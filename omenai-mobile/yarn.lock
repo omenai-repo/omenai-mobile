@@ -1519,7 +1519,7 @@
   dependencies:
     cross-spawn "^7.0.3"
 
-"@expo/vector-icons@^14.0.0":
+"@expo/vector-icons@^14.0.0", "@expo/vector-icons@^14.0.1":
   version "14.0.1"
   resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-14.0.1.tgz#c0b338548c374af862425d8fd1a4287d3fb7df12"
   integrity sha512-7oIe1RRWmRQXNxmewsuAaIRNAQfkig7EFTuI5T8PCI7T4q/rS5iXWvlzAEXndkzSOSs7BAANrLyj7AtpEhTksg==

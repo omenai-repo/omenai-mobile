@@ -1,20 +1,45 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 
-export default function AuthTabs() {
+type AuthTabsProps = {
+    tabs: string[],
+    stateIndex: number,
+    handleSelect: (e: number) => void
+}
 
-    const TabItem = () => {
+type TabItemProps = {
+    name: string,
+    onClick: () => void,
+    isSelected: boolean
+}
+
+export default function AuthTabs({tabs, stateIndex, handleSelect}: AuthTabsProps) {
+
+    const TabItem = ({name, onClick, isSelected}: TabItemProps) => {
+        if(isSelected)
         return(
             <TouchableOpacity style={styles.tabContainer}>
-                <Text style={styles.tabText}>Tab Item 1</Text>
+                <Text style={styles.tabText}>{name}</Text>
+            </TouchableOpacity>
+        )
+
+        return(
+            <TouchableOpacity style={[styles.tabContainer, {backgroundColor: 'transparent'}]} onPress={onClick}>
+                <Text style={[styles.tabText, {color: '#858585'}]}>{name}</Text>
             </TouchableOpacity>
         )
     }
 
     return (
         <View style={styles.container}>
-            <TabItem />
-            <TabItem />
+            {tabs.map((i, idx) => (
+                <TabItem 
+                    name={i}
+                    key={idx}
+                    onClick={() => handleSelect(idx)}
+                    isSelected={stateIndex === idx}
+                />
+            ))}
         </View>
     )
 }

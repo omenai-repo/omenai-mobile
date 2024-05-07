@@ -16,7 +16,7 @@ export default function Welcome() {
                 <Image source={welcome_banner} style={styles.welcomeBanner} />
                 <Text style={styles.largeText}>Get the best art deals anywhere, any time</Text>
                 <View style={styles.buttonContainer}>
-                    <LongBlackButton value='Log in' onClick={() => console.log('')} />
+                    <LongBlackButton value='Log in' onClick={() => console.log('')} isDisabled={false} />
                     <LongWhiteButton value='Sign Up' onClick={() => console.log('')} />
                 </View>
             </View>

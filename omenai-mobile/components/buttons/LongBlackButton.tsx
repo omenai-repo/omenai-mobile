@@ -4,10 +4,19 @@ import { COLORS } from '../../config/colors.config'
 
 type LongBlackButton = {
     value: string,
+    isDisabled: boolean,
     onClick: () => void
 }
 
-export default function LongBlackButton({value, onClick} : LongBlackButton) {
+export default function LongBlackButton({value, onClick, isDisabled} : LongBlackButton) {
+
+    if (isDisabled)
+    return(
+        <View style={[styles.container, {backgroundColor: '#E0E0E0'}]}>
+            <Text style={[styles.text, {color: '#A1A1A1'}]}>{value}</Text>
+        </View>
+    )
+
     return (
         <TouchableOpacity style={styles.container} onPress={onClick}>
             <Text style={styles.text}>{value}</Text>
