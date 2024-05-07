@@ -4,13 +4,18 @@ import AuthHeader from '../../components/auth/AuthHeader';
 import AuthTabs from '../../components/auth/AuthTabs';
 import Individual from './components/individual/Individual';
 import Gallery from './components/gallery/Gallery';
+import { COLORS } from '../../config/colors.config';
 
 export default function Login() {
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     return (
         <View style={styles.container}>
-            <AuthHeader />
+            <AuthHeader
+                title='Welcome Back'
+                subTitle='Access your account so you can start purchasing artwork'
+                handleBackClick={() => console.log('')}
+            />
             <ScrollView style={{flex: 1, paddingHorizontal: 20, paddingTop: 20}}>
                 <AuthTabs
                     tabs={['As an individual', 'As a gallery']}
@@ -27,8 +32,7 @@ export default function Login() {
 
 const styles = StyleSheet.create({
     container: {
-        display: "flex",
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.white,
         flex: 1
     }
 })
