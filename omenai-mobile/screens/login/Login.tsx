@@ -5,8 +5,13 @@ import AuthTabs from '../../components/auth/AuthTabs';
 import Individual from './components/individual/Individual';
 import Gallery from './components/gallery/Gallery';
 import { COLORS } from '../../config/colors.config';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { SCREEN } from '../../constants/screenNames.constants';
 
 export default function Login() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
+
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     return (
@@ -14,7 +19,7 @@ export default function Login() {
             <AuthHeader
                 title='Welcome Back'
                 subTitle='Access your account so you can start purchasing artwork'
-                handleBackClick={() => console.log('')}
+                handleBackClick={() => navigation.navigate(SCREEN.WELCOME)}
             />
             <ScrollView style={{flex: 1, paddingHorizontal: 20, paddingTop: 20}}>
                 <AuthTabs
