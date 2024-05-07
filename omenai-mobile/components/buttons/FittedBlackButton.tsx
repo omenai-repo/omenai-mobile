@@ -2,14 +2,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { COLORS } from '../../config/colors.config'
 
-type LongBlackButtonProps = {
+type FittedBlackButtonProps = {
     value: string,
     isDisabled: boolean,
     onClick: () => void
 }
 
-export default function LongBlackButton({value, onClick, isDisabled} : LongBlackButtonProps) {
-
+export default function FittedBlackButton({value, isDisabled, onClick}: FittedBlackButtonProps) {
     if (isDisabled)
     return(
         <View style={[styles.container, {backgroundColor: '#E0E0E0'}]}>
@@ -27,7 +26,7 @@ export default function LongBlackButton({value, onClick, isDisabled} : LongBlack
 const styles = StyleSheet.create({
     container: {
         height: 55,
-        width: '100%',
+        paddingHorizontal: 30,
         backgroundColor: COLORS.primary_black,
         display: 'flex',
         alignItems: 'center',
