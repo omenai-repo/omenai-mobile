@@ -4,12 +4,13 @@ import { COLORS } from '../../config/colors.config'
 
 type InputProps = {
     label: string,
+    value: string,
     onInputChange: (e: string) => void,
     placeHolder: string,
     keyboardType: string
 }
 
-export default function Input({label, onInputChange, placeHolder, keyboardType}: InputProps) {
+export default function Input({label, onInputChange, placeHolder, keyboardType, value}: InputProps) {
     return (
         <View>
             <Text style={styles.label}>{label}</Text>
@@ -19,6 +20,7 @@ export default function Input({label, onInputChange, placeHolder, keyboardType}:
                 style={styles.inputContainer}
                 keyboardType="default"
                 autoCapitalize="none"
+                value={value}
                 // autoComplete='email'
             />
         </View>
