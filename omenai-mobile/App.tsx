@@ -4,6 +4,6 @@ import Welcome from './screens/welcome/Welcome';
 
 export default function App() {
   return (
-    <Welcome />
+    <Login />
   );
 }
