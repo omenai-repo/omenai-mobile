@@ -7,7 +7,7 @@ export default function GalleryForm() {
     return (
         <View style={styles.container}>
             <View style={{gap: 20}}>
-                <Input label='Full name' keyboardType='default' onInputChange={e => console.log(e)} placeHolder='Enter your full name' />
+                <Input label='Gallery name' keyboardType='default' onInputChange={e => console.log(e)} placeHolder='Enter gallery name' />
                 <Input label='Email address' keyboardType='email-address' onInputChange={e => console.log(e)} placeHolder='Enter your email address' />
             </View>
             <View>
