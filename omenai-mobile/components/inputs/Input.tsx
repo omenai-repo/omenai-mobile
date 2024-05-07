@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React from 'react'
-import { COLORS } from '../../config/colors.config'
+import { colors } from '@/config/colors.config'
 
 type InputProps = {
     label: string,
@@ -30,13 +30,13 @@ export default function Input({label, onInputChange, placeHolder, keyboardType, 
 const styles = StyleSheet.create({
     label: {
         fontSize: 14,
-        color: COLORS.inputLabel
+        color: colors.inputLabel
     },
     inputContainer: {
         height: 60,
         width: '100%',
         borderWidth: 1,
-        borderColor: COLORS.inputBorder,
+        borderColor: colors.inputBorder,
         backgroundColor: '#FAFAFA',
         paddingHorizontal: 20,
         borderRadius: 5,

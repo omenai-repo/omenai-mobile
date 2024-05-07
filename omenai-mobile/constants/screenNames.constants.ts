@@ -1,5 +1,5 @@
-export const SCREEN = {
-    WELCOME: 'Welcome',
-    LOGIN: 'login',
-    REGISTER: 'register'
+export const screenName = {
+    welcome: 'Welcome',
+    login: 'login',
+    register: 'register'
 }

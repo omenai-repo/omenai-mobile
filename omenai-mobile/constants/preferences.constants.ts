@@ -1,4 +1,4 @@
-export const PREFERENCES = [
+export const prefrencesList = [
     'Art prints',
     'Live arts',
     'Wall arts',

@@ -1,11 +1,11 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import FittedBlackButton from '../../../../components/buttons/FittedBlackButton'
-import BackFormButton from '../../../../components/buttons/BackFormButton'
-import { COLORS } from '../../../../config/colors.config';
-import { ACCEPT_Terms } from '../../../../constants/accetTerms.constants';
+import FittedBlackButton from '@/components/buttons/FittedBlackButton'
+import BackFormButton from '@/components/buttons/BackFormButton'
+import { colors } from '@/config/colors.config';
+import { acceptTermsList } from '@/constants/accetTerms.constants';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
+import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore';
 
 type TermsAndConditionItemProps = {
     writeUp: string,
@@ -27,7 +27,7 @@ export default function TermsAndConditions() {
     const TermsAndConditionItem = ({writeUp, isSelected, handleSelect}: TermsAndConditionItemProps) => {
         return(
             <TouchableOpacity style={styles.singleItem} onPress={handleSelect}>
-                <View style={styles.tickBox}>{isSelected && <AntDesign name='check' color={COLORS.primary_black} size={15} />}</View>
+                <View style={styles.tickBox}>{isSelected && <AntDesign name='check' color={colors.primary_black} size={15} />}</View>
                 <Text style={styles.writeUp}>{writeUp}</Text>
             </TouchableOpacity>
         )
@@ -37,7 +37,7 @@ export default function TermsAndConditions() {
         <View style={{marginTop: 20}}>
             <Text style={styles.title}>Accept terms and conditions</Text>
             <View style={styles.termsContainer}>
-                {ACCEPT_Terms.map((i, idx) => (
+                {acceptTermsList.map((i, idx) => (
                     <TermsAndConditionItem
                         writeUp={i}
                         key={idx}
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FAFAFA',
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: COLORS.inputBorder,
+        borderColor: colors.inputBorder,
         paddingHorizontal: 15,
         paddingVertical: 20,
         gap: 30
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
         width: 20,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: COLORS.inputBorder,
+        borderColor: colors.inputBorder,
         alignItems: 'center',
         justifyContent: 'center'
     },

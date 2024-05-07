@@ -1,10 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
-import { COLORS } from '../../../../config/colors.config';
-import { PREFERENCES } from '../../../../constants/preferences.constants';
-import BackFormButton from '../../../../components/buttons/BackFormButton';
-import NextButton from '../../../../components/buttons/NextButton';
-import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
+import React from 'react'
+import { colors } from '@/config/colors.config';
+import { prefrencesList } from '@/constants/preferences.constants';
+import BackFormButton from '@/components/buttons/BackFormButton';
+import NextButton from '@/components/buttons/NextButton';
+import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore';
 
 type TabItemProps = {
     name: string,
@@ -44,7 +44,7 @@ export default function Preferences() {
         <View style={{marginTop: 20}}>
             <Text style={styles.title}>Select your art preference</Text>
             <View style={styles.tabsContainer}>
-                {PREFERENCES.map((i, idx) => (
+                {prefrencesList.map((i, idx) => (
                     <TabItem
                         name={i}
                         key={idx}
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FAFAFA',
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: COLORS.inputBorder,
+        borderColor: colors.inputBorder,
         paddingHorizontal: 15,
         paddingVertical: 20,
         flexDirection: 'row',
@@ -86,12 +86,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#FAFAFA',
         borderRadius: 30,
         borderWidth: 1,
-        borderColor: COLORS.inputBorder,
+        borderColor: colors.inputBorder,
         alignItems: 'center',
         justifyContent: 'center',
     },
     selectedTabItem: {
-        backgroundColor: COLORS.black
+        backgroundColor: colors.black
     },
     buttonsContainer: {
         flexDirection: 'row',

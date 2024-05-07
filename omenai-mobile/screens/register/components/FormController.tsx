@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import InputForm from './inputForm/InputForm'
 import Preferences from './preferences/Preferences';
 import TermsAndConditions from './TermsAndConditions/TermsAndConditions';
-import { useIndividualAuthRegisterStore } from '../../../store/auth/register/IndividualAuthRegisterStore';
+import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore';
 
 export default function FormController() {
     const {pageIndex} = useIndividualAuthRegisterStore();
