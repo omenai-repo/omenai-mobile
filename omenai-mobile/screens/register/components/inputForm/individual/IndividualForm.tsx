@@ -4,24 +4,45 @@ import PasswordInput from '../../../../../components/inputs/PasswordInput'
 import Input from '../../../../../components/inputs/Input'
 import BackFormButton from '../../../../../components/buttons/BackFormButton'
 import NextButton from '../../../../../components/buttons/NextButton'
+import { useIndividualAuthRegisterStore } from '../../../../../store/auth/register/IndividualAuthRegisterStore'
 
-type IndividualFormProps = {
-    handleNext: () => void
-}
+export default function IndividualForm() {
+    const { individualRegisterData, setEmail, setName, setPassword, setConfirmPassword, pageIndex, setPageIndex } = useIndividualAuthRegisterStore();
 
-export default function IndividualForm({handleNext}: IndividualFormProps) {
     return (
         <View style={styles.container}>
             <View style={{gap: 20}}>
-                <Input label='Full name' keyboardType='default' onInputChange={e => console.log(e)} placeHolder='Enter your full name' />
-                <Input label='Email address' keyboardType='email-address' onInputChange={e => console.log(e)} placeHolder='Enter your email address' />
-                <PasswordInput label='Password' onInputChange={e => console.log(e)} placeHolder='Enter password' />
-                <PasswordInput label='Confirm password' onInputChange={e => console.log(e)} placeHolder='Enter password again' />
+                <Input 
+                    label='Full name'
+                    keyboardType='default' 
+                    onInputChange={setName} 
+                    placeHolder='Enter your full name'
+                    value={individualRegisterData.name}
+                />
+                <Input 
+                    label='Email address' 
+                    keyboardType='email-address' 
+                    onInputChange={setEmail} 
+                    placeHolder='Enter your email address'
+                    value={individualRegisterData.email}
+                />
+                <PasswordInput 
+                    label='Password' 
+                    onInputChange={setPassword} 
+                    placeHolder='Enter password'
+                    value={individualRegisterData.password}
+                />
+                <PasswordInput 
+                    label='Confirm password' 
+                    onInputChange={setConfirmPassword} 
+                    placeHolder='Enter password again'
+                    value={individualRegisterData.confirmPassword}
+                />
             </View>
             <View style={styles.buttonsContainer}>
                 {/* <BackFormButton handleBackClick={() => console.log('')} /> */}
                 <View style={{flex: 1}} />
-                <NextButton isDisabled={false} handleButtonClick={handleNext}  />
+                <NextButton isDisabled={false} handleButtonClick={() => setPageIndex(pageIndex + 1)}  />
             </View>
         </View>
     )
