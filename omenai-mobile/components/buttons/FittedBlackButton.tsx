@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { COLORS } from '../../config/colors.config'
+import { colors } from '@/config/colors.config'
 
 type FittedBlackButtonProps = {
     value: string,
@@ -27,13 +27,13 @@ const styles = StyleSheet.create({
     container: {
         height: 55,
         paddingHorizontal: 30,
-        backgroundColor: COLORS.primary_black,
+        backgroundColor: colors.primary_black,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
     },
     text: {
-        color: COLORS.white,
+        color: colors.white,
         fontSize: 16
     }
 })

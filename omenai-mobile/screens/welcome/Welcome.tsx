@@ -1,14 +1,14 @@
 import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-import omenai_logo from '../../assets/omenai-logo.png';
-import welcome_banner from '../../assets/images/welcome-banner.png';
-import LongWhiteButton from '../../components/buttons/LongWhiteButton';
-import LongBlackButton from '../../components/buttons/LongBlackButton';
-import { COLORS } from '../../config/colors.config';
+import omenai_logo from '@/assets/omenai-logo.png';
+import welcome_banner from '@/assets/images/welcome-banner.png';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { SCREEN } from '../../constants/screenNames.constants';
+import { colors } from '@/config/colors.config';
+import LongBlackButton from '@/components/buttons/LongBlackButton';
+import LongWhiteButton from '@/components/buttons/LongWhiteButton';
+import { screenName } from '@/constants/screenNames.constants';
 
 export default function Welcome() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -18,7 +18,7 @@ export default function Welcome() {
     }
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
                     <Image source={omenai_logo} />
@@ -26,8 +26,8 @@ export default function Welcome() {
                 <Image source={welcome_banner} style={styles.welcomeBanner} />
                 <Text style={styles.largeText}>Get the best art deals anywhere, any time</Text>
                 <View style={styles.buttonContainer}>
-                    <LongBlackButton value='Log In' onClick={() => handleNavigation(SCREEN.LOGIN)} isDisabled={false} />
-                    <LongWhiteButton value='Sign Up' onClick={() => handleNavigation(SCREEN.REGISTER)} />
+                    <LongBlackButton value='Log In' onClick={() => handleNavigation(screenName.login)} isDisabled={false} />
+                    <LongWhiteButton value='Sign Up' onClick={() => handleNavigation(screenName.register)} />
                 </View>
             </View>
         </SafeAreaView>

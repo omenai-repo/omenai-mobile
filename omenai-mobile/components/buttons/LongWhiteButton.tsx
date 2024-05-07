@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { COLORS } from '../../config/colors.config'
+import { colors } from '@/config/colors.config'
 
 type LongWhiteButtonProps = {
     value: string,
@@ -19,15 +19,15 @@ const styles = StyleSheet.create({
     container: {
         height: 55,
         width: '100%',
-        backgroundColor: COLORS.white,
+        backgroundColor: colors.white,
         borderWidth: 1,
-        borderColor: COLORS.black,
+        borderColor: colors.black,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
     },
     text: {
-        color: COLORS.black,
+        color: colors.black,
         fontSize: 16
     }
 })

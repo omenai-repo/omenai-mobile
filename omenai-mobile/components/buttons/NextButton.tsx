@@ -1,9 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { COLORS } from '../../config/colors.config'
+import { colors } from '@/config/colors.config'
 import { AntDesign } from '@expo/vector-icons'
 
-export default function NextButton({isDisabled, handleButtonClick}: {isDisabled: boolean, handleButtonClick: () => void}) {
+type NextButtonProps =  {
+    isDisabled: boolean, 
+    handleButtonClick: () => void
+}
+
+export default function NextButton({isDisabled, handleButtonClick}: NextButtonProps) {
     
     if(isDisabled)
     return(
@@ -15,8 +20,8 @@ export default function NextButton({isDisabled, handleButtonClick}: {isDisabled:
 
     return (
         <TouchableOpacity style={styles.container} onPress={handleButtonClick}>
-            <Text style={{fontSize: 16, color: COLORS.white}}>Next</Text>
-            <AntDesign name='arrowright' color={COLORS.white} size={20} />
+            <Text style={{fontSize: 16, color: colors.white}}>Next</Text>
+            <AntDesign name='arrowright' color={colors.white} size={20} />
         </TouchableOpacity>
     )
 }
@@ -24,7 +29,7 @@ export default function NextButton({isDisabled, handleButtonClick}: {isDisabled:
 const styles = StyleSheet.create({
     container: {
         height: 55,
-        backgroundColor: COLORS.black,
+        backgroundColor: colors.black,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,

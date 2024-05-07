@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { COLORS } from '../../config/colors.config'
+import { colors } from '@/config/colors.config'
 import Feather from '@expo/vector-icons/Feather';
 
 type PasswordInputProps = {
@@ -37,13 +37,13 @@ export default function PasswordInput({label, onInputChange, placeHolder, value}
 const styles = StyleSheet.create({
     label: {
         fontSize: 14,
-        color: COLORS.inputLabel
+        color: colors.inputLabel
     },
     inputContainer: {
         height: 60,
         width: '100%',
         borderWidth: 1,
-        borderColor: COLORS.inputBorder,
+        borderColor: colors.inputBorder,
         backgroundColor: '#FAFAFA',
         overflow: 'hidden',
         borderRadius: 5,

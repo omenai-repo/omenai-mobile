@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './screens/login/Login';
 import Register from './screens/register/Register';
 import Welcome from './screens/welcome/Welcome';
-import { SCREEN } from './constants/screenNames.constants';
+import { screenName } from '@/constants/screenNames.constants';
 
 const Stack = createStackNavigator();
 
@@ -13,19 +13,19 @@ export default function App() {
   return (
     <NavigationContainer>
       {/* AUTH SCREENS */}
-      <Stack.Navigator initialRouteName={SCREEN.WELCOME}>
+      <Stack.Navigator initialRouteName={screenName.welcome}>
         <Stack.Screen 
-          name={SCREEN.WELCOME} 
+          name={screenName.welcome} 
           component={Welcome}
           options={{ headerShown: false }}
         />
         <Stack.Screen 
-          name={SCREEN.LOGIN} 
+          name={screenName.login} 
           component={Login}
           options={{ headerShown: false }}
         />
         <Stack.Screen 
-          name={SCREEN.REGISTER} 
+          name={screenName.register} 
           component={Register}
           options={{ headerShown: false }}
         />
