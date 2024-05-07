@@ -5,7 +5,11 @@ import Input from '../../../../../components/inputs/Input'
 import BackFormButton from '../../../../../components/buttons/BackFormButton'
 import NextButton from '../../../../../components/buttons/NextButton'
 
-export default function IndividualForm() {
+type IndividualFormProps = {
+    handleNext: () => void
+}
+
+export default function IndividualForm({handleNext}: IndividualFormProps) {
     return (
         <View style={styles.container}>
             <View style={{gap: 20}}>
@@ -15,9 +19,9 @@ export default function IndividualForm() {
                 <PasswordInput label='Confirm password' onInputChange={e => console.log(e)} placeHolder='Enter password again' />
             </View>
             <View style={styles.buttonsContainer}>
-                <BackFormButton handleBackClick={() => console.log('')} />
+                {/* <BackFormButton handleBackClick={() => console.log('')} /> */}
                 <View style={{flex: 1}} />
-                <NextButton isDisabled={false} handleButtonClick={() => console.log('')}  />
+                <NextButton isDisabled={false} handleButtonClick={handleNext}  />
             </View>
         </View>
     )
