@@ -6,11 +6,12 @@ import Feather from '@expo/vector-icons/Feather';
 type PasswordInputProps = {
     label: string,
     onInputChange: (e: string) => void,
-    placeHolder: string
+    placeHolder: string,
+    value: string
 }
 
 
-export default function PasswordInput({label, onInputChange, placeHolder}: PasswordInputProps) {
+export default function PasswordInput({label, onInputChange, placeHolder, value}: PasswordInputProps) {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -23,6 +24,7 @@ export default function PasswordInput({label, onInputChange, placeHolder}: Passw
                     onChangeText={onInputChange}
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
+                    value={value}
                 />
                 <TouchableOpacity style={styles.hideButton} onPress={() => setShowPassword(prev => !prev)}>
                     <Feather name={showPassword ? "eye-off" : "eye"} size={16} color="#858585" />
