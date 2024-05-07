@@ -4,7 +4,7 @@ import AuthTabs from '../../../../components/auth/AuthTabs'
 import IndividualForm from './individual/IndividualForm';
 import GalleryForm from './gallery/GalleryForm';
 
-export default function InputForm({handleNext}:{handleNext: () => void}) {
+export default function InputForm() {
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     return (
@@ -14,7 +14,7 @@ export default function InputForm({handleNext}:{handleNext: () => void}) {
                 stateIndex={selectedIndex}
                 handleSelect={e => setSelectedIndex(e)}
             />
-            {selectedIndex === 0 && <IndividualForm handleNext={handleNext} />}
+            {selectedIndex === 0 && <IndividualForm/>}
             {selectedIndex === 1 && <GalleryForm />}
         </View>
     )

@@ -3,27 +3,21 @@ import React, { useState } from 'react'
 import InputForm from './inputForm/InputForm'
 import Preferences from './preferences/Preferences';
 import TermsAndConditions from './TermsAndConditions/TermsAndConditions';
+import { useIndividualAuthRegisterStore } from '../../../store/auth/register/IndividualAuthRegisterStore';
 
 export default function FormController() {
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    const {pageIndex} = useIndividualAuthRegisterStore();
 
     return (
         <ScrollView style={{flex: 1, paddingHorizontal: 20, paddingTop: 20}}>
-            {selectedIndex === 0 && 
-                <InputForm 
-                    handleNext={() => setSelectedIndex(prev => prev + 1)}
-                />
+            {pageIndex === 0 && 
+                <InputForm />
             }
-            {selectedIndex === 1 && 
-                <Preferences 
-                    handleBack={() => setSelectedIndex(prev => prev - 1)}
-                    handleNext={() => setSelectedIndex(prev => prev + 1)}
-                />
+            {pageIndex === 1 && 
+                <Preferences />
             }
-            {selectedIndex === 2 &&
-                <TermsAndConditions
-                    handleBack={() => setSelectedIndex(prev => prev - 1)}
-                />
+            {pageIndex === 2 &&
+                <TermsAndConditions />
             }
         </ScrollView>
     )

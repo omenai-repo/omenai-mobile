@@ -1,10 +1,11 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React from 'react'
 import FittedBlackButton from '../../../../components/buttons/FittedBlackButton'
 import BackFormButton from '../../../../components/buttons/BackFormButton'
 import { COLORS } from '../../../../config/colors.config';
 import { ACCEPT_Terms } from '../../../../constants/accetTerms.constants';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
 
 type TermsAndConditionItemProps = {
     writeUp: string,
@@ -12,8 +13,8 @@ type TermsAndConditionItemProps = {
     handleSelect: () => void
 }
 
-export default function TermsAndConditions({handleBack}: {handleBack: () => void}) {
-    const [selectedTerms, setSelectedTerms] = useState<number[]>([]);
+export default function TermsAndConditions() {
+    const {pageIndex, setPageIndex, selectedTerms, setSelectedTerms} = useIndividualAuthRegisterStore();
 
     const handleAcceptTerms = (index: number) => {
         if (selectedTerms.includes(index)) {
@@ -46,7 +47,7 @@ export default function TermsAndConditions({handleBack}: {handleBack: () => void
                 ))}
             </View>
             <View style={styles.buttonsContainer}>
-                <BackFormButton handleBackClick={handleBack} />
+                <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
                 <View style={{flex: 1}} />
                 <FittedBlackButton value='Create my acount' isDisabled={false} onClick={() => console.log('')}  />
             </View>

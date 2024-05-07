@@ -4,6 +4,7 @@ import { COLORS } from '../../../../config/colors.config';
 import { PREFERENCES } from '../../../../constants/preferences.constants';
 import BackFormButton from '../../../../components/buttons/BackFormButton';
 import NextButton from '../../../../components/buttons/NextButton';
+import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
 
 type TabItemProps = {
     name: string,
@@ -11,19 +12,15 @@ type TabItemProps = {
     onSelect: () => void
 }
 
-type PreferencesProps = {
-    handleBack: () => void,
-    handleNext: () => void
-}
-
-export default function Preferences({handleBack, handleNext}: PreferencesProps) {
-    const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
+export default function Preferences() {
+    const {pageIndex, setPageIndex, preferences, setPreferences } = useIndividualAuthRegisterStore();
+    // const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
 
     const handleSelect = (value: string) => {
-        if (selectedPreferences.includes(value)) {
-            setSelectedPreferences(selectedPreferences.filter((selectedTab) => selectedTab !== value));
+        if (preferences.includes(value)) {
+            setPreferences(preferences.filter((selectedTab) => selectedTab !== value));
           } else {
-            setSelectedPreferences([...selectedPreferences, value]);
+            setPreferences([...preferences, value]);
           }
     }
 
@@ -52,14 +49,14 @@ export default function Preferences({handleBack, handleNext}: PreferencesProps) 
                         name={i}
                         key={idx}
                         onSelect={() => handleSelect(i)}
-                        isSelected={selectedPreferences.includes(i)}
+                        isSelected={preferences.includes(i)}
                     />
                 ))}
             </View>
             <View style={styles.buttonsContainer}>
-                <BackFormButton handleBackClick={handleBack} />
+                <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
                 <View style={{flex: 1}} />
-                <NextButton isDisabled={false} handleButtonClick={handleNext}  />
+                <NextButton isDisabled={false} handleButtonClick={() => setPageIndex(pageIndex + 1)}  />
             </View>
         </View>
     )
