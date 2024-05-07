@@ -1,14 +1,23 @@
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { COLORS } from '../../config/colors.config'
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-export default function AuthHeader() {
+type AuthHeaderProps = {
+    title: string,
+    subTitle: string,
+    handleBackClick: () => void
+}
+
+export default function AuthHeader({title, subTitle, handleBackClick}: AuthHeaderProps) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={{paddingHorizontal: 20, paddingBottom: 20, paddingTop: 10}}>
-                <TouchableOpacity style={styles.backButton}></TouchableOpacity>
-                <Text style={styles.headerText}>Create an account</Text>
-                <Text style={styles.subText}>Access your account so you can start purchasing artworks </Text>
+                <TouchableOpacity style={styles.backButton} onPress={handleBackClick}>
+                    <AntDesign name='arrowleft' color={COLORS.white} size={20} />
+                </TouchableOpacity>
+                <Text style={styles.headerText}>{title}</Text>
+                <Text style={styles.subText}>{subTitle}</Text>
             </View>
         </SafeAreaView>
     )
@@ -25,7 +34,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: COLORS.white
+        backgroundColor: '#515151'
     },
     headerText: {
         fontSize: 20,

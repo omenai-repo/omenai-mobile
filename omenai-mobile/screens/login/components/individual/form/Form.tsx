@@ -8,13 +8,13 @@ export default function Form() {
     return (
         <View style={styles.container}>
             <View style={{gap: 20}}>
-                <Input label='Email address' onInputChange={e => console.log(e)} placeHolder='Enter your email address' />
+                <Input label='Email address' keyboardType='email-address' onInputChange={e => console.log(e)} placeHolder='Enter your email address' />
                 <PasswordInput label='Password' onInputChange={e => console.log(e)} placeHolder='Enter password' />
             </View>
             <View style={{gap: 40}}>
                 <LongBlackButton
                     value='Log In'
-                    isDisabled
+                    isDisabled={false}
                     onClick={() => console.log('')}
                 />
                 <TouchableOpacity>
