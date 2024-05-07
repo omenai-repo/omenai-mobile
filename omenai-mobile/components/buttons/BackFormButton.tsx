@@ -6,7 +6,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 export default function BackFormButton({handleBackClick}: {handleBackClick: () => void}) {
     return (
         <TouchableOpacity style={styles.container} onPress={handleBackClick}>
-            <AntDesign name='arrowleft' color={'#1A1A1A'} size={24} />
+            <AntDesign name='arrowleft' color={COLORS.primary_black} size={24} />
         </TouchableOpacity>
     )
 }
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         height: 55,
         width: 70,
         borderWidth: 1,
-        borderColor: '#1A1A1A',
+        borderColor: COLORS.primary_black,
         alignItems: 'center',
         justifyContent: 'center'
     }
