@@ -1,5 +1,6 @@
 export const screenName = {
     welcome: 'Welcome',
     login: 'login',
-    register: 'register'
+    register: 'register',
+    forgotPassword: 'forgot-password'
 }
