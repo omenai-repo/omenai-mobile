@@ -5,6 +5,7 @@ import Input from '@/components/inputs/Input'
 import BackFormButton from '@/components/buttons/BackFormButton'
 import NextButton from '@/components/buttons/NextButton'
 import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore'
+import { areAllFieldsFilled } from '@/utils/checkObjectFields.utils'
 
 export default function IndividualForm() {
     const { individualRegisterData, setEmail, setName, setPassword, setConfirmPassword, pageIndex, setPageIndex } = useIndividualAuthRegisterStore();
@@ -42,7 +43,7 @@ export default function IndividualForm() {
             <View style={styles.buttonsContainer}>
                 {/* <BackFormButton handleBackClick={() => console.log('')} /> */}
                 <View style={{flex: 1}} />
-                <NextButton isDisabled={false} handleButtonClick={() => setPageIndex(pageIndex + 1)}  />
+                <NextButton isDisabled={!areAllFieldsFilled(individualRegisterData)} handleButtonClick={() => setPageIndex(pageIndex + 1)}  />
             </View>
         </View>
     )
