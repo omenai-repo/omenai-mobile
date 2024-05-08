@@ -4,8 +4,13 @@ import { useIndividualAuthLoginStore } from '../../../../../store/auth/login/Ind
 import PasswordInput from '@/components/inputs/PasswordInput'
 import Input from '@/components/inputs/Input'
 import LongBlackButton from '@/components/buttons/LongBlackButton'
+import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { screenName } from '@/constants/screenNames.constants'
 
 export default function Form() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
+
     const { individualLoginData, setEmail, setPassword, handleSubmit } = useIndividualAuthLoginStore()
 
     return (
@@ -31,7 +36,7 @@ export default function Form() {
                     isDisabled={false}
                     onClick={handleSubmit}
                 />
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate(screenName.forgotPassword)}>
                     <Text style={styles.resetText}>Forgot password? Click here</Text>
                 </TouchableOpacity>
             </View>
