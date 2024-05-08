@@ -56,7 +56,7 @@ export default function Preferences() {
             <View style={styles.buttonsContainer}>
                 <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
                 <View style={{flex: 1}} />
-                <NextButton isDisabled={false} handleButtonClick={() => setPageIndex(pageIndex + 1)}  />
+                <NextButton isDisabled={preferences.length < 5} handleButtonClick={() => setPageIndex(pageIndex + 1)}  />
             </View>
         </View>
     )

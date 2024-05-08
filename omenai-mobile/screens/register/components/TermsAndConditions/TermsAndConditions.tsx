@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import FittedBlackButton from '@/components/buttons/FittedBlackButton'
 import BackFormButton from '@/components/buttons/BackFormButton'
 import { colors } from '@/config/colors.config';
@@ -49,7 +49,7 @@ export default function TermsAndConditions() {
             <View style={styles.buttonsContainer}>
                 <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
                 <View style={{flex: 1}} />
-                <FittedBlackButton value='Create my acount' isDisabled={false} onClick={() => console.log('')}  />
+                <FittedBlackButton value='Create my acount' isDisabled={!selectedTerms.includes(0)} onClick={() => console.log('')}  />
             </View>
         </View>
     )
