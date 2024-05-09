@@ -1,13 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PasswordInput from '@/components/inputs/PasswordInput'
 import Input from '@/components/inputs/Input'
 import NextButton from '@/components/buttons/NextButton'
 import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore'
-import { validateEmail } from '@/lib/validations/emailValidator'
-import { validateText } from '@/lib/validations/textValidator'
-import { validatePassword } from '@/lib/validations/passwordValidator'
-import { validateConfirmPassword } from '@/lib/validations/confirmPasswordValidator'
+import { validate } from '@/lib/validations/validatorGroup'
 
 export default function IndividualForm() {
     const { individualRegisterData, setEmail, setName, setPassword, setConfirmPassword, pageIndex, setPageIndex } = useIndividualAuthRegisterStore();
@@ -22,25 +19,13 @@ export default function IndividualForm() {
         return !(isFormValid && areAllFieldsFilled);
     }
 
-    const handleValidationChecks = (field: string, value: string) => {
-        let validationMessage = '';
-        switch (field) {
-            case 'name':
-                validationMessage = validateText(value)[0] || '';
-                break;
-            case 'email':
-                validationMessage = validateEmail(value)[0] || '';
-                break;
-            case 'password':
-                validationMessage = validatePassword(value)[0] || '';
-                break;
-            case 'confirmPassword':
-                validationMessage = validateConfirmPassword(individualRegisterData.password, value)[0] || '';
-                break;
-            default:
-                break;
+    const handleValidationChecks = (label: string, value: string, confirm?: string) => {        
+        const {success, errors} : {success: boolean, errors: string[] | []} = validate(value, label, confirm)
+        if(!success){
+            setFormErrors(prev => ({...prev, [label]: errors[0]}));
+        }else{
+            setFormErrors(prev => ({...prev, [label]: ''}));
         }
-        setFormErrors(prev => ({...prev, [field]: validationMessage}));
     };
 
     return (
@@ -77,7 +62,7 @@ export default function IndividualForm() {
                     onInputChange={setConfirmPassword} 
                     placeHolder='Enter password again'
                     value={individualRegisterData.confirmPassword}
-                    handleBlur={() => handleValidationChecks('confirmPassword', individualRegisterData.confirmPassword)}
+                    handleBlur={() => handleValidationChecks('confirmPassword', individualRegisterData.password, individualRegisterData.confirmPassword)}
                     errorMessage={formErrors.confirmPassword}
                 />
             </View>
