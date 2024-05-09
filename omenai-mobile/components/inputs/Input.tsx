@@ -7,10 +7,12 @@ type InputProps = {
     value: string,
     onInputChange: (e: string) => void,
     placeHolder: string,
-    keyboardType: string
+    keyboardType: string,
+    errorMessage?: string,
+    handleBlur?: () => void
 }
 
-export default function Input({label, onInputChange, placeHolder, keyboardType, value}: InputProps) {
+export default function Input({label, onInputChange, placeHolder, keyboardType, value, errorMessage, handleBlur}: InputProps) {
     return (
         <View>
             <Text style={styles.label}>{label}</Text>
@@ -21,8 +23,10 @@ export default function Input({label, onInputChange, placeHolder, keyboardType, 
                 keyboardType="default"
                 autoCapitalize="none"
                 value={value}
+                onBlur={handleBlur}
                 // autoComplete='email'
             />
+            {errorMessage && errorMessage?.length > 0 && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>
     )
 }
@@ -41,5 +45,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 5,
         marginTop: 10
+    },
+    errorMessage: {
+        color: '#ff0000',
+        marginTop: 2
     }
 })

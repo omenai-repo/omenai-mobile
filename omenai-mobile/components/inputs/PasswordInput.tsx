@@ -7,11 +7,13 @@ type PasswordInputProps = {
     label: string,
     onInputChange: (e: string) => void,
     placeHolder: string,
-    value: string
+    value: string,
+    errorMessage?: string,
+    handleBlur?: () => void
 }
 
 
-export default function PasswordInput({label, onInputChange, placeHolder, value}: PasswordInputProps) {
+export default function PasswordInput({label, onInputChange, placeHolder, value, errorMessage, handleBlur}: PasswordInputProps) {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -25,11 +27,13 @@ export default function PasswordInput({label, onInputChange, placeHolder, value}
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
                     value={value}
+                    onBlur={handleBlur}
                 />
                 <TouchableOpacity style={styles.hideButton} onPress={() => setShowPassword(prev => !prev)}>
                     <Feather name={showPassword ? "eye-off" : "eye"} size={16} color="#858585" />
                 </TouchableOpacity>
             </View>
+            {errorMessage && errorMessage?.length > 0 && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>
     )
 }
@@ -62,5 +66,9 @@ const styles = StyleSheet.create({
         height: '100%',
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    errorMessage: {
+        color: '#ff0000',
+        marginTop: 2
     }
 })
