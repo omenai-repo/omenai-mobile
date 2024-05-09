@@ -10,17 +10,10 @@ type FittedBlackButtonProps = {
 }
 
 export default function FittedBlackButton({value, isDisabled, onClick, isLoading}: FittedBlackButtonProps) {
-    if (isDisabled)
+    if (isDisabled || isLoading)
     return(
         <View style={[styles.container, {backgroundColor: '#E0E0E0'}]}>
             <Text style={[styles.text, {color: '#A1A1A1'}]}>{value}</Text>
-        </View>
-    )
-
-    if (isLoading)
-    return(
-        <View style={[styles.container, {backgroundColor: '#E0E0E0'}]}>
-            <Text style={[styles.text, {color: '#A1A1A1'}]}>Loading...</Text>
         </View>
     )
 
