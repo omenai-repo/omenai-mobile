@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect } from 'react'
 import FittedBlackButton from '@/components/buttons/FittedBlackButton'
 import BackFormButton from '@/components/buttons/BackFormButton'
@@ -6,6 +6,7 @@ import { colors } from '@/config/colors.config';
 import { acceptTermsList } from '@/constants/accetTerms.constants';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore';
+import { registerAccount } from '@/services/register/registerAccount';
 
 type TermsAndConditionItemProps = {
     writeUp: string,
@@ -14,7 +15,27 @@ type TermsAndConditionItemProps = {
 }
 
 export default function TermsAndConditions() {
-    const {pageIndex, setPageIndex, selectedTerms, setSelectedTerms} = useIndividualAuthRegisterStore();
+    const {preferences, individualRegisterData, pageIndex, setPageIndex, selectedTerms, setSelectedTerms, isLoading, setIsLoading} = useIndividualAuthRegisterStore();
+
+    const handleSubmit = async () => {
+        setIsLoading(true)
+
+        const data = {
+            ...individualRegisterData,
+            preferences
+        }
+
+        const results = await registerAccount(data, 'individual');
+        
+        if(results?.isOk){
+            Alert.alert(results?.body.message)
+            //ADD further logic to navigate to the homepage and hide auth screens
+        }else{
+            Alert.alert(results?.body.message)
+        }
+
+        setIsLoading(false)
+    }
 
     const handleAcceptTerms = (index: number) => {
         if (selectedTerms.includes(index)) {
@@ -49,7 +70,7 @@ export default function TermsAndConditions() {
             <View style={styles.buttonsContainer}>
                 <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
                 <View style={{flex: 1}} />
-                <FittedBlackButton value='Create my acount' isDisabled={!selectedTerms.includes(0)} onClick={() => console.log('')}  />
+                <FittedBlackButton isLoading={isLoading} value='Create my acount' isDisabled={!selectedTerms.includes(0)} onClick={handleSubmit}  />
             </View>
         </View>
     )
