@@ -7,6 +7,9 @@ import { acceptTermsList } from '@/constants/accetTerms.constants';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore';
 import { registerAccount } from '@/services/register/registerAccount';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from '@/constants/screenNames.constants';
 
 type TermsAndConditionItemProps = {
     writeUp: string,
@@ -15,7 +18,8 @@ type TermsAndConditionItemProps = {
 }
 
 export default function TermsAndConditions() {
-    const {preferences, individualRegisterData, pageIndex, setPageIndex, selectedTerms, setSelectedTerms, isLoading, setIsLoading} = useIndividualAuthRegisterStore();
+    const navigation = useNavigation<StackNavigationProp<any>>();
+    const {preferences, individualRegisterData, pageIndex, setPageIndex, selectedTerms, setSelectedTerms, isLoading, setIsLoading, clearState} = useIndividualAuthRegisterStore();
 
     const handleSubmit = async () => {
         setIsLoading(true)
@@ -29,7 +33,9 @@ export default function TermsAndConditions() {
         
         if(results?.isOk){
             Alert.alert(results?.body.message)
+            clearState();
             //ADD further logic to navigate to the homepage and hide auth screens
+            navigation.navigate(screenName.welcome)
         }else{
             Alert.alert(results?.body.message)
         }
@@ -70,7 +76,7 @@ export default function TermsAndConditions() {
             <View style={styles.buttonsContainer}>
                 <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
                 <View style={{flex: 1}} />
-                <FittedBlackButton isLoading={isLoading} value='Create my acount' isDisabled={!selectedTerms.includes(0)} onClick={handleSubmit}  />
+                <FittedBlackButton isLoading={isLoading} value={isLoading ? 'Loading...' : 'Create my acount'} isDisabled={!selectedTerms.includes(0)} onClick={handleSubmit}  />
             </View>
         </View>
     )

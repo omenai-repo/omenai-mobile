@@ -1,12 +1,12 @@
 import { apiUrl } from "@/constants/apiUrl.constants";
 
 
-export async function registerAccount(
-    payload: IndividualRegisterData | GalleryRegisterData,
-    route: "gallery" | "individual"
+export async function loginAccount(
+    payload: IndividualLoginData,
+    route: "individual"
 ){
 
-    const url = apiUrl + '/api/auth/' + route + '/register'
+    const url = apiUrl + '/api/auth/' + route + '/login'
 
     try {
         const response = await fetch(url, {
@@ -28,7 +28,7 @@ export async function registerAccount(
     }catch(error){
         return {
             isOk: false,
-            body: {message: 'Error creating account'}
+            body: {message: 'Error logging into account'}
         }
     }
 }

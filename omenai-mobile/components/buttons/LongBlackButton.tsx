@@ -5,12 +5,13 @@ import { colors } from '@/config/colors.config'
 type LongBlackButtonProps = {
     value: string,
     isDisabled: boolean,
-    onClick: () => void
+    onClick: () => void,
+    isLoading?: boolean
 }
 
-export default function LongBlackButton({value, onClick, isDisabled} : LongBlackButtonProps) {
+export default function LongBlackButton({value, onClick, isDisabled, isLoading} : LongBlackButtonProps) {
 
-    if (isDisabled)
+    if (isDisabled || isLoading)
     return(
         <View style={[styles.container, {backgroundColor: '#E0E0E0'}]}>
             <Text style={[styles.text, {color: '#A1A1A1'}]}>{value}</Text>
