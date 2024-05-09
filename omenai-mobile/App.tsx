@@ -6,6 +6,7 @@ import Login from './screens/login/Login';
 import Register from './screens/register/Register';
 import Welcome from './screens/welcome/Welcome';
 import { screenName } from '@/constants/screenNames.constants';
+import ForgotPassword from './screens/forgotPassword/ForgotPassword';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,11 @@ export default function App() {
         <Stack.Screen 
           name={screenName.register} 
           component={Register}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+          name={screenName.forgotPassword} 
+          component={ForgotPassword}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
