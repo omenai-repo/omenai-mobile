@@ -5,14 +5,22 @@ import { colors } from '@/config/colors.config'
 type FittedBlackButtonProps = {
     value: string,
     isDisabled: boolean,
-    onClick: () => void
+    onClick: () => void,
+    isLoading?: boolean
 }
 
-export default function FittedBlackButton({value, isDisabled, onClick}: FittedBlackButtonProps) {
+export default function FittedBlackButton({value, isDisabled, onClick, isLoading}: FittedBlackButtonProps) {
     if (isDisabled)
     return(
         <View style={[styles.container, {backgroundColor: '#E0E0E0'}]}>
             <Text style={[styles.text, {color: '#A1A1A1'}]}>{value}</Text>
+        </View>
+    )
+
+    if (isLoading)
+    return(
+        <View style={[styles.container, {backgroundColor: '#E0E0E0'}]}>
+            <Text style={[styles.text, {color: '#A1A1A1'}]}>Loading...</Text>
         </View>
     )
 
