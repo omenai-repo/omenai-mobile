@@ -22,10 +22,6 @@ export default function IndividualForm() {
         return !(isFormValid && areAllFieldsFilled);
     }
 
-    useEffect(() => {
-        console.log(formErrors)
-    }, [formErrors])
-
     const handleValidationChecks = (field: string, value: string) => {
         let validationMessage = '';
         switch (field) {
