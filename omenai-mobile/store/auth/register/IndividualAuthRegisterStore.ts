@@ -11,7 +11,10 @@ type IndividualAuthRegisterStoreType = {
     preferences: string[],
     setPreferences: (e: string[]) => void,
     selectedTerms: number[],
-    setSelectedTerms: (e: number[]) => void
+    setSelectedTerms: (e: number[]) => void,
+    isLoading: boolean,
+    setIsLoading: (e: boolean) => void,
+    clearState: () => void
 };
 
 export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStoreType>(
@@ -49,6 +52,19 @@ export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStore
         selectedTerms: [],
         setSelectedTerms: (e: number[]) => {
             set({selectedTerms: e})
+        },
+        isLoading: false,
+        setIsLoading: (e: boolean) => {
+            set({isLoading: e})
+        },
+        clearState: () => {
+            set({
+                individualRegisterData: {name: "", email: "", password: "", confirmPassword: ""},
+                isLoading: false,
+                pageIndex: 0,
+                preferences: [],
+                selectedTerms: []
+            })
         }
     })
 )

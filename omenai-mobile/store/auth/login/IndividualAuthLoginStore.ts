@@ -4,7 +4,9 @@ type IndividualAuthLoginStoreTypes = {
     individualLoginData: IndividualLoginData,
     setEmail: (value: string) => void,
     setPassword: (value: string) => void,
-    handleSubmit: () => void
+    clearInputs: () => void,
+    isLoading: boolean,
+    setIsLoading: (e: boolean) => void
 }
 
 export const useIndividualAuthLoginStore = create<IndividualAuthLoginStoreTypes>(
@@ -21,8 +23,12 @@ export const useIndividualAuthLoginStore = create<IndividualAuthLoginStoreTypes>
             const prevData = get().individualLoginData
             set({individualLoginData: {...prevData, password: password}})
         },
-        handleSubmit: () => {
+        clearInputs: () => {
             set({individualLoginData: {email: "", password: ""}})
+        },
+        isLoading: false,
+        setIsLoading: (e: boolean) => {
+            set({isLoading: e})
         }
     })
 )
