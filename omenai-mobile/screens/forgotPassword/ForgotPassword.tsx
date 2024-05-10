@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { colors } from '@/config/colors.config'
-import AuthHeader from '@/components/auth/AuthHeader'
+import { colors } from '../../config/colors.config'
+import AuthHeader from '../../components/auth/AuthHeader'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { screenName } from '@/constants/screenNames.constants';
+import { screenName } from '../../constants/screenNames.constants';
 import Form from './components/form/Form';
 import Success from './components/success/Success';
-import { useForgerPasswordStore } from '@/store/auth/forgotPassword/forgotPasswordStore';
+import { useForgerPasswordStore } from '../../store/auth/forgotPassword/forgotPasswordStore';
 
 export default function ForgotPassword() {
     const navigation = useNavigation<StackNavigationProp<any>>();

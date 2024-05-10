@@ -1,10 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import PasswordInput from '@/components/inputs/PasswordInput'
-import Input from '@/components/inputs/Input'
-import NextButton from '@/components/buttons/NextButton'
-import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore'
-import { validate } from '@/lib/validations/validatorGroup'
+import PasswordInput from '../../../../../components/inputs/PasswordInput'
+import Input from '../../../../../components/inputs/Input'
+import NextButton from '../../../../../components/buttons/NextButton'
+import { useIndividualAuthRegisterStore } from '../../../../../store/auth/register/IndividualAuthRegisterStore'
+import { validate } from '../../../../../lib/validations/validatorGroup'
 
 export default function IndividualForm() {
     const { individualRegisterData, setEmail, setName, setPassword, setConfirmPassword, pageIndex, setPageIndex } = useIndividualAuthRegisterStore();
