@@ -7,11 +7,11 @@ module.exports = (async () => {
 
   return {
     resolver: {
-      assetExts: [...assetExts, 'tsc', 'tsx'],
-      sourceExts: [...sourceExts, 'ts', 'tsx', 'jsx', 'js', 'json'],
-      alias: {
-        '@': './',
-      },
+      // assetExts: [...assetExts, 'tsc', 'tsx'],
+      // sourceExts: [...sourceExts, 'ts', 'tsx', 'jsx', 'js', 'json'],
+      // alias: {
+      //   '@': './',
+      // },
     },
   };
 })();

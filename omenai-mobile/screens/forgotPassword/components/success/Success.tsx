@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
-import forgotPasswordSuccessEmail from '@/assets/images/forgot-password-email-success.png'
-import LongBlackButton from '@/components/buttons/LongBlackButton';
+import forgotPasswordSuccessEmail from '../../../../assets/images/forgot-password-email-success.png'
+import LongBlackButton from '../../../../components/buttons/LongBlackButton';
 
 export default function Success() {
     const handleClick = () => {
