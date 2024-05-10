@@ -1,37 +1,18 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import LongBlackButton from '@/components/buttons/LongBlackButton'
-import Input from '@/components/inputs/Input'
-import { UseGalleryAuthStore } from '@/store/auth/login/galleryAuthStore'
+import React, { useState } from 'react'
+import GalleryWaitList from '../../galleryWaitlist/GalleryWaitList'
+import GalleryRegisterForm from '../../galleryRegisterForm/GalleryRegisterForm'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export default function GalleryForm() {
-    const { waitlistData, setEmail, setName, handleSubmit } = UseGalleryAuthStore()
+    const [showWaitlistForm, setShowWaitlistForm] = useState<boolean>(false);
 
-    return (
+    return(
         <View style={styles.container}>
-            <View style={{gap: 20}}>
-                <Input 
-                    label='Gallery name' 
-                    keyboardType='default' 
-                    onInputChange={setName} 
-                    placeHolder='Enter gallery name'
-                    value={waitlistData.name}
-                />
-                <Input 
-                    label='Email address' 
-                    keyboardType='email-address' 
-                    onInputChange={setEmail} 
-                    placeHolder='Enter your email address'
-                    value={waitlistData.email}
-                />
-            </View>
-            <View>
-                <LongBlackButton
-                    value='Join waitlist'
-                    isDisabled={false}
-                    onClick={handleSubmit}
-                />
-            </View>
+            {showWaitlistForm ? <GalleryWaitList /> : <GalleryRegisterForm />}
+            <TouchableOpacity style={styles.toggleButton} onPress={() => setShowWaitlistForm(prev => !prev)}>
+                <Text style={styles.toggleText}>{showWaitlistForm ? 'Register gallery account' : 'Join our waitlist'}</Text>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -39,6 +20,14 @@ export default function GalleryForm() {
 const styles = StyleSheet.create({
     container: {
         marginTop: 40,
-        gap: 40
+        paddingBottom: 100
+    },
+    toggleButton: {
+        marginTop: 40,
+        paddingVertical: 10
+    },
+    toggleText: {
+        textAlign: 'center',
+        opacity: 0.8
     }
 })

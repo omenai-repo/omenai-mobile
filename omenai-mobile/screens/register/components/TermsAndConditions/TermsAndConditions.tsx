@@ -10,12 +10,9 @@ import { registerAccount } from '@/services/register/registerAccount';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from '@/constants/screenNames.constants';
+import TermsAndConditionItem from '@/components/general/TermsAndConditionItem';
 
-type TermsAndConditionItemProps = {
-    writeUp: string,
-    isSelected: boolean,
-    handleSelect: () => void
-}
+
 
 export default function TermsAndConditions() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -51,14 +48,6 @@ export default function TermsAndConditions() {
         }
     }
 
-    const TermsAndConditionItem = ({writeUp, isSelected, handleSelect}: TermsAndConditionItemProps) => {
-        return(
-            <TouchableOpacity style={styles.singleItem} onPress={handleSelect}>
-                <View style={styles.tickBox}>{isSelected && <AntDesign name='check' color={colors.primary_black} size={15} />}</View>
-                <Text style={styles.writeUp}>{writeUp}</Text>
-            </TouchableOpacity>
-        )
-    }
 
     return (
         <View style={{marginTop: 20}}>
@@ -102,23 +91,5 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 20,
         gap: 30
-    },
-    singleItem: {
-        flexDirection: 'row',
-        gap: 10
-    },
-    tickBox: {
-        height: 20,
-        width: 20,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: colors.inputBorder,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    writeUp: {
-        color: '#858585',
-        fontSize: 14,
-        flex: 1
     }
 })
