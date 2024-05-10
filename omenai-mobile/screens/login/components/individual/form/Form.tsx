@@ -1,13 +1,13 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { useIndividualAuthLoginStore } from '../../../../../store/auth/login/IndividualAuthLoginStore'
-import PasswordInput from '@/components/inputs/PasswordInput'
-import Input from '@/components/inputs/Input'
-import LongBlackButton from '@/components/buttons/LongBlackButton'
-import { loginAccount } from '@/services/login/loginAccount'
+import PasswordInput from '../../../../../components/inputs/PasswordInput'
+import Input from '../../../../../components/inputs/Input'
+import LongBlackButton from '../../../../../components/buttons/LongBlackButton'
+import { loginAccount } from '../../../../../services/login/loginAccount'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { screenName } from '@/constants/screenNames.constants'
+import { screenName } from '../../../../../constants/screenNames.constants'
 
 export default function Form() {
     const navigation = useNavigation<StackNavigationProp<any>>();

@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import Input from '@/components/inputs/Input'
-import LongBlackButton from '@/components/buttons/LongBlackButton'
+import Input from '../../../../components/inputs/Input'
+import LongBlackButton from '../../../../components/buttons/LongBlackButton'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { useForgerPasswordStore } from '@/store/auth/forgotPassword/forgotPasswordStore'
-import { colors } from '@/config/colors.config'
+import { useForgerPasswordStore } from '../../../../store/auth/forgotPassword/forgotPasswordStore'
+import { colors } from '../../../../config/colors.config'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { screenName } from '@/constants/screenNames.constants'
+import { screenName } from '../../../../constants/screenNames.constants'
 
 export default function Form() {
     const navigation = useNavigation<StackNavigationProp<any>>();

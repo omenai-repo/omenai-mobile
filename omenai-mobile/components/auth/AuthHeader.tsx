@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-native'
 import React from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { colors } from '@/config/colors.config';
+import { colors } from '../../config/colors.config';
 
 type AuthHeaderProps = {
     title: string,

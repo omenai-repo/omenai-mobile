@@ -1,10 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { colors } from '@/config/colors.config';
-import { prefrencesList } from '@/constants/preferences.constants';
-import BackFormButton from '@/components/buttons/BackFormButton';
-import NextButton from '@/components/buttons/NextButton';
-import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore';
+import { colors } from '../../../../config/colors.config';
+import { prefrencesList } from '../../../../constants/preferences.constants';
+import BackFormButton from '../../../../components/buttons/BackFormButton';
+import NextButton from '../../../../components/buttons/NextButton';
+import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
 
 type TabItemProps = {
     name: string,

@@ -1,13 +1,13 @@
 import { ScrollView, StyleSheet, View } from 'react-native'
 import React, { useState } from 'react';
-import AuthHeader from '@/components/auth/AuthHeader';
-import AuthTabs from '@/components/auth/AuthTabs';
+import AuthHeader from '../../components/auth/AuthHeader';
+import AuthTabs from '../../components/auth/AuthTabs';
 import Individual from './components/individual/Individual';
 import Gallery from './components/gallery/Gallery';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { colors } from '@/config/colors.config';
-import { screenName } from '@/constants/screenNames.constants';
+import { colors } from '../../config/colors.config';
+import { screenName } from '../../constants/screenNames.constants';
 
 export default function Login() {
     const navigation = useNavigation<StackNavigationProp<any>>();
