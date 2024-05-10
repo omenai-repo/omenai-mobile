@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { colors } from '../../config/colors.config'
 import AuthHeader from '../../components/auth/AuthHeader'
@@ -7,12 +7,13 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from '../../constants/screenNames.constants';
 import Form from './components/form/Form';
 import Success from './components/success/Success';
-import { useForgerPasswordStore } from '../../store/auth/forgotPassword/forgotPasswordStore';
+import { useForgetPasswordStore } from '../../store/auth/forgotPassword/forgotPasswordStore';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default function ForgotPassword() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-    const { isSuccess } = useForgerPasswordStore();
+    const { isSuccess } = useForgetPasswordStore();
 
     return (
         <View style={styles.container}>
@@ -21,7 +22,18 @@ export default function ForgotPassword() {
                 subTitle='Provide the details required and reset your password'
                 handleBackClick={() => navigation.navigate(screenName.login)}
             />
-            {isSuccess ? <Success /> : <Form />}
+            {isSuccess ? <Success /> : 
+                (
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={styles.container}
+                    >
+                        <ScrollView style={styles.container}>
+                            <Form />
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                )
+            }
         </View>
     )
 }

@@ -26,3 +26,5 @@ type GalleryWaitlistData = {
   name: string,
   email: string
 }
+
+type RouteIdentifier = "individual" | "gallery";
