@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { UseGalleryAuthStore } from '@/store/auth/login/galleryAuthStore'
-import Input from '@/components/inputs/Input'
-import LongBlackButton from '@/components/buttons/LongBlackButton'
+import { UseGalleryAuthStore } from '../../../../store/auth/login/galleryAuthStore'
+import Input from '../../../../components/inputs/Input'
+import LongBlackButton from '../../../../components/buttons/LongBlackButton'
 
 export default function GalleryWaitList() {
     const { waitlistData, setEmail, setName, handleSubmit } = UseGalleryAuthStore()

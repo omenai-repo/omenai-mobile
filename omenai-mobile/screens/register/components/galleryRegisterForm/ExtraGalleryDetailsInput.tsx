@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
-import { useGalleryAuthRegisterStore } from '@/store/auth/register/GalleryAuthRegisterStore'
-import NextButton from '@/components/buttons/NextButton';
-import { validate } from '@/lib/validations/validatorGroup';
-import Input from '@/components/inputs/Input';
-import BackFormButton from '@/components/buttons/BackFormButton';
-import LargeInput from '@/components/inputs/LargeInput';
+import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/GalleryAuthRegisterStore'
+import NextButton from '../../../../components/buttons/NextButton';
+import { validate } from '../../../../lib/validations/validatorGroup';
+import Input from '../../../../components/inputs/Input';
+import BackFormButton from '../../../../components/buttons/BackFormButton';
+import LargeInput from '../../../../components/inputs/LargeInput';
 
 export default function ExtraGalleryDetailsInput() {
     const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({admin: "", location: "", description: ""});

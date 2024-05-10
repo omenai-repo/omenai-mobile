@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
-import { useGalleryAuthRegisterStore } from '@/store/auth/register/GalleryAuthRegisterStore'
-import NextButton from '@/components/buttons/NextButton';
-import { validate } from '@/lib/validations/validatorGroup';
-import Input from '@/components/inputs/Input';
-import PasswordInput from '@/components/inputs/PasswordInput';
+import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/GalleryAuthRegisterStore'
+import NextButton from '../../../../components/buttons/NextButton';
+import { validate } from '../../../../lib/validations/validatorGroup';
+import Input from '../../../../components/inputs/Input';
+import PasswordInput from '../../../../components/inputs/PasswordInput';
 
 export default function AccountDetailsInput() {
     const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({name: '', email: '', password: '', confirmPassword: ''});
