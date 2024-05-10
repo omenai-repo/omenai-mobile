@@ -1,15 +1,15 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect } from 'react'
-import FittedBlackButton from '@/components/buttons/FittedBlackButton'
-import BackFormButton from '@/components/buttons/BackFormButton'
-import { colors } from '@/config/colors.config';
-import { acceptTermsList } from '@/constants/accetTerms.constants';
+import FittedBlackButton from '../../../../components/buttons/FittedBlackButton'
+import BackFormButton from '../../../../components/buttons/BackFormButton'
+import { colors } from '../../../../config/colors.config';
+import { acceptTermsList } from '../../../../constants/accetTerms.constants';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useIndividualAuthRegisterStore } from '@/store/auth/register/IndividualAuthRegisterStore';
-import { registerAccount } from '@/services/register/registerAccount';
+import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
+import { registerAccount } from '../../../../services/register/registerAccount';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { screenName } from '@/constants/screenNames.constants';
+import { screenName } from '../../../../constants/screenNames.constants';
 
 type TermsAndConditionItemProps = {
     writeUp: string,

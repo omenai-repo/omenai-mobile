@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { colors } from '@/config/colors.config'
-import AuthHeader from '@/components/auth/AuthHeader'
+import { colors } from '../../config/colors.config'
+import AuthHeader from '../../components/auth/AuthHeader'
 import FormController from './components/FormController';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from '@/constants/screenNames.constants';
+import { screenName } from '../../constants/screenNames.constants';
 
 export default function Register() {
     const navigation = useNavigation<StackNavigationProp<any>>();

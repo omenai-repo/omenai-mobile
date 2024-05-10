@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { colors } from '@/config/colors.config'
+import { colors } from '../../config/colors.config'
 import Feather from '@expo/vector-icons/Feather';
 
 type PasswordInputProps = {
