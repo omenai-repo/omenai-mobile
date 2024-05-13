@@ -1,32 +1,28 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect } from 'react'
+import { Alert, StyleSheet, Text, View } from 'react-native'
+import React from 'react'
+import { acceptTermsList } from '../../../../constants/accetTerms.constants'
+import TermsAndConditionItem from '../../../../components/general/TermsAndConditionItem'
 import FittedBlackButton from '../../../../components/buttons/FittedBlackButton'
 import BackFormButton from '../../../../components/buttons/BackFormButton'
-import { colors } from '../../../../config/colors.config';
-import { acceptTermsList } from '../../../../constants/accetTerms.constants';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
-import { registerAccount } from '../../../../services/register/registerAccount';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import TermsAndConditionItem from '../../../../components/general/TermsAndConditionItem';
-
-import { screenName } from '../../../../constants/screenNames.constants';
-
+import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/GalleryAuthRegisterStore'
+import { colors } from '../../../../config/colors.config'
+import { registerAccount } from 'services/register/registerAccount'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { useNavigation } from '@react-navigation/native'
+import { screenName } from 'constants/screenNames.constants'
 
 export default function TermsAndConditions() {
     const navigation = useNavigation<StackNavigationProp<any>>();
-    const {preferences, individualRegisterData, pageIndex, setPageIndex, selectedTerms, setSelectedTerms, isLoading, setIsLoading, clearState} = useIndividualAuthRegisterStore();
+    const {selectedTerms, setSelectedTerms, pageIndex, setPageIndex, isLoading, setIsLoading, galleryRegisterData, clearState} = useGalleryAuthRegisterStore()
 
     const handleSubmit = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
 
         const data = {
-            ...individualRegisterData,
-            preferences
+            ...galleryRegisterData
         }
 
-        const results = await registerAccount(data, 'individual');
+        const results = await registerAccount(data, 'gallery');
         
         if(results?.isOk){
             Alert.alert(results?.body.message)
@@ -48,9 +44,8 @@ export default function TermsAndConditions() {
         }
     }
 
-
     return (
-        <View style={{marginTop: 20}}>
+        <View>
             <Text style={styles.title}>Accept terms and conditions</Text>
             <View style={styles.termsContainer}>
                 {acceptTermsList.map((i, idx) => (
@@ -65,7 +60,7 @@ export default function TermsAndConditions() {
             <View style={styles.buttonsContainer}>
                 <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
                 <View style={{flex: 1}} />
-                <FittedBlackButton isLoading={isLoading} value={isLoading ? 'Loading...' : 'Create my acount'} isDisabled={!selectedTerms.includes(0)} onClick={handleSubmit}  />
+                <FittedBlackButton isLoading={isLoading} value={isLoading ? 'Loading...' : 'Create gallery acount'} isDisabled={!selectedTerms.includes(0)} onClick={handleSubmit}  />
             </View>
         </View>
     )
