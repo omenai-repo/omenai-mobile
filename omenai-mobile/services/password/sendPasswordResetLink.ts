@@ -1,12 +1,12 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
 
 
-export async function loginAccount(
-    payload: IndividualLoginData,
-    route: "individual"
+export async function sendPasswordResetLink(
+    payload: {email: string},
+    route: RouteIdentifier
 ){
 
-    const url = apiUrl + '/api/auth/' + route + '/login'
+    const url = apiUrl + '/api/auth/' + route + '/sendPasswordResetLink'
 
     try {
         const response = await fetch(url, {
@@ -14,7 +14,7 @@ export async function loginAccount(
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ recoveryEmail: payload.email })
         })
         .then(async (res) => {
             const ParsedResponse = {
