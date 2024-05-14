@@ -3,5 +3,6 @@ export const screenName = {
     login: 'login',
     register: 'register',
     forgotPassword: 'forgot-password',
-    searchResults: 'searchResults'
+    searchResults: 'searchResults',
+    home: 'home'
 }
