@@ -7,6 +7,7 @@ import Register from './screens/register/Register';
 import Welcome from './screens/welcome/Welcome';
 import { screenName } from './constants/screenNames.constants';
 import ForgotPassword from './screens/forgotPassword/ForgotPassword';
+import SearchResults from 'screens/searchResults/SearchResults';
 
 const Stack = createStackNavigator();
 
@@ -14,7 +15,7 @@ export default function App() {
   return (
     <NavigationContainer>
       {/* AUTH SCREENS */}
-      <Stack.Navigator initialRouteName={screenName.welcome}>
+      {/* <Stack.Navigator initialRouteName={screenName.welcome}>
         <Stack.Screen 
           name={screenName.welcome} 
           component={Welcome}
@@ -33,6 +34,13 @@ export default function App() {
         <Stack.Screen 
           name={screenName.forgotPassword} 
           component={ForgotPassword}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator> */}
+      <Stack.Navigator initialRouteName={screenName.searchResults}>
+        <Stack.Screen 
+          name={screenName.searchResults} 
+          component={SearchResults}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
