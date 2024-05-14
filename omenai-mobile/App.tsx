@@ -7,6 +7,7 @@ import Register from './screens/register/Register';
 import Welcome from './screens/welcome/Welcome';
 import { screenName } from './constants/screenNames.constants';
 import ForgotPassword from './screens/forgotPassword/ForgotPassword';
+import SearchResults from 'screens/searchResults/SearchResults';
 import Home from './screens/home/Home';
 import { useState } from 'react';
 
@@ -51,6 +52,11 @@ export default function App() {
             name={screenName.home}
             component={Home}
             options={{headerShown: false}}
+          />
+          <Stack.Screen 
+            name={screenName.searchResults} 
+            component={SearchResults}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       }
