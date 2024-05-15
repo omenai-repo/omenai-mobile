@@ -4,7 +4,11 @@ type HomeStoreTypes = {
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
     data: [],
-    setData: (e: any[]) => void
+    setData: (e: any[]) => void,
+    listingType: artworkListingType,
+    setListingType: (e: artworkListingType) => void,
+    showSelectModal: boolean,
+    setShowSelectModal: (e: boolean) => void
 };
 
 export const useHomeStore = create<HomeStoreTypes>(
@@ -15,7 +19,15 @@ export const useHomeStore = create<HomeStoreTypes>(
         },
         data: [],
         setData: (e: any[]) => {
-            set({data: e})
+            // set({data: e})
+        },
+        listingType: 'trending',
+        setListingType: (e: artworkListingType) => {
+            set({listingType: e})
+        },
+        showSelectModal: false,
+        setShowSelectModal: (e: boolean) => {
+            set({showSelectModal: e})
         }
     })
 )
