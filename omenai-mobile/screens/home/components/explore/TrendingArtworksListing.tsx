@@ -6,28 +6,28 @@ export default function TrendingArtworksListing({data}: {data: any[]}) {
     return (
         <View style={styles.artworksContainer}>
             <View style={styles.singleColumn}>
-                {data[0]?.map((i: any, idx: any) => (
+                {data[0]?.map((artwork: any, idx: any) => (
                     <TrendingArtworkCard
                         key={idx}
-                        title={i.title}
-                        artist={i.artist}
-                        image={i.url}
-                        medium={i.medium}
-                        likes={i.impressions}
-                        rarity={i.rarity}
+                        title={artwork.title}
+                        artist={artwork.artist}
+                        image={artwork.url}
+                        medium={artwork.medium}
+                        likes={artwork.impressions}
+                        rarity={artwork.rarity}
                     />
                 ))}
             </View>
             <View style={styles.singleColumn}>
-                {data[1]?.map((i: any, idx: any) => (
+                {data[1]?.map((artwork: any, idx: any) => (
                     <TrendingArtworkCard
                         key={idx}
-                        title={i.title}
-                        artist={i.artist}
-                        image={i.url}
-                        medium={i.medium}
-                        likes={i.impressions}
-                        rarity={i.rarity}
+                        title={artwork.title}
+                        artist={artwork.artist}
+                        image={artwork.url}
+                        medium={artwork.medium}
+                        likes={artwork.impressions}
+                        rarity={artwork.rarity}
                     />
                 ))}
             </View>

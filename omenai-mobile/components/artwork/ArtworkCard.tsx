@@ -25,8 +25,8 @@ export default function ArtworkCard({image, price, artist, rarity, medium, title
                 <View style={styles.top}>
                     <Image source={{uri: image_href}} style={styles.image} />
                     <View style={styles.likeContainer}>
-                        <TouchableOpacity>
-                            <View style={styles.likeButton}><Feather name='heart' size={20} /></View>
+                        <TouchableOpacity style={{padding: 10}}>
+                            <View style={styles.likeButton}><Feather name='heart' size={16} /></View>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -68,11 +68,11 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         right: 0,
-        padding: 20
+        padding: 0
     },
     likeButton: {
-        height: 40,
-        width: 40,
+        height: 30,
+        width: 30,
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     },
     contentsContainer: {
         backgroundColor: '#FAFAFA',
-        padding: 20
+        padding: 10
     },
     profileContainer: {
         flexDirection: 'row',

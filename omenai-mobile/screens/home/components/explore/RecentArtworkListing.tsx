@@ -6,30 +6,30 @@ export default function RecentArtworkListing({data}: {data: any[]}) {
     return (
         <View style={styles.artworksContainer}>
             <View style={styles.singleColumn}>
-                {data[0]?.map((i: any, idx: any) => (
+                {data[0]?.map((artwork: any, idx: any) => (
                     <ArtworkCard
                         key={idx}
-                        title={i.title}
-                        artist={i.artist}
-                        image={i.url}
-                        medium={i.medium}
-                        price={i.pricing.price || 0}
-                        showPrice={i.pricing.shouldShowPrice}
-                        rarity={i.rarity}
+                        title={artwork.title}
+                        artist={artwork.artist}
+                        image={artwork.url}
+                        medium={artwork.medium}
+                        price={artwork.pricing.price || 0}
+                        showPrice={artwork.pricing.shouldShowPrice}
+                        rarity={artwork.rarity}
                     />
                 ))}
             </View>
             <View style={styles.singleColumn}>
-                {data[1]?.map((i: any, idx: any) => (
+                {data[1]?.map((artwork: any, idx: any) => (
                     <ArtworkCard
                         key={idx}
-                        title={i.title}
-                        artist={i.artist}
-                        image={i.url}
-                        medium={i.medium}
-                        price={i.pricing.price || 0}
-                        showPrice={i.pricing.shouldShowPrice}
-                        rarity={i.rarity}
+                        title={artwork.title}
+                        artist={artwork.artist}
+                        image={artwork.url}
+                        medium={artwork.medium}
+                        price={artwork.pricing.price || 0}
+                        showPrice={artwork.pricing.shouldShowPrice}
+                        rarity={artwork.rarity}
                     />
                 ))}
             </View>
