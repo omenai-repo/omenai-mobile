@@ -1,16 +1,30 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
-import monalisaImage from '../../assets/images/monalisa.jpg';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
+import { getImageFileView } from 'lib/storage/getImageFileView';
 
-export default function ArtworkCard() {
+type ArtworkCardType = {
+    title: string,
+    image: string,
+    price: number,
+    artist: string,
+    rarity: string,
+    medium: string,
+    materials: string,
+    showPrice?: boolean
+}
+
+export default function ArtworkCard({image, price, artist, rarity, medium, materials, title, showPrice}: ArtworkCardType) {
+
+    const image_href = getImageFileView(image, 300);
+
     return (
         <TouchableOpacity>
             <View style={styles.container}>
                 <View style={styles.top}>
-                    <Image source={monalisaImage} style={styles.image} />
+                    <Image source={{uri: image_href}} style={styles.image} />
                     <View style={styles.likeContainer}>
                         <TouchableOpacity>
                             <View style={styles.likeButton}><Feather name='heart' size={20} /></View>
@@ -18,15 +32,15 @@ export default function ArtworkCard() {
                     </View>
                 </View>
                 <View style={styles.contentsContainer}>
-                    <Text style={{fontSize: 16}}>Monalisa</Text>
+                    <Text style={{fontSize: 16}}>{title}</Text>
                     <View style={styles.profileContainer}>
-                        <Image style={styles.profileImage} /><Text style={styles.artistName}>Artist name</Text>
+                        <Image style={styles.profileImage} /><Text style={styles.artistName}>{artist}</Text>
                     </View>
-                    <Text style={{fontSize: 18, fontWeight: 600,marginTop: 15}}>$1,200</Text>
+                    {showPrice && <Text style={{fontSize: 18, fontWeight: 600,marginTop: 15}}>${price.toLocaleString()}</Text>}
                     <View style={styles.tagsContainer}>
-                        <Text style={styles.tags}>Oil</Text>
-                        <Text style={styles.tags}>Unique</Text>
-                        <Text style={styles.tags}>Art Tag</Text>
+                        <Text style={styles.tags}>{medium}</Text>
+                        <Text style={styles.tags}>{rarity}</Text>
+                        <Text style={styles.tags}>{materials}</Text>
                     </View>
                 </View>
             </View>
