@@ -5,17 +5,16 @@ import { Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 
-type ArtworkCardType = {
+type TrendingArtworkCardType = {
     title: string,
     image: string,
-    price: number,
     artist: string,
     rarity: string,
     medium: string,
-    showPrice?: boolean
+    likes: number
 }
 
-export default function ArtworkCard({image, price, artist, rarity, medium, title, showPrice}: ArtworkCardType) {
+export default function TrendingArtworkCard({image, artist, rarity, medium, title, likes}: TrendingArtworkCardType) {
 
     const image_href = getImageFileView(image, 300);
 
@@ -34,8 +33,8 @@ export default function ArtworkCard({image, price, artist, rarity, medium, title
                     <Text style={{fontSize: 16}}>{title}</Text>
                     <View style={styles.profileContainer}>
                         <Text style={styles.artistName}>{artist}</Text>
+                        <Text style={styles.likes}>{likes} {likes > 1 ? 'Likes' : 'Like'}</Text>
                     </View>
-                    {showPrice && <Text style={{fontSize: 18, fontWeight: 600,marginTop: 15}}>${price.toLocaleString()}</Text>}
                     <View style={styles.tagsContainer}>
                         <Text style={styles.tags}>{medium}</Text>
                         <Text style={styles.tags}>{rarity}</Text>
@@ -83,14 +82,16 @@ const styles = StyleSheet.create({
         padding: 10
     },
     profileContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 15,
+        gap: 10,
         marginTop: 10
     },
     artistName: {
         textDecorationLine: 'underline',
-        fontSize: 14
+        fontSize: 14,
+        flex: 1
+    },
+    likes: {
+        fontSize: 14,
     },
     profileImage: {
         height: 25,

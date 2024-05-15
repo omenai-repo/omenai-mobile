@@ -8,6 +8,8 @@ import Explore from './components/explore/Explore'
 import { ScrollView } from 'react-native-gesture-handler'
 import FeaturedGalleries from './components/featuredGalleries/FeaturedGalleries'
 import Editorials from './components/editorials/Editorials'
+import ListingHeader from './components/listingHeader/ListingHeader'
+import ListingSelectContainer from './components/listingHeader/ListingSelectContainer'
 
 export default function Home() {
     return (
@@ -19,7 +21,11 @@ export default function Home() {
                     <SearchInput />
                     <View style={styles.courselContainer}>
                         <Coursel />
-                        <Explore />
+                        <View style={{position: 'relative'}}>
+                            <ListingHeader />
+                            <Explore />
+                            <ListingSelectContainer />
+                        </View>
                         <FeaturedGalleries />
                         <Editorials />
                     </View>

@@ -27,4 +27,6 @@ type GalleryWaitlistData = {
   email: string
 }
 
+type artworkListingType = 'trending' | 'recent'
+
 type RouteIdentifier = "individual" | "gallery";
