@@ -8,11 +8,14 @@ import { loginAccount } from '../../../../../services/login/loginAccount'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { screenName } from '../../../../../constants/screenNames.constants'
+import { storeAsyncData } from 'utils/asyncStorage.utils'
+import { useAppStore } from 'store/app/appStore'
 
 export default function Form() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const { individualLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } = useIndividualAuthLoginStore();
+    const { setUserSession, setIsLoggedIn } = useAppStore();
 
     const handleSubmit = async () => {
         setIsLoading(true)
@@ -20,11 +23,24 @@ export default function Form() {
         const results = await loginAccount(individualLoginData, 'individual')
 
         if(results?.isOk){
-            Alert.alert(results?.body.message)
-            clearInputs();
+            const resultsBody = results?.body
+            const data = {
+                id: resultsBody.id,
+                email: resultsBody.email,
+                name: resultsBody.name,
+                roles: resultsBody.role,
+                preferences: resultsBody.preferences,
+                verified: resultsBody.verified
+            }
 
-            //ADD further logic to navigate to the homepage and hide auth screens
-            navigation.navigate(screenName.welcome)
+            const isStored = await storeAsyncData('userSession', JSON.stringify(data))
+
+            if(isStored){
+                Alert.alert(results?.body.message)
+                setUserSession(data)
+                setIsLoggedIn(true)
+                clearInputs();
+            }
         }else{
             Alert.alert(results?.body.message)
         }
