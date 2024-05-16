@@ -32,8 +32,8 @@ export default function ListingSelectContainer() {
     return (
         <View style={styles.artworkListingSelect}>
             {/* <Item value='popular' name='Popular Artworks' /> */}
-            <Item value='trending' name='Trending Artworks' />
             <Item value='recent' name='Recent Artworks' />
+            <Item value='trending' name='Trending Artworks' />
         </View>
     )
 }
