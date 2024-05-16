@@ -9,14 +9,19 @@ import { screenName } from './constants/screenNames.constants';
 import ForgotPassword from './screens/forgotPassword/ForgotPassword';
 import SearchResults from 'screens/searchResults/SearchResults';
 import Home from './screens/home/Home';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAppStore } from 'store/app/appStore';
+import { appInit } from 'utils/appInit';
 
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const {isLoggedIn} = useAppStore()
 
   //add logic for conditional routing
+  useEffect(() => {
+    appInit()
+  }, [])
 
   return (
     <NavigationContainer>
