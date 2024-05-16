@@ -1,19 +1,24 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View, SafeAreaView } from 'react-native'
 import React from 'react'
 import { colors } from '../../config/colors.config'
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import omenaiIndividualAvatar from '../../assets/images/omenai-individual-avatar.jpg'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Feather } from '@expo/vector-icons';
+import { useAppStore } from 'store/app/appStore';
+import { logout } from 'utils/logout.utils';
 
 export default function Header() {
+    const { userSession } = useAppStore();
+
+    console.log(userSession)
+
     return (
         <SafeAreaView style={{backgroundColor: colors.primary_black}}>
             <View style={styles.container}>
                 <View style={{flex: 1}}>
                     <Text style={{fontSize: 16, color: colors.white}}>Welcome Back,</Text>
-                    <Text style={{fontSize: 20, fontWeight: 500, color: colors.white}}>John</Text>
+                    <Text style={{fontSize: 20, fontWeight: 500, color: colors.white}}>{userSession?.name}</Text>
                 </View>
                 <View style={styles.leftContainer}>
                     <TouchableOpacity>
@@ -21,7 +26,7 @@ export default function Header() {
                             <Feather name='bell' size={20} />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={logout}>
                         <Image style={styles.image} source={omenaiIndividualAvatar} alt='' />
                     </TouchableOpacity>
                 </View>
@@ -34,7 +39,8 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.primary_black,
         paddingHorizontal: 20,
-        paddingTop: 20,
+        paddingTop: 10,
+        paddingBottom: 20,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10
@@ -45,16 +51,16 @@ const styles = StyleSheet.create({
         gap: 15
     },
     iconContainer: {
-        height: 50,
-        width: 50,
+        height: 40,
+        width: 40,
         borderRadius: 30,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#FAFAFA'
     },
     image: {
-        height: 50,
-        width: 50,
+        height: 40,
+        width: 40,
         borderRadius: 30,
         borderWidth: 1,
         borderColor: colors.white
