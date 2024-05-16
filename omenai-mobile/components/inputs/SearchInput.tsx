@@ -3,8 +3,20 @@ import React from 'react'
 import { colors } from '../../config/colors.config';
 import omenaiSearchIcon from '../../assets/icons/omenai-search-icon.png'
 import { TextInput } from 'react-native-gesture-handler';
+import { useSearchStore } from 'store/search/searchStore';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 export default function SearchInput() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
+    const { searchQuery, setSearchQuery } = useSearchStore();
+
+    const handleSearch = () => {
+        console.log(searchQuery)
+        navigation.navigate(screenName.searchResults);
+    }
+
     return (
         <View style={styles.container}>
             <Image source={omenaiSearchIcon} />
@@ -12,8 +24,12 @@ export default function SearchInput() {
                 style={styles.input}
                 placeholder='Search for anything'
                 placeholderTextColor={'#858585'}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                onSubmitEditing={handleSearch}
+                returnKeyType="search"
             />
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleSearch}>
                 <View style={styles.searchButton}>
                     <Text style={{color: colors.white, fontSize: 14}}>Search</Text>
                 </View>

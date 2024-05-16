@@ -1,6 +1,6 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
 
-export async function fetchArtworkImpressions(listingType: artworkListingType){
+export async function fetchArtworks(listingType: artworkListingType){
     
     let url = ''
     if(listingType === 'trending') url = apiUrl + '/api/artworks/getTrendingArtworks'

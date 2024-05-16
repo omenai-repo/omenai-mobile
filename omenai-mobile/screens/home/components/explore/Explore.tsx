@@ -1,12 +1,7 @@
 import { Alert, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import { colors } from '../../../../config/colors.config'
-import { Feather } from '@expo/vector-icons'
-import ArtworkCard from 'components/artwork/ArtworkCard'
 import { useHomeStore } from 'store/home/homeStore'
-import { fetchArtworkImpressions } from '../../../../services/artworks/fetchArtworkImpressions'
-import TrendingArtworkCard from 'components/artwork/TrendingArtworkCard'
+import { fetchArtworks } from '../../../../services/artworks/fetchArtworks'
 import TrendingArtworksListing from './TrendingArtworksListing'
 import RecentArtworkListing from './RecentArtworkListing'
 
@@ -21,7 +16,7 @@ export default function Explore() {
 
     const handleFetchArtworks = async () => {
         setIsLoading(true)
-        const results = await fetchArtworkImpressions(listingType);
+        const results = await fetchArtworks(listingType);
 
         let arr = []
 

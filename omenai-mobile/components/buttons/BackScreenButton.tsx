@@ -4,9 +4,13 @@ import { AntDesign } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { colors } from '../../config/colors.config'
 
-export default function BackScreenButton() {
+type BackScreenButtonTypes = {
+    handleClick: () => void
+}
+
+export default function BackScreenButton({handleClick}: BackScreenButtonTypes) {
     return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleClick}>
             <View style={styles.container}>
                 <AntDesign name='arrowleft' color={colors.primary_black} size={20} />
             </View>

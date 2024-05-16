@@ -10,12 +10,13 @@ type ArtworkCardType = {
     image: string,
     price: number,
     artist: string,
-    rarity: string,
-    medium: string,
-    showPrice?: boolean
+    rarity?: string,
+    medium?: string,
+    showPrice?: boolean,
+    showTags?: boolean
 }
 
-export default function ArtworkCard({image, price, artist, rarity, medium, title, showPrice}: ArtworkCardType) {
+export default function ArtworkCard({image, price, artist, rarity, medium, title, showPrice, showTags = true}: ArtworkCardType) {
 
     const image_href = getImageFileView(image, 300);
 
@@ -36,10 +37,12 @@ export default function ArtworkCard({image, price, artist, rarity, medium, title
                         <Text style={styles.artistName}>{artist}</Text>
                     </View>
                     {showPrice && <Text style={{fontSize: 18, fontWeight: 600,marginTop: 15}}>${price.toLocaleString()}</Text>}
-                    <View style={styles.tagsContainer}>
-                        <Text style={styles.tags}>{medium}</Text>
-                        <Text style={styles.tags}>{rarity}</Text>
-                    </View>
+                    {showTags &&
+                        <View style={styles.tagsContainer}>
+                            <Text style={styles.tags}>{medium}</Text>
+                            <Text style={styles.tags}>{rarity}</Text>
+                        </View>
+                    }
                 </View>
             </View>
         </TouchableOpacity>
