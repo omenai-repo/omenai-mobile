@@ -11,8 +11,6 @@ import { logout } from 'utils/logout.utils';
 export default function Header() {
     const { userSession } = useAppStore();
 
-    console.log(userSession)
-
     return (
         <SafeAreaView style={{backgroundColor: colors.primary_black}}>
             <View style={styles.container}>
