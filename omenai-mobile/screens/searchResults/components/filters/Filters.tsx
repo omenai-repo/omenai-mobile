@@ -10,7 +10,11 @@ type FilterSelectProps = {
     name: string
 }
 
-export default function Filters() {
+type FilterComponentProps = {
+    dataLength: number
+}
+
+export default function Filters({dataLength}: FilterComponentProps) {
     const [showFilters, setShowFilters] = useState(false);
 
     const FilterSelect = ({name} : FilterSelectProps) => {
@@ -27,7 +31,7 @@ export default function Filters() {
     return (
         <View>
             <View style={styles.container}>
-                <Text style={styles.resultsText}>107 results found</Text>
+                <Text style={styles.resultsText}>{dataLength} results found</Text>
                 <TouchableOpacity onPress={() => setShowFilters(prev => !prev)}>
                     {showFilters ?
                         <View style={[styles.filterButton, {backgroundColor: colors.black}]}>

@@ -1,31 +1,70 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { colors } from '../../config/colors.config'
 import BackScreenButton from 'components/buttons/BackScreenButton'
 import Filters from './components/filters/Filters'
 import ArtworkCard from 'components/artwork/ArtworkCard'
+import { useSearchStore } from 'store/search/searchStore'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { useNavigation } from '@react-navigation/native'
+import { fetchSearchKeyWordResults } from 'services/search/fetchSearchKeywordResults'
+import ResultsListing from './components/resultsListing/ResultsListing'
 
 export default function SearchResults() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
+    const { searchQuery, setIsLoading, isLoading } = useSearchStore();
+
+    const [data, setData] = useState<any[]>([]);
+    const [dataLength, setDataLength] = useState(0);
+
+    useEffect(() => {
+        handleFetchSearch();
+    }, [searchQuery]);
+
+    const handleFetchSearch = async () => {
+        setIsLoading(true)
+        const results = await fetchSearchKeyWordResults(searchQuery);
+
+        let arr = []
+
+        if(results.isOk){
+            arr = results.body.data
+
+            if(arr.length > 1){
+                var indexToSplit = arr.length / 2;
+                var first = arr.slice(0, indexToSplit);
+                var second = arr.slice(indexToSplit, 4);
+    
+                setData([first, second])
+            }else{
+                setData([arr, []])
+            }
+            
+            setDataLength(arr.length)
+        }else{
+            Alert.alert(results.body)
+        }
+
+        setIsLoading(false)
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.mainContainer}>
                 <SafeAreaView>
-                    <BackScreenButton />
+                    <BackScreenButton handleClick={() => navigation.goBack()} />
                 </SafeAreaView>
-                <Text style={styles.headerText}>Search for “Search Term”:</Text>
-                <Filters />
-                <ScrollView style={{marginTop: 30}}>
-                    <View style={styles.artworksContainer}>
-                        <View style={styles.singleColumn}>
-                            <ArtworkCard />
-                            <ArtworkCard />
-                        </View>
-                        <View style={styles.singleColumn}>
-                            <ArtworkCard />
-                            <ArtworkCard />
-                        </View>
+                <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
+                {isLoading ? 
+                    <View style={styles.loadingContainer}>
+                        <Text>Loading...</Text>
                     </View>
-                </ScrollView>
+                :
+                    <View>
+                        <Filters dataLength={dataLength}  />
+                        <ResultsListing data={data} />
+                    </View>
+                }
             </View>
         </View>
     )
@@ -52,5 +91,10 @@ const styles = StyleSheet.create({
     singleColumn: {
         flex: 1,
         gap: 20
+    },
+    loadingContainer: {
+        height: 200,
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })
