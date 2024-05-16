@@ -28,7 +28,7 @@ export default function TermsAndConditions() {
             Alert.alert(results?.body.message)
             clearState();
             //ADD further logic to navigate to the homepage and hide auth screens
-            navigation.navigate(screenName.welcome)
+            navigation.navigate(screenName.login)
         }else{
             Alert.alert(results?.body.message)
         }

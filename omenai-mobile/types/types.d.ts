@@ -30,3 +30,10 @@ type GalleryWaitlistData = {
 type artworkListingType = 'trending' | 'recent'
 
 type RouteIdentifier = "individual" | "gallery";
+
+type userSessionType = {
+  name: string,
+  id: string,
+  email: string,
+  
+}

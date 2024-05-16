@@ -15,7 +15,6 @@ export const getAsyncData = async (key: string) => {
     try {
         const value = await AsyncStorage.getItem(key);
         if (value !== null) {
-            console.log('Data retrieved successfully:', value);
             return {isOk: true, value:value};
         } else {
             console.log('No data found for key:', key);
@@ -27,4 +26,13 @@ export const getAsyncData = async (key: string) => {
     return {
         isOk: false
     }
-}
+};
+
+export const clearLocalStorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log('Local storage cleared successfully');
+    } catch (e) {
+      console.error('Failed to clear local storage');
+    }
+};
