@@ -21,7 +21,7 @@ export const useHomeStore = create<HomeStoreTypes>(
         setData: (e: any[]) => {
             // set({data: e})
         },
-        listingType: 'trending',
+        listingType: 'recent',
         setListingType: (e: artworkListingType) => {
             set({listingType: e})
         },

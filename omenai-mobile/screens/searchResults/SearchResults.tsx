@@ -31,9 +31,9 @@ export default function SearchResults() {
             arr = results.body.data
 
             if(arr.length > 1){
-                var indexToSplit = arr.length / 2;
+                var indexToSplit = Math.floor(arr.length / 2);
                 var first = arr.slice(0, indexToSplit);
-                var second = arr.slice(indexToSplit, 4);
+                var second = arr.slice(indexToSplit);
     
                 setData([first, second])
             }else{
@@ -60,7 +60,7 @@ export default function SearchResults() {
                         <Text>Loading...</Text>
                     </View>
                 :
-                    <View>
+                    <View style={{flex: 1}}>
                         <Filters dataLength={dataLength}  />
                         <ResultsListing data={data} />
                     </View>

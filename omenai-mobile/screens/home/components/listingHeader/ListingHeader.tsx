@@ -14,7 +14,7 @@ export default function ListingHeader() {
                 <TouchableOpacity style={{flexWrap: 'wrap'}} onPress={() => setShowSelectModal(!showSelectModal)}>
                     <View style={styles.selectButton}>
                         <Text style={{fontSize: 14, color: colors.white, textTransform: 'capitalize'}}>{listingType} Artworks</Text>
-                        <Feather name='chevron-down' color={colors.white} size={18} />
+                        <Feather name='chevron-down' color={colors.white} size={18} style={showSelectModal ? {transform: [{ rotate: '180deg' }]} : null} />
                     </View>
                 </TouchableOpacity>
             </View>
