@@ -1,5 +1,5 @@
 import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 
 import omenai_logo from '../../assets/omenai-logo.png';
 import welcome_banner from '../../assets/images/welcome-banner.png';
@@ -9,13 +9,28 @@ import { colors } from '../../config/colors.config';
 import LongBlackButton from '../../components/buttons/LongBlackButton';
 import LongWhiteButton from '../../components/buttons/LongWhiteButton';
 import { screenName } from '../../constants/screenNames.constants';
+import { onboardingdata } from 'constants/onBoardingData.constants';
+import OnBoardingSection from './components/OnBoardingSection';
 
 export default function Welcome() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
+    const [selected, setSelected] = useState(0);
+    const [showWelcome, setShowWelcome] = useState(false);
+
     const handleNavigation = (value: any) => {
         navigation.navigate(value)
     }
+
+    if(!showWelcome)
+    return(
+        <OnBoardingSection 
+            data={onboardingdata[selected]}
+            currentIndex={selected}
+            onFinish={() => setShowWelcome(true)}
+            handleNext={() => setSelected(prev => prev + 1)}
+        />
+    )
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
