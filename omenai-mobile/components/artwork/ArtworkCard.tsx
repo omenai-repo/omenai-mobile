@@ -36,7 +36,7 @@ export default function ArtworkCard({image, price, artist, rarity, medium, title
                     <View style={styles.profileContainer}>
                         <Text style={styles.artistName}>{artist}</Text>
                     </View>
-                    {showPrice && <Text style={{fontSize: 18, fontWeight: 600,marginTop: 15}}>${price.toLocaleString()}</Text>}
+                    {showPrice && <Text style={{fontSize: 16, fontWeight: 500,marginTop: 15}}>${price.toLocaleString()}</Text>}
                     {showTags &&
                         <View style={styles.tagsContainer}>
                             <Text style={styles.tags}>{medium}</Text>
@@ -92,7 +92,6 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     artistName: {
-        textDecorationLine: 'underline',
         fontSize: 14
     },
     profileImage: {

@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     artistName: {
-        textDecorationLine: 'underline',
         fontSize: 14,
         flex: 1
     },
