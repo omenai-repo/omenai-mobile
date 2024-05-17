@@ -13,25 +13,25 @@ import ListingSelectContainer from './components/listingHeader/ListingSelectCont
 
 export default function Home() {
     return (
-        <View style={styles.container}>
-            <Header />
-            <ScrollView>
-                <View style={styles.contentsContainer}>
-                    <Text style={styles.introText}>Shop your favorite artworks and collections</Text>
-                    <SearchInput />
-                    <View style={styles.courselContainer}>
-                        <Coursel />
-                        <View style={{position: 'relative'}}>
-                            <ListingHeader />
-                            <Explore />
-                            <ListingSelectContainer />
+            <View style={styles.container}>
+                <Header />
+                <ScrollView>
+                    <View style={styles.contentsContainer}>
+                        <Text style={styles.introText}>Shop your favorite artworks and collections</Text>
+                        <SearchInput />
+                        <View style={styles.courselContainer}>
+                            <Coursel />
+                            <View style={{position: 'relative'}}>
+                                <ListingHeader />
+                                <Explore />
+                                <ListingSelectContainer />
+                            </View>
+                            <FeaturedGalleries />
+                            <Editorials />
                         </View>
-                        <FeaturedGalleries />
-                        <Editorials />
                     </View>
-                </View>
-            </ScrollView>
-        </View>
+                </ScrollView>
+            </View>
     )
 }
 

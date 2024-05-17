@@ -10,10 +10,13 @@ import { registerAccount } from 'services/register/registerAccount'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
+import { useModalStore } from 'store/modal/modalStore'
 
 export default function TermsAndConditions() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const {selectedTerms, setSelectedTerms, pageIndex, setPageIndex, isLoading, setIsLoading, galleryRegisterData, clearState} = useGalleryAuthRegisterStore()
+
+    const {setModalMessage} = useModalStore();
 
     const handleSubmit = async () => {
         setIsLoading(true);
@@ -25,12 +28,12 @@ export default function TermsAndConditions() {
         const results = await registerAccount(data, 'gallery');
         
         if(results?.isOk){
-            Alert.alert(results?.body.message)
+            // Alert.alert(results?.body.message)
             clearState();
             //ADD further logic to navigate to the homepage and hide auth screens
             navigation.navigate(screenName.login)
         }else{
-            Alert.alert(results?.body.message)
+            setModalMessage(results?.body.message)
         }
 
         setIsLoading(false)

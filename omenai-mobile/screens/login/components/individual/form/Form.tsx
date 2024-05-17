@@ -10,12 +10,14 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { screenName } from '../../../../../constants/screenNames.constants'
 import { storeAsyncData } from 'utils/asyncStorage.utils'
 import { useAppStore } from 'store/app/appStore'
+import { useModalStore } from 'store/modal/modalStore'
 
 export default function Form() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const { individualLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } = useIndividualAuthLoginStore();
     const { setUserSession, setIsLoggedIn } = useAppStore();
+    const {setModalMessage} = useModalStore();
 
     const handleSubmit = async () => {
         setIsLoading(true)
@@ -36,13 +38,13 @@ export default function Form() {
             const isStored = await storeAsyncData('userSession', JSON.stringify(data))
 
             if(isStored){
-                Alert.alert(results?.body.message)
                 setUserSession(data)
                 setIsLoggedIn(true)
                 clearInputs();
             }
         }else{
-            Alert.alert(results?.body.message)
+            // Alert.alert(results?.body.message)
+            setModalMessage(results?.body.message)
         }
 
         setIsLoading(false)
