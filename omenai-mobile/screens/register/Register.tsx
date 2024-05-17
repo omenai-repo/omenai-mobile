@@ -6,9 +6,12 @@ import FormController from './components/FormController';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { screenName } from '../../constants/screenNames.constants';
+import CustomModal from 'components/modal/CustomModal';
+import { useModalStore } from 'store/modal/modalStore';
 
 export default function Register() {
     const navigation = useNavigation<StackNavigationProp<any>>();
+    const { modalMessage, setModalMessage } = useModalStore();
 
     return (
         <View style={styles.container}>
@@ -19,6 +22,11 @@ export default function Register() {
             />
             
             <FormController />
+            <CustomModal
+                value={modalMessage}
+                isVisible={modalMessage !== null}
+                handleDismiss={() => setModalMessage(null)}
+            />
         </View>
     )
 }
