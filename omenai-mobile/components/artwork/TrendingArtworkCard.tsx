@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
         borderColor: colors.inputBorder
     },
     tags: {
-        fontSize: 12,
+        fontSize: 10,
         paddingHorizontal: 15,
         paddingVertical: 10,
         borderRadius: 20,
