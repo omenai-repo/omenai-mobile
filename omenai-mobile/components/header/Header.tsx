@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View, SafeAreaView } from 'react-native'
+import { Image, StyleSheet, Text, View, SafeAreaView, Modal } from 'react-native'
 import React from 'react'
 import { colors } from '../../config/colors.config'
 
@@ -7,9 +7,13 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Feather } from '@expo/vector-icons';
 import { useAppStore } from 'store/app/appStore';
 import { logout } from 'utils/logout.utils';
+import CustomModal from 'components/modal/CustomModal';
+import { useModalStore } from 'store/modal/modalStore';
 
 export default function Header() {
     const { userSession } = useAppStore();
+
+    const { setModalMessage, modalMessage } = useModalStore()
 
     return (
         <SafeAreaView style={{backgroundColor: colors.primary_black}}>
@@ -24,11 +28,22 @@ export default function Header() {
                             <Feather name='bell' size={20} />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={logout}>
+                    <TouchableOpacity onPress={() => setModalMessage('Confirm Logout')}>
                         <Image style={styles.image} source={omenaiIndividualAvatar} alt='' />
                     </TouchableOpacity>
                 </View>
             </View>
+            <CustomModal
+                multiChoice='Yes, Logout'
+                isVisible={modalMessage !== null}
+                value={modalMessage}
+                handleDismiss={e => {
+                    setModalMessage(null)
+                    if(e === true){
+                        logout()
+                    }
+                }}
+            />
         </SafeAreaView>
     )
 }

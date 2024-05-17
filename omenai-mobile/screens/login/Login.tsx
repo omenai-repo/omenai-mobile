@@ -8,9 +8,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../../config/colors.config';
 import { screenName } from '../../constants/screenNames.constants';
+import CustomModal from 'components/modal/CustomModal';
+import { useModalStore } from 'store/modal/modalStore';
 
 export default function Login() {
     const navigation = useNavigation<StackNavigationProp<any>>();
+
+    const { modalMessage, setModalMessage } = useModalStore();
 
     const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -31,6 +35,11 @@ export default function Login() {
                 {selectedIndex === 0 && <Individual />}
                 {selectedIndex === 1 && <Gallery />}
             </ScrollView>
+            <CustomModal
+                value={modalMessage}
+                isVisible={modalMessage !== null}
+                handleDismiss={() => setModalMessage(null)}
+            />
         </View>
     )  
 }
