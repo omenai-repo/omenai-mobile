@@ -12,6 +12,7 @@ import Home from './screens/home/Home';
 import { useEffect, useState } from 'react';
 import { useAppStore } from 'store/app/appStore';
 import { appInit } from 'utils/appInit';
+import Artwork from 'screens/artwork/Artwork';
 
 const Stack = createStackNavigator();
 
@@ -61,6 +62,11 @@ export default function App() {
           <Stack.Screen 
             name={screenName.searchResults} 
             component={SearchResults}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name={screenName.artwork} 
+            component={Artwork}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

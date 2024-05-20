@@ -4,5 +4,6 @@ export const screenName = {
     register: 'register',
     forgotPassword: 'forgot-password',
     searchResults: 'searchResults',
-    home: 'home'
+    home: 'home',
+    artwork: 'artwork'
 }
