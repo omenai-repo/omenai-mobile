@@ -1,17 +1,72 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import BackScreenButton from 'components/buttons/BackScreenButton'
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { colors } from 'config/colors.config';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import LongWhiteButton from 'components/buttons/LongWhiteButton';
 import DetailsCard from './components/detailsCard/DetailsCard';
 import ArtworkCard from 'components/artwork/ArtworkCard';
+import { fetchsingleArtwork } from 'services/artworks/fetchSingleArtwork';
+import { getImageFileView } from 'lib/storage/getImageFileView';
+
+type RouteParamsType = {
+    title: string;
+};
+
+type ArtworkDataType = {
+    title: string,
+    artist: string,
+    artist_country_origin: string,
+    artist_birthyear: string,
+    artwork_description: string,
+    pricing: {price: number, shouldShowPrice: "Yes" | "No"},
+    year: string,
+    dimensions: {depth: string, height: string, width: string, weight: string},
+    framing: string,
+    carrier: string,
+    rarity: string,
+    materials: string,
+    medium: string,
+    signature: string,
+    updatedAt: string,
+    url: string,
+    certificate_of_authenticity: "Yes" | 'No'
+}
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
+    const route = useRoute()
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState<ArtworkDataType | null>(null)
+
+    let image_href
+    if(data){
+        image_href = getImageFileView(data.url, 300);
+    }
+
+    useEffect(() => {
+        handleFecthSingleArtwork()
+    }, []);
+
+    const handleFecthSingleArtwork = async () => {
+        setIsLoading(true)
+
+        const { title } = route.params as RouteParamsType
+
+        const results = await fetchsingleArtwork(title)
+
+        if(results.isOk){
+            setData(results.body.data)
+        }else{
+            setData(null)
+        }
+
+        setIsLoading(false)
+    }
 
     return (
         <View style={{flex: 1, backgroundColor: colors.white}}>
@@ -20,73 +75,87 @@ export default function Artwork() {
                     <BackScreenButton handleClick={() => navigation.goBack()}/>
                 </View>
             </SafeAreaView>
-            <ScrollView style={styles.scrollContainer}>
-                <View style={styles.imageContainer}>
-
+            {(isLoading && !data) && (
+                <View style={styles.loaderContainer}>
+                    <Text>Loading artwork data...</Text>
                 </View>
-                <View style={styles.artworkDetails}>
-                    <Text style={styles.artworkTitle}>Artwork Title</Text>
-                    <Text style={styles.artworkCreator}>Artwork creator</Text>
-                    <Text style={styles.artworkTags}>Artwork medium | Artwork medium</Text>
-                    <View style={styles.tagsContainer}>
-                        <View style={styles.tagItem}><Text style={styles.tagItemText}>Unique</Text></View>
-                        <View style={styles.tagItem}><Text style={styles.tagItemText}>Unique</Text></View>
+            )}
+            {data && (
+                <ScrollView style={styles.scrollContainer}>
+                    <View style={styles.imageContainer}>
+                        <Image source={{uri: image_href}} style={styles.image} />
                     </View>
-                </View>
-                <View style={styles.priceContainer}>
-                    <Text style={styles.priceTitle}>Price</Text>
-                    <Text style={styles.price}>$12,000</Text>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <LongBlackButton value='Purchase artwork' isDisabled={false} onClick={() => console.log('')} />
-                    <LongWhiteButton value='Save artwork to favorites' onClick={() => console.log('')} />
-                </View>
-                <DetailsCard
-                    title='Artwork Details'
-                    details={[
-                        {name: 'Description', text: 'This is a description of the painting. This is a description of the painting. This is a description of the painting. This is a description of the painting.'},
-                        {name: 'Materials', text: 'Paint, Canvas, Brush'},
-                        {name: 'Certificate of authenticity', text: 'Included'},
-                        {name: 'Packaging', text: 'Rolled'},
-                        {name: 'Signature', text: 'Signed by gallery'},
-                        {name: 'Year', text: '1900'}
-                    ]}
-                />
-                <DetailsCard
-                    title='Artist Information'
-                    details={[
-                        {name: 'Birth Year', text: '2001'},
-                        {name: 'Country', text: 'United States of America'},
-                    ]}
-                />
-                <View style={styles.similarContainer}>
-                    <Text style={styles.similarTitle}>Similar artwork</Text>
-                    <View style={styles.artworksContainer}>
-                        <View style={styles.singleColumn}>
-                            <ArtworkCard
-                                title={'Artwork Title'}
-                                artist={'Artist name'}
-                                image={''}
-                                medium={'Oil'}
-                                price={25000}
-                                showPrice={true}
-                                rarity={'Unique'}
-                            />
-                        </View>
-                        <View style={styles.singleColumn}>
-                            <ArtworkCard
-                                title={'Artwork Title'}
-                                artist={'Artist name'}
-                                image={''}
-                                medium={'Oil'}
-                                price={25000}
-                                showPrice={true}
-                                rarity={'Unique'}
-                            />
+                    <View style={styles.artworkDetails}>
+                        <Text style={styles.artworkTitle}>{data?.title}</Text>
+                        <Text style={styles.artworkCreator}>{data?.artist}</Text>
+                        <Text style={styles.artworkTags}>{data?.materials} | {data?.medium}</Text>
+                        <View style={styles.tagsContainer}>
+                            <View style={styles.tagItem}><Text style={styles.tagItemText}>{data?.rarity}</Text></View>
+                            {data?.certificate_of_authenticity === 'Yes' && <View style={styles.tagItem}><Text style={styles.tagItemText}>Certificate of authencity</Text></View>}
                         </View>
                     </View>
+                    <View style={styles.priceContainer}>
+                        <Text style={styles.priceTitle}>Price</Text>
+                        {data?.pricing.shouldShowPrice === 'Yes' && <Text style={styles.price}>${data?.pricing.price || 0}</Text>}
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <LongBlackButton value='Purchase artwork' isDisabled={false} onClick={() => console.log('')} />
+                        <LongWhiteButton value='Save artwork to favorites' onClick={() => console.log('')} />
+                    </View>
+                    <View style={styles.detailsContainer}>
+                        <DetailsCard
+                            title='Artwork Details'
+                            details={[
+                                {name: 'Description', text: data?.artwork_description},
+                                {name: 'Materials', text: data.materials},
+                                {name: 'Certificate of authenticity', text: data?.certificate_of_authenticity === 'Yes' ? 'Included' : 'Not included'},
+                                {name: 'Framing', text: data?.framing},
+                                {name: 'Signature', text: `Signed ${data?.signature}`},
+                                {name: 'Year', text: data?.year}
+                            ]}
+                        />
+                        <DetailsCard
+                            title='Artist Information'
+                            details={[
+                                {name: 'Birth Year', text: data?.artist_birthyear},
+                                {name: 'Country', text: data?.artist_country_origin},
+                            ]}
+                        />
+                    </View>
+                    {/* <View style={styles.similarContainer}>
+                        <Text style={styles.similarTitle}>Similar artwork</Text>
+                        <View style={styles.artworksContainer}>
+                            <View style={styles.singleColumn}>
+                                <ArtworkCard
+                                    title={'Artwork Title'}
+                                    artist={'Artist name'}
+                                    image={''}
+                                    medium={'Oil'}
+                                    price={25000}
+                                    showPrice={true}
+                                    rarity={'Unique'}
+                                />
+                            </View>
+                            <View style={styles.singleColumn}>
+                                <ArtworkCard
+                                    title={'Artwork Title'}
+                                    artist={'Artist name'}
+                                    image={''}
+                                    medium={'Oil'}
+                                    price={25000}
+                                    showPrice={true}
+                                    rarity={'Unique'}
+                                />
+                            </View>
+                        </View>
+                    </View> */}
+                </ScrollView>
+            )}
+            {(!isLoading && !data) && (
+                <View style={styles.loaderContainer}>
+                    <Text style={styles.loaderText}>No details of artwork</Text>
                 </View>
-            </ScrollView>
+            )}
         </View>
     )
 }
@@ -98,10 +167,10 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         marginTop: 30,
     },
-    imageContainer: {
-        height: 300,
+    image: {
+        height: 340,
         width: '100%',
-        backgroundColor: '#E7F6EC',
+        objectFit: 'contain'
     },
     artworkDetails: {
         marginTop: 20
@@ -177,5 +246,17 @@ const styles = StyleSheet.create({
     singleColumn: {
         flex: 1,
         gap: 20
+    },
+    loaderContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    loaderText: {
+        fontSize: 16,
+        color: colors.black
+    },
+    detailsContainer: {
+        marginBottom: 100
     }
 })
