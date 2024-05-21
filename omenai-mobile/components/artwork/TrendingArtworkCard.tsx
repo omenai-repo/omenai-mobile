@@ -22,7 +22,7 @@ export default function TrendingArtworkCard({image, artist, rarity, medium, titl
     const image_href = getImageFileView(image, 300);
 
     return (
-        <TouchableOpacity onPress={() => navigation.navigate(screenName.artwork)}>
+        <TouchableOpacity onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
             <View style={styles.container}>
                 <View style={styles.top}>
                     <Image source={{uri: image_href}} style={styles.image} />
