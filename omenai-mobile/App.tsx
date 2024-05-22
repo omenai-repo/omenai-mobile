@@ -15,9 +15,19 @@ import { useEffect, useState } from 'react';
 import { useAppStore } from 'store/app/appStore';
 import { appInit } from 'utils/appInit';
 import Catalog from 'screens/catalog/Catalog';
+import { Ionicons, Feather } from '@expo/vector-icons';
+import { colors } from 'config/colors.config';
+import { StyleSheet, Text, View } from 'react-native';
+import Orders from 'screens/orders/Orders';
+import Profile from 'screens/profile/Profile';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+type CustomTabBarIconProps = {
+  name: string,
+  focused: boolean
+}
 
 export default function App() {
   const {isLoggedIn} = useAppStore()
@@ -26,6 +36,14 @@ export default function App() {
   useEffect(() => {
     appInit()
   }, [])
+
+  const CustomTabBarIcon = ({ name, focused }: CustomTabBarIconProps) => {
+    return (
+      <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
+        <Feather name={name} size={20} color={focused ? 'white' : 'gray'} />
+      </View>
+    );
+  };
 
   const AuthNavigation = () => {
     return(
@@ -56,7 +74,36 @@ export default function App() {
 
   const IndividualNavigation = () => {
     return(
-      <Tab.Navigator>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused }) => {
+            let iconName;
+
+            if (route.name === screenName.home) {
+              iconName = 'home';
+            } else if (route.name === screenName.catalog) {
+              iconName = 'bookmark';
+            }else if(route.name === screenName.orders){
+              iconName = 'package'
+            }else if(route.name === screenName.profile){
+              iconName = 'user'
+            }
+
+            return <CustomTabBarIcon name={iconName} focused={focused} />;;
+          },
+          tabBarActiveTintColor: colors.primary_black,
+          tabBarInactiveTintColor: 'gray',
+          tabBarStyle: {
+            backgroundColor: colors.white,
+            paddingBottom: 20,
+            paddingTop: 10,
+            height: 100,
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+          },
+        })}
+      >
         <Tab.Screen
           name={screenName.home}
           component={Home}
@@ -68,8 +115,13 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Tab.Screen 
-          name={screenName.searchResults} 
-          component={SearchResults}
+          name={screenName.orders} 
+          component={Orders}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen 
+          name={screenName.profile} 
+          component={Profile}
           options={{ headerShown: false }}
         />
       </Tab.Navigator>
@@ -91,3 +143,16 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    borderRadius: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  iconContainerActive: {
+    backgroundColor: colors.primary_black
+  }
+})
