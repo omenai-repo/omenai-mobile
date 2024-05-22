@@ -1,6 +1,5 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { colors } from '../../../../config/colors.config'
 import { Feather } from '@expo/vector-icons';
 import galleryImage from '../../../../assets/images/gallery-banner.png';

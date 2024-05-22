@@ -1,8 +1,7 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native'
 import React from 'react'
 import { colors } from '../../config/colors.config';
 import omenaiSearchIcon from '../../assets/icons/omenai-search-icon.png'
-import { TextInput } from 'react-native-gesture-handler';
 import { useSearchStore } from 'store/search/searchStore';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
