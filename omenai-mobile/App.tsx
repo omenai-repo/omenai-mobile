@@ -14,6 +14,7 @@ import Home from './screens/home/Home';
 import { useEffect, useState } from 'react';
 import { useAppStore } from 'store/app/appStore';
 import { appInit } from 'utils/appInit';
+import Artwork from 'screens/artwork/Artwork';
 import Catalog from 'screens/catalog/Catalog';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
@@ -129,6 +130,53 @@ export default function App() {
   }
 
   return (
+    <NavigationContainer>
+      {/* AUTH SCREENS */}
+      {!isLoggedIn &&
+        <Stack.Navigator initialRouteName={screenName.welcome}>
+          <Stack.Screen 
+            name={screenName.welcome} 
+            component={Welcome}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name={screenName.login} 
+            component={Login}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name={screenName.register} 
+            component={Register}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name={screenName.forgotPassword} 
+            component={ForgotPassword}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      }
+      {/* App screens */}
+      {isLoggedIn &&
+        <Stack.Navigator initialRouteName={screenName.home}>
+          <Stack.Screen
+            name={screenName.home}
+            component={Home}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen 
+            name={screenName.searchResults} 
+            component={SearchResults}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name={screenName.artwork} 
+            component={Artwork}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      }
+    </NavigationContainer>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         {/* AUTH SCREENS */}

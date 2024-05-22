@@ -5,7 +5,9 @@ export const screenName = {
     forgotPassword: 'forgot-password',
     searchResults: 'searchResults',
     home: 'home',
+    artwork: 'artwork'
     catalog: 'catalog',
     orders: 'orders',
     profile: 'profile'
+ main
 }
