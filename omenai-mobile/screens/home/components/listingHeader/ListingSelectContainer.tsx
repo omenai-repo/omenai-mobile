@@ -1,7 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { colors } from '../../../../config/colors.config'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useHomeStore } from 'store/home/homeStore'
 
 type ArtworkSelectItemProps = {
