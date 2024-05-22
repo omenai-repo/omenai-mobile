@@ -1,7 +1,6 @@
-import { Image, StyleSheet, Dimensions, View } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from '../../../../config/colors.config'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Feather } from '@expo/vector-icons';
 import { courselImages } from '../../../../constants/images.constants';
 import Animated, {
