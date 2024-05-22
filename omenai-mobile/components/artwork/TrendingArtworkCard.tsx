@@ -4,6 +4,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import { getImageFileView } from 'lib/storage/getImageFileView';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
 
 type TrendingArtworkCardType = {
     title: string,
@@ -15,11 +18,11 @@ type TrendingArtworkCardType = {
 }
 
 export default function TrendingArtworkCard({image, artist, rarity, medium, title, likes}: TrendingArtworkCardType) {
-
+    const navigation = useNavigation<StackNavigationProp<any>>();
     const image_href = getImageFileView(image, 300);
 
     return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
             <View style={styles.container}>
                 <View style={styles.top}>
                     <Image source={{uri: image_href}} style={styles.image} />
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
         width: '100%',
         objectFit: 'cover',
         height: '100%',
-        // backgroundColor: colors.inputBorder
+        backgroundColor: colors.grey50
     },
     likeContainer: {
         alignItems: 'flex-end',
