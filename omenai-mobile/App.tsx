@@ -1,6 +1,8 @@
 //screens import
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import Login from './screens/login/Login';
 import Register from './screens/register/Register';
@@ -12,8 +14,10 @@ import Home from './screens/home/Home';
 import { useEffect, useState } from 'react';
 import { useAppStore } from 'store/app/appStore';
 import { appInit } from 'utils/appInit';
+import Catalog from 'screens/catalog/Catalog';
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   const {isLoggedIn} = useAppStore()
@@ -23,48 +27,67 @@ export default function App() {
     appInit()
   }, [])
 
+  const AuthNavigation = () => {
+    return(
+      <Stack.Navigator initialRouteName={screenName.welcome}>
+        <Stack.Screen 
+          name={screenName.welcome} 
+          component={Welcome}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+          name={screenName.login} 
+          component={Login}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+          name={screenName.register} 
+          component={Register}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+          name={screenName.forgotPassword} 
+          component={ForgotPassword}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    )
+  };
+
+  const IndividualNavigation = () => {
+    return(
+      <Tab.Navigator>
+        <Tab.Screen
+          name={screenName.home}
+          component={Home}
+          options={{headerShown: false}}
+        />
+        <Tab.Screen 
+          name={screenName.catalog} 
+          component={Catalog}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen 
+          name={screenName.searchResults} 
+          component={SearchResults}
+          options={{ headerShown: false }}
+        />
+      </Tab.Navigator>
+    )
+  }
+
   return (
-    <NavigationContainer>
-      {/* AUTH SCREENS */}
-      {!isLoggedIn &&
-        <Stack.Navigator initialRouteName={screenName.welcome}>
-          <Stack.Screen 
-            name={screenName.welcome} 
-            component={Welcome}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name={screenName.login} 
-            component={Login}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name={screenName.register} 
-            component={Register}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name={screenName.forgotPassword} 
-            component={ForgotPassword}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      }
-      {/* App screens */}
-      {isLoggedIn &&
-        <Stack.Navigator initialRouteName={screenName.home}>
-          <Stack.Screen
-            name={screenName.home}
-            component={Home}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen 
-            name={screenName.searchResults} 
-            component={SearchResults}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      }
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        {/* AUTH SCREENS */}
+        {!isLoggedIn &&
+          <AuthNavigation />
+        }
+        {/* App screens */}
+        {isLoggedIn &&
+          <IndividualNavigation />
+        }
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
