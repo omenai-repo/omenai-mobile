@@ -1,19 +1,18 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { colors } from '../../../../config/colors.config';
-
-import sortIcon from '../../../../assets/icons/sort-icon.png';
+import { colors } from 'config/colors.config'
+import sortIcon from '../../assets/icons/sort-icon.png';
 import { Feather } from '@expo/vector-icons';
+
+type FilterProps = {
+    children?: React.ReactNode
+}
 
 type FilterSelectProps = {
     name: string
 }
 
-type FilterComponentProps = {
-    dataLength: number
-}
-
-export default function Filters({dataLength}: FilterComponentProps) {
+export default function Filter({children}: FilterProps) {
     const [showFilters, setShowFilters] = useState(false);
 
     const FilterSelect = ({name} : FilterSelectProps) => {
@@ -30,20 +29,34 @@ export default function Filters({dataLength}: FilterComponentProps) {
     return (
         <View>
             <View style={styles.container}>
-                <Text style={styles.resultsText}>{dataLength} results found</Text>
-                <TouchableOpacity onPress={() => setShowFilters(prev => !prev)}>
-                    {showFilters ?
-                        <View style={[styles.filterButton, {backgroundColor: colors.black}]}>
-                            <Text style={[styles.filterButtonText, {color: colors.white}]}>Filters</Text>
-                            <Feather name='x' size={20} color={colors.white} />
-                        </View>
+                <View style={styles.leftContainer}>
+                    {!showFilters ? 
+                        children
                     :
+                    <View style={{width: 130}}>
+                        <TouchableOpacity onPress={() => setShowFilters(false)}>
+                            <View style={[styles.filterButton, {backgroundColor: colors.black}]}>
+                                <Text style={[styles.filterButtonText, {color: colors.white}]}>Filters</Text>
+                                <Feather name='x' size={20} color={colors.white} />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    }
+                </View>
+                {!showFilters ?
+                    <TouchableOpacity onPress={() => setShowFilters(true)}>
                         <View style={styles.filterButton}>
                             <Text style={styles.filterButtonText}>Filters</Text>
                             <Image source={sortIcon} style={styles.sortIcon} />
                         </View>
-                    }
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                :
+                    <TouchableOpacity onPress={() => setShowFilters(false)}>
+                        <View style={styles.filterButton}>
+                            <Text style={styles.filterButtonText}>Apply Filters</Text>
+                        </View>
+                    </TouchableOpacity>
+                }
             </View>
             {showFilters && 
                 <View style={styles.FiltersListing}>
@@ -54,20 +67,19 @@ export default function Filters({dataLength}: FilterComponentProps) {
                 </View>
             }
         </View>
-    ) 
+    )
 }
 
 const styles = StyleSheet.create({
     container: {
+        marginTop: 20,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10
     },
-    resultsText: {
-        fontSize: 16,
-        color: '#858585',
-        fontWeight: '500',
-        flex: 1
+    leftContainer: {
+        flex: 1,
+        overflow: 'hidden'
     },
     filterButton: {
         height: 50,

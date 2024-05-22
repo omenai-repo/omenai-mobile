@@ -6,4 +6,8 @@ export const screenName = {
     searchResults: 'searchResults',
     home: 'home',
     artwork: 'artwork'
+    catalog: 'catalog',
+    orders: 'orders',
+    profile: 'profile'
+ main
 }
