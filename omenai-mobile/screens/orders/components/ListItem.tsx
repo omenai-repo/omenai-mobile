@@ -1,43 +1,27 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { colors } from 'config/colors.config'
+import React from 'react';
+import { colors } from 'config/colors.config';
 
-type OrdersListingProps = {
-    listing: any[]
+type ListItemProps = {
+    artworkName: string,
+    artworkPrice: string,
+    dateOrdered: string,
+    status: string
 }
 
-export default function OrdersListing({listing}: OrdersListingProps) {
-
-    const ListItem = () => {
-        return(
+export default function ListItem({artworkName, dateOrdered, status, artworkPrice}: ListItemProps) {
+        return (
             <View style={styles.listItem}>
                 <View style={styles.listItemDetails}>
-                    <Text style={styles.orderItemTitle}>Name of artwork</Text>
-                    <Text style={styles.orderItemDetails}>To be delivered: 12-02-2024</Text>
+                    <Text style={styles.orderItemTitle}>{artworkName}     ${parseFloat(artworkPrice).toLocaleString()}</Text>
+                    <Text style={styles.orderItemDetails}>Ordered: {dateOrdered}</Text>
                 </View>
-                <Text style={styles.statusPill}>Delivered</Text>
+                <Text style={styles.statusPill}>{status}</Text>
             </View>
         )
-    }
-
-    return (
-        <View style={styles.container}>
-            <ListItem />
-            <ListItem />
-            <ListItem />
-            <ListItem />
-        </View>
-    )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        borderWidth: 1,
-        borderColor: colors.inputBorder,
-        borderRadius: 8,
-        marginTop: 30,
-        paddingHorizontal: 20
-    },
     listItem: {
         borderBottomWidth: 1,
         borderBottomColor: colors.inputBorder,
@@ -65,5 +49,5 @@ const styles = StyleSheet.create({
         color: '#616161',
         fontSize: 12,
         marginTop: 5
-    }
+    },
 })
