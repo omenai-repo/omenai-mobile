@@ -26,7 +26,7 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 type CustomTabBarIconProps = {
-  name: string,
+  name: any,
   focused: boolean
 }
 
@@ -78,7 +78,7 @@ export default function App() {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused }) => {
-            let iconName;
+            let iconName = '';
 
             if (route.name === screenName.home) {
               iconName = 'home';
@@ -130,53 +130,6 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      {/* AUTH SCREENS */}
-      {!isLoggedIn &&
-        <Stack.Navigator initialRouteName={screenName.welcome}>
-          <Stack.Screen 
-            name={screenName.welcome} 
-            component={Welcome}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name={screenName.login} 
-            component={Login}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name={screenName.register} 
-            component={Register}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name={screenName.forgotPassword} 
-            component={ForgotPassword}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      }
-      {/* App screens */}
-      {isLoggedIn &&
-        <Stack.Navigator initialRouteName={screenName.home}>
-          <Stack.Screen
-            name={screenName.home}
-            component={Home}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen 
-            name={screenName.searchResults} 
-            component={SearchResults}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name={screenName.artwork} 
-            component={Artwork}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      }
-    </NavigationContainer>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         {/* AUTH SCREENS */}
