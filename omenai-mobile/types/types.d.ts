@@ -37,3 +37,22 @@ type userSessionType = {
   email: string,
   
 }
+type ArtworkDataType = {
+  title: string,
+  artist: string,
+  artist_country_origin: string,
+  artist_birthyear: string,
+  artwork_description: string,
+  pricing: {price: number, shouldShowPrice: "Yes" | "No"},
+  year: string,
+  dimensions: {depth: string, height: string, width: string, weight: string},
+  framing: string,
+  carrier: string,
+  rarity: string,
+  materials: string,
+  medium: string,
+  signature: string,
+  updatedAt: string,
+  url: string,
+  certificate_of_authenticity: "Yes" | 'No'
+}

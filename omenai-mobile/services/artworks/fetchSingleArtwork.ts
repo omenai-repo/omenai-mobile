@@ -22,7 +22,7 @@ export async function fetchsingleArtwork(title:string){
     }catch(error){
         return {
             isOk: false,
-            body: {message: 'Error fetching post impressions'}
+            body: {message: 'Error fetching artwork details'}
         }
     }
 
