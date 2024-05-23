@@ -1,8 +1,17 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import sortIcon from '../../assets/icons/sort-icon.png';
 import { Feather } from '@expo/vector-icons';
+import { filterStore } from 'store/artworks/FilterStore';
+import PriceFilter from './PriceFilter';
+import YearFilter from './YearFilter';
+import MediumFilter from './MediumFilter';
+import FilterPill from './FilterPill';
+import { artworkStore } from 'store/artworks/ArtworkStore';
+import { artworkActionStore } from 'store/artworks/ArtworkActionStore';
+import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
+import RarityFilter from './RarityFilter';
 
 type FilterProps = {
     children?: React.ReactNode
@@ -15,15 +24,24 @@ type FilterSelectProps = {
 export default function Filter({children}: FilterProps) {
     const [showFilters, setShowFilters] = useState(false);
 
-    const FilterSelect = ({name} : FilterSelectProps) => {
-        return(
-            <TouchableOpacity>
-                <View style={styles.FilterSelectContainer}>
-                    <Text style={{color: '#616161', fontSize: 16, flex: 1}}>{name}</Text>
-                    <Feather name='chevron-down' size={20} color={'#616161'} />
-                </View>
-            </TouchableOpacity>
-        )
+    const { filterOptions, selectedFilters } = filterStore();
+    const { paginationCount, updatePaginationCount } = artworkActionStore();
+    const { setArtworks, setIsLoading, setPageCount } = artworkStore();
+
+    const handleSubmitFilter = async () => {
+        updatePaginationCount("reset");
+        setIsLoading(true);
+        const response = await fetchPaginatedArtworks(
+            paginationCount,
+            filterOptions
+        );
+        if (response?.isOk) {
+            setPageCount(response.count);
+            setArtworks(response.data);
+        } else {
+            
+        }
+        setIsLoading(false);
     }
 
     return (
@@ -51,19 +69,26 @@ export default function Filter({children}: FilterProps) {
                         </View>
                     </TouchableOpacity>
                 :
-                    <TouchableOpacity onPress={() => setShowFilters(false)}>
+                    <TouchableOpacity onPress={handleSubmitFilter}>
                         <View style={styles.filterButton}>
                             <Text style={styles.filterButtonText}>Apply Filters</Text>
                         </View>
                     </TouchableOpacity>
                 }
             </View>
+            {selectedFilters.length > 0 &&
+                <View style={styles.selectedFilterContainer}>
+                    {selectedFilters.map((filter, index) => (
+                        <FilterPill filter={filter.name} key={index} />
+                    ))}
+                </View>
+            }
             {showFilters && 
                 <View style={styles.FiltersListing}>
-                    <FilterSelect name='Price range' />
-                    <FilterSelect name='Orientation' />
-                    <FilterSelect name='Year' />
-                    <FilterSelect name='Rarity' />
+                    <PriceFilter />
+                    <YearFilter />
+                    <MediumFilter />
+                    <RarityFilter />
                 </View>
             }
         </View>
@@ -114,5 +139,12 @@ const styles = StyleSheet.create({
         borderColor: colors.inputBorder,
         borderRadius: 5,
         flexDirection: 'row'
+    },
+    selectedFilterContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        marginTop: 20,
+        flexWrap: 'wrap'
     }
 })
