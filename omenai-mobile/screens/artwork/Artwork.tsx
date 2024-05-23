@@ -16,26 +16,6 @@ type RouteParamsType = {
     title: string;
 };
 
-type ArtworkDataType = {
-    title: string,
-    artist: string,
-    artist_country_origin: string,
-    artist_birthyear: string,
-    artwork_description: string,
-    pricing: {price: number, shouldShowPrice: "Yes" | "No"},
-    year: string,
-    dimensions: {depth: string, height: string, width: string, weight: string},
-    framing: string,
-    carrier: string,
-    rarity: string,
-    materials: string,
-    medium: string,
-    signature: string,
-    updatedAt: string,
-    url: string,
-    certificate_of_authenticity: "Yes" | 'No'
-}
-
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const route = useRoute()
@@ -82,9 +62,7 @@ export default function Artwork() {
             )}
             {data && (
                 <ScrollView style={styles.scrollContainer}>
-                    <View style={styles.imageContainer}>
-                        <Image source={{uri: image_href}} style={styles.image} />
-                    </View>
+                    <Image source={{uri: image_href}} style={styles.image} />
                     <View style={styles.artworkDetails}>
                         <Text style={styles.artworkTitle}>{data?.title}</Text>
                         <Text style={styles.artworkCreator}>{data?.artist}</Text>
