@@ -1,12 +1,13 @@
 export const screenName = {
     welcome: 'Welcome',
-    login: 'login',
-    register: 'register',
-    forgotPassword: 'forgot-password',
-    searchResults: 'searchResults',
-    home: 'home',
-    artwork: 'artwork',
-    catalog: 'catalog',
-    orders: 'orders',
-    profile: 'profile'
+    login: 'Login',
+    register: 'Register',
+    forgotPassword: 'Forgot-password',
+    searchResults: 'SearchResults',
+    home: 'Home',
+    artwork: 'Artwork',
+    catalogListing: 'Catalog-listing',
+    catalog: 'Catalog',
+    orders: 'Orders',
+    profile: 'Profile'
 }
