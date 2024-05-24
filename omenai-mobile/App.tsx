@@ -46,6 +46,16 @@ export default function App() {
     );
   };
 
+  function CatalogStackNavigator() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen name={screenName.catalogListing} component={Catalog} options={{ headerShown: false }} />
+        <Stack.Screen name={screenName.artwork} component={Artwork} options={{ headerShown: false }} />
+        <Stack.Screen name={screenName.searchResults} component={SearchResults} options={{headerShown: false}} />
+      </Stack.Navigator>
+    );
+  }
+
   const AuthNavigation = () => {
     return(
       <Stack.Navigator initialRouteName={screenName.welcome}>
@@ -112,7 +122,7 @@ export default function App() {
         />
         <Tab.Screen 
           name={screenName.catalog} 
-          component={Catalog}
+          component={CatalogStackNavigator}
           options={{ headerShown: false }}
         />
         <Tab.Screen 
