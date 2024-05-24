@@ -47,6 +47,15 @@ export default function App() {
     );
   };
 
+  function ProfileStackNavigator() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen name={screenName.profile} component={Profile} options={{ headerShown: false }} />
+        <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
+      </Stack.Navigator>
+    );
+  }
+
   const AuthNavigation = () => {
     return(
       <Stack.Navigator initialRouteName={screenName.welcome}>
@@ -87,7 +96,7 @@ export default function App() {
               iconName = 'bookmark';
             }else if(route.name === screenName.orders){
               iconName = 'package'
-            }else if(route.name === screenName.profile){
+            }else if(route.name === screenName.profileStack){
               iconName = 'user'
             }
 
@@ -122,8 +131,8 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Tab.Screen 
-          name={screenName.profile} 
-          component={SavedArtworks}
+          name={screenName.profileStack} 
+          component={ProfileStackNavigator}
           options={{ headerShown: false }}
         />
       </Tab.Navigator>
