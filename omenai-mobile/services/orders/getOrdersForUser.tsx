@@ -1,7 +1,6 @@
 import { OrderTabsTypes } from "screens/orders/Orders";
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { getAsyncData } from "utils/asyncStorage.utils";
-import { logout } from "utils/logout.utils";
 
 export async function getOrdersForUser(orderType: OrderTabsTypes){
 
@@ -11,12 +10,8 @@ export async function getOrdersForUser(orderType: OrderTabsTypes){
         userId = JSON.parse(userSession.value).id
     }
 
-    //if there isn't a user id this should log the user out
-    if(userId.length < 1){
-        logout()
-
-        return
-    }
+    //if there isn't a user id
+    if(userId.length < 1) return
 
     let url = apiUrl + '/api/orders/getOrdersByUserId'
 
