@@ -26,7 +26,7 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 type CustomTabBarIconProps = {
-  name: string,
+  name: any,
   focused: boolean
 }
 

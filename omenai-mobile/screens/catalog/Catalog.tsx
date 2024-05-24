@@ -1,10 +1,15 @@
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import { ScrollView } from 'react-native-gesture-handler'
 import SearchInput from 'components/inputs/SearchInput'
 import Filter from 'components/filter/Filter'
 import HeaderWithTitle from 'components/header/HeaderWithTitle'
+import ArtworksListing from './components/ArtworksListing'
+import { artworkActionStore } from 'store/artworks/ArtworkActionStore'
+import { artworkStore } from 'store/artworks/ArtworkStore'
+import { filterStore } from 'store/artworks/FilterStore'
+import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks'
 
 type TagItemProps = {
     name: string,
@@ -19,6 +24,26 @@ const tags = [
 
 export default function Catalog() {
     const [selectedTag, setSelectedTag] = useState(tags[0]);
+    const { paginationCount } = artworkActionStore();
+    const { setArtworks, artworks, isLoading, setPageCount, setIsLoading } = artworkStore();
+    const { filterOptions } = filterStore();
+
+    useEffect(() => {
+        handleFecthArtworks()
+    }, [])
+
+    const handleFecthArtworks = async () => {
+        setIsLoading(true)
+        const response = await fetchPaginatedArtworks(
+            paginationCount,
+            filterOptions
+        );
+        if (response?.isOk) {
+            setArtworks(response.data);
+            setPageCount(response.count);
+        }
+        setIsLoading(false)
+    }
 
     const handleTagSelect = (e: string) => {
         setSelectedTag(e)
@@ -44,6 +69,7 @@ export default function Catalog() {
                 </View>
                 <View style={styles.mainContainer}>
                     <Text style={{fontSize: 20, fontWeight: '500', color: colors.primary_black}}>Browse by collection</Text>
+                    <View style={{zIndex: 100}}>
                     <Filter>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             {tags.map((i, idx) => (
@@ -55,6 +81,11 @@ export default function Catalog() {
                             ))}
                         </ScrollView>
                     </Filter>
+                    </View>
+                    <View style={{zIndex: 5}}>
+                        {isLoading ? <Text>Loading ...</Text>:
+                        <ArtworksListing data={artworks} />}
+                    </View>
                 </View>
             </ScrollView>
         </View>
