@@ -8,6 +8,8 @@ import { UseSavedArtworksStore } from 'store/artworks/SavedArtworksStore';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import Divider from 'components/general/Divider';
 import Loader from 'components/general/Loader';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 type SavedArtworkItemProps = {
     name: string,
@@ -16,6 +18,8 @@ type SavedArtworkItemProps = {
 }
 
 export default function SavedArtworks() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
+
     const { isLoading, setIsLoading, data, setData } = UseSavedArtworksStore();
     const [refreshing, setRefreshing] = useState(false);
 
@@ -62,7 +66,7 @@ export default function SavedArtworks() {
         <View style={styles.container}>
             <SafeAreaView>
                 <View style={styles.topContainer}>
-                    <BackScreenButton handleClick={() => console.log('back')} />
+                    <BackScreenButton handleClick={() => navigation.goBack()} />
                     <Text style={styles.topTitle}>Saved artworks</Text>
                     <View style={{width: 50}} />
                 </View>

@@ -7,6 +7,9 @@ import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { Feather } from '@expo/vector-icons';
 import { getAsyncData } from 'utils/asyncStorage.utils';
 import Divider from 'components/general/Divider';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
 
 type PageButtonItemProps = {
     name: string,
@@ -20,6 +23,8 @@ type userDataType = {
 }
 
 export default function Profile() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
+
     const [userData, setuserdata] = useState<userDataType>({name: '', email: ''})
 
     useEffect(() => {
@@ -68,9 +73,9 @@ export default function Profile() {
                     </View>
                 </View>
                 <View style={styles.buttonsContainer}>
-                    <PageButtonItem name='Saved artworks' subText='See all your saved artworks' handlePress={() => console.log('')} />
+                    <PageButtonItem name='Saved artworks' subText='See all your saved artworks' handlePress={() => navigation.navigate(screenName.savedArtworks)} />
                     <Divider />
-                    <PageButtonItem name='Order history' subText='A summary of all your orders' handlePress={() => console.log('')} />
+                    <PageButtonItem name='Order history' subText='A summary of all your orders' handlePress={() => navigation.navigate(screenName.orders)} />
                 </View>
             </SafeAreaView>
         </ScrollView>
