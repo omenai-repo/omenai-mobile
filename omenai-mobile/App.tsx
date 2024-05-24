@@ -47,11 +47,13 @@ export default function App() {
     );
   };
 
-  function ProfileStackNavigator() {
+  function CatalogStackNavigator() {
     return (
       <Stack.Navigator>
-        <Stack.Screen name={screenName.profile} component={Profile} options={{ headerShown: false }} />
-        <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
+        <Stack.Screen name={screenName.catalogListing} component={Catalog} options={{ headerShown: false }} />
+        <Stack.Screen name={screenName.artwork} component={Artwork} options={{ headerShown: false }} />
+        <Stack.Screen name={screenName.searchResults} component={SearchResults} options={{headerShown: false}} />
+
       </Stack.Navigator>
     );
   }
@@ -122,7 +124,7 @@ export default function App() {
         />
         <Tab.Screen 
           name={screenName.catalog} 
-          component={Catalog}
+          component={CatalogStackNavigator}
           options={{ headerShown: false }}
         />
         <Tab.Screen 
