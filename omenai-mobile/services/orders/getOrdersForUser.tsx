@@ -1,6 +1,7 @@
 import { OrderTabsTypes } from "screens/orders/Orders";
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { getAsyncData } from "utils/asyncStorage.utils";
+import { logout } from "utils/logout.utils";
 
 export async function getOrdersForUser(orderType: OrderTabsTypes){
 
@@ -10,9 +11,14 @@ export async function getOrdersForUser(orderType: OrderTabsTypes){
         userId = JSON.parse(userSession.value).id
     }
 
-    let url = apiUrl + '/api/orders/getOrdersByUserId'
+    //if there isn't a user id this should log the user out
+    if(userId.length < 1){
+        logout()
 
-    console.log(userId)
+        return
+    }
+
+    let url = apiUrl + '/api/orders/getOrdersByUserId'
 
     try {
         const response = await fetch(url, {
@@ -29,9 +35,10 @@ export async function getOrdersForUser(orderType: OrderTabsTypes){
 
         return response
     }catch(error){
+        console.log('error' + error)
         return {
             isOk: false,
-            body: {message: 'Error fetching post impressions'}
+            body: {message: 'Error fetching orders'}
         }
     }
 
