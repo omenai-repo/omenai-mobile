@@ -21,6 +21,7 @@ import { colors } from 'config/colors.config';
 import { StyleSheet, Text, View } from 'react-native';
 import Orders from 'screens/orders/Orders';
 import Profile from 'screens/profile/Profile';
+import SavedArtworks from 'screens/savedArtworks/SavedArtworks';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -45,6 +46,15 @@ export default function App() {
       </View>
     );
   };
+
+  function ProfileStackNavigator() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen name={screenName.profile} component={Profile} options={{ headerShown: false }} />
+        <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
+      </Stack.Navigator>
+    );
+  }
 
   const AuthNavigation = () => {
     return(
@@ -86,7 +96,7 @@ export default function App() {
               iconName = 'bookmark';
             }else if(route.name === screenName.orders){
               iconName = 'package'
-            }else if(route.name === screenName.profile){
+            }else if(route.name === screenName.profileStack){
               iconName = 'user'
             }
 
@@ -121,8 +131,8 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Tab.Screen 
-          name={screenName.profile} 
-          component={Profile}
+          name={screenName.profileStack} 
+          component={ProfileStackNavigator}
           options={{ headerShown: false }}
         />
       </Tab.Navigator>
