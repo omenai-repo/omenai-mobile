@@ -12,8 +12,9 @@ export default function SearchInput() {
     const { searchQuery, setSearchQuery } = useSearchStore();
 
     const handleSearch = () => {
-        console.log(searchQuery)
-        navigation.navigate(screenName.searchResults);
+        if(searchQuery.length > 0){
+            navigation.navigate(screenName.searchResults);
+        }
     }
 
     return (

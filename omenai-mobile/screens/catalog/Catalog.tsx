@@ -84,7 +84,7 @@ export default function Catalog() {
                     </Filter>
                     </View>
                     <View style={{zIndex: 5}}>
-                        {isLoading ? <Text>Loading ...</Text>:
+                        {isLoading ? <View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}><Text>Loading ...</Text></View>:
                         <ArtworksListing data={artworks} />}
                     </View>
                 </View>
