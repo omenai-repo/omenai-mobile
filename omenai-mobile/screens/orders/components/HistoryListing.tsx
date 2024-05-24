@@ -14,8 +14,6 @@ export default function HistoryListing({orders}: OrdersListingProps) {
 
     const history = sortOrdersDataByDate(orders);
 
-    console.log(history[0])
-
     if(history.length > 0)
         return (
             <View style={styles.container}>

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,6 +18,12 @@ export type OrderTabsTypes = 'Pending' | 'Order history'
 
 export default function Orders() {
     const {selectedTab, setSelectedTab, isLoading, setIsLoading, data, setData} = useOrderStore();
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        // setRefreshing(true);
+        handleFetchOrders()
+    }, []);
 
 
     useEffect(() => {
@@ -49,7 +55,11 @@ export default function Orders() {
     return (
         <View style={styles.container}>
             <HeaderWithTitle pageTitle='Orders' />
-            <ScrollView style={styles.mainContainer}>
+            <ScrollView style={styles.mainContainer}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+            >
                 <View style={styles.tabContainer}>
                     <TabItem name='Pending'  isSelected={selectedTab === 'Pending'} />
                     <TabItem name='Order history' isSelected={selectedTab === 'Order history'} />
