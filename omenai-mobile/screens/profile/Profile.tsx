@@ -6,6 +6,7 @@ import omenaiAvatar from '../../assets/images/omenai-avatar.png';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { Feather } from '@expo/vector-icons';
 import { getAsyncData } from 'utils/asyncStorage.utils';
+import Divider from 'components/general/Divider';
 
 type PageButtonItemProps = {
     name: string,
@@ -68,7 +69,7 @@ export default function Profile() {
                 </View>
                 <View style={styles.buttonsContainer}>
                     <PageButtonItem name='Saved artworks' subText='See all your saved artworks' handlePress={() => console.log('')} />
-                    <View style={styles.divider} />
+                    <Divider />
                     <PageButtonItem name='Order history' subText='A summary of all your orders' handlePress={() => console.log('')} />
                 </View>
             </SafeAreaView>
@@ -108,9 +109,5 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10
-    },
-    divider: {
-        borderTopWidth: 1,
-        borderTopColor: colors.grey50
     }
 })

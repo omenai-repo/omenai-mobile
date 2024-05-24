@@ -21,6 +21,7 @@ import { colors } from 'config/colors.config';
 import { StyleSheet, Text, View } from 'react-native';
 import Orders from 'screens/orders/Orders';
 import Profile from 'screens/profile/Profile';
+import SavedArtworks from 'screens/savedArtworks/SavedArtworks';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -122,7 +123,7 @@ export default function App() {
         />
         <Tab.Screen 
           name={screenName.profile} 
-          component={Profile}
+          component={SavedArtworks}
           options={{ headerShown: false }}
         />
       </Tab.Navigator>
