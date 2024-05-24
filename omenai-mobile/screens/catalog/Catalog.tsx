@@ -4,6 +4,7 @@ import { colors } from 'config/colors.config'
 import { ScrollView } from 'react-native-gesture-handler'
 import SearchInput from 'components/inputs/SearchInput'
 import Filter from 'components/filter/Filter'
+import HeaderWithTitle from 'components/header/HeaderWithTitle'
 import ArtworksListing from './components/ArtworksListing'
 import { artworkActionStore } from 'store/artworks/ArtworkActionStore'
 import { artworkStore } from 'store/artworks/ArtworkStore'
@@ -60,9 +61,7 @@ export default function Catalog() {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView style={styles.header}>
-                <Text style={styles.headerText}>Catalog</Text>
-            </SafeAreaView>
+            <HeaderWithTitle pageTitle='Catalog' />
             <ScrollView>
                 <View style={styles.topContainer}>
                     <Text style={styles.introText}>Shop your favorite artworks and collections</Text>
@@ -97,17 +96,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white
-    },
-    header: {
-        backgroundColor: colors.primary_black,
-        alignItems: 'center'
-    },
-    headerText: {
-        color: colors.white,
-        paddingBottom: 30,
-        paddingVertical: 15,
-        fontSize: 16,
-        fontWeight: '500'
     },
     topContainer: {
         paddingHorizontal: 20,
