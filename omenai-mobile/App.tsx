@@ -58,6 +58,15 @@ export default function App() {
     );
   }
 
+  function ProfileStackNavigator() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen name={screenName.profile} component={Profile} options={{ headerShown: false }} />
+        <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
+      </Stack.Navigator>
+    );
+  }
+
   const AuthNavigation = () => {
     return(
       <Stack.Navigator initialRouteName={screenName.welcome}>
