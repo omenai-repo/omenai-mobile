@@ -10,4 +10,5 @@ export const screenName = {
     catalog: 'Catalog',
     orders: 'Orders',
     profile: 'Profile'
+
 }
