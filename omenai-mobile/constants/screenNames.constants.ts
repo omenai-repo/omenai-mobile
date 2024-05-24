@@ -8,5 +8,7 @@ export const screenName = {
     artwork: 'artwork',
     catalog: 'catalog',
     orders: 'orders',
-    profile: 'profile'
+    profileStack: 'profile-stack',
+    profile: 'profile',
+    savedArtworks: 'saved-artworks'
 }
