@@ -36,6 +36,14 @@
     },
     "updates": {
       "url": "https://u.expo.dev/d5c6d578-b0af-4098-93e7-e29c1190ed35"
-    }
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/nunito-sans.ttf"]
+        }
+      ]
+    ]
   }
 }

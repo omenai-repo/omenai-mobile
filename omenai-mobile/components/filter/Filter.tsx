@@ -61,7 +61,7 @@ export default function Filter({children}: FilterProps) {
                     </View>
                     }
                 </View>
-                {!showFilters ?
+                {(!showFilters && selectedFilters.length < 1) ?
                     <TouchableOpacity onPress={() => setShowFilters(true)}>
                         <View style={styles.filterButton}>
                             <Text style={styles.filterButtonText}>Filters</Text>

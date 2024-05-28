@@ -19,7 +19,7 @@ export default function NextButton({isDisabled, handleButtonClick}: NextButtonPr
     )
 
     return (
-        <TouchableOpacity style={styles.container} onPress={handleButtonClick}>
+        <TouchableOpacity activeOpacity={1} style={styles.container} onPress={handleButtonClick}>
             <Text style={{fontSize: 16, color: colors.white}}>Next</Text>
             <AntDesign name='arrowright' color={colors.white} size={20} />
         </TouchableOpacity>

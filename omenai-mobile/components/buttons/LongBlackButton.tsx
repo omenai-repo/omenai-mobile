@@ -19,7 +19,7 @@ export default function LongBlackButton({value, onClick, isDisabled, isLoading} 
     )
 
     return (
-        <TouchableOpacity style={styles.container} onPress={onClick}>
+        <TouchableOpacity activeOpacity={1} style={styles.container} onPress={onClick}>
             <Text style={styles.text}>{value}</Text>
         </TouchableOpacity>
     )

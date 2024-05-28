@@ -45,11 +45,12 @@ const styles = StyleSheet.create({
         paddingBottom: 100
     },
     introText: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: '500',
         color: colors.primary_black,
         maxWidth: 290,
-        paddingVertical: 40
+        paddingVertical: 40,
+        // fontFamily: 'nunitoSans'
     },
     courselContainer: {
         marginTop: 30

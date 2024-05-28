@@ -49,7 +49,7 @@ export default function Profile() {
 
     const PageButtonItem = ({name, subText, handlePress}: PageButtonItemProps) => {
         return(
-            <TouchableOpacity onPress={handlePress}>
+            <TouchableOpacity activeOpacity={1} onPress={handlePress}>
                 <View style={styles.pageButtonItem}>
                     <View style={{flex: 1}}>
                         <Text style={{fontSize: 16, color: colors.primary_black}}>{name}</Text>
