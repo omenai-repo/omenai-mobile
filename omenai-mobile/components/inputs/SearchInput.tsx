@@ -19,7 +19,9 @@ export default function SearchInput() {
 
     return (
         <View style={styles.container}>
-            <Image source={omenaiSearchIcon} />
+            <View style={{paddingLeft: 10}}>
+                <Image source={omenaiSearchIcon} />
+            </View>
             <TextInput
                 style={styles.input}
                 placeholder='Search for anything'
@@ -29,7 +31,7 @@ export default function SearchInput() {
                 onSubmitEditing={handleSearch}
                 returnKeyType="search"
             />
-            <TouchableOpacity onPress={handleSearch}>
+            <TouchableOpacity activeOpacity={1} onPress={handleSearch}>
                 <View style={styles.searchButton}>
                     <Text style={{color: colors.white, fontSize: 14}}>Search</Text>
                 </View>
@@ -40,12 +42,12 @@ export default function SearchInput() {
 
 const styles = StyleSheet.create({
     container: {
-        height: 65,
+        height: 55,
         backgroundColor: '#FAFAFA',
         borderWidth: 1,
         borderColor: colors.inputBorder,
-        paddingHorizontal: 15,
-        paddingVertical: 10,
+        paddingHorizontal: 7,
+        paddingVertical: 7,
         borderRadius: 40,
         flexDirection: 'row',
         alignItems: 'center',

@@ -25,6 +25,8 @@ export default function HistoryListing({orders}: OrdersListingProps) {
                             return(
                                 <ListItem
                                     key={index}
+                                    url={order.artwork_data.url}
+                                    orderId={order.order_id}
                                     artworkName={order.artwork_data?.title}
                                     artworkPrice={order.artwork_data?.pricing.price}
                                     dateOrdered={formatIntlDateTime(order.createdAt)}

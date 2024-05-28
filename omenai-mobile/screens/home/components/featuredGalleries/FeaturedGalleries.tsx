@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         backgroundColor: '#FAFAFA',
-        padding: 20
+        padding: 10
     },
     image: {
         width: '100%'

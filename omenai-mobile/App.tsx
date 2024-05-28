@@ -22,6 +22,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Orders from 'screens/orders/Orders';
 import Profile from 'screens/profile/Profile';
 import SavedArtworks from 'screens/savedArtworks/SavedArtworks';
+import { useFonts } from 'expo-font';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,6 +35,10 @@ type CustomTabBarIconProps = {
 export default function App() {
   const {isLoggedIn} = useAppStore()
 
+  const [fontsLoaded] = useFonts({
+    'nunitoSans': require('./assets/fonts/nunito-sans.ttf'),
+  });
+  
   //add logic for conditional routing
   useEffect(() => {
     appInit()
@@ -42,7 +47,7 @@ export default function App() {
   const CustomTabBarIcon = ({ name, focused }: CustomTabBarIconProps) => {
     return (
       <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
-        <Feather name={name} size={20} color={focused ? 'white' : 'gray'} />
+        <Feather name={name} size={18} color={focused ? 'white' : 'gray'} />
       </View>
     );
   };
@@ -61,7 +66,7 @@ export default function App() {
   function ProfileStackNavigator() {
     return (
       <Stack.Navigator>
-        <Stack.Screen name={screenName.profile} component={Profile} options={{ headerShown: false }} />
+        <Stack.Screen name={screenName.profileScreen} component={Profile} options={{ headerShown: false }} />
         <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
       </Stack.Navigator>
     );
@@ -107,7 +112,7 @@ export default function App() {
               iconName = 'bookmark';
             }else if(route.name === screenName.orders){
               iconName = 'package'
-            }else if(route.name === screenName.profileStack){
+            }else if(route.name === screenName.profile){
               iconName = 'user'
             }
 
@@ -117,9 +122,9 @@ export default function App() {
           tabBarInactiveTintColor: 'gray',
           tabBarStyle: {
             backgroundColor: colors.white,
-            paddingBottom: 20,
-            paddingTop: 10,
-            height: 100,
+            paddingBottom: 10,
+            paddingTop: 0,
+            height: 70,
           },
           tabBarLabelStyle: {
             fontSize: 12,
@@ -142,7 +147,7 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Tab.Screen 
-          name={screenName.profileStack} 
+          name={screenName.profile} 
           component={ProfileStackNavigator}
           options={{ headerShown: false }}
         />

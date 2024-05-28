@@ -11,6 +11,7 @@ import DetailsCard from './components/detailsCard/DetailsCard';
 import ArtworkCard from 'components/artwork/ArtworkCard';
 import { fetchsingleArtwork } from 'services/artworks/fetchSingleArtwork';
 import { getImageFileView } from 'lib/storage/getImageFileView';
+import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 
 type RouteParamsType = {
     title: string;
@@ -66,10 +67,10 @@ export default function Artwork() {
                     <View style={styles.artworkDetails}>
                         <Text style={styles.artworkTitle}>{data?.title}</Text>
                         <Text style={styles.artworkCreator}>{data?.artist}</Text>
-                        <Text style={styles.artworkTags}>{data?.materials} | {data?.medium}</Text>
+                        <Text style={styles.artworkTags}>{data?.materials}      |     {data?.rarity}</Text>
                         <View style={styles.tagsContainer}>
-                            <View style={styles.tagItem}><Text style={styles.tagItemText}>{data?.rarity}</Text></View>
-                            {data?.certificate_of_authenticity === 'Yes' && <View style={styles.tagItem}><Text style={styles.tagItemText}>Certificate of authencity</Text></View>}
+                            {data?.certificate_of_authenticity === 'Yes' && <View style={styles.tagItem}><Ionicons name='ribbon-outline' size={15} /><Text style={styles.tagItemText}>Certificate of authencity availiable</Text></View>}
+                            <View style={[styles.tagItem, {backgroundColor: '#e5f4ff'}]}><SimpleLineIcons name='frame' size={15} /><Text style={[styles.tagItemText, {color: '#30589f'}]}>{data?.framing === 'Framed' ? "Frame Included" : "Artwork is not framed"}</Text></View>
                         </View>
                     </View>
                     <View style={styles.priceContainer}>
@@ -82,12 +83,12 @@ export default function Artwork() {
                     </View>
                     <View style={styles.detailsContainer}>
                         <DetailsCard
-                            title='Artwork Details'
+                            title='Additional details about this artwork'
                             details={[
-                                {name: 'Description', text: data?.artwork_description},
+                                {name: 'Description', text: data?.artwork_description || 'N/A'},
                                 {name: 'Materials', text: data.materials},
                                 {name: 'Certificate of authenticity', text: data?.certificate_of_authenticity === 'Yes' ? 'Included' : 'Not included'},
-                                {name: 'Framing', text: data?.framing},
+                                {name: 'Artwork packaging', text: data?.framing},
                                 {name: 'Signature', text: `Signed ${data?.signature}`},
                                 {name: 'Year', text: data?.year}
                             ]}
@@ -95,6 +96,7 @@ export default function Artwork() {
                         <DetailsCard
                             title='Artist Information'
                             details={[
+                                {name: 'Artist name', text: data?.artist},
                                 {name: 'Birth Year', text: data?.artist_birthyear},
                                 {name: 'Country', text: data?.artist_country_origin},
                             ]}
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
         backgroundColor: colors.white,
-        marginTop: 30,
+        marginTop: 10,
     },
     image: {
         height: 340,
@@ -177,7 +179,7 @@ const styles = StyleSheet.create({
     tagItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 2,
+        gap: 5,
         paddingHorizontal: 10,
         paddingVertical: 10,
         borderRadius: 20,
