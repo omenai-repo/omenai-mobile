@@ -9,7 +9,7 @@ type handleBackCLickProp = {
 
 export default function BackFormButton({handleBackClick}: handleBackCLickProp) {
     return (
-        <TouchableOpacity style={styles.container} onPress={handleBackClick}>
+        <TouchableOpacity activeOpacity={1} style={styles.container} onPress={handleBackClick}>
             <AntDesign name='arrowleft' color={colors.primary_black} size={24} />
         </TouchableOpacity>
     )

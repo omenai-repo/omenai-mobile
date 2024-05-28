@@ -9,7 +9,7 @@ type BackScreenButtonTypes = {
 
 export default function BackScreenButton({handleClick}: BackScreenButtonTypes) {
     return (
-        <TouchableOpacity onPress={handleClick}>
+        <TouchableOpacity activeOpacity={1} onPress={handleClick}>
             <View style={styles.container}>
                 <AntDesign name='arrowleft' color={colors.primary_black} size={20} />
             </View>
