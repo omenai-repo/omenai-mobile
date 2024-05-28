@@ -17,6 +17,8 @@ export default function PendingListing({listing}: PendingListingProps) {
             {listing.map((order, idx) => (
                 <ListItem
                     key={idx}
+                    url={order.artwork_data.url}
+                    orderId={order.order_id}
                     artworkName={order.artwork_data.title}
                     artworkPrice={order.artwork_data.pricing.price}
                     dateOrdered={formatIntlDateTime(order.createdAt)}

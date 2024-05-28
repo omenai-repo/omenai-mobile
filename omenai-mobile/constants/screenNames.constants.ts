@@ -9,7 +9,7 @@ export const screenName = {
     catalogListing: 'Catalog-listing',
     catalog: 'Catalog',
     orders: 'Orders',
-    profileStack: 'profile-stack',
+    profileScreen: 'profile-screen',
     profile: 'profile',
     savedArtworks: 'saved-artworks'
 }

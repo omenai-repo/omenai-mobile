@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
-import React from 'react';
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
@@ -19,13 +19,30 @@ type TrendingArtworkCardType = {
 
 export default function TrendingArtworkCard({image, artist, rarity, medium, title, likes}: TrendingArtworkCardType) {
     const navigation = useNavigation<StackNavigationProp<any>>();
-    const image_href = getImageFileView(image, 300);
+
+    const screenWidth = Dimensions.get('window').width;
+    const [imageDimensions, setImageDimensions] = useState({width: 0, height: 0})
+
+    let imageWidth = 0
+    imageWidth = (screenWidth - 60) / 2 //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
+    const image_href = getImageFileView(image, imageWidth);
+
+    useEffect(() => {
+        // Fetch the image to get its dimensions
+        Image.getSize(image_href, (width, height) => {
+          // Calculate the image height based on the screen width and image aspect ratio
+          const aspectRatio = height / width;
+          setImageDimensions({height:height * aspectRatio, width: width});
+        });
+      }, [image_href, screenWidth]);
 
     return (
-        <TouchableOpacity onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
+        <TouchableOpacity activeOpacity={1} onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
             <View style={styles.container}>
                 <View style={styles.top}>
-                    <Image source={{uri: image_href}} style={styles.image} />
+                    <View style={{width: '100%', overflow: 'hidden'}}>
+                        <Image source={{uri: image_href}} style={{width: imageDimensions.width, height: imageDimensions.height, objectFit: 'cover' }} resizeMode="contain" />
+                    </View>
                     <View style={styles.likeContainer}>
                         <TouchableOpacity style={{padding: 10}}>
                             <View style={styles.likeButton}><Feather name='heart' size={16} /></View>
@@ -38,10 +55,10 @@ export default function TrendingArtworkCard({image, artist, rarity, medium, titl
                         <Text style={styles.artistName}>{artist}</Text>
                         <Text style={styles.likes}>{likes} {likes > 1 ? 'Likes' : 'Like'}</Text>
                     </View>
-                    <View style={styles.tagsContainer}>
+                    {/* <View style={styles.tagsContainer}>
                         <Text style={styles.tags}>{medium}</Text>
                         <Text style={styles.tags}>{rarity}</Text>
-                    </View>
+                    </View> */}
                 </View>
             </View>
         </TouchableOpacity>
@@ -52,10 +69,10 @@ const styles = StyleSheet.create({
     container: {
         borderWidth: 1,
         borderColor: '#E0E0E0',
+        overflow: 'hidden'
     },
     top: {
         width: '100%',
-        maxHeight: 250,
         position: 'relative'
     },
     image: {

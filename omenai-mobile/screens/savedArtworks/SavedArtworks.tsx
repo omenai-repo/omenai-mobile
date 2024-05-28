@@ -10,6 +10,8 @@ import Divider from 'components/general/Divider';
 import Loader from 'components/general/Loader';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+import { screenName } from 'constants/screenNames.constants';
 
 type SavedArtworkItemProps = {
     name: string,
@@ -47,7 +49,7 @@ export default function SavedArtworks() {
         let image_href = getImageFileView(url, 80);
 
         return(
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate(screenName.artwork, {title: name})} activeOpacity={1}>
                 <View style={styles.savedArtworkItem}>
                     <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10}}>
                         <Image source={{uri: image_href}} style={styles.image} />

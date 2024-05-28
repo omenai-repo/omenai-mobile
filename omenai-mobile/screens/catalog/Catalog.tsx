@@ -68,19 +68,19 @@ export default function Catalog() {
                     <SearchInput />
                 </View>
                 <View style={styles.mainContainer}>
-                    <Text style={{fontSize: 20, fontWeight: '500', color: colors.primary_black}}>Browse by collection</Text>
+                    {/* <Text style={{fontSize: 20, fontWeight: '500', color: colors.primary_black}}>Browse by collection</Text> */}
                     <View style={{zIndex: 100}}>
-                    <Filter>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {tags.map((i, idx) => (
-                                <TagItem
-                                    name={i}
-                                    isSelected={i === selectedTag}
-                                    key={idx}
-                                />
-                            ))}
-                        </ScrollView>
-                    </Filter>
+                        <Filter>
+                            {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                {tags.map((i, idx) => (
+                                    <TagItem
+                                        name={i}
+                                        isSelected={i === selectedTag}
+                                        key={idx}
+                                    />
+                                ))}
+                            </ScrollView> */}
+                        </Filter>
                     </View>
                     <View style={{zIndex: 5}}>
                         {isLoading ? <View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}><Text>Loading ...</Text></View>:
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     introText: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: '500',
         color: colors.primary_black,
         maxWidth: 290,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: colors.inputBorder,
         paddingHorizontal: 20,
-        paddingTop: 30
+        paddingTop: 10
     },
     tagItem: {
         backgroundColor: '#FAFAFA',
