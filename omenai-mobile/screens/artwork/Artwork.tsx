@@ -12,6 +12,7 @@ import ArtworkCard from 'components/artwork/ArtworkCard';
 import { fetchsingleArtwork } from 'services/artworks/fetchSingleArtwork';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
+import SimilarArtworks from './components/similarArtworks/SimilarArtworks';
 
 type RouteParamsType = {
     title: string;
@@ -102,33 +103,7 @@ export default function Artwork() {
                             ]}
                         />
                     </View>
-                    {/* <View style={styles.similarContainer}>
-                        <Text style={styles.similarTitle}>Similar artwork</Text>
-                        <View style={styles.artworksContainer}>
-                            <View style={styles.singleColumn}>
-                                <ArtworkCard
-                                    title={'Artwork Title'}
-                                    artist={'Artist name'}
-                                    image={''}
-                                    medium={'Oil'}
-                                    price={25000}
-                                    showPrice={true}
-                                    rarity={'Unique'}
-                                />
-                            </View>
-                            <View style={styles.singleColumn}>
-                                <ArtworkCard
-                                    title={'Artwork Title'}
-                                    artist={'Artist name'}
-                                    image={''}
-                                    medium={'Oil'}
-                                    price={25000}
-                                    showPrice={true}
-                                    rarity={'Unique'}
-                                />
-                            </View>
-                        </View>
-                    </View> */}
+                    <SimilarArtworks medium={data?.medium} />
                 </ScrollView>
             )}
             {(!isLoading && !data) && (
@@ -210,23 +185,6 @@ const styles = StyleSheet.create({
     buttonContainer: {
         gap: 20
     },
-    similarContainer: {
-        marginTop: 50
-    },
-    similarTitle: {
-        fontSize: 20,
-        fontWeight: '500',
-        color: colors.primary_black
-    },
-    artworksContainer: {
-        flexDirection: 'row',
-        gap: 20,
-        marginTop: 30
-    },
-    singleColumn: {
-        flex: 1,
-        gap: 20
-    },
     loaderContainer: {
         flex: 1,
         alignItems: 'center',
@@ -237,6 +195,6 @@ const styles = StyleSheet.create({
         color: colors.black
     },
     detailsContainer: {
-        marginBottom: 100
+        marginBottom: 30
     }
 })
