@@ -3,7 +3,7 @@ import React from 'react'
 import { colors } from 'config/colors.config'
 import { Feather } from '@expo/vector-icons'
 import { formatIntlDateTime } from 'utils/formatIntlDateTime'
-import ListItem from './ListItem'
+import OrderCard from './OrderCard'
 
 type PendingListingProps = {
     listing: any[]
@@ -15,14 +15,18 @@ export default function PendingListing({listing}: PendingListingProps) {
     return (
         <View style={styles.container}>
             {listing.map((order, idx) => (
-                <ListItem
+                <OrderCard
                     key={idx}
                     url={order.artwork_data.url}
                     orderId={order.order_id}
                     artworkName={order.artwork_data.title}
                     artworkPrice={order.artwork_data.pricing.price}
                     dateOrdered={formatIntlDateTime(order.createdAt)}
-                    status='pending'
+                    state='pending'
+                    status={order.status}
+                    payment_information={order.payment_information}
+                    tracking_information={order.tracking_information}
+                    shipping_quote={order.shipping_quote}
                 />
             ))}
         </View>

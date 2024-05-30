@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import ListItem from './ListItem'
 import { formatIntlDateTime } from 'utils/formatIntlDateTime'
 import { Feather } from '@expo/vector-icons'
 import { colors } from 'config/colors.config'
 import { sortOrdersDataByDate } from 'utils/sortOrdersDataByDate'
+import OrderCard from './OrderCard'
 
 type OrdersListingProps = {
     orders: any
@@ -23,14 +23,15 @@ export default function HistoryListing({orders}: OrdersListingProps) {
                         {orderlist.data.map((order, index) => {
                             if (order.status !== "completed") return null;
                             return(
-                                <ListItem
+                                <OrderCard
                                     key={index}
                                     url={order.artwork_data.url}
                                     orderId={order.order_id}
                                     artworkName={order.artwork_data?.title}
                                     artworkPrice={order.artwork_data?.pricing.price}
                                     dateOrdered={formatIntlDateTime(order.createdAt)}
-                                    status='pending'
+                                    status={order.status}
+                                    state="history"
                                 />
                             )
                         })}
