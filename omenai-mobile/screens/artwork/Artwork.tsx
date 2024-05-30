@@ -14,10 +14,7 @@ import { getImageFileView } from 'lib/storage/getImageFileView';
 import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import SimilarArtworks from './components/similarArtworks/SimilarArtworks';
 import { formatPrice } from 'utils/priceFormatter';
-
-type RouteParamsType = {
-    title: string;
-};
+import { screenName } from 'constants/screenNames.constants';
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -80,7 +77,7 @@ export default function Artwork() {
                         {data?.pricing.shouldShowPrice === 'Yes' && <Text style={styles.price}>{formatPrice(data?.pricing.price)}</Text>}
                     </View>
                     <View style={styles.buttonContainer}>
-                        <LongBlackButton value='Purchase artwork' isDisabled={false} onClick={() => console.log('')} />
+                        <LongBlackButton value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
                         <LongWhiteButton value='Save artwork' onClick={() => console.log('')} />
                     </View>
                     <View style={styles.detailsContainer}>

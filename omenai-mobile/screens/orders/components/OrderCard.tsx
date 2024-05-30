@@ -4,6 +4,9 @@ import { colors } from 'config/colors.config';
 import { formatPrice } from 'utils/priceFormatter';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
 
 type OrderCardProps = {
     artworkName: string,
@@ -19,6 +22,7 @@ type OrderCardProps = {
 }
 
 export default function OrderCard({artworkName, dateOrdered, status, state, artworkPrice, url, orderId, payment_information, tracking_information, shipping_quote}: OrderCardProps) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     let image_href = getImageFileView(url, 300);
 
@@ -39,7 +43,7 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
                     ) : (
                         <View>
                         {shipping_quote?.shipping_fees !== "" ? (
-                            <FittedBlackButton value='Pay now' onClick={() => console.log('')} isDisabled={false} />
+                            <FittedBlackButton value='Pay now' onClick={() => navigation.navigate(screenName.payment, {id: orderId})} isDisabled={false} />
                         ) : (
                             <>
                             <Text>

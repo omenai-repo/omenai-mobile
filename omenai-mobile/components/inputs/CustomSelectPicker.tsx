@@ -5,7 +5,7 @@ import { colors } from 'config/colors.config';
 
 type CustomSelectPickerProps = {
     data: {label: string, value: string}[],
-    placeholder: string,
+    placeholder?: string,
     label: string,
     value: string,
     handleSetValue: (e: string) => void

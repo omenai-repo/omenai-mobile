@@ -7,7 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Catalog from 'screens/catalog/Catalog';
 import Profile from 'screens/profile/Profile';
 import SavedArtworks from 'screens/savedArtworks/SavedArtworks';
-import OrderDetails from 'screens/orderDetails/OrderDetails';
+import PurchaseArtwork from 'screens/purchase/PurchaseArtwork';
 import { colors } from 'config/colors.config';
 import Home from 'screens/home/Home';
 import Artwork from 'screens/artwork/Artwork';
@@ -93,7 +93,7 @@ export default function IndividualNavigation() {
             <Stack.Screen name='Individual' component={IndividualTabNavigationComponents} options={{headerShown: false}} />
             <Stack.Screen name={screenName.artwork} component={Artwork} options={{ headerShown: false }} />
             <Stack.Screen name={screenName.searchResults} component={SearchResults} options={{headerShown: false}} />
-            <Stack.Screen name={screenName.orderDetails} component={OrderDetails} options={{headerShown: false}} />
+            <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} options={{headerShown: false}} />
             <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
         </Stack.Navigator>
     )
