@@ -3,17 +3,26 @@ import React from 'react';
 import { colors } from 'config/colors.config';
 import { formatPrice } from 'utils/priceFormatter';
 import { getImageFileView } from 'lib/storage/getImageFileView';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
 
-type ListItemProps = {
+type OrderCardProps = {
     artworkName: string,
     artworkPrice: number,
     dateOrdered: string,
     url: string,
     orderId: string,
-    status: string
+    status: string,
+    state: "pending" | "history",
+    payment_information?: PaymentStatusTypes;
+    tracking_information?: TrackingInformationTypes;
+    shipping_quote?: ShippingQuoteTypes;
 }
 
-export default function ListItem({artworkName, dateOrdered, status, artworkPrice, url, orderId}: ListItemProps) {
+export default function OrderCard({artworkName, dateOrdered, status, state, artworkPrice, url, orderId, payment_information, tracking_information, shipping_quote}: OrderCardProps) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     let image_href = getImageFileView(url, 300);
 
@@ -25,10 +34,26 @@ export default function ListItem({artworkName, dateOrdered, status, artworkPrice
                 <Text style={{fontSize: 16, fontWeight: '500', marginTop: 5}}>{formatPrice(artworkPrice)}</Text>
                 <Text style={{fontSize: 16, fontWeight: '500', marginTop: 5}}>{orderId}</Text>
                 <Text style={styles.orderItemDetails}>Ordered: {dateOrdered}</Text>
-                <View style={{flexWrap: 'wrap'}}>
-                    <View style={{borderRadius: 20, overflow: 'hidden', marginTop: 15, backgroundColor: '#E7F6EC', paddingHorizontal: 10}}>
-                        <Text style={styles.statusPill}>{status}</Text>
-                    </View>
+                <View style={{flexWrap: 'wrap', marginTop: 20}}>
+                {state === "pending" ? (
+                    payment_information!.status === "completed" ? (
+                        <Text>
+                        View tracking information
+                        </Text>
+                    ) : (
+                        <View>
+                        {shipping_quote?.shipping_fees !== "" ? (
+                            <FittedBlackButton value='Pay now' onClick={() => navigation.navigate(screenName.payment, {id: orderId})} isDisabled={false} />
+                        ) : (
+                            <>
+                            <Text>
+                                Awaiting gallery confirmation
+                            </Text>
+                            </>
+                        )}
+                        </View>
+                    )
+                    ) : null}
                 </View>
             </View>
         </View>
