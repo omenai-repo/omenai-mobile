@@ -13,6 +13,7 @@ import Home from 'screens/home/Home';
 import Artwork from 'screens/artwork/Artwork';
 import SearchResults from 'screens/searchResults/SearchResults';
 import Orders from 'screens/orders/Orders';
+import Payment from 'screens/payment/Payment';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -95,6 +96,7 @@ export default function IndividualNavigation() {
             <Stack.Screen name={screenName.searchResults} component={SearchResults} options={{headerShown: false}} />
             <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} options={{headerShown: false}} />
             <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
+            <Stack.Screen name={screenName.payment} component={Payment} options={{headerShown: false}} />
         </Stack.Navigator>
     )
 }
