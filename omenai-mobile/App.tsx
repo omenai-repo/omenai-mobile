@@ -23,6 +23,7 @@ import Orders from 'screens/orders/Orders';
 import Profile from 'screens/profile/Profile';
 import SavedArtworks from 'screens/savedArtworks/SavedArtworks';
 import { useFonts } from 'expo-font';
+import OrderDetails from 'screens/orderDetails/OrderDetails';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -58,7 +59,6 @@ export default function App() {
         <Stack.Screen name={screenName.catalogListing} component={Catalog} options={{ headerShown: false }} />
         <Stack.Screen name={screenName.artwork} component={Artwork} options={{ headerShown: false }} />
         <Stack.Screen name={screenName.searchResults} component={SearchResults} options={{headerShown: false}} />
-
       </Stack.Navigator>
     );
   }
@@ -70,6 +70,15 @@ export default function App() {
         <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
       </Stack.Navigator>
     );
+  }
+
+  function OrderStackNavigator(){
+    return(
+      <Stack.Navigator>
+        <Stack.Screen name={screenName.ordersListing} component={Orders} options={{ headerShown: false }} />
+        <Stack.Screen name={screenName.orderDetails} component={OrderDetails} options={{headerShown: false}} />
+      </Stack.Navigator>
+    )
   }
 
   const AuthNavigation = () => {
@@ -143,7 +152,7 @@ export default function App() {
         />
         <Tab.Screen 
           name={screenName.orders} 
-          component={Orders}
+          component={OrderStackNavigator}
           options={{ headerShown: false }}
         />
         <Tab.Screen 

@@ -14,7 +14,7 @@ type InputProps = {
 
 export default function Input({label, onInputChange, placeHolder, keyboardType, value, errorMessage, handleBlur}: InputProps) {
     return (
-        <View>
+        <View style={{zIndex: 100}}>
             <Text style={styles.label}>{label}</Text>
             <TextInput 
                 onChangeText={onInputChange} 
