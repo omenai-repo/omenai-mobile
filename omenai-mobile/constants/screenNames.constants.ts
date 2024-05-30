@@ -9,6 +9,8 @@ export const screenName = {
     catalogListing: 'Catalog-listing',
     catalog: 'Catalog',
     orders: 'Orders',
+    ordersListing: 'orders-listing',
+    orderDetails: 'order-details',
     profileScreen: 'profile-screen',
     profile: 'profile',
     savedArtworks: 'saved-artworks'

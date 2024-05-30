@@ -4,7 +4,7 @@ import { colors } from '../../config/colors.config'
 
 type LongBlackButtonProps = {
     value: string,
-    isDisabled: boolean,
+    isDisabled?: boolean,
     onClick: () => void,
     isLoading?: boolean
 }
