@@ -56,3 +56,25 @@ type ArtworkDataType = {
   url: string,
   certificate_of_authenticity: "Yes" | 'No'
 }
+
+type OrderAcceptedStatusTypes = {
+  status: "accepted" | "declined" | "";
+  reason?: string;
+};
+type TrackingInformationTypes = {
+  tracking_id: string;
+  tracking_link: string;
+};
+type PaymentStatusTypes = {
+  status: "pending" | "completed";
+  transaction_value: string;
+  transaction_date: string;
+  transaction_reference: string;
+};
+
+type ShippingQuoteTypes = {
+  package_carrier: string;
+  shipping_fees: string;
+  taxes: string;
+  additional_information?: string;
+};

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { colors } from 'config/colors.config'
-import ListItem from 'screens/orders/components/ListItem'
+import ListItem from 'screens/orders/components/OrderCard'
 import LongBlackButton from 'components/buttons/LongBlackButton'
 import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore'
 import SummaryContainer from './SummaryContainer'
