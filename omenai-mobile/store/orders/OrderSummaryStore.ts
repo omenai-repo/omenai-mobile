@@ -1,15 +1,19 @@
 import { create } from "zustand";
 
 type OrderSummaryStoreTypes = {
+    isLoading: boolean,
+    setIsLoading: (e: boolean) => void,
+    artworkOrderData: artworkOrderDataTypes | null,
+    setArtworkOrderData: (e: artworkOrderDataTypes) => void,
     selectedSectionIndex: number,
     setSelectedSectionIndex: (e: number) => void,
     deliveryMode: "Shipping" | "Pickup",
     setDeliveryMode: (e: "Shipping" | "Pickup") => void,
-    fullname: string,
-    setFullname: (e: string) => void,
+    name: string,
+    setName: (e: string) => void,
     email: string,
     setEmail: (e: string) => void,
-    deliveryAddress: string,
+    address: string,
     setDeliveryAddress: (e: string) => void,
     country: string,
     city: string,
@@ -18,12 +22,18 @@ type OrderSummaryStoreTypes = {
     setCountry: (e: string) => void,
     setState: (e: string) => void,
     setCity: (e: string) => void,
-    setZipCode: (e: string) => void
-
+    setZipCode: (e: string) => void,
+    saveShippingAddress: boolean,
+    setSaveShippingAddress: (e: boolean) => void
+    resetState: () => void
 };
 
 export const useOrderSummaryStore = create<OrderSummaryStoreTypes>(
     (set, get) => ({
+        isLoading: false,
+        setIsLoading: (e: boolean) => {
+            set({isLoading: e})
+        },
         selectedSectionIndex: 1,
         setSelectedSectionIndex: (index: number) => {
             set({selectedSectionIndex: index})
@@ -32,17 +42,17 @@ export const useOrderSummaryStore = create<OrderSummaryStoreTypes>(
         setDeliveryMode: (e: "Shipping" | "Pickup") => {
             set({deliveryMode: e})
         },
-        fullname: '',
-        setFullname: (e: string) => {
-            set({fullname: e})
+        name: '',
+        setName: (e: string) => {
+            set({name: e})
         },
         email: '',
         setEmail: (e: string) => {
             set({email: e})
         },
-        deliveryAddress: '',
+        address: '',
         setDeliveryAddress: (e: string) => {
-            set({deliveryAddress: e})
+            set({address: e})
         },
         city: '',
         setCity: (e: string) => {
@@ -60,5 +70,26 @@ export const useOrderSummaryStore = create<OrderSummaryStoreTypes>(
         setCountry: (e: string) => {
             set({country: e})
         },
+        artworkOrderData: null,
+        setArtworkOrderData: (e: artworkOrderDataTypes) => {
+            set({artworkOrderData: e})
+        },
+        saveShippingAddress: false,
+        setSaveShippingAddress: (e: boolean) => {
+            set({saveShippingAddress: e})
+        },
+        resetState: () => {
+            set({
+                selectedSectionIndex: 1,
+                address: '',
+                isLoading: false,
+                email: '',
+                name: '',
+                state: '',
+                zipCode: '',
+                country: '',
+                artworkOrderData: null
+            })
+        }
     })
 )

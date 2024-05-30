@@ -78,3 +78,25 @@ type ShippingQuoteTypes = {
   taxes: string;
   additional_information?: string;
 };
+
+type RouteParamsType = {
+  title: string;
+};
+
+type artworkOrderDataTypes = {
+  pricing: {shouldShowPrice: "Yes" | "No", price: number},
+  url: string,
+  title: string,
+  artist: string,
+  gallery_id: string,
+  art_id: string
+}
+
+type IndividualAddressTypes = {
+  address_line: string;
+  city: string;
+  country: string;
+  state: string;
+  zip: string;
+  [key: string]: string;
+};

@@ -8,19 +8,46 @@ import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
 import { countriesListing } from 'constants/countries.constants';
 import SummaryContainer from './SummaryContainer';
 import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore';
+import { validate } from 'lib/validations/validatorGroup';
 
 const deliveryOptions = [
     'Shipping',
-    'Pickup'
+    // 'Pickup'
 ]
 
 type deliveryModeTypes = "Shipping" | "Pickup"
 
-export default function ShippingDetails() {
-    const [selectedDeliveryoption, setSelectedDeliveryOption] = useState(deliveryOptions[0]);
-    const [saveDeliveryAddress, setSaveDeliveryAddress] = useState(false);
+export default function ShippingDetails({data: {
+    pricing
+}}: {data: artworkOrderDataTypes}){
+    const [formErrors, setFormErrors] = useState({name: '', email: '', address: '', zipCode: '', city: '', state: ''});
 
-    const { deliveryMode, setDeliveryMode, fullname, setFullname, email, setEmail, deliveryAddress, setDeliveryAddress, country, setCountry, city, setCity, zipCode, setZipCode, state, setState } = useOrderSummaryStore();
+    const { deliveryMode, setDeliveryMode, name, setName, email, setEmail, address, setDeliveryAddress, country, setCountry, city, setCity, zipCode, setZipCode, state, setState, saveShippingAddress, setSaveShippingAddress } = useOrderSummaryStore();
+
+    const checkIsDisabled = () => {
+        // Check if there are no error messages and all input fields are filled
+        const isFormValid = Object.values(formErrors).every((error) => error === "");
+        const areAllFieldsFilled = Object.values({
+            name: name,
+            email: email,
+            address: address,
+            // country: country,
+            city: city,
+            state: state,
+            zipCode: zipCode
+        }).every((value) => value !== "");
+
+        return !(isFormValid && areAllFieldsFilled);
+    }
+
+    const handleValidationChecks = (label: string, value: string, confirm?: string) => {        
+        const {success, errors} : {success: boolean, errors: string[] | []} = validate(value, label, confirm)
+        if(!success){
+            setFormErrors(prev => ({...prev, [label]: errors[0]}));
+        }else{
+            setFormErrors(prev => ({...prev, [label]: ''}));
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -35,9 +62,11 @@ export default function ShippingDetails() {
                 <View style={styles.formContainer}>
                     <Input
                         label='Full name'
-                        value={fullname}
+                        value={name}
                         placeHolder='Enter your full name'
-                        onInputChange={setFullname}
+                        onInputChange={setName}
+                        handleBlur={() => handleValidationChecks('name', name)}
+                        errorMessage={formErrors.name}
                     />
                     <Input
                         label='Email address'
@@ -45,15 +74,19 @@ export default function ShippingDetails() {
                         placeHolder='Enter your email address'
                         onInputChange={setEmail}
                         keyboardType="email-address"
+                        handleBlur={() => handleValidationChecks('email', email)}
+                        errorMessage={formErrors.email}
                     />
                     <View>
                         <Input
                             label='Delivery address'
-                            value={deliveryAddress}
+                            value={address}
                             placeHolder='Enter your delivery address'
                             onInputChange={setDeliveryAddress}
+                            handleBlur={() => handleValidationChecks('address', address)}
+                            errorMessage={formErrors.address}
                         />
-                        <CustomChecker isSelected={saveDeliveryAddress} label='Save my delivery address' onPress={() => setSaveDeliveryAddress(prev => !prev)} />
+                        <CustomChecker isSelected={saveShippingAddress} label='Save my delivery address' onPress={() => setSaveShippingAddress(!saveShippingAddress)} />
                     </View>
                     <CustomSelectPicker
                         placeholder='🇺🇸 Select your country'
@@ -67,12 +100,16 @@ export default function ShippingDetails() {
                         value={state}
                         placeHolder='Enter your state'
                         onInputChange={setState}
+                        handleBlur={() => handleValidationChecks('state', state)}
+                        errorMessage={formErrors.state}
                     />
                     <Input
                         label='City'
                         value={city}
                         placeHolder='Enter your city'
                         onInputChange={setCity}
+                        handleBlur={() => handleValidationChecks('city', city)}
+                        errorMessage={formErrors.city}
                     />
                     <Input
                         label='Zip Code'
@@ -80,10 +117,12 @@ export default function ShippingDetails() {
                         placeHolder='123456'
                         onInputChange={setZipCode}
                         keyboardType="number-pad"
+                        handleBlur={() => handleValidationChecks('zipCode', zipCode)}
+                        errorMessage={formErrors.zipCode}
                     />
                 </View>
             </View>
-            <SummaryContainer buttonTypes="Request price quote" />
+            <SummaryContainer buttonTypes="Request price quote" price={pricing.shouldShowPrice === "Yes" ? pricing.price : 0} disableButton={checkIsDisabled()} />
         </View>
     )
 }
