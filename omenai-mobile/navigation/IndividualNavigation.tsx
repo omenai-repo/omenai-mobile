@@ -14,6 +14,7 @@ import Artwork from 'screens/artwork/Artwork';
 import SearchResults from 'screens/searchResults/SearchResults';
 import Orders from 'screens/orders/Orders';
 import Payment from 'screens/payment/Payment';
+import EditProfile from 'screens/editProfile/EditProfile';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -34,7 +35,7 @@ export default function IndividualNavigation() {
     };
 
     const IndividualTabNavigationComponents = () => {
-    return(
+      return(
         <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarIcon: ({ focused }) => {
@@ -86,7 +87,7 @@ export default function IndividualNavigation() {
             options={{ headerShown: false }}
           />
         </Tab.Navigator>
-    )
+      )
     }
 
     return(
@@ -97,6 +98,7 @@ export default function IndividualNavigation() {
             <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} options={{headerShown: false}} />
             <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
             <Stack.Screen name={screenName.payment} component={Payment} options={{headerShown: false}} />
+            <Stack.Screen name={screenName.editProfile} component={EditProfile} options={{headerShown: false}} />
         </Stack.Navigator>
     )
 }
