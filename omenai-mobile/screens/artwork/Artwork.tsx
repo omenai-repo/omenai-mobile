@@ -11,7 +11,7 @@ import DetailsCard from './components/detailsCard/DetailsCard';
 import ArtworkCard from 'components/artwork/ArtworkCard';
 import { fetchsingleArtwork } from 'services/artworks/fetchSingleArtwork';
 import { getImageFileView } from 'lib/storage/getImageFileView';
-import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
+import { Feather, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import SimilarArtworks from './components/similarArtworks/SimilarArtworks';
 import { formatPrice } from 'utils/priceFormatter';
 import { screenName } from 'constants/screenNames.constants';
@@ -50,6 +50,7 @@ export default function Artwork() {
 
     return (
         <View style={{flex: 1, backgroundColor: colors.white}}>
+            <View style={{flex: 1}}>
             <SafeAreaView>
                 <View style={{paddingHorizontal: 20}}>
                     <BackScreenButton handleClick={() => navigation.goBack()}/>
@@ -62,44 +63,41 @@ export default function Artwork() {
             )}
             {data && (
                 <ScrollView style={styles.scrollContainer}>
-                    <Image source={{uri: image_href}} style={styles.image} />
-                    <View style={styles.artworkDetails}>
-                        <Text style={styles.artworkTitle}>{data?.title}</Text>
-                        <Text style={styles.artworkCreator}>{data?.artist}</Text>
-                        <Text style={styles.artworkTags}>{data?.materials}      |     {data?.rarity}</Text>
-                        <View style={styles.tagsContainer}>
-                            {data?.certificate_of_authenticity === 'Yes' && <View style={styles.tagItem}><Ionicons name='ribbon-outline' size={15} /><Text style={styles.tagItemText}>Certificate of authencity availiable</Text></View>}
-                            <View style={[styles.tagItem, {backgroundColor: '#e5f4ff'}]}><SimpleLineIcons name='frame' size={15} /><Text style={[styles.tagItemText, {color: '#30589f'}]}>{data?.framing === 'Framed' ? "Frame Included" : "Artwork is not framed"}</Text></View>
+                    <View style={{paddingHorizontal: 20}}>
+                        <Image source={{uri: image_href}} style={styles.image} />
+                        <View style={styles.likeContainer}>
+                            <View style={[styles.tagItem, {backgroundColor: '#f5f5f5', gap: 10, paddingHorizontal: 20}]}><Feather name='heart' /><Text>Save artwork</Text></View>
                         </View>
-                    </View>
-                    <View style={styles.priceContainer}>
-                        <Text style={styles.priceTitle}>Price</Text>
-                        {data?.pricing.shouldShowPrice === 'Yes' && <Text style={styles.price}>{formatPrice(data?.pricing.price)}</Text>}
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <LongBlackButton value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
-                        <LongWhiteButton value='Save artwork' onClick={() => console.log('')} />
-                    </View>
-                    <View style={styles.detailsContainer}>
-                        <DetailsCard
-                            title='Additional details about this artwork'
-                            details={[
-                                {name: 'Description', text: data?.artwork_description || 'N/A'},
-                                {name: 'Materials', text: data.materials},
-                                {name: 'Certificate of authenticity', text: data?.certificate_of_authenticity === 'Yes' ? 'Included' : 'Not included'},
-                                {name: 'Artwork packaging', text: data?.framing},
-                                {name: 'Signature', text: `Signed ${data?.signature}`},
-                                {name: 'Year', text: data?.year}
-                            ]}
-                        />
-                        <DetailsCard
-                            title='Artist Information'
-                            details={[
-                                {name: 'Artist name', text: data?.artist},
-                                {name: 'Birth Year', text: data?.artist_birthyear},
-                                {name: 'Country', text: data?.artist_country_origin},
-                            ]}
-                        />
+                        <View style={styles.artworkDetails}>
+                            <Text style={styles.artworkTitle}>{data?.title}</Text>
+                            <Text style={styles.artworkCreator}>{data?.artist}</Text>
+                            <Text style={styles.artworkTags}>{data?.materials}      |     {data?.rarity}</Text>
+                            <View style={styles.tagsContainer}>
+                                {data?.certificate_of_authenticity === 'Yes' && <View style={styles.tagItem}><Ionicons name='ribbon-outline' size={15} /><Text style={styles.tagItemText}>Certificate of authencity availiable</Text></View>}
+                                <View style={[styles.tagItem, {backgroundColor: '#e5f4ff'}]}><SimpleLineIcons name='frame' size={15} /><Text style={[styles.tagItemText, {color: '#30589f'}]}>{data?.framing === 'Framed' ? "Frame Included" : "Artwork is not framed"}</Text></View>
+                            </View>
+                        </View>
+                        <View style={styles.detailsContainer}>
+                            <DetailsCard
+                                title='Additional details about this artwork'
+                                details={[
+                                    {name: 'Description', text: data?.artwork_description || 'N/A'},
+                                    {name: 'Materials', text: data.materials},
+                                    {name: 'Certificate of authenticity', text: data?.certificate_of_authenticity === 'Yes' ? 'Included' : 'Not included'},
+                                    {name: 'Artwork packaging', text: data?.framing},
+                                    {name: 'Signature', text: `Signed ${data?.signature}`},
+                                    {name: 'Year', text: data?.year}
+                                ]}
+                            />
+                            <DetailsCard
+                                title='Artist Information'
+                                details={[
+                                    {name: 'Artist name', text: data?.artist},
+                                    {name: 'Birth Year', text: data?.artist_birthyear},
+                                    {name: 'Country', text: data?.artist_country_origin},
+                                ]}
+                            />
+                        </View>
                     </View>
                     <SimilarArtworks medium={data?.medium} />
                 </ScrollView>
@@ -109,6 +107,19 @@ export default function Artwork() {
                     <Text style={styles.loaderText}>No details of artwork</Text>
                 </View>
             )}
+            </View>
+            <SafeAreaView>
+                <View style={{backgroundColor: colors.white, paddingHorizontal: 20, borderTopWidth: 1, borderTopColor: colors.grey50}}>
+                    <View style={styles.priceContainer}>
+                        <Text style={styles.priceTitle}>Price</Text>
+                        {data?.pricing.shouldShowPrice === 'Yes' && <Text style={styles.price}>{formatPrice(data?.pricing.price)}</Text>}
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <LongBlackButton value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
+                        {/* <LongWhiteButton value='Save artwork' onClick={() => console.log('')} /> */}
+                    </View>
+                </View>
+            </SafeAreaView>
         </View>
     )
 }
@@ -116,7 +127,7 @@ export default function Artwork() {
 const styles = StyleSheet.create({
     scrollContainer: {
         flex: 1,
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         backgroundColor: colors.white,
         marginTop: 10,
     },
@@ -163,9 +174,7 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     priceContainer:  {
-        marginVertical: 15,
-        borderTopWidth: 1,
-        borderTopColor: colors.inputBorder,
+        marginVertical: 1,
         borderBottomWidth: 1,
         borderBottomColor: colors.inputBorder,
         paddingVertical: 20
@@ -194,5 +203,9 @@ const styles = StyleSheet.create({
     },
     detailsContainer: {
         marginBottom: 30
+    },
+    likeContainer: {
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })

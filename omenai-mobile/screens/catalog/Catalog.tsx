@@ -61,33 +61,33 @@ export default function Catalog() {
 
     return (
         <View style={styles.container}>
-            <HeaderWithTitle pageTitle='Catalog' />
-            <ScrollView>
-                <View style={styles.topContainer}>
-                    <Text style={styles.introText}>Shop your favorite artworks and collections</Text>
-                    <SearchInput />
-                </View>
-                <View style={styles.mainContainer}>
-                    {/* <Text style={{fontSize: 20, fontWeight: '500', color: colors.primary_black}}>Browse by collection</Text> */}
-                    <View style={{zIndex: 100}}>
-                        <Filter>
-                            {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                {tags.map((i, idx) => (
-                                    <TagItem
-                                        name={i}
-                                        isSelected={i === selectedTag}
-                                        key={idx}
-                                    />
-                                ))}
-                            </ScrollView> */}
-                        </Filter>
+            <SafeAreaView>
+                <ScrollView>
+                    <View style={{paddingHorizontal: 20}}>
+                        <SearchInput />
                     </View>
-                    <View style={{zIndex: 5}}>
-                        {isLoading ? <View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}><Text>Loading ...</Text></View>:
-                        <ArtworksListing data={artworks} />}
+                    <View style={styles.mainContainer}>
+                        {/* <Text style={{fontSize: 20, fontWeight: '500', color: colors.primary_black}}>Browse by collection</Text> */}
+                        <View style={{zIndex: 100}}>
+                            <Filter>
+                                {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                    {tags.map((i, idx) => (
+                                        <TagItem
+                                            name={i}
+                                            isSelected={i === selectedTag}
+                                            key={idx}
+                                        />
+                                    ))}
+                                </ScrollView> */}
+                            </Filter>
+                        </View>
+                        <View style={{zIndex: 5}}>
+                            {isLoading ? <View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}><Text>Loading ...</Text></View>:
+                            <ArtworksListing data={artworks} />}
+                        </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </SafeAreaView>
         </View>
     )
 }
@@ -108,9 +108,7 @@ const styles = StyleSheet.create({
         paddingVertical: 40
     },
     mainContainer: {
-        marginTop: 40,
-        borderTopWidth: 1,
-        borderTopColor: colors.inputBorder,
+        marginTop: 10,
         paddingHorizontal: 20,
         paddingTop: 10
     },
