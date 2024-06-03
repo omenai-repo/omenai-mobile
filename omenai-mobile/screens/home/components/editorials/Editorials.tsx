@@ -3,20 +3,51 @@ import React from 'react'
 import { colors } from '../../../../config/colors.config'
 import { Feather } from '@expo/vector-icons';
 import galleryImage from '../../../../assets/images/gallery-banner.png';
+import { FlatList } from 'react-native-gesture-handler';
+
+import gallery_one from '../../../../assets/images/gallery_one.png';
+
+const data = [
+    {
+        image: 'https://thesun.my/binrepository/web-page-3-art-economy-art_4236330_20240603074729.jpg',
+        articleHeader: 'Meet XinJin Pi, Chineese painter',
+        writer: 'Oluwafemi',
+        content: ''
+    },
+    {
+        image: 'https://www.artnews.com/wp-content/uploads/2024/05/IMG_1784.jpg',
+        articleHeader: 'Women Art taking over london',
+        writer: 'Moses Martin',
+        content: ''
+    },
+    {
+        image: 'https://www.artnews.com/wp-content/uploads/2024/05/Fini_ART523873.jpeg?w=762',
+        articleHeader: 'Black and White paintings on the rise',
+        writer: 'Adeyinka Moses',
+        content: ''
+    },
+];
+
+type EditorialCardProps = {
+    image: string,
+    writer: string,
+    articleHeader: string,
+    content: string
+}
 
 export default function Editorials() {
 
-    const Editorials = () => {
+    const Editorials = ({image, writer, articleHeader, content}: EditorialCardProps) => {
         return(
             <View style={styles.card}>
-                <Image source={galleryImage} style={styles.image} />
+                <Image source={{uri: image}} style={styles.image} />
                 <View>
                     <View style={styles.cardDetails}>
-                        <Text style={{fontSize: 12, color: '#616161'}}>by Jane Doe</Text>
+                        <Text style={{fontSize: 12, color: '#616161'}}>by {writer}</Text>
                         <View style={{height: 5, width: 5, borderRadius: 5, backgroundColor: '#616161'}} />
-                        <Text style={{fontSize: 12, color: '#616161'}}>by Jane Doe</Text>
+                        <Text style={{fontSize: 12, color: '#616161'}}>12th June, 2024</Text>
                     </View>
-                    <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 15, fontWeight: 500}}>Blog article header</Text>
+                    <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 15, fontWeight: 500}}>{articleHeader}</Text>
                     <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize: 14, marginTop: 10, color: '#616161'}}>This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post.</Text>
                     <TouchableOpacity style={{flexWrap: 'wrap'}}>
                         <View style={styles.cardButton}>
@@ -31,23 +62,24 @@ export default function Editorials() {
 
     return (
         <View style={{marginTop: 40}}>
-            <View style={styles.container}>
-                <View style={{flex: 1}}>
-                    <Text style={{fontSize: 18, fontWeight: 500}}>Editorials</Text>
-                </View>
-                <View style={{flex: 1}}>
-                    <TouchableOpacity>
-                        <View style={styles.seeMoreButton}>
-                            <Text style={{fontSize: 14, color: colors.primary_black}}>See more</Text>
-                            <Feather name='arrow-right' color={colors.primary_black} size={18} />
-                        </View>
-                    </TouchableOpacity>
-                </View>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
+                <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Featured Galleries</Text>
             </View>
-            <View style={styles.featuredListing}>
-                <Editorials />
-                <Editorials />
-            </View>
+            <FlatList
+                data={data}
+                renderItem={({item}: {item: EditorialCardProps}) => (
+                    <Editorials
+                        image={item.image}
+                        writer={item.writer}
+                        content={item.content}
+                        articleHeader={item.articleHeader}
+                    />
+                )}
+                keyExtractor={(_, index) => JSON.stringify(index)}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                style={{marginTop: 20}}
+            />
         </View>
     ) 
 }
@@ -73,7 +105,8 @@ const styles = StyleSheet.create({
         marginTop: 20
     }, 
     card: {
-        flex: 1
+        width: 350,
+        marginLeft: 20
     },
     cardDetails: {
         flexDirection: 'row',
@@ -82,7 +115,8 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     image: {
-        width: '100%'
+        width: '100%',
+        height: 300
     },
     cardButton: {
         marginTop: 25,

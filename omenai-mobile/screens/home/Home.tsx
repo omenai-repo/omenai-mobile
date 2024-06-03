@@ -20,6 +20,7 @@ export default function Home() {
                 <NewArtworksListing />
                 <FeaturedGalleries />
                 <TrendingArtworks />
+                <Editorials />
 
                     {/* <View style={styles.contentsContainer}>
                         <Text style={styles.introText}>Shop your favorite artworks and collections</Text>
