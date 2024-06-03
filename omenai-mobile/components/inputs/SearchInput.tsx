@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 15
+        gap: 15,
     },
     input: {
         flex: 1,
