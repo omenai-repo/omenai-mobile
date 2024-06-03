@@ -9,13 +9,19 @@ import FeaturedGalleries from './components/featuredGalleries/FeaturedGalleries'
 import Editorials from './components/editorials/Editorials'
 import ListingHeader from './components/listingHeader/ListingHeader'
 import ListingSelectContainer from './components/listingHeader/ListingSelectContainer'
+import NewArtworksListing from './components/NewArtworksListing'
+import TrendingArtworks from './components/TrendingArtworks'
 
 export default function Home() {
     return (
-            <View style={styles.container}>
-                <Header />
+            <View style={styles.container}> 
                 <ScrollView>
-                    <View style={styles.contentsContainer}>
+                <Header />
+                <NewArtworksListing />
+                <FeaturedGalleries />
+                <TrendingArtworks />
+
+                    {/* <View style={styles.contentsContainer}>
                         <Text style={styles.introText}>Shop your favorite artworks and collections</Text>
                         <SearchInput />
                         <View style={styles.courselContainer}>
@@ -28,7 +34,7 @@ export default function Home() {
                             <FeaturedGalleries />
                             <Editorials />
                         </View>
-                    </View>
+                    </View> */}
                 </ScrollView>
             </View>
     )

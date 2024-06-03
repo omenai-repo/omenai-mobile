@@ -3,16 +3,51 @@ import React from 'react'
 import { colors } from '../../../../config/colors.config'
 import { Feather } from '@expo/vector-icons';
 import galleryImage from '../../../../assets/images/gallery-banner.png';
+import { FlatList } from 'react-native-gesture-handler';
+
+import gallery_one from '../../../../assets/images/gallery_one.png';
+import gallery_two from '../../../../assets/images/gallery_two.png';
+import gallery_three from '../../../../assets/images/gallery_three.jpg';
+import gallery_four from '../../../../assets/images/gallery_four.jpg';
+
+const data = [
+    {
+        image: gallery_one,
+        name: 'Midas',
+        location: '1035 Manchester, London'
+    },
+    {
+        image: gallery_two,
+        name: 'The Expresso Gallery',
+        location: '25 Expresso, Dublin'
+    },
+    {
+        image: gallery_three,
+        name: 'Midas',
+        location: 'London'
+    },
+    {
+        image: gallery_four,
+        name: 'The Boys',
+        location: 'New york, USA'
+    }
+];
+
+type GalleryCardProps = {
+    image: string, 
+    name: string,
+    location: string
+}
 
 export default function FeaturedGalleries() {
 
-    const Gallery = () => {
+    const Gallery = ({image, name, location}: GalleryCardProps) => {
         return(
             <View style={styles.gallery}>
-                <Image source={galleryImage} style={styles.image} />
+                <Image source={image} style={styles.image} />
                 <View style={styles.contentContainer}>
-                    <Text style={{fontSize: 14, color: colors.primary_black}}>Name of gallery</Text>
-                    <Text style={{fontSize: 12, marginTop: 5, color: '#858585'}}>Location of gallery</Text>
+                    <Text style={{fontSize: 14, color: colors.primary_black}}>{name}</Text>
+                    <Text style={{fontSize: 12, marginTop: 5, color: '#858585'}}>{location}</Text>
                 </View>
             </View>
         )
@@ -20,23 +55,23 @@ export default function FeaturedGalleries() {
 
     return (
         <View style={{marginTop: 40}}>
-            <View style={styles.container}>
-                <View style={{flex: 1}}>
-                    <Text style={{fontSize: 18, fontWeight: 500}}>Featured galleries</Text>
-                </View>
-                <View style={{flex: 1}}>
-                    <TouchableOpacity>
-                        <View style={styles.seeMoreButton}>
-                            <Text style={{fontSize: 14, color: colors.primary_black}}>See more</Text>
-                            <Feather name='arrow-right' color={colors.primary_black} size={18} />
-                        </View>
-                    </TouchableOpacity>
-                </View>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
+                <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Featured Galleries</Text>
             </View>
-            <View style={styles.featuredListing}>
-                <Gallery />
-                <Gallery />
-            </View>
+            <FlatList
+                data={data}
+                renderItem={({item}: {item: GalleryCardProps}) => (
+                    <Gallery
+                        name={item.name}
+                        image={item.image}
+                        location={item.location}
+                    />
+                )}
+                keyExtractor={(_, index) => JSON.stringify(index)}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                style={{marginTop: 20}}
+            />
         </View>
     )
 }
@@ -63,14 +98,14 @@ const styles = StyleSheet.create({
     }, 
     gallery: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: '#ebebeb'
+        width: 300,
+        marginLeft: 20
     },
     contentContainer: {
-        backgroundColor: '#FAFAFA',
-        padding: 10
+        paddingTop: 10,
     },
     image: {
-        width: '100%'
+        width: '100%',
+        height: 200
     }
 })
