@@ -1,49 +1,16 @@
-import { Image, StyleSheet, Text, View, SafeAreaView, Modal } from 'react-native'
+import { Image, StyleSheet, View, SafeAreaView } from 'react-native'
 import React from 'react'
 import { colors } from '../../config/colors.config'
 
-import omenaiIndividualAvatar from '../../assets/images/omenai-individual-avatar.jpg'
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Feather } from '@expo/vector-icons';
-import { useAppStore } from 'store/app/appStore';
-import { logout } from 'utils/logout.utils';
-import CustomModal from 'components/modal/CustomModal';
-import { useModalStore } from 'store/modal/modalStore';
+import omenaiLogo from '../../assets/omenai-logo.png';
 
 export default function Header() {
-    const { userSession } = useAppStore();
-
-    const { setModalMessage, modalMessage } = useModalStore()
 
     return (
-        <SafeAreaView style={{backgroundColor: colors.primary_black}}>
-            <View style={styles.container}>
-                <View style={{flex: 1}}>
-                    <Text style={{fontSize: 16, color: colors.white}}>Welcome Back,</Text>
-                    <Text style={{fontSize: 20, fontWeight: 500, color: colors.white}}>{userSession?.name}</Text>
-                </View>
-                <View style={styles.leftContainer}>
-                    <TouchableOpacity>
-                        <View style={styles.iconContainer}>
-                            <Feather name='bell' size={20} />
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setModalMessage('Confirm Logout')}>
-                        <Image style={styles.image} source={omenaiIndividualAvatar} alt='' />
-                    </TouchableOpacity>
-                </View>
+        <SafeAreaView>
+            <View style={{alignItems: 'center'}}>
+                <Image source={omenaiLogo} />
             </View>
-            <CustomModal
-                multiChoice='Yes, Logout'
-                isVisible={modalMessage !== null}
-                value={modalMessage}
-                handleDismiss={e => {
-                    setModalMessage(null)
-                    if(e === true){
-                        logout()
-                    }
-                }}
-            />
         </SafeAreaView>
     )
 }
