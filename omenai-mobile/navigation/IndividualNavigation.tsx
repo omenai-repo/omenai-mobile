@@ -28,7 +28,7 @@ export default function IndividualNavigation() {
     const CustomTabBarIcon = ({ name, focused }: CustomTabBarIconProps) => {
         return (
             <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
-                <Feather name={name} size={18} color={focused ? 'white' : 'gray'} />
+                <Feather name={name} size={22} color={focused ? 'white' : 'gray'} />
             </View>
         );
     };
@@ -50,8 +50,9 @@ export default function IndividualNavigation() {
                 iconName = 'user'
               }
   
-              return <CustomTabBarIcon name={iconName} focused={focused} />;;
+              return <CustomTabBarIcon name={iconName} focused={focused} />;
             },
+            tabBarLabel: () => null,
             tabBarActiveTintColor: colors.primary_black,
             tabBarInactiveTintColor: 'gray',
             tabBarStyle: {
