@@ -57,6 +57,14 @@ type ArtworkDataType = {
   certificate_of_authenticity: "Yes" | 'No'
 }
 
+type ArtworkFlatlistItem = {
+  title: string,
+  artist: string,
+  pricing: {price: number, shouldShowPrice: "Yes" | "No"},
+  url: string,
+  pricing: {price: number, shouldShowPrice: "Yes" | "No"}
+}
+
 type OrderAcceptedStatusTypes = {
   status: "accepted" | "declined" | "";
   reason?: string;
