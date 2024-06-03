@@ -4,6 +4,7 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import ArtworkCard from 'components/artwork/ArtworkCard';
 import { fetchArtworks } from 'services/artworks/fetchArtworks';
 import { colors } from 'config/colors.config';
+import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
 
 export default function NewArtworksListing() {
     const [isLoading, setIsLoading] = useState(false)
@@ -34,22 +35,24 @@ export default function NewArtworksListing() {
                 <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>New artworks for you</Text>
                 <Text>View more</Text>
             </View>
-            <FlatList
-                data={data}
-                renderItem={({item}: {item: ArtworkFlatlistItem}) => (
-                    <ArtworkCard 
-                        title={item.title} 
-                        url={item.url}
-                        artist={item.artist}
-                        showPrice={item.pricing.shouldShowPrice === "Yes"}
-                        price={item.pricing.price}
-                    />
-                )}
-                keyExtractor={(_, index) => JSON.stringify(index)}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                style={{marginTop: 20}}
-            />
+            {isLoading ? <ArtworkCardLoader /> :
+                <FlatList
+                    data={data}
+                    renderItem={({item}: {item: ArtworkFlatlistItem}) => (
+                        <ArtworkCard 
+                            title={item.title} 
+                            url={item.url}
+                            artist={item.artist}
+                            showPrice={item.pricing.shouldShowPrice === "Yes"}
+                            price={item.pricing.price}
+                        />
+                    )}
+                    keyExtractor={(_, index) => JSON.stringify(index)}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    style={{marginTop: 20}}
+                />
+            }
         </View>
     )
 }

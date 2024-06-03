@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import ArtworkCard from 'components/artwork/ArtworkCard'
 import { fetchArtworksByCriteria } from 'services/artworks/fetchArtworksByCriteria'
+import ArtworkCardLoader from 'components/general/ArtworkCardLoader'
+import { FlatList } from 'react-native-gesture-handler'
 
 export default function SimilarArtworks({medium}: {medium: string}) {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -19,7 +21,7 @@ export default function SimilarArtworks({medium}: {medium: string}) {
         if(results.isOk){
             let resultsData = results.body.data as []
             if(resultsData.length > 0){
-                setData(resultsData.splice(0,2))
+                setData(resultsData.splice(0,4))
             }
         }
         setIsLoading(false)
@@ -29,26 +31,24 @@ export default function SimilarArtworks({medium}: {medium: string}) {
         <View style={styles.similarContainer}>
             <Text style={styles.similarTitle}>Similar artwork</Text>
             <View style={styles.artworksContainer}>
-                {data.map((art: {
-                    title: string,
-                    artist: string,
-                    pricing: {price: number; shouldShowPrice: "Yes" | "No" | string}
-                    url: string,
-                    medium: string;
-                    rarity: string;
-                }, index) => (
-                    <View style={styles.singleColumn} key={index}>
-                        <ArtworkCard
-                            title={art.title}
-                            artist={art.artist}
-                            image={art.url}
-                            medium={art.rarity}
-                            price={art.pricing.price}
-                            showPrice={art.pricing.shouldShowPrice === "Yes" ? true : false}
-                            rarity={art.rarity}
+            {isLoading ? <ArtworkCardLoader /> :
+                <FlatList
+                    data={data}
+                    renderItem={({item}: {item: ArtworkFlatlistItem}) => (
+                        <ArtworkCard 
+                            title={item.title} 
+                            url={item.url}
+                            artist={item.artist}
+                            showPrice={item.pricing.shouldShowPrice === "Yes"}
+                            price={item.pricing.price}
                         />
-                    </View>
-                ))}
+                    )}
+                    keyExtractor={(_, index) => JSON.stringify(index)}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    // style={{marginTop: 20}}
+                />
+            }
             </View>
         </View>
     )
@@ -56,17 +56,17 @@ export default function SimilarArtworks({medium}: {medium: string}) {
 
 const styles = StyleSheet.create({
     similarContainer: {
-        marginTop: 0
+        marginTop: 0,
+        marginBottom: 100
     },
     similarTitle: {
         fontSize: 20,
         fontWeight: '500',
-        color: colors.primary_black
+        color: colors.primary_black,
+        paddingHorizontal: 20
     },
     artworksContainer: {
-        flexDirection: 'row',
-        gap: 20,
-        marginTop: 30
+        marginTop: 10
     },
     singleColumn: {
         flex: 1,
