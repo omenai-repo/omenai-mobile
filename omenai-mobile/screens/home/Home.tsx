@@ -11,20 +11,22 @@ import ListingHeader from './components/listingHeader/ListingHeader'
 import ListingSelectContainer from './components/listingHeader/ListingSelectContainer'
 import NewArtworksListing from './components/NewArtworksListing'
 import TrendingArtworks from './components/TrendingArtworks'
+import Banner from './components/Banner'
 
 export default function Home() {
     return (
-            <View style={styles.container}> 
+        <View style={styles.container}> 
             <SafeAreaView>
                 <ScrollView showsHorizontalScrollIndicator={false}>
                     <Header />
                     <NewArtworksListing />
+                    <Banner />
                     <FeaturedGalleries />
                     <TrendingArtworks />
                     <Editorials />
                 </ScrollView>
-                </SafeAreaView>
-            </View>
+            </SafeAreaView>
+        </View>
     )
 }
 
@@ -32,21 +34,5 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white
-    },
-    contentsContainer: {
-        paddingHorizontal: 20,
-        flex: 1,
-        paddingBottom: 100
-    },
-    introText: {
-        fontSize: 28,
-        fontWeight: '500',
-        color: colors.primary_black,
-        maxWidth: 290,
-        paddingVertical: 40,
-        // fontFamily: 'nunitoSans'
-    },
-    courselContainer: {
-        marginTop: 30
-    },
+    }
 })
