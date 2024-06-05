@@ -1,7 +1,6 @@
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Dimensions, Image, StyleSheet, Text, View, NativeSyntheticEvent, NativeScrollEvent, FlatList } from 'react-native'
+import React, { useRef, useState } from 'react'
 import { colors } from 'config/colors.config'
-import { FlatList } from 'react-native-gesture-handler';
 
 const { width: windowWidth } = Dimensions.get('window');
 const ITEM_WIDTH = windowWidth; // Width of each item, adjust this to your needs
@@ -42,6 +41,14 @@ const data: BannerItemProps[] =[
 
 
 export default function Banner() {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const flatListRef = useRef<FlatList>(null);
+
+    const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const contentOffsetX = event.nativeEvent.contentOffset.x;
+        const index = Math.round(contentOffsetX / ITEM_WIDTH);
+        setCurrentIndex(index);
+    };
 
     const Item = ({image, text, title, buttonLabel, showButton}: BannerItemProps) => {
         return(
@@ -60,25 +67,37 @@ export default function Banner() {
     };
 
     return (
-        <View style={{backgroundColor: colors.primary_black, marginTop: 40}}>
-            <FlatList
-                data={data}
-                renderItem={({item}: {item: BannerItemProps}) => (
-                    <Item
-                        title={item.title}
-                        text={item.text}
-                        buttonLabel={item.buttonLabel}
-                        image={item.image}
-                        showButton={item.showButton}
+        <View>
+            <View style={{backgroundColor: colors.primary_black, marginTop: 40}}>
+                <FlatList
+                    data={data}
+                    renderItem={({item}: {item: BannerItemProps}) => (
+                        <Item
+                            title={item.title}
+                            text={item.text}
+                            buttonLabel={item.buttonLabel}
+                            image={item.image}
+                            showButton={item.showButton}
+                        />
+                    )}
+                    keyExtractor={(_, index) => JSON.stringify(index)}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    snapToAlignment="center"
+                    snapToInterval={ITEM_WIDTH}
+                    decelerationRate="fast"
+                    onScroll={onScroll}
+                    scrollEventThrottle={16}
+                />
+            </View>
+            <View style={styles.indicatorsContainer}>
+                {data.map((_, index) => (
+                    <View 
+                        style={[styles.indicator, index === currentIndex && {backgroundColor: colors.primary_black}]}
+                        key={index}
                     />
-                )}
-                keyExtractor={(_, index) => JSON.stringify(index)}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                snapToAlignment="center"
-                snapToInterval={ITEM_WIDTH}
-                decelerationRate="fast"
-            />
+                ))}
+            </View>
         </View>
     )
 }
@@ -109,5 +128,18 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 15,
         marginTop: 20
+    },
+    indicatorsContainer: {
+        marginTop: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        gap: 10
+    },
+    indicator: {
+        height: 8,
+        width: 8,
+        borderRadius: 5,
+        backgroundColor: '#ddd'
     }
 })
