@@ -12,6 +12,7 @@ import ListingSelectContainer from './components/listingHeader/ListingSelectCont
 import NewArtworksListing from './components/NewArtworksListing'
 import TrendingArtworks from './components/TrendingArtworks'
 import Banner from './components/Banner'
+import CuratedArtworksListing from './components/CuratedArtworksListing'
 
 export default function Home() {
     return (
@@ -23,6 +24,7 @@ export default function Home() {
                     <Banner />
                     <FeaturedGalleries />
                     <TrendingArtworks />
+                    <CuratedArtworksListing />
                     <Editorials />
                 </ScrollView>
             </SafeAreaView>
