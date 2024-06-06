@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, RefreshControl} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -10,6 +10,9 @@ import { artworkActionStore } from 'store/artworks/ArtworkActionStore'
 import { artworkStore } from 'store/artworks/ArtworkStore'
 import { filterStore } from 'store/artworks/FilterStore'
 import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks'
+import { useNavigation } from '@react-navigation/native'
+import { screenName } from 'constants/screenNames.constants'
+import FilterButton from 'components/filter/FilterButton'
 
 type TagItemProps = {
     name: string,
@@ -27,6 +30,12 @@ export default function Catalog() {
     const { paginationCount } = artworkActionStore();
     const { setArtworks, artworks, isLoading, setPageCount, setIsLoading } = artworkStore();
     const { filterOptions } = filterStore();
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        // setRefreshing(true);
+        handleFecthArtworks()
+    }, []);
 
     useEffect(() => {
         handleFecthArtworks()
@@ -62,31 +71,28 @@ export default function Catalog() {
     return (
         <View style={styles.container}>
             <SafeAreaView>
-                <ScrollView>
-                    <View style={{paddingHorizontal: 20}}>
-                        <SearchInput />
-                    </View>
                     <View style={styles.mainContainer}>
-                        {/* <Text style={{fontSize: 20, fontWeight: '500', color: colors.primary_black}}>Browse by collection</Text> */}
                         <View style={{zIndex: 100}}>
-                            <Filter>
-                                {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                    {tags.map((i, idx) => (
-                                        <TagItem
-                                            name={i}
-                                            isSelected={i === selectedTag}
-                                            key={idx}
-                                        />
-                                    ))}
-                                </ScrollView> */}
-                            </Filter>
+                            <FilterButton>
+                                <Text style={styles.headerText}>Catalog</Text>
+                            </FilterButton>
                         </View>
                         <View style={{zIndex: 5}}>
-                            {isLoading ? <View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}><Text>Loading ...</Text></View>:
-                            <ArtworksListing data={artworks} />}
+                            {isLoading ?
+                                <View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}><Text>Loading ...</Text></View>
+                            :
+                                <ScrollView
+                                    style={{height: '100%'}}
+                                    showsVerticalScrollIndicator={false}
+                                    refreshControl={
+                                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                                    }
+                                >
+                                    <ArtworksListing data={artworks} />
+                                </ScrollView>
+                            }
                         </View>
                     </View>
-                </ScrollView>
             </SafeAreaView>
         </View>
     )
@@ -124,5 +130,10 @@ const styles = StyleSheet.create({
     tagText: {
         fontSize: 12,
         color: colors.primary_black
-    }
+    },
+    headerText: {
+        fontSize: 24,
+        color: colors.primary_black, 
+        paddingVertical: 20
+    },
 })

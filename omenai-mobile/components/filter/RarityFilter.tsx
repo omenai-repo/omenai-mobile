@@ -34,7 +34,7 @@ export default function RarityFilter() {
             {openDropdown &&
                 <FilterOptionBox
                     filters={rarityFilterOptions}
-                    label={"year"}
+                    label={"rarity"}
                 />
             }
         </View>

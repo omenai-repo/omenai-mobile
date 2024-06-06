@@ -49,7 +49,7 @@ export default function Artwork() {
     }
 
     return (
-        <View style={{flex: 1, backgroundColor: colors.white}}>
+        <View style={{flex: 1, backgroundColor: colors.white, position: 'relative'}}>
             <View style={{flex: 1}}>
             <SafeAreaView>
                 <View style={{paddingHorizontal: 20}}>
@@ -99,7 +99,7 @@ export default function Artwork() {
                             />
                         </View>
                     </View>
-                    <SimilarArtworks medium={data?.medium} />
+                    <SimilarArtworks title={data.title} medium={data?.medium} />
                 </ScrollView>
             )}
             {(!isLoading && !data) && (
@@ -108,18 +108,18 @@ export default function Artwork() {
                 </View>
             )}
             </View>
-            <SafeAreaView>
-                <View style={{backgroundColor: colors.white, paddingHorizontal: 20, borderTopWidth: 1, borderTopColor: colors.grey50}}>
-                    <View style={styles.priceContainer}>
-                        <Text style={styles.priceTitle}>Price</Text>
-                        {data?.pricing.shouldShowPrice === 'Yes' && <Text style={styles.price}>{formatPrice(data?.pricing.price)}</Text>}
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <LongBlackButton value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
-                        {/* <LongWhiteButton value='Save artwork' onClick={() => console.log('')} /> */}
+                <View style={{padding: 30, position: 'absolute', bottom: 0, left: 0, width: '100%'}}>
+                    <View style={{backgroundColor: colors.white, paddingHorizontal: 10, paddingBottom: 10, borderWidth: 1, borderColor: colors.grey50, borderRadius: 15}}>
+                        <View style={styles.priceContainer}>
+                            <Text style={styles.priceTitle}>Price</Text>
+                            {data?.pricing.shouldShowPrice === 'Yes' && <Text style={styles.price}>{formatPrice(data?.pricing.price)}</Text>}
+                        </View>
+                        <View style={styles.buttonContainer}>
+                            <LongBlackButton radius={10} value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
+                            {/* <LongWhiteButton value='Save artwork' onClick={() => console.log('')} /> */}
+                        </View>
                     </View>
                 </View>
-            </SafeAreaView>
         </View>
     )
 }
@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
     },
     likeContainer: {
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: 15
     }
 })

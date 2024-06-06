@@ -25,11 +25,11 @@ export async function fetchCuratedArtworks(){
                 result.data,
                 preferences
             );
-            const ParsedResponse = {
+            const parsedResponse = {
                 isOk: res.ok,
                 body: curated,
             };
-            return ParsedResponse;
+            return parsedResponse;
         })
 
         return response

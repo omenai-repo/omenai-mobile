@@ -61,9 +61,9 @@ export default function Editorials() {
     }
 
     return (
-        <View style={{marginTop: 40}}>
+        <View style={{marginTop: 40, marginBottom: 100}}>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
-                <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Featured Galleries</Text>
+                <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Editorials</Text>
             </View>
             <FlatList
                 data={data}
