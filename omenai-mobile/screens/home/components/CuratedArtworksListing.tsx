@@ -7,14 +7,14 @@ import { colors } from 'config/colors.config';
 import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
 import curatedBg from 'assets/images/curated_bg.png';
 
-export default function CuratedArtworksListing() {
+export default function CuratedArtworksListing({refreshCount} : {refreshCount?: number}) {
     const [isLoading, setIsLoading] = useState(false)
 
     const [data, setData] = useState([]);
 
     useEffect(() => {
         handleFetchArtworks()
-    }, [])
+    }, [refreshCount])
 
     const handleFetchArtworks = async () => {
         setIsLoading(true)

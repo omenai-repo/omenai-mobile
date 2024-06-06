@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import sortIcon from '../../assets/icons/sort-icon.png';
@@ -12,6 +12,11 @@ import { artworkStore } from 'store/artworks/ArtworkStore';
 import { artworkActionStore } from 'store/artworks/ArtworkActionStore';
 import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
 import RarityFilter from './RarityFilter';
+import BackScreenButton from 'components/buttons/BackScreenButton';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { ScrollView } from 'react-native-gesture-handler';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 type FilterProps = {
     children?: React.ReactNode
@@ -22,11 +27,11 @@ type FilterSelectProps = {
 }
 
 export default function Filter({children}: FilterProps) {
-    const [showFilters, setShowFilters] = useState(false);
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
-    const { filterOptions, selectedFilters } = filterStore();
+    const { filterOptions, selectedFilters, clearAllFilters } = filterStore();
     const { paginationCount, updatePaginationCount } = artworkActionStore();
-    const { setArtworks, setIsLoading, setPageCount } = artworkStore();
+    const { setArtworks, setIsLoading, setPageCount, isLoading } = artworkStore();
 
     const handleSubmitFilter = async () => {
         updatePaginationCount("reset");
@@ -42,55 +47,47 @@ export default function Filter({children}: FilterProps) {
             
         }
         setIsLoading(false);
+        navigation.goBack()
     }
 
     return (
-        <View>
-            <View style={styles.container}>
-                <View style={styles.leftContainer}>
-                    {!showFilters ? 
-                        children
-                    :
-                    <View style={{width: 130}}>
-                        <TouchableOpacity onPress={() => setShowFilters(false)}>
-                            <View style={[styles.filterButton, {backgroundColor: colors.black}]}>
-                                <Text style={[styles.filterButtonText, {color: colors.white}]}>Filters</Text>
-                                <Feather name='x' size={20} color={colors.white} />
+        <View style={{backgroundColor: colors.white, flex: 1}}>
+            <SafeAreaView>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, backgroundColor: colors.white, paddingBottom: 10}}>
+                    <View style={{flex: 1}}>
+                        <BackScreenButton handleClick={() => navigation.goBack()} />
+                    </View>
+                    
+                    {selectedFilters.length > 0 &&
+                        <TouchableOpacity onPress={clearAllFilters}>
+                            <View style={styles.clearButton}>
+                                <Text style={styles.filterButtonText}>Clear filters</Text>
+                                <Feather name='trash' size={18} color={colors.primary_black} />
                             </View>
                         </TouchableOpacity>
-                    </View>
                     }
                 </View>
-                {(!showFilters && selectedFilters.length < 1) ?
-                    <TouchableOpacity onPress={() => setShowFilters(true)}>
-                        <View style={styles.filterButton}>
-                            <Text style={styles.filterButtonText}>Filters</Text>
-                            <Image source={sortIcon} style={styles.sortIcon} />
-                        </View>
-                    </TouchableOpacity>
-                :
-                    <TouchableOpacity onPress={handleSubmitFilter}>
-                        <View style={styles.filterButton}>
-                            <Text style={styles.filterButtonText}>Apply Filters</Text>
-                        </View>
-                    </TouchableOpacity>
+            </SafeAreaView>
+            <ScrollView style={{flex: 1}}>
+                {selectedFilters.length > 0 &&
+                    <View style={styles.selectedFilterContainer}>
+                        {selectedFilters.map((filter, index) => (
+                            <FilterPill filter={filter.name} key={index} />
+                        ))}
+                    </View>
                 }
-            </View>
-            {selectedFilters.length > 0 &&
-                <View style={styles.selectedFilterContainer}>
-                    {selectedFilters.map((filter, index) => (
-                        <FilterPill filter={filter.name} key={index} />
-                    ))}
-                </View>
-            }
-            {showFilters && 
                 <View style={styles.FiltersListing}>
                     <PriceFilter />
                     <YearFilter />
                     <MediumFilter />
                     <RarityFilter />
                 </View>
-            }
+            </ScrollView>
+                <View style={{position: 'absolute', bottom: 0, paddingHorizontal: 20, paddingVertical: 20, width: '100%'}}>
+                    <SafeAreaView>
+                    <LongBlackButton value={isLoading ? 'Applying ...' :'Apply filters'} onClick={handleSubmitFilter} isLoading={isLoading} radius={10} />
+                    </SafeAreaView>
+                </View>
         </View>
     )
 }
@@ -106,17 +103,17 @@ const styles = StyleSheet.create({
         flex: 1,
         overflow: 'hidden'
     },
-    filterButton: {
-        height: 50,
+    clearButton: {
+        height: 40,
         paddingHorizontal: 20,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 20,
+        gap: 10,
         backgroundColor: '#FAFAFA',
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: colors.inputBorder
+        borderRadius: 30,
+        // borderWidth: 1,
+        // borderColor: colors.inputBorder,
     },
     filterButtonText: {
         fontSize: 14,
@@ -128,7 +125,8 @@ const styles = StyleSheet.create({
     },
     FiltersListing: {
         gap: 15,
-        marginTop: 20
+        marginTop: 30,
+        paddingHorizontal: 20
     },
     FilterSelectContainer: {
         height: 55,
@@ -145,6 +143,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 10,
         marginTop: 20,
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        paddingHorizontal: 20
     }
 })

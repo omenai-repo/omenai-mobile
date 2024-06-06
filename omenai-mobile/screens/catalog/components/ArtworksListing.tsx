@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ArtworkCard from 'components/artwork/ArtworkCard';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import MiniArtworkCard from 'components/artwork/MiniArtworkCard';
 
 export default function ArtworksListing({data}: {data: any[]}) {
@@ -16,11 +16,21 @@ export default function ArtworksListing({data}: {data: any[]}) {
             var second = data.slice(indexToSplit);
 
             setListing([first, second])
+        }else if(data.length > 0){
+            setListing([data, []])
         }
     }, [])
 
+    if(data.length === 0)
+    return(
+        <View style={{marginTop: 30}}>
+            <Text style={{fontSize: 20, textAlign: 'center'}}>No artworks to display</Text>
+        </View>
+    )
+
     return (
         <View style={styles.artworksContainer}>
+            <View style={{flex: 1}}>
             <FlatList
                 data={listing[0]}
                 renderItem={({item}: {item: ArtworkFlatlistItem}) => (
@@ -35,26 +45,29 @@ export default function ArtworksListing({data}: {data: any[]}) {
                 keyExtractor={(_, index) => JSON.stringify(index)}
                 horizontal={false}
                 showsHorizontalScrollIndicator={false}
-                style={{gap: 200}}
-                contentContainerStyle={{ gap: 30 }}
+                // style={{gap: 200}}
+                contentContainerStyle={{ gap: 30}}
             />
-            <FlatList
-                data={listing[1]}
-                renderItem={({item}: {item: ArtworkFlatlistItem}) => (
-                    <MiniArtworkCard 
-                        title={item.title} 
-                        url={item.url}
-                        artist={item.artist}
-                        showPrice={item.pricing.shouldShowPrice === "Yes"}
-                        price={item.pricing.price}
-                    />
-                )}
-                keyExtractor={(_, index) => JSON.stringify(index)}
-                horizontal={false}
-                showsHorizontalScrollIndicator={false}
-                style={{gap: 200}}
-                contentContainerStyle={{ gap: 30 }}
-            />
+            </View>
+            <View style={{flex: 1}}>
+                <FlatList
+                    data={listing[1]}
+                    renderItem={({item}: {item: ArtworkFlatlistItem}) => (
+                        <MiniArtworkCard 
+                            title={item.title} 
+                            url={item.url}
+                            artist={item.artist}
+                            showPrice={item.pricing.shouldShowPrice === "Yes"}
+                            price={item.pricing.price}
+                        />
+                    )}
+                    keyExtractor={(_, index) => JSON.stringify(index)}
+                    horizontal={false}
+                    showsHorizontalScrollIndicator={false}
+                    // style={{gap: 200}}
+                    contentContainerStyle={{ gap: 30 }}
+                />
+            </View>
         </View>
     )
 }

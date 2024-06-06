@@ -14,6 +14,7 @@ import Artwork from 'screens/artwork/Artwork';
 import SearchResults from 'screens/searchResults/SearchResults';
 import Orders from 'screens/orders/Orders';
 import Payment from 'screens/payment/Payment';
+import Filter from 'components/filter/Filter';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -27,9 +28,9 @@ export default function IndividualNavigation() {
 
     const CustomTabBarIcon = ({ name, focused }: CustomTabBarIconProps) => {
         return (
-            <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
-                <Feather name={name} size={22} color={focused ? 'white' : 'gray'} />
-            </View>
+            // <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
+                <Feather name={name} size={25} color={focused ? colors.black : colors.primary_black} />
+            // </View>
         );
     };
 
@@ -48,6 +49,8 @@ export default function IndividualNavigation() {
                 iconName = 'package'
               }else if(route.name === screenName.profile){
                 iconName = 'user'
+              }else if(route.name === screenName.searchResults){
+                iconName = 'search'
               }
   
               return <CustomTabBarIcon name={iconName} focused={focused} />;
@@ -77,6 +80,11 @@ export default function IndividualNavigation() {
             options={{ headerShown: false }}
           />
           <Tab.Screen 
+            name={screenName.searchResults} 
+            component={SearchResults}
+            options={{ headerShown: false }}
+          />
+          <Tab.Screen 
             name={screenName.orders} 
             component={Orders}
             options={{ headerShown: false }}
@@ -98,6 +106,7 @@ export default function IndividualNavigation() {
             <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} options={{headerShown: false}} />
             <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
             <Stack.Screen name={screenName.payment} component={Payment} options={{headerShown: false}} />
+            <Stack.Screen name={screenName.filter} component={Filter} options={{headerShown: false}} />
         </Stack.Navigator>
     )
 }

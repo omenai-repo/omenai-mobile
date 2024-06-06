@@ -75,11 +75,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    position: 'absolute',
-    top: '100%',
+    // position: 'absolute',
+    // top: '100%',
     zIndex: 500,
     padding: 15,
-    gap: 15
+    gap: 15,
+    marginTop: 10
   },
   itemContainer: {
     flexDirection: 'row',
