@@ -13,6 +13,7 @@ import ShippingDetails from './components/ShippingDetails'
 import { fetchsingleArtworkOnPurchase } from 'services/artworks/fetchSingleArtworkOnPurchase'
 import Loader from 'components/general/Loader'
 import PriceQuoteSent from './components/PriceQuoteSent'
+import { screenName } from 'constants/screenNames.constants'
 
 export default function PurchaseArtwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -39,13 +40,17 @@ export default function PurchaseArtwork() {
         setIsLoading(false)
     };
 
-    const handleBackNavigation = () => {
+    const handleBackNavigation = (goHome?: boolean) => {
         if(selectedSectionIndex === 2){
             setSelectedSectionIndex(selectedSectionIndex - 1)
+        }else if(goHome){
+            resetState()
+            navigation.navigate(screenName.home)
         }else{
             resetState()
             navigation.goBack()
         }
+        
     }
 
     return (
@@ -66,7 +71,7 @@ export default function PurchaseArtwork() {
                     <>
                         {selectedSectionIndex === 1 && <OrderSummary data={artworkOrderData} />}
                         {selectedSectionIndex === 2 && <ShippingDetails data={artworkOrderData} />}
-                        {selectedSectionIndex === 3 && <PriceQuoteSent handleClick={handleBackNavigation}  />}
+                        {selectedSectionIndex === 3 && <PriceQuoteSent handleClick={() => handleBackNavigation(true)}  />}
                     </>
                 ):
                     null

@@ -73,7 +73,7 @@ export default function SummaryContainer({buttonTypes, price, disableButton}: Su
                 <Text style={{fontSize: 16, fontWeight: '500', color: colors.primary_black}}>Waiting for final cost</Text>
             </View>
             <View style={{marginTop: 40}}>
-                <LongBlackButton value={buttonTypes} onClick={() => {
+                <LongBlackButton radius={10} value={buttonTypes} onClick={() => {
                     if(buttonTypes === "Proceed to shipping"){
                         setSelectedSectionIndex(2)
                     }else{
