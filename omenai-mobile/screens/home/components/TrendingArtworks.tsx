@@ -6,14 +6,14 @@ import { fetchArtworks } from 'services/artworks/fetchArtworks';
 import { colors } from 'config/colors.config';
 import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
 
-export default function TrendingArtworks() {
+export default function TrendingArtworks({refreshCount} : {refreshCount?: number}) {
     const [isLoading, setIsLoading] = useState(false)
 
     const [data, setData] = useState([]);
 
     useEffect(() => {
         handleFetchArtworks()
-    }, [])
+    }, [refreshCount])
 
     const handleFetchArtworks = async () => {
         setIsLoading(true)

@@ -54,16 +54,18 @@ export default function Orders() {
 
     return (
         <View style={styles.container}>
-            <HeaderWithTitle pageTitle='Orders' />
+            {/* <HeaderWithTitle pageTitle='Orders' /> */}
             <ScrollView style={styles.mainContainer}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             >
-                <View style={styles.tabContainer}>
-                    <TabItem name='Pending'  isSelected={selectedTab === 'Pending'} />
-                    <TabItem name='Order history' isSelected={selectedTab === 'Order history'} />
-                </View>
+                <SafeAreaView>
+                    <View style={styles.tabContainer}>
+                        <TabItem name='Pending'  isSelected={selectedTab === 'Pending'} />
+                        <TabItem name='Order history' isSelected={selectedTab === 'Order history'} />
+                    </View>
+                </SafeAreaView>
                 {isLoading ? 
                     <View style={styles.loadingContainer}>
                         <Text>Loading...</Text>
