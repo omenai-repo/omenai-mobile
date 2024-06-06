@@ -6,7 +6,7 @@ import { fetchArtworksByCriteria } from 'services/artworks/fetchArtworksByCriter
 import ArtworkCardLoader from 'components/general/ArtworkCardLoader'
 import { FlatList } from 'react-native-gesture-handler'
 
-export default function SimilarArtworks({medium}: {medium: string}) {
+export default function SimilarArtworks({medium, title = ''}: {medium: string, title: string}) {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState([]);
 
@@ -21,7 +21,11 @@ export default function SimilarArtworks({medium}: {medium: string}) {
         if(results.isOk){
             let resultsData = results.body.data as []
             if(resultsData.length > 0){
-                setData(resultsData.splice(0,4))
+                const parsedResults = resultsData.filter((artwork: any) => {
+                    return artwork.title !== title;
+                });
+
+                setData(parsedResults.splice(0,4))
             }
         }
         setIsLoading(false)
@@ -57,7 +61,7 @@ export default function SimilarArtworks({medium}: {medium: string}) {
 const styles = StyleSheet.create({
     similarContainer: {
         marginTop: 0,
-        marginBottom: 100
+        marginBottom: 200
     },
     similarTitle: {
         fontSize: 20,
