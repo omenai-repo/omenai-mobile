@@ -6,10 +6,11 @@ type LongBlackButtonProps = {
     value: string,
     isDisabled?: boolean,
     onClick: () => void,
-    isLoading?: boolean
+    isLoading?: boolean,
+    radius?: number
 }
 
-export default function LongBlackButton({value, onClick, isDisabled, isLoading} : LongBlackButtonProps) {
+export default function LongBlackButton({value, onClick, isDisabled, isLoading, radius = 0} : LongBlackButtonProps) {
 
     if (isDisabled || isLoading)
     return(
@@ -19,7 +20,7 @@ export default function LongBlackButton({value, onClick, isDisabled, isLoading} 
     )
 
     return (
-        <TouchableOpacity activeOpacity={1} style={styles.container} onPress={onClick}>
+        <TouchableOpacity activeOpacity={1} style={[styles.container, radius > 0 && {borderRadius: radius}]} onPress={onClick}>
             <Text style={styles.text}>{value}</Text>
         </TouchableOpacity>
     )

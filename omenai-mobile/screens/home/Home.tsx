@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, RefreshControl } from 'react-native'
+import React, { useState } from 'react'
 import Header from '../../components/header/Header'
 import { colors } from '../../config/colors.config'
 import SearchInput from 'components/inputs/SearchInput'
@@ -11,20 +11,37 @@ import ListingHeader from './components/listingHeader/ListingHeader'
 import ListingSelectContainer from './components/listingHeader/ListingSelectContainer'
 import NewArtworksListing from './components/NewArtworksListing'
 import TrendingArtworks from './components/TrendingArtworks'
+import Banner from './components/Banner'
+import CuratedArtworksListing from './components/CuratedArtworksListing'
 
 export default function Home() {
+    const [refreshCount, setRefreshCount] = useState(0);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        // setRefreshing(true);
+        setRefreshCount(prev => prev + 1)
+    }, []);
+
     return (
-            <View style={styles.container}> 
+        <View style={styles.container}> 
             <SafeAreaView>
-                <ScrollView showsHorizontalScrollIndicator={false}>
+                <ScrollView 
+                    showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                >
                     <Header />
-                    <NewArtworksListing />
+                    <NewArtworksListing refreshCount={refreshCount} />
+                    <Banner />
                     <FeaturedGalleries />
-                    <TrendingArtworks />
+                    <TrendingArtworks refreshCount={refreshCount} />
+                    <CuratedArtworksListing refreshCount={refreshCount} />
                     <Editorials />
                 </ScrollView>
-                </SafeAreaView>
-            </View>
+            </SafeAreaView>
+        </View>
     )
 }
 
@@ -32,21 +49,5 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white
-    },
-    contentsContainer: {
-        paddingHorizontal: 20,
-        flex: 1,
-        paddingBottom: 100
-    },
-    introText: {
-        fontSize: 28,
-        fontWeight: '500',
-        color: colors.primary_black,
-        maxWidth: 290,
-        paddingVertical: 40,
-        // fontFamily: 'nunitoSans'
-    },
-    courselContainer: {
-        marginTop: 30
-    },
+    }
 })

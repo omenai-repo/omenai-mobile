@@ -9,6 +9,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { fetchSearchKeyWordResults } from 'services/search/fetchSearchKeywordResults'
 import ResultsListing from './components/resultsListing/ResultsListing'
+import SearchInput from 'components/inputs/SearchInput'
 
 export default function SearchResults() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -52,16 +53,17 @@ export default function SearchResults() {
         <View style={styles.container}>
             <View style={styles.mainContainer}>
                 <SafeAreaView>
-                    <BackScreenButton handleClick={() => navigation.goBack()} />
+                    <SearchInput />
                 </SafeAreaView>
                 <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
+                <Text style={{fontSize: 16, color: colors.grey}}>{dataLength} results found</Text>
                 {isLoading ? 
                     <View style={styles.loadingContainer}>
                         <Text>Loading...</Text>
                     </View>
                 :
                     <View style={{flex: 1}}>
-                        <Filters dataLength={dataLength}  />
+                        {/* <Filters dataLength={dataLength}  /> */}
                         <ResultsListing data={data} />
                     </View>
                 }

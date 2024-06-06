@@ -17,10 +17,11 @@ type ArtworkCardType = {
     medium?: string,
     showPrice?: boolean,
     showTags?: boolean,
-    fullDisplay?: boolean
+    fullDisplay?: boolean,
+    lightText?: boolean
 }
 
-export default function ArtworkCard({title, url, artist, showPrice, price, fullDisplay}: ArtworkCardType) {
+export default function ArtworkCard({title, url, artist, showPrice, price, fullDisplay, lightText}: ArtworkCardType) {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const screenWidth = Dimensions.get('window').width;
 
@@ -29,15 +30,15 @@ export default function ArtworkCard({title, url, artist, showPrice, price, fullD
     return (
         <TouchableOpacity activeOpacity={1} style={[styles.container, fullDisplay && {width: '100%', marginLeft: 0}]} onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
             <View style={[styles.imageContainer, fullDisplay && {height: 300}]}>
-                <Image source={{uri: image_href}} style={[styles.image, fullDisplay && {backgroundColor: '#f5f5f5'}]} resizeMode="contain"  />
+                <Image source={{uri: image_href}} style={[styles.image, (fullDisplay || lightText) && {backgroundColor: 'rgba(225,225,225,0.1)'}]} resizeMode="contain"  />
             </View>
             <View style={styles.mainDetailsContainer}>
                 <View style={{flex: 1}}>
-                    <Text style={{fontSize: 14, color: colors.primary_black}}>{title}</Text>
-                    <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.7, marginTop: 5}}>{artist}</Text>
-                    {showPrice && <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}}>{formatPrice(price)}</Text>}
+                    <Text style={[{fontSize: 14, color: colors.primary_black}, lightText && {color: colors.white}]}>{title}</Text>
+                    <Text style={[{fontSize: 12, color: colors.primary_black, opacity: 0.7, marginTop: 5}, lightText && {color: colors.white, opacity: 1}]}>{artist}</Text>
+                    {showPrice && <Text style={[{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}, lightText && {color: colors.white}]}>{formatPrice(price)}</Text>}
                 </View>
-                <Feather name='heart' size={20} />
+                <Feather name='heart' size={20} color={lightText ? colors.white : colors.primary_black} />
             </View>
         </TouchableOpacity>
     )
