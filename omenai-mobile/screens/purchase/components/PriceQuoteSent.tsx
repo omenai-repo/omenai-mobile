@@ -7,16 +7,16 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 
-export default function PriceQuoteSent() {
+export default function PriceQuoteSent({handleClick}: {handleClick: () => void}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
         <View style={styles.container}>
-            <Text style={styles.titleHeader}>Price quote sent</Text>
+            <Text style={styles.titleHeader}>Order request successful</Text>
             <View style={styles.summaryContainer}>
-                <Text style={{fontSize: 16, textAlign: 'center', color: colors.primary_black}}>A price quote has been sent to your email</Text>
+                <Text style={{fontSize: 16, textAlign: 'center', color: colors.primary_black}}>Order request has been successfully recieved and is being processed. We will get back to you within 24hours</Text>
                 <Image style={{marginTop: 40, marginBottom: 60}} source={mailIcon} />
-                <LongBlackButton value='Return to home' onClick={() => navigation.navigate(screenName.home)} />
+                <LongBlackButton value='Return to home' onClick={handleClick} radius={10} />
             </View>
         </View>
     )
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     },
     titleHeader: {
         fontSize: 20,
-        fontWeight: 500,
+        fontWeight: '500',
         color: colors.primary_black,
         textAlign: 'center'
     },

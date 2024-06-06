@@ -45,7 +45,7 @@ export default function MiniArtworkCard({url, artist, title, showPrice, price}: 
                 <View style={{flex: 1}}>
                     <Text style={{fontSize: 14, color: colors.primary_black}}>{title}</Text>
                     <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.7, marginTop: 5}}>{artist}</Text>
-                    {showPrice && <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}}>{formatPrice(price)}</Text>}
+                    <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
                 </View>
                 <Feather name='heart' size={18} />
             </View>

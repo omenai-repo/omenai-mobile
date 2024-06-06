@@ -13,11 +13,12 @@ import ShippingDetails from './components/ShippingDetails'
 import { fetchsingleArtworkOnPurchase } from 'services/artworks/fetchSingleArtworkOnPurchase'
 import Loader from 'components/general/Loader'
 import PriceQuoteSent from './components/PriceQuoteSent'
+import { screenName } from 'constants/screenNames.constants'
 
 export default function PurchaseArtwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const route = useRoute()
-    const { selectedSectionIndex, setIsLoading, artworkOrderData, setArtworkOrderData, isLoading, resetState } = useOrderSummaryStore();
+    const { selectedSectionIndex, setIsLoading, artworkOrderData, setArtworkOrderData, isLoading, resetState, setSelectedSectionIndex } = useOrderSummaryStore();
 
     useEffect(() => {
         handleFetchArtworkDetails()
@@ -37,16 +38,26 @@ export default function PurchaseArtwork() {
         }
 
         setIsLoading(false)
+    };
+
+    const handleBackNavigation = (goHome?: boolean) => {
+        if(selectedSectionIndex === 2){
+            setSelectedSectionIndex(selectedSectionIndex - 1)
+        }else if(goHome){
+            resetState()
+            navigation.navigate(screenName.home)
+        }else{
+            resetState()
+            navigation.goBack()
+        }
+        
     }
 
     return (
         <View style={{flex: 1, backgroundColor: colors.white}}>
             <SafeAreaView style={{paddingBottom: 0, marginBottom: 0}}>
                 <View style={{paddingHorizontal: 20}}>
-                    <BackScreenButton handleClick={() => {
-                        resetState()
-                        navigation.goBack()
-                    }}/>
+                    <BackScreenButton handleClick={handleBackNavigation}/>
                 </View>
             </SafeAreaView>
             <KeyboardAvoidingView
@@ -60,7 +71,7 @@ export default function PurchaseArtwork() {
                     <>
                         {selectedSectionIndex === 1 && <OrderSummary data={artworkOrderData} />}
                         {selectedSectionIndex === 2 && <ShippingDetails data={artworkOrderData} />}
-                        {selectedSectionIndex === 3 && <PriceQuoteSent/>}
+                        {selectedSectionIndex === 3 && <PriceQuoteSent handleClick={() => handleBackNavigation(true)}  />}
                     </>
                 ):
                     null
