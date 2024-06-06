@@ -3,7 +3,7 @@ export const screenName = {
     login: 'Login',
     register: 'Register',
     forgotPassword: 'Forgot-password',
-    searchResults: 'SearchResults',
+    searchResults: 'Search',
     home: 'Home',
     artwork: 'Artwork',
     catalogListing: 'Catalog-listing',
@@ -13,7 +13,7 @@ export const screenName = {
     purchaseArtwork: 'purchase-artwork',
     payment: 'payment',
     profileScreen: 'profile-screen',
-    profile: 'profile',
+    profile: 'Profile',
     savedArtworks: 'saved-artworks',
     filter: 'filter',
 }
