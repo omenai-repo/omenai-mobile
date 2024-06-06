@@ -15,6 +15,7 @@ import SearchResults from 'screens/searchResults/SearchResults';
 import Orders from 'screens/orders/Orders';
 import Payment from 'screens/payment/Payment';
 import Filter from 'components/filter/Filter';
+import Notifications from 'screens/notifications/Notifications';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -109,6 +110,7 @@ export default function IndividualNavigation() {
             <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
             <Stack.Screen name={screenName.payment} component={Payment} options={{headerShown: false}} />
             <Stack.Screen name={screenName.filter} component={Filter} options={{headerShown: false}} />
+            <Stack.Screen name={screenName.notifications} component={Notifications} options={{headerShown: false}} />
         </Stack.Navigator>
     )
 }

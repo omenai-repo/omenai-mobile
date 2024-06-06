@@ -16,4 +16,5 @@ export const screenName = {
     profile: 'Profile',
     savedArtworks: 'saved-artworks',
     filter: 'filter',
+    notifications: 'notifications'
 }
