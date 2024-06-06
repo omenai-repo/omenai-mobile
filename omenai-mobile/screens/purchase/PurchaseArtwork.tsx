@@ -17,7 +17,7 @@ import PriceQuoteSent from './components/PriceQuoteSent'
 export default function PurchaseArtwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const route = useRoute()
-    const { selectedSectionIndex, setIsLoading, artworkOrderData, setArtworkOrderData, isLoading, resetState } = useOrderSummaryStore();
+    const { selectedSectionIndex, setIsLoading, artworkOrderData, setArtworkOrderData, isLoading, resetState, setSelectedSectionIndex } = useOrderSummaryStore();
 
     useEffect(() => {
         handleFetchArtworkDetails()
@@ -37,16 +37,22 @@ export default function PurchaseArtwork() {
         }
 
         setIsLoading(false)
+    };
+
+    const handleBackNavigation = () => {
+        if(selectedSectionIndex === 2){
+            setSelectedSectionIndex(selectedSectionIndex - 1)
+        }else{
+            resetState()
+            navigation.goBack()
+        }
     }
 
     return (
         <View style={{flex: 1, backgroundColor: colors.white}}>
             <SafeAreaView style={{paddingBottom: 0, marginBottom: 0}}>
                 <View style={{paddingHorizontal: 20}}>
-                    <BackScreenButton handleClick={() => {
-                        resetState()
-                        navigation.goBack()
-                    }}/>
+                    <BackScreenButton handleClick={handleBackNavigation}/>
                 </View>
             </SafeAreaView>
             <KeyboardAvoidingView
@@ -60,7 +66,7 @@ export default function PurchaseArtwork() {
                     <>
                         {selectedSectionIndex === 1 && <OrderSummary data={artworkOrderData} />}
                         {selectedSectionIndex === 2 && <ShippingDetails data={artworkOrderData} />}
-                        {selectedSectionIndex === 3 && <PriceQuoteSent/>}
+                        {selectedSectionIndex === 3 && <PriceQuoteSent handleClick={handleBackNavigation}  />}
                     </>
                 ):
                     null
