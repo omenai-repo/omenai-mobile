@@ -82,6 +82,7 @@ export default function Filter({children}: FilterProps) {
                     <MediumFilter />
                     <RarityFilter />
                 </View>
+                <View style={{height: 200}} />
             </ScrollView>
                 <View style={{position: 'absolute', bottom: 0, paddingHorizontal: 20, paddingVertical: 20, width: '100%'}}>
                     <SafeAreaView>
