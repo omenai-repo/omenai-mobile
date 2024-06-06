@@ -18,7 +18,8 @@ import Filter from 'components/filter/Filter';
 
 type CustomTabBarIconProps = {
     name: any,
-    focused: boolean
+    focused: boolean,
+    title: string
 }
 
 const Tab = createBottomTabNavigator();
@@ -26,11 +27,12 @@ const Stack = createStackNavigator();
 
 export default function IndividualNavigation() {
 
-    const CustomTabBarIcon = ({ name, focused }: CustomTabBarIconProps) => {
+    const CustomTabBarIcon = ({ name, focused, title }: CustomTabBarIconProps) => {
         return (
-            // <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
-                <Feather name={name} size={25} color={focused ? colors.black : colors.primary_black} />
-            // </View>
+            <View style={{alignItems: 'center', gap: 5}}>
+              <Feather name={name} size={focused ? 25 : 22} color={focused ? colors.black : colors.grey} />
+              <Text style={[{fontSize: 13, color: colors.grey}, focused && {color: colors.primary_black}]}>{title}</Text>
+            </View>
         );
     };
 
@@ -53,7 +55,7 @@ export default function IndividualNavigation() {
                 iconName = 'search'
               }
   
-              return <CustomTabBarIcon name={iconName} focused={focused} />;
+              return <CustomTabBarIcon title={route.name} name={iconName} focused={focused} />;
             },
             tabBarLabel: () => null,
             tabBarActiveTintColor: colors.primary_black,
