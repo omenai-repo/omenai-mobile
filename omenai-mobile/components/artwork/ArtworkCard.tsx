@@ -17,26 +17,26 @@ type ArtworkCardType = {
     medium?: string,
     showPrice?: boolean,
     showTags?: boolean,
-    fullDisplay?: boolean,
-    lightText?: boolean
+    lightText?: boolean,
+    width?: number
 }
 
-export default function ArtworkCard({title, url, artist, showPrice, price, fullDisplay, lightText}: ArtworkCardType) {
+export default function ArtworkCard({title, url, artist, showPrice, price, lightText, width = 0}: ArtworkCardType) {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const screenWidth = Dimensions.get('window').width;
 
     const image_href = getImageFileView(url, 270);
 
     return (
-        <TouchableOpacity activeOpacity={1} style={[styles.container, fullDisplay && {width: '100%', marginLeft: 0}]} onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
-            <View style={[styles.imageContainer, fullDisplay && {height: 300}]}>
-                <Image source={{uri: image_href}} style={[styles.image, (fullDisplay || lightText) && {backgroundColor: 'rgba(225,225,225,0.1)'}]} resizeMode="contain"  />
+        <TouchableOpacity activeOpacity={1} style={[styles.container, width > 0 && {width: width}]} onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
+            <View style={[styles.imageContainer, lightText && {backgroundColor: 'rgba(225,225,225,0.15)', padding: 15}]}>
+                <Image source={{uri: image_href}} style={styles.image} resizeMode="contain" />
             </View>
             <View style={styles.mainDetailsContainer}>
                 <View style={{flex: 1}}>
                     <Text style={[{fontSize: 14, color: colors.primary_black}, lightText && {color: colors.white}]}>{title}</Text>
                     <Text style={[{fontSize: 12, color: colors.primary_black, opacity: 0.7, marginTop: 5}, lightText && {color: colors.white, opacity: 1}]}>{artist}</Text>
-                    {showPrice && <Text style={[{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}, lightText && {color: colors.white}]}>{formatPrice(price)}</Text>}
+                    <Text style={[{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}, lightText && {color: colors.white}]}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
                 </View>
                 <Feather name='heart' size={20} color={lightText ? colors.white : colors.primary_black} />
             </View>

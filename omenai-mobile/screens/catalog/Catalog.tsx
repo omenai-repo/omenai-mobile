@@ -89,6 +89,7 @@ export default function Catalog() {
                                     }
                                 >
                                     <ArtworksListing data={artworks} />
+                                    <View style={{height: 300}} />
                                 </ScrollView>
                             }
                         </View>
@@ -132,7 +133,8 @@ const styles = StyleSheet.create({
         color: colors.primary_black
     },
     headerText: {
-        fontSize: 24,
+        fontSize: 18,
+        fontWeight: '500',
         color: colors.primary_black, 
         paddingVertical: 20
     },
