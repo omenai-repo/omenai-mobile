@@ -99,7 +99,7 @@ export default function Artwork() {
                             />
                         </View>
                     </View>
-                    <SimilarArtworks medium={data?.medium} />
+                    <SimilarArtworks title={data.title} medium={data?.medium} />
                 </ScrollView>
             )}
             {(!isLoading && !data) && (
