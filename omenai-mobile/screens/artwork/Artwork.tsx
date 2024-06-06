@@ -108,18 +108,23 @@ export default function Artwork() {
                 </View>
             )}
             </View>
-                <View style={{padding: 30, position: 'absolute', bottom: 0, left: 0, width: '100%'}}>
-                    <View style={{backgroundColor: colors.white, paddingHorizontal: 10, paddingBottom: 10, borderWidth: 1, borderColor: colors.grey50, borderRadius: 15}}>
+                {isLoading ? null :
+                <View style={{paddingHorizontal: 10, paddingBottom: 30, position: 'absolute', bottom: 0, left: 0, width: '100%'}}>
+                    <View style={{backgroundColor: colors.white, paddingHorizontal: 15, paddingBottom: 15, borderWidth: 1, borderColor: colors.grey50, borderRadius: 15}}>
                         <View style={styles.priceContainer}>
                             <Text style={styles.priceTitle}>Price</Text>
-                            {data?.pricing.shouldShowPrice === 'Yes' && <Text style={styles.price}>{formatPrice(data?.pricing.price)}</Text>}
+                            <Text style={[styles.price, data?.pricing.shouldShowPrice === "No" && {fontSize: 16, color: colors.grey}]}>{data?.pricing.shouldShowPrice === 'Yes' ? formatPrice(data?.pricing.price) : "Price on request"}</Text>
                         </View>
                         <View style={styles.buttonContainer}>
-                            <LongBlackButton radius={10} value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
-                            {/* <LongWhiteButton value='Save artwork' onClick={() => console.log('')} /> */}
+                            {data?.pricing.shouldShowPrice === "Yes" ?
+                                <LongBlackButton radius={10} value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
+                            :
+                                <LongBlackButton radius={10} value='Request price' isDisabled={false} onClick={() => console.log('request price button clicked')} />
+                            }
                         </View>
                     </View>
                 </View>
+                }
         </View>
     )
 }
@@ -174,9 +179,6 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     priceContainer:  {
-        marginVertical: 1,
-        borderBottomWidth: 1,
-        borderBottomColor: colors.inputBorder,
         paddingVertical: 20
     },
     priceTitle: {
