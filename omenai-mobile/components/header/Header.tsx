@@ -3,13 +3,25 @@ import React from 'react'
 import { colors } from '../../config/colors.config'
 
 import omenaiLogo from '../../assets/omenai-logo.png';
+import { Feather } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
 
 export default function Header() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
         <SafeAreaView>
-            <View style={{alignItems: 'center'}}>
-                <Image source={omenaiLogo} />
+            <View style={styles.mainContainer}>
+                <View style={{width: 50}} />
+                <View style={{flex: 1, alignItems: 'center'}}>
+                    <Image source={omenaiLogo} />
+                </View>
+                <TouchableOpacity onPress={() => navigation.navigate(screenName.notifications)} style={{width: 50, alignItems: 'flex-end'}}>
+                    <Feather name='bell' size={25} color={colors.grey} style={{opacity: 1}} />
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     )
@@ -24,6 +36,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10
+    },
+    mainContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10
     },
     leftContainer: {
         flexDirection: 'row',
