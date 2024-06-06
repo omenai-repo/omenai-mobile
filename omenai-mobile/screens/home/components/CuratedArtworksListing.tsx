@@ -6,6 +6,7 @@ import { fetchArtworks } from 'services/artworks/fetchArtworks';
 import { colors } from 'config/colors.config';
 import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
 import curatedBg from 'assets/images/curated_bg.png';
+import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
 
 export default function CuratedArtworksListing({refreshCount} : {refreshCount?: number}) {
     const [isLoading, setIsLoading] = useState(false)
@@ -19,10 +20,10 @@ export default function CuratedArtworksListing({refreshCount} : {refreshCount?: 
     const handleFetchArtworks = async () => {
         setIsLoading(true)
 
-        const results = await fetchArtworks("recent");
+        const results = await fetchCuratedArtworks();
 
         if(results.isOk){
-            setData(results.body.data)
+            setData(results.body)
         }else{
             console.log(results)
         }
