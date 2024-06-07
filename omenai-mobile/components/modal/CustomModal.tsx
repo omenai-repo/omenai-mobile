@@ -16,13 +16,15 @@ type ModalProps = {
 
 export default function CustomModal({message, isVisible, modalType}: ModalProps) {
     return (
-        <Modal isVisible={isVisible} backdropOpacity={0.4}>
-            <View style={styles.container}>
-                <View style={{height: 40, width: 40, borderRadius: 10, backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center'}}>
-                    {modalType === 'error' && <MaterialIcons name='error-outline' color={'#ff0000'} size={20} /> }
-                </View>
-                <View style={{flex: 1}}>
-                    <Text style={{fontSize: 16, color: colors.primary_black}}>{message}</Text>
+        <Modal isVisible={isVisible} backdropOpacity={0.2} animationIn={'slideInDown'} animationOut={'slideOutUp'}>
+            <View style={styles.mainContainer}>
+                <View style={styles.container}>
+                    <View style={{height: 40, width: 40, borderRadius: 10, backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center'}}>
+                        {modalType === 'error' && <MaterialIcons name='error-outline' color={'#ff0000'} size={20} /> }
+                    </View>
+                    <View style={{flex: 1}}>
+                        <Text style={{fontSize: 16, color: colors.primary_black}}>{message}</Text>
+                    </View>
                 </View>
             </View>
         </Modal>
@@ -39,4 +41,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 15
     },
+    mainContainer: {
+        flex: 1,
+        paddingTop: 50
+    }
 })

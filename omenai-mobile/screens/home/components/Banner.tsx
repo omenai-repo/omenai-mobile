@@ -7,7 +7,7 @@ const ITEM_WIDTH = windowWidth; // Width of each item, adjust this to your needs
 const CENTER_OFFSET = (windowWidth - ITEM_WIDTH) / 2;
 
 type BannerItemProps = {
-    image: string,
+    image?: string,
     title: string,
     text: string,
     buttonLabel?: string,
@@ -16,21 +16,21 @@ type BannerItemProps = {
 
 const data: BannerItemProps[] =[
     {
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHWWPo63RuGPEv0ulEbUkec7iwnTH-FpM_7g&s',
-        title: 'New Gallery in London',
+        image: 'https://images.saatchiart.com/saatchi/1393639/art/6885443/5954793-HSC00001-7.jpg',
+        title: '2024 New Art Inspo',
         text: 'Exciting news ✨. Our Omenai gallery is now opened in london',
-        buttonLabel: 'View location',
+        buttonLabel: 'Read article',
         showButton: true
     },
     {
         image: 'https://i.pinimg.com/736x/8a/f5/68/8af568d2dab958de07c9099b29c15d2d.jpg',
         title: '$500,000 Artwork sold',
         text: 'The taj-mahal paintaing has been purchased for $500,000 on the Omenai platform 🚀',
-        // buttonLabel: 'View location',
-        showButton: false
+        buttonLabel: 'Read article',
+        showButton: true
     },
     {
-        image: 'https://miro.medium.com/v2/resize:fit:1024/1*7b4mWA8bBHVgDLgvZYANRg.png',
+        image: 'https://blog.yourdesignjuice.com/wp-content/uploads/2023/02/dg-art-illustraton-feb-2023.jpg',
         title: 'Most liked artwork',
         text: 'Fan favourite artwork "Levurn" is the most liked artwork on our platform',
         buttonLabel: 'View artwork',
@@ -53,9 +53,11 @@ export default function Banner() {
     const Item = ({image, text, title, buttonLabel, showButton}: BannerItemProps) => {
         return(
             <View style={styles.container}>
-                <Image source={{uri: image}} style={styles.image} />
+                <View style={styles.imageContainer}>
+                    <Image source={{uri: image}} style={{width: '100%', height: '100%'}} resizeMode="contain" />
+                </View>
                 <View style={styles.contentContainer}>
-                    <Text style={{fontSize: 18, fontWeight: '500', color: colors.white}}>{title}</Text>
+                    <Text style={{fontSize: 21, fontWeight: '500', color: colors.white}}>{title}</Text>
                     <Text style={{fontSize: 14, color: colors.white, marginTop: 7}}>{text}</Text>
                     
                     <View style={{flexWrap: 'wrap'}}>
@@ -104,18 +106,17 @@ export default function Banner() {
 
 const styles = StyleSheet.create({
     container: {
-        height: 200,
+        height: 250,
         backgroundColor: colors.primary_black,
         flexDirection: 'row',
         width: windowWidth
     },
-    image: {
-        height: 200,
-        width: 150,
-        backgroundColor: colors.grey50
+    imageContainer: {
+        width: 190,
+        paddingHorizontal: 10
     },
     contentContainer: {
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
         paddingVertical: 10,
         flex: 1,
         justifyContent: 'center'
@@ -125,9 +126,9 @@ const styles = StyleSheet.create({
         borderColor: colors.white,
         borderRadius: 30,
         flexWrap: 'wrap',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        marginTop: 20
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        marginTop: 30
     },
     indicatorsContainer: {
         marginTop: 10,

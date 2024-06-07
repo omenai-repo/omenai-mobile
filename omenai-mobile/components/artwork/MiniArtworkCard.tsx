@@ -8,6 +8,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { formatPrice } from 'utils/priceFormatter';
+import { resizeImageDimensions } from 'utils/resizeImageDimensions.utils';
 
 type MiniArtworkCardType = {
     title: string,
@@ -28,11 +29,9 @@ export default function MiniArtworkCard({url, artist, title, showPrice, price}: 
     const image_href = getImageFileView(url, imageWidth);
 
     useEffect(() => {
-        // Fetch the image to get its dimensions
-        Image.getSize(image_href, (width, height) => {
-          // Calculate the image height based on the screen width and image aspect ratio
-          const aspectRatio = height / width;
-          setImageDimensions({height:height * aspectRatio, width: width});
+        Image.getSize(image_href, (defaultWidth, defaultHeight) => {
+            const {width, height} = resizeImageDimensions({width: defaultWidth, height: defaultHeight}, 300)
+            setImageDimensions({height, width})
         });
       }, [image_href, screenWidth]);
 
