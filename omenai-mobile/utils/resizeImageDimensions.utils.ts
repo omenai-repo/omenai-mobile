@@ -11,10 +11,8 @@ export function resizeImageDimensions(dimensions: Dimensions, heightLimit: numbe
         return { width, height };
     }
 
-    // Calculate the aspect ratio
     const aspectRatio = width / height;
 
-    // Calculate the new height and width while maintaining the aspect ratio
     const newHeight = heightLimit;
     const newWidth = Math.round(newHeight * aspectRatio);
 
