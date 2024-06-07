@@ -6,6 +6,7 @@ import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore';
 import { formatPrice } from 'utils/priceFormatter';
 import { createShippingOrder } from 'services/orders/createShippingOrder';
 import { getAsyncData } from 'utils/asyncStorage.utils';
+import { useModalStore } from 'store/modal/modalStore';
 
 type SummaryContainerProps = {
     buttonTypes: "Proceed to shipping" | "Request price quote" | "Proceed to make payment",
@@ -15,6 +16,7 @@ type SummaryContainerProps = {
 
 export default function SummaryContainer({buttonTypes, price, disableButton}: SummaryContainerProps) {
     const { setIsLoading, address, city, country, state, zipCode, artworkOrderData, saveShippingAddress, setSelectedSectionIndex } = useOrderSummaryStore();
+    const { updateModal } = useModalStore();
 
     const placeOrderHandler = async () => {
         setIsLoading(true);
@@ -45,7 +47,8 @@ export default function SummaryContainer({buttonTypes, price, disableButton}: Su
             console.log(results.message);
             setSelectedSectionIndex(3)
         }else{
-            console.log('Error', results?.message)
+            console.log('Error', results?.message);
+            updateModal({modalType: 'error', message: results?.message, showModal: true })
         }
 
         setIsLoading(false)

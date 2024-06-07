@@ -5,36 +5,24 @@ import { colors } from 'config/colors.config';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import LongWhiteButton from 'components/buttons/LongWhiteButton';
+import { modalType } from 'store/modal/modalStore';
+import { MaterialIcons } from '@expo/vector-icons';
 
 type ModalProps = {
-    value: string | null,
-    handleDismiss: (e? : string | boolean) => void,
+    message: string,
     isVisible: boolean,
-    multiChoice?: string,
+    modalType: modalType
 }
 
-export default function CustomModal({value, handleDismiss, isVisible, multiChoice}: ModalProps) {
-
+export default function CustomModal({message, isVisible, modalType}: ModalProps) {
     return (
-        <Modal isVisible={isVisible}>
+        <Modal isVisible={isVisible} backdropOpacity={0.4}>
             <View style={styles.container}>
-                <Text style={{fontSize: 18}}>{value}</Text>
-                <View style={styles.buttonBottom}>
-                    {multiChoice &&
-                        <View style={{flex: 1}}>
-                            <LongWhiteButton
-                                value='Dismiss'
-                                onClick={handleDismiss}
-                            />
-                        </View>
-                    }
-                    <View style={{flex: 1}}>
-                        <LongBlackButton
-                            value={multiChoice ? multiChoice : 'Dismiss'}
-                            onClick={() => handleDismiss(true)}
-                            isDisabled={false}
-                        />
-                    </View>
+                <View style={{height: 40, width: 40, borderRadius: 10, backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center'}}>
+                    {modalType === 'error' && <MaterialIcons name='error-outline' color={'#ff0000'} size={20} /> }
+                </View>
+                <View style={{flex: 1}}>
+                    <Text style={{fontSize: 16, color: colors.primary_black}}>{message}</Text>
                 </View>
             </View>
         </Modal>
@@ -45,15 +33,10 @@ const styles = StyleSheet.create({
     container: {
         paddingVertical: 20,
         paddingHorizontal: 20,
-        backgroundColor: colors.white
-    },
-    buttonBottom: {
-        marginTop: 20,
-        paddingTop: 20,
-        borderTopWidth: 1,
-        borderTopColor: colors.inputBorder,
+        backgroundColor: colors.white,
+        borderRadius: 10,
         flexDirection: 'row',
-        alignItems: 'flex-end',
-        gap: 10
-    }
+        alignItems: 'center',
+        gap: 15
+    },
 })
