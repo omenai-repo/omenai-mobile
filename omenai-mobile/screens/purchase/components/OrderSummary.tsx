@@ -40,7 +40,8 @@ export default function OrderSummary({data: {
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
-        paddingVertical: 30
+        paddingVertical: 30,
+        paddingTop: 0
     },
     titleHeader: {
         fontSize: 20,
