@@ -55,8 +55,8 @@ export default function Banner() {
             <View style={styles.container}>
                 <Image source={{uri: image}} style={styles.image} />
                 <View style={styles.contentContainer}>
-                    <Text style={{fontSize: 16, fontWeight: '500', color: colors.white}}>{title}</Text>
-                    <Text style={{fontSize: 14, color: colors.white, marginTop: 5}}>{text}</Text>
+                    <Text style={{fontSize: 18, fontWeight: '500', color: colors.white}}>{title}</Text>
+                    <Text style={{fontSize: 14, color: colors.white, marginTop: 7}}>{text}</Text>
                     
                     <View style={{flexWrap: 'wrap'}}>
                         {showButton && <View style={styles.button}><Text style={{fontSize: 14, fontWeight: '500', color: colors.white}}>{buttonLabel}</Text></View>}
