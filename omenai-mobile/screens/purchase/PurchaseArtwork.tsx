@@ -14,6 +14,7 @@ import { fetchsingleArtworkOnPurchase } from 'services/artworks/fetchSingleArtwo
 import Loader from 'components/general/Loader'
 import PriceQuoteSent from './components/PriceQuoteSent'
 import { screenName } from 'constants/screenNames.constants'
+import WithModal from 'components/modal/WithModal'
 
 export default function PurchaseArtwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -54,31 +55,33 @@ export default function PurchaseArtwork() {
     }
 
     return (
-        <View style={{flex: 1, backgroundColor: colors.white}}>
-            <SafeAreaView style={{paddingBottom: 0, marginBottom: 0}}>
-                <View style={{paddingHorizontal: 20}}>
-                    <BackScreenButton handleClick={handleBackNavigation}/>
-                </View>
-            </SafeAreaView>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={styles.scrollContainer}
-            >
-            <ScrollView nestedScrollEnabled={true}>
-                {/* <TabsIndicator selectedIndex={selectedSectionIndex} /> */}
-                {isLoading && <Loader />}
-                {(!isLoading && artworkOrderData) ? (
-                    <>
-                        {selectedSectionIndex === 1 && <OrderSummary data={artworkOrderData} />}
-                        {selectedSectionIndex === 2 && <ShippingDetails data={artworkOrderData} />}
-                        {selectedSectionIndex === 3 && <PriceQuoteSent handleClick={() => handleBackNavigation(true)}  />}
-                    </>
-                ):
-                    null
-                }
-            </ScrollView>
-            </KeyboardAvoidingView>
-        </View>
+        <WithModal>
+            <View style={{flex: 1, backgroundColor: colors.white}}>
+                <SafeAreaView>
+                    <View style={{paddingHorizontal: 20}}>
+                        <BackScreenButton handleClick={handleBackNavigation}/>
+                    </View>
+                </SafeAreaView>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={styles.scrollContainer}
+                >
+                <ScrollView nestedScrollEnabled={true}>
+                    {/* <TabsIndicator selectedIndex={selectedSectionIndex} /> */}
+                    {isLoading && <Loader />}
+                    {(!isLoading && artworkOrderData) ? (
+                        <>
+                            {selectedSectionIndex === 1 && <OrderSummary data={artworkOrderData} />}
+                            {selectedSectionIndex === 2 && <ShippingDetails data={artworkOrderData} />}
+                            {selectedSectionIndex === 3 && <PriceQuoteSent handleClick={() => handleBackNavigation(true)}  />}
+                        </>
+                    ):
+                        null
+                    }
+                </ScrollView>
+                </KeyboardAvoidingView>
+            </View>
+        </WithModal>
     )
 }
 
