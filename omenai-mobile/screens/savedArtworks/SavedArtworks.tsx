@@ -3,20 +3,25 @@ import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import BackScreenButton from 'components/buttons/BackScreenButton'
 import { fetchUserSavedArtworks } from 'services/artworks/fetchUserSavedArtwork';
-import { Feather } from '@expo/vector-icons';
 import { UseSavedArtworksStore } from 'store/artworks/SavedArtworksStore';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import Divider from 'components/general/Divider';
 import Loader from 'components/general/Loader';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { AntDesign } from '@expo/vector-icons'
 import { screenName } from 'constants/screenNames.constants';
+import { handleFetchUserID } from 'utils/asyncStorage.utils';
+import useLikedState from 'custom/hooks/useLikedState';
 
 type SavedArtworkItemProps = {
     name: string,
     artistName: string,
-    url: string
+    url: string,
+    index: number,
+    art_id: string,
+    likeIds: string[],
+    impressions: number
 }
 
 export default function SavedArtworks() {
@@ -24,6 +29,18 @@ export default function SavedArtworks() {
 
     const { isLoading, setIsLoading, data, setData } = UseSavedArtworksStore();
     const [refreshing, setRefreshing] = useState(false);
+
+    const [sessionId, setSessionId] = useState('');
+
+    useEffect(() => {
+        handleFetchUserSessionData()
+    }, [])
+
+
+    const handleFetchUserSessionData = async () => {
+        const userId = await handleFetchUserID();
+        setSessionId(userId)
+    }
 
     const onRefresh = React.useCallback(() => {
         // setRefreshing(true);
@@ -45,8 +62,26 @@ export default function SavedArtworks() {
         setIsLoading(false)
     };
 
-    const SavedArtworkItem = ({name, artistName, url}: SavedArtworkItemProps) => {
+    const SavedArtworkItem = ({name, artistName, url, index, art_id, likeIds, impressions}: SavedArtworkItemProps) => {
         let image_href = getImageFileView(url, 80);
+
+
+        const { handleLike } = useLikedState(
+            impressions,
+            likeIds,
+            sessionId,
+            art_id
+        ); 
+
+        const handleRemove = () => {
+            handleLike(false)
+            
+            //remove artwork from state
+            let prevData = data
+            prevData.splice(index, 1)
+            setData(prevData)
+        }
+
 
         return(
             <TouchableOpacity onPress={() => navigation.navigate(screenName.artwork, {title: name})} activeOpacity={1}>
@@ -58,7 +93,9 @@ export default function SavedArtworks() {
                             <Text style={{fontSize: 14, color: '#858585', marginTop: 2}}>{artistName}</Text>
                         </View>
                     </View>
-                    <Feather name='trash-2' color={'#ff0000'} size={15} />
+                    <TouchableOpacity onPress={handleRemove}>
+                        <AntDesign name='heart' color={'#ff0000'} size={20} />
+                    </TouchableOpacity>
                 </View>
             </TouchableOpacity>
         )
@@ -87,12 +124,21 @@ export default function SavedArtworks() {
                                     name={artwork.title}
                                     artistName={artwork.artist}
                                     url={artwork.url}
+                                    art_id={artwork.art_id}
+                                    likeIds={artwork.like_ids}
+                                    impressions={artwork.impressions}
+                                    index={index}
                                 />
                                 {(index + 1) !== data.length && <Divider />}
                             </View>
                         ))}
                     </View>
                 }
+                {(data.length === 0 && !isLoading) && (
+                    <View style={{height: 400, alignItems: 'center', justifyContent: 'center'}}>
+                        <Text style={{fontSize: 20}}>No Saved Artworks</Text>
+                    </View>
+                )}
             </ScrollView>
         </View>
     )
@@ -121,7 +167,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     sectionContainer: {
-        marginTop: 50,
+        marginTop: 20,
         borderWidth: 1,
         borderColor: colors.grey50,
         padding: 15,
