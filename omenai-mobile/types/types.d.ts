@@ -54,7 +54,8 @@ type ArtworkDataType = {
   signature: string,
   updatedAt: string,
   url: string,
-  certificate_of_authenticity: "Yes" | 'No'
+  certificate_of_authenticity: "Yes" | 'No',
+  art_id: string
 }
 
 type ArtworkFlatlistItem = {
@@ -107,4 +108,28 @@ type IndividualAddressTypes = {
   state: string;
   zip: string;
   [key: string]: string;
+};
+
+type ArtworkSchemaTypes = {
+  artist: string;
+  year: number;
+  title: string;
+  medium: string;
+  rarity: string;
+  materials: string;
+  dimensions: ArtworkDimensions;
+  url: string;
+  pricing: ArtworkPricing;
+  art_id: string;
+  gallery_id: string;
+  impressions?: number;
+  like_IDs?: string[];
+  artist_birthyear: string;
+  artist_country_origin: string;
+  certificate_of_authenticity: string;
+  artwork_description?: string;
+  framing: string;
+  signature: string;
+  carrier: string;
+  should_show_on_sub_active?: boolean;
 };
