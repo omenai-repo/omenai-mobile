@@ -9,16 +9,20 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { formatPrice } from 'utils/priceFormatter';
 import { resizeImageDimensions } from 'utils/resizeImageDimensions.utils';
+import LikeComponent from './LikeComponent';
 
 type MiniArtworkCardType = {
     title: string,
     url: string,
     price: number,
     artist: string,
-    showPrice?: boolean
+    showPrice?: boolean,
+    art_id: string;
+    impressions: number;
+    like_IDs: string[];
 }
 
-export default function MiniArtworkCard({url, artist, title, showPrice, price}: MiniArtworkCardType) {
+export default function MiniArtworkCard({url, artist, title, showPrice, price, art_id, impressions, like_IDs}: MiniArtworkCardType) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const screenWidth = Dimensions.get('window').width;
@@ -46,7 +50,11 @@ export default function MiniArtworkCard({url, artist, title, showPrice, price}: 
                     <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.7, marginTop: 5}}>{artist}</Text>
                     <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
                 </View>
-                <Feather name='heart' size={18} />
+                <LikeComponent
+                    art_id={art_id}
+                    impressions={impressions || 0}
+                    likeIds={like_IDs || []}
+                />
             </View>
         </TouchableOpacity>
     )

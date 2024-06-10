@@ -52,6 +52,9 @@ export default function NewArtworksListing({refreshCount} : {refreshCount?: numb
                             artist={item.artist}
                             showPrice={item.pricing.shouldShowPrice === "Yes"}
                             price={item.pricing.price}
+                            impressions={item.impressions}
+                            like_IDs={item.like_IDs}
+                            art_id={item.art_id}
                         />
                     )}
                     keyExtractor={(_, index) => JSON.stringify(index)}
