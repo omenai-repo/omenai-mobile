@@ -19,6 +19,7 @@ import WithModal from 'components/modal/WithModal';
 import { requestArtworkPrice } from 'services/artworks/requestArtworkPrice';
 import { getAsyncData } from 'utils/asyncStorage.utils';
 import { useModalStore } from 'store/modal/modalStore';
+import SaveArtworkButton from './components/SaveArtworkButton';
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -104,9 +105,7 @@ export default function Artwork() {
                 <ScrollView style={styles.scrollContainer}>
                     <View style={{paddingHorizontal: 20}}>
                         <Image source={{uri: image_href}} style={styles.image} />
-                        <View style={styles.likeContainer}>
-                            <View style={[styles.tagItem, {backgroundColor: '#f5f5f5', gap: 10, paddingHorizontal: 20}]}><Feather name='heart' /><Text>Save artwork</Text></View>
-                        </View>
+                        <SaveArtworkButton likeIds={data.like_IDs || []} art_id={data.art_id} impressions={data.impressions || 0} />
                         <View style={styles.artworkDetails}>
                             <Text style={styles.artworkTitle}>{data?.title}</Text>
                             <Text style={styles.artworkCreator}>{data?.artist}</Text>
@@ -250,10 +249,5 @@ const styles = StyleSheet.create({
     },
     detailsContainer: {
         marginBottom: 30
-    },
-    likeContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 15
     }
 })

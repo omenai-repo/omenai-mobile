@@ -55,7 +55,10 @@ type ArtworkDataType = {
   updatedAt: string,
   url: string,
   certificate_of_authenticity: "Yes" | 'No',
-  art_id: string
+  art_id: string;
+  gallery_id: string;
+  impressions?: number;
+  like_IDs?: string[];
 }
 
 type ArtworkFlatlistItem = {
@@ -63,7 +66,10 @@ type ArtworkFlatlistItem = {
   artist: string,
   pricing: {price: number, shouldShowPrice: "Yes" | "No"},
   url: string,
-  pricing: {price: number, shouldShowPrice: "Yes" | "No"}
+  pricing: {price: number, shouldShowPrice: "Yes" | "No"},
+  art_id: string;
+  impressions: number;
+  like_IDs: string[];
 }
 
 type OrderAcceptedStatusTypes = {
