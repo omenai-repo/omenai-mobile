@@ -33,7 +33,7 @@ export async function fetchUserSavedArtworks(){
         console.log('error' + error)
         return {
             isOk: false,
-            body: {message: 'Error fetching orders'}
+            body: {message: 'Error fetching saved artworks'}
         }
     }
 

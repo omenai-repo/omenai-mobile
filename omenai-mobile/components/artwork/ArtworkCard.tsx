@@ -7,6 +7,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { formatPrice } from 'utils/priceFormatter';
+import LikeComponent from './LikeComponent';
 
 type ArtworkCardType = {
     title: string,
@@ -18,10 +19,13 @@ type ArtworkCardType = {
     showPrice?: boolean,
     showTags?: boolean,
     lightText?: boolean,
-    width?: number
+    width?: number,
+    art_id: string;
+    impressions: number;
+    like_IDs: string[];
 }
 
-export default function ArtworkCard({title, url, artist, showPrice, price, lightText, width = 0}: ArtworkCardType) {
+export default function ArtworkCard({title, url, artist, showPrice, price, lightText, width = 0, impressions, art_id, like_IDs}: ArtworkCardType) {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const screenWidth = Dimensions.get('window').width;
 
@@ -38,7 +42,12 @@ export default function ArtworkCard({title, url, artist, showPrice, price, light
                     <Text style={[{fontSize: 12, color: colors.primary_black, opacity: 0.7, marginTop: 5}, lightText && {color: colors.white, opacity: 1}]}>{artist}</Text>
                     <Text style={[{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}, lightText && {color: colors.white}]}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
                 </View>
-                <Feather name='heart' size={20} color={lightText ? colors.white : colors.primary_black} />
+                <LikeComponent
+                    art_id={art_id}
+                    impressions={impressions || 0}
+                    likeIds={like_IDs || []}
+                    lightText
+                />
             </View>
         </TouchableOpacity>
     )
