@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react';
 import CustomModal from './CustomModal';
 import { useModalStore } from 'store/modal/modalStore';
+import { colors } from 'config/colors.config';
 
 type WithModalProps = {
     children: React.ReactNode
@@ -24,7 +25,7 @@ export default function WithModal({children}: WithModalProps) {
     }
 
     return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: colors.white}}>
             {children}
             <CustomModal 
                 isVisible={showModal}

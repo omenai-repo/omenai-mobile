@@ -15,14 +15,21 @@ import { Feather, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import SimilarArtworks from './components/similarArtworks/SimilarArtworks';
 import { formatPrice } from 'utils/priceFormatter';
 import { screenName } from 'constants/screenNames.constants';
+import WithModal from 'components/modal/WithModal';
+import { requestArtworkPrice } from 'services/artworks/requestArtworkPrice';
+import { getAsyncData } from 'utils/asyncStorage.utils';
+import { useModalStore } from 'store/modal/modalStore';
 import SaveArtworkButton from './components/SaveArtworkButton';
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const route = useRoute()
 
+    const { updateModal } = useModalStore();
+
     const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState<ArtworkDataType | null>(null)
+    const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
+    const [data, setData] = useState<ArtworkDataType | null>(null);
 
     let image_href
     if(data){
@@ -47,10 +54,42 @@ export default function Artwork() {
         }
 
         setIsLoading(false)
+    };
+
+    const handleRequestPriceQuote = async () => {
+        setLoadingPriceQuote(true);
+
+        let userEmail = '';
+        let userName = '';
+
+        const userSession = await getAsyncData('userSession')
+        if(userSession.value){
+            userEmail = JSON.parse(userSession.value).email
+            userName = JSON.parse(userSession.value).name
+        }else return
+
+        const artwork_data = {
+            title: data!.title,
+            artist: data!.artist,
+            art_id: data!.art_id,
+            url: data!.url,
+            medium: data!.medium,
+            pricing: data!.pricing,
+        };
+
+        const results = await requestArtworkPrice(artwork_data, userEmail, userName);
+        if(results.isOk){
+            updateModal({message: `Price quote for ${artwork_data.title} has been sent to ${userEmail}`, showModal: true, modalType: "success"})
+        }else{
+            updateModal({message: "Something went wrong, please try again or contact us for assistance.", showModal: true, modalType: "error"})
+        }
+
+        setLoadingPriceQuote(false)
+
     }
 
     return (
-        <View style={{flex: 1, backgroundColor: colors.white, position: 'relative'}}>
+        <WithModal>
             <View style={{flex: 1}}>
             <SafeAreaView>
                 <View style={{paddingHorizontal: 20}}>
@@ -118,13 +157,19 @@ export default function Artwork() {
                             {data?.pricing.shouldShowPrice === "Yes" ?
                                 <LongBlackButton radius={10} value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
                             :
-                                <LongBlackButton radius={10} value='Request price' isDisabled={false} onClick={() => console.log('request price button clicked')} />
+                                <LongBlackButton 
+                                    radius={10} 
+                                    value={loadingPriceQuote ? 'Requesting ...' : 'Request price' }
+                                    isDisabled={false} 
+                                    onClick={handleRequestPriceQuote} 
+                                    isLoading={loadingPriceQuote}
+                                />
                             }
                         </View>
                     </View>
                 </View>
-                }
-        </View>
+            }
+        </WithModal>
     )
 }
 

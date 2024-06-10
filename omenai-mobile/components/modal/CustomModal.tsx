@@ -21,6 +21,7 @@ export default function CustomModal({message, isVisible, modalType}: ModalProps)
                 <View style={styles.container}>
                     <View style={{height: 40, width: 40, borderRadius: 10, backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center'}}>
                         {modalType === 'error' && <MaterialIcons name='error-outline' color={'#ff0000'} size={20} /> }
+                        {modalType === 'success' && <MaterialIcons name='check-circle-outline' color={'#008000'} size={20} /> }
                     </View>
                     <View style={{flex: 1}}>
                         <Text style={{fontSize: 16, color: colors.primary_black}}>{message}</Text>
