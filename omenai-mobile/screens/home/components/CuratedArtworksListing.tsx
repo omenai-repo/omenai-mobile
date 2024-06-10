@@ -51,6 +51,9 @@ export default function CuratedArtworksListing({refreshCount} : {refreshCount?: 
                                     price={item.pricing.price}
                                     lightText={true}
                                     width={310}
+                                    impressions={item.impressions}
+                                    like_IDs={item.like_IDs}
+                                    art_id={item.art_id}
                                 />
                             )}
                             keyExtractor={(_, index) => JSON.stringify(index)}

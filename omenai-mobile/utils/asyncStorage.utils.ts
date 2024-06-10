@@ -36,3 +36,13 @@ export const clearLocalStorage = async () => {
       console.error('Failed to clear local storage');
     }
 };
+
+export const handleFetchUserID = async () => {
+    const userdata = await getAsyncData('userSession');
+    if(userdata.value){
+        const userId = JSON.parse(userdata.value).id
+        return(userId)
+    }
+
+    return
+}
