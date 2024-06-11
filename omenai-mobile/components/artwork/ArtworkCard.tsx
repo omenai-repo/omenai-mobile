@@ -46,7 +46,7 @@ export default function ArtworkCard({title, url, artist, showPrice, price, light
                     art_id={art_id}
                     impressions={impressions || 0}
                     likeIds={like_IDs || []}
-                    lightText
+                    lightText={lightText}
                 />
             </View>
         </TouchableOpacity>
