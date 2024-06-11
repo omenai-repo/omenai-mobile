@@ -5,7 +5,7 @@ export type modalType = "error" | "success" | "input"
 type updateModalProps = {
     message: string,
     showModal: boolean,
-    modalType: modalType
+    modalType: modalType,
 }
 
 type ModalStoreTypes = {
@@ -13,7 +13,9 @@ type ModalStoreTypes = {
     modalMessage: string,
     setModalMessage: (e: string) => void,
     modalType: modalType,
-    updateModal: (e: updateModalProps) => void
+    updateModal: (e: updateModalProps) => void,
+    webViewUrl: string | null,
+    setWebViewUrl: (e: string | null) => void
 };
 
 export const useModalStore = create<ModalStoreTypes>(
@@ -26,6 +28,10 @@ export const useModalStore = create<ModalStoreTypes>(
         modalType: "error",
         updateModal: (e: updateModalProps) => {
             set({showModal: e.showModal, modalMessage: e.message, modalType: e.modalType})
+        },
+        webViewUrl: null,
+        setWebViewUrl: (e: string | null) => {
+            set({webViewUrl: e})
         }
     })
 )

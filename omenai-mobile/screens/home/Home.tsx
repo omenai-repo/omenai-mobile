@@ -13,6 +13,7 @@ import NewArtworksListing from './components/NewArtworksListing'
 import TrendingArtworks from './components/TrendingArtworks'
 import Banner from './components/Banner'
 import CuratedArtworksListing from './components/CuratedArtworksListing'
+import WithModal from 'components/modal/WithModal'
 
 export default function Home() {
     const [refreshCount, setRefreshCount] = useState(0);
@@ -24,7 +25,7 @@ export default function Home() {
     }, []);
 
     return (
-        <View style={styles.container}> 
+        <WithModal> 
             <SafeAreaView>
                 <ScrollView 
                     showsVerticalScrollIndicator={false}
@@ -41,7 +42,7 @@ export default function Home() {
                     <Editorials />
                 </ScrollView>
             </SafeAreaView>
-        </View>
+        </WithModal>
     )
 }
 
