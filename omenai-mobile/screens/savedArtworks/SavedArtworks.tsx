@@ -8,7 +8,7 @@ import { getImageFileView } from 'lib/storage/getImageFileView';
 import Divider from 'components/general/Divider';
 import Loader from 'components/general/Loader';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons'
 import { screenName } from 'constants/screenNames.constants';
 import { handleFetchUserID } from 'utils/asyncStorage.utils';
@@ -26,6 +26,7 @@ type SavedArtworkItemProps = {
 
 export default function SavedArtworks() {
     const navigation = useNavigation<StackNavigationProp<any>>();
+    const isFocused = useIsFocused();
 
     const { isLoading, setIsLoading, data, setData } = UseSavedArtworksStore();
     const [refreshing, setRefreshing] = useState(false);
@@ -34,7 +35,8 @@ export default function SavedArtworks() {
 
     useEffect(() => {
         handleFetchUserSessionData()
-    }, [])
+        handleFetchUserSavedArtorks()
+    }, [isFocused])
 
 
     const handleFetchUserSessionData = async () => {
@@ -46,10 +48,6 @@ export default function SavedArtworks() {
         // setRefreshing(true);
         handleFetchUserSavedArtorks()
     }, []);
-
-    useEffect(() => {
-        handleFetchUserSavedArtorks()
-    }, [])
 
     const handleFetchUserSavedArtorks = async () => {
         setIsLoading(true);
