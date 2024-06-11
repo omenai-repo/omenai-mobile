@@ -139,3 +139,11 @@ type ArtworkSchemaTypes = {
   carrier: string;
   should_show_on_sub_active?: boolean;
 };
+
+type editorialListingType = {
+  title: string,
+  id: string,
+  author: string,
+  date: string,
+  url: string,
+}

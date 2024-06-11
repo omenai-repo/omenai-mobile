@@ -16,6 +16,8 @@ import Orders from 'screens/orders/Orders';
 import Payment from 'screens/payment/Payment';
 import Filter from 'components/filter/Filter';
 import Notifications from 'screens/notifications/Notifications';
+import EditorialsListing from 'screens/editorialsListing/EditorialsListing';
+import Editorial from 'screens/editorial/Editorial';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -25,6 +27,8 @@ type CustomTabBarIconProps = {
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+const hideHeader = {headerShown: false}
 
 export default function IndividualNavigation() {
 
@@ -60,6 +64,7 @@ export default function IndividualNavigation() {
             },
             tabBarLabel: () => null,
             tabBarActiveTintColor: colors.primary_black,
+            headerShown: false,
             tabBarInactiveTintColor: 'gray',
             tabBarStyle: {
               backgroundColor: colors.white,
@@ -75,42 +80,39 @@ export default function IndividualNavigation() {
           <Tab.Screen
             name={screenName.home}
             component={Home}
-            options={{headerShown: false}}
           />
           <Tab.Screen 
             name={screenName.catalog} 
             component={Catalog}
-            options={{ headerShown: false }}
           />
           <Tab.Screen 
             name={screenName.searchResults} 
             component={SearchResults}
-            options={{ headerShown: false }}
           />
           <Tab.Screen 
             name={screenName.orders} 
             component={Orders}
-            options={{ headerShown: false }}
           />
           <Tab.Screen 
             name={screenName.profile} 
             component={Profile}
-            options={{ headerShown: false }}
           />
         </Tab.Navigator>
     )
     }
 
     return(
-        <Stack.Navigator>
-            <Stack.Screen name='Individual' component={IndividualTabNavigationComponents} options={{headerShown: false}} />
-            <Stack.Screen name={screenName.artwork} component={Artwork} options={{ headerShown: false }} />
-            <Stack.Screen name={screenName.searchResults} component={SearchResults} options={{headerShown: false}} />
-            <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} options={{headerShown: false}} />
-            <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} options={{headerShown: false}} />
-            <Stack.Screen name={screenName.payment} component={Payment} options={{headerShown: false}} />
-            <Stack.Screen name={screenName.filter} component={Filter} options={{headerShown: false}} />
-            <Stack.Screen name={screenName.notifications} component={Notifications} options={{headerShown: false}} />
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen name='Individual' component={IndividualTabNavigationComponents} options={hideHeader}/>
+            <Stack.Screen name={screenName.artwork} component={Artwork} />
+            <Stack.Screen name={screenName.searchResults} component={SearchResults} />
+            <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} />
+            <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} />
+            <Stack.Screen name={screenName.payment} component={Payment} />
+            <Stack.Screen name={screenName.filter} component={Filter} />
+            <Stack.Screen name={screenName.notifications} component={Notifications} />
+            <Stack.Screen name={screenName.editorialsListing} component={EditorialsListing} />
+            <Stack.Screen name={screenName.editorial} component={Editorial} />
         </Stack.Navigator>
     )
 }
