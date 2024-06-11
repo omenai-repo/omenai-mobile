@@ -3,13 +3,14 @@ import React, { useEffect } from 'react';
 import CustomModal from './CustomModal';
 import { useModalStore } from 'store/modal/modalStore';
 import { colors } from 'config/colors.config';
+import WebViewModal from './WebViewModal';
 
 type WithModalProps = {
     children: React.ReactNode
 }
 
 export default function WithModal({children}: WithModalProps) {
-    const { showModal, updateModal, modalMessage, modalType } = useModalStore();
+    const { showModal, updateModal, modalMessage, modalType, webViewUrl } = useModalStore();
 
     useEffect(() => {
         if(showModal){
@@ -26,7 +27,8 @@ export default function WithModal({children}: WithModalProps) {
 
     return (
         <View style={{flex: 1, backgroundColor: colors.white}}>
-            {children}
+            {webViewUrl === null && children}
+            <WebViewModal url={webViewUrl} />
             <CustomModal 
                 isVisible={showModal}
                 message={modalMessage}

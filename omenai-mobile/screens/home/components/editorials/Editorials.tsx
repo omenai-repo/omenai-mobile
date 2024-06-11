@@ -1,11 +1,17 @@
 import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { colors } from '../../../../config/colors.config'
 import { Feather } from '@expo/vector-icons';
 import galleryImage from '../../../../assets/images/gallery-banner.png';
 import { FlatList } from 'react-native-gesture-handler';
 
 import gallery_one from '../../../../assets/images/gallery_one.png';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import EditorialCard, { EditorialCardProps } from 'components/editorials/EditorialCard';
+import Loader from 'components/general/Loader';
+import { listEditorials } from 'secure/editorial/admin/lib/getAllBlogArticles';
 
 const data = [
     {
@@ -28,58 +34,69 @@ const data = [
     },
 ];
 
-type EditorialCardProps = {
-    image: string,
-    writer: string,
-    articleHeader: string,
-    content: string
-}
+
 
 export default function Editorials() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [data, setData] = useState<editorialListingType[]>([]);
 
-    const Editorials = ({image, writer, articleHeader, content}: EditorialCardProps) => {
-        return(
-            <View style={styles.card}>
-                <Image source={{uri: image}} style={styles.image} />
-                <View>
-                    <View style={styles.cardDetails}>
-                        <Text style={{fontSize: 12, color: '#616161'}}>by {writer}</Text>
-                        <View style={{height: 5, width: 5, borderRadius: 5, backgroundColor: '#616161'}} />
-                        <Text style={{fontSize: 12, color: '#616161'}}>12th June, 2024</Text>
-                    </View>
-                    <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 15, fontWeight: 500}}>{articleHeader}</Text>
-                    <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize: 14, marginTop: 10, color: '#616161'}}>This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post.</Text>
-                    <TouchableOpacity style={{flexWrap: 'wrap'}}>
-                        <View style={styles.cardButton}>
-                            <Text style={{color: colors.primary_black, fontSize: 14}}>Read the full article</Text>
-                            <Feather name='arrow-right' size={20} />
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        )
+    useEffect(() => {
+        handleFetchHomeEditorials()
+    }, []);
+
+    const handleFetchHomeEditorials = async () => {
+        console.log('here')
+        setIsLoading(true)
+
+        const editorials: any = await listEditorials();
+        const editorialList = editorials.reverse().map((editorial: any) => {
+            return {
+              title: editorial.title,
+              id: editorial.id,
+              author: editorial.author,
+              date: editorial.date,
+              url: editorial.image,
+            };
+        });
+
+        const parsedList = editorialList.slice(0,2)
+
+        setData(parsedList);
+        
+        setIsLoading(false)
     }
 
     return (
         <View style={{marginTop: 40, marginBottom: 100}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
-                <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Editorials</Text>
-            </View>
-            <FlatList
-                data={data}
-                renderItem={({item}: {item: EditorialCardProps}) => (
-                    <Editorials
-                        image={item.image}
-                        writer={item.writer}
-                        content={item.content}
-                        articleHeader={item.articleHeader}
+            <TouchableOpacity onPress={() => navigation.navigate(screenName.editorialsListing)}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
+                    <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Editorials</Text>
+                    <Feather name='chevron-right' color={colors.grey} size={20} />
+                </View>
+            </TouchableOpacity>
+            {(isLoading && data.length < 1) && <Loader />}
+            {(!isLoading && data.length > 0) && (
+                    <FlatList
+                        data={data}
+                        renderItem={({item}: {item: editorialListingType}) => (
+                            <View style={{marginLeft: 20}}>
+                                <EditorialCard
+                                    url={item.url}
+                                    writer={item.author}
+                                    articleHeader={item.title}
+                                    date={item.date}
+                                    id={item.id}
+                                    width={320}
+                                />
+                            </View>
+                        )}
+                        keyExtractor={(_, index) => JSON.stringify(index)}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        style={{marginTop: 20}}
                     />
                 )}
-                keyExtractor={(_, index) => JSON.stringify(index)}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                style={{marginTop: 20}}
-            />
         </View>
     ) 
 }

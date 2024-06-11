@@ -102,7 +102,7 @@ export default function Artwork() {
                 </View>
             )}
             {data && (
-                <ScrollView style={styles.scrollContainer}>
+                <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
                     <View style={{paddingHorizontal: 20}}>
                         <Image source={{uri: image_href}} style={styles.image} />
                         <SaveArtworkButton likeIds={data.like_IDs || []} art_id={data.art_id} impressions={data.impressions || 0} />
