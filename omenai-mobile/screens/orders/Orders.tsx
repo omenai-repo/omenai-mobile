@@ -8,6 +8,7 @@ import OrdersListing from './components/PendingListing'
 import { getOrdersForUser } from 'services/orders/getOrdersForUser'
 import { useOrderStore } from 'store/orders/Orders'
 import HistoryListing from './components/HistoryListing'
+import Loader from 'components/general/Loader'
 
 type TabItemProps = {
     name: OrderTabsTypes,
@@ -67,9 +68,7 @@ export default function Orders() {
                     </View>
                 </SafeAreaView>
                 {isLoading ? 
-                    <View style={styles.loadingContainer}>
-                        <Text>Loading...</Text>
-                    </View>
+                    <Loader />
                 : 
                     <View>
                     {selectedTab === 'Pending' ?
