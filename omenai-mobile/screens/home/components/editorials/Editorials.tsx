@@ -46,7 +46,6 @@ export default function Editorials() {
     }, []);
 
     const handleFetchHomeEditorials = async () => {
-        console.log('here')
         setIsLoading(true)
 
         const editorials: any = await listEditorials();

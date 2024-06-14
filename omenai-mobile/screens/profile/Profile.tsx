@@ -69,7 +69,7 @@ export default function Profile() {
                     <View>
                         <Text style={{fontSize: 16, fontWeight: '500', color: colors.primary_black}}>{userData.name}</Text>
                         <Text style={{fontSize: 14, marginTop: 5, marginBottom: 20, color: '#858585'}}>{userData.email}</Text>
-                        <FittedBlackButton value='View profile' isDisabled={false} onClick={() => console.log('')} />
+                        <FittedBlackButton value='Edit profile' isDisabled={false} onClick={() => navigation.navigate(screenName.editProfile)} />
                     </View>
                 </View>
                 <View style={styles.buttonsContainer}>

@@ -5,8 +5,8 @@ import { colors } from '../../config/colors.config'
 type InputProps = {
     label: string,
     value: string,
-    onInputChange: (e: string) => void,
-    placeHolder: string,
+    onInputChange?: (e: string) => void,
+    placeHolder?: string,
     keyboardType?: KeyboardTypeOptions,
     errorMessage?: string,
     handleBlur?: () => void,

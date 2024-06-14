@@ -18,5 +18,6 @@ export const screenName = {
     filter: 'filter',
     notifications: 'notifications',
     editorialsListing: 'editorials',
-    editorial: 'editorial'
+    editorial: 'editorial',
+    editProfile: 'edit-profile'
 }

@@ -34,8 +34,11 @@ export default function SavedArtworks() {
     const [sessionId, setSessionId] = useState('');
 
     useEffect(() => {
-        handleFetchUserSessionData()
-        handleFetchUserSavedArtorks()
+        if(isFocused){
+            handleFetchUserSessionData()
+            handleFetchUserSavedArtorks()
+        }
+        return
     }, [isFocused])
 
 

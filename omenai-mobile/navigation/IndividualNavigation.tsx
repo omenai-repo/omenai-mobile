@@ -18,6 +18,7 @@ import Filter from 'components/filter/Filter';
 import Notifications from 'screens/notifications/Notifications';
 import EditorialsListing from 'screens/editorialsListing/EditorialsListing';
 import Editorial from 'screens/editorial/Editorial';
+import EditProfile from 'screens/editProfile/EditProfile';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -113,6 +114,7 @@ export default function IndividualNavigation() {
             <Stack.Screen name={screenName.notifications} component={Notifications} />
             <Stack.Screen name={screenName.editorialsListing} component={EditorialsListing} />
             <Stack.Screen name={screenName.editorial} component={Editorial} />
+            <Stack.Screen name={screenName.editProfile} component={EditProfile} />
         </Stack.Navigator>
     )
 }
