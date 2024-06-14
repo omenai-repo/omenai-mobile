@@ -34,7 +34,7 @@ export default function Home() {
                     }
                 >
                     <Header />
-                    <NewArtworksListing refreshCount={refreshCount} />
+                    <NewArtworksListing limit={8} refreshCount={refreshCount} />
                     <Banner />
                     <FeaturedGalleries />
                     <TrendingArtworks refreshCount={refreshCount} />

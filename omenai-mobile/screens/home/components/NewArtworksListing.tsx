@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { screenName } from 'constants/screenNames.constants';
 
-export default function NewArtworksListing({refreshCount} : {refreshCount?: number}) {
+export default function NewArtworksListing({refreshCount, limit} : {refreshCount?: number, limit: number}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(false)
 
@@ -26,7 +26,8 @@ export default function NewArtworksListing({refreshCount} : {refreshCount?: numb
         const results = await fetchArtworks("recent");
 
         if(results.isOk){
-            setData(results.body.data)
+            const data = results.body.data
+            setData(data.splice(0,limit))
         }else{
             console.log(results)
         }

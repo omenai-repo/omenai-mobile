@@ -13,6 +13,7 @@ import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks
 import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
 import FilterButton from 'components/filter/FilterButton'
+import Loader from 'components/general/Loader'
 
 type TagItemProps = {
     name: string,
@@ -79,7 +80,7 @@ export default function Catalog() {
                         </View>
                         <View style={{zIndex: 5}}>
                             {isLoading ?
-                                <View style={{height: 200, alignItems: 'center', justifyContent: 'center'}}><Text>Loading ...</Text></View>
+                                <Loader />
                             :
                                 <ScrollView
                                     style={{height: '100%'}}
