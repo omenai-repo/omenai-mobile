@@ -10,11 +10,13 @@ import Divider from 'components/general/Divider';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
+import { logout } from 'utils/logout.utils';
 
 type PageButtonItemProps = {
     name: string,
-    subText: string,
-    handlePress: () => void
+    subText?: string,
+    handlePress: () => void,
+    logout?: boolean
 }
 
 type userDataType = {
@@ -47,15 +49,15 @@ export default function Profile() {
         return
     }
 
-    const PageButtonItem = ({name, subText, handlePress}: PageButtonItemProps) => {
+    const PageButtonItem = ({name, subText, handlePress, logout}: PageButtonItemProps) => {
         return(
             <TouchableOpacity activeOpacity={1} onPress={handlePress}>
-                <View style={styles.pageButtonItem}>
+                <View style={[styles.pageButtonItem]}>
                     <View style={{flex: 1}}>
-                        <Text style={{fontSize: 16, color: colors.primary_black}}>{name}</Text>
-                        <Text style={{fontSize: 14, color: '#858585', marginTop: 2}}>{subText}</Text>
+                        <Text style={[{fontSize: 16, color: colors.primary_black}, logout && {color: '#ff0000'}]}>{name}</Text>
+                        {subText && <Text style={{fontSize: 14, color: '#858585', marginTop: 2}}>{subText}</Text>}
                     </View>
-                    <Feather name='chevron-right' color={colors.primary_black} size={15} />
+                    <Feather name='chevron-right' color={logout ? '#ff0000' : colors.primary_black} size={15} />
                 </View>
             </TouchableOpacity>
         )
@@ -76,6 +78,8 @@ export default function Profile() {
                     <PageButtonItem name='Saved artworks' subText='See all your saved artworks' handlePress={() => navigation.navigate(screenName.savedArtworks)} />
                     <Divider />
                     <PageButtonItem name='Order history' subText='A summary of all your orders' handlePress={() => navigation.navigate(screenName.orders)} />
+                    <Divider />
+                    <PageButtonItem name='Log Out' logout  handlePress={logout} />
                 </View>
             </SafeAreaView>
         </ScrollView>
