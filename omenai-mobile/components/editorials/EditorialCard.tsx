@@ -22,8 +22,6 @@ export default function EditorialCard({url, writer, articleHeader, date, id, wid
     const navigation = useNavigation<StackNavigationProp<any>>();
     const { setWebViewUrl } = useModalStore()
 
-    console.log(id)
-
     const image_href = getEditorialImageFilePreview(url, width);
 
     return(

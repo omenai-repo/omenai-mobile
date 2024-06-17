@@ -9,6 +9,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { screenName } from 'constants/screenNames.constants';
+import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
 
 export default function NewArtworksListing({refreshCount, limit} : {refreshCount?: number, limit: number}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -46,18 +47,25 @@ export default function NewArtworksListing({refreshCount, limit} : {refreshCount
             {isLoading ? <ArtworkCardLoader /> :
                 <FlatList
                     data={data}
-                    renderItem={({item}: {item: ArtworkFlatlistItem}) => (
-                        <ArtworkCard 
-                            title={item.title} 
-                            url={item.url}
-                            artist={item.artist}
-                            showPrice={item.pricing.shouldShowPrice === "Yes"}
-                            price={item.pricing.price}
-                            impressions={item.impressions}
-                            like_IDs={item.like_IDs}
-                            art_id={item.art_id}
-                        />
-                    )}
+                    renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
+                        if((index + 1) === limit){
+                            return(
+                                <ViewAllCategoriesButton label='View all artworks' path={screenName.catalog} />
+                            )
+                        }
+                        return(
+                            <ArtworkCard 
+                                title={item.title} 
+                                url={item.url}
+                                artist={item.artist}
+                                showPrice={item.pricing.shouldShowPrice === "Yes"}
+                                price={item.pricing.price}
+                                impressions={item.impressions}
+                                like_IDs={item.like_IDs}
+                                art_id={item.art_id}
+                            />
+                        )
+                    }}
                     keyExtractor={(_, index) => JSON.stringify(index)}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
