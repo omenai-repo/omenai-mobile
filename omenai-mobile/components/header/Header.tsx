@@ -9,7 +9,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 
-export default function Header() {
+export default function Header({showNotification}: {showNotification?: boolean}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
@@ -19,9 +19,13 @@ export default function Header() {
                 <View style={{flex: 1, alignItems: 'center'}}>
                     <Image source={omenaiLogo} />
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate(screenName.notifications)} style={{width: 50, alignItems: 'flex-end'}}>
-                    <Feather name='bell' size={25} color={colors.grey} style={{opacity: 1}} />
-                </TouchableOpacity>
+                {showNotification ?
+                    <TouchableOpacity onPress={() => navigation.navigate(screenName.notifications)} style={{width: 50, alignItems: 'flex-end'}}>
+                        <Feather name='bell' size={25} color={colors.grey} style={{opacity: 1}} />
+                    </TouchableOpacity>
+                    :
+                    <View style={{width: 50}} />
+                }
             </View>
         </SafeAreaView>
     )

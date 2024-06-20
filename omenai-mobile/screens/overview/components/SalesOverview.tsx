@@ -6,11 +6,7 @@ const chartData = [40,20,19,30,45,35]
 export default function SalesOverview() {
 
     const Bar = ({num}: {num: number}) => {
-        let height
-
-        height = (num / 50) * 200
-
-        console.log(height)
+        let height = (num / 50) * 200
 
         return(
             <View style={{flex: 1, justifyContent: 'flex-end'}}>
@@ -21,7 +17,7 @@ export default function SalesOverview() {
 
     return (
         <View style={styles.container}>
-            <Text style={{fontSize: 20, fontWeight: '500'}}>Sales overview</Text>
+            <Text style={{fontSize: 18, fontWeight: '500'}}>Sales overview</Text>
             <View style={styles.chartContainer}>
                 <View style={styles.numsIndicator}>
                     <Text style={styles.nums}>50k</Text>

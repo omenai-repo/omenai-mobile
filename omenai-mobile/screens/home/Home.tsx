@@ -33,7 +33,7 @@ export default function Home() {
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
                 >
-                    <Header />
+                    <Header showNotification />
                     <NewArtworksListing limit={8} refreshCount={refreshCount} />
                     <Banner />
                     <FeaturedGalleries />
