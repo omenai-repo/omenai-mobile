@@ -1,4 +1,4 @@
-import { Client, Databases, Storage, ID } from 'react-native-appwrite';
+import { Client, Storage } from 'react-native-appwrite';
 const client = new Client();
 
 client
@@ -6,6 +6,3 @@ client
   .setProject(process.env.APPWRITE_CLIENT_ID!);
 
 export const storage = new Storage(client);
-export const database = new Databases(client);
-
-export { client, ID };

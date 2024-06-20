@@ -1,4 +1,4 @@
-import { database } from "../../../appWrite";
+import { database } from "../../../lib/editorial/controller/appwrite";
 
 export default async function getEditorialDocument(doc_id: string) {
   try {
