@@ -30,7 +30,7 @@ export default function Form() {
                 id: resultsBody.id,
                 email: resultsBody.email,
                 name: resultsBody.name,
-                roles: resultsBody.role,
+                role: resultsBody.role,
                 preferences: resultsBody.preferences,
                 verified: resultsBody.verified
             }
