@@ -67,6 +67,7 @@ export default function EditorialsListing() {
                         keyExtractor={(_, index) => JSON.stringify(index)}
                         // horizontal={true}
                         showsHorizontalScrollIndicator={false}
+                        scrollEnabled={false}
                         style={{marginTop: 20}}
                         ItemSeparatorComponent={() => <View style={{height: 50}} />}
                     />
