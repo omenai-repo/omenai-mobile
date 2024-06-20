@@ -6,9 +6,10 @@ import { appInit } from 'utils/appInit';
 import { useFonts } from 'expo-font';
 import IndividualNavigation from 'navigation/IndividualNavigation';
 import AuthNavigation from 'navigation/AuthNavigation';
+import GalleryNavigation from 'navigation/GalleryNavigation';
 
 export default function App() {
-  const {isLoggedIn} = useAppStore()
+  const {isLoggedIn, userType} = useAppStore()
 
   const [fontsLoaded] = useFonts({
     'nunitoSans': require('./assets/fonts/nunito-sans.ttf'),
@@ -17,7 +18,7 @@ export default function App() {
   //add logic for conditional routing
   useEffect(() => {
     appInit()
-  }, [])
+  }, [isLoggedIn])
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -27,7 +28,10 @@ export default function App() {
           <AuthNavigation />
         }
         {/* App screens */}
-        {isLoggedIn &&
+        {(isLoggedIn && userType === "gallery") &&
+          <GalleryNavigation />
+        }
+        {(isLoggedIn && userType === "user") &&
           <IndividualNavigation />
         }
       </NavigationContainer>
