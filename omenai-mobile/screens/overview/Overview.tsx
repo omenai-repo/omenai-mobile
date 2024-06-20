@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import WithModal from 'components/modal/WithModal'
 import Header from 'components/header/Header'
 import TotalAmounts from './components/TotalAmounts';
+import SalesOverview from './components/SalesOverview';
 
 export default function Overview() {
     const [refreshCount, setRefreshCount] = useState(0);
@@ -24,6 +25,7 @@ export default function Overview() {
                 >
                     <Header />
                     <TotalAmounts />
+                    <SalesOverview />
                 </ScrollView>
             </SafeAreaView>
         </WithModal>
