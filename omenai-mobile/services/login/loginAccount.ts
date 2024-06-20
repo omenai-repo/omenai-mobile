@@ -3,7 +3,7 @@ import { apiUrl } from "../../constants/apiUrl.constants";
 
 export async function loginAccount(
     payload: IndividualLoginData,
-    route: "individual"
+    route: "individual" | "gallery"
 ){
 
     const url = apiUrl + '/api/auth/' + route + '/login'
