@@ -19,7 +19,9 @@ export default function SearchResults() {
     const [dataLength, setDataLength] = useState(0);
 
     useEffect(() => {
-        handleFetchSearch();
+        if(searchQuery.length > 2){
+            handleFetchSearch();
+        }
     }, [searchQuery]);
 
     const handleFetchSearch = async () => {

@@ -6,7 +6,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { colors } from 'config/colors.config';
-import { listEditorials } from 'secure/editorial/admin/lib/getAllBlogArticles';
+import { listEditorials } from 'lib/editorial/lib/getAllBlogArticles';
 import Loader from 'components/general/Loader';
 import EditorialCard from 'components/editorials/EditorialCard';
 
@@ -67,6 +67,7 @@ export default function EditorialsListing() {
                         keyExtractor={(_, index) => JSON.stringify(index)}
                         // horizontal={true}
                         showsHorizontalScrollIndicator={false}
+                        scrollEnabled={false}
                         style={{marginTop: 20}}
                         ItemSeparatorComponent={() => <View style={{height: 50}} />}
                     />

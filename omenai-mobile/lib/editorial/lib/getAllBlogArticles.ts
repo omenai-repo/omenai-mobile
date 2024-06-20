@@ -1,4 +1,4 @@
-import { database } from "../controller/appwrite";
+import { database } from "../../../lib/editorial/controller/appwrite";
 import { getEditorialData } from "./getEditorialData";
 import { getPromiseResolvedEditorialData } from "./getPromisedResolvedEditorialData";
 

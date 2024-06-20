@@ -11,7 +11,8 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import EditorialCard, { EditorialCardProps } from 'components/editorials/EditorialCard';
 import Loader from 'components/general/Loader';
-import { listEditorials } from 'secure/editorial/admin/lib/getAllBlogArticles';
+import { listEditorials } from 'lib/editorial/lib/getAllBlogArticles';
+import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
 
 const data = [
     {
@@ -46,7 +47,6 @@ export default function Editorials() {
     }, []);
 
     const handleFetchHomeEditorials = async () => {
-        console.log('here')
         setIsLoading(true)
 
         const editorials: any = await listEditorials();
@@ -75,7 +75,7 @@ export default function Editorials() {
                     <Feather name='chevron-right' color={colors.grey} size={20} />
                 </View>
             </TouchableOpacity>
-            {(isLoading && data.length < 1) && <Loader />}
+            {(isLoading && data.length < 1) && <ArtworkCardLoader />}
             {(!isLoading && data.length > 0) && (
                     <FlatList
                         data={data}

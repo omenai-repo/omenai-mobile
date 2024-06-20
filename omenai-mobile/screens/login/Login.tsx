@@ -8,18 +8,15 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../../config/colors.config';
 import { screenName } from '../../constants/screenNames.constants';
-import CustomModal from 'components/modal/CustomModal';
-import { useModalStore } from 'store/modal/modalStore';
+import WithModal from 'components/modal/WithModal';
 
 export default function Login() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-    const { modalMessage, setModalMessage } = useModalStore();
-
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     return (
-        <View style={styles.container}>
+        <WithModal>
             <AuthHeader
                 title='Welcome Back'
                 subTitle='Access your account so you can start purchasing artwork'
@@ -35,12 +32,7 @@ export default function Login() {
                 {selectedIndex === 0 && <Individual />}
                 {selectedIndex === 1 && <Gallery />}
             </ScrollView>
-            <CustomModal
-                value={modalMessage}
-                isVisible={modalMessage !== null}
-                handleDismiss={() => setModalMessage(null)}
-            />
-        </View>
+        </WithModal>
     )  
 }
 
