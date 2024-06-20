@@ -16,9 +16,9 @@ export default function TotalAmounts() {
             <View style={styles.card}>
                 <View style={styles.iconContainer}>
                     {type === "amount" ? 
-                        <Ionicons name='document-text-outline' size={24} color={'#0F973D'} />
+                        <Ionicons name='document-text-outline' size={21} color={'#0F973D'} />
                         :
-                        <Feather name='user' size={24} color={'#0F973D'} />
+                        <Feather name='user' size={21} color={'#0F973D'} />
                     }
                 </View>
                 <Text style={styles.cardTitle}>{name}</Text>
@@ -35,7 +35,7 @@ export default function TotalAmounts() {
 
     return (
         <View style={styles.container}>
-            <Text style={{fontSize: 20, fontWeight: '500'}}>Overview</Text>
+            <Text style={{fontSize: 18, fontWeight: '500'}}>Overview</Text>
             <View style={styles.contentsContainer}>
                 <Card name='Total amount sold' amount='$10,027' percentage='+3%' type="amount" />
                 <Card name='Customers' amount='42' percentage='+10%' type="customers" />
