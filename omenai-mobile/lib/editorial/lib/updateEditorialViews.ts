@@ -1,4 +1,4 @@
-import { database } from "../controller/appwrite";
+import { database } from "../../../appWrite";
 
 export const updateDocView = async (doc_id: string, currentViews: number) => {
   try {
