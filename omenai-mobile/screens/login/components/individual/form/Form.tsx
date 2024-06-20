@@ -17,7 +17,7 @@ export default function Form() {
 
     const { individualLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } = useIndividualAuthLoginStore();
     const { setUserSession, setIsLoggedIn } = useAppStore();
-    const {setModalMessage} = useModalStore();
+    const {updateModal} = useModalStore();
 
     const handleSubmit = async () => {
         setIsLoading(true)
@@ -44,7 +44,7 @@ export default function Form() {
             }
         }else{
             // Alert.alert(results?.body.message)
-            setModalMessage(results?.body.message)
+            updateModal({message:results?.body.message, showModal: true, modalType: "error"})
         }
 
         setIsLoading(false)
