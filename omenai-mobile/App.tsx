@@ -6,6 +6,7 @@ import { appInit } from 'utils/appInit';
 import { useFonts } from 'expo-font';
 import IndividualNavigation from 'navigation/IndividualNavigation';
 import AuthNavigation from 'navigation/AuthNavigation';
+import GalleryNavigation from 'navigation/GalleryNavigation';
 
 export default function App() {
   const {isLoggedIn} = useAppStore()
@@ -28,7 +29,7 @@ export default function App() {
         }
         {/* App screens */}
         {isLoggedIn &&
-          <IndividualNavigation />
+          <GalleryNavigation />
         }
       </NavigationContainer>
     </GestureHandlerRootView>
