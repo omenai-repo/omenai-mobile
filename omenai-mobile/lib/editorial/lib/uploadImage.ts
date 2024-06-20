@@ -1,4 +1,4 @@
-import { ID, storage } from "../controller/appwrite";
+import { storage, ID } from "../../../appWrite";
 
 export const uploadImage = async (file: File | undefined) => {
   if (file === undefined) return;
