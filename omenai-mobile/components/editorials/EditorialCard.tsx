@@ -4,7 +4,7 @@ import { Feather } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { getImageFileView } from 'lib/storage/getImageFileView'
 import { colors } from 'config/colors.config'
-import { getEditorialImageFilePreview } from 'secure/editorial/admin/lib/getEditorialImageFilePreview'
+import { getEditorialImageFilePreview } from 'lib/editorial/lib/getEditorialImageFilePreview'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
@@ -21,8 +21,6 @@ export type EditorialCardProps = {
 export default function EditorialCard({url, writer, articleHeader, date, id, width}: EditorialCardProps & {width: number}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const { setWebViewUrl } = useModalStore()
-
-    console.log(id)
 
     const image_href = getEditorialImageFilePreview(url, width);
 

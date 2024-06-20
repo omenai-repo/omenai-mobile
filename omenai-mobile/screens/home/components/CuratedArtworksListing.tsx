@@ -7,11 +7,13 @@ import { colors } from 'config/colors.config';
 import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
 import curatedBg from 'assets/images/curated_bg.png';
 import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
+import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
+import { screenName } from 'constants/screenNames.constants';
 
-export default function CuratedArtworksListing({refreshCount} : {refreshCount?: number}) {
+export default function CuratedArtworksListing({refreshCount, limit} : {refreshCount?: number, limit: number}) {
     const [isLoading, setIsLoading] = useState(false)
 
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any[]>([]);
 
     useEffect(() => {
         handleFetchArtworks()
@@ -23,7 +25,8 @@ export default function CuratedArtworksListing({refreshCount} : {refreshCount?: 
         const results = await fetchCuratedArtworks();
 
         if(results.isOk){
-            setData(results.body)
+            const data = Array.isArray(results.body) ? results.body : [];
+            setData(data.splice(0,limit))
         }else{
             console.log(results)
         }
@@ -42,20 +45,27 @@ export default function CuratedArtworksListing({refreshCount} : {refreshCount?: 
                 {isLoading ? <ArtworkCardLoader /> :
                         <FlatList
                             data={data}
-                            renderItem={({item}: {item: ArtworkFlatlistItem}) => (
-                                <ArtworkCard 
-                                    title={item.title} 
-                                    url={item.url}
-                                    artist={item.artist}
-                                    showPrice={item.pricing.shouldShowPrice === "Yes"}
-                                    price={item.pricing.price}
-                                    lightText={true}
-                                    width={310}
-                                    impressions={item.impressions}
-                                    like_IDs={item.like_IDs}
-                                    art_id={item.art_id}
-                                />
-                            )}
+                            renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
+                                if((index + 1) === limit){
+                                    return(
+                                        <ViewAllCategoriesButton label='View all artworks' path={screenName.catalog} darkMode />
+                                    )
+                                }
+                                return(
+                                    <ArtworkCard 
+                                        title={item.title} 
+                                        url={item.url}
+                                        artist={item.artist}
+                                        showPrice={item.pricing.shouldShowPrice === "Yes"}
+                                        price={item.pricing.price}
+                                        lightText={true}
+                                        width={310}
+                                        impressions={item.impressions}
+                                        like_IDs={item.like_IDs}
+                                        art_id={item.art_id}
+                                    />
+                                )
+                            }}
                             keyExtractor={(_, index) => JSON.stringify(index)}
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}

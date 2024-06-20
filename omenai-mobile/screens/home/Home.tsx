@@ -34,11 +34,11 @@ export default function Home() {
                     }
                 >
                     <Header />
-                    <NewArtworksListing refreshCount={refreshCount} />
+                    <NewArtworksListing limit={8} refreshCount={refreshCount} />
                     <Banner />
                     <FeaturedGalleries />
-                    <TrendingArtworks refreshCount={refreshCount} />
-                    <CuratedArtworksListing refreshCount={refreshCount} />
+                    <TrendingArtworks limit={8} refreshCount={refreshCount} />
+                    <CuratedArtworksListing limit={8} refreshCount={refreshCount} />
                     <Editorials />
                 </ScrollView>
             </SafeAreaView>

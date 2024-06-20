@@ -20,6 +20,7 @@ import { requestArtworkPrice } from 'services/artworks/requestArtworkPrice';
 import { getAsyncData } from 'utils/asyncStorage.utils';
 import { useModalStore } from 'store/modal/modalStore';
 import SaveArtworkButton from './components/SaveArtworkButton';
+import Loader from 'components/general/Loader';
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -97,9 +98,7 @@ export default function Artwork() {
                 </View>
             </SafeAreaView>
             {(isLoading && !data) && (
-                <View style={styles.loaderContainer}>
-                    <Text>Loading artwork data...</Text>
-                </View>
+                <Loader />
             )}
             {data && (
                 <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>

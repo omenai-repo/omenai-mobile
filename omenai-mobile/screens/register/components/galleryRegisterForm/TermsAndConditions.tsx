@@ -16,7 +16,7 @@ export default function TermsAndConditions() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const {selectedTerms, setSelectedTerms, pageIndex, setPageIndex, isLoading, setIsLoading, galleryRegisterData, clearState} = useGalleryAuthRegisterStore()
 
-    const {setModalMessage} = useModalStore();
+    const { updateModal } = useModalStore();
 
     const handleSubmit = async () => {
         setIsLoading(true);
@@ -33,7 +33,7 @@ export default function TermsAndConditions() {
             //ADD further logic to navigate to the homepage and hide auth screens
             navigation.navigate(screenName.login)
         }else{
-            setModalMessage(results?.body.message)
+            updateModal({message:results?.body.message, modalType: "error", showModal: true})
         }
 
         setIsLoading(false)

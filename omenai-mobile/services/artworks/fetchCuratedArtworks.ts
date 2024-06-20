@@ -36,7 +36,7 @@ export async function fetchCuratedArtworks(){
     }catch(error){
         return {
             isOk: false,
-            body: {message: 'Error fetching post impressions'}
+            body: {message: 'Error fetching arteorks'}
         }
     }
 }

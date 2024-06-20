@@ -1,4 +1,4 @@
-import { storage } from "../controller/appwrite";
+import { storage } from "../../../lib/editorial/controller/appwrite";
 
 export const getEditorialImageFilePreview = (fileId: string, width: number) => {
   const fileData = storage.getFilePreview(
