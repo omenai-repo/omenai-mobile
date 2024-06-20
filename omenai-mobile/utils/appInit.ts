@@ -6,6 +6,8 @@ export const appInit = async () => {
 
     if(userData.isOk === false) return false
 
-    if(userData.value)
-    useAppStore.setState({isLoggedIn: true, userSession: JSON.parse(userData.value)})
+    if(userData.value){
+        const value = JSON.parse(userData.value)
+        useAppStore.setState({isLoggedIn: true, userSession: value, userType: value.role})
+    }
 }

@@ -3,6 +3,11 @@ type IndividualLoginData = {
   password: string;
 };
 
+type GalleryLoginData = {
+  email: string;
+  password: string;
+};
+
 type IndividualRegisterData = {
   name: string,
   email: string,
