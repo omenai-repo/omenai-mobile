@@ -32,7 +32,7 @@ export default function Overview() {
                             <HighlightCard refreshCount={refreshCount} name='Sold artworks' type="sales" />
                         </View>
                     </View>
-                    <SalesOverview />
+                    <SalesOverview refreshCount={refreshCount}/>
                     <RecentOrders />
                 </ScrollView>
             </SafeAreaView>

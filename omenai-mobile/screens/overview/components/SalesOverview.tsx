@@ -5,12 +5,14 @@ import { getSalesDataHighestMonth, salesDataAlgorithm, splitNumberIntoChartIndic
 
 const chartData = [40,20,19,30,45,35]
 
-export default function SalesOverview() {
+export default function SalesOverview({refreshCount}: {refreshCount: number}) {
     const [salesOverviewData, setSalesOverviewData] = useState<any[]>([]);
     const [highestNum, setHighestnum] = useState(1);
-    const [indicatorArr, setIndicatorArr] = useState([0,1,2,3,4])
+    const [indicatorArr, setIndicatorArr] = useState([0,1,2,3,4]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+        setIsLoading(true)
         async function handleFetchSalesData(){
             const data = await getSalesActivityData();
             const activityData = salesDataAlgorithm(data.data);
@@ -19,10 +21,11 @@ export default function SalesOverview() {
             const highest = getSalesDataHighestMonth(activityData);
             setHighestnum(highest)
             setIndicatorArr(splitNumberIntoChartIndicator(highest));
+            setIsLoading(false)
         }
 
         handleFetchSalesData()
-    }, [])
+    }, [refreshCount])
     
 
     const Bar = ({num}: {num: number}) => {
@@ -34,6 +37,13 @@ export default function SalesOverview() {
             </View>
         )
     }
+    
+    if(isLoading)return(
+        <View style={styles.container}>
+            <Text style={{fontSize: 18, fontWeight: '500'}}>Sales overview</Text>
+            <View style={[styles.chartContainer, {height: 250, alignItems: 'center', justifyContent: 'center'}]}><Text>Loading...</Text></View>
+        </View>
+    )
 
     return (
         <View style={styles.container}>
