@@ -1,35 +1,67 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Image, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import Divider from 'components/general/Divider';
+import { getOverviewOrders } from 'services/orders/getOverviewOrders';
+import { getImageFileView } from 'lib/storage/getImageFileView';
+import { formatPrice } from 'utils/priceFormatter';
+import Loader from 'components/general/Loader';
 
 type OrderItemProps = {
     artworkName: string,
-    status: "pending" | "delivered"
+    artist: string,
+    url: string,
+    amount?: number
 }
 
-export default function RecentOrders() {
+export default function RecentOrders({refreshCount}: {refreshCount: number}) {
+    const [data, setData] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(false)
 
-    const OrderItem = ({artworkName, status}: OrderItemProps) => {
+    useEffect(() => {
+        setIsLoading(true)
+        async function handleFetchRecentOrders(){
+            const results = await getOverviewOrders();
+
+            setData(results.data)
+
+            setIsLoading(false)
+        };
+
+        handleFetchRecentOrders();
+    }, [refreshCount])
+
+    const OrderItem = ({artworkName, artist, url, amount}: OrderItemProps) => {
+        let image_href = getImageFileView(url, 300);
+
         return(
             <View style={styles.orderItem}>
+                <Image source={{uri: image_href}} alt='' style={{height: 100, width: 100}} />
                 <View style={{flex: 1}}>
                     <Text style={{fontSize: 14, color: colors.primary_black}}>{artworkName}</Text>
                     <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 10}}>
-                        <Text style={{fontSize: 12, color: '#858585'}}>30/05/2024</Text>
-                        <View style={{height: 4, width: 4, borderRadius: 10, backgroundColor: '#858585'}} />
-                        <Text style={{fontSize: 12, color: '#858585'}}>12:50AM</Text>
+                        <Text style={{fontSize: 12, color: '#858585'}}>{artist}</Text>
                     </View>
-                    <Text style={{fontSize: 14, color: colors.primary_black}}>View details</Text>
+                    <Text style={{fontSize: 14, color: colors.primary_black}}>{amount}</Text>
                 </View>
-                <View style={{flexWrap: 'wrap'}}>
+                {/* <View style={{flexWrap: 'wrap'}}>
                     {status === "pending" && <View style={[styles.statusPill]}><Text style={[styles.status]}>{status}</Text></View>}
                     {status === "delivered" && <View style={[styles.statusPill, {backgroundColor: '#E7F6EC'}]}><Text style={[styles.status, {color: '#004617'}]}>{status}</Text></View>}
-                </View>
+                </View> */}
             </View>
         )
-    }
+    };
+
+    if(isLoading)return(
+        <View style={styles.container}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={{fontSize: 18, fontWeight: '500', flex: 1}}>Recent orders</Text>
+                <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
+            </View>
+            <Loader />
+        </View>
+    )
 
     return (
         <View style={styles.container}>
@@ -38,11 +70,18 @@ export default function RecentOrders() {
                 <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
             </View>
             <View style={styles.mainContainer}>
-                <OrderItem artworkName='Stary Nights' status='pending' />
-                <Divider />
-                <OrderItem artworkName='Jason Monalisa' status='pending' />
-                <Divider />
-                <OrderItem artworkName='The thousand year war' status='delivered' />
+                {data.map((order, index) => (
+                    <>
+                    <OrderItem 
+                        artworkName={order.artwork_data.title}
+                        artist={order.artwork_data.artist}
+                        url={order.artwork_data.url}
+                        amount={order.artwork_data.pricing.shouldShowPrice && formatPrice(order.artwork_data.pricing.price)}
+                        key={index}
+                    />
+                    {(index + 1) !== data.length && <Divider />}
+                    </>
+                ))}
             </View>
         </View>
     )
