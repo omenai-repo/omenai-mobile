@@ -1,50 +1,76 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { getSalesActivityData } from 'services/overview/getSalesActivityData';
+import { getSalesDataHighestMonth, salesDataAlgorithm, splitNumberIntoChartIndicator } from 'utils/salesDataAlgorithm';
 
 const chartData = [40,20,19,30,45,35]
 
-export default function SalesOverview() {
+export default function SalesOverview({refreshCount}: {refreshCount: number}) {
+    const [salesOverviewData, setSalesOverviewData] = useState<any[]>([]);
+    const [highestNum, setHighestnum] = useState(1);
+    const [indicatorArr, setIndicatorArr] = useState([0,1,2,3,4]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        setIsLoading(true)
+        async function handleFetchSalesData(){
+            const data = await getSalesActivityData();
+            const activityData = salesDataAlgorithm(data.data);
+
+            setSalesOverviewData(activityData)
+            const highest = getSalesDataHighestMonth(activityData);
+            setHighestnum(highest)
+            setIndicatorArr(splitNumberIntoChartIndicator(highest));
+            setIsLoading(false)
+        }
+
+        handleFetchSalesData()
+    }, [refreshCount])
+    
 
     const Bar = ({num}: {num: number}) => {
-        let height = (num / 50) * 200
+        let height = (num / highestNum) * 200
 
         return(
-            <View style={{flex: 1, justifyContent: 'flex-end'}}>
+            <View style={{width: 40, justifyContent: 'flex-end', alignItems: 'center'}}>
                 <View style={{height: height, width: 22, backgroundColor: '#B5E3C4'}} />
             </View>
         )
     }
+    
+    if(isLoading)return(
+        <View style={styles.container}>
+            <Text style={{fontSize: 18, fontWeight: '500'}}>Sales overview</Text>
+            <View style={[styles.chartContainer, {height: 250, alignItems: 'center', justifyContent: 'center'}]}><Text>Loading...</Text></View>
+        </View>
+    )
 
     return (
         <View style={styles.container}>
             <Text style={{fontSize: 18, fontWeight: '500'}}>Sales overview</Text>
             <View style={styles.chartContainer}>
                 <View style={styles.numsIndicator}>
-                    <Text style={styles.nums}>50k</Text>
-                    <Text style={styles.nums}>40k</Text>
-                    <Text style={styles.nums}>30k</Text>
-                    <Text style={styles.nums}>20k</Text>
-                    <Text style={styles.nums}>10k</Text>
-                    <Text style={styles.nums}>5k</Text>
+                    {indicatorArr.map((indicator, index) => (
+                        <Text style={styles.nums} key={index}>{indicator}</Text>
+                    ))}
                 </View>
-                <View style={styles.mainChart}>
-                    <View style={styles.mainChartDisplay}>
-                        {chartData.map((i, index) => (
-                            <Bar
-                                num={i}
-                                key={index}
-                            />
-                        ))}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View style={styles.mainChart}>
+                        <View style={styles.mainChartDisplay}>
+                            {salesOverviewData.map((month, index) => (
+                                <Bar
+                                    num={month.Revenue}
+                                    key={index}
+                                />
+                            ))}
+                        </View>
+                        <View style={styles.labelContainer}>
+                            {salesOverviewData.map((month, index) => (
+                                <Text style={styles.label} key={index}>{month.name}</Text>
+                            ))}
+                        </View>
                     </View>
-                    <View style={styles.labelContainer}>
-                        <Text style={styles.label}>Jan</Text>
-                        <Text style={styles.label}>Feb</Text>
-                        <Text style={styles.label}>Mar</Text>
-                        <Text style={styles.label}>Apr</Text>
-                        <Text style={styles.label}>May</Text>
-                        <Text style={styles.label}>Jun</Text>
-                    </View>
-                </View>
+                </ScrollView>
             </View>
         </View>
     )
@@ -85,9 +111,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12
     },
     label: {
-        flex: 1,
+        width: 40,
         fontSize: 14,
-        opacity: 0.6
+        opacity: 0.6,
+        textAlign: 'center'
     },
     mainChartDisplay: {
         flex: 1,
