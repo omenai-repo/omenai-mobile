@@ -6,7 +6,6 @@ import { getSalesHighlightData } from "./getSalesHighlightData";
 export async function fetchHighlightData(tag: string) {
 
   let sessionId = '';
-
   const userSession = await getAsyncData('userSession')
   if(userSession.value){
     sessionId = JSON.parse(userSession.value).id
