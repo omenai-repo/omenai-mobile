@@ -5,6 +5,7 @@ import Header from 'components/header/Header'
 import SalesOverview from './components/SalesOverview';
 import RecentOrders from './components/RecentOrders';
 import { HighlightCard } from './components/HighlightCard';
+import PopularArtworks from './components/PopularArtworks';
 
 export default function Overview() {
     const [refreshCount, setRefreshCount] = useState(0);
@@ -33,7 +34,8 @@ export default function Overview() {
                         </View>
                     </View>
                     <SalesOverview refreshCount={refreshCount}/>
-                    <RecentOrders />
+                    <PopularArtworks refreshCount={refreshCount} />
+                    <RecentOrders refreshCount={refreshCount} />
                 </ScrollView>
             </SafeAreaView>
         </WithModal>

@@ -6,6 +6,7 @@ import Divider from 'components/general/Divider';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { formatPrice } from 'utils/priceFormatter';
+import Loader from 'components/general/Loader';
 
 type OrderItemProps = {
     artworkName: string,
@@ -14,7 +15,7 @@ type OrderItemProps = {
     amount?: number
 }
 
-export default function RecentOrders() {
+export default function RecentOrders({refreshCount}: {refreshCount: number}) {
     const [data, setData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false)
 
@@ -29,7 +30,7 @@ export default function RecentOrders() {
         };
 
         handleFetchRecentOrders();
-    }, [])
+    }, [refreshCount])
 
     const OrderItem = ({artworkName, artist, url, amount}: OrderItemProps) => {
         let image_href = getImageFileView(url, 300);
@@ -50,7 +51,17 @@ export default function RecentOrders() {
                 </View> */}
             </View>
         )
-    }
+    };
+
+    if(isLoading)return(
+        <View style={styles.container}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={{fontSize: 18, fontWeight: '500', flex: 1}}>Recent orders</Text>
+                <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
+            </View>
+            <Loader />
+        </View>
+    )
 
     return (
         <View style={styles.container}>
