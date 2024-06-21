@@ -1,10 +1,10 @@
-import { ScrollView, StyleSheet, Text, SafeAreaView, RefreshControl } from 'react-native'
+import { ScrollView, StyleSheet, Text, SafeAreaView, RefreshControl, View } from 'react-native'
 import React, { useState } from 'react'
 import WithModal from 'components/modal/WithModal'
 import Header from 'components/header/Header'
-import TotalAmounts from './components/TotalAmounts';
 import SalesOverview from './components/SalesOverview';
 import RecentOrders from './components/RecentOrders';
+import { HighlightCard } from './components/HighlightCard';
 
 export default function Overview() {
     const [refreshCount, setRefreshCount] = useState(0);
@@ -25,7 +25,13 @@ export default function Overview() {
                     }
                 >
                     <Header />
-                    <TotalAmounts />
+                    <View style={styles.container}>
+                        <Text style={{fontSize: 18, fontWeight: '500'}}>Overview</Text>
+                        <View style={styles.contentsContainer}>
+                            <HighlightCard refreshCount={refreshCount} name='Total artworks' type="artworks" />
+                            <HighlightCard refreshCount={refreshCount} name='Sold artworks' type="sales" />
+                        </View>
+                    </View>
                     <SalesOverview />
                     <RecentOrders />
                 </ScrollView>
@@ -34,4 +40,14 @@ export default function Overview() {
     )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 20,
+        paddingVertical: 40
+    },
+    contentsContainer: {
+        flexDirection: 'row',
+        gap: 20,
+        marginTop: 20
+    },
+})
