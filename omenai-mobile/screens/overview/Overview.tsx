@@ -25,9 +25,9 @@ export default function Overview() {
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
                 >
-                    <Header />
+                    <Header showNotification />
                     <View style={styles.container}>
-                        <Text style={{fontSize: 18, fontWeight: '500'}}>Overview</Text>
+                        <Text style={{fontSize: 16, fontWeight: '400'}}>Overview</Text>
                         <View style={styles.contentsContainer}>
                             <HighlightCard refreshCount={refreshCount} name='Total artworks' type="artworks" />
                             <HighlightCard refreshCount={refreshCount} name='Sold artworks' type="sales" />
