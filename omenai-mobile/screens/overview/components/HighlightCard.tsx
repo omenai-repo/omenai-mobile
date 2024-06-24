@@ -26,9 +26,9 @@ export const HighlightCard = ({name, type, refreshCount}: HighlightCardProps) =>
         <View style={styles.card}>
             <View style={styles.iconContainer}>
                 {type === "artworks" ? 
-                    <Ionicons name='document-text-outline' size={21} color={'#0F973D'} />
+                    <Ionicons name='document-text-outline' size={21} color={'#1a1a1a'} style={{opacity: 0.5}}  />
                     :
-                    <FontAwesome name='dollar' size={21} color={'#0F973D'} />
+                    <FontAwesome name='dollar' size={21} color={'#1a1a1a'} style={{opacity: 0.5}} />
                 }
             </View>
             <Text style={styles.cardTitle}>{name}</Text>
@@ -58,12 +58,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     cardTitle: {
-        color: '#0F973D',
-        fontSize: 14,
+        color: '#1a1a1a',
+        fontSize: 12,
         marginTop: 15
     },
     cardAmount: {
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: '500',
         flex: 1
     },
