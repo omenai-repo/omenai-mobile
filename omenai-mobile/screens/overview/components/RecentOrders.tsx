@@ -56,7 +56,7 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
     if(isLoading)return(
         <View style={styles.container}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{fontSize: 18, fontWeight: '500', flex: 1}}>Recent orders</Text>
+                <Text style={{fontSize: 16, fontWeight: '400', flex: 1}}>Recent orders</Text>
                 <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
             </View>
             <Loader />
@@ -66,21 +66,24 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
     return (
         <View style={styles.container}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{fontSize: 18, fontWeight: '500', flex: 1}}>Recent orders</Text>
+                <Text style={{fontSize: 16, fontWeight: '400', flex: 1}}>Recent orders</Text>
                 <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
             </View>
             <View style={styles.mainContainer}>
                 {data.map((order, index) => (
-                    <>
-                    <OrderItem 
-                        artworkName={order.artwork_data.title}
-                        artist={order.artwork_data.artist}
-                        url={order.artwork_data.url}
-                        amount={order.artwork_data.pricing.shouldShowPrice && formatPrice(order.artwork_data.pricing.price)}
+                    <View 
                         key={index}
-                    />
-                    {(index + 1) !== data.length && <Divider />}
-                    </>
+                        style={{gap: 20}}
+                    >
+                        <OrderItem 
+                            artworkName={order.artwork_data.title}
+                            artist={order.artwork_data.artist}
+                            url={order.artwork_data.url}
+                            amount={order.artwork_data.pricing.shouldShowPrice && formatPrice(order.artwork_data.pricing.price)}
+                            
+                        />
+                        {(index + 1) !== data.length && <Divider />}
+                    </View>
                 ))}
             </View>
         </View>

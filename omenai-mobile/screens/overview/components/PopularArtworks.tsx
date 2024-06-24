@@ -26,7 +26,7 @@ export default function PopularArtworks({refreshCount}: {refreshCount: number}) 
     return (
         <View style={styles.container}>
             <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20}}>
-                <Text style={{fontSize: 18, fontWeight: '500', flex: 1}}>Popular artworks</Text>
+                <Text style={{fontSize: 16, fontWeight: '400', flex: 1}}>Popular artworks</Text>
                 <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
             </View>
             {isLoading && <ArtworkCardLoader />}
