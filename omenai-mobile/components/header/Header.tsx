@@ -15,9 +15,9 @@ export default function Header({showNotification}: {showNotification?: boolean})
     return (
         <SafeAreaView>
             <View style={styles.mainContainer}>
-                <View style={{width: 50}} />
-                <View style={{flex: 1, alignItems: 'center'}}>
-                    <Image source={omenaiLogo} />
+                {/* <View style={{width: 50}} /> */}
+                <View style={{flex: 1}}>
+                    <Image style={{width: 130, height: 30}} resizeMode='contain' source={omenaiLogo} />
                 </View>
                 {showNotification ?
                     <TouchableOpacity onPress={() => navigation.navigate(screenName.notifications)} style={{width: 50, alignItems: 'flex-end'}}>
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     mainContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 10
+        paddingHorizontal: 20,
     },
     leftContainer: {
         flexDirection: 'row',
