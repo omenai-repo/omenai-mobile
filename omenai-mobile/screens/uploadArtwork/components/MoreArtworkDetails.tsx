@@ -101,9 +101,5 @@ const styles = StyleSheet.create({
     flexInputsContainer: {
         flexDirection: 'row',
         gap: 20
-    },
-    label: {
-        fontSize: 14, 
-        color: colors.inputLabel
     }
 })

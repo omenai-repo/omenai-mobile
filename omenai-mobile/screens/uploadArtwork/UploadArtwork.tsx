@@ -5,6 +5,7 @@ import HeaderIndicator from './components/HeaderIndicator'
 import ArtworkDetails from './components/ArtworkDetails'
 import MoreArtworkDetails from './components/MoreArtworkDetails'
 import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore'
+import ArtistDetails from './components/ArtistDetails'
 
 export default function UploadArtwork() {
 
@@ -12,10 +13,11 @@ export default function UploadArtwork() {
 
     return (
         <WithModal>
-            <HeaderIndicator activeIndex={activeIndex} />
+            <HeaderIndicator />
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 {activeIndex === 1 && <ArtworkDetails />}
                 {activeIndex === 2 && <MoreArtworkDetails />}
+                {activeIndex === 3 && <ArtistDetails />}
             </ScrollView>
         </WithModal>
     )
