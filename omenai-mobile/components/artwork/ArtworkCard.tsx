@@ -23,16 +23,21 @@ type ArtworkCardType = {
     art_id: string;
     impressions: number;
     like_IDs: string[];
+    galleryView?: boolean
 }
 
-export default function ArtworkCard({title, url, artist, showPrice, price, lightText, width = 0, impressions, art_id, like_IDs}: ArtworkCardType) {
+export default function ArtworkCard({title, url, artist, showPrice, price, lightText, width = 0, impressions, art_id, like_IDs, galleryView = false}: ArtworkCardType) {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const screenWidth = Dimensions.get('window').width;
 
     const image_href = getImageFileView(url, 270);
 
     return (
-        <TouchableOpacity activeOpacity={1} style={[styles.container, width > 0 && {width: width}]} onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
+        <TouchableOpacity activeOpacity={1} style={[styles.container, width > 0 && {width: width}]} onPress={() => {
+            if(galleryView) return
+
+            navigation.navigate(screenName.artwork, {title: title})
+        }}>
             <View style={[styles.imageContainer, lightText && {backgroundColor: 'rgba(225,225,225,0.15)', padding: 15}]}>
                 <Image source={{uri: image_href}} style={styles.image} resizeMode="contain" />
             </View>
@@ -42,12 +47,14 @@ export default function ArtworkCard({title, url, artist, showPrice, price, light
                     <Text style={[{fontSize: 12, color: colors.primary_black, opacity: 0.7, marginTop: 5}, lightText && {color: colors.white, opacity: 1}]}>{artist}</Text>
                     <Text style={[{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}, lightText && {color: colors.white}]}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
                 </View>
-                <LikeComponent
-                    art_id={art_id}
-                    impressions={impressions || 0}
-                    likeIds={like_IDs || []}
-                    lightText={lightText}
-                />
+                {!galleryView &&
+                    <LikeComponent
+                        art_id={art_id}
+                        impressions={impressions || 0}
+                        likeIds={like_IDs || []}
+                        lightText={lightText}
+                    />
+                }
             </View>
         </TouchableOpacity>
     )

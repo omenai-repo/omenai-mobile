@@ -70,7 +70,7 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                 <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
             </View>
             <View style={styles.mainContainer}>
-                {data.map((order, index) => (
+                {data.length > 0 && data.map((order, index) => (
                     <View 
                         key={index}
                         style={{gap: 20}}
@@ -85,6 +85,11 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                         {(index + 1) !== data.length && <Divider />}
                     </View>
                 ))}
+                {data.length === 0 && (
+                    <View style={{paddingVertical: 20, alignItems: 'center'}}>
+                        <Text>No orders yet</Text>
+                    </View>
+                )}
             </View>
         </View>
     )
