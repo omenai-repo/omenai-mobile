@@ -21,12 +21,12 @@ export default function Header({showNotification, showLogout}: {showNotification
                     <Image style={{width: 130, height: 30}} resizeMode='contain' source={omenaiLogo} />
                 </View>
                 {showLogout && (
-                    <TouchableOpacity onPress={() => navigation.navigate(screenName.notifications)} style={styles.iconContainer}>
+                    <TouchableOpacity onPress={() => logout()} style={styles.iconContainer}>
                         <AntDesign name='poweroff' size={20} color={'#ff0000'}/>
                     </TouchableOpacity>
                 )}
                 {showNotification &&
-                    <TouchableOpacity onPress={() => logout()} style={styles.iconContainer}>
+                    <TouchableOpacity onPress={() => navigation.navigate(screenName.notifications)} style={styles.iconContainer}>
                         <Feather name='bell' size={20} color={colors.grey} />
                     </TouchableOpacity>
                 }
