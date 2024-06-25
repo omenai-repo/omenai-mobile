@@ -18,5 +18,10 @@ export const screenName = {
     filter: 'filter',
     notifications: 'notifications',
     editorialsListing: 'editorials',
-    editorial: 'editorial'
+    editorial: 'editorial',
+    gallery: {
+        overview: 'Overview',
+        artworks: 'Artworks',
+        uploadArtwork: 'upload-artwork'
+    }
 }

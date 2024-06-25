@@ -72,29 +72,29 @@ export default function Catalog() {
     return (
         <View style={styles.container}>
             <SafeAreaView>
-                    <View style={styles.mainContainer}>
-                        <View style={{zIndex: 100}}>
-                            <FilterButton>
-                                <Text style={styles.headerText}>Catalog</Text>
-                            </FilterButton>
-                        </View>
-                        <View style={{zIndex: 5}}>
-                            {isLoading ?
-                                <Loader />
-                            :
-                                <ScrollView
-                                    style={{height: '100%'}}
-                                    showsVerticalScrollIndicator={false}
-                                    refreshControl={
-                                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                                    }
-                                >
-                                    <ArtworksListing data={artworks} />
-                                    <View style={{height: 300}} />
-                                </ScrollView>
-                            }
-                        </View>
+                <View style={styles.mainContainer}>
+                    <View style={{zIndex: 100}}>
+                        <FilterButton>
+                            <Text style={styles.headerText}>Catalog</Text>
+                        </FilterButton>
                     </View>
+                    <View style={{zIndex: 5}}>
+                        {isLoading ?
+                            <Loader />
+                        :
+                            <ScrollView
+                                style={{height: '100%'}}
+                                showsVerticalScrollIndicator={false}
+                                refreshControl={
+                                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                                }
+                            >
+                                <ArtworksListing data={artworks} />
+                                <View style={{height: 300}} />
+                            </ScrollView>
+                        }
+                    </View>
+                </View>
             </SafeAreaView>
         </View>
     )
