@@ -11,7 +11,7 @@ export default function UploadImageInput({label}: UploadImageInputProps) {
     return (
         <View style={{zIndex: 100}}>
             <Text style={styles.label}>{label}</Text>
-            <TouchableOpacity>
+            <TouchableOpacity activeOpacity={1}>
                 <View style={styles.container}>
                     <View style={styles.iconContainer}>
                     <Ionicons name='image-outline' size={30} color={'#858585'} />
