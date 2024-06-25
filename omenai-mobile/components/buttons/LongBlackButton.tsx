@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
         backgroundColor: colors.primary_black,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderRadius: 8
     },
     text: {
         color: colors.white,
