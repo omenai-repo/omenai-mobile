@@ -69,9 +69,9 @@ export default function GalleryNavigation() {
 
     return(
         <Stack.Navigator screenOptions={{headerShown: false}}>
-            <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
             <Stack.Screen name='Individual' component={GalleryTabNavigationScreens} options={hideHeader}/>
             <Stack.Screen name={screenName.artwork} component={Artwork} />
+            <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
         </Stack.Navigator>
     )
 }

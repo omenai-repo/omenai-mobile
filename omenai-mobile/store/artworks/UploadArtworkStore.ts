@@ -7,7 +7,7 @@ type UploadArtworkStoreTypes = {
 };
 
 export const uploadArtworkStore = create<UploadArtworkStoreTypes>((set, get) => ({
-    activeIndex: 2,
+    activeIndex: 1,
     setActiveIndex: (e: number) => {
         set({activeIndex: e})
     }

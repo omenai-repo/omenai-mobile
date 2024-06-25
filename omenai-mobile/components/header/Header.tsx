@@ -3,13 +3,14 @@ import React from 'react'
 import { colors } from '../../config/colors.config'
 
 import omenaiLogo from '../../assets/omenai-logo.png';
-import { Feather } from '@expo/vector-icons';
+import { AntDesign, Feather } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
+import { logout } from 'utils/logout.utils';
 
-export default function Header({showNotification}: {showNotification?: boolean}) {
+export default function Header({showNotification, showLogout}: {showNotification?: boolean, showLogout?: boolean}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
@@ -19,12 +20,15 @@ export default function Header({showNotification}: {showNotification?: boolean})
                 <View style={{flex: 1}}>
                     <Image style={{width: 130, height: 30}} resizeMode='contain' source={omenaiLogo} />
                 </View>
-                {showNotification ?
-                    <TouchableOpacity onPress={() => navigation.navigate(screenName.notifications)} style={{width: 50, alignItems: 'flex-end'}}>
-                        <Feather name='bell' size={25} color={colors.grey} style={{opacity: 1}} />
+                {showLogout && (
+                    <TouchableOpacity onPress={() => navigation.navigate(screenName.notifications)} style={styles.iconContainer}>
+                        <AntDesign name='poweroff' size={20} color={'#ff0000'}/>
                     </TouchableOpacity>
-                    :
-                    <View style={{width: 50}} />
+                )}
+                {showNotification &&
+                    <TouchableOpacity onPress={() => logout()} style={styles.iconContainer}>
+                        <Feather name='bell' size={20} color={colors.grey} />
+                    </TouchableOpacity>
                 }
             </View>
         </SafeAreaView>
@@ -45,6 +49,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 20,
+        alignSelf: 'center',
+        gap: 20
     },
     leftContainer: {
         flexDirection: 'row',
@@ -57,7 +63,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#FAFAFA'
+        backgroundColor: '#f5f5f5'
     },
     image: {
         height: 40,

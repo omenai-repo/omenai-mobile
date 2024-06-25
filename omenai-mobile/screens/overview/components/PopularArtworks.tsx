@@ -6,6 +6,7 @@ import { isLoading } from 'expo-font'
 import ArtworkCardLoader from 'components/general/ArtworkCardLoader'
 import { fetchPopularArtworks } from 'services/artworks/fetchPopularArtworks'
 import ArtworkCard from 'components/artwork/ArtworkCard'
+import EmptyArtworks from 'components/general/EmptyArtworks'
 
 export default function PopularArtworks({refreshCount}: {refreshCount: number}) {
     const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function PopularArtworks({refreshCount}: {refreshCount: number}) 
                 <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
             </View>
             {isLoading && <ArtworkCardLoader />}
-            {!isLoading && (
+            {(!isLoading && data.length > 0) && (
                 <FlatList
                 data={data}
                     renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
@@ -44,6 +45,7 @@ export default function PopularArtworks({refreshCount}: {refreshCount: number}) 
                                 impressions={item.impressions}
                                 like_IDs={item.like_IDs}
                                 art_id={item.art_id}
+                                galleryView
                             />
                         )
                     }}
@@ -53,6 +55,7 @@ export default function PopularArtworks({refreshCount}: {refreshCount: number}) 
                     style={{marginTop: 30}}
                 />
             )}
+            {(!isLoading && data.length === 0) && <EmptyArtworks size={70} />}
         </View>
     )
 }
