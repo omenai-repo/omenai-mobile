@@ -3,13 +3,19 @@ import React from 'react'
 import WithModal from 'components/modal/WithModal'
 import HeaderIndicator from './components/HeaderIndicator'
 import ArtworkDetails from './components/ArtworkDetails'
+import MoreArtworkDetails from './components/MoreArtworkDetails'
+import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore'
 
 export default function UploadArtwork() {
+
+    const {activeIndex} = uploadArtworkStore();
+
     return (
         <WithModal>
-            <HeaderIndicator activeIndex={1} />
+            <HeaderIndicator activeIndex={activeIndex} />
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-                <ArtworkDetails />
+                {activeIndex === 1 && <ArtworkDetails />}
+                {activeIndex === 2 && <MoreArtworkDetails />}
             </ScrollView>
         </WithModal>
     )

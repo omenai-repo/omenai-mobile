@@ -6,8 +6,11 @@ import UploadImageInput from 'components/inputs/UploadImageInput'
 import NoLabelInput from 'components/inputs/NoLabelInput'
 import { colors } from 'config/colors.config'
 import LongBlackButton from 'components/buttons/LongBlackButton'
+import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore'
 
 export default function ArtworkDetails() {
+    const {setActiveIndex} = uploadArtworkStore();
+
     return (
         <View style={styles.container}>
             <View style={styles.inputsContainer}>
@@ -66,7 +69,7 @@ export default function ArtworkDetails() {
             </View>
             <LongBlackButton
                 value='Proceed'
-                onClick={() => console.log('')}
+                onClick={() => setActiveIndex(2)}
                 isLoading={false}
             />
         </View>

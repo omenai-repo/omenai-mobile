@@ -2,17 +2,32 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
 import BackScreenButton from 'components/buttons/BackScreenButton';
 import { colors } from 'config/colors.config';
+import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
-type HeaderIndicatorProps = {
-    activeIndex: number
-}
+export default function HeaderIndicator() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
+    const {activeIndex, setActiveIndex} = uploadArtworkStore();
 
-export default function HeaderIndicator({activeIndex}: HeaderIndicatorProps) {
     return (
         <SafeAreaView>
             <View style={styles.container}>
-                <BackScreenButton handleClick={() => console.log('')} />
-                <Text style={styles.topTitle}>Upload artwork</Text>
+                <BackScreenButton 
+                    handleClick={() => {
+                        if(activeIndex === 1){
+                            navigation.goBack()
+                        }else{
+                            setActiveIndex(activeIndex - 1)
+                        }
+                    }} 
+                    cancle={activeIndex === 1}
+                />
+                <Text style={styles.topTitle}>
+                    {activeIndex === 1 && 'Upload artwork'}
+                    {activeIndex === 2 && 'Artwork details'}
+                    {activeIndex === 3 && 'Artist details'}
+                </Text>
                 <View style={{width: 50}} />
             </View>
             <View style={styles.indicatorContainer}>
