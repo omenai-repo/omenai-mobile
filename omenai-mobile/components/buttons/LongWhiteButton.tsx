@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
         borderColor: colors.black,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderRadius: 8
     },
     text: {
         color: colors.black,

@@ -41,7 +41,7 @@ export default function IndividualNavigation() {
         );
     };
 
-    const IndividualTabNavigationComponents = () => {
+    const IndividualTabNavigationScreens = () => {
     return(
         <Tab.Navigator
           screenOptions={({ route }) => ({
@@ -103,7 +103,7 @@ export default function IndividualNavigation() {
 
     return(
         <Stack.Navigator screenOptions={{headerShown: false}}>
-            <Stack.Screen name='Individual' component={IndividualTabNavigationComponents} options={hideHeader}/>
+            <Stack.Screen name='Individual' component={IndividualTabNavigationScreens} options={hideHeader}/>
             <Stack.Screen name={screenName.artwork} component={Artwork} />
             <Stack.Screen name={screenName.searchResults} component={SearchResults} />
             <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} />
