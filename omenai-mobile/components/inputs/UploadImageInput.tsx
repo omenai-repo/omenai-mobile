@@ -4,14 +4,15 @@ import { colors } from 'config/colors.config'
 import { Ionicons } from '@expo/vector-icons'
 
 type UploadImageInputProps = {
-    label: string
+    label: string,
+    handlePress: () => void
 }
 
-export default function UploadImageInput({label}: UploadImageInputProps) {
+export default function UploadImageInput({label, handlePress}: UploadImageInputProps) {
     return (
         <View style={{zIndex: 100}}>
             <Text style={styles.label}>{label}</Text>
-            <TouchableOpacity activeOpacity={1}>
+            <TouchableOpacity activeOpacity={1} onPress={handlePress}>
                 <View style={styles.container}>
                     <View style={styles.iconContainer}>
                     <Ionicons name='image-outline' size={30} color={'#858585'} />

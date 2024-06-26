@@ -10,6 +10,14 @@ export default function HeaderIndicator() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const {activeIndex, setActiveIndex} = uploadArtworkStore();
 
+    const titles = [
+        'Upload artwork',
+        'Dimensions',
+        'Pricing',
+        'Artist details',
+        'Upload image'
+    ]
+
     return (
         <SafeAreaView>
             <View style={styles.container}>
@@ -24,15 +32,13 @@ export default function HeaderIndicator() {
                     cancle={activeIndex === 1}
                 />
                 <Text style={styles.topTitle}>
-                    {activeIndex === 1 && 'Upload artwork'}
-                    {activeIndex === 2 && 'Artwork details'}
-                    {activeIndex === 3 && 'Artist details'}
+                    {titles[activeIndex - 1]}
                 </Text>
                 <View style={{width: 50}} />
             </View>
             <View style={styles.indicatorContainer}>
-                {[1,2,3].map(index => (
-                    <View key={index} style={[styles.indicator, activeIndex >= index && {backgroundColor: '#000'}]} />
+                {titles.map((_, index) => (
+                    <View key={index} style={[styles.indicator, activeIndex >= index + 1 && {backgroundColor: '#000'}]} />
                 ))}
             </View>
         </SafeAreaView>

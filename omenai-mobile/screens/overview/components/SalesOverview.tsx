@@ -57,6 +57,7 @@ export default function SalesOverview({refreshCount}: {refreshCount: number}) {
                 data={data}
                 width={screenWidth}
                 height={220}
+                withDots={false}
                 chartConfig={{
                     backgroundGradientFrom: "#fff",
                     backgroundGradientFromOpacity: 1,

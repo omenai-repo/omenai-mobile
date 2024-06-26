@@ -3,13 +3,12 @@ import React from 'react'
 import Input from 'components/inputs/Input'
 import LargeInput from 'components/inputs/LargeInput'
 import UploadImageInput from 'components/inputs/UploadImageInput'
-import NoLabelInput from 'components/inputs/NoLabelInput'
-import { colors } from 'config/colors.config'
 import LongBlackButton from 'components/buttons/LongBlackButton'
 import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore'
+import CustomSelectPicker from 'components/inputs/CustomSelectPicker'
 
 export default function ArtworkDetails() {
-    const {setActiveIndex} = uploadArtworkStore();
+    const {setActiveIndex, activeIndex} = uploadArtworkStore();
 
     return (
         <View style={styles.container}>
@@ -20,56 +19,83 @@ export default function ArtworkDetails() {
                     placeHolder='Enter the name of your artwork'
                     value=''
                 />
-                <UploadImageInput
-                    label='Upload image'
-                />
                 <LargeInput
                     label='Artwork description'
                     onInputChange={e => console.log(e)}
                     placeHolder='Write a description of your artwork (not more than 100 words)'
                     value=''
                 />
-                <View>
-                    <Text style={styles.label}>Dimensions (in inches)</Text>
-                    <View style={styles.dimensionsInputs}>
-                        <NoLabelInput 
-                            placeHolder='Length'
-                            value=''
+                <View style={styles.flexInputsContainer}>
+                    <View style={{flex: 1}}>
+                        <Input
+                            label='Year'
                             onInputChange={e => console.log(e)}
+                            placeHolder='Enter year of creation'
+                            value=''
                             keyboardType="decimal-pad"
                         />
-                        <NoLabelInput 
-                            placeHolder='Width'
+                    </View>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Medium'
+                            data={[]}
+                            placeholder='Select medium'
                             value=''
-                            onInputChange={e => console.log(e)}
-                            keyboardType="decimal-pad"
+                            handleSetValue={e => console.log(e)}
                         />
-                        <NoLabelInput 
-                            placeHolder='Depth'
+                    </View>
+                </View>
+                <View style={styles.flexInputsContainer}>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Rarity'
+                            data={[]}
+                            placeholder='Select rarity'
                             value=''
-                            onInputChange={e => console.log(e)}
-                            keyboardType="decimal-pad"
+                            handleSetValue={e => console.log(e)}
+                        />
+                    </View>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Certificate of authenticity'
+                            data={[]}
+                            placeholder='Yes'
+                            value=''
+                            handleSetValue={e => console.log(e)}
                         />
                     </View>
                 </View>
                 <Input
-                    label='Weight (in Kg)'
+                    label='Materials'
                     onInputChange={e => console.log(e)}
-                    placeHolder='Enter weight of artwork'
+                    placeHolder='Enter the materials used (separate each with a comma)'
                     value=''
                     keyboardType="decimal-pad"
                 />
-                <Input
-                    label='Price ($)'
-                    onInputChange={e => console.log(e)}
-                    placeHolder='Enter your price'
-                    value=''
-                    keyboardType="decimal-pad"
-                />
+                <View style={styles.flexInputsContainer}>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Signature'
+                            data={[]}
+                            placeholder='Choose source'
+                            value=''
+                            handleSetValue={e => console.log(e)}
+                        />
+                    </View>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Framing'
+                            data={[]}
+                            placeholder='Choose frame'
+                            value=''
+                            handleSetValue={e => console.log(e)}
+                        />
+                    </View>
+                </View>
             </View>
             <LongBlackButton
                 value='Proceed'
-                onClick={() => setActiveIndex(2)}
+                onClick={() => setActiveIndex(activeIndex + 1)}
                 isLoading={false}
             />
         </View>
@@ -85,12 +111,8 @@ const styles = StyleSheet.create({
         gap: 20,
         marginBottom: 50
     },
-    dimensionsInputs: {
+    flexInputsContainer: {
         flexDirection: 'row',
         gap: 20
-    },
-    label: {
-        fontSize: 14, 
-        color: colors.inputLabel
     }
 })
