@@ -1,36 +1,43 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { colors } from 'config/colors.config'
 import Input from 'components/inputs/Input'
 import CustomSelectPicker from 'components/inputs/CustomSelectPicker'
-import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore';
-import LongBlackButton from 'components/buttons/LongBlackButton';
+import { displayPrice, preferredShippingCarrier } from 'data/uploadArtworkForm'
+import LongBlackButton from 'components/buttons/LongBlackButton'
+import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore'
 
-export default function ArtistDetails() {
+export default function Pricing() {
     const {setActiveIndex, activeIndex} = uploadArtworkStore();
 
     return (
         <View style={styles.container}>
             <View style={styles.inputsContainer}>
                 <Input
-                    label='Full Name'
+                    label='Price ($)'
                     onInputChange={e => console.log(e)}
-                    placeHolder='Enter artist full name'
-                    value=''
-                />
-                <Input
-                    label='Birth year'
-                    onInputChange={e => console.log(e)}
-                    placeHolder='Enter artist birth year'
+                    placeHolder='Enter your price'
                     value=''
                     keyboardType="decimal-pad"
                 />
+                <View style={{zIndex: 10}}>
                 <CustomSelectPicker
-                    label='Country of origin'
-                    handleSetValue={e => console.log(e)}
-                    placeholder='🇺🇸 United state of america'
+                    label='Display price'
+                    data={displayPrice}
+                    placeholder='Select'
                     value=''
-                    data={[]}
+                    handleSetValue={e => console.log(e)}
                 />
+                </View>
+                <View style={{zIndex: 5}}>
+                    <CustomSelectPicker
+                        label='Preferred shipping carrier'
+                        data={preferredShippingCarrier}
+                        placeholder='Yes'
+                        value=''
+                        handleSetValue={e => console.log(e)}
+                    />
+                </View>
             </View>
             <LongBlackButton
                 value='Proceed'
@@ -53,5 +60,9 @@ const styles = StyleSheet.create({
     flexInputsContainer: {
         flexDirection: 'row',
         gap: 20
+    },
+    label: {
+        fontSize: 14, 
+        color: colors.inputLabel
     }
 })
