@@ -34,8 +34,6 @@ export default function ArtworkCard({title, url, artist, showPrice, price, light
 
     return (
         <TouchableOpacity activeOpacity={1} style={[styles.container, width > 0 && {width: width}]} onPress={() => {
-            if(galleryView) return
-
             navigation.navigate(screenName.artwork, {title: title})
         }}>
             <View style={[styles.imageContainer, lightText && {backgroundColor: 'rgba(225,225,225,0.15)', padding: 15}]}>
@@ -45,7 +43,11 @@ export default function ArtworkCard({title, url, artist, showPrice, price, light
                 <View style={{flex: 1}}>
                     <Text style={[{fontSize: 14, color: colors.primary_black}, lightText && {color: colors.white}]}>{title}</Text>
                     <Text style={[{fontSize: 12, color: colors.primary_black, opacity: 0.7, marginTop: 5}, lightText && {color: colors.white, opacity: 1}]}>{artist}</Text>
-                    <Text style={[{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}, lightText && {color: colors.white}]}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
+                    {galleryView ? 
+                        <Text style={[{fontSize: 12, color: colors.primary_black, marginTop: 5}, lightText && {color: colors.white}]}>{impressions} impressions</Text>
+                        :
+                        <Text style={[{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}, lightText && {color: colors.white}]}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
+                    }
                 </View>
                 {!galleryView &&
                     <LikeComponent

@@ -21,12 +21,16 @@ import { getAsyncData } from 'utils/asyncStorage.utils';
 import { useModalStore } from 'store/modal/modalStore';
 import SaveArtworkButton from './components/SaveArtworkButton';
 import Loader from 'components/general/Loader';
+import { useAppStore } from 'store/app/appStore';
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const route = useRoute()
 
     const { updateModal } = useModalStore();
+    const {userType} = useAppStore();
+
+    console.log(userType)
 
     const [isLoading, setIsLoading] = useState(false);
     const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
@@ -104,7 +108,7 @@ export default function Artwork() {
                 <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
                     <View style={{paddingHorizontal: 20}}>
                         <Image source={{uri: image_href}} style={styles.image} />
-                        <SaveArtworkButton likeIds={data.like_IDs || []} art_id={data.art_id} impressions={data.impressions || 0} />
+                        {userType !== 'gallery' && <SaveArtworkButton likeIds={data.like_IDs || []} art_id={data.art_id} impressions={data.impressions || 0} />}
                         <View style={styles.artworkDetails}>
                             <Text style={styles.artworkTitle}>{data?.title}</Text>
                             <Text style={styles.artworkCreator}>{data?.artist}</Text>
@@ -136,7 +140,7 @@ export default function Artwork() {
                             />
                         </View>
                     </View>
-                    <SimilarArtworks title={data.title} medium={data?.medium} />
+                    {userType !== 'gallery' && <SimilarArtworks title={data.title} medium={data?.medium} />}
                 </ScrollView>
             )}
             {(!isLoading && !data) && (
@@ -152,19 +156,21 @@ export default function Artwork() {
                             <Text style={styles.priceTitle}>Price</Text>
                             <Text style={[styles.price, data?.pricing.shouldShowPrice === "No" && {fontSize: 16, color: colors.grey}]}>{data?.pricing.shouldShowPrice === 'Yes' ? formatPrice(data?.pricing.price) : "Price on request"}</Text>
                         </View>
-                        <View style={styles.buttonContainer}>
-                            {data?.pricing.shouldShowPrice === "Yes" ?
-                                <LongBlackButton radius={10} value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
-                            :
-                                <LongBlackButton 
-                                    radius={10} 
-                                    value={loadingPriceQuote ? 'Requesting ...' : 'Request price' }
-                                    isDisabled={false} 
-                                    onClick={handleRequestPriceQuote} 
-                                    isLoading={loadingPriceQuote}
-                                />
-                            }
-                        </View>
+                        {userType !== 'gallery' &&
+                            <View style={styles.buttonContainer}>
+                                {data?.pricing.shouldShowPrice === "Yes" ?
+                                    <LongBlackButton radius={10} value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
+                                :
+                                    <LongBlackButton 
+                                        radius={10} 
+                                        value={loadingPriceQuote ? 'Requesting ...' : 'Request price' }
+                                        isDisabled={false} 
+                                        onClick={handleRequestPriceQuote} 
+                                        isLoading={loadingPriceQuote}
+                                    />
+                                }
+                            </View>
+                        }
                     </View>
                 </View>
             }
