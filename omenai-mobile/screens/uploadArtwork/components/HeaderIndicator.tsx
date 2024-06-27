@@ -2,37 +2,44 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
 import BackScreenButton from 'components/buttons/BackScreenButton';
 import { colors } from 'config/colors.config';
-import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore';
+import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
 export default function HeaderIndicator() {
     const navigation = useNavigation<StackNavigationProp<any>>();
-    const {activeIndex, setActiveIndex} = uploadArtworkStore();
+    const {activeIndex, setActiveIndex, isUploaded, clearData} = uploadArtworkStore();
+
+    const titles = [
+        'Upload artwork',
+        'Dimensions',
+        'Pricing',
+        'Artist details',
+        'Upload image'
+    ]
 
     return (
         <SafeAreaView>
             <View style={styles.container}>
                 <BackScreenButton 
                     handleClick={() => {
-                        if(activeIndex === 1){
+                        if(activeIndex === 1 || isUploaded){
                             navigation.goBack()
+                            clearData()
                         }else{
                             setActiveIndex(activeIndex - 1)
                         }
                     }} 
-                    cancle={activeIndex === 1}
+                    cancle={activeIndex === 1 || isUploaded}
                 />
                 <Text style={styles.topTitle}>
-                    {activeIndex === 1 && 'Upload artwork'}
-                    {activeIndex === 2 && 'Artwork details'}
-                    {activeIndex === 3 && 'Artist details'}
+                    {titles[activeIndex - 1]}
                 </Text>
                 <View style={{width: 50}} />
             </View>
             <View style={styles.indicatorContainer}>
-                {[1,2,3].map(index => (
-                    <View key={index} style={[styles.indicator, activeIndex >= index && {backgroundColor: '#000'}]} />
+                {titles.map((_, index) => (
+                    <View key={index} style={[styles.indicator, activeIndex >= index + 1 && {backgroundColor: '#000'}]} />
                 ))}
             </View>
         </SafeAreaView>
