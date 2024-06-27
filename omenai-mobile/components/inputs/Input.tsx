@@ -28,7 +28,7 @@ export default function Input({label, onInputChange, placeHolder, keyboardType, 
                 editable={!disabled}
                 // autoComplete='email'
             />
-            {errorMessage && errorMessage?.length > 0 && <Text style={styles.errorMessage}>{errorMessage}</Text>}
+            {(errorMessage && errorMessage?.length > 0) && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>
     )
 }
