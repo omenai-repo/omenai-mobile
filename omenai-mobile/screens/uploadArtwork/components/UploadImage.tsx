@@ -4,9 +4,10 @@ import UploadImageInput from 'components/inputs/UploadImageInput'
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import * as ImagePicker from 'expo-image-picker';
 import LongWhiteButton from 'components/buttons/LongWhiteButton';
+import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
 
-export default function UploadImage() {
-    const [image, setImage] = useState<any>(null);
+export default function UploadImage({handleUpload}: {handleUpload: () => void}) {
+    const {image, setImage} = uploadArtworkStore();
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -17,7 +18,7 @@ export default function UploadImage() {
         // console.log(result);
     
         if (!result.canceled) {
-          setImage(result.assets[0].uri);
+          setImage(result);
         }
       };
 
@@ -30,7 +31,7 @@ export default function UploadImage() {
                         handlePress={pickImage}
                     />
                 }
-                {image && <Image source={{ uri: image }} style={styles.image} />}
+                {image && <Image source={{ uri: image.assets[0].uri }} style={styles.image} />}
             </View>
 
             <View style={styles.buttonsContainer}>
@@ -42,8 +43,9 @@ export default function UploadImage() {
             }
             <LongBlackButton
                 value='Proceed'
-                onClick={() => console.log('upload')}
+                onClick={handleUpload}
                 isLoading={false}
+                isDisabled={image === null}
             />
             </View>
         </View>
