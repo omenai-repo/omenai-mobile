@@ -8,12 +8,14 @@ type CustomSelectPickerProps = {
     placeholder?: string,
     label: string,
     value: string,
-    handleSetValue: (e: string) => void
+    handleSetValue: (e: string) => void,
+    handleBlur?: () => void,
+    errorMessage?: string,
 }
 
 type SetStateValue<S> = ((prevState: S) => S);
 
-export default function CustomSelectPicker({value, data, label, placeholder, handleSetValue}: CustomSelectPickerProps) {
+export default function CustomSelectPicker({value, data, label, placeholder, handleSetValue, handleBlur, errorMessage}: CustomSelectPickerProps) {
     const [open, setOpen] = useState(false);
 
     const [localValue, setLocalValue] = useState(null)
@@ -35,7 +37,9 @@ export default function CustomSelectPicker({value, data, label, placeholder, han
                 setValue={setLocalValue}
                 placeholder={placeholder}
                 style={styles.container}
+                onClose={handleBlur}
             />
+            {errorMessage && errorMessage?.length > 0 && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>
     )
 }
@@ -52,5 +56,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 5,
         height: 60
+    },
+    errorMessage: {
+        color: '#ff0000',
+        marginTop: 2
     }
 })

@@ -3,9 +3,9 @@ import React from 'react'
 import { colors } from 'config/colors.config'
 import Input from 'components/inputs/Input'
 import CustomSelectPicker from 'components/inputs/CustomSelectPicker'
-import { displayPrice, preferredShippingCarrier } from 'data/uploadArtworkForm'
+import { displayPrice, preferredShippingCarrier } from 'data/uploadArtworkForm.data'
 import LongBlackButton from 'components/buttons/LongBlackButton'
-import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore'
+import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore'
 
 export default function Pricing() {
     const {setActiveIndex, activeIndex} = uploadArtworkStore();
@@ -21,15 +21,15 @@ export default function Pricing() {
                     keyboardType="decimal-pad"
                 />
                 <View style={{zIndex: 10}}>
-                <CustomSelectPicker
-                    label='Display price'
-                    data={displayPrice}
-                    placeholder='Select'
-                    value=''
-                    handleSetValue={e => console.log(e)}
-                />
+                    <CustomSelectPicker
+                        label='Display price'
+                        data={displayPrice}
+                        placeholder='Select'
+                        value=''
+                        handleSetValue={e => console.log(e)}
+                    />
                 </View>
-                <View style={{zIndex: 5}}>
+                <View>
                     <CustomSelectPicker
                         label='Preferred shipping carrier'
                         data={preferredShippingCarrier}
@@ -39,11 +39,13 @@ export default function Pricing() {
                     />
                 </View>
             </View>
-            <LongBlackButton
-                value='Proceed'
-                onClick={() => setActiveIndex(activeIndex + 1)}
-                isLoading={false}
-            />
+            <View style={{zIndex: 2}}>
+                <LongBlackButton
+                    value='Proceed'
+                    onClick={() => setActiveIndex(activeIndex + 1)}
+                    isLoading={false}
+                />
+            </View>
         </View>
     )
 }
@@ -55,7 +57,8 @@ const styles = StyleSheet.create({
     },
     inputsContainer: {
         gap: 20,
-        marginBottom: 50
+        marginBottom: 50,
+        zIndex: 3
     },
     flexInputsContainer: {
         flexDirection: 'row',
