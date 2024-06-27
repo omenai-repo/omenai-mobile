@@ -19,6 +19,7 @@
     "appwrite": "^13.0.0",
     "expo": "51",
     "expo-font": "~12.0.5",
+    "expo-image-picker": "~15.0.5",
     "expo-status-bar": "~1.12.1",
     "expo-updates": "^0.25.10",
     "lottie-react-native": "6.7.0",

@@ -12,8 +12,8 @@ type TrendingArtworkCardType = {
     title: string,
     image: string,
     artist: string,
-    rarity: string,
-    medium: string,
+    rarity?: string,
+    medium?: string,
     likes: number
 }
 

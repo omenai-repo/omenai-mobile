@@ -43,6 +43,12 @@
         {
           "fonts": ["./assets/fonts/nunito-sans.ttf"]
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you upload artworks."
+        }
       ]
     ]
   }

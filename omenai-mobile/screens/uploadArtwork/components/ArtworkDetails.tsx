@@ -1,76 +1,148 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import Input from 'components/inputs/Input'
 import LargeInput from 'components/inputs/LargeInput'
 import UploadImageInput from 'components/inputs/UploadImageInput'
-import NoLabelInput from 'components/inputs/NoLabelInput'
-import { colors } from 'config/colors.config'
 import LongBlackButton from 'components/buttons/LongBlackButton'
-import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore'
+import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore'
+import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
+import { certificateOfAuthenticitySelectOptions, framingList, mediumListing, rarityList, signatureSelectOptions } from 'data/uploadArtworkForm.data'
+import { validate } from 'lib/validations/upload_artwork_input_validator/validator'
+
+type artworkDetailsErrorsType = {
+    title: string,
+    description: string,
+    materials: string,
+    year: string
+}
 
 export default function ArtworkDetails() {
-    const {setActiveIndex} = uploadArtworkStore();
+    const {setActiveIndex, activeIndex, updateArtworkUploadData, artworkUploadData} = uploadArtworkStore();
+
+    const [formErrors, setFormErrors] = useState<artworkDetailsErrorsType>({title: '', description: '', materials: '', year: ''});
+
+    const checkIsDisabled = () => {
+        // Check if there are no error messages and all input fields are filled
+        const isFormValid = Object.values(formErrors).every((error) => error === "");
+        const areAllFieldsFilled = Object.values({
+            title: artworkUploadData.title, 
+            materials: artworkUploadData.materials, 
+            year: artworkUploadData.year, 
+            medium: artworkUploadData.medium,
+            rarity: artworkUploadData.rarity,
+            certificate_of_auth: artworkUploadData.certificate_of_authenticity,
+            signature: artworkUploadData.signature,
+            framing: artworkUploadData.framing
+        }).every((value) => value !== "");
+
+        return !(isFormValid && areAllFieldsFilled);
+    }
+
+    const handleValidationChecks = (label: string, value: string) => {        
+        const {success, errors} : {success: boolean, errors: string[] | []} = validate(label, value)
+        if(!success){
+            setFormErrors(prev => ({...prev, [label]: errors[0]}));
+        }else{
+            setFormErrors(prev => ({...prev, [label]: ''}));
+        }
+    };
 
     return (
         <View style={styles.container}>
             <View style={styles.inputsContainer}>
                 <Input
                     label='Artwork title'
-                    onInputChange={e => console.log(e)}
+                    onInputChange={value => updateArtworkUploadData('title', value)}
                     placeHolder='Enter the name of your artwork'
-                    value=''
-                />
-                <UploadImageInput
-                    label='Upload image'
+                    value={artworkUploadData.title}
+                    handleBlur={() => handleValidationChecks('title', artworkUploadData.title)}
+                    errorMessage={formErrors.title}
                 />
                 <LargeInput
                     label='Artwork description'
-                    onInputChange={e => console.log(e)}
+                    onInputChange={value => updateArtworkUploadData('artwork_description', value)}
                     placeHolder='Write a description of your artwork (not more than 100 words)'
-                    value=''
+                    value={artworkUploadData.artwork_description || ''}
+                    handleBlur={() => handleValidationChecks('description', artworkUploadData.artwork_description || '')}
+                    errorMessage={formErrors.description}
                 />
-                <View>
-                    <Text style={styles.label}>Dimensions (in inches)</Text>
-                    <View style={styles.dimensionsInputs}>
-                        <NoLabelInput 
-                            placeHolder='Length'
-                            value=''
-                            onInputChange={e => console.log(e)}
-                            keyboardType="decimal-pad"
+                <View style={[styles.flexInputsContainer, {zIndex: 10}]}>
+                    <View style={{flex: 1}}>
+                        <Input
+                            label='Year'
+                            placeHolder='Enter year of creation'
+                            value={artworkUploadData.year}
+                            onInputChange={value => updateArtworkUploadData('year', value)}
+                            handleBlur={() => handleValidationChecks('year', artworkUploadData.year)}
+                            errorMessage={formErrors.year}
                         />
-                        <NoLabelInput 
-                            placeHolder='Width'
-                            value=''
-                            onInputChange={e => console.log(e)}
-                            keyboardType="decimal-pad"
-                        />
-                        <NoLabelInput 
-                            placeHolder='Depth'
-                            value=''
-                            onInputChange={e => console.log(e)}
-                            keyboardType="decimal-pad"
+                    </View>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Medium'
+                            data={mediumListing}
+                            placeholder='Select medium'
+                            value={artworkUploadData.medium}
+                            handleSetValue={value => updateArtworkUploadData('medium', value)}
                         />
                     </View>
                 </View>
-                <Input
-                    label='Weight (in Kg)'
-                    onInputChange={e => console.log(e)}
-                    placeHolder='Enter weight of artwork'
-                    value=''
-                    keyboardType="decimal-pad"
-                />
-                <Input
-                    label='Price ($)'
-                    onInputChange={e => console.log(e)}
-                    placeHolder='Enter your price'
-                    value=''
-                    keyboardType="decimal-pad"
-                />
+                <View style={[styles.flexInputsContainer, {zIndex: 5}]}>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Rarity'
+                            data={rarityList}
+                            placeholder='Select rarity'
+                            value={artworkUploadData.rarity}
+                            handleSetValue={value => updateArtworkUploadData('rarity', value)}
+                        />
+                    </View>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Certificate of authenticity'
+                            data={certificateOfAuthenticitySelectOptions}
+                            placeholder='Select'
+                            value={artworkUploadData.certificate_of_authenticity}
+                            handleSetValue={value => updateArtworkUploadData('certificate_of_authenticity', value)}
+                        />
+                    </View>
+                </View>
+                <View style={{zIndex: 3}}>
+                    <Input
+                        label='Materials'
+                        onInputChange={value => updateArtworkUploadData('materials', value)}
+                        placeHolder='Enter the materials used (separate each with a comma)'
+                        value={artworkUploadData.materials}
+                        handleBlur={() => handleValidationChecks('materials', artworkUploadData.materials)}
+                        errorMessage={formErrors.materials}
+                    />
+                </View>
+                <View style={[styles.flexInputsContainer, {zIndex: 4}]}>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Signature'
+                            data={signatureSelectOptions}
+                            placeholder='Select'
+                            value={artworkUploadData.signature}
+                            handleSetValue={value => updateArtworkUploadData('signature', value)}
+                        />
+                    </View>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Framing'
+                            data={framingList}
+                            placeholder='Choose frame'
+                            value={artworkUploadData.framing}
+                            handleSetValue={value => updateArtworkUploadData('framing', value)}
+                        />
+                    </View>
+                </View>
             </View>
             <LongBlackButton
                 value='Proceed'
-                onClick={() => setActiveIndex(2)}
+                onClick={() => setActiveIndex(activeIndex + 1)}
                 isLoading={false}
+                isDisabled={checkIsDisabled()}
             />
         </View>
     )
@@ -85,12 +157,8 @@ const styles = StyleSheet.create({
         gap: 20,
         marginBottom: 50
     },
-    dimensionsInputs: {
+    flexInputsContainer: {
         flexDirection: 'row',
         gap: 20
-    },
-    label: {
-        fontSize: 14, 
-        color: colors.inputLabel
     }
 })

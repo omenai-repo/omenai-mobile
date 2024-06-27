@@ -36,7 +36,7 @@ export default function Welcome() {
         <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
-                    <Image source={omenai_logo} />
+                    <Image source={omenai_logo} style={styles.logo} resizeMode="contain" />
                 </View>
                 <Image source={welcome_banner} style={styles.welcomeBanner} />
                 <Text style={styles.largeText}>Get the best art deals anywhere, any time</Text>
@@ -74,5 +74,8 @@ const styles = StyleSheet.create({
     buttonContainer: {
         marginTop: 50,
         gap: 15
+    },
+    logo: {
+        width: 150
     }
 })
