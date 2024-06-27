@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import WithModal from 'components/modal/WithModal'
 import { Feather } from '@expo/vector-icons'
@@ -14,19 +14,26 @@ export default function GalleryArtworksListing() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const [isloading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        // setRefreshing(true);
+        handleFetchGalleryArtworks()
+    }, []);
 
 
     useEffect(() => {
-        setIsLoading(true)
-        async function handleFetchGalleryArtworks(){
-            const results = await fetchAllArtworksById();
-            setData(results.data)
-            
-            setIsLoading(false)
-        };
-
         handleFetchGalleryArtworks()
     }, [])
+
+    
+    async function handleFetchGalleryArtworks(){
+        setIsLoading(true)
+        const results = await fetchAllArtworksById();
+        setData(results.data)
+        
+        setIsLoading(false)
+    };
 
     return (
         <WithModal>
@@ -38,8 +45,13 @@ export default function GalleryArtworksListing() {
                     </FittedBlackButton>
                 </View>
             </SafeAreaView>
-            <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                {/* TODO: ADD LISTING FOR GALLERY ARTWORKS */}
+            <ScrollView 
+                style={styles.scrollContainer} 
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+            >
                 {isloading ? <Loader /> : <ArtworksListing data={data} />}
             </ScrollView>
         </WithModal>
