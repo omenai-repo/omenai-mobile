@@ -11,8 +11,6 @@ export async function fetchAllArtworksById(){
         return
     }
 
-    console.log(userId)
-
     try {
         const response = await fetch(`${apiUrl}/api/artworks/getAllArtworksbyId`, {
             method: 'POST',
