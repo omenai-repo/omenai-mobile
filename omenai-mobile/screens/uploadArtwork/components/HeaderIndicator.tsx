@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function HeaderIndicator() {
     const navigation = useNavigation<StackNavigationProp<any>>();
-    const {activeIndex, setActiveIndex} = uploadArtworkStore();
+    const {activeIndex, setActiveIndex, isUploaded, clearData} = uploadArtworkStore();
 
     const titles = [
         'Upload artwork',
@@ -23,13 +23,14 @@ export default function HeaderIndicator() {
             <View style={styles.container}>
                 <BackScreenButton 
                     handleClick={() => {
-                        if(activeIndex === 1){
+                        if(activeIndex === 1 || isUploaded){
                             navigation.goBack()
+                            clearData()
                         }else{
                             setActiveIndex(activeIndex - 1)
                         }
                     }} 
-                    cancle={activeIndex === 1}
+                    cancle={activeIndex === 1 || isUploaded}
                 />
                 <Text style={styles.topTitle}>
                     {titles[activeIndex - 1]}

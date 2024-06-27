@@ -7,51 +7,40 @@ import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { formatPrice } from 'utils/priceFormatter';
 import Loader from 'components/general/Loader';
-
-type OrderItemProps = {
-    artworkName: string,
-    artist: string,
-    url: string,
-    amount?: number
-}
+import OrderCard from 'components/gallery/OrderCard';
 
 export default function RecentOrders({refreshCount}: {refreshCount: number}) {
     const [data, setData] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+    const [morePendingOrders, setMorePendingOrders] = useState(false);
 
     useEffect(() => {
         setIsLoading(true)
         async function handleFetchRecentOrders(){
             const results = await getOverviewOrders();
+            let data = results.data
 
-            setData(results.data)
+
+            const arr : any[] = [];
+
+            data.map((i: any) => {
+                let stat = i.order_accepted.status === ""
+                if(stat){
+                    if(arr.length !== 3){
+                        arr.push(i)
+                    }else{
+                        setMorePendingOrders(true)
+                    }
+                }
+            })
+
+            setData(arr)
 
             setIsLoading(false)
         };
 
         handleFetchRecentOrders();
     }, [refreshCount])
-
-    const OrderItem = ({artworkName, artist, url, amount}: OrderItemProps) => {
-        let image_href = getImageFileView(url, 300);
-
-        return(
-            <View style={styles.orderItem}>
-                <Image source={{uri: image_href}} alt='' style={{height: 100, width: 100}} />
-                <View style={{flex: 1}}>
-                    <Text style={{fontSize: 14, color: colors.primary_black}}>{artworkName}</Text>
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 10}}>
-                        <Text style={{fontSize: 12, color: '#858585'}}>{artist}</Text>
-                    </View>
-                    <Text style={{fontSize: 14, color: colors.primary_black}}>{amount}</Text>
-                </View>
-                {/* <View style={{flexWrap: 'wrap'}}>
-                    {status === "pending" && <View style={[styles.statusPill]}><Text style={[styles.status]}>{status}</Text></View>}
-                    {status === "delivered" && <View style={[styles.statusPill, {backgroundColor: '#E7F6EC'}]}><Text style={[styles.status, {color: '#004617'}]}>{status}</Text></View>}
-                </View> */}
-            </View>
-        )
-    };
 
     if(isLoading)return(
         <View style={styles.container}>
@@ -67,7 +56,10 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
         <View style={styles.container}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{fontSize: 16, fontWeight: '400', flex: 1}}>Recent orders</Text>
-                <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                    <Text style={{fontSize: 14, opacity: 0.6}}>All orders</Text>
+                    <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
+                </View>
             </View>
             <View style={styles.mainContainer}>
                 {data.length > 0 && data.map((order, index) => (
@@ -75,10 +67,11 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                         key={index}
                         style={{gap: 20}}
                     >
-                        <OrderItem 
+                        <OrderCard 
                             artworkName={order.artwork_data.title}
                             artist={order.artwork_data.artist}
                             url={order.artwork_data.url}
+                            status={'Pending'}
                             amount={order.artwork_data.pricing.shouldShowPrice && formatPrice(order.artwork_data.pricing.price)}
                             
                         />
@@ -90,6 +83,13 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                         <Text>No orders yet</Text>
                     </View>
                 )}
+                <View style={{flexWrap: 'wrap', marginRight: 'auto', marginLeft: 'auto'}}>
+                    {morePendingOrders &&
+                        <View style={styles.pendingButton}>
+                            <Text>View all pending orders</Text>
+                        </View>
+                    }
+                </View>
             </View>
         </View>
     )
@@ -108,21 +108,11 @@ const styles = StyleSheet.create({
         padding: 15,
         gap: 20
     },
-    orderItem: {
-        flexDirection: 'row',
-        gap: 10,
-        alignItems: 'center'
-    },
-    statusPill: {
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 20,
-        backgroundColor: '#FEF7EC',
-        height: 'auto'
-    },
-    status: {
-        textTransform: 'capitalize',
-        fontSize: 12,
-        color: '#F3A218'
+    pendingButton: {
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 40,
+        marginVertical: 20,
     }
 })
