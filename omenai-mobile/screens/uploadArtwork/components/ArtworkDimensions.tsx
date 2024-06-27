@@ -3,7 +3,7 @@ import React from 'react'
 import { colors } from 'config/colors.config'
 import Input from 'components/inputs/Input'
 import LongBlackButton from 'components/buttons/LongBlackButton'
-import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore'
+import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore'
 import NoLabelInput from 'components/inputs/NoLabelInput'
 
 export default function ArtworkDimensions() {

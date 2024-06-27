@@ -152,3 +152,25 @@ type editorialListingType = {
   date: string,
   url: string,
 }
+
+type ArtworkUploadStateTypes = {
+  artist: string;
+  year: number;
+  title: string;
+  medium: string;
+  rarity: string;
+  materials: string;
+  height: string;
+  width: string;
+  depth?: string;
+  weight: string;
+  price: number;
+  shouldShowPrice: "Yes" | "No" | string;
+  artist_birthyear: string;
+  artist_country_origin: string;
+  certificate_of_authenticity: string;
+  artwork_description?: string;
+  framing: string;
+  signature: string;
+  carrier: string;
+};

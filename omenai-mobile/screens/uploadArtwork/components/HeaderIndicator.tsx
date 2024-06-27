@@ -2,7 +2,7 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
 import BackScreenButton from 'components/buttons/BackScreenButton';
 import { colors } from 'config/colors.config';
-import { uploadArtworkStore } from 'store/artworks/UploadArtworkStore';
+import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
