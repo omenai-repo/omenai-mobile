@@ -22,6 +22,7 @@ export const screenName = {
     gallery: {
         overview: 'Overview',
         artworks: 'Artworks',
-        uploadArtwork: 'upload-artwork'
+        uploadArtwork: 'upload-artwork',
+        orders: 'Orders'
     }
 }
