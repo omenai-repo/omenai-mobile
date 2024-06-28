@@ -6,6 +6,7 @@ import { screenName } from "constants/screenNames.constants";
 import { Text, View } from "react-native";
 import Artwork from "screens/artwork/Artwork";
 import GalleryArtworksListing from "screens/galleryArtworksListing/GalleryArtworksListing";
+import GalleryOrdersListing from "screens/galleryOrders/GalleryOrdersListing";
 import Overview from "screens/overview/Overview";
 import UploadArtwork from "screens/uploadArtwork/UploadArtwork";
 
@@ -42,6 +43,8 @@ export default function GalleryNavigation() {
                         iconName = 'grid-outline';
                     }else if(route.name === screenName.gallery.artworks){
                         iconName = 'briefcase-outline'
+                    }else if(route.name === screenName.gallery.orders){
+                        iconName = 'briefcase-outline'
                     }
         
                     return <CustomTabBarIcon title={route.name} name={iconName} focused={focused} />;
@@ -63,6 +66,7 @@ export default function GalleryNavigation() {
             >
                 <Tab.Screen component={Overview} name={screenName.gallery.overview} />
                 <Tab.Screen component={GalleryArtworksListing} name={screenName.gallery.artworks} />
+                <Tab.Screen component={GalleryOrdersListing} name={screenName.gallery.orders} />
             </Tab.Navigator>
         )
     }
@@ -72,6 +76,7 @@ export default function GalleryNavigation() {
             <Stack.Screen name='Individual' component={GalleryTabNavigationScreens} options={hideHeader}/>
             <Stack.Screen name={screenName.artwork} component={Artwork} />
             <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
+            {/* <Stack.Screen name={screenName.gallery.orders} component={GalleryOrdersListing} /> */}
         </Stack.Navigator>
     )
 }
