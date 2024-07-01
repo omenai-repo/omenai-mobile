@@ -1,8 +1,6 @@
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import WithModal from 'components/modal/WithModal'
 import HeaderTabs from './components/HeaderTabs'
-import OrdersListing from './components/OrdersListing'
 import { getOverviewOrders } from 'services/orders/getOverviewOrders'
 import { organizeOrders } from 'utils/splitArray'
 import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore'
