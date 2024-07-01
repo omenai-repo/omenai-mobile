@@ -174,3 +174,8 @@ type ArtworkUploadStateTypes = {
   signature: string;
   carrier: string;
 };
+
+type OrderAcceptedStatusTypes = {
+  status: "accepted" | "declined" | "";
+  reason?: string;
+};

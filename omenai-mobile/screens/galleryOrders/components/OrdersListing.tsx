@@ -10,7 +10,7 @@ export type orderCardStatusTypes = 'Pending' | 'Pending customer payment' | 'Pen
 
 export default function OrdersListing({data}: {data: any[]}) {
     const { selectedTab } = galleryOrdersStore();
-    const { setIsVisible, setModalType} = galleryOrderModalStore();
+    const { setIsVisible, setModalType, setArtworkDetails, setCurrentId} = galleryOrderModalStore();
 
     const getStatus = (order: any) :orderCardStatusTypes => {
         //for pending status
@@ -58,8 +58,17 @@ export default function OrdersListing({data}: {data: any[]}) {
                     artworkName={item.artwork_data.title}
                     color={getColors()}
                     handlePress={e => {
+                        setCurrentId(item.order_id)
+
                         if(e === 'Pending'){
                             handleOpenModal('pending')
+                            setArtworkDetails([
+                                {label: 'Artwork title', value: item.artwork_data.title},
+                                {label: 'Artist name', value: item.artwork_data.artist},
+                                {label: 'Price', value: formatPrice(item.artwork_data.pricing.price)},
+                                {label: 'Buyer name', value: item.buyer.name},
+                                {label: 'Address', value: `${item.shipping_address.address_line}, ${item.shipping_address.city}, ${item.shipping_address.country}, ${item.shipping_address.zip}`},
+                            ])
                         }else if(e === 'Pending tracking info'){
 
                         }
