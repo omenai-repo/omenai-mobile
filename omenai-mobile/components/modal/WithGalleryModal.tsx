@@ -9,6 +9,7 @@ import LongBlackButton from 'components/buttons/LongBlackButton'
 import DeclineOrderModal from './gallery/DeclineOrderModal'
 import PendingOrderModal from './gallery/PendingOrderModal'
 import ProvideShippingQuoteModal from './gallery/ProvideShippingQuoteModal'
+import ProvideTrackingInfo from './gallery/ProvideTrackingInfo'
 
 export default function WithGalleryModal({children}:WithModalProps) {
     const {isVisible, modalType} = galleryOrderModalStore();
@@ -17,7 +18,7 @@ export default function WithGalleryModal({children}:WithModalProps) {
         pending: <PendingOrderModal />,
         decline: <DeclineOrderModal />,
         accept: <ProvideShippingQuoteModal />,
-        provideTrackingInfo: <DeclineOrderModal />,
+        provideTrackingInfo: <ProvideTrackingInfo />,
     }
 
     return (
