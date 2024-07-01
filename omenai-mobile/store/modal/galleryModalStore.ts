@@ -3,22 +3,26 @@ import { create } from "zustand";
 export type galleryOrderModalTypes = 'pending' | 'decline' | 'accept' | 'provideTrackingInfo'
 
 type declineFormType = {reason: string}
+type acceptFormType = {
+    carrier: string,
+    fees: string,
+    taxes: string,
+    additional_info: string
+}
+type trackingInfoFormType = {
+    tracking_id: string,
+    tracking_link: string
+}
 
 type galleryModalStoreTypes = {
     isVisible: boolean,
     modalType: galleryOrderModalTypes,
     declineForm: declineFormType,
     updateDeclineForm: (label: string, value: string) => void,
-    acceptForm: {
-        carrier: string,
-        fees: string,
-        taxes: string,
-        additional_info: string
-    },
-    trackingInfoForm: {
-        tracking_id: string,
-        tracking_link: string
-    },
+    acceptForm: acceptFormType,
+    updateAcceptForm: (label: string, value: string) => void,
+    trackingInfoForm: trackingInfoFormType,
+    updateTrackingInfoForm: (label: string, value: string) => void,
     clear: () => void,
     setIsVisible: (value: boolean) => void,
     setModalType: (modal: galleryOrderModalTypes) => void,
@@ -51,6 +55,24 @@ export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) 
           const updatedData = { ...data, [label]: value };
   
           set({declineForm: updatedData as declineFormType});
+        }
+    },
+    updateAcceptForm: (label: string, value: string) => {
+        const data: Record<string, any> = get().acceptForm;
+  
+        if (label in data) {
+          const updatedData = { ...data, [label]: value };
+  
+          set({acceptForm: updatedData as acceptFormType});
+        }
+    },
+    updateTrackingInfoForm: (label: string, value: string) => {
+        const data: Record<string, any> = get().trackingInfoForm;
+  
+        if (label in data) {
+          const updatedData = { ...data, [label]: value };
+  
+          set({trackingInfoForm: updatedData as trackingInfoFormType});
         }
     },
     clear: () => {

@@ -9,7 +9,6 @@ import { OrdersListingProps } from './PendingOrders';
 import { orderCardStatusTypes } from './OrdersListing';
 
 export default function CompletedOrders({data}: {data: any[]}) {
-    // console.log(data[0].order_accepted.status)
 
     const getStatus = (order: any) : orderCardStatusTypes => {
         console.log(order.order_accepted.status)
