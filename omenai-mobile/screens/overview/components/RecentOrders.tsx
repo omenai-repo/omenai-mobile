@@ -72,7 +72,7 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                             artist={order.artwork_data.artist}
                             url={order.artwork_data.url}
                             status={'Pending'}
-                            amount={order.artwork_data.pricing.shouldShowPrice && formatPrice(order.artwork_data.pricing.price)}
+                            amount={formatPrice(order.artwork_data.pricing.price)}
                             
                         />
                         {(index + 1) !== data.length && <Divider />}

@@ -2,31 +2,38 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { colors } from 'config/colors.config';
+import { orderCardStatusTypes } from 'screens/galleryOrders/components/OrdersListing';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+export type ordersColorsTypes = {bgColor: string, textColor: string}
 
 type OrderItemProps = {
     artworkName: string,
     artist: string,
     url: string,
-    amount?: number,
-    status: string
+    amount?: string,
+    status: orderCardStatusTypes,
+    color?: ordersColorsTypes,
+    handlePress?: (e: orderCardStatusTypes) => void
 }
 
-export default function OrderCard({artworkName, artist, url, amount, status}: OrderItemProps) {
+export default function OrderCard({artworkName, artist, url, amount, status, color, handlePress}: OrderItemProps) {
     let image_href = getImageFileView(url, 300);
 
     return(
-        <View style={styles.orderItem}>
-            <Image source={{uri: image_href}} alt='' style={{height: 100, width: 100}} />
-            <View style={{flex: 1, alignItems: 'flex-end'}}>
-                <Text style={{fontSize: 14, color: colors.primary_black}}>{artworkName}</Text>
-                <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 5, marginBottom: 10}}>{amount}</Text>
-                <View style={[styles.statusPill]}><Text style={[styles.status]}>{status}</Text></View>
+        <TouchableOpacity 
+            activeOpacity={1} 
+            onPress={handlePress ? () => handlePress(status) : null}
+        >
+            <View style={styles.orderItem}>
+                <Image source={{uri: image_href}} alt='' style={{height: 100, width: 100}} />
+                <View style={{flex: 1, alignItems: 'flex-end'}}>
+                    <Text style={{fontSize: 14, color: colors.primary_black}}>{artworkName}</Text>
+                    <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 5, marginBottom: 10}}>{amount}</Text>
+                    <View style={[styles.statusPill, color && {backgroundColor: color.bgColor}]}><Text style={[styles.status, color && {color: color.textColor}]}>{status}</Text></View>
+                </View>
             </View>
-            {/* <View style={{flexWrap: 'wrap'}}>
-                {status === "pending" && <View style={[styles.statusPill]}><Text style={[styles.status]}>{status}</Text></View>}
-                {status === "delivered" && <View style={[styles.statusPill, {backgroundColor: '#E7F6EC'}]}><Text style={[styles.status, {color: '#004617'}]}>{status}</Text></View>}
-            </View> */}
-        </View>
+        </TouchableOpacity>
     )
 }
 
