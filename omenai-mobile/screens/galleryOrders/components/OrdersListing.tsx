@@ -7,7 +7,7 @@ import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore';
 import { galleryOrderModalStore, galleryOrderModalTypes } from 'store/modal/galleryModalStore';
 import { getColors } from 'utils/sortFunctions.utils';
 
-export type orderCardStatusTypes = 'Pending' | 'Pending customer payment' | 'Pending tracking info' | 'Declined'
+export type orderCardStatusTypes = 'Pending' | 'Pending customer payment' | 'Pending tracking info' | 'Declined by gallery' | 'Order completed'
 
 export default function OrdersListing({data}: {data: any[]}) {
     const { selectedTab } = galleryOrdersStore();
@@ -28,7 +28,7 @@ export default function OrdersListing({data}: {data: any[]}) {
             return "Pending tracking info"
         }
         
-        return 'Declined';
+        return "Declined by gallery"
     };
 
     const handleOpenModal = (modal: galleryOrderModalTypes) => {

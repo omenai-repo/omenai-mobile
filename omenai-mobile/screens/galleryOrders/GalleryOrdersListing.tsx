@@ -9,6 +9,8 @@ import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore'
 import WithGalleryModal from 'components/modal/WithGalleryModal'
 import { galleryOrderModalStore, galleryOrderModalTypes } from 'store/modal/galleryModalStore'
 import PendingOrders from './components/PendingOrders'
+import ProcessingOrders from './components/ProcessingOrders'
+import CompletedOrders from './components/CompletedOrders'
 
 export default function GalleryOrdersListing() {
     const [refreshing, setRefreshing] = useState(false);
@@ -55,6 +57,17 @@ export default function GalleryOrdersListing() {
                     <PendingOrders 
                         data={data[selectedTab]} 
                         handleOpenModal={handleOpenModal}
+                    />
+                }
+                {selectedTab === "processing" &&
+                    <ProcessingOrders 
+                        data={data[selectedTab]} 
+                        handleOpenModal={handleOpenModal}
+                    />
+                }
+                {selectedTab === "completed" &&
+                    <CompletedOrders 
+                        data={data[selectedTab]}
                     />
                 }
             </ScrollView>
