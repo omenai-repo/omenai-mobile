@@ -4,13 +4,13 @@ import OrderCard, { ordersColorsTypes } from 'components/gallery/OrderCard';
 import Divider from 'components/general/Divider';
 import { formatPrice } from 'utils/priceFormatter';
 import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore';
+import { galleryOrderModalStore, galleryOrderModalTypes } from 'store/modal/galleryModalStore';
 
 export type orderCardStatusTypes = 'Pending' | 'Pending customer payment' | 'Pending tracking info' | 'Declined'
 
 export default function OrdersListing({data}: {data: any[]}) {
-    console.log(data[0]);
-
     const { selectedTab } = galleryOrdersStore();
+    const { setIsVisible, setModalType} = galleryOrderModalStore();
 
     const getStatus = (order: any) :orderCardStatusTypes => {
         //for pending status
@@ -18,7 +18,7 @@ export default function OrdersListing({data}: {data: any[]}) {
           return 'Pending';
         }
 
-        //processing orders that has 
+        //processing orders that has the payment info status set to pending
         if (selectedTab === 'processing' && order.payment_information.status === "pending") {
             return 'Pending customer payment';
         }
@@ -34,12 +34,16 @@ export default function OrdersListing({data}: {data: any[]}) {
         if(selectedTab === 'processing'){
             return {bgColor: '#007BFF26', textColor: '#007BFF'}
         }
-
         if(selectedTab === 'completed'){
             return {bgColor: '#ff000026', textColor: '#ff0000'}
         }
 
         return {bgColor: '#FEF7EC', textColor: '#F3A218'}
+    };
+
+    const handleOpenModal = (modal: galleryOrderModalTypes) => {
+        setIsVisible(true)
+        setModalType(modal)
     }
 
     return (
@@ -53,6 +57,13 @@ export default function OrdersListing({data}: {data: any[]}) {
                     status={getStatus(item)}
                     artworkName={item.artwork_data.title}
                     color={getColors()}
+                    handlePress={e => {
+                        if(e === 'Pending'){
+                            handleOpenModal('pending')
+                        }else if(e === 'Pending tracking info'){
+
+                        }
+                    }}
                 />
             )}
             keyExtractor={(_, index) => JSON.stringify(index)}

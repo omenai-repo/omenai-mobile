@@ -6,6 +6,7 @@ import OrdersListing from './components/OrdersListing'
 import { getOverviewOrders } from 'services/orders/getOverviewOrders'
 import { organizeOrders } from 'utils/splitArray'
 import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore'
+import WithGalleryModal from 'components/modal/WithGalleryModal'
 
 export default function GalleryOrdersListing() {
     const [refreshing, setRefreshing] = useState(false);
@@ -32,7 +33,7 @@ export default function GalleryOrdersListing() {
     };
 
     return (
-        <WithModal>
+        <WithGalleryModal>
             <HeaderTabs />
             <ScrollView 
                 style={styles.container}
@@ -45,7 +46,7 @@ export default function GalleryOrdersListing() {
                     data={data[selectedTab]} 
                 />
             </ScrollView>
-        </WithModal>
+        </WithGalleryModal>
     )
 }
 
