@@ -9,6 +9,7 @@ import { galleryOrderModalStore, galleryOrderModalTypes } from 'store/modal/gall
 import PendingOrders from './components/PendingOrders'
 import ProcessingOrders from './components/ProcessingOrders'
 import CompletedOrders from './components/CompletedOrders'
+import EmptyOrdersListing from './components/EmptyOrdersListing'
 
 export default function GalleryOrdersListing() {
     const [refreshing, setRefreshing] = useState(false);
@@ -68,6 +69,9 @@ export default function GalleryOrdersListing() {
                         data={data[selectedTab]}
                     />
                 }
+                {data[selectedTab].length === 0 && (
+                    <EmptyOrdersListing status={selectedTab} />
+                )}
             </ScrollView>
         </WithGalleryModal>
     )
