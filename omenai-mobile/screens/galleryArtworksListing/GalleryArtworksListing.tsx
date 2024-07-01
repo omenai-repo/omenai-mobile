@@ -53,6 +53,7 @@ export default function GalleryArtworksListing() {
                 }
             >
                 {isloading ? <Loader /> : <ArtworksListing data={data} />}
+                <View style={{paddingVertical: 100}} />
             </ScrollView>
         </WithModal>
     )
