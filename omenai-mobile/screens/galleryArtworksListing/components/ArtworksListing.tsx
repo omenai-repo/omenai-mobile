@@ -31,7 +31,7 @@ export default function ArtworksListing({data}: {data: any[]}) {
         <View style={styles.artworksContainer}>
             <View style={{flex: 1}}>
             <FlatList
-                data={listing[0]}
+                data={listing[0]?.toReversed()}
                 renderItem={({item}: {item: ArtworkFlatlistItem}) => (
                     <GalleryMiniArtworkCard 
                         title={item.title} 
@@ -49,7 +49,7 @@ export default function ArtworksListing({data}: {data: any[]}) {
             </View>
             <View style={{flex: 1}}>
                 <FlatList
-                    data={listing[1]}
+                    data={listing[1]?.toReversed()}
                     renderItem={({item}: {item: ArtworkFlatlistItem}) => (
                         <GalleryMiniArtworkCard 
                             title={item.title} 

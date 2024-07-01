@@ -8,6 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import LongBlackButton from 'components/buttons/LongBlackButton'
 import DeclineOrderModal from './gallery/DeclineOrderModal'
 import PendingOrderModal from './gallery/PendingOrderModal'
+import ProvideShippingQuoteModal from './gallery/ProvideShippingQuoteModal'
+import ProvideTrackingInfo from './gallery/ProvideTrackingInfo'
 
 export default function WithGalleryModal({children}:WithModalProps) {
     const {isVisible, modalType} = galleryOrderModalStore();
@@ -15,8 +17,8 @@ export default function WithGalleryModal({children}:WithModalProps) {
     const modals = {
         pending: <PendingOrderModal />,
         decline: <DeclineOrderModal />,
-        accept: <DeclineOrderModal />,
-        provideTrackingInfo: <DeclineOrderModal />,
+        accept: <ProvideShippingQuoteModal />,
+        provideTrackingInfo: <ProvideTrackingInfo />,
     }
 
     return (

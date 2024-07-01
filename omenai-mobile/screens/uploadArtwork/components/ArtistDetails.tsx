@@ -42,7 +42,7 @@ export default function ArtistDetails() {
         <View style={styles.container}>
             <View style={styles.inputsContainer}>
                 <Input
-                    label='Full Name'
+                    label='Artist full name'
                     onInputChange={value => updateArtworkUploadData('artist', value)}
                     placeHolder='Enter artist full name'
                     value={artworkUploadData.artist}
@@ -50,7 +50,7 @@ export default function ArtistDetails() {
                     errorMessage={formErrors.artist}
                 />
                 <Input
-                    label='Birth year'
+                    label='Artist Birth year'
                     onInputChange={value => updateArtworkUploadData('artist_birthyear', value)}
                     placeHolder='Enter artist birth year'
                     value={artworkUploadData.artist_birthyear}
@@ -60,7 +60,7 @@ export default function ArtistDetails() {
                 />
                 <View>
                     <CustomSelectPicker
-                        label='Country of origin'
+                        label='Artist Country of origin'
                         handleSetValue={value => updateArtworkUploadData('artist_country_origin', value)}
                         placeholder='Select country'
                         value={artworkUploadData.artist_country_origin}

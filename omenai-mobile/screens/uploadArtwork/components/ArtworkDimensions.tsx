@@ -45,7 +45,7 @@ export default function ArtworkDimensions() {
         <View style={styles.container}>
             <View style={styles.inputsContainer}>
                 <View>
-                    <Text style={styles.label}>Dimensions (in inches)</Text>
+                    <Text style={styles.label}>Dimensions (e.g 20cm)</Text>
                     <View style={styles.flexInputsContainer}>
                         <NoLabelInput
                             placeHolder='Height'
