@@ -21,7 +21,11 @@ type galleryModalStoreTypes = {
     },
     clear: () => void,
     setIsVisible: (value: boolean) => void,
-    setModalType: (modal: galleryOrderModalTypes) => void
+    setModalType: (modal: galleryOrderModalTypes) => void,
+    artworkDetails: null | {label: string, value: string}[],
+    setArtworkDetails: (e: null | {label: string, value: string}[]) => void,
+    currentId: string,
+    setCurrentId: (e: string) => void
 };
 
 export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) => ({
@@ -65,7 +69,9 @@ export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) 
             trackingInfoForm: {
                 tracking_id: '',
                 tracking_link: ''
-            }
+            },
+            artworkDetails: null,
+            currentId: ''
         })
     },
     setIsVisible: (value: boolean) => {
@@ -73,5 +79,13 @@ export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) 
     },
     setModalType: (modal: galleryOrderModalTypes) => {
         set({modalType: modal})
+    },
+    artworkDetails: null,
+    setArtworkDetails: (value: null | {label: string, value: string}[]) => {
+        set({artworkDetails: value})
+    },
+    currentId: '',
+    setCurrentId: (e: string) => {
+        set({currentId: e})
     }
 }))
