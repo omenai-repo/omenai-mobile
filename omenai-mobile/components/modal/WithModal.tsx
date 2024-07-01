@@ -5,7 +5,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import { colors } from 'config/colors.config';
 import WebViewModal from './WebViewModal';
 
-type WithModalProps = {
+export type WithModalProps = {
     children: React.ReactNode
 }
 
@@ -19,7 +19,7 @@ export default function WithModal({children}: WithModalProps) {
     }, [showModal])
 
     const closeModal = () => {
-        //close modal after 4 seconds
+        //close modal after 3.5 seconds
         setTimeout(() => {
             updateModal({message: "", showModal: false, modalType: "success"})
         }, 3500)
