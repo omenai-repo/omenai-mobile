@@ -5,6 +5,7 @@ import Divider from 'components/general/Divider';
 import { formatPrice } from 'utils/priceFormatter';
 import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore';
 import { galleryOrderModalStore, galleryOrderModalTypes } from 'store/modal/galleryModalStore';
+import { getColors } from 'utils/sortFunctions.utils';
 
 export type orderCardStatusTypes = 'Pending' | 'Pending customer payment' | 'Pending tracking info' | 'Declined'
 
@@ -30,17 +31,6 @@ export default function OrdersListing({data}: {data: any[]}) {
         return 'Declined';
     };
 
-    const getColors = (): ordersColorsTypes => {
-        if(selectedTab === 'processing'){
-            return {bgColor: '#007BFF26', textColor: '#007BFF'}
-        }
-        if(selectedTab === 'completed'){
-            return {bgColor: '#ff000026', textColor: '#ff0000'}
-        }
-
-        return {bgColor: '#FEF7EC', textColor: '#F3A218'}
-    };
-
     const handleOpenModal = (modal: galleryOrderModalTypes) => {
         setIsVisible(true)
         setModalType(modal)
@@ -56,7 +46,7 @@ export default function OrdersListing({data}: {data: any[]}) {
                     amount={formatPrice(item.artwork_data.pricing.price)}
                     status={getStatus(item)}
                     artworkName={item.artwork_data.title}
-                    color={getColors()}
+                    color={getColors(selectedTab)}
                     handlePress={e => {
                         setCurrentId(item.order_id)
 
