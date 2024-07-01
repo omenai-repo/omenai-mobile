@@ -34,10 +34,10 @@ export function organizeOrders(arr: any[]){
     //first check for orders that has order accepted status set to empty
     if(order.order_accepted.status === ""){
       pendingOrders.push(order)
-    }else if(order.order_accepted.status === "declined"){ //Then orders accepted status set to decline should move to completed
-      completedOrders.push(order)
-    }else{ //anything in-between must def be in processing
+    }else if(order.order_accepted.status === "accepted" && !order.delivery_confirmed){ //Then orders accepted status set to decline should move to completed
       processingOrders.push(order)
+    }else if(order.status === "completed"){ //anything in-between must def be in processing
+      completedOrders.push(order)
     }
   };
 

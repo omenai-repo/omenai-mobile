@@ -179,3 +179,9 @@ type OrderAcceptedStatusTypes = {
   status: "accepted" | "declined" | "";
   reason?: string;
 };
+type ShippingQuoteTypes = {
+  package_carrier: string;
+  shipping_fees: string;
+  taxes: string;
+  additional_information?: string;
+};

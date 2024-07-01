@@ -7,26 +7,13 @@ import CloseButton from 'components/buttons/CloseButton';
 import { declineOrderRequest } from 'services/orders/declineOrderRequest';
 import CompletedModal from './CompletedModal';
 
-export default function DeclineOrderModal() {
-    const {declineForm, updateDeclineForm, setIsVisible, currentId, clear} = galleryOrderModalStore();
+export default function ProvideTrackingInfo() {
+    const {clear} = galleryOrderModalStore();
     const [isLoading, setIsLoading] = useState(false);
     const [completed, setCompleted] = useState(false);
 
-    const handleDecline = async () => {
+    const handleSubmit = async () => {
         setIsLoading(true);
-        let data : OrderAcceptedStatusTypes = {
-            status: 'declined',
-            reason: declineForm.reason
-        };
-        
-        const results = await declineOrderRequest({data: data, order_id: currentId})
-
-        if(results.isOk){
-            setCompleted(true)
-            console.log(results)
-        }else{
-            console.log(results)
-        }
 
         setIsLoading(false);
 
@@ -35,28 +22,36 @@ export default function DeclineOrderModal() {
     return (
         <View>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-                <Text style={{fontSize: 16, flex: 1}}>Decline order</Text>
+                <Text style={{fontSize: 16, flex: 1}}>Tracking Information</Text>
                 <CloseButton handlePress={clear} />
             </View>
             <View style={{marginBottom: 40, marginTop: 20}}>
                 {completed ? 
                     <CompletedModal placeholder='Order declined successfully'  /> 
                     :
-                    <Input
-                        label='Reason'
-                        placeHolder='Enter a reason for declining order'
-                        onInputChange={e => updateDeclineForm('reason', e)}
-                        value={declineForm.reason}
-                    />
+                    <View style={{gap: 20}}>
+                        <Input
+                            label='Package tracking link'
+                            placeHolder='Please provide tracking link for this order'
+                            onInputChange={e => console.log('reason', e)}
+                            value=''
+                        />
+                        <Input
+                            label='Tracking ID'
+                            placeHolder='Please provide tracking ID for this package'
+                            onInputChange={e => console.log('reason', e)}
+                            value=''
+                        />
+                    </View>
                 }
             </View>
             {completed ? 
                 <LongBlackButton value='Dismiss' onClick={clear} />
             :
                 <LongBlackButton
-                    value={isLoading ? 'Loading...' : 'Decline order'}
-                    onClick={handleDecline}
-                    isDisabled={declineForm.reason.length < 1 || isLoading}
+                    value={isLoading ? 'Loading...' : 'Submit'}
+                    onClick={handleSubmit}
+                    isDisabled={false}
                     isLoading={isLoading}
                 />
             }

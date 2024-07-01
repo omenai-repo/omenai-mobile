@@ -18,13 +18,12 @@ export default function NoLabelInput({value, onInputChange, placeHolder, keyboar
             <TextInput
                 onChangeText={onInputChange} 
                 placeholder={placeHolder} 
-                style={styles.container}
+                style={[styles.container, (errorMessage && errorMessage?.length > 0) ? {borderColor: '#ff0000'} : null]}
                 keyboardType={keyboardType}
                 autoCapitalize="none"
                 value={value}
                 onBlur={handleBlur}
             />
-            {(errorMessage && errorMessage?.length > 0) && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>
     )
 }

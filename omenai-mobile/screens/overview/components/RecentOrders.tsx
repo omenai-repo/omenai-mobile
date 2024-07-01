@@ -12,7 +12,6 @@ import OrderCard from 'components/gallery/OrderCard';
 export default function RecentOrders({refreshCount}: {refreshCount: number}) {
     const [data, setData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [morePendingOrders, setMorePendingOrders] = useState(false);
 
     useEffect(() => {
         setIsLoading(true)
@@ -28,8 +27,6 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                 if(stat){
                     if(arr.length !== 3){
                         arr.push(i)
-                    }else{
-                        setMorePendingOrders(true)
                     }
                 }
             })
@@ -78,15 +75,14 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                         {(index + 1) !== data.length && <Divider />}
                     </View>
                 ))}
-                {data.length === 0 && (
-                    <View style={{paddingVertical: 20, alignItems: 'center'}}>
-                        <Text>No orders yet</Text>
-                    </View>
-                )}
                 <View style={{flexWrap: 'wrap', marginRight: 'auto', marginLeft: 'auto'}}>
-                    {morePendingOrders &&
+                    {data.length > 1 ?
                         <View style={styles.pendingButton}>
-                            <Text>View all pending orders</Text>
+                            <Text>View {data.length} pending orders</Text>
+                        </View>
+                        :
+                        <View style={styles.pendingButton}>
+                            <Text>No pending orders</Text>
                         </View>
                     }
                 </View>
