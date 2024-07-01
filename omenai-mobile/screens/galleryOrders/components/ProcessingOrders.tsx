@@ -5,14 +5,19 @@ import OrderCard from 'components/gallery/OrderCard';
 import { formatPrice } from 'utils/priceFormatter';
 import Divider from 'components/general/Divider';
 import { getColors } from 'utils/sortFunctions.utils';
+import { OrdersListingProps } from './PendingOrders';
+import { orderCardStatusTypes } from './OrdersListing';
 
-export type OrdersListingProps = {
-    data: any[],
-    handleOpenModal: (modalType: galleryOrderModalTypes, order_id: string) => void
-}
-
-export default function PendingOrders({data, handleOpenModal}: OrdersListingProps) {
+export default function ProcessingOrders({data, handleOpenModal}: OrdersListingProps) {
     const { setArtworkDetails} = galleryOrderModalStore();
+
+    const getStatus = (order: any) : orderCardStatusTypes => {
+        if (order.payment_information.status === "pending") {
+            return 'Pending customer payment';
+        }
+        
+        return "Pending tracking info"
+    };
 
     return (
         <FlatList
@@ -22,18 +27,13 @@ export default function PendingOrders({data, handleOpenModal}: OrdersListingProp
                     url={item.artwork_data.url}
                     artist={item.artwork_data.artist}
                     amount={formatPrice(item.artwork_data.pricing.price)}
-                    status={"Pending"}
+                    status={getStatus(item)}
                     artworkName={item.artwork_data.title}
-                    color={getColors('')}
-                    handlePress={() => {
-                        handleOpenModal('pending', item.order_id)
-                        setArtworkDetails([
-                            {label: 'Artwork title', value: item.artwork_data.title},
-                            {label: 'Artist name', value: item.artwork_data.artist},
-                            {label: 'Price', value: formatPrice(item.artwork_data.pricing.price)},
-                            {label: 'Buyer name', value: item.buyer.name},
-                            {label: 'Address', value: `${item.shipping_address.address_line}, ${item.shipping_address.city}, ${item.shipping_address.country}, ${item.shipping_address.zip}`},
-                        ])
+                    color={getColors('processing')}
+                    handlePress={e => {
+                        if(e === "Pending tracking info"){
+                            handleOpenModal("provideTrackingInfo", item.order_id)
+                        }
                     }}
                 />
             )}
