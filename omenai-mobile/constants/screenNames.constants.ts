@@ -23,6 +23,7 @@ export const screenName = {
         overview: 'Overview',
         artworks: 'Artworks',
         uploadArtwork: 'upload-artwork',
-        orders: 'Orders'
+        orders: 'Orders',
+        order: 'gallery-order'
     }
 }

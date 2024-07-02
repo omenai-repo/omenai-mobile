@@ -67,6 +67,7 @@ export default function GalleryOrdersListing() {
                 {selectedTab === "completed" &&
                     <CompletedOrders 
                         data={data[selectedTab]}
+                        handleOpenModal={handleOpenModal}
                     />
                 }
                 {data[selectedTab].length === 0 && (
