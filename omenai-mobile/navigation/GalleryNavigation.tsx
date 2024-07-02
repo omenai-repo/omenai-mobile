@@ -6,6 +6,7 @@ import { screenName } from "constants/screenNames.constants";
 import { Text, View } from "react-native";
 import Artwork from "screens/artwork/Artwork";
 import GalleryArtworksListing from "screens/galleryArtworksListing/GalleryArtworksListing";
+import GalleryOrder from "screens/galleryOrder/GalleryOrder";
 import GalleryOrdersListing from "screens/galleryOrders/GalleryOrdersListing";
 import Overview from "screens/overview/Overview";
 import UploadArtwork from "screens/uploadArtwork/UploadArtwork";
@@ -76,6 +77,7 @@ export default function GalleryNavigation() {
             <Stack.Screen name='Individual' component={GalleryTabNavigationScreens} options={hideHeader}/>
             <Stack.Screen name={screenName.artwork} component={Artwork} />
             <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
+            <Stack.Screen name={screenName.gallery.order} component={GalleryOrder} />
             {/* <Stack.Screen name={screenName.gallery.orders} component={GalleryOrdersListing} /> */}
         </Stack.Navigator>
     )

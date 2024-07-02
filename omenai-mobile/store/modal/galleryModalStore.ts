@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type galleryOrderModalTypes = 'pending' | 'decline' | 'accept' | 'provideTrackingInfo'
+export type galleryOrderModalTypes = 'details' | 'decline' | 'accept' | 'provideTrackingInfo'
 
 type declineFormType = {reason: string}
 type acceptFormType = {
@@ -12,6 +12,12 @@ type acceptFormType = {
 type trackingInfoFormType = {
     tracking_id: string,
     tracking_link: string
+}
+
+type orderDetailsType = {
+    url: string,
+    type: string,
+    details: {label: string, value: string}[]
 }
 
 type galleryModalStoreTypes = {
@@ -26,8 +32,8 @@ type galleryModalStoreTypes = {
     clear: () => void,
     setIsVisible: (value: boolean) => void,
     setModalType: (modal: galleryOrderModalTypes) => void,
-    artworkDetails: null | {label: string, value: string}[],
-    setArtworkDetails: (e: null | {label: string, value: string}[]) => void,
+    artworkDetails: null | orderDetailsType,
+    setArtworkDetails: (e: null | orderDetailsType) => void,
     currentId: string,
     setCurrentId: (e: string) => void
 };
@@ -103,7 +109,7 @@ export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) 
         set({modalType: modal})
     },
     artworkDetails: null,
-    setArtworkDetails: (value: null | {label: string, value: string}[]) => {
+    setArtworkDetails: (value: null | orderDetailsType) => {
         set({artworkDetails: value})
     },
     currentId: '',
