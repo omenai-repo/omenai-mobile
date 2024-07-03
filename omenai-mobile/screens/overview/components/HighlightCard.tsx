@@ -1,4 +1,5 @@
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { colors } from "config/colors.config";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { fetchHighlightData } from "services/overview/fetchHighlightData";
@@ -26,9 +27,9 @@ export const HighlightCard = ({name, type, refreshCount}: HighlightCardProps) =>
         <View style={styles.card}>
             <View style={styles.iconContainer}>
                 {type === "artworks" ? 
-                    <Ionicons name='document-text-outline' size={21} color={'#1a1a1a'} style={{opacity: 0.5}}  />
+                    <Ionicons name='document-text-outline' size={21} color={colors.white}/>
                     :
-                    <FontAwesome name='dollar' size={21} color={'#1a1a1a'} style={{opacity: 0.5}} />
+                    <FontAwesome name='dollar' size={21} color={colors.white}/>
                 }
             </View>
             <Text style={styles.cardTitle}>{name}</Text>
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
         height: 40,
         width: 40,
         borderRadius: 4,
-        backgroundColor: '#E7F6EC',
+        backgroundColor: colors.primary_black,
         alignItems: 'center',
         justifyContent: 'center'
     },
