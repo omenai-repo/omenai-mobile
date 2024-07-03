@@ -19,7 +19,7 @@ export default function GalleryProfile() {
             </SafeAreaView>
             <ScrollView style={styles.mainContainer}>
                 <View style={styles.buttonsContainer}>
-                    <PageButtonCard name='Edit gallery' subText='See all your saved artworks' handlePress={() => navigation.navigate(screenName.gallery.editProfile)} />
+                    <PageButtonCard name='Gallery profile' subText='View and edit your profile details' handlePress={() => navigation.navigate(screenName.gallery.editProfile)} />
                     <Divider />
                     <PageButtonCard name='Settings' subText='See all your saved artworks' handlePress={() => navigation.navigate(screenName.gallery.settings)} />
                 </View>
@@ -38,10 +38,11 @@ const styles = StyleSheet.create({
     },
     mainContainer: {
         paddingHorizontal: 20,
+        marginTop: 20,
         flex: 1
     },
     buttonsContainer: {
-        marginTop: 30,
+        marginTop: 10,
         borderWidth: 1,
         borderColor: colors.grey50,
         padding: 15,
