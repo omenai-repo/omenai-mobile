@@ -6,12 +6,13 @@ type InputProps = {
     label: string,
     value: string,
     onInputChange: (e: string) => void,
-    placeHolder: string,
+    placeHolder?: string,
     errorMessage?: string,
-    handleBlur?: () => void
+    handleBlur?: () => void,
+    defaultValue?: string
 }
 
-export default function LargeInput({label, onInputChange, placeHolder, value, errorMessage, handleBlur}: InputProps) {
+export default function LargeInput({label, onInputChange, placeHolder, value, errorMessage, handleBlur, defaultValue}: InputProps) {
     return (
         <View>
             <Text style={styles.label}>{label}</Text>
@@ -21,10 +22,11 @@ export default function LargeInput({label, onInputChange, placeHolder, value, er
                 style={styles.inputContainer}
                 keyboardType="default"
                 autoCapitalize="none"
-                value={value}
+                value={value.length > 0 ? value : defaultValue}
                 onBlur={handleBlur}
                 multiline
                 numberOfLines={4}
+                defaultValue={defaultValue}
             />
             {errorMessage && errorMessage?.length > 0 && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>

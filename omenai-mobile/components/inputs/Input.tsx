@@ -6,14 +6,15 @@ type InputProps = {
     label: string,
     value: string,
     onInputChange: (e: string) => void,
-    placeHolder: string,
+    placeHolder?: string,
     keyboardType?: KeyboardTypeOptions,
     errorMessage?: string,
     handleBlur?: () => void,
-    disabled?: boolean
+    disabled?: boolean,
+    defaultValue?: string
 }
 
-export default function Input({label, onInputChange, placeHolder, keyboardType, value, errorMessage, handleBlur, disabled}: InputProps) {
+export default function Input({label, onInputChange, placeHolder, keyboardType, value, errorMessage, handleBlur, disabled, defaultValue}: InputProps) {
     return (
         <View style={{zIndex: 100}}>
             <Text style={styles.label}>{label}</Text>
@@ -23,9 +24,10 @@ export default function Input({label, onInputChange, placeHolder, keyboardType, 
                 style={styles.inputContainer}
                 keyboardType={keyboardType}
                 autoCapitalize="none"
-                value={value}
+                value={value.length > 0 ? value : defaultValue}
                 onBlur={handleBlur}
                 editable={!disabled}
+                defaultValue={defaultValue}
                 // autoComplete='email'
             />
             {(errorMessage && errorMessage?.length > 0) && <Text style={styles.errorMessage}>{errorMessage}</Text>}
