@@ -22,8 +22,7 @@ export default function Pricing() {
         const isFormValid = Object.values(formErrors).every((error) => error === "");
         const areAllFieldsFilled = Object.values({
             pricing: artworkUploadData.price,
-            showPrice: artworkUploadData.shouldShowPrice,
-            carrier: artworkUploadData.carrier
+            showPrice: artworkUploadData.shouldShowPrice
         }).every((value) => value !== "");
 
         return !(isFormValid && areAllFieldsFilled);
@@ -57,15 +56,6 @@ export default function Pricing() {
                         placeholder='Select'
                         value={artworkUploadData.shouldShowPrice}
                         handleSetValue={value => updateArtworkUploadData('shouldShowPrice', value)}
-                    />
-                </View>
-                <View>
-                    <CustomSelectPicker
-                        label='Preferred shipping carrier'
-                        data={preferredShippingCarrier}
-                        placeholder='Select carrier'
-                        value={artworkUploadData.carrier}
-                        handleSetValue={value => updateArtworkUploadData('carrier', value)}
                     />
                 </View>
             </View>

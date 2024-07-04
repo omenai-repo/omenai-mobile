@@ -20,7 +20,7 @@ export default function GalleryProfile() {
         <WithGalleryModal>
             <SafeAreaView>
                 <View style={styles.headerContainer}>
-                    <Text style={{fontSize: 20}}>Profile</Text>
+                    <Text style={{fontSize: 20, textAlign: 'center'}}>Profile</Text>
                 </View>
             </SafeAreaView>
             <ScrollView style={styles.mainContainer}>

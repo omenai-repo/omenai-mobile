@@ -33,7 +33,9 @@ export default function GalleryMiniArtworkCard({url, title, art_id, artist}: Min
       }, [image_href, screenWidth]);
 
     return (
-        <TouchableOpacity activeOpacity={1} style={[styles.container]}>
+        <TouchableOpacity activeOpacity={1} style={[styles.container]} onPress={() => {
+            navigation.navigate(screenName.artwork, {title: title})
+        }}>
             <View style={{width: imageDimensions.width, height: imageDimensions.height, }}>
                 <Image source={{uri: image_href}} style={{width: imageDimensions.width, height: imageDimensions.height, objectFit: 'cover' }} resizeMode="contain" />
             </View>

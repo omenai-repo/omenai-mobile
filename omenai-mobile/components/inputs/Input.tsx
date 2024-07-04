@@ -21,7 +21,7 @@ export default function Input({label, onInputChange, placeHolder, keyboardType, 
             <TextInput 
                 onChangeText={onInputChange} 
                 placeholder={placeHolder} 
-                style={styles.inputContainer}
+                style={[styles.inputContainer, disabled && {color: '#1a1a1a70'}]}
                 keyboardType={keyboardType}
                 autoCapitalize="none"
                 value={defaultValue ? undefined : value} 

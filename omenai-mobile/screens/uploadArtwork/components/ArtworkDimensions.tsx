@@ -21,10 +21,9 @@ export default function ArtworkDimensions() {
 
     const checkIsDisabled = () => {
         // Check if there are no error messages and all input fields are filled
-        const isFormValid = Object.values(formErrors).every((error) => error === "");
+        const isFormValid = Object.values({weight: formErrors.weight, height: formErrors.height, width: formErrors.width}).every((error) => error === "");
         const areAllFieldsFilled = Object.values({
             weight: artworkUploadData.weight,
-            depth: artworkUploadData.depth,
             height: artworkUploadData.height,
             width: artworkUploadData.width
         }).every((value) => value !== "");
@@ -49,14 +48,20 @@ export default function ArtworkDimensions() {
                     <View style={styles.flexInputsContainer}>
                         <NoLabelInput
                             placeHolder='Height'
-                            onInputChange={value => updateArtworkUploadData('height', value)}
+                            onInputChange={value => {
+                                updateArtworkUploadData('height', value)
+                                handleValidationChecks('height', artworkUploadData.height)
+                            }}
                             value={artworkUploadData.height}
                             handleBlur={() => handleValidationChecks('height', artworkUploadData.height)}
                             errorMessage={formErrors.height}
                         />
                         <NoLabelInput 
                             placeHolder='Width'
-                            onInputChange={value => updateArtworkUploadData('width', value)}
+                            onInputChange={value => {
+                                updateArtworkUploadData('width', value)
+                                handleValidationChecks('width', artworkUploadData.width)
+                            }}
                             value={artworkUploadData.width}
                             handleBlur={() => handleValidationChecks('width', artworkUploadData.width)}
                             errorMessage={formErrors.width}
@@ -72,7 +77,10 @@ export default function ArtworkDimensions() {
                 </View>
                 <Input
                     label='Weight (in Kg)'
-                    onInputChange={value => updateArtworkUploadData('weight', value)}
+                    onInputChange={value => {
+                        updateArtworkUploadData('weight', value)
+                        handleValidationChecks('weight', artworkUploadData.weight)
+                    }}
                     placeHolder='Enter weight of artwork'
                     value={artworkUploadData.weight}
                     handleBlur={() => handleValidationChecks('weight', artworkUploadData.weight)}
