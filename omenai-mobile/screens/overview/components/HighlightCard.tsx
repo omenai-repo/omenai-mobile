@@ -12,16 +12,26 @@ type HighlightCardProps = {
 
 export const HighlightCard = ({name, type, refreshCount}: HighlightCardProps) => {
     const [amount, setAmount] = useState(0);
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         handleFetchHighlightData()
     }, [refreshCount]);
 
     const handleFetchHighlightData = async () => {
-        setAmount(0)
+        setIsLoading(true)
         let results = await fetchHighlightData(type);
         setAmount(results)
+        setIsLoading(false)
     }
+
+    if(isLoading)return(
+        <View style={styles.card}>
+            <View style={{height: 40, width: 40, backgroundColor: colors.grey50}} />
+            <View style={{width: '70%', height: 15, backgroundColor: colors.grey50, marginTop: 10}} />
+            <View style={{width: '30%', height: 10, backgroundColor: colors.grey50, marginTop: 10}} />
+        </View>
+    )
 
     return(
         <View style={styles.card}>
