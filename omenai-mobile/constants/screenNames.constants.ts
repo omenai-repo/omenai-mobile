@@ -26,7 +26,7 @@ export const screenName = {
         orders: 'Orders',
         profile: 'Profile',
         editProfile: 'edit-profile',
-        settings: 'gallery-settings',
+        changePassword: 'change-gallery-password',
         order: 'gallery-order'
     }
 }
