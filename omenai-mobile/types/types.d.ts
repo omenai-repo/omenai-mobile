@@ -185,3 +185,8 @@ type ShippingQuoteTypes = {
   taxes: string;
   additional_information?: string;
 };
+type GalleryProfileUpdateData = {
+  location?: string;
+  admin?: string;
+  description?: string;
+};

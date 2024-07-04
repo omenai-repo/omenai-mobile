@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type galleryOrderModalTypes = 'details' | 'decline' | 'accept' | 'provideTrackingInfo'
+export type galleryOrderModalTypes = 'details' | 'decline' | 'accept' | 'provideTrackingInfo' | 'deleteAccount'
 
 type declineFormType = {reason: string}
 type acceptFormType = {

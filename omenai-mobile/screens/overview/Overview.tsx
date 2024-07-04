@@ -25,7 +25,7 @@ export default function Overview() {
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
                 >
-                    <Header showNotification showLogout />
+                    <Header showNotification />
                     <View style={styles.container}>
                         <Text style={{fontSize: 16, fontWeight: '400'}}>Overview</Text>
                         <View style={styles.contentsContainer}>

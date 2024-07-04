@@ -24,6 +24,9 @@ export const screenName = {
         artworks: 'Artworks',
         uploadArtwork: 'upload-artwork',
         orders: 'Orders',
+        profile: 'Profile',
+        editProfile: 'edit-profile',
+        changePassword: 'change-gallery-password',
         order: 'gallery-order'
     }
 }
