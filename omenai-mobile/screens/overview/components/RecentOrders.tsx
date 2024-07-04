@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
@@ -8,8 +8,12 @@ import { getImageFileView } from 'lib/storage/getImageFileView';
 import { formatPrice } from 'utils/priceFormatter';
 import Loader from 'components/general/Loader';
 import OrderCard from 'components/gallery/OrderCard';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
 
 export default function RecentOrders({refreshCount}: {refreshCount: number}) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
     const [data, setData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -51,13 +55,15 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
 
     return (
         <View style={styles.container}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{fontSize: 16, fontWeight: '400', flex: 1}}>Recent orders</Text>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-                    <Text style={{fontSize: 14, opacity: 0.6}}>All orders</Text>
-                    <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
+            <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.orders)}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={{fontSize: 16, fontWeight: '400', flex: 1}}>Recent orders</Text>
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                        <Text style={{fontSize: 14, opacity: 0.6}}>All orders</Text>
+                        <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
+                    </View>
                 </View>
-            </View>
+            </TouchableOpacity>
             <View style={styles.mainContainer}>
                 {data.length > 0 && data.map((order, index) => (
                     <View 
@@ -77,9 +83,11 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                 ))}
                 <View style={{flexWrap: 'wrap', marginRight: 'auto', marginLeft: 'auto'}}>
                     {data.length > 1 ?
-                        <View style={styles.pendingButton}>
-                            <Text>View {data.length} pending orders</Text>
-                        </View>
+                        <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.orders)}>
+                            <View style={styles.pendingButton}>
+                                <Text>View {data.length} pending orders</Text>
+                            </View>
+                        </TouchableOpacity>
                         :
                         <View style={styles.pendingButton}>
                             <Text>No pending orders</Text>
