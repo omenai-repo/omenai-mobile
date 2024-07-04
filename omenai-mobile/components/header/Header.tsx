@@ -3,14 +3,13 @@ import React from 'react'
 import { colors } from '../../config/colors.config'
 
 import omenaiLogo from '../../assets/omenai-logo.png';
-import { AntDesign, Feather } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
-import { logout } from 'utils/logout.utils';
 
-export default function Header({showNotification, showLogout}: {showNotification?: boolean, showLogout?: boolean}) {
+export default function Header({showNotification}: {showNotification?: boolean}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
@@ -20,11 +19,6 @@ export default function Header({showNotification, showLogout}: {showNotification
                 <View style={{flex: 1}}>
                     <Image style={{width: 130, height: 30}} resizeMode='contain' source={omenaiLogo} />
                 </View>
-                {showLogout && (
-                    <TouchableOpacity onPress={() => logout()} style={styles.iconContainer}>
-                        <AntDesign name='poweroff' size={20} color={'#ff0000'}/>
-                    </TouchableOpacity>
-                )}
                 {showNotification &&
                     <TouchableOpacity onPress={() => navigation.navigate(screenName.notifications)} style={styles.iconContainer}>
                         <Feather name='bell' size={20} color={colors.grey} />

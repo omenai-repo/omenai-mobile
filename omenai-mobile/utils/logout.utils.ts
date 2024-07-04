@@ -1,5 +1,5 @@
 import { useAppStore } from "../store/app/appStore"
-import { clearLocalStorage, getAsyncData } from "./asyncStorage.utils"
+import { clearLocalStorage } from "./asyncStorage.utils"
 
 export const logout = async () => {
     clearLocalStorage()

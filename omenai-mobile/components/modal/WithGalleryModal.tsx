@@ -12,6 +12,7 @@ import ProvideShippingQuoteModal from './gallery/ProvideShippingQuoteModal'
 import ProvideTrackingInfo from './gallery/ProvideTrackingInfo'
 import OrderDetailsModal from './gallery/OrderDetailsModal'
 import LongWhiteButton from 'components/buttons/LongWhiteButton'
+import DeleteAccountModal from './gallery/DeleteAccountModal'
 
 export default function WithGalleryModal({children}:WithModalProps) {
     const {isVisible, modalType, setModalType} = galleryOrderModalStore();
@@ -20,7 +21,8 @@ export default function WithGalleryModal({children}:WithModalProps) {
         decline: <DeclineOrderModal />,
         accept: <ProvideShippingQuoteModal />,
         provideTrackingInfo: <ProvideTrackingInfo />,
-        details: <OrderDetailsModal />
+        details: <OrderDetailsModal />,
+        deleteAccount: <DeleteAccountModal />
     }
 
     return (

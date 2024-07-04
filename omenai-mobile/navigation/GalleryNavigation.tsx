@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { colors } from "config/colors.config";
@@ -8,6 +8,9 @@ import Artwork from "screens/artwork/Artwork";
 import GalleryArtworksListing from "screens/galleryArtworksListing/GalleryArtworksListing";
 import GalleryOrder from "screens/galleryOrder/GalleryOrder";
 import GalleryOrdersListing from "screens/galleryOrders/GalleryOrdersListing";
+import ChangeGalleryPassword from "screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
+import EditGalleryProfile from "screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile";
+import GalleryProfile from "screens/galleryProfileScreens/galleryProfile/GalleryProfile";
 import Overview from "screens/overview/Overview";
 import UploadArtwork from "screens/uploadArtwork/UploadArtwork";
 
@@ -25,9 +28,16 @@ const hideHeader = {headerShown: false}
 export default function GalleryNavigation() {
 
     const CustomTabBarIcon = ({ name, focused, title }: CustomTabBarIconProps) => {
+
+        let icon = <Ionicons name={name} size={focused ? 25 : 22} color={focused ? colors.black : colors.grey} />
+
+        if(title === screenName.gallery.orders || title === screenName.gallery.profile){
+            icon = <Feather name={name} size={focused ? 25 : 22} color={focused ? colors.black : colors.grey} />
+        }
+
         return (
             <View style={{alignItems: 'center', gap: 5}}>
-              <Ionicons name={name} size={focused ? 25 : 22} color={focused ? colors.black : colors.grey} />
+              {icon}
               <Text style={[{fontSize: 13, color: colors.grey}, focused && {color: colors.primary_black}]}>{title}</Text>
             </View>
         );
@@ -45,7 +55,9 @@ export default function GalleryNavigation() {
                     }else if(route.name === screenName.gallery.artworks){
                         iconName = 'briefcase-outline'
                     }else if(route.name === screenName.gallery.orders){
-                        iconName = 'briefcase-outline'
+                        iconName = 'package'
+                    }else if(route.name === screenName.gallery.profile){
+                        iconName = 'user'
                     }
         
                     return <CustomTabBarIcon title={route.name} name={iconName} focused={focused} />;
@@ -68,6 +80,7 @@ export default function GalleryNavigation() {
                 <Tab.Screen component={Overview} name={screenName.gallery.overview} />
                 <Tab.Screen component={GalleryArtworksListing} name={screenName.gallery.artworks} />
                 <Tab.Screen component={GalleryOrdersListing} name={screenName.gallery.orders} />
+                <Tab.Screen component={GalleryProfile} name={screenName.gallery.profile} />
             </Tab.Navigator>
         )
     }
@@ -78,7 +91,8 @@ export default function GalleryNavigation() {
             <Stack.Screen name={screenName.artwork} component={Artwork} />
             <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
             <Stack.Screen name={screenName.gallery.order} component={GalleryOrder} />
-            {/* <Stack.Screen name={screenName.gallery.orders} component={GalleryOrdersListing} /> */}
+            <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
+            <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
         </Stack.Navigator>
     )
 }

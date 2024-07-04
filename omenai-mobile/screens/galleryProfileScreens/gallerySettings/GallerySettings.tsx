@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-export default function Filter() {
+export default function GallerySettings() {
     return (
         <View>
-            <Text>Filter</Text>
+            <Text>GallerySettings</Text>
         </View>
     )
 }

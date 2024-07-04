@@ -13,6 +13,7 @@ import { AntDesign } from '@expo/vector-icons'
 import { screenName } from 'constants/screenNames.constants';
 import { handleFetchUserID } from 'utils/asyncStorage.utils';
 import useLikedState from 'custom/hooks/useLikedState';
+import BackHeaderTitle from 'components/header/BackHeaderTitle';
 
 type SavedArtworkItemProps = {
     name: string,
@@ -25,7 +26,7 @@ type SavedArtworkItemProps = {
 }
 
 export default function SavedArtworks() {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+    
     const isFocused = useIsFocused();
 
     const { isLoading, setIsLoading, data, setData } = UseSavedArtworksStore();
@@ -101,13 +102,7 @@ export default function SavedArtworks() {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView>
-                <View style={styles.topContainer}>
-                    <BackScreenButton handleClick={() => navigation.goBack()} />
-                    <Text style={styles.topTitle}>Saved artworks</Text>
-                    <View style={{width: 50}} />
-                </View>
-            </SafeAreaView>
+            <BackHeaderTitle title='Saved artworks' />
             <ScrollView style={styles.mainContainer}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -146,18 +141,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white
-    },
-    topContainer: {
-        paddingHorizontal: 20,
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    topTitle: {
-        flex: 1,
-        textAlign: 'center',
-        fontSize: 16,
-        fontWeight: '500',
-        color: colors.primary_black
     },
     mainContainer: {
         paddingHorizontal: 20,

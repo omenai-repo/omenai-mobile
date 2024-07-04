@@ -1,23 +1,16 @@
-import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import { ScrollView } from 'react-native-gesture-handler'
 import omenaiAvatar from '../../assets/images/omenai-avatar.png';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import { Feather } from '@expo/vector-icons';
 import { getAsyncData } from 'utils/asyncStorage.utils';
 import Divider from 'components/general/Divider';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { logout } from 'utils/logout.utils';
-
-type PageButtonItemProps = {
-    name: string,
-    subText?: string,
-    handlePress: () => void,
-    logout?: boolean
-}
+import { PageButtonCard } from 'components/buttons/PageButtonCard';
 
 type userDataType = {
     name: string,
@@ -49,20 +42,6 @@ export default function Profile() {
         return
     }
 
-    const PageButtonItem = ({name, subText, handlePress, logout}: PageButtonItemProps) => {
-        return(
-            <TouchableOpacity activeOpacity={1} onPress={handlePress}>
-                <View style={[styles.pageButtonItem]}>
-                    <View style={{flex: 1}}>
-                        <Text style={[{fontSize: 16, color: colors.primary_black}, logout && {color: '#ff0000'}]}>{name}</Text>
-                        {subText && <Text style={{fontSize: 14, color: '#858585', marginTop: 2}}>{subText}</Text>}
-                    </View>
-                    <Feather name='chevron-right' color={logout ? '#ff0000' : colors.primary_black} size={15} />
-                </View>
-            </TouchableOpacity>
-        )
-    }
-
     return (
         <ScrollView style={styles.container}>
             <SafeAreaView>
@@ -75,11 +54,11 @@ export default function Profile() {
                     </View>
                 </View>
                 <View style={styles.buttonsContainer}>
-                    <PageButtonItem name='Saved artworks' subText='See all your saved artworks' handlePress={() => navigation.navigate(screenName.savedArtworks)} />
+                    <PageButtonCard name='Saved artworks' subText='See all your saved artworks' handlePress={() => navigation.navigate(screenName.savedArtworks)} />
                     <Divider />
-                    <PageButtonItem name='Order history' subText='A summary of all your orders' handlePress={() => navigation.navigate(screenName.orders)} />
+                    <PageButtonCard name='Order history' subText='A summary of all your orders' handlePress={() => navigation.navigate(screenName.orders)} />
                     <Divider />
-                    <PageButtonItem name='Log Out' logout  handlePress={logout} />
+                    <PageButtonCard name='Log Out' logout  handlePress={logout} />
                 </View>
             </SafeAreaView>
         </ScrollView>
@@ -109,14 +88,5 @@ const styles = StyleSheet.create({
         borderColor: colors.grey50,
         padding: 15,
         gap: 20
-    },
-    pageButtonItem: {
-        backgroundColor: '#FAFAFA',
-        borderWidth: 1,
-        borderColor: colors.grey50,
-        padding: 20,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10
     }
 })
