@@ -7,7 +7,7 @@ import { useForgetPasswordStore } from '../../../../store/auth/forgotPassword/fo
 import { colors } from '../../../../config/colors.config'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { screenName } from '../../../../constants/screenNames.constants'
 import { validate } from '../../../../lib/validations/validatorGroup'
 import { sendPasswordResetLink } from 'services/password/sendPasswordResetLink'
@@ -15,13 +15,16 @@ import { sendPasswordResetLink } from 'services/password/sendPasswordResetLink'
 export default function Form() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const {email, setEmail, isLoading, setIsLoading, updateSuccess} = useForgetPasswordStore()
+    const route = useRoute()
 
     const [formErrors, setFormErrors] = useState({email: ''});
 
     const handleSubmit = async () => {
         setIsLoading(true)
 
-        const results = await sendPasswordResetLink({email}, 'individual')
+        const { type } = route.params as forgetPasswordRouteParamsType
+
+        const results = await sendPasswordResetLink({email}, type)
 
         if(results?.isOk){
             Alert.alert(results?.body.message)
