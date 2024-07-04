@@ -43,9 +43,9 @@ export default function SalesOverview({refreshCount}: {refreshCount: number}) {
     };
     
     if(isLoading)return(
-        <View style={styles.container}>
-            <Text style={{fontSize: 16, fontWeight: '400', paddingHorizontal: 20, marginBottom: 20}}>Sales overview</Text>
-            <Loader />
+        <View style={[styles.container, {paddingHorizontal: 20}]}>
+            <Text style={{fontSize: 16, fontWeight: '400', marginBottom: 20}}>Sales overview</Text>
+            <View style={{height: 200, backgroundColor: '#f5f5f5'}} />
         </View>
     )
 
