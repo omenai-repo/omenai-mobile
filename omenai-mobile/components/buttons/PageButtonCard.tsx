@@ -6,10 +6,11 @@ type PageButtonItemProps = {
     name: string,
     subText?: string,
     handlePress: () => void,
-    logout?: boolean
+    logout?: boolean,
+    children?: React.ReactNode
 }
 
-export const PageButtonCard = ({name, subText, handlePress, logout}: PageButtonItemProps) => {
+export const PageButtonCard = ({name, subText, handlePress, logout, children}: PageButtonItemProps) => {
     return(
         <TouchableOpacity activeOpacity={1} onPress={handlePress}>
             <View style={[styles.pageButtonItem]}>
@@ -17,7 +18,11 @@ export const PageButtonCard = ({name, subText, handlePress, logout}: PageButtonI
                     <Text style={[{fontSize: 16, color: colors.primary_black}, logout && {color: '#ff0000'}]}>{name}</Text>
                     {subText && <Text style={{fontSize: 14, color: '#858585', marginTop: 5}}>{subText}</Text>}
                 </View>
-                <Feather name='chevron-right' color={logout ? '#ff0000' : colors.primary_black} size={15} />
+                {children ? 
+                    children
+                    :
+                    <Feather name='chevron-right' color={logout ? '#ff0000' : colors.primary_black} size={15} />
+                }
             </View>
         </TouchableOpacity>
     )
