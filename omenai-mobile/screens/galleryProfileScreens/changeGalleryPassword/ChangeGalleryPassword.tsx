@@ -97,8 +97,7 @@ export default function ChangeGalleryPassword() {
                                 loading ||
                                 errorList.length > 0 ||
                                 info.confirmPassword === "" ||
-                                info.password === "" ||
-                                codeLoading
+                                info.password === ""
                             }
                             isLoading={codeLoading}
                         />
