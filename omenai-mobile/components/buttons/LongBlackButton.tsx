@@ -1,6 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { colors } from '../../config/colors.config'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef } from 'react';
+import { colors } from '../../config/colors.config';
+import LottieView from 'lottie-react-native';
+import loaderAnimation from '../../assets/other/loader-animation.json';
 
 type LongBlackButtonProps = {
     value: string,
@@ -12,11 +14,24 @@ type LongBlackButtonProps = {
 }
 
 export default function LongBlackButton({value, onClick, isDisabled, isLoading, radius = 0, bgColor} : LongBlackButtonProps) {
+    const animation = useRef(null);
 
     if (isDisabled || isLoading)
     return(
         <View style={[styles.container, {backgroundColor: '#E0E0E0'}]}>
-            <Text style={[styles.text, {color: '#A1A1A1'}]}>{value}</Text>
+            {isDisabled ? 
+                <Text style={[styles.text, {color: '#A1A1A1'}]}>{value}</Text> 
+            :
+                <LottieView
+                    autoPlay
+                    ref={animation}
+                    style={{
+                        width: 100,
+                        height: 100
+                    }}
+                    source={loaderAnimation}
+                />
+            }
         </View>
     )
 
