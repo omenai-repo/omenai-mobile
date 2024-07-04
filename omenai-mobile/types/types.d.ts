@@ -172,7 +172,6 @@ type ArtworkUploadStateTypes = {
   artwork_description?: string;
   framing: string;
   signature: string;
-  carrier: string;
 };
 
 type OrderAcceptedStatusTypes = {

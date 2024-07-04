@@ -40,7 +40,7 @@ export default function OrderCard({artworkName, amount, status, color, handlePre
     return(
         <View style={styles.orderItem}>
             <View style={{flex: 1}}>
-                <Text style={{fontSize: 14, marginBottom: 5}}>{order_id}</Text>
+                <Text style={{fontSize: 14, marginBottom: 5}}>Order ID: {order_id}</Text>
                 <Text style={{fontSize: 14, color: colors.primary_black}}>{artworkName}</Text>
                 <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 5, marginBottom: 10}}>{amount}</Text>
                 <View style={{flexWrap: 'wrap'}}>
