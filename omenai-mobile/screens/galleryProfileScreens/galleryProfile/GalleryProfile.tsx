@@ -21,7 +21,7 @@ export default function GalleryProfile() {
                 <View style={styles.buttonsContainer}>
                     <PageButtonCard name='Gallery profile' subText='View and edit your profile details' handlePress={() => navigation.navigate(screenName.gallery.editProfile)} />
                     <Divider />
-                    <PageButtonCard name='Settings' subText='See all your saved artworks' handlePress={() => navigation.navigate(screenName.gallery.settings)} />
+                    <PageButtonCard name='Change password' subText='Change the password to your account' handlePress={() => navigation.navigate(screenName.gallery.changePassword)} />
                 </View>
             </ScrollView>
         </View>

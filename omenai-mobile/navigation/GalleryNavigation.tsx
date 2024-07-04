@@ -8,9 +8,9 @@ import Artwork from "screens/artwork/Artwork";
 import GalleryArtworksListing from "screens/galleryArtworksListing/GalleryArtworksListing";
 import GalleryOrder from "screens/galleryOrder/GalleryOrder";
 import GalleryOrdersListing from "screens/galleryOrders/GalleryOrdersListing";
+import ChangeGalleryPassword from "screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
 import EditGalleryProfile from "screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile";
 import GalleryProfile from "screens/galleryProfileScreens/galleryProfile/GalleryProfile";
-import GallerySettings from "screens/galleryProfileScreens/gallerySettings/GallerySettings";
 import Overview from "screens/overview/Overview";
 import UploadArtwork from "screens/uploadArtwork/UploadArtwork";
 
@@ -92,7 +92,7 @@ export default function GalleryNavigation() {
             <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
             <Stack.Screen name={screenName.gallery.order} component={GalleryOrder} />
             <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
-            <Stack.Screen name={screenName.gallery.settings} component={GallerySettings} />
+            <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
         </Stack.Navigator>
     )
 }
