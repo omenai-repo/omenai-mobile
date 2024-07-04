@@ -91,7 +91,7 @@ export default function ChangeGalleryPassword() {
                             />
                         </View>
                         <GetCodeButton 
-                            value={codeLoading ? 'loading...' : 'Get code'} 
+                            value='Get code' 
                             onClick={requestConfirmationCode} 
                             isDisabled={
                                 loading ||

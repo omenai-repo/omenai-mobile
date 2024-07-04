@@ -9,6 +9,7 @@ import { screenName } from 'constants/screenNames.constants'
 import ArtworksListing from './components/ArtworksListing'
 import { fetchAllArtworksById } from 'services/artworks/fetchAllArtworksById'
 import Loader from 'components/general/Loader'
+import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader'
 
 export default function GalleryArtworksListing() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -52,8 +53,8 @@ export default function GalleryArtworksListing() {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             >
-                {isloading ? <Loader /> : <ArtworksListing data={data} />}
-                <View style={{paddingVertical: 100}} />
+                {isloading ? <MiniArtworkCardLoader /> : <ArtworksListing data={data} />}
+                <View style={{paddingVertical: 25}} />
             </ScrollView>
         </WithModal>
     )

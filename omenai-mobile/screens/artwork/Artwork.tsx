@@ -22,6 +22,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import SaveArtworkButton from './components/SaveArtworkButton';
 import Loader from 'components/general/Loader';
 import { useAppStore } from 'store/app/appStore';
+import DeleteArtworkButton from './components/DeleteArtworkButton';
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -29,8 +30,6 @@ export default function Artwork() {
 
     const { updateModal } = useModalStore();
     const {userType} = useAppStore();
-
-    console.log(userType)
 
     const [isLoading, setIsLoading] = useState(false);
     const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
@@ -106,41 +105,47 @@ export default function Artwork() {
             )}
             {data && (
                 <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                    <View style={{paddingHorizontal: 20}}>
-                        <Image source={{uri: image_href}} style={styles.image} />
-                        {userType !== 'gallery' && <SaveArtworkButton likeIds={data.like_IDs || []} art_id={data.art_id} impressions={data.impressions || 0} />}
-                        <View style={styles.artworkDetails}>
-                            <Text style={styles.artworkTitle}>{data?.title}</Text>
-                            <Text style={styles.artworkCreator}>{data?.artist}</Text>
-                            <Text style={styles.artworkTags}>{data?.materials}      |     {data?.rarity}</Text>
-                            <View style={styles.tagsContainer}>
-                                {data?.certificate_of_authenticity === 'Yes' && <View style={styles.tagItem}><Ionicons name='ribbon-outline' size={15} /><Text style={styles.tagItemText}>Certificate of authencity availiable</Text></View>}
-                                <View style={[styles.tagItem, {backgroundColor: '#e5f4ff'}]}><SimpleLineIcons name='frame' size={15} /><Text style={[styles.tagItemText, {color: '#30589f'}]}>{data?.framing === 'Framed' ? "Frame Included" : "Artwork is not framed"}</Text></View>
+                    <View style={{paddingBottom: 170}}>
+                        <View style={{paddingHorizontal: 20}}>
+                            <Image source={{uri: image_href}} style={styles.image} />
+                            {userType !== 'gallery' && <SaveArtworkButton likeIds={data.like_IDs || []} art_id={data.art_id} impressions={data.impressions || 0} />}
+                            <View style={styles.artworkDetails}>
+                                <Text style={styles.artworkTitle}>{data?.title}</Text>
+                                <Text style={styles.artworkCreator}>{data?.artist}</Text>
+                                <Text style={styles.artworkTags}>{data?.materials}      |     {data?.rarity}</Text>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                    <View style={styles.tagsContainer}>
+                                        {data?.certificate_of_authenticity === 'Yes' && <View style={styles.tagItem}><Ionicons name='ribbon-outline' size={15} /><Text style={styles.tagItemText}>Certificate of authencity availiable</Text></View>}
+                                        <View style={[styles.tagItem, {backgroundColor: '#e5f4ff'}]}><SimpleLineIcons name='frame' size={15} /><Text style={[styles.tagItemText, {color: '#30589f'}]}>{data?.framing === 'Framed' ? "Frame Included" : "Artwork is not framed"}</Text></View>
+                                    </View>
+                                </ScrollView>
                             </View>
+                            <View style={styles.detailsContainer}>
+                                <DetailsCard
+                                    title='Additional details about this artwork'
+                                    details={[
+                                        {name: 'Description', text: data?.artwork_description || 'N/A'},
+                                        {name: 'Materials', text: data.materials},
+                                        {name: 'Certificate of authenticity', text: data?.certificate_of_authenticity === 'Yes' ? 'Included' : 'Not included'},
+                                        {name: 'Artwork packaging', text: data?.framing},
+                                        {name: 'Signature', text: `Signed ${data?.signature}`},
+                                        {name: 'Year', text: data?.year}
+                                    ]}
+                                />
+                                <DetailsCard
+                                    title='Artist Information'
+                                    details={[
+                                        {name: 'Artist name', text: data?.artist},
+                                        {name: 'Birth Year', text: data?.artist_birthyear},
+                                        {name: 'Country', text: data?.artist_country_origin},
+                                    ]}
+                                />
+                            </View>
+                            {userType === 'gallery' && <DeleteArtworkButton />}
                         </View>
-                        <View style={styles.detailsContainer}>
-                            <DetailsCard
-                                title='Additional details about this artwork'
-                                details={[
-                                    {name: 'Description', text: data?.artwork_description || 'N/A'},
-                                    {name: 'Materials', text: data.materials},
-                                    {name: 'Certificate of authenticity', text: data?.certificate_of_authenticity === 'Yes' ? 'Included' : 'Not included'},
-                                    {name: 'Artwork packaging', text: data?.framing},
-                                    {name: 'Signature', text: `Signed ${data?.signature}`},
-                                    {name: 'Year', text: data?.year}
-                                ]}
-                            />
-                            <DetailsCard
-                                title='Artist Information'
-                                details={[
-                                    {name: 'Artist name', text: data?.artist},
-                                    {name: 'Birth Year', text: data?.artist_birthyear},
-                                    {name: 'Country', text: data?.artist_country_origin},
-                                ]}
-                            />
-                        </View>
+                        
+                        {userType !== 'gallery' && <SimilarArtworks title={data.title} medium={data?.medium} />}
                     </View>
-                    {userType !== 'gallery' && <SimilarArtworks title={data.title} medium={data?.medium} />}
                 </ScrollView>
             )}
             {(!isLoading && !data) && (

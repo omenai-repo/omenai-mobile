@@ -12,7 +12,6 @@ export default function CompletedOrders({data, handleOpenModal}: OrdersListingPr
     const { setArtworkDetails} = galleryOrderModalStore();
 
     const getStatus = (order: any) : orderCardStatusTypes => {
-        console.log(order.order_accepted.status)
         if(order.order_accepted.status === "accepted"){
             return "Order completed"
         }

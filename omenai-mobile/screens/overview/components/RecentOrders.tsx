@@ -49,7 +49,22 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                 <Text style={{fontSize: 16, fontWeight: '400', flex: 1}}>Recent orders</Text>
                 <Feather name='chevron-right' size={20} style={{opacity: 0.5}} />
             </View>
-            <Loader />
+            <View style={{gap: 20, marginTop: 20}}>
+                <View style={{flexDirection: 'row', gap: 20}}>
+                    <View style={{height: 100, width: 100, backgroundColor: colors.grey50}} />
+                    <View>
+                        <View style={{height: 20, backgroundColor: colors.grey50, width: 170, marginTop: 20}} />
+                        <View style={{height: 20, backgroundColor: colors.grey50, width: 100, marginTop: 10}} />
+                    </View>
+                </View>
+                <View style={{flexDirection: 'row', gap: 20}}>
+                    <View style={{height: 100, width: 100, backgroundColor: colors.grey50}} />
+                    <View>
+                        <View style={{height: 20, backgroundColor: colors.grey50, width: 170, marginTop: 20}} />
+                        <View style={{height: 20, backgroundColor: colors.grey50, width: 100, marginTop: 10}} />
+                    </View>
+                </View>
+            </View>
         </View>
     )
 
