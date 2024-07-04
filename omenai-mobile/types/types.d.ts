@@ -103,6 +103,10 @@ type RouteParamsType = {
   title: string;
 };
 
+type forgetPasswordRouteParamsType = {
+  type: "indiviaual" | "gallery";
+};
+
 type artworkOrderDataTypes = {
   pricing: {shouldShowPrice: "Yes" | "No", price: number},
   url: string,

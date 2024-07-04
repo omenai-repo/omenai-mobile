@@ -10,9 +10,12 @@ import PendingOrders from './components/PendingOrders'
 import ProcessingOrders from './components/ProcessingOrders'
 import CompletedOrders from './components/CompletedOrders'
 import EmptyOrdersListing from './components/EmptyOrdersListing'
+import OrderslistingLoader from './components/OrderslistingLoader'
 
 export default function GalleryOrdersListing() {
     const [refreshing, setRefreshing] = useState(false);
+
+    const [isloading, setIsloading] = useState(false);
 
     const {data, setData, selectedTab} = galleryOrdersStore();
     const { setIsVisible, setModalType, setCurrentId} = galleryOrderModalStore();
@@ -22,6 +25,7 @@ export default function GalleryOrdersListing() {
     }, [refreshing]);
 
     const handleFetchOrders = async () => {
+        setIsloading(true)
         const results = await getOverviewOrders();
         let data = results.data
 
@@ -33,7 +37,8 @@ export default function GalleryOrdersListing() {
             completed: parsedOrders.completed
         })
 
-        setRefreshing(false)
+        setRefreshing(false);
+        setIsloading(false)
     };
 
     const handleOpenModal = (modal: galleryOrderModalTypes, order_id: string) => {
@@ -52,26 +57,29 @@ export default function GalleryOrdersListing() {
                     <RefreshControl refreshing={refreshing} onRefresh={() => setRefreshing(true)} />
                 }
             >
-                {selectedTab === "pending" &&
+                {(selectedTab === "pending" && !isloading) &&
                     <PendingOrders 
                         data={data[selectedTab]} 
                         handleOpenModal={handleOpenModal}
                     />
                 }
-                {selectedTab === "processing" &&
+                {(selectedTab === "processing" && !isloading) &&
                     <ProcessingOrders 
                         data={data[selectedTab]} 
                         handleOpenModal={handleOpenModal}
                     />
                 }
-                {selectedTab === "completed" &&
+                {(selectedTab === "completed" && !isloading) &&
                     <CompletedOrders 
                         data={data[selectedTab]}
                         handleOpenModal={handleOpenModal}
                     />
                 }
-                {data[selectedTab].length === 0 && (
+                {(data[selectedTab].length === 0 && !isloading) && (
                     <EmptyOrdersListing status={selectedTab} />
+                )}
+                {isloading && (
+                    <OrderslistingLoader />
                 )}
             </ScrollView>
         </WithGalleryModal>

@@ -74,7 +74,7 @@ export default function Form() {
                     onClick={handleSubmit}
                     isLoading={isLoading}
                 />
-                <TouchableOpacity onPress={() => navigation.navigate(screenName.forgotPassword)}>
+                <TouchableOpacity onPress={() => navigation.navigate(screenName.forgotPassword, {type: 'individual'})}>
                     <Text style={styles.resetText}>Forgot password? Click here</Text>
                 </TouchableOpacity>
             </View>

@@ -10,11 +10,17 @@ import { useAppStore } from 'store/app/appStore'
 import { useModalStore } from 'store/modal/modalStore'
 import { loginAccount } from 'services/login/loginAccount'
 import { storeAsyncData } from 'utils/asyncStorage.utils'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { screenName } from 'constants/screenNames.constants'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { useNavigation } from '@react-navigation/native'
 
 export default function Form() {
     const { galleryLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } = useGalleryAuthLoginStore();
     const { setUserSession, setIsLoggedIn } = useAppStore();
     const {updateModal} = useModalStore();
+
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     const handleSubmit = async () => {
         setIsLoading(true)
@@ -78,6 +84,9 @@ export default function Form() {
                         onClick={handleSubmit}
                     />
                 </View>
+                <TouchableOpacity onPress={() => navigation.navigate(screenName.forgotPassword, {type: 'gallery'})}>
+                    <Text style={styles.resetText}>Forgot password? Click here</Text>
+                </TouchableOpacity>
             </View>
         </WithModal>
     )
@@ -87,5 +96,9 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 40,
         gap: 40
+    },
+    resetText: {
+        fontSize: 16,
+        textAlign: 'center'
     }
 })
