@@ -38,7 +38,6 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>((set, get) => (
         artwork_description: "",
         framing: "",
         signature: "",
-        carrier: "",
     },
     updateArtworkUploadData: (label: string, value: string) => {
         const data: Record<string, any> = get().artworkUploadData;
@@ -72,7 +71,6 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>((set, get) => (
             artwork_description: "",
             framing: "",
             signature: "",
-            carrier: "",
           },
           isUploaded: false
         });
