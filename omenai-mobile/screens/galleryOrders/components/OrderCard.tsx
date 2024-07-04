@@ -23,26 +23,26 @@ export default function OrderCard({artworkName, amount, status, color, handlePre
     const statusPills = {
         'pending': (
             <View style={[styles.statusPill, color && {backgroundColor: color.bgColor}]}>
-            <MaterialIcons name='info' />
-            <Text style={[styles.status, color && {color: color.textColor}]}>Action required</Text>
+                <MaterialIcons name='info' />
+                <Text style={[styles.status, color && {color: color.textColor}]}>Action required</Text>
             </View>
         ),
         'Pending tracking info': (
             <View style={[styles.statusPill, color && {backgroundColor: color.bgColor}]}>
-            <MaterialIcons name='check-circle' size={14} />
-            <Text style={[styles.status, color && {color: color.textColor}]}>Payment completed</Text>
+                <MaterialIcons name='check-circle' size={14} />
+                <Text style={[styles.status, color && {color: color.textColor}]}>Payment completed</Text>
             </View>
         ),
         'Declined by gallery': (
             <View style={[styles.statusPill, color && {backgroundColor: color.bgColor}]}>
-            <Feather name='x-circle' size={14} color={color?.textColor} />
-            <Text style={[styles.status, color && {color: color.textColor}]}>{status}</Text>
+                <Feather name='x-circle' size={14} color={color?.textColor} />
+                <Text style={[styles.status, color && {color: color.textColor}]}>{status}</Text>
             </View>
         ),
         'Order completed': (
             <View style={[styles.statusPill, color && {backgroundColor: color.bgColor}]}>
-            <MaterialIcons name='check-circle' size={14} />
-            <Text style={[styles.status, color && {color: color.textColor}]}>{status}</Text>
+                <MaterialIcons name='check-circle' size={14} />
+                <Text style={[styles.status, color && {color: color.textColor}]}>{status}</Text>
             </View>
         ),
     };
@@ -64,7 +64,7 @@ export default function OrderCard({artworkName, amount, status, color, handlePre
 
         return(
             <TouchableOpacity onPress={() => handlePress(status)}>
-                <View style={{backgroundColor: colors.white, borderWidth: 1, borderColor: colors.primary_black, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5}}>
+                <View style={{backgroundColor: '#e0e0e0', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5}}>
                     <Text style={{fontSize: 14, color: colors.black}}>{text}</Text>
                 </View>
             </TouchableOpacity>
