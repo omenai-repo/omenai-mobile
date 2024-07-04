@@ -24,11 +24,10 @@ export default function Input({label, onInputChange, placeHolder, keyboardType, 
                 style={styles.inputContainer}
                 keyboardType={keyboardType}
                 autoCapitalize="none"
-                value={value.length > 0 ? value : defaultValue}
+                value={defaultValue ? undefined : value} 
+                defaultValue={defaultValue}
                 onBlur={handleBlur}
                 editable={!disabled}
-                defaultValue={defaultValue}
-                // autoComplete='email'
             />
             {(errorMessage && errorMessage?.length > 0) && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>
