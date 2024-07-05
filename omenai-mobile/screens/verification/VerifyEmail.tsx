@@ -46,6 +46,9 @@ export default function VerifyEmail() {
         const results = await resendVerifyCode(account.type, account.id);
         if(!results.isOk){
             updateModal({message: results.body.message, modalType: "error", showModal: true})
+            console.log(results.body)
+        }else{
+            console.log(results.body)
         }
     };
 

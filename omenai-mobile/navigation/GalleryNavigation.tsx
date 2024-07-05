@@ -5,6 +5,7 @@ import { colors } from "config/colors.config";
 import { screenName } from "constants/screenNames.constants";
 import { Text, View } from "react-native";
 import Artwork from "screens/artwork/Artwork";
+import Billing from "screens/billing/Billing";
 import GalleryArtworksListing from "screens/galleryArtworksListing/GalleryArtworksListing";
 import GalleryOrder from "screens/galleryOrder/GalleryOrder";
 import GalleryOrdersListing from "screens/galleryOrders/GalleryOrdersListing";
@@ -12,6 +13,7 @@ import ChangeGalleryPassword from "screens/galleryProfileScreens/changeGalleryPa
 import EditGalleryProfile from "screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile";
 import GalleryProfile from "screens/galleryProfileScreens/galleryProfile/GalleryProfile";
 import Overview from "screens/overview/Overview";
+import Subscriptions from "screens/subscriptions/Subscriptions";
 import UploadArtwork from "screens/uploadArtwork/UploadArtwork";
 
 type CustomTabBarIconProps = {
@@ -93,6 +95,8 @@ export default function GalleryNavigation() {
             <Stack.Screen name={screenName.gallery.order} component={GalleryOrder} />
             <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
             <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
+            <Stack.Screen name={screenName.gallery.subscriptions} component={Subscriptions} />
+            <Stack.Screen name={screenName.gallery.billing} component={Billing} />
         </Stack.Navigator>
     )
 }
