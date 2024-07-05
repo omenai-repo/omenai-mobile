@@ -4,6 +4,7 @@ export const screenName = {
     register: 'Register',
     forgotPassword: 'Forgot-password',
     searchResults: 'Search',
+    verifyEmail: 'verify-email',
     home: 'Home',
     artwork: 'Artwork',
     catalogListing: 'Catalog-listing',
@@ -26,7 +27,9 @@ export const screenName = {
         orders: 'Orders',
         profile: 'Profile',
         editProfile: 'edit-profile',
+        billing: 'billing',
         changePassword: 'change-gallery-password',
+        subscriptions: 'subscriptions',
         order: 'gallery-order'
     }
 }

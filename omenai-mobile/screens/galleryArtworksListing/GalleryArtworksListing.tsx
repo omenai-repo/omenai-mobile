@@ -10,12 +10,17 @@ import ArtworksListing from './components/ArtworksListing'
 import { fetchAllArtworksById } from 'services/artworks/fetchAllArtworksById'
 import Loader from 'components/general/Loader'
 import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader'
+import { useAppStore } from 'store/app/appStore'
+import LockScreen from './components/LockScreen'
 
 export default function GalleryArtworksListing() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const [isloading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
+    const [showLockScreen, setShowLockScreen] = useState(false)
+
+    const {userSession} = useAppStore()
 
     const onRefresh = React.useCallback(() => {
         // setRefreshing(true);
@@ -36,26 +41,39 @@ export default function GalleryArtworksListing() {
         setIsLoading(false)
     };
 
+    const handleChecks = () => {
+        if(userSession.gallery_verified && userSession.subscription_active){
+            navigation.navigate(screenName.gallery.uploadArtwork)
+        }else{
+            //lock screen
+            setShowLockScreen(true)
+        }
+    }
+
     return (
         <WithModal>
             <SafeAreaView>
                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
                     <Text style={{fontSize: 20, flex: 1}}>Artworks</Text>
-                    <FittedBlackButton value='Upload artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.gallery.uploadArtwork)}>
+                    <FittedBlackButton value='Upload artwork' isDisabled={false} onClick={handleChecks}>
                         <Feather name='plus' color={'#fff'} size={20} />
                     </FittedBlackButton>
                 </View>
             </SafeAreaView>
-            <ScrollView 
-                style={styles.scrollContainer} 
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                }
-            >
-                {isloading ? <MiniArtworkCardLoader /> : <ArtworksListing data={data} />}
-                <View style={{paddingVertical: 25}} />
-            </ScrollView>
+            {showLockScreen ? 
+                <LockScreen />
+            :
+                <ScrollView 
+                    style={styles.scrollContainer} 
+                    showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                >
+                    {isloading ? <MiniArtworkCardLoader /> : <ArtworksListing data={data} />}
+                    <View style={{paddingVertical: 25}} />
+                </ScrollView>
+            }
         </WithModal>
     )
 }

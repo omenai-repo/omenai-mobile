@@ -6,6 +6,7 @@ import Login from 'screens/login/Login'
 import Register from 'screens/register/Register'
 import ForgotPassword from 'screens/forgotPassword/ForgotPassword'
 import { createStackNavigator } from '@react-navigation/stack'
+import VerifyEmail from 'screens/verification/VerifyEmail'
 
 export default function AuthNavigation() {
 
@@ -30,6 +31,11 @@ export default function AuthNavigation() {
             <Stack.Screen 
                 name={screenName.forgotPassword} 
                 component={ForgotPassword}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+                name={screenName.verifyEmail} 
+                component={VerifyEmail}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>
