@@ -24,6 +24,7 @@ export async function verifyEmail(
 
         return response
     }catch(error){
+        console.log(error)
         return {
             isOk: false,
             body: {message: 'Error verifying token, try again later'}
