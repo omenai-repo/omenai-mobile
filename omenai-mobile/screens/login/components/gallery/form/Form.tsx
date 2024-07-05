@@ -29,6 +29,13 @@ export default function Form() {
 
         if(results?.isOk){
             const resultsBody = results?.body
+
+            if(resultsBody.verified === false){
+
+                setIsLoading(false)
+                navigation.navigate(screenName.verifyEmail, {account: {id: resultsBody.id, type: 'gallery'}})
+                return
+            }
             const data = {
                 id: resultsBody.id,
                 email: resultsBody.email,

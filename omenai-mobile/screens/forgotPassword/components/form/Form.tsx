@@ -22,7 +22,7 @@ export default function Form() {
     const handleSubmit = async () => {
         setIsLoading(true)
 
-        const { type } = route.params as forgetPasswordRouteParamsType
+        const { type } = route.params as accountsRouteParamsType
 
         const results = await sendPasswordResetLink({email}, type)
 
