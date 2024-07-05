@@ -28,10 +28,9 @@ export default function TermsAndConditions() {
         const results = await registerAccount(data, 'gallery');
         
         if(results?.isOk){
-            // Alert.alert(results?.body.message)
+            const resultsBody = results?.body
             clearState();
-            //ADD further logic to navigate to the homepage and hide auth screens
-            navigation.navigate(screenName.login)
+            navigation.navigate(screenName.verifyEmail, {account: {id: resultsBody.id, type: 'gallery'}})
         }else{
             updateModal({message:results?.body.message, modalType: "error", showModal: true})
         }
