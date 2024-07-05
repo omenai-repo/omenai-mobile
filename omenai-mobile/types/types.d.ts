@@ -103,9 +103,13 @@ type RouteParamsType = {
   title: string;
 };
 
-type forgetPasswordRouteParamsType = {
+type accountsRouteParamsType = {
   type: "indiviaual" | "gallery";
 };
+
+type verifyEmailRouteParamsType = {
+  account: {id: string, type: RouteIdentifier}
+}
 
 type artworkOrderDataTypes = {
   pricing: {shouldShowPrice: "Yes" | "No", price: number},

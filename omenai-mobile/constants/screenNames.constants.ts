@@ -4,6 +4,7 @@ export const screenName = {
     register: 'Register',
     forgotPassword: 'Forgot-password',
     searchResults: 'Search',
+    verifyEmail: 'verify-email',
     home: 'Home',
     artwork: 'Artwork',
     catalogListing: 'Catalog-listing',
