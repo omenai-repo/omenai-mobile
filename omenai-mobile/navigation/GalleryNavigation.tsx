@@ -6,6 +6,7 @@ import { screenName } from "constants/screenNames.constants";
 import { Text, View } from "react-native";
 import Artwork from "screens/artwork/Artwork";
 import Billing from "screens/billing/Billing";
+import Checkout from "screens/checkout/Checkout";
 import GalleryArtworksListing from "screens/galleryArtworksListing/GalleryArtworksListing";
 import GalleryOrder from "screens/galleryOrder/GalleryOrder";
 import GalleryOrdersListing from "screens/galleryOrders/GalleryOrdersListing";
@@ -60,6 +61,8 @@ export default function GalleryNavigation() {
                         iconName = 'package'
                     }else if(route.name === screenName.gallery.profile){
                         iconName = 'user'
+                    }else if(route.name === screenName.gallery.subscriptions){
+                        iconName = 'card-outline'
                     }
         
                     return <CustomTabBarIcon title={route.name} name={iconName} focused={focused} />;
@@ -82,6 +85,7 @@ export default function GalleryNavigation() {
                 <Tab.Screen component={Overview} name={screenName.gallery.overview} />
                 <Tab.Screen component={GalleryArtworksListing} name={screenName.gallery.artworks} />
                 <Tab.Screen component={GalleryOrdersListing} name={screenName.gallery.orders} />
+                <Tab.Screen component={Subscriptions} name={screenName.gallery.subscriptions} />
                 <Tab.Screen component={GalleryProfile} name={screenName.gallery.profile} />
             </Tab.Navigator>
         )
@@ -97,6 +101,7 @@ export default function GalleryNavigation() {
             <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
             <Stack.Screen name={screenName.gallery.subscriptions} component={Subscriptions} />
             <Stack.Screen name={screenName.gallery.billing} component={Billing} />
+            <Stack.Screen name={screenName.checkout} component={Checkout} />
         </Stack.Navigator>
     )
 }

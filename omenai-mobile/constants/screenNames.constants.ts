@@ -20,6 +20,7 @@ export const screenName = {
     notifications: 'notifications',
     editorialsListing: 'editorials',
     editorial: 'editorial',
+    checkout: 'checkout',
     gallery: {
         overview: 'Overview',
         artworks: 'Artworks',
@@ -29,7 +30,7 @@ export const screenName = {
         editProfile: 'edit-profile',
         billing: 'billing',
         changePassword: 'change-gallery-password',
-        subscriptions: 'subscriptions',
+        subscriptions: 'Subscription',
         order: 'gallery-order'
     }
 }
