@@ -18,7 +18,7 @@ export default function PlanDetails() {
 
     const Button = ({label, remove}: {label: string, remove?: boolean}) => {
         return(
-            <TouchableOpacity style={{flex: 1}}>
+            <TouchableOpacity style={{flex: 1}} activeOpacity={1}>
                 <View style={styles.button}>
                     <Text style={{color: remove ? '#ff0000' : colors.primary_black}}>{label}</Text>
                 </View>
@@ -58,7 +58,7 @@ export default function PlanDetails() {
                         <Text style={{fontSize: 16, color: colors.primary_black, marginBottom: 5}}>Payment method</Text>
                         <Text style={{fontSize: 14, color: colors.primary_black}}>**** **** **** **** 6789</Text>
                     </View>
-                    <TouchableOpacity onPress={() => setShowCardButtons(prev => !prev)} style={{height: 40, width: 40, borderRadius: 25, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.grey50, backgroundColor: '#f5f5f5'}}>
+                    <TouchableOpacity activeOpacity={1} onPress={() => setShowCardButtons(prev => !prev)} style={{height: 40, width: 40, borderRadius: 25, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.grey50, backgroundColor: '#f5f5f5'}}>
                         <Feather name={showCardButtons ? 'chevron-up' : 'chevron-down'} size={20} color={colors.grey} />
                     </TouchableOpacity>
                 </View>
