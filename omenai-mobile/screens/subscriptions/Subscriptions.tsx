@@ -5,9 +5,13 @@ import LongBlackButton from 'components/buttons/LongBlackButton'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
+import InActiveSubscription from './components/InActiveSubscription';
+import PlanDetails from './components/PlanDetails';
 
 export default function Subscriptions() {
     const navigation = useNavigation<StackNavigationProp<any>>();
+
+    
 
     return (
         <View style={styles.container}>
@@ -17,7 +21,9 @@ export default function Subscriptions() {
                 </View>
             </SafeAreaView>
             <ScrollView style={styles.mainContainer}>
-                <LongBlackButton value='billing' onClick={() => navigation.navigate(screenName.gallery.billing)}/>
+                <View>
+                    <PlanDetails />
+                </View>
             </ScrollView>
         </View>
     )
