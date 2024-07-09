@@ -1,5 +1,5 @@
 import { StyleSheet, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import WithModal from 'components/modal/WithModal'
 import HeaderIndicator from './components/HeaderIndicator'
 import ArtworkDetails from './components/ArtworkDetails'
@@ -15,12 +15,28 @@ import { uploadArtworkData } from 'services/artworks/uploadArtworkData'
 import SuccessScreen from './components/SuccessScreen'
 import { useModalStore } from 'store/modal/modalStore'
 import Loader from 'components/general/Loader'
+import { useAppStore } from 'store/app/appStore'
+import LockScreen from 'screens/galleryArtworksListing/components/LockScreen'
 
 export default function UploadArtwork() {
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showLockScreen, setShowLockScreen] = useState(false)
+
+    const {userSession} = useAppStore()
 
     const {activeIndex, artworkUploadData, image, isUploaded, setIsUploaded} = uploadArtworkStore();
-    const {updateModal} = useModalStore()
+    const {updateModal} = useModalStore();
+
+    useEffect(() => {
+        handleGalleryVerification();
+    }, [])
+
+    const handleGalleryVerification = () => {
+        if(userSession.gallery_verified && userSession.subscription_active) return
+
+        setShowLockScreen(true)
+        
+    }
 
     const handleArtworkUpload = async () => {
         setIsLoading(true);
@@ -74,6 +90,8 @@ export default function UploadArtwork() {
         <ArtistDetails />,
         <UploadImage handleUpload={handleArtworkUpload} />
     ];
+
+    if(showLockScreen)return <LockScreen />
 
     return (
         <WithModal>

@@ -11,7 +11,7 @@ export default function InActiveSubscription() {
     return (
         <View>
             <Text style={{textAlign: 'center', marginTop: 40, marginBottom: 20, fontSize: 16}}>No active subscription</Text>
-            <LongBlackButton value='billing' onClick={() => navigation.navigate(screenName.gallery.billing)}/>
+            <LongBlackButton value='Activate subscription' onClick={() => navigation.navigate(screenName.gallery.billing)}/>
         </View>
     )
 }
