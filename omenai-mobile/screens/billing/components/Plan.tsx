@@ -4,6 +4,9 @@ import { PlanProps } from 'constants/plan_details'
 import { colors } from 'config/colors.config'
 import { Feather } from '@expo/vector-icons'
 import LongBlackButton from 'components/buttons/LongBlackButton'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { useNavigation } from '@react-navigation/native'
+import { screenName } from 'constants/screenNames.constants'
 
 export default function Plan({
     name,
@@ -12,6 +15,7 @@ export default function Plan({
     benefits,
     tab,
 }: PlanProps & { tab: "monthly" | "yearly" }) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
         <View style={styles.container}>
@@ -35,7 +39,7 @@ export default function Plan({
             </View>
             <LongBlackButton
                 value={'Get started with ' + name}
-                onClick={() => void('')}
+                onClick={() => navigation.navigate(screenName.checkout)}
             />
         </View>
     )
