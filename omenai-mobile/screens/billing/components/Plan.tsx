@@ -83,7 +83,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingVertical: 20,
         paddingHorizontal: 10,
-        gap: 20
+        gap: 20,
+        marginBottom: 20
     },
     benefitContainer: {
         flexDirection: 'row',
