@@ -25,8 +25,6 @@ export default function GalleryProfile() {
             </SafeAreaView>
             <ScrollView style={styles.mainContainer}>
                 <View style={styles.buttonsContainer}>
-                    <PageButtonCard name='Subscriptions' subText='Create a subscription' handlePress={() => navigation.navigate(screenName.gallery.billing)} />
-                    {/* <Divider /> */}
                     <PageButtonCard name='Gallery profile' subText='View and edit your profile details' handlePress={() => navigation.navigate(screenName.gallery.editProfile)} />
                     {/* <Divider /> */}
                     <PageButtonCard name='Change password' subText='Change the password to your account' handlePress={() => navigation.navigate(screenName.gallery.changePassword)} />
