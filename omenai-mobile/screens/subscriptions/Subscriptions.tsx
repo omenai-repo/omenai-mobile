@@ -1,17 +1,14 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { colors } from 'config/colors.config'
-import LongBlackButton from 'components/buttons/LongBlackButton'
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
 import InActiveSubscription from './components/InActiveSubscription';
 import PlanDetails from './components/PlanDetails';
+import CardDetails from './components/CardDetails';
+import ManageSubscriptionsSection from './components/ManageSubscriptionsSection';
+import { useAppStore } from 'store/app/appStore';
 
 export default function Subscriptions() {
-    const navigation = useNavigation<StackNavigationProp<any>>();
-
-    
+    const {userSession} = useAppStore();
 
     return (
         <View style={styles.container}>
@@ -20,10 +17,16 @@ export default function Subscriptions() {
                     <Text style={{fontSize: 20, textAlign: 'center'}}>Subscriptions</Text>
                 </View>
             </SafeAreaView>
-            <ScrollView style={styles.mainContainer}>
-                <View>
-                    <PlanDetails />
-                </View>
+            <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+                {userSession.subscription_active ?
+                    <View>
+                        <CardDetails />
+                        <PlanDetails />
+                        <ManageSubscriptionsSection />
+                    </View>
+                :
+                    <InActiveSubscription />
+                }
             </ScrollView>
         </View>
     )
