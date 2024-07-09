@@ -48,7 +48,7 @@ export default function PlanDetails() {
 const styles = StyleSheet.create({
     container: {
         borderWidth: 1,
-        borderColor: '#ff000035',
+        borderColor: colors.grey50,
         borderRadius: 10,
     },
     topContainer: {
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     bottomContainer: {
         padding: 20,
         borderTopWidth: 1,
-        borderTopColor: '#ff000020'
+        borderTopColor: colors.grey50
     },
     
     benefit: {

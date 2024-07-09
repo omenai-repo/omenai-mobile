@@ -17,14 +17,14 @@ export default function ManageSubscriptionsSection() {
     return (
         <View style={styles.container}>
             <Button label='Upgrade/Downgrade plan' />
-            <Button label='Cancle subscription' remove />
+            <Button label='Cancel subscription' remove />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        gap: 20,
+        gap: 15,
         marginTop: 30,
         paddingBottom: 100
     },
