@@ -1,14 +1,12 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
-import BackScreenButton from 'components/buttons/BackScreenButton'
 import { fetchUserSavedArtworks } from 'services/artworks/fetchUserSavedArtwork';
 import { UseSavedArtworksStore } from 'store/artworks/SavedArtworksStore';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import Divider from 'components/general/Divider';
 import Loader from 'components/general/Loader';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation, useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons'
 import { screenName } from 'constants/screenNames.constants';
 import { handleFetchUserID } from 'utils/asyncStorage.utils';
