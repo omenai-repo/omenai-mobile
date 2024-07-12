@@ -31,6 +31,7 @@ export const screenName = {
         billing: 'billing',
         changePassword: 'change-gallery-password',
         subscriptions: 'Subscription',
-        order: 'gallery-order'
+        order: 'gallery-order',
+        stripePayouts: 'stripe-payouts'
     }
 }
