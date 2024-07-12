@@ -71,7 +71,6 @@ export default function GalleryNavigation() {
     }
 
     const CustomTabBarIcon = ({ name, focused, title }: CustomTabBarIconProps) => {
-
         let icon = <Ionicons name={name} size={focused ? 25 : 22} color={focused ? colors.black : colors.grey} />
         if(title === screenName.gallery.orders || title === screenName.gallery.profile){
             icon = <Feather name={name} size={focused ? 25 : 22} color={focused ? colors.black : colors.grey} />
@@ -86,7 +85,7 @@ export default function GalleryNavigation() {
     };
 
     const GalleryProfileScreen = () => {
-        return <GalleryProfile showStripePayoutDashboaord={account.connected_account_id !== null && account.gallery_verified} />
+        return <GalleryProfile connected_id={account.connected_account_id} showStripePayoutDashboaord={account.connected_account_id !== null && account.gallery_verified} />
     }
     
     const GalleryTabNavigationScreens = () => {
@@ -134,9 +133,9 @@ export default function GalleryNavigation() {
         )
     }
 
-    if(account.connected_account_id !== null && account.gallery_verified)return(
+    if(account.connected_account_id === null && account.gallery_verified)return(
         <Stack.Navigator screenOptions={{headerShown: false}}>
-            <Stack.Screen name='Gallery' component={GetStartedWithStripe} options={hideHeader}/>
+            <Stack.Screen name='connect-stripe' component={GetStartedWithStripe} options={hideHeader}/>
         </Stack.Navigator>
     )
 
