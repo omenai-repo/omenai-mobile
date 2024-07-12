@@ -9,9 +9,14 @@ import { screenName } from 'constants/screenNames.constants'
 import { Feather } from '@expo/vector-icons'
 import { logout } from 'utils/logout.utils'
 import WithGalleryModal from 'components/modal/WithGalleryModal'
-import { galleryOrderModalStore } from 'store/modal/galleryModalStore'
+import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
 
-export default function GalleryProfile({showStripePayoutDashboaord}: {showStripePayoutDashboaord: boolean}) {
+type GalleryProfileProps = {
+    showStripePayoutDashboaord: boolean,
+    connected_id: string
+}
+
+export default function GalleryProfile({showStripePayoutDashboaord, connected_id}: GalleryProfileProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const { setIsVisible, setModalType } = galleryOrderModalStore();
@@ -25,7 +30,9 @@ export default function GalleryProfile({showStripePayoutDashboaord}: {showStripe
             </SafeAreaView>
             <ScrollView style={styles.mainContainer}>
                 <View style={styles.buttonsContainer}>
-                    <PageButtonCard name='Stripe Payout' subText='Where you manage your' handlePress={() => navigation.navigate(screenName.gallery.stripePayouts)} />
+                    {showStripePayoutDashboaord &&
+                        <PageButtonCard name='Stripe Payout' subText='Where you manage your' handlePress={() => navigation.navigate(screenName.gallery.stripePayouts, {account_id: connected_id})} />
+                    }
                     {/* <Divider /> */}
                     <PageButtonCard name='Gallery profile' subText='View and edit your profile details' handlePress={() => navigation.navigate(screenName.gallery.editProfile)} />
                     {/* <Divider /> */}
