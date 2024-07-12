@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Linking } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import Input from 'components/inputs/Input'
@@ -9,6 +9,7 @@ import LongBlackButton from 'components/buttons/LongBlackButton';
 import { createConnectedAccount } from 'services/stripe/createConnectedAccount';
 import WithModal from 'components/modal/WithModal';
 import { useModalStore } from 'store/modal/modalStore';
+import { createAccountLink } from 'services/stripe/createAccountLink';
 
 const transformedCountryCodes = country_codes.map(item => ({
     value: item.key,
@@ -48,7 +49,6 @@ export default function GetStartedWithStripe() {
             customer_id: gallerySession.id,
             country: countrySelect
         }
-        console.log(customer);
 
         const res = await createConnectedAccount(customer)
         if(res?.isOk){
@@ -64,6 +64,19 @@ export default function GetStartedWithStripe() {
 
     async function handleAccountLink(){
         setAccountLinkCreatePending(true)
+
+        const res = await createAccountLink(connectedAccountId!);
+
+        if(res?.isOk){
+            const supportedLink = await Linking.canOpenURL(res.url);
+            if(supportedLink){
+                setAccountLinkCreatePending(false);
+                console.log(supportedLink)
+                await Linking.openURL(res.url)
+            }
+        }else{
+            updateModal({message: 'Something went wrong, please try again or contact support', modalType: 'error', showModal: true})
+        }
     }
 
     return (
@@ -96,7 +109,28 @@ export default function GetStartedWithStripe() {
                         value={countrySelect}
                     />
                 </View>
-                <View style={{marginTop: 40, zIndex: 5}}>
+                {(connectedAccountId ||
+                    accountCreatePending ||
+                    accountLinkCreatePending) && (
+                    <View style={{marginTop: 20}}>
+                        {connectedAccountId && (
+                            <>
+                            <Text style={{fontSize: 14}}>
+                                Your connected account ID is:{" "}
+                                {connectedAccountId}{" "}
+                            </Text>
+                            <Text style={{fontSize: 12, opacity: 0.7}}>Hey, don&apos;t worry, we'll remember it for you!</Text>
+                            </>
+                        )}
+                        {accountCreatePending && (
+                            <Text style={{fontSize: 14}}>Creating a connected account for you...</Text>
+                        )}
+                        {accountLinkCreatePending && (
+                            <Text style={{fontSize: 14}}>Creating a new Account Link for you...</Text>
+                        )}
+                    </View>
+                )}
+                <View style={{marginTop: 30, zIndex: 5}}>
                     {!connectedAccountId && <LongBlackButton
                         value='Create connected account'
                         onClick={handleCreateConnectAccount}

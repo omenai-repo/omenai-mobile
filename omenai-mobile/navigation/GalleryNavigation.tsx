@@ -134,8 +134,10 @@ export default function GalleryNavigation() {
         )
     }
 
-    if(account.connected_account_id === null && account.gallery_verified)return(
-        <GetStartedWithStripe />
+    if(account.connected_account_id !== null && account.gallery_verified)return(
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen name='Gallery' component={GetStartedWithStripe} options={hideHeader}/>
+        </Stack.Navigator>
     )
 
     return(
