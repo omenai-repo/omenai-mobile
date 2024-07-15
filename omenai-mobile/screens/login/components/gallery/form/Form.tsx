@@ -31,13 +31,12 @@ export default function Form() {
             const resultsBody = results?.body
 
             if(resultsBody.verified === false){
-
                 setIsLoading(false)
                 navigation.navigate(screenName.verifyEmail, {account: {id: resultsBody.id, type: 'gallery'}})
                 return
             }
             const data = {
-                id: resultsBody.id,
+                id: resultsBody.gallery_id,
                 email: resultsBody.email,
                 name: resultsBody.name,
                 role: resultsBody.role,
