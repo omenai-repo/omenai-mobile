@@ -21,6 +21,7 @@ export const screenName = {
     editorialsListing: 'editorials',
     editorial: 'editorial',
     checkout: 'checkout',
+    connectStripe: 'connect-stripe',
     gallery: {
         overview: 'Overview',
         artworks: 'Artworks',

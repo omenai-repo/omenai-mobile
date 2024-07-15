@@ -1,4 +1,4 @@
-import { Linking, StyleSheet, Text, View } from 'react-native'
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import LongBlackButton from 'components/buttons/LongBlackButton'
@@ -6,31 +6,13 @@ import { retrieveBalance } from 'services/stripe/retrieveBalance';
 import { useModalStore } from 'store/modal/modalStore';
 import { getCurrencySymbol } from 'utils/getCurrencySymbol';
 import { generateStripeLoginLink } from 'services/stripe/generateStripeLoginLink';
+import { formatPrice } from 'utils/priceFormatter';
 
-export default function BalanceBox({account_id} : {account_id: string}) {
-    const [pendingBalance, setPendingBalance] = useState<boolean>(false);
+export default function BalanceBox({account_id, balance} : {account_id: string, balance: any}) {
     const [pendingLoginLink, setPendingLoginLink] = useState(false)
-    const [balance, setBalance] = useState()
 
 
     const { updateModal } = useModalStore()
-
-    useEffect(() => {
-        async function handleFetchBalance(){
-            setPendingBalance(true)
-            const res = await retrieveBalance(account_id);
-
-            if(res?.isOk){
-                setBalance(res.data)
-            }else{
-                updateModal({message: 'Something went wrong, please try again or contact support', modalType: 'error', showModal: true})
-            }
-
-            setPendingBalance(false)
-        }
-
-        handleFetchBalance();
-    }, [])
 
     async function generateLoginLink() {
         setPendingLoginLink(true)
@@ -50,50 +32,50 @@ export default function BalanceBox({account_id} : {account_id: string}) {
 
     }
 
-    if(pendingBalance)return(
-        <View style={{height: 200, borderRadius: 20, backgroundColor: colors.grey50}} />
-    )
+    const GreyButton = ({label}: {label: string}) => {
+        return(
+            <TouchableOpacity style={{flex: 1}} activeOpacity={1}>
+                <View style={styles.button}>
+                    <Text style={{color: colors.primary_black}}>{label}</Text>
+                </View>
+            </TouchableOpacity>
+        )
+    };
 
-    if(balance)
-    return (
-        <View style={styles.container}>
-            <View style={{paddingHorizontal: 20, paddingVertical: 15}}>
-                <Text style={{fontSize: 14, color: colors.primary_black}}>Paystack Balance</Text>
-            </View>
-            <View style={styles.mainContainer}>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-                    <Text style={{fontSize: 16}}>Availiable balance:</Text>
-                    <Text style={{fontSize: 20, fontWeight: 500}}>
-                        {getCurrencySymbol(balance.available[0].currency)}
-                        {balance?.available[0].amount}
+    if(balance){
+        const currency = getCurrencySymbol(balance.available[0].currency);
+
+        return(
+            <View style={styles.container}>
+                <Text style={{textAlign: 'center', fontSize: 14, color: colors.primary_black, marginTop: 10}}>Stripe Available Balance</Text>
+                <Text style={{fontSize: 20, fontWeight: 500, textAlign: 'center', marginTop: 10, color: colors.primary_black}}>
+                    {formatPrice(balance.available[0].amount / 100, currency)}
+                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 10}}>
+                    <Text style={{fontSize: 12, opacity: 0.9, color: colors.primary_black}}>Balance pending on Stripe:</Text>
+                    <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>
+                        {formatPrice(balance.pending[0].amount / 100, currency)}
                     </Text>
                 </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 10}}>
-                    <Text style={{fontSize: 16}}>Pending balance:</Text>
-                    <Text style={{fontSize: 20, fontWeight: 500}}>
-                        {getCurrencySymbol(balance.pending[0].currency)}
-                        {balance?.pending[0].amount}
-                    </Text>
-                </View>
-                <View style={{flexDirection: 'row', gap: 15, marginTop: 20}}>
-                    <View style={{flex: 1}}>
-                        <LongBlackButton
-                            value='View Stripe Dashboard'
-                            onClick={generateLoginLink}
-                            isLoading={pendingLoginLink}
-                        />
-                    </View>
+                <View style={{gap: 10, marginTop: 15, paddingTop: 15, borderTopColor: colors.grey50, borderTopWidth: 1}}>
+                    <GreyButton label='Payout balance' />
+                    <LongBlackButton
+                        value='View Stripe Dashboard'
+                        onClick={generateLoginLink}
+                        isLoading={pendingLoginLink}
+                    />
                 </View>
             </View>
-        </View>
-    )
+        );
+    }
 }
 
 const styles = StyleSheet.create({
     container: {
         borderColor: colors.grey50,
         borderRadius: 10,
-        borderWidth: 1
+        borderWidth: 1,
+        padding: 10
     },
     mainContainer: {
         paddingHorizontal: 20,
@@ -101,5 +83,14 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
         borderTopWidth: 1,
         borderTopColor: colors.grey50
-    }
+    },
+    button: {
+        height: 50,
+        backgroundColor: '#f5f5f5',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: colors.grey50,
+        borderRadius: 10
+    },
 })
