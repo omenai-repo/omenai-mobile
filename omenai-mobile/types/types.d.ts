@@ -197,3 +197,14 @@ type GalleryProfileUpdateData = {
   admin?: string;
   description?: string;
 };
+
+type TransactionModelSchemaTypes = {
+  trans_id: string;
+  trans_reference: string;
+  trans_amount: string;
+  trans_owner_id: string;
+  trans_owner_role: "user" | "gallery";
+  trans_gallery_id: string;
+  trans_type: "purchase_payout" | "subscription";
+  trans_date: Date;
+};

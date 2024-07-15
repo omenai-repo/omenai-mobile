@@ -112,7 +112,7 @@ export default function GetStartedWithStripe() {
                 {(connectedAccountId ||
                     accountCreatePending ||
                     accountLinkCreatePending) && (
-                    <View style={{marginTop: 20}}>
+                    <View style={{marginTop: 20, gap: 7}}>
                         {connectedAccountId && (
                             <>
                             <Text style={{fontSize: 14}}>

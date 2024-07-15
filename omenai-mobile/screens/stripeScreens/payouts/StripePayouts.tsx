@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import WithModal from 'components/modal/WithModal'
 import BackHeaderTitle from 'components/header/BackHeaderTitle'
@@ -9,10 +9,15 @@ import Loader from 'components/general/Loader'
 import CompleteOnBoarding from './components/CompleteOnBoarding'
 import { useModalStore } from 'store/modal/modalStore'
 import BlockingScreen from './components/BlockingScreen'
+import Transactions from './components/Transactions'
+import PayoutDashboard from './components/PayoutDashboard'
+import { colors } from 'config/colors.config'
 
 export default function StripePayouts({account_id, showScreen}: {account_id: string, showScreen: boolean}) {
     const [loading, setLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const [refreshCount, setRefreshCount] = useState<number>(1)
 
     const { updateModal } = useModalStore()
 
@@ -37,16 +42,26 @@ export default function StripePayouts({account_id, showScreen}: {account_id: str
     )
 
     if(loading)return(
+        <View style={{flex: 1, backgroundColor: colors.white}}>
         <Loader />
+        </View>
     )
     
     if(!loading && showScreen)
     return (
         <WithModal>
             <BackHeaderTitle title={isSubmitted ? 'Stripe Payout': 'Complete stripe onboarding'} />
-            <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <ScrollView 
+                style={styles.container} 
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl refreshing={false} onRefresh={() => setRefreshCount(prev => prev + 1)} />
+                }
+            >
                 {!isSubmitted && <CompleteOnBoarding />}
-                {(isSubmitted && account_id.length > 0) && <BalanceBox account_id={account_id} />}
+                {(isSubmitted && account_id.length > 0) && (
+                    <PayoutDashboard account_id={account_id} refreshCount={refreshCount} />
+                )}
             </ScrollView>
         </WithModal>
     )

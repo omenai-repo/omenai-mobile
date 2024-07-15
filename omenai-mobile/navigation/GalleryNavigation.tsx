@@ -158,7 +158,7 @@ export default function GalleryNavigation() {
             <Stack.Screen name={screenName.gallery.subscriptions} component={Subscriptions} />
             <Stack.Screen name={screenName.gallery.billing} component={Billing} />
             <Stack.Screen name={screenName.checkout} component={Checkout} />
-            <Stack.Screen name={screenName.gallery.stripePayouts} component={StripePayouts} />
+            <Stack.Screen name={screenName.connectStripe} component={GetStartedWithStripe} options={hideHeader}/>
         </Stack.Navigator>
     )
 }
