@@ -79,13 +79,18 @@ export default function GalleryNavigation() {
         return (
             <View style={{alignItems: 'center', gap: 5}}>
               {icon}
-              <Text style={[{fontSize: 13, color: colors.grey}, focused && {color: colors.primary_black}]}>{title}</Text>
+              {focused && <Text style={[{fontSize: 13, color: colors.grey}, focused && {color: colors.primary_black}]}>{title}</Text>}
             </View>
         );
     };
 
-    const GalleryProfileScreen = () => {
-        return <GalleryProfile connected_id={account.connected_account_id} showStripePayoutDashboaord={account.connected_account_id !== null && account.gallery_verified} />
+    const StripePayoutScreen = () => {
+        return(
+            <StripePayouts
+                showScreen={account.connected_account_id !== null && account.gallery_verified}
+                account_id={account.connected_account_id || ''}
+            />
+        )
     }
     
     const GalleryTabNavigationScreens = () => {
@@ -105,6 +110,8 @@ export default function GalleryNavigation() {
                         iconName = 'user'
                     }else if(route.name === screenName.gallery.subscriptions){
                         iconName = 'card-outline'
+                    }else if(route.name === screenName.gallery.stripePayouts){
+                        iconName = 'wallet-outline'
                     }
         
                     return <CustomTabBarIcon title={route.name} name={iconName} focused={focused} />;
@@ -128,7 +135,8 @@ export default function GalleryNavigation() {
                 <Tab.Screen component={GalleryArtworksListing} name={screenName.gallery.artworks} />
                 <Tab.Screen component={GalleryOrdersListing} name={screenName.gallery.orders} />
                 <Tab.Screen component={Subscriptions} name={screenName.gallery.subscriptions} />
-                <Tab.Screen component={GalleryProfileScreen} name={screenName.gallery.profile} />
+                <Tab.Screen component={StripePayoutScreen} name={screenName.gallery.stripePayouts} />
+                <Tab.Screen component={GalleryProfile} name={screenName.gallery.profile} />
             </Tab.Navigator>
         )
     }

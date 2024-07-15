@@ -11,12 +11,7 @@ import { logout } from 'utils/logout.utils'
 import WithGalleryModal from 'components/modal/WithGalleryModal'
 import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
 
-type GalleryProfileProps = {
-    showStripePayoutDashboaord: boolean,
-    connected_id: string
-}
-
-export default function GalleryProfile({showStripePayoutDashboaord, connected_id}: GalleryProfileProps) {
+export default function GalleryProfile() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const { setIsVisible, setModalType } = galleryOrderModalStore();
@@ -30,9 +25,6 @@ export default function GalleryProfile({showStripePayoutDashboaord, connected_id
             </SafeAreaView>
             <ScrollView style={styles.mainContainer}>
                 <View style={styles.buttonsContainer}>
-                    {showStripePayoutDashboaord &&
-                        <PageButtonCard name='Stripe Payout' subText='Where you manage your' handlePress={() => navigation.navigate(screenName.gallery.stripePayouts, {account_id: connected_id})} />
-                    }
                     {/* <Divider /> */}
                     <PageButtonCard name='Gallery profile' subText='View and edit your profile details' handlePress={() => navigation.navigate(screenName.gallery.editProfile)} />
                     {/* <Divider /> */}
