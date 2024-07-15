@@ -8,12 +8,11 @@ import { useRoute } from '@react-navigation/native'
 import Loader from 'components/general/Loader'
 import CompleteOnBoarding from './components/CompleteOnBoarding'
 import { useModalStore } from 'store/modal/modalStore'
+import BlockingScreen from './components/BlockingScreen'
 
-export default function StripePayouts() {
-    const route = useRoute();
+export default function StripePayouts({account_id, showScreen}: {account_id: string, showScreen: boolean}) {
     const [loading, setLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [accountID, setAccountID] = useState('');
 
     const { updateModal } = useModalStore()
 
@@ -21,8 +20,6 @@ export default function StripePayouts() {
     useEffect(() => {
         async function handleOnBoardingCheck(){
             setLoading(true)
-            const { account_id } = route.params as {account_id: string}
-            setAccountID(account_id)
             const res = await checkIsStripeOnboarded(account_id);
             if(res?.isOk){
                 setIsSubmitted(res.details_submitted)
@@ -35,17 +32,21 @@ export default function StripePayouts() {
         handleOnBoardingCheck()
     }, []);
 
+    if(!showScreen)return(
+        <BlockingScreen />
+    )
+
     if(loading)return(
         <Loader />
     )
     
-    if(!loading)
+    if(!loading && showScreen)
     return (
         <WithModal>
             <BackHeaderTitle title={isSubmitted ? 'Stripe Payout': 'Complete stripe onboarding'} />
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 {!isSubmitted && <CompleteOnBoarding />}
-                {(isSubmitted && accountID.length > 0) && <BalanceBox account_id={accountID} />}
+                {(isSubmitted && account_id.length > 0) && <BalanceBox account_id={account_id} />}
             </ScrollView>
         </WithModal>
     )
