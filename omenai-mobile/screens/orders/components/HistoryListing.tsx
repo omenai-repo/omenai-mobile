@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.inputBorder,
         borderRadius: 8,
-        marginTop: 30,
         paddingHorizontal: 20
     },
     emptyOrders: {

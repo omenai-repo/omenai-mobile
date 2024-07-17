@@ -55,18 +55,20 @@ export default function Orders() {
 
     return (
         <View style={styles.container}>
-            {/* <HeaderWithTitle pageTitle='Orders' /> */}
+            <SafeAreaView>
+                <View style={{paddingHorizontal: 20}}>
+                    <View style={[styles.tabContainer]}>
+                        <TabItem name='Pending'  isSelected={selectedTab === 'Pending'} />
+                        <TabItem name='Order history' isSelected={selectedTab === 'Order history'} />
+                    </View>
+                </View>
+            </SafeAreaView>
             <ScrollView style={styles.mainContainer}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             >
-                <SafeAreaView>
-                    <View style={styles.tabContainer}>
-                        <TabItem name='Pending'  isSelected={selectedTab === 'Pending'} />
-                        <TabItem name='Order history' isSelected={selectedTab === 'Order history'} />
-                    </View>
-                </SafeAreaView>
+                
                 {isLoading ? 
                     <Loader />
                 : 
@@ -90,7 +92,6 @@ const styles = StyleSheet.create({
     },
     mainContainer: {
         paddingHorizontal: 20,
-        paddingVertical: 30,
         flex: 1
     },
     tabContainer: {
@@ -99,8 +100,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.inputBorder,
         borderRadius: 8,
-        padding: 15,
-        gap: 15
+        padding: 10,
+        gap: 10
     },
     tabItem: {
         height: 44,

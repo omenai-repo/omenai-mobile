@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     listItem: {
         borderBottomWidth: 1,
         borderBottomColor: colors.inputBorder,
-        paddingVertical: 25,
+        paddingVertical:15,
         flexDirection: 'row',
         gap: 15
     },
