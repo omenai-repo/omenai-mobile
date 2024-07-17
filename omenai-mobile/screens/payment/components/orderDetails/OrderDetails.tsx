@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import BackHeaderTitle from 'components/header/BackHeaderTitle'
 import LongBlackButton from 'components/buttons/LongBlackButton'
@@ -8,11 +8,16 @@ import { calculatePurchaseGrandTotalNumber } from 'utils/calculatePurchaseGrandT
 import { Feather } from '@expo/vector-icons'
 import { useAppStore } from 'store/app/appStore'
 import { createOrderLock } from 'services/orders/createOrderLock'
-import { createCheckoutSession } from 'services/stripe/createCheckoutSession'
 import { useModalStore } from 'store/modal/modalStore'
+import { getAppDeepLink } from 'config/getAppDeepLink.config'
+import { useStripe } from '@stripe/stripe-react-native';
+import { StackNavigationProp } from '@react-navigation/stack'
+import { useNavigation } from '@react-navigation/native'
+import { screenName } from 'constants/screenNames.constants'
 
 export default function OrderDetails({data, locked}:{data: any, locked: boolean}) {
-    console.log(data, locked)
+    const navigation = useNavigation<StackNavigationProp<any>>();
+    // const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
     const [loading, setLoading] = useState<boolean>(false)
     const { userSession } = useAppStore();
@@ -26,38 +31,27 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
 
     async function handleClickPayNow(){
         setLoading(true);
-        const get_purchase_lock = await createOrderLock(data.artwork_data.art_id, userSession.id);
+        
+        const deepLink = getAppDeepLink()
 
+        const get_purchase_lock = await createOrderLock(data.artwork_data.art_id, userSession.id);
         if (get_purchase_lock?.isOk) {
             if (get_purchase_lock.data.lock_data.user_id === userSession.id) {
-                
-                const checkoutSession = await createCheckoutSession(
-                    data.artwork_data.title,
-                    total_price_number,
-                    data.gallery_id,
-                    {
-                        trans_type: "purchase_payout",
-                        user_email: userSession.email,
-                        user_id: userSession.id,
-                        art_id: data.artwork_data.art_id,
-                    },
-                    '/success',
-                    '/cancled'
-                )
 
-                if (!checkoutSession?.isOk) {
-                    //something went wronf
-                    updateModal({message: 'Something went wrong, please try again or contact support', modalType: 'error', showModal: true})
-                  } else {
-                    //success add linking to open checkout in an external browser
-                  }
+                //pay with stripe SDK
+                navigation.goBack()
+                navigation.navigate(screenName.cancleOrderPayment, {art_id: data.artwork_data.art_id})
 
             }else{
-                updateModal({message: "A user is currently processing a purchase transaction on this artwork. Please check back in a few minutes for a status update", modalType: 'error', showModal: true})
+                throwError("A user is currently processing a purchase transaction on this artwork. Please check back in a few minutes for a status update")
             }
         }
 
         setLoading(false)
+    }
+
+    const throwError = (message: string) => {
+        updateModal({message, modalType: 'error', showModal: true})
     }
 
     return (
