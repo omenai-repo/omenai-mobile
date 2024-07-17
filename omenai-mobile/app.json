@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "omenai-mobile",
+    "scheme": "omenaimobile",
     "slug": "omenai-mobile",
     "version": "1.0.0",
     "orientation": "portrait",

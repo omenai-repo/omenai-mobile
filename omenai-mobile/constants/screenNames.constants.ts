@@ -20,6 +20,8 @@ export const screenName = {
     notifications: 'notifications',
     editorialsListing: 'editorials',
     editorial: 'editorial',
+    cancleOrderPayment: 'CancleOrderPayment',
+    successOrderPayment: 'SuccessOrderPayment',
     checkout: 'checkout',
     connectStripe: 'connect-stripe',
     gallery: {
