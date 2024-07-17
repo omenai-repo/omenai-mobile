@@ -14,12 +14,15 @@ import { useStripe } from '@stripe/stripe-react-native';
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
+import { createPaymentIntent } from 'services/stripe/createPaymentIntent'
+import Loader from 'components/general/Loader'
 
 export default function OrderDetails({data, locked}:{data: any, locked: boolean}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
-    // const { initPaymentSheet, presentPaymentSheet } = useStripe();
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false);
+    const [mainPageLoader, setMainPageLoader] = useState<boolean>(true)
     const { userSession } = useAppStore();
     const { updateModal } = useModalStore()
 
@@ -28,6 +31,64 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
         data.shipping_quote.shipping_fees,
         data.shipping_quote.taxes
     );
+
+    const fetchPaymentSheetParams = async () => {
+        const { paymentIntent, publishableKey } = await createPaymentIntent(
+            total_price_number,
+            data.gallery_id,
+            {
+                trans_type: "purchase_payout",
+                user_email: userSession.email,
+                user_id: userSession.id,
+                art_id: data.artwork_data.art_id,
+            }
+        );
+
+        return {
+            paymentIntent,
+            publishableKey
+        };
+    };
+
+    const initializePaymentSheet = async () => {
+        setMainPageLoader(true);
+        const {
+            paymentIntent,
+            publishableKey,
+        } = await fetchPaymentSheetParams();
+
+        const { error } = await initPaymentSheet({
+            merchantDisplayName: "Omenai, Inc.",
+            paymentIntentClientSecret: paymentIntent,
+            // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
+            //methods that complete payment after a delay, like SEPA Debit and Sofort.
+            allowsDelayedPaymentMethods: true,
+            defaultBillingDetails: {
+              name: userSession.name,
+            }
+          });
+          if (!error) {
+            setMainPageLoader(false);
+          }
+    }
+
+    const openPaymentSheet = async () => {
+        const { error } = await presentPaymentSheet();
+    
+        if (error) {
+            navigation.goBack()
+            navigation.navigate(screenName.cancleOrderPayment, {art_id: data.artwork_data.art_id})
+        } else {
+            navigation.goBack()
+            navigation.navigate(screenName.successOrderPayment)
+        }
+
+        setLoading(false)
+    };
+
+    useEffect(() => {
+        initializePaymentSheet();
+    }, []);
 
     async function handleClickPayNow(){
         setLoading(true);
@@ -39,8 +100,9 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
             if (get_purchase_lock.data.lock_data.user_id === userSession.id) {
 
                 //pay with stripe SDK
-                navigation.goBack()
-                navigation.navigate(screenName.cancleOrderPayment, {art_id: data.artwork_data.art_id})
+                openPaymentSheet()
+                // navigation.goBack()
+                // navigation.navigate(screenName.cancleOrderPayment, {art_id: data.artwork_data.art_id})
 
             }else{
                 throwError("A user is currently processing a purchase transaction on this artwork. Please check back in a few minutes for a status update")
@@ -53,6 +115,16 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
     const throwError = (message: string) => {
         updateModal({message, modalType: 'error', showModal: true})
     }
+
+    if(mainPageLoader)return(
+        <View style={{flex: 1}}>
+            <BackHeaderTitle title='Confirm order details' />
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20}}>
+                <Loader />
+                <Text style={{fontSize: 16}}>Initializing Payment ...</Text>
+            </View>
+        </View>
+    )
 
     return (
         <View style={{flex: 1}}>
