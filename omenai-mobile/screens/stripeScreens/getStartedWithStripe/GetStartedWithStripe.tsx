@@ -71,7 +71,6 @@ export default function GetStartedWithStripe() {
             const supportedLink = await Linking.canOpenURL(res.url);
             if(supportedLink){
                 setAccountLinkCreatePending(false);
-                console.log(supportedLink)
                 await Linking.openURL(res.url)
             }
         }else{
