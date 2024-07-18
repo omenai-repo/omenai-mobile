@@ -70,9 +70,8 @@ type ArtworkDataType = {
 type ArtworkFlatlistItem = {
   title: string,
   artist: string,
-  pricing: {price: number, shouldShowPrice: "Yes" | "No"},
+  pricing: {price: number, shouldShowPrice: "Yes" | "No", usd_price: number},
   url: string,
-  pricing: {price: number, shouldShowPrice: "Yes" | "No"},
   art_id: string;
   impressions: number;
   like_IDs: string[];
@@ -174,6 +173,7 @@ type ArtworkUploadStateTypes = {
   depth?: string;
   weight: string;
   price: number;
+  usd_price: number;
   shouldShowPrice: "Yes" | "No" | string;
   artist_birthyear: string;
   artist_country_origin: string;
@@ -181,6 +181,7 @@ type ArtworkUploadStateTypes = {
   artwork_description?: string;
   framing: string;
   signature: string;
+  currency: string;
 };
 
 type OrderAcceptedStatusTypes = {
