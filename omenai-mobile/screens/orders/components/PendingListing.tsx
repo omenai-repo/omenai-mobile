@@ -4,6 +4,7 @@ import { colors } from 'config/colors.config'
 import { Feather } from '@expo/vector-icons'
 import { formatIntlDateTime } from 'utils/formatIntlDateTime'
 import OrderCard from './OrderCard'
+import Divider from 'components/general/Divider'
 
 type PendingListingProps = {
     listing: any[]
@@ -14,9 +15,9 @@ export default function PendingListing({listing}: PendingListingProps) {
     if(listing.length > 0)
     return (
         <View style={styles.container}>
-            {listing.map((order, idx) => (
+            {listing.map((order, index) => (
+                <View key={index}>
                 <OrderCard
-                    key={idx}
                     url={order.artwork_data.url}
                     orderId={order.order_id}
                     artworkName={order.artwork_data.title}
@@ -28,6 +29,8 @@ export default function PendingListing({listing}: PendingListingProps) {
                     tracking_information={order.tracking_information}
                     shipping_quote={order.shipping_quote}
                 />
+                {(index + 1) !== listing.length && <View style={{paddingVertical: 15}}><Divider /></View>}
+                </View>
             ))}
         </View>
     )
@@ -45,7 +48,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.inputBorder,
         borderRadius: 8,
-        paddingHorizontal: 20
+        paddingHorizontal: 10
     },
     emptyOrders: {
         height: 500,

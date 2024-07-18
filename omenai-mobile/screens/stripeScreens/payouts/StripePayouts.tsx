@@ -51,18 +51,12 @@ export default function StripePayouts({account_id, showScreen}: {account_id: str
     return (
         <WithModal>
             <BackHeaderTitle title={isSubmitted ? 'Stripe Payout': 'Complete stripe onboarding'} />
-            <ScrollView 
-                style={styles.container} 
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                    <RefreshControl refreshing={false} onRefresh={() => setRefreshCount(prev => prev + 1)} />
-                }
-            >
+            <View style={styles.container}>
                 {!isSubmitted && <CompleteOnBoarding />}
                 {(isSubmitted && account_id.length > 0) && (
                     <PayoutDashboard account_id={account_id} refreshCount={refreshCount} />
                 )}
-            </ScrollView>
+            </View>
         </WithModal>
     )
 }

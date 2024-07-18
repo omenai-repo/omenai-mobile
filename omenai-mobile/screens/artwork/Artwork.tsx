@@ -159,22 +159,26 @@ export default function Artwork() {
                     <View style={{backgroundColor: colors.white, paddingHorizontal: 15, paddingBottom: 15, borderWidth: 1, borderColor: colors.grey50, borderRadius: 15}}>
                         <View style={styles.priceContainer}>
                             <Text style={styles.priceTitle}>Price</Text>
-                            <Text style={[styles.price, data?.pricing.shouldShowPrice === "No" && {fontSize: 16, color: colors.grey}]}>{data?.pricing.shouldShowPrice === 'Yes' ? formatPrice(data?.pricing.price) : "Price on request"}</Text>
+                            <Text style={[styles.price, data?.pricing.shouldShowPrice === "No" && {fontSize: 16, color: colors.grey}]}>{data?.pricing.shouldShowPrice === 'Yes' ? formatPrice(data?.pricing.usd_price) : "Price on request"}</Text>
                         </View>
                         {userType !== 'gallery' &&
-                            <View style={styles.buttonContainer}>
-                                {data?.pricing.shouldShowPrice === "Yes" ?
-                                    <LongBlackButton radius={10} value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
+                            (data?.availability ?
+                                <View style={styles.buttonContainer}>
+                                    {data?.pricing.shouldShowPrice === "Yes" ?
+                                        <LongBlackButton radius={10} value='Purchase artwork' isDisabled={false} onClick={() => navigation.navigate(screenName.purchaseArtwork, {title: data?.title})} />
+                                    :
+                                        <LongBlackButton 
+                                            radius={10} 
+                                            value={loadingPriceQuote ? 'Requesting ...' : 'Request price' }
+                                            isDisabled={false} 
+                                            onClick={handleRequestPriceQuote} 
+                                            isLoading={loadingPriceQuote}
+                                        />
+                                    }
+                                </View>
                                 :
-                                    <LongBlackButton 
-                                        radius={10} 
-                                        value={loadingPriceQuote ? 'Requesting ...' : 'Request price' }
-                                        isDisabled={false} 
-                                        onClick={handleRequestPriceQuote} 
-                                        isLoading={loadingPriceQuote}
-                                    />
-                                }
-                            </View>
+                                <LongBlackButton value='Sold' isDisabled={true} onClick={()=>{}} />
+                            )
                         }
                     </View>
                 </View>

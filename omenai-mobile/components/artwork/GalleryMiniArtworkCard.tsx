@@ -7,15 +7,17 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { resizeImageDimensions } from 'utils/resizeImageDimensions.utils';
+import { formatPrice } from 'utils/priceFormatter';
 
 type MiniArtworkCardType = {
     title: string,
     url: string,
     art_id: string,
-    artist: string
+    artist: string,
+    usd_price: number
 }
 
-export default function GalleryMiniArtworkCard({url, title, art_id, artist}: MiniArtworkCardType) {
+export default function GalleryMiniArtworkCard({url, title, art_id, artist, usd_price}: MiniArtworkCardType) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const screenWidth = Dimensions.get('window').width;
@@ -42,6 +44,7 @@ export default function GalleryMiniArtworkCard({url, title, art_id, artist}: Min
             <View style={styles.mainDetailsContainer}>
                 <Text style={{fontSize: 14, color: colors.primary_black}}>{title}</Text>
                 <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.7}}>{artist}</Text>
+                <Text>{formatPrice(usd_price, '$')}</Text>
             </View>
         </TouchableOpacity>
     )

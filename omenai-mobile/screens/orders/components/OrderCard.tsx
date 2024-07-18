@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
-import React from 'react';
+import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useState } from 'react';
 import { colors } from 'config/colors.config';
 import { formatPrice } from 'utils/priceFormatter';
 import { getImageFileView } from 'lib/storage/getImageFileView';
@@ -7,6 +7,8 @@ import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
+import DropDownButton from './DropDownButton';
+import { useModalStore } from 'store/modal/modalStore';
 
 type OrderCardProps = {
     artworkName: string,
@@ -24,47 +26,77 @@ type OrderCardProps = {
 export default function OrderCard({artworkName, dateOrdered, status, state, artworkPrice, url, orderId, payment_information, tracking_information, shipping_quote}: OrderCardProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
+    const [showTrackingInfo, setShowTrackingInfo] = useState<boolean>(false);
+    const { updateModal } = useModalStore();
+
+    async function  openTrackingLink() {
+        const url = tracking_information?.tracking_link || ''
+
+        const validUrl = await Linking.canOpenURL(url);
+        if(validUrl){
+            Linking.openURL(url)
+        }else{
+            updateModal({message: 'Invalid tracking link', modalType: 'error', showModal: true})
+        }
+    }
+
     let image_href = getImageFileView(url, 300);
 
     return (
-        <View style={styles.listItem}>
-            <Image source={{uri: image_href}} style={{height: 100, width: 100, backgroundColor: '#f5f5f5', borderRadius: 3}} />
-            <View style={styles.listItemDetails}>
-                <Text style={styles.orderItemTitle}>{artworkName}</Text>
-                <Text style={{fontSize: 16, fontWeight: '500', marginTop: 5}}>{formatPrice(artworkPrice)}</Text>
-                <Text style={{fontSize: 16, fontWeight: '500', marginTop: 5}}>{orderId}</Text>
-                <Text style={styles.orderItemDetails}>Ordered: {dateOrdered}</Text>
-                <View style={{flexWrap: 'wrap', marginTop: 20}}>
-                {state === "pending" ? (
-                    payment_information!.status === "completed" ? (
-                        <Text>
-                        View tracking information
-                        </Text>
-                    ) : (
-                        <View>
-                        {shipping_quote?.shipping_fees !== "" ? (
-                            <FittedBlackButton value='Pay now' onClick={() => navigation.navigate(screenName.payment, {id: orderId})} isDisabled={false} />
+        <View style={{paddingVertical: 10, gap: 15}}>
+            <View style={styles.listItem}>
+                <Image source={{uri: image_href}} style={{width: 100, backgroundColor: '#f5f5f5', borderRadius: 3}} />
+                <View style={styles.listItemDetails}>
+                    <Text style={styles.orderItemTitle}>{artworkName}</Text>
+                    
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 7}}>
+                        <Text style={{fontSize: 16, fontWeight: 500, flex: 1}}>{formatPrice(artworkPrice)}</Text>
+                        <Text style={{fontSize: 14}}>Order ID: #{orderId}</Text>
+                        {/* <Text style={styles.orderItemDetails}>Ordered: {dateOrdered}</Text> */}
+                    </View>
+                    <View style={{flexWrap: 'wrap', marginTop: 15}}>
+                    {state === "pending" ? (
+                        (payment_information!.status === "completed") ? (tracking_information?.tracking_id.length > 0 ?
+                            <DropDownButton label='View tracking information' onPress={setShowTrackingInfo} value={showTrackingInfo} />
+                            :
+                            <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.6}}>Pending upload tracking info</Text>
                         ) : (
-                            <>
-                            <Text>
-                                Awaiting gallery confirmation
-                            </Text>
-                            </>
-                        )}
-                        </View>
-                    )
-                    ) : null}
+                            <View>
+                            {shipping_quote?.shipping_fees !== "" ? (
+                                <FittedBlackButton value='Pay now' onClick={() => navigation.navigate(screenName.payment, {id: orderId})} isDisabled={false} />
+                            ) : (
+                                <>
+                                <Text>
+                                    Awaiting gallery confirmation
+                                </Text>
+                                </>
+                            )}
+                            </View>
+                        )
+                        ) : null}
+                    </View>
                 </View>
             </View>
+            {showTrackingInfo && (
+                <View style={{gap: 10}}>
+                    <View style={{flexDirection: 'row', gap: 10}}>
+                        <Text style={{fontSize: 14, color: colors.primary_black}}>Tracking ID:</Text>
+                        <Text style={{flex: 1, fontSize: 14, color: colors.primary_black, textAlign: 'right'}}>{tracking_information?.tracking_id}</Text>
+                    </View>
+                    <View style={{flexDirection: 'row', gap: 10}}>
+                        <Text style={{fontSize: 14, color: colors.primary_black}}>Tracking link:</Text>
+                        <TouchableOpacity style={{flexWrap: 'wrap', flex: 1, overflow: 'hidden'}} onPress={openTrackingLink}>
+                            <Text style={{fontSize: 14, color: '#0000ff90', textAlign: 'right', flexWrap: 'wrap'}}>{tracking_information?.tracking_link}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     listItem: {
-        borderBottomWidth: 1,
-        borderBottomColor: colors.inputBorder,
-        paddingVertical:15,
         flexDirection: 'row',
         gap: 15
     },
