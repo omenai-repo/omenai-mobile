@@ -35,9 +35,7 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
         const validUrl = await Linking.canOpenURL(url);
         if(validUrl){
             Linking.openURL(url)
-            console.log('valid url')
         }else{
-            console.log('error')
             updateModal({message: 'Invalid tracking link', modalType: 'error', showModal: true})
         }
     }
