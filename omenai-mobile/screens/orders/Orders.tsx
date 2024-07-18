@@ -9,6 +9,7 @@ import { getOrdersForUser } from 'services/orders/getOrdersForUser'
 import { useOrderStore } from 'store/orders/Orders'
 import HistoryListing from './components/HistoryListing'
 import Loader from 'components/general/Loader'
+import WithModal from 'components/modal/WithModal'
 
 type TabItemProps = {
     name: OrderTabsTypes,
@@ -54,7 +55,7 @@ export default function Orders() {
     }
 
     return (
-        <View style={styles.container}>
+        <WithModal>
             <SafeAreaView>
                 <View style={{paddingHorizontal: 20}}>
                     <View style={[styles.tabContainer]}>
@@ -81,7 +82,7 @@ export default function Orders() {
                     </View>
                 }
             </ScrollView>
-        </View>
+        </WithModal>
     )
 }
 
