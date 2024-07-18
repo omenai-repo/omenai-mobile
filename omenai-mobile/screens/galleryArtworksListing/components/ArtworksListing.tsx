@@ -38,6 +38,7 @@ export default function ArtworksListing({data}: {data: any[]}) {
                         url={item.url}
                         art_id={item.art_id}
                         artist={item.artist}
+                        usd_price={item.pricing.usd_price}
                     />
                 )}
                 keyExtractor={(_, index) => JSON.stringify(index)}
@@ -56,6 +57,7 @@ export default function ArtworksListing({data}: {data: any[]}) {
                             url={item.url}
                             art_id={item.art_id}
                             artist={item.artist}
+                            usd_price={item.pricing.usd_price}
                         />
                     )}
                     keyExtractor={(_, index) => JSON.stringify(index)}

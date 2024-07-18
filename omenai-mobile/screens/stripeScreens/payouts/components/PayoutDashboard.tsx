@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import BalanceBox from './BalanceBox'
 import Transactions from './Transactions'
@@ -49,9 +49,12 @@ export default function PayoutDashboard({account_id, refreshCount}:{account_id: 
     )
 
     return (
-        <View>
+        <View style={{flex: 1}}>
             <BalanceBox account_id={account_id} balance={balance} />
-            <Transactions transactions={transactions} />
+            <ScrollView style={{flex: 1, marginTop: 15}} showsVerticalScrollIndicator={false}>
+                <Transactions transactions={transactions} />
+                <View style={{height: 50}} />
+            </ScrollView>
         </View>
     )
 }
