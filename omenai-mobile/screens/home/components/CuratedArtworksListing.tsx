@@ -9,6 +9,7 @@ import curatedBg from 'assets/images/curated_bg.png';
 import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
 import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
 import { screenName } from 'constants/screenNames.constants';
+import EmptyArtworks from 'components/general/EmptyArtworks';
 
 export default function CuratedArtworksListing({refreshCount, limit} : {refreshCount?: number, limit: number}) {
     const [isLoading, setIsLoading] = useState(false)
@@ -42,36 +43,40 @@ export default function CuratedArtworksListing({refreshCount, limit} : {refreshC
                     <Text style={{fontSize: 14, color: colors.white, marginTop: 10, opacity: 0.9}}>Explore artworks based off your interests and interactions within the past days</Text>
                 </View>
                 <View style={{marginTop: 10}}>
-                {isLoading ? <ArtworkCardLoader /> :
-                        <FlatList
-                            data={data}
-                            renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
-                                if((index + 1) === limit){
-                                    return(
-                                        <ViewAllCategoriesButton label='View all artworks' path={screenName.catalog} darkMode />
-                                    )
-                                }
+                {isLoading && <ArtworkCardLoader /> }
+                {(!isLoading && data.length > 0) &&
+                    <FlatList
+                        data={data}
+                        renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
+                            if((index + 1) === limit){
                                 return(
-                                    <ArtworkCard 
-                                        title={item.title} 
-                                        url={item.url}
-                                        artist={item.artist}
-                                        showPrice={item.pricing.shouldShowPrice === "Yes"}
-                                        price={item.pricing.price}
-                                        lightText={true}
-                                        width={310}
-                                        impressions={item.impressions}
-                                        like_IDs={item.like_IDs}
-                                        art_id={item.art_id}
-                                    />
+                                    <ViewAllCategoriesButton label='View all artworks' path={screenName.catalog} darkMode />
                                 )
-                            }}
-                            keyExtractor={(_, index) => JSON.stringify(index)}
-                            horizontal={true}
-                            showsHorizontalScrollIndicator={false}
-                            style={{marginTop: 20}}
-                        />
-                    }
+                            }
+                            return(
+                                <ArtworkCard 
+                                    title={item.title} 
+                                    url={item.url}
+                                    artist={item.artist}
+                                    showPrice={item.pricing.shouldShowPrice === "Yes"}
+                                    price={item.pricing.price}
+                                    lightText={true}
+                                    width={310}
+                                    impressions={item.impressions}
+                                    like_IDs={item.like_IDs}
+                                    art_id={item.art_id}
+                                />
+                            )
+                        }}
+                        keyExtractor={(_, index) => JSON.stringify(index)}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        style={{marginTop: 20}}
+                    />
+                }
+                {(!isLoading && data.length < 1) && (
+                    <EmptyArtworks size={70} writeUp='No artworks to match your interests' darkTheme />
+                )}
                 </View>
             </View>
         </ImageBackground>
