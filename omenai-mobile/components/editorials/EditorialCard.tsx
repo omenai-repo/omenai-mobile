@@ -31,8 +31,12 @@ export default function EditorialCard({url, writer, articleHeader, date, id, wid
                     <Image source={{uri: image_href}} style={styles.image} />
                     <View>
                         <View style={styles.cardDetails}>
-                            <Text style={{fontSize: 12, color: '#616161'}}>by {writer}</Text>
-                            <View style={{height: 5, width: 5, borderRadius: 5, backgroundColor: '#616161'}} />
+                            {writer &&
+                                <>
+                                    <Text style={{fontSize: 12, color: '#616161'}}>by {writer}</Text>
+                                    <View style={{height: 5, width: 5, borderRadius: 5, backgroundColor: '#616161'}} />
+                                </>
+                            }
                             <Text style={{fontSize: 12, color: '#616161'}}>{date}</Text>
                         </View>
                         <Text style={{fontSize: 18, color: colors.primary_black, marginTop: 15, fontWeight: 500}}>{articleHeader}</Text>
