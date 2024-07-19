@@ -9,6 +9,7 @@ import { colors } from 'config/colors.config';
 import { listEditorials } from 'lib/editorial/lib/getAllBlogArticles';
 import Loader from 'components/general/Loader';
 import EditorialCard from 'components/editorials/EditorialCard';
+import EmptyArtworks from 'components/general/EmptyArtworks';
 
 
 export default function EditorialsListing() {
@@ -72,7 +73,13 @@ export default function EditorialsListing() {
                         ItemSeparatorComponent={() => <View style={{height: 50}} />}
                     />
                 )}
-                <View style={{height: 200}} />
+                {(!isLoading && data.length < 1) &&
+                (
+                    <View>
+                        <EmptyArtworks size={100} writeUp='No articles at the moment, try looking again later' />
+                    </View>
+                )}
+                <View style={{height: 100}} />
             </ScrollView>
         </WithModal>
     )
