@@ -53,9 +53,9 @@ export default function Filter({children}: FilterProps) {
     return (
         <View style={{backgroundColor: colors.white, flex: 1}}>
             <SafeAreaView>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, backgroundColor: colors.white, paddingBottom: 10}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, backgroundColor: colors.white, paddingBottom: 10, paddingTop: 20}}>
                     <View style={{flex: 1}}>
-                        <BackScreenButton handleClick={() => navigation.goBack()} />
+                        <BackScreenButton cancle handleClick={() => navigation.goBack()} />
                     </View>
                     
                     {selectedFilters.length > 0 &&

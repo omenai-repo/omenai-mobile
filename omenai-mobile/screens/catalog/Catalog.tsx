@@ -14,6 +14,8 @@ import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
 import FilterButton from 'components/filter/FilterButton'
 import Loader from 'components/general/Loader'
+import WithModal from 'components/modal/WithModal'
+import { useModalStore } from 'store/modal/modalStore'
 
 type TagItemProps = {
     name: string,
@@ -29,48 +31,34 @@ const tags = [
 export default function Catalog() {
     const [selectedTag, setSelectedTag] = useState(tags[0]);
     const { paginationCount } = artworkActionStore();
+    const { updateModal } = useModalStore()
     const { setArtworks, artworks, isLoading, setPageCount, setIsLoading } = artworkStore();
-    const { filterOptions } = filterStore();
-    const [refreshing, setRefreshing] = useState(false);
-
-    const onRefresh = React.useCallback(() => {
-        // setRefreshing(true);
-        handleFecthArtworks()
-    }, []);
+    const { filterOptions, clearAllFilters } = filterStore();
+    const [reloadCount, setReloadCount] = useState<number>(0);
 
     useEffect(() => {
+        clearAllFilters()
         handleFecthArtworks()
-    }, [])
+    }, [reloadCount])
 
     const handleFecthArtworks = async () => {
         setIsLoading(true)
+        setArtworks([])
         const response = await fetchPaginatedArtworks(
             paginationCount,
-            filterOptions
+            {"medium": [], "price": [], "rarity": [], "year": []}
         );
         if (response?.isOk) {
             setArtworks(response.data);
             setPageCount(response.count);
+        }else{
+            updateModal({message: 'Error fetching artworks, reload page again', modalType: 'error', showModal: true})
         }
         setIsLoading(false)
     }
 
-    const handleTagSelect = (e: string) => {
-        setSelectedTag(e)
-    }
-    
-    const TagItem = ({name, isSelected}: TagItemProps) => {
-        return(
-            <TouchableOpacity onPress={() => handleTagSelect(name)}>
-                <View style={[styles.tagItem, isSelected && {backgroundColor: colors.primary_black}]}>
-                    <Text style={[styles.tagText, isSelected && {color: colors.white}]}>{name}</Text>
-                </View>
-            </TouchableOpacity>
-        )
-    }
-
     return (
-        <View style={styles.container}>
+        <WithModal>
             <SafeAreaView>
                 <View style={styles.mainContainer}>
                     <View style={{zIndex: 100}}>
@@ -86,7 +74,7 @@ export default function Catalog() {
                                 style={{height: '100%'}}
                                 showsVerticalScrollIndicator={false}
                                 refreshControl={
-                                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                                    <RefreshControl refreshing={false} onRefresh={() => setReloadCount(prev => prev + 1)} />
                                 }
                             >
                                 <ArtworksListing data={artworks} />
@@ -96,15 +84,11 @@ export default function Catalog() {
                     </View>
                 </View>
             </SafeAreaView>
-        </View>
+        </WithModal>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colors.white
-    },
     topContainer: {
         paddingHorizontal: 20,
     },

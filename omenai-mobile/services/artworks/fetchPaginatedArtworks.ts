@@ -26,7 +26,9 @@ export async function fetchPaginatedArtworks(page: number, filters?: any) {
         console.log(error)
         return {
             isOk: false,
-            body: {message: 'Error loading artworks'}
+            body: {message: 'Error loading artworks'},
+            data: [],
+            count: 1
         }
     }
 }

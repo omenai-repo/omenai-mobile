@@ -106,12 +106,15 @@ export default function IndividualNavigation() {
     return(
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name='Individual' component={IndividualTabNavigationScreens} options={hideHeader}/>
+          <Stack.Group screenOptions={{presentation: 'modal'}}>
+            <Stack.Screen name={screenName.filter} component={Filter} />
+          </Stack.Group>
           <Stack.Screen name={screenName.artwork} component={Artwork} />
           <Stack.Screen name={screenName.searchResults} component={SearchResults} />
           <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} />
           <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} />
           <Stack.Screen name={screenName.payment} component={Payment} />
-          <Stack.Screen name={screenName.filter} component={Filter} />
+          
           <Stack.Screen name={screenName.notifications} component={Notifications} />
           <Stack.Screen name={screenName.editorialsListing} component={EditorialsListing} />
           <Stack.Screen name={screenName.editorial} component={Editorial} />
