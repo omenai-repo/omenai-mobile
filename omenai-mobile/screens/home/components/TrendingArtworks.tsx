@@ -10,6 +10,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
+import EmptyArtworks from 'components/general/EmptyArtworks';
 
 export default function TrendingArtworks({refreshCount, limit} : {refreshCount?: number, limit: number}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -45,7 +46,8 @@ export default function TrendingArtworks({refreshCount, limit} : {refreshCount?:
                     <Feather name='chevron-right' color={colors.grey} size={20} />
                 </View>
             </TouchableOpacity>
-            {isLoading ? <ArtworkCardLoader /> :
+            {isLoading && <ArtworkCardLoader /> }
+            {(!isLoading && data.length > 0) &&
                 <FlatList
                     data={data}
                     renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
@@ -73,6 +75,9 @@ export default function TrendingArtworks({refreshCount, limit} : {refreshCount?:
                     style={{marginTop: 20}}
                 />
             }
+            {(!isLoading && data.length < 1) && (
+                <EmptyArtworks size={70} writeUp='No trending artworks at the moment' />
+            )}
         </View>
     )
 }
