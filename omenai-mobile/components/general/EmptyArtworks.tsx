@@ -3,11 +3,11 @@ import React from 'react';
 
 import emptyImage from '../../assets/icons/empty-artworks.png';
 
-export default function EmptyArtworks({size}: {size: number}) {
+export default function EmptyArtworks({size, writeUp}: {size: number, writeUp?: string}) {
     return (
         <View style={styles.container}>
             <Image source={emptyImage} alt='' style={{height: size, width: size}} />
-            <Text>No artwork available</Text>
+            <Text style={{textAlign: 'center'}}>{writeUp ? writeUp : 'No artwork available'}</Text>
         </View>
     )
 }

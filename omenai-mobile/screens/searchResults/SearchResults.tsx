@@ -10,6 +10,8 @@ import { useNavigation } from '@react-navigation/native'
 import { fetchSearchKeyWordResults } from 'services/search/fetchSearchKeywordResults'
 import ResultsListing from './components/resultsListing/ResultsListing'
 import SearchInput from 'components/inputs/SearchInput'
+import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader'
+import EmptyArtworks from 'components/general/EmptyArtworks'
 
 export default function SearchResults() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -57,18 +59,32 @@ export default function SearchResults() {
                 <SafeAreaView>
                     <SearchInput />
                 </SafeAreaView>
-                <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
-                <Text style={{fontSize: 16, color: colors.grey}}>{dataLength} results found</Text>
-                {isLoading ? 
-                    <View style={styles.loadingContainer}>
-                        <Text>Loading...</Text>
+                {searchQuery.length > 0 ?
+                    <>
+                        <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
+                        <Text style={{fontSize: 16, color: colors.grey}}>{dataLength} results found</Text>
+                    </>
+                    :
+                    <View>
+                        <Text style={styles.headerText}>Search for artworks on Omenai</Text>
                     </View>
-                :
+                }
+                {isLoading && 
+                    <View style={{marginTop: 30}}>
+                        <MiniArtworkCardLoader />
+                    </View>
+                }
+                {(!isLoading && dataLength > 0) &&
                     <View style={{flex: 1}}>
                         {/* <Filters dataLength={dataLength}  /> */}
                         <ResultsListing data={data} />
                     </View>
                 }
+                {(searchQuery.length > 0 && dataLength === 0 && !isLoading) && (
+                    <View style={{marginTop: 40}}>
+                        <EmptyArtworks size={100} writeUp="Can't find artwork you're looking for, try checking for mispellings" />
+                    </View>
+                )}
             </View>
         </View>
     )
