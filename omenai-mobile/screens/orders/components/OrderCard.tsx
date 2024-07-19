@@ -81,12 +81,12 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
                 <View style={{gap: 10}}>
                     <View style={{flexDirection: 'row', gap: 10}}>
                         <Text style={{fontSize: 14, color: colors.primary_black}}>Tracking ID:</Text>
-                        <Text style={{flex: 1, fontSize: 14, color: colors.primary_black, textAlign: 'right'}}>{tracking_information?.tracking_id}</Text>
+                        <Text style={{flex: 1, fontSize: 14, color: colors.primary_black}}>{tracking_information?.tracking_id}</Text>
                     </View>
                     <View style={{flexDirection: 'row', gap: 10}}>
                         <Text style={{fontSize: 14, color: colors.primary_black}}>Tracking link:</Text>
                         <TouchableOpacity style={{flexWrap: 'wrap', flex: 1, overflow: 'hidden'}} onPress={openTrackingLink}>
-                            <Text style={{fontSize: 14, color: '#0000ff90', textAlign: 'right', flexWrap: 'wrap'}}>{tracking_information?.tracking_link}</Text>
+                            <Text style={{fontSize: 14, color: '#0000ff90', flexWrap: 'wrap'}}>{tracking_information?.tracking_link}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
