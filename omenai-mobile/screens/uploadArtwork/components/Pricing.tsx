@@ -27,6 +27,7 @@ export default function Pricing() {
     const {updateModal} = useModalStore()
 
     const [formErrors, setFormErrors] = useState<artworkPricingErrorsType>({price: ''});
+    const [loadingConversion, setLoadingConversion] = useState<boolean>(false)
 
     const currency_symbol = getCurrencySymbol(artworkUploadData.currency);
     const usd_symbol = getCurrencySymbol("USD");
@@ -36,8 +37,16 @@ export default function Pricing() {
         const isFormValid = Object.values(formErrors).every((error) => error === "");
         const areAllFieldsFilled = Object.values({
             pricing: artworkUploadData.price,
-            showPrice: artworkUploadData.shouldShowPrice
-        }).every((value) => value !== "");
+            showPrice: artworkUploadData.shouldShowPrice,
+            usd_price: artworkUploadData.usd_price
+        }).every((value, index) => {
+            if (value === "") return false;
+
+            // check if the index of pricing is zero
+            if (index === 0 && value === 0) return false;
+
+            return true;
+        });
 
         return !(isFormValid && areAllFieldsFilled);
     }
@@ -53,7 +62,12 @@ export default function Pricing() {
 
     const handleCurrencyConvert = async (value: number) => {
         updateArtworkUploadData('price', value)
+        if((Number.isNaN(value))){
+            updateArtworkUploadData('price', 0)
+            return
+        }
 
+        setLoadingConversion(true)
         const conversion_value = await getCurrencyConversion(
             artworkUploadData.currency.toUpperCase(),
             +value
@@ -64,6 +78,8 @@ export default function Pricing() {
         else {
             updateArtworkUploadData("usd_price", conversion_value.data);
         }
+
+        setLoadingConversion(false)
     }
 
     return (
@@ -76,7 +92,10 @@ export default function Pricing() {
                         data={transformedCurrencies}
                         placeholder='Select'
                         value={artworkUploadData.currency}
-                        handleSetValue={value => updateArtworkUploadData('currency', value)}
+                        handleSetValue={value => {
+                            updateArtworkUploadData('currency', value)
+                            updateArtworkUploadData('price', 0)
+                        }}
                     />
                 </View>
                     <View style={{flex: 1}}>
@@ -85,10 +104,11 @@ export default function Pricing() {
                             // onInputChange={value => updateArtworkUploadData('price', parseInt(value, 10))}
                             onInputChange={value => handleCurrencyConvert(parseInt(value, 10))}
                             placeHolder='Enter your price'
-                            value={artworkUploadData.price}
+                            value={artworkUploadData.price === 0 ? '' : artworkUploadData.price}
                             handleBlur={() => handleValidationChecks('price', JSON.stringify(artworkUploadData.price))}
                             errorMessage={formErrors.price}
                             keyboardType="decimal-pad"
+                            disabled={artworkUploadData.currency === ""}
                         />
                     </View>
                 </View>
@@ -101,7 +121,7 @@ export default function Pricing() {
                     {`${formatPrice(
                         artworkUploadData.price,
                         currency_symbol
-                    )} = ${formatPrice(artworkUploadData.usd_price, usd_symbol)}`}
+                    )} = ${loadingConversion ? 'converting...' : formatPrice(artworkUploadData.usd_price, usd_symbol)}`}
                     </Text>
                 )}
                 </View>
@@ -119,7 +139,8 @@ export default function Pricing() {
             <View style={{zIndex: 2}}>
                 <LongBlackButton
                     value='Proceed'
-                    onClick={() => setActiveIndex(activeIndex + 1)}
+                    // onClick={() => setActiveIndex(activeIndex + 1)}
+                    onClick={() => console.log(artworkUploadData.price)}
                     isLoading={false}
                     isDisabled={checkIsDisabled()}
                 />
