@@ -23,6 +23,7 @@ import SaveArtworkButton from './components/SaveArtworkButton';
 import Loader from 'components/general/Loader';
 import { useAppStore } from 'store/app/appStore';
 import DeleteArtworkButton from './components/DeleteArtworkButton';
+import Header from './components/Header';
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -89,23 +90,18 @@ export default function Artwork() {
         }
 
         setLoadingPriceQuote(false)
-
     }
 
     return (
         <WithModal>
             <View style={{flex: 1}}>
-            <SafeAreaView>
-                <View style={{paddingHorizontal: 20}}>
-                    <BackScreenButton handleClick={() => navigation.goBack()}/>
-                </View>
-            </SafeAreaView>
+            <Header />
             {(isLoading && !data) && (
                 <Loader />
             )}
             {data && (
                 <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                    <View style={{paddingBottom: 170}}>
+                    <View style={{paddingBottom: 250}}>
                         <View style={{paddingHorizontal: 20}}>
                             <Image source={{uri: image_href}} style={styles.image} />
                             {userType !== 'gallery' && <SaveArtworkButton likeIds={data.like_IDs || []} art_id={data.art_id} impressions={data.impressions || 0} />}
@@ -141,7 +137,7 @@ export default function Artwork() {
                                     ]}
                                 />
                             </View>
-                            {userType === 'gallery' && <DeleteArtworkButton />}
+                            {userType === 'gallery' && <DeleteArtworkButton art_id={data.art_id} />}
                         </View>
                         
                         {userType !== 'gallery' && <SimilarArtworks title={data.title} medium={data?.medium} />}
@@ -159,9 +155,9 @@ export default function Artwork() {
                     <View style={{backgroundColor: colors.white, paddingHorizontal: 15, paddingBottom: 15, borderWidth: 1, borderColor: colors.grey50, borderRadius: 15}}>
                         <View style={styles.priceContainer}>
                             <Text style={styles.priceTitle}>Price</Text>
-                            <Text style={[styles.price, data?.pricing.shouldShowPrice === "No" && {fontSize: 16, color: colors.grey}]}>{data?.pricing.shouldShowPrice === 'Yes' ? formatPrice(data?.pricing.usd_price) : "Price on request"}</Text>
+                            <Text style={[styles.price, (data?.pricing.shouldShowPrice === "No" && userType !== 'gallery')&& {fontSize: 16, color: colors.grey}]}>{(data?.pricing.shouldShowPrice === 'Yes' || userType === 'gallery') ? formatPrice(data?.pricing.usd_price) : "Price on request"}</Text>
                         </View>
-                        {userType !== 'gallery' &&
+                        {userType !== 'gallery' ?
                             (data?.availability ?
                                 <View style={styles.buttonContainer}>
                                     {data?.pricing.shouldShowPrice === "Yes" ?
@@ -177,8 +173,19 @@ export default function Artwork() {
                                     }
                                 </View>
                                 :
-                                <LongBlackButton value='Sold' isDisabled={true} onClick={()=>{}} />
+                                <LongBlackButton value='Sold' isDisabled={true} onClick={() => {}} />
                             )
+                            :
+                            <LongWhiteButton value='Edit pricing' onClick={()=>{
+                                const edit_pricing = {
+                                    art_id: data?.art_id,
+                                    price: data?.pricing.price,
+                                    usd_price: data?.pricing.usd_price,
+                                    shouldShowPrice: data?.pricing.shouldShowPrice
+                                };
+
+                                navigation.navigate(screenName.gallery.editArtwork, {data: edit_pricing})
+                            }} />
                         }
                     </View>
                 </View>
