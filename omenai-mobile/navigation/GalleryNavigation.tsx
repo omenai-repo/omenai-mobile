@@ -23,6 +23,7 @@ import { getAccountID } from "services/stripe/getAccountID";
 import { getAsyncData } from "utils/asyncStorage.utils";
 import { useNavigation } from "@react-navigation/native";
 import StripePayouts from "screens/stripeScreens/payouts/StripePayouts";
+import EditArtwork from "screens/editArtwork/EditArtwork";
 
 type CustomTabBarIconProps = {
     name: any,
@@ -158,7 +159,8 @@ export default function GalleryNavigation() {
             <Stack.Screen name={screenName.gallery.subscriptions} component={Subscriptions} />
             <Stack.Screen name={screenName.gallery.billing} component={Billing} />
             <Stack.Screen name={screenName.checkout} component={Checkout} />
-            <Stack.Screen name={screenName.connectStripe} component={GetStartedWithStripe} options={hideHeader}/>
+            <Stack.Screen name={screenName.connectStripe} component={GetStartedWithStripe}/>
+            <Stack.Screen name={screenName.gallery.editArtwork} component={EditArtwork} />
         </Stack.Navigator>
     )
 }
