@@ -21,7 +21,7 @@ export default function PendingListing({listing}: PendingListingProps) {
                     url={order.artwork_data.url}
                     orderId={order.order_id}
                     artworkName={order.artwork_data.title}
-                    artworkPrice={order.artwork_data.pricing.price}
+                    artworkPrice={order.artwork_data.pricing.usd_price}
                     dateOrdered={formatIntlDateTime(order.createdAt)}
                     state='pending'
                     status={order.status}

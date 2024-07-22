@@ -62,7 +62,8 @@ export default function TrendingArtworks({refreshCount, limit} : {refreshCount?:
                                 url={item.url}
                                 artist={item.artist}
                                 showPrice={item.pricing.shouldShowPrice === "Yes"}
-                                price={item.pricing.price}
+                                price={item.pricing.usd_price}
+                                availiablity={item.availability}
                                 impressions={item.impressions}
                                 like_IDs={item.like_IDs}
                                 art_id={item.art_id}

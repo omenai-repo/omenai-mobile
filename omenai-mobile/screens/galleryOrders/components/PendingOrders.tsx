@@ -19,7 +19,7 @@ export default function PendingOrders({data, handleOpenModal}: OrdersListingProp
             data={data}
             renderItem={({item}) => (
                 <OrderCard
-                    amount={formatPrice(item.artwork_data.pricing.price)}
+                    amount={formatPrice(item.artwork_data.pricing.usd_price)}
                     status={"pending"}
                     artworkName={item.artwork_data.title}
                     color={getColors('')}
@@ -32,7 +32,7 @@ export default function PendingOrders({data, handleOpenModal}: OrdersListingProp
                             details:[
                                 {label: 'Artwork title', value: item.artwork_data.title},
                                 {label: 'Artist name', value: item.artwork_data.artist},
-                                {label: 'Price', value: formatPrice(item.artwork_data.pricing.price)},
+                                {label: 'Price', value: formatPrice(item.artwork_data.pricing.usd_price)},
                                 {label: 'Buyer name', value: item.buyer.name},
                                 {label: 'Address', value: `${item.shipping_address.address_line}, ${item.shipping_address.city}, ${item.shipping_address.country}, ${item.shipping_address.zip}`},
                         ]})
