@@ -4,13 +4,14 @@ import CustomModal from './CustomModal';
 import { useModalStore } from 'store/modal/modalStore';
 import { colors } from 'config/colors.config';
 import WebViewModal from './WebViewModal';
+import ConfirmationModal from './ConfirmationModal';
 
 export type WithModalProps = {
     children: React.ReactNode
 }
 
 export default function WithModal({children}: WithModalProps) {
-    const { showModal, updateModal, modalMessage, modalType, webViewUrl } = useModalStore();
+    const { showModal, updateModal, modalMessage, modalType, webViewUrl, confirmationModal, showConfirmationModal } = useModalStore();
 
     useEffect(() => {
         if(showModal){
@@ -33,6 +34,10 @@ export default function WithModal({children}: WithModalProps) {
                 isVisible={showModal}
                 message={modalMessage}
                 modalType={modalType}
+            />
+            <ConfirmationModal
+                isVisible={showConfirmationModal}
+                child={confirmationModal}
             />
         </View>
     )

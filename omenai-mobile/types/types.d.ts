@@ -72,6 +72,7 @@ type ArtworkFlatlistItem = {
   artist: string,
   pricing: {price: number, shouldShowPrice: "Yes" | "No", usd_price: number},
   url: string,
+  availability: boolean,
   art_id: string;
   impressions: number;
   like_IDs: string[];
@@ -209,4 +210,11 @@ type TransactionModelSchemaTypes = {
   trans_gallery_id: string;
   trans_type: "purchase_payout" | "subscription";
   trans_date: Date;
+};
+
+type ArtworkPriceFilterData = {
+  "pricing.price": number;
+  "pricing.usd_price": number;
+  "pricing.shouldShowPrice": string;
+  "pricing.currency": string;
 };

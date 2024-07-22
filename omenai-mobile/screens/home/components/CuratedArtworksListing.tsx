@@ -59,7 +59,8 @@ export default function CuratedArtworksListing({refreshCount, limit} : {refreshC
                                     url={item.url}
                                     artist={item.artist}
                                     showPrice={item.pricing.shouldShowPrice === "Yes"}
-                                    price={item.pricing.price}
+                                    price={item.pricing.usd_price}
+                                    availiablity={item.availability}
                                     lightText={true}
                                     width={310}
                                     impressions={item.impressions}
