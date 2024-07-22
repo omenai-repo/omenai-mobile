@@ -211,3 +211,10 @@ type TransactionModelSchemaTypes = {
   trans_type: "purchase_payout" | "subscription";
   trans_date: Date;
 };
+
+type ArtworkPriceFilterData = {
+  "pricing.price": number;
+  "pricing.usd_price": number;
+  "pricing.shouldShowPrice": string;
+  "pricing.currency": string;
+};

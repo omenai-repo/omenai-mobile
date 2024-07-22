@@ -4,31 +4,25 @@ import WithModal from 'components/modal/WithModal'
 import BackHeaderTitle from 'components/header/BackHeaderTitle'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useRoute } from '@react-navigation/native'
+import EditPricing from './components/EditPricing'
 
-type editPricingparams = {
-    art_id: string, 
-    pricing: number, 
-    usd_price: number, 
-    shouldShowPrice: boolean
-}
 
 export default function EditArtwork() {
     const route = useRoute();
-
-    const [price, setPrice] = useState<number>(0);
-    const [usdPrice, setUsdPrice] = useState<number>(0);
-    const [shouldShowPrice, setShouldShowPrice] = useState<boolean>(false)
+    const [artID, setArtID] = useState<string | null>(null)
 
     useEffect(() => {
-        const {data} = route.params as {data: editPricingparams}
-        console.log(data)
+        const {art_id} = route.params as {art_id: string}
+        setArtID(art_id)
     }, [])
 
     return (
         <WithModal>
-            <BackHeaderTitle title='Edit artwork' />
+            <BackHeaderTitle title='Edit artwork pricong' />
             <ScrollView style={styles.container}>
-
+                {artID &&
+                    <EditPricing art_id={artID} />
+                }
             </ScrollView>
         </WithModal>
     )

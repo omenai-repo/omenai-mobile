@@ -86,18 +86,18 @@ export default function Pricing() {
         <View style={styles.container}>
             <View style={styles.inputsContainer}>
                 <View style={{flexDirection: 'row', gap: 10, zIndex: 11}}>
-                <View style={{flex: 1, zIndex: 11}}>
-                    <CustomSelectPicker
-                        label='Currency'
-                        data={transformedCurrencies}
-                        placeholder='Select'
-                        value={artworkUploadData.currency}
-                        handleSetValue={value => {
-                            updateArtworkUploadData('currency', value)
-                            updateArtworkUploadData('price', 0)
-                        }}
-                    />
-                </View>
+                    <View style={{flex: 1}}>
+                        <CustomSelectPicker
+                            label='Currency'
+                            data={transformedCurrencies}
+                            placeholder='Select'
+                            value={artworkUploadData.currency}
+                            handleSetValue={value => {
+                                updateArtworkUploadData('currency', value)
+                                updateArtworkUploadData('price', 0)
+                            }}
+                        />
+                    </View>
                     <View style={{flex: 1}}>
                         <Input
                             label='Price'
@@ -139,8 +139,7 @@ export default function Pricing() {
             <View style={{zIndex: 2}}>
                 <LongBlackButton
                     value='Proceed'
-                    // onClick={() => setActiveIndex(activeIndex + 1)}
-                    onClick={() => console.log(artworkUploadData.price)}
+                    onClick={() => setActiveIndex(activeIndex + 1)}
                     isLoading={false}
                     isDisabled={checkIsDisabled()}
                 />
