@@ -95,7 +95,7 @@ export default function Artwork() {
     return (
         <WithModal>
             <View style={{flex: 1}}>
-            <Header />
+            <Header art_id={data?.art_id} isGallery={userType === "gallery"} />
             {(isLoading && !data) && (
                 <Loader />
             )}
@@ -157,7 +157,7 @@ export default function Artwork() {
                             <Text style={styles.priceTitle}>Price</Text>
                             <Text style={[styles.price, (data?.pricing.shouldShowPrice === "No" && userType !== 'gallery')&& {fontSize: 16, color: colors.grey}]}>{(data?.pricing.shouldShowPrice === 'Yes' || userType === 'gallery') ? formatPrice(data?.pricing.usd_price) : "Price on request"}</Text>
                         </View>
-                        {userType !== 'gallery' ?
+                        {userType !== 'gallery' &&
                             (data?.availability ?
                                 <View style={styles.buttonContainer}>
                                     {data?.pricing.shouldShowPrice === "Yes" ?
@@ -175,17 +175,17 @@ export default function Artwork() {
                                 :
                                 <LongBlackButton value='Sold' isDisabled={true} onClick={() => {}} />
                             )
-                            :
-                            <LongWhiteButton value='Edit pricing' onClick={()=>{
-                                const edit_pricing = {
-                                    art_id: data?.art_id,
-                                    price: data?.pricing.price,
-                                    usd_price: data?.pricing.usd_price,
-                                    shouldShowPrice: data?.pricing.shouldShowPrice
-                                };
+                            // :
+                            // <LongWhiteButton value='Edit pricing' onClick={()=>{
+                            //     const edit_pricing = {
+                            //         art_id: data?.art_id,
+                            //         price: data?.pricing.price,
+                            //         usd_price: data?.pricing.usd_price,
+                            //         shouldShowPrice: data?.pricing.shouldShowPrice
+                            //     };
 
-                                navigation.navigate(screenName.gallery.editArtwork, {data: edit_pricing})
-                            }} />
+                            //     navigation.navigate(screenName.gallery.editArtwork, {data: edit_pricing})
+                            // }} />
                         }
                     </View>
                 </View>
