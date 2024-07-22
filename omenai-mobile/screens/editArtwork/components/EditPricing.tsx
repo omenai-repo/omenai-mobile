@@ -1,44 +1,54 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { colors } from 'config/colors.config'
-import Input from 'components/inputs/Input'
-import CustomSelectPicker from 'components/inputs/CustomSelectPicker'
-import { displayPrice, preferredShippingCarrier } from 'data/uploadArtworkForm.data'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import LongBlackButton from 'components/buttons/LongBlackButton'
-import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
-import { validate } from 'lib/validations/upload_artwork_input_validator/validator'
-import { currencies } from './mocks'
-import { getCurrencyConversion } from 'services/exchange_rate/getCurrencyConversion'
+import { colors } from 'config/colors.config'
+import CustomSelectPicker from 'components/inputs/CustomSelectPicker'
+import Input from 'components/inputs/Input'
 import { formatPrice } from 'utils/priceFormatter'
+import { displayPrice } from 'data/uploadArtworkForm.data'
+import { validate } from 'lib/validations/upload_artwork_input_validator/validator'
+import { currencies } from 'screens/uploadArtwork/components/mocks'
 import { getCurrencySymbol } from 'utils/getCurrencySymbol'
 import { useModalStore } from 'store/modal/modalStore'
-
-const transformedCurrencies = currencies.map(item => ({
-    value: item.code,
-    label: item.name
-  }));
+import { getCurrencyConversion } from 'services/exchange_rate/getCurrencyConversion'
+import { updateArtworkPrice } from 'services/artworks/updateArtworkPrice'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { screenName } from 'constants/screenNames.constants'
 
 type artworkPricingErrorsType = {
     price: string
 }
 
-export default function Pricing() {
-    const {setActiveIndex, activeIndex, artworkUploadData, updateArtworkUploadData} = uploadArtworkStore();
+const transformedCurrencies = currencies.map(item => ({
+    value: item.code,
+    label: item.name
+}));
+
+export default function EditPricing({art_id}: {art_id: string}) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
     const {updateModal} = useModalStore()
+
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const [price, setPrice] = useState<number>(0);
+    const [usdPrice, setUsdPrice] = useState<number>(0);
+    const [currency, setCurrency] = useState('');
+    const [shouldShowPrice, setShouldShowPrice] = useState<string>('');
 
     const [formErrors, setFormErrors] = useState<artworkPricingErrorsType>({price: ''});
     const [loadingConversion, setLoadingConversion] = useState<boolean>(false)
 
-    const currency_symbol = getCurrencySymbol(artworkUploadData.currency);
+    const currency_symbol = getCurrencySymbol(currency);
     const usd_symbol = getCurrencySymbol("USD");
 
     const checkIsDisabled = () => {
         // Check if there are no error messages and all input fields are filled
         const isFormValid = Object.values(formErrors).every((error) => error === "");
         const areAllFieldsFilled = Object.values({
-            pricing: artworkUploadData.price,
-            showPrice: artworkUploadData.shouldShowPrice,
-            usd_price: artworkUploadData.usd_price
+            pricing: price,
+            showPrice: shouldShowPrice,
+            usd_price: setUsdPrice
         }).every((value, index) => {
             if (value === "") return false;
 
@@ -61,27 +71,53 @@ export default function Pricing() {
     };
 
     const handleCurrencyConvert = async (value: number) => {
-        updateArtworkUploadData('price', value)
+        setPrice(value)
         if((Number.isNaN(value))){
-            updateArtworkUploadData('price', 0)
+            setPrice(0)
             return
         }
 
         setLoadingConversion(true)
         const conversion_value = await getCurrencyConversion(
-            artworkUploadData.currency.toUpperCase(),
+            currency.toUpperCase(),
             +value
         );
 
         if (!conversion_value?.isOk)
             updateModal({message: "Unable to retrieve exchange rate value at this time.", modalType: 'error', showModal: true});
         else {
-            updateArtworkUploadData("usd_price", conversion_value.data);
+            setUsdPrice(conversion_value.data);
         }
 
         setLoadingConversion(false)
+    };
+
+    const handlePriceUpdate = async () => {
+        setLoading(true)
+        const filter: ArtworkPriceFilterData = {
+            "pricing.price": price,
+            "pricing.usd_price": usdPrice,
+            "pricing.shouldShowPrice": shouldShowPrice,
+            "pricing.currency": currency,
+        };
+
+        const update = await updateArtworkPrice(filter, art_id);
+        if(update?.isOk){
+            updateModal({message: "Artwork pricing detials successfully updated", showModal: true, modalType: 'success'})
+            goBack()
+        }else{
+            updateModal({message: "Error updating pricing detials", showModal: true, modalType: "error"})
+        }
+
+        setLoading(false)
     }
 
+    const goBack = () => {
+        setTimeout(() => {
+            navigation.navigate(screenName.gallery.artworks)
+        }, 3500);
+    }
+    
     return (
         <View style={styles.container}>
             <View style={styles.inputsContainer}>
@@ -91,10 +127,10 @@ export default function Pricing() {
                             label='Currency'
                             data={transformedCurrencies}
                             placeholder='Select'
-                            value={artworkUploadData.currency}
+                            value={currency}
                             handleSetValue={value => {
-                                updateArtworkUploadData('currency', value)
-                                updateArtworkUploadData('price', 0)
+                                setCurrency(value)
+                                setPrice(0)
                             }}
                         />
                     </View>
@@ -104,24 +140,24 @@ export default function Pricing() {
                             // onInputChange={value => updateArtworkUploadData('price', parseInt(value, 10))}
                             onInputChange={value => handleCurrencyConvert(parseInt(value, 10))}
                             placeHolder='Enter your price'
-                            value={artworkUploadData.price === 0 ? '' : artworkUploadData.price}
-                            handleBlur={() => handleValidationChecks('price', JSON.stringify(artworkUploadData.price))}
+                            value={price === 0 ? '' : price}
+                            handleBlur={() => handleValidationChecks('price', JSON.stringify(price))}
                             errorMessage={formErrors.price}
                             keyboardType="decimal-pad"
-                            disabled={artworkUploadData.currency === ""}
+                            disabled={currency === ""}
                         />
                     </View>
                 </View>
                 <View>
-                {artworkUploadData.currency !== "" &&
-                artworkUploadData.price !== 0 &&
-                artworkUploadData.usd_price !== 0 && (
+                {currency !== "" &&
+                price !== 0 &&
+                usdPrice !== 0 && (
                     <Text style={{fontSize: 14, fontWeight: 500, opacity: 0.8}}>
                     Exchange rate:{" "}
                     {`${formatPrice(
-                        artworkUploadData.price,
+                        price,
                         currency_symbol
-                    )} = ${loadingConversion ? 'converting...' : formatPrice(artworkUploadData.usd_price, usd_symbol)}`}
+                    )} = ${loadingConversion ? 'converting...' : formatPrice(usdPrice, usd_symbol)}`}
                     </Text>
                 )}
                 </View>
@@ -130,17 +166,17 @@ export default function Pricing() {
                         label='Display price'
                         data={displayPrice}
                         placeholder='Select'
-                        value={artworkUploadData.shouldShowPrice}
-                        handleSetValue={value => updateArtworkUploadData('shouldShowPrice', value)}
+                        value={shouldShowPrice}
+                        handleSetValue={value => setShouldShowPrice(value)}
                     />
                 </View>
                 <Text style={{fontSize: 12, color: '#ff0000'}}>Please note: To ensure consistent pricing across the platform, all uploaded prices will be displayed in US Dollar equivalents.</Text>
             </View>
             <View style={{zIndex: 2}}>
                 <LongBlackButton
-                    value='Proceed'
-                    onClick={() => setActiveIndex(activeIndex + 1)}
-                    isLoading={false}
+                    value='Update pricing details'
+                    onClick={handlePriceUpdate}
+                    isLoading={loading}
                     isDisabled={checkIsDisabled()}
                 />
             </View>
