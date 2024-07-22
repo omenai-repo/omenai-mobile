@@ -72,6 +72,7 @@ type ArtworkFlatlistItem = {
   artist: string,
   pricing: {price: number, shouldShowPrice: "Yes" | "No", usd_price: number},
   url: string,
+  availability: boolean,
   art_id: string;
   impressions: number;
   like_IDs: string[];

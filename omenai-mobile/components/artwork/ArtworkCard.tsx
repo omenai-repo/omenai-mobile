@@ -17,6 +17,7 @@ type ArtworkCardType = {
     rarity?: string,
     medium?: string,
     showPrice?: boolean,
+    availiablity?: boolean,
     showTags?: boolean,
     lightText?: boolean,
     width?: number,
@@ -26,7 +27,7 @@ type ArtworkCardType = {
     galleryView?: boolean
 }
 
-export default function ArtworkCard({title, url, artist, showPrice, price, lightText, width = 0, impressions, art_id, like_IDs, galleryView = false}: ArtworkCardType) {
+export default function ArtworkCard({title, url, artist, showPrice, price, lightText, width = 0, impressions, art_id, like_IDs, galleryView = false, availiablity}: ArtworkCardType) {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const screenWidth = Dimensions.get('window').width;
 
@@ -46,7 +47,11 @@ export default function ArtworkCard({title, url, artist, showPrice, price, light
                     {galleryView ? 
                         <Text style={[{fontSize: 12, color: colors.primary_black, marginTop: 5}, lightText && {color: colors.white}]}>{impressions} impressions</Text>
                         :
-                        <Text style={[{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}, lightText && {color: colors.white}]}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
+                        (!availiablity ? 
+                            <Text style={[{fontSize: 14, color: colors.primary_black, opacity: 0.7, marginTop: 5}, lightText && {color: colors.white}]}>Sold</Text> 
+                            : 
+                            <Text style={[{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}, lightText && {color: colors.white}]}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
+                        )
                     }
                 </View>
                 {!galleryView &&

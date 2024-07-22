@@ -17,7 +17,6 @@ import Payment from 'screens/payment/Payment';
 import Filter from 'components/filter/Filter';
 import Notifications from 'screens/notifications/Notifications';
 import EditorialsListing from 'screens/editorialsListing/EditorialsListing';
-import Editorial from 'screens/editorial/Editorial';
 import CancleOrderPayment from 'screens/payment/components/cancel/CancleOrderPayment';
 import SuccessOrderPayment from 'screens/payment/components/success/SuccessOrderPayment';
 
@@ -117,7 +116,6 @@ export default function IndividualNavigation() {
           
           <Stack.Screen name={screenName.notifications} component={Notifications} />
           <Stack.Screen name={screenName.editorialsListing} component={EditorialsListing} />
-          <Stack.Screen name={screenName.editorial} component={Editorial} />
           <Stack.Screen name={screenName.cancleOrderPayment} component={CancleOrderPayment} />
           <Stack.Screen name={screenName.successOrderPayment} component={SuccessOrderPayment} />
         </Stack.Navigator>
