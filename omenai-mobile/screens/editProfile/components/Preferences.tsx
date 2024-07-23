@@ -24,7 +24,7 @@ export default function Preferences({label, selectedPreferences, setSelectedPref
             let index = arr.indexOf(value);
             arr.splice(index, 1);
             setSelectedPreferences(arr);
-        }else{
+        }else if(selectedPreferences.length < 5){
             const arr = [...selectedPreferences, value];
             setSelectedPreferences(arr);
         }
@@ -33,7 +33,7 @@ export default function Preferences({label, selectedPreferences, setSelectedPref
     const Pill = ({label, value, onTap}: PillProps) => {
         const selected = selectedPreferences.includes(value)
         return(
-            <TouchableOpacity onPress={() => onTap(value)}>
+            <TouchableOpacity onPress={() => onTap(value)} activeOpacity={1}>
                 <View style={[styles.pill, selected && styles.selectedPill]}>
                     <Text style={[styles.pillText, selected && styles.selectedPillText]}>{label}</Text>
                 </View>
