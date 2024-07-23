@@ -5,18 +5,17 @@ import { mediumListing } from 'data/uploadArtworkForm.data'
 
 type PreferencesProps = {
     label: string,
-    profilePreferences: string[]
+    selectedPreferences: string[],
+    setSelectedPreferences: (e: string[]) => void
 };
 
 type PillProps = {
     label: string,
     value: string,
-    isSelected: boolean,
     onTap: (e: string) => void
 }
 
-export default function Preferences({label, profilePreferences}: PreferencesProps) {
-    const [selectedPreferences, setSelectedPreferences] = useState<string[]>(profilePreferences);
+export default function Preferences({label, selectedPreferences, setSelectedPreferences}: PreferencesProps) {
 
     const handleUpdatePreference = (value: string) => {
         if(selectedPreferences.includes(value)){
@@ -31,7 +30,7 @@ export default function Preferences({label, profilePreferences}: PreferencesProp
         }
     }
 
-    const Pill = ({label, value, isSelected, onTap}: PillProps) => {
+    const Pill = ({label, value, onTap}: PillProps) => {
         const selected = selectedPreferences.includes(value)
         return(
             <TouchableOpacity onPress={() => onTap(value)}>
@@ -49,7 +48,6 @@ export default function Preferences({label, profilePreferences}: PreferencesProp
                     <Pill
                         label={medium.label}
                         value={medium.value}
-                        isSelected={selectedPreferences.includes(medium.value)}
                         onTap={handleUpdatePreference}
                         key={index}
                     />
