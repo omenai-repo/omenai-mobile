@@ -2,7 +2,7 @@ import { apiUrl } from "../../constants/apiUrl.constants";
 
 export async function updateProfile(
     route: RouteIdentifier,
-    payload: GalleryProfileUpdateData,
+    payload: GalleryProfileUpdateData | IndividualProfileUpdateData,
     id: string
 ) {
   try {
@@ -27,7 +27,7 @@ export async function updateProfile(
   }catch(error){
       return {
           isOk: false,
-          body: {message: 'Error updating item'}
+          body: {message: 'Error updating profile'}
       }
   }
 }
