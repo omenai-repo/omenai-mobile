@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { logout } from 'utils/logout.utils';
 import { PageButtonCard } from 'components/buttons/PageButtonCard';
+import WithModal from 'components/modal/WithModal';
 
 type userDataType = {
     name: string,
@@ -43,25 +44,28 @@ export default function Profile() {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <WithModal>
+        
             <SafeAreaView>
                 <View style={styles.profileContainer}>
                     <Image source={omenaiAvatar} style={styles.image} />
                     <View>
                         <Text style={{fontSize: 16, fontWeight: '500', color: colors.primary_black}}>{userData.name}</Text>
                         <Text style={{fontSize: 14, marginTop: 5, marginBottom: 20, color: '#858585'}}>{userData.email}</Text>
-                        <FittedBlackButton value='View profile' isDisabled={false} onClick={() => console.log('')} />
+                        <FittedBlackButton value='Edit profile' isDisabled={false} onClick={() => navigation.navigate(screenName.editProfile)} />
                     </View>
                 </View>
-                <View style={styles.buttonsContainer}>
-                    <PageButtonCard name='Saved artworks' subText='See all your saved artworks' handlePress={() => navigation.navigate(screenName.savedArtworks)} />
-                    <Divider />
-                    <PageButtonCard name='Order history' subText='A summary of all your orders' handlePress={() => navigation.navigate(screenName.orders)} />
-                    <Divider />
-                    <PageButtonCard name='Log Out' logout  handlePress={logout} />
-                </View>
-            </SafeAreaView>
-        </ScrollView>
+                </SafeAreaView>
+                <ScrollView style={styles.container}>
+                    <View style={styles.buttonsContainer}>
+                        <PageButtonCard name='Saved artworks' subText='See all your saved artworks' handlePress={() => navigation.navigate(screenName.savedArtworks)} />
+                        <Divider />
+                        <PageButtonCard name='Order history' subText='A summary of all your orders' handlePress={() => navigation.navigate(screenName.orders)} />
+                        <Divider />
+                        <PageButtonCard name='Log Out' logout  handlePress={logout} />
+                    </View>
+                </ScrollView>
+        </WithModal>
     )
 }
 
@@ -70,20 +74,22 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.white,
         paddingHorizontal: 20,
-        paddingVertical: 30
+        marginTop: 10,
+        paddingTop: 10
     },
     profileContainer: {
         flexDirection: 'row',
         gap: 20,
         alignItems: 'center',
+        paddingHorizontal: 20,
         paddingTop: 20
     },
     image: {
-        height: 140,
-        width: 140
+        height: 100,
+        width: 100
     },
     buttonsContainer: {
-        marginTop: 50,
+        marginTop: 10,
         borderWidth: 1,
         borderColor: colors.grey50,
         padding: 15,
