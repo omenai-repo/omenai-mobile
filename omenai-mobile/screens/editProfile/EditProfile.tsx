@@ -23,7 +23,7 @@ export default function EditProfile() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [fullname, setFullName] = useState<string>(userSession.name);
-    const [selectedPreferences, setSelectedPreferences] = useState<string[]>(userSession.preferences);
+    const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
     const [formErrors, setFormErrors] = useState<EditProfileErrorsTypes>({name: ''});
 
     const [isChanged, setIsChanged] = useState<boolean>(false)
@@ -61,6 +61,12 @@ export default function EditProfile() {
 
         if(!userSession.id) return
 
+        if(selectedPreferences.length < 5){
+            setIsLoading(false)
+            updateModal({message: "Please select up to 5 preferences", modalType: "error", showModal: true})
+            return
+        }
+
         const data = {
             name: fullname,
             preferences: selectedPreferences
@@ -75,8 +81,6 @@ export default function EditProfile() {
             setIsLoading(false)
             updateModal({message: result.body.message, modalType: "error", showModal: true})
         }
-
-        
     }
 
     const signOut = () => {
