@@ -48,4 +48,7 @@ export const mediumListing: selectItemProp[] = [
     {label: 'Ink', value: 'Ink'},
     {label: 'Canvas', value: 'Canvas'},
     {label: 'Photography', value: 'Photography'},
+    {label: 'Ankara', value: 'Ankara'},
+    {label: 'Charcoal', value: 'Charcoal'},
+    {label: 'Fabric', value: 'Fabric'},
 ]
