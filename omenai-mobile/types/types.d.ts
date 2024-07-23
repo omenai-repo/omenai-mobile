@@ -201,6 +201,11 @@ type GalleryProfileUpdateData = {
   description?: string;
 };
 
+type IndividualProfileUpdateData = {
+  name?: string;
+  preferences?: string[];
+};
+
 type TransactionModelSchemaTypes = {
   trans_id: string;
   trans_reference: string;

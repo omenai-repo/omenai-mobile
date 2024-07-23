@@ -10,6 +10,7 @@ import { useOrderStore } from 'store/orders/Orders'
 import HistoryListing from './components/HistoryListing'
 import Loader from 'components/general/Loader'
 import WithModal from 'components/modal/WithModal'
+import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader'
 
 type TabItemProps = {
     name: OrderTabsTypes,
@@ -71,7 +72,7 @@ export default function Orders() {
             >
                 
                 {isLoading ? 
-                    <Loader />
+                    <OrderslistingLoader />
                 : 
                     <View>
                     {selectedTab === 'Pending' ?

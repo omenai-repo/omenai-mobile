@@ -15,6 +15,7 @@ export const screenName = {
     payment: 'payment',
     profileScreen: 'profile-screen',
     profile: 'Profile',
+    editProfile: 'edit-profile',
     savedArtworks: 'saved-artworks',
     filter: 'filter',
     notifications: 'notifications',
