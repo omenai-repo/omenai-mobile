@@ -19,6 +19,7 @@ import Notifications from 'screens/notifications/Notifications';
 import EditorialsListing from 'screens/editorialsListing/EditorialsListing';
 import CancleOrderPayment from 'screens/payment/components/cancel/CancleOrderPayment';
 import SuccessOrderPayment from 'screens/payment/components/success/SuccessOrderPayment';
+import EditProfile from 'screens/editProfile/EditProfile';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -113,11 +114,11 @@ export default function IndividualNavigation() {
           <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} />
           <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} />
           <Stack.Screen name={screenName.payment} component={Payment} />
-          
           <Stack.Screen name={screenName.notifications} component={Notifications} />
           <Stack.Screen name={screenName.editorialsListing} component={EditorialsListing} />
           <Stack.Screen name={screenName.cancleOrderPayment} component={CancleOrderPayment} />
           <Stack.Screen name={screenName.successOrderPayment} component={SuccessOrderPayment} />
+          <Stack.Screen name={screenName.editProfile} component={EditProfile} />
         </Stack.Navigator>
     )
 }
