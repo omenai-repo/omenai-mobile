@@ -1,12 +1,10 @@
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
-import sortIcon from '../../assets/icons/sort-icon.png';
 import { Feather } from '@expo/vector-icons';
 import { filterStore } from 'store/artworks/FilterStore';
 import PriceFilter from './PriceFilter';
 import YearFilter from './YearFilter';
-import MediumFilter from './MediumFilter';
 import FilterPill from './FilterPill';
 import { artworkStore } from 'store/artworks/ArtworkStore';
 import { artworkActionStore } from 'store/artworks/ArtworkActionStore';
@@ -17,28 +15,22 @@ import LongBlackButton from 'components/buttons/LongBlackButton';
 import { ScrollView } from 'react-native-gesture-handler';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import { artworksMediumFilterStore } from 'store/artworks/ArtworksMediumFilterStore';
+import { artworksMediumStore } from 'store/artworks/ArtworksMediumsStore';
 
-type FilterProps = {
-    children?: React.ReactNode
-}
-
-type FilterSelectProps = {
-    name: string
-}
-
-export default function Filter({children}: FilterProps) {
+export default function ArtworkMediumFilterModal() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-    const { filterOptions, selectedFilters, clearAllFilters } = filterStore();
+    const { filterOptions, selectedFilters, clearAllFilters } = artworksMediumFilterStore();
     const { paginationCount, updatePaginationCount } = artworkActionStore();
-    const { setArtworks, setIsLoading, setPageCount, isLoading } = artworkStore();
+    const { setArtworks, setIsLoading, setPageCount, isLoading, medium } = artworksMediumStore();
 
     const handleSubmitFilter = async () => {
         updatePaginationCount("reset");
         setIsLoading(true);
         const response = await fetchPaginatedArtworks(
             paginationCount,
-            filterOptions
+            {...filterOptions, medium: [medium]}
         );
         if (response?.isOk) {
             setPageCount(response.count);
@@ -79,7 +71,6 @@ export default function Filter({children}: FilterProps) {
                 <View style={styles.FiltersListing}>
                     <PriceFilter />
                     <YearFilter />
-                    <MediumFilter />
                     <RarityFilter />
                 </View>
                 <View style={{height: 200}} />

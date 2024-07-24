@@ -14,6 +14,7 @@ import TrendingArtworks from './components/TrendingArtworks'
 import Banner from './components/Banner'
 import CuratedArtworksListing from './components/CuratedArtworksListing'
 import WithModal from 'components/modal/WithModal'
+import CatalogListing from './components/CatalogListing'
 
 export default function Home() {
     const [refreshCount, setRefreshCount] = useState(0);
@@ -39,6 +40,7 @@ export default function Home() {
                     <FeaturedGalleries />
                     <TrendingArtworks limit={8} refreshCount={refreshCount} />
                     <CuratedArtworksListing limit={8} refreshCount={refreshCount} />
+                    <CatalogListing />
                     <Editorials />
                 </ScrollView>
             </SafeAreaView>
