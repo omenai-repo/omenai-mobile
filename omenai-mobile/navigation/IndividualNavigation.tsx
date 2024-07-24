@@ -21,6 +21,7 @@ import CancleOrderPayment from 'screens/payment/components/cancel/CancleOrderPay
 import SuccessOrderPayment from 'screens/payment/components/success/SuccessOrderPayment';
 import EditProfile from 'screens/editProfile/EditProfile';
 import ArtworksMedium from 'screens/artworksMedium/ArtworksMedium';
+import ArtworkMediumFilterModal from 'screens/artworksMedium/components/filter/ArtworkMediumFilterModal';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -109,6 +110,7 @@ export default function IndividualNavigation() {
           <Stack.Screen name='Individual' component={IndividualTabNavigationScreens} options={hideHeader}/>
           <Stack.Group screenOptions={{presentation: 'modal'}}>
             <Stack.Screen name={screenName.filter} component={Filter} />
+            <Stack.Screen name={screenName.artworkMediumFilterModal} component={ArtworkMediumFilterModal} />
           </Stack.Group>
           <Stack.Screen name={screenName.artwork} component={Artwork} />
           <Stack.Screen name={screenName.searchResults} component={SearchResults} />

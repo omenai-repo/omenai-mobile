@@ -10,7 +10,7 @@ export default function CatalogListing() {
 
     const CatalogCard = ({image, name, value}: CatalogCardTypes) => {
         return(
-            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate(screenName.artworksMedium, {medium: value, image: image})}>
+            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate(screenName.artworksMedium, {catalog: value, image: image})}>
                 <View style={styles.container}>
                     <Image source={image} style={{width: 220, height: 220}} />
                     <Text style={{fontSize: 14, marginTop: 10}}>{name}</Text>

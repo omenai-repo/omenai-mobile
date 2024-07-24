@@ -8,10 +8,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { screenName } from 'constants/screenNames.constants';
 
 type FilterButtonProps = {
-    children?: React.ReactNode
+    children?: React.ReactNode,
+    handleClick?: () => void
 }
 
-export default function FilterButton({children}: FilterButtonProps) {
+export default function FilterButton({children, handleClick}: FilterButtonProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
@@ -19,7 +20,13 @@ export default function FilterButton({children}: FilterButtonProps) {
             <View style={{flex: 1}}>
                 {children}
             </View>
-            <TouchableOpacity onPress={() => navigation.navigate(screenName.filter)}>
+            <TouchableOpacity onPress={() => {
+                if(handleClick){
+                    handleClick()
+                }else{
+                    navigation.navigate(screenName.filter)
+                }
+            }}>
                 <View style={styles.filterButton}>
                     <Text style={styles.filterButtonText}>Filters</Text>
                     <Image source={sortIcon} style={styles.sortIcon} />

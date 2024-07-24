@@ -11,34 +11,41 @@ import { fetchArtworksByCriteria } from 'services/artworks/fetchArtworksByCriter
 import { artworksMediumStore } from 'store/artworks/ArtworksMediumsStore';
 import ArtworksMediumListing from './components/ArtworksMediumListing';
 import { useModalStore } from 'store/modal/modalStore';
+import { screenName } from 'constants/screenNames.constants';
+import { artworksMediumFilterStore } from 'store/artworks/ArtworksMediumFilterStore';
+import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
 
 export default function ArtworksMedium() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const route = useRoute();
 
     const { updateModal } = useModalStore()
-    const { filterOptions, clearAllFilters } = artworksMediumStore();
+    const { setArtworks, artworks, isLoading, setMedium, setIsLoading, pageCount, medium  } = artworksMediumStore();
+    const { filterOptions, clearAllFilters } = artworksMediumFilterStore();
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState();
-
-    const { medium, image } = route.params as {medium: string, image: string};
+    const { catalog, image } = route.params as {catalog: string, image: string};
 
     useEffect(() => {
-        clearAllFilters();
-        console.log(filterOptions)
+        setMedium(catalog)
+    }, [])
+
+    useEffect(() => {
+        clearAllFilters()
         handleFetchArtworks()
     }, [])
 
     const handleFetchArtworks = async () => {
         setIsLoading(true);
 
-        const res = await fetchArtworksByCriteria(medium);
+        const res = await fetchPaginatedArtworks(
+            pageCount,
+            {...filterOptions, medium: [medium]}
+        );
         if(res.isOk){
-            setData(res.body.data)
-            console.log(res.body)
+            setArtworks(res.data)
         }else{
-            updateModal({message: `Error fetching ${medium} artworks, reload page again`, modalType: 'error', showModal: true})
+            console.log(res)
+            updateModal({message: `Error fetching ${catalog} artworks, reload page again`, modalType: 'error', showModal: true})
         }
 
         setIsLoading(false);
@@ -49,12 +56,12 @@ export default function ArtworksMedium() {
             <Header image={image} goBack={()=>navigation.goBack()} />
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 <View style={{zIndex: 100}}>
-                    <FilterButton>
+                    <FilterButton handleClick={() => navigation.navigate(screenName.artworkMediumFilterModal)}>
                         <Text style={styles.headerText}>{medium}</Text>
                     </FilterButton>
                 </View>
                 {isLoading && <MiniArtworkCardLoader />}
-                {(!isLoading && data) && <ArtworksMediumListing data={data} />}
+                {(!isLoading && artworks) && <ArtworksMediumListing data={artworks} />}
                 <View style={{height: 100}} />
             </ScrollView>
         </WithModal>
