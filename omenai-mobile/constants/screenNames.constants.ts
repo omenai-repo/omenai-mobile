@@ -18,6 +18,7 @@ export const screenName = {
     editProfile: 'edit-profile',
     savedArtworks: 'saved-artworks',
     filter: 'filter',
+    artworkMediumFilterModal: 'artwork-medium-filter-modal',
     notifications: 'notifications',
     editorialsListing: 'editorials',
     editorial: 'editorial',
@@ -25,6 +26,7 @@ export const screenName = {
     successOrderPayment: 'SuccessOrderPayment',
     checkout: 'checkout',
     connectStripe: 'connect-stripe',
+    artworksMedium: 'artworks-medium',
     gallery: {
         overview: 'Overview',
         artworks: 'Artworks',
