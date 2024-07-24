@@ -86,7 +86,7 @@ export default function Filter({children}: FilterProps) {
             </ScrollView>
                 <View style={{position: 'absolute', bottom: 0, paddingHorizontal: 20, paddingVertical: 20, width: '100%'}}>
                     <SafeAreaView>
-                    <LongBlackButton value={isLoading ? 'Applying ...' :'Apply filters'} onClick={handleSubmitFilter} isLoading={isLoading} radius={10} />
+                    <LongBlackButton value={'Apply filters'} onClick={handleSubmitFilter} isLoading={isLoading} radius={10} />
                     </SafeAreaView>
                 </View>
         </View>
