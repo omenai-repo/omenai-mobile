@@ -11,7 +11,7 @@ export type WithModalProps = {
 }
 
 export default function WithModal({children}: WithModalProps) {
-    const { showModal, updateModal, modalMessage, modalType, webViewUrl, confirmationModal, showConfirmationModal } = useModalStore();
+    const { showModal, updateModal, modalMessage, modalType, confirmationModal, showConfirmationModal } = useModalStore();
 
     useEffect(() => {
         if(showModal){
@@ -28,8 +28,7 @@ export default function WithModal({children}: WithModalProps) {
 
     return (
         <View style={{flex: 1, backgroundColor: colors.white}}>
-            {webViewUrl === null && children}
-            <WebViewModal url={webViewUrl} />
+            {children}
             <CustomModal 
                 isVisible={showModal}
                 message={modalMessage}
