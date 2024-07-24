@@ -223,3 +223,9 @@ type ArtworkPriceFilterData = {
   "pricing.shouldShowPrice": string;
   "pricing.currency": string;
 };
+
+type CatalogCardTypes = {
+  name: string, 
+  value: string,
+  image: string
+}
