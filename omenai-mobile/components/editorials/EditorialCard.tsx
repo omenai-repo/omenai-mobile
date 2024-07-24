@@ -20,13 +20,15 @@ export type EditorialCardProps = {
 
 export default function EditorialCard({url, writer, articleHeader, date, id, width}: EditorialCardProps & {width: number}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
-    const { setWebViewUrl } = useModalStore()
+    
 
     const image_href = getEditorialImageFilePreview(url, width);
 
     return(
         <>
-            <TouchableOpacity activeOpacity={1} onPress={() => setWebViewUrl(`/articles/${id}/${articleHeader}`)}>
+            <TouchableOpacity activeOpacity={1} onPress={() => {
+                navigation.navigate(screenName.editorial, {id, articleHeader})
+            }}>
                 <View style={{width: width, overflow: 'hidden'}}>
                     <Image source={{uri: image_href}} style={styles.image} />
                     <View>

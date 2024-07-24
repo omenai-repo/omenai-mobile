@@ -22,6 +22,7 @@ import SuccessOrderPayment from 'screens/payment/components/success/SuccessOrder
 import EditProfile from 'screens/editProfile/EditProfile';
 import ArtworksMedium from 'screens/artworksMedium/ArtworksMedium';
 import ArtworkMediumFilterModal from 'screens/artworksMedium/components/filter/ArtworkMediumFilterModal';
+import Editorial from 'screens/editorial/Editorial';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -123,6 +124,7 @@ export default function IndividualNavigation() {
           <Stack.Screen name={screenName.successOrderPayment} component={SuccessOrderPayment} />
           <Stack.Screen name={screenName.editProfile} component={EditProfile} />
           <Stack.Screen name={screenName.artworksMedium} component={ArtworksMedium} />
+          <Stack.Screen name={screenName.editorial} component={Editorial} />
         </Stack.Navigator>
     )
 }
