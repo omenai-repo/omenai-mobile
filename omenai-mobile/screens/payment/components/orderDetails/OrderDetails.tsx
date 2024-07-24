@@ -67,7 +67,13 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
               name: userSession.name,
             }
           });
-          if (!error) {
+          if (error) {
+            throwError(error.message)
+            setTimeout(() => {
+                navigation.goBack()
+            }, 3500);
+            
+          }else{
             setMainPageLoader(false);
           }
     }
