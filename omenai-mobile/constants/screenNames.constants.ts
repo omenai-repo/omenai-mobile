@@ -25,6 +25,7 @@ export const screenName = {
     successOrderPayment: 'SuccessOrderPayment',
     checkout: 'checkout',
     connectStripe: 'connect-stripe',
+    artworksMedium: 'artworks-medium',
     gallery: {
         overview: 'Overview',
         artworks: 'Artworks',
