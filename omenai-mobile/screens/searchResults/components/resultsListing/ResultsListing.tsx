@@ -17,7 +17,7 @@ export default function ResultsListing({data}: {data: any[]}) {
                             url={item.url}
                             artist={item.artist}
                             showPrice={item.pricing.shouldShowPrice === "Yes"}
-                            price={item.pricing.price}
+                            price={item.pricing.usd_price}
                             impressions={item.impressions}
                             like_IDs={item.like_IDs}
                             art_id={item.art_id}
