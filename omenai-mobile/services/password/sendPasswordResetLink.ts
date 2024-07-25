@@ -1,6 +1,5 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
 
-
 export async function sendPasswordResetLink(
     payload: {email: string},
     route: RouteIdentifier

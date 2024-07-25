@@ -2,7 +2,7 @@ import { OrderTabsTypes } from "screens/orders/Orders";
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { getAsyncData } from "utils/asyncStorage.utils";
 
-export async function getOrdersForUser(orderType: OrderTabsTypes){
+export async function getOrdersForUser(){
 
     let userId = ''
     const userSession = await getAsyncData('userSession')
@@ -30,10 +30,10 @@ export async function getOrdersForUser(orderType: OrderTabsTypes){
 
         return response
     }catch(error){
-        console.log('error' + error)
+        console.log(error)
         return {
             isOk: false,
-            body: {message: 'Error fetching orders'}
+            message: 'Error fetching orders'
         }
     }
 

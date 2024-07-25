@@ -100,6 +100,11 @@ type ShippingQuoteTypes = {
   additional_information?: string;
 };
 
+type OrderAcceptedStatusTypes = {
+  status: "accepted" | "declined" | "";
+  reason?: string;
+};
+
 type RouteParamsType = {
   title: string;
 };
@@ -229,3 +234,26 @@ type CatalogCardTypes = {
   value: string,
   image: string
 }
+
+type CreateOrderModelTypes = {
+  createdAt: string | number | Date;
+  artwork_data: Pick<
+    ArtworkSchemaTypes,
+    "artist" | "pricing" | "title" | "url" | "art_id"
+  > & { _id: ObjectId };
+  buyer: {
+    name: string;
+    email: string;
+    user_id: string;
+    _id: ObjectId;
+  };
+  gallery_id: string;
+  order_id: string;
+  status: string;
+  shipping_address: IndividualAddressTypes;
+  shipping_quote: ShippingQuoteTypes;
+  payment_information: PaymentStatusTypes;
+  tracking_information: TrackingInformationTypes;
+  order_accepted: OrderAcceptedStatusTypes;
+  delivery_confirmed: boolean;
+};

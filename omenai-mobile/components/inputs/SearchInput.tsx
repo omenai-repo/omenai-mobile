@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         borderColor: colors.inputBorder,
         paddingHorizontal: 7,
         paddingVertical: 7,
-        borderRadius: 40,
+        borderRadius: 5,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 15,
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     searchButton: {
         height: '100%',
         backgroundColor: colors.primary_black,
-        borderRadius: 30,
+        borderRadius: 4,
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 20

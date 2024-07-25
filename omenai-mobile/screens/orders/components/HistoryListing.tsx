@@ -12,29 +12,27 @@ type OrdersListingProps = {
 
 export default function HistoryListing({orders}: OrdersListingProps) {
 
-    const history = sortOrdersDataByDate(orders);
+    // const history = sortOrdersDataByDate(orders);
 
-    if(history.length > 0)
+    if(orders.length > 0)
         return (
             <View style={styles.container}>
-                {history.map((orderlist, idx) => (
-                    <View key={idx}>
-                        <Text style={{fontSize: 16, fontWeight: '500', paddingVertical: 20}}>{orderlist.date}</Text>
-                        {orderlist.data.map((order, index) => {
-                            if (order.status !== "completed") return null;
-                            return(
-                                <OrderCard
-                                    key={index}
-                                    url={order.artwork_data.url}
-                                    orderId={order.order_id}
-                                    artworkName={order.artwork_data?.title}
-                                    artworkPrice={order.artwork_data?.pricing.price}
-                                    dateOrdered={formatIntlDateTime(order.createdAt)}
-                                    status={order.status}
-                                    state="history"
-                                />
-                            )
-                        })}
+                {orders.map((order, index) => (
+                    <View key={index}>
+                        <OrderCard
+                            url={order.artwork_data.url}
+                            orderId={order.order_id}
+                            artworkName={order.artwork_data.title}
+                            artworkPrice={order.artwork_data.pricing.usd_price}
+                            dateOrdered={formatIntlDateTime(order.createdAt)}
+                            state='pending'
+                            status={order.status}
+                            payment_information={order.payment_information}
+                            tracking_information={order.tracking_information}
+                            shipping_quote={order.shipping_quote}
+                            order_accepted={order.order_accepted}
+                            delivery_confirmed={order.delivery_confirmed}
+                        />
                     </View>
                 ))}
             </View>
@@ -53,7 +51,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.inputBorder,
         borderRadius: 8,
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        marginBottom: 50
     },
     emptyOrders: {
         height: 500,

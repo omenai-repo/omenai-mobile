@@ -20,7 +20,7 @@ export default function ArtworksMedium() {
     const route = useRoute();
 
     const { updateModal } = useModalStore()
-    const { setArtworks, artworks, isLoading, setMedium, setIsLoading, pageCount, medium  } = artworksMediumStore();
+    const { setArtworks, artworks, isLoading, setMedium, setIsLoading, pageCount } = artworksMediumStore();
     const { filterOptions, clearAllFilters } = artworksMediumFilterStore();
 
     const { catalog, image } = route.params as {catalog: string, image: string};
@@ -39,7 +39,7 @@ export default function ArtworksMedium() {
 
         const res = await fetchPaginatedArtworks(
             pageCount,
-            {...filterOptions, medium: [medium]}
+            {...filterOptions, medium: [catalog]}
         );
         if(res.isOk){
             setArtworks(res.data)
@@ -57,7 +57,7 @@ export default function ArtworksMedium() {
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 <View style={{zIndex: 100}}>
                     <FilterButton handleClick={() => navigation.navigate(screenName.artworkMediumFilterModal)}>
-                        <Text style={styles.headerText}>{medium}</Text>
+                        <Text style={styles.headerText}>{catalog}</Text>
                     </FilterButton>
                 </View>
                 {isLoading && <MiniArtworkCardLoader />}

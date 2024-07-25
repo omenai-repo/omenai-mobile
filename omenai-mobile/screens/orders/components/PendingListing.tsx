@@ -28,6 +28,8 @@ export default function PendingListing({listing}: PendingListingProps) {
                     payment_information={order.payment_information}
                     tracking_information={order.tracking_information}
                     shipping_quote={order.shipping_quote}
+                    order_accepted={order.order_accepted}
+                    delivery_confirmed={order.delivery_confirmed}
                 />
                 {(index + 1) !== listing.length && <View style={{paddingVertical: 15}}><Divider /></View>}
                 </View>
@@ -48,7 +50,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.inputBorder,
         borderRadius: 8,
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
+        marginBottom: 50
     },
     emptyOrders: {
         height: 500,
