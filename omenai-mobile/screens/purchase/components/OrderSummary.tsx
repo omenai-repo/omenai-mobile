@@ -28,11 +28,11 @@ export default function OrderSummary({data: {
                     <View style={styles.listItemDetails}>
                         <Text style={[styles.orderItemTitle, {fontSize: 16, marginBottom: 5}]}>{title}</Text>
                         <Text style={styles.orderItemTitle}>{artist}</Text>
-                        {pricing.shouldShowPrice === "Yes" ? <Text style={{fontSize: 18, fontWeight: '500', marginTop: 15}}>{formatPrice(pricing.price)}</Text> : <Text>Request Price</Text>}
+                        {pricing.shouldShowPrice === "Yes" ? <Text style={{fontSize: 18, fontWeight: '500', marginTop: 15}}>{formatPrice(pricing.usd_price)}</Text> : <Text>Request Price</Text>}
                     </View>
                 </View>
             </View>
-            <SummaryContainer buttonTypes="Proceed to shipping" price={pricing.shouldShowPrice === "Yes" ? pricing.price : 0} />
+            <SummaryContainer buttonTypes="Proceed to shipping" price={pricing.shouldShowPrice === "Yes" ? pricing.usd_price : 0} />
         </View>
     )
 }

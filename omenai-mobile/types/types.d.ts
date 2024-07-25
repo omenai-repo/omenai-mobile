@@ -118,7 +118,7 @@ type verifyEmailRouteParamsType = {
 }
 
 type artworkOrderDataTypes = {
-  pricing: {shouldShowPrice: "Yes" | "No", price: number},
+  pricing: {shouldShowPrice: "Yes" | "No", price: number, usd_price: number},
   url: string,
   title: string,
   artist: string,
