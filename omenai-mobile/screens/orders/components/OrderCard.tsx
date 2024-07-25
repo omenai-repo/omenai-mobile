@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import DropDownButton from './DropDownButton';
 import { useModalStore } from 'store/modal/modalStore';
+import StatusPill from './StatusPill';
 
 type OrderCardProps = {
     artworkName: string,
@@ -21,9 +22,11 @@ type OrderCardProps = {
     payment_information?: PaymentStatusTypes;
     tracking_information?: TrackingInformationTypes;
     shipping_quote?: ShippingQuoteTypes;
+    order_accepted: OrderAcceptedStatusTypes;
+    delivery_confirmed: boolean;
 }
 
-export default function OrderCard({artworkName, dateOrdered, status, state, artworkPrice, url, orderId, payment_information, tracking_information, shipping_quote}: OrderCardProps) {
+export default function OrderCard({artworkName, dateOrdered, status, state, artworkPrice, url, orderId, payment_information, tracking_information, shipping_quote, order_accepted, delivery_confirmed}: OrderCardProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const [showTrackingInfo, setShowTrackingInfo] = useState<boolean>(false);
@@ -55,21 +58,25 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
                         {/* <Text style={styles.orderItemDetails}>Ordered: {dateOrdered}</Text> */}
                     </View>
                     <View style={{flexWrap: 'wrap', marginTop: 15}}>
+                        <StatusPill 
+                            status={status}
+                            payment_status={payment_information?.status}
+                            tracking_status={tracking_information?.tracking_link}
+                            order_accepted={order_accepted.status}
+                            delivery_confirmed={delivery_confirmed}
+                        />
+                    </View>
+                    <View style={{flexWrap: 'wrap', marginTop: 15}}>
                     {state === "pending" ? (
                         (payment_information!.status === "completed") ? (tracking_information?.tracking_id.length > 0 ?
                             <DropDownButton label='View tracking information' onPress={setShowTrackingInfo} value={showTrackingInfo} />
                             :
-                            <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.6}}>Pending upload tracking info</Text>
+                            // <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.6}}>Pending upload tracking info</Text>
+                            null
                         ) : (
                             <View>
-                            {shipping_quote?.shipping_fees !== "" ? (
-                                <FittedBlackButton value='Pay now' onClick={() => navigation.navigate(screenName.payment, {id: orderId})} isDisabled={false} />
-                            ) : (
-                                <>
-                                <Text>
-                                    Awaiting gallery confirmation
-                                </Text>
-                                </>
+                            {shipping_quote?.shipping_fees !== "" && (
+                                <FittedBlackButton height={40} value='Pay now' onClick={() => navigation.navigate(screenName.payment, {id: orderId})} isDisabled={false} />
                             )}
                             </View>
                         )
