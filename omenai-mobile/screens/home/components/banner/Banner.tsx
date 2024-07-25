@@ -55,12 +55,12 @@ export default function Banner({reloadCount}:{reloadCount: number}) {
 
     const Item = ({image, headline, subheadline, cta}: BannerItemProps) => {
 
-        const image_href = getPromotionalFileView(image, 170);
+        const image_href = getPromotionalFileView(image, 500);
 
         return(
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
-                    <Image source={{uri: image_href}} style={{width: 170, height: 170}} resizeMode="contain" />
+                    <Image source={{uri: image_href}} style={{width: 180, height: 270}} resizeMode="cover" />
                 </View>
                 <View style={styles.contentContainer}>
                     <Text style={{fontSize: 21, fontWeight: '500', color: colors.white}}>{headline}</Text>
@@ -123,7 +123,6 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         width: 190,
-        paddingHorizontal: 10
     },
     contentContainer: {
         paddingHorizontal: 10,

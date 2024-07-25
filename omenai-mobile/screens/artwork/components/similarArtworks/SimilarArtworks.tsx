@@ -44,7 +44,7 @@ export default function SimilarArtworks({medium, title = ''}: {medium: string, t
                             url={item.url}
                             artist={item.artist}
                             showPrice={item.pricing.shouldShowPrice === "Yes"}
-                            price={item.pricing.price}
+                            price={item.pricing.usd_price}
                         />
                     )}
                     keyExtractor={(_, index) => JSON.stringify(index)}
