@@ -30,6 +30,8 @@ export default function HistoryListing({orders}: OrdersListingProps) {
                             payment_information={order.payment_information}
                             tracking_information={order.tracking_information}
                             shipping_quote={order.shipping_quote}
+                            order_accepted={order.order_accepted}
+                            delivery_confirmed={order.delivery_confirmed}
                         />
                     </View>
                 ))}
@@ -49,7 +51,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.inputBorder,
         borderRadius: 8,
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        marginBottom: 50
     },
     emptyOrders: {
         height: 500,

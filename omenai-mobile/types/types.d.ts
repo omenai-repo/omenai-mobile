@@ -100,6 +100,11 @@ type ShippingQuoteTypes = {
   additional_information?: string;
 };
 
+type OrderAcceptedStatusTypes = {
+  status: "accepted" | "declined" | "";
+  reason?: string;
+};
+
 type RouteParamsType = {
   title: string;
 };
