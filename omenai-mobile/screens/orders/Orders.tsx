@@ -11,6 +11,7 @@ import HistoryListing from './components/HistoryListing'
 import Loader from 'components/general/Loader'
 import WithModal from 'components/modal/WithModal'
 import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader'
+import { useModalStore } from 'store/modal/modalStore'
 
 type TabItemProps = {
     name: OrderTabsTypes,
@@ -20,8 +21,12 @@ type TabItemProps = {
 export type OrderTabsTypes = 'Pending' | 'Order history'
 
 export default function Orders() {
-    const {selectedTab, setSelectedTab, isLoading, setIsLoading, data, setData} = useOrderStore();
+    const {selectedTab, setSelectedTab, isLoading, setIsLoading} = useOrderStore();
     const [refreshing, setRefreshing] = useState(false);
+
+    const { updateModal } = useModalStore()
+
+    const [data, setData] = useState<{pendingOrders: [], completedOrders: []}>({pendingOrders: [], completedOrders: []})
 
     const onRefresh = React.useCallback(() => {
         // setRefreshing(true);
@@ -36,12 +41,18 @@ export default function Orders() {
     const handleFetchOrders = async  () => {
         setIsLoading(true)
 
-        const results = await getOrdersForUser(selectedTab);
+        const results = await getOrdersForUser();
 
-        if(results.isOk){
-            setData(results.data)
+        if(results?.isOk){
+            const data = results.data;
+
+            const pending_orders = data.filter((order: CreateOrderModelTypes) => !order.delivery_confirmed);
+            const completed_orders = data.filter((order: CreateOrderModelTypes) => order.delivery_confirmed);
+
+            setData({pendingOrders: pending_orders, completedOrders: completed_orders})
+
         }else{
-            console.log(results.message)
+            updateModal({message: 'Something went wrong fetching orders, reload page', modalType: 'error', showModal: true})
         }
 
         setIsLoading(false)
@@ -76,9 +87,9 @@ export default function Orders() {
                 : 
                     <View>
                     {selectedTab === 'Pending' ?
-                        <OrdersListing listing={data} />
+                        <OrdersListing listing={data.pendingOrders} />
                     :
-                        <HistoryListing orders={data} />
+                        <HistoryListing orders={data.completedOrders} />
                     }
                     </View>
                 }
