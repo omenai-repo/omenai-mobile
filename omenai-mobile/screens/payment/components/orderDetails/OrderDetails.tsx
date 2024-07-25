@@ -27,7 +27,7 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
     const { updateModal } = useModalStore()
 
     const total_price_number = calculatePurchaseGrandTotalNumber(
-        data.artwork_data.pricing.price,
+        data.artwork_data.pricing.usd_price,
         data.shipping_quote.shipping_fees,
         data.shipping_quote.taxes
     );
@@ -141,7 +141,7 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
                     <View style={styles.priceListing}>
                         <View style={styles.priceListingItem}>
                             <Text style={{fontSize: 14, color: '#616161', flex: 1}}>Price</Text>
-                            <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{formatPrice(data.artwork_data.pricing.price)}</Text>
+                            <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{formatPrice(data.artwork_data.pricing.usd_price)}</Text>
                         </View>
                         <View style={styles.priceListingItem}>
                             <Text style={{fontSize: 14, color: '#616161', flex: 1}}>Shipping</Text>
