@@ -11,7 +11,7 @@ import ListingHeader from './components/listingHeader/ListingHeader'
 import ListingSelectContainer from './components/listingHeader/ListingSelectContainer'
 import NewArtworksListing from './components/NewArtworksListing'
 import TrendingArtworks from './components/TrendingArtworks'
-import Banner from './components/Banner'
+import Banner from './components/banner/Banner'
 import CuratedArtworksListing from './components/CuratedArtworksListing'
 import WithModal from 'components/modal/WithModal'
 import CatalogListing from './components/CatalogListing'
@@ -36,7 +36,7 @@ export default function Home() {
                 >
                     <Header showNotification />
                     <NewArtworksListing limit={8} refreshCount={refreshCount} />
-                    <Banner />
+                    <Banner reloadCount={refreshCount} />
                     <FeaturedGalleries />
                     <TrendingArtworks limit={8} refreshCount={refreshCount} />
                     <CuratedArtworksListing limit={8} refreshCount={refreshCount} />

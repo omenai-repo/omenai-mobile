@@ -21,7 +21,7 @@ export default function CatalogListing() {
 
     return (
         <View style={{marginTop: 40}}>
-            <Text style={{fontSize: 18, fontWeight: 500, paddingHorizontal: 20}}>Catalog</Text>
+            <Text style={{fontSize: 18, fontWeight: 500, paddingHorizontal: 20}}>Art Collections</Text>
             <FlatList 
                 data={mediums}
                 renderItem={({item, index}: {item: CatalogCardTypes, index: string}) => (
