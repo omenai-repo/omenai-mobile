@@ -5,6 +5,7 @@ import { prefrencesList } from '../../../../constants/preferences.constants';
 import BackFormButton from '../../../../components/buttons/BackFormButton';
 import NextButton from '../../../../components/buttons/NextButton';
 import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
+import { mediumListing } from 'data/uploadArtworkForm.data';
 
 type TabItemProps = {
     name: string,
@@ -14,12 +15,14 @@ type TabItemProps = {
 
 export default function Preferences() {
     const {pageIndex, setPageIndex, preferences, setPreferences } = useIndividualAuthRegisterStore();
-    // const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
 
     const handleSelect = (value: string) => {
         if (preferences.includes(value)) {
-            setPreferences(preferences.filter((selectedTab) => selectedTab !== value));
-          } else {
+            let arr = [...preferences];
+            let index = arr.indexOf(value);
+            arr.splice(index, 1);
+            setPreferences(arr);
+          } else if(preferences.length < 5){
             setPreferences([...preferences, value]);
           }
     }
@@ -28,13 +31,13 @@ export default function Preferences() {
 
         if(isSelected)
         return(
-            <TouchableOpacity style={[styles.tabItem, styles.selectedTabItem]} onPress={onSelect}>
+            <TouchableOpacity style={[styles.tabItem, styles.selectedTabItem]} activeOpacity={0.7} onPress={onSelect}>
                 <Text style={{fontSize: 12, color: '#fff'}}>{name}</Text>
             </TouchableOpacity>
         )
 
         return(
-            <TouchableOpacity style={styles.tabItem} onPress={onSelect}>
+            <TouchableOpacity style={styles.tabItem} activeOpacity={0.7} onPress={onSelect}>
                 <Text style={{fontSize: 12, color: '#1a1a1a'}}>{name}</Text>
             </TouchableOpacity>
         )
@@ -42,14 +45,14 @@ export default function Preferences() {
 
     return (
         <View style={{marginTop: 20}}>
-            <Text style={styles.title}>Select your art preference</Text>
+            <Text style={styles.title}>We would like understand your art interests, please select up to <Text style={{fontWeight: 500, color: colors.primary_black}}>5 artwork mediums</Text> that resonates with you most</Text>
             <View style={styles.tabsContainer}>
-                {prefrencesList.map((i, idx) => (
+                {mediumListing.map((i, idx) => (
                     <TabItem
-                        name={i}
+                        name={i.value}
                         key={idx}
-                        onSelect={() => handleSelect(i)}
-                        isSelected={preferences.includes(i)}
+                        onSelect={() => handleSelect(i.value)}
+                        isSelected={preferences.includes(i.value)}
                     />
                 ))}
             </View>
@@ -64,8 +67,8 @@ export default function Preferences() {
 
 const styles = StyleSheet.create({
     title: {
-        fontWeight: '500',
-        fontSize: 20
+        color: colors.primary_black,
+        fontSize: 16
     },
     tabsContainer: {
         marginTop: 20,
@@ -77,11 +80,11 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        rowGap: 20,
-        columnGap: 15
+        rowGap: 10,
+        columnGap: 10
     },
     tabItem: {
-        height: 48,
+        height: 40,
         paddingHorizontal: 20,
         backgroundColor: '#FAFAFA',
         borderRadius: 30,
