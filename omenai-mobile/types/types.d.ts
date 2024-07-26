@@ -126,6 +126,21 @@ type artworkOrderDataTypes = {
   art_id: string
 }
 
+type OrderCardProps = {
+  artworkName: string,
+  artworkPrice: number,
+  dateOrdered: string,
+  url: string,
+  orderId: string,
+  status: string,
+  state: "pending" | "history",
+  payment_information?: PaymentStatusTypes;
+  tracking_information?: TrackingInformationTypes;
+  shipping_quote?: ShippingQuoteTypes;
+  order_accepted: OrderAcceptedStatusTypes;
+  delivery_confirmed: boolean;
+}
+
 type IndividualAddressTypes = {
   address_line: string;
   city: string;
