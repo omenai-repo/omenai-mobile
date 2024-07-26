@@ -11,21 +11,6 @@ import DropDownButton from './DropDownButton';
 import { useModalStore } from 'store/modal/modalStore';
 import StatusPill from './StatusPill';
 
-type OrderCardProps = {
-    artworkName: string,
-    artworkPrice: number,
-    dateOrdered: string,
-    url: string,
-    orderId: string,
-    status: string,
-    state: "pending" | "history",
-    payment_information?: PaymentStatusTypes;
-    tracking_information?: TrackingInformationTypes;
-    shipping_quote?: ShippingQuoteTypes;
-    order_accepted: OrderAcceptedStatusTypes;
-    delivery_confirmed: boolean;
-}
-
 export default function OrderCard({artworkName, dateOrdered, status, state, artworkPrice, url, orderId, payment_information, tracking_information, shipping_quote, order_accepted, delivery_confirmed}: OrderCardProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
@@ -48,7 +33,7 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
     return (
         <View style={{paddingVertical: 10, gap: 15}}>
             <View style={styles.listItem}>
-                <Image source={{uri: image_href}} style={{width: 100, backgroundColor: '#f5f5f5', borderRadius: 3}} />
+                <Image source={{uri: image_href}} style={{width: 100, backgroundColor: '#f5f5f5', borderRadius: 3}} resizeMode="contain" />
                 <View style={styles.listItemDetails}>
                     <Text style={styles.orderItemTitle}>{artworkName}</Text>
                     
