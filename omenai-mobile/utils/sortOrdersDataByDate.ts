@@ -11,6 +11,7 @@ interface OriginalObject {
 
 interface FormattedObject extends OriginalObject {
   createdAt: string; // Updated type for formatted date
+  
 }
 
 interface FinalObject {
