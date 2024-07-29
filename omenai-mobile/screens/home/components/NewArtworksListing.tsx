@@ -16,6 +16,7 @@ export default function NewArtworksListing({refreshCount, limit} : {refreshCount
     const [isLoading, setIsLoading] = useState(false)
 
     const [data, setData] = useState([]);
+    const [showMoreButton, setshowMoreButton] = useState(false);
 
     useEffect(() => {
         handleFetchArtworks()
@@ -28,7 +29,14 @@ export default function NewArtworksListing({refreshCount, limit} : {refreshCount
 
         if(results.isOk){
             const data = results.body.data
-            setData(data.splice(0,limit))
+            
+            if(data.length <= 20){
+                setData(data)
+                setshowMoreButton(false)
+            }else{
+                setData(data.splice(0,limit))
+                setshowMoreButton(true)
+            }
         }else{
             console.log(results)
         }
@@ -48,9 +56,9 @@ export default function NewArtworksListing({refreshCount, limit} : {refreshCount
                 <FlatList
                     data={data}
                     renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
-                        if((index + 1) === limit){
+                        if((index + 1) === data.length && showMoreButton){
                             return(
-                                <ViewAllCategoriesButton label='View all artworks' path={screenName.catalog} />
+                                <ViewAllCategoriesButton label='View all new artworks' listingType="recent" />
                             )
                         }
                         return(

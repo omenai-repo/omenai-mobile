@@ -21,7 +21,7 @@ export default function FittedBlackButton({value, isDisabled, onClick, isLoading
     )
 
     return (
-        <TouchableOpacity activeOpacity={1} style={[styles.container, height ? {height: height} : null]} onPress={onClick}>
+        <TouchableOpacity activeOpacity={0.9} style={[styles.container, height ? {height: height} : null]} onPress={onClick}>
             <Text style={styles.text}>{value}</Text>
             {children}
         </TouchableOpacity>

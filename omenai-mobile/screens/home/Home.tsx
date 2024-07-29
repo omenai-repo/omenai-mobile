@@ -35,11 +35,11 @@ export default function Home() {
                     }
                 >
                     <Header showNotification />
-                    <NewArtworksListing limit={8} refreshCount={refreshCount} />
                     <Banner reloadCount={refreshCount} />
+                    <NewArtworksListing limit={20} refreshCount={refreshCount} />
                     <FeaturedGalleries />
-                    <TrendingArtworks limit={8} refreshCount={refreshCount} />
-                    <CuratedArtworksListing limit={8} refreshCount={refreshCount} />
+                    <TrendingArtworks limit={28} refreshCount={refreshCount} />
+                    <CuratedArtworksListing limit={20} refreshCount={refreshCount} />
                     <CatalogListing />
                     <Editorials />
                 </ScrollView>

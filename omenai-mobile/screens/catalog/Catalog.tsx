@@ -16,6 +16,9 @@ import FilterButton from 'components/filter/FilterButton'
 import Loader from 'components/general/Loader'
 import WithModal from 'components/modal/WithModal'
 import { useModalStore } from 'store/modal/modalStore'
+import ShowMoreButton from 'components/buttons/ShowMoreButton'
+import Pagination from './components/Pagination'
+import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader'
 
 type TagItemProps = {
     name: string,
@@ -30,19 +33,21 @@ const tags = [
 
 export default function Catalog() {
     const [selectedTag, setSelectedTag] = useState(tags[0]);
-    const { paginationCount } = artworkActionStore();
+    const { paginationCount, updatePaginationCount } = artworkActionStore();
     const { updateModal } = useModalStore()
-    const { setArtworks, artworks, isLoading, setPageCount, setIsLoading } = artworkStore();
+    const { setArtworks, artworks, isLoading, setPageCount, setIsLoading, pageCount } = artworkStore();
     const { filterOptions, clearAllFilters } = filterStore();
     const [reloadCount, setReloadCount] = useState<number>(0);
 
+    const [loadingMore, setLoadingmore] = useState<boolean>(false);
+
     useEffect(() => {
-        clearAllFilters()
         handleFecthArtworks()
     }, [reloadCount])
 
     const handleFecthArtworks = async () => {
         setIsLoading(true)
+        clearAllFilters()
         setArtworks([])
         const response = await fetchPaginatedArtworks(
             paginationCount,
@@ -55,6 +60,40 @@ export default function Catalog() {
             updateModal({message: 'Error fetching artworks, reload page again', modalType: 'error', showModal: true})
         }
         setIsLoading(false)
+    };
+
+    const handlePagination = async (type: "dec" | "inc") => {
+        setIsLoading(true)
+        if(type === "dec"){
+            const response = await fetchPaginatedArtworks(
+                paginationCount - 1,
+                filterOptions
+              );
+              if (response?.isOk) {
+                setArtworks(response.data);
+                updatePaginationCount(type);
+                setPageCount(response.count);
+              } else {
+                //throw error
+                updateModal({message: response?.message, showModal: true, modalType: 'error'})
+              }
+            } else {
+              const response = await fetchPaginatedArtworks(
+                paginationCount + 1,
+                filterOptions
+              );
+              if (response?.isOk) {
+                setArtworks(response.data);
+                updatePaginationCount(type);
+                setPageCount(response.count);
+              } else {
+                //throw error
+                console.log(response)
+                updateModal({message: response?.message, showModal: true, modalType: 'error'})
+            }
+        }
+
+        setIsLoading(false);
     }
 
     return (
@@ -68,7 +107,7 @@ export default function Catalog() {
                     </View>
                     <View style={{zIndex: 5}}>
                         {isLoading ?
-                            <Loader />
+                            <MiniArtworkCardLoader />
                         :
                             <ScrollView
                                 style={{height: '100%'}}
@@ -78,6 +117,7 @@ export default function Catalog() {
                                 }
                             >
                                 <ArtworksListing data={artworks} />
+                                <Pagination count={pageCount} onPress={handlePagination} currentScreen={paginationCount} />
                                 <View style={{height: 300}} />
                             </ScrollView>
                         }
