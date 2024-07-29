@@ -5,6 +5,7 @@ import BackHeaderTitle from 'components/header/BackHeaderTitle'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useRoute } from '@react-navigation/native'
 import EditPricing from './components/EditPricing'
+import DeleteArtworkButton from 'screens/artwork/components/DeleteArtworkButton'
 
 
 export default function EditArtwork() {
@@ -18,11 +19,12 @@ export default function EditArtwork() {
 
     return (
         <WithModal>
-            <BackHeaderTitle title='Edit artwork pricong' />
+            <BackHeaderTitle title='Edit artwork pricing' />
             <ScrollView style={styles.container}>
                 {artID &&
                     <EditPricing art_id={artID} />
                 }
+                {artID && <DeleteArtworkButton art_id={artID} />}
             </ScrollView>
         </WithModal>
     )

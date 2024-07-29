@@ -23,6 +23,7 @@ import EditProfile from 'screens/editProfile/EditProfile';
 import ArtworksMedium from 'screens/artworksMedium/ArtworksMedium';
 import ArtworkMediumFilterModal from 'screens/artworksMedium/components/filter/ArtworkMediumFilterModal';
 import Editorial from 'screens/editorial/Editorial';
+import ArtworkCategories from 'screens/artworkCategories/ArtworkCategories';
 
 type CustomTabBarIconProps = {
     name: any,
@@ -125,6 +126,7 @@ export default function IndividualNavigation() {
           <Stack.Screen name={screenName.editProfile} component={EditProfile} />
           <Stack.Screen name={screenName.artworksMedium} component={ArtworksMedium} />
           <Stack.Screen name={screenName.editorial} component={Editorial} />
+          <Stack.Screen name={screenName.artworkCategories} component={ArtworkCategories} />
         </Stack.Navigator>
     )
 }
