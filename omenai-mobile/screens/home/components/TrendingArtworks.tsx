@@ -61,7 +61,7 @@ export default function TrendingArtworks({refreshCount, limit} : {refreshCount?:
                     renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
                         if((index + 1) === data.length && showMoreButton){
                             return(
-                                <ViewAllCategoriesButton label='View all trending artworks' path={screenName.catalog} />
+                                <ViewAllCategoriesButton label='View all trending artworks' listingType="trending" />
                             )
                         }
                         return(

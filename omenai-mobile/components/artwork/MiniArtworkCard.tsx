@@ -26,7 +26,8 @@ export default function MiniArtworkCard({url, artist, title, showPrice, price, a
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const screenWidth = Dimensions.get('window').width;
-    const [imageDimensions, setImageDimensions] = useState({width: 0, height: 0})
+    const [imageDimensions, setImageDimensions] = useState({width: 0, height: 0});
+    const [renderImage, setRenderImage] = useState(false);
 
     let imageWidth = 0
     imageWidth = (screenWidth - 60) / 2 //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
@@ -36,14 +37,19 @@ export default function MiniArtworkCard({url, artist, title, showPrice, price, a
         Image.getSize(image_href, (defaultWidth, defaultHeight) => {
             const {width, height} = resizeImageDimensions({width: defaultWidth, height: defaultHeight}, 300)
             setImageDimensions({height, width})
+            setRenderImage(true)
         });
-      }, [image_href, screenWidth]);
+    }, [image_href, screenWidth]);
 
     return (
         <TouchableOpacity activeOpacity={1} style={[styles.container, {width: imageWidth}]} onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
-            <View style={{width: imageDimensions.width, height: imageDimensions.height, }}>
-                <Image source={{uri: image_href}} style={{width: imageDimensions.width, height: imageDimensions.height, objectFit: 'cover' }} resizeMode="contain" />
-            </View>
+            {renderImage ?
+                <View style={{width: imageDimensions.width, height: imageDimensions.height, }}>
+                    <Image source={{uri: image_href}} style={{width: imageDimensions.width, height: imageDimensions.height, objectFit: 'cover' }} resizeMode="contain" />
+                </View>
+            :
+                <View style={{height: 200, width: '100%', backgroundColor: '#f5f5f5'}} />
+            }
             <View style={styles.mainDetailsContainer}>
                 <View style={{flex: 1}}>
                     <Text style={{fontSize: 14, color: colors.primary_black}}>{title}</Text>
