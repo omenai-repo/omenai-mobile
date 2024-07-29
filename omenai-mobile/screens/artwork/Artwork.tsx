@@ -137,7 +137,6 @@ export default function Artwork() {
                                     ]}
                                 />
                             </View>
-                            {userType === 'gallery' && <DeleteArtworkButton art_id={data.art_id} />}
                         </View>
                         
                         {userType !== 'gallery' && <SimilarArtworks title={data.title} medium={data?.medium} />}

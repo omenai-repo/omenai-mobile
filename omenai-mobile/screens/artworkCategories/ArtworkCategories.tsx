@@ -10,6 +10,7 @@ import { RefreshControl } from 'react-native-gesture-handler';
 import { fetchArtworks } from 'services/artworks/fetchArtworks';
 import { useModalStore } from 'store/modal/modalStore';
 import ShowMoreButton from 'components/buttons/ShowMoreButton';
+import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
 
 export default function ArtworkCategories() {
     const route = useRoute()
@@ -27,15 +28,26 @@ export default function ArtworkCategories() {
     const handleFetchArtworks = async () => {
         setIsLoading(true)
 
-        const results = await fetchArtworks(title);
+        let results
 
-        if(results.isOk){
-            const data = results.body.data
-            setData(data)
+        if(title === "curated"){
+            results = await fetchCuratedArtworks();
+            if(results.isOk){
+                const data = Array.isArray(results.body) ? results.body : [];
+                setData(data)
+            }else{
+                updateModal({message: "Error fetching " + title + " artworks", showModal: true, modalType: 'error'})
+            }
         }else{
-            console.log(results);
-            updateModal({message: "Error fetching " + title + " artworks", showModal: true, modalType: 'error'})
-        }
+            results = await fetchArtworks(title);
+            if(results.isOk){
+                const data = results.body.data
+                setData(data)
+            }else{
+                console.log(results);
+                updateModal({message: "Error fetching " + title + " artworks", showModal: true, modalType: 'error'})
+            }
+        } 
 
         setIsLoading(false)
     }
