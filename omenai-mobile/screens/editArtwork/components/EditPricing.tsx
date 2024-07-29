@@ -187,7 +187,7 @@ export default function EditPricing({art_id}: {art_id: string}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingBottom: 100
+        paddingBottom: 50
     },
     inputsContainer: {
         gap: 20,

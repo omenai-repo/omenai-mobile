@@ -57,7 +57,7 @@ export default function CuratedArtworksListing({refreshCount, limit} : {refreshC
                         renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
                             if((index + 1) === limit && showMoreButton){
                                 return(
-                                    <ViewAllCategoriesButton label='View all curated artworks'  listingType="recent" darkMode />
+                                    <ViewAllCategoriesButton label='View all curated artworks'  listingType="curated" darkMode />
                                 )
                             }
                             return(
