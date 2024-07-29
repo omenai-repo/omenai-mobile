@@ -4,18 +4,19 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from 'config/colors.config';
 import { Feather } from '@expo/vector-icons';
+import { screenName } from 'constants/screenNames.constants';
 
 type ViewAllCategoriesButtonProps = {
     label: string,
-    path: string,
-    darkMode?: boolean
+    darkMode?: boolean,
+    listingType: artworkListingType
 }
 
-export default function ViewAllCategoriesButton({label, path, darkMode}: ViewAllCategoriesButtonProps) {
+export default function ViewAllCategoriesButton({label, darkMode, listingType}: ViewAllCategoriesButtonProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
-        <TouchableOpacity onPress={() => navigation.navigate(path)}>
+        <TouchableOpacity onPress={() => navigation.navigate(screenName.artworkCategories, {title: listingType})}>
             <View style={[styles.container, darkMode && {borderColor: colors.white}]}>
                 <Text style={[{fontSize: 14}, darkMode && {color: colors.white}]}>{label}</Text>
                 <Feather name='arrow-right' size={18} style={[darkMode && {color: colors.white}]} />

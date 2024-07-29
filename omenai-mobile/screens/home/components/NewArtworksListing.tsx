@@ -58,7 +58,7 @@ export default function NewArtworksListing({refreshCount, limit} : {refreshCount
                     renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
                         if((index + 1) === data.length && showMoreButton){
                             return(
-                                <ViewAllCategoriesButton label='View all new artworks' path={screenName.catalog} />
+                                <ViewAllCategoriesButton label='View all new artworks' listingType="recent" />
                             )
                         }
                         return(

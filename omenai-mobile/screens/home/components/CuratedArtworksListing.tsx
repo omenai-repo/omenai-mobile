@@ -15,6 +15,7 @@ export default function CuratedArtworksListing({refreshCount, limit} : {refreshC
     const [isLoading, setIsLoading] = useState(false)
 
     const [data, setData] = useState<any[]>([]);
+    const [showMoreButton, setshowMoreButton] = useState(false);
 
     useEffect(() => {
         handleFetchArtworks()
@@ -27,7 +28,13 @@ export default function CuratedArtworksListing({refreshCount, limit} : {refreshC
 
         if(results.isOk){
             const data = Array.isArray(results.body) ? results.body : [];
-            setData(data.splice(0,limit))
+            if(data.length <= 20){
+                setData(data)
+                setshowMoreButton(false)
+            }else{
+                setData(data.splice(0,limit))
+                setshowMoreButton(true)
+            }
         }else{
             console.log(results)
         }
@@ -48,9 +55,9 @@ export default function CuratedArtworksListing({refreshCount, limit} : {refreshC
                     <FlatList
                         data={data}
                         renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
-                            if((index + 1) === limit){
+                            if((index + 1) === limit && showMoreButton){
                                 return(
-                                    <ViewAllCategoriesButton label='View all artworks' path={screenName.catalog} darkMode />
+                                    <ViewAllCategoriesButton label='View all curated artworks'  listingType="recent" darkMode />
                                 )
                             }
                             return(

@@ -27,6 +27,7 @@ export const screenName = {
     checkout: 'checkout',
     connectStripe: 'connect-stripe',
     artworksMedium: 'artworks-medium',
+    artworkCategories: 'artwork-categories',
     gallery: {
         overview: 'Overview',
         artworks: 'Artworks',
