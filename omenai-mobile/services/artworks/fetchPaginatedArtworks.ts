@@ -28,7 +28,8 @@ export async function fetchPaginatedArtworks(page: number, filters?: any) {
             isOk: false,
             body: {message: 'Error loading artworks'},
             data: [],
-            count: 1
+            count: 1,
+            page: 1
         }
     }
 }
