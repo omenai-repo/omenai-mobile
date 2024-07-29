@@ -9,6 +9,7 @@ import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { fetchArtworks } from 'services/artworks/fetchArtworks';
 import { useModalStore } from 'store/modal/modalStore';
+import ShowMoreButton from 'components/buttons/ShowMoreButton';
 
 export default function ArtworkCategories() {
     const route = useRoute()
@@ -55,9 +56,7 @@ export default function ArtworkCategories() {
                     }
                 >
                 <ArtworksListing data={data} />
-                <View>
-                    <Text>Load more</Text>
-                </View>
+                <ShowMoreButton />
                 <View style={{height: 300}} />
             </ScrollView>
             }
