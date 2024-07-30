@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import LottieView from 'lottie-react-native';
 import loaderAnimation from '../../assets/other/loader-animation.json';
 
-export default function Loader() {
+export default function Loader({size = 200}:{size?: number}) {
     const animation = useRef(null);
 
     return (
@@ -12,8 +12,8 @@ export default function Loader() {
                 autoPlay
                 ref={animation}
                 style={{
-                    width: 200,
-                    height: 200
+                    width: size,
+                    height: size
                 }}
                 source={loaderAnimation}
             />
