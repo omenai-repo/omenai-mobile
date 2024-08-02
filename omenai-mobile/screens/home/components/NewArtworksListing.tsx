@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { screenName } from 'constants/screenNames.constants';
 import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
+import EmptyArtworks from 'components/general/EmptyArtworks';
 
 export default function NewArtworksListing({refreshCount, limit} : {refreshCount?: number, limit: number}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -52,7 +53,8 @@ export default function NewArtworksListing({refreshCount, limit} : {refreshCount
                     <Feather name='chevron-right' color={colors.grey} size={20} />
                 </View>
             </TouchableOpacity>
-            {isLoading ? <ArtworkCardLoader /> :
+            {isLoading && <ArtworkCardLoader /> }
+            {(!isLoading && data.length > 0) &&
                 <FlatList
                     data={data}
                     renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
@@ -81,6 +83,9 @@ export default function NewArtworksListing({refreshCount, limit} : {refreshCount
                     style={{marginTop: 20}}
                 />
             }
+            {(!isLoading && data.length < 1) && (
+                <EmptyArtworks size={70} writeUp='No new artworks at the moment' />
+            )}
         </View>
     )
 }
