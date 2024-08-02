@@ -43,6 +43,7 @@ export default function Catalog() {
 
     useEffect(() => {
         handleFecthArtworks()
+        updatePaginationCount("reset")
     }, [reloadCount])
 
     const handleFecthArtworks = async () => {
@@ -50,7 +51,7 @@ export default function Catalog() {
         clearAllFilters()
         setArtworks([])
         const response = await fetchPaginatedArtworks(
-            paginationCount,
+            1,
             {"medium": [], "price": [], "rarity": [], "year": []}
         );
         if (response?.isOk) {
@@ -63,37 +64,26 @@ export default function Catalog() {
     };
 
     const handlePagination = async (type: "dec" | "inc") => {
-        setIsLoading(true)
-        if(type === "dec"){
-            const response = await fetchPaginatedArtworks(
-                paginationCount - 1,
-                filterOptions
-              );
-              if (response?.isOk) {
-                setArtworks(response.data);
-                updatePaginationCount(type);
-                setPageCount(response.count);
-              } else {
-                //throw error
-                updateModal({message: response?.message, showModal: true, modalType: 'error'})
-              }
-            } else {
-              const response = await fetchPaginatedArtworks(
-                paginationCount + 1,
-                filterOptions
-              );
-              if (response?.isOk) {
-                setArtworks(response.data);
-                updatePaginationCount(type);
-                setPageCount(response.count);
-              } else {
-                //throw error
-                console.log(response)
-                updateModal({message: response?.message, showModal: true, modalType: 'error'})
-            }
-        }
+        setLoadingmore(true)
 
-        setIsLoading(false);
+        const response = await fetchPaginatedArtworks(
+            paginationCount + 1,
+            filterOptions
+        );
+        if (response?.isOk) {
+            const arr = [...artworks, ...response.data];
+
+            setArtworks(arr);
+            updatePaginationCount(type);
+            setPageCount(response.count);
+        } else {
+            //throw error
+            console.log(response)
+            updateModal({message: response?.message, showModal: true, modalType: 'error'})
+        }
+        
+
+        setLoadingmore(false);
     }
 
     return (
@@ -117,7 +107,12 @@ export default function Catalog() {
                                 }
                             >
                                 <ArtworksListing data={artworks} />
-                                <Pagination count={pageCount} onPress={handlePagination} currentScreen={paginationCount} />
+                                <Pagination 
+                                    count={pageCount} 
+                                    onPress={handlePagination} 
+                                    currentScreen={paginationCount} 
+                                    isLoading={loadingMore}
+                                />
                                 <View style={{height: 300}} />
                             </ScrollView>
                         }
