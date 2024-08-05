@@ -27,16 +27,15 @@ export default function TrendingArtworks({refreshCount, limit} : {refreshCount?:
     const handleFetchArtworks = async () => {
         setIsLoading(true)
 
-        const results = await fetchArtworks("trending");
+        const results = await fetchArtworks({listingType: "trending", page: 1});
 
         if(results.isOk){
-            const data = results.body.data
+            const resData = results.body.data
+
+            setData(resData)
             
-            if(data.length <= 20){
-                setData(data)
-                setshowMoreButton(false)
-            }else{
-                setData(data.splice(0,limit))
+            if(resData.length >= 20){
+                setData(resData.splice(0,limit))
                 setshowMoreButton(true)
             }
         }else{
@@ -48,7 +47,7 @@ export default function TrendingArtworks({refreshCount, limit} : {refreshCount?:
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => navigation.navigate(screenName.catalog)}>
+            <TouchableOpacity onPress={() => navigation.navigate(screenName.artworkCategories, {title: "trending"})}>
                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
                     <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Trending Artworks</Text>
                     <Feather name='chevron-right' color={colors.grey} size={20} />

@@ -1,6 +1,6 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
 
-export async function fetchArtworks(listingType: artworkListingType){
+export async function fetchArtworks({listingType, page}: {listingType: artworkListingType, page: number}){
     
     let url = ''
     if(listingType === 'trending') url = apiUrl + '/api/artworks/getTrendingArtworks'
@@ -8,10 +8,11 @@ export async function fetchArtworks(listingType: artworkListingType){
 
     try {
         const response = await fetch(url, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            body: JSON.stringify({ page }),
         })
         .then(async (res) => {
             const ParsedResponse = {
