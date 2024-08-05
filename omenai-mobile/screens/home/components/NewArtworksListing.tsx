@@ -26,16 +26,15 @@ export default function NewArtworksListing({refreshCount, limit} : {refreshCount
     const handleFetchArtworks = async () => {
         setIsLoading(true)
 
-        const results = await fetchArtworks("recent");
+        const results = await fetchArtworks({listingType: "recent", page: 1});
 
         if(results.isOk){
-            const data = results.body.data
+            const resData = results.body.data
+
+            setData(resData)
             
-            if(data.length <= 20){
-                setData(data)
-                setshowMoreButton(false)
-            }else{
-                setData(data.splice(0,limit))
+            if(resData.length >= 20){
+                setData(resData.splice(0,limit))
                 setshowMoreButton(true)
             }
         }else{
@@ -47,7 +46,7 @@ export default function NewArtworksListing({refreshCount, limit} : {refreshCount
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => navigation.navigate(screenName.catalog)}>
+            <TouchableOpacity onPress={() => navigation.navigate(screenName.artworkCategories, {title: "recent"})}>
                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
                     <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>New artworks for you</Text>
                     <Feather name='chevron-right' color={colors.grey} size={20} />

@@ -2,7 +2,7 @@ import filterArtObjectsByMedium from "utils/filterArtObjectsByMedium";
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { getAsyncData } from "utils/asyncStorage.utils";
 
-export async function fetchCuratedArtworks(){
+export async function fetchCuratedArtworks({page}:{page: number}){
 
     let preferences = [];
     const userSession = await getAsyncData('userSession')
@@ -14,10 +14,11 @@ export async function fetchCuratedArtworks(){
 
     try {
         const response = await fetch(url, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            body: JSON.stringify({ page }),
         })
         .then(async (res) => {
             const result = await res.json();
