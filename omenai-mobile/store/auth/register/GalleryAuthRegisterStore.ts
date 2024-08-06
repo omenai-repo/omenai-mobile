@@ -15,12 +15,14 @@ type GalleryAuthRegisterStoreType = {
     setIsLoading: (e: boolean) => void,
     selectedTerms: number[],
     setSelectedTerms: (e: number[]) => void,
-    clearState: () => void
+    clearState: () => void,
+    galleryLogo: any,
+    setGalleryLogo: (image: any) => void,
 }
 
 export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
     (set, get) => ({
-        pageIndex: 0,
+        pageIndex: 1,
         setPageIndex: (e: number) => {
             set({pageIndex: e})
         },
@@ -83,6 +85,8 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
                     description: ""
                 }
             })
-        }
+        },
+        galleryLogo: null,
+        setGalleryLogo: (logo: any) => { set({galleryLogo: logo}) },
     })
 )

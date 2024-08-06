@@ -15,3 +15,12 @@ promotional_client
   .setProject(process.env.PUBLIC_APPWRITE_PROMOTIONAL_CLIENT_ID!);
 
 export const promotional_storage = new Storage(promotional_client);
+
+// Gallery logo upload
+const gallery_logo_client = new Client();
+
+gallery_logo_client
+  .setEndpoint(endpoint)
+  .setProject(process.env.PUBLIC_APPWRITE_GALLERY_LOGO_CLIENT_ID!);
+
+export const gallery_logo_storage = new Storage(gallery_logo_client);
