@@ -6,11 +6,18 @@ import { validate } from '../../../../lib/validations/validatorGroup';
 import Input from '../../../../components/inputs/Input';
 import BackFormButton from '../../../../components/buttons/BackFormButton';
 import LargeInput from '../../../../components/inputs/LargeInput';
+import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
+import { country_codes } from 'json/country_alpha_2_codes';
+
+const transformedCountries = country_codes.map(item => ({
+    value: item.key,
+    label: item.name
+  }));
 
 export default function ExtraGalleryDetailsInput() {
-    const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({admin: "", location: "", description: ""});
+    const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({admin: "", location: "", description: "", country: ""});
 
-    const {pageIndex, setPageIndex, galleryRegisterData, setAdmin, setLocation, setDescription} = useGalleryAuthRegisterStore();
+    const {pageIndex, setPageIndex, galleryRegisterData, setAdmin, setLocation, country, setCountry, setDescription} = useGalleryAuthRegisterStore();
 
     const checkIsDisabled = () => {
         // Check if there are no error messages and all input fields are filled
@@ -18,7 +25,8 @@ export default function ExtraGalleryDetailsInput() {
         const areAllFieldsFilled = Object.values({
             admin: galleryRegisterData.admin,
             location: galleryRegisterData.location,
-            description: galleryRegisterData.description
+            description: galleryRegisterData.description,
+            country: country
         }).every((value) => value !== "");
 
         return !(isFormValid && areAllFieldsFilled);
@@ -45,11 +53,18 @@ export default function ExtraGalleryDetailsInput() {
                     handleBlur={() => handleValidationChecks('admin', galleryRegisterData.admin)}
                     errorMessage={formErrors.admin}
                 />
+                <CustomSelectPicker
+                    data={transformedCountries}
+                    placeholder='Select country of operation'
+                    value={country}
+                    handleSetValue={setCountry}
+                    label='Country of operation'
+                />
                 <Input
-                    label={`Gallery Location`}
+                    label={`Gallery address`}
                     keyboardType='default' 
                     onInputChange={setLocation} 
-                    placeHolder='Enter location of gallery'
+                    placeHolder='Enter gallery address'
                     value={galleryRegisterData.location}
                     handleBlur={() => handleValidationChecks('location', galleryRegisterData.location)}
                     errorMessage={formErrors.location}

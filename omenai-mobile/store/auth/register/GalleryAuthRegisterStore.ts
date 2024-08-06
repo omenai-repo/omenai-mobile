@@ -11,6 +11,8 @@ type GalleryAuthRegisterStoreType = {
     setAdmin: (e: string) => void,
     setLocation: (e: string) => void,
     setDescription: (e: string) => void,
+    country: string,
+    setCountry: (e: string) => void,
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
     selectedTerms: number[],
@@ -22,7 +24,7 @@ type GalleryAuthRegisterStoreType = {
 
 export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
     (set, get) => ({
-        pageIndex: 1,
+        pageIndex: 0,
         setPageIndex: (e: number) => {
             set({pageIndex: e})
         },
@@ -58,6 +60,10 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
         setLocation: (location: string) => {
             const data = get().galleryRegisterData
             set({galleryRegisterData: {...data, location}})
+        },
+        country: '',
+        setCountry: (country: string) => {
+            set({country: country})
         },
         setDescription: (description: string) => {
             const data = get().galleryRegisterData
