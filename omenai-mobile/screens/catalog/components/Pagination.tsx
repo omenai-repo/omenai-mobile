@@ -7,7 +7,7 @@ type PaginationTypes = "inc" | "dec"
 
 type PaginationProps = {
     count: number,
-    currentScreen: number,
+    currentScreen?: number,
     onPress: (e: PaginationTypes) => void,
     isLoading: boolean
 }
