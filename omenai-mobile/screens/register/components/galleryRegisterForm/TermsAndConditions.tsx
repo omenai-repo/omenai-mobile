@@ -11,28 +11,67 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
 import { useModalStore } from 'store/modal/modalStore'
+import uploadGalleryLogoContent from './uploadGalleryLogo'
+import { gallery_logo_storage } from 'appWrite'
 
 export default function TermsAndConditions() {
     const navigation = useNavigation<StackNavigationProp<any>>();
-    const {selectedTerms, setSelectedTerms, pageIndex, setPageIndex, isLoading, setIsLoading, galleryRegisterData, clearState} = useGalleryAuthRegisterStore()
+    const {selectedTerms, setSelectedTerms, pageIndex, setPageIndex, isLoading, setIsLoading, country, galleryLogo, galleryRegisterData, clearState} = useGalleryAuthRegisterStore()
 
     const { updateModal } = useModalStore();
 
     const handleSubmit = async () => {
         setIsLoading(true);
 
-        const data = {
-            ...galleryRegisterData
+        const {
+            name,
+            email,
+            password,
+            admin,
+            location,
+            description
+        } = galleryRegisterData
+
+        if (galleryLogo === null) return;
+
+        const imageparams = {
+            name: galleryLogo.assets[0].fileName,
+            size: galleryLogo.assets[0].fileSize,
+            uri: galleryLogo.assets[0].uri,
+            type: 'png'
         }
 
-        const results = await registerAccount(data, 'gallery');
-        
-        if(results?.isOk){
-            const resultsBody = results?.body
-            clearState();
-            navigation.navigate(screenName.verifyEmail, {account: {id: resultsBody.id, type: 'gallery'}})
-        }else{
-            updateModal({message:results?.body.message, modalType: "error", showModal: true})
+        const fileUploaded = await uploadGalleryLogoContent(imageparams);
+
+        if (fileUploaded) {
+            let file: { bucketId: string; fileId: string } = {
+                bucketId: fileUploaded.bucketId,
+                fileId: fileUploaded.$id,
+            };
+
+            const payload = {
+                name,
+                email,
+                password,
+                admin,
+                location: {address: location, country},
+                description,
+                logo: file.fileId
+            }
+    
+            const results = await registerAccount(payload, 'gallery');
+            
+            if(results?.isOk){
+                const resultsBody = results?.body
+                clearState();
+                navigation.navigate(screenName.verifyEmail, {account: {id: resultsBody.data, type: 'gallery'}})
+            }else{
+                await gallery_logo_storage.deleteFile(
+                    process.env.PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
+                    file.fileId
+                );
+                updateModal({message:results?.body.message, modalType: "error", showModal: true})
+            }
         }
 
         setIsLoading(false)

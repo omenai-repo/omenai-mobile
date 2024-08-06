@@ -11,11 +11,15 @@ type GalleryAuthRegisterStoreType = {
     setAdmin: (e: string) => void,
     setLocation: (e: string) => void,
     setDescription: (e: string) => void,
+    country: string,
+    setCountry: (e: string) => void,
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
     selectedTerms: number[],
     setSelectedTerms: (e: number[]) => void,
-    clearState: () => void
+    clearState: () => void,
+    galleryLogo: any,
+    setGalleryLogo: (image: any) => void,
 }
 
 export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
@@ -57,6 +61,10 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
             const data = get().galleryRegisterData
             set({galleryRegisterData: {...data, location}})
         },
+        country: '',
+        setCountry: (country: string) => {
+            set({country: country})
+        },
         setDescription: (description: string) => {
             const data = get().galleryRegisterData
             set({galleryRegisterData: {...data, description}})
@@ -83,6 +91,8 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
                     description: ""
                 }
             })
-        }
+        },
+        galleryLogo: null,
+        setGalleryLogo: (logo: any) => { set({galleryLogo: logo}) },
     })
 )

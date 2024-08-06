@@ -4,17 +4,19 @@ import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/Gal
 import AccountDetailsInput from './AccountDetailsInput';
 import ExtraGalleryDetailsInput from './ExtraGalleryDetailsInput';
 import TermsAndConditions from './TermsAndConditions';
+import UploadLogo from './UploadLogo';
 
 export default function GalleryRegisterForm() {
     const { pageIndex } = useGalleryAuthRegisterStore();
 
-    if(pageIndex === 0) return <AccountDetailsInput />
+    const forms = [
+        <AccountDetailsInput />,
+        <ExtraGalleryDetailsInput />,
+        <UploadLogo />,
+        <TermsAndConditions />
+    ]
     
-    if(pageIndex === 1) return <ExtraGalleryDetailsInput />
-
-    if(pageIndex === 2) return <TermsAndConditions />
-
-    return
+    return forms[pageIndex]
 }
 
 const styles = StyleSheet.create({})
