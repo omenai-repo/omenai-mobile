@@ -21,10 +21,6 @@ export default function UploadLogo() {
         }
     };
 
-    const checkIsDisabled = () => {
-        
-    }
-
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={() => {
