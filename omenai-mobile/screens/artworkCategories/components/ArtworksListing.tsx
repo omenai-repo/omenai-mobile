@@ -18,7 +18,7 @@ export default function ArtworksListing({data}: {data: any[]}) {
         }else if(data.length > 0){
             setListing([data, []])
         }
-    }, [])
+    }, [data])
 
     if(data.length === 0)
     return(
