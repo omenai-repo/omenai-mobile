@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ImageBackground } from 'react-native'
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import ArtworkCard from 'components/artwork/ArtworkCard';
@@ -10,9 +10,12 @@ import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
 import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
 import { screenName } from 'constants/screenNames.constants';
 import EmptyArtworks from 'components/general/EmptyArtworks';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 export default function CuratedArtworksListing({refreshCount, limit} : {refreshCount?: number, limit: number}) {
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     const [data, setData] = useState<any[]>([]);
     const [showMoreButton, setshowMoreButton] = useState(false);
@@ -24,15 +27,15 @@ export default function CuratedArtworksListing({refreshCount, limit} : {refreshC
     const handleFetchArtworks = async () => {
         setIsLoading(true)
 
-        const results = await fetchCuratedArtworks();
+        const results = await fetchCuratedArtworks({page: 1});
 
         if(results.isOk){
-            const data = Array.isArray(results.body) ? results.body : [];
-            if(data.length <= 20){
-                setData(data)
-                setshowMoreButton(false)
-            }else{
-                setData(data.splice(0,limit))
+            const resData = Array.isArray(results.body) ? results.body : [];
+
+            setData(resData)
+
+            if(resData.length >= 20){
+                setData(resData.splice(0,limit))
                 setshowMoreButton(true)
             }
         }else{
@@ -45,10 +48,10 @@ export default function CuratedArtworksListing({refreshCount, limit} : {refreshC
     return (
         <ImageBackground source={curatedBg} resizeMode="cover" style={styles.container}>
             <View style={styles.mainContainer}>
-                <View style={{paddingHorizontal: 20}}>
+                <TouchableOpacity activeOpacity={0.7} style={{paddingHorizontal: 20}} onPress={() => navigation.navigate(screenName.artworkCategories, {title: "curated"})}>
                     <Text style={{fontSize: 18, fontWeight: 500, flex: 1, color: colors.white}}>Artworks based on your interests</Text>
                     <Text style={{fontSize: 14, color: colors.white, marginTop: 10, opacity: 0.9}}>Explore artworks based off your interests and interactions within the past days</Text>
-                </View>
+                </TouchableOpacity>
                 <View style={{marginTop: 10}}>
                 {isLoading && <ArtworkCardLoader /> }
                 {(!isLoading && data.length > 0) &&
