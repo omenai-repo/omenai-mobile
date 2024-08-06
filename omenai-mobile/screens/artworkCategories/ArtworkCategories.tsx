@@ -11,6 +11,7 @@ import { fetchArtworks } from 'services/artworks/fetchArtworks';
 import { useModalStore } from 'store/modal/modalStore';
 import ShowMoreButton from 'components/buttons/ShowMoreButton';
 import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
+import Pagination from 'screens/catalog/components/Pagination';
 
 export default function ArtworkCategories() {
     const route = useRoute()
@@ -18,6 +19,8 @@ export default function ArtworkCategories() {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState([]);
+    const [pageNum, setPageNum] = useState(1);
+    const [loadingMore, setLoadingmore] = useState<boolean>(false);
 
     const { updateModal } = useModalStore();
 
@@ -27,29 +30,62 @@ export default function ArtworkCategories() {
 
     const handleFetchArtworks = async () => {
         setIsLoading(true)
-
+        
         let results
 
         if(title === "curated"){
-            results = await fetchCuratedArtworks();
+            results = await fetchCuratedArtworks({page: pageNum});
             if(results.isOk){
-                const data = Array.isArray(results.body) ? results.body : [];
-                setData(data)
+                const resData = Array.isArray(results.body) ? results.body : [];
+                const newArr = [...data, ...resData]
+
+                setData(newArr)
             }else{
                 updateModal({message: "Error fetching " + title + " artworks", showModal: true, modalType: 'error'})
             }
         }else{
-            results = await fetchArtworks(title);
+            results = await fetchArtworks({listingType: title, page: pageNum});
             if(results.isOk){
-                const data = results.body.data
-                setData(data)
+                const resData = results.body.data
+                const newArr = [...data, ...resData]
+                setData(newArr)
             }else{
-                console.log(results);
                 updateModal({message: "Error fetching " + title + " artworks", showModal: true, modalType: 'error'})
             }
         } 
 
         setIsLoading(false)
+        setLoadingmore(false)
+    };
+
+    const handlePagination = async ()  => {
+        setLoadingmore(true)
+
+        let response;
+
+        if(title === "curated"){
+            response = await fetchCuratedArtworks({page: pageNum + 1});
+            if(response.isOk){
+                const responseData = Array.isArray(response.body) ? response.body : [];
+                const newArr = [...data, ...responseData]
+
+                setData(newArr)
+            }else{
+                //throw error
+            }
+        }else{
+            response = await fetchArtworks({listingType: title, page: pageNum + 1});
+            if(response.isOk){
+                const responseData = response.body.data
+                const newArr = [...data, ...responseData]
+                setData(newArr);
+            }else{
+                //throw error
+            }
+        }
+
+        setPageNum(prev => prev + 1);
+        setLoadingmore(false)
     }
 
     return (
@@ -68,7 +104,14 @@ export default function ArtworkCategories() {
                     }
                 >
                 <ArtworksListing data={data} />
-                <ShowMoreButton />
+                <Pagination
+                    count={pageNum} 
+                    onPress={() => {
+                        setPageNum(prev => prev + 1);
+                        handlePagination()
+                    }}
+                    isLoading={loadingMore}
+                />
                 <View style={{height: 300}} />
             </ScrollView>
             }
