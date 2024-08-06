@@ -23,6 +23,7 @@ type GallerySignupData = {
   location: string;
   admin: string;
   description: string;
+  country: string
 };
 
 type GalleryRegisterData = Omit<GallerySignupData, "confirmPassword">;
