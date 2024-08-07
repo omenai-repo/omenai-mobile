@@ -11,11 +11,12 @@ type CustomSelectPickerProps = {
     handleSetValue: (e: string) => void,
     handleBlur?: () => void,
     errorMessage?: string,
+    zIndex?: number
 }
 
 type SetStateValue<S> = ((prevState: S) => S);
 
-export default function CustomSelectPicker({value, data, label, placeholder, handleSetValue, handleBlur, errorMessage}: CustomSelectPickerProps) {
+export default function CustomSelectPicker({value, data, label, placeholder, handleSetValue, handleBlur, errorMessage, zIndex = 200}: CustomSelectPickerProps) {
     const [open, setOpen] = useState(false);
 
     const [localValue, setLocalValue] = useState(null)
@@ -27,7 +28,7 @@ export default function CustomSelectPicker({value, data, label, placeholder, han
     }, [localValue])
 
     return (
-        <View style={{zIndex: 200}}>
+        <View style={{zIndex: zIndex}}>
             <Text style={styles.label}>{label}</Text>
             <DropDownPicker
                 open={open}
