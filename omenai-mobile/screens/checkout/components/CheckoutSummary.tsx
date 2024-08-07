@@ -7,17 +7,12 @@ export default function CheckoutSummary() {
     return (
         <View style={styles.container}>
             <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>Checkout Summary</Text>
-            <Text style={{fontSize: 16, color: colors.primary_black, marginTop: 10}}>Omenai Gallery annual Premium Subscription</Text>
+            <Text style={{fontSize: 16, color: colors.primary_black, marginTop: 10}}>Omenai Pro subscription</Text>
             <View style={styles.listingContainer}>
                 <Divider />
                 <View style={{flexDirection: 'row', gap: 10}}>
-                    <Text style={{fontSize: 14, color: colors.grey, flex: 1}}>Subtotal</Text>
-                    <Text style={{fontSize: 16, color: colors.primary_black}}>$4,000</Text>
-                </View>
-                <Divider />
-                <View style={{flexDirection: 'row', gap: 10}}>
-                    <Text style={{fontSize: 14, color: colors.grey, flex: 1}}>Subtotal</Text>
-                    <Text style={{fontSize: 16, color: colors.primary_black}}>$4,000</Text>
+                    <Text style={{fontSize: 14, color: colors.grey, flex: 1}}>Due today</Text>
+                    <Text style={{fontSize: 16, color: colors.primary_black}}>$250</Text>
                 </View>
             </View>
         </View>
@@ -32,7 +27,8 @@ const styles = StyleSheet.create({
         borderColor: colors.grey50,
         borderRadius: 10,
         marginTop: 40,
-        marginBottom: 100
+        marginBottom: 100,
+        zIndex: 20
     },
     listingContainer: {
         marginTop: 15,

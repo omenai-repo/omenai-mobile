@@ -2,6 +2,8 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react';
 import Input from 'components/inputs/Input';
 import LongBlackButton from 'components/buttons/LongBlackButton';
+import { Entypo, Feather, Fontisto } from '@expo/vector-icons';
+import { colors } from 'config/colors.config';
 
 type cardInfoProps = {
     name: string,
@@ -19,8 +21,14 @@ export default function CardInfo({handleNext}:CardInfoProps) {
     const [cardInfo, setCardInfo] = useState<cardInfoProps>({name: '', cardNumber: '', expiryMonth: '', year: '', cvv: ''});
 
     return (
-        <View style={styles.container}>
-            <Text style={{fontSize: 16}}>Enter your card information</Text>
+        <View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={{fontSize: 16, flex: 1}}>Payment Method</Text>
+                <View style={styles.secureForm}>
+                    <Fontisto name='locked' size={10} />
+                    <Text style={{fontSize: 12, color: colors.primary_black}}>Secure form</Text>
+                </View>
+            </View>
             <View style={styles.formContainer}>
                 <Input
                     label='Card name'
@@ -61,19 +69,21 @@ export default function CardInfo({handleNext}:CardInfoProps) {
             </View>
             <LongBlackButton
                 onClick={handleNext}
-                value='Proceed'
+                value='Submit'
             />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-
-    },
     formContainer: {
         gap: 20,
-        marginTop: 30,
+        marginTop: 20,
         marginBottom: 30
+    },
+    secureForm: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5
     }
 })
