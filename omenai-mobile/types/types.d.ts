@@ -273,3 +273,11 @@ type CreateOrderModelTypes = {
   order_accepted: OrderAcceptedStatusTypes;
   delivery_confirmed: boolean;
 };
+
+type PlanProps = {
+  name: string;
+  pricing: {annual_price: string, monthly_price: string}
+  benefits: string[];
+  currency: string,
+  plan_id: string
+};
