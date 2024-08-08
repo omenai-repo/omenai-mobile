@@ -1,27 +1,32 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { PlanProps } from 'constants/plan_details'
 import { colors } from 'config/colors.config'
 import { Feather } from '@expo/vector-icons'
 import LongBlackButton from 'components/buttons/LongBlackButton'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
+import { formatPrice } from 'utils/priceFormatter'
+import { getCurrencySymbol } from 'utils/getCurrencySymbol'
+
 
 export default function Plan({
     name,
-    monthly_price,
-    yearly_price,
+    pricing,
     benefits,
     tab,
+    currency,
+    plan_id
 }: PlanProps & { tab: "monthly" | "yearly" }) {
     const navigation = useNavigation<StackNavigationProp<any>>();
+
+    const currency_symbol = getCurrencySymbol(currency);
 
     return (
         <View style={styles.container}>
             <Text style={styles.name}>{name}</Text>
             <View style={styles.priceContainer}>
-                <Text style={styles.amount}>{tab === "monthly" ? `${monthly_price.text}` : `${yearly_price.text}`}</Text>
+                <Text style={styles.amount}>{currency_symbol}{tab === "monthly" ? `${pricing.monthly_price}` : `${pricing.annual_price}`}</Text>
                 <Text style={styles.tabDurationText}>{tab === "monthly" ? `/mo` : `/yr`}</Text>
             </View>
             <Text style={styles.benefitsText}>
@@ -39,7 +44,7 @@ export default function Plan({
             </View>
             <LongBlackButton
                 value={'Get started with ' + name}
-                onClick={() => navigation.navigate(screenName.checkout)}
+                onClick={() => navigation.navigate(screenName.checkout, {plan_id, tab})}
             />
         </View>
     )
