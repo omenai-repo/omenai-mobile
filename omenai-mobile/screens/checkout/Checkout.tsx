@@ -9,9 +9,15 @@ import FinishTransaction from './components/forms/FinishTransaction'
 import CheckoutSummary from './components/CheckoutSummary'
 import AvsNoauthInput from './components/forms/AvsNoauthInput'
 import AuthPinInput from './components/forms/AuthPinInput'
+import { useRoute } from '@react-navigation/native'
 
 export default function Checkout() {
+    const route = useRoute();
     const [activeIndex, setActiveIndex] = useState<number>(0);
+
+    const {plan_id, tab} = route.params as {plan_id: string, tab: string}
+
+    
 
     const forms = [
         <CardInfo handleNext={() => setActiveIndex(3)} />,
