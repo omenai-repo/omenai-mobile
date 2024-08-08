@@ -59,7 +59,7 @@ export default function Billing() {
                 )}
                 {(!loading && plans.length === 0) && (
                     <EmptyArtworks
-                        size={30}
+                        size={70}
                         writeUp='No plans at the moment, reload or check again later'
                     />
                 )}
