@@ -273,3 +273,28 @@ type CreateOrderModelTypes = {
   order_accepted: OrderAcceptedStatusTypes;
   delivery_confirmed: boolean;
 };
+
+type PlanProps = {
+  name: string;
+  pricing: {annual_price: string, monthly_price: string}
+  benefits: string[];
+  currency: string,
+  plan_id: string
+};
+
+type ValidateChargeTypes = "redirect" | "pin" | "avs_noauth" | ""
+type FinalChargeAuthTypes = "redirect" | "otp" | ""
+
+type FLWDirectChargeDataTypes = CardInputTypes & {
+  card: string;
+  cvv: string;
+  month: string;
+  year: string;
+  tx_ref: string;
+  amount: string;
+  customer: {
+    name: string;
+    email: string;
+  };
+  redirect: string;
+};

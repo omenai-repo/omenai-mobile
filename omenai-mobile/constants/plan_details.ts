@@ -1,9 +1,4 @@
-export type PlanProps = {
-  name: string;
-  monthly_price: { value: number; text: string };
-  yearly_price: { value: number; text: string };
-  benefits: string[];
-};
+
 export const plan_details: PlanProps[] = [
   {
     name: "Basic",
@@ -15,6 +10,7 @@ export const plan_details: PlanProps[] = [
       "International payment management",
       "Custom tailored Performance dashboard",
     ],
+    currency: 'USD'
   },
   {
     name: "Pro",
@@ -26,6 +22,7 @@ export const plan_details: PlanProps[] = [
       "Unlimited artwork uploads monthly",
       "Priority customer support",
     ],
+    currency: 'USD'
   },
   {
     name: "Premium",
@@ -37,5 +34,6 @@ export const plan_details: PlanProps[] = [
       "`Price on demand` feature on artworks",
       "Priority feature on hompage",
     ],
+    currency: 'USD'
   },
 ];
