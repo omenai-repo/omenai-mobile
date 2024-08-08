@@ -281,3 +281,6 @@ type PlanProps = {
   currency: string,
   plan_id: string
 };
+
+type ValidateChargeTypes = "redirect" | "pin" | "avs_noauth" | ""
+type FinalChargeAuthTypes = "redirect" | "otp" | ""

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import Input from 'components/inputs/Input';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import { Entypo, Feather, Fontisto } from '@expo/vector-icons';
@@ -14,10 +14,12 @@ type cardInfoProps = {
 }
 
 type CardInfoProps = {
-    handleNext: () => void
+    handleNext: () => void,
+    plan: PlanProps,
+    updateAuthorization: Dispatch<SetStateAction<"redirect" | "avs_noauth" | "pin" | "">>
 }
 
-export default function CardInfo({handleNext}:CardInfoProps) {
+export default function CardInfo({handleNext, plan, updateAuthorization}:CardInfoProps) {
     const [cardInfo, setCardInfo] = useState<cardInfoProps>({name: '', cardNumber: '', expiryMonth: '', year: '', cvv: ''});
 
     return (
