@@ -44,6 +44,7 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
         const ref = generateAlphaDigit(7);
         if (hasEmptyString(cardInfo)){
             //theow error
+            updateModal({message: "Make sure all input fields are filled", modalType: 'error', showModal: true})
         }else{
             const data: FLWDirectChargeDataTypes & { name: string } = {
                 name: cardInfo.name,

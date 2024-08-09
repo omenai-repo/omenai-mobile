@@ -298,3 +298,17 @@ type FLWDirectChargeDataTypes = CardInputTypes & {
   };
   redirect: string;
 };
+
+type AvsAuthorizationData = {
+  mode: "avs_noauth";
+  country?: string;
+  state?: string;
+  city?: string;
+  zip?: string;
+  address?: string;
+};
+
+type PinAuthorizationData = {
+  mode: "pin";
+  pin: string;
+};

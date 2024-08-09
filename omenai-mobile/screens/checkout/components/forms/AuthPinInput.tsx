@@ -1,10 +1,15 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import { Fontisto } from '@expo/vector-icons'
 import { colors } from 'config/colors.config'
 import LongBlackButton from 'components/buttons/LongBlackButton';
 
-export default function AuthPinInput() {
+type AuthPinInputProps = {
+    handleNext: () => void;
+    updateFinalAuthorization: Dispatch<SetStateAction<"otp" | "redirect" | "">>;
+}
+
+export default function AuthPinInput({handleNext, updateFinalAuthorization}:AuthPinInputProps) {
     const [pin, setpin] = useState('');
 
     const handlePinChange = (value: string) => {

@@ -27,6 +27,10 @@ export default function CheckoutStepper({plan}:{plan: PlanProps}) {
         );
     };
 
+    const handlePinClick = () => {
+        !isLastStep && setActiveIndex((cur) => cur + 1);
+    };
+
     return (
         <View style={{flex: 1}}>
             {activeIndex === 0 && (
@@ -34,6 +38,18 @@ export default function CheckoutStepper({plan}:{plan: PlanProps}) {
                     handleNext={handleNext}
                     updateAuthorization={setValidateChargeAuthorization}
                     plan={plan}
+                />
+            )}
+            {validateChargeAuthorization === "pin" && (
+                <AuthPinInput
+                    handleNext={handlePinClick}
+                    updateFinalAuthorization={setFinalChargeAuthorization}
+                />
+            )}
+            {validateChargeAuthorization === "avs_noauth" && (
+                <AvsNoauthInput
+                    updateFinalAuthorization={setFinalChargeAuthorization}
+                    handleNext={handleNext}
                 />
             )}
         </View>
