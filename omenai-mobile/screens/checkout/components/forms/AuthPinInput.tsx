@@ -3,6 +3,8 @@ import React, { Dispatch, SetStateAction, useState } from 'react'
 import { Fontisto } from '@expo/vector-icons'
 import { colors } from 'config/colors.config'
 import LongBlackButton from 'components/buttons/LongBlackButton';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 type AuthPinInputProps = {
     handleNext: () => void;
@@ -10,6 +12,7 @@ type AuthPinInputProps = {
 }
 
 export default function AuthPinInput({handleNext, updateFinalAuthorization}:AuthPinInputProps) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
     const [pin, setpin] = useState('');
 
     const handlePinChange = (value: string) => {

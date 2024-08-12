@@ -1,13 +1,9 @@
 import { apiUrl } from "constants/apiUrl.constants";
 
-export async function validateChargeAuthorization(
-  data: FLWDirectChargeDataTypes & {
-    authorization: PinAuthorizationData | AvsAuthorizationData;
-  }
-) {
+export async function validateCharge(data: { otp: string; flw_ref: string }) {
   try {
     const res = await fetch(
-      `${apiUrl}/api/subscriptions/subscribeUser/validateChargeAuthorization`,
+      `${apiUrl}/api/subscriptions/subscribeUser/validateCharge`,
       {
         method: "POST",
         body: JSON.stringify({ ...data }),

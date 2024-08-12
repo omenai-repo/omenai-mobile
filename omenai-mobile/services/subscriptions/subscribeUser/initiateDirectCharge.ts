@@ -1,4 +1,4 @@
-import { apiUrl } from "../../../constants/apiUrl.constants";
+import { apiUrl } from "constants/apiUrl.constants";
 
 export async function initiateDirectCharge(data: FLWDirectChargeDataTypes) {
   try {
