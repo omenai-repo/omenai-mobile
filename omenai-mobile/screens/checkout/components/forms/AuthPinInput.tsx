@@ -71,11 +71,9 @@ export default function AuthPinInput({handleNext, updateFinalAuthorization}:Auth
                 // redirect user
                 set_transaction_id(response.data.data.id);
                 setWebViewUrl(response.data.meta.authorization.redirect)
-                console.log('hereeeee')
             } else {
                 set_flw_ref(response.data.data.flw_ref);
                 updateFinalAuthorization(response.data.meta.authorization.mode);
-                console.log('herrr')
             }
             handleNext();
         }
