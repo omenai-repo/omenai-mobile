@@ -24,7 +24,7 @@ type cardInfoProps = {
 type CardInfoProps = {
     handleNext: () => void,
     plan: PlanProps,
-    updateAuthorization: Dispatch<SetStateAction<"redirect" | "avs_noauth" | "pin" | "">>
+    updateAuthorization: Dispatch<SetStateAction<"redirect" | "avs_noauth" | "pin" | "otp" | "">>
 }
 
 export default function CardInfo({handleNext, plan, updateAuthorization}:CardInfoProps) {
@@ -46,10 +46,11 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
             //theow error
             updateModal({message: "Make sure all input fields are filled", modalType: 'error', showModal: true})
         }else{
+            const parsedCardNumber = cardInfo.cardNumber.replace(/ /g, '')
             const data: FLWDirectChargeDataTypes & { name: string } = {
                 name: cardInfo.name,
                 cvv: cardInfo.cvv,
-                card: cardInfo.cardNumber,
+                card: parsedCardNumber,
                 month: cardInfo.expiryMonth,
                 year: cardInfo.year.slice(2, 4),
                 tx_ref: ref,
@@ -64,6 +65,7 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
             const response = await initiateDirectCharge(data);
             if (response?.isOk) {
                 if (response.data.status === "error") {
+                    console.log(response.data)
                     updateModal({message: response.data.message, showModal: true, modalType: 'error'})
                 } else {
                 console.log(response.data);

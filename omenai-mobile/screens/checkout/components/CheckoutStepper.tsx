@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CardInfo from './forms/CardInfo';
 import FinishTransaction from './forms/FinishTransaction';
 import OTPForm from './forms/OTPForm';
@@ -8,11 +8,19 @@ import AuthPinInput from './forms/AuthPinInput';
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
 import { WebView } from 'react-native-webview';
 
-export default function CheckoutStepper({plan, verificationScreen}:{plan: PlanProps, verificationScreen: boolean}) {
+type CheckoutStepperProps = {
+    plan: PlanProps, 
+    verificationScreen: boolean,
+    setVerificationScreen: (value: boolean) => void
+}
+
+export default function CheckoutStepper({plan, verificationScreen, setVerificationScreen}: CheckoutStepperProps) {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [isLastStep, setIsLastStep] = useState(false);
     const [validateChargeAuthorization, setValidateChargeAuthorization] = useState<ValidateChargeTypes>("");
     const [finalChargeAuthorization, setFinalChargeAuthorization] = useState<FinalChargeAuthTypes>("");
+
+    const { set_transaction_id } = subscriptionStepperStore();
 
     // const forms = [
     //     <CardInfo handleNext={() => setActiveIndex(3)} />,
@@ -21,6 +29,10 @@ export default function CheckoutStepper({plan, verificationScreen}:{plan: PlanPr
     //     <AvsNoauthInput />,
     //     <AuthPinInput />
     // ]
+
+    useEffect(() => {
+        console.log(validateChargeAuthorization, activeIndex)
+      }, [validateChargeAuthorization, activeIndex])
 
     const handleNext = () => {
         !isLastStep &&
@@ -42,17 +54,32 @@ export default function CheckoutStepper({plan, verificationScreen}:{plan: PlanPr
                     plan={plan}
                 />
             )}
-            {validateChargeAuthorization === "pin" && (
-                <AuthPinInput
-                    handleNext={handlePinClick}
-                    updateFinalAuthorization={setFinalChargeAuthorization}
-                />
+            {activeIndex === 1 && (
+                <View>
+                    {validateChargeAuthorization === "pin" && (
+                        <AuthPinInput
+                            handleNext={handlePinClick}
+                            updateFinalAuthorization={setValidateChargeAuthorization}
+                        />
+                    )}
+                    {validateChargeAuthorization === "avs_noauth" && (
+                        <AvsNoauthInput
+                            updateFinalAuthorization={setValidateChargeAuthorization}
+                            handleNext={handleNext}
+                        />
+                    )}
+                    
+                </View>
             )}
-            {validateChargeAuthorization === "avs_noauth" && (
-                <AvsNoauthInput
-                    updateFinalAuthorization={setFinalChargeAuthorization}
-                    handleNext={handleNext}
-                />
+            {activeIndex === 2 && (
+                <View>
+                    {validateChargeAuthorization === "otp" && (
+                        <OTPForm
+                            handleNext={()=> setVerificationScreen(true)}
+                            set_id={set_transaction_id}
+                        />
+                    )}
+                </View>
             )}
             {verificationScreen && (
                 <FinishTransaction />
