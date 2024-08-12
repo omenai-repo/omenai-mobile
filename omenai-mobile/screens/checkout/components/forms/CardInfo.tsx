@@ -24,7 +24,7 @@ type cardInfoProps = {
 type CardInfoProps = {
     handleNext: () => void,
     plan: PlanProps,
-    updateAuthorization: Dispatch<SetStateAction<"redirect" | "avs_noauth" | "pin" | "">>
+    updateAuthorization: Dispatch<SetStateAction<"redirect" | "avs_noauth" | "pin" | "otp" | "">>,
 }
 
 export default function CardInfo({handleNext, plan, updateAuthorization}:CardInfoProps) {
@@ -34,7 +34,7 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
 
     const { tab }  = routes.params as {tab: string}
 
-    const { update_flw_charge_payload_data } = subscriptionStepperStore()
+    const { update_flw_charge_payload_data, setWebViewUrl, set_transaction_id } = subscriptionStepperStore()
 
     const [cardInfo, setCardInfo] = useState<cardInfoProps>({name: '', cardNumber: '', expiryMonth: '', year: '', cvv: ''});
     const [cardInputLoading, setCardInputLoading] = useState(false);
@@ -44,11 +44,13 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
         const ref = generateAlphaDigit(7);
         if (hasEmptyString(cardInfo)){
             //theow error
+            updateModal({message: "Make sure all input fields are filled", modalType: 'error', showModal: true})
         }else{
+            const parsedCardNumber = cardInfo.cardNumber.replace(/ /g, '')
             const data: FLWDirectChargeDataTypes & { name: string } = {
                 name: cardInfo.name,
                 cvv: cardInfo.cvv,
-                card: cardInfo.cardNumber,
+                card: parsedCardNumber,
                 month: cardInfo.expiryMonth,
                 year: cardInfo.year.slice(2, 4),
                 tx_ref: ref,
@@ -63,13 +65,13 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
             const response = await initiateDirectCharge(data);
             if (response?.isOk) {
                 if (response.data.status === "error") {
+                    console.log(response.data)
                     updateModal({message: response.data.message, showModal: true, modalType: 'error'})
                 } else {
-                console.log(response.data);
                 if (response.data.meta.authorization.mode === "redirect") {
-                    // console.log("User needs to be redirected");
-                    handleRedirect(response.data.meta.authorization.redirect);
                     // redirect user
+                    set_transaction_id(response.data.data.id);
+                    setWebViewUrl(response.data.meta.authorization.redirect)
                 } else {
                     updateAuthorization(response.data.meta.authorization.mode);
                 }
@@ -83,10 +85,6 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
 
         setCardInputLoading(false)
     };
-
-    const handleRedirect = (path: string) => {
-        // redirect to 
-    }
 
     return (
         <View>

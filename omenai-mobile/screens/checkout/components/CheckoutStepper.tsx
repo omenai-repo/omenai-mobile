@@ -1,30 +1,37 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CardInfo from './forms/CardInfo';
 import FinishTransaction from './forms/FinishTransaction';
 import OTPForm from './forms/OTPForm';
 import AvsNoauthInput from './forms/AvsNoauthInput';
 import AuthPinInput from './forms/AuthPinInput';
+import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
+import { WebView } from 'react-native-webview';
 
-export default function CheckoutStepper({plan}:{plan: PlanProps}) {
-    const [activeIndex, setActiveIndex] = useState<number>(0);
+type CheckoutStepperProps = {
+    plan: PlanProps, 
+    verificationScreen: boolean,
+    setVerificationScreen: (value: boolean) => void,
+    activeIndex: number,
+    setActiveIndex: (index: any) => void
+}
+
+export default function CheckoutStepper({plan, verificationScreen, setVerificationScreen, activeIndex, setActiveIndex}: CheckoutStepperProps) {
+    
     const [isLastStep, setIsLastStep] = useState(false);
     const [validateChargeAuthorization, setValidateChargeAuthorization] = useState<ValidateChargeTypes>("");
-    const [finalChargeAuthorization, setFinalChargeAuthorization] = useState<FinalChargeAuthTypes>("");
 
-    // const forms = [
-    //     <CardInfo handleNext={() => setActiveIndex(3)} />,
-    //     <OTPForm handleNext={() => setActiveIndex(prev => prev + 1)} />,
-    //     <FinishTransaction />,
-    //     <AvsNoauthInput />,
-    //     <AuthPinInput />
-    // ]
+    const { set_transaction_id } = subscriptionStepperStore();
 
     const handleNext = () => {
         !isLastStep &&
         setActiveIndex((cur) =>
             cur + validateChargeAuthorization !== "redirect" ? 1 : 3
         );
+    };
+
+    const handlePinClick = () => {
+        !isLastStep && setActiveIndex((cur) => cur + 1);
     };
 
     return (
@@ -35,6 +42,39 @@ export default function CheckoutStepper({plan}:{plan: PlanProps}) {
                     updateAuthorization={setValidateChargeAuthorization}
                     plan={plan}
                 />
+            )}
+            {activeIndex === 1 && (
+                <View>
+                    {validateChargeAuthorization === "pin" && (
+                        <AuthPinInput
+                            handleNext={handlePinClick}
+                            updateFinalAuthorization={setValidateChargeAuthorization}
+                        />
+                    )}
+                    {validateChargeAuthorization === "avs_noauth" && (
+                        <AvsNoauthInput
+                            updateFinalAuthorization={setValidateChargeAuthorization}
+                            handleNext={handleNext}
+                        />
+                    )}
+                    
+                </View>
+            )}
+            {activeIndex === 2 && (
+                <View>
+                    {validateChargeAuthorization === "otp" && (
+                        <OTPForm
+                            handleNext={()=> {
+                                setVerificationScreen(true);
+                                setActiveIndex(4)
+                            }}
+                            set_id={set_transaction_id}
+                        />
+                    )}
+                </View>
+            )}
+            {verificationScreen && (
+                <FinishTransaction />
             )}
         </View>
     )
