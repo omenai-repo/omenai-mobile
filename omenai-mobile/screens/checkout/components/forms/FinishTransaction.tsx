@@ -7,7 +7,7 @@ import { subscriptionStepperStore } from 'store/subscriptionStepper/subscription
 
 export default function FinishTransaction() {
 
-    const { flw_ref } = subscriptionStepperStore();
+    const { transaction_id } = subscriptionStepperStore();
 
     useEffect(() => {
         async function handleTransVerification(){

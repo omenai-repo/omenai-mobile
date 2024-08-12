@@ -70,6 +70,7 @@ export default function Checkout() {
                                 <CheckoutStepper
                                     plan={plan}
                                     verificationScreen={verificationScreen}
+                                    setVerificationScreen={setVerificationScreen}
                                 />
                                 <CheckoutSummary 
                                     name={plan.name}

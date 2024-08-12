@@ -282,7 +282,7 @@ type PlanProps = {
   plan_id: string
 };
 
-type ValidateChargeTypes = "redirect" | "pin" | "avs_noauth" | ""
+type ValidateChargeTypes = "redirect" | "pin" | "avs_noauth" | "otp" | ""
 type FinalChargeAuthTypes = "redirect" | "otp" | ""
 
 type FLWDirectChargeDataTypes = CardInputTypes & {

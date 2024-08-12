@@ -22,7 +22,7 @@ const transformedCountries = country_codes.map(item => ({
 
 type AvsNoauthInputProps = {
     handleNext: () => void;
-    updateFinalAuthorization: Dispatch<SetStateAction<"otp" | "redirect" | "">>;
+    updateFinalAuthorization: Dispatch<SetStateAction<ValidateChargeTypes>>;
 }
 
 export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: AvsNoauthInputProps) {
@@ -104,9 +104,7 @@ export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: A
                 {} as FLWDirectChargeDataTypes & { name: string }
             );
             if (response.data.meta.authorization.mode === "redirect") {
-                // console.log("User needs to be redirected");
                 // redirect user
-                // handleRedirect(response.data.meta.authorization.redirect)
                 setWebViewUrl(response.data.meta.authorization.redirect)
             } else {
                 updateFinalAuthorization(response.data.meta.authorization.mode);
@@ -120,14 +118,6 @@ export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: A
 
         setLoading(false)
     };
-
-    const handleRedirect = async (link: string) => {
-        const supportedLink = await Linking.canOpenURL(link);
-        if(supportedLink){
-            await Linking.openURL(link)
-            navigation.navigate(screenName.gallery.billing)
-        }
-    }
 
     return (
         <View style={{zIndex: 25}}>

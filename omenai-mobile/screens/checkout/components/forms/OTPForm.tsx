@@ -4,10 +4,11 @@ import Input from 'components/inputs/Input';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 
 type OTPFormProps = {
-    handleNext: () => void
+    handleNext: () => void,
+    set_id: (id: string) => void
 }
 
-export default function OTPForm({handleNext}:OTPFormProps) {
+export default function OTPForm({handleNext, set_id}:OTPFormProps) {
     const [otp, setOtp] = useState('');
 
     return (
