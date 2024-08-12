@@ -1,9 +1,9 @@
 import { apiUrl } from "constants/apiUrl.constants";
 
-export async function initiateDirectCharge(data: FLWDirectChargeDataTypes) {
+export async function validateCharge(data: { otp: string; flw_ref: string }) {
   try {
     const res = await fetch(
-      `${apiUrl}/api/subscriptions/subscribeUser/initiateDirectCharge`,
+      `${apiUrl}/api/subscriptions/subscribeUser/validateCharge`,
       {
         method: "POST",
         body: JSON.stringify({ ...data }),

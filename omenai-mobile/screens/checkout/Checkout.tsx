@@ -15,6 +15,8 @@ import Loader from 'components/general/Loader'
 import CheckoutStepper from './components/CheckoutStepper'
 import EmptyArtworks from 'components/general/EmptyArtworks'
 import { useModalStore } from 'store/modal/modalStore'
+import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore'
+import WebView from 'react-native-webview'
 
 export default function Checkout() {
     const route = useRoute();
@@ -24,6 +26,10 @@ export default function Checkout() {
     const [reloadCount, setReloadCount] = useState(1);
 
     const { updateModal } = useModalStore();
+    const { webViewUrl, setWebViewUrl } = subscriptionStepperStore();
+    const [verificationScreen, setVerificationScreen] = useState<boolean>(false);
+
+    const [activeIndex, setActiveIndex] = useState<number>(0);
 
     const {plan_id, tab} = route.params as {plan_id: string, tab: string}
 
@@ -42,35 +48,58 @@ export default function Checkout() {
         }
 
         fetchSinglePlanDetails()
-    }, [reloadCount])
+    }, [reloadCount]);
+
+    const handleFlutterwaveRedirect = (event: any) => {
+        if(event.canGoBack && event.navigationType === 'formsubmit'){
+            setWebViewUrl(null)
+            setVerificationScreen(true)
+            setActiveIndex(4)
+        }
+    }
 
     
 
     return (
         <WithModal>
-            <BackHeaderTitle title='Checkout' />
-            {loading && <Loader />}
-            <ScrollView style={styles.mainContainer}>
-                {/* <FormsHeaderNavigation index={activeIndex} setIndex={setActiveIndex} /> */}
-                {(!loading && plan !== null) &&
-                    <View>
-                        <CheckoutStepper
-                            plan={plan}
-                        />
-                        <CheckoutSummary 
-                            name={plan.name}
-                            pricing={plan.pricing}
-                            interval={tab}
-                        />
-                    </View>
-                }
-                {(!loading && plan === null) && (
-                    <EmptyArtworks
-                        size={70}
-                        writeUp='An unexpected error occured, reload page'
-                    />
-                )}
-            </ScrollView>
+            {webViewUrl === null && (
+                <View style={{flex: 1}}>
+                    <BackHeaderTitle title='Checkout' />
+                    {loading && <Loader />}
+                    <ScrollView style={styles.mainContainer}>
+                        {/* <FormsHeaderNavigation index={activeIndex} setIndex={setActiveIndex} /> */}
+                        {(!loading && plan !== null) &&
+                            <View>
+                                <CheckoutStepper
+                                    plan={plan}
+                                    verificationScreen={verificationScreen}
+                                    setVerificationScreen={setVerificationScreen}
+                                    activeIndex={activeIndex}
+                                    setActiveIndex={setActiveIndex}
+                                />
+                                <CheckoutSummary 
+                                    name={plan.name}
+                                    pricing={plan.pricing}
+                                    interval={tab}
+                                />
+                            </View>
+                        }
+                        {(!loading && plan === null) && (
+                            <EmptyArtworks
+                                size={70}
+                                writeUp='An unexpected error occured, reload page'
+                            />
+                        )}
+                    </ScrollView>
+                </View>
+            )}
+            {webViewUrl && (
+                <WebView
+                    source={{ uri: webViewUrl }} 
+                    style={{ flex: 1 }} 
+                    onNavigationStateChange={handleFlutterwaveRedirect}
+                />
+            )}
         </WithModal>
     )
 }
