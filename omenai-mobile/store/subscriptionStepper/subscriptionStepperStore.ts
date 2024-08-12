@@ -9,6 +9,8 @@ type subscriptionStepperStoreTypes = {
   ) => void;
   flw_ref: string;
   set_flw_ref: (ref: string) => void;
+  webViewUrl: string | null;
+  setWebViewUrl: (url: string | null) => void
 };
 
 export const subscriptionStepperStore = create<subscriptionStepperStoreTypes>((set, get) => ({
@@ -30,4 +32,8 @@ export const subscriptionStepperStore = create<subscriptionStepperStoreTypes>((s
   set_flw_ref: (ref: string) => {
     set({ flw_ref: ref });
   },
+  webViewUrl: null,
+  setWebViewUrl: (url: string | null) => {
+    set({webViewUrl: url})
+  }
 }));

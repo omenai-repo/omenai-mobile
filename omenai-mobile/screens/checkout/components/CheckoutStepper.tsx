@@ -5,8 +5,10 @@ import FinishTransaction from './forms/FinishTransaction';
 import OTPForm from './forms/OTPForm';
 import AvsNoauthInput from './forms/AvsNoauthInput';
 import AuthPinInput from './forms/AuthPinInput';
+import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
+import { WebView } from 'react-native-webview';
 
-export default function CheckoutStepper({plan}:{plan: PlanProps}) {
+export default function CheckoutStepper({plan, verificationScreen}:{plan: PlanProps, verificationScreen: boolean}) {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [isLastStep, setIsLastStep] = useState(false);
     const [validateChargeAuthorization, setValidateChargeAuthorization] = useState<ValidateChargeTypes>("");
@@ -51,6 +53,9 @@ export default function CheckoutStepper({plan}:{plan: PlanProps}) {
                     updateFinalAuthorization={setFinalChargeAuthorization}
                     handleNext={handleNext}
                 />
+            )}
+            {verificationScreen && (
+                <FinishTransaction />
             )}
         </View>
     )

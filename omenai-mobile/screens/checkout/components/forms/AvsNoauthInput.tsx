@@ -11,6 +11,9 @@ import { generateAlphaDigit } from 'utils/generateToken';
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
 import { validateChargeAuthorization } from 'services/subscriptions/subscribeUser/validateChargeAuthorization';
 import { useModalStore } from 'store/modal/modalStore';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { screenName } from 'constants/screenNames.constants';
 
 const transformedCountries = country_codes.map(item => ({
     value: item.name,
@@ -23,6 +26,7 @@ type AvsNoauthInputProps = {
 }
 
 export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: AvsNoauthInputProps) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     const [address_info, set_address_info] = useState<{
         city: string;
@@ -42,7 +46,7 @@ export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: A
     const [loading, setLoading] = useState<boolean>(false);
     const { updateModal } = useModalStore();
 
-    const { flw_charge_payload, update_flw_charge_payload_data } = subscriptionStepperStore()
+    const { flw_charge_payload, update_flw_charge_payload_data, setWebViewUrl } = subscriptionStepperStore()
 
     useEffect(() => {
         const states = country_and_states.find(
@@ -93,25 +97,24 @@ export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: A
         if (response?.isOk) {
         if (response.data.status === "error") {
             console.log(response.data);
-            // toast.error(response.data.message);
             updateModal({message: response.data.message, showModal: true, modalType: 'error'})
         } else {
-                console.log(response.data);
+                // console.log(response.data);
                 update_flw_charge_payload_data(
                 {} as FLWDirectChargeDataTypes & { name: string }
             );
             if (response.data.meta.authorization.mode === "redirect") {
-                console.log("User needs to be redirected");
-                // router.replace(response.data.meta.authorization.redirect);
+                // console.log("User needs to be redirected");
                 // redirect user
-                handleRedirect(response.data.meta.authorization.redirect)
+                // handleRedirect(response.data.meta.authorization.redirect)
+                setWebViewUrl(response.data.meta.authorization.redirect)
             } else {
                 updateFinalAuthorization(response.data.meta.authorization.mode);
             }
             handleNext();
         }
         } else {
-            // toast.error("Something went wrong");
+            updateModal({message: "Something went wrong", showModal: true, modalType: 'error'})
         }
 
 
@@ -121,8 +124,8 @@ export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: A
     const handleRedirect = async (link: string) => {
         const supportedLink = await Linking.canOpenURL(link);
         if(supportedLink){
-            // setPendingLoginLink(false);
             await Linking.openURL(link)
+            navigation.navigate(screenName.gallery.billing)
         }
     }
 
@@ -180,6 +183,7 @@ export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: A
             <LongBlackButton
                 onClick={handleSubmit}
                 value='Submit'
+                isLoading={loading}
             />
         </View>
     )
