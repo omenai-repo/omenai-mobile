@@ -46,7 +46,7 @@ export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: A
     const [loading, setLoading] = useState<boolean>(false);
     const { updateModal } = useModalStore();
 
-    const { flw_charge_payload, update_flw_charge_payload_data, setWebViewUrl } = subscriptionStepperStore()
+    const { flw_charge_payload, update_flw_charge_payload_data, setWebViewUrl, set_transaction_id } = subscriptionStepperStore()
 
     useEffect(() => {
         const states = country_and_states.find(
@@ -95,22 +95,23 @@ export default function AvsNoauthInput({handleNext, updateFinalAuthorization}: A
 
         const response = await validateChargeAuthorization(data);
         if (response?.isOk) {
-        if (response.data.status === "error") {
-            console.log(response.data);
-            updateModal({message: response.data.message, showModal: true, modalType: 'error'})
-        } else {
-                // console.log(response.data);
-                update_flw_charge_payload_data(
-                {} as FLWDirectChargeDataTypes & { name: string }
-            );
-            if (response.data.meta.authorization.mode === "redirect") {
-                // redirect user
-                setWebViewUrl(response.data.meta.authorization.redirect)
+            if (response.data.status === "error") {
+                console.log(response.data);
+                updateModal({message: response.data.message, showModal: true, modalType: 'error'})
             } else {
-                updateFinalAuthorization(response.data.meta.authorization.mode);
+                    // console.log(response.data);
+                    update_flw_charge_payload_data(
+                    {} as FLWDirectChargeDataTypes & { name: string }
+                );
+                if (response.data.meta.authorization.mode === "redirect") {
+                    // redirect user
+                    set_transaction_id(response.data.data.id);
+                    setWebViewUrl(response.data.meta.authorization.redirect)
+                } else {
+                    updateFinalAuthorization(response.data.meta.authorization.mode);
+                }
+                handleNext();
             }
-            handleNext();
-        }
         } else {
             updateModal({message: "Something went wrong", showModal: true, modalType: 'error'})
         }

@@ -29,6 +29,8 @@ export default function Checkout() {
     const { webViewUrl, setWebViewUrl } = subscriptionStepperStore();
     const [verificationScreen, setVerificationScreen] = useState<boolean>(false);
 
+    const [activeIndex, setActiveIndex] = useState<number>(0);
+
     const {plan_id, tab} = route.params as {plan_id: string, tab: string}
 
     useEffect(() => {
@@ -52,6 +54,7 @@ export default function Checkout() {
         if(event.canGoBack && event.navigationType === 'formsubmit'){
             setWebViewUrl(null)
             setVerificationScreen(true)
+            setActiveIndex(4)
         }
     }
 
@@ -71,6 +74,8 @@ export default function Checkout() {
                                     plan={plan}
                                     verificationScreen={verificationScreen}
                                     setVerificationScreen={setVerificationScreen}
+                                    activeIndex={activeIndex}
+                                    setActiveIndex={setActiveIndex}
                                 />
                                 <CheckoutSummary 
                                     name={plan.name}
