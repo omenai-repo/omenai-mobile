@@ -1,4 +1,4 @@
-import { promotional_storage } from "../../appWrite";
+import { gallery_logo_storage } from "appWrite";
 
 export const getGalleryLogoFileView = (
   fileId: string,
@@ -6,7 +6,7 @@ export const getGalleryLogoFileView = (
   height?: number,
   format?: string
 ) => {
-  const fileData = promotional_storage.getFilePreview(
+  const fileData = gallery_logo_storage.getFilePreview(
     process.env.PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
     fileId,
 

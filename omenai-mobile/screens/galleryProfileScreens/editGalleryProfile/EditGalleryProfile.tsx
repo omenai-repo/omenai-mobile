@@ -58,7 +58,7 @@ export default function EditGalleryProfile() {
     return (
         <WithModal>
             <BackHeaderTitle title='Gallery profile' callBack={clearData} />
-            <ScrollView style={{flex: 1, paddingHorizontal: 20, paddingTop: 10, marginTop: 10}}>
+            <ScrollView style={{flex: 1, paddingHorizontal: 20, paddingTop: 10, marginTop: 10}} showsVerticalScrollIndicator={false}>
                 <View style={{gap: 20}}>
                     <UploadNewLogo
                         logo={user?.logo}
@@ -111,6 +111,7 @@ export default function EditGalleryProfile() {
                         />
                     </View>
                 </View>
+                <View style={{height: 100}} />
             </ScrollView>
         </WithModal>
     )
