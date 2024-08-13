@@ -24,6 +24,7 @@ import { getAsyncData } from "utils/asyncStorage.utils";
 import { useNavigation } from "@react-navigation/native";
 import StripePayouts from "screens/stripeScreens/payouts/StripePayouts";
 import EditArtwork from "screens/editArtwork/EditArtwork";
+import UploadNewLogo from "screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo";
 
 type CustomTabBarIconProps = {
     name: any,
@@ -161,6 +162,9 @@ export default function GalleryNavigation() {
             <Stack.Screen name={screenName.checkout} component={Checkout} />
             <Stack.Screen name={screenName.connectStripe} component={GetStartedWithStripe}/>
             <Stack.Screen name={screenName.gallery.editArtwork} component={EditArtwork} />
+            <Stack.Group screenOptions={{presentation: 'modal'}}>
+                <Stack.Screen name={screenName.gallery.uploadNewLogo} component={UploadNewLogo} />
+            </Stack.Group>
         </Stack.Navigator>
     )
 }
