@@ -11,19 +11,21 @@ import { updateProfile } from 'services/update/updateProfile'
 import WithModal from 'components/modal/WithModal'
 import { useModalStore } from 'store/modal/modalStore'
 import { logout } from 'utils/logout.utils'
+import UploadNewLogo from './components/GalleryLogo'
 
 export default function EditGalleryProfile() {
     const [user, setUser] = useState<any>({});
     const [isLoading, setIsLoading] = useState(false);
     const { updateModal } = useModalStore();
 
-    const {updateData, setProfileUpdateData, clearData} = galleryProfileUpdate()
+
+    const {updateData, setProfileUpdateData, clearData} = galleryProfileUpdate();
 
     useEffect(() => {
         async function handleFetchUserSession(){
             const user = await getAsyncData('userSession');
             if(user.value){
-                setUser(JSON.parse(user.value))
+                setUser(JSON.parse(user.value));
             }
         }
 
@@ -58,6 +60,9 @@ export default function EditGalleryProfile() {
             <BackHeaderTitle title='Gallery profile' callBack={clearData} />
             <ScrollView style={{flex: 1, paddingHorizontal: 20, paddingTop: 10, marginTop: 10}}>
                 <View style={{gap: 20}}>
+                    <UploadNewLogo
+                        logo={user?.logo}
+                    />
                     <Input 
                         label='Gallery name'
                         value={user?.name || ''}

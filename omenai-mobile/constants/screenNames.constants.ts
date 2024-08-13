@@ -32,6 +32,7 @@ export const screenName = {
         overview: 'Overview',
         artworks: 'Artworks',
         uploadArtwork: 'upload-artwork',
+        uploadNewLogo: 'upload-new-gallery-logo',
         orders: 'Orders',
         profile: 'Profile',
         editProfile: 'edit-profile',
