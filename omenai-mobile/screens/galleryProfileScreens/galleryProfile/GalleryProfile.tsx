@@ -10,11 +10,14 @@ import { Feather } from '@expo/vector-icons'
 import { logout } from 'utils/logout.utils'
 import WithGalleryModal from 'components/modal/WithGalleryModal'
 import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
+import { useAppStore } from 'store/app/appStore'
+import Logo from './components/Logo'
 
 export default function GalleryProfile() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const { setIsVisible, setModalType } = galleryOrderModalStore();
+    const { userSession } = useAppStore();
 
     return (
         <WithGalleryModal>
@@ -24,9 +27,12 @@ export default function GalleryProfile() {
                 </View>
             </SafeAreaView>
             <ScrollView style={styles.mainContainer}>
+                {userSession.logo !== '' && (
+                    <Logo url={userSession.logo} />
+                )}
                 <View style={styles.buttonsContainer}>
                     {/* <Divider /> */}
-                    <PageButtonCard name='Gallery profile' subText='View and edit your profile details' handlePress={() => navigation.navigate(screenName.gallery.editProfile)} />
+                    <PageButtonCard name='Edit gallery profile' subText='View and edit your profile details' handlePress={() => navigation.navigate(screenName.gallery.editProfile)} />
                     {/* <Divider /> */}
                     <PageButtonCard name='Change password' subText='Change the password to your account' handlePress={() => navigation.navigate(screenName.gallery.changePassword)} />
                     {/* <Divider /> */}
