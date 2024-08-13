@@ -20,6 +20,8 @@ export default function GalleryLogo({logo}: GalleryLogoProps) {
         imageUrl = getGalleryLogoFileView(logo, 120, 120);
     }
 
+    console.log(imageUrl)
+
     return (
         <TouchableOpacity style={styles.container} activeOpacity={0.8} onPress={() => navigation.navigate(screenName.gallery.uploadNewLogo)}>
             <ImageBackground source={imageUrl.length > 0 ? {uri: imageUrl} : {uri: ''}} style={styles.image}>
