@@ -10,9 +10,13 @@ import Loader from 'components/general/Loader';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
+import { useAppStore } from 'store/app/appStore';
+import { storeAsyncData } from 'utils/asyncStorage.utils';
 
 export default function FinishTransaction() {
     const navigation = useNavigation<StackNavigationProp<any>>();
+
+    const { setUserSession, userSession } = useAppStore();
 
     const { transaction_id } = subscriptionStepperStore();
     const [loading, setLoading] = useState<boolean>(false);
@@ -20,7 +24,6 @@ export default function FinishTransaction() {
     const [verified, setVerified] = useState()
 
     useEffect(() => {
-        console.log(transaction_id)
         async function handleTransVerification(){
             setLoading(true)
             const response = await verifyFlwTransaction({ transaction_id });
@@ -35,7 +38,19 @@ export default function FinishTransaction() {
         };
 
         handleTransVerification()
-    }, [])
+    }, []);
+    
+    async function handleViewSubscription(){
+        const newUserSession = {
+            ...userSession,
+            subscription_active: true
+        }
+
+        setUserSession(newUserSession);
+        storeAsyncData('userSession', JSON.stringify(newUserSession));
+
+        navigation.navigate(screenName.gallery.subscriptions);
+    }
 
     return (
         <View>
@@ -52,8 +67,8 @@ export default function FinishTransaction() {
                         <Image style={{height: 100, marginHorizontal: 'auto', marginTop: 10, marginBottom: 30}} resizeMode='contain' source={success ? successImage : errorImage} />
                     )} 
                     <LongBlackButton
-                        value='Return home'
-                        onClick={() => navigation.navigate(screenName.gallery.overview)}
+                        value='View subscription'
+                        onClick={handleViewSubscription}
                     />
                 </View>
             )}
