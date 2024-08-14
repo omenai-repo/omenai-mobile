@@ -279,7 +279,8 @@ type PlanProps = {
   pricing: {annual_price: string, monthly_price: string}
   benefits: string[];
   currency: string,
-  plan_id: string
+  plan_id: string,
+  _id: string
 };
 
 type ValidateChargeTypes = "redirect" | "pin" | "avs_noauth" | "otp" | ""

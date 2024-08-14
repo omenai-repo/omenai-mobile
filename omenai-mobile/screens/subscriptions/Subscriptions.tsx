@@ -7,7 +7,7 @@ import ActiveSubscriptions from './features/ActiveSubscriptions';
 import WithModal from 'components/modal/WithModal';
 
 export default function Subscriptions() {
-    const {userSession} = useAppStore();
+    const { userSession } = useAppStore();
 
     return (
         <WithModal>
