@@ -1,14 +1,27 @@
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
-import { Feather } from '@expo/vector-icons';
+import React from 'react'
 import { colors } from 'config/colors.config';
 import mastercardLogo from 'assets/icons/MastercardLogo.png';
+import visa from 'assets/icons/visa.png';
+import verve from 'assets/icons/verve.png';
 import cardwifiIcon from 'assets/icons/cardwifiIcon.png';
 import chip from 'assets/icons/chip.png';
 import creditcardBG from 'assets/icons/creditcardBg.png';
+import { useAppStore } from 'store/app/appStore';
 
-export default function CardDetails() {
-    const [showCardButtons, setShowCardButtons] = useState(true);
+type CardDetailsProps = {
+    cardData: {
+        country: string,
+        first_6digits: string,
+        issuer: string,
+        last_4digits: string,
+        expiry: string,
+        type: string
+    }
+}
+
+export default function CardDetails({cardData}: CardDetailsProps) {
+    const { userSession } = useAppStore();
 
     const Button = ({label, remove}: {label: string, remove?: boolean}) => {
         return(
@@ -26,19 +39,21 @@ export default function CardDetails() {
                 <Text style={{fontSize: 16, color: colors.primary_black, marginBottom: 10}}>Payment info</Text>
                 <ImageBackground source={creditcardBG} resizeMode="cover" style={styles.cardContainer}>
                     <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-                        <Text style={styles.galleryName}>Fvture Gallery</Text>
+                        <Text style={styles.galleryName}>{userSession.name}</Text>
                         <Image source={cardwifiIcon} />
                     </View>
                     <Image style={styles.chip} source={chip} />
                     <View style={{flexDirection: 'row', marginTop: 10, alignItems: 'flex-end'}}>
                         <View style={{flex: 1}}>
-                            <Text style={styles.cardNumber}>3701 92** **** 3643</Text>
+                            <Text style={styles.cardNumber}>{cardData.first_6digits} ** **** {cardData.last_4digits}</Text>
                             <View style={{flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 10}}>
                                 <Text style={{fontSize: 13, color: colors.white, opacity: 0.7}}>Valid Thru</Text>
-                                <Text style={styles.expiryYear}>08/24</Text>
+                                <Text style={styles.expiryYear}>{cardData.expiry}</Text>
                             </View>
                         </View>
-                        <Image source={mastercardLogo} style={styles.cardLogo} />
+                        {cardData.type === "MASTERCARD" && <Image source={mastercardLogo} style={styles.cardLogo} />}
+                        {cardData.type === "VERVE" && <Image source={verve} style={styles.cardLogo} />}
+                        {cardData.type === "VISA" && <Image source={visa} style={styles.cardLogo} />}
                     </View>
                 </ImageBackground>
             </View>
@@ -54,7 +69,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.grey50,
         borderRadius: 10,
-        marginBottom: 20
     },
     topContainer: {
         // flexDirection: 'row',
