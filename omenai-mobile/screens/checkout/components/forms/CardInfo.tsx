@@ -12,6 +12,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import { apiUrl } from 'constants/apiUrl.constants';
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
 import { useRoute } from '@react-navigation/native';
+import CardNumberInput from '../inputs/CardNumberInput';
 
 type cardInfoProps = {
     name: string,
@@ -43,7 +44,7 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
         setCardInputLoading(true)
         const ref = generateAlphaDigit(7);
         if (hasEmptyString(cardInfo)){
-            //theow error
+            //throw error
             updateModal({message: "Make sure all input fields are filled", modalType: 'error', showModal: true})
         }else{
             const parsedCardNumber = cardInfo.cardNumber.replace(/ /g, '')
@@ -56,8 +57,11 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
                 tx_ref: ref,
                 amount: tab === "monthly" ? plan.pricing.monthly_price : plan.pricing.annual_price,
                 customer: {
-                  name: userSession.name,
-                  email: userSession.email,
+                    name: userSession.name,
+                    email: userSession.email,
+                    gallery_id: userSession.id,
+                    plan_id: plan._id,
+                    plan_interval: tab,
                 },
                 redirect: `${apiUrl}/dashboard/gallery/billing`,
             };
@@ -102,12 +106,15 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
                     value={cardInfo.name}
                     placeHolder='Enter the name on your card'
                 />
-                <Input
+                {/* <Input
                     label='Card number'
                     onInputChange={e => setCardInfo(prev => ({...prev, cardNumber: e}))}
                     value={cardInfo.cardNumber}
                     placeHolder='Enter the card number'
                     keyboardType="number-pad"
+                /> */}
+                <CardNumberInput
+                    onChange={(e) => setCardInfo(prev => ({...prev, cardNumber: e}))}
                 />
                 <View style={{flexDirection: 'row', gap: 20}}>
                     <View style={{flex: 1}}>
