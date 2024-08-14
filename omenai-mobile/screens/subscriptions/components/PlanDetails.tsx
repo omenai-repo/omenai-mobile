@@ -1,44 +1,56 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { colors } from 'config/colors.config'
-import LongWhiteButton from 'components/buttons/LongWhiteButton'
-import LongBlackButton from 'components/buttons/LongBlackButton'
-import FittedBlackButton from 'components/buttons/FittedBlackButton'
-import { Feather } from '@expo/vector-icons'
-import CardDetails from './CardDetails'
+import omenai_logo from 'assets/icons/omenai_logo_cut.png';
+import { formatPrice } from 'utils/priceFormatter'
+import { getCurrencySymbol } from 'utils/getCurrencySymbol'
+import Button from './Button'
+import { formatIntlDateTime } from 'utils/formatIntlDateTime'
 
-export default function PlanDetails() {
-    const benefits = [
-        '30% commission excl. tax**',
-        'Up to 25 artwork uploads',
-        'International payment management',
-        'Priority customer support'
-    ]
+type PlanDetailsProps = {
+    sub_status: string;
+    end_date: Date;
+    payment: { value: number; currency: string };
+    plan_details: {
+        value: { monthly_price: string; annual_price: string };
+        currency: string;
+        type: string;
+        interval: string;
+    };
+}
+
+export default function PlanDetails({ sub_status, end_date, payment, plan_details }: PlanDetailsProps) {
+
+    const currency_symbol = getCurrencySymbol(payment.currency);
 
     return (
         <View>
-            
             <View style={styles.container}>
                 <View style={styles.topContainer}>
                     <View style={styles.planTitleContainer}>
-                        <Text style={{fontSize: 16, color: colors.primary_black}}>Premium Plan</Text>
-                        <View style={{flexWrap: 'wrap'}}><View style={styles.activePill}><Text style={{fontSize: 12, fontWeight: 500, color: '#00800080'}}>Active</Text></View></View>
+                        <Text style={{fontSize: 16, color: colors.primary_black}}>Subscription Info</Text>
                     </View>
-                    <View style={styles.amountContainer}>
-                        <Text style={{fontSize: 20, fontWeight: 500, color: colors.primary_black}}>$200</Text>
-                        <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>/yearly</Text>
-                    </View>
-                </View>
-                <View style={[styles.bottomContainer, {gap: 10}]}>
-                    {benefits.map((benefit, index) => (
-                        <View style={styles.benefit} key={index}>
-                            <Feather name='check' size={14} color={'#0F513278'} />
-                            <Text style={{color: colors.primary_black, opacity: 0.8}}>{benefit}</Text>
-                        </View>
-                    ))}
                 </View>
                 <View style={styles.bottomContainer}>
-                    <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>Next billing date: 14th July 2024</Text>
+                    <View style={{flexDirection: 'row', gap: 10}}>
+                        <Image source={omenai_logo} style={styles.omenaiLogo} />
+                        <View style={{gap: 7}}>
+                            <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>Omenai {plan_details.type}</Text>
+                            <View style={styles.amountContainer}>
+                                <Text style={{fontSize: 20, fontWeight: 500, color: colors.primary_black}}>{formatPrice(payment.value, currency_symbol)}</Text>
+                                <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>/ {plan_details.interval.replace(/^./, (char) => char.toUpperCase())}</Text>
+                            </View>
+                            <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>Next billing date: {formatIntlDateTime(end_date)}</Text>
+                            <View style={{flexWrap: 'wrap'}}><View style={styles.activePill}><Text style={{fontSize: 12, fontWeight: 500, color: '#00800080'}}>{sub_status.toUpperCase()}</Text></View></View>
+                        </View>
+                    </View>
+
+                    <View style={styles.buttonContainer}>
+                        <Button label='Upgrade/Downgrade plan' />
+                        <Button label='Cancel subscription' remove />
+                    </View>
+                    
+                    
                 </View>
             </View>
         </View>
@@ -78,10 +90,13 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: colors.grey50
     },
-    
-    benefit: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10
-    }
+    omenaiLogo: {
+        height: 30,
+        width: 30,
+        marginTop: 5
+    },
+    buttonContainer: {
+        gap: 15,
+        marginTop: 30,
+    },
 })
