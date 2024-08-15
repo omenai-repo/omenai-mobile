@@ -41,7 +41,7 @@ export default function PlanDetails({ sub_status, end_date, payment, plan_detail
                         <View style={{gap: 7}}>
                             <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>Omenai {plan_details.type}</Text>
                             <View style={styles.amountContainer}>
-                                <Text style={{fontSize: 20, fontWeight: 500, color: colors.primary_black}}>{formatPrice(payment.value, currency_symbol)}</Text>
+                                <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>{formatPrice(payment.value, currency_symbol)}</Text>
                                 <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>/ {plan_details.interval.replace(/^./, (char) => char.toUpperCase())}</Text>
                             </View>
                             <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>Next billing date: {formatIntlDateTime(end_date)}</Text>

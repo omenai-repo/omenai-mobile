@@ -341,3 +341,24 @@ type SubscriptionModelSchemaTypes = {
     plan_id: string;
   };
 };
+
+type SubscriptionPlanDataTypes = {
+  name: string;
+  pricing: {
+    annual_price: string;
+    monthly_price: string;
+  };
+  plan_id: string;
+  currency: string;
+  benefits: string[];
+};
+
+type SubscriptionTokenizationTypes = {
+  amount: number;
+  email: string;
+  tx_ref: string;
+  token: string;
+  gallery_id: string;
+  plan_id: string;
+  plan_interval: string;
+};

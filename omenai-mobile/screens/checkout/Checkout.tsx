@@ -17,31 +17,43 @@ import EmptyArtworks from 'components/general/EmptyArtworks'
 import { useModalStore } from 'store/modal/modalStore'
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore'
 import WebView from 'react-native-webview'
+import MigrationUpgradeCheckoutItem from './components/MigrationCheckouts/MigrationUpgradeCheckoutItem'
+import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData'
+import { useAppStore } from 'store/app/appStore'
 
 export default function Checkout() {
     const route = useRoute();
 
     const [loading, setLoading] = useState<boolean>(false);
-    const [plan, setPlan] = useState<PlanProps | null>(null);
     const [reloadCount, setReloadCount] = useState(1);
+    const [verificationScreen, setVerificationScreen] = useState<boolean>(false);
+
+    const [plan, setPlan] = useState<SubscriptionPlanDataTypes | null>(null);
+    const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(null);
 
     const { updateModal } = useModalStore();
     const { webViewUrl, setWebViewUrl } = subscriptionStepperStore();
-    const [verificationScreen, setVerificationScreen] = useState<boolean>(false);
+    const { userSession } = useAppStore();
+    
+    
 
     const [activeIndex, setActiveIndex] = useState<number>(0);
 
-    const {plan_id, tab} = route.params as {plan_id: string, tab: string}
+    const {plan_id, tab, id, action} = route.params as {plan_id: string, tab: string, id?: string, action?: string}
 
     useEffect(() => {
         async function fetchSinglePlanDetails(){
             setLoading(true)
             const plan = await getSinglePlanData(plan_id);
-            if(plan?.isOk){
-                setPlan(plan.data)
-            }else{
+            const subResults = await retrieveSubscriptionData(userSession.id)
+
+            if(!plan?.isOk && !subResults?.isOk){
                 //throw error
-                updateModal({message: "Error fetching plan details", modalType: 'error', showModal: true})
+                updateModal({message: "Something went wrong", modalType: 'error', showModal: true})
+                
+            }else{
+                setPlan(plan?.data)
+                setSubData(subResults?.data)
             }
 
             setLoading(false)
@@ -70,18 +82,35 @@ export default function Checkout() {
                         {/* <FormsHeaderNavigation index={activeIndex} setIndex={setActiveIndex} /> */}
                         {(!loading && plan !== null) &&
                             <View>
-                                <CheckoutStepper
-                                    plan={plan}
-                                    verificationScreen={verificationScreen}
-                                    setVerificationScreen={setVerificationScreen}
-                                    activeIndex={activeIndex}
-                                    setActiveIndex={setActiveIndex}
-                                />
-                                <CheckoutSummary 
-                                    name={plan.name}
-                                    pricing={plan.pricing}
-                                    interval={tab}
-                                />
+                                {action ? (
+                                    <>
+                                        {action === "upgrade" ? 
+                                            <MigrationUpgradeCheckoutItem
+                                                plan={plan}
+                                                interval={tab}
+                                                sub_data={subData}
+                                            />
+                                            :
+                                            <Text>Downgrade</Text>
+                                        }
+                                    </>
+                                )
+                                :
+                                <View>
+                                    <CheckoutStepper
+                                        plan={plan}
+                                        verificationScreen={verificationScreen}
+                                        setVerificationScreen={setVerificationScreen}
+                                        activeIndex={activeIndex}
+                                        setActiveIndex={setActiveIndex}
+                                    />
+                                    <CheckoutSummary 
+                                        name={plan.name}
+                                        pricing={plan.pricing}
+                                        interval={tab}
+                                    />
+                                </View>
+                                }
                             </View>
                         }
                         {(!loading && plan === null) && (
