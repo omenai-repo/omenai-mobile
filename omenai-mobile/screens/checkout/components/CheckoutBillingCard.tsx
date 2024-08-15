@@ -11,6 +11,9 @@ import mastercardLogo from 'assets/icons/MastercardLogo.png';
 import verve from 'assets/icons/verve.png';
 import visa from 'assets/icons/visa.png';
 import LongBlackButton from 'components/buttons/LongBlackButton';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
 
 export default function CheckoutBillingCard({
     plan,
@@ -30,6 +33,7 @@ export default function CheckoutBillingCard({
     interval: string;
     amount: number;
   }) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     const { set_transaction_id } = subscriptionStepperStore();
     const { updateModal } = useModalStore();
@@ -58,9 +62,9 @@ export default function CheckoutBillingCard({
             updateModal({message: "Couldn't create tokenized card charge", modalType: 'error', showModal: true})
         }else{
             const { data } = tokenize_card;
-            console.log(data)
             set_transaction_id(data.data.id);
             //navigate to verification screen
+            navigation.navigate(screenName.verifyTransaction)
         }
 
         setLoading(false);
@@ -110,8 +114,7 @@ const styles = StyleSheet.create({
         gap: 5
     },
     cardDetailsContainer: {
-        paddingHorizontal: 10,
-        paddingVertical: 15,
+        padding: 15,
         borderWidth: 1,
         borderColor: colors.grey50,
         borderRadius: 5,
