@@ -17,7 +17,8 @@ export default function Plan({
     tab,
     currency,
     plan_id,
-    sub_data
+    sub_data,
+    id,
 }: PlanProps & { 
     tab: "monthly" | "yearly",
     id: string,
@@ -26,6 +27,19 @@ export default function Plan({
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const currency_symbol = getCurrencySymbol(currency);
+
+    const handleNavigate = () => {
+        const action = sub_data === null
+        ? null
+        : +sub_data.payment.value >
+          (sub_data.plan_details.interval === "yearly"
+            ? +pricing.annual_price
+            : +pricing.monthly_price)
+        ? "downgrade"
+        : "upgrade"
+
+        navigation.navigate(screenName.checkout, {plan_id, tab, id: id, action})
+    }
 
     return (
         <View style={styles.container}>
@@ -56,7 +70,7 @@ export default function Plan({
                       : "Subscribed"
                     : "Get started with " + name
                 }
-                onClick={() => navigation.navigate(screenName.checkout, {plan_id, tab})}
+                onClick={handleNavigate}
                 isDisabled={
                     sub_data !== null &&
                     sub_data.plan_details.type === name &&
