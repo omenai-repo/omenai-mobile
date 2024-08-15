@@ -313,3 +313,52 @@ type PinAuthorizationData = {
   mode: "pin";
   pin: string;
 };
+type SubscriptionModelSchemaTypes = {
+  customer: {
+    id: number;
+    name: string;
+    phone_number?: string;
+    email: string;
+    created_at: string;
+    gallery_id: string;
+  };
+  start_date: Date;
+  expiry_date: Date;
+  status: "active" | "cancelled" | "expired";
+  card: SubscriptionCardDetails;
+  payment: SubscriptionPaymentTypes;
+  plan_details: {
+    type: string;
+    value: { monthly_price: string; annual_price: string };
+    currency: string;
+    interval: "monthly" | "yearly";
+  };
+  next_charge_params: {
+    value: number;
+    currency: string;
+    type: string;
+    interval: "monthly" | "yearly";
+    plan_id: string;
+  };
+};
+
+type SubscriptionPlanDataTypes = {
+  name: string;
+  pricing: {
+    annual_price: string;
+    monthly_price: string;
+  };
+  plan_id: string;
+  currency: string;
+  benefits: string[];
+};
+
+type SubscriptionTokenizationTypes = {
+  amount: number;
+  email: string;
+  tx_ref: string;
+  token: string;
+  gallery_id: string;
+  plan_id: string;
+  plan_interval: string;
+};

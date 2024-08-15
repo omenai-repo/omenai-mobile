@@ -10,13 +10,12 @@ import { WebView } from 'react-native-webview';
 
 type CheckoutStepperProps = {
     plan: PlanProps, 
-    verificationScreen: boolean,
-    setVerificationScreen: (value: boolean) => void,
+    setVerificationScreen: () => void,
     activeIndex: number,
     setActiveIndex: (index: any) => void
 }
 
-export default function CheckoutStepper({plan, verificationScreen, setVerificationScreen, activeIndex, setActiveIndex}: CheckoutStepperProps) {
+export default function CheckoutStepper({plan, setVerificationScreen, activeIndex, setActiveIndex}: CheckoutStepperProps) {
     
     const [isLastStep, setIsLastStep] = useState(false);
     const [validateChargeAuthorization, setValidateChargeAuthorization] = useState<ValidateChargeTypes>("");
@@ -65,7 +64,7 @@ export default function CheckoutStepper({plan, verificationScreen, setVerificati
                     {validateChargeAuthorization === "otp" && (
                         <OTPForm
                             handleNext={()=> {
-                                setVerificationScreen(true);
+                                setVerificationScreen();
                                 setActiveIndex(4)
                             }}
                             set_id={set_transaction_id}
@@ -73,9 +72,7 @@ export default function CheckoutStepper({plan, verificationScreen, setVerificati
                     )}
                 </View>
             )}
-            {verificationScreen && (
-                <FinishTransaction />
-            )}
+            
         </View>
     )
 }

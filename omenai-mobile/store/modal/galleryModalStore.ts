@@ -40,6 +40,9 @@ type galleryModalStoreTypes = {
 
 export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) => ({
     isVisible: false,
+    setIsVisible: (value: boolean) => {
+        set({isVisible: value})
+    },
     modalType: "decline",
     declineForm: {
         reason: ''
@@ -101,9 +104,6 @@ export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) 
             artworkDetails: null,
             currentId: ''
         })
-    },
-    setIsVisible: (value: boolean) => {
-        set({isVisible: value})
     },
     setModalType: (modal: galleryOrderModalTypes) => {
         set({modalType: modal})
