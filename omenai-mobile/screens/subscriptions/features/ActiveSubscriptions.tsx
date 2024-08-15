@@ -10,8 +10,11 @@ import { useModalStore } from 'store/modal/modalStore'
 import UpcomingBilling from '../components/UpcomingBilling'
 import BillingInfo from '../components/BillingInfo'
 import TransactionsListing from '../components/TransactionsListing'
+import { useIsFocused } from '@react-navigation/native'
 
 export default function ActiveSubscriptions() {
+    const isFocused = useIsFocused();
+
     const [loading, setLoading] = useState<boolean>(false);
 
     const [ subscriptionData, setSubscriptionData ] = useState<any>()
@@ -35,8 +38,10 @@ export default function ActiveSubscriptions() {
             setLoading(false)
         }
 
-        handleFetchSubData()
-    }, []);
+        if(isFocused){
+            handleFetchSubData()
+        }
+    }, [isFocused]);
 
     if(loading)return <ActiveSubLoader />
 

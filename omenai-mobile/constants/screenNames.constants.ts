@@ -28,6 +28,7 @@ export const screenName = {
     connectStripe: 'connect-stripe',
     artworksMedium: 'artworks-medium',
     artworkCategories: 'artwork-categories',
+    verifyTransaction: 'verify-transaction',
     gallery: {
         overview: 'Overview',
         artworks: 'Artworks',

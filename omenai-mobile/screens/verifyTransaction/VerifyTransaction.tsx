@@ -1,8 +1,8 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
-import successImage from '../../../../assets/icons/success_check.png';
-import errorImage from '../../../../assets/icons/error.png';
+import successImage from 'assets/icons/success_check.png';
+import errorImage from 'assets/icons/error.png';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
 import { verifyFlwTransaction } from 'services/subscriptions/verifyFlwTransaction';
@@ -12,8 +12,9 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { useAppStore } from 'store/app/appStore';
 import { storeAsyncData } from 'utils/asyncStorage.utils';
+import { colors } from 'config/colors.config';
 
-export default function FinishTransaction({handleDone}: {handleDone: () => void}) {
+export default function VerifyTransaction() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const { setUserSession, userSession } = useAppStore();
@@ -48,13 +49,13 @@ export default function FinishTransaction({handleDone}: {handleDone: () => void}
 
         setUserSession(newUserSession);
         storeAsyncData('userSession', JSON.stringify(newUserSession));
-        handleDone()
 
-        navigation.navigate(screenName.gallery.subscriptions);
+        navigation.navigate(screenName.gallery.overview);
     }
 
     return (
-        <View>
+        <View style={styles.container}>
+            <SafeAreaView>
             {loading && (
                 <View>
                     <Loader />
@@ -62,7 +63,7 @@ export default function FinishTransaction({handleDone}: {handleDone: () => void}
                 </View>
             )}
             {(!loading && verified) && (
-                <View>
+                <View style={{paddingHorizontal: 20, paddingTop: 50}}>
                     <Text style={{fontSize: 16, textAlign: 'center'}}>{verified.message}</Text>
                     {success !== null && (
                         <Image style={{height: 100, marginHorizontal: 'auto', marginTop: 10, marginBottom: 30}} resizeMode='contain' source={success ? successImage : errorImage} />
@@ -73,6 +74,7 @@ export default function FinishTransaction({handleDone}: {handleDone: () => void}
                     />
                 </View>
             )}
+            </SafeAreaView>
             
             
         </View>
@@ -81,6 +83,7 @@ export default function FinishTransaction({handleDone}: {handleDone: () => void}
 
 const styles = StyleSheet.create({
     container: {
-        
+        flex: 1,
+        backgroundColor: colors.white
     }
 })

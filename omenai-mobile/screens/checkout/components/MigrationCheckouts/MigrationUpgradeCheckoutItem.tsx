@@ -9,7 +9,6 @@ import {
     getDaysInMonth,
 } from "date-fns";
 import { getDaysLeft } from 'utils/getDaysLeft';
-import { getCurrencySymbol } from 'utils/getCurrencySymbol';
 import MigrationDetailsCard from '../MigrationDetailsCard';
 import CheckoutBillingCard from '../CheckoutBillingCard';
 
@@ -52,11 +51,6 @@ export default function MigrationUpgradeCheckoutItem({plan, interval, sub_data}:
         interval === "monthly"
         ? +plan.pricing.monthly_price
         : +plan.pricing.annual_price;
-
-    const currency = getCurrencySymbol(plan.currency);
-
-    const is_effected_end_of_billing_cycle =
-        sub_data.plan_details.interval === "yearly" && interval === "monthly";
     
     const total = upgrade_cost - prorated_cost;
     const grand_total = Math.round((total + Number.EPSILON) * 100) / 100;
@@ -64,7 +58,12 @@ export default function MigrationUpgradeCheckoutItem({plan, interval, sub_data}:
     return (
         <View style={styles.container}>
             <MigrationDetailsCard
-                
+                interval={interval}
+                sub_data={sub_data}
+                plan={plan}
+                prorated_cost={prorated_cost}
+                grand_total={grand_total}
+                days_used={days_used}
             />
             <CheckoutBillingCard
                 sub_data={sub_data}
@@ -78,6 +77,7 @@ export default function MigrationUpgradeCheckoutItem({plan, interval, sub_data}:
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        gap: 30
     }
 })

@@ -9,7 +9,7 @@ import FinishTransaction from './components/forms/FinishTransaction'
 import CheckoutSummary from './components/CheckoutSummary'
 import AvsNoauthInput from './components/forms/AvsNoauthInput'
 import AuthPinInput from './components/forms/AuthPinInput'
-import { useRoute } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { getSinglePlanData } from 'services/subscriptions/getSinglePlanData'
 import Loader from 'components/general/Loader'
 import CheckoutStepper from './components/CheckoutStepper'
@@ -20,9 +20,12 @@ import WebView from 'react-native-webview'
 import MigrationUpgradeCheckoutItem from './components/MigrationCheckouts/MigrationUpgradeCheckoutItem'
 import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData'
 import { useAppStore } from 'store/app/appStore'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { screenName } from 'constants/screenNames.constants'
 
 export default function Checkout() {
     const route = useRoute();
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     const [loading, setLoading] = useState<boolean>(false);
     const [reloadCount, setReloadCount] = useState(1);
@@ -65,7 +68,8 @@ export default function Checkout() {
     const handleFlutterwaveRedirect = (event: any) => {
         if(event.canGoBack && event.navigationType === 'formsubmit'){
             setWebViewUrl(null)
-            setVerificationScreen(true)
+            // setVerificationScreen(true)
+            navigation.navigate(screenName.verifyTransaction)
             setActiveIndex(4)
         }
     }
@@ -99,10 +103,9 @@ export default function Checkout() {
                                 <View>
                                     <CheckoutStepper
                                         plan={plan}
-                                        verificationScreen={verificationScreen}
-                                        setVerificationScreen={setVerificationScreen}
                                         activeIndex={activeIndex}
                                         setActiveIndex={setActiveIndex}
+                                        setVerificationScreen={() => navigation.navigate(screenName.verifyTransaction)}
                                     />
                                     <CheckoutSummary 
                                         name={plan.name}
