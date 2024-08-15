@@ -8,26 +8,34 @@ import { getAllPlanData } from 'services/subscriptions/getAllPlanData'
 import Loader from 'components/general/Loader'
 import EmptyArtworks from 'components/general/EmptyArtworks'
 import { useModalStore } from 'store/modal/modalStore'
+import { useRoute } from '@react-navigation/native'
+import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData'
+import { useAppStore } from 'store/app/appStore'
 
 export type billingTabs = "monthly" | "yearly"
 
 export default function Billing() {
     const [selectedTab, setSelectedTab] = useState<billingTabs>("monthly");
     const [plans, setPlans] = useState<PlanProps[]>([]);
+    const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(null);
     const [loading, setLoading] = useState(false);
 
     const { updateModal } = useModalStore();
+    const { userSession } = useAppStore();
 
     useEffect(() => {
         async function handleFetchPlans(){
             setLoading(true)
             const results = await getAllPlanData();
+            const subResults = await retrieveSubscriptionData(userSession.id)
 
-            if(results?.isOk){
-                setPlans(results.data)
-            }else{
+            if(!results?.isOk && !subResults?.isOk){
                 //throw error
-                updateModal({message: "Error fetching plans", modalType: 'error', showModal: true})
+                updateModal({message: "Something went wrong", modalType: 'error', showModal: true})
+                
+            }else{
+                setPlans(results?.data)
+                setSubData(subResults?.data)
             }
 
             setLoading(false)
@@ -47,12 +55,14 @@ export default function Billing() {
                         {plans.map((plan, index) => (
                             <Plan
                                 key={index}
+                                id={plan._id}
                                 name={plan.name}
                                 benefits={plan.benefits}
                                 pricing={plan.pricing}
                                 currency={plan.currency}
                                 tab={selectedTab}
                                 plan_id={plan.plan_id}
+                                sub_data={subData}
                             />
                         ))}
                     </View>

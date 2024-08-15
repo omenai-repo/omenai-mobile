@@ -6,6 +6,9 @@ import { formatPrice } from 'utils/priceFormatter'
 import { getCurrencySymbol } from 'utils/getCurrencySymbol'
 import Button from './Button'
 import { formatIntlDateTime } from 'utils/formatIntlDateTime'
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
 
 type PlanDetailsProps = {
     sub_status: string;
@@ -20,6 +23,7 @@ type PlanDetailsProps = {
 }
 
 export default function PlanDetails({ sub_status, end_date, payment, plan_details }: PlanDetailsProps) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     const currency_symbol = getCurrencySymbol(payment.currency);
 
@@ -46,8 +50,15 @@ export default function PlanDetails({ sub_status, end_date, payment, plan_detail
                     </View>
 
                     <View style={styles.buttonContainer}>
-                        <Button label='Upgrade/Downgrade plan' />
-                        <Button label='Cancel subscription' remove />
+                        <Button 
+                            label='Upgrade/Downgrade plan' 
+                            handleClick={() => navigation.navigate(screenName.gallery.billing)}
+                        />
+                        <Button 
+                            label='Cancel subscription' 
+                            remove 
+                            handleClick={() => {}}
+                        />
                     </View>
                     
                     
