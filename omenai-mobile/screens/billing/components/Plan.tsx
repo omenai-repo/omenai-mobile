@@ -16,8 +16,13 @@ export default function Plan({
     benefits,
     tab,
     currency,
-    plan_id
-}: PlanProps & { tab: "monthly" | "yearly" }) {
+    plan_id,
+    sub_data
+}: PlanProps & { 
+    tab: "monthly" | "yearly",
+    id: string,
+    sub_data: SubscriptionModelSchemaTypes | null;
+}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const currency_symbol = getCurrencySymbol(currency);
@@ -43,8 +48,20 @@ export default function Plan({
                 ))}
             </View>
             <LongBlackButton
-                value={'Get started with ' + name}
+                value={sub_data !== null
+                    ? sub_data.plan_details.type !== name ||
+                      (sub_data.plan_details.type === name &&
+                        sub_data.plan_details.interval !== tab)
+                      ? "Migrate to " + name
+                      : "Subscribed"
+                    : "Get started with " + name
+                }
                 onClick={() => navigation.navigate(screenName.checkout, {plan_id, tab})}
+                isDisabled={
+                    sub_data !== null &&
+                    sub_data.plan_details.type === name &&
+                    sub_data.plan_details.interval === tab
+                }
             />
         </View>
     )

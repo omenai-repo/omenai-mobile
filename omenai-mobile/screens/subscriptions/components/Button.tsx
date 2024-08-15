@@ -2,9 +2,15 @@ import { colors } from 'config/colors.config';
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const Button = ({label, remove}: {label: string, remove?: boolean}) => {
+type ButtonProps = {
+    label: string, 
+    remove?: boolean,
+    handleClick: () => void
+}
+
+const Button = ({label, remove, handleClick}: ButtonProps) => {
     return(
-        <TouchableOpacity style={{flex: 1}} activeOpacity={1}>
+        <TouchableOpacity style={{flex: 1}} activeOpacity={1} onPress={handleClick}>
             <View style={styles.button}>
                 <Text style={{color: remove ? '#ff0000' : colors.primary_black}}>{label}</Text>
             </View>
