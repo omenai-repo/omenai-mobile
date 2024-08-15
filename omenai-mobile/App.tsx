@@ -16,8 +16,6 @@ export default function App() {
 
   const prefix = Linking.createURL('/');
 
-  //exp://172.20.10.2:8081/--/CancleOrderPayment?art_id=wojciech
-
   const config = {
     screens: {
       CancleOrderPayment: 'CancleOrderPayment',

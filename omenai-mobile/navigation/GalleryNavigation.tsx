@@ -25,6 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 import StripePayouts from "screens/stripeScreens/payouts/StripePayouts";
 import EditArtwork from "screens/editArtwork/EditArtwork";
 import UploadNewLogo from "screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo";
+import VerifyTransaction from "screens/verifyTransaction/VerifyTransaction";
 
 type CustomTabBarIconProps = {
     name: any,
@@ -165,6 +166,7 @@ export default function GalleryNavigation() {
             <Stack.Group screenOptions={{presentation: 'modal'}}>
                 <Stack.Screen name={screenName.gallery.uploadNewLogo} component={UploadNewLogo} />
             </Stack.Group>
+            <Stack.Screen name={screenName.verifyTransaction} component={VerifyTransaction} />
         </Stack.Navigator>
     )
 }
