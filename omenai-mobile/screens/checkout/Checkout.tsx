@@ -86,17 +86,12 @@ export default function Checkout() {
                         {(!loading && plan !== null) &&
                             <View>
                                 {action ? (
-                                    <>
-                                        {action === "upgrade" ? 
-                                            <MigrationUpgradeCheckoutItem
-                                                plan={plan}
-                                                interval={tab}
-                                                sub_data={subData}
-                                            />
-                                            :
-                                            <Text>Downgrade</Text>
-                                        }
-                                    </>
+                                    
+                                    <MigrationUpgradeCheckoutItem
+                                        plan={plan}
+                                        interval={tab}
+                                        sub_data={subData}
+                                    />
                                 )
                                 :
                                 <View>
