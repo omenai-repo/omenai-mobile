@@ -42,7 +42,7 @@ export default function Checkout() {
 
     const [activeIndex, setActiveIndex] = useState<number>(0);
 
-    const {plan_id, tab, id, action} = route.params as {plan_id: string, tab: string, id?: string, action?: string}
+    const {plan_id, tab, action} = route.params as {plan_id: string, tab: string, id?: string, action?: string};
 
     useEffect(() => {
         async function fetchSinglePlanDetails(){
@@ -74,7 +74,6 @@ export default function Checkout() {
         }
     }
 
-    
 
     return (
         <WithModal>

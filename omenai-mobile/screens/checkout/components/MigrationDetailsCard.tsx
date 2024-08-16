@@ -3,6 +3,7 @@ import React from 'react'
 import { colors } from 'config/colors.config';
 import { getCurrencySymbol } from 'utils/getCurrencySymbol';
 import { formatPrice } from 'utils/priceFormatter';
+import { useRoute } from '@react-navigation/native';
 
 type MigrationDetailsCardProps = {
     plan:  SubscriptionPlanDataTypes & {
@@ -17,12 +18,17 @@ type MigrationDetailsCardProps = {
     };
     days_used: number,
     prorated_cost: number,
-    grand_total: number
+    grand_total: number,
+    shouldCharge: boolean,
+    action: string
 }
 
-export default function MigrationDetailsCard({ plan, interval, sub_data , days_used, prorated_cost, grand_total}: MigrationDetailsCardProps) {
-
+export default function MigrationDetailsCard({ plan, interval, sub_data , days_used, prorated_cost, grand_total, shouldCharge, action}: MigrationDetailsCardProps) {
+    const routes = useRoute();
+        
     const currency = getCurrencySymbol(plan.currency);
+
+    const {} = routes.params as {}
 
     const upgrade_cost =
     interval === "monthly"
@@ -35,9 +41,9 @@ export default function MigrationDetailsCard({ plan, interval, sub_data , days_u
     return (
         <View style={styles.container}>
             <View style={styles.topContainer}>
-                <Text style={{fontSize: 12, color: colors.white}}>Subscription upgrade</Text>
+                <Text style={{fontSize: 12, color: colors.white}}>Subscription {action}</Text>
                 <Text style={{fontSize: 14, color: colors.white, fontWeight: 500, marginTop: 10}}>Omenai {plan.name} subscription</Text>
-                <Text style={{fontSize: 14, color: colors.white, marginTop: 10}}>Billed yearly</Text>
+                <Text style={{fontSize: 14, color: colors.white, marginTop: 10}}>Billed {interval}</Text>
             </View>
             <View style={styles.mainContainer}>
                 <View style={styles.detailItem}>
@@ -51,7 +57,7 @@ export default function MigrationDetailsCard({ plan, interval, sub_data , days_u
                 <View style={styles.detailItem}>
                     <Text style={{flex: 1, fontSize: 14, color: colors.primary_black}}>Porated cost</Text>
                     <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: 500}}>
-                    {is_effected_end_of_billing_cycle
+                    {!shouldCharge
                         ? formatPrice(0, currency)
                         : `-${formatPrice(prorated_cost, currency)}`}
                     </Text>
@@ -59,11 +65,16 @@ export default function MigrationDetailsCard({ plan, interval, sub_data , days_u
                 <View style={styles.detailItem}>
                     <Text style={{flex: 1, fontSize: 14, color: colors.primary_black}}>Due today</Text>
                     <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: 500}}>
-                    {is_effected_end_of_billing_cycle
+                    {!shouldCharge
                         ? formatPrice(0, currency)
                         : `${formatPrice(grand_total, currency)}`}
                     </Text>
                 </View>
+                {!shouldCharge && (
+                    <View style={styles.warning}>
+                        <Text style={{fontSize: 12, color: '#ff0000'}}>NOTE: Your plan change will take effect at the end of your currentbilling cycle.</Text>
+                    </View>
+                )}
             </View>
         </View>
     )
@@ -88,5 +99,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10
+    },
+    warning: {
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: '#ff000015'
     }
 })
