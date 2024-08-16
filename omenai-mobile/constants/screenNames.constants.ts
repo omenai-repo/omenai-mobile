@@ -43,5 +43,6 @@ export const screenName = {
         order: 'gallery-order',
         stripePayouts: 'Payouts',
         editArtwork: 'edit-artwork',
+        changeBillingCard: 'change-billing-card',
     }
 }
