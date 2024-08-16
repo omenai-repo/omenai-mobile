@@ -17,9 +17,10 @@ type UpcomingBillingProps = {
         type: string;
         interval: "monthly" | "yearly";
     };
+    next_charge_params: NextChargeParams
 }
 
-export default function UpcomingBilling({ end_date, payment, plan_details }: UpcomingBillingProps) {
+export default function UpcomingBilling({ end_date, payment, plan_details, next_charge_params }: UpcomingBillingProps) {
 
     const currency_symbol = getCurrencySymbol(payment.currency);
 
@@ -32,19 +33,18 @@ export default function UpcomingBilling({ end_date, payment, plan_details }: Upc
             </View>
             <View style={styles.bottomContainer}>
                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-                    <View style={{flex: 1, flexDirection: 'row', gap: 10}}>
+                    <View style={{flex: 1, flexDirection: 'row', gap: 10, alignItems: 'center'}}>
                         <Image source={omenai_logo} style={styles.omenaiLogo} />
                         <View style={{gap: 5}}>
-                            <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>Omenai {plan_details.type}</Text>
-                            <Text style={{opacity: 0.7}}>{daysLeft(end_date)} day(s) left</Text>
+                            <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>Omenai {next_charge_params.type}</Text>
                         </View>
                     </View>
                     <View style={{alignItems: 'flex-end', gap: 5}}>
-                        <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>{formatPrice(payment.value, currency_symbol)}</Text>
-                        <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>{plan_details.interval.replace(/^./, (char) => char.toUpperCase())}</Text>
+                        <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>{formatPrice(next_charge_params.value, currency_symbol)}</Text>
+                        <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>{next_charge_params.interval.replace(/^./, (char) => char.toUpperCase())}</Text>
                     </View>
                 </View>
-                <Text style={{color: colors.grey, marginTop: 15}}><Text style={{fontWeight: 500, color: colors.primary_black}}>From:</Text> {formatIntlDateTime(end_date)} <Text style={{fontWeight: 500, color: colors.primary_black}}>To:</Text> {getFutureDate(end_date, plan_details.interval)}</Text>
+                <Text style={{color: colors.grey, marginTop: 15}}><Text style={{fontWeight: 500, color: colors.primary_black}}>From:</Text> {formatIntlDateTime(end_date)} <Text style={{fontWeight: 500, color: colors.primary_black}}>To:</Text> {getFutureDate(end_date, next_charge_params.interval)}</Text>
             </View>
         </View>
     )
@@ -75,6 +75,5 @@ const styles = StyleSheet.create({
     omenaiLogo: {
         height: 30,
         width: 30,
-        marginTop: 5
     },
 })
