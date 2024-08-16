@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
 import { formatPrice } from 'utils/priceFormatter'
 import { getCurrencySymbol } from 'utils/getCurrencySymbol'
+import { determinePlanChange } from 'utils/determinePlanChange'
 
 
 export default function Plan({
@@ -28,17 +29,25 @@ export default function Plan({
 
     const currency_symbol = getCurrencySymbol(currency);
 
-    const handleNavigate = () => {
-        const action = sub_data === null
-        ? null
-        : +sub_data.payment.value >
-          (sub_data.plan_details.interval === "yearly"
-            ? +pricing.annual_price
-            : +pricing.monthly_price)
-        ? "downgrade"
-        : "upgrade"
+    let plan_change_params: { action: string; shouldCharge: boolean } = {
+        action: "",
+        shouldCharge: false,
+    };
 
-        navigation.navigate(screenName.checkout, {plan_id, tab, id: id, action})
+    if (sub_data !== null) {
+        const { action, shouldCharge } = determinePlanChange(
+          sub_data.plan_details.type.toLowerCase(),
+          sub_data.plan_details.interval.toLowerCase() as "yearly" | "monthly",
+          tab === "yearly" ? +pricing.annual_price : +pricing.monthly_price,
+          tab
+        );
+        plan_change_params = { action, shouldCharge };
+    };
+
+    const handleNavigate = () => {
+        const action = sub_data === null ? null : plan_change_params.action
+
+        navigation.navigate(screenName.checkout, {plan_id, tab, id: id, action, shouldCharge: plan_change_params.shouldCharge})
     }
 
     return (
