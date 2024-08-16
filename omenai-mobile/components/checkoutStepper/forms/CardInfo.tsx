@@ -12,7 +12,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import { apiUrl } from 'constants/apiUrl.constants';
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
 import { useRoute } from '@react-navigation/native';
-import CardNumberInput from '../inputs/CardNumberInput';
+import CardNumberInput from '../../../screens/checkout/components/inputs/CardNumberInput';
 
 type cardInfoProps = {
     name: string,
@@ -26,14 +26,15 @@ type CardInfoProps = {
     handleNext: () => void,
     plan: PlanProps,
     updateAuthorization: Dispatch<SetStateAction<"redirect" | "avs_noauth" | "pin" | "otp" | "">>,
+    updateCard: boolean
 }
 
-export default function CardInfo({handleNext, plan, updateAuthorization}:CardInfoProps) {
+export default function CardInfo({handleNext, plan, updateAuthorization, updateCard}:CardInfoProps) {
     const routes = useRoute();
     const { userSession } = useAppStore();
     const { updateModal } = useModalStore();
 
-    const { tab }  = routes.params as {tab: string}
+    const params  = routes.params as {tab?: string}
 
     const { update_flw_charge_payload_data, setWebViewUrl, set_transaction_id } = subscriptionStepperStore()
 
@@ -47,7 +48,23 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
             //throw error
             updateModal({message: "Make sure all input fields are filled", modalType: 'error', showModal: true})
         }else{
-            const parsedCardNumber = cardInfo.cardNumber.replace(/ /g, '')
+            const parsedCardNumber = cardInfo.cardNumber.replace(/ /g, '');
+
+            let customer = {
+                name: userSession.name,
+                email: userSession.email,
+                gallery_id: userSession.id,
+            };
+
+            if(!updateCard && plan){
+                customer = {
+                    name: userSession.name,
+                    email: userSession.email,
+                    gallery_id: userSession.id,
+                    plan_id: plan._id,
+                    plan_interval: params?.tab,
+                }
+            }
             const data: FLWDirectChargeDataTypes & { name: string } = {
                 name: cardInfo.name,
                 cvv: cardInfo.cvv,
@@ -55,14 +72,8 @@ export default function CardInfo({handleNext, plan, updateAuthorization}:CardInf
                 month: cardInfo.expiryMonth,
                 year: cardInfo.year.slice(2, 4),
                 tx_ref: ref,
-                amount: tab === "monthly" ? plan.pricing.monthly_price : plan.pricing.annual_price,
-                customer: {
-                    name: userSession.name,
-                    email: userSession.email,
-                    gallery_id: userSession.id,
-                    plan_id: plan._id,
-                    plan_interval: tab,
-                },
+                amount: updateCard ? 1 : params?.tab === "monthly" ? plan.pricing.monthly_price : plan.pricing.annual_price,
+                customer,
                 redirect: `${apiUrl}/dashboard/gallery/billing`,
             };
 

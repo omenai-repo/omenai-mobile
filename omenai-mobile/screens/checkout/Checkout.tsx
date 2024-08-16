@@ -3,16 +3,15 @@ import React, { useEffect, useState } from 'react'
 import WithModal from 'components/modal/WithModal'
 import BackHeaderTitle from 'components/header/BackHeaderTitle'
 import FormsHeaderNavigation from './components/FormsHeaderNavigation'
-import CardInfo from './components/forms/CardInfo'
-import OTPForm from './components/forms/OTPForm'
-import FinishTransaction from './components/forms/FinishTransaction'
+import CardInfo from '../../components/checkoutStepper/forms/CardInfo'
+import OTPForm from '../../components/checkoutStepper/forms/OTPForm'
+import FinishTransaction from '../../components/checkoutStepper/forms/FinishTransaction'
 import CheckoutSummary from './components/CheckoutSummary'
-import AvsNoauthInput from './components/forms/AvsNoauthInput'
-import AuthPinInput from './components/forms/AuthPinInput'
+import AvsNoauthInput from '../../components/checkoutStepper/forms/AvsNoauthInput'
+import AuthPinInput from '../../components/checkoutStepper/forms/AuthPinInput'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { getSinglePlanData } from 'services/subscriptions/getSinglePlanData'
 import Loader from 'components/general/Loader'
-import CheckoutStepper from './components/CheckoutStepper'
 import EmptyArtworks from 'components/general/EmptyArtworks'
 import { useModalStore } from 'store/modal/modalStore'
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore'
@@ -22,6 +21,7 @@ import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscri
 import { useAppStore } from 'store/app/appStore'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { screenName } from 'constants/screenNames.constants'
+import CheckoutStepper from 'components/checkoutStepper/CheckoutStepper'
 
 export default function Checkout() {
     const route = useRoute();
@@ -100,6 +100,7 @@ export default function Checkout() {
                                         activeIndex={activeIndex}
                                         setActiveIndex={setActiveIndex}
                                         setVerificationScreen={() => navigation.navigate(screenName.verifyTransaction)}
+                                        updateCard={false}
                                     />
                                     <CheckoutSummary 
                                         name={plan.name}
