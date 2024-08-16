@@ -9,6 +9,7 @@ import { formatIntlDateTime } from 'utils/formatIntlDateTime'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
+import { daysLeft } from 'utils/daysLeft';
 
 type PlanDetailsProps = {
     sub_status: string;
@@ -40,6 +41,7 @@ export default function PlanDetails({ sub_status, end_date, payment, plan_detail
                         <Image source={omenai_logo} style={styles.omenaiLogo} />
                         <View style={{gap: 7}}>
                             <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>Omenai {plan_details.type}</Text>
+                            <Text style={{opacity: 0.7}}>{daysLeft(end_date)} day(s) left</Text>
                             <View style={styles.amountContainer}>
                                 <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>{formatPrice(payment.value, currency_symbol)}</Text>
                                 <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>/ {plan_details.interval.replace(/^./, (char) => char.toUpperCase())}</Text>
