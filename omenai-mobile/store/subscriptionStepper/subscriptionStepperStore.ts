@@ -12,7 +12,8 @@ type subscriptionStepperStoreTypes = {
   webViewUrl: string | null;
   setWebViewUrl: (url: string | null) => void,
   transaction_id: string,
-  set_transaction_id: (id: string) => void
+  set_transaction_id: (id: string) => void,
+  reset: () => void
 };
 
 export const subscriptionStepperStore = create<subscriptionStepperStoreTypes>((set, get) => ({
@@ -41,5 +42,13 @@ export const subscriptionStepperStore = create<subscriptionStepperStoreTypes>((s
   transaction_id: '',
   set_transaction_id: (id: string) => {
     set({transaction_id: id})
+  },
+  reset: () => {
+    set({
+      avs_input_fields: [],
+      flw_ref: "",
+      webViewUrl: null,
+      transaction_id: ''
+    })
   }
 }));

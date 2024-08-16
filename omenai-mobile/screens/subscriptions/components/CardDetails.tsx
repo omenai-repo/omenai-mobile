@@ -8,6 +8,10 @@ import cardwifiIcon from 'assets/icons/cardwifiIcon.png';
 import chip from 'assets/icons/chip.png';
 import creditcardBG from 'assets/icons/creditcardBg.png';
 import { useAppStore } from 'store/app/appStore';
+import Button from './Button';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { screenName } from 'constants/screenNames.constants';
 
 type CardDetailsProps = {
     cardData: {
@@ -21,17 +25,8 @@ type CardDetailsProps = {
 }
 
 export default function CardDetails({cardData}: CardDetailsProps) {
+    const navigation = useNavigation<StackNavigationProp<any>>();
     const { userSession } = useAppStore();
-
-    const Button = ({label, remove}: {label: string, remove?: boolean}) => {
-        return(
-            <TouchableOpacity style={{flex: 1}} activeOpacity={1}>
-                <View style={styles.button}>
-                    <Text style={{color: remove ? '#ff0000' : colors.primary_black}}>{label}</Text>
-                </View>
-            </TouchableOpacity>
-        )
-    };
 
     return (
         <View style={styles.container}>
@@ -58,7 +53,10 @@ export default function CardDetails({cardData}: CardDetailsProps) {
                 </ImageBackground>
             </View>
             <View style={styles.bottomContainer}>
-                <Button label='Update card' />
+                <Button 
+                    label='Change card' 
+                    handleClick={() => navigation.navigate(screenName.gallery.changeBillingCard)}
+                />
             </View>
         </View>
     )

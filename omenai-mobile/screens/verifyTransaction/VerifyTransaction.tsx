@@ -19,7 +19,7 @@ export default function VerifyTransaction() {
 
     const { setUserSession, userSession } = useAppStore();
 
-    const { transaction_id } = subscriptionStepperStore();
+    const { transaction_id, reset } = subscriptionStepperStore();
     const [loading, setLoading] = useState<boolean>(false);
     const [success, setSuccess] = useState<null | boolean>(null)
     const [verified, setVerified] = useState()
@@ -49,6 +49,9 @@ export default function VerifyTransaction() {
 
         setUserSession(newUserSession);
         storeAsyncData('userSession', JSON.stringify(newUserSession));
+
+        //clear the checkout stepper store
+        reset()
 
         navigation.navigate(screenName.gallery.overview);
     }
