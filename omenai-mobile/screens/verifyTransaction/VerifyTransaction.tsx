@@ -69,7 +69,7 @@ export default function VerifyTransaction() {
                         <Image style={{height: 100, marginHorizontal: 'auto', marginTop: 10, marginBottom: 30}} resizeMode='contain' source={success ? successImage : errorImage} />
                     )} 
                     <LongBlackButton
-                        value='View subscription'
+                        value='Return home'
                         onClick={handleViewSubscription}
                     />
                 </View>

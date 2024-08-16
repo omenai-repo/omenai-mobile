@@ -362,3 +362,10 @@ type SubscriptionTokenizationTypes = {
   plan_id: string;
   plan_interval: string;
 };
+type NextChargeParams = {
+  value: number;
+  currency: string;
+  type: string;
+  interval: string;
+  id: string;
+};

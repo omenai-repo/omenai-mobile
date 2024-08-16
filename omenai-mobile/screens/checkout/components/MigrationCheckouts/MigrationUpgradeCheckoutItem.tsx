@@ -11,6 +11,7 @@ import {
 import { getDaysLeft } from 'utils/getDaysLeft';
 import MigrationDetailsCard from '../MigrationDetailsCard';
 import CheckoutBillingCard from '../CheckoutBillingCard';
+import { useRoute } from '@react-navigation/native';
 
 type MigrationUpgradeCheckoutItemProps = {
     plan:  SubscriptionPlanDataTypes & {
@@ -26,6 +27,9 @@ type MigrationUpgradeCheckoutItemProps = {
 }
 
 export default function MigrationUpgradeCheckoutItem({plan, interval, sub_data}: MigrationUpgradeCheckoutItemProps) {
+    const route = useRoute();
+
+    const {shouldCharge, action} = route.params as {shouldCharge: boolean, action: string};
 
     const days_used = daysElapsedSince(sub_data.start_date);
     const startDate = new Date(sub_data.start_date);
@@ -64,12 +68,15 @@ export default function MigrationUpgradeCheckoutItem({plan, interval, sub_data}:
                 prorated_cost={prorated_cost}
                 grand_total={grand_total}
                 days_used={days_used}
+                shouldCharge={shouldCharge}
+                action={action}
             />
             <CheckoutBillingCard
                 sub_data={sub_data}
                 interval={interval}
                 plan={plan}
                 amount={grand_total}
+                shouldCharge={shouldCharge}
             />
         </View>
     )
