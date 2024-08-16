@@ -14,12 +14,15 @@ import LongBlackButton from 'components/buttons/LongBlackButton';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
+import { useAppStore } from 'store/app/appStore';
+import { downgradeSubscriptionPlan } from 'services/subscriptions/downgradeSubscriptionPlan';
 
 export default function CheckoutBillingCard({
     plan,
     interval,
     sub_data,
     amount,
+    shouldCharge
   }: {
     plan: SubscriptionPlanDataTypes & {
       createdAt: string;
@@ -32,18 +35,18 @@ export default function CheckoutBillingCard({
     };
     interval: string;
     amount: number;
+    shouldCharge: boolean
   }) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const { set_transaction_id } = subscriptionStepperStore();
     const { updateModal } = useModalStore();
-
-    const is_effected_end_of_billing_cycle =
-    sub_data.plan_details.interval === "yearly" && interval === "monthly";
+    const { userSession } = useAppStore();
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [migrationLoading, setMigrationLoading] = useState<boolean>(false);
 
-    async function handleSubMigrationPayment(){
+    async function handlePayNow(){
         setLoading(true);
         const tokenized_data: SubscriptionTokenizationTypes = {
             amount,
@@ -68,6 +71,37 @@ export default function CheckoutBillingCard({
         }
 
         setLoading(false);
+    };
+
+    async function handleMigrateToPlan(){
+        setMigrationLoading(true);
+
+        const data: NextChargeParams = {
+          value:
+            interval === "monthly"
+              ? +plan.pricing.monthly_price
+              : +plan.pricing.annual_price,
+          currency: "USD",
+          type: plan.name,
+          interval,
+          id: plan._id as string,
+        };
+    
+        const migrate = await downgradeSubscriptionPlan(data, userSession.id);
+    
+        if (!migrate?.isOk){
+            updateModal({message: migrate?.message, modalType: 'error', showModal: true})
+        }else{
+            updateModal({message: 'Migration successful', modalType: 'success', showModal: true})
+            handleMigrationNavigate()
+        };
+        setMigrationLoading(false);
+    };
+
+    const handleMigrationNavigate = () => {
+        setTimeout(() => {
+            navigation.navigate(screenName.gallery.overview)
+        }, 3500);
     }
 
     return (
@@ -98,11 +132,21 @@ export default function CheckoutBillingCard({
                     />
                 </View>
             </View>
-            <LongBlackButton
-                value='Pay now'
-                onClick={handleSubMigrationPayment}
-                isLoading={loading}
-            />
+            <View>
+                {shouldCharge ? 
+                    <LongBlackButton
+                        value='Pay now'
+                        onClick={handlePayNow}
+                        isLoading={loading}
+                    />
+                :
+                    <LongBlackButton
+                        value='Migrate to Plan'
+                        onClick={handleMigrateToPlan}
+                        isLoading={migrationLoading}
+                    />
+                }
+            </View>
         </View>
     )
 }
