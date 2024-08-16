@@ -1,21 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import React, { useState } from 'react'
 import CardInfo from './forms/CardInfo';
-import FinishTransaction from './forms/FinishTransaction';
 import OTPForm from './forms/OTPForm';
 import AvsNoauthInput from './forms/AvsNoauthInput';
 import AuthPinInput from './forms/AuthPinInput';
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
-import { WebView } from 'react-native-webview';
 
 type CheckoutStepperProps = {
     plan: PlanProps, 
     setVerificationScreen: () => void,
     activeIndex: number,
-    setActiveIndex: (index: any) => void
+    setActiveIndex: (index: any) => void,
+    updateCard: boolean
 }
 
-export default function CheckoutStepper({plan, setVerificationScreen, activeIndex, setActiveIndex}: CheckoutStepperProps) {
+export default function CheckoutStepper({plan, setVerificationScreen, activeIndex, setActiveIndex, updateCard}: CheckoutStepperProps) {
     
     const [isLastStep, setIsLastStep] = useState(false);
     const [validateChargeAuthorization, setValidateChargeAuthorization] = useState<ValidateChargeTypes>("");
@@ -40,6 +39,7 @@ export default function CheckoutStepper({plan, setVerificationScreen, activeInde
                     handleNext={handleNext}
                     updateAuthorization={setValidateChargeAuthorization}
                     plan={plan}
+                    updateCard={updateCard}
                 />
             )}
             {activeIndex === 1 && (
