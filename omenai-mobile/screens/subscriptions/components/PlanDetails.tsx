@@ -53,20 +53,26 @@ export default function PlanDetails({ sub_status, end_date, payment, plan_detail
                             <View style={{flexWrap: 'wrap'}}><View style={styles.activePill}><Text style={{fontSize: 12, fontWeight: 500, color: '#00800080'}}>{sub_status.toUpperCase()}</Text></View></View>
                         </View>
                     </View>
-
-                    <View style={styles.buttonContainer}>
-                        <Button 
-                            label='Upgrade/Downgrade plan' 
-                            handleClick={() => navigation.navigate(screenName.gallery.billing)}
-                        />
-                        <Button 
-                            label='Cancel subscription' 
-                            remove 
-                            handleClick={() => setRetainModal({retainModal: 'cancleSubscription', showModal: true, message: end_date})}
-                        />
-                    </View>
-                    
-                    
+                    {sub_status === 'canceled' ? (
+                        <View style={styles.buttonContainer}>
+                            <Button 
+                                label='Reactivate subscription' 
+                                handleClick={() => navigation.navigate(screenName.gallery.billing, {plan_action: 'reactivation'})}
+                            />
+                        </View>
+                    ) :
+                        <View style={styles.buttonContainer}>
+                            <Button 
+                                label='Upgrade/Downgrade plan' 
+                                handleClick={() => navigation.navigate(screenName.gallery.billing)}
+                            />
+                            <Button 
+                                label='Cancel subscription' 
+                                remove 
+                                handleClick={() => setRetainModal({retainModal: 'cancleSubscription', showModal: true, message: end_date})}
+                            />
+                        </View>
+                    }
                 </View>
             </View>
         </View>
