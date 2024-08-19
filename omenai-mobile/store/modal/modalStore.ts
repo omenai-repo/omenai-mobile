@@ -24,7 +24,9 @@ type ModalStoreTypes = {
     setWebViewUrl: (e: string | null) => void,
     updateConfirmationModal: (e: updateConfirmationModalProps) => void,
     confirmationModal: ReactNode,
-    clear: () => void
+    clear: () => void,
+    retainModal: string | null,
+    setRetainModal: (modalName: {retainModal: string | null, showModal: boolean, message?: string}) => void
 };
 
 export const useModalStore = create<ModalStoreTypes>(
@@ -47,10 +49,15 @@ export const useModalStore = create<ModalStoreTypes>(
         updateConfirmationModal: (e: updateConfirmationModalProps) => {
             set({confirmationModal: e.child, showConfirmationModal: true})
         },
+        retainModal: null,
+        setRetainModal: ({retainModal, showModal, message}: {retainModal: string | null, showModal: boolean, message?: string}) => {
+            set({retainModal: retainModal, showModal: showModal, modalMessage: message})
+        },
         clear: () => {
             set({
                 showConfirmationModal: false,
                 showModal: false,
+                retainModal: null,
                 modalMessage: "",
                 webViewUrl: null
             })
