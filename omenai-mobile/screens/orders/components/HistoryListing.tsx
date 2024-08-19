@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { formatIntlDateTime } from 'utils/formatIntlDateTime'
+import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime'
 import { Feather } from '@expo/vector-icons'
 import { colors } from 'config/colors.config'
-import { sortOrdersDataByDate } from 'utils/sortOrdersDataByDate'
+import { utils_sortOrdersDataByDate } from 'utils/utils_sortOrdersDataByDate'
 import OrderCard from './OrderCard'
 
 type OrdersListingProps = {
@@ -12,7 +12,7 @@ type OrdersListingProps = {
 
 export default function HistoryListing({orders}: OrdersListingProps) {
 
-    const histories = sortOrdersDataByDate(orders);
+    const histories = utils_sortOrdersDataByDate(orders);
 
     if(histories.length > 0)
         return (

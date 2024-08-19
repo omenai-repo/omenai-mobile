@@ -2,10 +2,10 @@ import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import OrderCard, { ordersColorsTypes } from 'components/gallery/OrderCard';
 import Divider from 'components/general/Divider';
-import { formatPrice } from 'utils/priceFormatter';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore';
 import { galleryOrderModalStore, galleryOrderModalTypes } from 'store/modal/galleryModalStore';
-import { getColors } from 'utils/sortFunctions.utils';
+import { utils_getColors } from 'utils/utils_sortFunctions';
 
 export type orderCardStatusTypes = 'Pending' | 'Pending customer payment' | 'Pending tracking info' | 'Declined by gallery' | 'Order completed'
 
@@ -43,10 +43,10 @@ export default function OrdersListing({data}: {data: any[]}) {
                 <OrderCard
                     url={item.artwork_data.url}
                     artist={item.artwork_data.artist}
-                    amount={formatPrice(item.artwork_data.pricing.price)}
+                    amount={utils_formatPrice(item.artwork_data.pricing.price)}
                     status={getStatus(item)}
                     artworkName={item.artwork_data.title}
-                    color={getColors(selectedTab)}
+                    color={utils_getColors(selectedTab)}
                     handlePress={e => {
                         setCurrentId(item.order_id)
 
@@ -55,7 +55,7 @@ export default function OrdersListing({data}: {data: any[]}) {
                             setArtworkDetails([
                                 {label: 'Artwork title', value: item.artwork_data.title},
                                 {label: 'Artist name', value: item.artwork_data.artist},
-                                {label: 'Price', value: formatPrice(item.artwork_data.pricing.price)},
+                                {label: 'Price', value: utils_formatPrice(item.artwork_data.pricing.price)},
                                 {label: 'Buyer name', value: item.buyer.name},
                                 {label: 'Address', value: `${item.shipping_address.address_line}, ${item.shipping_address.city}, ${item.shipping_address.country}, ${item.shipping_address.zip}`},
                             ])

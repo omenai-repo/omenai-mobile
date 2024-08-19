@@ -2,11 +2,11 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
 import { colors } from 'config/colors.config';
 import omenai_logo from 'assets/icons/omenai_logo_cut.png';
-import { daysLeft } from 'utils/daysLeft';
-import { formatPrice } from 'utils/priceFormatter';
-import { getCurrencySymbol } from 'utils/getCurrencySymbol';
-import { formatIntlDateTime } from 'utils/formatIntlDateTime';
-import { getFutureDate } from 'utils/getFutureDate';
+import { daysLeft } from 'utils/utils_daysLeft';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol';
+import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
+import { getFutureDate } from 'utils/utils_getFutureDate';
 
 type UpcomingBillingProps = {
     end_date: Date;
@@ -22,7 +22,7 @@ type UpcomingBillingProps = {
 
 export default function UpcomingBilling({ end_date, payment, plan_details, next_charge_params }: UpcomingBillingProps) {
 
-    const currency_symbol = getCurrencySymbol(payment.currency);
+    const currency_symbol = utils_getCurrencySymbol(payment.currency);
 
     return (
         <View style={styles.container}>
@@ -40,7 +40,7 @@ export default function UpcomingBilling({ end_date, payment, plan_details, next_
                         </View>
                     </View>
                     <View style={{alignItems: 'flex-end', gap: 5}}>
-                        <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>{formatPrice(next_charge_params.value, currency_symbol)}</Text>
+                        <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>{utils_formatPrice(next_charge_params.value, currency_symbol)}</Text>
                         <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>{next_charge_params.interval.replace(/^./, (char) => char.toUpperCase())}</Text>
                     </View>
                 </View>

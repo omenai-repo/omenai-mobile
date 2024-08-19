@@ -1,9 +1,9 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import TransactionCard from './TransactionCard'
-import { formatPrice } from 'utils/priceFormatter'
-import { formatIntlDateTime } from 'utils/formatIntlDateTime'
-import { convertPriceStringToNumber } from 'utils/priceStringToNumberConverter'
+import { utils_formatPrice } from 'utils/utils_priceFormatter'
+import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime'
+import { convertPriceStringToNumber } from 'utils/utils_priceStringToNumberConverter'
 
 type TransactionsTableProps = {
     transactions: TransactionModelSchemaTypes & { createdAt: any; updatedAt: any }[] | []
@@ -18,7 +18,7 @@ export default function Transactions({transactions}: TransactionsTableProps) {
           id: transaction.trans_id,
           date: formatIntlDateTime(transaction.trans_date),
           gross: transaction.trans_amount,
-          net: formatPrice(priceNumber),
+          net: utils_formatPrice(priceNumber),
           type: "Incoming",
           status: "Completed",
         };

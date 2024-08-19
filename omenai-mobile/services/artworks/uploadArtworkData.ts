@@ -1,4 +1,4 @@
-import { getAsyncData } from "utils/asyncStorage.utils";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
 import { apiUrl } from "../../constants/apiUrl.constants";
 
 export async function uploadArtworkData(data: Omit<ArtworkSchemaTypes, "art_id">){

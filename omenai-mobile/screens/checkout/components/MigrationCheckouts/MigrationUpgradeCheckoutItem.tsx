@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { daysElapsedSince } from 'utils/daysElapsedSince';
+import { utils_daysElapsedSince } from 'utils/utils_daysElapsedSince';
 import {
     differenceInDays,
     startOfYear,
@@ -8,7 +8,7 @@ import {
     endOfMonth,
     getDaysInMonth,
 } from "date-fns";
-import { getDaysLeft } from 'utils/getDaysLeft';
+import { getDaysLeft } from 'utils/utils_getDaysLeft';
 import MigrationDetailsCard from '../MigrationDetailsCard';
 import CheckoutBillingCard from '../CheckoutBillingCard';
 import { useRoute } from '@react-navigation/native';
@@ -31,7 +31,7 @@ export default function MigrationUpgradeCheckoutItem({plan, interval, sub_data}:
 
     const {shouldCharge, action} = route.params as {shouldCharge: boolean, action: string};
 
-    const days_used = daysElapsedSince(sub_data.start_date);
+    const days_used = utils_daysElapsedSince(sub_data.start_date);
     const startDate = new Date(sub_data.start_date);
 
     const daysInYear = differenceInDays(

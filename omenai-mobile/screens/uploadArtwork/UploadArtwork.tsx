@@ -9,8 +9,8 @@ import Pricing from './components/Pricing'
 import UploadImage from './components/UploadImage'
 import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore'
 import uploadImage from 'services/artworks/uploadArtworkImage'
-import { createUploadedArtworkData } from 'utils/createUploadedArtworkData'
-import { getAsyncData } from 'utils/asyncStorage.utils'
+import { createUploadedArtworkData } from 'utils/utils_createUploadedArtworkData'
+import { utils_getAsyncData } from 'utils/utils_asyncStorage'
 import { uploadArtworkData } from 'services/artworks/uploadArtworkData'
 import SuccessScreen from './components/SuccessScreen'
 import { useModalStore } from 'store/modal/modalStore'
@@ -42,7 +42,7 @@ export default function UploadArtwork() {
         setIsLoading(true);
 
         let userId = ''
-        let session = await getAsyncData('userSession')
+        let session = await utils_getAsyncData('userSession')
         if(session.value){
             userId = JSON.parse(session.value).id
         }else{

@@ -9,8 +9,8 @@ import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
 import { validate } from 'lib/validations/upload_artwork_input_validator/validator'
 import { currencies } from './mocks'
 import { getCurrencyConversion } from 'services/exchange_rate/getCurrencyConversion'
-import { formatPrice } from 'utils/priceFormatter'
-import { getCurrencySymbol } from 'utils/getCurrencySymbol'
+import { utils_formatPrice } from 'utils/utils_priceFormatter'
+import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol'
 import { useModalStore } from 'store/modal/modalStore'
 
 const transformedCurrencies = currencies.map(item => ({
@@ -29,8 +29,8 @@ export default function Pricing() {
     const [formErrors, setFormErrors] = useState<artworkPricingErrorsType>({price: ''});
     const [loadingConversion, setLoadingConversion] = useState<boolean>(false)
 
-    const currency_symbol = getCurrencySymbol(artworkUploadData.currency);
-    const usd_symbol = getCurrencySymbol("USD");
+    const currency_symbol = utils_getCurrencySymbol(artworkUploadData.currency);
+    const usd_symbol = utils_getCurrencySymbol("USD");
 
     const checkIsDisabled = () => {
         // Check if there are no error messages and all input fields are filled
@@ -118,10 +118,10 @@ export default function Pricing() {
                 artworkUploadData.usd_price !== 0 && (
                     <Text style={{fontSize: 14, fontWeight: 500, opacity: 0.8}}>
                     Exchange rate:{" "}
-                    {`${formatPrice(
+                    {`${utils_formatPrice(
                         artworkUploadData.price,
                         currency_symbol
-                    )} = ${loadingConversion ? 'converting...' : formatPrice(artworkUploadData.usd_price, usd_symbol)}`}
+                    )} = ${loadingConversion ? 'converting...' : utils_formatPrice(artworkUploadData.usd_price, usd_symbol)}`}
                     </Text>
                 )}
                 </View>

@@ -8,7 +8,7 @@ import LongBlackButton from 'components/buttons/LongBlackButton'
 import { validate } from 'lib/validations/validatorGroup'
 import { MaterialIcons } from '@expo/vector-icons'
 import { requestPasswordConfirmationCode } from 'services/requests/requestConfirmationCode'
-import { getAsyncData } from 'utils/asyncStorage.utils'
+import { utils_getAsyncData } from 'utils/utils_asyncStorage'
 import { updateGalleryPassword } from 'services/requests/updateGalleryPassword'
 import { useModalStore } from 'store/modal/modalStore'
 

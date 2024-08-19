@@ -2,14 +2,14 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { colors } from 'config/colors.config'
 import omenai_logo from 'assets/icons/omenai_logo_cut.png';
-import { formatPrice } from 'utils/priceFormatter'
-import { getCurrencySymbol } from 'utils/getCurrencySymbol'
+import { utils_formatPrice } from 'utils/utils_priceFormatter'
+import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol'
 import Button from './Button'
-import { formatIntlDateTime } from 'utils/formatIntlDateTime'
+import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
-import { daysLeft } from 'utils/daysLeft';
+import { daysLeft } from 'utils/utils_daysLeft';
 
 type PlanDetailsProps = {
     sub_status: string;
@@ -26,7 +26,7 @@ type PlanDetailsProps = {
 export default function PlanDetails({ sub_status, end_date, payment, plan_details }: PlanDetailsProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-    const currency_symbol = getCurrencySymbol(payment.currency);
+    const currency_symbol = utils_getCurrencySymbol(payment.currency);
 
     return (
         <View>
@@ -43,7 +43,7 @@ export default function PlanDetails({ sub_status, end_date, payment, plan_detail
                             <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>Omenai {plan_details.type}</Text>
                             <Text style={{opacity: 0.7}}>{daysLeft(end_date)} day(s) left</Text>
                             <View style={styles.amountContainer}>
-                                <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>{formatPrice(payment.value, currency_symbol)}</Text>
+                                <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>{utils_formatPrice(payment.value, currency_symbol)}</Text>
                                 <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>/ {plan_details.interval.replace(/^./, (char) => char.toUpperCase())}</Text>
                             </View>
                             <Text style={{fontSize: 14, color: colors.primary_black, opacity: 0.8}}>Next billing date: {formatIntlDateTime(end_date)}</Text>

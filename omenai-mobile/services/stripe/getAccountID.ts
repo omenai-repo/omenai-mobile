@@ -1,5 +1,5 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
-import { getAsyncData } from "utils/asyncStorage.utils";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
 
 export async function getAccountID(email: string){
 

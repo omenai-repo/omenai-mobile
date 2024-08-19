@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useEffect, useState } from 'react';
 import { useAppStore } from 'store/app/appStore';
-import { appInit } from 'utils/appInit';
+import { utils_appInit } from 'utils/utils_appInit';
 import { useFonts } from 'expo-font';
 import IndividualNavigation from 'navigation/IndividualNavigation';
 import AuthNavigation from 'navigation/AuthNavigation';
@@ -34,7 +34,7 @@ export default function App() {
   
   //add logic for conditional routing
   useEffect(() => {
-    appInit()
+    utils_appInit()
   }, [isLoggedIn])
 
   return (

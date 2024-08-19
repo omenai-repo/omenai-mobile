@@ -5,8 +5,8 @@ import { getImageFileView } from 'lib/storage/getImageFileView';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
-import { resizeImageDimensions } from 'utils/resizeImageDimensions.utils';
-import { formatPrice } from 'utils/priceFormatter';
+import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import EditArtworkButton from 'components/buttons/EditArtworkButton';
 
 type MiniArtworkCardType = {
@@ -54,7 +54,7 @@ export default function GalleryMiniArtworkCard({url, title, art_id, artist, usd_
             <View style={styles.mainDetailsContainer}>
                 <Text style={{fontSize: 14, color: colors.primary_black}}>{title}</Text>
                 <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.7}}>{artist}</Text>
-                <Text>{formatPrice(usd_price, '$')}</Text>
+                <Text>{utils_formatPrice(usd_price, '$')}</Text>
             </View>
         </TouchableOpacity>
     )

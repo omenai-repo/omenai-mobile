@@ -1,8 +1,8 @@
 import { useAppStore } from "../store/app/appStore"
-import { getAsyncData } from "./asyncStorage.utils"
+import { utils_getAsyncData } from "./utils_asyncStorage"
 
-export const appInit = async () => {
-    const userData = await getAsyncData('userSession')
+export const utils_appInit = async () => {
+    const userData = await utils_getAsyncData('userSession')
 
     if(userData.isOk === false) return false
 

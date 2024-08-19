@@ -2,9 +2,9 @@ import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
 import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
 import OrderCard from './OrderCard';
-import { formatPrice } from 'utils/priceFormatter';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import Divider from 'components/general/Divider';
-import { getColors } from 'utils/sortFunctions.utils';
+import { utils_getColors } from 'utils/utils_sortFunctions';
 import { OrdersListingProps } from './PendingOrders';
 import { orderCardStatusTypes } from './OrdersListing';
 
@@ -24,11 +24,11 @@ export default function CompletedOrders({data, handleOpenModal}: OrdersListingPr
             data={data}
             renderItem={({item}) => (
                 <OrderCard
-                    amount={formatPrice(item.artwork_data.pricing.usd_price)}
+                    amount={utils_formatPrice(item.artwork_data.pricing.usd_price)}
                     order_id={item.order_id}
                     status={getStatus(item)}
                     artworkName={item.artwork_data.title}
-                    color={getColors('completed', item)}
+                    color={utils_getColors('completed', item)}
                     handlePress={() => {
                         handleOpenModal('details', item.order_id)
                         setArtworkDetails({
@@ -37,7 +37,7 @@ export default function CompletedOrders({data, handleOpenModal}: OrdersListingPr
                             details:[
                                 {label: 'Artwork title', value: item.artwork_data.title},
                                 {label: 'Artist name', value: item.artwork_data.artist},
-                                {label: 'Price', value: formatPrice(item.artwork_data.pricing.usd_price)},
+                                {label: 'Price', value: utils_formatPrice(item.artwork_data.pricing.usd_price)},
                                 {label: 'Buyer name', value: item.buyer.name},
                                 {label: 'Address', value: `${item.shipping_address.address_line}, ${item.shipping_address.city}, ${item.shipping_address.country}, ${item.shipping_address.zip}`},
                         ]})

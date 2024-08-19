@@ -1,6 +1,6 @@
 import { currency_symbol } from "../json/currencySymbol";
 
-export function getCurrencySymbol(currency: string) {
+export function utils_getCurrencySymbol(currency: string) {
   const found_currency = currency_symbol.find(
     (single_currency) => single_currency.abbreviation === currency.toUpperCase()
   );

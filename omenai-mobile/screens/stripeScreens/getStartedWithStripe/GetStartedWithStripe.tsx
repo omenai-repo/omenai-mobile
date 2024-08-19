@@ -2,7 +2,7 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, View, Linking } from 'react
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import Input from 'components/inputs/Input'
-import { getAsyncData } from 'utils/asyncStorage.utils';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
 import { country_codes } from 'json/country_alpha_2_codes';
 import LongBlackButton from 'components/buttons/LongBlackButton';
@@ -29,7 +29,7 @@ export default function GetStartedWithStripe() {
     useEffect(() => {
         //fetch gallery session
         async function handleFetchSession(){
-            const session = await getAsyncData('userSession')
+            const session = await utils_getAsyncData('userSession')
             if(session.value){
                 setGallerySession(JSON.parse(session.value))
                 return

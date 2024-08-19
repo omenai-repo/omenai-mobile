@@ -4,7 +4,7 @@ import { colors } from 'config/colors.config'
 import { ScrollView } from 'react-native-gesture-handler'
 import omenaiAvatar from '../../assets/images/omenai-avatar.png';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import { getAsyncData } from 'utils/asyncStorage.utils';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import Divider from 'components/general/Divider';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
@@ -28,7 +28,7 @@ export default function Profile() {
     }, []);
 
     const handleFetchUserSession = async () => {
-        const userSession = await getAsyncData('userSession')
+        const userSession = await utils_getAsyncData('userSession')
 
         if(userSession.isOk === false) return
 

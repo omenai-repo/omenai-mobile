@@ -22,7 +22,7 @@ interface FinalObject {
   data: OriginalObject[];
 }
 
-export function sortOrdersDataByDate(
+export function utils_sortOrdersDataByDate(
   inputArray: OriginalObject[]
 ): FinalObject[] {
   // Format and sort the data

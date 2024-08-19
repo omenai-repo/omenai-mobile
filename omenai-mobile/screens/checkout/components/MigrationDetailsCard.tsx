@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { colors } from 'config/colors.config';
-import { getCurrencySymbol } from 'utils/getCurrencySymbol';
-import { formatPrice } from 'utils/priceFormatter';
+import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { useRoute } from '@react-navigation/native';
 
 type MigrationDetailsCardProps = {
@@ -26,7 +26,7 @@ type MigrationDetailsCardProps = {
 export default function MigrationDetailsCard({ plan, interval, sub_data , days_used, prorated_cost, grand_total, shouldCharge, action}: MigrationDetailsCardProps) {
     const routes = useRoute();
         
-    const currency = getCurrencySymbol(plan.currency);
+    const currency = utils_getCurrencySymbol(plan.currency);
 
     const {} = routes.params as {}
 
@@ -52,22 +52,22 @@ export default function MigrationDetailsCard({ plan, interval, sub_data , days_u
                 </View>
                 <View style={styles.detailItem}>
                     <Text style={{flex: 1, fontSize: 14, color: colors.primary_black}}>Plan upgrade cost</Text>
-                    <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: 500}}>{formatPrice(upgrade_cost, currency)}</Text>
+                    <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: 500}}>{utils_formatPrice(upgrade_cost, currency)}</Text>
                 </View>
                 <View style={styles.detailItem}>
                     <Text style={{flex: 1, fontSize: 14, color: colors.primary_black}}>Porated cost</Text>
                     <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: 500}}>
                     {!shouldCharge
-                        ? formatPrice(0, currency)
-                        : `-${formatPrice(prorated_cost, currency)}`}
+                        ? utils_formatPrice(0, currency)
+                        : `-${utils_formatPrice(prorated_cost, currency)}`}
                     </Text>
                 </View>
                 <View style={styles.detailItem}>
                     <Text style={{flex: 1, fontSize: 14, color: colors.primary_black}}>Due today</Text>
                     <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: 500}}>
                     {!shouldCharge
-                        ? formatPrice(0, currency)
-                        : `${formatPrice(grand_total, currency)}`}
+                        ? utils_formatPrice(0, currency)
+                        : `${utils_formatPrice(grand_total, currency)}`}
                     </Text>
                 </View>
                 {!shouldCharge && (

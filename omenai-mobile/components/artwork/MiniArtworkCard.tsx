@@ -7,8 +7,8 @@ import { getImageFileView } from 'lib/storage/getImageFileView';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
-import { formatPrice } from 'utils/priceFormatter';
-import { resizeImageDimensions } from 'utils/resizeImageDimensions.utils';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
 import LikeComponent from './LikeComponent';
 
 type MiniArtworkCardType = {
@@ -54,7 +54,7 @@ export default function MiniArtworkCard({url, artist, title, showPrice, price, a
                 <View style={{flex: 1}}>
                     <Text style={{fontSize: 14, color: colors.primary_black}}>{title}</Text>
                     <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.7, marginTop: 5}}>{artist}</Text>
-                    <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}}>{showPrice ? formatPrice(price) : "Price on request"}</Text>
+                    <Text style={{fontSize: 14, color: colors.primary_black, fontWeight: '500', marginTop: 5}}>{showPrice ? utils_formatPrice(price) : "Price on request"}</Text>
                 </View>
                 <LikeComponent
                     art_id={art_id}

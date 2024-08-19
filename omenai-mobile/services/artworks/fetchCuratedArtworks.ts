@@ -1,11 +1,11 @@
-import filterArtObjectsByMedium from "utils/filterArtObjectsByMedium";
+import filterArtObjectsByMedium from "utils/utils_filterArtObjectsByMedium";
 import { apiUrl } from "../../constants/apiUrl.constants";
-import { getAsyncData } from "utils/asyncStorage.utils";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
 
 export async function fetchCuratedArtworks({page}:{page: number}){
 
     let preferences = [];
-    const userSession = await getAsyncData('userSession')
+    const userSession = await utils_getAsyncData('userSession')
     if(userSession.value){
         preferences = JSON.parse(userSession.value).preferences
     }

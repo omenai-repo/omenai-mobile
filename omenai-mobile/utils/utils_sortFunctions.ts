@@ -1,6 +1,6 @@
 import { ordersColorsTypes } from "components/gallery/OrderCard";
 
-export const getColors = (selectedTab : string, order?: any): ordersColorsTypes => {
+export const utils_getColors = (selectedTab : string, order?: any): ordersColorsTypes => {
     if(selectedTab === 'processing' && order?.payment_information.status === "completed"){
         return {bgColor: '#17963925', textColor: '#000'}
     }

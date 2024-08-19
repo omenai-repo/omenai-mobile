@@ -1,8 +1,8 @@
 import { useAppStore } from "../store/app/appStore"
-import { clearLocalStorage } from "./asyncStorage.utils"
+import { utils_clearLocalStorage } from "./utils_asyncStorage"
 
 export const logout = async () => {
-    clearLocalStorage()
+    utils_clearLocalStorage()
 
     useAppStore.setState({isLoggedIn: false, userSession: null})
 }
