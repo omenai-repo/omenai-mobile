@@ -7,7 +7,7 @@ import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
 import { country_codes } from 'json/country_alpha_2_codes';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import { country_and_states } from 'json/countryAndStateList';
-import { generateAlphaDigit } from 'utils/generateToken';
+import { generateAlphaDigit } from 'utils/utils_generateToken';
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
 import { validateChargeAuthorization } from 'services/subscriptions/subscribeUser/validateChargeAuthorization';
 import { useModalStore } from 'store/modal/modalStore';

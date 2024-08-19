@@ -3,9 +3,9 @@ import React from 'react'
 import LongBlackButton from 'components/buttons/LongBlackButton'
 import { colors } from 'config/colors.config'
 import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore';
-import { formatPrice } from 'utils/priceFormatter';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { createShippingOrder } from 'services/orders/createShippingOrder';
-import { getAsyncData } from 'utils/asyncStorage.utils';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import { useModalStore } from 'store/modal/modalStore';
 
 type SummaryContainerProps = {
@@ -22,7 +22,7 @@ export default function SummaryContainer({buttonTypes, price, disableButton}: Su
         setIsLoading(true);
 
         let userId = ''
-        const userSession = await getAsyncData('userSession')
+        const userSession = await utils_getAsyncData('userSession')
         if(userSession.value){
             userId = JSON.parse(userSession.value).id
         }
@@ -60,7 +60,7 @@ export default function SummaryContainer({buttonTypes, price, disableButton}: Su
             <View style={styles.priceListing}>
                 <View style={styles.priceListingItem}>
                     <Text style={{fontSize: 14, color: '#616161', flex: 1}}>Price</Text>
-                    <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{price ? formatPrice(price) : 'Request price'}</Text>
+                    <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{price ? utils_formatPrice(price) : 'Request price'}</Text>
                 </View>
                 <View style={styles.priceListingItem}>
                     <Text style={{fontSize: 14, color: '#616161', flex: 1}}>Shipping</Text>

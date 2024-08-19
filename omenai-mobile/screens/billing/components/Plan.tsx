@@ -6,9 +6,9 @@ import LongBlackButton from 'components/buttons/LongBlackButton'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
-import { formatPrice } from 'utils/priceFormatter'
-import { getCurrencySymbol } from 'utils/getCurrencySymbol'
-import { determinePlanChange } from 'utils/determinePlanChange'
+import { utils_formatPrice } from 'utils/utils_priceFormatter'
+import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol'
+import { utils_determinePlanChange } from 'utils/utils_determinePlanChange'
 
 
 export default function Plan({
@@ -27,7 +27,7 @@ export default function Plan({
 }) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-    const currency_symbol = getCurrencySymbol(currency);
+    const currency_symbol = utils_getCurrencySymbol(currency);
 
     let plan_change_params: { action: string; shouldCharge: boolean } = {
         action: "",
@@ -35,7 +35,7 @@ export default function Plan({
     };
 
     if (sub_data !== null) {
-        const { action, shouldCharge } = determinePlanChange(
+        const { action, shouldCharge } = utils_determinePlanChange(
           sub_data.plan_details.type.toLowerCase(),
           sub_data.plan_details.interval.toLowerCase() as "yearly" | "monthly",
           tab === "yearly" ? +pricing.annual_price : +pricing.monthly_price,

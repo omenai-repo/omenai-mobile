@@ -5,7 +5,7 @@ import BackHeaderTitle from 'components/header/BackHeaderTitle'
 import Input from 'components/inputs/Input'
 import LargeInput from 'components/inputs/LargeInput'
 import LongBlackButton from 'components/buttons/LongBlackButton'
-import { getAsyncData } from 'utils/asyncStorage.utils'
+import { utils_getAsyncData } from 'utils/utils_asyncStorage'
 import { galleryProfileUpdate } from 'store/gallery/galleryProfileUpdateStore'
 import { updateProfile } from 'services/update/updateProfile'
 import WithModal from 'components/modal/WithModal'
@@ -23,7 +23,7 @@ export default function EditGalleryProfile() {
 
     useEffect(() => {
         async function handleFetchUserSession(){
-            const user = await getAsyncData('userSession');
+            const user = await utils_getAsyncData('userSession');
             if(user.value){
                 setUser(JSON.parse(user.value));
             }

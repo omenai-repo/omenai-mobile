@@ -1,11 +1,11 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
-import { getAsyncData } from "utils/asyncStorage.utils";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
 import { logout } from "utils/logout.utils";
 
 export async function fetchUserSavedArtworks(){
 
     let userId = ''
-    const userSession = await getAsyncData('userSession')
+    const userSession = await utils_getAsyncData('userSession')
     if(userSession.value){
         userId = JSON.parse(userSession.value).id
     }

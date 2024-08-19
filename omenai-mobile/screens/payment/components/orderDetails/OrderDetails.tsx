@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import BackHeaderTitle from 'components/header/BackHeaderTitle'
 import LongBlackButton from 'components/buttons/LongBlackButton'
-import { formatPrice } from 'utils/priceFormatter'
-import { calculatePurchaseGrandTotalNumber } from 'utils/calculatePurchaseGrandTotal'
+import { utils_formatPrice } from 'utils/utils_priceFormatter'
+import { utils_calculatePurchaseGrandTotalNumber } from 'utils/utils_calculatePurchaseGrandTotal'
 import { Feather } from '@expo/vector-icons'
 import { useAppStore } from 'store/app/appStore'
 import { createOrderLock } from 'services/orders/createOrderLock'
@@ -26,7 +26,7 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
     const { userSession } = useAppStore();
     const { updateModal } = useModalStore()
 
-    const total_price_number = calculatePurchaseGrandTotalNumber(
+    const total_price_number = utils_calculatePurchaseGrandTotalNumber(
         data.artwork_data.pricing.usd_price,
         data.shipping_quote.shipping_fees,
         data.shipping_quote.taxes
@@ -141,20 +141,20 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
                     <View style={styles.priceListing}>
                         <View style={styles.priceListingItem}>
                             <Text style={{fontSize: 14, color: '#616161', flex: 1}}>Price</Text>
-                            <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{formatPrice(data.artwork_data.pricing.usd_price)}</Text>
+                            <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{utils_formatPrice(data.artwork_data.pricing.usd_price)}</Text>
                         </View>
                         <View style={styles.priceListingItem}>
                             <Text style={{fontSize: 14, color: '#616161', flex: 1}}>Shipping</Text>
-                            <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{formatPrice(data.shipping_quote.shipping_fees)}</Text>
+                            <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{utils_formatPrice(data.shipping_quote.shipping_fees)}</Text>
                         </View>
                         <View style={styles.priceListingItem}>
                             <Text style={{fontSize: 14, color: '#616161', flex: 1}}>Taxes</Text>
-                            <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{formatPrice(data.shipping_quote.taxes)}</Text>
+                            <Text style={{fontSize: 14, fontWeight: '500', color: '#616161'}}>{utils_formatPrice(data.shipping_quote.taxes)}</Text>
                         </View>
                     </View>
                     <View style={styles.priceListingItem}>
                         <Text style={{fontSize: 16, fontWeight: '500', color: colors.primary_black, flex: 1}}>Subtotal</Text>
-                        <Text style={{fontSize: 16, fontWeight: '500', color: colors.primary_black}}>{formatPrice(total_price_number)}</Text>
+                        <Text style={{fontSize: 16, fontWeight: '500', color: colors.primary_black}}>{utils_formatPrice(total_price_number)}</Text>
                     </View>
                     <View style={{marginTop: 49}}>
                         <LongBlackButton 

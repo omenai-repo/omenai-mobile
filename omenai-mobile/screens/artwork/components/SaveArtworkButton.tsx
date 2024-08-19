@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { AntDesign } from '@expo/vector-icons'
 import { colors } from 'config/colors.config'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { handleFetchUserID } from 'utils/asyncStorage.utils'
+import { utils_handleFetchUserID } from 'utils/utils_asyncStorage'
 import useLikedState from 'custom/hooks/useLikedState'
 
 type SaveArtworkButtonProps = {
@@ -21,7 +21,7 @@ export default function SaveArtworkButton({likeIds, art_id, impressions}: SaveAr
 
 
     const handleFetchUserSessionData = async () => {
-        const userId = await handleFetchUserID();
+        const userId = await utils_handleFetchUserID();
         setSessionId(userId)
     }
     

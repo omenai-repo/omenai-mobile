@@ -13,11 +13,11 @@ import { fetchsingleArtwork } from 'services/artworks/fetchSingleArtwork';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { Feather, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import SimilarArtworks from './components/similarArtworks/SimilarArtworks';
-import { formatPrice } from 'utils/priceFormatter';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { screenName } from 'constants/screenNames.constants';
 import WithModal from 'components/modal/WithModal';
 import { requestArtworkPrice } from 'services/artworks/requestArtworkPrice';
-import { getAsyncData } from 'utils/asyncStorage.utils';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import { useModalStore } from 'store/modal/modalStore';
 import SaveArtworkButton from './components/SaveArtworkButton';
 import Loader from 'components/general/Loader';
@@ -67,7 +67,7 @@ export default function Artwork() {
         let userEmail = '';
         let userName = '';
 
-        const userSession = await getAsyncData('userSession')
+        const userSession = await utils_getAsyncData('userSession')
         if(userSession.value){
             userEmail = JSON.parse(userSession.value).email
             userName = JSON.parse(userSession.value).name
@@ -154,7 +154,7 @@ export default function Artwork() {
                     <View style={{backgroundColor: colors.white, paddingHorizontal: 15, paddingBottom: 15, borderWidth: 1, borderColor: colors.grey50, borderRadius: 15}}>
                         <View style={styles.priceContainer}>
                             <Text style={styles.priceTitle}>Price</Text>
-                            <Text style={[styles.price, (data?.pricing.shouldShowPrice === "No" && userType !== 'gallery')&& {fontSize: 16, color: colors.grey}]}>{(data?.pricing.shouldShowPrice === 'Yes' || userType === 'gallery') ? formatPrice(data?.pricing.usd_price) : "Price on request"}</Text>
+                            <Text style={[styles.price, (data?.pricing.shouldShowPrice === "No" && userType !== 'gallery')&& {fontSize: 16, color: colors.grey}]}>{(data?.pricing.shouldShowPrice === 'Yes' || userType === 'gallery') ? utils_formatPrice(data?.pricing.usd_price) : "Price on request"}</Text>
                         </View>
                         {userType !== 'gallery' &&
                             (data?.availability ?

@@ -1,10 +1,10 @@
-import { getAsyncData } from "utils/asyncStorage.utils";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
 import { apiUrl } from "../../constants/apiUrl.constants";
 
 export async function requestPasswordConfirmationCode(){
 
     let id = ''
-    const userSession = await getAsyncData('userSession')
+    const userSession = await utils_getAsyncData('userSession')
     if(userSession.value){
         id = JSON.parse(userSession.value).id
     }else{

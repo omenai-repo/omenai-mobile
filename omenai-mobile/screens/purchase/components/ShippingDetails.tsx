@@ -9,7 +9,7 @@ import { countriesListing } from 'constants/countries.constants';
 import SummaryContainer from './SummaryContainer';
 import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore';
 import { validate } from 'lib/validations/validatorGroup';
-import { getAsyncData } from 'utils/asyncStorage.utils';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 
 const deliveryOptions = [
     'Shipping',
@@ -30,7 +30,7 @@ export default function ShippingDetails({data: {
     }, []);
 
     const fetchUserSessionsData = async () => {
-        let userSession = await getAsyncData('userSession');
+        let userSession = await utils_getAsyncData('userSession');
         if(userSession.value){
             const userData = JSON.parse(userSession.value)
             setName(userData.name)

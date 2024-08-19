@@ -1,7 +1,7 @@
 import { Linking, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Input from 'components/inputs/Input'
-import { getAsyncData } from 'utils/asyncStorage.utils';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import { getAccountID } from 'services/stripe/getAccountID';
 import { createAccountLink } from 'services/stripe/createAccountLink';
@@ -17,7 +17,7 @@ export default function CompleteOnBoarding() {
     useEffect(() => {
         //fetch gallery session
         async function handleFetchSession(){
-            const session = await getAsyncData('userSession')
+            const session = await utils_getAsyncData('userSession')
             if(session.value){
                 setGallerySession(JSON.parse(session.value))
                 const connect_id =  await getAccountID(JSON.parse(session.value).email);

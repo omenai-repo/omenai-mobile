@@ -9,7 +9,7 @@ import Loader from 'components/general/Loader';
 import { useIsFocused } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons'
 import { screenName } from 'constants/screenNames.constants';
-import { handleFetchUserID } from 'utils/asyncStorage.utils';
+import { utils_handleFetchUserID } from 'utils/utils_asyncStorage';
 import useLikedState from 'custom/hooks/useLikedState';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
 
@@ -39,7 +39,7 @@ export default function SavedArtworks() {
 
 
     const handleFetchUserSessionData = async () => {
-        const userId = await handleFetchUserID();
+        const userId = await utils_handleFetchUserID();
         setSessionId(userId)
     }
 

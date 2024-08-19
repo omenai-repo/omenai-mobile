@@ -1,5 +1,5 @@
 import { filterStore } from "store/artworks/FilterStore";
-import { hasFilterValue } from "utils/checkIfFilterExists";
+import { hasFilterValue } from "utils/utils_checkIfFilterExists";
 import { ChangeEvent } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { colors } from "config/colors.config";

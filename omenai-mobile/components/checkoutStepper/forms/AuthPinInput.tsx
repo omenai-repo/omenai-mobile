@@ -7,7 +7,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
 import { useModalStore } from 'store/modal/modalStore';
-import { generateAlphaDigit } from 'utils/generateToken';
+import { generateAlphaDigit } from 'utils/utils_generateToken';
 import { validateChargeAuthorization } from 'services/subscriptions/subscribeUser/validateChargeAuthorization';
 
 type AuthPinInputProps = {

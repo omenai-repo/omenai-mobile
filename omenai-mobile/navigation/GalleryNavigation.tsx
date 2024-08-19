@@ -20,7 +20,7 @@ import GetStartedWithStripe from "screens/stripeScreens/getStartedWithStripe/Get
 import Subscriptions from "screens/subscriptions/Subscriptions";
 import UploadArtwork from "screens/uploadArtwork/UploadArtwork";
 import { getAccountID } from "services/stripe/getAccountID";
-import { getAsyncData } from "utils/asyncStorage.utils";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
 import { useNavigation } from "@react-navigation/native";
 import StripePayouts from "screens/stripeScreens/payouts/StripePayouts";
 import EditArtwork from "screens/editArtwork/EditArtwork";
@@ -64,7 +64,7 @@ export default function GalleryNavigation() {
     }, [navigation])
 
     async function handleGetAccountID(){
-        const userSession = await getAsyncData('userSession')
+        const userSession = await utils_getAsyncData('userSession')
         if(userSession.value){
             const res = await getAccountID(JSON.parse(userSession.value).email);
             if(res?.data){
