@@ -4,7 +4,7 @@ import { colors } from 'config/colors.config'
 import { Feather } from '@expo/vector-icons'
 import LongBlackButton from 'components/buttons/LongBlackButton'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
 import { utils_formatPrice } from 'utils/utils_priceFormatter'
 import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol'
@@ -25,7 +25,10 @@ export default function Plan({
     id: string,
     sub_data: SubscriptionModelSchemaTypes | null;
 }) {
+    const route = useRoute();
     const navigation = useNavigation<StackNavigationProp<any>>();
+
+    const { plan_action } = route.params as { plan_action?: string }
 
     const currency_symbol = utils_getCurrencySymbol(currency);
 
@@ -43,6 +46,19 @@ export default function Plan({
         );
         plan_change_params = { action, shouldCharge };
     };
+
+    let buttonText = "Get started today";
+
+    if (sub_data !== null) {
+        if (
+        sub_data.plan_details.type !== name ||
+        (sub_data.plan_details.type === name &&
+            sub_data.plan_details.interval !== tab)
+        ) {
+        buttonText =
+            plan_action === "reactivation" ? "Activate plan" : "Subscribed";
+        }
+    }
 
     const handleNavigate = () => {
         const action = sub_data === null ? null : plan_change_params.action
@@ -71,19 +87,13 @@ export default function Plan({
                 ))}
             </View>
             <LongBlackButton
-                value={sub_data !== null
-                    ? sub_data.plan_details.type !== name ||
-                      (sub_data.plan_details.type === name &&
-                        sub_data.plan_details.interval !== tab)
-                      ? "Migrate to " + name
-                      : "Subscribed"
-                    : "Get started with " + name
-                }
+                value={buttonText}
                 onClick={handleNavigate}
                 isDisabled={
                     sub_data !== null &&
                     sub_data.plan_details.type === name &&
-                    sub_data.plan_details.interval === tab
+                    sub_data.plan_details.interval === tab &&
+                    plan_action === null
                 }
             />
         </View>
