@@ -23,9 +23,6 @@ export default function DeclineOrderModal() {
 
         if(results.isOk){
             setCompleted(true)
-            console.log(results)
-        }else{
-            console.log(results)
         }
 
         setIsLoading(false);
