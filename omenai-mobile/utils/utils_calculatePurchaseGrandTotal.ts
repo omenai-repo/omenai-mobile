@@ -1,4 +1,4 @@
-export function calculatePurchaseGrandTotal(
+export function utils_calculatePurchaseGrandTotal(
   price: number,
   fees: string,
   taxes: string
@@ -14,7 +14,7 @@ export function calculatePurchaseGrandTotal(
 
   return totalString;
 }
-export function calculatePurchaseGrandTotalNumber(
+export function utils_calculatePurchaseGrandTotalNumber(
   price: number,
   fees: string,
   taxes: string

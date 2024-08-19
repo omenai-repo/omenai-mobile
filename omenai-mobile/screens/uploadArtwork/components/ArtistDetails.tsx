@@ -4,7 +4,6 @@ import Input from 'components/inputs/Input'
 import CustomSelectPicker from 'components/inputs/CustomSelectPicker'
 import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
 import LongBlackButton from 'components/buttons/LongBlackButton';
-import { trimWhiteSpace } from 'utils/trimWhitePace';
 import { countriesListing } from 'data/uploadArtworkForm.data';
 import { validate } from 'lib/validations/upload_artwork_input_validator/validator';
 

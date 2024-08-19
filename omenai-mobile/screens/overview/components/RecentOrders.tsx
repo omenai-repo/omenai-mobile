@@ -5,7 +5,7 @@ import { colors } from 'config/colors.config';
 import Divider from 'components/general/Divider';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { getImageFileView } from 'lib/storage/getImageFileView';
-import { formatPrice } from 'utils/priceFormatter';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import Loader from 'components/general/Loader';
 import OrderCard from 'components/gallery/OrderCard';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -90,7 +90,7 @@ export default function RecentOrders({refreshCount}: {refreshCount: number}) {
                             artist={order.artwork_data.artist}
                             url={order.artwork_data.url}
                             status={'Pending'}
-                            amount={formatPrice(order.artwork_data.pricing.usd_price)}
+                            amount={utils_formatPrice(order.artwork_data.pricing.usd_price)}
                             
                         />
                         {(index + 1) !== data.length && <Divider />}

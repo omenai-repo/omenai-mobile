@@ -11,7 +11,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { useAppStore } from 'store/app/appStore';
-import { storeAsyncData } from 'utils/asyncStorage.utils';
+import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
 
 export default function FinishTransaction({handleDone}: {handleDone: () => void}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -47,7 +47,7 @@ export default function FinishTransaction({handleDone}: {handleDone: () => void}
         }
 
         setUserSession(newUserSession);
-        storeAsyncData('userSession', JSON.stringify(newUserSession));
+        utils_storeAsyncData('userSession', JSON.stringify(newUserSession));
         handleDone()
 
         navigation.navigate(screenName.gallery.subscriptions);

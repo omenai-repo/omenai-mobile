@@ -9,7 +9,7 @@ import WithModal from 'components/modal/WithModal'
 import { useAppStore } from 'store/app/appStore'
 import { useModalStore } from 'store/modal/modalStore'
 import { loginAccount } from 'services/login/loginAccount'
-import { storeAsyncData } from 'utils/asyncStorage.utils'
+import { utils_storeAsyncData } from 'utils/utils_asyncStorage'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { screenName } from 'constants/screenNames.constants'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -49,7 +49,7 @@ export default function Form() {
                 subscription_active: resultsBody.subscription_active,
             }
 
-            const isStored = await storeAsyncData('userSession', JSON.stringify(data))
+            const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data))
 
             if(isStored){
                 setUserSession(data)

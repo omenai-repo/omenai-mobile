@@ -1,4 +1,4 @@
-// export function splitArray(arr: any[], condition: any) {
+// export function utils_splitArray(arr: any[], condition: any) {
 //     const group1: any[] = [];
 //     const group2: any[] = [];
     
@@ -12,7 +12,7 @@
   
 //     return { group1, group2 };
 // }
-export function splitArray(arr: string | any[], splitIndex: number) {
+export function utils_splitArray(arr: string | any[], splitIndex: number) {
   if (splitIndex < 0 || splitIndex >= arr.length) {
     throw new Error('Split index out of bounds');
   }

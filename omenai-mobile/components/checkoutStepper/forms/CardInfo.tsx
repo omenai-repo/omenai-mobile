@@ -4,8 +4,8 @@ import Input from 'components/inputs/Input';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import { Entypo, Feather, Fontisto } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
-import { generateAlphaDigit } from 'utils/generateToken';
-import { hasEmptyString } from 'utils/hasEmptyString';
+import { generateAlphaDigit } from 'utils/utils_generateToken';
+import { utils_hasEmptyString } from 'utils/utils_hasEmptyString';
 import { useAppStore } from 'store/app/appStore';
 import { initiateDirectCharge } from 'services/subscriptions/subscribeUser/initiateDirectCharge';
 import { useModalStore } from 'store/modal/modalStore';
@@ -44,7 +44,7 @@ export default function CardInfo({handleNext, plan, updateAuthorization, updateC
     const handleCardSubmit = async () => {
         setCardInputLoading(true)
         const ref = generateAlphaDigit(7);
-        if (hasEmptyString(cardInfo)){
+        if (utils_hasEmptyString(cardInfo)){
             //throw error
             updateModal({message: "Make sure all input fields are filled", modalType: 'error', showModal: true})
         }else{

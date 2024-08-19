@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { handleFetchUserID } from 'utils/asyncStorage.utils';
+import { utils_handleFetchUserID } from 'utils/utils_asyncStorage';
 import useLikedState from 'custom/hooks/useLikedState';
 import { AntDesign } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
@@ -21,7 +21,7 @@ export default function LikeComponent({likeIds, art_id, impressions, lightText}:
 
 
     const handleFetchUserSessionData = async () => {
-        const userId = await handleFetchUserID();
+        const userId = await utils_handleFetchUserID();
         setSessionId(userId)
     }
 

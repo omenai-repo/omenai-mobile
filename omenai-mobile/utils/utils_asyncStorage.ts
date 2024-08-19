@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const storeAsyncData = async (key: string, value: string) => {
+export const utils_storeAsyncData = async (key: string, value: string) => {
     try {
         await AsyncStorage.setItem(key, value);
         return true
@@ -11,7 +11,7 @@ export const storeAsyncData = async (key: string, value: string) => {
     return false
 };
 
-export const getAsyncData = async (key: string) => {
+export const utils_getAsyncData = async (key: string) => {
     try {
         const value = await AsyncStorage.getItem(key);
         if (value !== null) {
@@ -28,7 +28,7 @@ export const getAsyncData = async (key: string) => {
     }
 };
 
-export const clearLocalStorage = async () => {
+export const utils_clearLocalStorage = async () => {
     try {
       await AsyncStorage.clear();
       console.log('Local storage cleared successfully');
@@ -37,8 +37,8 @@ export const clearLocalStorage = async () => {
     }
 };
 
-export const handleFetchUserID = async () => {
-    const userdata = await getAsyncData('userSession');
+export const utils_handleFetchUserID = async () => {
+    const userdata = await utils_getAsyncData('userSession');
     if(userdata.value){
         const userId = JSON.parse(userdata.value).id
         return(userId)

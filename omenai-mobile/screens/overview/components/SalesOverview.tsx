@@ -1,7 +1,7 @@
 import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { getSalesActivityData } from 'services/overview/getSalesActivityData';
-import { salesDataAlgorithm } from 'utils/salesDataAlgorithm';
+import { salesDataAlgorithm } from 'utils/utils_salesDataAlgorithm';
 import {
     LineChart,
 } from "react-native-chart-kit";
