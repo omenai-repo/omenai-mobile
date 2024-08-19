@@ -11,10 +11,10 @@ export type WithModalProps = {
 }
 
 export default function WithModal({children}: WithModalProps) {
-    const { showModal, updateModal, modalMessage, modalType, confirmationModal, showConfirmationModal } = useModalStore();
+    const { showModal, updateModal, confirmationModal, showConfirmationModal, retainModal } = useModalStore();
 
     useEffect(() => {
-        if(showModal){
+        if(showModal && retainModal !== null){
             closeModal()
         }
     }, [showModal])
@@ -29,11 +29,7 @@ export default function WithModal({children}: WithModalProps) {
     return (
         <View style={{flex: 1, backgroundColor: colors.white}}>
             {children}
-            <CustomModal 
-                isVisible={showModal}
-                message={modalMessage}
-                modalType={modalType}
-            />
+            <CustomModal />
             <ConfirmationModal
                 isVisible={showConfirmationModal}
                 child={confirmationModal}

@@ -10,6 +10,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { daysLeft } from 'utils/utils_daysLeft';
+import { useModalStore } from 'store/modal/modalStore';
 
 type PlanDetailsProps = {
     sub_status: string;
@@ -25,6 +26,8 @@ type PlanDetailsProps = {
 
 export default function PlanDetails({ sub_status, end_date, payment, plan_details }: PlanDetailsProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
+
+    const { setRetainModal } = useModalStore();
 
     const currency_symbol = utils_getCurrencySymbol(payment.currency);
 
@@ -59,7 +62,7 @@ export default function PlanDetails({ sub_status, end_date, payment, plan_detail
                         <Button 
                             label='Cancel subscription' 
                             remove 
-                            handleClick={() => {}}
+                            handleClick={() => setRetainModal({retainModal: 'cancleSubscription', showModal: true, message: end_date})}
                         />
                     </View>
                     
