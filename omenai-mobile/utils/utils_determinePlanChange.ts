@@ -9,7 +9,7 @@ const planTiers = {
   basic: { monthlyPrice: 150, yearlyPrice: 1500 },
 };
 
-export function determinePlanChange(
+export function utils_determinePlanChange(
   currentPlan: string,
   currentInterval: "monthly" | "yearly",
   newPrice: number,

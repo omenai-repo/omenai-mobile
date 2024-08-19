@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { colors } from 'config/colors.config';
-import { getCardType } from 'utils/cardTypeDetection';
+import { getCardType } from 'utils/utils_cardTypeDetection';
 
 import mastercardLogo from 'assets/icons/MastercardLogo.png';
 import verve from 'assets/icons/verve.png';

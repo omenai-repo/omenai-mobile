@@ -11,7 +11,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { useAppStore } from 'store/app/appStore';
-import { storeAsyncData } from 'utils/asyncStorage.utils';
+import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
 import { colors } from 'config/colors.config';
 
 export default function VerifyTransaction() {
@@ -48,7 +48,7 @@ export default function VerifyTransaction() {
         }
 
         setUserSession(newUserSession);
-        storeAsyncData('userSession', JSON.stringify(newUserSession));
+        utils_storeAsyncData('userSession', JSON.stringify(newUserSession));
 
         //clear the checkout stepper store
         reset()

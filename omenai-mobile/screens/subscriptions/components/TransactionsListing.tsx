@@ -5,8 +5,8 @@ import { fetchSubscriptionTransactions } from 'services/transactions/fetchSubscr
 import { useAppStore } from 'store/app/appStore'
 import Loader from 'components/general/Loader'
 import omenai_logo from 'assets/icons/omenai_logo_cut.png';
-import { formatIntlDateTime } from 'utils/formatIntlDateTime'
-import { formatPrice } from 'utils/priceFormatter'
+import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime'
+import { utils_formatPrice } from 'utils/utils_priceFormatter'
 
 export default function TransactionsListing() {
     const { userSession } = useAppStore();

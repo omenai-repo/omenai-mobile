@@ -5,11 +5,11 @@ import LongBlackButton from 'components/buttons/LongBlackButton'
 import { colors } from 'config/colors.config'
 import CustomSelectPicker from 'components/inputs/CustomSelectPicker'
 import Input from 'components/inputs/Input'
-import { formatPrice } from 'utils/priceFormatter'
+import { utils_formatPrice } from 'utils/utils_priceFormatter'
 import { displayPrice } from 'data/uploadArtworkForm.data'
 import { validate } from 'lib/validations/upload_artwork_input_validator/validator'
 import { currencies } from 'screens/uploadArtwork/components/mocks'
-import { getCurrencySymbol } from 'utils/getCurrencySymbol'
+import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol'
 import { useModalStore } from 'store/modal/modalStore'
 import { getCurrencyConversion } from 'services/exchange_rate/getCurrencyConversion'
 import { updateArtworkPrice } from 'services/artworks/updateArtworkPrice'
@@ -39,8 +39,8 @@ export default function EditPricing({art_id}: {art_id: string}) {
     const [formErrors, setFormErrors] = useState<artworkPricingErrorsType>({price: ''});
     const [loadingConversion, setLoadingConversion] = useState<boolean>(false)
 
-    const currency_symbol = getCurrencySymbol(currency);
-    const usd_symbol = getCurrencySymbol("USD");
+    const currency_symbol = utils_getCurrencySymbol(currency);
+    const usd_symbol = utils_getCurrencySymbol("USD");
 
     const checkIsDisabled = () => {
         // Check if there are no error messages and all input fields are filled
@@ -154,10 +154,10 @@ export default function EditPricing({art_id}: {art_id: string}) {
                 usdPrice !== 0 && (
                     <Text style={{fontSize: 14, fontWeight: 500, opacity: 0.8}}>
                     Exchange rate:{" "}
-                    {`${formatPrice(
+                    {`${utils_formatPrice(
                         price,
                         currency_symbol
-                    )} = ${loadingConversion ? 'converting...' : formatPrice(usdPrice, usd_symbol)}`}
+                    )} = ${loadingConversion ? 'converting...' : utils_formatPrice(usdPrice, usd_symbol)}`}
                     </Text>
                 )}
                 </View>

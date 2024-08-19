@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
-import { generateAlphaDigit } from 'utils/generateToken';
+import { generateAlphaDigit } from 'utils/utils_generateToken';
 import { createTokenizedCharge } from 'services/subscriptions/createTokenizedCharge';
 import { useModalStore } from 'store/modal/modalStore';
 import { Fontisto } from '@expo/vector-icons';

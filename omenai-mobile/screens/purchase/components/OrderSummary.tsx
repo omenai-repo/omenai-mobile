@@ -6,7 +6,7 @@ import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore'
 import SummaryContainer from './SummaryContainer'
 import OrderCard from 'screens/orders/components/OrderCard'
 import { getImageFileView } from 'lib/storage/getImageFileView'
-import { formatPrice } from 'utils/priceFormatter'
+import { utils_formatPrice } from 'utils/utils_priceFormatter'
 
 export default function OrderSummary({data: {
     title,
@@ -28,7 +28,7 @@ export default function OrderSummary({data: {
                     <View style={styles.listItemDetails}>
                         <Text style={[styles.orderItemTitle, {fontSize: 16, marginBottom: 5}]}>{title}</Text>
                         <Text style={styles.orderItemTitle}>{artist}</Text>
-                        {pricing.shouldShowPrice === "Yes" ? <Text style={{fontSize: 18, fontWeight: '500', marginTop: 15}}>{formatPrice(pricing.usd_price)}</Text> : <Text>Request Price</Text>}
+                        {pricing.shouldShowPrice === "Yes" ? <Text style={{fontSize: 18, fontWeight: '500', marginTop: 15}}>{utils_formatPrice(pricing.usd_price)}</Text> : <Text>Request Price</Text>}
                     </View>
                 </View>
             </View>

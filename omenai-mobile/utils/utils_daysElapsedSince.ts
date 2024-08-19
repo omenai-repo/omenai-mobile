@@ -1,4 +1,4 @@
-export function daysElapsedSince(isoDateString: Date): number {
+export function utils_daysElapsedSince(isoDateString: Date): number {
   // Parse the input ISO date string into a Date object
   const inputDate = new Date(isoDateString);
 

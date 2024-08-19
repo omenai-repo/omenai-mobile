@@ -313,6 +313,7 @@ type PinAuthorizationData = {
   mode: "pin";
   pin: string;
 };
+
 type SubscriptionModelSchemaTypes = {
   customer: {
     id: number;
@@ -362,6 +363,7 @@ type SubscriptionTokenizationTypes = {
   plan_id: string;
   plan_interval: string;
 };
+
 type NextChargeParams = {
   value: number;
   currency: string;

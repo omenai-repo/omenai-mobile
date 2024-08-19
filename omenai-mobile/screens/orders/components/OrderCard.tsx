@@ -1,7 +1,7 @@
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react';
 import { colors } from 'config/colors.config';
-import { formatPrice } from 'utils/priceFormatter';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -38,7 +38,7 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
                     <Text style={styles.orderItemTitle}>{artworkName}</Text>
                     
                     <View style={{flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 7}}>
-                        <Text style={{fontSize: 16, fontWeight: 500, flex: 1}}>{formatPrice(artworkPrice)}</Text>
+                        <Text style={{fontSize: 16, fontWeight: 500, flex: 1}}>{utils_formatPrice(artworkPrice)}</Text>
                         <Text style={{fontSize: 14}}>Order ID: #{orderId}</Text>
                         {/* <Text style={styles.orderItemDetails}>Ordered: {dateOrdered}</Text> */}
                     </View>
