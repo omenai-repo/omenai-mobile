@@ -72,9 +72,10 @@ export default function CardInfo({handleNext, plan, updateAuthorization, updateC
                 month: cardInfo.expiryMonth,
                 year: cardInfo.year.slice(2, 4),
                 tx_ref: ref,
-                amount: updateCard ? 1 : params?.tab === "monthly" ? plan.pricing.monthly_price : plan.pricing.annual_price,
+                amount: updateCard ? "1" : params?.tab === "monthly" ? plan.pricing.monthly_price : plan.pricing.annual_price,
                 customer,
                 redirect: `${apiUrl}/dashboard/gallery/billing`,
+                charge_type: updateCard ? "card_change"  : null
             };
 
             const response = await initiateDirectCharge(data);

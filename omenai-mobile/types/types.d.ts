@@ -298,6 +298,7 @@ type FLWDirectChargeDataTypes = CardInputTypes & {
     email: string;
   };
   redirect: string;
+  charge_type: string | null;
 };
 
 type AvsAuthorizationData = {
