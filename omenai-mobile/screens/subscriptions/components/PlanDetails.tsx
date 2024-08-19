@@ -10,6 +10,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { daysLeft } from 'utils/utils_daysLeft';
+import { useModalStore } from 'store/modal/modalStore';
 
 type PlanDetailsProps = {
     sub_status: string;
@@ -25,6 +26,8 @@ type PlanDetailsProps = {
 
 export default function PlanDetails({ sub_status, end_date, payment, plan_details }: PlanDetailsProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
+
+    const { setRetainModal } = useModalStore();
 
     const currency_symbol = utils_getCurrencySymbol(payment.currency);
 
@@ -50,20 +53,26 @@ export default function PlanDetails({ sub_status, end_date, payment, plan_detail
                             <View style={{flexWrap: 'wrap'}}><View style={styles.activePill}><Text style={{fontSize: 12, fontWeight: 500, color: '#00800080'}}>{sub_status.toUpperCase()}</Text></View></View>
                         </View>
                     </View>
-
-                    <View style={styles.buttonContainer}>
-                        <Button 
-                            label='Upgrade/Downgrade plan' 
-                            handleClick={() => navigation.navigate(screenName.gallery.billing)}
-                        />
-                        <Button 
-                            label='Cancel subscription' 
-                            remove 
-                            handleClick={() => {}}
-                        />
-                    </View>
-                    
-                    
+                    {sub_status === 'canceled' ? (
+                        <View style={styles.buttonContainer}>
+                            <Button 
+                                label='Reactivate subscription' 
+                                handleClick={() => navigation.navigate(screenName.gallery.billing, {plan_action: 'reactivation'})}
+                            />
+                        </View>
+                    ) :
+                        <View style={styles.buttonContainer}>
+                            <Button 
+                                label='Upgrade/Downgrade plan' 
+                                handleClick={() => navigation.navigate(screenName.gallery.billing)}
+                            />
+                            <Button 
+                                label='Cancel subscription' 
+                                remove 
+                                handleClick={() => setRetainModal({retainModal: 'cancleSubscription', showModal: true, message: end_date})}
+                            />
+                        </View>
+                    }
                 </View>
             </View>
         </View>

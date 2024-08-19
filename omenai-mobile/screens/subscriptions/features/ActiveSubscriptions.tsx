@@ -62,6 +62,7 @@ export default function ActiveSubscriptions() {
                 end_date={subscriptionData.expiry_date}
                 payment={subscriptionData.payment}
                 next_charge_params={subscriptionData.next_charge_params}
+                sub_status={subscriptionData.status}
             />
             <BillingInfo />
             <TransactionsListing />
