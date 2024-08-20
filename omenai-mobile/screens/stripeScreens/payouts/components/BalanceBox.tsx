@@ -7,6 +7,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol';
 import { generateStripeLoginLink } from 'services/stripe/generateStripeLoginLink';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { AntDesign, Feather } from '@expo/vector-icons';
 
 export default function BalanceBox({account_id, balance} : {account_id: string, balance: any}) {
     const [pendingLoginLink, setPendingLoginLink] = useState(false)
@@ -32,33 +33,20 @@ export default function BalanceBox({account_id, balance} : {account_id: string, 
 
     }
 
-    const GreyButton = ({label}: {label: string}) => {
-        return(
-            <TouchableOpacity style={{flex: 1}} activeOpacity={1}>
-                <View style={styles.button}>
-                    <Text style={{color: colors.primary_black}}>{label}</Text>
-                </View>
-            </TouchableOpacity>
-        )
-    };
-
     if(balance){
         const currency = utils_getCurrencySymbol(balance.available[0].currency);
 
         return(
             <View style={styles.container}>
-                <Text style={{textAlign: 'center', fontSize: 14, color: colors.primary_black, marginTop: 10}}>Stripe Available Balance</Text>
+                <Text style={{textAlign: 'center', fontSize: 14, color: colors.primary_black, marginTop: 10}}>Stripe Pending Balance</Text>
                 <Text style={{fontSize: 20, fontWeight: 500, textAlign: 'center', marginTop: 10, color: colors.primary_black}}>
-                    {utils_formatPrice(balance.available[0].amount / 100, currency)}
+                    {utils_formatPrice(balance.pending[0].amount / 100, currency)}
                 </Text>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 10}}>
-                    <Text style={{fontSize: 12, opacity: 0.9, color: colors.primary_black}}>Balance pending on Stripe:</Text>
-                    <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>
-                        {utils_formatPrice(balance.pending[0].amount / 100, currency)}
-                    </Text>
-                </View>
                 <View style={{gap: 10, marginTop: 15, paddingTop: 15, borderTopColor: colors.grey50, borderTopWidth: 1}}>
-                    <GreyButton label='Payout balance' />
+                    <View style={styles.disclaimer}>
+                        <AntDesign size={16} name='warning' color={'#FFC200'} />
+                        <Text style={{fontSize: 12, color: '#FFC200'}}>The balance is yet to be settled, once settled, you’ll receive payout to your bank account</Text>
+                    </View>
                     <LongBlackButton
                         value='View Stripe Dashboard'
                         onClick={generateLoginLink}
@@ -93,4 +81,12 @@ const styles = StyleSheet.create({
         borderColor: colors.grey50,
         borderRadius: 10
     },
+    disclaimer: {
+        backgroundColor: '#FFBF0015',
+        borderRadius: 10,
+        padding: 10,
+        paddingHorizontal: 20,
+        flexDirection: 'row',
+        gap: 10
+    }
 })

@@ -64,8 +64,8 @@ export default function OrderCard({artworkName, amount, status, color, handlePre
 
         return(
             <TouchableOpacity onPress={() => handlePress(status)}>
-                <View style={{backgroundColor: '#e0e0e0', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5}}>
-                    <Text style={{fontSize: 14, color: colors.black}}>{text}</Text>
+                <View style={{backgroundColor: colors.primary_black, paddingHorizontal: 10, paddingVertical: 10, borderRadius: 5}}>
+                    <Text style={{fontSize: 14, color: colors.white}}>{text}</Text>
                 </View>
             </TouchableOpacity>
         )
