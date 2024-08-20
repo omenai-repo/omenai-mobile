@@ -7,35 +7,59 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { colors } from 'config/colors.config';
+import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
+import WebView from 'react-native-webview';
 
 export default function ChangeCard() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const [activeIndex, setActiveIndex] = useState<number>(0);
 
+    const { webViewUrl, setWebViewUrl } = subscriptionStepperStore();
+
+    const handleFlutterwaveRedirect = (event: any) => {
+        if(event.canGoBack && event.navigationType === 'formsubmit'){
+            setWebViewUrl(null)
+            // setVerificationScreen(true)
+            navigation.navigate(screenName.verifyTransaction)
+            setActiveIndex(4)
+        }
+    }
+
     return (
         <WithModal>
-            <BackHeaderTitle title='Change card' />
-            <ScrollView 
-                style={styles.container}
-                showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.detailsContainer}>
-                    <View style={styles.topContainer}>
-                        <Text style={{color: colors.white, fontSize: 16}}>Change card</Text>
-                    </View>
-                    <View style={styles.mainContainer}>
-                        <Text style={{fontSize: 13, color: '#ff0000'}}>NOTE: A small, temporary charge of $1 will be applied to verify your card. This charge will be refunded to you immediately.</Text>
-                    </View>
-                </View>
+            {webViewUrl === null && (
+                <View style={{flex: 1}}>
+                    <BackHeaderTitle title='Change card' />
+                    <ScrollView 
+                        style={styles.container}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={styles.detailsContainer}>
+                            <View style={styles.topContainer}>
+                                <Text style={{color: colors.white, fontSize: 16}}>Change card</Text>
+                            </View>
+                            <View style={styles.mainContainer}>
+                                <Text style={{fontSize: 13, color: '#ff0000'}}>NOTE: A small, temporary charge of $1 will be applied to verify your card. This charge will be refunded to you immediately.</Text>
+                            </View>
+                        </View>
 
-                <CheckoutStepper
-                    activeIndex={activeIndex}
-                    plan={null}
-                    setActiveIndex={setActiveIndex}
-                    setVerificationScreen={() => navigation.navigate(screenName.verifyTransaction)}
-                    updateCard={true}
+                        <CheckoutStepper
+                            activeIndex={activeIndex}
+                            plan={null}
+                            setActiveIndex={setActiveIndex}
+                            setVerificationScreen={() => navigation.navigate(screenName.verifyTransaction)}
+                            updateCard={true}
+                        />
+                    </ScrollView>
+                </View>
+            )}
+            {webViewUrl && (
+                <WebView
+                    source={{ uri: webViewUrl }} 
+                    style={{ flex: 1 }} 
+                    onNavigationStateChange={handleFlutterwaveRedirect}
                 />
-            </ScrollView>
+            )}
         </WithModal>
     )
 }
