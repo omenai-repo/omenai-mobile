@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
     container: {
         borderWidth: 1,
         borderColor: colors.inputBorder,
-        marginTop: 40
     },
     header: {
         backgroundColor: '#FAFAFA',
