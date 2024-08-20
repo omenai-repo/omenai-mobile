@@ -26,13 +26,14 @@ import DeleteArtworkButton from './components/DeleteArtworkButton';
 import Header from './components/Header';
 import ShippingAndTaxes from './components/extraDetails/ShippingAndTaxes';
 import Coverage from './components/extraDetails/Coverage';
+import { createViewHistory } from 'services/artworks/viewHistory/createViewHistory';
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const route = useRoute()
 
     const { updateModal } = useModalStore();
-    const {userType} = useAppStore();
+    const {userType, userSession} = useAppStore();
 
     const [isLoading, setIsLoading] = useState(false);
     const [loadingPriceQuote, setLoadingPriceQuote] = useState(false)
@@ -55,13 +56,21 @@ export default function Artwork() {
         const results = await fetchsingleArtwork(title)
 
         if(results.isOk){
-            setData(results.body.data)
+            const data = results.body.data;
+            setData(data)
+
+            //add this to recently viewed artworks
+            handleCreateViewHistory({artwork: title, artist: data.artist, art_id: data.art_id})
         }else{
             setData(null)
         }
 
         setIsLoading(false)
     };
+
+    const handleCreateViewHistory = async ({artwork, artist, art_id}: {artwork: string, artist: string, art_id: string}) => {
+        createViewHistory(artwork, artist, art_id, userSession.id);
+    }
 
     const handleRequestPriceQuote = async () => {
         setLoadingPriceQuote(true);
