@@ -14,7 +14,7 @@ export default function WithModal({children}: WithModalProps) {
     const { showModal, updateModal, confirmationModal, showConfirmationModal, retainModal } = useModalStore();
 
     useEffect(() => {
-        if(showModal && retainModal !== null){
+        if(showModal && retainModal === null){
             closeModal()
         }
     }, [showModal])
