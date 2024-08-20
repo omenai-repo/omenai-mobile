@@ -6,12 +6,14 @@ import { UseSavedArtworksStore } from 'store/artworks/SavedArtworksStore';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import Divider from 'components/general/Divider';
 import Loader from 'components/general/Loader';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons'
 import { screenName } from 'constants/screenNames.constants';
 import { utils_handleFetchUserID } from 'utils/utils_asyncStorage';
 import useLikedState from 'custom/hooks/useLikedState';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 type SavedArtworkItemProps = {
     name: string,
@@ -20,10 +22,12 @@ type SavedArtworkItemProps = {
     index: number,
     art_id: string,
     likeIds: string[],
-    impressions: number
+    impressions: number,
+    pricing: {currency: string, price: number, shouldShowPrice: "Yes" | "No", usd_price: number}
 }
 
 export default function SavedArtworks() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
     
     const isFocused = useIsFocused();
 
@@ -59,7 +63,7 @@ export default function SavedArtworks() {
         setIsLoading(false)
     };
 
-    const SavedArtworkItem = ({name, artistName, url, index, art_id, likeIds, impressions}: SavedArtworkItemProps) => {
+    const SavedArtworkItem = ({name, artistName, url, index, art_id, likeIds, impressions, pricing}: SavedArtworkItemProps) => {
         let image_href = getImageFileView(url, 80);
 
 
@@ -83,16 +87,22 @@ export default function SavedArtworks() {
         return(
             <TouchableOpacity onPress={() => navigation.navigate(screenName.artwork, {title: name})} activeOpacity={1}>
                 <View style={styles.savedArtworkItem}>
-                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10}}>
-                        <Image source={{uri: image_href}} style={styles.image} />
-                        <View>
+                    <View style={{flex: 1, flexDirection: 'row', gap: 15}}>
+                        <Image source={{uri: image_href}} style={styles.image} resizeMode="contain" />
+                        <View style={{paddingTop: 5}}>
                             <Text style={{fontSize: 16, color: colors.primary_black}}>{name}</Text>
                             <Text style={{fontSize: 14, color: '#858585', marginTop: 2}}>{artistName}</Text>
+                            {pricing.shouldShowPrice === "Yes" && (
+                                <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 5, fontWeight: 500}}>{utils_formatPrice(pricing.usd_price)}</Text>
+                            )}
+                            <TouchableOpacity onPress={handleRemove} style={{paddingTop: 5, flexWrap: 'wrap'}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10, marginTop: 10, borderRadius: 20, backgroundColor: '#f1f1f1'}}>
+                                    <AntDesign name='heart' color={'#ff0000'} size={14} />
+                                    <Text style={{fontSize: 12, color: colors.primary_black}}>Remove from saved</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
-                    <TouchableOpacity onPress={handleRemove}>
-                        <AntDesign name='heart' color={'#ff0000'} size={20} />
-                    </TouchableOpacity>
                 </View>
             </TouchableOpacity>
         )
@@ -110,18 +120,17 @@ export default function SavedArtworks() {
                 {(data.length > 0 && !isLoading) &&
                     <View style={styles.sectionContainer}>
                         {data.map((artwork, index) => (
-                            <View style={{gap: 20}} key={index}>
-                                <SavedArtworkItem
-                                    name={artwork.title}
-                                    artistName={artwork.artist}
-                                    url={artwork.url}
-                                    art_id={artwork.art_id}
-                                    likeIds={artwork.like_ids}
-                                    impressions={artwork.impressions}
-                                    index={index}
-                                />
-                                {(index + 1) !== data.length && <Divider />}
-                            </View>
+                            <SavedArtworkItem
+                                name={artwork.title}
+                                artistName={artwork.artist}
+                                url={artwork.url}
+                                art_id={artwork.art_id}
+                                likeIds={artwork.like_ids}
+                                impressions={artwork.impressions}
+                                index={index}
+                                key={index}
+                                pricing={artwork.pricing}
+                            />
                         ))}
                     </View>
                 }
@@ -142,26 +151,20 @@ const styles = StyleSheet.create({
     },
     mainContainer: {
         paddingHorizontal: 20,
-        marginTop: 10,
+        marginTop: 15,
+        paddingTop: 15,
         flex: 1
     },
     sectionContainer: {
-        marginTop: 20,
-        borderWidth: 1,
-        borderColor: colors.grey50,
-        padding: 15,
-        gap: 20,
-        backgroundColor: '#FAFAFA'
+        gap: 25
     },
     savedArtworkItem: {
         flexDirection: 'row',
-        alignItems: 'center',
         gap: 10
     },
     image: {
         width: 80,
-        height: 65,
-        // objectFit: 'contain',
-        backgroundColor: colors.inputBorder
+        height: 100,
+        backgroundColor: '#f9f9f9'
     }
 })

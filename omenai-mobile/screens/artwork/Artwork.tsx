@@ -24,6 +24,8 @@ import Loader from 'components/general/Loader';
 import { useAppStore } from 'store/app/appStore';
 import DeleteArtworkButton from './components/DeleteArtworkButton';
 import Header from './components/Header';
+import ShippingAndTaxes from './components/extraDetails/ShippingAndTaxes';
+import Coverage from './components/extraDetails/Coverage';
 
 export default function Artwork() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -101,7 +103,7 @@ export default function Artwork() {
             )}
             {data && (
                 <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                    <View style={{paddingBottom: 250}}>
+                    <View style={{paddingBottom: 20}}>
                         <View style={{paddingHorizontal: 20}}>
                             <Image source={{uri: image_href}} style={styles.image} />
                             {userType !== 'gallery' && <SaveArtworkButton likeIds={data.like_IDs || []} art_id={data.art_id} impressions={data.impressions || 0} />}
@@ -136,6 +138,8 @@ export default function Artwork() {
                                         {name: 'Country', text: data?.artist_country_origin},
                                     ]}
                                 />
+                                <ShippingAndTaxes />
+                                <Coverage />
                             </View>
                         </View>
                         
@@ -268,6 +272,8 @@ const styles = StyleSheet.create({
         color: colors.black
     },
     detailsContainer: {
-        marginBottom: 30
+        marginBottom: 30,
+        gap: 30,
+        marginTop: 30
     }
 })
