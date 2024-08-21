@@ -7,8 +7,16 @@ import EmptyArtworks from 'components/general/EmptyArtworks';
 import { Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
+import ViewHistoryCard from './ViewHistoryCard';
 
-export default function RecentlyViewedArtworks() {
+type ViewHistoryItem = {
+    art_id: string,
+    url: string,
+    artist: string,
+    artwork: string
+}
+
+export default function RecentlyViewedArtworks({refreshCount}: {refreshCount?: number}) {
     const { userSession } = useAppStore();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -20,16 +28,15 @@ export default function RecentlyViewedArtworks() {
             setIsLoading(true)
             const results = await fetchViewHistory(userSession.id)
 
-            return
-
             if(results?.isOk){
                 const resData = results.data
-
     
-                setData(resData)
+                
                 
                 if(resData.length >= 20){
                     setData(resData.splice(0,20))
+                }else{
+                    setData(resData);
                 }
             }
 
@@ -37,7 +44,7 @@ export default function RecentlyViewedArtworks() {
         };
 
         handleFetchHistory()
-    }, [])
+    }, [refreshCount])
 
     return (
         <View style={styles.container}>
@@ -48,18 +55,14 @@ export default function RecentlyViewedArtworks() {
             {(!isLoading && data.length > 0) &&
                 <FlatList
                     data={data}
-                    renderItem={({item, index}: {item: ArtworkFlatlistItem, index: number}) => {
+                    renderItem={({item, index}: {item: ViewHistoryItem, index: number}) => {
                         return(
-                            <ArtworkCard
-                                title={item.title} 
-                                url={item.url}
-                                artist={item.artist}
-                                showPrice={item.pricing.shouldShowPrice === "Yes"}
-                                price={item.pricing.usd_price}
-                                availiablity={item.availability}
-                                impressions={item.impressions}
-                                like_IDs={item.like_IDs}
+                            <ViewHistoryCard 
                                 art_id={item.art_id}
+                                artist={item.artist}
+                                artwork={item.artwork}
+                                url={item.url}
+                                key={index}
                             />
                         )
                     }}

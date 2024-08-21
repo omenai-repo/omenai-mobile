@@ -41,9 +41,9 @@ export default function Home() {
                     <FeaturedGalleries />
                     <TrendingArtworks limit={28} refreshCount={refreshCount} />
                     <CuratedArtworksListing limit={20} refreshCount={refreshCount} />
-                    <RecentlyViewedArtworks />
                     <CatalogListing />
                     <Editorials />
+                    <RecentlyViewedArtworks refreshCount={refreshCount} />
                 </ScrollView>
             </SafeAreaView>
         </WithModal>

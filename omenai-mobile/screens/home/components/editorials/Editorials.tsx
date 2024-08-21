@@ -68,7 +68,7 @@ export default function Editorials() {
     }
 
     return (
-        <View style={{marginTop: 40, marginBottom: 100}}>
+        <View style={{marginTop: 40, marginBottom: 10}}>
             <TouchableOpacity onPress={() => navigation.navigate(screenName.editorialsListing)}>
                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
                     <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Editorials</Text>

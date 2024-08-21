@@ -60,17 +60,13 @@ export default function Artwork() {
             setData(data)
 
             //add this to recently viewed artworks
-            handleCreateViewHistory({artwork: title, artist: data.artist, art_id: data.art_id})
+            createViewHistory(title, data.artist, data.art_id, userSession.id, data.url);
         }else{
             setData(null)
         }
 
         setIsLoading(false)
     };
-
-    const handleCreateViewHistory = async ({artwork, artist, art_id}: {artwork: string, artist: string, art_id: string}) => {
-        createViewHistory(artwork, artist, art_id, userSession.id);
-    }
 
     const handleRequestPriceQuote = async () => {
         setLoadingPriceQuote(true);
