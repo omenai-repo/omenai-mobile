@@ -87,7 +87,7 @@ export default function Editorials() {
                                     articleHeader={item.title}
                                     date={item.date}
                                     id={item.id}
-                                    width={320}
+                                    width={280}
                                 />
                             </View>
                         )}

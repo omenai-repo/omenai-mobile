@@ -73,7 +73,7 @@ export default function RecentlyViewedArtworks({refreshCount}: {refreshCount?: n
                 />
             }
             {(!isLoading && data.length < 1) && (
-                <EmptyArtworks size={70} writeUp='No trending artworks at the moment' />
+                <EmptyArtworks size={70} writeUp="You haven't viewed an artwork yet" />
             )}
         </View>
     )
@@ -81,6 +81,7 @@ export default function RecentlyViewedArtworks({refreshCount}: {refreshCount?: n
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 40
+        marginTop: 40,
+        marginBottom: 40
     }
 })
