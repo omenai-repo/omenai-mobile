@@ -44,7 +44,10 @@ export default function Form() {
 
             const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data))
 
-            if(isStored){
+            const loginTimeStamp = new Date();
+            const isLoginTimeStampStored = await utils_storeAsyncData('loginTimeStamp', JSON.stringify(loginTimeStamp))
+
+            if(isStored && isLoginTimeStampStored){
                 setUserSession(data)
                 setIsLoggedIn(true)
                 clearInputs();

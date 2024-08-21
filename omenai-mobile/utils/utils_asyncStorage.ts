@@ -30,8 +30,9 @@ export const utils_getAsyncData = async (key: string) => {
 
 export const utils_clearLocalStorage = async () => {
     try {
-      await AsyncStorage.clear();
-      console.log('Local storage cleared successfully');
+        const keys = ['userSession', 'loginTimeStamp'];
+        await AsyncStorage.multiRemove(keys);
+        console.log('Local storage cleared successfully');
     } catch (e) {
       console.error('Failed to clear local storage');
     }
