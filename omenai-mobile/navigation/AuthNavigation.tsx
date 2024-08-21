@@ -10,6 +10,8 @@ import VerifyEmail from 'screens/verification/VerifyEmail'
 
 export default function AuthNavigation() {
 
+    
+
     const Stack = createStackNavigator();
     return (
         <Stack.Navigator initialRouteName={screenName.welcome}>

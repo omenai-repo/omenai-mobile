@@ -31,13 +31,14 @@ export default function TrendingArtworks({refreshCount, limit} : {refreshCount?:
 
         if(results.isOk){
             const resData = results.body.data
-
-            setData(resData)
             
             if(resData.length >= 20){
                 setData(resData.splice(0,limit))
                 setshowMoreButton(true)
-            }
+            }else{
+                setData(resData)
+            };
+            
         }else{
             console.log(results)
         }
