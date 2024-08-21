@@ -41,7 +41,7 @@ export default function EditorialCard({url, writer, articleHeader, date, id, wid
                             }
                             <Text style={{fontSize: 12, color: '#616161'}}>{date}</Text>
                         </View>
-                        <Text style={{fontSize: 18, color: colors.primary_black, marginTop: 15, fontWeight: 500}}>{articleHeader}</Text>
+                        <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 15, fontWeight: 400}}>{articleHeader}</Text>
                         {/* <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize: 14, marginTop: 10, color: '#616161'}}>This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post.</Text> */}
                     </View>
                 </View>
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height: 300
+        height: 220
     },
     cardButton: {
         marginTop: 25,
