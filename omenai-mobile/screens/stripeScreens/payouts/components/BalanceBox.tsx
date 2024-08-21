@@ -39,13 +39,13 @@ export default function BalanceBox({account_id, balance} : {account_id: string, 
         return(
             <View style={styles.container}>
                 <Text style={{textAlign: 'center', fontSize: 14, color: colors.primary_black, marginTop: 10}}>Stripe Pending Balance</Text>
-                <Text style={{fontSize: 20, fontWeight: 500, textAlign: 'center', marginTop: 10, color: colors.primary_black}}>
+                <Text style={{fontSize: 22, fontWeight: 600, textAlign: 'center', marginTop: 10, color: colors.primary_black}}>
                     {utils_formatPrice(balance.pending[0].amount / 100, currency)}
                 </Text>
                 <View style={{gap: 10, marginTop: 15, paddingTop: 15, borderTopColor: colors.grey50, borderTopWidth: 1}}>
                     <View style={styles.disclaimer}>
-                        <AntDesign size={16} name='warning' color={'#FFC200'} />
-                        <Text style={{fontSize: 12, color: '#FFC200'}}>The balance is yet to be settled, once settled, you’ll receive payout to your bank account</Text>
+                        <AntDesign size={16} name='warning' color={'#ff0000'} />
+                        <Text style={{fontSize: 12, color: '#ff0000', flex: 1}}>The balance is yet to be settled, once settled, you’ll receive payout to your bank account</Text>
                     </View>
                     <LongBlackButton
                         value='View Stripe Dashboard'
@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
     disclaimer: {
         backgroundColor: '#FFBF0015',
         borderRadius: 10,
-        padding: 10,
-        paddingHorizontal: 20,
+        padding: 15,
+        paddingHorizontal: 15,
         flexDirection: 'row',
         gap: 10
     }

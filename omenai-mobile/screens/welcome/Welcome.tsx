@@ -1,5 +1,5 @@
 import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import omenai_logo from '../../assets/omenai-logo.png';
 import welcome_banner from '../../assets/images/welcome-banner.png';
@@ -11,12 +11,26 @@ import LongWhiteButton from '../../components/buttons/LongWhiteButton';
 import { screenName } from '../../constants/screenNames.constants';
 import { onboardingdata } from 'constants/onBoardingData.constants';
 import OnBoardingSection from './components/OnBoardingSection';
+import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
+import { utils_determineOnboardingPages } from 'utils/utils_determineOnboardingPages';
 
 export default function Welcome() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const [selected, setSelected] = useState(0);
     const [showWelcome, setShowWelcome] = useState(false);
+
+    useEffect(() => {
+        async function handleOnboardingCheck(){
+            const isOnboarded = await utils_determineOnboardingPages();
+
+            if(isOnboarded){
+                setShowWelcome(true)
+            }
+        }
+
+        handleOnboardingCheck()
+    }, [])
 
     const handleNavigation = (value: any) => {
         navigation.navigate(value)
@@ -27,7 +41,10 @@ export default function Welcome() {
         <OnBoardingSection 
             data={onboardingdata[selected]}
             currentIndex={selected}
-            onFinish={() => setShowWelcome(true)}
+            onFinish={() => {
+                setShowWelcome(true)
+                utils_storeAsyncData('isOnboarded', JSON.stringify(true))
+            }}
             handleNext={() => setSelected(prev => prev + 1)}
         />
     )

@@ -64,7 +64,7 @@ export default function PlanDetails({ sub_status, end_date, payment, plan_detail
                         <View style={styles.buttonContainer}>
                             <Button 
                                 label='Upgrade/Downgrade plan' 
-                                handleClick={() => navigation.navigate(screenName.gallery.billing)}
+                                handleClick={() => navigation.navigate(screenName.gallery.billing, {plan_action: null})}
                             />
                             <Button 
                                 label='Cancel subscription' 
