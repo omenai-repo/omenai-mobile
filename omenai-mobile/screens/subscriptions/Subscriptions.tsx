@@ -13,7 +13,7 @@ export default function Subscriptions() {
         <WithModal>
             <SafeAreaView>
                 <View style={styles.headerContainer}>
-                    <Text style={{fontSize: 20, textAlign: 'center'}}>Subscriptions</Text>
+                    <Text style={{fontSize: 20, textAlign: 'center'}}>Subscription & Billing</Text>
                 </View>
             </SafeAreaView>
             <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>

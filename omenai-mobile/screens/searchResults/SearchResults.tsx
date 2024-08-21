@@ -23,6 +23,9 @@ export default function SearchResults() {
     useEffect(() => {
         if(searchQuery.length > 2){
             handleFetchSearch();
+        }else if(searchQuery.length === 0){
+            setData([])
+            setDataLength(0)
         }
     }, [searchQuery]);
 
