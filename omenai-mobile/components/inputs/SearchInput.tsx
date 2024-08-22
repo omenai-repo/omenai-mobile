@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View, TextInput } from 'react-native'
 import React from 'react'
 import { colors } from '../../config/colors.config';
 import omenaiSearchIcon from '../../assets/icons/omenai-search-icon.png'
