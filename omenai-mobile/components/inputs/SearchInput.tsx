@@ -6,6 +6,7 @@ import { useSearchStore } from 'store/search/searchStore';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function SearchInput() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -15,6 +16,10 @@ export default function SearchInput() {
         if(searchQuery.length > 0){
             navigation.navigate(screenName.searchResults);
         }
+    }
+
+    const handleClearSearchQuery = () => {
+        setSearchQuery('')
     }
 
     return (
@@ -31,11 +36,16 @@ export default function SearchInput() {
                 onSubmitEditing={handleSearch}
                 returnKeyType="search"
             />
-            <TouchableOpacity activeOpacity={1} onPress={handleSearch}>
-                <View style={styles.searchButton}>
-                    <Text style={{color: colors.white, fontSize: 14}}>Search</Text>
-                </View>
-            </TouchableOpacity>
+            {searchQuery.length > 0 &&
+                <TouchableOpacity activeOpacity={0.5} onPress={handleClearSearchQuery}>
+                    <AntDesign 
+                        size={18} 
+                        color={colors.grey} 
+                        name='closecircle' 
+                        style={{padding: 5, opacity: 0.7}}
+                    />
+                </TouchableOpacity>
+            }
         </View>
     )
 }
