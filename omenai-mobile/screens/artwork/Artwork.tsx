@@ -115,7 +115,7 @@ export default function Artwork() {
                             <View style={styles.artworkDetails}>
                                 <Text style={styles.artworkTitle}>{data?.title}</Text>
                                 <Text style={styles.artworkCreator}>{data?.artist}</Text>
-                                <Text style={styles.artworkTags}>{data?.materials}      |     {data?.rarity}</Text>
+                                <Text style={styles.artworkTags}>{data?.medium}      |     {data?.rarity}</Text>
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                     <View style={styles.tagsContainer}>
                                         {data?.certificate_of_authenticity === 'Yes' && <View style={styles.tagItem}><Ionicons name='ribbon-outline' size={15} /><Text style={styles.tagItemText}>Certificate of authencity availiable</Text></View>}

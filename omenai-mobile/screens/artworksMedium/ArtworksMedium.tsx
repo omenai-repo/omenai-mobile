@@ -37,10 +37,12 @@ export default function ArtworksMedium() {
     const handleFetchArtworks = async () => {
         setIsLoading(true);
 
-        const res = await fetchPaginatedArtworks(
-            pageCount,
-            {...filterOptions, medium: [catalog]}
-        );
+        const res = await fetchArtworksByCriteria({
+            filters: filterOptions,
+            medium: catalog,
+            page: pageCount
+        });
+
         if(res.isOk){
             setArtworks(res.data)
         }else{

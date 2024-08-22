@@ -29,15 +29,14 @@ export default function CuratedArtworksListing({refreshCount, limit} : {refreshC
 
         const results = await fetchCuratedArtworks({page: 1});
 
-        if(results.isOk){
-            const resData = Array.isArray(results.body) ? results.body : [];
+        if(results){
+            const resData = results.data
 
+            setData(resData.splice(0,limit))
             if(resData.length >= 20){
-                setData(resData.splice(0,limit))
                 setshowMoreButton(true)
-            }else{
-                setData(resData)
-            }
+            };
+            
         }else{
             console.log(results)
         }
