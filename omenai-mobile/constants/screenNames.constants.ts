@@ -19,6 +19,7 @@ export const screenName = {
     savedArtworks: 'saved-artworks',
     filter: 'filter',
     artworkMediumFilterModal: 'artwork-medium-filter-modal',
+    artworkCategoriesFilterModal: 'artwork-categories-filter-modal',
     notifications: 'notifications',
     editorialsListing: 'editorials',
     editorial: 'editorial',

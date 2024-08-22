@@ -13,13 +13,22 @@ export type FilterStoreTypes = {
     medium: string[];
     rarity: string[];
   };
-
   updateFilter: (label: string, value: string) => void;
   removeFilter: (label: string, value: any) => void;
   selectedFilters: SelectedFilterArray[];
   setSelectedFilters: (value: string, name: string, label: string) => void;
   removeSingleFilterSelection: (filter: string) => void;
   clearAllFilters: () => void;
+  artworks: any[];
+  setArtworks: (artworks: any[]) => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+  pageCount: number;
+  setPageCount: (count: number) => void;
+  category: artworkListingType,
+  setCategory: (e: artworkListingType) => void,
+  artworkCount: number,
+  setArtworkCount: (count: number) => void
 };
 
 type SelectedFilterArray = {
@@ -28,7 +37,7 @@ type SelectedFilterArray = {
   value: string;
 };
 
-export const artworkCategoriesFilterStore = create<FilterStoreTypes>((set, get) => ({
+export const artworkCategoriesStore = create<FilterStoreTypes>((set, get) => ({
   filterOptions: {
     price: [],
     year: [],
@@ -121,4 +130,24 @@ export const artworkCategoriesFilterStore = create<FilterStoreTypes>((set, get) 
     });
     set({ selectedFilters: [] });
   },
+  artworks: [],
+  setArtworks: (artworks: any[]) => {
+    set({ artworks });
+  },
+  isLoading: false,
+  setIsLoading: (loading: boolean) => {
+    set({ isLoading: loading });
+  },
+  pageCount: 1,
+  setPageCount: (count: number) => {
+    set({ pageCount: count });
+  },
+  category: '',
+  setCategory: (e: artworkListingType) => {
+    set({category: e})
+  },
+  artworkCount: 0,
+  setArtworkCount: (count: number) => {
+    set({artworkCount: count})
+  }
 }));

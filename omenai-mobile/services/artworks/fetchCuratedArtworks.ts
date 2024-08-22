@@ -2,7 +2,7 @@ import filterArtObjectsByMedium from "utils/utils_filterArtObjectsByMedium";
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 
-export async function fetchCuratedArtworks({page}:{page: number}){
+export async function fetchCuratedArtworks({page, filters}:{page: number, filters: any[]}){
 
     let preferences = [];
     const userSession = await utils_getAsyncData('userSession')
@@ -10,7 +10,7 @@ export async function fetchCuratedArtworks({page}:{page: number}){
         preferences = JSON.parse(userSession.value).preferences
     }
     
-    let url = apiUrl + '/api/artworks/getAllArtworks'
+    let url = apiUrl + '/api/artworks/getUserCuratedArtworks'
 
     try {
         const response = await fetch(url, {
@@ -18,19 +18,12 @@ export async function fetchCuratedArtworks({page}:{page: number}){
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ page }),
+            body: JSON.stringify({ page , preferences, filters}),
         })
         .then(async (res) => {
             const result = await res.json();
-            const curated = filterArtObjectsByMedium(
-                result.data,
-                preferences
-            );
-            const parsedResponse = {
-                isOk: res.ok,
-                body: curated,
-            };
-            return parsedResponse;
+
+            return result;
         })
 
         return response
