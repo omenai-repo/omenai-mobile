@@ -14,7 +14,6 @@ export const mediums = <CatalogCardTypes[]> [
     {name: 'Paper', value: 'Paper', image: unnamed},
     {name: 'Ankara', value: 'Ankara', image: ankara},
     {name: 'Oil', value: 'Oil', image: oil_art},
-    {name: 'Paper', value: 'Paper', image: unnamed},
     {name: 'Canvas', value: 'Canvas', image: canvas},
     {name: 'Ink', value: 'Ink', image: ink},
     {name: 'Photography', value: 'Photography', image: photography_art},
