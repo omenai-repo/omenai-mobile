@@ -29,15 +29,11 @@ export default function RecentlyViewedArtworks({refreshCount}: {refreshCount?: n
             const results = await fetchViewHistory(userSession.id)
 
             if(results?.isOk){
-                const resData = results.data
-    
+                const resData = results.data;
+
+                const reversedArray = resData.slice().reverse()
                 
-                
-                if(resData.length >= 20){
-                    setData(resData.splice(0,20))
-                }else{
-                    setData(resData);
-                }
+                setData(reversedArray.splice(0,20)) 
             }
 
             setIsLoading(false)
