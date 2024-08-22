@@ -3,6 +3,8 @@ import { apiUrl } from "../../constants/apiUrl.constants";
 
 export async function fetchTrendingArtworks({page, filters}:{page: number, filters: any[]}){
 
+    console.log(filters)
+
     try {
         const response = await fetch(`${apiUrl}/api/artworks/getTrendingArtworks`, {
             method: 'POST',

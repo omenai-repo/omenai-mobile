@@ -13,6 +13,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { artworkCategoriesStore } from 'store/artworks/ArtworkCategoriesStore';
 import { fetchTrendingArtworks } from 'services/artworks/fetchTrendingArtworks';
+import MediumFilter from './MediumFilter';
 
 export default function ArtworkCategoriesFilterModal() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -53,6 +54,7 @@ export default function ArtworkCategoriesFilterModal() {
                     </View>
                 }
                 <View style={styles.FiltersListing}>
+                    <MediumFilter />
                     <PriceFilter />
                     <YearFilter />
                     <RarityFilter />
