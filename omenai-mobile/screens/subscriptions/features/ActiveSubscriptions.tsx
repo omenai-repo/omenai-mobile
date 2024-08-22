@@ -12,40 +12,9 @@ import BillingInfo from '../components/BillingInfo'
 import TransactionsListing from '../components/TransactionsListing'
 import { useIsFocused } from '@react-navigation/native'
 
-export default function ActiveSubscriptions() {
-    const isFocused = useIsFocused();
-
-    const [loading, setLoading] = useState<boolean>(false);
-
-    const [ subscriptionData, setSubscriptionData ] = useState<any>()
-
-    const { userSession } = useAppStore();
-    const { updateModal } = useModalStore();
-
-    useEffect(() => {
-        async function handleFetchSubData(){
-            setLoading(true);
-
-            const res = await retrieveSubscriptionData(userSession.id);
-            
-            if(res?.isOk){
-                setSubscriptionData(res.data)
-            }else{
-                //something went wrong
-                updateModal({message: 'something went wrong', modalType: 'error', showModal: true})
-            }
-
-            setLoading(false)
-        }
-
-        if(isFocused){
-            handleFetchSubData()
-        }
-    }, [isFocused]);
-
-    if(loading)return <ActiveSubLoader />
-
-    if(!loading && subscriptionData)
+export default function ActiveSubscriptions({subscriptionData}: {subscriptionData: any}) {
+    
+    if(subscriptionData)
     return (
         <View style={{gap: 20, marginBottom: 100}}>
             <CardDetails
