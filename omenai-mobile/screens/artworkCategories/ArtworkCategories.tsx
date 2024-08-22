@@ -12,6 +12,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import ShowMoreButton from 'components/buttons/ShowMoreButton';
 import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
 import Pagination from 'screens/catalog/components/Pagination';
+import ArtworksCountsContainer from './components/ArtworksCountsContainer';
 
 export default function ArtworkCategories() {
     const route = useRoute()
@@ -19,6 +20,7 @@ export default function ArtworkCategories() {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState([]);
+    const [artworksCount, setArtworksCount] = useState(0);
     const [pageNum, setPageNum] = useState(1);
     const [loadingMore, setLoadingmore] = useState<boolean>(false);
 
@@ -28,8 +30,14 @@ export default function ArtworkCategories() {
         handleFetchArtworks()
     }, []);
 
+    const handleDataReset = () => {
+        setData([]);
+        setPageNum(1);
+        setArtworksCount(0);
+    }
+
     const handleFetchArtworks = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         
         let results
 
@@ -37,9 +45,10 @@ export default function ArtworkCategories() {
             results = await fetchCuratedArtworks({page: pageNum});
             if(results.isOk){
                 const resData = Array.isArray(results.body) ? results.body : [];
-                const newArr = [...data, ...resData]
+                // const newArr = [...data, ...resData]
 
-                setData(newArr)
+                setData(resData);resData
+                setArtworksCount(newArr.length)
             }else{
                 updateModal({message: "Error fetching " + title + " artworks", showModal: true, modalType: 'error'})
             }
@@ -47,8 +56,9 @@ export default function ArtworkCategories() {
             results = await fetchArtworks({listingType: title, page: pageNum});
             if(results.isOk){
                 const resData = results.body.data
-                const newArr = [...data, ...resData]
-                setData(newArr)
+                // const newArr = [...data, ...resData]
+                setData(resData)
+                setArtworksCount(resData.length)
             }else{
                 updateModal({message: "Error fetching " + title + " artworks", showModal: true, modalType: 'error'})
             }
@@ -69,7 +79,8 @@ export default function ArtworkCategories() {
                 const responseData = Array.isArray(response.body) ? response.body : [];
                 const newArr = [...data, ...responseData]
 
-                setData(newArr)
+                setData(newArr);
+                setArtworksCount(newArr.length)
             }else{
                 //throw error
             }
@@ -79,6 +90,7 @@ export default function ArtworkCategories() {
                 const responseData = response.body.data
                 const newArr = [...data, ...responseData]
                 setData(newArr);
+                setArtworksCount(newArr.length)
             }else{
                 //throw error
             }
@@ -96,13 +108,20 @@ export default function ArtworkCategories() {
                     <MiniArtworkCardLoader />
                 </View>
             :
-                <ScrollView
-                    style={styles.scrollContainer}
-                    showsVerticalScrollIndicator={false}
-                    refreshControl={
-                        <RefreshControl refreshing={false} onRefresh={handleFetchArtworks} />
-                    }
-                >
+            <ScrollView
+                style={styles.scrollContainer}
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl refreshing={false} onRefresh={() => {
+                        handleDataReset()
+                        handleFetchArtworks()
+                    }} />
+                }
+            >
+                <ArtworksCountsContainer
+                    count={artworksCount}
+                    title={title}
+                />
                 <ArtworksListing data={data} />
                 <Pagination
                     count={pageNum} 

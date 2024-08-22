@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     artworksContainer: {
         flexDirection: 'row',
         gap: 20,
-        marginTop: 30,
+        marginTop: 20,
         zIndex: 5
     },
     singleColumn: {
