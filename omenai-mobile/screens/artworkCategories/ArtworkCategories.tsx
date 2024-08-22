@@ -13,6 +13,7 @@ import Pagination from 'screens/catalog/components/Pagination';
 import ArtworksCountsContainer from './components/ArtworksCountsContainer';
 import { artworkCategoriesStore } from 'store/artworks/ArtworkCategoriesStore';
 import { fetchTrendingArtworks } from 'services/artworks/fetchTrendingArtworks';
+import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
 
 export default function ArtworkCategories() {
     const isFocused = useIsFocused()
@@ -23,13 +24,12 @@ export default function ArtworkCategories() {
     const [loadingMore, setLoadingmore] = useState<boolean>(false);
 
     const { updateModal } = useModalStore();
-    const { artworks, setArtworks, isLoading, setIsLoading, pageCount, setPageCount, filterOptions, artworkCount, setArtworkCount, setCategory } = artworkCategoriesStore();
+    const { artworks, setArtworks, isLoading, setIsLoading, pageCount, setPageCount, filterOptions, artworkCount, setArtworkCount, setCategory, clearAllFilters } = artworkCategoriesStore();
 
     useEffect(() => {
         if(isFocused){
             setCategory(title)
             handleFetchArtworks();
-            console.log(filterOptions)
         }
     }, [filterOptions, isFocused]);
 
@@ -37,6 +37,7 @@ export default function ArtworkCategories() {
         setArtworks([]);
         setPageCount(1);
         setArtworkCount(0);
+        clearAllFilters()
     }
 
     const handleFetchArtworks = async () => {
@@ -45,23 +46,15 @@ export default function ArtworkCategories() {
         let results
 
         if(title === 'curated'){
-            results = await fetchCuratedArtworks({page: pageCount});
+            results = await fetchCuratedArtworks({page: pageCount, filters: filterOptions});
         }else if(title === 'trending'){
             results = await fetchTrendingArtworks({page: pageCount, filters: filterOptions});
         }else if(title === 'recent'){
-            results = await fetchArtworks({listingType: title, page: pageCount});
+            results = await fetchPaginatedArtworks(pageCount, filterOptions);
         }
 
-        console.log(results.data)
-
-        let resData
-
         if(results){
-            if(title === 'curated' || title === 'trending'){
-                resData = results.data
-            }else{
-                resData = results.body.data
-            }
+            const resData = results.data
             // const newArr = [...data, ...resData]
             setArtworks(resData)
             setArtworkCount(resData.length)
@@ -88,10 +81,7 @@ export default function ArtworkCategories() {
 
         if(response.isOk){
             const responseData = response.body.data
-            const newArr = [...artworks, ...responseData];
-
-            console.log(artworks[0].artist)
-            console.log(responseData[0].artist)
+            const newArr = [...responseData, ...artworks];
 
             setArtworks(newArr);
             setArtworkCount(newArr.length)
