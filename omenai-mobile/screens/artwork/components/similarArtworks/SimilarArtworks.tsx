@@ -16,7 +16,7 @@ export default function SimilarArtworks({medium, title = ''}: {medium: string, t
 
     const handleFetchArtworksByCiteria = async () => {
         setIsLoading(true)
-        const results = await fetchArtworksByCriteria(medium);
+        const results = await fetchArtworksByCriteria({medium, page: 1, filters: null});
 
         if(results.isOk){
             let resultsData = results.body.data as []

@@ -1,6 +1,14 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
 
-export async function fetchArtworksByCriteria(medium: string){
+export async function fetchArtworksByCriteria({
+    medium,
+    filters,
+    page,
+}: {
+    medium: string,
+    filters: any,
+    page: number
+}){
 
     try {
         const response = await fetch(`${apiUrl}/api/artworks/getArtworksByCriteria`, {
@@ -8,14 +16,12 @@ export async function fetchArtworksByCriteria(medium: string){
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ medium }),
+            body: JSON.stringify({ page, medium, filters }),
         })
         .then(async (res) => {
-            const ParsedResponse = {
-                isOk: res.ok,
-                body: await res.json(),
-            };
-            return ParsedResponse;
+            const result = await res.json();
+
+            return { isOk: res.ok, data: result.data};
         })
 
         return response
