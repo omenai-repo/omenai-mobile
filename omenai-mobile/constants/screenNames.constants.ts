@@ -22,6 +22,7 @@ export const screenName = {
     artworkCategoriesFilterModal: 'artwork-categories-filter-modal',
     notifications: 'notifications',
     editorialsListing: 'editorials',
+    collections: 'collections',
     editorial: 'editorial',
     cancleOrderPayment: 'CancleOrderPayment',
     successOrderPayment: 'SuccessOrderPayment',
