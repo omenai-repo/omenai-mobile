@@ -4,6 +4,8 @@ import { mediums } from 'constants/mediums';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
+import { colors } from 'config/colors.config';
+import { Feather } from '@expo/vector-icons';
 
 export default function CatalogListing() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -21,7 +23,12 @@ export default function CatalogListing() {
 
     return (
         <View style={{marginTop: 40}}>
-            <Text style={{fontSize: 18, fontWeight: 500, paddingHorizontal: 20}}>Art Collections</Text>
+            <TouchableOpacity onPress={() => navigation.navigate(screenName.collections)}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
+                    <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Art Collections</Text>
+                    <Feather name='chevron-right' color={colors.grey} size={20} />
+                </View>
+            </TouchableOpacity>
             <FlatList 
                 data={mediums}
                 renderItem={({item, index}: {item: CatalogCardTypes, index: string}) => (

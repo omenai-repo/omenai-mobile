@@ -1,1 +1,1 @@
-export const apiUrl = 'https://omenai-web.vercel.app'
+export const apiUrl = 'https://omenai.app'

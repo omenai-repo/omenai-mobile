@@ -14,6 +14,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import { screenName } from 'constants/screenNames.constants';
 import { artworksMediumFilterStore } from 'store/artworks/ArtworksMediumFilterStore';
 import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
+import { mediums } from 'constants/mediums';
 
 export default function ArtworksMedium() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -23,7 +24,12 @@ export default function ArtworksMedium() {
     const { setArtworks, artworks, isLoading, setMedium, setIsLoading, pageCount } = artworksMediumStore();
     const { filterOptions, clearAllFilters } = artworksMediumFilterStore();
 
-    const { catalog, image } = route.params as {catalog: string, image: string};
+    const { catalog } = route.params as {catalog: string};
+
+    function getImageUrl(){
+        const selectedCollection = mediums.filter(collection => collection.name === catalog);
+        return(`${selectedCollection[0].image}`)
+    };
 
     useEffect(() => {
         setMedium(catalog)
@@ -55,7 +61,7 @@ export default function ArtworksMedium() {
 
     return (
         <WithModal>
-            <Header image={image} goBack={()=>navigation.goBack()} />
+            <Header image={getImageUrl()} goBack={()=>navigation.goBack()} />
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 <View style={{zIndex: 100}}>
                     <FilterButton handleClick={() => navigation.navigate(screenName.artworkMediumFilterModal)}>
