@@ -12,14 +12,14 @@ type HighlightCardProps = {
 
 export const HighlightCard = ({name, type, refreshCount}: HighlightCardProps) => {
     const [amount, setAmount] = useState(0);
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        handleFetchHighlightData()
+        handleFetchHighlightData();
     }, [refreshCount]);
 
     const handleFetchHighlightData = async () => {
-        setIsLoading(true)
+        // setIsLoading(true)
         let results = await fetchHighlightData(type);
         setAmount(results)
         setIsLoading(false)
