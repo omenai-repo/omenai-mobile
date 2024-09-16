@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, SafeAreaView, RefreshControl, View, Button } from 'react-native'
+import { ScrollView, StyleSheet, Text, SafeAreaView, RefreshControl, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import WithModal from 'components/modal/WithModal'
 import Header from 'components/header/Header'
@@ -11,17 +11,21 @@ const CopilotText = walkthroughable(Text);
 
 export default function Overview() {
     const {start} = useCopilot();
+
     const [refreshCount, setRefreshCount] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
 
-    useEffect(() => {
-        async function handleStartTour(){
-            start('started');
-            console.log('start')
-        }
+    const handlePress = async () => {
+        start();
+    };
 
-        handleStartTour()
-    }, [])
+    useEffect(() => {
+        const timer = setTimeout(() => {
+          handlePress()
+        }, 4000);
+    
+        return () => clearTimeout(timer)
+      }, []);
 
     const onRefresh = React.useCallback(() => {
         // setRefreshing(true);
@@ -44,7 +48,6 @@ export default function Overview() {
                     }
                 >
                     <Header showNotification />
-                    {/* <Button title="Start tutorial" onPress={() => start()} /> */}
                     <View style={styles.container}>
                         <Text style={{fontSize: 16, fontWeight: '400'}}>Overview</Text>
                         <View style={styles.contentsContainer}>
@@ -60,7 +63,11 @@ export default function Overview() {
                             </CopilotStep>
                         </View>
                     </View>
-                    <SalesOverview refreshCount={refreshCount}/>
+                    <CopilotStep text="You can view your sales progress from this chart here, it keeps track of and shows how much revenue you've made from successful artwork sales." order={3} name="sales-overview">
+                        <CustomComponent>
+                            <SalesOverview refreshCount={refreshCount}/>
+                        </CustomComponent>
+                    </CopilotStep>
                     <PopularArtworks refreshCount={refreshCount} />
                     <RecentOrders refreshCount={refreshCount} />
                 </ScrollView>
