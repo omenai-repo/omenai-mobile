@@ -53,7 +53,7 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
                         />
                     </View>
                     <View style={{flexWrap: 'wrap', marginTop: 15}}>
-                    {state === "pending" && !availability ? (
+                    {state === "pending" && availability ? (
                         (payment_information!.status === "completed") ? (tracking_information?.tracking_id.length > 0 ?
                             <DropDownButton label='View tracking information' onPress={setShowTrackingInfo} value={showTrackingInfo} />
                             :

@@ -41,9 +41,9 @@ export default function OrderDetails({data, locked}:{data: any, locked: boolean}
                 user_email: userSession.email,
                 user_id: userSession.id,
                 art_id: data.artwork_data.art_id,
-                gallery_email: "",
-                gallery_name: "",
-                artwork_name: "",
+                gallery_email: data.gallery_details.email,
+                gallery_name: data.gallery_details.name,
+                artwork_name: data.artwork_data.title,
             }
         );
 
