@@ -8,6 +8,9 @@ export const createPaymentIntent = async (
         user_id: string;
         user_email: string;
         art_id: string;
+        gallery_email: string;
+        gallery_name: string;
+        artwork_name: string;
     }
 ) => {
   try {

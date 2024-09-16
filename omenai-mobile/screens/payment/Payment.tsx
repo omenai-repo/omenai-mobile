@@ -34,6 +34,7 @@ export default function Payment() {
         async function handleFetchOrderDetails(){
             const data = await getSingleOrder(id);
             if(data?.isOk){
+                // console.log(data)
                 const lock_status = await checkLockStatus(id, userSession.id);
                 setArtworkDetails({data: data.data, locked: lock_status?.data.locked})
             }
