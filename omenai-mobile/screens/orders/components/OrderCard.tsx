@@ -11,7 +11,7 @@ import DropDownButton from './DropDownButton';
 import { useModalStore } from 'store/modal/modalStore';
 import StatusPill from './StatusPill';
 
-export default function OrderCard({artworkName, dateOrdered, status, state, artworkPrice, url, orderId, payment_information, tracking_information, shipping_quote, order_accepted, delivery_confirmed}: OrderCardProps) {
+export default function OrderCard({artworkName, dateOrdered, status, state, artworkPrice, url, orderId, payment_information, tracking_information, shipping_quote, order_accepted, delivery_confirmed, availability}: OrderCardProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const [showTrackingInfo, setShowTrackingInfo] = useState<boolean>(false);
@@ -49,10 +49,11 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
                             tracking_status={tracking_information?.tracking_link}
                             order_accepted={order_accepted.status}
                             delivery_confirmed={delivery_confirmed}
+                            availability={availability}
                         />
                     </View>
                     <View style={{flexWrap: 'wrap', marginTop: 15}}>
-                    {state === "pending" ? (
+                    {state === "pending" && availability ? (
                         (payment_information!.status === "completed") ? (tracking_information?.tracking_id.length > 0 ?
                             <DropDownButton label='View tracking information' onPress={setShowTrackingInfo} value={showTrackingInfo} />
                             :
@@ -65,7 +66,7 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
                             )}
                             </View>
                         )
-                        ) : null}
+                    ) : null}
                     </View>
                 </View>
             </View>

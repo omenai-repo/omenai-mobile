@@ -10,6 +10,7 @@ import GalleryNavigation from 'navigation/GalleryNavigation';
 import * as Linking from 'expo-linking';
 import { screenName } from 'constants/screenNames.constants';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import { CopilotProvider } from 'react-native-copilot';
 
 export default function App() {
   const {isLoggedIn, userType} = useAppStore();
@@ -38,22 +39,24 @@ export default function App() {
   }, [isLoggedIn])
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <StripeProvider publishableKey={process.env.STRIPE_PK}>
-        <NavigationContainer linking={linking}>
-          {/* AUTH SCREENS */}
-          {!isLoggedIn &&
-            <AuthNavigation />
-          }
-          {/* App screens */}
-          {(isLoggedIn && userType === "gallery") &&
-            <GalleryNavigation />
-          }
-          {(isLoggedIn && userType === "user") &&
-            <IndividualNavigation />
-          }
-        </NavigationContainer>
-      </StripeProvider>
-    </GestureHandlerRootView>
+    <CopilotProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <StripeProvider publishableKey={process.env.STRIPE_PK}>
+          <NavigationContainer linking={linking}>
+            {/* AUTH SCREENS */}
+            {!isLoggedIn &&
+              <AuthNavigation />
+            }
+            {/* App screens */}
+            {(isLoggedIn && userType === "gallery") &&
+              <GalleryNavigation />
+            }
+            {(isLoggedIn && userType === "user") &&
+              <IndividualNavigation />
+            }
+          </NavigationContainer>
+        </StripeProvider>
+      </GestureHandlerRootView>
+    </CopilotProvider>
   );
 }
