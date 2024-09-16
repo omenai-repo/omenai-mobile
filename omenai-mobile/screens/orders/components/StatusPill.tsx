@@ -8,11 +8,20 @@ type StatusPillProps = {
     payment_status: string,
     tracking_status: string,
     order_accepted: string,
-    delivery_confirmed: boolean
+    delivery_confirmed: boolean,
+    availability: boolean
 }
 
-export default function StatusPill({ status, payment_status, tracking_status, order_accepted, delivery_confirmed }: StatusPillProps) {
-    if (
+export default function StatusPill({ status, payment_status, tracking_status, order_accepted, delivery_confirmed, availability}: StatusPillProps) {
+  if(!availability){
+    return (
+      <View style={[styles.pill, {backgroundColor: '#00800015'}]}>
+          <Feather name='x-circle' size={14}/><Text style={styles.text}>Artwork unavailable for purchase</Text>
+      </View>
+    );
+  } ;
+
+  if (
         status === "pending" &&
         status === "pending" &&
         order_accepted === "accepted" &&

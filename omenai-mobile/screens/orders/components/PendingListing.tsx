@@ -30,6 +30,7 @@ export default function PendingListing({listing}: PendingListingProps) {
                     shipping_quote={order.shipping_quote}
                     order_accepted={order.order_accepted}
                     delivery_confirmed={order.delivery_confirmed}
+                    availability={order.availability}
                 />
                 {(index + 1) !== listing.length && <View style={{paddingVertical: 15}}><Divider /></View>}
                 </View>

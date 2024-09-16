@@ -140,6 +140,7 @@ type OrderCardProps = {
   shipping_quote?: ShippingQuoteTypes;
   order_accepted: OrderAcceptedStatusTypes;
   delivery_confirmed: boolean;
+  availability: boolean
 }
 
 type IndividualAddressTypes = {
@@ -272,6 +273,7 @@ type CreateOrderModelTypes = {
   tracking_information: TrackingInformationTypes;
   order_accepted: OrderAcceptedStatusTypes;
   delivery_confirmed: boolean;
+  availability: boolean
 };
 
 type PlanProps = {

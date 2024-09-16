@@ -46,8 +46,8 @@ export default function Orders() {
         if(results?.isOk){
             const data = results.data;
 
-            const pending_orders = data.filter((order: CreateOrderModelTypes) => !order.delivery_confirmed);
-            const completed_orders = data.filter((order: CreateOrderModelTypes) => order.delivery_confirmed);
+            const pending_orders = data.filter((order: CreateOrderModelTypes) => !order.delivery_confirmed && order.availability);
+            const completed_orders = data.filter((order: CreateOrderModelTypes) => order.delivery_confirmed || !order.availability);
 
             setData({pendingOrders: pending_orders, completedOrders: completed_orders})
 
