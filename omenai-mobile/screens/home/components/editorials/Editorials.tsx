@@ -53,50 +53,49 @@ export default function Editorials() {
         const editorialList = editorials.reverse().map((editorial: any) => {
             return {
               title: editorial.title,
-              id: editorial.id,
-              author: editorial.author,
+              id: editorial.$id,
+              link: editorial.link,
               date: editorial.date,
-              url: editorial.image,
+              url: editorial.cover,
+              minutes: editorial.minutes
             };
         });
 
-        const parsedList = editorialList.slice(0,2)
+        // const parsedList = editorialList.slice(0,2)
 
-        setData(parsedList);
+        setData(editorialList);
         
         setIsLoading(false)
     }
 
     return (
         <View style={{marginTop: 40, marginBottom: 10}}>
-            <TouchableOpacity onPress={() => navigation.navigate(screenName.editorialsListing)}>
-                <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
-                    <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Editorials</Text>
-                    <Feather name='chevron-right' color={colors.grey} size={20} />
-                </View>
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20}}>
+                <Text style={{fontSize: 18, fontWeight: 500, flex: 1}}>Editorials</Text>
+                {/* <Feather name='chevron-right' color={colors.grey} size={20} /> */}
+            </View>
             {(isLoading && data.length < 1) && <ArtworkCardLoader />}
             {(!isLoading && data.length > 0) && (
-                    <FlatList
-                        data={data}
-                        renderItem={({item}: {item: editorialListingType}) => (
-                            <View style={{marginLeft: 20}}>
-                                <EditorialCard
-                                    url={item.url}
-                                    writer={item.author}
-                                    articleHeader={item.title}
-                                    date={item.date}
-                                    id={item.id}
-                                    width={280}
-                                />
-                            </View>
-                        )}
-                        keyExtractor={(_, index) => JSON.stringify(index)}
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                        style={{marginTop: 20}}
-                    />
-                )}
+                <FlatList
+                    data={data}
+                    renderItem={({item}: {item: editorialListingType}) => (
+                        <View style={{marginLeft: 20}}>
+                            <EditorialCard
+                                url={item.url}
+                                link={item.link}
+                                articleHeader={item.title}
+                                date={item.date}
+                                minutes={item.minutes}
+                                width={280}
+                            />
+                        </View>
+                    )}
+                    keyExtractor={(_, index) => JSON.stringify(index)}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    style={{marginTop: 20}}
+                />
+            )}
         </View>
     ) 
 }
