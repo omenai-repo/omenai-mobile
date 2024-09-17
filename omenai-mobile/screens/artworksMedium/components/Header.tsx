@@ -1,4 +1,4 @@
-import { ImageBackground, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { ImageBackground, SafeAreaView, StyleSheet, Text, View, Platform, StatusBar} from 'react-native'
 import React from 'react';
 import BackScreenButton from 'components/buttons/BackScreenButton';
 
@@ -10,7 +10,7 @@ type HeaderProps = {
 export default function Header({image, goBack}: HeaderProps) {
     return (
         <ImageBackground source={image} alt=''>
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <View style={{paddingHorizontal: 20, paddingBottom: 20}}>
                     <BackScreenButton handleClick={goBack} />
                 </View>
@@ -19,4 +19,8 @@ export default function Header({image, goBack}: HeaderProps) {
     )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    }
+})

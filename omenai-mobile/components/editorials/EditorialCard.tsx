@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View, Dimensions } from 'react-native'
+import { Image, StyleSheet, Text, View, Linking } from 'react-native'
 import React from 'react'
 import { Feather } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
@@ -12,34 +12,32 @@ import { useModalStore } from 'store/modal/modalStore'
 
 export type EditorialCardProps = {
     url: string,
-    writer: string,
     articleHeader: string,
+    link: string,
     date: string,
-    id: string
+    minutes: string,
 }
 
-export default function EditorialCard({url, writer, articleHeader, date, id, width}: EditorialCardProps & {width: number}) {
-    const navigation = useNavigation<StackNavigationProp<any>>();
-    
+export default function EditorialCard({url, link, articleHeader, date, minutes, width}: EditorialCardProps & {width: number}) {
+
+    const handleOpenLink = async () => {
+        const parsedLink = 'https://' + link
+        const supportedLink = await Linking.canOpenURL(parsedLink);
+        if(supportedLink){
+            await Linking.openURL(parsedLink)
+        }
+    }
 
     const image_href = getEditorialImageFilePreview(url, width);
 
     return(
         <>
-            <TouchableOpacity activeOpacity={1} onPress={() => {
-                navigation.navigate(screenName.editorial, {id, articleHeader})
-            }}>
+            <TouchableOpacity activeOpacity={1} onPress={handleOpenLink}>
                 <View style={{width: width, overflow: 'hidden'}}>
                     <Image source={{uri: image_href}} style={styles.image} />
                     <View>
                         <View style={styles.cardDetails}>
-                            {writer &&
-                                <>
-                                    <Text style={{fontSize: 12, color: '#616161'}}>by {writer}</Text>
-                                    <View style={{height: 5, width: 5, borderRadius: 5, backgroundColor: '#616161'}} />
-                                </>
-                            }
-                            <Text style={{fontSize: 12, color: '#616161'}}>{date}</Text>
+                            <Text style={{fontSize: 12, color: '#616161'}}>{minutes} Minutes read</Text>
                         </View>
                         <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 15, fontWeight: 400}}>{articleHeader}</Text>
                         {/* <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize: 14, marginTop: 10, color: '#616161'}}>This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post.</Text> */}
