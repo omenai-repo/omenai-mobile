@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Platform, StatusBar} from 'react-native'
 import React from 'react'
 import { colors } from 'config/colors.config'
 import { galleryOrdersStore, galleryOrdersTab } from 'store/gallery/galleryOrdersStore'
@@ -9,7 +9,7 @@ export default function HeaderTabs() {
     const {selectedTab, setSelectedTab} = galleryOrdersStore()
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
                 <Text style={{fontSize: 20, textAlign: 'center'}}>Orders</Text>
                 <View style={styles.mainContainer}>
@@ -55,5 +55,8 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })

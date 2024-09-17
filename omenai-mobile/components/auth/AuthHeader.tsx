@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Platform, StatusBar} from 'react-native'
 import React from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { colors } from '../../config/colors.config';
@@ -26,6 +26,7 @@ export default function AuthHeader({title, subTitle, handleBackClick}: AuthHeade
 const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.authHeaderBg,
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
     backButton: {
         height: 40,

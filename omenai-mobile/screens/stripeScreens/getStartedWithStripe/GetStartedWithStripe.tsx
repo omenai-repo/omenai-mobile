@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View, Linking } from 'react-native'
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Linking, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import Input from 'components/inputs/Input'
@@ -80,7 +80,7 @@ export default function GetStartedWithStripe() {
 
     return (
         <WithModal>
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <View style={{paddingHorizontal: 20}}><Text style={{textAlign: 'center', fontSize: 20}}>Connect Stripe</Text></View>
             </SafeAreaView>
             <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
@@ -161,5 +161,8 @@ const styles = StyleSheet.create({
     form: {
         gap: 20,
         marginTop: 30
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })

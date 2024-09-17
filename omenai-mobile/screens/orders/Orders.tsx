@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, RefreshControl, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -68,7 +68,7 @@ export default function Orders() {
 
     return (
         <WithModal>
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <View style={{paddingHorizontal: 20}}>
                     <View style={[styles.tabContainer]}>
                         <TabItem name='Pending'  isSelected={selectedTab === 'Pending'} />
@@ -132,5 +132,8 @@ const styles = StyleSheet.create({
         height: 500,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })

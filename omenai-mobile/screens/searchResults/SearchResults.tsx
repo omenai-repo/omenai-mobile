@@ -1,4 +1,4 @@
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, View, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from '../../config/colors.config'
 import BackScreenButton from 'components/buttons/BackScreenButton'
@@ -59,7 +59,7 @@ export default function SearchResults() {
     return (
         <View style={styles.container}>
             <View style={styles.mainContainer}>
-                <SafeAreaView>
+                <SafeAreaView style={styles.safeArea}>
                     <SearchInput />
                 </SafeAreaView>
                 {searchQuery.length > 0 ?
@@ -120,5 +120,8 @@ const styles = StyleSheet.create({
         height: 200,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })
