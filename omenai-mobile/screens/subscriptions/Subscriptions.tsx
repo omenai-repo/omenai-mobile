@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import InActiveSubscription from './features/InActiveSubscription';
@@ -45,7 +45,7 @@ export default function Subscriptions() {
 
     return (
         <WithModal>
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <View style={styles.headerContainer}>
                     <Text style={{fontSize: 20, textAlign: 'center'}}>Subscription & Billing</Text>
                 </View>
@@ -78,4 +78,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         flex: 1
     },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    }
 })

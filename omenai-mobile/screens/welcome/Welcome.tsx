@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, View, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 
 import omenai_logo from '../../assets/omenai-logo.png';
@@ -50,7 +50,7 @@ export default function Welcome() {
     )
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+        <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
                     <Image source={omenai_logo} style={styles.logo} resizeMode="contain" />
@@ -94,5 +94,10 @@ const styles = StyleSheet.create({
     },
     logo: {
         width: 150
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+        flex: 1,
+        backgroundColor: colors.white
     }
 })

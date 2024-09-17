@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Platform, StatusBar} from 'react-native'
 import React from 'react'
 import { colors } from 'config/colors.config'
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,7 @@ export default function Notifications() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     return (
         <View style={{flex: 1, backgroundColor: colors.white}}>
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <View style={{alignItems: 'center', justifyContent: 'center'}}>
                     <Text>Notifications</Text>
                     <TouchableOpacity style={{marginTop: 200}} onPress={() => navigation.navigate(screenName.home)}><Text>Go Back</Text></TouchableOpacity>
@@ -19,4 +19,8 @@ export default function Notifications() {
     )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    }
+})

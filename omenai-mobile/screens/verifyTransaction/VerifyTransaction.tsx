@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, View, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 
 import successImage from 'assets/icons/success_check.png';
@@ -58,28 +58,26 @@ export default function VerifyTransaction() {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView>
-            {loading && (
-                <View>
-                    <Loader />
-                    <Text>Verification in progress...please wait</Text>
-                </View>
-            )}
-            {(!loading && verified) && (
-                <View style={{paddingHorizontal: 20, paddingTop: 50}}>
-                    <Text style={{fontSize: 16, textAlign: 'center'}}>{verified.message}</Text>
-                    {success !== null && (
-                        <Image style={{height: 100, marginHorizontal: 'auto', marginTop: 10, marginBottom: 30}} resizeMode='contain' source={success ? successImage : errorImage} />
-                    )} 
-                    <LongBlackButton
-                        value='Return home'
-                        onClick={handleViewSubscription}
-                    />
-                </View>
-            )}
+            <SafeAreaView style={styles.safeArea}>
+                {loading && (
+                    <View>
+                        <Loader />
+                        <Text>Verification in progress...please wait</Text>
+                    </View>
+                )}
+                {(!loading && verified) && (
+                    <View style={{paddingHorizontal: 20, paddingTop: 50}}>
+                        <Text style={{fontSize: 16, textAlign: 'center'}}>{verified.message}</Text>
+                        {success !== null && (
+                            <Image style={{height: 100, marginHorizontal: 'auto', marginTop: 10, marginBottom: 30}} resizeMode='contain' source={success ? successImage : errorImage} />
+                        )} 
+                        <LongBlackButton
+                            value='Return home'
+                            onClick={handleViewSubscription}
+                        />
+                    </View>
+                )}
             </SafeAreaView>
-            
-            
         </View>
     )
 }
@@ -88,5 +86,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.white
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })

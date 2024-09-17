@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, RefreshControl } from 'react-native'
+import { StyleSheet, ScrollView, SafeAreaView, RefreshControl, Platform, StatusBar} from 'react-native'
 import React, { useState } from 'react'
 import Header from '../../components/header/Header'
 import { colors } from '../../config/colors.config'
@@ -28,7 +28,7 @@ export default function Home() {
 
     return (
         <WithModal> 
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <ScrollView 
                     showsVerticalScrollIndicator={false}
                     refreshControl={
@@ -51,8 +51,7 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colors.white
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })
