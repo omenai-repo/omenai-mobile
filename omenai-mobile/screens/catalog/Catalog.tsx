@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, RefreshControl} from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, RefreshControl, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -88,7 +88,7 @@ export default function Catalog() {
 
     return (
         <WithModal>
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <View style={styles.mainContainer}>
                     <View style={{zIndex: 100}}>
                         <FilterButton>
@@ -158,4 +158,7 @@ const styles = StyleSheet.create({
         color: colors.primary_black, 
         paddingVertical: 20
     },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    }
 })

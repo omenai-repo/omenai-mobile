@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, SafeAreaView, RefreshControl, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, SafeAreaView, RefreshControl, View, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import WithModal from 'components/modal/WithModal'
 import Header from 'components/header/Header'
@@ -40,7 +40,7 @@ export default function Overview() {
 
     return (
         <WithModal> 
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     refreshControl={
@@ -86,4 +86,7 @@ const styles = StyleSheet.create({
         gap: 20,
         marginTop: 20
     },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    }
 })

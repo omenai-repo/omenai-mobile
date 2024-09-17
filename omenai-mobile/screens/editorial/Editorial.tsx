@@ -1,7 +1,6 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, StyleSheet, View, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import WithModal from 'components/modal/WithModal'
-import { useModalStore } from 'store/modal/modalStore'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import BackScreenButton from 'components/buttons/BackScreenButton';
 import WebView from 'react-native-webview';
@@ -44,7 +43,8 @@ export default function Editorial() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   topContainer: {
     paddingHorizontal: 20,

@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Platform, StatusBar} from 'react-native'
 import React from 'react';
 import BackScreenButton from 'components/buttons/BackScreenButton';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -16,7 +16,7 @@ export default function Header({isGallery, art_id}: ArtworkHeaderProps) {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.safeArea}>
             <View style={{paddingHorizontal: 20, flexDirection: 'row'}}>
                 <BackScreenButton handleClick={() => navigation.goBack()}/>
                 <View style={{flex: 1}} />
@@ -45,5 +45,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
         borderWidth: 1,
         borderColor: colors.inputBorder
-    }
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    },
 })

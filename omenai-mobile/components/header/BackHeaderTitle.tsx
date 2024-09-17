@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar} from 'react-native'
 import React from 'react'
 import BackScreenButton from 'components/buttons/BackScreenButton'
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -14,7 +14,7 @@ export default function BackHeaderTitle({title, callBack}: BackHeaderTitleProps)
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.safeArea}>
             <View style={styles.topContainer}>
                 <BackScreenButton handleClick={() => {
                     navigation.goBack()
@@ -40,5 +40,8 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: colors.primary_black,
         textTransform: 'capitalize',
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })

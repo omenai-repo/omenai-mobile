@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { colors } from 'config/colors.config'
@@ -57,7 +57,7 @@ export default function PurchaseArtwork() {
     return (
         <WithModal>
             <View style={{flex: 1, backgroundColor: colors.white}}>
-                <SafeAreaView>
+                <SafeAreaView style={styles.safeArea}>
                     <View style={{paddingHorizontal: 20}}>
                         <BackScreenButton handleClick={handleBackNavigation}/>
                     </View>
@@ -90,5 +90,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.white,
         // marginTop: 10,
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })
