@@ -8,9 +8,10 @@ export const listEditorials = async () => {
       process.env.APPWRITE_EDITORIAL_DATABASE_ID!,
       process.env.APPWRITE_EDITORIAL_COLLECTION_ID!
     );
-    const articles = await getEditorialData(promise);
-    const resolvedArticles = await getPromiseResolvedEditorialData(articles);
-    return resolvedArticles;
+    // console.log(promise)
+    // const articles = await getEditorialData(promise);
+    // const resolvedArticles = await getPromiseResolvedEditorialData(articles);
+    return promise.documents;
   } catch (error) {
     console.log(error);
   }

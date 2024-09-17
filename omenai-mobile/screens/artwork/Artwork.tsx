@@ -42,7 +42,6 @@ export default function Artwork() {
     let image_href
     if(data){
         image_href = getImageFileView(data.url, 300);
-        console.log(image_href)
     }
 
     useEffect(() => {
