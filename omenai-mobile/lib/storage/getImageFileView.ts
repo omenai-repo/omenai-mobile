@@ -1,6 +1,9 @@
 import { ImageFormat, ImageGravity } from "react-native-appwrite";
 import { storage } from "../../appWrite";
 
+//for development purpose, move to env
+const bucketID = "66e1aa4f000b16df96a2"
+
 export const getImageFileView = (
   fileId: string,
   width: number,
@@ -8,7 +11,7 @@ export const getImageFileView = (
   format?: string
 ) => {
   const fileData = storage.getFilePreview(
-    process.env.APPWRITE_BUCKET_ID,
+    bucketID,
     fileId,
 
     width, // width, will be resized using this value.
