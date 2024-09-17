@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, View, Linking } from 'react-native'
+import { Dimensions, FlatList, SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import WithModal from 'components/modal/WithModal'
 import BackScreenButton from 'components/buttons/BackScreenButton'
@@ -43,7 +43,7 @@ export default function EditorialsListing() {
 
     return (
         <WithModal>
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', gap: 20}}>
                     <BackScreenButton handleClick={() => navigation.goBack()}/>
                     <Text style={styles.headerText}>Editorial articles</Text>
@@ -93,4 +93,7 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: 'center'
     },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    }
 })

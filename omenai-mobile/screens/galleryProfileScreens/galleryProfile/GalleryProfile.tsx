@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Platform, StatusBar} from 'react-native'
 import React from 'react'
 import { colors } from 'config/colors.config'
 import { PageButtonCard } from 'components/buttons/PageButtonCard'
@@ -21,7 +21,7 @@ export default function GalleryProfile() {
 
     return (
         <WithGalleryModal>
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <View style={styles.headerContainer}>
                     <Text style={{fontSize: 20, textAlign: 'center'}}>Profile</Text>
                 </View>
@@ -69,5 +69,8 @@ const styles = StyleSheet.create({
         // borderColor: colors.grey50,
         // padding: 15,
         gap: 20
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })

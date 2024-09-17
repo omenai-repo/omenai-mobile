@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, View, Platform, StatusBar} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { colors } from 'config/colors.config'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -45,8 +45,7 @@ export default function Profile() {
 
     return (
         <WithModal>
-        
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
                 <View style={styles.profileContainer}>
                     <Image source={omenaiAvatar} style={styles.image} />
                     <View>
@@ -94,5 +93,8 @@ const styles = StyleSheet.create({
         borderColor: colors.grey50,
         padding: 15,
         gap: 20
+    },
+    safeArea: {
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     }
 })
