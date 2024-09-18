@@ -85,13 +85,16 @@ export default function SearchResults() {
                 }
                 {(searchQuery.length > 0 && dataLength === 0 && !isLoading) && (
                     <View style={{marginTop: 40}}>
-                        <EmptyArtworks size={100} writeUp="Can't find artwork you're looking for, try checking for mispellings" />
+                        <EmptyArtworks 
+                            size={100} 
+                            writeUp={searchQuery.length < 3  && dataLength === 0 ? 'Please enter at least 3 characters to search...' : `Can't find artwork you're looking for, try checking for mispellings`}
+                        />
                     </View>
                 )}
             </View>
         </View>
     )
-}
+};
 
 const styles = StyleSheet.create({
     container: {

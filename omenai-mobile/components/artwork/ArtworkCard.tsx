@@ -38,7 +38,11 @@ export default function ArtworkCard({title, url, artist, showPrice, price, light
             navigation.navigate(screenName.artwork, {title: title})
         }}>
             <View style={[styles.imageContainer, lightText && {backgroundColor: 'rgba(225,225,225,0.15)', padding: 15}]}>
-                <Image source={{uri: image_href}} style={styles.image} resizeMode="contain" />
+                <Image 
+                    source={{uri: image_href, cache: 'only-if-cached'}} 
+                    style={styles.image} 
+                    resizeMode="contain" 
+                />
             </View>
             <View style={styles.mainDetailsContainer}>
                 <View style={{flex: 1}}>
