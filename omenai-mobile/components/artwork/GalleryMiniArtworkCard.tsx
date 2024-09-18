@@ -42,7 +42,11 @@ export default function GalleryMiniArtworkCard({url, title, art_id, artist, usd_
         }}>
             {renderImage ?
                 <View style={{width: imageDimensions.width, height: imageDimensions.height, position: 'relative'}}>
-                    <Image source={{uri: image_href}} style={{width: imageDimensions.width, height: imageDimensions.height, objectFit: 'cover' }} resizeMode="contain" />
+                    <Image 
+                        source={{uri: image_href, cache: 'only-if-cached'}} 
+                        style={{width: imageDimensions.width, height: imageDimensions.height, objectFit: 'contain' }} 
+                        resizeMode="contain" 
+                    />
                     <EditArtworkButton handlePress={() => {
                         navigation.navigate(screenName.gallery.editArtwork, {art_id: art_id})
                         console.log('here')
