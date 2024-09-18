@@ -45,7 +45,11 @@ export default function MiniArtworkCard({url, artist, title, showPrice, price, a
         <TouchableOpacity activeOpacity={1} style={[styles.container, {width: imageWidth}]} onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
             {renderImage ?
                 <View style={{width: imageDimensions.width, height: imageDimensions.height, }}>
-                    <Image source={{uri: image_href}} style={{width: imageDimensions.width, height: imageDimensions.height, objectFit: 'cover' }} resizeMode="contain" />
+                    <Image 
+                        source={{uri: image_href, cache: 'only-if-cached'}} 
+                        style={{width: imageDimensions.width, height: imageDimensions.height, objectFit: 'contain'}} 
+                        resizeMode="contain" 
+                    />
                 </View>
             :
                 <View style={{height: 200, width: '100%', backgroundColor: '#f5f5f5'}} />
