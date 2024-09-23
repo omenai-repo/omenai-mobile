@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState } from 'react';
 import AuthHeader from '../../components/auth/AuthHeader';
 import AuthTabs from '../../components/auth/AuthTabs';
@@ -22,16 +22,21 @@ export default function Login() {
                 subTitle='Access your account so you can start purchasing artwork'
                 handleBackClick={() => navigation.navigate(screenName.welcome)}
             />
-            <ScrollView style={{flex: 1, paddingHorizontal: 20, paddingTop: 20}}>
-                <AuthTabs
-                    tabs={['As an individual', 'As a gallery']}
-                    stateIndex={selectedIndex}
-                    handleSelect={e => setSelectedIndex(e)}
-                />
-                {/* route depending on state */}
-                {selectedIndex === 0 && <Individual />}
-                {selectedIndex === 1 && <Gallery />}
-            </ScrollView>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.container}
+            >
+                <ScrollView style={{flex: 1, paddingHorizontal: 20, paddingTop: 20}}>
+                    <AuthTabs
+                        tabs={['As an individual', 'As a gallery']}
+                        stateIndex={selectedIndex}
+                        handleSelect={e => setSelectedIndex(e)}
+                    />
+                    {/* route depending on state */}
+                    {selectedIndex === 0 && <Individual />}
+                    {selectedIndex === 1 && <Gallery />}
+                </ScrollView>
+            </KeyboardAvoidingView>
         </WithModal>
     )  
 }

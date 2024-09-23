@@ -101,7 +101,12 @@ export default function TermsAndConditions() {
             <View style={styles.buttonsContainer}>
                 <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
                 <View style={{flex: 1}} />
-                <FittedBlackButton isLoading={isLoading} value={isLoading ? 'Loading...' : 'Create gallery acount'} isDisabled={!selectedTerms.includes(0)} onClick={handleSubmit}  />
+                <FittedBlackButton 
+                    isLoading={isLoading} 
+                    value='Create gallery account' 
+                    isDisabled={!selectedTerms.includes(0)} 
+                    onClick={handleSubmit}
+                />
             </View>
         </View>
     )
