@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 10,
+        paddingBottom: 20,
         paddingHorizontal: 20,
         flexDirection: 'column',
     },
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
         width: '100%',
         objectFit: 'contain',
         height: 350,
-        marginTop: 20
+        marginTop: 10
     },
     largeText: {
         fontSize: 38,
