@@ -30,7 +30,7 @@ export default function PasswordInput({label, onInputChange, placeHolder, value,
                     onBlur={handleBlur}
                 />
                 <TouchableOpacity style={styles.hideButton} onPress={() => setShowPassword(prev => !prev)}>
-                    <Feather name={showPassword ? "eye-off" : "eye"} size={16} color="#858585" />
+                    <Feather name={showPassword ? "eye" : "eye-off"} size={16} color="#858585" />
                 </TouchableOpacity>
             </View>
             {errorMessage && errorMessage?.length > 0 && <Text style={styles.errorMessage}>{errorMessage}</Text>}
