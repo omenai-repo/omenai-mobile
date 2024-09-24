@@ -29,7 +29,7 @@ export default function VerifyEmail() {
         const results = await verifyEmail({ params: account.id, token: token }, account.type);
 
         if(results.isOk){
-            updateModal({message: results.body.message, modalType: "error", showModal: true})
+            updateModal({message: results.body.message, modalType: "success", showModal: true})
             setIsLoading(false)
             setTimeout(() => {
                 navigation.navigate(screenName.login)
@@ -46,9 +46,8 @@ export default function VerifyEmail() {
         const results = await resendVerifyCode(account.type, account.id);
         if(!results.isOk){
             updateModal({message: results.body.message, modalType: "error", showModal: true})
-            console.log(results.body)
         }else{
-            console.log(results.body)
+            updateModal({message: "Reset code sent to your email", modalType: "success", showModal: true})
         }
     };
 

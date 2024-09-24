@@ -27,12 +27,12 @@ export default function Subscriptions() {
 
             const res = await retrieveSubscriptionData(userSession.id);
             
-            if(res?.isOk && res.data !== (null || undefined)){
+            if(res?.isOk && res.data !== null){
                 setIsSubActive(true)
                 setSubscriptionData(res.data);
             }else{
                 //something went wrong
-                updateModal({message: 'something went wrong', modalType: 'error', showModal: true})
+                updateModal({message: "No active subscription", modalType: 'error', showModal: true})
             }
 
             setLoading(false)
@@ -54,17 +54,17 @@ export default function Subscriptions() {
                 <View style={{padding: 20}}>
                     <ActiveSubLoader />
                 </View>
-            :
-            <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
-                {isSubActive ?
-                    <ActiveSubscriptions
-                        subscriptionData={subscriptionData}
-                    />
                 :
-                    <InActiveSubscription />
-                }
-            </ScrollView>
-}
+                <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+                    {isSubActive ?
+                        <ActiveSubscriptions
+                            subscriptionData={subscriptionData}
+                        />
+                    :
+                        <InActiveSubscription />
+                    }
+                </ScrollView>
+            }
         </WithModal>
     )
 }
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     mainContainer: {
         paddingHorizontal: 20,
         marginTop: 20,
-        flex: 1
+        flex: 1,
     },
     safeArea: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
