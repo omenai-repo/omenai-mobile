@@ -54,17 +54,17 @@ export default function Subscriptions() {
                 <View style={{padding: 20}}>
                     <ActiveSubLoader />
                 </View>
-            :
-            <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
-                {isSubActive ?
-                    <ActiveSubscriptions
-                        subscriptionData={subscriptionData}
-                    />
                 :
-                    <InActiveSubscription />
-                }
-            </ScrollView>
-}
+                <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+                    {isSubActive ?
+                        <ActiveSubscriptions
+                            subscriptionData={subscriptionData}
+                        />
+                    :
+                        <InActiveSubscription />
+                    }
+                </ScrollView>
+            }
         </WithModal>
     )
 }
