@@ -40,7 +40,6 @@ export default function Subscriptions() {
 
         if(isFocused){
             handleFetchSubData()
-            console.log(isSubActive)
         }
     }, [isFocused]);
 
