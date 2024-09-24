@@ -9,11 +9,16 @@ export default function InActiveSubscription() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     return (
-        <View>
+        <View style={styles.container}>
             <Text style={{textAlign: 'center', marginTop: 40, marginBottom: 20, fontSize: 16}}>No active subscription</Text>
             <LongBlackButton value='Activate subscription' onClick={() => navigation.navigate(screenName.gallery.billing, {plan_action: null})}/>
         </View>
     )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        marginTop: 20
+    }
+})
