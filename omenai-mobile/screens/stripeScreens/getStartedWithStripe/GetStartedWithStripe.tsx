@@ -55,7 +55,6 @@ export default function GetStartedWithStripe() {
             setConnectedAccountId(res.account_id);
             updateModal({message: 'Connected account created successfully, Please continue with Onboarding', modalType: 'success', showModal: true})
         }else{
-            console.log(res?.message)
             updateModal({message: 'Something went wrong, please try again or contact support', modalType: 'error', showModal: true})
         }
 
@@ -74,14 +73,14 @@ export default function GetStartedWithStripe() {
                 await Linking.openURL(res.url)
             }
         }else{
-            updateModal({message: 'Something went wrong, please try again or contact support', modalType: 'error', showModal: true})
+            updateModal({message: "Can't open browser to continue stripe onboarding flow", modalType: 'error', showModal: true})
         }
     }
 
     return (
         <WithModal>
             <SafeAreaView style={styles.safeArea}>
-                <View style={{paddingHorizontal: 20}}><Text style={{textAlign: 'center', fontSize: 20}}>Connect Stripe</Text></View>
+                <View style={{paddingHorizontal: 20}}><Text style={{textAlign: 'center', fontSize: 20, fontWeight: 600, color: '#0A2552'}}>Connect Stripe</Text></View>
             </SafeAreaView>
             <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
                 <Text>Let&apos;s get you setup to receive payments!</Text>
@@ -118,7 +117,7 @@ export default function GetStartedWithStripe() {
                                 Your connected account ID is:{" "}
                                 {connectedAccountId}{" "}
                             </Text>
-                            <Text style={{fontSize: 12, opacity: 0.7}}>Hey, don&apos;t worry, we'll remember it for you!</Text>
+                            <Text style={{fontSize: 14, opacity: 0.7}}>Hey, don&apos;t worry, we'll remember it for you!</Text>
                             </>
                         )}
                         {accountCreatePending && (
@@ -135,11 +134,13 @@ export default function GetStartedWithStripe() {
                         onClick={handleCreateConnectAccount}
                         isLoading={accountCreatePending}
                         isDisabled={countrySelect.length < 1}
+                        bgColor='#0A2552'
                     />}
                     {connectedAccountId && <LongBlackButton
                         value='Continue to stripe onboarding'
                         onClick={handleAccountLink}
                         isLoading={accountLinkCreatePending}
+                        bgColor='#0A2552'
                     />}
                 </View>
             </ScrollView>
