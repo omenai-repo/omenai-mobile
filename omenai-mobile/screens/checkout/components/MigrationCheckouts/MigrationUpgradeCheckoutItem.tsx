@@ -41,22 +41,28 @@ export default function MigrationUpgradeCheckoutItem({plan, interval, sub_data}:
 
     const daysInMonth = getDaysInMonth(startDate);
 
-    const days_left = getDaysLeft(startDate, sub_data.plan_details.interval);
+    // const days_left = getDaysLeft(startDate, sub_data.plan_details.interval);
 
     const dailyRate =
-    +sub_data.payment.value /
+    (sub_data.plan_details.interval === "yearly"
+      ? +sub_data.plan_details.value.annual_price
+      : +sub_data.plan_details.value.monthly_price) /
     (sub_data.plan_details.interval === "yearly" ? daysInYear : daysInMonth);
 
-    const proratedPrice = days_left * dailyRate;
+    const proratedPrice =
+    (sub_data.plan_details.interval === "yearly"
+      ? +sub_data.plan_details.value.annual_price
+      : +sub_data.plan_details.value.monthly_price) -
+    days_used * dailyRate;
 
-    const prorated_cost = days_used > 0 ? proratedPrice : 0;
+    // const prorated_cost = days_used > 0 ? proratedPrice : 0;
 
     const upgrade_cost =
         interval === "monthly"
         ? +plan.pricing.monthly_price
         : +plan.pricing.annual_price;
     
-    const total = upgrade_cost - prorated_cost;
+    const total = upgrade_cost - proratedPrice;
     const grand_total = Math.round((total + Number.EPSILON) * 100) / 100;
 
     return (
@@ -65,7 +71,7 @@ export default function MigrationUpgradeCheckoutItem({plan, interval, sub_data}:
                 interval={interval}
                 sub_data={sub_data}
                 plan={plan}
-                prorated_cost={prorated_cost}
+                prorated_cost={proratedPrice}
                 grand_total={grand_total}
                 days_used={days_used}
                 shouldCharge={shouldCharge}
