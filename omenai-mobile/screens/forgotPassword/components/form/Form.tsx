@@ -12,9 +12,13 @@ import { screenName } from '../../../../constants/screenNames.constants'
 import { validate } from '../../../../lib/validations/validatorGroup'
 import { sendPasswordResetLink } from 'services/password/sendPasswordResetLink'
 
-export default function Form() {
+export default function Form({
+    setIsSuccess
+}:{
+    setIsSuccess: (e: boolean) => void
+}) {
     const navigation = useNavigation<StackNavigationProp<any>>();
-    const {email, setEmail, isLoading, setIsLoading, updateSuccess} = useForgetPasswordStore()
+    const {email, setEmail, isLoading, setIsLoading} = useForgetPasswordStore()
     const route = useRoute()
 
     const [formErrors, setFormErrors] = useState({email: ''});
@@ -29,7 +33,7 @@ export default function Form() {
         if(results?.isOk){
             Alert.alert(results?.body.message)
             //ADD further logic to navigate to the homepage and hide auth screens
-            updateSuccess(true)
+            setIsSuccess(true)
         }else{
             Alert.alert(results?.body.message)
         }

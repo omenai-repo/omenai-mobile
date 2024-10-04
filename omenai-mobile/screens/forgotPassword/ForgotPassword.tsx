@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { colors } from '../../config/colors.config'
 import AuthHeader from '../../components/auth/AuthHeader'
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -7,13 +7,12 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from '../../constants/screenNames.constants';
 import Form from './components/form/Form';
 import Success from './components/success/Success';
-import { useForgetPasswordStore } from '../../store/auth/forgotPassword/forgotPasswordStore';
 import { ScrollView } from 'react-native-gesture-handler';
 
 export default function ForgotPassword() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-    const { isSuccess } = useForgetPasswordStore();
+    const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
     return (
         <View style={styles.container}>
@@ -29,7 +28,9 @@ export default function ForgotPassword() {
                         style={styles.container}
                     >
                         <ScrollView style={styles.container}>
-                            <Form />
+                            <Form
+                                setIsSuccess={setIsSuccess}
+                            />
                         </ScrollView>
                     </KeyboardAvoidingView>
                 )
