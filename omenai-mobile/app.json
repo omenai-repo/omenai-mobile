@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "omenai-mobile",
+    "name": "Omenai",
     "scheme": "omenaimobile",
     "slug": "omenai-mobile",
     "owner": "omenai",
@@ -24,7 +24,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.omenai.omenaimobile"
+      "package": "com.omenai.omenaimobile",
+      "buildType": "apk",
+      "gradleCommand": ":app:assembleRelease"
     },
     "web": {
       "favicon": "./assets/favicon.png"

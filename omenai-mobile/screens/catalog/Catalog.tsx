@@ -32,7 +32,6 @@ const tags = [
 ]
 
 export default function Catalog() {
-    const [selectedTag, setSelectedTag] = useState(tags[0]);
     const { paginationCount, updatePaginationCount } = artworkActionStore();
     const { updateModal } = useModalStore()
     const { setArtworks, artworks, isLoading, setPageCount, setIsLoading, pageCount } = artworkStore();
