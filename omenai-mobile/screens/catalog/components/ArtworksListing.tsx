@@ -31,26 +31,25 @@ export default function ArtworksListing({data}: {data: any[]}) {
     return (
         <View style={styles.artworksContainer}>
             <View style={{flex: 1}}>
-            <FlatList
-                data={listing[0]}
-                renderItem={({item}: {item: ArtworkFlatlistItem}) => (
-                    <MiniArtworkCard 
-                        title={item.title} 
-                        url={item.url}
-                        artist={item.artist}
-                        showPrice={item.pricing.shouldShowPrice === "Yes"}
-                        price={item.pricing.usd_price}
-                        impressions={item.impressions}
-                        like_IDs={item.like_IDs}
-                        art_id={item.art_id}
-                    />
-                )}
-                keyExtractor={(_, index) => JSON.stringify(index)}
-                horizontal={false}
-                showsHorizontalScrollIndicator={false}
-                // style={{gap: 200}}
-                contentContainerStyle={{ gap: 30}}
-            />
+                <FlatList
+                    data={listing[0]}
+                    renderItem={({item}: {item: ArtworkFlatlistItem}) => (
+                        <MiniArtworkCard 
+                            title={item.title} 
+                            url={item.url}
+                            artist={item.artist}
+                            showPrice={item.pricing.shouldShowPrice === "Yes"}
+                            price={item.pricing.usd_price}
+                            impressions={item.impressions}
+                            like_IDs={item.like_IDs}
+                            art_id={item.art_id}
+                        />
+                    )}
+                    keyExtractor={(_, index) => JSON.stringify(index)}
+                    horizontal={false}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 30}}
+                />
             </View>
             <View style={{flex: 1}}>
                 <FlatList
@@ -70,7 +69,6 @@ export default function ArtworksListing({data}: {data: any[]}) {
                     keyExtractor={(_, index) => JSON.stringify(index)}
                     horizontal={false}
                     showsHorizontalScrollIndicator={false}
-                    // style={{gap: 200}}
                     contentContainerStyle={{ gap: 30 }}
                 />
             </View>
