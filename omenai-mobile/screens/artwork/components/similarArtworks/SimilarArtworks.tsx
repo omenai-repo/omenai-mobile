@@ -49,7 +49,7 @@ export default function SimilarArtworks({
 
   return (
     <View style={styles.similarContainer}>
-      <Text style={styles.similarTitle}>Similar artwork</Text>
+      <Text style={styles.similarTitle}>Hot Recommendations</Text>
       <View style={styles.artworksContainer}>
         {isLoading ? (
           <ArtworkCardLoader />
