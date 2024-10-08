@@ -1,7 +1,7 @@
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 import { apiUrl } from "../../constants/apiUrl.constants";
 
-export async function requestPasswordConfirmationCode(){
+export async function requestPasswordConfirmationCode(route: string){
 
     let id = ''
     const userSession = await utils_getAsyncData('userSession')
@@ -12,12 +12,12 @@ export async function requestPasswordConfirmationCode(){
     }
 
     try {
-        const response = await fetch(`${apiUrl}/api/requests/gallery/requestPasswordConfirmationCode`, {
+        const response = await fetch(`${apiUrl}/api/requests/${route}/requestPasswordConfirmationCode`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ gallery_id: id}),
+            body: JSON.stringify({ ...(route === "gallery" ? {gallery_id: id} : {id: id})}),
         })
         .then(async (res) => {
             const result = await res.json();

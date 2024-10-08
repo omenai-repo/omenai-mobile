@@ -1,7 +1,7 @@
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 import { apiUrl } from "../../constants/apiUrl.constants";
 
-export async function updateGalleryPassword(password: string, code: string){
+export async function updatePassword(password: string, code: string, route: string){
 
     let id = ''
     const userSession = await utils_getAsyncData('userSession')
@@ -12,12 +12,12 @@ export async function updateGalleryPassword(password: string, code: string){
     }
 
     try {
-        const response = await fetch(`${apiUrl}/api/requests/gallery/updatePassword`, {
+        const response = await fetch(`${apiUrl}/api/requests/${route}/updatePassword`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ gallery_id: id, password, code}),
+            body: JSON.stringify({ ...(route === "gallery" ? {gallery_id: id} : {id: id}), password, code}),
         })
         .then(async (res) => {
             const result = await res.json();
