@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.omenai.omenaimobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -43,7 +44,9 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/nunito-sans.ttf"]
+          "fonts": [
+            "./assets/fonts/nunito-sans.ttf"
+          ]
         }
       ],
       [

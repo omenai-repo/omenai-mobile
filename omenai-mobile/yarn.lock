@@ -804,12 +804,21 @@
     globals "^11.1.0"
 
 "@babel/types@^7.19.0", "@babel/types@^7.2.0":
+<<<<<<< HEAD
   version "7.25.7"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.25.7.tgz#1b7725c1d3a59f328cb700ce704c46371e6eef9b"
   integrity sha512-vwIVdXG+j+FOpkwqHRcBgHLYNL7XMkufrlaFvL9o6Ai9sJn9+PdyIL5qa0XzTZw084c+u9LOls53eoZWP/W5WQ==
   dependencies:
     "@babel/helper-string-parser" "^7.25.7"
     "@babel/helper-validator-identifier" "^7.25.7"
+=======
+  version "7.25.6"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.25.6.tgz#893942ddb858f32ae7a004ec9d3a76b3463ef8e6"
+  integrity sha512-/l42B1qxpG6RdfYf343Uw1vmDjeNhneUXtzhojE7pDgfpEypmRhI6j1kr17XCVv4Cgl9HdAiQY2x0GwKm7rWCw==
+  dependencies:
+    "@babel/helper-string-parser" "^7.24.8"
+    "@babel/helper-validator-identifier" "^7.24.7"
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
     to-fast-properties "^2.0.0"
 
 "@babel/types@^7.20.0", "@babel/types@^7.23.4", "@babel/types@^7.24.5", "@babel/types@^7.24.7", "@babel/types@^7.24.8", "@babel/types@^7.25.0", "@babel/types@^7.25.2":
@@ -1053,10 +1062,17 @@
     mv "~2"
     safe-json-stringify "~1"
 
+<<<<<<< HEAD
 "@expo/cli@0.18.30":
   version "0.18.30"
   resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-0.18.30.tgz#0cb4829aa11e98ae350a5c15958b9816e9a1d2f0"
   integrity sha512-V90TUJh9Ly8stYo8nwqIqNWCsYjE28GlVFWEhAFCUOp99foiQr8HSTpiiX5GIrprcPoWmlGoY+J5fQA29R4lFg==
+=======
+"@expo/cli@0.18.29":
+  version "0.18.29"
+  resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-0.18.29.tgz#108682e28ccf3beab34938501d6dfc079683b82c"
+  integrity sha512-X810C48Ss+67RdZU39YEO1khNYo1RmjouRV+vVe0QhMoTe8R6OA3t+XYEdwaNbJ5p/DJN7szfHfNmX2glpC7xg==
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
   dependencies:
     "@babel/runtime" "^7.20.0"
     "@expo/code-signing-certificates" "0.0.5"
@@ -1070,7 +1086,11 @@
     "@expo/osascript" "^2.0.31"
     "@expo/package-manager" "^1.5.0"
     "@expo/plist" "^0.1.0"
+<<<<<<< HEAD
     "@expo/prebuild-config" "7.0.9"
+=======
+    "@expo/prebuild-config" "7.0.8"
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
     "@expo/rudder-sdk-node" "1.1.1"
     "@expo/spawn-async" "^1.7.2"
     "@expo/xcpretty" "^4.3.0"
@@ -1144,12 +1164,21 @@
     node-forge "^1.2.1"
     nullthrows "^1.1.1"
 
+<<<<<<< HEAD
 "@expo/config-plugins@8.0.10", "@expo/config-plugins@~8.0.8":
   version "8.0.10"
   resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-8.0.10.tgz#5cda076f38bc04675cb42d8acdd23d6e460a62de"
   integrity sha512-KG1fnSKRmsudPU9BWkl59PyE0byrE2HTnqbOrgwr2FAhqh7tfr9nRs6A9oLS/ntpGzmFxccTEcsV0L4apsuxxg==
   dependencies:
     "@expo/config-types" "^51.0.3"
+=======
+"@expo/config-plugins@8.0.9", "@expo/config-plugins@~8.0.8":
+  version "8.0.9"
+  resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-8.0.9.tgz#c3b05dbed0c690a4912c1b9f4420f2c6ad4b00cc"
+  integrity sha512-dNCG45C7BbDPV9MdWvCbsFtJtVn4w/TJbb5b7Yr6FA8HYIlaaVM0wqUMzTPmGj54iYXw8X/Vge8uCPxg7RWgeA==
+  dependencies:
+    "@expo/config-types" "^51.0.0-unreleased"
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
     "@expo/json-file" "~8.3.0"
     "@expo/plist" "^0.1.0"
     "@expo/sdk-runtime-versions" "^1.0.0"
@@ -1191,6 +1220,7 @@
   resolved "https://registry.npmjs.org/@expo/config-types/-/config-types-51.0.0.tgz"
   integrity sha512-acn03/u8mQvBhdTQtA7CNhevMltUhbSrpI01FYBJwpVntufkU++ncQujWKlgY/OwIajcfygk1AY4xcNZ5ImkRA==
 
+<<<<<<< HEAD
 "@expo/config-types@^51.0.3":
   version "51.0.3"
   resolved "https://registry.yarnpkg.com/@expo/config-types/-/config-types-51.0.3.tgz#520bdce5fd75f9d234fd81bd0347443086419450"
@@ -1204,6 +1234,16 @@
     "@babel/code-frame" "~7.10.4"
     "@expo/config-plugins" "~8.0.8"
     "@expo/config-types" "^51.0.3"
+=======
+"@expo/config@9.0.3":
+  version "9.0.3"
+  resolved "https://registry.yarnpkg.com/@expo/config/-/config-9.0.3.tgz#4bc2ec654145e6242f4b1964db2962ee0fee1270"
+  integrity sha512-eOTNM8eOC8gZNHgenySRlc/lwmYY1NOgvjwA8LHuvPT7/eUwD93zrxu3lPD1Cc/P6C/2BcVdfH4hf0tLmDxnsg==
+  dependencies:
+    "@babel/code-frame" "~7.10.4"
+    "@expo/config-plugins" "~8.0.8"
+    "@expo/config-types" "^51.0.0-unreleased"
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
     "@expo/json-file" "^8.3.0"
     getenv "^1.0.0"
     glob "7.1.6"
@@ -1358,6 +1398,7 @@
     base64-js "^1.2.3"
     xmlbuilder "^14.0.0"
 
+<<<<<<< HEAD
 "@expo/prebuild-config@7.0.9":
   version "7.0.9"
   resolved "https://registry.yarnpkg.com/@expo/prebuild-config/-/prebuild-config-7.0.9.tgz#7abd489e18ed6514a0c9cd214eb34c0d5efda799"
@@ -1366,6 +1407,16 @@
     "@expo/config" "~9.0.0-beta.0"
     "@expo/config-plugins" "~8.0.8"
     "@expo/config-types" "^51.0.3"
+=======
+"@expo/prebuild-config@7.0.8":
+  version "7.0.8"
+  resolved "https://registry.yarnpkg.com/@expo/prebuild-config/-/prebuild-config-7.0.8.tgz#8af72b19c92f05f1ab6c6c70d31f33159dacac39"
+  integrity sha512-wH9NVg6HiwF5y9x0TxiMEeBF+ITPGDXy5/i6OUheSrKpPgb0lF1Mwzl/f2fLPXBEpl+ZXOQ8LlLW32b7K9lrNg==
+  dependencies:
+    "@expo/config" "~9.0.0-beta.0"
+    "@expo/config-plugins" "~8.0.8"
+    "@expo/config-types" "^51.0.0-unreleased"
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
     "@expo/image-utils" "^0.5.0"
     "@expo/json-file" "^8.3.0"
     "@react-native/normalize-colors" "0.74.85"
@@ -1401,9 +1452,15 @@
     cross-spawn "^7.0.3"
 
 "@expo/vector-icons@^14.0.3":
+<<<<<<< HEAD
   version "14.0.4"
   resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-14.0.4.tgz#fa9d4351877312badf91a806598b2f0bab16039a"
   integrity sha512-+yKshcbpDfbV4zoXOgHxCwh7lkE9VVTT5T03OUlBsqfze1PLy6Hi4jp1vSb1GVbY6eskvMIivGVc9SKzIv0oEQ==
+=======
+  version "14.0.3"
+  resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-14.0.3.tgz#2e095118dadc0dac80a230bfa659949776b16d74"
+  integrity sha512-UJAKOXPPi6ez/1QZfoFVopCH3+c12Sw+T+IIVkvONCEN7zjN1fLxxWHkZ7Spz4WO5EH2ObtaJfCe/k4rw+ftxA==
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
   dependencies:
     prop-types "^15.8.1"
 
@@ -2850,6 +2907,16 @@ aggregate-error@^3.0.0:
     clean-stack "^2.0.0"
     indent-string "^4.0.0"
 
+ajv@8.11.0:
+  version "8.11.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.11.0.tgz#977e91dd96ca669f54a11e23e378e33b884a565f"
+  integrity sha512-wGgprdCvMalC0BztXvitD2hC04YffAvtsUn93JbGXYLAtCUO4xd17mCCZQxUOItiBwZvJScWo8NIvQMQ71rdpg==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    json-schema-traverse "^1.0.0"
+    require-from-string "^2.0.2"
+    uri-js "^4.2.2"
+
 anser@^1.4.9:
   version "1.4.10"
   resolved "https://registry.npmjs.org/anser/-/anser-1.4.10.tgz"
@@ -3059,9 +3126,15 @@ babel-plugin-polyfill-regenerator@^0.6.1:
     "@babel/helper-define-polyfill-provider" "^0.6.2"
 
 babel-plugin-react-compiler@^0.0.0-experimental-592953e-20240517:
+<<<<<<< HEAD
   version "0.0.0-experimental-b4db8c3-20241001"
   resolved "https://registry.yarnpkg.com/babel-plugin-react-compiler/-/babel-plugin-react-compiler-0.0.0-experimental-b4db8c3-20241001.tgz#fca90197fb90550a6b69076ee5476f407bdbed65"
   integrity sha512-2qiuysJU65kKm4CznEMxpjvGV4FOlreXlpJwfJrOIqVxyQYL156614vzXFzuPObCsiwJrA5agXoAI9EP8zuvBw==
+=======
+  version "0.0.0-experimental-6067d4e-20240924"
+  resolved "https://registry.yarnpkg.com/babel-plugin-react-compiler/-/babel-plugin-react-compiler-0.0.0-experimental-6067d4e-20240924.tgz#f469d1469f0dc03c05df1a7154fca99057d51f18"
+  integrity sha512-Xprt5PqHZKqF2H8Di7y+o9j1RTFsNGJ6ntBcRFu8kcChy5sVSVVIKXq+FBezcBhVChzaRrUb+OV/nWZlJH1aJA==
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
   dependencies:
     "@babel/generator" "7.2.0"
     "@babel/types" "^7.19.0"
@@ -4216,6 +4289,41 @@ expo-constants@~16.0.0:
   dependencies:
     "@expo/config" "~9.0.0-beta.0"
 
+expo-dev-client@~4.0.27:
+  version "4.0.27"
+  resolved "https://registry.yarnpkg.com/expo-dev-client/-/expo-dev-client-4.0.27.tgz#c1589321ade3912cd66c7ef37139aba5e90c7a99"
+  integrity sha512-4f0eO7GTdGzYYg3qABR98Vc2iiCBA2HICh8namVAvqkcVCuh44I9lOctaAEe/932+lLugEW4+Mv29pdEHq3/FA==
+  dependencies:
+    expo-dev-launcher "4.0.27"
+    expo-dev-menu "5.0.21"
+    expo-dev-menu-interface "1.8.3"
+    expo-manifests "~0.14.0"
+    expo-updates-interface "~0.16.2"
+
+expo-dev-launcher@4.0.27:
+  version "4.0.27"
+  resolved "https://registry.yarnpkg.com/expo-dev-launcher/-/expo-dev-launcher-4.0.27.tgz#77261eb3f4ad2fe467b7e9adc2dd4a0e868563af"
+  integrity sha512-n+uUkcr5f5v5VR0sDw/sGna4aut2nTu3EiOqA0ijb8fBuelpgqYiBp2x7Su6wT6InoBHZxTBgVlyzgLNFGSdDw==
+  dependencies:
+    ajv "8.11.0"
+    expo-dev-menu "5.0.21"
+    expo-manifests "~0.14.0"
+    resolve-from "^5.0.0"
+    semver "^7.6.0"
+
+expo-dev-menu-interface@1.8.3:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/expo-dev-menu-interface/-/expo-dev-menu-interface-1.8.3.tgz#8c1262e29e0124fc5932a129c95b36de56656b20"
+  integrity sha512-QM0LRozeFT5Ek0N7XpV93M+HMdEKRLEOXn0aW5M3uoUlnqC1+PLtF3HMy3k3hMKTTE/kJ1y1Z7akH07T0lunCQ==
+
+expo-dev-menu@5.0.21:
+  version "5.0.21"
+  resolved "https://registry.yarnpkg.com/expo-dev-menu/-/expo-dev-menu-5.0.21.tgz#668cc923a9521e4f5c36ffd0664f5c280e154f3a"
+  integrity sha512-i7kOaxOeBksqgeUDvb5vb2cZIVLZhAX2rjLJNH3fBifiAWISeCBAQsKN9vAkMPQGqL9F88vjMyy14ca6Vo+fEw==
+  dependencies:
+    expo-dev-menu-interface "1.8.3"
+    semver "^7.5.4"
+
 expo-eas-client@~0.12.0:
   version "0.12.0"
   resolved "https://registry.npmjs.org/expo-eas-client/-/expo-eas-client-0.12.0.tgz"
@@ -4276,10 +4384,17 @@ expo-manifests@~0.14.0:
     "@expo/config" "~9.0.0-beta.0"
     expo-json-utils "~0.13.0"
 
+<<<<<<< HEAD
 expo-modules-autolinking@1.11.3:
   version "1.11.3"
   resolved "https://registry.yarnpkg.com/expo-modules-autolinking/-/expo-modules-autolinking-1.11.3.tgz#bc64d278c04015014bb5802e3cfcd942d7c07168"
   integrity sha512-oYh8EZEvYF5TYppxEKUTTJmbr8j7eRRnrIxzZtMvxLTXoujThVPMFS/cbnSnf2bFm1lq50TdDNABhmEi7z0ngQ==
+=======
+expo-modules-autolinking@1.11.2:
+  version "1.11.2"
+  resolved "https://registry.yarnpkg.com/expo-modules-autolinking/-/expo-modules-autolinking-1.11.2.tgz#98245eb66f157bbfebebd2d576256ea7c683c605"
+  integrity sha512-fdcaNO8ucHA3yLNY52ZUENBcAG7KEx8QyMmnVNavO1JVBGRMZG8JyVcbrhYQDtVtpxkbai5YzwvLutINvbDZDQ==
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
   dependencies:
     chalk "^4.1.0"
     commander "^7.2.0"
@@ -4289,10 +4404,17 @@ expo-modules-autolinking@1.11.3:
     require-from-string "^2.0.2"
     resolve-from "^5.0.0"
 
+<<<<<<< HEAD
 expo-modules-core@1.12.25:
   version "1.12.25"
   resolved "https://registry.yarnpkg.com/expo-modules-core/-/expo-modules-core-1.12.25.tgz#9ec8d8762da92d961ab1044817da033ae617c9f4"
   integrity sha512-HB2LS2LEM41Xq1bG+Jtzqm6XgPaa+mM9BAvCdX1lDGMQ9Ay9vMTL/GVEs2gpsINPofICopjBRwD+wftyCbVrzg==
+=======
+expo-modules-core@1.12.24:
+  version "1.12.24"
+  resolved "https://registry.yarnpkg.com/expo-modules-core/-/expo-modules-core-1.12.24.tgz#8c35a16ed6ecb8997f6bd527fc95a8c22f343602"
+  integrity sha512-3geIe2ecizlp7l26iY8Nmc59z2d1RUC5nQZtI9iJoi5uHEUV/zut8e4zRLFVnZb8KOcMcEDsrvaBL5DPnqdfpg==
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
   dependencies:
     invariant "^2.2.4"
 
@@ -4311,10 +4433,17 @@ expo-updates-interface@~0.16.2:
   resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-0.16.2.tgz#ad1ac2ca8ee5a8cc84052ea3c18a11da64da569b"
   integrity sha512-929XBU70q5ELxkKADj1xL0UIm3HvhYhNAOZv5DSk7rrKvLo7QDdPyl+JVnwZm9LrkNbH4wuE2rLoKu1KMgZ+9A==
 
+<<<<<<< HEAD
 expo-updates@~0.25.26:
   version "0.25.26"
   resolved "https://registry.yarnpkg.com/expo-updates/-/expo-updates-0.25.26.tgz#a9a2d526ce6b7b38b034ae86d18941a3eac888fd"
   integrity sha512-wh3t82Wg3rvAjLQin4dLSp3ZcTexkeLUo7nlrFTF52bLSpa1AsBk3ikVD5ygUIFSxmJudl5H/F43NYXC1WDMsg==
+=======
+expo-updates@~0.25.25:
+  version "0.25.25"
+  resolved "https://registry.yarnpkg.com/expo-updates/-/expo-updates-0.25.25.tgz#1fe382b4ca06a2a723cbf6be6dfe78a04ef8580c"
+  integrity sha512-Z9sCf6w3876JLlj6DGRsXFI/NnRhXM0gfXT2dusniagt4qvwThGKxS/zEcpo9JUyO411yVL/XGv411Czeaw9xA==
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
   dependencies:
     "@expo/code-signing-certificates" "0.0.5"
     "@expo/config" "~9.0.0-beta.0"
@@ -4332,6 +4461,7 @@ expo-updates@~0.25.26:
     ignore "^5.3.1"
     resolve-from "^5.0.0"
 
+<<<<<<< HEAD
 expo@~51.0.36:
   version "51.0.36"
   resolved "https://registry.yarnpkg.com/expo/-/expo-51.0.36.tgz#546fe4ec1670660b50088bb19e640732757c0c3a"
@@ -4341,6 +4471,17 @@ expo@~51.0.36:
     "@expo/cli" "0.18.30"
     "@expo/config" "9.0.4"
     "@expo/config-plugins" "8.0.10"
+=======
+expo@~51.0.34:
+  version "51.0.34"
+  resolved "https://registry.yarnpkg.com/expo/-/expo-51.0.34.tgz#7b5c47f6bb4402e7f781f03918274b4194391706"
+  integrity sha512-l2oi+hIj/ph3qGcvM54Nyd2uF3Zq5caVmSg7AXfBUgtvcdv5Pj1EI/2xCXP9tfMNQo351CWyOwBkTGjv+GdrLg==
+  dependencies:
+    "@babel/runtime" "^7.20.0"
+    "@expo/cli" "0.18.29"
+    "@expo/config" "9.0.3"
+    "@expo/config-plugins" "8.0.9"
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
     "@expo/metro-config" "0.18.11"
     "@expo/vector-icons" "^14.0.3"
     babel-preset-expo "~11.0.14"
@@ -4348,8 +4489,13 @@ expo@~51.0.36:
     expo-file-system "~17.0.1"
     expo-font "~12.0.10"
     expo-keep-awake "~13.0.2"
+<<<<<<< HEAD
     expo-modules-autolinking "1.11.3"
     expo-modules-core "1.12.25"
+=======
+    expo-modules-autolinking "1.11.2"
+    expo-modules-core "1.12.24"
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
     fbemitter "^3.0.0"
     whatwg-url-without-unicode "8.0.0-3"
 
@@ -4367,7 +4513,7 @@ external-editor@^3.1.0:
     iconv-lite "^0.4.24"
     tmp "^0.0.33"
 
-fast-deep-equal@^3.1.3:
+fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
   resolved "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz"
   integrity sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==
@@ -4728,7 +4874,11 @@ glob@7.1.6:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
+<<<<<<< HEAD
 glob@^10.2.2, glob@^10.3.10:
+=======
+glob@^10.2.2:
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
   version "10.4.5"
   resolved "https://registry.yarnpkg.com/glob/-/glob-10.4.5.tgz#f4d9f0b90ffdbab09c9d77f5f29b4262517b0956"
   integrity sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==
@@ -5513,6 +5663,11 @@ json-schema-deref-sync@^0.13.0:
     memory-cache "~0.2.0"
     traverse "~0.6.6"
     valid-url "~1.0.9"
+
+json-schema-traverse@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-1.0.0.tgz#ae7bcb3656ab77a73ba5c49bf654f38e6b6860e2"
+  integrity sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==
 
 json5@^2.2.2, json5@^2.2.3:
   version "2.2.3"
@@ -6504,9 +6659,15 @@ p-try@^2.0.0:
   integrity sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==
 
 package-json-from-dist@^1.0.0:
+<<<<<<< HEAD
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/package-json-from-dist/-/package-json-from-dist-1.0.1.tgz#4f1471a010827a86f94cfd9b0727e36d267de505"
   integrity sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==
+=======
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/package-json-from-dist/-/package-json-from-dist-1.0.0.tgz#e501cd3094b278495eb4258d4c9f6d5ac3019f00"
+  integrity sha512-dATvCeZN/8wQsGywez1mzHtTlP22H8OEfPrVMLNr4/eGa+ijtLn/6M5f0dY8UKNrC2O9UCU6SSoG3qRKnt7STw==
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
 
 package-manager-detector@^0.2.0:
   version "0.2.0"
@@ -6810,7 +6971,7 @@ pump@^3.0.0:
     end-of-stream "^1.1.0"
     once "^1.3.1"
 
-punycode@^2.1.1:
+punycode@^2.1.0, punycode@^2.1.1:
   version "2.3.1"
   resolved "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz"
   integrity sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==
@@ -7937,6 +8098,7 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+<<<<<<< HEAD
 tailwindcss@>=2.0.0:
   version "3.4.13"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.13.tgz#3d11e5510660f99df4f1bfb2d78434666cb8f831"
@@ -7965,6 +8127,8 @@ tailwindcss@>=2.0.0:
     resolve "^1.22.2"
     sucrase "^3.32.0"
 
+=======
+>>>>>>> 3d4d575 (fixing android eas deployment bug)
 tar@^6.0.5, tar@^6.1.11:
   version "6.2.1"
   resolved "https://registry.npmjs.org/tar/-/tar-6.2.1.tgz"
@@ -8328,6 +8492,13 @@ update-browserslist-db@^1.1.0:
   dependencies:
     escalade "^3.1.2"
     picocolors "^1.0.1"
+
+uri-js@^4.2.2:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/uri-js/-/uri-js-4.4.1.tgz#9b1a52595225859e55f669d928f88c6c57f2a77e"
+  integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
+  dependencies:
+    punycode "^2.1.0"
 
 url-join@4.0.0:
   version "4.0.0"
