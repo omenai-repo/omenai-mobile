@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { colors } from "config/colors.config";
-import { ScrollView } from "react-native-gesture-handler";
 import omenaiAvatar from "../../assets/images/omenai-avatar.png";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
@@ -20,6 +19,7 @@ import { screenName } from "constants/screenNames.constants";
 import { logout } from "utils/logout.utils";
 import { PageButtonCard } from "components/buttons/PageButtonCard";
 import WithModal from "components/modal/WithModal";
+import ScrollWrapper from "components/general/ScrollWrapper";
 
 type userDataType = {
   name: string;
@@ -87,7 +87,7 @@ export default function Profile() {
           </View>
         </View>
       </SafeAreaView>
-      <ScrollView style={styles.container}>
+      <ScrollWrapper style={styles.container}>
         <View style={styles.buttonsContainer}>
           <PageButtonCard
             name="Saved artworks"
@@ -113,7 +113,7 @@ export default function Profile() {
           <Divider />
           <PageButtonCard name="Log Out" logout handlePress={logout} />
         </View>
-      </ScrollView>
+      </ScrollWrapper>
     </WithModal>
   );
 }

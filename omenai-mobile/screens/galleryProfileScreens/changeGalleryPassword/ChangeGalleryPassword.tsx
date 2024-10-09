@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import WithModal from "components/modal/WithModal";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
@@ -10,6 +10,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { requestPasswordConfirmationCode } from "services/requests/requestConfirmationCode";
 import { updatePassword } from "services/requests/updatePassword";
 import { useModalStore } from "store/modal/modalStore";
+import ScrollWrapper from "components/general/ScrollWrapper";
 
 export default function ChangeGalleryPassword({
   route,
@@ -93,7 +94,7 @@ export default function ChangeGalleryPassword({
   return (
     <WithModal>
       <BackHeaderTitle title="Change password" />
-      <ScrollView
+      <ScrollWrapper
         style={{
           flex: 1,
           paddingHorizontal: 20,
@@ -173,7 +174,7 @@ export default function ChangeGalleryPassword({
           }
           isLoading={loading}
         />
-      </ScrollView>
+      </ScrollWrapper>
     </WithModal>
   );
 }

@@ -1,6 +1,5 @@
 import {
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -10,7 +9,6 @@ import {
 import React from "react";
 import { colors } from "config/colors.config";
 import { PageButtonCard } from "components/buttons/PageButtonCard";
-import Divider from "components/general/Divider";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "constants/screenNames.constants";
@@ -20,6 +18,7 @@ import WithGalleryModal from "components/modal/WithGalleryModal";
 import { galleryOrderModalStore } from "store/modal/galleryModalStore";
 import { useAppStore } from "store/app/appStore";
 import Logo from "./components/Logo";
+import ScrollWrapper from "components/general/ScrollWrapper";
 
 export default function GalleryProfile() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -34,7 +33,7 @@ export default function GalleryProfile() {
           <Text style={{ fontSize: 20, textAlign: "center" }}>Profile</Text>
         </View>
       </SafeAreaView>
-      <ScrollView style={styles.mainContainer}>
+      <ScrollWrapper style={styles.mainContainer}>
         {userSession.logo !== "" && <Logo url={userSession.logo} />}
         <View style={styles.buttonsContainer}>
           {/* <Divider /> */}
@@ -69,7 +68,7 @@ export default function GalleryProfile() {
           {/* <Divider /> */}
           <PageButtonCard name="Logout" logout handlePress={logout} />
         </View>
-      </ScrollView>
+      </ScrollWrapper>
     </WithGalleryModal>
   );
 }
