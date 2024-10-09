@@ -71,7 +71,7 @@ export default function ArtworkCard({
         ]}
       >
         <Image
-          source={{ uri: image_href, cache: "only-if-cached" }}
+          source={{ uri: image_href }}
           style={styles.image}
           resizeMode="contain"
         />
