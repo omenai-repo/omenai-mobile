@@ -7,13 +7,10 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { ScrollView } from "react-native-gesture-handler";
-import BackScreenButton from "components/buttons/BackScreenButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { colors } from "config/colors.config";
 import LongBlackButton from "components/buttons/LongBlackButton";
-import LongWhiteButton from "components/buttons/LongWhiteButton";
 import DetailsCard from "./components/detailsCard/DetailsCard";
 import ArtworkCard from "components/artwork/ArtworkCard";
 import { fetchsingleArtwork } from "services/artworks/fetchSingleArtwork";
@@ -36,6 +33,7 @@ import Coverage from "./components/extraDetails/Coverage";
 import { createViewHistory } from "services/artworks/viewHistory/createViewHistory";
 import { fetchArtworkByArtist } from "services/artworks/fetchArtworkByArtist";
 import tw from "twrnc";
+import ScrollWrapper from "components/general/ScrollWrapper";
 
 export default function Artwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -155,7 +153,7 @@ export default function Artwork() {
         <Header art_id={data?.art_id} isGallery={userType === "gallery"} />
         {isLoading && !data && <Loader />}
         {data && (
-          <ScrollView
+          <ScrollWrapper
             style={styles.scrollContainer}
             showsVerticalScrollIndicator={false}
           >
@@ -175,7 +173,10 @@ export default function Artwork() {
                   <Text style={styles.artworkTags}>
                     {data?.medium} | {data?.rarity}
                   </Text>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <ScrollWrapper
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                  >
                     <View style={styles.tagsContainer}>
                       {data?.certificate_of_authenticity === "Yes" && (
                         <View style={styles.tagItem}>
@@ -198,7 +199,7 @@ export default function Artwork() {
                         </Text>
                       </View>
                     </View>
-                  </ScrollView>
+                  </ScrollWrapper>
                 </View>
                 <View style={styles.detailsContainer}>
                   <DetailsCard
@@ -275,7 +276,7 @@ export default function Artwork() {
                 <SimilarArtworks title={data.title} medium={data?.medium} />
               )}
             </View>
-          </ScrollView>
+          </ScrollWrapper>
         )}
         {!isLoading && !data && (
           <View style={styles.loaderContainer}>
