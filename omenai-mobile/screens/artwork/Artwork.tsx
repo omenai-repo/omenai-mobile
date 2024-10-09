@@ -241,7 +241,7 @@ export default function Artwork() {
                       `text-[20px] font-medium text-[#000] mb-[20px] pl-[20px]`
                     )}
                   >
-                    Other Works by This Artist
+                    Other Works by {data?.artist}
                   </Text>
 
                   <FlatList
