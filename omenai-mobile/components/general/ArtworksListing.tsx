@@ -1,17 +1,17 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MiniArtworkCard from "components/artwork/MiniArtworkCard";
 import { FlashList } from "@shopify/flash-list";
+import EmptyArtworks from "./EmptyArtworks";
 
 export default function ArtworksListing({ data }: { data: any[] }) {
 
   if (data.length === 0)
     return (
-      <View style={{ marginTop: 30 }}>
-        <Text style={{ fontSize: 20, textAlign: "center" }}>
-          No artworks to display
-        </Text>
-      </View>
+      <EmptyArtworks
+        size={20}
+        writeUp="No artworks to display"
+      />
     );
 
   return (

@@ -9,13 +9,12 @@ import { colors } from "config/colors.config";
 import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
 import { fetchArtworksByCriteria } from "services/artworks/fetchArtworksByCriteria";
 import { artworksMediumStore } from "store/artworks/ArtworksMediumsStore";
-import ArtworksMediumListing from "./components/ArtworksMediumListing";
 import { useModalStore } from "store/modal/modalStore";
 import { screenName } from "constants/screenNames.constants";
 import { artworksMediumFilterStore } from "store/artworks/ArtworksMediumFilterStore";
-import { fetchPaginatedArtworks } from "services/artworks/fetchPaginatedArtworks";
 import { mediums } from "constants/mediums";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import ArtworksListing from "components/general/ArtworksListing";
 
 export default function ArtworksMedium() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -90,7 +89,7 @@ export default function ArtworksMedium() {
           </FilterButton>
         </View>
         {isLoading && <MiniArtworkCardLoader />}
-        {!isLoading && artworks && <ArtworksMediumListing data={artworks} />}
+        {!isLoading && artworks && <ArtworksListing data={artworks} />}
         <View style={{ height: 100 }} />
       </ScrollWrapper>
     </WithModal>
