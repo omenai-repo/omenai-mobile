@@ -1,22 +1,22 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MiniArtworkCard from "components/artwork/MiniArtworkCard";
 import { FlashList } from "@shopify/flash-list";
+import EmptyArtworks from "./EmptyArtworks";
 
 export default function ArtworksListing({ data }: { data: any[] }) {
 
   if (data.length === 0)
     return (
-      <View style={{ marginTop: 30 }}>
-        <Text style={{ fontSize: 20, textAlign: "center" }}>
-          No artworks to display
-        </Text>
-      </View>
+      <EmptyArtworks
+        size={20}
+        writeUp="No artworks to display"
+      />
     );
 
   return (
     <View style={styles.artworksContainer}>
-        <FlashList
+      <FlashList
         data={data}
         renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
           <View style={{flex: 1, alignItems: 'center', paddingBottom: 20}}>
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   artworksContainer: {
     flexDirection: "row",
     gap: 20,
-    marginTop: 20,
+    marginTop: 30,
     zIndex: 5,
   },
   singleColumn: {
