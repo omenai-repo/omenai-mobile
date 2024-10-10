@@ -116,6 +116,7 @@ export default function Catalog() {
               <ScrollWrapper
                 style={{ flex: 1 }}
                 showsVerticalScrollIndicator={false}
+                onEndReached={handlePagination}
                 refreshControl={
                   <RefreshControl
                     refreshing={false}
@@ -124,12 +125,6 @@ export default function Catalog() {
                 }
               >
                 <ArtworksListing data={artworks} />
-                <Pagination
-                  count={pageCount}
-                  onPress={handlePagination}
-                  currentScreen={paginationCount}
-                  isLoading={loadingMore}
-                />
                 <View style={{ height: 300 }} />
               </ScrollWrapper>
             )}
