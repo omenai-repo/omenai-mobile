@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import { colors } from "config/colors.config";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
-import ArtworksListing from "./components/ArtworksListing";
 import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
 import { RefreshControl } from "react-native-gesture-handler";
 import { fetchArtworks } from "services/artworks/fetchArtworks";
@@ -15,6 +14,7 @@ import { artworkCategoriesStore } from "store/artworks/ArtworkCategoriesStore";
 import { fetchTrendingArtworks } from "services/artworks/fetchTrendingArtworks";
 import { fetchPaginatedArtworks } from "services/artworks/fetchPaginatedArtworks";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import ArtworksListing from "components/general/ArtworksListing";
 
 export default function ArtworkCategories() {
   const isFocused = useIsFocused();
@@ -133,6 +133,7 @@ export default function ArtworkCategories() {
         <ScrollWrapper
           style={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
+          onEndReached={handlePagination}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -144,14 +145,8 @@ export default function ArtworkCategories() {
           }
         >
           <ArtworksCountsContainer count={artworkCount} title={title} />
-          <ArtworksListing data={artworks} />
-          <Pagination
-            count={pageCount}
-            onPress={() => {
-              setPageCount((prev) => prev + 1);
-              handlePagination();
-            }}
-            isLoading={loadingMore}
+          <ArtworksListing 
+            data={artworks} 
           />
           <View style={{ height: 300 }} />
         </ScrollWrapper>
