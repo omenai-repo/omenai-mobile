@@ -5,21 +5,15 @@ import { FlashList } from "@shopify/flash-list";
 import EmptyArtworks from "./EmptyArtworks";
 
 export default function ArtworksListing({ data }: { data: any[] }) {
-
   if (data.length === 0)
-    return (
-      <EmptyArtworks
-        size={20}
-        writeUp="No artworks to display"
-      />
-    );
+    return <EmptyArtworks size={20} writeUp="No artworks to display" />;
 
   return (
     <View style={styles.artworksContainer}>
       <FlashList
         data={data}
         renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
-          <View style={{flex: 1, alignItems: 'center', paddingBottom: 20}}>
+          <View style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
             <MiniArtworkCard
               title={item.title}
               url={item.url}
@@ -36,6 +30,7 @@ export default function ArtworksListing({ data }: { data: any[] }) {
         horizontal={false}
         showsHorizontalScrollIndicator={false}
         numColumns={2}
+        estimatedItemSize={278}
       />
     </View>
   );
