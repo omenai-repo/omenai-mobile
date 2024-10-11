@@ -14,13 +14,10 @@ import FittedBlackButton from "components/buttons/FittedBlackButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "constants/screenNames.constants";
-import ArtworksListing from "./components/ArtworksListing";
 import { fetchAllArtworksById } from "services/artworks/fetchAllArtworksById";
-import Loader from "components/general/Loader";
 import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
-import { useAppStore } from "store/app/appStore";
-import LockScreen from "./components/LockScreen";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import ArtworksListing from "components/general/ArtworksListing";
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
