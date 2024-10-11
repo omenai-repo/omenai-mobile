@@ -10,6 +10,7 @@ import { colors } from "../../config/colors.config";
 import { screenName } from "../../constants/screenNames.constants";
 import WithModal from "components/modal/WithModal";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import { StatusBar } from "expo-status-bar";
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -18,6 +19,7 @@ export default function Login() {
 
   return (
     <WithModal>
+      <StatusBar style="light" />
       <AuthHeader
         title="Welcome Back"
         subTitle="Access your account so you can start purchasing artwork"

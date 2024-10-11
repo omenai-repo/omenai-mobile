@@ -112,9 +112,10 @@ export default function Catalog() {
               <MiniArtworkCardLoader />
             ) : (
               <ScrollWrapper
-                style={{ flex: 1 }}
+                style={{ flex: 1,}}
                 showsVerticalScrollIndicator={false}
                 onEndReached={handlePagination}
+                onEndReachedThreshold={0.9}
                 refreshControl={
                   <RefreshControl
                     refreshing={false}
@@ -122,7 +123,10 @@ export default function Catalog() {
                   />
                 }
               >
-                <ArtworksListing data={artworks} />
+                <ArtworksListing 
+                  data={artworks} 
+                  loadingMore={loadingMore}
+                />
                 <View style={{ height: 300 }} />
               </ScrollWrapper>
             )}
