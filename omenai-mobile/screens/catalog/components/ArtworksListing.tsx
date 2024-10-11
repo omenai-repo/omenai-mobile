@@ -4,7 +4,6 @@ import MiniArtworkCard from "components/artwork/MiniArtworkCard";
 import { FlashList } from "@shopify/flash-list";
 
 export default function ArtworksListing({ data }: { data: any[] }) {
-
   if (data.length === 0)
     return (
       <View style={{ marginTop: 30 }}>
@@ -19,7 +18,7 @@ export default function ArtworksListing({ data }: { data: any[] }) {
       <FlashList
         data={data}
         renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
-          <View style={{flex: 1, alignItems: 'center', paddingBottom: 20}}>
+          <View style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
             <MiniArtworkCard
               title={item.title}
               url={item.url}
@@ -36,6 +35,7 @@ export default function ArtworksListing({ data }: { data: any[] }) {
         horizontal={false}
         showsHorizontalScrollIndicator={false}
         numColumns={2}
+        estimatedItemSize={278}
       />
     </View>
   );
