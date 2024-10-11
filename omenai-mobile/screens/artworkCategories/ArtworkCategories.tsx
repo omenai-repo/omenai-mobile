@@ -147,6 +147,7 @@ export default function ArtworkCategories() {
           <ArtworksCountsContainer count={artworkCount} title={title} />
           <ArtworksListing 
             data={artworks} 
+            loadingMore={loadingMore}
           />
           <View style={{ height: 300 }} />
         </ScrollWrapper>
