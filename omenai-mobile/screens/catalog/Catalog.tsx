@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { colors } from "config/colors.config";
-import ArtworksListing from "./components/ArtworksListing";
 import { artworkActionStore } from "store/artworks/ArtworkActionStore";
 import { artworkStore } from "store/artworks/ArtworkStore";
 import { filterStore } from "store/artworks/FilterStore";
@@ -18,10 +17,9 @@ import FilterButton from "components/filter/FilterButton";
 import Loader from "components/general/Loader";
 import WithModal from "components/modal/WithModal";
 import { useModalStore } from "store/modal/modalStore";
-import ShowMoreButton from "components/buttons/ShowMoreButton";
-import Pagination from "./components/Pagination";
 import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import ArtworksListing from "components/general/ArtworksListing";
 
 type TagItemProps = {
   name: string;
@@ -116,6 +114,7 @@ export default function Catalog() {
               <ScrollWrapper
                 style={{ flex: 1 }}
                 showsVerticalScrollIndicator={false}
+                onEndReached={handlePagination}
                 refreshControl={
                   <RefreshControl
                     refreshing={false}
@@ -124,12 +123,6 @@ export default function Catalog() {
                 }
               >
                 <ArtworksListing data={artworks} />
-                <Pagination
-                  count={pageCount}
-                  onPress={handlePagination}
-                  currentScreen={paginationCount}
-                  isLoading={loadingMore}
-                />
                 <View style={{ height: 300 }} />
               </ScrollWrapper>
             )}

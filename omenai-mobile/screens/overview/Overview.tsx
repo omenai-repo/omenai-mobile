@@ -55,14 +55,16 @@ export default function Overview() {
 
   return (
     <WithModal>
-      <SafeAreaView style={styles.safeArea}>
+      
         <ScrollWrapper
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          <Header showNotification />
+          <SafeAreaView style={styles.safeArea}>
+            <Header showNotification />
+          </SafeAreaView>
           <View style={styles.container}>
             <Text style={{ fontSize: 16, fontWeight: "400" }}>Overview</Text>
             <View style={styles.contentsContainer}>
@@ -106,7 +108,6 @@ export default function Overview() {
           <PopularArtworks refreshCount={refreshCount} />
           <RecentOrders refreshCount={refreshCount} />
         </ScrollWrapper>
-      </SafeAreaView>
     </WithModal>
   );
 }

@@ -1,22 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native-gesture-handler";
 import MiniArtworkCard from "components/artwork/MiniArtworkCard";
+import { FlashList } from "@shopify/flash-list";
 
 export default function ArtworksListing({ data }: { data: any[] }) {
-  const [listing, setListing] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (data.length > 1) {
-      var indexToSplit = data.length / 2;
-      var first = data.slice(0, indexToSplit);
-      var second = data.slice(indexToSplit);
-
-      setListing([first, second]);
-    } else if (data.length > 0) {
-      setListing([data, []]);
-    }
-  }, [data]);
 
   if (data.length === 0)
     return (
@@ -29,10 +16,10 @@ export default function ArtworksListing({ data }: { data: any[] }) {
 
   return (
     <View style={styles.artworksContainer}>
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={listing[0]}
-          renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
+        <FlashList
+        data={data}
+        renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
+          <View style={{flex: 1, alignItems: 'center', paddingBottom: 20}}>
             <MiniArtworkCard
               title={item.title}
               url={item.url}
@@ -43,36 +30,13 @@ export default function ArtworksListing({ data }: { data: any[] }) {
               like_IDs={item.like_IDs}
               art_id={item.art_id}
             />
-          )}
-          keyExtractor={(_, index) => JSON.stringify(index)}
-          horizontal={false}
-          showsHorizontalScrollIndicator={false}
-          // style={{gap: 200}}
-          contentContainerStyle={{ gap: 30 }}
-        />
-      </View>
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={listing[1]}
-          renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
-            <MiniArtworkCard
-              title={item.title}
-              url={item.url}
-              artist={item.artist}
-              showPrice={item.pricing.shouldShowPrice === "Yes"}
-              price={item.pricing.usd_price}
-              impressions={item.impressions}
-              like_IDs={item.like_IDs}
-              art_id={item.art_id}
-            />
-          )}
-          keyExtractor={(_, index) => JSON.stringify(index)}
-          horizontal={false}
-          showsHorizontalScrollIndicator={false}
-          // style={{gap: 200}}
-          contentContainerStyle={{ gap: 30 }}
-        />
-      </View>
+          </View>
+        )}
+        keyExtractor={(_, index) => JSON.stringify(index)}
+        horizontal={false}
+        showsHorizontalScrollIndicator={false}
+        numColumns={2}
+      />
     </View>
   );
 }
