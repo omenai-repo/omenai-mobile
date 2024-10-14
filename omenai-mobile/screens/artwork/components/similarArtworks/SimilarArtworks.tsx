@@ -74,7 +74,7 @@ export default function SimilarArtworks({
                 {data.length - 1 === index && (
                   <View style={styles.viewMoreContainer}>
                     <FittedBlackButton
-                      value="View more similar artworks"
+                      value="View similar artworks"
                       onClick={() => {
                         navigation.navigate(screenName.home);
                         navigation.navigate(screenName.artworksMedium, {

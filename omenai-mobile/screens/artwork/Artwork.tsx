@@ -201,7 +201,7 @@ export default function Artwork() {
                     </View>
                   </ScrollWrapper>
                 </View>
-                <View style={styles.detailsContainer}>
+                <View style={[styles.detailsContainer, userType === "gallery" && {paddingBottom: 70}]}>
                   <DetailsCard
                     title="Additional details about this artwork"
                     details={[
@@ -426,7 +426,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   priceContainer: {
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 0
   },
   priceTitle: {
     color: colors.secondary_text_color,
