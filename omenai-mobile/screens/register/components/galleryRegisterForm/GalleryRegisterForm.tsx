@@ -16,7 +16,7 @@ export default function GalleryRegisterForm() {
         <TermsAndConditions />
     ]
     
-    return forms[1]
+    return forms[pageIndex]
 }
 
 const styles = StyleSheet.create({})

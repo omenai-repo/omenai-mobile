@@ -26,6 +26,7 @@ export default function LargeInput({label, onInputChange, placeHolder, value, er
                 onBlur={handleBlur}
                 multiline
                 numberOfLines={4}
+                textAlign={'left'}
                 defaultValue={defaultValue}
             />
             {errorMessage && errorMessage?.length > 0 && <Text style={styles.errorMessage}>{errorMessage}</Text>}
