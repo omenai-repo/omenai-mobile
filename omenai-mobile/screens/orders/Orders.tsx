@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     paddingHorizontal: 20,
     flex: 1,
+    paddingTop: Platform.OS === "android" ? 15 : 10
   },
   tabContainer: {
     flexDirection: "row",
