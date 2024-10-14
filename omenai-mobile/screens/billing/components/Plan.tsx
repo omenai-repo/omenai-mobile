@@ -49,15 +49,15 @@ export default function Plan({
 
     let buttonText = "Get started today";
 
-    if (sub_data !== null) {
-        if (
-        sub_data.plan_details.type !== name ||
-        (sub_data.plan_details.type === name &&
+  if (sub_data !== null) {
+    buttonText =
+      plan_action === "reactivation"
+        ? "Activate plan"
+        : sub_data.plan_details.type !== name ||
+          (sub_data.plan_details.type === name &&
             sub_data.plan_details.interval !== tab)
-        ) {
-        buttonText =
-            plan_action === "reactivation" ? "Activate plan" : "Subscribed";
-        }
+        ? "Migrate"
+        : "Subscribed";
     }
 
     const handleNavigate = () => {
