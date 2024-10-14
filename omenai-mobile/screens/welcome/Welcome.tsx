@@ -1,11 +1,10 @@
 import {
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
   Platform,
-  StatusBar,
+  useWindowDimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
@@ -22,8 +21,10 @@ import OnBoardingSection from "./components/OnBoardingSection";
 import { utils_storeAsyncData } from "utils/utils_asyncStorage";
 import { utils_determineOnboardingPages } from "utils/utils_determineOnboardingPages";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import tw from "twrnc";
 
 export default function Welcome() {
+  const { width, height } = useWindowDimensions();
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const [selected, setSelected] = useState(0);
@@ -59,25 +60,38 @@ export default function Welcome() {
     );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={tw`flex-1 bg-[#ffff]`}>
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
         style={styles.container}
       >
-        <View>
-          <View style={styles.imageContainer}>
-            <Image
-              source={omenai_logo}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-          </View>
-          <Image source={welcome_banner} style={styles.welcomeBanner} />
+        <View
+          style={{
+            marginTop: Platform.OS === "android" ? height / 13 : height / 10,
+          }}
+        >
+          <Image
+            source={omenai_logo}
+            style={{
+              width: width / 3,
+              height: height / 40,
+              alignSelf: "center",
+            }}
+          />
+          <Image
+            source={welcome_banner}
+            style={{
+              width: width / 1.13,
+              height: height / 2.8,
+              alignSelf: "center",
+              marginTop: height / 45,
+            }}
+          />
           <Text style={styles.largeText}>
             Get the best art deals anywhere, any time
           </Text>
         </View>
-        <View style={{ flex: 1, paddingTop: 50 }}>
+        <View style={{ flex: 1, paddingTop: 50, marginHorizontal: 20 }}>
           <View style={styles.buttonContainer}>
             <LongBlackButton
               value="Log In"
@@ -91,21 +105,14 @@ export default function Welcome() {
           </View>
         </View>
       </ScrollWrapper>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 10,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    flexDirection: "column",
-  },
-  imageContainer: {
-    display: "flex",
-    alignItems: "center",
+    paddingBottom: 50,
   },
   welcomeBanner: {
     width: "100%",
@@ -117,17 +124,13 @@ const styles = StyleSheet.create({
     fontSize: 38,
     fontWeight: "500",
     lineHeight: 54,
+    paddingHorizontal: 20,
   },
   buttonContainer: {
     // marginTop: 50,
     gap: 15,
   },
   logo: {
-    width: 150,
-  },
-  safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    flex: 1,
-    backgroundColor: colors.white,
+    // width: 150,
   },
 });
