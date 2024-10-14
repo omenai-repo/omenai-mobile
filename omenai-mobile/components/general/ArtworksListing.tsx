@@ -6,15 +6,15 @@ import EmptyArtworks from "./EmptyArtworks";
 import Loader from "./Loader";
 import { MasonryFlashList } from "@shopify/flash-list";
 
-export default function ArtworksListing({ data, loadingMore }: { data: any[], loadingMore?: boolean }) {
-
+export default function ArtworksListing({
+  data,
+  loadingMore,
+}: {
+  data: any[];
+  loadingMore?: boolean;
+}) {
   if (data.length === 0)
-    return (
-      <EmptyArtworks
-        size={20}
-        writeUp="No artworks to display"
-      />
-    );
+    return <EmptyArtworks size={20} writeUp="No artworks to display" />;
 
   return (
     <View style={styles.artworksContainer}>
@@ -22,7 +22,7 @@ export default function ArtworksListing({ data, loadingMore }: { data: any[], lo
         data={data}
         estimatedItemSize={200}
         renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
-          <View style={{flex: 1, alignItems: 'center', paddingBottom: 20}}>
+          <View style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
             <MiniArtworkCard
               title={item.title}
               url={item.url}
@@ -39,12 +39,7 @@ export default function ArtworksListing({ data, loadingMore }: { data: any[], lo
         showsVerticalScrollIndicator={false}
         numColumns={2}
       />
-      {loadingMore &&
-        <Loader
-          size={150}
-          height={200}
-        />
-      }
+      {loadingMore && <Loader size={150} height={200} />}
     </View>
   );
 }
