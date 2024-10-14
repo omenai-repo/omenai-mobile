@@ -114,7 +114,7 @@ export default function Catalog() {
               <ScrollWrapper
                 style={{ flex: 1,}}
                 showsVerticalScrollIndicator={false}
-                onEndReached={handlePagination}
+                onEndReached={() => console.log('end-reached')}
                 onEndReachedThreshold={0.9}
                 refreshControl={
                   <RefreshControl
