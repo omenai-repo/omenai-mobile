@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import React from 'react'
 import { colors } from '../../config/colors.config'
 
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         color: colors.inputLabel
     },
     inputContainer: {
-        height: 140,
+        height: Platform.OS === 'android' ? 'auto' : 140,
         width: '100%',
         borderWidth: 1,
         borderColor: colors.inputBorder,
