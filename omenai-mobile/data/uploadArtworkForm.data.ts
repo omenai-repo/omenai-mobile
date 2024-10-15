@@ -21,7 +21,9 @@ export const framingList : selectItemProp[] = [
 
 export const rarityList : selectItemProp[] = [
     {label: 'Unique', value: 'Unique'},
-    {label: 'Limited', value: 'Limited'}
+    {label: 'Limited edition', value: 'Limited edition'},
+    {label: 'Open edition', value: 'Open edition'},
+    {label: 'Unknown edition', value: 'Unknown edition'}
 ];
 
 export const certificateOfAuthenticitySelectOptions : selectItemProp[] = [
@@ -51,4 +53,6 @@ export const mediumListing: selectItemProp[] = [
     {label: 'Ankara', value: 'Ankara'},
     {label: 'Charcoal', value: 'Charcoal'},
     {label: 'Fabric', value: 'Fabric'},
+    {label: 'Collage or other works on paper', value: 'Collage or other works on paper'},
+    {label: 'Other', value: 'Other'},
 ]

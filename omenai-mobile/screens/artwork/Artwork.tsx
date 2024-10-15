@@ -45,8 +45,7 @@ export default function Artwork() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [data, setData] = useState<ArtworkDataType | null>(null);
-  const [similarArtworksByArtist, setSimilarArtworksByArtist] =
-    useState<ArtworkDataType | null>(null);
+  const [similarArtworksByArtist, setSimilarArtworksByArtist] = useState([]);
 
   let image_href;
   if (data) {
@@ -92,7 +91,7 @@ export default function Artwork() {
   const handleArtistArtwork = async () => {
     setIsLoading(true);
 
-    const results = await fetchArtworkByArtist(data?.artist);
+    const results = await fetchArtworkByArtist(data?.artist as string);
 
     if (results.isOk) {
       const data = results.body.data;
@@ -235,7 +234,7 @@ export default function Artwork() {
                 </View>
               </View>
 
-              {userType !== "gallery" && (
+              {userType !== "gallery" && similarArtworksByArtist.length > 0 && (
                 <>
                   <Text
                     style={tw.style(
