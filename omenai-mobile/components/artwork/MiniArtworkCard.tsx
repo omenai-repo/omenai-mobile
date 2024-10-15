@@ -20,6 +20,7 @@ type MiniArtworkCardType = {
   art_id: string;
   impressions: number;
   like_IDs: string[];
+  galleryView?: boolean;
 };
 
 export default function MiniArtworkCard({
@@ -31,6 +32,7 @@ export default function MiniArtworkCard({
   art_id,
   impressions,
   like_IDs,
+  galleryView = false,
 }: MiniArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
@@ -59,7 +61,7 @@ export default function MiniArtworkCard({
   return (
     <TouchableOpacity
       activeOpacity={1}
-      style={[styles.container, { width: '100%'}]}
+      style={[styles.container, { width: "100%" }]}
       onPress={() => navigation.navigate(screenName.artwork, { title: title })}
     >
       {renderImage ? (
@@ -110,11 +112,13 @@ export default function MiniArtworkCard({
             {showPrice ? utils_formatPrice(price) : "Price on request"}
           </Text>
         </View>
-        <LikeComponent
-          art_id={art_id}
-          impressions={impressions || 0}
-          likeIds={like_IDs || []}
-        />
+        {galleryView && (
+          <LikeComponent
+            art_id={art_id}
+            impressions={impressions || 0}
+            likeIds={like_IDs || []}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );

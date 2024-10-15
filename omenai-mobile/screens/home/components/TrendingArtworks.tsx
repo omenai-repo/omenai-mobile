@@ -109,6 +109,7 @@ export default function TrendingArtworks({
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           style={{ marginTop: 20 }}
+          contentContainerStyle={{ paddingRight: 20 }}
         />
       )}
       {!isLoading && data.length < 1 && (
