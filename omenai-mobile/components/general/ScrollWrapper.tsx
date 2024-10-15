@@ -12,6 +12,7 @@ interface ScrollWrapperProps {
   onEndReachedThreshold?: number;
   refreshControl?: React.ReactElement;
   horizontal?: boolean;
+  nestedScrollEnabled?: boolean;
 }
 
 const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
@@ -25,6 +26,7 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
   onEndReachedThreshold,
   refreshControl,
   horizontal = false,
+  nestedScrollEnabled,
 }) => {
   // Wrap children in a container for FlatList
   const renderItem = () => <View>{children}</View>;
@@ -44,6 +46,7 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
       refreshControl={refreshControl}
       horizontal={horizontal}
       scrollEventThrottle={16} // For smooth scrolling
+      nestedScrollEnabled={nestedScrollEnabled}
     />
   );
 };
