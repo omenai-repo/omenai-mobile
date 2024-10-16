@@ -105,13 +105,15 @@ export default function UploadArtwork() {
   return (
     <WithModal>
       <HeaderIndicator />
-      <View
+      <ScrollWrapper
         style={styles.container}
+        showsVerticalScrollIndicator={false}
+        nestedScrollEnabled={true}
       >
         {!isLoading && !isUploaded && components[activeIndex - 1]}
         {!isLoading && isUploaded && <SuccessScreen />}
         {isLoading && <Loader />}
-      </View>
+      </ScrollWrapper>
     </WithModal>
   );
 }
