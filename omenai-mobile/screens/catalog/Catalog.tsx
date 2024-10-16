@@ -73,6 +73,8 @@ export default function Catalog() {
   };
 
   const handlePagination = async (type: "dec" | "inc") => {
+    if(artworks.length < 1) return
+
     setLoadingmore(true);
 
     const response = await fetchPaginatedArtworks(
@@ -115,7 +117,7 @@ export default function Catalog() {
                 style={{ flex: 1,}}
                 showsVerticalScrollIndicator={false}
                 onEndReached={handlePagination}
-                onEndReachedThreshold={0.9}
+                onEndReachedThreshold={1}
                 refreshControl={
                   <RefreshControl
                     refreshing={false}

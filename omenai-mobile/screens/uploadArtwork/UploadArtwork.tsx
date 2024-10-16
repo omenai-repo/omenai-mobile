@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import WithModal from "components/modal/WithModal";
 import HeaderIndicator from "./components/HeaderIndicator";
@@ -105,14 +105,13 @@ export default function UploadArtwork() {
   return (
     <WithModal>
       <HeaderIndicator />
-      <ScrollWrapper
+      <View
         style={styles.container}
-        showsVerticalScrollIndicator={false}
       >
         {!isLoading && !isUploaded && components[activeIndex - 1]}
         {!isLoading && isUploaded && <SuccessScreen />}
         {isLoading && <Loader />}
-      </ScrollWrapper>
+      </View>
     </WithModal>
   );
 }
