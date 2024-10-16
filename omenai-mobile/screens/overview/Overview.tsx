@@ -63,7 +63,7 @@ export default function Overview() {
           }
         >
           <SafeAreaView style={styles.safeArea}>
-            <Header showNotification />
+            <Header />
           </SafeAreaView>
           <View style={styles.container}>
             <Text style={{ fontSize: 16, fontWeight: "400" }}>Overview</Text>

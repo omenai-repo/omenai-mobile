@@ -90,6 +90,8 @@ export default function ArtworkCategories() {
   };
 
   const handlePagination = async () => {
+    if(artworks.length < 1) return
+    
     setLoadingmore(true);
 
     let response;
