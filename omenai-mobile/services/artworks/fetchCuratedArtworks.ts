@@ -2,7 +2,7 @@ import filterArtObjectsByMedium from "utils/utils_filterArtObjectsByMedium";
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 
-export async function fetchCuratedArtworks({page, filters}:{page: number, filters: any[]}){
+export async function fetchCuratedArtworks({page, filters}:{page: number, filters?: any[]}){
 
     let preferences = [];
     const userSession = await utils_getAsyncData('userSession')
