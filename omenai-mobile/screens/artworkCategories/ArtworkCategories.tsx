@@ -135,7 +135,6 @@ export default function ArtworkCategories() {
         <ScrollWrapper
           style={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
-          onEndReached={handlePagination}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -150,6 +149,7 @@ export default function ArtworkCategories() {
           <ArtworksListing 
             data={artworks} 
             loadingMore={loadingMore}
+            onEndReached={handlePagination}
           />
           <View style={{ height: 300 }} />
         </ScrollWrapper>
