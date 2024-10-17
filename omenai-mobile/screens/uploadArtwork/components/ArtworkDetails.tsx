@@ -112,7 +112,7 @@ export default function ArtworkDetails() {
           value={artworkUploadData.artwork_description || ""}
           errorMessage={formErrors.description}
         />
-        <View style={[styles.flexInputsContainer, { zIndex: 10 }]}>
+        <View style={[styles.flexInputsContainer]}>
           <View style={{ flex: 1 }}>
             <Input
               label="Year"

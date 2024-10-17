@@ -1,6 +1,6 @@
-import { Platform, StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
-import { colors } from '../../config/colors.config'
+import { Platform, StyleSheet, Text, TextInput, View } from "react-native";
+import React from "react";
+import { colors } from "../../config/colors.config";
 
 type InputProps = {
   label: string;
@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     borderRadius: 5,
     marginTop: 10,
+    textAlignVertical: "top",
   },
   errorMessage: {
     color: "#ff0000",
