@@ -6,6 +6,7 @@ import LongBlackButton from "components/buttons/LongBlackButton";
 import { uploadArtworkStore } from "store/gallery/uploadArtworkStore";
 import NoLabelInput from "components/inputs/NoLabelInput";
 import { validate } from "lib/validations/upload_artwork_input_validator/validator";
+import tw from 'twrnc';
 
 type artworkDimensionsErrorsType = {
   height: string;
@@ -105,11 +106,24 @@ export default function ArtworkDimensions() {
             />
             <NoLabelInput
               placeHolder="Depth"
-              onInputChange={(value) => updateArtworkUploadData("depth", value)}
+              onInputChange={(value) => {
+                updateArtworkUploadData("depth", value)
+                handleValidationChecks("depth", artworkUploadData.depth);
+              }}
               value={artworkUploadData.depth || ""}
               errorMessage={formErrors.depth}
             />
           </View>
+
+          {/* Displaying only one error in the dimentions inputs */}
+          {(formErrors.depth && 
+            <Text style={tw`text-red-700 mt-2`}>{formErrors.depth}</Text>) ||
+          (formErrors.width && 
+            <Text style={tw`text-red-700 mt-2`}>{formErrors.width}</Text>) ||
+          (formErrors.height && 
+            <Text style={tw`text-red-700 mt-2`}>{formErrors.height}</Text>)
+          }
+
         </View>
         <Input
           label="Weight (in Kg)"
