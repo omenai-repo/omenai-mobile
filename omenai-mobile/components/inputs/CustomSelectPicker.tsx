@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { SetStateAction, useEffect, useState } from "react";
-import DropDownPicker from "react-native-dropdown-picker";
+import { Dropdown } from "react-native-element-dropdown";
 import { colors } from "config/colors.config";
 
 type CustomSelectPickerProps = {
@@ -32,29 +32,26 @@ export default function CustomSelectPicker({
 
   useEffect(() => {
     if (localValue) {
-      handleSetValue(localValue);
+      handleSetValue(localValue.value);
     }
   }, [localValue]);
 
   return (
     <View style={{ zIndex: zIndex }}>
       <Text style={styles.label}>{label}</Text>
-      <DropDownPicker
-        open={open}
+      <Dropdown
         value={value}
-        items={data}
-        setOpen={setOpen}
-        setValue={setLocalValue}
+        data={data}
+        labelField="label"
+        valueField="value"
+        onChange={(item: any) => {
+          setLocalValue(item);
+        }}
+        showsVerticalScrollIndicator={false}
         placeholder={placeholder}
+        maxHeight={150}
         style={styles.container}
-        onClose={handleBlur}
-        listMode="SCROLLVIEW"
-        scrollViewProps={{
-          showsVerticalScrollIndicator: false,
-        }}
-        dropDownContainerStyle={{
-          borderColor: "#E0E0E0",
-        }}
+        dropdownPosition="auto"
       />
       {errorMessage && errorMessage?.length > 0 && (
         <Text style={styles.errorMessage}>{errorMessage}</Text>
