@@ -90,11 +90,11 @@ export default function Catalog() {
     } else {
       //throw error
       console.log(response);
-      updateModal({
-        message: response?.message,
-        showModal: true,
-        modalType: "error",
-      });
+      // updateModal({
+      //   message: response?.message,
+      //   showModal: true,
+      //   modalType: "error",
+      // });
     }
 
     setLoadingmore(false);
@@ -113,25 +113,24 @@ export default function Catalog() {
             {isLoading ? (
               <MiniArtworkCardLoader />
             ) : (
-              //   <ScrollWrapper
-              //     style={{ flex: 1,}}
-              //     showsVerticalScrollIndicator={false}
-              //     onEndReached={handlePagination}
-              //     onEndReachedThreshold={1}
-              //     refreshControl={
-              //       <RefreshControl
-              //         refreshing={false}
-              //         onRefresh={() => setReloadCount((prev) => prev + 1)}
-              //       />
-              //     }
-              //   >
-              <ArtworksListing
-                data={artworks}
-                loadingMore={loadingMore}
-                onEndReached={handlePagination}
-              />
-              // <View style={{ height: 300 }} />
-              //   </ScrollWrapper>
+                <ScrollWrapper
+                  style={{ flex: 1}}
+                  showsVerticalScrollIndicator={false}
+                  onEndReached={handlePagination}
+                  onEndReachedThreshold={1}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={false}
+                      onRefresh={() => setReloadCount((prev) => prev + 1)}
+                    />
+                  }
+                >
+                <ArtworksListing
+                  data={artworks}
+                  loadingMore={loadingMore}
+                  onEndReached={handlePagination}
+                />
+              </ScrollWrapper>
             )}
           </View>
         </View>
