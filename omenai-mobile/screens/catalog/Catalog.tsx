@@ -72,8 +72,8 @@ export default function Catalog() {
     setIsLoading(false);
   };
 
-  const handlePagination = async (type: "dec" | "inc") => {
-    if(artworks.length < 1) return
+  const handlePagination = async () => {
+    if (artworks.length < 1) return;
 
     setLoadingmore(true);
 
@@ -85,7 +85,7 @@ export default function Catalog() {
       const arr = [...artworks, ...response.data];
 
       setArtworks(arr);
-      updatePaginationCount(type);
+      updatePaginationCount("inc");
       setPageCount(response.count);
     } else {
       //throw error
@@ -113,24 +113,25 @@ export default function Catalog() {
             {isLoading ? (
               <MiniArtworkCardLoader />
             ) : (
-              <ScrollWrapper
-                style={{ flex: 1,}}
-                showsVerticalScrollIndicator={false}
+              //   <ScrollWrapper
+              //     style={{ flex: 1,}}
+              //     showsVerticalScrollIndicator={false}
+              //     onEndReached={handlePagination}
+              //     onEndReachedThreshold={1}
+              //     refreshControl={
+              //       <RefreshControl
+              //         refreshing={false}
+              //         onRefresh={() => setReloadCount((prev) => prev + 1)}
+              //       />
+              //     }
+              //   >
+              <ArtworksListing
+                data={artworks}
+                loadingMore={loadingMore}
                 onEndReached={handlePagination}
-                onEndReachedThreshold={1}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={false}
-                    onRefresh={() => setReloadCount((prev) => prev + 1)}
-                  />
-                }
-              >
-                <ArtworksListing 
-                  data={artworks} 
-                  loadingMore={loadingMore}
-                />
-                <View style={{ height: 300 }} />
-              </ScrollWrapper>
+              />
+              // <View style={{ height: 300 }} />
+              //   </ScrollWrapper>
             )}
           </View>
         </View>
