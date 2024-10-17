@@ -32,7 +32,7 @@ export default function CustomSelectPicker({
 
   useEffect(() => {
     if (localValue) {
-      handleSetValue(localValue);
+      handleSetValue(localValue.value);
     }
   }, [localValue]);
 
