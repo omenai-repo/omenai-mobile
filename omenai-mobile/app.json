@@ -17,7 +17,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.omenai.omenaimobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +27,10 @@
       },
       "package": "com.omenai.omenaimobile",
       "buildType": "apk",
-      "gradleCommand": ":app:assembleRelease"
+      "gradleCommand": ":app:assembleRelease",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
