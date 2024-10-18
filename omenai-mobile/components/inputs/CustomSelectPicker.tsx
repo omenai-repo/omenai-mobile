@@ -49,7 +49,6 @@ export default function CustomSelectPicker({
         }}
         showsVerticalScrollIndicator={false}
         placeholder={placeholder}
-        maxHeight={150}
         style={styles.container}
         dropdownPosition="auto"
       />
