@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/GalleryAuthRegisterStore'
 import NextButton from '../../../../components/buttons/NextButton';
 import { validate } from '../../../../lib/validations/validatorGroup';
@@ -41,6 +41,18 @@ export default function ExtraGalleryDetailsInput() {
         }
     };
 
+    useEffect(() => {
+        if(galleryRegisterData.admin){
+            handleValidationChecks('admin', galleryRegisterData.admin)
+        }
+        if(galleryRegisterData.location){
+            handleValidationChecks('location', galleryRegisterData.location)
+        }
+        if(galleryRegisterData.description){
+            handleValidationChecks('description', galleryRegisterData.description)
+        }
+    }, [galleryRegisterData])
+
     return (
         <View style={{gap: 40}}>
             <View style={{gap: 20}}>
@@ -50,7 +62,6 @@ export default function ExtraGalleryDetailsInput() {
                     onInputChange={setAdmin} 
                     placeHolder='Enter your full name'
                     value={galleryRegisterData.admin}
-                    handleBlur={() => handleValidationChecks('admin', galleryRegisterData.admin)}
                     errorMessage={formErrors.admin}
                 />
                 <CustomSelectPicker
@@ -66,7 +77,6 @@ export default function ExtraGalleryDetailsInput() {
                     onInputChange={setLocation} 
                     placeHolder='Enter gallery address'
                     value={galleryRegisterData.location}
-                    handleBlur={() => handleValidationChecks('location', galleryRegisterData.location)}
                     errorMessage={formErrors.location}
                 />
                 <LargeInput
@@ -74,7 +84,6 @@ export default function ExtraGalleryDetailsInput() {
                     onInputChange={setDescription} 
                     placeHolder='Write a description of your gallery (not more than 100 words)'
                     value={galleryRegisterData.description}
-                    handleBlur={() => handleValidationChecks('description', galleryRegisterData.description)}
                     errorMessage={formErrors.description}
                 />
             </View>

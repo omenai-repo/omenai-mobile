@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PasswordInput from '../../../../../components/inputs/PasswordInput'
 import Input from '../../../../../components/inputs/Input'
 import NextButton from '../../../../../components/buttons/NextButton'
@@ -28,6 +28,24 @@ export default function IndividualForm() {
         }
     };
 
+     //
+     useEffect(() => {
+        if (individualRegisterData.name) {
+            handleValidationChecks('name', individualRegisterData.name)
+        }
+        if(individualRegisterData.email){
+            handleValidationChecks('email', individualRegisterData.email)
+        }
+        if(individualRegisterData.password){
+            handleValidationChecks('password', individualRegisterData.password)
+        }
+        if(individualRegisterData.confirmPassword){
+            handleValidationChecks('confirmPassword', individualRegisterData.password, individualRegisterData.confirmPassword)
+        }
+        return
+
+    }, [individualRegisterData]);
+
     return (
         <View style={styles.container}>
             <View style={{gap: 20}}>
@@ -37,7 +55,6 @@ export default function IndividualForm() {
                     onInputChange={setName} 
                     placeHolder='Enter your full name'
                     value={individualRegisterData.name}
-                    handleBlur={() => handleValidationChecks('name', individualRegisterData.name)}
                     errorMessage={formErrors.name}
                 />
                 <Input 
@@ -46,7 +63,6 @@ export default function IndividualForm() {
                     onInputChange={setEmail} 
                     placeHolder='Enter your email address'
                     value={individualRegisterData.email}
-                    handleBlur={() => handleValidationChecks('email', individualRegisterData.email)}
                     errorMessage={formErrors.email}
                 />
                 <PasswordInput 
@@ -54,7 +70,6 @@ export default function IndividualForm() {
                     onInputChange={setPassword} 
                     placeHolder='Enter password'
                     value={individualRegisterData.password}
-                    handleBlur={() => handleValidationChecks('password', individualRegisterData.password)}
                     errorMessage={formErrors.password}
                 />
                 <PasswordInput 
@@ -62,7 +77,6 @@ export default function IndividualForm() {
                     onInputChange={setConfirmPassword} 
                     placeHolder='Enter password again'
                     value={individualRegisterData.confirmPassword}
-                    handleBlur={() => handleValidationChecks('confirmPassword', individualRegisterData.password, individualRegisterData.confirmPassword)}
                     errorMessage={formErrors.confirmPassword}
                 />
             </View>

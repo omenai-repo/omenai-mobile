@@ -9,15 +9,19 @@ import { useIndividualAuthRegisterStore } from "../../../store/auth/register/Ind
 export default function FormController() {
   const { pageIndex } = useIndividualAuthRegisterStore();
 
+  const forms = [
+    <InputForm />,
+    <Preferences />,
+    <TermsAndConditions />
+  ]
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
       <ScrollView nestedScrollEnabled={true} style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}>
-        {pageIndex === 0 && <InputForm />}
-        {pageIndex === 1 && <Preferences />}
-        {pageIndex === 2 && <TermsAndConditions />}
+        {forms[pageIndex]}
       </ScrollView>
     </KeyboardAvoidingView>
   );
