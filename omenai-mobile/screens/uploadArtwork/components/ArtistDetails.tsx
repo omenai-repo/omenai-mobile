@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Input from 'components/inputs/Input'
 import CustomSelectPicker from 'components/inputs/CustomSelectPicker'
 import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
@@ -22,11 +22,12 @@ export default function ArtistDetails() {
         const isFormValid = Object.values(formErrors).every((error) => error === "");
         const areAllFieldsFilled = Object.values({
             artist: artworkUploadData.artist,
-            birth_year: artworkUploadData.artist_birthyear
+            birth_year: artworkUploadData.artist_birthyear,
+            country: artworkUploadData.artist_country_origin
         }).every((value) => value !== "");
 
         return !(isFormValid && areAllFieldsFilled);
-    }
+    };
 
     const handleValidationChecks = (label: string, value: string) => {        
         const {success, errors} : {success: boolean, errors: string[] | []} = validate(label, value)
@@ -37,6 +38,18 @@ export default function ArtistDetails() {
         }
     };
 
+    //
+    useEffect(() => {
+        if (artworkUploadData.artist) {
+            handleValidationChecks('artist', artworkUploadData.artist);
+        }
+        if(artworkUploadData.artist_birthyear){
+            handleValidationChecks('artist_birthyear', artworkUploadData.artist_birthyear)
+        }
+        return
+
+    }, [artworkUploadData.artist, artworkUploadData.artist_birthyear]);
+
     return (
         <View style={styles.container}>
             <View style={styles.inputsContainer}>
@@ -45,7 +58,6 @@ export default function ArtistDetails() {
                     onInputChange={value => updateArtworkUploadData('artist', value)}
                     placeHolder='Enter artist full name'
                     value={artworkUploadData.artist}
-                    handleBlur={() => handleValidationChecks('artist', artworkUploadData.artist)}
                     errorMessage={formErrors.artist}
                 />
                 <Input
@@ -53,7 +65,6 @@ export default function ArtistDetails() {
                     onInputChange={value => updateArtworkUploadData('artist_birthyear', value)}
                     placeHolder='Enter artist birth year'
                     value={artworkUploadData.artist_birthyear}
-                    handleBlur={() => handleValidationChecks('artist_birthyear', artworkUploadData.artist_birthyear)}
                     errorMessage={formErrors.artist_birthyear}
                     keyboardType="decimal-pad"
                 />

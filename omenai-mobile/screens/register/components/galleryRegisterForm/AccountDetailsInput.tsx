@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/GalleryAuthRegisterStore'
 import NextButton from '../../../../components/buttons/NextButton';
 import { validate } from '../../../../lib/validations/validatorGroup';
@@ -33,6 +33,23 @@ export default function AccountDetailsInput() {
         }
     };
 
+    useEffect(() => {
+        if(galleryRegisterData.name){
+            handleValidationChecks('name', galleryRegisterData.name)
+        }
+        if(galleryRegisterData.email){
+            handleValidationChecks('email', galleryRegisterData.email)
+        }
+        if(galleryRegisterData.password){
+            handleValidationChecks('password', galleryRegisterData.password)
+        }
+        if(galleryRegisterData.confirmPassword){
+            handleValidationChecks('confirmPassword', galleryRegisterData.password, galleryRegisterData.confirmPassword)
+        }
+        return
+
+    }, [galleryRegisterData])
+
     return (
         <View style={{gap: 40}}>
             <View style={{gap: 20}}>
@@ -42,7 +59,6 @@ export default function AccountDetailsInput() {
                     onInputChange={setName} 
                     placeHolder='Enter the name of your gallery'
                     value={galleryRegisterData.name}
-                    handleBlur={() => handleValidationChecks('name', galleryRegisterData.name)}
                     errorMessage={formErrors.name}
                 />
                 <Input 
@@ -51,7 +67,6 @@ export default function AccountDetailsInput() {
                     onInputChange={setEmail} 
                     placeHolder={`Enter your gallery's email address`}
                     value={galleryRegisterData.email}
-                    handleBlur={() => handleValidationChecks('email', galleryRegisterData.email)}
                     errorMessage={formErrors.email}
                 />
                 <PasswordInput
@@ -59,7 +74,6 @@ export default function AccountDetailsInput() {
                     onInputChange={setPassword} 
                     placeHolder='Enter password'
                     value={galleryRegisterData.password}
-                    handleBlur={() => handleValidationChecks('password', galleryRegisterData.password)}
                     errorMessage={formErrors.password}
                 />
                 <PasswordInput 
@@ -67,7 +81,6 @@ export default function AccountDetailsInput() {
                     onInputChange={setConfirmPassword} 
                     placeHolder='Enter password again'
                     value={galleryRegisterData.confirmPassword}
-                    handleBlur={() => handleValidationChecks('confirmPassword', galleryRegisterData.password, galleryRegisterData.confirmPassword)}
                     errorMessage={formErrors.confirmPassword}
                 />
             </View>

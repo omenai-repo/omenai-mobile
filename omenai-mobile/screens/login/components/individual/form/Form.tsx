@@ -80,7 +80,7 @@ export default function Form() {
             <View style={{gap: 40}}>
                 <LongBlackButton
                     value={isLoading ? 'Loading...' : 'Log In'}
-                    isDisabled={false}
+                    isDisabled={!(individualLoginData.email && individualLoginData.password)}
                     onClick={handleSubmit}
                     isLoading={isLoading}
                 />
