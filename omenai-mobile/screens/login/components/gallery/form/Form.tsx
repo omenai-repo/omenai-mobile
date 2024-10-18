@@ -88,7 +88,7 @@ export default function Form() {
                 <View>
                     <LongBlackButton
                         value={isLoading ? 'Loading ...' : 'Sign In Gallery'}
-                        isDisabled={false}
+                        isDisabled={!(galleryLoginData.password && galleryLoginData.email)}
                         isLoading={isLoading}
                         onClick={handleSubmit}
                     />
