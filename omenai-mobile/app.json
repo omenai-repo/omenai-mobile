@@ -26,8 +26,6 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.omenai.omenaimobile",
-      "buildType": "apk",
-      "gradleCommand": ":app:assembleRelease",
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]
