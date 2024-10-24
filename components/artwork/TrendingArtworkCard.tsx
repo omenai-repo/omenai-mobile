@@ -37,7 +37,7 @@ export default function TrendingArtworkCard({image, artist, rarity, medium, titl
       }, [image_href, screenWidth]);
 
     return (
-        <TouchableOpacity activeOpacity={1} onPress={() => navigation.navigate(screenName.artwork, {title: title})}>
+        <TouchableOpacity activeOpacity={1} onPress={() => navigation.push(screenName.artwork, {title: title})}>
             <View style={styles.container}>
                 <View style={styles.top}>
                     <View style={{width: '100%', overflow: 'hidden'}}>

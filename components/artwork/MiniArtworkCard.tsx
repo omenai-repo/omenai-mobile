@@ -62,7 +62,7 @@ export default function MiniArtworkCard({
     <TouchableOpacity
       activeOpacity={1}
       style={[styles.container, { width: "100%" }]}
-      onPress={() => navigation.navigate(screenName.artwork, { title: title })}
+      onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
       {renderImage ? (
         <View
