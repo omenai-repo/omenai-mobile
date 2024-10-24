@@ -58,7 +58,7 @@ export default function ArtworkCard({
       activeOpacity={1}
       style={[styles.container, width > 0 && { width: width }]}
       onPress={() => {
-        navigation.navigate(screenName.artwork, { title: title });
+        navigation.push(screenName.artwork, { title: title });
       }}
     >
       <View
