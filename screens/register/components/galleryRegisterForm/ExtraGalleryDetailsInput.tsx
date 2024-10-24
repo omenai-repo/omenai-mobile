@@ -12,7 +12,7 @@ import { country_codes } from 'json/country_alpha_2_codes';
 const transformedCountries = country_codes.map(item => ({
     value: item.key,
     label: item.name
-  }));
+}));
 
 export default function ExtraGalleryDetailsInput() {
     const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({admin: "", location: "", description: "", country: ""});
