@@ -10,6 +10,7 @@ import SummaryContainer from './SummaryContainer';
 import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore';
 import { validate } from 'lib/validations/validatorGroup';
 import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { country_codes } from 'json/country_alpha_2_codes';
 
 const deliveryOptions = [
     'Shipping',
@@ -17,6 +18,11 @@ const deliveryOptions = [
 ]
 
 type deliveryModeTypes = "Shipping" | "Pickup"
+
+const transformedCountries = country_codes.map(item => ({
+    value: item.key,
+    label: item.name
+}));
 
 export default function ShippingDetails({data: {
     pricing
@@ -102,11 +108,11 @@ export default function ShippingDetails({data: {
                         errorMessage={formErrors.address}
                     />
                     <CustomSelectPicker
-                        placeholder='🇺🇸 Select your country'
-                        data={countriesListing}
-                        label='Country'
+                        data={transformedCountries}
+                        placeholder='Select your country'
                         value={country}
                         handleSetValue={setCountry}
+                        label='Country'
                     />
                     <Input
                         label='State'
