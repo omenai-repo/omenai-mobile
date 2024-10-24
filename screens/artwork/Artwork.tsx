@@ -94,8 +94,14 @@ export default function Artwork() {
     const results = await fetchArtworkByArtist(data?.artist as string);
 
     if (results.isOk) {
-      const data = results.body.data;
-      setSimilarArtworksByArtist(data);
+      const artistsArtworksData = results.body.data;
+      if(artistsArtworksData.length > 0){
+        const parsedResults = artistsArtworksData.filter((artwork: any) => {
+          return artwork.title !== data?.title;
+        });
+
+        setSimilarArtworksByArtist(parsedResults);
+      }
     } else {
       setData(null);
     }
