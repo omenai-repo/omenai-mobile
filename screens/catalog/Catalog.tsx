@@ -113,24 +113,22 @@ export default function Catalog() {
             {isLoading ? (
               <MiniArtworkCardLoader />
             ) : (
-              // <ScrollWrapper
-              //   style={{ flex: 1}}
-              //   showsVerticalScrollIndicator={false}
-              //   onEndReached={handlePagination}
-              //   onEndReachedThreshold={1}
-              //   refreshControl={
-              //     <RefreshControl
-              //       refreshing={false}
-              //       onRefresh={() => setReloadCount((prev) => prev + 1)}
-              //     />
-              //   }
-              // >
-              <ArtworksListing
-                data={artworks}
-                loadingMore={loadingMore}
-                onEndReached={handlePagination}
-              />
-              //   </ScrollWrapper>
+              <ScrollWrapper
+                style={{ flex: 1 }}
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={false}
+                    onRefresh={() => setReloadCount((prev) => prev + 1)}
+                  />
+                }
+              >
+                <ArtworksListing
+                  data={artworks}
+                  loadingMore={loadingMore}
+                  onEndReached={handlePagination}
+                />
+              </ScrollWrapper>
             )}
           </View>
         </View>
@@ -151,9 +149,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   mainContainer: {
-    marginTop: 10,
     paddingHorizontal: 20,
-    paddingTop: 10,
     flex: 1,
   },
   tagItem: {

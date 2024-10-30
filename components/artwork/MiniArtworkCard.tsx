@@ -1,4 +1,11 @@
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
@@ -34,29 +41,44 @@ export default function MiniArtworkCard({
   like_IDs,
   galleryView = false,
 }: MiniArtworkCardType) {
+  const { width, height } = useWindowDimensions();
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const screenWidth = Dimensions.get("window").width;
   const [imageDimensions, setImageDimensions] = useState({
-    width: 0,
-    height: 0,
+    width: (width - 60) / 2,
+    height: 200,
   });
   const [renderImage, setRenderImage] = useState(false);
 
   let imageWidth = 0;
-  imageWidth = (screenWidth - 60) / 2; //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
+  imageWidth = (width - 60) / 2; //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
   const image_href = getImageFileView(url, imageWidth);
 
   useEffect(() => {
-    Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-      const { width, height } = resizeImageDimensions(
-        { width: defaultWidth, height: defaultHeight },
-        300
-      );
-      setImageDimensions({ height, width });
-      setRenderImage(true);
-    });
-  }, [image_href, screenWidth]);
+    Image.getSize(
+      image_href,
+      (defaultWidth, defaultHeight) => {
+        // Calculate aspect ratio to maintain image proportions
+        const aspectRatio = defaultWidth / defaultHeight;
+
+        // Determine the maximum height based on screen height (adjust padding as needed)
+        const maxHeight = height - 100; // Adjust 100 as needed
+
+        // Calculate the new width and height based on the maximum height and aspect ratio
+        const newHeight = Math.min(maxHeight, defaultHeight);
+        const newWidth = Math.round(newHeight * aspectRatio);
+
+        setImageDimensions({ height: newHeight, width: newWidth });
+        setRenderImage(true);
+      },
+      (error) => {
+        if (error) {
+          setImageDimensions({ height: 200, width: imageWidth });
+          setRenderImage(true);
+        }
+      }
+    );
+  }, [image_href, width]);
 
   return (
     <TouchableOpacity
@@ -65,25 +87,22 @@ export default function MiniArtworkCard({
       onPress={() => navigation.navigate(screenName.artwork, { title: title })}
     >
       {renderImage ? (
-        <View
+        <Image
+          source={{ uri: image_href }}
           style={{
             width: imageDimensions.width,
             height: imageDimensions.height,
+            objectFit: "contain",
           }}
-        >
-          <Image
-            source={{ uri: image_href }}
-            style={{
-              width: imageDimensions.width,
-              height: imageDimensions.height,
-              objectFit: "contain",
-            }}
-            resizeMode="contain"
-          />
-        </View>
+          resizeMode="contain"
+        />
       ) : (
         <View
-          style={{ height: 200, width: "100%", backgroundColor: "#f5f5f5" }}
+          style={{
+            height: imageDimensions.height,
+            width: imageDimensions.width,
+            backgroundColor: "#f5f5f5",
+          }}
         />
       )}
       <View style={styles.mainDetailsContainer}>
