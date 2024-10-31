@@ -48,7 +48,7 @@ export default function MiniArtworkCard({
     width: (width - 60) / 2,
     height: 200,
   });
-  const [renderImage, setRenderImage] = useState(false);
+  // const [renderImage, setRenderImage] = useState(false);
 
   let imageWidth = 0;
   imageWidth = (width - 60) / 2; //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
@@ -69,12 +69,12 @@ export default function MiniArtworkCard({
         const newWidth = Math.round(newHeight * aspectRatio);
 
         setImageDimensions({ height: newHeight, width: newWidth });
-        setRenderImage(true);
+        // setRenderImage(true);
       },
       (error) => {
         if (error) {
           setImageDimensions({ height: 200, width: imageWidth });
-          setRenderImage(true);
+          // setRenderImage(true);
         }
       }
     );
@@ -86,25 +86,15 @@ export default function MiniArtworkCard({
       style={[styles.container, { width: "100%" }]}
       onPress={() => navigation.navigate(screenName.artwork, { title: title })}
     >
-      {renderImage ? (
-        <Image
-          source={{ uri: image_href }}
-          style={{
-            width: imageDimensions.width,
-            height: imageDimensions.height,
-            objectFit: "contain",
-          }}
-          resizeMode="contain"
-        />
-      ) : (
-        <View
-          style={{
-            height: imageDimensions.height,
-            width: imageDimensions.width,
-            backgroundColor: "#f5f5f5",
-          }}
-        />
-      )}
+      <Image
+        source={{ uri: image_href }}
+        style={{
+          width: imageDimensions.width,
+          height: imageDimensions.height,
+          objectFit: "contain",
+        }}
+        resizeMode="contain"
+      />
       <View style={styles.mainDetailsContainer}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, color: colors.primary_black }}>
