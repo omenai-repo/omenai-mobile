@@ -41,10 +41,10 @@ export default function MiniArtworkCard({
     width: 0,
     height: 0,
   });
-  const [renderImage, setRenderImage] = useState(false);
+  const [renderDynamicImage, setRenderDynamicImage] = useState(false);
 
   let imageWidth = 0;
-  imageWidth = (screenWidth - 60) / 2; //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
+  imageWidth = Math.round((screenWidth - 60) / 2); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
   const image_href = getImageFileView(url, imageWidth);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function MiniArtworkCard({
         300
       );
       setImageDimensions({ height, width });
-      setRenderImage(true);
+      setRenderDynamicImage(true);
     });
   }, [image_href, screenWidth]);
 
@@ -64,7 +64,7 @@ export default function MiniArtworkCard({
       style={[styles.container, { width: "100%" }]}
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
-      {renderImage ? (
+      {renderDynamicImage ? (
         <View
           style={{
             width: imageDimensions.width,
@@ -84,7 +84,17 @@ export default function MiniArtworkCard({
       ) : (
         <View
           style={{ height: 200, width: "100%", backgroundColor: "#f5f5f5" }}
-        />
+        >
+          <Image
+            source={{ uri: image_href }}
+            style={{
+              width: imageWidth,
+              height: 200,
+              objectFit: "contain",
+            }}
+            resizeMode="contain"
+          />
+        </View>
       )}
       <View style={styles.mainDetailsContainer}>
         <View style={{ flex: 1 }}>
