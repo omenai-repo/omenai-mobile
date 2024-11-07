@@ -41,7 +41,9 @@ export default function App() {
   return (
     <CopilotProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <StripeProvider publishableKey={process.env.STRIPE_PK as string}>
+        <StripeProvider
+          publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
+        >
           <NavigationContainer linking={linking}>
             {/* AUTH SCREENS */}
             {!isLoggedIn && <AuthNavigation />}
