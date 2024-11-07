@@ -7,7 +7,7 @@ export const getGalleryLogoFileView = (
   format?: string
 ) => {
   const fileData = gallery_logo_storage.getFilePreview(
-    process.env.EXPO_PUBLIC_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
+    process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
     fileId,
 
     width, // width, will be resized using this value.

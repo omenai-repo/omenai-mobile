@@ -4,7 +4,7 @@ import { ID } from "react-native-appwrite";
 const uploadGalleryLogoContent = async (file: File) => {
   if (!file) return;
   const fileUploaded = await gallery_logo_storage.createFile(
-    process.env.EXPO_PUBLIC_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
+    process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
     ID.unique(),
     file
   );

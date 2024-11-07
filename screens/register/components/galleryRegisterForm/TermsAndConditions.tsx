@@ -74,7 +74,7 @@ export default function TermsAndConditions() {
         });
       } else {
         await gallery_logo_storage.deleteFile(
-          process.env.EXPO_PUBLIC_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
+          process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
           file.fileId
         );
         updateModal({
