@@ -66,15 +66,14 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
 
   const Item = ({ image, headline, subheadline, cta }: BannerItemProps) => {
     const image_href = getPromotionalFileView(image, 500);
-
-  const Item = ({ image, headline, subheadline, cta }: BannerItemProps) => {
-    const image_href = getPromotionalFileView(image, 500);
     console.log(image_href, "ooo");
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: image_href }}
+            source={{
+              uri: "https://cloud.appwrite.io/v1/storage/buckets/66a0e9b3001b6f875e63/files/671627f6c24fcfbdb733/preview?width=500&height=0&gravity=center&quality=90&borderWidth=0&borderColor=FFFFFF&borderRadius=0&opacity=1&rotation=0&background=FFFFFF&output=webp&project=66a0e9130033484bb1c5",
+            }}
             style={{ width: 180, height: 270 }}
             resizeMode="cover"
           />
