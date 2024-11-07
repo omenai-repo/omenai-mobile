@@ -5,7 +5,7 @@ export const uploadImage = async (file: File | undefined) => {
 
   const imageUploadPromise = await storage
     .createFile(
-      process.env.NEXT_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!,
+      process.env.EXPO_PUBLIC_NEXT_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!,
       ID.unique(),
       file
     )
