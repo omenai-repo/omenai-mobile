@@ -15,16 +15,9 @@ import { colors } from "config/colors.config";
 import { getPromotionalData } from "services/promotional/getPromotionalContent";
 import { getPromotionalFileView } from "lib/storage/getPromotionalsFileView";
 import BannerLoader from "./BannerLoader";
-<<<<<<< HEAD
-import BannerCard from "./BannerCard";
-
-const { width: windowWidth } = Dimensions.get("window");
-const ITEM_WIDTH = windowWidth - 50; // Width of each item, adjust this to your needs
-=======
 
 const { width: windowWidth } = Dimensions.get("window");
 const ITEM_WIDTH = windowWidth; // Width of each item, adjust this to your needs
->>>>>>> 84051a2 (test blank issue fix)
 const CENTER_OFFSET = (windowWidth - ITEM_WIDTH) / 2;
 
 type BannerItemProps = {
@@ -70,27 +63,21 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
     const index = Math.round(contentOffsetX / ITEM_WIDTH);
     setCurrentIndex(index);
   };
-<<<<<<< HEAD
-=======
 
   const Item = ({ image, headline, subheadline, cta }: BannerItemProps) => {
-    const image_href = getPromotionalFileView(image, 500);
->>>>>>> 84051a2 (test blank issue fix)
+    // const image_href = getPromotionalFileView(image, 500);
 
   const Item = ({ image, headline, subheadline, cta }: BannerItemProps) => {
     const image_href = getPromotionalFileView(image, 500);
     console.log(image_href, "ooo");
     return (
       <View style={styles.container}>
-<<<<<<< HEAD
         <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: image_href,
-            }}
+          {/* <Image
+            source={{ uri: image_href }}
             style={{ width: 180, height: 270 }}
             resizeMode="cover"
-          />
+          /> */}
         </View>
         <View style={styles.contentContainer}>
           <Text
@@ -118,37 +105,6 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
             </View>
           </TouchableOpacity>
         </View>
-=======
-        {/* <View style={styles.imageContainer}>
-                    <Image source={{uri: image_href}} style={{width: 180, height: 270}} resizeMode="cover" />
-                </View> */}
-        <View style={styles.contentContainer}>
-          <Text
-            style={{ fontSize: 21, fontWeight: "500", color: colors.white }}
-          >
-            {headline}
-          </Text>
-          <Text style={{ fontSize: 14, color: colors.white, marginTop: 7 }}>
-            {subheadline}
-          </Text>
-
-          <TouchableOpacity onPress={() => handleClick(cta)}>
-            <View style={{ flexWrap: "wrap" }}>
-              <View style={styles.button}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "500",
-                    color: colors.white,
-                  }}
-                >
-                  View resource
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
->>>>>>> 84051a2 (test blank issue fix)
       </View>
     );
   };
@@ -157,14 +113,9 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
     <View>
       <View
         style={{
-<<<<<<< HEAD
-          // backgroundColor: colors.primary_black,
-          marginTop: 40,
-=======
           backgroundColor: colors.primary_black,
           marginTop: 40,
           minHeight: 200,
->>>>>>> 84051a2 (test blank issue fix)
         }}
       >
         {loading && data.length === 0 && <BannerLoader />}
@@ -172,19 +123,11 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
           <FlatList
             data={data}
             renderItem={({ item }: { item: BannerItemProps }) => (
-<<<<<<< HEAD
-              <BannerCard
-=======
               <Item
->>>>>>> 84051a2 (test blank issue fix)
                 cta={item.cta}
                 headline={item.headline}
                 subheadline={item.subheadline}
                 image={item.image}
-<<<<<<< HEAD
-                handleClick={handleClick}
-=======
->>>>>>> 84051a2 (test blank issue fix)
               />
             )}
             keyExtractor={(_, index) => JSON.stringify(index)}
