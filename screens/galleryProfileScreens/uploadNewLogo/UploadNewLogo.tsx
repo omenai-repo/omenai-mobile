@@ -46,7 +46,7 @@ export default function UploadNewLogo() {
 
     try {
       const logoUpdated = await gallery_logo_storage.createFile(
-        process.env.EXPO_PUBLIC_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
+        process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
         ID.unique(),
         logoParams
       );
