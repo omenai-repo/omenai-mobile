@@ -1,3 +1,4 @@
+import { ImageFormat, ImageGravity } from "react-native-appwrite";
 import { promotional_storage } from "../../appWrite";
 
 export const getPromotionalFileView = (
@@ -12,7 +13,7 @@ export const getPromotionalFileView = (
 
     width, // width, will be resized using this value.
     height ? height : 0, // height, ignored when 0
-    "center", // crop center
+    ImageGravity.Center, // crop center
     90, // slight compression
     0, // border width
     "FFFFFF", // border color
@@ -20,7 +21,7 @@ export const getPromotionalFileView = (
     1, // full opacity
     0, // no rotation
     "FFFFFF", // background color
-    format ? format : "webp"
+    ImageFormat.Jpeg
   );
 
   return fileData.href;
