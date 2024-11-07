@@ -71,9 +71,7 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Image
-            source={{
-              uri: "https://cloud.appwrite.io/v1/storage/buckets/66a0e9b3001b6f875e63/files/671627f6c24fcfbdb733/preview?width=500&height=0&gravity=center&quality=90&borderWidth=0&borderColor=FFFFFF&borderRadius=0&opacity=1&rotation=0&background=FFFFFF&output=webp&project=66a0e9130033484bb1c5",
-            }}
+            source={{ uri: image_href }}
             style={{ width: 180, height: 270 }}
             resizeMode="cover"
           />
