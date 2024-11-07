@@ -38,13 +38,13 @@ export default function Home() {
         >
           <Header />
           <Banner reloadCount={refreshCount} />
-          {/* <NewArtworksListing limit={20} refreshCount={refreshCount} />
+          <NewArtworksListing limit={20} refreshCount={refreshCount} />
           <FeaturedGalleries />
           <TrendingArtworks limit={28} refreshCount={refreshCount} />
           <CuratedArtworksListing limit={20} refreshCount={refreshCount} />
           <CatalogListing />
           <Editorials />
-          <RecentlyViewedArtworks refreshCount={refreshCount} /> */}
+          <RecentlyViewedArtworks refreshCount={refreshCount} />
         </ScrollWrapper>
       </SafeAreaView>
     </WithModal>
