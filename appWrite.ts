@@ -4,7 +4,7 @@ const endpoint = "https://cloud.appwrite.io/v1";
 
 client
   .setEndpoint(endpoint)
-  .setProject(process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!);
+  .setProject("655231c3469bf1ef8d8f");
 
 export const storage = new Storage(client);
 
@@ -12,7 +12,7 @@ const promotional_client = new Client();
 
 promotional_client
   .setEndpoint(endpoint)
-  .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROMOTIONAL_CLIENT_ID!);
+  .setProject("66a0e9130033484bb1c5");
 
 export const promotional_storage = new Storage(promotional_client);
 
@@ -21,6 +21,6 @@ const gallery_logo_client = new Client();
 
 gallery_logo_client
   .setEndpoint(endpoint)
-  .setProject(process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_CLIENT_ID!);
+  .setProject("66aa198b0038ad614178");
 
 export const gallery_logo_storage = new Storage(gallery_logo_client);

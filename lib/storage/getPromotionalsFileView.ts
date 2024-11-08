@@ -8,7 +8,7 @@ export const getPromotionalFileView = (
   format?: string
 ) => {
   const fileData = promotional_storage.getFilePreview(
-    process.env.EXPO_PUBLIC_APPWRITE_PROMOTIONAL_BUCKET_ID!,
+    "66a0e9b3001b6f875e63",
     fileId,
 
     width, // width, will be resized using this value.
