@@ -66,12 +66,12 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
 
   const Item = ({ image, headline, subheadline, cta }: BannerItemProps) => {
     const [img, setImg] = useState("");
-    useEffect(() => {
-      setTimeout(() => {
-        const image_href = getPromotionalFileView(image, 500);
-        setImg(image_href);
-      }, 5000);
-    }, [image]);
+
+    setTimeout(() => {
+      const image_href = getPromotionalFileView(image, 500);
+      setImg(image_href);
+    }, 5000);
+
     // const image_href = getPromotionalFileView(image, 500);
 
     return (
@@ -85,15 +85,23 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
             resizeMode="cover"
           />
         </View>
+
         <View style={styles.contentContainer}>
           <Text
+            style={{
+              color: "#fff",
+            }}
+          >
+            {img}
+          </Text>
+          {/* <Text
             style={{ fontSize: 21, fontWeight: "500", color: colors.white }}
           >
             {headline}
           </Text>
           <Text style={{ fontSize: 14, color: colors.white, marginTop: 7 }}>
             {subheadline}
-          </Text>
+          </Text> */}
 
           <TouchableOpacity onPress={() => handleClick(cta)}>
             <View style={{ flexWrap: "wrap" }}>
