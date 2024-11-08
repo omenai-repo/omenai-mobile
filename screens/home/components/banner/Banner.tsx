@@ -65,14 +65,21 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
   };
 
   const Item = ({ image, headline, subheadline, cta }: BannerItemProps) => {
-    const image_href = getPromotionalFileView(image, 500);
+    const [img, setImg] = useState("");
+    useEffect(() => {
+      setTimeout(() => {
+        const image_href = getPromotionalFileView(image, 500);
+        setImg(image_href);
+      }, 5000);
+    }, [image]);
+    // const image_href = getPromotionalFileView(image, 500);
 
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Image
             source={{
-              uri: image_href,
+              uri: img,
             }}
             style={{ width: 180, height: 270 }}
             resizeMode="cover"
