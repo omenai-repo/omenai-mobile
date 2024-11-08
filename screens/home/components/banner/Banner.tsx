@@ -65,43 +65,28 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
   };
 
   const Item = ({ image, headline, subheadline, cta }: BannerItemProps) => {
-    const [img, setImg] = useState("");
-
-    setTimeout(() => {
-      const image_href = getPromotionalFileView(image, 500);
-      setImg(image_href);
-    }, 5000);
-
-    // const image_href = getPromotionalFileView(image, 500);
+    const image_href = getPromotionalFileView(image, 500);
 
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Image
             source={{
-              uri: img,
+              uri: image_href,
             }}
             style={{ width: 180, height: 270 }}
             resizeMode="cover"
           />
         </View>
-
         <View style={styles.contentContainer}>
           <Text
-            style={{
-              color: "#fff",
-            }}
-          >
-            {img}
-          </Text>
-          {/* <Text
             style={{ fontSize: 21, fontWeight: "500", color: colors.white }}
           >
             {headline}
           </Text>
           <Text style={{ fontSize: 14, color: colors.white, marginTop: 7 }}>
             {subheadline}
-          </Text> */}
+          </Text>
 
           <TouchableOpacity onPress={() => handleClick(cta)}>
             <View style={{ flexWrap: "wrap" }}>
