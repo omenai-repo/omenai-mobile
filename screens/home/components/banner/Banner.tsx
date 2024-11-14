@@ -66,7 +66,7 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
 
   const Item = ({ image, headline, subheadline, cta }: BannerItemProps) => {
     const image_href = getPromotionalFileView(image, 500);
-
+    console.log(image_href, "ooo");
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>
