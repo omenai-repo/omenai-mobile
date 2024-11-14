@@ -137,7 +137,7 @@ export default function MiniArtworkCard({
       style={tw`w-full bg-[#E7D9D9] rounded-2xl px-[10px] py-[10px] pb-[20px]`}
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
-      <View style={tw`rounded-[10px] overflow-hidden relative`}>
+      <View style={tw`rounded-2xl overflow-hidden relative`}>
         {renderDynamicImage ? (
           <Image
             source={{ uri: image_href }}
@@ -145,7 +145,7 @@ export default function MiniArtworkCard({
               width: imageDimensions.width - 20,
               height: imageDimensions.height,
               objectFit: "cover",
-              borderRadius: 10,
+              borderRadius: 20,
               overflow: "hidden",
             }}
             resizeMode="contain"
@@ -171,27 +171,25 @@ export default function MiniArtworkCard({
         >
           {galleryView && (
             <View
-              style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
+              style={tw`bg-white h-[30px] w-[30px] rounded-full flex items-center justify-center`}
             >
               <LikeComponent
                 art_id={art_id}
                 impressions={impressions || 0}
                 likeIds={like_IDs || []}
-                lightText
               />
             </View>
           )}
         </View>
       </View>
-      <View style={tw`mt-3`}>
-        <Text style={tw`text-sm text-black/70`}>{title}</Text>
-        <Text style={tw`text-sm text-black/70`}>by {artist}</Text>
+      <View>
+        <Text style={tw`text-base text-black/70`}>{title}</Text>
         <Text style={tw`text-base font-bold text-black/90`}>
           {showPrice ? utils_formatPrice(price) : "Price on request"}
         </Text>
         <View style={tw`flex-wrap`}>
           <TouchableOpacity
-            style={tw`bg-black rounded-full px-3 py-1 w-fit mt-2`}
+            style={tw`bg-black rounded-full px-5 py-2 w-fit mt-2`}
             onPress={() =>
               navigation.push(screenName.purchaseArtwork, {
                 title,
@@ -199,7 +197,7 @@ export default function MiniArtworkCard({
             }
             activeOpacity={1}
           >
-            <Text style={tw`text-white text-sm font-medium`}>Purchase</Text>
+            <Text style={tw`text-white text-sm`}>Purchase</Text>
           </TouchableOpacity>
         </View>
       </View>
