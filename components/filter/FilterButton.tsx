@@ -6,6 +6,7 @@ import sortIcon from '../../assets/icons/sort-icon.png';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { screenName } from 'constants/screenNames.constants';
+import tw from 'twrnc';
 
 type FilterButtonProps = {
     children?: React.ReactNode,
@@ -29,7 +30,9 @@ export default function FilterButton({children, handleClick}: FilterButtonProps)
             }}>
                 <View style={styles.filterButton}>
                     <Text style={styles.filterButtonText}>Filters</Text>
-                    <Image source={sortIcon} style={styles.sortIcon} />
+                    <View style={tw`rounded-full h-[30px] w-[30px] flex items-center justify-center text-white`}>
+                        <Image source={sortIcon} style={styles.sortIcon} />
+                    </View>
                 </View>
             </TouchableOpacity>
         </View>
@@ -60,6 +63,6 @@ const styles = StyleSheet.create({
     },
     sortIcon: {
         height: 20,
-        width: 20
+        width: 20,
     },
 })
