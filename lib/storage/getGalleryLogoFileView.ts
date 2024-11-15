@@ -1,3 +1,4 @@
+import { ImageFormat, ImageGravity } from "react-native-appwrite";
 import { gallery_logo_storage } from "appWrite";
 
 export const getGalleryLogoFileView = (
@@ -7,12 +8,12 @@ export const getGalleryLogoFileView = (
   format?: string
 ) => {
   const fileData = gallery_logo_storage.getFilePreview(
-    process.env.PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
+    process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
     fileId,
 
     width, // width, will be resized using this value.
     height ? height : 0, // height, ignored when 0
-    "center", // crop center
+    ImageGravity.Center, // crop center
     90, // slight compression
     0, // border width
     "FFFFFF", // border color
@@ -20,7 +21,7 @@ export const getGalleryLogoFileView = (
     1, // full opacity
     0, // no rotation
     "FFFFFF", // background color
-    format ? format : "webp"
+    ImageFormat.Jpeg
   );
 
   return fileData.href;

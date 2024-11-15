@@ -65,22 +65,15 @@ export default function MiniArtworkCard({
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
       {renderDynamicImage ? (
-        <View
+        <Image
+          source={{ uri: image_href }}
           style={{
             width: imageDimensions.width,
             height: imageDimensions.height,
+            objectFit: "contain",
           }}
-        >
-          <Image
-            source={{ uri: image_href }}
-            style={{
-              width: imageDimensions.width,
-              height: imageDimensions.height,
-              objectFit: "contain",
-            }}
-            resizeMode="contain"
-          />
-        </View>
+          resizeMode="contain"
+        />
       ) : (
         <View
           style={{ height: 200, width: "100%", backgroundColor: "#f5f5f5" }}
