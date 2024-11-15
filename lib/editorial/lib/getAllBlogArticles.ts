@@ -5,8 +5,8 @@ import { getPromiseResolvedEditorialData } from "./getPromisedResolvedEditorialD
 export const listEditorials = async () => {
   try {
     let promise = await database.listDocuments(
-      process.env.APPWRITE_EDITORIAL_DATABASE_ID!,
-      process.env.APPWRITE_EDITORIAL_COLLECTION_ID!
+      process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_DATABASE_ID!,
+      process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_COLLECTION_ID!
     );
     // console.log(promise)
     // const articles = await getEditorialData(promise);

@@ -3,8 +3,8 @@ import { database } from "../../../lib/editorial/controller/appwrite";
 export default async function getEditorialDocument(doc_id: string) {
   try {
     const documentPromise = await database.getDocument(
-      process.env.NEXT_PUBLIC_APPWRITE_EDITORIAL_DATABASE_ID!,
-      process.env.NEXT_PUBLIC_APPWRITE_EDITORIAL_COLLECTION_ID!,
+      process.env.EXPO_PUBLIC_NEXT_PUBLIC_APPWRITE_EDITORIAL_DATABASE_ID!,
+      process.env.EXPO_PUBLIC_NEXT_PUBLIC_APPWRITE_EDITORIAL_COLLECTION_ID!,
       doc_id
     );
     if (documentPromise.cover) {
