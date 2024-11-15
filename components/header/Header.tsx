@@ -28,7 +28,7 @@ export default function Header({
         <View
           style={tailwind`bg-[#f0f0f0] h-[40px] w-[40px] rounded-full flex items-center justify-center`}
         >
-          <Text style={tailwind`text-lg font-bold text-center`}>MC</Text>
+          <Text style={tailwind`text-sm font-bold text-center`}>MC</Text>
         </View>
       </View>
     </SafeAreaView>
