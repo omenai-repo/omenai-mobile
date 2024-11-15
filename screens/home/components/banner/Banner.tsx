@@ -15,6 +15,7 @@ import { colors } from "config/colors.config";
 import { getPromotionalData } from "services/promotional/getPromotionalContent";
 import { getPromotionalFileView } from "lib/storage/getPromotionalsFileView";
 import BannerLoader from "./BannerLoader";
+import BannerCard from "./BannerCard";
 
 const { width: windowWidth } = Dimensions.get("window");
 const ITEM_WIDTH = windowWidth; // Width of each item, adjust this to your needs
@@ -110,9 +111,8 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
     <View>
       <View
         style={{
-          backgroundColor: colors.primary_black,
+          // backgroundColor: colors.primary_black,
           marginTop: 40,
-          minHeight: 200,
         }}
       >
         {loading && data.length === 0 && <BannerLoader />}
@@ -120,11 +120,12 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
           <FlatList
             data={data}
             renderItem={({ item }: { item: BannerItemProps }) => (
-              <Item
+              <BannerCard
                 cta={item.cta}
                 headline={item.headline}
                 subheadline={item.subheadline}
                 image={item.image}
+                handleClick={handleClick}
               />
             )}
             keyExtractor={(_, index) => JSON.stringify(index)}
