@@ -130,7 +130,7 @@ export default function MiniArtworkCard({
       style={tw`w-full bg-[#E7D9D9] rounded-2xl px-[10px] py-[10px] pb-[20px]`}
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
-      <View style={tw`rounded-2xl overflow-hidden relative`} >
+      <View style={tw`rounded-2xl overflow-hidden relative`}>
         {renderDynamicImage ? (
           <Image
             source={{ uri: image_href }}
