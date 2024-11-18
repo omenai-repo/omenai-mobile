@@ -50,12 +50,12 @@ export default function IndividualNavigation() {
         <Feather
           name={name}
           size={focused ? 25 : 22}
-          color={focused ? colors.black : colors.grey}
+          color={focused ? colors.white : colors.grey}
         />
         <Text
           style={[
             { fontSize: 13, color: colors.grey },
-            focused && { color: colors.primary_black },
+            focused && { color: colors.white },
           ]}
         >
           {title}
@@ -92,11 +92,11 @@ export default function IndividualNavigation() {
             );
           },
           tabBarLabel: () => null,
-          tabBarActiveTintColor: colors.primary_black,
+          tabBarActiveTintColor: colors.white,
           headerShown: false,
           tabBarInactiveTintColor: "gray",
           tabBarStyle: {
-            backgroundColor: colors.white,
+            backgroundColor: colors.black,
             paddingBottom: 10,
             paddingTop: 0,
             height: 70,
