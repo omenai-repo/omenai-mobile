@@ -65,21 +65,21 @@ export default function Welcome() {
     <View style={tw`flex-1 bg-[#FFFFFF]`}>
       <View>
         <View style={tw`flex-row justify-between`}>
-          <View style={tw`mt-[80px]`}>
+          <View style={tw`mt-[70px] android:mt-[20px]`}>
             <Image
               source={omenai_logo}
               style={{
                 width: width / 3,
                 height: height / 40,
                 alignSelf: "center",
-                marginBottom: 25,
+                marginBottom: Platform.OS === "ios" ? 25 : 20,
               }}
             />
             <Image
               source={onboarding2}
               style={{
                 width: width / 2.1,
-                height: 190,
+                height: Platform.OS === "ios" ? 190 : 160,
               }}
               resizeMode="contain"
             />
@@ -89,7 +89,7 @@ export default function Welcome() {
             style={{
               width: width / 2.1,
               height: 274,
-              marginTop: 45,
+              marginTop: Platform.OS === "ios" ? 45 : -40,
             }}
             resizeMode="contain"
           />
@@ -100,8 +100,8 @@ export default function Welcome() {
               source={onboarding3}
               style={{
                 width: width / 2.14,
-                height: 190,
-                marginTop: 20,
+                height: Platform.OS === "ios" ? 190 : 160,
+                marginTop: Platform.OS === "ios" ? 20 : 10,
               }}
               resizeMode="contain"
             />
@@ -109,7 +109,7 @@ export default function Welcome() {
               source={onboarding5}
               style={{
                 width: width / 3.2,
-                height: 190,
+                height: Platform.OS === "ios" ? 190 : 160,
                 marginTop: 20,
               }}
               resizeMode="contain"
@@ -120,7 +120,7 @@ export default function Welcome() {
               source={onboarding4}
               style={{
                 width: width / 2.14,
-                height: 274,
+                height: Platform.OS === "ios" ? 274 : 220,
               }}
               resizeMode="contain"
             />
@@ -128,7 +128,8 @@ export default function Welcome() {
               source={onboarding6}
               style={{
                 width: width / 2.14,
-                height: 190,
+                height: Platform.OS === "ios" ? 190 : 140,
+                marginTop: Platform.OS === "ios" ? 0 : 20,
               }}
               resizeMode="contain"
             />
@@ -138,7 +139,7 @@ export default function Welcome() {
       <View
         style={tw.style(`bg-[#1A1A1A] rounded-[20px]`, {
           position: "absolute",
-          bottom: Platform.OS === "ios" ? 40 : 65,
+          bottom: Platform.OS === "ios" ? 40 : 20,
           left: 10,
           right: 10,
         })}
@@ -147,8 +148,8 @@ export default function Welcome() {
           style={tw.style(
             `text-[32px] text-[#FFFFFF] font-medium text-center`,
             {
-              paddingHorizontal: width / 8,
-              paddingTop: height / 15,
+              paddingHorizontal: Platform.OS === "ios" ? width / 8 : width / 10,
+              paddingTop: Platform.OS === "ios" ? height / 15 : height / 20,
             }
           )}
         >
