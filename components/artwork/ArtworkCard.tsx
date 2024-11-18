@@ -51,7 +51,6 @@ export default function ArtworkCard({
   availiablity,
 }: ArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const screenWidth = Dimensions.get("window").width;
 
   const image_href = getImageFileView(url, 270);
 
@@ -69,7 +68,7 @@ export default function ArtworkCard({
       setImageDimensions({ height, width });
       // setRenderDynamicImage(true);
     });
-  }, [image_href, screenWidth]);
+  }, [image_href]);
 
   return (
     // <TouchableOpacity
@@ -167,14 +166,15 @@ export default function ArtworkCard({
     //   </View>
     // </TouchableOpacity>
     <View>
+    <View style={tw`flex-1`} />
     <TouchableOpacity
       activeOpacity={1}
-      style={[tw`ml-[20px] bg-[#E7D9D9] p-[15px] rounded-2xl`, width > 0 && { width: width }]}
+      style={[tw`ml-[20px] bg-[#F0F0F0] p-[15px] rounded-2xl`, width > 0 && { width: width }]}
       onPress={() => {
         navigation.push(screenName.artwork, { title: title });
       }}
     >
-      <View style={tw`rounded-2xl overflow-hidden relative`}>
+      <View style={tw`rounded-[10px] overflow-hidden relative`}>
           <Image
             source={{ uri: image_href }}
             style={{
@@ -184,35 +184,40 @@ export default function ArtworkCard({
               objectFit: "cover",
               borderRadius: 10
             }}
-            resizeMode="contain"
+            resizeMode="cover"
           />
         <View style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-start p-2`}>
         {!galleryView && (
-          <View style={tw`bg-white h-[30px] w-[30px] rounded-full flex items-center justify-center`}>
+          <View style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}>
             <LikeComponent
               art_id={art_id}
               impressions={impressions || 0}
               likeIds={like_IDs || []}
+              lightText
             />
           </View>
         )}
         </View>
       </View>
       <View style={tw`mt-[15px]`}>
-        <Text style={tw`text-base text-black/70`}>{title}</Text>
-        <Text style={tw`text-base font-bold text-black/90`}>{showPrice ? utils_formatPrice(price) : "Price on request"}</Text>
-        <View style={tw`flex-wrap`}>
-          <TouchableOpacity 
-            style={tw`bg-black rounded-full px-5 py-2 w-fit mt-2`}
-            onPress={() =>
-              navigation.push(screenName.purchaseArtwork, {
-                title
-              })
-            }
-            activeOpacity={1}
-          >
-            <Text style={tw`text-white text-sm`}>Purchase</Text>
-          </TouchableOpacity>
+        <View style={tw`flex-wrap w-[${imageDimensions.width}px]`}>
+          <Text style={tw`text-base text-black/70 w-full`}>{title} - {artist}</Text>
+        </View>
+        <View style={tw`flex flex-row items-center gap-2`}>
+          <Text style={tw`text-base font-bold text-black/90 flex-1`}>{showPrice ? utils_formatPrice(price) : "Price on request"}</Text>
+          <View style={tw`flex-wrap`}>
+            <TouchableOpacity 
+              style={tw`bg-black rounded-full px-5 py-2 w-fit mt-2`}
+              onPress={() =>
+                navigation.push(screenName.purchaseArtwork, {
+                  title
+                })
+              }
+              activeOpacity={1}
+            >
+              <Text style={tw`text-white text-sm`}>Purchase</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
