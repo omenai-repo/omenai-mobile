@@ -123,7 +123,7 @@ export default function CuratedArtworksListing({
                     price={item.pricing.usd_price}
                     availiablity={item.availability}
                     lightText={true}
-                    width={310}
+                    // width={310}
                     impressions={item.impressions}
                     like_IDs={item.like_IDs}
                     art_id={item.art_id}

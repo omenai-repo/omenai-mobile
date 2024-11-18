@@ -57,7 +57,8 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height: 220
+        height: 220,
+        borderRadius: 15
     },
     cardButton: {
         marginTop: 25,
