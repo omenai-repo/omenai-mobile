@@ -79,7 +79,7 @@ export default function ArtworksMedium() {
         style={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ zIndex: 100 }}>
+        <View style={{ zIndex: 100, paddingHorizontal: 10 }}>
           <FilterButton
             handleClick={() =>
               navigation.navigate(screenName.artworkMediumFilterModal)
@@ -99,7 +99,7 @@ export default function ArtworksMedium() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     marginTop: 10,
   },
   headerText: {

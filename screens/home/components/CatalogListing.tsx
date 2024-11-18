@@ -29,7 +29,7 @@ export default function CatalogListing() {
         }
       >
         <View style={styles.container}>
-          <Image source={image} style={{ width: 220, height: 220 }} />
+          <Image source={image} style={{ width: 220, height: 220, borderRadius: 15 }} />
           <Text style={{ fontSize: 14, marginTop: 10 }}>{name}</Text>
         </View>
       </TouchableOpacity>
