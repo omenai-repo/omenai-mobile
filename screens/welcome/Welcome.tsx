@@ -10,12 +10,12 @@ import {
 import React, { useEffect, useState } from "react";
 
 import omenai_logo from "../../assets/omenai-logo.png";
-import onboarding1 from "../../assets/images/onboarding1.png";
-import onboarding2 from "../../assets/images/onboarding2.png";
-import onboarding3 from "../../assets/images/onboarding3.png";
-import onboarding4 from "../../assets/images/onboarding4.png";
-import onboarding5 from "../../assets/images/onboarding5.png";
-import onboarding6 from "../../assets/images/onboarding6.png";
+import onboarding1 from "../../assets/images/onboarding1.jpg";
+import onboarding2 from "../../assets/images/onboarding2.jpg";
+import onboarding3 from "../../assets/images/onboarding3.jpg";
+import onboarding4 from "../../assets/images/onboarding4.jpg";
+import onboarding5 from "../../assets/images/onboarding5.jpg";
+import onboarding6 from "../../assets/images/onboarding6.jpg";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "../../constants/screenNames.constants";
