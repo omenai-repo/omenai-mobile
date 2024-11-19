@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
     borderColor: colors.grey50,
     padding: 15,
     gap: 20,
+    marginBottom: 150,
   },
   safeArea: {
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
