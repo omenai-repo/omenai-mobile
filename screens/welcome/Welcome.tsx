@@ -1,6 +1,5 @@
 import {
   Image,
-  StyleSheet,
   Text,
   View,
   Platform,
@@ -10,12 +9,12 @@ import {
 import React, { useEffect, useState } from "react";
 
 import omenai_logo from "../../assets/omenai-logo.png";
-import onboarding1 from "../../assets/images/onboarding1.png";
-import onboarding2 from "../../assets/images/onboarding2.png";
-import onboarding3 from "../../assets/images/onboarding3.png";
-import onboarding4 from "../../assets/images/onboarding4.png";
-import onboarding5 from "../../assets/images/onboarding5.png";
-import onboarding6 from "../../assets/images/onboarding6.png";
+import onboarding1 from "../../assets/images/onboarding1.jpg";
+import onboarding2 from "../../assets/images/onboarding2.jpg";
+import onboarding3 from "../../assets/images/onboarding3.jpg";
+import onboarding4 from "../../assets/images/onboarding4.jpg";
+import onboarding5 from "../../assets/images/onboarding5.jpg";
+import onboarding6 from "../../assets/images/onboarding6.jpg";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "../../constants/screenNames.constants";
@@ -65,21 +64,21 @@ export default function Welcome() {
     <View style={tw`flex-1 bg-[#FFFFFF]`}>
       <View>
         <View style={tw`flex-row justify-between`}>
-          <View style={tw`mt-[80px]`}>
+          <View style={tw`mt-[70px] android:mt-[20px]`}>
             <Image
               source={omenai_logo}
               style={{
                 width: width / 3,
                 height: height / 40,
                 alignSelf: "center",
-                marginBottom: 25,
+                marginBottom: Platform.OS === "ios" ? 25 : 20,
               }}
             />
             <Image
               source={onboarding2}
               style={{
                 width: width / 2.1,
-                height: 190,
+                height: Platform.OS === "ios" ? 190 : 160,
               }}
               resizeMode="contain"
             />
@@ -89,7 +88,7 @@ export default function Welcome() {
             style={{
               width: width / 2.1,
               height: 274,
-              marginTop: 45,
+              marginTop: Platform.OS === "ios" ? 35 : -40,
             }}
             resizeMode="contain"
           />
@@ -100,8 +99,8 @@ export default function Welcome() {
               source={onboarding3}
               style={{
                 width: width / 2.14,
-                height: 190,
-                marginTop: 20,
+                height: Platform.OS === "ios" ? 190 : 160,
+                marginTop: Platform.OS === "ios" ? 20 : 10,
               }}
               resizeMode="contain"
             />
@@ -109,7 +108,7 @@ export default function Welcome() {
               source={onboarding5}
               style={{
                 width: width / 3.2,
-                height: 190,
+                height: Platform.OS === "ios" ? 190 : 160,
                 marginTop: 20,
               }}
               resizeMode="contain"
@@ -120,7 +119,7 @@ export default function Welcome() {
               source={onboarding4}
               style={{
                 width: width / 2.14,
-                height: 274,
+                height: Platform.OS === "ios" ? 274 : 220,
               }}
               resizeMode="contain"
             />
@@ -128,7 +127,8 @@ export default function Welcome() {
               source={onboarding6}
               style={{
                 width: width / 2.14,
-                height: 190,
+                height: Platform.OS === "ios" ? 190 : 140,
+                marginTop: Platform.OS === "ios" ? 0 : 20,
               }}
               resizeMode="contain"
             />
@@ -138,7 +138,7 @@ export default function Welcome() {
       <View
         style={tw.style(`bg-[#1A1A1A] rounded-[20px]`, {
           position: "absolute",
-          bottom: Platform.OS === "ios" ? 40 : 65,
+          bottom: Platform.OS === "ios" ? 40 : 20,
           left: 10,
           right: 10,
         })}
@@ -147,8 +147,8 @@ export default function Welcome() {
           style={tw.style(
             `text-[32px] text-[#FFFFFF] font-medium text-center`,
             {
-              paddingHorizontal: width / 8,
-              paddingTop: height / 15,
+              paddingHorizontal: Platform.OS === "ios" ? width / 8 : width / 10,
+              paddingTop: Platform.OS === "ios" ? height / 15 : height / 20,
             }
           )}
         >

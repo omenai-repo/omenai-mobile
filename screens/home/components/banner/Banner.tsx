@@ -72,9 +72,7 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Image
-            source={{
-              uri: image_href,
-            }}
+            source={{ uri: image_href }}
             style={{ width: 180, height: 270 }}
             resizeMode="cover"
           />
