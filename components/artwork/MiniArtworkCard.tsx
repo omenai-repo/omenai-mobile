@@ -1,4 +1,11 @@
-import { Button, Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
@@ -10,7 +17,7 @@ import { screenName } from "constants/screenNames.constants";
 import { utils_formatPrice } from "utils/utils_priceFormatter";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
 import LikeComponent from "./LikeComponent";
-import tw from 'twrnc';
+import tw from "twrnc";
 
 type MiniArtworkCardType = {
   title: string;
@@ -139,7 +146,7 @@ export default function MiniArtworkCard({
               height: imageDimensions.height,
               objectFit: "cover",
               borderRadius: 10,
-              overflow: 'hidden'
+              overflow: "hidden",
             }}
             resizeMode="contain"
           />
@@ -153,35 +160,41 @@ export default function MiniArtworkCard({
                 width: imageWidth,
                 height: 200,
                 objectFit: "contain",
-                borderRadius: 10
+                borderRadius: 10,
               }}
               resizeMode="contain"
             />
           </View>
         )}
-        <View style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-start p-2`}>
-        {galleryView && (
-          <View style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}>
-            <LikeComponent
-              art_id={art_id}
-              impressions={impressions || 0}
-              likeIds={like_IDs || []}
-              lightText
-            />
-          </View>
-        )}
+        <View
+          style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-start p-2`}
+        >
+          {galleryView && (
+            <View
+              style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
+            >
+              <LikeComponent
+                art_id={art_id}
+                impressions={impressions || 0}
+                likeIds={like_IDs || []}
+                lightText
+              />
+            </View>
+          )}
         </View>
       </View>
       <View style={tw`mt-3`}>
         <Text style={tw`text-sm text-black/70`}>{title}</Text>
         <Text style={tw`text-sm text-black/70`}>by {artist}</Text>
-        <Text style={tw`text-base font-bold text-black/90`}>{showPrice ? utils_formatPrice(price) : "Price on request"}</Text>
+        <Text style={tw`text-base font-bold text-black/90`}>
+          {showPrice ? utils_formatPrice(price) : "Price on request"}
+        </Text>
         <View style={tw`flex-wrap`}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={tw`bg-black rounded-full px-3 py-1 w-fit mt-2`}
             onPress={() =>
               navigation.push(screenName.purchaseArtwork, {
-                title
+                title,
               })
             }
             activeOpacity={1}
@@ -198,10 +211,10 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     marginLeft: 0,
-    backgroundColor: '#E7D9D9',
+    backgroundColor: "#E7D9D9",
     paddingHorizontal: 10,
     paddingVertical: 10,
-    borderRadius: 10
+    borderRadius: 10,
   },
   imageContainer: {
     width: "100%",
