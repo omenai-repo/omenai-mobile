@@ -20,7 +20,7 @@ export default function BannerCard({image, headline, subheadline, cta, handleCli
     const image_href = getPromotionalFileView(image, 500);
 
     return (
-        <View style={tw`w-[${windowWidth - 50}px] h-[230px] px-[20px]`}>
+        <View style={tw`w-[${windowWidth - 50}px] h-[230px] pl-[15px]`}>
             <View style={tw`w-full h-full bg-[#F0F0F0] rounded-2xl p-[15px] gap-[15px] flex flex-row items-center`}>
                 <View style={tw`flex-1`}>
                     <Text style={tw`font-semibold`}>{headline}</Text>
