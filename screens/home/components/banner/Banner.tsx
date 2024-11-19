@@ -18,7 +18,7 @@ import BannerLoader from "./BannerLoader";
 import BannerCard from "./BannerCard";
 
 const { width: windowWidth } = Dimensions.get("window");
-const ITEM_WIDTH = windowWidth; // Width of each item, adjust this to your needs
+const ITEM_WIDTH = windowWidth - 50; // Width of each item, adjust this to your needs
 const CENTER_OFFSET = (windowWidth - ITEM_WIDTH) / 2;
 
 type BannerItemProps = {
