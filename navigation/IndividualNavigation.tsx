@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import React from "react";
 import { screenName } from "constants/screenNames.constants";
 import { Feather } from "@expo/vector-icons";
@@ -65,6 +71,7 @@ export default function IndividualNavigation() {
   };
 
   const IndividualTabNavigationScreens = () => {
+    const { width, height } = useWindowDimensions();
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -91,18 +98,17 @@ export default function IndividualNavigation() {
               />
             );
           },
-          tabBarLabel: () => null,
-          tabBarActiveTintColor: colors.white,
+          tabBarShowLabel: false,
           headerShown: false,
           tabBarInactiveTintColor: "gray",
           tabBarStyle: {
+            height: 82,
             backgroundColor: colors.black,
-            paddingBottom: 10,
-            paddingTop: 0,
-            height: 70,
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
+            bottom: 30,
+            borderRadius: 18,
+            marginHorizontal: width / 18,
+            position: "absolute",
+            paddingTop: Platform.OS === "ios" ? 25 : 0,
           },
         })}
       >
@@ -172,16 +178,3 @@ export default function IndividualNavigation() {
     </Stack.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  iconContainer: {
-    borderRadius: 30,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconContainerActive: {
-    backgroundColor: colors.primary_black,
-  },
-});
