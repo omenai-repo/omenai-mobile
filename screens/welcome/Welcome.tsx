@@ -1,6 +1,5 @@
 import {
   Image,
-  StyleSheet,
   Text,
   View,
   Platform,
@@ -89,7 +88,7 @@ export default function Welcome() {
             style={{
               width: width / 2.1,
               height: 274,
-              marginTop: Platform.OS === "ios" ? 45 : -40,
+              marginTop: Platform.OS === "ios" ? 35 : -40,
             }}
             resizeMode="contain"
           />
