@@ -68,7 +68,7 @@ export default function ArtworkCard({
       setImageDimensions({ height, width });
       // setRenderDynamicImage(true);
     });
-  }, [image_href, screenWidth]);
+  }, [image_href]);
 
   return (
     // <TouchableOpacity
