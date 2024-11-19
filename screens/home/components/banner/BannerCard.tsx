@@ -53,11 +53,3 @@ export default function BannerCard({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 250,
-    flexDirection: "row",
-    width: windowWidth,
-  },
-});
