@@ -47,7 +47,8 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/nunito-sans.ttf"
+            "./assets/fonts/nunito-sans.ttf",
+            "./assets/fonts/DMSans.ttf"
           ]
         }
       ],

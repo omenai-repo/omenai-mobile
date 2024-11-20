@@ -11,6 +11,7 @@ import { Feather } from "@expo/vector-icons";
 import { screenName } from "constants/screenNames.constants";
 import ViewAllCategoriesButton from "components/buttons/ViewAllCategoriesButton";
 import EmptyArtworks from "components/general/EmptyArtworks";
+import { fontNames } from "constants/fontNames.constants";
 
 export default function NewArtworksListing({
   refreshCount,
@@ -63,7 +64,7 @@ export default function NewArtworksListing({
             paddingHorizontal: 20,
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: 500, flex: 1 }}>
+          <Text style={{ fontSize: 18, fontWeight: 500, flex: 1, fontFamily: fontNames.dmSans + 'Medium' }}>
             New artworks for you
           </Text>
           <Feather name="chevron-right" color={colors.grey} size={20} />
