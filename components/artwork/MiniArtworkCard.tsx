@@ -134,7 +134,7 @@ export default function MiniArtworkCard({
     // </TouchableOpacity>
     <TouchableOpacity
       activeOpacity={1}
-      style={tw`w-full bg-[#E7D9D9] rounded-2xl px-[10px] py-[10px] pb-[20px]`}
+      style={tw`w-full bg-[#F0F0F0] rounded-2xl px-[10px] py-[10px] pb-[20px]`}
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
       <View style={tw`rounded-[10px] overflow-hidden relative`}>
@@ -185,7 +185,7 @@ export default function MiniArtworkCard({
       </View>
       <View style={tw`mt-3`}>
         <Text style={tw`text-sm text-black/70`}>{title}</Text>
-        <Text style={tw`text-sm text-black/70`}>by {artist}</Text>
+        <Text style={tw`text-sm text-black/70`}>{artist}</Text>
         <Text style={tw`text-base font-bold text-black/90`}>
           {showPrice ? utils_formatPrice(price) : "Price on request"}
         </Text>

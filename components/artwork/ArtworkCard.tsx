@@ -17,6 +17,7 @@ import { utils_formatPrice } from "utils/utils_priceFormatter";
 import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
+import { fontNames } from "constants/fontNames.constants";
 
 type ArtworkCardType = {
   title: string;
@@ -169,7 +170,7 @@ export default function ArtworkCard({
       <TouchableOpacity
         activeOpacity={1}
         style={[
-          tw`ml-[20px] bg-[#E7D9D9] p-[15px] rounded-2xl`,
+          tw`ml-[20px] bg-[#F0F0F0] p-[15px] rounded-2xl`,
           width > 0 && { width: width },
         ]}
         onPress={() => {
@@ -204,11 +205,13 @@ export default function ArtworkCard({
             )}
           </View>
         </View>
-        <View style={tw`mt-[15px]`}>
-          <Text style={tw`text-base text-black/70`}>{title}</Text>
-          <Text style={tw`text-base font-bold text-black/90`}>
-            {showPrice ? utils_formatPrice(price) : "Price on request"}
-          </Text>
+      <View style={tw`mt-[15px]`}>
+        <View style={tw`flex-wrap w-[${imageDimensions.width}px]`}>
+          <Text style={[tw`text-base text-black/70 w-full`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{title}</Text>
+          <Text style={[tw`text-base text-black/70 w-full`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{artist}</Text>
+        </View>
+        <View style={tw`flex flex-row items-center gap-2`}>
+          <Text style={[tw`text-base font-bold text-black/90 flex-1`, {fontFamily: fontNames.dmSans + 'Bold'}]}>{showPrice ? utils_formatPrice(price) : "Price on request"}</Text>
           <View style={tw`flex-wrap`}>
             <TouchableOpacity
               style={tw`bg-black rounded-full px-5 py-2 w-fit mt-2`}
@@ -219,9 +222,10 @@ export default function ArtworkCard({
               }
               activeOpacity={1}
             >
-              <Text style={tw`text-white text-sm`}>Purchase</Text>
+              <Text style={[tw`text-white text-sm`, {fontFamily: fontNames.dmSans + 'Medium'}]}>Purchase</Text>
             </TouchableOpacity>
           </View>
+        </View>
         </View>
       </TouchableOpacity>
     </View>

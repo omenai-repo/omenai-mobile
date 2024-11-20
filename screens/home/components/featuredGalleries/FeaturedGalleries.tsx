@@ -9,6 +9,7 @@ import gallery_one from "../../../../assets/images/gallery_one.png";
 import gallery_two from "../../../../assets/images/gallery_two.png";
 import gallery_three from "../../../../assets/images/gallery_three.jpg";
 import gallery_four from "../../../../assets/images/gallery_four.jpg";
+import { fontNames } from "constants/fontNames.constants";
 
 const data = [
   {
@@ -48,7 +49,7 @@ export default function FeaturedGalleries() {
           <Text style={{ fontSize: 14, color: colors.primary_black }}>
             {name}
           </Text>
-          <Text style={{ fontSize: 12, marginTop: 5, color: "#858585" }}>
+          <Text style={{ fontSize: 12, marginTop: 5, color: "#858585", fontFamily: fontNames.dmSans + 'Regular' }}>
             {location}
           </Text>
         </View>

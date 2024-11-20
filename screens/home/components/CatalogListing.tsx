@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { screenName } from "constants/screenNames.constants";
 import { colors } from "config/colors.config";
 import { Feather } from "@expo/vector-icons";
+import { fontNames } from "constants/fontNames.constants";
 
 export default function CatalogListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -49,7 +50,7 @@ export default function CatalogListing() {
             paddingHorizontal: 20,
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: 500, flex: 1 }}>
+          <Text style={{ fontSize: 18, fontWeight: 500, flex: 1, fontFamily: fontNames.dmSans + 'Medium' }}>
             Art Collections
           </Text>
           <Feather name="chevron-right" color={colors.grey} size={20} />

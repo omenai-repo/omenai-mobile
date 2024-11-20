@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { screenName } from "constants/screenNames.constants";
 import ViewAllCategoriesButton from "components/buttons/ViewAllCategoriesButton";
 import EmptyArtworks from "components/general/EmptyArtworks";
+import { fontNames } from "constants/fontNames.constants";
 
 export default function TrendingArtworks({
   refreshCount,
@@ -66,7 +67,7 @@ export default function TrendingArtworks({
             paddingHorizontal: 20,
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: 500, flex: 1 }}>
+          <Text style={{ fontSize: 18, fontWeight: 500, flex: 1, fontFamily: fontNames.dmSans + 'Medium' }}>
             Trending Artworks
           </Text>
           <Feather name="chevron-right" color={colors.grey} size={20} />
