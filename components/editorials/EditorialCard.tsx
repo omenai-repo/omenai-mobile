@@ -9,6 +9,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { screenName } from 'constants/screenNames.constants'
 import { useModalStore } from 'store/modal/modalStore'
+import { fontNames } from 'constants/fontNames.constants'
 
 export type EditorialCardProps = {
     url: string,
@@ -37,9 +38,9 @@ export default function EditorialCard({url, link, articleHeader, date, minutes, 
                     <Image source={{uri: image_href}} style={styles.image} />
                     <View>
                         <View style={styles.cardDetails}>
-                            <Text style={{fontSize: 12, color: '#616161'}}>{minutes} Minutes read</Text>
+                            <Text style={{fontSize: 12, color: '#616161', fontFamily: fontNames.dmSans + 'Regular'}}>{minutes} Minutes read</Text>
                         </View>
-                        <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 15, fontWeight: 400}}>{articleHeader}</Text>
+                        <Text style={{fontSize: 14, color: colors.primary_black, marginTop: 15, fontWeight: 400, fontFamily: fontNames.dmSans + 'Medium'}}>{articleHeader}</Text>
                         {/* <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize: 14, marginTop: 10, color: '#616161'}}>This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post. This is body content for the blog post.</Text> */}
                     </View>
                 </View>
