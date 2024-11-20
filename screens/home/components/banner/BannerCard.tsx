@@ -7,16 +7,22 @@ import { getPromotionalFileView } from 'lib/storage/getPromotionalsFileView';
 import { fontNames } from 'constants/fontNames.constants';
 
 type BannerItemProps = {
-    image?: string;
-    headline: string;
-    subheadline: string;
-    cta: string;
-    handleClick: (url: string) => void
+  image?: string;
+  headline: string;
+  subheadline: string;
+  cta: string;
+  handleClick: (url: string) => void;
 };
 
 const { width: windowWidth } = Dimensions.get("window");
 
-export default function BannerCard({image, headline, subheadline, cta, handleClick} : BannerItemProps) {
+export default function BannerCard({
+  image,
+  headline,
+  subheadline,
+  cta,
+  handleClick,
+}: BannerItemProps) {
 
     const image_href = getPromotionalFileView(image, 500);
 
@@ -45,13 +51,5 @@ export default function BannerCard({image, headline, subheadline, cta, handleCli
                 </View>
             </View>
         </View>
-    )
+  );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        height: 250,
-        flexDirection: "row",
-        width: windowWidth,
-    },
-})

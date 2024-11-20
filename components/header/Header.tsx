@@ -1,13 +1,8 @@
-import { Image, StyleSheet, View, SafeAreaView, Text } from 'react-native'
-import React from 'react'
-import { colors } from '../../config/colors.config'
+import { Image, StyleSheet, View, SafeAreaView, Text } from "react-native";
+import React from "react";
+import { colors } from "../../config/colors.config";
 
 import omenaiLogo from '../../assets/omenai-logo.png';
-import { Feather } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
 import tailwind from 'twrnc';
 import { fontNames } from 'constants/fontNames.constants';
 
@@ -29,11 +24,11 @@ export default function Header({showNotification}: {showNotification?: boolean})
 }
 
 const styles = StyleSheet.create({
-    mainContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        alignSelf: 'center',
-        gap: 20
-    }
-})
+  mainContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    alignSelf: "center",
+    gap: 20,
+  },
+});

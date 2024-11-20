@@ -1,26 +1,27 @@
 import {
   Image,
-  StyleSheet,
   Text,
   View,
   Platform,
   useWindowDimensions,
+  Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
 import omenai_logo from "../../assets/omenai-logo.png";
-import welcome_banner from "../../assets/images/welcome-banner.png";
+import onboarding1 from "../../assets/images/onboarding1.jpg";
+import onboarding2 from "../../assets/images/onboarding2.jpg";
+import onboarding3 from "../../assets/images/onboarding3.jpg";
+import onboarding4 from "../../assets/images/onboarding4.jpg";
+import onboarding5 from "../../assets/images/onboarding5.jpg";
+import onboarding6 from "../../assets/images/onboarding6.jpg";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { colors } from "../../config/colors.config";
-import LongBlackButton from "../../components/buttons/LongBlackButton";
-import LongWhiteButton from "../../components/buttons/LongWhiteButton";
 import { screenName } from "../../constants/screenNames.constants";
 import { onboardingdata } from "constants/onBoardingData.constants";
 import OnBoardingSection from "./components/OnBoardingSection";
 import { utils_storeAsyncData } from "utils/utils_asyncStorage";
 import { utils_determineOnboardingPages } from "utils/utils_determineOnboardingPages";
-import ScrollWrapper from "components/general/ScrollWrapper";
 import tw from "twrnc";
 
 export default function Welcome() {
@@ -60,77 +61,138 @@ export default function Welcome() {
     );
 
   return (
-    <View style={tw`flex-1 bg-[#ffff]`}>
-      <ScrollWrapper
-        showsVerticalScrollIndicator={false}
-        style={styles.container}
-      >
-        <View
-          style={{
-            marginTop: Platform.OS === "android" ? height / 13 : height / 10,
-          }}
-        >
-          <Image
-            source={omenai_logo}
-            style={{
-              width: width / 3,
-              height: height / 40,
-              alignSelf: "center",
-            }}
-          />
-          <Image
-            source={welcome_banner}
-            style={{
-              width: width / 1.13,
-              height: height / 2.8,
-              alignSelf: "center",
-              marginTop: height / 45,
-            }}
-          />
-          <Text style={styles.largeText}>
-            Get the best art deals anywhere, any time
-          </Text>
-        </View>
-        <View style={{ flex: 1, paddingTop: 50, marginHorizontal: 20 }}>
-          <View style={styles.buttonContainer}>
-            <LongBlackButton
-              value="Log In"
-              onClick={() => handleNavigation(screenName.login)}
-              isDisabled={false}
+    <View style={tw`flex-1 bg-[#FFFFFF]`}>
+      <View>
+        <View style={tw`flex-row justify-between`}>
+          <View style={tw`mt-[70px] android:mt-[20px]`}>
+            <Image
+              source={omenai_logo}
+              style={{
+                width: width / 3,
+                height: height / 40,
+                alignSelf: "center",
+                marginBottom: Platform.OS === "ios" ? 25 : 20,
+              }}
             />
-            <LongWhiteButton
-              value="Sign Up"
-              onClick={() => handleNavigation(screenName.register)}
+            <Image
+              source={onboarding2}
+              style={{
+                width: width / 2.1,
+                height: Platform.OS === "ios" ? 190 : 160,
+              }}
+              resizeMode="contain"
+            />
+          </View>
+          <Image
+            source={onboarding1}
+            style={{
+              width: width / 2.1,
+              height: 274,
+              marginTop: Platform.OS === "ios" ? 35 : -40,
+            }}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={tw`flex-row justify-between`}>
+          <View>
+            <Image
+              source={onboarding3}
+              style={{
+                width: width / 2.14,
+                height: Platform.OS === "ios" ? 190 : 160,
+                marginTop: Platform.OS === "ios" ? 20 : 10,
+              }}
+              resizeMode="contain"
+            />
+            <Image
+              source={onboarding5}
+              style={{
+                width: width / 3.2,
+                height: Platform.OS === "ios" ? 190 : 160,
+                marginTop: 20,
+              }}
+              resizeMode="contain"
+            />
+          </View>
+          <View>
+            <Image
+              source={onboarding4}
+              style={{
+                width: width / 2.14,
+                height: Platform.OS === "ios" ? 274 : 220,
+              }}
+              resizeMode="contain"
+            />
+            <Image
+              source={onboarding6}
+              style={{
+                width: width / 2.14,
+                height: Platform.OS === "ios" ? 190 : 140,
+                marginTop: Platform.OS === "ios" ? 0 : 20,
+              }}
+              resizeMode="contain"
             />
           </View>
         </View>
-      </ScrollWrapper>
+      </View>
+      <View
+        style={tw.style(`bg-[#1A1A1A] rounded-[20px]`, {
+          position: "absolute",
+          bottom: Platform.OS === "ios" ? 40 : 20,
+          left: 10,
+          right: 10,
+        })}
+      >
+        <Text
+          style={tw.style(
+            `text-[32px] text-[#FFFFFF] font-medium text-center`,
+            {
+              paddingHorizontal: Platform.OS === "ios" ? width / 8 : width / 10,
+              paddingTop: Platform.OS === "ios" ? height / 15 : height / 20,
+            }
+          )}
+        >
+          Find every artwork you desire here
+        </Text>
+
+        <Text
+          style={tw.style(`text-[15px] text-[#FFFFFFB2] text-center pt-[25px]`)}
+        >
+          Buy, Trade, Discover
+        </Text>
+        <Text
+          style={tw.style(`text-[15px] text-[#FFFFFFB2] text-center px-[10px]`)}
+        >
+          and experience art like the louvre with a single tap.
+        </Text>
+
+        <Pressable
+          style={tw.style(
+            `rounded-[100px] bg-[#FFFFFF] h-[56px] justify-center items-center self-center`,
+            {
+              width: width / 1.2,
+              marginTop: height / 20,
+            }
+          )}
+          onPress={() => handleNavigation(screenName.login)}
+        >
+          <Text style={tw`text-[#000000] text-[16px]`}>Log In</Text>
+        </Pressable>
+
+        <Pressable
+          style={tw.style(
+            `rounded-[100px] border-[2px] border-[#FFFFFF] h-[56px] justify-center items-center self-center`,
+            {
+              width: width / 1.2,
+              marginTop: height / 35,
+              marginBottom: height / 15,
+            }
+          )}
+          onPress={() => handleNavigation(screenName.register)}
+        >
+          <Text style={tw`text-[#FFFFFF] text-[16px]`}>Sign Up</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingBottom: 50,
-  },
-  welcomeBanner: {
-    width: "100%",
-    objectFit: "contain",
-    height: 350,
-    marginTop: 10,
-  },
-  largeText: {
-    fontSize: 38,
-    fontWeight: "500",
-    lineHeight: 54,
-    paddingHorizontal: 20,
-  },
-  buttonContainer: {
-    // marginTop: 50,
-    gap: 15,
-  },
-  logo: {
-    // width: 150,
-  },
-});
