@@ -18,6 +18,7 @@ import { screenName } from "constants/screenNames.constants";
 import EmptyArtworks from "components/general/EmptyArtworks";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
+import { fontNames } from "constants/fontNames.constants";
 
 export default function CuratedArtworksListing({
   refreshCount,
@@ -77,6 +78,7 @@ export default function CuratedArtworksListing({
               fontWeight: 500,
               flex: 1,
               color: colors.white,
+              fontFamily: fontNames.dmSans + 'Medium'
             }}
           >
             Artworks based on your interests
@@ -87,6 +89,7 @@ export default function CuratedArtworksListing({
               color: colors.white,
               marginTop: 10,
               opacity: 0.9,
+              fontFamily: fontNames.dmSans + 'Regular'
             }}
           >
             Explore artworks based off your interests and interactions within

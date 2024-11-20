@@ -15,6 +15,7 @@ import EditorialCard, {
 import Loader from "components/general/Loader";
 import { listEditorials } from "lib/editorial/lib/getAllBlogArticles";
 import ArtworkCardLoader from "components/general/ArtworkCardLoader";
+import { fontNames } from "constants/fontNames.constants";
 
 const data = [
   {
@@ -80,7 +81,7 @@ export default function Editorials() {
           paddingHorizontal: 20,
         }}
       >
-        <Text style={{ fontSize: 18, fontWeight: 500, flex: 1 }}>
+        <Text style={{ fontSize: 18, fontWeight: 500, flex: 1, fontFamily: fontNames.dmSans + 'Medium' }}>
           Editorials
         </Text>
         {/* <Feather name='chevron-right' color={colors.grey} size={20} /> */}

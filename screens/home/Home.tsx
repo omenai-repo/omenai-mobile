@@ -4,6 +4,7 @@ import {
   RefreshControl,
   Platform,
   StatusBar,
+  View,
 } from "react-native";
 import React, { useState } from "react";
 import Header from "../../components/header/Header";
@@ -45,6 +46,7 @@ export default function Home() {
           <CatalogListing />
           <Editorials />
           <RecentlyViewedArtworks refreshCount={refreshCount} />
+          <View style={{height: 70}} />
         </ScrollWrapper>
       </SafeAreaView>
     </WithModal>
