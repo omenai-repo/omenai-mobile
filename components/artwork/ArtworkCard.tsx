@@ -170,7 +170,7 @@ export default function ArtworkCard({
       <TouchableOpacity
         activeOpacity={1}
         style={[
-          tw`ml-[20px] bg-[#E7D9D9] p-[15px] rounded-2xl`,
+          tw`ml-[20px] bg-[#F0F0F0] p-[15px] rounded-2xl`,
           width > 0 && { width: width },
         ]}
         onPress={() => {
