@@ -4,7 +4,7 @@ import { colors } from "../../config/colors.config";
 
 import omenaiLogo from '../../assets/omenai-logo.png';
 import tailwind from 'twrnc';
-import { fontNames } from 'constants/fontNames.constants';
+import { fontNames } from '../../constants/fontNames.constants';
 
 export default function Header({showNotification}: {showNotification?: boolean}) {
     

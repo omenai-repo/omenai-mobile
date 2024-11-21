@@ -112,7 +112,7 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
       <View
         style={{
           // backgroundColor: colors.primary_black,
-          marginTop: 40,
+          marginTop: 20,
         }}
       >
         {loading && data.length === 0 && <BannerLoader />}

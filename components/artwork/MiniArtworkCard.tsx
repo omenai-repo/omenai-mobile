@@ -18,6 +18,7 @@ import { utils_formatPrice } from "utils/utils_priceFormatter";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
 import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
+import { fontNames } from "constants/fontNames.constants";
 
 type MiniArtworkCardType = {
   title: string;
@@ -167,7 +168,7 @@ export default function MiniArtworkCard({
           </View>
         )}
         <View
-          style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-start p-2`}
+          style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end p-2`}
         >
           {galleryView && (
             <View
@@ -184,9 +185,9 @@ export default function MiniArtworkCard({
         </View>
       </View>
       <View style={tw`mt-3`}>
-        <Text style={tw`text-sm text-black/70`}>{title}</Text>
-        <Text style={tw`text-sm text-black/70`}>{artist}</Text>
-        <Text style={tw`text-base font-bold text-black/90`}>
+        <Text style={[tw`text-base font-medium text-black/90`, {fontFamily: fontNames.dmSans + 'Medium'}]}>{title}</Text>
+        <Text style={[tw`text-sm text-black/70 my-1`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{artist}</Text>
+        <Text style={[tw`text-base font-bold text-black/90`, {fontFamily: fontNames.dmSans + 'Bold'}]}>
           {showPrice ? utils_formatPrice(price) : "Price on request"}
         </Text>
         <View style={tw`flex-wrap`}>
