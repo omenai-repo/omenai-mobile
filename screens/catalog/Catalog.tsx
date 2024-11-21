@@ -102,7 +102,7 @@ export default function Catalog() {
 
   return (
     <WithModal>
-      <SafeAreaView style={styles.safeArea}>
+      {/* <SafeAreaView style={styles.safeArea}> */}
         <View style={styles.mainContainer}>
           <View style={{ zIndex: 100, paddingHorizontal: 10 }}>
             <FilterButton>
@@ -134,7 +134,7 @@ export default function Catalog() {
             )}
           </View>
         </View>
-      </SafeAreaView>
+      {/* </SafeAreaView> */}
     </WithModal>
   );
 }
