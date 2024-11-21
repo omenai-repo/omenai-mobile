@@ -30,7 +30,7 @@ export default function Home() {
 
   return (
     <WithModal>
-      <SafeAreaView style={styles.safeArea}>
+      {/* <SafeAreaView style={styles.safeArea}> */}
         <ScrollWrapper
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -46,9 +46,9 @@ export default function Home() {
           <CatalogListing />
           <Editorials />
           <RecentlyViewedArtworks refreshCount={refreshCount} />
-          <View style={{height: 70}} />
+          <View style={{height: 100}} />
         </ScrollWrapper>
-      </SafeAreaView>
+      {/* </SafeAreaView> */}
     </WithModal>
   );
 }
