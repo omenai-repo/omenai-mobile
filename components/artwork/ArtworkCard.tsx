@@ -208,14 +208,14 @@ export default function ArtworkCard({
         </View>
       <View style={tw`mt-[15px]`}>
         <View style={tw`flex-wrap w-[${imageDimensions.width}px]`}>
-          <Text style={[tw`text-base text-black/90 font-medium w-full`, {fontFamily: fontNames.dmSans + 'Medium'}]}>{title}</Text>
-          <Text style={[tw`text-sm text-black/70 w-full`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{artist}</Text>
+          <Text style={[tw`text-base ${lightText ? 'text-white/90' : 'text-black/90'} font-medium w-full`, {fontFamily: fontNames.dmSans + 'Medium'}]}>{title}</Text>
+          <Text style={[tw`text-sm ${lightText ? 'text-white/80' : 'text-black/70'} w-full`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{artist}</Text>
         </View>
         <View style={tw`flex flex-row items-center gap-2`}>
-          <Text style={[tw`text-base font-bold text-black/90 flex-1`, {fontFamily: fontNames.dmSans + 'Bold'}]}>{showPrice ? utils_formatPrice(price) : "Price on request"}</Text>
+          <Text style={[tw`text-base font-bold ${lightText ? 'text-white/90' : 'text-black/90'} flex-1`, {fontFamily: fontNames.dmSans + 'Bold'}]}>{showPrice ? utils_formatPrice(price) : "Price on request"}</Text>
           <View style={tw`flex-wrap`}>
             <TouchableOpacity
-              style={tw`bg-black rounded-full px-5 py-1 w-fit mt-2`}
+              style={tw`${lightText ? 'bg-white' : 'bg-black'} rounded-full px-5 py-2 w-fit mt-2`}
               onPress={() =>
                 navigation.push(screenName.purchaseArtwork, {
                   title,
@@ -223,7 +223,7 @@ export default function ArtworkCard({
               }
               activeOpacity={1}
             >
-              <Text style={[tw`text-white text-sm`, {fontFamily: fontNames.dmSans + 'Medium'}]}>Purchase</Text>
+              <Text style={[tw`${lightText ? 'text-black' : 'text-white'} text-sm`, {fontFamily: fontNames.dmSans + 'Medium'}]}>Purchase</Text>
             </TouchableOpacity>
           </View>
         </View>
