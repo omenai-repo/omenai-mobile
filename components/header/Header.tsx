@@ -30,5 +30,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: "center",
     gap: 20,
+    paddingTop: 10,
+    marginTop: 5
   },
 });

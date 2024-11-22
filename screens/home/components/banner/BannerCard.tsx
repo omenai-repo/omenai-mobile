@@ -27,7 +27,6 @@ export default function BannerCard({
     const image_href = getPromotionalFileView(image, 500);
 
     return (
-        // <View>
         <View style={tw`w-[${windowWidth - 50}px] pl-[15px]`}>
             <View style={tw`w-full h-full bg-[#1a1a1a] rounded-2xl p-[15px] gap-[15px] flex flex-row flex-1`}>
                 <View style={tw`flex-1`}>
@@ -43,7 +42,7 @@ export default function BannerCard({
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={tw`flex-1 max-h-[190px] bg-[#ddd] rounded overflow-hidden`}>
+                <View style={tw`flex-1 max-h-[150px] bg-[#ddd] rounded overflow-hidden`}>
                     <Image
                         source={{uri: image_href}}
                         style={tw`w-full h-full`}
