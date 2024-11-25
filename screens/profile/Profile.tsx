@@ -20,6 +20,13 @@ import { logout } from "utils/logout.utils";
 import { PageButtonCard } from "components/buttons/PageButtonCard";
 import WithModal from "components/modal/WithModal";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import tw from "twrnc";
+import {
+  changePasswsordIcon,
+  orderHistoryIcon,
+  savedArtworksIcon,
+} from "utils/SvgImages";
+import LongBlackButton from "components/buttons/LongBlackButton";
 
 type userDataType = {
   name: string;
@@ -56,51 +63,50 @@ export default function Profile() {
 
   return (
     <WithModal>
-      {/* <SafeAreaView style={styles.safeArea}> */}
-        <View style={styles.profileContainer}>
-          <Image source={omenaiAvatar} style={styles.image} />
-          <View>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                color: colors.primary_black,
-              }}
-            >
-              {userData.name}
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                marginTop: 5,
-                marginBottom: 20,
-                color: "#858585",
-              }}
-            >
-              {userData.email}
-            </Text>
-            <FittedBlackButton
-              value="Edit profile"
-              isDisabled={false}
-              onClick={() => navigation.navigate(screenName.editProfile)}
-            />
-          </View>
+      <View style={styles.profileContainer}>
+        <Image source={omenaiAvatar} style={styles.image} />
+        <View>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "500",
+              color: colors.primary_black,
+            }}
+          >
+            {userData.name}
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              marginTop: 5,
+              marginBottom: 20,
+              color: "#00000099",
+            }}
+          >
+            {userData.email}
+          </Text>
+          <FittedBlackButton
+            value="Edit profile"
+            isDisabled={false}
+            onClick={() => navigation.navigate(screenName.editProfile)}
+          />
         </View>
+      </View>
       {/* </SafeAreaView> */}
       <ScrollWrapper style={styles.container}>
-        <View style={styles.buttonsContainer}>
+        <View style={tw`gap-[20px] pt-[40px]`}>
           <PageButtonCard
             name="Saved artworks"
             subText="See all your saved artworks"
             handlePress={() => navigation.navigate(screenName.savedArtworks)}
+            svgIcon={savedArtworksIcon}
           />
-          <Divider />
           <PageButtonCard
             name="Order history"
             subText="A summary of all your orders"
             handlePress={() => navigation.navigate(screenName.orders)}
+            svgIcon={orderHistoryIcon}
           />
-          <Divider />
           <PageButtonCard
             name="Change password"
             subText="Change the password to your account"
@@ -109,9 +115,10 @@ export default function Profile() {
                 routeName: "individual",
               })
             }
+            svgIcon={changePasswsordIcon}
           />
-          <Divider />
-          <PageButtonCard name="Log Out" logout handlePress={logout} />
+          <View style={tw`mt-[20px]`} />
+          <LongBlackButton value="Log Out" onClick={logout} />
         </View>
       </ScrollWrapper>
     </WithModal>
@@ -131,11 +138,11 @@ const styles = StyleSheet.create({
     gap: 20,
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: Platform.OS === "ios" ? 90 : 100,
   },
   image: {
-    height: 100,
-    width: 100,
+    height: 132,
+    width: 132,
   },
   buttonsContainer: {
     marginTop: 10,
