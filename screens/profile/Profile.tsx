@@ -56,7 +56,7 @@ export default function Profile() {
 
   return (
     <WithModal>
-      <SafeAreaView style={styles.safeArea}>
+      {/* <SafeAreaView style={styles.safeArea}> */}
         <View style={styles.profileContainer}>
           <Image source={omenaiAvatar} style={styles.image} />
           <View>
@@ -86,7 +86,7 @@ export default function Profile() {
             />
           </View>
         </View>
-      </SafeAreaView>
+      {/* </SafeAreaView> */}
       <ScrollWrapper style={styles.container}>
         <View style={styles.buttonsContainer}>
           <PageButtonCard
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     gap: 20,
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 40,
   },
   image: {
     height: 100,

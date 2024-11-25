@@ -4,7 +4,7 @@ import { colors } from "../../config/colors.config";
 
 import omenaiLogo from '../../assets/omenai-logo.png';
 import tailwind from 'twrnc';
-import { fontNames } from 'constants/fontNames.constants';
+import { fontNames } from '../../constants/fontNames.constants';
 
 export default function Header({showNotification}: {showNotification?: boolean}) {
     
@@ -30,5 +30,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: "center",
     gap: 20,
+    paddingTop: 10,
+    marginTop: 5
   },
 });
