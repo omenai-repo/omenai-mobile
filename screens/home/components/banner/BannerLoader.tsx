@@ -22,7 +22,7 @@ export default function BannerLoader() {
 
 const styles = StyleSheet.create({
     container: {
-        height: 250,
+        height: 200,
         flexDirection: 'row',
         padding: 20
     },
