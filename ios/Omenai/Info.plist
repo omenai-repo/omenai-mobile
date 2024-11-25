@@ -58,6 +58,7 @@
     <key>UIAppFonts</key>
     <array>
       <string>nunito-sans.ttf</string>
+      <string>DMSans.ttf</string>
     </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
