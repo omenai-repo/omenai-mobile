@@ -16,6 +16,7 @@
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		FB9A0C937FA94EE783DCD99C /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AAFE54F48294D529F9CC1FF /* noop-file.swift */; };
 		491B195D8F3540A99E54C302 /* nunito-sans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E10E61A8328548C5830EB2D6 /* nunito-sans.ttf */; };
+		B084B75D54B34BDEB3160E0A /* DMSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 905AFB8809724BD5BFCD86AB /* DMSans.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		5AAFE54F48294D529F9CC1FF /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "Omenai/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
 		7BFD7A4ADE434829952CA463 /* Omenai-Bridging-Header.h */ = {isa = PBXFileReference; name = "Omenai-Bridging-Header.h"; path = "Omenai/Omenai-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 		E10E61A8328548C5830EB2D6 /* nunito-sans.ttf */ = {isa = PBXFileReference; name = "nunito-sans.ttf"; path = "../assets/fonts/nunito-sans.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		905AFB8809724BD5BFCD86AB /* DMSans.ttf */ = {isa = PBXFileReference; name = "DMSans.ttf"; path = "../assets/fonts/DMSans.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 			isa = "PBXGroup";
 			children = (
 				E10E61A8328548C5830EB2D6 /* nunito-sans.ttf */,
+				905AFB8809724BD5BFCD86AB /* DMSans.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -212,6 +215,7 @@
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				2879F8685AD547C983613BDF /* Omenai-Bridging-Header.h in Resources */,
 				491B195D8F3540A99E54C302 /* nunito-sans.ttf in Resources */,
+				B084B75D54B34BDEB3160E0A /* DMSans.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
