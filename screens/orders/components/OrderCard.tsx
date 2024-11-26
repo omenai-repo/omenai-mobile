@@ -33,7 +33,7 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
     return (
         <View style={{paddingVertical: 10, gap: 15}}>
             <View style={styles.listItem}>
-                <Image source={{uri: image_href}} style={{width: 100, backgroundColor: '#f5f5f5', borderRadius: 3}} resizeMode="contain" />
+                <Image source={{uri: image_href}} style={{width: 100, backgroundColor: '#f5f5f5', borderRadius: 5}} resizeMode="contain" />
                 <View style={styles.listItemDetails}>
                     <Text style={styles.orderItemTitle}>{artworkName}</Text>
                     

@@ -178,14 +178,15 @@ export default function ArtworkCard({
           navigation.push(screenName.artwork, { title: title });
         }}
       >
-        <View style={tw`rounded-lg overflow-hidden relative`}>
+        <View style={tw`rounded-[5px] overflow-hidden relative`}>
           <Image
             source={{ uri: image_href }}
             style={{
               // width: imageWidth,
               width: imageDimensions.width,
               height: imageDimensions.height,
-              objectFit: "cover",
+              objectFit: "contain",
+              borderRadius: 5
             }}
             resizeMode="contain"
           />
