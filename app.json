@@ -22,7 +22,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/omenai-logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.omenai.omenaimobile",
@@ -55,7 +55,19 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos to let you upload artworks."
+          "photosPermission": "Omenai app accesses your photos to let you upload artworks."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#ffffff",
+          "image": "./assets/omenai-logo.png",
+          "dark": {
+            "image": "./assets/omenai-logo.png",
+            "backgroundColor": "#1a1a1a"
+          },
+          "imageWidth": 200
         }
       ]
     ]
