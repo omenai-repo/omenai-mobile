@@ -33,6 +33,19 @@ import ArtworkCategories from "screens/artworkCategories/ArtworkCategories";
 import ArtworkCategoriesFilterModal from "screens/artworkCategories/components/filter/ArtworkCategoriesFilterModal";
 import Collections from "screens/collections/Collections";
 import ChangeGalleryPassword from "screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
+import { SvgXml } from "react-native-svg";
+import {
+  catalogueIcon,
+  catalogueIconFocused,
+  homeIcon,
+  homeIconFocused,
+  orderIcon,
+  orderIconFocused,
+  profileIcon,
+  profileIconFocused,
+  searchIcon,
+  searchIconFocused,
+} from "utils/SvgImages";
 
 type CustomTabBarIconProps = {
   name: any;
@@ -53,11 +66,7 @@ export default function IndividualNavigation() {
   }: CustomTabBarIconProps) => {
     return (
       <View style={{ alignItems: "center", gap: 5 }}>
-        <Feather
-          name={name}
-          size={focused ? 25 : 22}
-          color={focused ? colors.white : colors.grey}
-        />
+        <SvgXml xml={name} />
         <Text
           style={[
             { fontSize: 13, color: colors.grey },
@@ -79,15 +88,15 @@ export default function IndividualNavigation() {
             let iconName = "";
 
             if (route.name === screenName.home) {
-              iconName = "home";
+              iconName = !focused ? homeIconFocused : homeIcon;
             } else if (route.name === screenName.catalog) {
-              iconName = "bookmark";
+              iconName = !focused ? catalogueIconFocused : catalogueIcon;
             } else if (route.name === screenName.orders) {
-              iconName = "package";
+              iconName = !focused ? orderIconFocused : orderIcon;
             } else if (route.name === screenName.profile) {
-              iconName = "user";
+              iconName = !focused ? profileIconFocused : profileIcon;
             } else if (route.name === screenName.searchResults) {
-              iconName = "search";
+              iconName = !focused ? searchIconFocused : searchIcon;
             }
 
             return (
