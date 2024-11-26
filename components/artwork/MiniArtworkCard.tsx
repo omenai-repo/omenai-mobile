@@ -53,7 +53,7 @@ export default function MiniArtworkCard({
   const [renderDynamicImage, setRenderDynamicImage] = useState(false);
 
   let imageWidth = 0;
-  imageWidth = Math.round((screenWidth - 50) / 2); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
+  imageWidth = Math.round((screenWidth - 5) / 2); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
   const image_href = getImageFileView(url, imageWidth);
 
   useEffect(() => {
@@ -135,10 +135,10 @@ export default function MiniArtworkCard({
     // </TouchableOpacity>
     <TouchableOpacity
       activeOpacity={1}
-      style={tw`w-full bg-[#F0F0F0] rounded-2xl px-[10px] py-[10px] pb-[20px]`}
+      style={tw`w-full`}
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
-      <View style={tw`rounded-[10px] overflow-hidden relative`}>
+      <View style={tw`rounded-[5px] overflow-hidden relative`}>
         {renderDynamicImage ? (
           <Image
             source={{ uri: image_href }}
@@ -146,7 +146,7 @@ export default function MiniArtworkCard({
               width: imageDimensions.width - 20,
               height: imageDimensions.height,
               objectFit: "cover",
-              borderRadius: 10,
+              borderRadius: 5,
               overflow: "hidden",
             }}
             resizeMode="contain"
@@ -161,7 +161,7 @@ export default function MiniArtworkCard({
                 width: imageWidth,
                 height: 200,
                 objectFit: "contain",
-                borderRadius: 10,
+                borderRadius: 5,
               }}
               resizeMode="contain"
             />
@@ -190,7 +190,7 @@ export default function MiniArtworkCard({
         <Text style={[tw`text-base font-bold text-black/90`, {fontFamily: fontNames.dmSans + 'Bold'}]}>
           {showPrice ? utils_formatPrice(price) : "Price on request"}
         </Text>
-        <View style={tw`flex-wrap`}>
+        {/* <View style={tw`flex-wrap`}>
           <TouchableOpacity
             style={tw`bg-black rounded-full px-3 py-1 w-fit mt-2`}
             onPress={() =>
@@ -202,7 +202,7 @@ export default function MiniArtworkCard({
           >
             <Text style={tw`text-white text-sm font-medium`}>Purchase</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </TouchableOpacity>
   );
