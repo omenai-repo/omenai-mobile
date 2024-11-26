@@ -114,7 +114,6 @@ export default function Filter({ children }: FilterProps) {
             value={"Apply filters"}
             onClick={handleSubmitFilter}
             isLoading={isLoading}
-            radius={10}
           />
         </SafeAreaView>
       </View>
