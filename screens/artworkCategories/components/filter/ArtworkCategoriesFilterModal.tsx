@@ -101,7 +101,6 @@ export default function ArtworkCategoriesFilterModal() {
             value={"Apply filters"}
             onClick={handleSubmitFilter}
             isLoading={isLoading}
-            radius={10}
           />
         </SafeAreaView>
       </View>
