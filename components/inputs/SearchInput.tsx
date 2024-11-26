@@ -56,12 +56,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#FAFAFA',
         borderWidth: 1,
         borderColor: colors.inputBorder,
-        paddingHorizontal: 7,
+        paddingHorizontal: 10,
         paddingVertical: 7,
-        borderRadius: 5,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 15,
+        borderRadius: 30
     },
     input: {
         flex: 1,

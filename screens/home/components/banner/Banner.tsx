@@ -136,6 +136,7 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
             decelerationRate="fast"
             onScroll={onScroll}
             scrollEventThrottle={16}
+            contentContainerStyle={{paddingRight: 15}}
           />
         )}
       </View>

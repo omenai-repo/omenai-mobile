@@ -57,11 +57,6 @@ export default function CuratedArtworksListing({
   };
 
   return (
-    <ImageBackground
-      source={curatedBg}
-      resizeMode="cover"
-      style={styles.container}
-    >
       <View style={styles.mainContainer}>
         <TouchableOpacity
           activeOpacity={0.7}
@@ -96,7 +91,7 @@ export default function CuratedArtworksListing({
             the past days
           </Text>
         </TouchableOpacity>
-        <View style={{ marginTop: 10 }}>
+        <View style={{ marginTop: 20 }}>
           {isLoading && <ArtworkCardLoader />}
           {!isLoading && data.length > 0 && (
             <FlatList
@@ -149,7 +144,6 @@ export default function CuratedArtworksListing({
           )}
         </View>
       </View>
-    </ImageBackground>
   );
 }
 
@@ -161,7 +155,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     paddingBottom: 50,
     backgroundColor: colors.black,
-    marginTop: 80,
-    paddingTop: 20,
+    marginTop: 50,
+    paddingTop: 50,
   },
 });
