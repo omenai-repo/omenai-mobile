@@ -107,7 +107,6 @@ export default function ArtworkMediumFilterModal() {
             value={"Apply filters"}
             onClick={handleSubmitFilter}
             isLoading={isLoading}
-            radius={10}
           />
         </SafeAreaView>
       </View>

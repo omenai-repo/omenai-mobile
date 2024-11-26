@@ -9,7 +9,6 @@ type LongBlackButtonProps = {
   isDisabled?: boolean;
   onClick: () => void;
   isLoading?: boolean;
-  radius?: number;
   bgColor?: string;
 };
 
@@ -18,7 +17,6 @@ export default function LongBlackButton({
   onClick,
   isDisabled,
   isLoading,
-  radius = 0,
   bgColor,
 }: LongBlackButtonProps) {
   const animation = useRef(null);
@@ -45,11 +43,7 @@ export default function LongBlackButton({
   return (
     <TouchableOpacity
       activeOpacity={1}
-      style={[
-        styles.container,
-        radius > 0 && { borderRadius: radius },
-        bgColor ? { backgroundColor: bgColor } : null,
-      ]}
+      style={[styles.container, bgColor ? { backgroundColor: bgColor } : null]}
       onPress={onClick}
     >
       <Text style={styles.text}>{value}</Text>
