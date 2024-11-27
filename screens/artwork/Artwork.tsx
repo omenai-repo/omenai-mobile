@@ -1,7 +1,9 @@
 import {
   FlatList,
   Image,
+  Platform,
   Pressable,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -34,7 +36,8 @@ import { fetchArtworkByArtist } from "services/artworks/fetchArtworkByArtist";
 import tw from "twrnc";
 import ScrollWrapper from "components/general/ScrollWrapper";
 import { SvgXml } from "react-native-svg";
-import { licenseIcon } from "utils/SvgImages";
+import { backBtnArrow, licenseIcon } from "utils/SvgImages";
+import BackScreenButton from "components/buttons/BackScreenButton";
 
 export default function Artwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -156,245 +159,237 @@ export default function Artwork() {
 
   return (
     <WithModal>
-      <View style={{ flex: 1 }}>
-        <Header
-          art_id={data?.art_id}
-          isGallery={userType === "gallery"}
-          showMore={showMore}
-          setShowMore={setShowMore}
-        />
-
-        {!showMore ? (
-          <>
-            {isLoading && !data && <Loader />}
-            {data && (
-              <ScrollWrapper
-                style={styles.scrollContainer}
-                showsVerticalScrollIndicator={false}
-              >
-                <View style={{ paddingBottom: 20 }}>
-                  <View style={{ paddingHorizontal: 30, marginBottom: 100 }}>
-                    <Image
-                      source={{ uri: image_href }}
-                      style={{
-                        height: 388,
-                        aspectRatio: 1 / 1.2,
-                        resizeMode: "cover",
-                        alignSelf: "center",
-                        borderRadius: 10,
-                      }}
-                    />
-                    <View style={styles.artworkDetails}>
-                      <Text style={styles.artworkTitle}>{data?.title}</Text>
-                      <Text style={styles.artworkCreator}>{data?.artist}</Text>
-                      <Text style={styles.artworkTags}>
-                        {data?.medium} | {data?.rarity}
-                      </Text>
-                      <Text style={styles.priceTitle}>Price</Text>
-                      <Text
-                        style={[
-                          styles.price,
-                          data?.pricing.shouldShowPrice === "No" &&
-                            userType !== "gallery" && {
-                              fontSize: 16,
-                              color: colors.grey,
-                            },
-                        ]}
-                      >
-                        {data?.pricing.shouldShowPrice === "Yes" ||
-                        userType === "gallery"
-                          ? utils_formatPrice(Number(data?.pricing.usd_price))
-                          : "Price on request"}
-                      </Text>
-                      <ScrollWrapper
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                      >
-                        <View style={styles.tagsContainer}>
-                          {data?.certificate_of_authenticity === "Yes" && (
-                            <View style={styles.tagItem}>
-                              <SvgXml xml={licenseIcon} />
-                              <Text style={styles.tagItemText}>
-                                Certificate of authencity availiable
-                              </Text>
-                            </View>
-                          )}
-                          <View
-                            style={[
-                              styles.tagItem,
-                              { backgroundColor: "#e5f4ff" },
-                            ]}
-                          >
-                            <SimpleLineIcons name="frame" size={15} />
-                            <Text
-                              style={[styles.tagItemText, { color: "#30589f" }]}
-                            >
-                              {data?.framing === "Framed"
-                                ? "Frame Included"
-                                : "Artwork is not framed"}
+      {!showMore ? (
+        <View style={{ flex: 1 }}>
+          <Header art_id={data?.art_id} isGallery={userType === "gallery"} />
+          {isLoading && !data && <Loader />}
+          {data && (
+            <ScrollWrapper
+              style={styles.scrollContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={{ paddingBottom: 20 }}>
+                <View style={{ paddingHorizontal: 30, marginBottom: 100 }}>
+                  <Image
+                    source={{ uri: image_href }}
+                    style={{
+                      height: 388,
+                      aspectRatio: 1 / 1.2,
+                      resizeMode: "cover",
+                      alignSelf: "center",
+                      borderRadius: 10,
+                    }}
+                  />
+                  <View style={styles.artworkDetails}>
+                    <Text style={styles.artworkTitle}>{data?.title}</Text>
+                    <Text style={styles.artworkCreator}>{data?.artist}</Text>
+                    <Text style={styles.artworkTags}>
+                      {data?.medium} | {data?.rarity}
+                    </Text>
+                    <Text style={styles.priceTitle}>Price</Text>
+                    <Text
+                      style={[
+                        styles.price,
+                        data?.pricing.shouldShowPrice === "No" &&
+                          userType !== "gallery" && {
+                            fontSize: 16,
+                            color: colors.grey,
+                          },
+                      ]}
+                    >
+                      {data?.pricing.shouldShowPrice === "Yes" ||
+                      userType === "gallery"
+                        ? utils_formatPrice(Number(data?.pricing.usd_price))
+                        : "Price on request"}
+                    </Text>
+                    <ScrollWrapper
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                    >
+                      <View style={styles.tagsContainer}>
+                        {data?.certificate_of_authenticity === "Yes" && (
+                          <View style={styles.tagItem}>
+                            <SvgXml xml={licenseIcon} />
+                            <Text style={styles.tagItemText}>
+                              Certificate of authencity availiable
                             </Text>
                           </View>
+                        )}
+                        <View
+                          style={[
+                            styles.tagItem,
+                            { backgroundColor: "#e5f4ff" },
+                          ]}
+                        >
+                          <SimpleLineIcons name="frame" size={15} />
+                          <Text
+                            style={[styles.tagItemText, { color: "#30589f" }]}
+                          >
+                            {data?.framing === "Framed"
+                              ? "Frame Included"
+                              : "Artwork is not framed"}
+                          </Text>
                         </View>
-                      </ScrollWrapper>
-                    </View>
-                    {isLoading
-                      ? null
-                      : userType !== "gallery" &&
-                        (data?.availability ? (
-                          data?.pricing.shouldShowPrice === "Yes" ? (
-                            <LongBlackButton
-                              value="Purchase artwork"
-                              isDisabled={false}
-                              onClick={() =>
-                                navigation.navigate(
-                                  screenName.purchaseArtwork,
-                                  {
-                                    title: data?.title,
-                                  }
-                                )
-                              }
-                            />
-                          ) : (
-                            <LongBlackButton
-                              value={
-                                loadingPriceQuote
-                                  ? "Requesting ..."
-                                  : "Request price"
-                              }
-                              isDisabled={false}
-                              onClick={handleRequestPriceQuote}
-                              isLoading={loadingPriceQuote}
-                            />
-                          )
+                      </View>
+                    </ScrollWrapper>
+                  </View>
+                  {isLoading
+                    ? null
+                    : userType !== "gallery" &&
+                      (data?.availability ? (
+                        data?.pricing.shouldShowPrice === "Yes" ? (
+                          <LongBlackButton
+                            value="Purchase artwork"
+                            isDisabled={false}
+                            onClick={() =>
+                              navigation.navigate(screenName.purchaseArtwork, {
+                                title: data?.title,
+                              })
+                            }
+                          />
                         ) : (
                           <LongBlackButton
-                            value="Sold"
-                            isDisabled={true}
-                            onClick={() => {}}
+                            value={
+                              loadingPriceQuote
+                                ? "Requesting ..."
+                                : "Request price"
+                            }
+                            isDisabled={false}
+                            onClick={handleRequestPriceQuote}
+                            isLoading={loadingPriceQuote}
                           />
-                        ))}
-                    {userType !== "gallery" && (
-                      <SaveArtworkButton
-                        likeIds={data.like_IDs || []}
-                        art_id={data.art_id}
-                        impressions={data.impressions || 0}
-                      />
-                    )}
-                    <Pressable onPress={() => setShowMore(true)}>
-                      <Text
-                        style={tw`text-[#004617] text-[14px] text-center mt-[20px] underline`}
-                      >
-                        More details about this artwork
-                      </Text>
-                    </Pressable>
-
-                    <View style={tw`mt-[50px] gap-[25px]`}>
-                      <ShippingAndTaxes />
-                      <Coverage />
-                    </View>
-                  </View>
-                </View>
-              </ScrollWrapper>
-            )}
-            {!isLoading && !data && (
-              <View style={styles.loaderContainer}>
-                <Text style={styles.loaderText}>No details of artwork</Text>
-              </View>
-            )}
-          </>
-        ) : (
-          <>
-            {data && (
-              <ScrollWrapper
-                showsVerticalScrollIndicator={false}
-                style={tw`flex-1`}
-              >
-                <View style={tw`mx-[30px]`}>
-                  <View
-                    style={[
-                      styles.detailsContainer,
-                      userType === "gallery" && { paddingBottom: 70 },
-                    ]}
-                  >
-                    <DetailsCard
-                      title="Additional details about this artwork"
-                      details={[
-                        {
-                          name: "Description",
-                          text: data?.artwork_description || "N/A",
-                        },
-                        { name: "Materials", text: data.materials },
-                        {
-                          name: "Certificate of authenticity",
-                          text:
-                            data?.certificate_of_authenticity === "Yes"
-                              ? "Included"
-                              : "Not included",
-                        },
-                        { name: "Artwork packaging", text: data?.framing },
-                        {
-                          name: "Signature",
-                          text: `Signed ${data?.signature}`,
-                        },
-                        { name: "Year", text: data?.year },
-                      ]}
-                    />
-                    <DetailsCard
-                      title="Artist Information"
-                      details={[
-                        { name: "Artist name", text: data?.artist },
-                        { name: "Birth Year", text: data?.artist_birthyear },
-                        { name: "Country", text: data?.artist_country_origin },
-                      ]}
-                    />
-                  </View>
-                  {userType !== "gallery" &&
-                    similarArtworksByArtist.length > 0 && (
-                      <>
-                        <Text
-                          style={tw.style(
-                            `text-[20px] font-medium text-[#000] mb-[20px] pl-[20px]`
-                          )}
-                        >
-                          Other Works by {data?.artist}
-                        </Text>
-
-                        <FlatList
-                          data={similarArtworksByArtist}
-                          horizontal={true}
-                          showsHorizontalScrollIndicator={false}
-                          keyExtractor={(_, index) => JSON.stringify(index)}
-                          style={{
-                            marginBottom: 25,
-                          }}
-                          renderItem={({
-                            item,
-                            index,
-                          }: {
-                            item: ArtworkFlatlistItem;
-                            index: number;
-                          }) => (
-                            <ArtworkCard
-                              title={item.title}
-                              url={item.url}
-                              artist={item.artist}
-                              showPrice={item.pricing.shouldShowPrice === "Yes"}
-                              price={item.pricing.usd_price}
-                            />
-                          )}
+                        )
+                      ) : (
+                        <LongBlackButton
+                          value="Sold"
+                          isDisabled={true}
+                          onClick={() => {}}
                         />
-                      </>
-                    )}
-
+                      ))}
                   {userType !== "gallery" && (
-                    <SimilarArtworks title={data.title} medium={data?.medium} />
+                    <SaveArtworkButton
+                      likeIds={data.like_IDs || []}
+                      art_id={data.art_id}
+                      impressions={data.impressions || 0}
+                    />
                   )}
+                  <Pressable onPress={() => setShowMore(true)}>
+                    <Text
+                      style={tw`text-[#004617] text-[14px] text-center mt-[20px] underline`}
+                    >
+                      More details about this artwork
+                    </Text>
+                  </Pressable>
+
+                  <View style={tw`mt-[50px] gap-[25px]`}>
+                    <ShippingAndTaxes />
+                    <Coverage />
+                  </View>
                 </View>
-              </ScrollWrapper>
-            )}
-          </>
-        )}
-      </View>
+              </View>
+            </ScrollWrapper>
+          )}
+          {!isLoading && !data && (
+            <View style={styles.loaderContainer}>
+              <Text style={styles.loaderText}>No details of artwork</Text>
+            </View>
+          )}
+        </View>
+      ) : (
+        <View style={tw`flex-1`}>
+          <View style={tw`pt-[60px] android:pt-[80px] pl-[25px]`}>
+            <BackScreenButton handleClick={() => setShowMore(false)} />
+          </View>
+          {data && (
+            <ScrollWrapper
+              showsVerticalScrollIndicator={false}
+              style={tw`flex-1`}
+            >
+              <View>
+                <View
+                  style={[
+                    styles.detailsContainer,
+                    userType === "gallery" && { paddingBottom: 70 },
+                  ]}
+                >
+                  <DetailsCard
+                    title="Additional details about this artwork"
+                    details={[
+                      {
+                        name: "Description",
+                        text: data?.artwork_description || "N/A",
+                      },
+                      { name: "Materials", text: data.materials },
+                      {
+                        name: "Certificate of authenticity",
+                        text:
+                          data?.certificate_of_authenticity === "Yes"
+                            ? "Included"
+                            : "Not included",
+                      },
+                      { name: "Artwork packaging", text: data?.framing },
+                      {
+                        name: "Signature",
+                        text: `Signed ${data?.signature}`,
+                      },
+                      { name: "Year", text: data?.year },
+                    ]}
+                  />
+                  <DetailsCard
+                    title="Artist Information"
+                    details={[
+                      { name: "Artist name", text: data?.artist },
+                      { name: "Birth Year", text: data?.artist_birthyear },
+                      { name: "Country", text: data?.artist_country_origin },
+                    ]}
+                  />
+                </View>
+                {userType !== "gallery" &&
+                  similarArtworksByArtist.length > 0 && (
+                    <>
+                      <Text
+                        style={tw.style(
+                          `text-[20px] font-medium text-[#000] mb-[20px] pl-[20px]`
+                        )}
+                      >
+                        Other Works by {data?.artist}
+                      </Text>
+
+                      <FlatList
+                        data={similarArtworksByArtist}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        keyExtractor={(_, index) => JSON.stringify(index)}
+                        style={{
+                          marginBottom: 25,
+                        }}
+                        renderItem={({
+                          item,
+                          index,
+                        }: {
+                          item: ArtworkFlatlistItem;
+                          index: number;
+                        }) => (
+                          <ArtworkCard
+                            title={item.title}
+                            url={item.url}
+                            artist={item.artist}
+                            showPrice={item.pricing.shouldShowPrice === "Yes"}
+                            price={item.pricing.usd_price}
+                          />
+                        )}
+                      />
+                    </>
+                  )}
+
+                {userType !== "gallery" && (
+                  <SimilarArtworks title={data.title} medium={data?.medium} />
+                )}
+              </View>
+            </ScrollWrapper>
+          )}
+        </View>
+      )}
     </WithModal>
   );
 }
@@ -475,5 +470,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     gap: 30,
     marginTop: 30,
+    marginHorizontal: 30,
   },
 });
