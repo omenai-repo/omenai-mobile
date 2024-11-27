@@ -5,6 +5,7 @@ import tw from 'twrnc';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getPromotionalFileView } from 'lib/storage/getPromotionalsFileView';
 import { fontNames } from 'constants/fontNames.constants';
+import { AntDesign } from '@expo/vector-icons';
 
 type BannerItemProps = {
   image?: string;
@@ -31,16 +32,16 @@ export default function BannerCard({
             <View style={tw`w-full h-full bg-[#f5f5f5] rounded-2xl p-[15px] gap-[15px] flex flex-row flex-1`}>
                 <View style={tw`flex-1 h-full space-y-1`}>
                     <View style={tw`flex-1`}>
-                        <Text style={[tw`font-semibold text-[#1a1a1a] text-lg`, {fontFamily: fontNames.dmSans + 'SemiBold'}]}>{headline}</Text>
+                        <Text style={[tw`font-semibold text-[#1a1a1a] text-base`, {fontFamily: fontNames.dmSans + 'SemiBold'}]}>{headline}</Text>
                         <Text style={[tw`mt-2 text-sm text-[#1a1a1a]`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{subheadline}</Text>
                     </View>
                     <View style={tw`flex-wrap`}>
                         <TouchableOpacity
-                            style={tw`bg-[#1a1a1a] rounded-full px-5 py-2 w-fit mt-4`}
+                            style={tw`bg-[#1a1a1a] rounded-full h-[40px] w-[40px] mt-3 items-center justify-center `}
                             onPress={() => handleClick(cta)}
                             activeOpacity={1}
                         >
-                            <Text style={[tw`text-white text-sm`, {fontFamily: fontNames.dmSans + 'Medium'}]}>View resource</Text>
+                            <AntDesign name='arrowright' color={colors.white} size={20} />
                         </TouchableOpacity>
                     </View>
                 </View>

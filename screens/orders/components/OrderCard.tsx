@@ -31,9 +31,9 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
     let image_href = getImageFileView(url, 300);
 
     return (
-        <View style={{paddingVertical: 10, gap: 15}}>
+        <View style={{paddingVertical: 15, gap: 15}}>
             <View style={styles.listItem}>
-                <Image source={{uri: image_href}} style={{width: 100, backgroundColor: '#f5f5f5', borderRadius: 5}} resizeMode="contain" />
+                <Image source={{uri: image_href}} style={{width: 100, backgroundColor: '#f5f5f5', borderRadius: 5}} resizeMode="cover" />
                 <View style={styles.listItemDetails}>
                     <Text style={styles.orderItemTitle}>{artworkName}</Text>
                     
@@ -91,7 +91,7 @@ export default function OrderCard({artworkName, dateOrdered, status, state, artw
 const styles = StyleSheet.create({
     listItem: {
         flexDirection: 'row',
-        gap: 15
+        gap: 15,
     },
     statusPill: {
         paddingVertical: 10,
@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap'
     },
     listItemDetails: {
-        flex: 1
+        flex: 1,
+        paddingTop: 10
     },
     orderItemTitle: {
         fontSize: 14,
