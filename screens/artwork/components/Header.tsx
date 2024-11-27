@@ -18,16 +18,9 @@ import { screenName } from "constants/screenNames.constants";
 type ArtworkHeaderProps = {
   isGallery: boolean;
   art_id: string | undefined;
-  showMore?: boolean;
-  setShowMore?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function Header({
-  isGallery,
-  art_id,
-  showMore = false,
-  setShowMore,
-}: ArtworkHeaderProps) {
+export default function Header({ isGallery, art_id }: ArtworkHeaderProps) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   return (
@@ -39,14 +32,10 @@ export default function Header({
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              if (!showMore) {
-                if (!art_id) return;
-                navigation.navigate(screenName.gallery.editArtwork, {
-                  art_id: art_id,
-                });
-              } else {
-                setShowMore(true);
-              }
+              if (!art_id) return;
+              navigation.navigate(screenName.gallery.editArtwork, {
+                art_id: art_id,
+              });
             }}
           >
             <View style={styles.container}>
