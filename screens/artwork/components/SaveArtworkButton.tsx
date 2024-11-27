@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   likeContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 25,
+    marginTop: 15,
   },
   tagItem: {
     flexDirection: "row",

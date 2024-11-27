@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     borderRadius: 91,
     gap: 10,
+    paddingHorizontal: 20,
   },
   text: {
     color: colors.white,
