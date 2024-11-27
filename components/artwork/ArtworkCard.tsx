@@ -72,108 +72,11 @@ export default function ArtworkCard({
   }, [image_href]);
 
   return (
-    // <TouchableOpacity
-    //   activeOpacity={1}
-    //   style={[styles.container, width > 0 && { width: width }]}
-    //   onPress={() => {
-    //     navigation.push(screenName.artwork, { title: title });
-    //   }}
-    // >
-    //   <View
-    //     style={[
-    //       styles.imageContainer,
-    //       lightText && {
-    //         backgroundColor: "rgba(225,225,225,0.15)",
-    //         padding: 15,
-    //       },
-    //     ]}
-    //   >
-    //     <Image
-    //       source={{ uri: image_href }}
-    //       style={styles.image}
-    //       resizeMode="contain"
-    //     />
-    //   </View>
-    //   <View style={styles.mainDetailsContainer}>
-    //     <View style={{ flex: 1 }}>
-    //       <Text
-    //         style={[
-    //           { fontSize: 14, color: colors.primary_black },
-    //           lightText && { color: colors.white },
-    //         ]}
-    //       >
-    //         {title}
-    //       </Text>
-    //       <Text
-    //         style={[
-    //           {
-    //             fontSize: 12,
-    //             color: colors.primary_black,
-    //             opacity: 0.7,
-    //             marginTop: 5,
-    //           },
-    //           lightText && { color: colors.white, opacity: 1 },
-    //         ]}
-    //       >
-    //         {artist}
-    //       </Text>
-    //       {galleryView ? (
-    //         <Text
-    //           style={[
-    //             { fontSize: 12, color: colors.primary_black, marginTop: 5 },
-    //             lightText && { color: colors.white },
-    //           ]}
-    //         >
-    //           {impressions} impressions
-    //         </Text>
-    //       ) : !availiablity ? (
-    //         <Text
-    //           style={[
-    //             {
-    //               fontSize: 14,
-    //               color: colors.primary_black,
-    //               opacity: 0.7,
-    //               marginTop: 5,
-    //             },
-    //             lightText && { color: colors.white },
-    //           ]}
-    //         >
-    //           Sold
-    //         </Text>
-    //       ) : (
-    //         <Text
-    //           style={[
-    //             {
-    //               fontSize: 14,
-    //               color: colors.primary_black,
-    //               fontWeight: "500",
-    //               marginTop: 5,
-    //             },
-    //             lightText && { color: colors.white },
-    //           ]}
-    //         >
-    //           {showPrice ? utils_formatPrice(price) : "Price on request"}
-    //         </Text>
-    //       )}
-    //     </View>
-    //     {!galleryView && (
-    //       <LikeComponent
-    //         art_id={art_id}
-    //         impressions={impressions || 0}
-    //         likeIds={like_IDs || []}
-    //         lightText={lightText}
-    //       />
-    //     )}
-    //   </View>
-    // </TouchableOpacity>
     <View>
       <View style={tw`flex-1`} />
       <TouchableOpacity
         activeOpacity={1}
-        style={[
-          tw`ml-[20px] rounded-2xl`,
-          width > 0 && { width: width },
-        ]}
+        style={[tw`ml-[20px] rounded-2xl`, width > 0 && { width: width }]}
         onPress={() => {
           navigation.push(screenName.artwork, { title: title });
         }}
@@ -186,7 +89,7 @@ export default function ArtworkCard({
               width: imageDimensions.width,
               height: imageDimensions.height,
               objectFit: "contain",
-              borderRadius: 5
+              borderRadius: 15,
             }}
             resizeMode="contain"
           />
@@ -195,39 +98,75 @@ export default function ArtworkCard({
           >
             {!galleryView && (
               <View
-                style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
+                style={tw`bg-[#FFFFFF] h-[30px] w-[30px] rounded-full flex items-center justify-center`}
               >
                 <LikeComponent
                   art_id={art_id}
                   impressions={impressions || 0}
                   likeIds={like_IDs || []}
-                  lightText
+                  lightText={false}
                 />
               </View>
             )}
           </View>
         </View>
-      <View style={tw`mt-[15px]`}>
-        <View style={tw`flex-wrap w-[${imageDimensions.width}px]`}>
-          <Text style={[tw`text-base ${lightText ? 'text-white/90' : 'text-black/90'} font-medium w-full`, {fontFamily: fontNames.dmSans + 'Medium'}]}>{title}</Text>
-          <Text style={[tw`text-sm ${lightText ? 'text-white/80' : 'text-black/70'} w-full`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{artist}</Text>
-        </View>
-        <View style={tw`flex flex-row items-center gap-2`}>
-          <Text style={[tw`text-base font-bold ${lightText ? 'text-white/90' : 'text-black/90'} flex-1`, {fontFamily: fontNames.dmSans + 'Bold'}]}>{showPrice ? utils_formatPrice(price) : "Price on request"}</Text>
-          <View style={tw`flex-wrap`}>
-            <TouchableOpacity
-              style={tw`${lightText ? 'bg-white' : 'bg-black'} rounded-full px-5 py-2 w-fit mt-2`}
-              onPress={() =>
-                navigation.push(screenName.purchaseArtwork, {
-                  title,
-                })
-              }
-              activeOpacity={1}
+        <View style={tw`mt-[15px]`}>
+          <View style={tw`flex-wrap w-[${imageDimensions.width}px]`}>
+            <Text
+              style={[
+                tw`text-base ${
+                  lightText ? "text-white/90" : "text-[#00000099]"
+                } font-medium w-full`,
+                { fontFamily: fontNames.dmSans + "Medium" },
+              ]}
             >
-              <Text style={[tw`${lightText ? 'text-black' : 'text-white'} text-sm`, {fontFamily: fontNames.dmSans + 'Medium'}]}>Purchase</Text>
-            </TouchableOpacity>
+              {title}
+            </Text>
+            <Text
+              style={[
+                tw`text-sm ${
+                  lightText ? "text-white/80" : "text-black/70"
+                } w-full`,
+                { fontFamily: fontNames.dmSans + "Regular" },
+              ]}
+            >
+              {artist}
+            </Text>
           </View>
-        </View>
+          <View style={tw`flex flex-row items-center gap-2`}>
+            <Text
+              style={[
+                tw`text-base font-bold ${
+                  lightText ? "text-white/90" : "text-black/90"
+                } flex-1`,
+                { fontFamily: fontNames.dmSans + "Bold" },
+              ]}
+            >
+              {showPrice ? utils_formatPrice(price) : "Price on request"}
+            </Text>
+            <View style={tw`flex-wrap`}>
+              <TouchableOpacity
+                style={tw`${
+                  lightText ? "bg-white" : "bg-black"
+                } rounded-full px-5 py-2 w-fit mt-2`}
+                onPress={() =>
+                  navigation.push(screenName.purchaseArtwork, {
+                    title,
+                  })
+                }
+                activeOpacity={1}
+              >
+                <Text
+                  style={[
+                    tw`${lightText ? "text-black" : "text-white"} text-sm`,
+                    { fontFamily: fontNames.dmSans + "Medium" },
+                  ]}
+                >
+                  Purchase
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </TouchableOpacity>
     </View>
