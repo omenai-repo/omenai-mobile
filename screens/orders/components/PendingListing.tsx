@@ -16,7 +16,6 @@ export default function PendingListing({listing}: PendingListingProps) {
     return (
         <View style={styles.container}>
             {listing.map((order, index) => (
-                <View key={index}>
                 <OrderCard
                     url={order.artwork_data.url}
                     orderId={order.order_id}
@@ -31,9 +30,8 @@ export default function PendingListing({listing}: PendingListingProps) {
                     order_accepted={order.order_accepted}
                     delivery_confirmed={order.delivery_confirmed}
                     availability={order.availability}
+                    key={index}
                 />
-                {(index + 1) !== listing.length && <View style={{paddingVertical: 15}}><Divider /></View>}
-                </View>
             ))}
         </View>
     )
@@ -48,10 +46,6 @@ export default function PendingListing({listing}: PendingListingProps) {
 
 const styles = StyleSheet.create({
     container: {
-        borderWidth: 1,
-        borderColor: colors.inputBorder,
-        borderRadius: 8,
-        paddingHorizontal: 10,
         marginBottom: 50
     },
     emptyOrders: {
