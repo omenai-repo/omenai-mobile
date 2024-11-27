@@ -38,6 +38,7 @@ import ScrollWrapper from "components/general/ScrollWrapper";
 import { SvgXml } from "react-native-svg";
 import { backBtnArrow, licenseIcon } from "utils/SvgImages";
 import BackScreenButton from "components/buttons/BackScreenButton";
+import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
 
 export default function Artwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -51,11 +52,7 @@ export default function Artwork() {
   const [data, setData] = useState<ArtworkDataType | null>(null);
   const [similarArtworksByArtist, setSimilarArtworksByArtist] = useState([]);
   const [showMore, setShowMore] = useState(false);
-
-  let image_href;
-  if (data) {
-    image_href = getImageFileView(data.url, 300);
-  }
+  const [img, setImg] = useState("");
 
   useEffect(() => {
     handleFecthSingleArtwork();
@@ -77,6 +74,11 @@ export default function Artwork() {
     if (results.isOk) {
       const data = results.body.data;
       setData(data);
+      const image_href = getImageFileView(
+        data.url,
+        Platform.OS === "ios" ? 380 : 300
+      );
+      setImg(image_href);
 
       //add this to recently viewed artworks
       createViewHistory(
@@ -157,6 +159,22 @@ export default function Artwork() {
     setLoadingPriceQuote(false);
   };
 
+  const [imageDimensions, setImageDimensions] = useState({
+    width: 200,
+    height: 200,
+  });
+
+  useEffect(() => {
+    Image.getSize(img, (defaultWidth, defaultHeight) => {
+      const { width, height } = resizeImageDimensions(
+        { width: defaultWidth, height: defaultHeight },
+        300
+      );
+      setImageDimensions({ height, width });
+      // setRenderDynamicImage(true);
+    });
+  }, [img]);
+
   return (
     <WithModal>
       {!showMore ? (
@@ -171,11 +189,11 @@ export default function Artwork() {
               <View style={{ paddingBottom: 20 }}>
                 <View style={{ paddingHorizontal: 30, marginBottom: 100 }}>
                   <Image
-                    source={{ uri: image_href }}
+                    source={{ uri: img }}
                     style={{
-                      height: 388,
-                      aspectRatio: 1 / 1.2,
-                      resizeMode: "cover",
+                      height: imageDimensions.height,
+                      width: imageDimensions.width,
+                      resizeMode: "contain",
                       alignSelf: "center",
                       borderRadius: 10,
                     }}
@@ -297,7 +315,7 @@ export default function Artwork() {
         </View>
       ) : (
         <View style={tw`flex-1`}>
-          <View style={tw`pt-[60px] android:pt-[80px] pl-[25px]`}>
+          <View style={tw`pt-[60px] android:pt-[40px] pl-[25px]`}>
             <BackScreenButton handleClick={() => setShowMore(false)} />
           </View>
           {data && (
@@ -363,6 +381,9 @@ export default function Artwork() {
                         style={{
                           marginBottom: 25,
                         }}
+                        contentContainerStyle={{
+                          paddingRight: 20,
+                        }}
                         renderItem={({
                           item,
                           index,
@@ -418,7 +439,7 @@ const styles = StyleSheet.create({
   artworkTags: {
     color: "#616161",
     fontSize: 14,
-    marginTop: 20,
+    marginTop: 10,
   },
   tagsContainer: {
     marginTop: 15,
@@ -439,14 +460,10 @@ const styles = StyleSheet.create({
     color: colors.secondary_text_color,
     fontSize: 12,
   },
-  priceContainer: {
-    paddingTop: 20,
-    paddingBottom: 0,
-  },
   priceTitle: {
     color: "#616161",
     fontSize: 14,
-    marginTop: 25,
+    marginTop: 10,
   },
   price: {
     fontSize: 19,
@@ -470,6 +487,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     gap: 30,
     marginTop: 30,
-    marginHorizontal: 30,
+    marginHorizontal: 20,
   },
 });

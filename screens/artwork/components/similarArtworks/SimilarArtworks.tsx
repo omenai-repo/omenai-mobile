@@ -89,7 +89,6 @@ export default function SimilarArtworks({
             keyExtractor={(_, index) => JSON.stringify(index)}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            // style={{marginTop: 20}}
           />
         )}
       </View>
