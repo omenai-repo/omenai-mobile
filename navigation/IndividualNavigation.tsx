@@ -80,7 +80,7 @@ export default function IndividualNavigation() {
   };
 
   const IndividualTabNavigationScreens = () => {
-    const { width, height } = useWindowDimensions();
+    const { width } = useWindowDimensions();
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
