@@ -168,11 +168,11 @@ export default function MiniArtworkCard({
           </View>
         )}
         <View
-          style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end p-3`}
+          style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end pb-3`}
         >
           {galleryView && (
             <View
-              style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
+              style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center relative right-3`}
             >
               <LikeComponent
                 art_id={art_id}

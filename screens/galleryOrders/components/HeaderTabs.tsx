@@ -11,7 +11,7 @@ export default function HeaderTabs() {
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
-                <Text style={{fontSize: 20, textAlign: 'center'}}>Orders</Text>
+                <Text style={{fontSize: 20}}>Orders</Text>
                 <View style={styles.mainContainer}>
                     {tabs.map((tab: galleryOrdersTab, index: number) => (
                         <TouchableOpacity
@@ -37,22 +37,18 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20
     },
     mainContainer: {
-        paddingHorizontal: 5,
-        paddingVertical: 5,
+        padding: 10,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
-        backgroundColor: '#f5f5f5',
-        borderWidth: 1,
-        borderColor: '#eee',
-        borderRadius: 7,
+        backgroundColor: '#EAE8E8',
+        borderRadius: 30,
         marginTop: 20
     },
     item: {
         height: '100%',
         width: '100%',
-        backgroundColor: '#f5f5f5',
-        borderRadius: 7,
+        borderRadius: 30,
         alignItems: 'center',
         justifyContent: 'center'
     },

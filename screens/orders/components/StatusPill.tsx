@@ -13,6 +13,7 @@ type StatusPillProps = {
 }
 
 export default function StatusPill({ status, payment_status, tracking_status, order_accepted, delivery_confirmed, availability}: StatusPillProps) {
+
   if(!availability){
     return (
       <View style={[styles.pill, {backgroundColor: '#00800015'}]}>
@@ -22,7 +23,6 @@ export default function StatusPill({ status, payment_status, tracking_status, or
   } ;
 
   if (
-        status === "pending" &&
         status === "pending" &&
         order_accepted === "accepted" &&
         payment_status === "pending" &&
@@ -37,7 +37,6 @@ export default function StatusPill({ status, payment_status, tracking_status, or
     };
 
     if (
-        status === "pending" &&
         status === "pending" &&
         order_accepted === "accepted" &&
         payment_status === "completed" &&
@@ -104,8 +103,8 @@ export default function StatusPill({ status, payment_status, tracking_status, or
       }
 
     return (
-        <View>
-            <Text style={{fontSize: 14, textTransform: 'capitalize', color: '#858585'}}>{status}</Text>
+        <View style={[styles.pill, {backgroundColor: '#FFBF0040'}]}>
+          <MaterialIcons name='info-outline' size={14}/><Text style={styles.text}>Awaiting gallery confirmation</Text>
         </View>
     )
 }
