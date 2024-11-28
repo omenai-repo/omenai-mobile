@@ -25,7 +25,7 @@ export default function Coverage() {
         <View
           style={tw`bg-[#FFFFFF] shadow-md shadow-[#FFF5097A] h-[30px] w-[30px] rounded-full justify-center items-center`}
         >
-          <SvgXml xml={expand ? downArrIcon : upArrwIcon} />
+          <SvgXml xml={!expand ? downArrIcon : upArrwIcon} />
         </View>
       </Pressable>
       {expand && (

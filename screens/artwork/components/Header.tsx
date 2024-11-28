@@ -24,7 +24,7 @@ export default function Header({ isGallery, art_id }: ArtworkHeaderProps) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <View style={{ paddingHorizontal: 20, flexDirection: "row" }}>
         <BackScreenButton handleClick={() => navigation.goBack()} />
         <View style={{ flex: 1 }} />
@@ -44,7 +44,7 @@ export default function Header({ isGallery, art_id }: ArtworkHeaderProps) {
           </TouchableOpacity>
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -60,6 +60,6 @@ const styles = StyleSheet.create({
     borderColor: colors.inputBorder,
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === "android" ? 40 : 60,
   },
 });

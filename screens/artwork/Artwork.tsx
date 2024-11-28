@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   priceTitle: {
     color: "#616161",
     fontSize: 14,
-    marginTop: 10,
+    marginTop: 20,
   },
   price: {
     fontSize: 19,
