@@ -1,4 +1,4 @@
-import { Image, StyleSheet, TouchableOpacity, View, TextInput } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View, TextInput, Text } from 'react-native'
 import React from 'react'
 import { colors } from '../../config/colors.config';
 import omenaiSearchIcon from '../../assets/icons/omenai-search-icon.png'
@@ -24,28 +24,18 @@ export default function SearchInput() {
 
     return (
         <View style={styles.container}>
-            <View style={{paddingLeft: 10}}>
-                <Image source={omenaiSearchIcon} />
-            </View>
             <TextInput
                 style={styles.input}
-                placeholder='Search for anything'
+                placeholder='Ask Omenai'
                 placeholderTextColor={'#858585'}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 onSubmitEditing={handleSearch}
                 returnKeyType="search"
             />
-            {searchQuery.length > 0 &&
-                <TouchableOpacity activeOpacity={0.5} onPress={handleClearSearchQuery}>
-                    <AntDesign 
-                        size={18} 
-                        color={colors.grey} 
-                        name='closecircle' 
-                        style={{padding: 5, opacity: 0.7}}
-                    />
-                </TouchableOpacity>
-            }
+            <TouchableOpacity style={styles.searchButton} activeOpacity={0.5} onPress={handleSearch}>
+                <Text style={{fontSize: 14, color: colors.white}}>Search</Text>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -66,12 +56,13 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         paddingVertical: 10,
-        fontSize: 16
+        fontSize: 16,
+        paddingLeft: 15
     },
     searchButton: {
         height: '100%',
         backgroundColor: colors.primary_black,
-        borderRadius: 4,
+        borderRadius: 40,
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 20

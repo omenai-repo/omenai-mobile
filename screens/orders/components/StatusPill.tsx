@@ -105,7 +105,7 @@ export default function StatusPill({ status, payment_status, tracking_status, or
 
     return (
         <View>
-            <Text>StatusPill</Text>
+            <Text style={{fontSize: 14, textTransform: 'capitalize', color: '#858585'}}>{status}</Text>
         </View>
     )
 }
