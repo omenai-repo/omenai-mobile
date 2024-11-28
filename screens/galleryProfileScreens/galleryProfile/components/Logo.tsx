@@ -5,6 +5,8 @@ import { getGalleryLogoFileView } from 'lib/storage/getGalleryLogoFileView'
 
 export default function Logo({url}:{url: string}) {
     let image = getGalleryLogoFileView(url, 120, 120);
+
+    console.log(image)
     
     return (
         <Image 
@@ -16,11 +18,9 @@ export default function Logo({url}:{url: string}) {
 
 const styles = StyleSheet.create({
     container: {
-        height: 120,
-        width: 120,
-        marginHorizontal: 'auto',
+        height: 132,
+        width: 132,
         backgroundColor: colors.grey50,
-        marginBottom: 20,
-        borderRadius: 10
+        borderRadius: 70
     }
 })

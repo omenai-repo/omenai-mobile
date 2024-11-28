@@ -5,8 +5,9 @@ import {
   View,
   Platform,
   StatusBar,
+  Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { colors } from "config/colors.config";
 import { PageButtonCard } from "components/buttons/PageButtonCard";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -19,6 +20,19 @@ import { galleryOrderModalStore } from "store/modal/galleryModalStore";
 import { useAppStore } from "store/app/appStore";
 import Logo from "./components/Logo";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
+import omenaiAvatar from "assets/images/omenai-avatar.png";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
+import {
+  changePasswsordIcon,
+  deleteIcon
+} from "utils/SvgImages";
+import LongBlackButton from "components/buttons/LongBlackButton";
+
+type userDataType = {
+  name: string;
+  email: string;
+};
 
 export default function GalleryProfile() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -26,24 +40,69 @@ export default function GalleryProfile() {
   const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
 
+  const [userData, setuserdata] = useState<userDataType>({
+    name: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    handleFetchUserSession();
+  }, []);
+
+  const handleFetchUserSession = async () => {
+    const userSession = await utils_getAsyncData("userSession");
+
+    if (userSession.isOk === false) return;
+
+    if (userSession.value) {
+      const parsedUserSessions = JSON.parse(userSession.value);
+      setuserdata({
+        name: parsedUserSessions.name,
+        email: parsedUserSessions.email,
+      });
+    }
+
+    return;
+  };
+
   return (
     <WithGalleryModal>
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.headerContainer}>
-          <Text style={{ fontSize: 20, textAlign: "center" }}>Profile</Text>
-        </View>
-      </SafeAreaView>
       <ScrollWrapper style={styles.mainContainer}>
-        {userSession.logo !== "" && <Logo url={userSession.logo} />}
+        <View style={styles.profileContainer}>
+          {/* {userSession.logo !== "" ? 
+            <Logo url={userSession.logo} /> 
+            : 
+            <Image source={omenaiAvatar} style={styles.image} />
+          } */}
+          <Image source={omenaiAvatar} style={styles.image} />
+          <View>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "500",
+                color: colors.primary_black,
+              }}
+            >
+              {userData.name}
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                marginTop: 5,
+                marginBottom: 20,
+                color: "#00000099",
+              }}
+            >
+              {userData.email}
+            </Text>
+            <FittedBlackButton
+              value="Edit profile"
+              isDisabled={false}
+              onClick={() => navigation.navigate(screenName.gallery.editProfile)}
+            />
+          </View>
+        </View>
         <View style={styles.buttonsContainer}>
-          {/* <Divider /> */}
-          <PageButtonCard
-            name="Edit gallery profile"
-            subText="View and edit your profile details"
-            handlePress={() =>
-              navigation.navigate(screenName.gallery.editProfile)
-            }
-          />
           {/* <Divider /> */}
           <PageButtonCard
             name="Change password"
@@ -53,6 +112,7 @@ export default function GalleryProfile() {
                 routeName: "gallery",
               })
             }
+            svgIcon={changePasswsordIcon}
           />
           {/* <Divider /> */}
           <PageButtonCard
@@ -62,12 +122,10 @@ export default function GalleryProfile() {
               setModalType("deleteAccount");
               setIsVisible(true);
             }}
-          >
-            <Feather name="trash" color={"#ff0000"} size={15} />
-          </PageButtonCard>
-          {/* <Divider /> */}
-          <PageButtonCard name="Logout" logout handlePress={logout} />
+            svgIcon={deleteIcon}
+          />
         </View>
+        <LongBlackButton value="Log Out" onClick={logout} />
       </ScrollWrapper>
     </WithGalleryModal>
   );
@@ -77,6 +135,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  profileContainer: {
+    flexDirection: "row",
+    gap: 20,
+    alignItems: "center",
+    paddingTop: Platform.OS === "ios" ? 50 : 50,
+  },
+  image: {
+    height: 132,
+    width: 132,
   },
   headerContainer: {
     paddingHorizontal: 20,
@@ -88,9 +156,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     marginTop: 10,
-    // borderWidth: 1,
-    // borderColor: colors.grey50,
-    // padding: 15,
+    marginBottom: 50,
     gap: 20,
   },
   safeArea: {
