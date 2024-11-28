@@ -8,7 +8,7 @@ import {
 import { colors } from "config/colors.config";
 import { screenName } from "constants/screenNames.constants";
 import { useEffect, useRef, useState } from "react";
-import { Text, View } from "react-native";
+import { Platform, Text, View, useWindowDimensions } from "react-native";
 import Artwork from "screens/artwork/Artwork";
 import Billing from "screens/billing/Billing";
 import Checkout from "screens/checkout/Checkout";
@@ -58,7 +58,7 @@ export default function GalleryNavigation() {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("state", (e) => {
-      const currentRoute = e.data.state.routes[e.data.state.index].name;
+      const currentRoute = e.data.state?.routes[e.data.state.index].name;
 
       if (currentRoute !== prevRouteRef.current) {
         handleGetAccountID();
@@ -92,7 +92,7 @@ export default function GalleryNavigation() {
       <Ionicons
         name={name}
         size={focused ? 25 : 22}
-        color={focused ? colors.black : colors.grey}
+        color={focused ? colors.white : colors.grey}
       />
     );
     if (
@@ -103,7 +103,7 @@ export default function GalleryNavigation() {
         <Feather
           name={name}
           size={focused ? 25 : 22}
-          color={focused ? colors.black : colors.grey}
+          color={focused ? colors.white : colors.grey}
         />
       );
     }
@@ -111,16 +111,6 @@ export default function GalleryNavigation() {
     return (
       <View style={{ alignItems: "center", gap: 5 }}>
         {icon}
-        {focused && (
-          <Text
-            style={[
-              { fontSize: 13, color: colors.grey },
-              focused && { color: colors.primary_black },
-            ]}
-          >
-            {title}
-          </Text>
-        )}
       </View>
     );
   };
@@ -137,6 +127,7 @@ export default function GalleryNavigation() {
   };
 
   const GalleryTabNavigationScreens = () => {
+    const { width } = useWindowDimensions();
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -170,13 +161,13 @@ export default function GalleryNavigation() {
           headerShown: false,
           tabBarInactiveTintColor: "gray",
           tabBarStyle: {
-            backgroundColor: colors.white,
-            paddingBottom: 10,
-            paddingTop: 0,
-            height: 70,
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
+            height: 82,
+            backgroundColor: colors.black,
+            bottom: 30,
+            borderRadius: 18,
+            marginHorizontal: width / 18,
+            position: "absolute",
+            paddingTop: Platform.OS === "ios" ? 25 : 0,
           },
         })}
       >

@@ -89,7 +89,7 @@ export default function ArtworkCard({
               width: imageDimensions.width,
               height: imageDimensions.height,
               objectFit: "contain",
-              borderRadius: 15,
+              borderRadius: 5,
             }}
             resizeMode="contain"
           />

@@ -104,12 +104,12 @@ export default function Catalog() {
     <WithModal>
       {/* <SafeAreaView style={styles.safeArea}> */}
         <View style={styles.mainContainer}>
-          <View style={{ zIndex: 100, paddingHorizontal: 10 }}>
+          <View style={{ zIndex: 100, paddingHorizontal: 10, width: '100%' }}>
             <FilterButton>
               <Text style={styles.headerText}>Catalog</Text>
             </FilterButton>
           </View>
-          <View style={{ zIndex: 5, flex: 1 }}>
+          <View style={{ zIndex: 5, flex: 1, width: '100%' }}>
             {isLoading ? (
               <MiniArtworkCardLoader />
             ) : (
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 10,
     flex: 1,
+    alignItems: 'center'
   },
   tagItem: {
     backgroundColor: "#FAFAFA",
