@@ -16,7 +16,7 @@ export default function HistoryListing({orders}: OrdersListingProps) {
 
     if(histories.length > 0)
         return (
-            <View style={styles.container}>
+            <View>
                 {histories.map((history, index) => {
                     const order = history.data[index]
                     return(
@@ -51,13 +51,6 @@ export default function HistoryListing({orders}: OrdersListingProps) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        borderWidth: 1,
-        borderColor: colors.inputBorder,
-        borderRadius: 8,
-        paddingHorizontal: 20,
-        marginBottom: 50
-    },
     emptyOrders: {
         height: 500,
         alignItems: 'center',
@@ -67,6 +60,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 500,
         color: colors.primary_black,
-        paddingVertical: 20
+        paddingBottom: 10
     }
 })

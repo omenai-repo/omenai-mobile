@@ -168,7 +168,7 @@ export default function MiniArtworkCard({
           </View>
         )}
         <View
-          style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end p-2`}
+          style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end p-3`}
         >
           {galleryView && (
             <View

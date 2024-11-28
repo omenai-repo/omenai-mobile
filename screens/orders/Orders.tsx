@@ -145,8 +145,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
+    backgroundColor: '#EAE8E8',
     borderRadius: 30,
     padding: 10,
     gap: 10,
