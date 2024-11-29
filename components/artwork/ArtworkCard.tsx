@@ -98,13 +98,13 @@ export default function ArtworkCard({
           >
             {!galleryView && (
               <View
-                style={tw`bg-[#FFFFFF] h-[30px] w-[30px] rounded-full flex items-center justify-center`}
+                style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
               >
                 <LikeComponent
                   art_id={art_id}
                   impressions={impressions || 0}
                   likeIds={like_IDs || []}
-                  lightText={false}
+                  lightText={true}
                 />
               </View>
             )}
