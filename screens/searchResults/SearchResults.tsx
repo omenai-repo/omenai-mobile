@@ -42,17 +42,7 @@ export default function SearchResults() {
 
     if (results.isOk) {
       arr = results.body.data;
-
-      if (arr.length > 1) {
-        var indexToSplit = Math.floor(arr.length / 2);
-        var first = arr.slice(0, indexToSplit);
-        var second = arr.slice(indexToSplit);
-
-        setData([first, second]);
-      } else {
-        setData([arr, []]);
-      }
-
+      setData(arr)
       setDataLength(arr.length);
     } else {
       Alert.alert(results.body);
@@ -114,7 +104,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   headerText: {
     fontSize: 18,
