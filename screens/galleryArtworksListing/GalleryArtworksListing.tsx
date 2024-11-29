@@ -77,7 +77,7 @@ export default function GalleryArtworksListing() {
         ) : (
           <ArtworksListing data={data} />
         )}
-        <View style={{ paddingVertical: 25 }} />
+        <View style={{ paddingVertical: 20 }} />
       </ScrollWrapper>
     </WithModal>
   );
