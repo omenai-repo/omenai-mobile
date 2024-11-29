@@ -1,5 +1,6 @@
 import {
   Image,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -67,7 +68,7 @@ export default function Filter({ children }: FilterProps) {
             paddingHorizontal: 20,
             backgroundColor: colors.white,
             paddingBottom: 10,
-            paddingTop: 20,
+            paddingTop: Platform.OS === "ios" ? 20 : 50,
           }}
         >
           <View style={{ flex: 1 }}>
