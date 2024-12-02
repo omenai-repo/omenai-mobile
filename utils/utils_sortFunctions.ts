@@ -13,3 +13,11 @@ export const utils_getColors = (selectedTab : string, order?: any): ordersColors
 
     return {bgColor: '#FFBF0030', textColor: '#000'}
 };
+
+export function utils_getInitials(fullName: string) {
+    if (!fullName) return "";
+
+    const names = fullName.split(" ");
+    const initials = names.map(name => name[0].toUpperCase()).join("");
+    return initials;
+}

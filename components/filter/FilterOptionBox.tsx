@@ -80,7 +80,8 @@ const styles = StyleSheet.create({
     zIndex: 500,
     padding: 15,
     gap: 15,
-    marginTop: 10
+    marginTop: 10,
+    borderRadius: 15
   },
   itemContainer: {
     flexDirection: 'row',

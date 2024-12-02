@@ -54,21 +54,23 @@ export default function SearchResults() {
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
-        <SafeAreaView style={styles.safeArea}>
-          <SearchInput />
-        </SafeAreaView>
-        {searchQuery.length > 0 ? (
-          <>
-            <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
-            <Text style={{ fontSize: 16, color: colors.grey }}>
-              {dataLength} results found
-            </Text>
-          </>
-        ) : (
-          <View>
-            <Text style={styles.headerText}>Search for artworks on Omenai</Text>
-          </View>
-        )}
+        <View style={{paddingHorizontal: 15}}>
+          <SafeAreaView style={styles.safeArea}>
+            <SearchInput />
+          </SafeAreaView>
+          {searchQuery.length > 0 ? (
+            <>
+              <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
+              <Text style={{ fontSize: 16, color: colors.grey }}>
+                {dataLength} results found
+              </Text>
+            </>
+          ) : (
+            <View>
+              <Text style={styles.headerText}>Search for artworks on Omenai</Text>
+            </View>
+          )}
+        </View>
         {isLoading && (
           <View style={{ marginTop: 30 }}>
             <MiniArtworkCardLoader />
@@ -104,7 +106,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
   },
   headerText: {
     fontSize: 18,

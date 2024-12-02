@@ -6,6 +6,7 @@ import {
   RefreshControl,
   Platform,
   StatusBar,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { colors } from "config/colors.config";
@@ -20,6 +21,7 @@ import { useModalStore } from "store/modal/modalStore";
 import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
 import ScrollWrapper from "components/general/ScrollWrapper";
 import ArtworksListing from "components/general/ArtworksListing";
+import tailwind from "twrnc";
 
 type TagItemProps = {
   name: string;
@@ -43,6 +45,8 @@ export default function Catalog() {
   const [reloadCount, setReloadCount] = useState<number>(0);
 
   const [loadingMore, setLoadingmore] = useState<boolean>(false);
+
+  const {width} = Dimensions.get("screen");
 
   useEffect(() => {
     handleFecthArtworks();
@@ -104,12 +108,12 @@ export default function Catalog() {
     <WithModal>
       {/* <SafeAreaView style={styles.safeArea}> */}
         <View style={styles.mainContainer}>
-          <View style={{ zIndex: 100, paddingHorizontal: 10, width: '100%' }}>
+          <View style={{ zIndex: 100, paddingHorizontal: 20, width: '100%' }}>
             <FilterButton>
               <Text style={styles.headerText}>Catalog</Text>
             </FilterButton>
           </View>
-          <View style={{ zIndex: 5, flex: 1, width: '100%' }}>
+          <View style={tailwind`z-[5] flex-1 w-[${width}px]`}>
             {isLoading ? (
               <MiniArtworkCardLoader />
             ) : (
@@ -152,8 +156,8 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     marginTop: 10,
-    paddingHorizontal: 10,
-    paddingTop: 10,
+    // paddingHorizontal: 10,
+    paddingTop: 20,
     flex: 1,
     alignItems: 'center'
   },

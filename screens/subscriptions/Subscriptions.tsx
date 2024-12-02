@@ -76,6 +76,7 @@ export default function Subscriptions() {
           ) : (
             <InActiveSubscription />
           )}
+          <View style={{paddingVertical: 30}} />
         </ScrollWrapper>
       )}
     </WithModal>
