@@ -57,7 +57,7 @@ export default function ArtworksListing({
 const styles = StyleSheet.create({
   artworksContainer: {
     flex: 1,
-    // zIndex: 5,
+    // marginHorizontal: 'auto'
   },
   singleColumn: {
     flex: 1,

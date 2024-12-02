@@ -35,7 +35,8 @@ export default function MiniArtworkCardLoader() {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        gap: 20
+        gap: 20,
+        paddingHorizontal: 10
     },
     imageContainer: {
         width: '100%',
