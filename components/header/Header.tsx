@@ -16,8 +16,6 @@ export default function Header({showNotification}: {showNotification?: boolean})
 
     const { userSession } = useAppStore();
 
-    console.log(userSession)
-
     const handleNavigation = () => {
         if(userSession.role === "gallery"){
             //navigate to gallery profile screen
