@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderWidth: 1,
         borderColor: colors.grey50,
-        borderRadius: 10
+        borderRadius: 30
     }
 })
 

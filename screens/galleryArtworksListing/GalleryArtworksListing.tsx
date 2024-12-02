@@ -86,7 +86,7 @@ export default function GalleryArtworksListing() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
-    paddingHorizontal: 5,
+    // paddingHorizontal: 5,
     // backgroundColor: '#ff0000',
     paddingTop: 20,
     marginTop: 20,
