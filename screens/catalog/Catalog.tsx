@@ -47,7 +47,6 @@ export default function Catalog() {
   const [loadingMore, setLoadingmore] = useState<boolean>(false);
 
   const {width} = Dimensions.get("screen");
-  console.log(width)
 
   useEffect(() => {
     handleFecthArtworks();
