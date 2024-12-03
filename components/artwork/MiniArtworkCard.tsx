@@ -56,6 +56,8 @@ export default function MiniArtworkCard({
   imageWidth = Math.round((screenWidth - 5) / 2); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
   const image_href = getImageFileView(url, imageWidth);
 
+  const image_href = getImageFileView(url, imageWidth);
+
   useEffect(() => {
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
       const { width, height } = resizeImageDimensions(
