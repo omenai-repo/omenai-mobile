@@ -1,12 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  SafeAreaView,
-  RefreshControl,
-  View,
-  Platform,
-  StatusBar,
-} from "react-native";
+import { StyleSheet, Text, RefreshControl, View, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import WithModal from "components/modal/WithModal";
 import Header from "components/header/Header";
@@ -14,9 +6,8 @@ import SalesOverview from "./components/SalesOverview";
 import RecentOrders from "./components/RecentOrders";
 import { HighlightCard } from "./components/HighlightCard";
 import PopularArtworks from "./components/PopularArtworks";
-import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";
+import { CopilotStep, useCopilot } from "react-native-copilot";
 import ScrollWrapper from "components/general/ScrollWrapper";
-const CopilotText = walkthroughable(Text);
 
 export default function Overview() {
   const { start } = useCopilot();
@@ -61,39 +52,27 @@ export default function Overview() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <SafeAreaView style={styles.safeArea}>
+        <View
+          style={{
+            marginTop: Platform.OS === "ios" ? 0 : 60,
+          }}
+        >
           <Header />
-        </SafeAreaView>
+        </View>
         <View style={styles.container}>
-          <Text style={{ fontSize: 16, fontWeight: "400" }}>Overview</Text>
-          <View style={styles.contentsContainer}>
-            <CopilotStep
-              text="View total number of artworks here"
-              order={1}
-              name="total-artworks"
-            >
-              <CustomComponent>
-                <HighlightCard
-                  refreshCount={refreshCount}
-                  name="Total artworks"
-                  type="artworks"
-                />
-              </CustomComponent>
-            </CopilotStep>
-            <CopilotStep
-              text="View total number of sold artworks here"
-              order={2}
-              name="total-sold-artworks"
-            >
-              <CustomComponent>
-                <HighlightCard
-                  refreshCount={refreshCount}
-                  name="Sold artworks"
-                  type="sales"
-                />
-              </CustomComponent>
-            </CopilotStep>
-          </View>
+          <CopilotStep
+            text="View total number of artworks here"
+            order={1}
+            name="total-artworks"
+          >
+            <CustomComponent>
+              <HighlightCard
+                refreshCount={refreshCount}
+                name="Total artworks"
+                type="artworks"
+              />
+            </CustomComponent>
+          </CopilotStep>
         </View>
         <CopilotStep
           text="You can view your sales progress from this chart here, it keeps track of and shows how much revenue you've made from successful artwork sales."
@@ -113,15 +92,11 @@ export default function Overview() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    paddingVertical: 40,
+    paddingVertical: 20,
   },
   contentsContainer: {
     flexDirection: "row",
     gap: 20,
     marginTop: 20,
-  },
-  safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
 });
