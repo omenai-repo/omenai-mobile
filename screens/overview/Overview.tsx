@@ -52,11 +52,7 @@ export default function Overview() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View
-          style={{
-            marginTop: Platform.OS === "ios" ? 0 : 60,
-          }}
-        >
+        <View>
           <Header />
         </View>
         <View style={styles.container}>
