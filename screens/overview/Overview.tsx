@@ -55,59 +55,58 @@ export default function Overview() {
 
   return (
     <WithModal>
-      
-        <ScrollWrapper
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        >
-          <SafeAreaView style={styles.safeArea}>
-            <Header />
-          </SafeAreaView>
-          <View style={styles.container}>
-            <Text style={{ fontSize: 16, fontWeight: "400" }}>Overview</Text>
-            <View style={styles.contentsContainer}>
-              <CopilotStep
-                text="View total number of artworks here"
-                order={1}
-                name="total-artworks"
-              >
-                <CustomComponent>
-                  <HighlightCard
-                    refreshCount={refreshCount}
-                    name="Total artworks"
-                    type="artworks"
-                  />
-                </CustomComponent>
-              </CopilotStep>
-              <CopilotStep
-                text="View total number of sold artworks here"
-                order={2}
-                name="total-sold-artworks"
-              >
-                <CustomComponent>
-                  <HighlightCard
-                    refreshCount={refreshCount}
-                    name="Sold artworks"
-                    type="sales"
-                  />
-                </CustomComponent>
-              </CopilotStep>
-            </View>
+      <ScrollWrapper
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <SafeAreaView style={styles.safeArea}>
+          <Header />
+        </SafeAreaView>
+        <View style={styles.container}>
+          <Text style={{ fontSize: 16, fontWeight: "400" }}>Overview</Text>
+          <View style={styles.contentsContainer}>
+            <CopilotStep
+              text="View total number of artworks here"
+              order={1}
+              name="total-artworks"
+            >
+              <CustomComponent>
+                <HighlightCard
+                  refreshCount={refreshCount}
+                  name="Total artworks"
+                  type="artworks"
+                />
+              </CustomComponent>
+            </CopilotStep>
+            <CopilotStep
+              text="View total number of sold artworks here"
+              order={2}
+              name="total-sold-artworks"
+            >
+              <CustomComponent>
+                <HighlightCard
+                  refreshCount={refreshCount}
+                  name="Sold artworks"
+                  type="sales"
+                />
+              </CustomComponent>
+            </CopilotStep>
           </View>
-          <CopilotStep
-            text="You can view your sales progress from this chart here, it keeps track of and shows how much revenue you've made from successful artwork sales."
-            order={3}
-            name="sales-overview"
-          >
-            <CustomComponent>
-              <SalesOverview refreshCount={refreshCount} />
-            </CustomComponent>
-          </CopilotStep>
-          <PopularArtworks refreshCount={refreshCount} />
-          <RecentOrders refreshCount={refreshCount} />
-        </ScrollWrapper>
+        </View>
+        <CopilotStep
+          text="You can view your sales progress from this chart here, it keeps track of and shows how much revenue you've made from successful artwork sales."
+          order={3}
+          name="sales-overview"
+        >
+          <CustomComponent>
+            <SalesOverview refreshCount={refreshCount} />
+          </CustomComponent>
+        </CopilotStep>
+        <PopularArtworks refreshCount={refreshCount} />
+        <RecentOrders refreshCount={refreshCount} />
+      </ScrollWrapper>
     </WithModal>
   );
 }
