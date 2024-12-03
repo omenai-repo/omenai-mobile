@@ -54,6 +54,7 @@ export default function MiniArtworkCard({
 
   let imageWidth = 0;
   imageWidth = Math.round((screenWidth - 5) / 2); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
+  const image_href = getImageFileView(url, imageWidth);
 
   useEffect(() => {
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
@@ -184,9 +185,28 @@ export default function MiniArtworkCard({
         </View>
       </View>
       <View style={tw`mt-3`}>
-        <Text style={[tw`text-base font-medium text-black/90`, {fontFamily: fontNames.dmSans + 'Medium'}]}>{title}</Text>
-        <Text style={[tw`text-sm text-black/70 my-1`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{artist}</Text>
-        <Text style={[tw`text-base font-bold text-black/90`, {fontFamily: fontNames.dmSans + 'Bold'}]}>
+        <Text
+          style={[
+            tw`text-base font-medium text-black/90`,
+            { fontFamily: fontNames.dmSans + "Medium" },
+          ]}
+        >
+          {title}
+        </Text>
+        <Text
+          style={[
+            tw`text-sm text-black/70 my-1`,
+            { fontFamily: fontNames.dmSans + "Regular" },
+          ]}
+        >
+          {artist}
+        </Text>
+        <Text
+          style={[
+            tw`text-base font-bold text-black/90`,
+            { fontFamily: fontNames.dmSans + "Bold" },
+          ]}
+        >
           {showPrice ? utils_formatPrice(price) : "Price on request"}
         </Text>
         {/* <View style={tw`flex-wrap`}>
