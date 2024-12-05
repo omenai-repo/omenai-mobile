@@ -1,4 +1,11 @@
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  Easing,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { getSalesActivityData } from "services/overview/getSalesActivityData";
 import { salesDataAlgorithm } from "utils/utils_salesDataAlgorithm";
@@ -6,6 +13,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import tw from "twrnc";
 
 const { width } = Dimensions.get("window");
+
 export default function SalesOverview({
   refreshCount,
 }: {
@@ -13,18 +21,23 @@ export default function SalesOverview({
 }) {
   const [salesOverviewData, setSalesOverviewData] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [tooltip, setTooltip] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    value: 0,
+  });
+  const [fadeAnim] = useState(new Animated.Value(0)); // For tooltip animation
 
   useEffect(() => {
     setIsLoading(true);
     async function handleFetchSalesData() {
       const data = await getSalesActivityData();
       const activityData = salesDataAlgorithm(data.data);
-      let arr: number[] = [];
-      activityData.map((month) => arr.push(month.Revenue));
+      const arr = activityData.map((month) => month.Revenue);
       setSalesOverviewData(arr);
       setIsLoading(false);
     }
-
     handleFetchSalesData();
   }, [refreshCount]);
 
@@ -45,10 +58,10 @@ export default function SalesOverview({
   const maxValue = Math.max(...salesOverviewData);
 
   // Chart configuration
-  const chartWidth = width - 40; // Adjusting for padding
+  const chartWidth = width - 40;
   const chartHeight = 100;
   const yAxisWidth = 40;
-  const barWidth = (chartWidth - yAxisWidth) / salesOverviewData.length; // Each bar takes equal width
+  const barWidth = (chartWidth - yAxisWidth) / salesOverviewData.length;
 
   const formatToK = (num: number) => {
     if (num >= 1000) {
@@ -57,7 +70,26 @@ export default function SalesOverview({
     return num.toString();
   };
 
-  if (isLoading)
+  const handleBarPress = (x: number, y: number, value: number) => {
+    setTooltip({ visible: true, x, y, value });
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 200,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const hideTooltip = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 200,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start(() => setTooltip({ ...tooltip, visible: false }));
+  };
+
+  if (isLoading) {
     return (
       <View style={[styles.container, { paddingHorizontal: 20 }]}>
         <Text style={{ fontSize: 16, fontWeight: "400", marginBottom: 20 }}>
@@ -66,6 +98,7 @@ export default function SalesOverview({
         <View style={{ height: 200, backgroundColor: "#f5f5f5" }} />
       </View>
     );
+  }
 
   return (
     <>
@@ -111,24 +144,44 @@ export default function SalesOverview({
             </Defs>
 
             {salesOverviewData.map((value, index) => {
-              const barHeight = (value / maxValue) * chartHeight; // Bar height based on value
-              const x = yAxisWidth + index * barWidth - barWidth + index + 10; // Correct positioning for bars
-              const y = chartHeight - barHeight; // Bars grow upward
+              const barHeight = (value / maxValue) * chartHeight;
+              const x = yAxisWidth + index * barWidth - barWidth + index + 10;
+              const y = chartHeight - barHeight;
 
               return (
                 <Rect
                   key={index}
                   x={x}
                   y={y}
-                  width={barWidth - 10} // Adding padding between bars
+                  width={barWidth - 10}
                   height={barHeight}
                   fill="url(#barGradient)"
-                  rx={4} // Rounded corners
+                  rx={4}
+                  onPressIn={() => handleBarPress(x + barWidth / 2, y, value)}
+                  onPressOut={hideTooltip}
                 />
               );
             })}
           </Svg>
         </View>
+
+        {/* Tooltip */}
+        {tooltip.visible && (
+          <Animated.View
+            style={[
+              styles.tooltip,
+              {
+                opacity: fadeAnim,
+                left: tooltip.x,
+                top: tooltip.y,
+              },
+            ]}
+          >
+            <Text style={styles.tooltipText}>
+              {formatToK(tooltip.value)} Sales
+            </Text>
+          </Animated.View>
+        )}
 
         {/* X-Axis */}
         <View style={styles.xAxis}>
@@ -202,6 +255,16 @@ const styles = StyleSheet.create({
     color: "#7C7C8D",
     fontSize: 10,
     position: "absolute",
-    bottom: -20, // Labels below the chart
+    bottom: -20,
+  },
+  tooltip: {
+    position: "absolute",
+    backgroundColor: "#fff",
+    padding: 8,
+    borderRadius: 4,
+  },
+  tooltipText: {
+    color: "#000",
+    fontSize: 12,
   },
 });
