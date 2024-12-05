@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import MiniArtworkCard from "components/artwork/MiniArtworkCard";
 import EmptyArtworks from "./EmptyArtworks";
@@ -57,10 +57,9 @@ export default function ArtworksListing({
 const styles = StyleSheet.create({
   artworksContainer: {
     flex: 1,
-    // marginHorizontal: 'auto'
   },
   singleColumn: {
     flex: 1,
     gap: 20,
-  },
+  }
 });
