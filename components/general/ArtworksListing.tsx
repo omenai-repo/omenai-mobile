@@ -64,5 +64,5 @@ const styles = StyleSheet.create({
   singleColumn: {
     flex: 1,
     gap: 20,
-  },x
+  }
 });
