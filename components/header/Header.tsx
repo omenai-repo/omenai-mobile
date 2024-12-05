@@ -27,7 +27,7 @@ export default function Header({showNotification}: {showNotification?: boolean})
     
 
     return (
-        <SafeAreaView style={{paddingTop: Platform.OS === "android" ? 50 : 0}}>
+        <SafeAreaView>
             <View style={styles.mainContainer}>
                 <View style={tailwind`flex-1`}>
                     <Image style={tailwind`w-[130px] h-[30px]`} resizeMode='contain' source={omenaiLogo} />
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: "center",
     gap: 20,
-    paddingTop: Platform.OS === "android" ? 50 : 20,
+    paddingTop: Platform.OS === "android" ? 40 : 20,
     marginTop: 5
   },
 });
