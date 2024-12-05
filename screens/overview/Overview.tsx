@@ -52,9 +52,7 @@ export default function Overview() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View>
-          <Header />
-        </View>
+        <Header />
         <View style={styles.container}>
           <CopilotStep
             text="View total number of artworks here"
@@ -62,11 +60,7 @@ export default function Overview() {
             name="total-artworks"
           >
             <CustomComponent>
-              <HighlightCard
-                refreshCount={refreshCount}
-                name="Total artworks"
-                type="artworks"
-              />
+              <HighlightCard refreshCount={refreshCount} />
             </CustomComponent>
           </CopilotStep>
         </View>

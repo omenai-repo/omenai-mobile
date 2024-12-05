@@ -53,7 +53,7 @@ export default function PopularArtworks({
           }}
         >
           <Text
-            style={{ fontSize: 18, fontWeight: "500", flex: 1, color: "#000" }}
+            style={{ fontSize: 24, fontWeight: "500", flex: 1, color: "#000" }}
           >
             Popular artworks
           </Text>
