@@ -12,8 +12,8 @@ type GalleryAuthLoginStoreTypes = {
 export const useGalleryAuthLoginStore = create<GalleryAuthLoginStoreTypes>(
     (set, get) => ({
         galleryLoginData: {
-            email: "",
-            password: ""
+            email: "dantereus1@gmail.com",
+            password: "Devilwillcry@1"
         },
         setEmail: (email: string) => {
             const prevData = get().galleryLoginData

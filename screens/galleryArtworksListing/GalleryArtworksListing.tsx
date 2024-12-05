@@ -53,7 +53,16 @@ export default function GalleryArtworksListing() {
             paddingHorizontal: 20,
           }}
         >
-          <Text style={{ fontSize: 20, flex: 1 }}>Artworks</Text>
+          <Text
+            style={{
+              fontSize: 24,
+              flex: 1,
+              fontWeight: "500",
+              color: "#000",
+            }}
+          >
+            Artworks
+          </Text>
           <FittedBlackButton
             value="Upload artwork"
             isDisabled={false}
@@ -75,9 +84,10 @@ export default function GalleryArtworksListing() {
         {isloading ? (
           <MiniArtworkCardLoader />
         ) : (
-          <ArtworksListing data={data} />
+          <View style={{ paddingBottom: 130, paddingHorizontal: 10 }}>
+            <ArtworksListing data={data} />
+          </View>
         )}
-        <View style={{ paddingVertical: 20 }} />
       </ScrollWrapper>
     </WithModal>
   );
