@@ -1,123 +1,270 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { getSalesActivityData } from 'services/overview/getSalesActivityData';
-import { salesDataAlgorithm } from 'utils/utils_salesDataAlgorithm';
 import {
-    LineChart,
-} from "react-native-chart-kit";
-import Loader from 'components/general/Loader';
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  Easing,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { getSalesActivityData } from "services/overview/getSalesActivityData";
+import { salesDataAlgorithm } from "utils/utils_salesDataAlgorithm";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import tw from "twrnc";
 
-const screenWidth = Dimensions.get("window").width;
+const { width } = Dimensions.get("window");
 
-export default function SalesOverview({refreshCount}: {refreshCount: number}) {
-    const [salesOverviewData, setSalesOverviewData] = useState<number[]>([0]);
-    const [isLoading, setIsLoading] = useState(false);
+export default function SalesOverview({
+  refreshCount,
+}: {
+  refreshCount: number;
+}) {
+  const [salesOverviewData, setSalesOverviewData] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tooltip, setTooltip] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    value: 0,
+  });
+  const [fadeAnim] = useState(new Animated.Value(0)); // For tooltip animation
 
-    useEffect(() => {
-        setIsLoading(true)
-        async function handleFetchSalesData(){
-            const data = await getSalesActivityData();
-            const activityData = salesDataAlgorithm(data.data);
-            
-            let arr : number[] = [];
-            activityData.map((month) => (
-                arr.push(month.Revenue)
-            ))
+  useEffect(() => {
+    setIsLoading(true);
+    async function handleFetchSalesData() {
+      const data = await getSalesActivityData();
+      const activityData = salesDataAlgorithm(data.data);
+      const arr = activityData.map((month) => month.Revenue);
+      setSalesOverviewData(arr);
+      setIsLoading(false);
+    }
+    handleFetchSalesData();
+  }, [refreshCount]);
 
-            setSalesOverviewData(arr)
-            setIsLoading(false)
-        }
+  const labels = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const maxValue = Math.max(...salesOverviewData);
 
-        handleFetchSalesData()
-    }, [refreshCount])
+  // Chart configuration
+  const chartWidth = width - 40;
+  const chartHeight = 100;
+  const yAxisWidth = 40;
+  const barWidth = (chartWidth - yAxisWidth) / salesOverviewData.length;
 
-    const data = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [
-          {
-            data: salesOverviewData,
-            strokeWidth: 2, // optional,
-            color: () => '#808783',
-          }
-        ],
-    };
-    
-    if(isLoading)return(
-        <View style={[styles.container, {paddingHorizontal: 20}]}>
-            <Text style={{fontSize: 16, fontWeight: '400', marginBottom: 20}}>Sales overview</Text>
-            <View style={{height: 200, backgroundColor: '#f5f5f5'}} />
-        </View>
-    )
+  const formatToK = (num: number) => {
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1).replace(/\.0$/, "")}K`;
+    }
+    return num.toString();
+  };
 
+  const handleBarPress = (x: number, y: number, value: number) => {
+    setTooltip({ visible: true, x, y, value });
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 200,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const hideTooltip = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 200,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start(() => setTooltip({ ...tooltip, visible: false }));
+  };
+
+  if (isLoading) {
     return (
-        <View style={styles.container}>
-            <Text style={{fontSize: 16, fontWeight: '400', paddingHorizontal: 20, marginBottom: 20}}>Sales overview</Text>
+      <View style={[styles.container, { paddingHorizontal: 20 }]}>
+        <Text style={{ fontSize: 16, fontWeight: "400", marginBottom: 20 }}>
+          Sales overview
+        </Text>
+        <View style={{ height: 200, backgroundColor: "#f5f5f5" }} />
+      </View>
+    );
+  }
 
-            <LineChart
-                data={data}
-                width={screenWidth}
-                height={220}
-                withDots={false}
-                chartConfig={{
-                    backgroundGradientFrom: "#fff",
-                    backgroundGradientFromOpacity: 1,
-                    backgroundGradientTo: "#fff",
-                    backgroundGradientToOpacity: 0.1,
-                    labelColor: () => `rgba(0, 0, 0, 0.5)`,
-                    color: () => 'rgba(0,0,0, 0.2)',
-                    strokeWidth: 2, // optional, default 3
-                    barPercentage: 0.5,
-                    useShadowColorFromDataset: false, // optional
-                }}
-                fromZero={false}
-                bezier
-                formatYLabel={value => {
-                    const num = Number(value)
-                    if (num >= 1000) {
-                        return Math.ceil(num / 1000) + 'k';
-                        }
-                        return num.toString();
-                }}
-            />
+  return (
+    <>
+      <Text style={tw`text-[18px] text-[#000] font-medium mb-[10px] mx-[20px]`}>
+        Sales Overview
+      </Text>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Sales</Text>
         </View>
-    )
+
+        {/* Chart */}
+        <View style={styles.chart}>
+          {/* Y-Axis */}
+          <View style={styles.yAxis}>
+            {[0, maxValue / 2, maxValue].map((value, index) => (
+              <Text
+                key={index}
+                style={[
+                  styles.yAxisLabel,
+                  { bottom: (chartHeight / 2) * index - 8 },
+                ]}
+              >
+                {formatToK(value)}
+              </Text>
+            ))}
+          </View>
+
+          {/* Bars */}
+          <Svg
+            width={chartWidth}
+            height={chartHeight}
+            style={{
+              backgroundColor: "#242731",
+            }}
+          >
+            <Defs>
+              <LinearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                <Stop offset="0" stopColor="#8668E1" stopOpacity="1" />
+                <Stop offset="1" stopColor="#232630" stopOpacity="0.5" />
+              </LinearGradient>
+            </Defs>
+
+            {salesOverviewData.map((value, index) => {
+              const barHeight = (value / maxValue) * chartHeight;
+              const x = yAxisWidth + index * barWidth - barWidth + index + 10;
+              const y = chartHeight - barHeight;
+
+              return (
+                <Rect
+                  key={index}
+                  x={x}
+                  y={y}
+                  width={barWidth - 10}
+                  height={barHeight}
+                  fill="url(#barGradient)"
+                  rx={4}
+                  onPressIn={() => handleBarPress(x + barWidth / 2, y, value)}
+                  onPressOut={hideTooltip}
+                />
+              );
+            })}
+          </Svg>
+        </View>
+
+        {/* Tooltip */}
+        {tooltip.visible && (
+          <Animated.View
+            style={[
+              styles.tooltip,
+              {
+                opacity: fadeAnim,
+                left: tooltip.x,
+                top: tooltip.y,
+              },
+            ]}
+          >
+            <Text style={styles.tooltipText}>
+              {formatToK(tooltip.value)} Sales
+            </Text>
+          </Animated.View>
+        )}
+
+        {/* X-Axis */}
+        <View style={styles.xAxis}>
+          {labels.map((label, index) => (
+            <Text
+              key={index}
+              style={[
+                styles.xAxisLabel,
+                {
+                  width: barWidth,
+                  textAlign: "center",
+                  left: yAxisWidth + index * barWidth - barWidth + index + 5,
+                },
+              ]}
+            >
+              {label}
+            </Text>
+          ))}
+        </View>
+      </View>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        paddingHorizontal: 0
-    },
-    numsIndicator: {
-        width: 30,
-        gap: 20,
-        justifyContent: 'flex-end',
-        paddingBottom: 20
-    },
-    mainChart: {
-        flex: 1,
-    },
-    nums: {
-        fontSize: 14,
-        opacity: 0.6,
-        textAlign: 'right'
-    },
-    labelContainer: {
-        flexDirection: 'row',
-        gap: 10,
-        height: 20,
-        paddingTop: 5,
-        paddingHorizontal: 12
-    },
-    label: {
-        width: 40,
-        fontSize: 14,
-        opacity: 0.6,
-        textAlign: 'center'
-    },
-    mainChartDisplay: {
-        flex: 1,
-        paddingHorizontal: 12,
-        flexDirection: 'row',
-        gap: 10
-    }
-})
+  container: {
+    backgroundColor: "#242731",
+    borderRadius: 16,
+    paddingTop: 20,
+    paddingBottom: 40,
+    paddingHorizontal: 10,
+    marginHorizontal: 15,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 18,
+    color: "#FFFFFF",
+    fontWeight: "600",
+  },
+  chart: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    height: 100,
+    position: "relative",
+  },
+  yAxis: {
+    position: "absolute",
+    left: 0,
+    justifyContent: "space-between",
+    height: "100%",
+    zIndex: 10,
+  },
+  yAxisLabel: {
+    color: "#7C7C8D",
+    fontSize: 12,
+    textAlign: "right",
+    position: "absolute",
+    left: 0,
+  },
+  xAxis: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+    position: "relative",
+  },
+  xAxisLabel: {
+    color: "#7C7C8D",
+    fontSize: 10,
+    position: "absolute",
+    bottom: -20,
+  },
+  tooltip: {
+    position: "absolute",
+    backgroundColor: "#fff",
+    padding: 8,
+    borderRadius: 4,
+  },
+  tooltipText: {
+    color: "#000",
+    fontSize: 12,
+  },
+});

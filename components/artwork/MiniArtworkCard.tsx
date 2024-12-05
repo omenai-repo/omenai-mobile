@@ -187,9 +187,28 @@ export default function MiniArtworkCard({
         </View>
       </View>
       <View style={tw`mt-3 w-full px-3`}>
-        <Text style={[tw`text-base font-medium text-black/90`, {fontFamily: fontNames.dmSans + 'Medium'}]}>{title}</Text>
-        <Text style={[tw`text-sm text-black/70 my-1`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{artist}</Text>
-        <Text style={[tw`text-base font-bold text-black/90`, {fontFamily: fontNames.dmSans + 'Bold'}]}>
+        <Text
+          style={[
+            tw`text-base font-medium text-black/90`,
+            { fontFamily: fontNames.dmSans + "Medium" },
+          ]}
+        >
+          {title}
+        </Text>
+        <Text
+          style={[
+            tw`text-sm text-black/70 my-1`,
+            { fontFamily: fontNames.dmSans + "Regular" },
+          ]}
+        >
+          {artist}
+        </Text>
+        <Text
+          style={[
+            tw`text-base font-bold text-black/90`,
+            { fontFamily: fontNames.dmSans + "Bold" },
+          ]}
+        >
           {showPrice ? utils_formatPrice(price) : "Price on request"}
         </Text>
         {/* <View style={tw`flex-wrap`}>
