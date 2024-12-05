@@ -91,11 +91,18 @@ export default function SalesOverview({
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { paddingHorizontal: 20 }]}>
+      <View
+        style={{
+          paddingBottom: 40,
+          marginHorizontal: 15,
+        }}
+      >
         <Text style={{ fontSize: 16, fontWeight: "400", marginBottom: 20 }}>
           Sales overview
         </Text>
-        <View style={{ height: 200, backgroundColor: "#f5f5f5" }} />
+        <View
+          style={{ height: 200, backgroundColor: "#f5f5f5", borderRadius: 16 }}
+        />
       </View>
     );
   }
