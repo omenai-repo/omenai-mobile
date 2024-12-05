@@ -137,7 +137,7 @@ export default function MiniArtworkCard({
     // </TouchableOpacity>
     <TouchableOpacity
       activeOpacity={1}
-      style={tw`w-full`}
+      style={tw`w-[${imageWidth}px] flex flex-col items-center`}
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
       <View style={tw`rounded-[5px] overflow-hidden relative`}>
@@ -145,7 +145,7 @@ export default function MiniArtworkCard({
           <Image
             source={{ uri: image_href }}
             style={{
-              width: imageDimensions.width - 20,
+              width: imageDimensions.width - 15,
               height: imageDimensions.height,
               objectFit: "cover",
               borderRadius: 5,
@@ -170,11 +170,11 @@ export default function MiniArtworkCard({
           </View>
         )}
         <View
-          style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end pb-3 ${Platform.OS === 'android' ? 'pr-5' : 'pr-0'}`}
+          style={tw`absolute top-0 left-0 h-full w-[${imageDimensions.width - 15}px] bg-black/20 flex items-end justify-end p-3`}
         >
           {galleryView && (
             <View
-              style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center relative right-3`}
+              style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
             >
               <LikeComponent
                 art_id={art_id}
@@ -186,7 +186,7 @@ export default function MiniArtworkCard({
           )}
         </View>
       </View>
-      <View style={tw`mt-3`}>
+      <View style={tw`mt-3 w-full px-3`}>
         <Text style={[tw`text-base font-medium text-black/90`, {fontFamily: fontNames.dmSans + 'Medium'}]}>{title}</Text>
         <Text style={[tw`text-sm text-black/70 my-1`, {fontFamily: fontNames.dmSans + 'Regular'}]}>{artist}</Text>
         <Text style={[tw`text-base font-bold text-black/90`, {fontFamily: fontNames.dmSans + 'Bold'}]}>

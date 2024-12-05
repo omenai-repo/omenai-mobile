@@ -57,9 +57,6 @@ export default function ArtworksListing({
 const styles = StyleSheet.create({
   artworksContainer: {
     flex: 1,
-    // marginHorizontal: 'auto',
-    position: Platform.OS === "android" ? 'relative' :'static',
-    left: Platform.OS === 'android' ? 15 : 0 
   },
   singleColumn: {
     flex: 1,
