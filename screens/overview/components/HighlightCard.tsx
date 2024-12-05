@@ -8,16 +8,10 @@ import tw from "twrnc";
 import { notesIcon, walletIcon } from "utils/SvgImages";
 
 type HighlightCardProps = {
-  name: string;
-  type: "artworks" | "sales";
   refreshCount: number;
 };
 
-export const HighlightCard = ({
-  name,
-  type,
-  refreshCount,
-}: HighlightCardProps) => {
+export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
   const { width } = useWindowDimensions();
   const [totalArtwork, setTotalArtwork] = useState(0);
   const [soldArtwork, setSoldArtwork] = useState(0);

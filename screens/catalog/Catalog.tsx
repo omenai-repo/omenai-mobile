@@ -46,7 +46,7 @@ export default function Catalog() {
 
   const [loadingMore, setLoadingmore] = useState<boolean>(false);
 
-  const {width} = Dimensions.get("screen");
+  const { width } = Dimensions.get("screen");
 
   useEffect(() => {
     handleFecthArtworks();
@@ -106,39 +106,24 @@ export default function Catalog() {
 
   return (
     <WithModal>
-      {/* <SafeAreaView style={styles.safeArea}> */}
-        <View style={styles.mainContainer}>
-          <View style={{ zIndex: 100, paddingHorizontal: 20, width: '100%' }}>
-            <FilterButton>
-              <Text style={styles.headerText}>Catalog</Text>
-            </FilterButton>
-          </View>
-          <View style={tailwind`z-[5] flex-1 w-[${width}px]`}>
-            {isLoading ? (
-              <MiniArtworkCardLoader />
-            ) : (
-              // <ScrollWrapper
-              //   style={{ flex: 1}}
-              //   showsVerticalScrollIndicator={false}
-              //   onEndReached={handlePagination}
-              //   onEndReachedThreshold={1}
-              //   refreshControl={
-              //     <RefreshControl
-              //       refreshing={false}
-              //       onRefresh={() => setReloadCount((prev) => prev + 1)}
-              //     />
-              //   }
-              // >
-              <ArtworksListing
-                data={artworks}
-                loadingMore={loadingMore}
-                onEndReached={handlePagination}
-              />
-              //   </ScrollWrapper>
-            )}
-          </View>
+      <View style={styles.mainContainer}>
+        <View style={{ zIndex: 100, paddingHorizontal: 20, width: "100%" }}>
+          <FilterButton>
+            <Text style={styles.headerText}>Catalog</Text>
+          </FilterButton>
         </View>
-      {/* </SafeAreaView> */}
+        <View style={tailwind`z-[5] flex-1 w-[${width}px]`}>
+          {isLoading ? (
+            <MiniArtworkCardLoader />
+          ) : (
+            <ArtworksListing
+              data={artworks}
+              loadingMore={loadingMore}
+              onEndReached={handlePagination}
+            />
+          )}
+        </View>
+      </View>
     </WithModal>
   );
 }
@@ -159,7 +144,7 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 10,
     paddingTop: 20,
     flex: 1,
-    alignItems: 'center'
+    alignItems: "center",
   },
   tagItem: {
     backgroundColor: "#FAFAFA",
@@ -179,9 +164,5 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: colors.primary_black,
     paddingVertical: 20,
-  },
-  safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    flex: 1,
   },
 });
