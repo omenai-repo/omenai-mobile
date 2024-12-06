@@ -137,15 +137,15 @@ export default function MiniArtworkCard({
     // </TouchableOpacity>
     <TouchableOpacity
       activeOpacity={1}
-      style={tw`w-[${imageWidth}px] flex flex-col items-center`}
+      style={tw`w-[${imageWidth - 10}px] flex flex-col items-center`}
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
-      <View style={tw`rounded-[5px] overflow-hidden relative`}>
+      <View style={tw`rounded-[5px] overflow-hidden relative w-full`}>
         {renderDynamicImage ? (
           <Image
             source={{ uri: image_href }}
             style={{
-              width: imageDimensions.width - 15,
+              width: imageDimensions.width - 10,
               height: imageDimensions.height,
               objectFit: "cover",
               borderRadius: 5,
@@ -153,38 +153,41 @@ export default function MiniArtworkCard({
             }}
             resizeMode="contain"
           />
-        ) : (
-          <View
-            style={{ height: 200, width: "100%", backgroundColor: "#f5f5f5" }}
-          >
-            <Image
-              source={{ uri: image_href }}
-              style={{
-                width: imageWidth,
-                height: 200,
-                objectFit: "contain",
-                borderRadius: 5,
-              }}
-              resizeMode="contain"
-            />
-          </View>
-        )}
-        <View
-          style={tw`absolute top-0 left-0 h-full w-[${imageDimensions.width - 15}px] bg-black/20 flex items-end justify-end p-3`}
-        >
-          {galleryView && (
+        ) 
+        : 
+          (
             <View
-              style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
+              style={{ height: 200, width: "100%", backgroundColor: "#f5f5f5" }}
             >
-              <LikeComponent
-                art_id={art_id}
-                impressions={impressions || 0}
-                likeIds={like_IDs || []}
-                lightText
+              <Image
+                source={{ uri: image_href }}
+                style={{
+                  width: imageWidth,
+                  height: 200,
+                  objectFit: "contain",
+                  borderRadius: 5,
+                }}
+                resizeMode="contain"
               />
             </View>
-          )}
-        </View>
+          )
+        }
+        {renderDynamicImage &&
+          <View style={tw`absolute top-0 left-0 h-full w-[${imageDimensions.width - 10}px] bg-black/20 flex items-end justify-end p-3`}>
+            {galleryView && (
+              <View
+                style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
+              >
+                <LikeComponent
+                  art_id={art_id}
+                  impressions={impressions || 0}
+                  likeIds={like_IDs || []}
+                  lightText
+                />
+              </View>
+            )}
+          </View>
+        }
       </View>
       <View style={tw`mt-3 w-full px-3`}>
         <Text
