@@ -1,10 +1,16 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { getNumberOfColumns } from 'utils/utils_screen'
+import { MasonryFlashList } from '@shopify/flash-list'
+import tailwind from 'twrnc'
 
 export default function MiniArtworkCardLoader() {
+
+    const dummyArr = new Array(20).fill('loader')
+
     const Card = () => {
         return(
-            <View>
+            <View style={tailwind`px-[10px] w-full`}>
                 <View style={styles.imageContainer} />
                 <View style={styles.mainDetailsContainer}>
                     <View style={{flex: 1}}>
@@ -18,25 +24,26 @@ export default function MiniArtworkCardLoader() {
 
     return (
         <View style={styles.container}>
-            <View style={{flex: 1, gap: 20}}>
-                <Card />
-                <Card />
-                <Card />
-            </View>
-            <View style={{flex: 1, gap: 20}}>
-                <Card />
-                <Card />
-                <Card />
-            </View>
+            <MasonryFlashList
+                data={dummyArr}
+                estimatedItemSize={20}
+                onEndReachedThreshold={0.1}
+                renderItem={() => (
+                    <View style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
+                        <Card />
+                    </View>
+                )}
+                keyExtractor={(_, index) => JSON.stringify(index)}
+                showsVerticalScrollIndicator={false}
+                numColumns={getNumberOfColumns()}
+            />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: 'row',
-        gap: 20,
-        paddingHorizontal: 10
+        flex: 1,
     },
     imageContainer: {
         width: '100%',
