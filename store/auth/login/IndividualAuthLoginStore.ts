@@ -12,8 +12,8 @@ type IndividualAuthLoginStoreTypes = {
 export const useIndividualAuthLoginStore = create<IndividualAuthLoginStoreTypes>(
     (set, get) => ({
         individualLoginData: {
-            email: "",
-            password: ""
+            email: "dantereus1@gmail.com",
+            password: "Test12345!"
         },
         setEmail: (email: string) => {
             const prevData = get().individualLoginData

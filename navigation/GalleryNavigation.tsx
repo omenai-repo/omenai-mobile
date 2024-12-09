@@ -108,11 +108,7 @@ export default function GalleryNavigation() {
       );
     }
 
-    return (
-      <View style={{ alignItems: "center", gap: 5 }}>
-        {icon}
-      </View>
-    );
+    return <View style={{ alignItems: "center", gap: 5 }}>{icon}</View>;
   };
 
   const StripePayoutScreen = () => {
