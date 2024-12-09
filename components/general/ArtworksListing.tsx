@@ -5,6 +5,7 @@ import EmptyArtworks from "./EmptyArtworks";
 import Loader from "./Loader";
 import { MasonryFlashList } from "@shopify/flash-list";
 import { useAppStore } from "store/app/appStore";
+import { getNumberOfColumns } from "utils/utils_screen";
 
 export default function ArtworksListing({
   data,
@@ -26,7 +27,7 @@ export default function ArtworksListing({
         onEndReached={onEndReached}
         onEndReachedThreshold={0.1}
         renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
-          <View style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
+          // <View style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
             <MiniArtworkCard
               title={item.title}
               url={item.url}
@@ -38,11 +39,11 @@ export default function ArtworksListing({
               art_id={item.art_id}
               galleryView={userType !== "user" ? false : true}
             />
-          </View>
+          // </View>
         )}
         keyExtractor={(_, index) => JSON.stringify(index)}
         showsVerticalScrollIndicator={false}
-        numColumns={2}
+        numColumns={getNumberOfColumns()}
         ListFooterComponent={() => {
           if (loadingMore) {
             return <Loader size={150} height={200} />;
