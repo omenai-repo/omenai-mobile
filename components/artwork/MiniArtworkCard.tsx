@@ -20,6 +20,7 @@ import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
 import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
 import { fontNames } from "constants/fontNames.constants";
+import { getNumberOfColumns } from "utils/utils_screen";
 
 type MiniArtworkCardType = {
   title: string;
@@ -46,15 +47,17 @@ export default function MiniArtworkCard({
 }: MiniArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const screenWidth = Dimensions.get("window").width;
+  const screenWidth = Dimensions.get("window").width - 10;
   const [imageDimensions, setImageDimensions] = useState({
     width: 0,
     height: 0,
   });
   const [renderDynamicImage, setRenderDynamicImage] = useState(false);
 
+  const dividerNum = getNumberOfColumns();
+
   let imageWidth = 0;
-  imageWidth = Math.round((screenWidth - 10) / 2); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
+  imageWidth = Math.round(screenWidth / dividerNum); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
 
   const image_href = getImageFileView(url, imageWidth);
 
@@ -137,7 +140,7 @@ export default function MiniArtworkCard({
     // </TouchableOpacity>
     <TouchableOpacity
       activeOpacity={1}
-      style={tw`w-[${imageWidth - 10}px] flex flex-col items-center`}
+      style={tw`w-[${imageWidth}px] flex flex-col items-center pb-[20px]`}
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
       <View style={tw`rounded-[5px] overflow-hidden relative w-full`}>
@@ -153,12 +156,9 @@ export default function MiniArtworkCard({
             }}
             resizeMode="contain"
           />
-        ) 
-        : 
-          (
-            <View
-              style={{ height: 200, width: "100%", backgroundColor: "#f5f5f5" }}
-            >
+        ) : (
+          <View style={tw`w-[${imageWidth}px] overflow-hidden px-[7px]`}>
+            <View style={tw`bg-[#f5f5f5] h-[200px] w-full`}>
               <Image
                 source={{ uri: image_href }}
                 style={{
@@ -170,10 +170,14 @@ export default function MiniArtworkCard({
                 resizeMode="contain"
               />
             </View>
-          )
-        }
-        {renderDynamicImage &&
-          <View style={tw`absolute top-0 left-0 h-full w-[${imageDimensions.width - 10}px] bg-black/20 flex items-end justify-end p-3`}>
+          </View>
+        )}
+        {renderDynamicImage && (
+          <View
+            style={tw`absolute top-0 left-0 h-full w-[${
+              imageDimensions.width - 10
+            }px] bg-black/20 flex items-end justify-end p-3`}
+          >
             {galleryView && (
               <View
                 style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
@@ -187,7 +191,7 @@ export default function MiniArtworkCard({
               </View>
             )}
           </View>
-        }
+        )}
       </View>
       <View style={tw`mt-3 w-full px-3`}>
         <Text
