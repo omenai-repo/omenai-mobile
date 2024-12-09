@@ -141,7 +141,7 @@ const MiniArtworkCard = memo(
       // </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={1}
-        style={tw`w-[${imageWidth - 10}px] flex flex-col items-center`}
+        style={tw`w-[${imageWidth}px] flex flex-col items-center pb-[20px]`}
         onPress={() => navigation.push(screenName.artwork, { title: title })}
       >
         <View style={tw`rounded-[5px] overflow-hidden relative w-full`}>
@@ -158,19 +158,19 @@ const MiniArtworkCard = memo(
               resizeMode="contain"
             />
           ) : (
-            <View
-              style={{ height: 200, width: "100%", backgroundColor: "#f5f5f5" }}
-            >
-              <Image
-                source={{ uri: image_href }}
-                style={{
-                  width: imageWidth,
-                  height: 200,
-                  objectFit: "contain",
-                  borderRadius: 5,
-                }}
-                resizeMode="contain"
-              />
+            <View style={tw`w-[${imageWidth}px] overflow-hidden px-[7px]`}>
+              <View style={tw`bg-[#f5f5f5] h-[200px] w-full`}>
+                <Image
+                  source={{ uri: image_href }}
+                  style={{
+                    width: imageWidth,
+                    height: 200,
+                    objectFit: "contain",
+                    borderRadius: 5,
+                  }}
+                  resizeMode="contain"
+                />
+              </View>
             </View>
           )}
           {renderDynamicImage && (
