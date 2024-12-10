@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "config/colors.config";
@@ -21,6 +21,7 @@ import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
 import { fontNames } from "constants/fontNames.constants";
 import { getNumberOfColumns } from "utils/utils_screen";
+import MiniImage from "./MiniImage";
 
 type MiniArtworkCardType = {
   title: string;
@@ -34,7 +35,7 @@ type MiniArtworkCardType = {
   galleryView?: boolean;
 };
 
-export default function MiniArtworkCard({
+const MiniArtworkCard = memo(({
   url,
   artist,
   title,
@@ -44,7 +45,7 @@ export default function MiniArtworkCard({
   impressions,
   like_IDs,
   galleryView = false,
-}: MiniArtworkCardType) {
+}: MiniArtworkCardType) => {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const screenWidth = Dimensions.get("window").width - 10;
@@ -144,36 +145,9 @@ export default function MiniArtworkCard({
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
       <View style={tw`rounded-[5px] overflow-hidden relative`}>
-        {renderDynamicImage ? (
-          <Image
-            source={{ uri: image_href }}
-            style={{
-              width: imageDimensions.width - 10,
-              height: imageDimensions.height,
-              objectFit: "cover",
-              borderRadius: 5,
-              overflow: "hidden",
-            }}
-            resizeMode="contain"
-          />
-        ) : (
-          <View
-            style={tw`w-[${imageWidth}px] overflow-hidden px-[7px]`}
-          >
-            <View style={tw`bg-[#f5f5f5] h-[200px] w-full`}>
-              <Image
-                source={{ uri: image_href }}
-                style={{
-                  width: imageWidth,
-                  height: 200,
-                  objectFit: "contain",
-                  borderRadius: 5,
-                }}
-                resizeMode="contain"
-              />
-            </View>
-          </View>
-        )}
+        <View style={tw`w-full flex items-center justify-center bg-red-500`}>
+        {MiniImage({maxWidth: imageWidth, url: image_href, name: title})}
+        </View>
         {renderDynamicImage &&
           <View
             style={tw`absolute top-0 left-0 h-full w-[${imageDimensions.width - 10}px] bg-black/20 flex items-end justify-end p-3`}
@@ -234,7 +208,9 @@ export default function MiniArtworkCard({
       </View>
     </TouchableOpacity>
   );
-}
+});
+
+export default MiniArtworkCard
 
 const styles = StyleSheet.create({
   container: {
