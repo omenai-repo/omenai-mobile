@@ -14,6 +14,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "constants/screenNames.constants";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import { getNumberOfColumns } from "utils/utils_screen";
 
 export default function Collections() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -43,7 +44,7 @@ export default function Collections() {
       <ScrollWrapper style={styles.mainContainer}>
         <FlatList
           data={mediums}
-          numColumns={2}
+          numColumns={getNumberOfColumns()}
           renderItem={({
             item,
             index,
