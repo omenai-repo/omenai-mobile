@@ -28,17 +28,17 @@ export default function ArtworksListing({
         onEndReachedThreshold={0.1}
         renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
           // <View style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
-            <MiniArtworkCard
-              title={item.title}
-              url={item.url}
-              artist={item.artist}
-              showPrice={item.pricing.shouldShowPrice === "Yes"}
-              price={item.pricing.usd_price}
-              impressions={item.impressions}
-              like_IDs={item.like_IDs}
-              art_id={item.art_id}
-              galleryView={userType !== "user" ? false : true}
-            />
+          <MiniArtworkCard
+            title={item.title}
+            url={item.url}
+            artist={item.artist}
+            showPrice={item.pricing.shouldShowPrice === "Yes"}
+            price={item.pricing.usd_price}
+            impressions={item.impressions}
+            like_IDs={item.like_IDs}
+            art_id={item.art_id}
+            galleryView={userType !== "user" ? false : true}
+          />
           // </View>
         )}
         keyExtractor={(_, index) => JSON.stringify(index)}
@@ -62,5 +62,5 @@ const styles = StyleSheet.create({
   singleColumn: {
     flex: 1,
     gap: 20,
-  }
+  },
 });
