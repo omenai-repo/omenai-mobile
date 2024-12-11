@@ -63,38 +63,39 @@ export default function Profile() {
 
   return (
     <WithModal>
-      <View style={styles.profileContainer}>
-        <Image source={omenaiAvatar} style={styles.image} />
-        <View>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "500",
-              color: colors.primary_black,
-            }}
-          >
-            {userData.name}
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              marginTop: 5,
-              marginBottom: 20,
-              color: "#00000099",
-            }}
-          >
-            {userData.email}
-          </Text>
-          <FittedBlackButton
-            value="Edit profile"
-            isDisabled={false}
-            onClick={() => navigation.navigate(screenName.editProfile)}
-          />
-        </View>
-      </View>
-      {/* </SafeAreaView> */}
       <ScrollWrapper style={styles.container}>
-        <View style={tw`gap-[20px] pt-[40px]`}>
+        <View style={styles.profileContainer}>
+          <Image source={omenaiAvatar} style={styles.image} />
+          <View>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "500",
+                color: colors.primary_black,
+              }}
+            >
+              {userData.name}
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                marginTop: 5,
+                marginBottom: 20,
+                color: "#00000099",
+              }}
+            >
+              {userData.email}
+            </Text>
+            <FittedBlackButton
+              value="Edit profile"
+              isDisabled={false}
+              onClick={() => navigation.navigate(screenName.editProfile)}
+            />
+          </View>
+        </View>
+        {/* </SafeAreaView> */}
+
+        <View style={tw`gap-[20px] pt-[40px] px-[20px]`}>
           <PageButtonCard
             name="Saved artworks"
             subText="See all your saved artworks"
@@ -119,6 +120,7 @@ export default function Profile() {
           />
           <View style={tw`mt-[20px]`} />
           <LongBlackButton value="Log Out" onClick={logout} />
+          <View style={tw`h-[200px]`} />
         </View>
       </ScrollWrapper>
     </WithModal>
@@ -129,7 +131,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    paddingHorizontal: 20,
     marginTop: 10,
     paddingTop: 10,
   },
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     gap: 20,
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === "ios" ? 90 : 100,
+    paddingTop: Platform.OS === "ios" ? 70 : 20,
   },
   image: {
     height: 132,
