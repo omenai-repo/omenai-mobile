@@ -168,7 +168,7 @@ export default function Artwork() {
     Image.getSize(img, (defaultWidth, defaultHeight) => {
       const { width, height } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        300
+        400
       );
       setImageDimensions({ height, width });
       // setRenderDynamicImage(true);
@@ -187,7 +187,7 @@ export default function Artwork() {
               showsVerticalScrollIndicator={false}
             >
               <View style={{ paddingBottom: 20 }}>
-                <View style={{ paddingHorizontal: 30, marginBottom: 100 }}>
+                <View style={{ paddingHorizontal: 20, marginBottom: 100 }}>
                   <Image
                     source={{ uri: img }}
                     style={{
