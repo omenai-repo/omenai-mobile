@@ -57,7 +57,6 @@ export default function ArtworkCard({
 }: ArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
-
   const image_href = getImageFileView(url, 270);
 
   const { updateModal } = useModalStore();
@@ -197,34 +196,49 @@ export default function ArtworkCard({
             </Text>
 
             <View style={tw`flex-wrap`}>
-              <TouchableOpacity
-                style={tw`${
-                  lightText ? "bg-white" : "bg-black"
-                } rounded-full px-5 py-2 w-fit mt-2`}
-                onPress={() => {
-                  if (showPrice) {
-                    navigation.push(screenName.purchaseArtwork, {
-                      title,
-                    });
-                  } else {
-                    handleRequestPriceQuote();
-                  }
-                }}
-                activeOpacity={1}
-              >
-                <Text
-                  style={[
-                    tw`${lightText ? "text-black" : "text-white"} text-sm`,
-                    { fontFamily: fontNames.dmSans + "Medium" },
-                  ]}
+              {availiablity ? (
+                <TouchableOpacity
+                  style={tw`${
+                    lightText ? "bg-white" : "bg-black"
+                  } rounded-full px-5 py-2 w-fit mt-2`}
+                  onPress={() => {
+                    if (showPrice) {
+                      navigation.push(screenName.purchaseArtwork, {
+                        title,
+                      });
+                    } else {
+                      handleRequestPriceQuote();
+                    }
+                  }}
+                  activeOpacity={1}
                 >
-                  {showPrice
-                    ? "Purchase"
-                    : loadingPriceQuote
-                    ? "Requesting ..."
-                    : "Request price"}
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={[
+                      tw`${lightText ? "text-black" : "text-white"} text-sm`,
+                      { fontFamily: fontNames.dmSans + "Medium" },
+                    ]}
+                  >
+                    {showPrice
+                      ? "Purchase"
+                      : loadingPriceQuote
+                      ? "Requesting ..."
+                      : "Request price"}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <View
+                  style={tw`rounded-full bg-[#E0E0E0] px-5 py-2 w-fit mt-2`}
+                >
+                  <Text
+                    style={[
+                      tw`text-[#A1A1A1] text-sm`,
+                      { fontFamily: fontNames.dmSans + "Medium" },
+                    ]}
+                  >
+                    Sold
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
