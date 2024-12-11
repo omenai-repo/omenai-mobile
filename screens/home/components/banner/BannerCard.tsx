@@ -1,5 +1,5 @@
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
-import React from 'react';
+import React, { memo } from 'react';
 import { colors } from 'config/colors.config';
 import tw from 'twrnc';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -17,13 +17,13 @@ type BannerItemProps = {
 
 const { width: windowWidth } = Dimensions.get("window");
 
-export default function BannerCard({
+const BannerCard = memo(({
   image,
   headline,
   subheadline,
   cta,
   handleClick,
-}: BannerItemProps) {
+}: BannerItemProps) => {
 
     const image_href = getPromotionalFileView(image, 500);
 
@@ -56,4 +56,6 @@ export default function BannerCard({
             {/* <View style={tw`flex-1`} /> */}
         </View>
   );
-}
+})
+
+export default BannerCard
