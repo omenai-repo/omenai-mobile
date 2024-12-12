@@ -148,9 +148,9 @@ const MiniArtworkCard = memo(({
         <View style={tw`w-full flex items-center justify-center bg-red-500`}>
         {MiniImage({maxWidth: imageWidth, url: image_href, name: title})}
         </View>
-        {renderDynamicImage &&
+        {/* {renderDynamicImage && */}
           <View
-            style={tw`absolute top-0 left-0 h-full w-[${imageDimensions.width - 10}px] bg-black/20 flex items-end justify-end p-3`}
+            style={tw`absolute top-0 left-0 h-full w-[${imageWidth - 10}px] bg-black/20 flex items-end justify-end p-3`}
           >
             {galleryView && (
               <View
@@ -165,7 +165,7 @@ const MiniArtworkCard = memo(({
               </View>
             )}
           </View>
-        }
+        {/* } */}
       </View>
       <View style={tw`mt-3 w-full px-3`}>
         <Text
