@@ -62,16 +62,16 @@ const MiniArtworkCard = memo(({
 
   const image_href = getImageFileView(url, imageWidth);
 
-  useEffect(() => {
-    Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-      const { width, height } = resizeImageDimensions(
-        { width: defaultWidth, height: defaultHeight },
-        300
-      );
-      setImageDimensions({ height, width });
-      setRenderDynamicImage(true);
-    });
-  }, [image_href, screenWidth]);
+  // useEffect(() => {
+  //   Image.getSize(image_href, (defaultWidth, defaultHeight) => {
+  //     const { width, height } = resizeImageDimensions(
+  //       { width: defaultWidth, height: defaultHeight },
+  //       300
+  //     );
+  //     setImageDimensions({ height, width });
+  //     setRenderDynamicImage(true);
+  //   });
+  // }, [image_href, screenWidth]);
 
   return (
     // <TouchableOpacity
@@ -145,8 +145,8 @@ const MiniArtworkCard = memo(({
       onPress={() => navigation.push(screenName.artwork, { title: title })}
     >
       <View style={tw`rounded-[5px] overflow-hidden relative`}>
-        <View style={tw`w-full flex items-center justify-center bg-red-500`}>
-        {MiniImage({maxWidth: imageWidth, url: image_href, name: title})}
+        <View style={tw`w-full flex items-center justify-center`}>
+        {MiniImage({maxWidth: imageWidth, url: image_href})}
         </View>
         {/* {renderDynamicImage && */}
           <View
