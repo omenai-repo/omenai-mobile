@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 10,
     flex: 1,
     alignItems: "center",
+    paddingTop: 40,
   },
   tagItem: {
     backgroundColor: "#FAFAFA",
