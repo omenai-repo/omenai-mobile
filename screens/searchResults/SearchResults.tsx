@@ -42,7 +42,7 @@ export default function SearchResults() {
 
     if (results.isOk) {
       arr = results.body.data;
-      setData(arr)
+      setData(arr);
       setDataLength(arr.length);
     } else {
       Alert.alert(results.body);
@@ -53,48 +53,44 @@ export default function SearchResults() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.mainContainer}>
-        <View style={{paddingHorizontal: 15}}>
-          <SafeAreaView style={styles.safeArea}>
-            <SearchInput />
-          </SafeAreaView>
-          {searchQuery.length > 0 ? (
-            <>
-              <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
-              <Text style={{ fontSize: 16, color: colors.grey }}>
-                {dataLength} results found
-              </Text>
-            </>
-          ) : (
-            <View>
-              <Text style={styles.headerText}>Search for artworks on Omenai</Text>
-            </View>
-          )}
-        </View>
-        {isLoading && (
-          <View style={{ marginTop: 30 }}>
-            <MiniArtworkCardLoader />
-          </View>
-        )}
-        {!isLoading && dataLength > 0 && (
-          <View style={{ flex: 1 }}>
-            {/* <Filters dataLength={dataLength}  /> */}
-            <ResultsListing data={data} />
-          </View>
-        )}
-        {searchQuery.length > 0 && dataLength === 0 && !isLoading && (
-          <View style={{ marginTop: 40 }}>
-            <EmptyArtworks
-              size={100}
-              writeUp={
-                searchQuery.length < 3 && dataLength === 0
-                  ? "Please enter at least 3 characters to search..."
-                  : `Can't find artwork you're looking for, try checking for mispellings`
-              }
-            />
+      <View style={{ paddingHorizontal: 15 }}>
+        <SearchInput />
+        {searchQuery.length > 0 ? (
+          <>
+            <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
+            <Text style={{ fontSize: 16, color: colors.grey }}>
+              {dataLength} results found
+            </Text>
+          </>
+        ) : (
+          <View>
+            <Text style={styles.headerText}>Search for artworks on Omenai</Text>
           </View>
         )}
       </View>
+      {isLoading && (
+        <View style={{ marginTop: 30 }}>
+          <MiniArtworkCardLoader />
+        </View>
+      )}
+      {!isLoading && dataLength > 0 && (
+        <View style={{ flex: 1 }}>
+          {/* <Filters dataLength={dataLength}  /> */}
+          <ResultsListing data={data} />
+        </View>
+      )}
+      {searchQuery.length > 0 && dataLength === 0 && !isLoading && (
+        <View style={{ marginTop: 40 }}>
+          <EmptyArtworks
+            size={100}
+            writeUp={
+              searchQuery.length < 3 && dataLength === 0
+                ? "Please enter at least 3 characters to search..."
+                : `Can't find artwork you're looking for, try checking for mispellings`
+            }
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -103,10 +99,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-  },
-  mainContainer: {
-    flex: 1,
-    // paddingHorizontal: 10,
+    paddingTop: Platform.OS === "ios" ? 80 : 50,
   },
   headerText: {
     fontSize: 18,
