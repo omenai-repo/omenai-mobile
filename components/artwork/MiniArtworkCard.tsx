@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useEffect, useState, memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "config/colors.config";
@@ -35,43 +35,44 @@ type MiniArtworkCardType = {
   galleryView?: boolean;
 };
 
-const MiniArtworkCard = memo(({
-  url,
-  artist,
-  title,
-  showPrice,
-  price,
-  art_id,
-  impressions,
-  like_IDs,
-  galleryView = false,
-}: MiniArtworkCardType) => {
-  const navigation = useNavigation<StackNavigationProp<any>>();
+const MiniArtworkCard = memo(
+  ({
+    url,
+    artist,
+    title,
+    showPrice,
+    price,
+    art_id,
+    impressions,
+    like_IDs,
+    galleryView = false,
+  }: MiniArtworkCardType) => {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const screenWidth = Dimensions.get("window").width - 10;
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
-  const [renderDynamicImage, setRenderDynamicImage] = useState(false);
-
-  const dividerNum = getNumberOfColumns()
-
-  let imageWidth = 0;
-  imageWidth = Math.round((screenWidth) / dividerNum); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
-
-  const image_href = getImageFileView(url, imageWidth);
-
-  useEffect(() => {
-    Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-      const { width, height } = resizeImageDimensions(
-        { width: defaultWidth, height: defaultHeight },
-        300
-      );
-      setImageDimensions({ height, width });
-      setRenderDynamicImage(true);
+    const screenWidth = Dimensions.get("window").width - 10;
+    const [imageDimensions, setImageDimensions] = useState({
+      width: 0,
+      height: 0,
     });
-  }, [image_href, screenWidth]);
+    const [renderDynamicImage, setRenderDynamicImage] = useState(false);
+
+    const dividerNum = getNumberOfColumns();
+
+    let imageWidth = 0;
+    imageWidth = Math.round(screenWidth / dividerNum); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
+
+    const image_href = getImageFileView(url, imageWidth);
+
+    useEffect(() => {
+      Image.getSize(image_href, (defaultWidth, defaultHeight) => {
+        const { width, height } = resizeImageDimensions(
+          { width: defaultWidth, height: defaultHeight },
+          300
+        );
+        setImageDimensions({ height, width });
+        setRenderDynamicImage(true);
+      });
+    }, [image_href, screenWidth]);
 
   return (
     // <TouchableOpacity
@@ -205,12 +206,13 @@ const MiniArtworkCard = memo(({
             <Text style={tw`text-white text-sm font-medium`}>Purchase</Text>
           </TouchableOpacity>
         </View> */}
-      </View>
-    </TouchableOpacity>
-  );
-});
+        </View>
+      </TouchableOpacity>
+    );
+  }
+);
 
-export default MiniArtworkCard
+export default MiniArtworkCard;
 
 const styles = StyleSheet.create({
   container: {

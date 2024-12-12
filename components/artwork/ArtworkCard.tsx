@@ -18,6 +18,9 @@ import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
 import { fontNames } from "constants/fontNames.constants";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
+import { requestArtworkPrice } from "services/artworks/requestArtworkPrice";
+import { useModalStore } from "store/modal/modalStore";
 
 type ArtworkCardType = {
   title: string;
@@ -50,10 +53,13 @@ export default function ArtworkCard({
   like_IDs,
   galleryView = false,
   availiablity,
+  medium,
 }: ArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-
+  const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const image_href = getImageFileView(url, 270);
+
+  const { updateModal } = useModalStore();
 
   const [imageDimensions, setImageDimensions] = useState({
     width: 200,
@@ -70,6 +76,50 @@ export default function ArtworkCard({
       // setRenderDynamicImage(true);
     });
   }, [image_href]);
+
+  const handleRequestPriceQuote = async () => {
+    setLoadingPriceQuote(true);
+
+    let userEmail = "";
+    let userName = "";
+
+    const userSession = await utils_getAsyncData("userSession");
+    if (userSession.value) {
+      userEmail = JSON.parse(userSession.value).email;
+      userName = JSON.parse(userSession.value).name;
+    } else return;
+
+    const artwork_data = {
+      title: title,
+      artist: artist,
+      art_id: art_id,
+      url: url,
+      medium: medium,
+      pricing: price,
+    };
+
+    const results = await requestArtworkPrice(
+      artwork_data,
+      userEmail,
+      userName
+    );
+    if (results.isOk) {
+      updateModal({
+        message: `Price quote for ${artwork_data.title} has been sent to ${userEmail}`,
+        showModal: true,
+        modalType: "success",
+      });
+    } else {
+      updateModal({
+        message:
+          "Something went wrong, please try again or contact us for assistance.",
+        showModal: true,
+        modalType: "error",
+      });
+    }
+
+    setLoadingPriceQuote(false);
+  };
 
   return (
     <View>
@@ -144,27 +194,51 @@ export default function ArtworkCard({
             >
               {showPrice ? utils_formatPrice(price) : "Price on request"}
             </Text>
+
             <View style={tw`flex-wrap`}>
-              <TouchableOpacity
-                style={tw`${
-                  lightText ? "bg-white" : "bg-black"
-                } rounded-full px-5 py-2 w-fit mt-2`}
-                onPress={() =>
-                  navigation.push(screenName.purchaseArtwork, {
-                    title,
-                  })
-                }
-                activeOpacity={1}
-              >
-                <Text
-                  style={[
-                    tw`${lightText ? "text-black" : "text-white"} text-sm`,
-                    { fontFamily: fontNames.dmSans + "Medium" },
-                  ]}
+              {availiablity ? (
+                <TouchableOpacity
+                  style={tw`${
+                    lightText ? "bg-white" : "bg-black"
+                  } rounded-full px-5 py-2 w-fit mt-2`}
+                  onPress={() => {
+                    if (showPrice) {
+                      navigation.push(screenName.purchaseArtwork, {
+                        title,
+                      });
+                    } else {
+                      handleRequestPriceQuote();
+                    }
+                  }}
+                  activeOpacity={1}
                 >
-                  Purchase
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={[
+                      tw`${lightText ? "text-black" : "text-white"} text-sm`,
+                      { fontFamily: fontNames.dmSans + "Medium" },
+                    ]}
+                  >
+                    {showPrice
+                      ? "Purchase"
+                      : loadingPriceQuote
+                      ? "Requesting ..."
+                      : "Request price"}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <View
+                  style={tw`rounded-full bg-[#E0E0E0] px-5 py-2 w-fit mt-2`}
+                >
+                  <Text
+                    style={[
+                      tw`text-[#A1A1A1] text-sm`,
+                      { fontFamily: fontNames.dmSans + "Medium" },
+                    ]}
+                  >
+                    Sold
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
