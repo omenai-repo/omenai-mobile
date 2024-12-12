@@ -131,8 +131,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    marginTop: 10,
-    paddingTop: 10,
+    paddingTop: 40,
   },
   profileContainer: {
     flexDirection: "row",
