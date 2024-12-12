@@ -106,7 +106,7 @@ export default function Catalog() {
 
   return (
     <WithModal>
-      <View style={styles.mainContainer}>
+      <SafeAreaView style={styles.mainContainer}>
         <View style={{ zIndex: 100, paddingHorizontal: 20, width: "100%" }}>
           <FilterButton>
             <Text style={styles.headerText}>Catalog</Text>
@@ -123,7 +123,7 @@ export default function Catalog() {
             />
           )}
         </View>
-      </View>
+      </SafeAreaView>
     </WithModal>
   );
 }
@@ -140,11 +140,10 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   mainContainer: {
-    marginTop: 10,
     // paddingHorizontal: 10,
-    paddingTop: 20,
     flex: 1,
     alignItems: "center",
+    paddingTop: 40,
   },
   tagItem: {
     backgroundColor: "#FAFAFA",

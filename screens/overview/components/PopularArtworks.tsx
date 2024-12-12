@@ -53,7 +53,7 @@ export default function PopularArtworks({
           }}
         >
           <Text
-            style={{ fontSize: 24, fontWeight: "500", flex: 1, color: "#000" }}
+            style={{ fontSize: 18, fontWeight: "500", flex: 1, color: "#000" }}
           >
             Popular artworks
           </Text>
@@ -89,6 +89,7 @@ export default function PopularArtworks({
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           style={{ marginTop: 30 }}
+          contentContainerStyle={{ paddingRight: 20 }}
         />
       )}
       {!isLoading && data.length === 0 && <EmptyArtworks size={70} />}
