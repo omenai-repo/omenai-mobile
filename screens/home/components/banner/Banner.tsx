@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { colors } from "config/colors.config";
 import { getPromotionalData } from "services/promotional/getPromotionalContent";
 import { getPromotionalFileView } from "lib/storage/getPromotionalsFileView";
@@ -30,12 +30,12 @@ type BannerItemProps = {
 
 export default function Banner({ reloadCount }: { reloadCount: number }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const flatListRef = useRef<FlatList>(null);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState([]);
 
-  useEffect(() => {
+
+  useMemo(() => {
     setData([]);
     async function handlePromitionalContent() {
       setLoading(true);
@@ -65,48 +65,6 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
     setCurrentIndex(index);
   };
 
-  const Item = ({ image, headline, subheadline, cta }: BannerItemProps) => {
-    const image_href = getPromotionalFileView(image, 500);
-    console.log(image_href, "ooo");
-    return (
-      <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: image_href }}
-            style={{ width: 180, height: 270 }}
-            resizeMode="cover"
-          />
-        </View>
-        <View style={styles.contentContainer}>
-          <Text
-            style={{ fontSize: 21, fontWeight: "500", color: colors.white }}
-          >
-            {headline}
-          </Text>
-          <Text style={{ fontSize: 14, color: colors.white, marginTop: 7 }}>
-            {subheadline}
-          </Text>
-
-          <TouchableOpacity onPress={() => handleClick(cta)}>
-            <View style={{ flexWrap: "wrap" }}>
-              <View style={styles.button}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "500",
-                    color: colors.white,
-                  }}
-                >
-                  View resource
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
-
   return (
     <View>
       <View
@@ -129,7 +87,7 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
               />
             )}
             keyExtractor={(_, index) => JSON.stringify(index)}
-            horizontal
+            horizontal={true}
             showsHorizontalScrollIndicator={false}
             snapToAlignment="center"
             snapToInterval={ITEM_WIDTH}
@@ -183,7 +141,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   indicatorsContainer: {
-    marginTop: 10,
+    marginTop: 15,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
