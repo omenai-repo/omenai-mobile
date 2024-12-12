@@ -18,6 +18,7 @@ import WithModal from "components/modal/WithModal";
 import CatalogListing from "./components/CatalogListing";
 import RecentlyViewedArtworks from "./components/recentlyViewed/RecentlyViewedArtworks";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import tw from "twrnc";
 
 export default function Home() {
   const [refreshCount, setRefreshCount] = useState(0);
@@ -30,7 +31,7 @@ export default function Home() {
 
   return (
     <WithModal>
-      {/* <SafeAreaView style={styles.safeArea}> */}
+      <View style={tw`pt-[40] flex-1`}>
         <ScrollWrapper
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -46,16 +47,9 @@ export default function Home() {
           <CatalogListing />
           <Editorials />
           <RecentlyViewedArtworks refreshCount={refreshCount} />
-          <View style={{height: 100}} />
+          <View style={{ height: 100 }} />
         </ScrollWrapper>
-      {/* </SafeAreaView> */}
+      </View>
     </WithModal>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    flex: 1,
-  },
-});
