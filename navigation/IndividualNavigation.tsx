@@ -65,7 +65,12 @@ export default function IndividualNavigation() {
     title,
   }: CustomTabBarIconProps) => {
     return (
-      <View style={{ alignItems: "center", gap: 5 }}>
+      <View
+        style={{
+          alignItems: "center",
+          gap: 5,
+        }}
+      >
         <SvgXml xml={name} />
         <Text
           style={[
