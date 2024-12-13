@@ -98,7 +98,7 @@ export default function PayoutDashboard({
         showsVerticalScrollIndicator={false}
       >
         <Transactions transactions={transactions} />
-        <View style={{ height: 50 }} />
+        <View style={{ height: 200 }} />
       </ScrollWrapper>
     </View>
   );
