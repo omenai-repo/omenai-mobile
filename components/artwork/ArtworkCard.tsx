@@ -62,8 +62,8 @@ export default function ArtworkCard({
   const { updateModal } = useModalStore();
 
   const [imageDimensions, setImageDimensions] = useState({
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
   });
 
   useEffect(() => {
@@ -140,6 +140,7 @@ export default function ArtworkCard({
               height: imageDimensions.height,
               objectFit: "contain",
               borderRadius: 5,
+              backgroundColor: '#f5f5f5'
             }}
             resizeMode="contain"
           />
