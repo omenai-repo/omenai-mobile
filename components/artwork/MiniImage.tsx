@@ -24,8 +24,8 @@ export default function MiniImage({maxWidth, url}:{url: string, maxWidth: number
             source={image} 
             style={{ width: maxWidth - 10, height: 250}} 
             cachePolicy={'memory'}
-            transition={500}
-            contentFit="scale-down"
+            transition={100}
+            contentFit="contain"
         />
     )
 }
