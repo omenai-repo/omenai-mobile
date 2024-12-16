@@ -161,8 +161,8 @@ export default function Artwork() {
   };
 
   const [imageDimensions, setImageDimensions] = useState({
-    width: 200,
-    height: 200,
+    width: 350,
+    height: 250,
   });
 
   useEffect(() => {
@@ -198,7 +198,8 @@ export default function Artwork() {
                       resizeMode: "contain",
                       alignSelf: "center",
                       borderRadius: 10,
-                      zIndex: 1000
+                      zIndex: 1000,
+                      backgroundColor: '#f5f5f5'
                     }}
                   />
                   <View style={styles.artworkDetails}>
