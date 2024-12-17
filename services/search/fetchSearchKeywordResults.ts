@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function fetchSearchKeyWordResults(searchTerm: string) {
   try {
@@ -7,6 +7,7 @@ export async function fetchSearchKeyWordResults(searchTerm: string) {
         body: JSON.stringify({ searchTerm }),
         headers: {
             'Content-Type': 'application/json',
+            'Origin': originHeader,
         }
     })
     .then(async (res) => {

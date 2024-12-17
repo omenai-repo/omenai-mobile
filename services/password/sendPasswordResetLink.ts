@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function sendPasswordResetLink(
     payload: {email: string},
@@ -12,6 +12,7 @@ export async function sendPasswordResetLink(
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Origin': originHeader,
             },
             body: JSON.stringify({ recoveryEmail: payload.email })
         })

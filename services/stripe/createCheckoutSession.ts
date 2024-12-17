@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function createCheckoutSession(
   item: string,
@@ -24,6 +24,9 @@ export async function createCheckoutSession(
   try {
     const res = await fetch(`${apiUrl}/api/stripe/createCheckoutSession`, {
       method: "POST",
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify({
         item,
         amount,

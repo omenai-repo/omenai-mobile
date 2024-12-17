@@ -1,5 +1,5 @@
 import { date } from "zod";
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function fetchsingleArtworkOnPurchase(title:string){
 
@@ -8,6 +8,7 @@ export async function fetchsingleArtworkOnPurchase(title:string){
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Origin': originHeader,
             },
             body: JSON.stringify({title})
         })

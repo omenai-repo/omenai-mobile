@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function fetchArtworksByCriteria({
     medium,
@@ -15,6 +15,7 @@ export async function fetchArtworksByCriteria({
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Origin': originHeader,
             },
             body: JSON.stringify({ page, medium, filters }),
         })

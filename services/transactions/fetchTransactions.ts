@@ -1,4 +1,4 @@
-import { apiUrl } from "constants/apiUrl.constants";
+import { apiUrl, originHeader } from "constants/apiUrl.constants";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 
 export async function fetchTransactions() {
@@ -13,6 +13,9 @@ export async function fetchTransactions() {
   try {
     const res = await fetch(`${apiUrl}/api/transactions/fetchTransaction`, {
       method: "POST",
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify({ gallery_id }),
     });
 

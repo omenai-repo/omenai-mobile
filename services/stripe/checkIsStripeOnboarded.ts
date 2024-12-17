@@ -1,9 +1,12 @@
-import { apiUrl } from "constants/apiUrl.constants";
+import { apiUrl, originHeader } from "constants/apiUrl.constants";
 
 export async function checkIsStripeOnboarded(accountId: string) {
   try {
     const res = await fetch(`${apiUrl}/api/stripe/checkStripeDetailsSubmitted`, {
       method: "POST",
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify({ accountId }),
     });
 

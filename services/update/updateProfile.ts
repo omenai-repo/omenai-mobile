@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function updateProfile(
     route: RouteIdentifier,
@@ -11,6 +11,7 @@ export async function updateProfile(
         body: JSON.stringify({ ...payload, id }),
         headers: {
             'Content-Type': 'application/json',
+            'Origin': originHeader,
         }
     })
     .then(async (res) => {

@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function getSalesHighlightData({sessionId} : {sessionId: string}){
     try {
@@ -6,6 +6,7 @@ export async function getSalesHighlightData({sessionId} : {sessionId: string}){
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Origin': originHeader,
             },
             body: JSON.stringify({ id: sessionId}),
         })
