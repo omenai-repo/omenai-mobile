@@ -9,7 +9,7 @@ export default function MiniImage({
 }: {
   url: string;
   maxWidth: number;
-  name: string;
+  name?: string;
 }) {
   const imageOptions = useMemo(
     () => ({
@@ -39,8 +39,6 @@ export default function MiniImage({
     <Image
       source={image}
       style={{ width: image.width, height: image.height }}
-      cachePolicy={"memory"}
-      transition={500}
     />
   );
 }
