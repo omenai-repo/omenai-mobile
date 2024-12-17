@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 import { logout } from "utils/logout.utils";
 
@@ -20,6 +20,7 @@ export async function fetchUserSavedArtworks(){
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Origin': originHeader,
             },
             body: JSON.stringify({ id: userId}),
         })

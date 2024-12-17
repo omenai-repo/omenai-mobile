@@ -1,4 +1,4 @@
-import { apiUrl } from "constants/apiUrl.constants";
+import { apiUrl, originHeader } from "constants/apiUrl.constants";
 
 export async function validateCharge(data: { otp: string; flw_ref: string }) {
   try {
@@ -6,6 +6,9 @@ export async function validateCharge(data: { otp: string; flw_ref: string }) {
       `${apiUrl}/api/subscriptions/subscribeUser/validateCharge`,
       {
         method: "POST",
+        headers: {
+          'Origin': originHeader,
+        },
         body: JSON.stringify({ ...data }),
       }
     );

@@ -1,9 +1,12 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function generateStripeLoginLink(account: string) {
   try {
     const res = await fetch(`${apiUrl}/api/stripe/generateStripeLoginLink`, {
       method: "POST",
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify({ account }),
     });
 

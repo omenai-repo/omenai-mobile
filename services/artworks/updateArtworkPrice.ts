@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function updateArtworkPrice(
   filter: ArtworkPriceFilterData,
@@ -7,6 +7,9 @@ export async function updateArtworkPrice(
   try {
     const res = await fetch(`${apiUrl}/api/artworks/updateArtworkPrice`, {
       method: "POST",
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify({ filter, art_id }),
     });
 

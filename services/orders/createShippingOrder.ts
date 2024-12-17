@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 
 export async function createShippingOrder(
@@ -14,6 +14,7 @@ export async function createShippingOrder(
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Origin': originHeader,
             },
             body: JSON.stringify({
                 buyer_id,
