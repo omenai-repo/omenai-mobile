@@ -1585,6 +1585,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@likashefqet/react-native-image-zoom@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@likashefqet/react-native-image-zoom/-/react-native-image-zoom-4.2.1.tgz#0596124b11e4d464c785480d95afdbdb4240b660"
+  integrity sha512-Akyms1fCAYnqGmcSNR7gr+eHnGAqajkzBwKMkA42efk9UQcL/1k38wCu9sOOB0rG7uAZ/bb4T7aLNIXqfefTFQ==
+
 "@manypkg/find-root@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@manypkg/find-root/-/find-root-1.1.0.tgz#a62d8ed1cd7e7d4c11d9d52a8397460b5d4ad29f"
@@ -3696,6 +3701,11 @@ expo-image-picker@~16.0.3:
   integrity sha512-c4IOqIQOtx8puWWU4fVsJhuGiAhH6gAIdrVzhimOXSEUHnfxCckRYzvznbd/0cuvaA5y9H0CSYrxpTUc/0WNVw==
   dependencies:
     expo-image-loader "~5.0.0"
+
+expo-image@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/expo-image/-/expo-image-2.0.3.tgz#0a39a51af7af786226aa5ffc000277ca0e564a52"
+  integrity sha512-+YnHTQv8jbXaut3FY7TDhNiSiGZ927C329mHvTZWV4Fyj32/Hjhhmk7dqq9I6LrA0nqBBiJjFj3u6VdHvCBnZg==
 
 expo-json-utils@~0.14.0:
   version "0.14.0"

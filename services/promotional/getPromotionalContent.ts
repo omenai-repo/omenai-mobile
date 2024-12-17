@@ -1,9 +1,12 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function getPromotionalData() {
   try {
     const res = await fetch(`${apiUrl}/api/promotionals/getPromotionalData`, {
       method: "GET",
+      headers: {
+        'Origin': originHeader,
+      }
     });
 
     const result = await res.json();

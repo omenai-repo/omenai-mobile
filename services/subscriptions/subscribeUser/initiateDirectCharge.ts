@@ -1,4 +1,4 @@
-import { apiUrl } from "constants/apiUrl.constants";
+import { apiUrl, originHeader } from "constants/apiUrl.constants";
 
 export async function initiateDirectCharge(data: FLWDirectChargeDataTypes) {
   try {
@@ -6,6 +6,9 @@ export async function initiateDirectCharge(data: FLWDirectChargeDataTypes) {
       `${apiUrl}/api/subscriptions/subscribeUser/initiateDirectCharge`,
       {
         method: "POST",
+        headers: {
+          'Origin': originHeader,
+        },
         body: JSON.stringify({ ...data }),
       }
     );

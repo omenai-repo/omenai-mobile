@@ -1,9 +1,12 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function verifyFlwTransaction(data: { transaction_id: string }) {
   try {
     const res = await fetch(`${apiUrl}/api/transactions/verify_FLW_transaction`, {
       method: "POST",
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify(data),
     });
 

@@ -1,4 +1,4 @@
-import { apiUrl } from "constants/apiUrl.constants";
+import { apiUrl, originHeader } from "constants/apiUrl.constants";
 
 export async function downgradeSubscriptionPlan(
   data: NextChargeParams,
@@ -9,6 +9,9 @@ export async function downgradeSubscriptionPlan(
       `${apiUrl}/api/subscriptions/downgradeSubscriptionPlan`,
       {
         method: "POST",
+        headers: {
+          'Origin': originHeader,
+        },
         body: JSON.stringify({ data, gallery_id }),
       }
     );

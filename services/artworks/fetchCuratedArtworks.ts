@@ -1,5 +1,5 @@
 import filterArtObjectsByMedium from "utils/utils_filterArtObjectsByMedium";
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 
 export async function fetchCuratedArtworks({page, filters}:{page: number, filters?: any[]}){
@@ -17,6 +17,7 @@ export async function fetchCuratedArtworks({page, filters}:{page: number, filter
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Origin': originHeader,
             },
             body: JSON.stringify({ page , preferences, filters}),
         })

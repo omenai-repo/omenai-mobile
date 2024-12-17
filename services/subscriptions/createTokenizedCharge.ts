@@ -1,4 +1,4 @@
-import { apiUrl } from "constants/apiUrl.constants";
+import { apiUrl, originHeader } from "constants/apiUrl.constants";
 
 export async function createTokenizedCharge(
   data: SubscriptionTokenizationTypes
@@ -6,6 +6,9 @@ export async function createTokenizedCharge(
   try {
     const res = await fetch(`${apiUrl}/api/subscriptions/createTokenizedCharge`, {
       method: "POST",
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify({ ...data }),
     });
 

@@ -39,6 +39,7 @@ import { SvgXml } from "react-native-svg";
 import { backBtnArrow, licenseIcon } from "utils/SvgImages";
 import BackScreenButton from "components/buttons/BackScreenButton";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
+import { ImageZoom } from '@likashefqet/react-native-image-zoom';
 
 export default function Artwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -160,8 +161,8 @@ export default function Artwork() {
   };
 
   const [imageDimensions, setImageDimensions] = useState({
-    width: 200,
-    height: 200,
+    width: 350,
+    height: 250,
   });
 
   useEffect(() => {
@@ -188,14 +189,17 @@ export default function Artwork() {
             >
               <View style={{ paddingBottom: 20 }}>
                 <View style={{ paddingHorizontal: 20, marginBottom: 100 }}>
-                  <Image
-                    source={{ uri: img }}
+                  <ImageZoom
+                    // source={{ uri: img }}
+                    uri={img}
                     style={{
                       height: imageDimensions.height,
                       width: imageDimensions.width,
                       resizeMode: "contain",
                       alignSelf: "center",
                       borderRadius: 10,
+                      zIndex: 1000,
+                      backgroundColor: '#f5f5f5'
                     }}
                   />
                   <View style={styles.artworkDetails}>
