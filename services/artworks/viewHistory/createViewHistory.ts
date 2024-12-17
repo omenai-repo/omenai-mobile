@@ -1,4 +1,4 @@
-import { apiUrl } from "constants/apiUrl.constants";
+import { apiUrl, originHeader } from "constants/apiUrl.constants";
 
 export async function createViewHistory(
   artwork: string,
@@ -10,7 +10,9 @@ export async function createViewHistory(
   try {
     const res = await fetch(`${apiUrl}/api/viewHistory/createViewHistory`, {
       method: "POST",
-
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify({ artwork, artist, art_id, user_id, url }),
     });
 

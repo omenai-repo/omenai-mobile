@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 
 export async function getAccountID(email: string){
@@ -6,6 +6,9 @@ export async function getAccountID(email: string){
     try {
         const res = await fetch(`${apiUrl}/api/stripe/getAccountId`, {
           method: "POST",
+          headers: {
+            'Origin': originHeader,
+          },
           body: JSON.stringify({ email }),
         });
     

@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export const createPaymentIntent = async (
     amount: number,
@@ -16,6 +16,9 @@ export const createPaymentIntent = async (
   try {
     const res = await fetch(`${apiUrl}/api/stripe/createPaymentIntent`, {
       method: "POST",
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify({
         amount,
         gallery_id,

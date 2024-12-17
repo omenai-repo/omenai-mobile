@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 
 export async function loginAccount(
@@ -13,10 +13,12 @@ export async function loginAccount(
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Origin': originHeader,
             },
             body: JSON.stringify(payload)
         })
         .then(async (res) => {
+            console.log(res)
             const ParsedResponse = {
                 isOk: res.ok,
                 body: await res.json(),

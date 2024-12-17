@@ -1,5 +1,5 @@
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function fetchPopularArtworks(){
 
@@ -16,6 +16,7 @@ export async function fetchPopularArtworks(){
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Origin': originHeader,
             },
             body: JSON.stringify({ id: userId}),
         })

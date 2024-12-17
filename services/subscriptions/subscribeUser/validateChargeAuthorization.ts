@@ -1,4 +1,4 @@
-import { apiUrl } from "constants/apiUrl.constants";
+import { apiUrl, originHeader } from "constants/apiUrl.constants";
 
 export async function validateChargeAuthorization(
   data: FLWDirectChargeDataTypes & {
@@ -10,6 +10,9 @@ export async function validateChargeAuthorization(
       `${apiUrl}/api/subscriptions/subscribeUser/validateChargeAuthorization`,
       {
         method: "POST",
+        headers: {
+          'Origin': originHeader,
+        },
         body: JSON.stringify({ ...data }),
       }
     );

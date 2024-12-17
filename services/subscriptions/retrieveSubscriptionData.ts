@@ -1,10 +1,13 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function retrieveSubscriptionData(gallery_id: string) {
   try {
 
     const res = await fetch(`${apiUrl}/api/subscriptions/retrieveSubData`, {
       method: "POST",
+      headers: {
+        'Origin': originHeader,
+      },
       body: JSON.stringify({ gallery_id }),
     });
 

@@ -1,4 +1,4 @@
-import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
 
 export async function resendVerifyCode(
     route: RouteIdentifier,
@@ -10,6 +10,7 @@ export async function resendVerifyCode(
         body: JSON.stringify({author: id }),
         headers: {
             'Content-Type': 'application/json',
+            'Origin': originHeader,
         }
     })
     .then(async (res) => {
