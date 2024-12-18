@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function updateArtworkImpressions(
     id: string,
@@ -12,6 +12,8 @@ export async function updateArtworkImpressions(
             headers: {
                 'Content-Type': 'application/json',
                 'Origin': originHeader,
+                "User-Agent": userAgent,
+                "Authorization": authorization
             },
             body: JSON.stringify({ id, value, like_id }),
         })
