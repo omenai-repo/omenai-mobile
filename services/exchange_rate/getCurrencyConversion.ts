@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function getCurrencyConversion(currency: string, amount: number) {
   try {
@@ -6,6 +6,8 @@ export async function getCurrencyConversion(currency: string, amount: number) {
       method: "POST",
       headers: {
         'Origin': originHeader,
+        "User-Agent": userAgent,
+        "Authorization": authorization
       },
       body: JSON.stringify({ currency, amount }),
     });

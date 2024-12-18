@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function fetchPaginatedArtworks(page: number, filters?: any) {
     try{
@@ -7,6 +7,8 @@ export async function fetchPaginatedArtworks(page: number, filters?: any) {
             headers: {
                 'Content-Type': 'application/json',
                 'Origin': originHeader,
+                "User-Agent": userAgent,
+                "Authorization": authorization
             },
             body: JSON.stringify({ page, filters })
         })

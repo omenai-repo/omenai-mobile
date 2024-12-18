@@ -1,11 +1,13 @@
-import { apiUrl, originHeader } from "constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "constants/apiUrl.constants";
 
 export async function getAllPlanData() {
   try {
     const res = await fetch(`${apiUrl}/api/subscriptions/retrievePlans`, {
       method: "GET",
       headers: {
-        'Origin': originHeader
+        'Origin': originHeader,
+        "User-Agent": userAgent,
+        "Authorization": authorization
       }
     });
 

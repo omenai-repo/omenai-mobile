@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "constants/apiUrl.constants";
 
 export async function validateCharge(data: { otp: string; flw_ref: string }) {
   try {
@@ -8,6 +8,8 @@ export async function validateCharge(data: { otp: string; flw_ref: string }) {
         method: "POST",
         headers: {
           'Origin': originHeader,
+          "User-Agent": userAgent,
+          "Authorization": authorization
         },
         body: JSON.stringify({ ...data }),
       }
