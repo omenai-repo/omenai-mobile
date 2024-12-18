@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "constants/apiUrl.constants";
 
 export async function updateLogo(payload: { id: string; url: string }) {
 
@@ -8,6 +8,8 @@ export async function updateLogo(payload: { id: string; url: string }) {
     headers: {
       "Content-type": "application/json",
       'Origin': originHeader,
+      "User-Agent": userAgent,
+      "Authorization": authorization
     },
   }).then(async (res) => {
     const data: { message: string } = await res.json();

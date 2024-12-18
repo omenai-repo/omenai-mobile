@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function fetchSearchKeyWordResults(searchTerm: string) {
   try {
@@ -8,6 +8,8 @@ export async function fetchSearchKeyWordResults(searchTerm: string) {
         headers: {
             'Content-Type': 'application/json',
             'Origin': originHeader,
+            "User-Agent": userAgent,
+            "Authorization": authorization
         }
     })
     .then(async (res) => {

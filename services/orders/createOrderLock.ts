@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export const createOrderLock = async (art_id: string, user_id: string) => {
   try {
@@ -6,6 +6,8 @@ export const createOrderLock = async (art_id: string, user_id: string) => {
       method: "POST",
       headers: {
         'Origin': originHeader,
+        "User-Agent": userAgent,
+        "Authorization": authorization
       },
       body: JSON.stringify({
         art_id,

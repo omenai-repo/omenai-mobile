@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "constants/apiUrl.constants";
 
 export async function createViewHistory(
   artwork: string,
@@ -12,6 +12,8 @@ export async function createViewHistory(
       method: "POST",
       headers: {
         'Origin': originHeader,
+        "User-Agent": userAgent,
+        "Authorization": authorization
       },
       body: JSON.stringify({ artwork, artist, art_id, user_id, url }),
     });

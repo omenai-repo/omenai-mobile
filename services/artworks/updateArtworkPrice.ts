@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function updateArtworkPrice(
   filter: ArtworkPriceFilterData,
@@ -9,6 +9,8 @@ export async function updateArtworkPrice(
       method: "POST",
       headers: {
         'Origin': originHeader,
+        "User-Agent": userAgent,
+        "Authorization": authorization
       },
       body: JSON.stringify({ filter, art_id }),
     });

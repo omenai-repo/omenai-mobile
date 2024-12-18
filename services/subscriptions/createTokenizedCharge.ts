@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "constants/apiUrl.constants";
 
 export async function createTokenizedCharge(
   data: SubscriptionTokenizationTypes
@@ -8,6 +8,8 @@ export async function createTokenizedCharge(
       method: "POST",
       headers: {
         'Origin': originHeader,
+        "User-Agent": userAgent,
+        "Authorization": authorization
       },
       body: JSON.stringify({ ...data }),
     });
