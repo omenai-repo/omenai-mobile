@@ -1,5 +1,5 @@
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function fetchPopularArtworks(){
 
@@ -17,6 +17,8 @@ export async function fetchPopularArtworks(){
             headers: {
                 'Content-Type': 'application/json',
                 'Origin': originHeader,
+                "User-Agent": userAgent,
+                "Authorization": authorization
             },
             body: JSON.stringify({ id: userId}),
         })

@@ -1,5 +1,5 @@
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function uploadArtworkData(data: Omit<ArtworkSchemaTypes, "art_id">){
 
@@ -9,6 +9,8 @@ export async function uploadArtworkData(data: Omit<ArtworkSchemaTypes, "art_id">
             headers: {
                 'Content-Type': 'application/json',
                 'Origin': originHeader,
+                "User-Agent": userAgent,
+                "Authorization": authorization
             },
             body: JSON.stringify(data),
         })

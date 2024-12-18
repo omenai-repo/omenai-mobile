@@ -1,4 +1,4 @@
-import { apiUrl, originHeader } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function getSalesHighlightData({sessionId} : {sessionId: string}){
     try {
@@ -7,6 +7,8 @@ export async function getSalesHighlightData({sessionId} : {sessionId: string}){
             headers: {
                 'Content-Type': 'application/json',
                 'Origin': originHeader,
+                "User-Agent": userAgent,
+                "Authorization": authorization
             },
             body: JSON.stringify({ id: sessionId}),
         })
