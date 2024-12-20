@@ -36,7 +36,7 @@ import { fetchArtworkByArtist } from "services/artworks/fetchArtworkByArtist";
 import tw from "twrnc";
 import ScrollWrapper from "components/general/ScrollWrapper";
 import { SvgXml } from "react-native-svg";
-import { backBtnArrow, licenseIcon } from "utils/SvgImages";
+import { licenseIcon } from "utils/SvgImages";
 import BackScreenButton from "components/buttons/BackScreenButton";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
 import { ImageZoom } from '@likashefqet/react-native-image-zoom';
