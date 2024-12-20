@@ -50,16 +50,16 @@ const MiniArtworkCard = memo(
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const screenWidth = Dimensions.get("window").width - 10;
-    const [imageDimensions, setImageDimensions] = useState({
-      width: 0,
-      height: 0,
-    });
-    const [renderDynamicImage, setRenderDynamicImage] = useState(false);
+    // const [imageDimensions, setImageDimensions] = useState({
+    //   width: 0,
+    //   height: 0,
+    // });
+    // const [renderDynamicImage, setRenderDynamicImage] = useState(false);
 
     const dividerNum = getNumberOfColumns();
 
     let imageWidth = 0;
-    imageWidth = Math.round(screenWidth / dividerNum); //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
+    imageWidth = Math.round(screenWidth / dividerNum);
 
     const image_href = getImageFileView(url, imageWidth);
 
@@ -149,7 +149,6 @@ const MiniArtworkCard = memo(
           <View style={tw`w-full flex items-center justify-center`}>
             {MiniImage({ maxWidth: imageWidth, url: image_href })}
           </View>
-          {/* {renderDynamicImage && */}
           <View
             style={tw`absolute top-0 left-0 h-full w-[${
               imageWidth - 10
@@ -168,7 +167,6 @@ const MiniArtworkCard = memo(
               </View>
             )}
           </View>
-          {/* } */}
         </View>
         <View style={tw`mt-3 w-full px-3`}>
           <Text
