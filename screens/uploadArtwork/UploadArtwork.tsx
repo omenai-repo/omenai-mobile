@@ -67,7 +67,11 @@ export default function UploadArtwork() {
       const data = createUploadedArtworkData(
         artworkUploadData,
         file.fileId,
-        userId
+        userId,
+        {
+          role: "gallery",
+          designation: null,
+        }
       );
       const upload_response = await uploadArtworkData(data);
       if (upload_response.isOk) {

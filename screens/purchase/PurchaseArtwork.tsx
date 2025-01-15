@@ -42,13 +42,10 @@ export default function PurchaseArtwork() {
     setIsLoading(true);
 
     const { title } = route.params as RouteParamsType;
-
     const results = await fetchsingleArtworkOnPurchase(title);
-
     if (results.isOk) {
       setArtworkOrderData(results.data);
     } else {
-      console.log(results.body.mesage);
     }
 
     setIsLoading(false);

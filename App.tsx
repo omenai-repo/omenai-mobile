@@ -11,7 +11,7 @@ import * as Linking from "expo-linking";
 import { screenName } from "constants/screenNames.constants";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { CopilotProvider } from "react-native-copilot";
-import * as SplashScreen from 'expo-splash-screen';
+import * as SplashScreen from "expo-splash-screen";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -20,7 +20,6 @@ SplashScreen.setOptions({
   duration: 1000,
   fade: true,
 });
-
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -53,7 +52,7 @@ export default function App() {
     async function prepare() {
       try {
         // Artificially delay for two seconds to simulate a slow loading
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {
         console.warn(e);
       } finally {

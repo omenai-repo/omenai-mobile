@@ -39,7 +39,8 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>((set, get) => (
         framing: "",
         signature: "",
         currency: '',
-        usd_price: 0
+        usd_price: 0,
+        role_access: {} as RoleAccess
     },
     updateArtworkUploadData: (label: string, value: string) => {
         const data: Record<string, any> = get().artworkUploadData;
@@ -74,7 +75,8 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>((set, get) => (
             framing: "",
             signature: "",
             currency: '',
-            usd_price: 0
+            usd_price: 0,
+            role_access: {} as RoleAccess
           },
           isUploaded: false
         });

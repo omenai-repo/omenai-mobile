@@ -3,7 +3,7 @@ import { create } from "zustand";
 type OrderSummaryStoreTypes = {
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
-    artworkOrderData: artworkOrderDataTypes | null,
+    artworkOrderData: artworkOrderDataTypes,
     setArtworkOrderData: (e: artworkOrderDataTypes) => void,
     selectedSectionIndex: number,
     setSelectedSectionIndex: (e: number) => void,
@@ -70,7 +70,7 @@ export const useOrderSummaryStore = create<OrderSummaryStoreTypes>(
         setCountry: (e: string) => {
             set({country: e})
         },
-        artworkOrderData: null,
+        artworkOrderData: {} as artworkOrderDataTypes,
         setArtworkOrderData: (e: artworkOrderDataTypes) => {
             set({artworkOrderData: e})
         },
@@ -88,7 +88,7 @@ export const useOrderSummaryStore = create<OrderSummaryStoreTypes>(
                 state: '',
                 zipCode: '',
                 country: '',
-                artworkOrderData: null
+                artworkOrderData: {} as artworkOrderDataTypes,
             })
         }
     })
