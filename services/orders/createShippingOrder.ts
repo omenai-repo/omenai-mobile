@@ -4,9 +4,11 @@ import { utils_getAsyncData } from "utils/utils_asyncStorage";
 export async function createShippingOrder(
     buyer_id: string,
     art_id: string,
-    gallery_id: string,
+    seller_id: string,
     save_shipping_address: boolean,
-    shipping_address: IndividualAddressTypes
+    shipping_address: IndividualAddressTypes,
+    origin_address: IndividualAddressTypes | null,
+    designation: "gallery" | "artist"
 ){
 
     try {
@@ -21,17 +23,16 @@ export async function createShippingOrder(
             body: JSON.stringify({
                 buyer_id,
                 art_id,
-                gallery_id,
+                seller_id,
                 save_shipping_address,
-                shipping_address
+                shipping_address,
+                origin_address,
+                designation
             }),
         })
-        .then(async (res) => {
-            const result = await res.json();
-            return { isOk: res.ok, message: result.message};
-        })
-
-        return response
+        const result = await response.json();
+            return { isOk: response.ok, message: result.message};
+        
     }catch(error){
         console.log('error' + error)
         return {

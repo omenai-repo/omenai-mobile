@@ -1,15 +1,4 @@
-interface OriginalObject {
-  _id: string;
-  createdAt: string;
-  updatedAt: string;
-  artwork_data: Record<string, any>;
-  buyer: Record<string, any>;
-  gallery_id: string;
-  status: string;
-  order_id: string;
-}
-
-interface FormattedObject extends OriginalObject {
+interface FormattedObject extends CreateOrderModelTypes {
   createdAt: string; // Updated type for formatted date
   
 }
@@ -19,11 +8,11 @@ interface FinalObject {
   createdAt(createdAt: any): string;
   artwork_data: any;
   date: string;
-  data: OriginalObject[];
+  data: CreateOrderModelTypes[];
 }
 
 export function utils_sortOrdersDataByDate(
-  inputArray: OriginalObject[]
+  inputArray: CreateOrderModelTypes[]
 ): FinalObject[] {
   // Format and sort the data
   const formattedData: FormattedObject[] = inputArray
@@ -57,6 +46,9 @@ export function utils_sortOrdersDataByDate(
         result.push({
           date: item.createdAt,
           data: [item],
+          map: (arg0: (order: any, index: any) => import("react").JSX.Element | null) => [],
+          createdAt: (createdAt: any) => '',
+          artwork_data: {},
         });
       }
 

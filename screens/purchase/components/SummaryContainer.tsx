@@ -49,7 +49,7 @@ export default function SummaryContainer({
     const results = await createShippingOrder(
       userId,
       artworkOrderData.art_id,
-      artworkOrderData.gallery_id,
+      artworkOrderData?.author_id,
       saveShippingAddress,
       {
         address_line: address,
@@ -57,14 +57,14 @@ export default function SummaryContainer({
         country,
         state,
         zip: zipCode,
-      }
+      },
+      null, // or provide the actual origin address if available
+      "gallery" // or "artist" based on your requirement
     );
 
     if (results?.isOk) {
-      console.log(results.message);
       setSelectedSectionIndex(3);
     } else {
-      console.log("Error", results?.message);
       updateModal({
         modalType: "error",
         message: results?.message,

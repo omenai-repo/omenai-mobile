@@ -35,8 +35,8 @@ export default function OrderDetails({
 
   const total_price_number = utils_calculatePurchaseGrandTotalNumber(
     data.artwork_data.pricing.usd_price,
-    data.shipping_quote.shipping_fees,
-    data.shipping_quote.taxes
+    data.shipping_details.shipping_quote.shipping_fees,
+    data.shipping_details.shipping_quote.taxes
   );
 
   const fetchPaymentSheetParams = async () => {
@@ -48,8 +48,8 @@ export default function OrderDetails({
         user_email: userSession.email,
         user_id: userSession.id,
         art_id: data.artwork_data.art_id,
-        gallery_email: data.gallery_details.email,
-        gallery_name: data.gallery_details.name,
+        gallery_email: data.seller_details.email,
+        gallery_name: data.seller_details.name,
         artwork_name: data.artwork_data.title,
       }
     );

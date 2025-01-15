@@ -22,14 +22,16 @@ export async function fetchAllArtworksById(){
             },
             body: JSON.stringify({ id: userId}),
         })
-        .then(async (res) => {
-            if (!res.ok) return undefined;
-            const result = await res.json();
+       
+    
+            const result = await response.json();
+            return {
+                isOk: response.ok,
+                message: result.message,
+                data: result.data
+            }
 
-            return result;
-        })
-
-        return response
+      
     }catch(error){
         return {
             isOk: false,

@@ -22,12 +22,11 @@ export async function requestArtworkPrice(
             },
             body: JSON.stringify({ data, email, name }),
         })
-        .then(async (res) => {
-            const result = await res.json();
-            return { isOk: res.ok, message: result.message, data: result.data};
-        })
+       
+            const result = await response.json();
+            return { isOk: response.ok, message: result.message, data: result.data};
+        
 
-        return response
     }catch(error){
         console.log('error' + error)
         return {

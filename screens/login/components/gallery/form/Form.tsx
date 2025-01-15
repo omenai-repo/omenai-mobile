@@ -35,7 +35,7 @@ export default function Form() {
     const results = await loginAccount(galleryLoginData, "gallery");
 
     if (results?.isOk) {
-      const resultsBody = results?.body;
+      const resultsBody = results?.body?.data;
 
       if (resultsBody.verified === false) {
         setIsLoading(false);
@@ -44,6 +44,7 @@ export default function Form() {
         });
         return;
       }
+      console.log(resultsBody.gallery_id, "gallery_id");
       const data = {
         id: resultsBody.gallery_id,
         email: resultsBody.email,

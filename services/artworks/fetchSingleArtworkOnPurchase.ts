@@ -14,13 +14,13 @@ export async function fetchsingleArtworkOnPurchase(title:string){
             },
             body: JSON.stringify({title})
         })
-        .then(async (res) => {
-            const result = await res.json();
+        
+            const result = await response.json();
 
-            return { isOk: res.ok, message: result.message, data: result.data };
-        })
+            return { isOk: response.ok, message: result.message, data: result.data };
+     
 
-        return response
+
     }catch(error){
         return {
             isOk: false,

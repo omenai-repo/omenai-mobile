@@ -17,7 +17,7 @@ import DetailsCard from "./components/detailsCard/DetailsCard";
 import ArtworkCard from "components/artwork/ArtworkCard";
 import { fetchsingleArtwork } from "services/artworks/fetchSingleArtwork";
 import { getImageFileView } from "lib/storage/getImageFileView";
-import { MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
+import { SimpleLineIcons } from "@expo/vector-icons";
 import SimilarArtworks from "./components/similarArtworks/SimilarArtworks";
 import { utils_formatPrice } from "utils/utils_priceFormatter";
 import { screenName } from "constants/screenNames.constants";
@@ -36,10 +36,10 @@ import { fetchArtworkByArtist } from "services/artworks/fetchArtworkByArtist";
 import tw from "twrnc";
 import ScrollWrapper from "components/general/ScrollWrapper";
 import { SvgXml } from "react-native-svg";
-import { licenseIcon } from "utils/SvgImages";
+import { backBtnArrow, licenseIcon } from "utils/SvgImages";
 import BackScreenButton from "components/buttons/BackScreenButton";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
-import { ImageZoom } from '@likashefqet/react-native-image-zoom';
+import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 
 export default function Artwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -134,7 +134,10 @@ export default function Artwork() {
       art_id: data!.art_id,
       url: data!.url,
       medium: data!.medium,
-      pricing: data!.pricing,
+      pricing: {
+        ...data!.pricing,
+        currency: "USD", // Add default currency if not present
+      },
     };
 
     const results = await requestArtworkPrice(
@@ -189,27 +192,19 @@ export default function Artwork() {
             >
               <View style={{ paddingBottom: 20 }}>
                 <View style={{ paddingHorizontal: 20, marginBottom: 100 }}>
-                  <View style={tw`mx-auto w-[${imageDimensions.width}px] h-[${imageDimensions.height}px] overflow-hidden rounded-[10px] z-[1000] bg-[#f5f5f5]`}>
-                    <ImageZoom
-                      // source={{ uri: img }}
-                      uri={img}
-                      style={{
-                        height: imageDimensions.height,
-                        width: imageDimensions.width,
-                        resizeMode: "contain",
-                        alignSelf: "center",
-                        borderRadius: 10,
-                        zIndex: 1000,
-                        backgroundColor: '#f5f5f5'
-                      }}
-                    />
-                  </View>
-                  <View style={tw`w-full pt-4 flex items-end`}>
-                      <View style={tw`bg-black/10 rounded-full flex flex-row gap-2 items-center py-1 px-3 text-black/10`}>
-                        <MaterialIcons name="zoom-out-map" />
-                        <Text style={tw`text-sm`}>Pinch to zoom</Text>
-                      </View>
-                  </View>
+                  <ImageZoom
+                    // source={{ uri: img }}
+                    uri={img}
+                    style={{
+                      height: imageDimensions.height,
+                      width: imageDimensions.width,
+                      resizeMode: "contain",
+                      alignSelf: "center",
+                      borderRadius: 10,
+                      zIndex: 1000,
+                      backgroundColor: "#f5f5f5",
+                    }}
+                  />
                   <View style={styles.artworkDetails}>
                     <Text style={styles.artworkTitle}>{data?.title}</Text>
                     <Text style={styles.artworkCreator}>{data?.artist}</Text>
@@ -435,7 +430,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   artworkDetails: {
-    marginTop: 5,
+    marginTop: 25,
     marginBottom: 25,
   },
   artworkTitle: {

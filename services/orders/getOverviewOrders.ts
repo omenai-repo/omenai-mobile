@@ -22,14 +22,13 @@ export async function getOverviewOrders(){
             },
             body: JSON.stringify({ id: userId}),
         })
-        .then(async (res) => {
-            if (!res.ok) return undefined;
-            const result = await res.json();
-
-            return result;
-        })
-
-        return response
+         
+                const result = await response.json();
+                return {
+                 isOk: response.ok,
+                 message: result.message,
+                 data: result.data
+                }
     }catch(error){
         console.log('error' + error)
         return {
