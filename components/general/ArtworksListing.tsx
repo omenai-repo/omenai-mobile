@@ -21,7 +21,7 @@ export default function ArtworksListing({
   loadingMore,
   onEndReached,
 }: {
-  data: any[];
+  data: ArtworkSchemaTypes[];
   loadingMore?: boolean;
   onEndReached?: () => void;
 }) {

@@ -19,16 +19,13 @@ export async function loginAccount(
             },
             body: JSON.stringify(payload)
         })
-        .then(async (res) => {
-            console.log(res)
-            const ParsedResponse = {
-                isOk: res.ok,
-                body: await res.json(),
-            };
-            return ParsedResponse;
-        })
+        const result = await response.json()
+        return {
+            isOk: response.ok,
+            body: result
+        }
+ 
 
-        return response
     }catch(error){
         return {
             isOk: false,

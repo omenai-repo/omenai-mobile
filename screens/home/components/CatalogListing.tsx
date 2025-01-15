@@ -30,7 +30,10 @@ export default function CatalogListing() {
         }
       >
         <View style={styles.container}>
-          <Image source={image} style={{ width: 220, height: 220, borderRadius: 5 }} />
+          <Image
+            source={{ uri: image }}
+            style={{ width: 220, height: 220, borderRadius: 5 }}
+          />
           <Text style={{ fontSize: 14, marginTop: 10 }}>{name}</Text>
         </View>
       </TouchableOpacity>
@@ -50,7 +53,14 @@ export default function CatalogListing() {
             paddingHorizontal: 20,
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: 500, flex: 1, fontFamily: fontNames.dmSans + 'Medium' }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 500,
+              flex: 1,
+              fontFamily: fontNames.dmSans + "Medium",
+            }}
+          >
             Art Collections
           </Text>
           <Feather name="chevron-right" color={colors.grey} size={20} />
@@ -63,7 +73,7 @@ export default function CatalogListing() {
           index,
         }: {
           item: CatalogCardTypes;
-          index: string;
+          index: number;
         }) => (
           <CatalogCard
             name={item.name}

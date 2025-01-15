@@ -140,7 +140,7 @@ export default function ArtworkCard({
               height: imageDimensions.height,
               objectFit: "contain",
               borderRadius: 5,
-              backgroundColor: '#f5f5f5'
+              backgroundColor: "#f5f5f5",
             }}
             resizeMode="contain"
           />

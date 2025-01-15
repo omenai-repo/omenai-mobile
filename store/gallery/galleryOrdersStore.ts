@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type galleryOrderDataType = {pending: any[], processing: any[], completed: any[]};
+export type galleryOrderDataType = {pending: CreateOrderModelTypes[], processing: CreateOrderModelTypes[], completed: CreateOrderModelTypes[]};
 export type galleryOrdersTab = 'pending' | 'processing' | 'completed'
 
 type galleryOrdersStoreTypes = {

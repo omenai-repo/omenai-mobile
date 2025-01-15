@@ -31,8 +31,7 @@ export default function GalleryOrdersListing() {
   const handleFetchOrders = async () => {
     setIsloading(true);
     const results = await getOverviewOrders();
-    let data = results.data;
-
+    let data = results?.data;
     const parsedOrders = organizeOrders(data);
 
     setData({
@@ -95,6 +94,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    marginTop: 20
+    marginTop: 20,
   },
 });

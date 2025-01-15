@@ -37,7 +37,7 @@ export default function GalleryArtworksListing() {
   async function handleFetchGalleryArtworks() {
     setIsLoading(true);
     const results = await fetchAllArtworksById();
-    setData(results.data);
+    setData(results?.data);
 
     setIsLoading(false);
   }

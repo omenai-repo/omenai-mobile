@@ -1,6 +1,5 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationState } from "react-navigation";
 import {
   StackNavigationProp,
   createStackNavigator,
@@ -49,7 +48,7 @@ type accountStateType = {
 
 export default function GalleryNavigation() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const prevRouteRef = useRef(null);
+  const prevRouteRef = useRef<string | null>(null);
 
   const [account, setAccount] = useState<accountStateType>({
     connected_account_id: null,

@@ -57,11 +57,11 @@ export default function Orders() {
 
       const pending_orders = data.filter(
         (order: CreateOrderModelTypes) =>
-          !order.delivery_confirmed && order.availability
+          !order.shipping_details.delivery_confirmed && order.availability
       );
       const completed_orders = data.filter(
         (order: CreateOrderModelTypes) =>
-          order.delivery_confirmed || !order.availability
+          order.shipping_details.delivery_confirmed || !order.availability
       );
 
       setData({
@@ -140,12 +140,12 @@ const styles = StyleSheet.create({
   mainContainer: {
     paddingHorizontal: 20,
     flex: 1,
-    paddingTop: Platform.OS === "android" ? 15 : 10
+    paddingTop: Platform.OS === "android" ? 15 : 10,
   },
   tabContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: '#EAE8E8',
+    backgroundColor: "#EAE8E8",
     borderRadius: 30,
     padding: 10,
     gap: 10,

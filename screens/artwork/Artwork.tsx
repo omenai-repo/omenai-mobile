@@ -39,7 +39,7 @@ import { SvgXml } from "react-native-svg";
 import { backBtnArrow, licenseIcon } from "utils/SvgImages";
 import BackScreenButton from "components/buttons/BackScreenButton";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
-import { ImageZoom } from '@likashefqet/react-native-image-zoom';
+import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 
 export default function Artwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -134,7 +134,10 @@ export default function Artwork() {
       art_id: data!.art_id,
       url: data!.url,
       medium: data!.medium,
-      pricing: data!.pricing,
+      pricing: {
+        ...data!.pricing,
+        currency: "USD", // Add default currency if not present
+      },
     };
 
     const results = await requestArtworkPrice(
@@ -199,7 +202,7 @@ export default function Artwork() {
                       alignSelf: "center",
                       borderRadius: 10,
                       zIndex: 1000,
-                      backgroundColor: '#f5f5f5'
+                      backgroundColor: "#f5f5f5",
                     }}
                   />
                   <View style={styles.artworkDetails}>

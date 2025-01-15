@@ -1,4 +1,3 @@
-import { OrderTabsTypes } from "screens/orders/Orders";
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 
@@ -26,12 +25,9 @@ export async function getOrdersForUser(){
             },
             body: JSON.stringify({ id: userId}),
         })
-        .then(async (res) => {
-            const result = await res.json();
-            return { isOk: res.ok, message: result.message, data: result.data};
-        })
-
-        return response
+        
+            const result = await response.json();
+            return { isOk: response.ok, message: result.message, data: result.data};
     }catch(error){
         console.log(error)
         return {

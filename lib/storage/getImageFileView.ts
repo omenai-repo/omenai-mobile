@@ -13,7 +13,6 @@ export const getImageFileView = (
   const fileData = storage.getFilePreview(
     bucketID,
     fileId,
-
     width, // width, will be resized using this value.
     height ? height : 0, // height, ignored when 0
     ImageGravity.Center, // crop center
