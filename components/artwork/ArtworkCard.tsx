@@ -7,8 +7,6 @@ import {
   Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
 import { getImageFileView } from "lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
