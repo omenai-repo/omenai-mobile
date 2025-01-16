@@ -20,6 +20,7 @@ export async function loginAccount(
             body: JSON.stringify(payload)
         })
         const result = await response.json()
+        console.log(result, 'result')
         return {
             isOk: response.ok,
             body: result
