@@ -44,7 +44,7 @@ export default function Form() {
         });
         return;
       }
-      console.log(resultsBody.gallery_id, "gallery_id");
+
       const data = {
         id: resultsBody.gallery_id,
         email: resultsBody.email,

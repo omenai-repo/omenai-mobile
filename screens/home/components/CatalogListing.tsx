@@ -31,7 +31,7 @@ export default function CatalogListing() {
       >
         <View style={styles.container}>
           <Image
-            source={{ uri: image }}
+            source={image}
             style={{ width: 220, height: 220, borderRadius: 5 }}
           />
           <Text style={{ fontSize: 14, marginTop: 10 }}>{name}</Text>
