@@ -1,4 +1,11 @@
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { memo } from "react";
 import { colors } from "config/colors.config";
 import tw from "twrnc";
@@ -22,9 +29,13 @@ const BannerCard = memo(
     const image_href = getPromotionalFileView(image, 500);
 
     return (
-      <View style={tw`w-[${windowWidth - 50}px] pl-[15px]`}>
+      <View
+        style={tw.style(`w-[${windowWidth - 50}px] pl-[15px]`, {
+          width: subheadline.length <= 20 ? windowWidth - 50 : windowWidth - 10,
+        })}
+      >
         <View
-          style={tw`bg-[#000000] rounded-[10px] p-[25px] flex-row gap-[15px]`}
+          style={tw`bg-[#000000] rounded-[10px] p-[13px] flex-row gap-[15px]`}
         >
           <View style={tw`flex-1 justify-center`}>
             <Text
@@ -44,7 +55,7 @@ const BannerCard = memo(
               {subheadline}
             </Text>
             <View
-              style={tw`flex-row items-center mt-[25px] rounded-[26px] bg-[#0000] border-[1px] border-[#fff] px-[5px] py-[10px] justify-center items-center gap-[10px] mr-[35px]`}
+              style={tw`flex-row items-center mt-[15px] rounded-[26px] bg-[#0000] border-[1px] border-[#fff] px-[5px] py-[10px] justify-center items-center gap-[10px] mr-[35px]`}
             >
               <Text style={tw`text-[13px] text-[#fff] font-medium`}>
                 Explore
@@ -52,12 +63,15 @@ const BannerCard = memo(
               <AntDesign name="arrowright" color={colors.white} size={15} />
             </View>
           </View>
-          <View style={tw`flex-1 justify-center`}>
+          <View style={tw`justify-center`}>
             <Image
               source={{ uri: image_href }}
               style={tw.style(`rounded-[4px]`, {
-                width: windowWidth - 280,
-                height: 150,
+                width:
+                  Platform.OS === "android"
+                    ? windowWidth - 240
+                    : windowWidth - 280,
+                height: 135,
               })}
               resizeMode="cover"
             />
