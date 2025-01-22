@@ -50,11 +50,6 @@ const MiniArtworkCard = memo(
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const screenWidth = Dimensions.get("window").width - 10;
-    // const [imageDimensions, setImageDimensions] = useState({
-    //   width: 0,
-    //   height: 0,
-    // });
-    // const [renderDynamicImage, setRenderDynamicImage] = useState(false);
 
     const dividerNum = getNumberOfColumns();
 
@@ -63,83 +58,7 @@ const MiniArtworkCard = memo(
 
     const image_href = getImageFileView(url, imageWidth);
 
-    // useEffect(() => {
-    //   Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-    //     const { width, height } = resizeImageDimensions(
-    //       { width: defaultWidth, height: defaultHeight },
-    //       300
-    //     );
-    //     setImageDimensions({ height, width });
-    //     setRenderDynamicImage(true);
-    //   });
-    // }, [image_href, screenWidth]);
-
     return (
-      // <TouchableOpacity
-      //   activeOpacity={1}
-      //   style={[styles.container, { width: "100%" }]}
-      //   onPress={() => navigation.push(screenName.artwork, { title: title })}
-      // >
-      //   {renderDynamicImage ? (
-      //     <Image
-      //       source={{ uri: image_href }}
-      //       style={{
-      //         width: imageDimensions.width,
-      //         height: imageDimensions.height,
-      //         objectFit: "contain",
-      //       }}
-      //       resizeMode="contain"
-      //     />
-      //   ) : (
-      //     <View
-      //       style={{ height: 200, width: "100%", backgroundColor: "#f5f5f5" }}
-      //     >
-      //       <Image
-      //         source={{ uri: image_href }}
-      //         style={{
-      //           width: imageWidth,
-      //           height: 200,
-      //           objectFit: "contain",
-      //         }}
-      //         resizeMode="contain"
-      //       />
-      //     </View>
-      //   )}
-      //   <View style={styles.mainDetailsContainer}>
-      //     <View style={{ flex: 1 }}>
-      //       <Text style={{ fontSize: 14, color: colors.primary_black }}>
-      //         {title}
-      //       </Text>
-      //       <Text
-      //         style={{
-      //           fontSize: 12,
-      //           color: colors.primary_black,
-      //           opacity: 0.7,
-      //           marginTop: 5,
-      //         }}
-      //       >
-      //         {artist}
-      //       </Text>
-      //       <Text
-      //         style={{
-      //           fontSize: 14,
-      //           color: colors.primary_black,
-      //           fontWeight: "500",
-      //           marginTop: 5,
-      //         }}
-      //       >
-      //         {showPrice ? utils_formatPrice(price) : "Price on request"}
-      //       </Text>
-      //     </View>
-      //     {galleryView && (
-      //       <LikeComponent
-      //         art_id={art_id}
-      //         impressions={impressions || 0}
-      //         likeIds={like_IDs || []}
-      //       />
-      //     )}
-      //   </View>
-      // </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={1}
         style={tw`flex flex-col items-center pb-[20px]`}
@@ -193,19 +112,6 @@ const MiniArtworkCard = memo(
           >
             {showPrice ? utils_formatPrice(price) : "Price on request"}
           </Text>
-          {/* <View style={tw`flex-wrap`}>
-          <TouchableOpacity
-            style={tw`bg-black rounded-full px-3 py-1 w-fit mt-2`}
-            onPress={() =>
-              navigation.push(screenName.purchaseArtwork, {
-                title,
-              })
-            }
-            activeOpacity={1}
-          >
-            <Text style={tw`text-white text-sm font-medium`}>Purchase</Text>
-          </TouchableOpacity>
-        </View> */}
         </View>
       </TouchableOpacity>
     );
