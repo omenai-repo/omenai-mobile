@@ -67,7 +67,14 @@ export default function TrendingArtworks({
             paddingHorizontal: 20,
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: 500, flex: 1, fontFamily: fontNames.dmSans + 'Medium' }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 500,
+              flex: 1,
+              fontFamily: fontNames.dmSans + "Medium",
+            }}
+          >
             Trending Artworks
           </Text>
           <Feather name="chevron-right" color={colors.grey} size={20} />

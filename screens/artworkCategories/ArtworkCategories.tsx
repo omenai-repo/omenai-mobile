@@ -52,7 +52,7 @@ export default function ArtworkCategories() {
     setArtworkCount(0);
     clearAllFilters();
   };
-
+  console.log(filterOptions, "filterOptions");
   const handleFetchArtworks = async () => {
     setIsLoading(true);
 
@@ -90,8 +90,8 @@ export default function ArtworkCategories() {
   };
 
   const handlePagination = async () => {
-    if(artworks.length < 1) return
-    
+    if (artworks.length < 1) return;
+
     setLoadingmore(true);
 
     let response;
@@ -145,13 +145,18 @@ export default function ArtworkCategories() {
             />
           }
         >
-          <ArtworksCountsContainer count={artworkCount} title={title} />
-          <ArtworksListing 
-            data={artworks} 
+          <View
+            style={{
+              paddingHorizontal: 15,
+            }}
+          >
+            <ArtworksCountsContainer count={artworkCount} title={title} />
+          </View>
+          <ArtworksListing
+            data={artworks}
             loadingMore={loadingMore}
             onEndReached={handlePagination}
           />
-          <View style={{ height: 300 }} />
         </ScrollWrapper>
       )}
     </View>
@@ -161,6 +166,5 @@ export default function ArtworkCategories() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
-    paddingHorizontal: 20,
   },
 });

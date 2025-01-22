@@ -21,13 +21,11 @@ export async function fetchArtworksByCriteria({
             },
             body: JSON.stringify({ page, medium, filters }),
         })
-        .then(async (res) => {
-            const result = await res.json();
+       
+            const result = await response.json();
 
-            return { isOk: res.ok, data: result.data};
-        })
-
-        return response
+            return { isOk: response.ok, data: result.data};
+      
     }catch(error){
         return {
             isOk: false,

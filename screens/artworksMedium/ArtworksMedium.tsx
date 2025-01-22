@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import WithModal from "components/modal/WithModal";
-import Header from "./components/Header";
 import FilterButton from "components/filter/FilterButton";
 import { colors } from "config/colors.config";
 import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
@@ -15,6 +14,8 @@ import { artworksMediumFilterStore } from "store/artworks/ArtworksMediumFilterSt
 import { mediums } from "constants/mediums";
 import ScrollWrapper from "components/general/ScrollWrapper";
 import ArtworksListing from "components/general/ArtworksListing";
+import BackScreenButton from "components/buttons/BackScreenButton";
+import tw from "twrnc";
 
 export default function ArtworksMedium() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -74,11 +75,14 @@ export default function ArtworksMedium() {
 
   return (
     <WithModal>
-      <Header image={getImageUrl()} goBack={() => navigation.goBack()} />
       <ScrollWrapper
         style={styles.container}
         showsVerticalScrollIndicator={false}
       >
+        <View style={tw`px-[20px] pt-[60px] android:pt-[40px]`}>
+          <BackScreenButton handleClick={() => navigation.goBack()} />
+        </View>
+
         <View style={{ zIndex: 100, paddingHorizontal: 10 }}>
           <FilterButton
             handleClick={() =>
@@ -99,7 +103,6 @@ export default function ArtworksMedium() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
     marginTop: 10,
   },
   headerText: {

@@ -50,7 +50,7 @@ export default function Collections() {
             index,
           }: {
             item: CatalogCardTypes;
-            index: string;
+            index: number;
           }) => (
             <CatalogCard
               name={item.name}
