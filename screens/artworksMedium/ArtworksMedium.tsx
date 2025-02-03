@@ -62,7 +62,6 @@ export default function ArtworksMedium() {
     if (res.isOk) {
       setArtworks(res.data);
     } else {
-      console.log(res);
       updateModal({
         message: `Error fetching ${catalog} artworks, reload page again`,
         modalType: "error",

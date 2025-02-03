@@ -126,7 +126,7 @@ export default function ArtworkCard({
         activeOpacity={1}
         style={[tw`ml-[20px] rounded-2xl`, width > 0 && { width: width }]}
         onPress={() => {
-          navigation.push(screenName.artwork, { title: title });
+          navigation.push(screenName.artwork, { title, url });
         }}
       >
         <View style={tw`rounded-[5px] overflow-hidden relative`}>
@@ -225,9 +225,7 @@ export default function ArtworkCard({
                   </Text>
                 </TouchableOpacity>
               ) : (
-                <View
-                  style={tw`rounded-full bg-[#E0E0E0] px-5 py-2 w-fit mt-2`}
-                >
+                <View style={tw`rounded-full bg-[#E0E0E0] px-5 py-2 mt-2`}>
                   <Text
                     style={[
                       tw`text-[#A1A1A1] text-sm`,
@@ -245,23 +243,3 @@ export default function ArtworkCard({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    // width: 270,
-    marginLeft: 20,
-  },
-  imageContainer: {
-    width: "100%",
-    height: 250,
-  },
-  image: {
-    height: "100%",
-    width: "100%",
-  },
-  mainDetailsContainer: {
-    marginTop: 10,
-    flexDirection: "row",
-    gap: 10,
-  },
-});
