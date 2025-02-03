@@ -104,7 +104,9 @@ export default function SavedArtworks() {
 
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate(screenName.artwork, { title: name })}
+        onPress={() =>
+          navigation.navigate(screenName.artwork, { title: name, url })
+        }
         activeOpacity={1}
       >
         <View style={styles.savedArtworkItem}>

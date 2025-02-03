@@ -60,6 +60,6 @@ const styles = StyleSheet.create({
     borderColor: colors.inputBorder,
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? 40 : 60,
+    paddingTop: Platform.OS === "android" ? 30 : 60,
   },
 });

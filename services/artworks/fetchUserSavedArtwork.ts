@@ -26,12 +26,10 @@ export async function fetchUserSavedArtworks(){
             },
             body: JSON.stringify({ id: userId}),
         })
-        .then(async (res) => {
-            const result = await res.json();
-            return { isOk: res.ok, message: result.message, data: result.data};
-        })
-
-        return response
+        
+            const result = await response.json();
+            return { isOk: response.ok, message: result.message, data: result.data};
+     
     }catch(error){
         console.log('error' + error)
         return {

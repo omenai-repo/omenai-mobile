@@ -22,6 +22,7 @@ import tw from "twrnc";
 import { fontNames } from "constants/fontNames.constants";
 import { getNumberOfColumns } from "utils/utils_screen";
 import MiniImage from "./MiniImage";
+import { string } from "zod";
 
 type MiniArtworkCardType = {
   title: string;
@@ -62,7 +63,7 @@ const MiniArtworkCard = memo(
       <TouchableOpacity
         activeOpacity={1}
         style={tw`flex flex-col items-center pb-[20px]`}
-        onPress={() => navigation.push(screenName.artwork, { title: title })}
+        onPress={() => navigation.push(screenName.artwork, { title, url })}
       >
         <View style={tw`rounded-[5px] overflow-hidden relative`}>
           <View style={tw`w-full flex items-center justify-center`}>
