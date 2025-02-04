@@ -15,30 +15,20 @@ export default function ShippingAndTaxes() {
   };
 
   return (
-    <LinearGradient
-      colors={["#FFF50914", "#45FEFE14"]}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <Pressable onPress={handleToggle} style={styles.header}>
         <Text style={styles.title}>Shipping & taxes</Text>
-        <View
-          style={tw`bg-[#FFFFFF] shadow-md shadow-[#FFF5097A] h-[30px] w-[30px] rounded-full justify-center items-center`}
-        >
-          <SvgXml xml={!expand ? downArrIcon : upArrwIcon} />
-        </View>
+
+        <SvgXml xml={!expand ? downArrIcon : upArrwIcon} />
       </Pressable>
 
-      {expand && (
+      {!expand && (
         <Animated.View
           entering={FadeInDown.duration(600).damping(300)} // Duration in milliseconds
           exiting={FadeOut.duration(500).damping(300)}
           style={tw`mb-[30px]`}
         >
-          <LinearGradient
-            colors={["#FFF508", "#45FEFE"]}
-            start={{ x: 0.2, y: 0.1 }}
-            style={tw`h-[1px] w-full`}
-          />
+          <View style={tw`h-[1px] w-full bg-[#0f0f0f]`} />
           <View style={styles.detailItem}>
             <Text
               style={[styles.detailItemText, { width: 120, fontWeight: "500" }]}
@@ -72,15 +62,17 @@ export default function ShippingAndTaxes() {
           </Text>
         </Animated.View>
       )}
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#141414",
+    backgroundColor: "#fff",
     borderRadius: 20,
     paddingHorizontal: 25,
+    borderWidth: 1,
+    borderColor: "#0f0f0f",
   },
   header: {
     paddingVertical: 20,
@@ -90,7 +82,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: colors.white,
+    color: colors.black,
     flex: 1,
   },
   detailItem: {
@@ -99,7 +91,7 @@ const styles = StyleSheet.create({
     paddingTop: 25,
   },
   detailItemText: {
-    color: "#FFFFFF",
+    color: "#000",
     fontSize: 14,
   },
 });

@@ -15,16 +15,13 @@ import { fontNames } from "constants/fontNames.constants";
 
 export default function NewArtworksListing({
   refreshCount,
-  limit,
 }: {
   refreshCount?: number;
-  limit: number;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [isLoading, setIsLoading] = useState(false);
 
   const [data, setData] = useState([]);
-  const [showMoreButton, setshowMoreButton] = useState(false);
 
   useEffect(() => {
     handleFetchArtworks();
@@ -37,11 +34,7 @@ export default function NewArtworksListing({
 
     if (results.isOk) {
       const resData = results.body.data;
-
-      setData(resData.splice(0, limit));
-      if (resData.length >= 20) {
-        setshowMoreButton(true);
-      }
+      setData(resData);
     } else {
       console.log(results);
     }
@@ -64,7 +57,14 @@ export default function NewArtworksListing({
             paddingHorizontal: 20,
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: 500, flex: 1, fontFamily: fontNames.dmSans + 'Medium' }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 500,
+              flex: 1,
+              fontFamily: fontNames.dmSans + "Medium",
+            }}
+          >
             New artworks for you
           </Text>
           <Feather name="chevron-right" color={colors.grey} size={20} />
@@ -81,14 +81,6 @@ export default function NewArtworksListing({
             item: ArtworkFlatlistItem;
             index: number;
           }) => {
-            if (index + 1 === data.length && showMoreButton) {
-              return (
-                <ViewAllCategoriesButton
-                  label="View all new artworks"
-                  listingType="recent"
-                />
-              );
-            }
             return (
               <ArtworkCard
                 title={item.title}

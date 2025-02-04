@@ -48,6 +48,10 @@ const ZoomArtwork = ({
   const lastTranslateX = useSharedValue(0);
   const lastTranslateY = useSharedValue(0);
 
+  // Track the focal point for better zooming experience
+  const focalX = useSharedValue(0);
+  const focalY = useSharedValue(0);
+
   // Fetch and calculate image dimensions
   useEffect(() => {
     if (imageUrl) {
@@ -73,13 +77,33 @@ const ZoomArtwork = ({
     }
   }, [imageUrl, screenWidth, screenHeight]);
 
-  // Pinch gesture handler
+  // Reset image position and scale when modal closes
+  useEffect(() => {
+    if (!modalVisible) {
+      scale.value = 1;
+      translateX.value = 0;
+      translateY.value = 0;
+    }
+  }, [modalVisible]);
+
+  // Pinch gesture handler (with focal point handling)
   const pinchGesture = Gesture.Pinch()
-    .onStart(() => {
-      lastScale.value = scale.value; // Store last scale
+    .onStart((event) => {
+      lastScale.value = scale.value;
+      focalX.value = event.focalX;
+      focalY.value = event.focalY;
     })
     .onUpdate((event) => {
-      scale.value = Math.max(1, Math.min(3, lastScale.value * event.scale)); // Maintain absolute scale
+      const newScale = Math.max(1, Math.min(3, lastScale.value * event.scale));
+      const scaleFactor = newScale / scale.value;
+
+      // Adjust translation to keep zoom centered around fingers
+      translateX.value =
+        (translateX.value - focalX.value) * scaleFactor + focalX.value;
+      translateY.value =
+        (translateY.value - focalY.value) * scaleFactor + focalY.value;
+
+      scale.value = newScale;
     })
     .onEnd(() => {
       scale.value = withSpring(scale.value, {
@@ -128,9 +152,9 @@ const ZoomArtwork = ({
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
-        { scale: scale.value },
         { translateX: translateX.value },
         { translateY: translateY.value },
+        { scale: scale.value },
       ],
     };
   });
