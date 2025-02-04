@@ -183,19 +183,21 @@ export default function ArtworkCard({
             </Text>
           </View>
           <View style={tw`flex flex-row items-center gap-2`}>
-            <Text
-              style={[
-                tw`text-base font-bold ${
-                  lightText ? "text-white/90" : "text-black/90"
-                } flex-1`,
-                { fontFamily: fontNames.dmSans + "Bold" },
-              ]}
-            >
-              {showPrice ? utils_formatPrice(price) : "Price on request"}
-            </Text>
+            {availiablity && (
+              <Text
+                style={[
+                  tw`text-base font-bold ${
+                    lightText ? "text-white/90" : "text-black/90"
+                  } flex-1`,
+                  { fontFamily: fontNames.dmSans + "Bold" },
+                ]}
+              >
+                {showPrice ? utils_formatPrice(price) : "Price on request"}
+              </Text>
+            )}
 
             <View style={tw`flex-wrap`}>
-              {availiablity ? (
+              {/* {availiablity && (
                 <TouchableOpacity
                   style={tw`${
                     lightText ? "bg-white" : "bg-black"
@@ -224,7 +226,9 @@ export default function ArtworkCard({
                       : "Request price"}
                   </Text>
                 </TouchableOpacity>
-              ) : (
+              )}  */}
+
+              {!availiablity && (
                 <View style={tw`rounded-full bg-[#E0E0E0] px-5 py-2 mt-2`}>
                   <Text
                     style={[

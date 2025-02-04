@@ -44,11 +44,7 @@ export default function NewArtworksListing({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate(screenName.artworkCategories, { title: "recent" })
-        }
-      >
+      <TouchableOpacity onPress={() => navigation.navigate(screenName.catalog)}>
         <View
           style={{
             flexDirection: "row",
