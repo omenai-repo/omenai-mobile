@@ -65,7 +65,7 @@ export default function FittedBlackButton({
 
 const styles = StyleSheet.create({
   container: {
-    height: 51,
+    height: 45,
     backgroundColor: colors.primary_black,
     display: "flex",
     alignItems: "center",

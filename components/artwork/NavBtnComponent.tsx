@@ -8,7 +8,7 @@ const NavBtnComponent = ({ onPress }: { onPress: () => void }) => {
   return (
     <Pressable
       onPress={onPress}
-      style={tw`bg-[#FAFAFA] border border-[#E0E0E0] rounded-full justify-center items-center h-[40px] w-[40px]`}
+      style={tw`justify-center items-center h-[40px] w-[40px]`}
     >
       <SvgXml xml={rightArrowIcon} />
     </Pressable>

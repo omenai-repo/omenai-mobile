@@ -55,7 +55,7 @@ export default function GalleryArtworksListing() {
         >
           <Text
             style={{
-              fontSize: 24,
+              fontSize: 18,
               flex: 1,
               fontWeight: "500",
               color: "#000",
