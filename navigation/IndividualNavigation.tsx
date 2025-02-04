@@ -29,7 +29,6 @@ import EditProfile from "screens/editProfile/EditProfile";
 import ArtworksMedium from "screens/artworksMedium/ArtworksMedium";
 import ArtworkMediumFilterModal from "screens/artworksMedium/components/filter/ArtworkMediumFilterModal";
 import Editorial from "screens/editorial/Editorial";
-import ArtworkCategories from "screens/artworkCategories/ArtworkCategories";
 import ArtworkCategoriesFilterModal from "screens/artworkCategories/components/filter/ArtworkCategoriesFilterModal";
 import Collections from "screens/collections/Collections";
 import ChangeGalleryPassword from "screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
@@ -184,10 +183,6 @@ export default function IndividualNavigation() {
         component={ArtworksMedium}
       />
       <Stack.Screen name={screenName.editorial} component={Editorial} />
-      <Stack.Screen
-        name={screenName.artworkCategories}
-        component={ArtworkCategories}
-      />
       <Stack.Screen name={screenName.collections} component={Collections} />
     </Stack.Navigator>
   );
