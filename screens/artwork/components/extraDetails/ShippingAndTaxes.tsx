@@ -28,7 +28,7 @@ export default function ShippingAndTaxes() {
           exiting={FadeOut.duration(500).damping(300)}
           style={tw`mb-[30px]`}
         >
-          <View style={tw`h-[1px] w-full bg-[#0f0f0f]`} />
+          <View style={tw`h-[1px] w-full bg-[#00000033]`} />
           <View style={styles.detailItem}>
             <Text
               style={[styles.detailItemText, { width: 120, fontWeight: "500" }]}
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 25,
     borderWidth: 1,
-    borderColor: "#0f0f0f",
+    borderColor: "#00000033",
   },
   header: {
     paddingVertical: 20,
