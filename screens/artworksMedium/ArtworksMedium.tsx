@@ -1,6 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import WithModal from "components/modal/WithModal";
 import FilterButton from "components/filter/FilterButton";
@@ -44,6 +48,14 @@ export default function ArtworksMedium() {
   useEffect(() => {
     setMedium(catalog);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        clearAllFilters();
+      };
+    }, [])
+  );
 
   useEffect(() => {
     clearAllFilters();

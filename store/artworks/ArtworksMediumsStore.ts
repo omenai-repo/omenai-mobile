@@ -7,7 +7,7 @@ type ArtworkStoreTypes = {
   setIsLoading: (loading: boolean) => void;
   pageCount: number;
   setPageCount: (count: number) => void;
-  storemedium: string,
+  medium: string,
   setMedium: (e: string) => void
 };
 export const artworksMediumStore = create<ArtworkStoreTypes>((set, get) => ({
