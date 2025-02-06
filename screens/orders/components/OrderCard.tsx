@@ -104,16 +104,19 @@ export default function OrderCard({
                 null
               ) : (
                 <View>
-                  {shipping_quote?.fees !== "" && (
-                    <FittedBlackButton
-                      height={40}
-                      value="Pay now"
-                      onClick={() =>
-                        navigation.navigate(screenName.payment, { id: orderId })
-                      }
-                      isDisabled={false}
-                    />
-                  )}
+                  {shipping_quote?.fees !== "" &&
+                    order_accepted.status !== "declined" && (
+                      <FittedBlackButton
+                        height={40}
+                        value="Pay now"
+                        onClick={() =>
+                          navigation.navigate(screenName.payment, {
+                            id: orderId,
+                          })
+                        }
+                        isDisabled={false}
+                      />
+                    )}
                 </View>
               )
             ) : null}
