@@ -35,14 +35,14 @@ export default function OrderDetails({
 
   const total_price_number = utils_calculatePurchaseGrandTotalNumber(
     data.artwork_data.pricing.usd_price,
-    data.shipping_details.shipping_quote.shipping_fees,
-    data.shipping_details.shipping_quote.taxes
+    data.shipping_details.quote.fees,
+    data.shipping_details.quote.taxes
   );
 
   const fetchPaymentSheetParams = async () => {
     const { paymentIntent, publishableKey } = await createPaymentIntent(
       total_price_number,
-      data.gallery_id,
+      data.seller_details.id,
       {
         trans_type: "purchase_payout",
         user_email: userSession.email,
@@ -73,8 +73,10 @@ export default function OrderDetails({
       defaultBillingDetails: {
         name: userSession.name,
       },
+      returnURL: "omenaimobile://stripe-redirect",
     });
     if (error) {
+      console.log(error.message);
       throwError(error.message);
       setTimeout(() => {
         navigation.goBack();
@@ -129,6 +131,8 @@ export default function OrderDetails({
     setLoading(false);
   }
 
+  console.log(data.shipping_details.quote.shipping_fees, "hhh");
+
   const throwError = (message: string) => {
     updateModal({ message, modalType: "error", showModal: true });
   };
@@ -175,7 +179,7 @@ export default function OrderDetails({
               <Text
                 style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
               >
-                {utils_formatPrice(data.shipping_quote.shipping_fees)}
+                {utils_formatPrice(data.shipping_details.quote.fees)}
               </Text>
             </View>
             <View style={styles.priceListingItem}>
@@ -185,7 +189,7 @@ export default function OrderDetails({
               <Text
                 style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
               >
-                {utils_formatPrice(data.shipping_quote.taxes)}
+                {utils_formatPrice(data.shipping_details.quote.taxes)}
               </Text>
             </View>
           </View>

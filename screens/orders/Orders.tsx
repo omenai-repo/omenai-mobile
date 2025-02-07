@@ -96,7 +96,7 @@ export default function Orders() {
       </TouchableOpacity>
     );
   };
-  console.log(data.pendingOrders);
+
   return (
     <WithModal>
       <SafeAreaView style={styles.safeArea}>
