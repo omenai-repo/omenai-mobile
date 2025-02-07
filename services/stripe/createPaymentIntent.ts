@@ -27,6 +27,11 @@ export const createPaymentIntent = async (
         meta
       }),
     });
+    console.log({
+      amount,
+      gallery_id,
+      meta
+    })
     const result = await res.json();
     return result
   } catch (error: any) {
