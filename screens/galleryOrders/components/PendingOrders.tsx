@@ -48,7 +48,7 @@ export default function PendingOrders({
                 { label: "Buyer name", value: item.buyer_details.name },
                 {
                   label: "Address",
-                  value: `${item.shipping_details.shipping_address.address_line}, ${item.shipping_details.shipping_address.city}, ${item.shipping_details.shipping_address.country}, ${item.shipping_details.shipping_address.zip}`,
+                  value: `${item.shipping_details.addresses.destination.address_line}, ${item.shipping_details.addresses.destination.city}, ${item.shipping_details.addresses.destination.country}, ${item.shipping_details.addresses.destination.zip}`,
                 },
               ],
             });
