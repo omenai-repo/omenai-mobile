@@ -32,7 +32,9 @@ export default function RecentOrders({
         if (results?.isOk) {
           const data = results.data;
 
-          const filteredData = data.slice(0, 3); // Ensure only 3 items
+          const filteredData = data
+            .filter((i: any) => i.order_accepted.status === "")
+            .slice(0, 3); // Ensure only 3 items
           setData(filteredData);
         } else {
           setData([]);
