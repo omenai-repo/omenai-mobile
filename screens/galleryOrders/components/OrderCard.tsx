@@ -114,10 +114,11 @@ export default function OrderCard({
         </Text>
         <Text
           style={{
-            fontSize: 14,
+            fontSize: 16,
             color: colors.primary_black,
             marginTop: 5,
             marginBottom: 10,
+            fontWeight: "700",
           }}
         >
           {amount}
