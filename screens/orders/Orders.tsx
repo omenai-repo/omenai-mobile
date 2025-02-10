@@ -111,22 +111,23 @@ export default function Orders() {
         </View>
       </SafeAreaView>
       <ScrollWrapper
-        style={styles.mainContainer}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {isLoading ? (
-          <OrderslistingLoader />
-        ) : (
-          <View>
-            {selectedTab === "Pending" ? (
-              <OrdersListing listing={data.pendingOrders} />
-            ) : (
-              <HistoryListing orders={data.completedOrders} />
-            )}
-          </View>
-        )}
+        <View style={styles.mainContainer}>
+          {isLoading ? (
+            <OrderslistingLoader />
+          ) : (
+            <View>
+              {selectedTab === "Pending" ? (
+                <OrdersListing listing={data.pendingOrders} />
+              ) : (
+                <HistoryListing orders={data.completedOrders} />
+              )}
+            </View>
+          )}
+        </View>
       </ScrollWrapper>
     </WithModal>
   );
@@ -141,6 +142,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flex: 1,
     paddingTop: Platform.OS === "android" ? 15 : 10,
+    marginBottom: 150,
   },
   tabContainer: {
     flexDirection: "row",
