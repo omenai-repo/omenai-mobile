@@ -91,35 +91,87 @@ export default function OrderCard({
             />
           </View>
           <View style={{ flexWrap: "wrap", marginTop: 15 }}>
-            {state === "pending" && availability ? (
-              payment_information!.status === "completed" ? (
-                tracking_information?.id &&
-                tracking_information.id.length > 0 ? (
-                  <DropDownButton
-                    label="View tracking information"
-                    onPress={setShowTrackingInfo}
-                    value={showTrackingInfo}
-                  />
-                ) : // <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.6}}>Pending upload tracking info</Text>
-                null
-              ) : (
-                <View>
-                  {shipping_quote?.fees !== "" &&
-                    order_accepted.status !== "declined" && (
+            {!availability ? (
+              <View style={styles.disabledButton}>
+                <Text style={styles.disabledButtonText}>
+                  No action required
+                </Text>
+              </View>
+            ) : (
+              <>
+                {/* Pay Now Button */}
+                {payment_information?.status === "pending" &&
+                  status !== "completed" &&
+                  order_accepted.status === "accepted" && (
+                    <FittedBlackButton
+                      height={40}
+                      value="Pay now"
+                      onClick={() =>
+                        navigation.navigate(screenName.payment, {
+                          id: orderId,
+                        })
+                      }
+                      isDisabled={false}
+                    />
+                  )}
+
+                {/* Track Order and Confirm Delivery Buttons */}
+                <View style={styles.buttonRow}>
+                  {payment_information?.status === "completed" &&
+                    status !== "completed" &&
+                    !delivery_confirmed &&
+                    tracking_information?.id && (
                       <FittedBlackButton
                         height={40}
-                        value="Pay now"
-                        onClick={() =>
-                          navigation.navigate(screenName.payment, {
-                            id: orderId,
-                          })
-                        }
+                        value="Track this order"
+                        onClick={() => setShowTrackingInfo(true)}
+                        isDisabled={false}
+                      />
+                    )}
+
+                  {payment_information?.status === "completed" &&
+                    !delivery_confirmed &&
+                    tracking_information?.id && (
+                      <FittedBlackButton
+                        height={40}
+                        value="Confirm order delivery"
+                        onClick={() => {}}
                         isDisabled={false}
                       />
                     )}
                 </View>
-              )
-            ) : null}
+
+                {/* Awaiting Tracking Information */}
+                {payment_information?.status === "completed" &&
+                  order_accepted.status === "accepted" &&
+                  status !== "completed" &&
+                  !tracking_information?.id && (
+                    <View style={styles.disabledButton}>
+                      <Text style={styles.disabledButtonText}>
+                        Awaiting tracking information
+                      </Text>
+                    </View>
+                  )}
+
+                {/* Order in Review */}
+                {order_accepted.status === "" && (
+                  <View style={styles.disabledButton}>
+                    <Text style={styles.disabledButtonText}>
+                      Order in review
+                    </Text>
+                  </View>
+                )}
+
+                {/* Order Fulfilled */}
+                {delivery_confirmed && (
+                  <View style={styles.disabledButton}>
+                    <Text style={styles.disabledButtonText}>
+                      This order has been fulfilled
+                    </Text>
+                  </View>
+                )}
+              </>
+            )}
           </View>
         </View>
       </View>
@@ -181,5 +233,22 @@ const styles = StyleSheet.create({
     color: "#616161",
     fontSize: 12,
     marginTop: 5,
+  },
+  disabledButton: {
+    backgroundColor: "#E0E0E0",
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  disabledButtonText: {
+    fontSize: 12,
+    color: "#858585",
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
   },
 });
