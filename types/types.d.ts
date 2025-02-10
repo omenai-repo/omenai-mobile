@@ -336,17 +336,17 @@ type CreateOrderModelTypes = {
     ArtworkSchemaTypes,
     "artist" | "pricing" | "title" | "url" | "art_id"
   > & { _id: ObjectId };
-  buyer_details: OrderBuyerAndSellerDetails;
-  seller_details: OrderBuyerAndSellerDetails;
+  buyer_details: OrderBuyerAndSellerDetails
+  seller_details: OrderBuyerAndSellerDetails
   order_id: string;
-  status: "processing" | "completed";
+  status: "processing" | "completed" ;
   shipping_details: OrderShippingDetailsTypes;
   payment_information: PaymentStatusTypes;
   order_accepted: OrderAcceptedStatusTypes;
-  createdAt: string;
-  updatedAt: string;
-  availability: boolean;
-};
+  createdAt: string,
+  updatedAt: string,
+  availability: boolean
+}
 
 type PlanProps = {
   name: string;
