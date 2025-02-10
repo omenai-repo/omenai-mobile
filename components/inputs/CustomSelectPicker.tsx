@@ -12,6 +12,8 @@ type CustomSelectPickerProps = {
   handleBlur?: () => void;
   errorMessage?: string;
   zIndex?: number;
+  search?: boolean;
+  searchPlaceholder?: string;
 };
 
 type SetStateValue<S> = (prevState: S) => S;
@@ -25,10 +27,15 @@ export default function CustomSelectPicker({
   handleBlur,
   errorMessage,
   zIndex = 200,
+  search,
+  searchPlaceholder,
 }: CustomSelectPickerProps) {
   const [open, setOpen] = useState(false);
 
-  const [localValue, setLocalValue] = useState(null);
+  const [localValue, setLocalValue] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
 
   useEffect(() => {
     if (localValue) {
@@ -47,6 +54,8 @@ export default function CustomSelectPicker({
         onChange={(item: any) => {
           setLocalValue(item);
         }}
+        search={search}
+        searchPlaceholder={searchPlaceholder}
         showsVerticalScrollIndicator={false}
         placeholder={placeholder}
         style={styles.container}
