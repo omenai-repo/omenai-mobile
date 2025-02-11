@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   dateTitle: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 500,
     color: colors.primary_black,
   },

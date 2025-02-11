@@ -17,6 +17,7 @@ import { screenName } from "constants/screenNames.constants";
 import DropDownButton from "./DropDownButton";
 import { useModalStore } from "store/modal/modalStore";
 import StatusPill from "./StatusPill";
+import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
 
 export default function OrderCard({
   artworkName,
@@ -36,6 +37,7 @@ export default function OrderCard({
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const [showTrackingInfo, setShowTrackingInfo] = useState<boolean>(false);
+  const [confirmOrderModal, setConfirmOrderModal] = useState(false);
   const { updateModal } = useModalStore();
 
   async function openTrackingLink() {
@@ -53,10 +55,10 @@ export default function OrderCard({
     }
   }
 
-  let image_href = getImageFileView(url, 300);
+  let image_href = getImageFileView(url, 700);
 
   return (
-    <View style={{ paddingVertical: 15, gap: 15 }}>
+    <View style={{ paddingVertical: 10, gap: 15 }}>
       <View style={styles.listItem}>
         <Image
           source={{ uri: image_href }}
@@ -120,56 +122,38 @@ export default function OrderCard({
                   {payment_information?.status === "completed" &&
                     status !== "completed" &&
                     !delivery_confirmed &&
-                    tracking_information?.id && (
+                    tracking_information?.link?.trim() && ( // Checks for non-empty string
                       <FittedBlackButton
                         height={40}
                         value="Track this order"
-                        onClick={() => setShowTrackingInfo(true)}
+                        onClick={() => setShowTrackingInfo(!showTrackingInfo)}
                         isDisabled={false}
                       />
                     )}
 
                   {payment_information?.status === "completed" &&
+                    status !== "completed" && // Add status check for consistency
                     !delivery_confirmed &&
-                    tracking_information?.id && (
+                    tracking_information?.link?.trim() && (
                       <FittedBlackButton
                         height={40}
                         value="Confirm order delivery"
-                        onClick={() => {}}
+                        onClick={() => setConfirmOrderModal(true)}
                         isDisabled={false}
                       />
                     )}
                 </View>
-
                 {/* Awaiting Tracking Information */}
                 {payment_information?.status === "completed" &&
                   order_accepted.status === "accepted" &&
                   status !== "completed" &&
-                  !tracking_information?.id && (
+                  tracking_information?.link === "" && (
                     <View style={styles.disabledButton}>
                       <Text style={styles.disabledButtonText}>
                         Awaiting tracking information
                       </Text>
                     </View>
                   )}
-
-                {/* Order in Review */}
-                {order_accepted.status === "" && (
-                  <View style={styles.disabledButton}>
-                    <Text style={styles.disabledButtonText}>
-                      Order in review
-                    </Text>
-                  </View>
-                )}
-
-                {/* Order Fulfilled */}
-                {delivery_confirmed && (
-                  <View style={styles.disabledButton}>
-                    <Text style={styles.disabledButtonText}>
-                      This order has been fulfilled
-                    </Text>
-                  </View>
-                )}
               </>
             )}
           </View>
@@ -204,6 +188,11 @@ export default function OrderCard({
           </View>
         </View>
       )}
+      <ConfirmOrderDeliveryModal
+        orderId={orderId}
+        modalVisible={confirmOrderModal}
+        setModalVisible={setConfirmOrderModal}
+      />
     </View>
   );
 }
