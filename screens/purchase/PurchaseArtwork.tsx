@@ -56,7 +56,7 @@ export default function PurchaseArtwork() {
       setSelectedSectionIndex(selectedSectionIndex - 1);
     } else if (goHome) {
       resetState();
-      navigation.navigate(screenName.home);
+      navigation.popToTop();
     } else {
       resetState();
       navigation.goBack();

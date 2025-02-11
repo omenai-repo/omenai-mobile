@@ -83,6 +83,26 @@ export default function StatusPill({
     );
   }
 
+  // Order Fulfilled
+  if (delivery_confirmed) {
+    return (
+      <View style={[styles.pill, { backgroundColor: "#00800020" }]}>
+        <AntDesign name="checkcircleo" size={14} />
+        <Text style={styles.text}> This order has been fulfilled</Text>
+      </View>
+    );
+  }
+
+  // Order in Review
+  if (!order_accepted) {
+    return (
+      <View style={[styles.pill, { backgroundColor: "#FFBF0040" }]}>
+        <MaterialIcons name="info-outline" size={14} />
+        <Text style={styles.text}>Order in review</Text>
+      </View>
+    );
+  }
+
   return null;
 }
 

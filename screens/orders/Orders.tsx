@@ -27,8 +27,13 @@ type TabItemProps = {
 export type OrderTabsTypes = "Pending" | "Order history";
 
 export default function Orders() {
-  const { selectedTab, setSelectedTab, isLoading, setIsLoading } =
-    useOrderStore();
+  const {
+    selectedTab,
+    setSelectedTab,
+    isLoading,
+    setIsLoading,
+    refreshTrigger,
+  } = useOrderStore();
   const [refreshing, setRefreshing] = useState(false);
 
   const { updateModal } = useModalStore();
@@ -45,7 +50,7 @@ export default function Orders() {
 
   useEffect(() => {
     handleFetchOrders();
-  }, [selectedTab]);
+  }, [selectedTab, refreshTrigger]);
 
   const handleFetchOrders = async () => {
     setIsLoading(true);
@@ -57,11 +62,15 @@ export default function Orders() {
 
       const pending_orders = data.filter(
         (order: CreateOrderModelTypes) =>
-          !order.shipping_details.delivery_confirmed && order.availability
+          !order.shipping_details.delivery_confirmed &&
+          order.availability &&
+          order.status !== "completed"
       );
       const completed_orders = data.filter(
         (order: CreateOrderModelTypes) =>
-          order.shipping_details.delivery_confirmed || !order.availability
+          order.shipping_details.delivery_confirmed ||
+          !order.availability ||
+          order.status === "completed"
       );
 
       setData({
