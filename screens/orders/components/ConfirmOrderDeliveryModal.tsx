@@ -93,7 +93,7 @@ const ConfirmOrderDeliveryModal = ({
               <View style={tw`bg-[#fafafa] p-5 flex flex-col gap-3`}>
                 {/* Icon Row */}
                 <View style={tw`flex flex-row items-center gap-2`}>
-                  <Ionicons name="warning-outline" size={16} color="#FFA500" />
+                  <Ionicons name="warning-outline" size={25} color="#FFA500" />
                 </View>
                 {/* Info Text */}
                 <Text style={tw`text-[13px]`}>

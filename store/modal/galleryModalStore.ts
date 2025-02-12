@@ -10,9 +10,11 @@ type acceptFormType = {
     additional_info: string
 }
 type trackingInfoFormType = {
-    tracking_id: string,
-    tracking_link: string
+    id: string,
+    link: string
 }
+
+type trackingInfoLabel = "id" | "link"
 
 type orderDetailsType = {
     url: string,
@@ -28,7 +30,7 @@ type galleryModalStoreTypes = {
     acceptForm: acceptFormType,
     updateAcceptForm: (label: string, value: string) => void,
     trackingInfoForm: trackingInfoFormType,
-    updateTrackingInfoForm: (label: string, value: string) => void,
+    updateTrackingInfoForm: (label: trackingInfoLabel, value: string) => void,
     clear: () => void,
     setIsVisible: (value: boolean) => void,
     setModalType: (modal: galleryOrderModalTypes) => void,
@@ -54,8 +56,8 @@ export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) 
         additional_info: ''
     },
     trackingInfoForm: {
-        tracking_id: '',
-        tracking_link: ''
+        id: '',
+        link: ''
     },
     updateDeclineForm: (label: string, value: string) => {
         const data: Record<string, any> = get().declineForm;
@@ -75,7 +77,7 @@ export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) 
           set({acceptForm: updatedData as acceptFormType});
         }
     },
-    updateTrackingInfoForm: (label: string, value: string) => {
+    updateTrackingInfoForm: (label: trackingInfoLabel, value: string) => {
         const data: Record<string, any> = get().trackingInfoForm;
   
         if (label in data) {
@@ -98,8 +100,8 @@ export const galleryOrderModalStore = create<galleryModalStoreTypes>((set, get) 
                 additional_info: ''
             },
             trackingInfoForm: {
-                tracking_id: '',
-                tracking_link: ''
+                id: '',
+                link: ''
             },
             artworkDetails: null,
             currentId: ''

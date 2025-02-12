@@ -4,7 +4,7 @@ export async function provideTrackingInfo({
     data,
     order_id
 }: {
-    data: {tracking_id: string, tracking_link: string},
+    data: {id: string, link: string},
     order_id: string
 }){
 

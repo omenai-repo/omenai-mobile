@@ -162,8 +162,8 @@ type OrderAcceptedStatusTypes = {
   reason?: string;
 };
 type TrackingInformationTypes = {
-  tracking_id: string;
-  tracking_link: string;
+  id: string;
+  link: string;
 };
 type PaymentStatusTypes = {
   status: "pending" | "completed";
