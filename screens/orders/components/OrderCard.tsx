@@ -1,6 +1,7 @@
 import {
   Image,
   Linking,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -18,6 +19,8 @@ import DropDownButton from "./DropDownButton";
 import { useModalStore } from "store/modal/modalStore";
 import StatusPill from "./StatusPill";
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
+import { Ionicons } from "@expo/vector-icons";
+import tw from "twrnc";
 
 export default function OrderCard({
   artworkName,
@@ -102,33 +105,34 @@ export default function OrderCard({
             ) : (
               <>
                 {/* Pay Now Button */}
-                {payment_information?.status === "pending" &&
-                  status !== "completed" &&
-                  order_accepted.status === "accepted" && (
-                    <FittedBlackButton
-                      height={40}
-                      value="Pay now"
-                      onClick={() =>
-                        navigation.navigate(screenName.payment, {
-                          id: orderId,
-                        })
-                      }
-                      isDisabled={false}
-                    />
-                  )}
-
+                <View style={tw`flex-1`}>
+                  {payment_information?.status === "pending" &&
+                    status !== "completed" &&
+                    order_accepted.status === "accepted" && (
+                      <FittedBlackButton
+                        height={40}
+                        value="Pay now"
+                        onClick={() =>
+                          navigation.navigate(screenName.payment, {
+                            id: orderId,
+                          })
+                        }
+                        isDisabled={false}
+                      />
+                    )}
+                </View>
                 {/* Track Order and Confirm Delivery Buttons */}
                 <View style={styles.buttonRow}>
                   {payment_information?.status === "completed" &&
                     status !== "completed" &&
                     !delivery_confirmed &&
                     tracking_information?.link?.trim() && ( // Checks for non-empty string
-                      <FittedBlackButton
-                        height={40}
-                        value="Track this order"
-                        onClick={() => setShowTrackingInfo(!showTrackingInfo)}
-                        isDisabled={false}
-                      />
+                      <Pressable
+                        onPress={() => setShowTrackingInfo(!showTrackingInfo)}
+                        style={tw`h-[40px] w-[45px] bg-[#000] rounded-full justify-center items-center `}
+                      >
+                        <Ionicons name="link" size={25} color="#fff" />
+                      </Pressable>
                     )}
 
                   {payment_information?.status === "completed" &&
@@ -140,6 +144,7 @@ export default function OrderCard({
                         value="Confirm order delivery"
                         onClick={() => setConfirmOrderModal(true)}
                         isDisabled={false}
+                        bgColor="#16A34A"
                       />
                     )}
                 </View>
@@ -225,8 +230,8 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: "#E0E0E0",
-    borderRadius: 5,
-    paddingVertical: 10,
+    borderRadius: 20,
+    height: 40,
     paddingHorizontal: 15,
     alignItems: "center",
     justifyContent: "center",
@@ -237,7 +242,6 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
     gap: 10,
   },
 });
