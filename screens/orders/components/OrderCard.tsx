@@ -131,7 +131,11 @@ export default function OrderCard({
                         onPress={() => setShowTrackingInfo(!showTrackingInfo)}
                         style={tw`h-[40px] w-[45px] bg-[#000] rounded-full justify-center items-center `}
                       >
-                        <Ionicons name="link" size={25} color="#fff" />
+                        <Ionicons
+                          name="location-outline"
+                          size={25}
+                          color="#fff"
+                        />
                       </Pressable>
                     )}
 

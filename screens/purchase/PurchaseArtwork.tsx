@@ -52,15 +52,9 @@ export default function PurchaseArtwork() {
   };
 
   const handleBackNavigation = (goHome?: boolean) => {
-    if (selectedSectionIndex === 2) {
-      setSelectedSectionIndex(selectedSectionIndex - 1);
-    } else if (goHome) {
-      resetState();
-      navigation.popToTop();
-    } else {
-      resetState();
-      navigation.goBack();
-    }
+    navigation.navigate("Individual", {
+      screen: screenName.home,
+    });
   };
 
   return (
@@ -80,17 +74,9 @@ export default function PurchaseArtwork() {
             {isLoading && <Loader />}
             {!isLoading && artworkOrderData ? (
               <>
-                {selectedSectionIndex === 1 && (
-                  <OrderSummary data={artworkOrderData} />
-                )}
-                {selectedSectionIndex === 2 && (
-                  <ShippingDetails data={artworkOrderData} />
-                )}
-                {selectedSectionIndex === 3 && (
-                  <PriceQuoteSent
-                    handleClick={() => handleBackNavigation(true)}
-                  />
-                )}
+                <PriceQuoteSent
+                  handleClick={() => handleBackNavigation(true)}
+                />
               </>
             ) : null}
           </ScrollWrapper>
