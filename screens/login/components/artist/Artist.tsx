@@ -1,8 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import LongBlackButton from "../../../../../components/buttons/LongBlackButton";
-import Input from "../../../../../components/inputs/Input";
-import { UseGalleryAuthStore } from "../../../../../store/auth/login/galleryAuthStore";
+import LongBlackButton from "../../../../components/buttons/LongBlackButton";
+import Input from "../../../../components/inputs/Input";
 import { useGalleryAuthLoginStore } from "store/auth/login/GalleryAuthLoginStore";
 import PasswordInput from "components/inputs/PasswordInput";
 import WithModal from "components/modal/WithModal";
@@ -14,16 +13,17 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { screenName } from "constants/screenNames.constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
+import { useArtistAuthLoginStore } from "store/auth/login/ArtistAuthLoginStore";
 
-export default function Form() {
+export default function Artist() {
   const {
-    galleryLoginData,
+    artistLoginData,
     setEmail,
     setPassword,
     clearInputs,
     isLoading,
     setIsLoading,
-  } = useGalleryAuthLoginStore();
+  } = useArtistAuthLoginStore();
   const { setUserSession, setIsLoggedIn } = useAppStore();
   const { updateModal } = useModalStore();
 
@@ -32,7 +32,7 @@ export default function Form() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(galleryLoginData, "gallery");
+    const results = await loginAccount(artistLoginData, "artist");
 
     if (results?.isOk) {
       const resultsBody = results?.body?.data;
@@ -40,41 +40,41 @@ export default function Form() {
       if (resultsBody.verified === false) {
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.id, type: "gallery" },
+          account: { id: resultsBody.id, type: "artist" },
         });
         return;
       }
 
-      const data = {
-        id: resultsBody.gallery_id,
-        email: resultsBody.email,
-        name: resultsBody.name,
-        role: resultsBody.role,
-        gallery_verified: resultsBody.gallery_verified,
-        description: resultsBody.description,
-        location: resultsBody.location,
-        verified: resultsBody.verified,
-        admin: resultsBody.admin,
-        logo: resultsBody.logo,
-        subscription_active: resultsBody.subscription_active,
-      };
+      // const data = {
+      //   id: resultsBody.artist_id,
+      //   email: resultsBody.email,
+      //   name: resultsBody.name,
+      //   role: resultsBody.role,
+      //   artist_verified: resultsBody.artist_verified,
+      //   description: resultsBody.description,
+      //   location: resultsBody.location,
+      //   verified: resultsBody.verified,
+      //   admin: resultsBody.admin,
+      //   logo: resultsBody.logo,
+      //   subscription_active: resultsBody.subscription_active,
+      // };
 
-      const isStored = await utils_storeAsyncData(
-        "userSession",
-        JSON.stringify(data)
-      );
+      // const isStored = await utils_storeAsyncData(
+      //   "userSession",
+      //   JSON.stringify(data)
+      // );
 
-      const loginTimeStamp = new Date();
-      const isLoginTimeStampStored = await utils_storeAsyncData(
-        "loginTimeStamp",
-        JSON.stringify(loginTimeStamp)
-      );
+      // const loginTimeStamp = new Date();
+      // const isLoginTimeStampStored = await utils_storeAsyncData(
+      //   "loginTimeStamp",
+      //   JSON.stringify(loginTimeStamp)
+      // );
 
-      if (isStored && isLoginTimeStampStored) {
-        setUserSession(data);
-        setIsLoggedIn(true);
-        clearInputs();
-      }
+      // if (isStored && isLoginTimeStampStored) {
+      //   setUserSession(data);
+      //   setIsLoggedIn(true);
+      //   clearInputs();
+      // }
     } else {
       // Alert.alert(results?.body.message)
       updateModal({
@@ -92,24 +92,24 @@ export default function Form() {
       <View style={styles.container}>
         <View style={{ gap: 20 }}>
           <Input
-            label="Gallery Email address"
+            label="Artist Email address"
             keyboardType="email-address"
             onInputChange={setEmail}
             placeHolder="Enter your gallery email address"
-            value={galleryLoginData.email}
+            value={artistLoginData.email}
           />
           <PasswordInput
             label="Password"
             onInputChange={setPassword}
             placeHolder="Enter password"
-            value={galleryLoginData.password}
+            value={artistLoginData.password}
           />
         </View>
         <View>
           <LongBlackButton
-            value={isLoading ? "Loading ..." : "Sign In Gallery"}
+            value={isLoading ? "Loading ..." : "Sign In Artist"}
             isDisabled={
-              galleryLoginData.email && galleryLoginData.password ? false : true
+              artistLoginData.email && artistLoginData.password ? false : true
             }
             isLoading={isLoading}
             onClick={handleSubmit}

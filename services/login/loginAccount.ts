@@ -3,7 +3,7 @@ import { apiUrl, authorization, originHeader, userAgent } from "../../constants/
 
 export async function loginAccount(
     payload: IndividualLoginData,
-    route: "individual" | "gallery"
+    route: "individual" | "gallery" | "artist"
 ){
 
     const url = apiUrl + '/api/auth/' + route + '/login'

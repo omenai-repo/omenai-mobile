@@ -67,10 +67,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000",
     borderRadius: 20,
-    display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginHorizontal: 10,
   },
   tabText: {
     fontSize: 14,

@@ -86,6 +86,11 @@ type GalleryLoginData = {
   password: string;
 };
 
+type ArtistLoginData = {
+  email: string;
+  password: string;
+};
+
 type IndividualRegisterData = {
   name: string,
   email: string,
