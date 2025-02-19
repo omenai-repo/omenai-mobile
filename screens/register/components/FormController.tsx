@@ -22,6 +22,7 @@ export default function FormController() {
       <ScrollView
         nestedScrollEnabled={true}
         style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}
+        showsVerticalScrollIndicator={false}
       >
         {pageIndex === 0 && <InputForm />}
         {pageIndex === 1 && <Preferences />}

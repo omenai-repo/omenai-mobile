@@ -34,7 +34,7 @@ export default function Login() {
           style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}
         >
           <AuthTabs
-            tabs={["Individual", "Artist", "Gallery"]}
+            tabs={["Collector", "Artist", "Gallery"]}
             stateIndex={selectedIndex}
             handleSelect={(e) => setSelectedIndex(e)}
           />
