@@ -56,3 +56,16 @@ export const mediumListing: selectItemProp[] = [
     {label: 'Collage or other works on paper', value: 'Collage or other works on paper'},
     {label: 'Other', value: 'Other'},
 ]
+
+export const artistStyle: selectItemProp[] = [
+    {label: 'Art Form', value: 'Art Form'},
+    {label: 'Live arts', value: 'Live arts'},
+    {label: 'Wall arts', value: 'Wall arts'},
+    {label: 'Gallery', value: 'Gallery'},
+    {label: 'Sculptures', value: 'Sculptures'},
+    {label: 'Classisism', value: 'Classisism'},
+    {label: 'Photography', value: 'Photography'},
+    {label: 'Surrealism', value: 'Surrealism'},
+    {label: 'Paintings', value: 'Paintings'},
+    {label: 'Tarpestry', value: 'Tarpestry'},
+]

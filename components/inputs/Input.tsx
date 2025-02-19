@@ -32,11 +32,12 @@ export default function Input({
   defaultValue,
 }: InputProps) {
   return (
-    <View style={{ zIndex: 100 }}>
+    <View style={{ zIndex: 100, flex: 1 }}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         onChangeText={onInputChange}
         placeholder={placeHolder}
+        placeholderTextColor={"#858585"}
         style={[styles.inputContainer, disabled && { color: "#1a1a1a70" }]}
         keyboardType={keyboardType}
         autoCapitalize="none"

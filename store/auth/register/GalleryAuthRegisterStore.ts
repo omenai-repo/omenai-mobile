@@ -35,7 +35,8 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
             confirmPassword: "",
             admin: "",
             location: "",
-            description: ""
+            description: "",
+            country: ""
         },
         setName: (name: string) => {
             const data = get().galleryRegisterData
@@ -88,7 +89,8 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
                     confirmPassword: "",
                     admin: "",
                     location: "",
-                    description: ""
+                    description: "",
+                    country: ""
                 }
             })
         },

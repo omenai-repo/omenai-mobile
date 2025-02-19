@@ -109,6 +109,18 @@ type GallerySignupData = {
   country: string
 };
 
+type ArtistSignupData = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  homeAddress: string
+  city: string,
+  zipCode: string,
+  country: string,
+  artStyles: string[]
+};
+
 type GalleryRegisterData = Omit<GallerySignupData, "confirmPassword">;
 
 type GalleryWaitlistData = {

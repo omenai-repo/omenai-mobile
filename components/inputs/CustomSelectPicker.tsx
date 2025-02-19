@@ -58,6 +58,13 @@ export default function CustomSelectPicker({
         searchPlaceholder={searchPlaceholder}
         showsVerticalScrollIndicator={false}
         placeholder={placeholder}
+        placeholderStyle={{
+          color: "#858585",
+        }}
+        maxHeight={250}
+        containerStyle={{
+          borderRadius: 5,
+        }}
         style={styles.container}
         dropdownPosition="auto"
       />
@@ -76,10 +83,12 @@ const styles = StyleSheet.create({
   },
   container: {
     borderColor: colors.inputBorder,
-    backgroundColor: "#FAFAFA",
     paddingHorizontal: 20,
-    borderRadius: 5,
     height: 60,
+    width: "100%",
+    borderWidth: 1,
+    backgroundColor: "#FAFAFA",
+    borderRadius: 95,
   },
   errorMessage: {
     color: "#ff0000",
