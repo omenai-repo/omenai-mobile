@@ -5,6 +5,7 @@ import { SvgXml } from "react-native-svg";
 import { plusIcon, userProfileIcon } from "utils/SvgImages";
 import NextButton from "components/buttons/NextButton";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
+import BackFormButton from "components/buttons/BackFormButton";
 
 const UploadPhoto = () => {
   const { width, height } = useWindowDimensions();
@@ -46,6 +47,7 @@ const UploadPhoto = () => {
       </Text>
 
       <View style={tw`flex-row mt-[60px]`}>
+        <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <NextButton
           // isDisabled={checkIsDisabled()}
