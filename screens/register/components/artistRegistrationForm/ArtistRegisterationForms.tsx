@@ -4,6 +4,7 @@ import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegist
 import ArtistHomeAddressVerification from "./ArtistHomeAddressVerification";
 import UploadPhoto from "./UploadPhoto";
 import ArtistPreference from "./ArtistPreference";
+import TermsAndCondition from "./TermsAndCondition";
 
 const ArtistRegisterationForms = () => {
   const { pageIndex } = useArtistAuthRegisterStore();
@@ -13,6 +14,7 @@ const ArtistRegisterationForms = () => {
     <ArtistHomeAddressVerification />,
     <UploadPhoto />,
     <ArtistPreference />,
+    <TermsAndCondition />,
   ];
 
   return forms[pageIndex];

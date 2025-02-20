@@ -7,6 +7,7 @@ import { validate } from "lib/validations/validatorGroup";
 import CustomSelectPicker from "components/inputs/CustomSelectPicker";
 import { country_codes } from "json/country_alpha_2_codes";
 import NextButton from "components/buttons/NextButton";
+import BackFormButton from "components/buttons/BackFormButton";
 
 const transformedCountries = country_codes.map((item) => ({
   value: item.key,
@@ -100,6 +101,7 @@ const ArtistHomeAddressVerification = () => {
       </View>
 
       <View style={tw`flex-row mt-[40px]`}>
+        <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <NextButton
           // isDisabled={checkIsDisabled()}
