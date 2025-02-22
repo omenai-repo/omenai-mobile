@@ -1,15 +1,18 @@
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 
-export async function registerAccount(
-    payload: IndividualRegisterData | GalleryRegisterData | ArtistRegisterData,
-    route: "gallery" | "individual" | "artist"
+export async function verifyAddress(
+    payload: {
+        type: string,
+        countyName: string,
+        cityName: string,
+        postalCode: string,
+        countryCode: string,
+    }
 ){
 
-    const url = apiUrl + '/api/auth/' + route + '/register'
-
     try {
-        const response = await fetch(url, {
+        const response = await fetch(`${apiUrl}/api/shipment/address_validation`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -30,7 +33,7 @@ export async function registerAccount(
     }catch(error){
         return {
             isOk: false,
-            body: {message: 'Error creating account'}
+            body: {message: 'Error verify address'}
         }
     }
 }
