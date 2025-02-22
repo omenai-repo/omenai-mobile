@@ -14,7 +14,13 @@ type OrderDetailsModalProps = {
 export default function OrderDetailsModal({
   children,
 }: OrderDetailsModalProps) {
-  const { artworkDetails, clear, setModalType } = galleryOrderModalStore();
+  const {
+    artworkDetails,
+    clear,
+    setModalType,
+    declineForm,
+    updateDeclineForm,
+  } = galleryOrderModalStore();
 
   if (!artworkDetails) return;
 
