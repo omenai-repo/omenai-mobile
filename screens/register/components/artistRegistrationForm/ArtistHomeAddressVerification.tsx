@@ -47,9 +47,9 @@ const ArtistHomeAddressVerification = () => {
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
-    );
+    const isFormValid =
+      formErrors.address &&
+      Object.values(formErrors.address).every((error) => error === "");
     const areAllFieldsFilled = Object.values({
       address_line: artistRegisterData?.address?.address_line,
       city: artistRegisterData?.address?.city,
@@ -171,7 +171,7 @@ const ArtistHomeAddressVerification = () => {
         <CustomSelectPicker
           data={transformedCountries}
           placeholder="Select country of residence"
-          value={artistRegisterData.address.address_line}
+          value={artistRegisterData.address.country}
           handleSetValue={setCountry}
           label="Country of residence"
           search={true}
@@ -185,7 +185,7 @@ const ArtistHomeAddressVerification = () => {
         <FittedBlackButton
           isLoading={isLoading}
           value="Verify Address"
-          // isDisabled={checkIsDisabled()}
+          isDisabled={checkIsDisabled()}
           onClick={handleSubmit}
         />
       </View>

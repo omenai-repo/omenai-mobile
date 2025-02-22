@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type userType = "user" | "gallery" | ""
+type userType = "user" | "artist" | "gallery" | ""
 
 type AppStoreTypes = {
     isLoggedIn: boolean,

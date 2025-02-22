@@ -10,11 +10,11 @@ const ArtistRegisterationForms = () => {
   const { pageIndex } = useArtistAuthRegisterStore();
 
   const forms = [
-    // <AccountDetailsInput />,
+    <AccountDetailsInput />,
     <ArtistHomeAddressVerification />,
-    // <UploadPhoto />,
-    // <ArtistPreference />,
-    // <TermsAndCondition />,
+    <UploadPhoto />,
+    <ArtistPreference />,
+    <TermsAndCondition />,
   ];
 
   return forms[pageIndex];
