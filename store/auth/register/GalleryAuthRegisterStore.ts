@@ -9,16 +9,14 @@ type GalleryAuthRegisterStoreType = {
     setPassword: (e: string) => void,
     setConfirmPassword: (e: string) => void,
     setAdmin: (e: string) => void,
-    setLocation: (e: string) => void,
+    setAddress: (e: string) => void,
     setDescription: (e: string) => void,
-    country: string,
     setCountry: (e: string) => void,
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
     selectedTerms: number[],
     setSelectedTerms: (e: number[]) => void,
     clearState: () => void,
-    galleryLogo: any,
     setGalleryLogo: (image: any) => void,
 }
 
@@ -34,9 +32,12 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
             password: "",
             confirmPassword: "",
             admin: "",
-            location: "",
+            address: "",
             description: "",
-            country: ""
+            country: "", 
+            logo: {
+                assets: []
+            }
         },
         setName: (name: string) => {
             const data = get().galleryRegisterData
@@ -58,13 +59,13 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
             const data = get().galleryRegisterData
             set({galleryRegisterData: {...data, admin}})
         },
-        setLocation: (location: string) => {
+        setAddress: (address: string) => {
             const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, location}})
+            set({galleryRegisterData: {...data, address}})
         },
-        country: '',
         setCountry: (country: string) => {
-            set({country: country})
+            const data = get().galleryRegisterData
+            set({galleryRegisterData: {...data, country}})
         },
         setDescription: (description: string) => {
             const data = get().galleryRegisterData
@@ -88,13 +89,18 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
                     password: "",
                     confirmPassword: "",
                     admin: "",
-                    location: "",
+                    address: "",
                     description: "",
-                    country: ""
+                    country: "",
+                    logo: {
+                        assets: []
+                    }
                 }
             })
         },
-        galleryLogo: null,
-        setGalleryLogo: (logo: any) => { set({galleryLogo: logo}) },
+        setGalleryLogo: (logo: any) => { 
+            const data = get().galleryRegisterData
+            set({galleryRegisterData: {...data, logo}})
+        },
     })
 )

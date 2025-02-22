@@ -17,7 +17,7 @@ const transformedCountries = country_codes.map((item) => ({
 export default function ExtraGalleryDetailsInput() {
   const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({
     admin: "",
-    location: "",
+    address: "",
     description: "",
     country: "",
   });
@@ -27,8 +27,7 @@ export default function ExtraGalleryDetailsInput() {
     setPageIndex,
     galleryRegisterData,
     setAdmin,
-    setLocation,
-    country,
+    setAddress,
     setCountry,
     setDescription,
   } = useGalleryAuthRegisterStore();
@@ -40,9 +39,9 @@ export default function ExtraGalleryDetailsInput() {
     );
     const areAllFieldsFilled = Object.values({
       admin: galleryRegisterData.admin,
-      location: galleryRegisterData.location,
+      location: galleryRegisterData.address,
       description: galleryRegisterData.description,
-      country: country,
+      country: galleryRegisterData.country,
     }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
@@ -79,20 +78,20 @@ export default function ExtraGalleryDetailsInput() {
         <CustomSelectPicker
           data={transformedCountries}
           placeholder="Select country of operation"
-          value={country}
+          value={galleryRegisterData.country}
           handleSetValue={setCountry}
           label="Country of operation"
         />
         <Input
           label={`Gallery address`}
           keyboardType="default"
-          onInputChange={setLocation}
+          onInputChange={setAddress}
           placeHolder="Enter gallery address"
-          value={galleryRegisterData.location}
+          value={galleryRegisterData.address}
           handleBlur={() =>
-            handleValidationChecks("location", galleryRegisterData.location)
+            handleValidationChecks("location", galleryRegisterData.address)
           }
-          errorMessage={formErrors.location}
+          errorMessage={formErrors.address}
         />
         <LargeInput
           label={`Gallery Description`}

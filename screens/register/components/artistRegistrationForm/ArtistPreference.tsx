@@ -16,7 +16,6 @@ type TabItemProps = {
 };
 
 const ArtistPreference = () => {
-  const navigation = useNavigation<StackNavigationProp<any>>();
   const { pageIndex, setPageIndex, artStyles, setArtStyles } =
     useArtistAuthRegisterStore();
 
@@ -74,8 +73,7 @@ const ArtistPreference = () => {
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <NextButton
-          // isDisabled={checkIsDisabled()}
-          isDisabled={false}
+          isDisabled={artStyles.length < 5}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

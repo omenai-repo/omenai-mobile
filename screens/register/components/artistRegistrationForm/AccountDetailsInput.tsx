@@ -7,7 +7,7 @@ import PasswordInput from "../../../../components/inputs/PasswordInput";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
 
 const AccountDetailsInput = () => {
-  const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({
+  const [formErrors, setFormErrors] = useState<Partial<ArtistSignupData>>({
     name: "",
     email: "",
     password: "",
@@ -104,11 +104,9 @@ const AccountDetailsInput = () => {
         />
       </View>
       <View style={styles.buttonsContainer}>
-        {/* <BackFormButton handleBackClick={() => console.log('')} /> */}
         <View style={{ flex: 1 }} />
         <NextButton
-          // isDisabled={checkIsDisabled()}
-          isDisabled={false}
+          isDisabled={checkIsDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

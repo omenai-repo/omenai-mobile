@@ -13,6 +13,7 @@ import { screenName } from "constants/screenNames.constants";
 import { useModalStore } from "store/modal/modalStore";
 import uploadGalleryLogoContent from "./uploadGalleryLogo";
 import { gallery_logo_storage } from "appWrite";
+import { size } from "lodash";
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -23,8 +24,6 @@ export default function TermsAndConditions() {
     setPageIndex,
     isLoading,
     setIsLoading,
-    country,
-    galleryLogo,
     galleryRegisterData,
     clearState,
   } = useGalleryAuthRegisterStore();
@@ -34,19 +33,26 @@ export default function TermsAndConditions() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const { name, email, password, admin, location, description } =
-      galleryRegisterData;
+    const {
+      name,
+      email,
+      password,
+      admin,
+      address,
+      description,
+      country,
+      logo,
+    } = galleryRegisterData;
 
-    if (galleryLogo === null) return;
+    if (logo === null) return;
 
-    const imageparams = {
-      name: galleryLogo.assets[0].fileName,
-      size: galleryLogo.assets[0].fileSize,
-      uri: galleryLogo.assets[0].uri,
-      type: "png",
-    };
-
-    const fileUploaded = await uploadGalleryLogoContent(imageparams);
+    const files: any = logo.assets.map((asset) => ({
+      uri: asset.uri,
+      name: asset.fileName,
+      type: asset.type,
+      size: asset.fileSize,
+    }));
+    const fileUploaded = await uploadGalleryLogoContent(files);
 
     if (fileUploaded) {
       let file: { bucketId: string; fileId: string } = {
@@ -59,9 +65,12 @@ export default function TermsAndConditions() {
         email,
         password,
         admin,
-        location: { address: location, country },
         description,
         logo: file.fileId,
+        location: {
+          address,
+          country,
+        },
       };
 
       const results = await registerAccount(payload, "gallery");

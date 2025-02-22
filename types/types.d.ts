@@ -103,10 +103,22 @@ type GallerySignupData = {
   email: string;
   password: string;
   confirmPassword: string;
-  location: string;
+  address: string;
+  country: string;
   admin: string;
   description: string;
-  country: string
+  logo: {
+    assets: ImageAsset[];
+  } | null;
+};
+
+type ImageAsset = {
+  uri: string;
+  fileName?: string;
+  type?: string;
+  width?: number;
+  height?: number;
+  fileSize?: number;
 };
 
 type ArtistSignupData = {
@@ -114,14 +126,24 @@ type ArtistSignupData = {
   email: string;
   password: string;
   confirmPassword: string;
-  homeAddress: string
-  city: string,
-  zipCode: string,
-  country: string,
-  artStyles: string[]
+  logo: {
+    assets: ImageAsset[];
+  } | null;
+  art_style: string | string[];
+  address: IndividualAddressTypes;
 };
 
-type GalleryRegisterData = Omit<GallerySignupData, "confirmPassword">;
+type ArtistRegisterData = Pick<ArtistSignupData, "name" | "email" | "password"> & {
+  logo: string
+}
+
+type GalleryRegisterData = Pick<
+  GallerySignupData,
+  "name" | "admin" | "email" | "password" | "description"
+> & {
+  location: GalleryLocation;
+  logo: string
+};
 
 type GalleryWaitlistData = {
   name: string,
@@ -130,7 +152,7 @@ type GalleryWaitlistData = {
 
 type artworkListingType = 'trending' | 'recent' | 'curated';
 
-type RouteIdentifier = "individual" | "gallery";
+type RouteIdentifier = "individual" | "gallery" | "artist";
 
 type userSessionType = {
   name: string,

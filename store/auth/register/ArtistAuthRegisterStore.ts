@@ -11,10 +11,10 @@ type ArtistAuthRegisterStoreType = {
     setHomeAddress: (e: string) => void,
     setCity: (e: string) => void,
     setZipCode: (e: string) => void,
-    country: string,
     setCountry: (e: string) => void,
     artStyles: string[],
     setArtStyles: (e: string[]) => void,
+    setArtistPhoto: (image: any) => void,
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
     clearState: () => void,
@@ -31,11 +31,15 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
             email: "",
             password: "",
             confirmPassword: "",
-            homeAddress: "",
-            city: "",
-            zipCode: "",
-            country: "",
-            artStyles: []
+            address: {
+                address_line: "",
+                city: "",
+                country: "",
+                zip: "",
+                state: ""
+            },
+            art_style: [],
+            logo: null
         },
         setName: (name: string) => {
             const data = get().artistRegisterData
@@ -55,25 +59,28 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
         },
         setHomeAddress: (homeAddress: string) => {
             const data = get().artistRegisterData
-            set({artistRegisterData: {...data, homeAddress}})
+            set({artistRegisterData: {...data, address: {...data.address, address_line: homeAddress}}})
         },
         setCity: (city: string) => {
             const data = get().artistRegisterData
-            set({artistRegisterData: {...data, city}})
+            set({artistRegisterData: {...data, address: {...data.address, city}}})
         },
         setZipCode: (zipCode: string) => {
             const data = get().artistRegisterData
-            set({artistRegisterData: {...data, zipCode}})
+            set({artistRegisterData: {...data, address: {...data.address, zip: zipCode}}})
         },
-        country: "",
         setCountry: (country: string) => {
             const data = get().artistRegisterData
-            set({artistRegisterData: {...data, country}})
+            set({artistRegisterData: {...data, address: {...data.address, country}}})
         },
         artStyles: [],
-        setArtStyles: (artStyles: string[]) => {
+        setArtStyles: (art_style: string[]) => {
             const data = get().artistRegisterData
-            set({artistRegisterData: {...data, artStyles}})
+            set({artistRegisterData: {...data, art_style}})
+        },
+        setArtistPhoto: (logo: null) => {
+            const data = get().artistRegisterData
+            set({artistRegisterData: {...data, logo}})
         },
         isLoading: false,
         setIsLoading: (e: boolean) => {
@@ -84,15 +91,19 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
                 isLoading: false,
                 pageIndex: 0,
                 artistRegisterData: {
-                    name: "",
-                    email: "",
-                    password: "",
-                    confirmPassword: "",
-                    homeAddress: "",
+                name: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+                address: {
+                    address_line: "",
                     city: "",
-                    zipCode: "",
                     country: "",
-                    artStyles: []
+                    zip: "",
+                    state: ""
+                },
+                art_style: [],
+                logo: null
                 }
             })
         }
