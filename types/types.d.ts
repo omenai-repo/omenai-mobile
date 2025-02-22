@@ -228,7 +228,7 @@ type RouteParamsType = {
 };
 
 type accountsRouteParamsType = {
-  type: "indiviaual" | "gallery";
+  type: "individual" | "gallery" | "artist";
 };
 
 type verifyEmailRouteParamsType = {

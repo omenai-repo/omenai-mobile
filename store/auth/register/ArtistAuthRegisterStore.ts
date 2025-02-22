@@ -75,8 +75,7 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
         },
         artStyles: [],
         setArtStyles: (art_style: string[]) => {
-            const data = get().artistRegisterData
-            set({artistRegisterData: {...data, art_style}})
+            set({artStyles: art_style})
         },
         setArtistPhoto: (logo: null) => {
             const data = get().artistRegisterData

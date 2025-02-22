@@ -12,6 +12,7 @@ import { screenName } from "constants/screenNames.constants";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { CopilotProvider } from "react-native-copilot";
 import * as SplashScreen from "expo-splash-screen";
+import ArtistNavigation from "navigation/ArtistNavigation";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -91,6 +92,7 @@ export default function App() {
             {/* App screens */}
             {isLoggedIn && userType === "gallery" && <GalleryNavigation />}
             {isLoggedIn && userType === "user" && <IndividualNavigation />}
+            {isLoggedIn && userType === "artist" && <ArtistNavigation />}
           </NavigationContainer>
         </StripeProvider>
       </GestureHandlerRootView>

@@ -33,7 +33,7 @@ export default function Artist() {
     setIsLoading(true);
 
     const results = await loginAccount(artistLoginData, "artist");
-
+    console.log(results);
     if (results?.isOk) {
       const resultsBody = results?.body?.data;
 
@@ -45,36 +45,36 @@ export default function Artist() {
         return;
       }
 
-      // const data = {
-      //   id: resultsBody.artist_id,
-      //   email: resultsBody.email,
-      //   name: resultsBody.name,
-      //   role: resultsBody.role,
-      //   artist_verified: resultsBody.artist_verified,
-      //   description: resultsBody.description,
-      //   location: resultsBody.location,
-      //   verified: resultsBody.verified,
-      //   admin: resultsBody.admin,
-      //   logo: resultsBody.logo,
-      //   subscription_active: resultsBody.subscription_active,
-      // };
+      const data = {
+        id: resultsBody.artist_id,
+        email: resultsBody.email,
+        name: resultsBody.name,
+        role: resultsBody.role,
+        artist_verified: resultsBody.artist_verified,
+        description: resultsBody.description,
+        location: resultsBody.location,
+        verified: resultsBody.verified,
+        admin: resultsBody.admin,
+        logo: resultsBody.logo,
+        subscription_active: resultsBody.subscription_active,
+      };
 
-      // const isStored = await utils_storeAsyncData(
-      //   "userSession",
-      //   JSON.stringify(data)
-      // );
+      const isStored = await utils_storeAsyncData(
+        "userSession",
+        JSON.stringify(data)
+      );
 
-      // const loginTimeStamp = new Date();
-      // const isLoginTimeStampStored = await utils_storeAsyncData(
-      //   "loginTimeStamp",
-      //   JSON.stringify(loginTimeStamp)
-      // );
+      const loginTimeStamp = new Date();
+      const isLoginTimeStampStored = await utils_storeAsyncData(
+        "loginTimeStamp",
+        JSON.stringify(loginTimeStamp)
+      );
 
-      // if (isStored && isLoginTimeStampStored) {
-      //   setUserSession(data);
-      //   setIsLoggedIn(true);
-      //   clearInputs();
-      // }
+      if (isStored && isLoginTimeStampStored) {
+        setUserSession(data);
+        setIsLoggedIn(true);
+        clearInputs();
+      }
     } else {
       // Alert.alert(results?.body.message)
       updateModal({
@@ -95,7 +95,7 @@ export default function Artist() {
             label="Artist Email address"
             keyboardType="email-address"
             onInputChange={setEmail}
-            placeHolder="Enter your gallery email address"
+            placeHolder="Enter your email address"
             value={artistLoginData.email}
           />
           <PasswordInput
@@ -117,7 +117,7 @@ export default function Artist() {
         </View>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate(screenName.forgotPassword, { type: "gallery" })
+            navigation.navigate(screenName.forgotPassword, { type: "artist" })
           }
         >
           <Text style={styles.resetText}>Forgot password? Click here</Text>
