@@ -37,7 +37,7 @@ export default function OrderCard({
         <Image
           source={{ uri: image_href }}
           alt=""
-          style={{ height: 100, width: 100 }}
+          style={{ height: 100, width: 100, borderRadius: 5 }}
         />
         <View style={{ flex: 1, alignItems: "flex-end" }}>
           <Text style={{ fontSize: 14, color: colors.primary_black }}>
@@ -53,16 +53,20 @@ export default function OrderCard({
           >
             {amount}
           </Text>
-          <View
-            style={[
-              styles.statusPill,
-              color && { backgroundColor: color.bgColor },
-            ]}
-          >
-            <Text style={[styles.status, color && { color: color.textColor }]}>
-              {status}
-            </Text>
-          </View>
+          {status && (
+            <View
+              style={[
+                styles.statusPill,
+                color && { backgroundColor: color.bgColor },
+              ]}
+            >
+              <Text
+                style={[styles.status, color && { color: color.textColor }]}
+              >
+                {status}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>

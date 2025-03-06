@@ -157,6 +157,7 @@ export default function ShippingDetails({
             label="Country"
             search={true}
             searchPlaceholder={"Search Country"}
+            dropdownPosition="top"
           />
           <Input
             label="State"
