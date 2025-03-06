@@ -1,4 +1,11 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect } from "react";
 import FittedBlackButton from "../../../../components/buttons/FittedBlackButton";
 import BackFormButton from "../../../../components/buttons/BackFormButton";
@@ -10,9 +17,11 @@ import { registerAccount } from "../../../../services/register/registerAccount";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import TermsAndConditionItem from "../../../../components/general/TermsAndConditionItem";
+import tw from "twrnc";
 
 import { screenName } from "../../../../constants/screenNames.constants";
 import { useModalStore } from "store/modal/modalStore";
+import Loader from "components/general/Loader";
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -79,12 +88,14 @@ export default function TermsAndConditions() {
           />
         ))}
       </View>
+
       <View style={styles.buttonsContainer}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
-          value={isLoading ? "Loading..." : "Create my acount"}
+          height={50}
+          value="Create my account"
           isDisabled={!selectedTerms.includes(0)}
           onClick={handleSubmit}
         />
@@ -96,7 +107,7 @@ export default function TermsAndConditions() {
 const styles = StyleSheet.create({
   title: {
     fontWeight: "500",
-    fontSize: 20,
+    fontSize: 16,
   },
   buttonsContainer: {
     flexDirection: "row",

@@ -9,7 +9,6 @@ export async function fetchUserSavedArtworks(){
     if(userSession.value){
         userId = JSON.parse(userSession.value).id
     }
-
     //if there isn't a user id this should return
     if(userId.length < 1) return
 
@@ -24,7 +23,7 @@ export async function fetchUserSavedArtworks(){
                 "User-Agent": userAgent,
                 "Authorization": authorization
             },
-            body: JSON.stringify({ id: userId}),
+            body: JSON.stringify({ id: userId, page: 1 }),
         })
         
             const result = await response.json();

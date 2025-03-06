@@ -120,6 +120,7 @@ export default function Catalog() {
               data={artworks}
               loadingMore={loadingMore}
               onEndReached={handlePagination}
+              onRefresh={handleFecthArtworks}
             />
           )}
         </View>

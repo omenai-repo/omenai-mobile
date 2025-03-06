@@ -53,7 +53,7 @@ export default function PasswordInput({
         </TouchableOpacity>
       </View>
       {errorMessage && errorMessage?.length > 0 && (
-        <Text style={styles.errorMessage}>{errorMessage}</Text>
+        <Text style={styles.errorMessage}>{errorMessage || ""}</Text>
       )}
     </View>
   );

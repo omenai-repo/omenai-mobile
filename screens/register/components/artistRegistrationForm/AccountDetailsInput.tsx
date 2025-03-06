@@ -5,6 +5,7 @@ import { validate } from "../../../../lib/validations/validatorGroup";
 import Input from "../../../../components/inputs/Input";
 import PasswordInput from "../../../../components/inputs/PasswordInput";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
+import { debounce } from "lodash";
 
 const AccountDetailsInput = () => {
   const [formErrors, setFormErrors] = useState<Partial<ArtistSignupData>>({
@@ -39,19 +40,22 @@ const AccountDetailsInput = () => {
     return !(isFormValid && areAllFieldsFilled);
   };
 
-  const handleValidationChecks = (
-    label: string,
-    value: string,
-    confirm?: string
-  ) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(value, label, confirm);
-    if (!success) {
-      setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
-    } else {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-    }
-  };
+  const handleValidationChecks = debounce(
+    (label: string, value: string, confirm?: string) => {
+      // Clear error if the input is empty
+      if (value.trim() === "") {
+        setFormErrors((prev) => ({ ...prev, [label]: "" }));
+        return;
+      }
+
+      const { success, errors } = validate(value, label, confirm);
+      setFormErrors((prev) => ({
+        ...prev,
+        [label]: errors.length > 0 ? errors[0] : "",
+      }));
+    },
+    500
+  ); // ✅ Delay validation by 500ms
 
   return (
     <View style={{ gap: 40 }}>
@@ -59,47 +63,47 @@ const AccountDetailsInput = () => {
         <Input
           label="Artist Name"
           keyboardType="default"
-          onInputChange={setName}
+          onInputChange={(text) => {
+            setName(text);
+            handleValidationChecks("name", text);
+          }}
           placeHolder="Enter your full name"
           value={artistRegisterData.name}
-          handleBlur={() =>
-            handleValidationChecks("name", artistRegisterData.name)
-          }
           errorMessage={formErrors.name}
         />
         <Input
           label={`Artist email address`}
           keyboardType="email-address"
-          onInputChange={setEmail}
+          onInputChange={(text) => {
+            setEmail(text);
+            handleValidationChecks("email", text);
+          }}
           placeHolder={`Enter your email address`}
           value={artistRegisterData.email}
-          handleBlur={() =>
-            handleValidationChecks("email", artistRegisterData.email)
-          }
           errorMessage={formErrors.email}
         />
         <PasswordInput
           label="Password"
-          onInputChange={setPassword}
+          onInputChange={(text) => {
+            setPassword(text);
+            handleValidationChecks("password", text);
+          }}
           placeHolder="Enter password"
           value={artistRegisterData.password}
-          handleBlur={() =>
-            handleValidationChecks("password", artistRegisterData.password)
-          }
           errorMessage={formErrors.password}
         />
         <PasswordInput
           label="Confirm password"
-          onInputChange={setConfirmPassword}
-          placeHolder="Enter password again"
-          value={artistRegisterData.confirmPassword}
-          handleBlur={() =>
+          onInputChange={(text) => {
+            setConfirmPassword(text);
             handleValidationChecks(
               "confirmPassword",
               artistRegisterData.password,
-              artistRegisterData.confirmPassword
-            )
-          }
+              text
+            );
+          }}
+          placeHolder="Enter password again"
+          value={artistRegisterData.confirmPassword}
           errorMessage={formErrors.confirmPassword}
         />
       </View>

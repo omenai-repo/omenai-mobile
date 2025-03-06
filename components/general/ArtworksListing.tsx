@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import {
   FlatList,
   View,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  RefreshControl,
 } from "react-native";
 import MiniArtworkCard from "components/artwork/MiniArtworkCard";
 import EmptyArtworks from "./EmptyArtworks";
@@ -20,11 +21,24 @@ export default function ArtworksListing({
   data,
   loadingMore,
   onEndReached,
+  onRefresh,
 }: {
   data: ArtworkSchemaTypes[];
   loadingMore?: boolean;
   onEndReached?: () => void;
+  onRefresh?: () => Promise<void>;
 }) {
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Handle pull-to-refresh
+  const handleRefresh = useCallback(async () => {
+    if (onRefresh) {
+      setRefreshing(true);
+      await onRefresh();
+      setRefreshing(false);
+    }
+  }, [onRefresh]);
+
   // Split data into columns
   const columnsData = useMemo(() => {
     const columns = Array.from({ length: NUM_COLUMNS }, () => [] as any[]);
@@ -82,6 +96,9 @@ export default function ArtworksListing({
       onScroll={handleScroll}
       scrollEventThrottle={16} // Higher frequency scroll event
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
     >
       <View style={styles.container}>
         {/* Render each column */}
@@ -92,7 +109,6 @@ export default function ArtworksListing({
         ))}
       </View>
       {/* Loader at the bottom */}
-
       {loadingMore && <Loader size={150} height={0} />}
       <View style={tw`mb-[150px]`} />
     </ScrollView>

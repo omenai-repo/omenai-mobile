@@ -52,9 +52,15 @@ export default function PurchaseArtwork() {
   };
 
   const handleBackNavigation = (goHome?: boolean) => {
-    navigation.navigate("Individual", {
-      screen: screenName.home,
-    });
+    if (selectedSectionIndex === 2) {
+      setSelectedSectionIndex(selectedSectionIndex - 1);
+    } else if (goHome) {
+      resetState();
+      navigation.popToTop();
+    } else {
+      resetState();
+      navigation.goBack();
+    }
   };
 
   return (

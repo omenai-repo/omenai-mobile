@@ -6,10 +6,13 @@ import { orderCardStatusTypes } from "screens/galleryOrders/components/OrdersLis
 import { TouchableOpacity } from "react-native-gesture-handler";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
+import tw from "twrnc";
+import { utils_formatPrice } from "utils/utils_priceFormatter";
 
 export type ordersColorsTypes = { bgColor: string; textColor: string };
 
 type OrderItemProps = {
+  url: string;
   artworkName: string;
   amount?: string;
   order_id: string;
@@ -25,6 +28,7 @@ export default function OrderCard({
   color,
   handlePress,
   order_id,
+  url,
 }: OrderItemProps) {
   const statusPills = {
     Pending: (
@@ -92,7 +96,7 @@ export default function OrderCard({
         <View
           style={{
             backgroundColor: colors.primary_black,
-            paddingHorizontal: 12,
+            paddingHorizontal: 10,
             paddingVertical: 10,
             borderRadius: 40,
           }}
@@ -103,39 +107,67 @@ export default function OrderCard({
     );
   };
 
-  return (
-    <View style={styles.orderItem}>
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 14, marginBottom: 5 }}>
-          Order ID: {order_id}
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.primary_black }}>
-          {artworkName}
-        </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            color: colors.primary_black,
-            marginTop: 5,
-            marginBottom: 10,
-            fontWeight: "700",
-          }}
-        >
-          {amount}
-        </Text>
-        <View style={{ flexWrap: "wrap" }}>
-          {statusPills[status as keyof typeof statusPills] || defaultPill}
-        </View>
-      </View>
+  let image_href = getImageFileView(url, 700);
 
-      <View style={{ alignItems: "flex-end" }}>
-        <ViewOrder />
+  return (
+    <View style={{ paddingVertical: 10 }}>
+      <View style={styles.listItem}>
+        <Image
+          source={{ uri: image_href }}
+          style={{ width: 100, backgroundColor: "#f5f5f5", borderRadius: 5 }}
+          resizeMode="cover"
+        />
+        <View style={styles.listItemDetails}>
+          <View>
+            <Text style={styles.orderItemTitle}>{artworkName}</Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 5,
+                marginTop: 7,
+              }}
+            >
+              <Text style={{ fontSize: 16, fontWeight: 500, flex: 1 }}>
+                {amount}
+              </Text>
+              <Text style={{ fontSize: 14 }}>Order ID: #{order_id}</Text>
+              {/* <Text style={styles.orderItemDetails}>Ordered: {dateOrdered}</Text> */}
+            </View>
+          </View>
+          <View style={tw`mt-[20px] gap-[15px]`}>
+            <View style={tw`flex-wrap`}>
+              {statusPills[status as keyof typeof statusPills] || defaultPill}
+            </View>
+            <View style={tw`flex-wrap`}>
+              <ViewOrder />
+            </View>
+          </View>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  listItem: {
+    flexDirection: "row",
+    gap: 15,
+  },
+
+  listItemDetails: {
+    flex: 1,
+  },
+  orderItemTitle: {
+    fontSize: 14,
+    color: colors.primary_black,
+  },
+  orderItemDetails: {
+    color: "#616161",
+    fontSize: 12,
+    marginTop: 5,
+  },
   orderItem: {
     flexDirection: "row",
     gap: 10,

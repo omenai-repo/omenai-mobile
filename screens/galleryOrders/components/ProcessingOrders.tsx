@@ -32,6 +32,7 @@ export default function ProcessingOrders({
         <OrderCard
           amount={utils_formatPrice(item.artwork_data.pricing.usd_price)}
           status={getStatus(item)}
+          url={item.artwork_data.url}
           artworkName={item.artwork_data.title}
           order_id={item.order_id}
           color={utils_getColors("processing", item)}

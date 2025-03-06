@@ -12,6 +12,7 @@ type FittedBlackButtonProps = {
   children?: React.ReactNode;
   height?: number;
   bgColor?: string;
+  fontSize?: number;
 };
 
 export default function FittedBlackButton({
@@ -22,6 +23,7 @@ export default function FittedBlackButton({
   children,
   height,
   bgColor,
+  fontSize,
 }: FittedBlackButtonProps) {
   const animation = useRef(null);
   if (isDisabled || isLoading)
@@ -29,9 +31,8 @@ export default function FittedBlackButton({
       <View
         style={[
           styles.container,
-          bgColor
-            ? { backgroundColor: `${bgColor}` }
-            : { backgroundColor: "#000" },
+
+          { backgroundColor: "#E0E0E0" },
           height ? { height: height } : null,
         ]}
       >
@@ -66,7 +67,14 @@ export default function FittedBlackButton({
       ]}
       onPress={onClick}
     >
-      <Text style={styles.text}>{value}</Text>
+      <Text
+        style={[
+          styles.text,
+          { color: "#FFFFFF", fontSize: fontSize ? fontSize : 16 },
+        ]}
+      >
+        {value}
+      </Text>
       {children}
     </TouchableOpacity>
   );
@@ -86,6 +94,5 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.white,
-    fontSize: 16,
   },
 });

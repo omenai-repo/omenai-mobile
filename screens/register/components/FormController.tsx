@@ -3,6 +3,8 @@ import {
   Platform,
   StyleSheet,
   ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import React from "react";
 import InputForm from "./inputForm/InputForm";
@@ -19,15 +21,18 @@ export default function FormController() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <ScrollView
-        nestedScrollEnabled={true}
-        style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {pageIndex === 0 && <InputForm />}
-        {pageIndex === 1 && <Preferences />}
-        {pageIndex === 2 && <TermsAndConditions />}
-      </ScrollView>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          nestedScrollEnabled={true}
+          style={{ flexGrow: 1, paddingHorizontal: 20, marginTop: 20 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {pageIndex === 0 && <InputForm />}
+          {pageIndex === 1 && <Preferences />}
+          {pageIndex === 2 && <TermsAndConditions />}
+        </ScrollView>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }

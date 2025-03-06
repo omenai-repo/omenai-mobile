@@ -129,11 +129,11 @@ export default function OrderCard({
                     tracking_information?.link?.trim() && ( // Checks for non-empty string
                       <Pressable
                         onPress={() => setShowTrackingInfo(!showTrackingInfo)}
-                        style={tw`h-[40px] w-[45px] bg-[#000] rounded-full justify-center items-center `}
+                        style={tw`h-[35px] w-[35px] bg-[#000] rounded-full justify-center items-center `}
                       >
                         <Ionicons
                           name="location-outline"
-                          size={25}
+                          size={18}
                           color="#fff"
                         />
                       </Pressable>
@@ -144,10 +144,11 @@ export default function OrderCard({
                     !delivery_confirmed &&
                     tracking_information?.link?.trim() && (
                       <FittedBlackButton
-                        height={40}
+                        height={35}
                         value="Confirm order delivery"
                         onClick={() => setConfirmOrderModal(true)}
                         isDisabled={false}
+                        fontSize={12}
                         bgColor="#16A34A"
                       />
                     )}
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: "#E0E0E0",
     borderRadius: 20,
-    height: 40,
+    height: 30,
     paddingHorizontal: 15,
     alignItems: "center",
     justifyContent: "center",

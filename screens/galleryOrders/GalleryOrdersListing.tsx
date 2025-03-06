@@ -1,4 +1,4 @@
-import { RefreshControl, StyleSheet } from "react-native";
+import { RefreshControl, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import HeaderTabs from "./components/HeaderTabs";
 import { getOverviewOrders } from "services/orders/getOverviewOrders";
@@ -63,28 +63,35 @@ export default function GalleryOrdersListing() {
           />
         }
       >
-        {selectedTab === "pending" && !isloading && (
-          <PendingOrders
-            data={data[selectedTab]}
-            handleOpenModal={handleOpenModal}
-          />
-        )}
-        {selectedTab === "processing" && !isloading && (
-          <ProcessingOrders
-            data={data[selectedTab]}
-            handleOpenModal={handleOpenModal}
-          />
-        )}
-        {selectedTab === "completed" && !isloading && (
-          <CompletedOrders
-            data={data[selectedTab]}
-            handleOpenModal={handleOpenModal}
-          />
-        )}
-        {data[selectedTab].length === 0 && !isloading && (
-          <EmptyOrdersListing status={selectedTab} />
-        )}
-        {isloading && <OrderslistingLoader />}
+        <View
+          style={{
+            marginTop: 20,
+            marginBottom: 150,
+          }}
+        >
+          {selectedTab === "pending" && !isloading && (
+            <PendingOrders
+              data={data[selectedTab]}
+              handleOpenModal={handleOpenModal}
+            />
+          )}
+          {selectedTab === "processing" && !isloading && (
+            <ProcessingOrders
+              data={data[selectedTab]}
+              handleOpenModal={handleOpenModal}
+            />
+          )}
+          {selectedTab === "completed" && !isloading && (
+            <CompletedOrders
+              data={data[selectedTab]}
+              handleOpenModal={handleOpenModal}
+            />
+          )}
+          {data[selectedTab].length === 0 && !isloading && (
+            <EmptyOrdersListing status={selectedTab} />
+          )}
+          {isloading && <OrderslistingLoader />}
+        </View>
       </ScrollWrapper>
     </WithGalleryModal>
   );
@@ -94,6 +101,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    marginTop: 20,
   },
 });

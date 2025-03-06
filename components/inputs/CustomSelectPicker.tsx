@@ -14,6 +14,7 @@ type CustomSelectPickerProps = {
   zIndex?: number;
   search?: boolean;
   searchPlaceholder?: string;
+  dropdownPosition?: "auto" | "top" | "bottom";
 };
 
 type SetStateValue<S> = (prevState: S) => S;
@@ -29,6 +30,7 @@ export default function CustomSelectPicker({
   zIndex = 200,
   search,
   searchPlaceholder,
+  dropdownPosition,
 }: CustomSelectPickerProps) {
   const [open, setOpen] = useState(false);
 
@@ -61,12 +63,13 @@ export default function CustomSelectPicker({
         placeholderStyle={{
           color: "#858585",
         }}
-        maxHeight={250}
+        maxHeight={200}
         containerStyle={{
           borderRadius: 5,
         }}
         style={styles.container}
-        dropdownPosition="auto"
+        dropdownPosition={dropdownPosition}
+        keyboardAvoiding={true}
       />
       {errorMessage && errorMessage?.length > 0 && (
         <Text style={styles.errorMessage}>{errorMessage}</Text>

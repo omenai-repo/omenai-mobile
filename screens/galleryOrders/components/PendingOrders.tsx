@@ -29,7 +29,8 @@ export default function PendingOrders({
       renderItem={({ item }) => (
         <OrderCard
           amount={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-          status={"pending"}
+          status={"Pending"}
+          url={item.artwork_data.url}
           artworkName={item.artwork_data.title}
           color={utils_getColors("")}
           order_id={item.order_id}
