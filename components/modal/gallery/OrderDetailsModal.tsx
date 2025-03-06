@@ -36,7 +36,12 @@ export default function OrderDetailsModal({
       <View style={styles.artworkDetailsContainer}>
         <Image
           source={{ uri: image_href }}
-          style={{ height: 150, width: 150, marginVertical: 10 }}
+          style={{
+            height: 150,
+            width: 150,
+            marginVertical: 10,
+            borderRadius: 5,
+          }}
         />
         {artworkDetails.details.map((detail, index) => (
           <View key={index}>

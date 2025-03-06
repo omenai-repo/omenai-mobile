@@ -80,9 +80,17 @@ export default function PurchaseArtwork() {
             {isLoading && <Loader />}
             {!isLoading && artworkOrderData ? (
               <>
-                <PriceQuoteSent
-                  handleClick={() => handleBackNavigation(true)}
-                />
+                {selectedSectionIndex === 1 && (
+                  <OrderSummary data={artworkOrderData} />
+                )}
+                {selectedSectionIndex === 2 && (
+                  <ShippingDetails data={artworkOrderData} />
+                )}
+                {selectedSectionIndex === 3 && (
+                  <PriceQuoteSent
+                    handleClick={() => handleBackNavigation(true)}
+                  />
+                )}
               </>
             ) : null}
           </ScrollWrapper>

@@ -151,7 +151,7 @@ export default function RecentOrders({
         <View
           style={{ flexWrap: "wrap", marginRight: "auto", marginLeft: "auto" }}
         >
-          {data.length > 1 ? (
+          {data.length >= 1 ? (
             <TouchableOpacity
               onPress={() => navigation.navigate(screenName.gallery.orders)}
             >

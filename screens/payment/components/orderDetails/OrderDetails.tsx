@@ -131,8 +131,6 @@ export default function OrderDetails({
     setLoading(false);
   }
 
-  console.log(data.shipping_details.quote.shipping_fees, "hhh");
-
   const throwError = (message: string) => {
     updateModal({ message, modalType: "error", showModal: true });
   };
