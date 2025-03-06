@@ -8,6 +8,7 @@ import BackFormButton from "../../../../components/buttons/BackFormButton";
 import LargeInput from "../../../../components/inputs/LargeInput";
 import CustomSelectPicker from "components/inputs/CustomSelectPicker";
 import { country_codes } from "json/country_alpha_2_codes";
+import { debounce } from "lodash";
 
 const transformedCountries = country_codes.map((item) => ({
   value: item.key,
@@ -47,19 +48,22 @@ export default function ExtraGalleryDetailsInput() {
     return !(isFormValid && areAllFieldsFilled);
   };
 
-  const handleValidationChecks = (
-    label: string,
-    value: string,
-    confirm?: string
-  ) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(value, label, confirm);
-    if (!success) {
-      setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
-    } else {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-    }
-  };
+  const handleValidationChecks = debounce(
+    (label: string, value: string, confirm?: string) => {
+      // Clear error if the input is empty
+      if (value.trim() === "") {
+        setFormErrors((prev) => ({ ...prev, [label]: "" }));
+        return;
+      }
+
+      const { success, errors } = validate(value, label, confirm);
+      setFormErrors((prev) => ({
+        ...prev,
+        [label]: errors.length > 0 ? errors[0] : "",
+      }));
+    },
+    500
+  ); // ✅ Delay validation by 500ms
 
   return (
     <View style={{ gap: 40 }}>
@@ -67,12 +71,12 @@ export default function ExtraGalleryDetailsInput() {
         <Input
           label={`Administrator’s Full Name`}
           keyboardType="default"
-          onInputChange={setAdmin}
+          onInputChange={(text) => {
+            setAdmin(text);
+            handleValidationChecks("admin", text);
+          }}
           placeHolder="Enter your full name"
           value={galleryRegisterData.admin}
-          handleBlur={() =>
-            handleValidationChecks("admin", galleryRegisterData.admin)
-          }
           errorMessage={formErrors.admin}
         />
         <CustomSelectPicker
@@ -80,30 +84,30 @@ export default function ExtraGalleryDetailsInput() {
           placeholder="Select country of operation"
           value={galleryRegisterData.country}
           handleSetValue={setCountry}
+          search={true}
+          searchPlaceholder="Search country"
           label="Country of operation"
+          dropdownPosition="top"
         />
         <Input
           label={`Gallery address`}
           keyboardType="default"
-          onInputChange={setAddress}
+          onInputChange={(text) => {
+            setAddress(text);
+            handleValidationChecks("location", text);
+          }}
           placeHolder="Enter gallery address"
           value={galleryRegisterData.address}
-          handleBlur={() =>
-            handleValidationChecks("location", galleryRegisterData.address)
-          }
           errorMessage={formErrors.address}
         />
         <LargeInput
           label={`Gallery Description`}
-          onInputChange={setDescription}
+          onInputChange={(text) => {
+            setDescription(text);
+            handleValidationChecks("description", text);
+          }}
           placeHolder="Write a description of your gallery (not more than 100 words)"
           value={galleryRegisterData.description}
-          handleBlur={() =>
-            handleValidationChecks(
-              "description",
-              galleryRegisterData.description
-            )
-          }
           errorMessage={formErrors.description}
         />
       </View>

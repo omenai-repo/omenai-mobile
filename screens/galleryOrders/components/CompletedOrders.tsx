@@ -30,6 +30,7 @@ export default function CompletedOrders({
           amount={utils_formatPrice(item.artwork_data.pricing.usd_price)}
           order_id={item.order_id}
           status={getStatus(item)}
+          url={item.artwork_data.url}
           artworkName={item.artwork_data.title}
           color={utils_getColors("completed", item)}
           handlePress={() => {

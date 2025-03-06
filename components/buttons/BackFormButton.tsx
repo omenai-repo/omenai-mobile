@@ -23,7 +23,7 @@ export default function BackFormButton({
 
 const styles = StyleSheet.create({
   container: {
-    height: 55,
+    height: 50,
     width: 70,
     borderWidth: 1,
     borderColor: colors.primary_black,

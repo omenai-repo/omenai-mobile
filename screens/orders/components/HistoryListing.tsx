@@ -10,10 +10,15 @@ export default function HistoryListing({
 }: {
   orders: CreateOrderModelTypes[];
 }) {
-  if (orders.length > 0)
+  // Sort orders by createdAt in ascending order
+  const sortedOrders = [...orders].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  if (sortedOrders.length > 0)
     return (
       <View>
-        {orders.map((order, index) => {
+        {sortedOrders.map((order, index) => {
           return (
             <View key={index}>
               <Text style={styles.dateTitle}>
@@ -60,7 +65,7 @@ const styles = StyleSheet.create({
   },
   dateTitle: {
     fontSize: 14,
-    fontWeight: 500,
+    fontWeight: "500",
     color: colors.primary_black,
   },
 });

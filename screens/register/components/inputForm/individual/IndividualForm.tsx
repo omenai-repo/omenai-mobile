@@ -5,6 +5,7 @@ import Input from "../../../../../components/inputs/Input";
 import NextButton from "../../../../../components/buttons/NextButton";
 import { useIndividualAuthRegisterStore } from "../../../../../store/auth/register/IndividualAuthRegisterStore";
 import { validate } from "../../../../../lib/validations/validatorGroup";
+import { debounce } from "lodash";
 
 export default function IndividualForm() {
   const {
@@ -36,19 +37,22 @@ export default function IndividualForm() {
     return !(isFormValid && areAllFieldsFilled);
   };
 
-  const handleValidationChecks = (
-    label: string,
-    value: string,
-    confirm?: string
-  ) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(value, label, confirm);
-    if (!success) {
-      setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
-    } else {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-    }
-  };
+  const handleValidationChecks = debounce(
+    (label: string, value: string, confirm?: string) => {
+      // Clear error if the input is empty
+      if (value.trim() === "") {
+        setFormErrors((prev) => ({ ...prev, [label]: "" }));
+        return;
+      }
+
+      const { success, errors } = validate(value, label, confirm);
+      setFormErrors((prev) => ({
+        ...prev,
+        [label]: errors.length > 0 ? errors[0] : "",
+      }));
+    },
+    500
+  ); // ✅ Delay validation by 500ms
 
   return (
     <View style={styles.container}>
@@ -56,47 +60,47 @@ export default function IndividualForm() {
         <Input
           label="Full name"
           keyboardType="default"
-          onInputChange={setName}
+          onInputChange={(text) => {
+            setName(text);
+            handleValidationChecks("name", text);
+          }}
           placeHolder="Enter your full name"
           value={individualRegisterData.name}
-          handleBlur={() =>
-            handleValidationChecks("name", individualRegisterData.name)
-          }
           errorMessage={formErrors.name}
         />
         <Input
           label="Email address"
           keyboardType="email-address"
-          onInputChange={setEmail}
+          onInputChange={(text) => {
+            setEmail(text);
+            handleValidationChecks("email", text);
+          }}
           placeHolder="Enter your email address"
           value={individualRegisterData.email}
-          handleBlur={() =>
-            handleValidationChecks("email", individualRegisterData.email)
-          }
           errorMessage={formErrors.email}
         />
         <PasswordInput
           label="Password"
-          onInputChange={setPassword}
+          onInputChange={(text) => {
+            setPassword(text);
+            handleValidationChecks("password", text); // ✅ Debounced validation
+          }}
           placeHolder="Enter password"
           value={individualRegisterData.password}
-          handleBlur={() =>
-            handleValidationChecks("password", individualRegisterData.password)
-          }
           errorMessage={formErrors.password}
         />
         <PasswordInput
           label="Confirm password"
-          onInputChange={setConfirmPassword}
-          placeHolder="Enter password again"
-          value={individualRegisterData.confirmPassword}
-          handleBlur={() =>
+          onInputChange={(text) => {
+            setConfirmPassword(text);
             handleValidationChecks(
               "confirmPassword",
               individualRegisterData.password,
-              individualRegisterData.confirmPassword
-            )
-          }
+              text
+            );
+          }}
+          placeHolder="Enter password again"
+          value={individualRegisterData.confirmPassword}
           errorMessage={formErrors.confirmPassword}
         />
       </View>
@@ -116,6 +120,7 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 40,
     gap: 40,
+    marginBottom: 100,
   },
   buttonsContainer: {
     flexDirection: "row",

@@ -21,5 +21,3 @@ export default function InputForm() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

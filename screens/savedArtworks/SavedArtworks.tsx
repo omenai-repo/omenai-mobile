@@ -66,7 +66,6 @@ export default function SavedArtworks() {
   const handleFetchUserSavedArtorks = async () => {
     setIsLoading(true);
     const results = await fetchUserSavedArtworks();
-
     if (results?.isOk) {
       setData(results.data);
     }
@@ -219,6 +218,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     gap: 25,
+    marginBottom: 50,
   },
   savedArtworkItem: {
     flexDirection: "row",

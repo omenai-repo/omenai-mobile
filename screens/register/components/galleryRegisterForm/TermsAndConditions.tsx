@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { acceptTermsList } from "../../../../constants/accetTerms.constants";
 import TermsAndConditionItem from "../../../../components/general/TermsAndConditionItem";
@@ -13,7 +13,8 @@ import { screenName } from "constants/screenNames.constants";
 import { useModalStore } from "store/modal/modalStore";
 import uploadGalleryLogoContent from "./uploadGalleryLogo";
 import { gallery_logo_storage } from "appWrite";
-import { size } from "lodash";
+import tw from "twrnc";
+import Loader from "components/general/Loader";
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -46,12 +47,13 @@ export default function TermsAndConditions() {
 
     if (logo === null) return;
 
-    const files: any = logo.assets.map((asset) => ({
-      uri: asset.uri,
-      name: asset.fileName,
-      type: asset.type,
-      size: asset.fileSize,
-    }));
+    const files = {
+      uri: logo.assets[0].uri,
+      name: logo.assets[0].fileName,
+      type: logo.assets[0].mimeType,
+      size: logo.assets[0].fileSize,
+    };
+
     const fileUploaded = await uploadGalleryLogoContent(files);
 
     if (fileUploaded) {
@@ -74,7 +76,6 @@ export default function TermsAndConditions() {
       };
 
       const results = await registerAccount(payload, "gallery");
-
       if (results?.isOk) {
         const resultsBody = results?.body;
         clearState();
@@ -125,7 +126,8 @@ export default function TermsAndConditions() {
         <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
-          value="Create gallery account"
+          height={50}
+          value="Create my account"
           isDisabled={!selectedTerms.includes(0)}
           onClick={handleSubmit}
         />
@@ -137,7 +139,7 @@ export default function TermsAndConditions() {
 const styles = StyleSheet.create({
   title: {
     fontWeight: "500",
-    fontSize: 20,
+    fontSize: 16,
   },
   buttonsContainer: {
     flexDirection: "row",

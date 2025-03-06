@@ -17,6 +17,8 @@ type ArtistAuthRegisterStoreType = {
     setArtistPhoto: (image: any) => void,
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
+    selectedTerms: number[],
+    setSelectedTerms: (e: number[]) => void,
     clearState: () => void,
 }
 
@@ -84,6 +86,10 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
         isLoading: false,
         setIsLoading: (e: boolean) => {
             set({isLoading: e})
+        },
+        selectedTerms: [],
+        setSelectedTerms: (e: number[]) => {
+            set({selectedTerms: e})
         },
         clearState: () => {
             set({

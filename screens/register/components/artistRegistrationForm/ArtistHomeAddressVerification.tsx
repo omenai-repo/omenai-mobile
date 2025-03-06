@@ -6,11 +6,11 @@ import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegist
 import { validate } from "lib/validations/validatorGroup";
 import CustomSelectPicker from "components/inputs/CustomSelectPicker";
 import { country_codes } from "json/country_alpha_2_codes";
-import NextButton from "components/buttons/NextButton";
 import BackFormButton from "components/buttons/BackFormButton";
 import { verifyAddress } from "services/register/verifyAddress";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
 import { useModalStore } from "store/modal/modalStore";
+import { debounce } from "lodash";
 
 const transformedCountries = country_codes.map((item) => ({
   value: item.key,
@@ -42,7 +42,6 @@ const ArtistHomeAddressVerification = () => {
     setCountry,
     setIsLoading,
     isLoading,
-    clearState,
   } = useArtistAuthRegisterStore();
 
   const checkIsDisabled = () => {
@@ -60,19 +59,22 @@ const ArtistHomeAddressVerification = () => {
     return !(isFormValid && areAllFieldsFilled);
   };
 
-  const handleValidationChecks = (
-    label: string,
-    value: string,
-    confirm?: string
-  ) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(value, label, confirm);
-    if (!success) {
-      setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
-    } else {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-    }
-  };
+  const handleValidationChecks = debounce(
+    (label: string, value: string, confirm?: string) => {
+      // Clear error if the input is empty
+      if (value.trim() === "") {
+        setFormErrors((prev) => ({ ...prev, [label]: "" }));
+        return;
+      }
+
+      const { success, errors } = validate(value, label, confirm);
+      setFormErrors((prev) => ({
+        ...prev,
+        [label]: errors.length > 0 ? errors[0] : "",
+      }));
+    },
+    500
+  ); // ✅ Delay validation by 500ms
 
   const handleSubmit = async () => {
     try {
@@ -94,7 +96,6 @@ const ArtistHomeAddressVerification = () => {
           response?.body?.data?.address &&
           response.body.data.address.length !== 0
         ) {
-          clearState();
           setPageIndex(pageIndex + 1);
         } else {
           updateModal({
@@ -130,15 +131,12 @@ const ArtistHomeAddressVerification = () => {
       <Input
         label="Home Address"
         keyboardType="default"
-        onInputChange={setHomeAddress}
+        onInputChange={(text) => {
+          setHomeAddress(text);
+          handleValidationChecks("general", text);
+        }}
         placeHolder="Input your home address here"
         value={artistRegisterData?.address?.address_line}
-        handleBlur={() =>
-          handleValidationChecks(
-            "general",
-            artistRegisterData?.address?.address_line
-          )
-        }
         errorMessage={formErrors.address?.address_line}
       />
 
@@ -146,23 +144,23 @@ const ArtistHomeAddressVerification = () => {
         <Input
           label="City"
           keyboardType="default"
-          onInputChange={setCity}
+          onInputChange={(text) => {
+            setCity(text);
+            handleValidationChecks("general", text);
+          }}
           placeHolder="City"
           value={artistRegisterData?.address?.city}
-          handleBlur={() =>
-            handleValidationChecks("general", artistRegisterData?.address?.city)
-          }
           errorMessage={formErrors.address?.city}
         />
         <Input
           label="Zip Code"
           keyboardType="default"
-          onInputChange={setZipCode}
+          onInputChange={(text) => {
+            setZipCode(text);
+            handleValidationChecks("general", text);
+          }}
           placeHolder="Zip Code"
           value={artistRegisterData?.address?.zip}
-          handleBlur={() =>
-            handleValidationChecks("general", artistRegisterData?.address?.zip)
-          }
           errorMessage={formErrors.address?.zip}
         />
       </View>
@@ -176,6 +174,7 @@ const ArtistHomeAddressVerification = () => {
           label="Country of residence"
           search={true}
           searchPlaceholder="Search Country"
+          dropdownPosition="top"
         />
       </View>
 
@@ -184,6 +183,7 @@ const ArtistHomeAddressVerification = () => {
         <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
+          height={50}
           value="Verify Address"
           isDisabled={checkIsDisabled()}
           onClick={handleSubmit}

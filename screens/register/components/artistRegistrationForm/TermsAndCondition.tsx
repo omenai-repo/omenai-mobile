@@ -14,10 +14,13 @@ import { screenName } from "constants/screenNames.constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { gallery_logo_storage } from "appWrite";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
+import Loader from "components/general/Loader";
 
 const TermsAndCondition = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const {
+    selectedTerms,
+    setSelectedTerms,
     pageIndex,
     setPageIndex,
     setIsLoading,
@@ -25,7 +28,6 @@ const TermsAndCondition = () => {
     clearState,
     isLoading,
   } = useArtistAuthRegisterStore();
-  const [checkBox, setCheckBox] = useState<any>([]);
 
   const checks = [
     {
@@ -39,10 +41,12 @@ const TermsAndCondition = () => {
   ];
 
   const handleCheckPress = (id: number) => {
-    if (checkBox.includes(id)) {
-      setCheckBox(checkBox.filter((checkId: number) => checkId !== id));
+    if (selectedTerms.includes(id)) {
+      setSelectedTerms(
+        selectedTerms.filter((checkId: number) => checkId !== id)
+      );
     } else {
-      setCheckBox([...checkBox, id]);
+      setSelectedTerms([...selectedTerms, id]);
     }
   };
 
@@ -55,12 +59,12 @@ const TermsAndCondition = () => {
 
     if (logo === null) return;
 
-    const files: any = logo.assets.map((asset) => ({
-      uri: asset.uri,
-      name: asset.fileName,
-      type: asset.type,
-      size: asset.fileSize,
-    }));
+    const files = {
+      uri: logo.assets[0].uri,
+      name: logo.assets[0].fileName,
+      type: logo.assets[0].mimeType,
+      size: logo.assets[0].fileSize,
+    };
     const fileUploaded = await uploadGalleryLogoContent(files);
 
     if (fileUploaded) {
@@ -112,7 +116,7 @@ const TermsAndCondition = () => {
   }) => {
     return (
       <Pressable onPress={onPress} style={tw`flex-row gap-[15px]`}>
-        <SvgXml xml={checkBox.includes(id) ? checkedBox : uncheckedBox} />
+        <SvgXml xml={selectedTerms.includes(id) ? checkedBox : uncheckedBox} />
         <Text style={tw`text-[14px] text-[#858585] leading-[20px]`}>
           {text}
         </Text>
@@ -127,22 +131,24 @@ const TermsAndCondition = () => {
       <View
         style={tw`border-[0.96px] border-[#E0E0E0] bg-[#FAFAFA] rounded-[8px] pl-[15px] pr-[25px] pt-[20px] py-[30px] gap-[25px]`}
       >
-        {checks.map(({ id, text }: { id: number; text: string }) => (
+        {checks.map((item, index) => (
           <Conatiner
-            key={id}
-            id={id}
-            text={text}
-            onPress={() => handleCheckPress(id)}
+            key={index}
+            id={index}
+            text={item.text}
+            onPress={() => handleCheckPress(index)}
           />
         ))}
       </View>
+
       <View style={tw`flex-row mt-[40px]`}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
+          height={50}
           value="Proceed"
-          isDisabled={checkBox.length !== 2}
+          isDisabled={!selectedTerms.includes(0)}
           onClick={handleSubmit}
         />
       </View>
