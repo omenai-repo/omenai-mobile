@@ -19,7 +19,7 @@ export async function registerAccount(
             },
             body: JSON.stringify(payload)
         })
-        console.log(await response.json(), "ll")
+
             const ParsedResponse = {
                 isOk: response.ok,
                 body: await response.json(),
