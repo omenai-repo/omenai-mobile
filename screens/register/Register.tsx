@@ -11,14 +11,18 @@ import { useModalStore } from "store/modal/modalStore";
 import WithModal from "components/modal/WithModal";
 import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
 import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
+import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
+import { StatusBar } from "expo-status-bar";
 
 export default function Register() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { clearState: clearIndividualState } = useIndividualAuthRegisterStore();
   const { clearState: clearGalleryState } = useGalleryAuthRegisterStore();
+  const { clearState: clearArtistState } = useArtistAuthRegisterStore();
 
   return (
     <WithModal>
+      <StatusBar style="light" />
       <AuthHeader
         title="Create an account"
         subTitle="Fill in required details and create an account"
@@ -27,6 +31,7 @@ export default function Register() {
 
           //clears registration form data
           clearGalleryState();
+          clearArtistState();
           clearIndividualState();
         }}
       />

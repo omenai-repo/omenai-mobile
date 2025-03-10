@@ -3,7 +3,6 @@ import React from "react";
 import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "config/colors.config";
-import { utils_sortOrdersDataByDate } from "utils/utils_sortOrdersDataByDate";
 import OrderCard from "./OrderCard";
 
 export default function HistoryListing({
@@ -11,23 +10,27 @@ export default function HistoryListing({
 }: {
   orders: CreateOrderModelTypes[];
 }) {
-  const histories = utils_sortOrdersDataByDate(orders);
+  // Sort orders by createdAt in ascending order
+  const sortedOrders = [...orders].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
-  if (histories.length > 0)
+  if (sortedOrders.length > 0)
     return (
       <View>
-        {histories.map((history, index) => {
-          const order = history.data[index];
+        {sortedOrders.map((order, index) => {
           return (
             <View key={index}>
-              <Text style={styles.dateTitle}>{history.date}</Text>
+              <Text style={styles.dateTitle}>
+                {formatIntlDateTime(order.createdAt)}
+              </Text>
               <OrderCard
                 url={order.artwork_data.url}
                 orderId={order.order_id}
                 artworkName={order.artwork_data.title}
                 artworkPrice={order.artwork_data.pricing.usd_price}
                 dateOrdered={order.createdAt}
-                state="pending"
+                state="history"
                 status={order.status}
                 payment_information={order.payment_information}
                 tracking_information={order.shipping_details.tracking}
@@ -61,9 +64,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   dateTitle: {
-    fontSize: 18,
-    fontWeight: 500,
+    fontSize: 14,
+    fontWeight: "500",
     color: colors.primary_black,
-    paddingBottom: 10,
   },
 });

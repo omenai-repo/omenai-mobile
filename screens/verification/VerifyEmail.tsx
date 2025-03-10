@@ -79,8 +79,10 @@ export default function VerifyEmail() {
       <AuthHeader
         title="Verify email"
         subTitle={`Verify your account so you can start ${
-          account.type === "gallery" ? "selling" : "purchasing"
-        } artwork`}
+          account.type === "gallery" || account.type === "artist"
+            ? "selling"
+            : "purchasing"
+        } artworks`}
         handleBackClick={() => navigation.goBack()}
       />
       <ScrollWrapper style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>

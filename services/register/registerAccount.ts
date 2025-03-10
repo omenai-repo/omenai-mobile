@@ -2,8 +2,8 @@ import { apiUrl, authorization, originHeader, userAgent } from "../../constants/
 
 
 export async function registerAccount(
-    payload: IndividualRegisterData | GalleryRegisterData,
-    route: "gallery" | "individual"
+    payload: IndividualRegisterData | GalleryRegisterData | ArtistRegisterData,
+    route: "gallery" | "individual" | "artist"
 ){
 
     const url = apiUrl + '/api/auth/' + route + '/register'
@@ -19,15 +19,14 @@ export async function registerAccount(
             },
             body: JSON.stringify(payload)
         })
-        .then(async (res) => {
-            const ParsedResponse = {
-                isOk: res.ok,
-                body: await res.json(),
-            };
-            return ParsedResponse;
-        })
 
-        return response
+            const ParsedResponse = {
+                isOk: response.ok,
+                body: await response.json(),
+            };
+     
+
+        return ParsedResponse
     }catch(error){
         return {
             isOk: false,

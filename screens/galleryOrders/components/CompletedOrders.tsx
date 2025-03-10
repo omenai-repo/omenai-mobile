@@ -30,6 +30,7 @@ export default function CompletedOrders({
           amount={utils_formatPrice(item.artwork_data.pricing.usd_price)}
           order_id={item.order_id}
           status={getStatus(item)}
+          url={item.artwork_data.url}
           artworkName={item.artwork_data.title}
           color={utils_getColors("completed", item)}
           handlePress={() => {
@@ -47,7 +48,7 @@ export default function CompletedOrders({
                 { label: "Buyer name", value: item.buyer_details.name },
                 {
                   label: "Address",
-                  value: `${item.shipping_details.shipping_address.address_line}, ${item.shipping_details.shipping_address.city}, ${item.shipping_details.shipping_address.country}, ${item.shipping_details.shipping_address.zip}`,
+                  value: `${item.shipping_details.addresses.destination.address_line}, ${item.shipping_details.addresses.destination.city}, ${item.shipping_details.addresses.destination.country}, ${item.shipping_details.addresses.destination.zip}`,
                 },
               ],
             });

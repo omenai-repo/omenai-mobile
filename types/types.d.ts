@@ -86,6 +86,11 @@ type GalleryLoginData = {
   password: string;
 };
 
+type ArtistLoginData = {
+  email: string;
+  password: string;
+};
+
 type IndividualRegisterData = {
   name: string,
   email: string,
@@ -98,13 +103,47 @@ type GallerySignupData = {
   email: string;
   password: string;
   confirmPassword: string;
-  location: string;
+  address: string;
+  country: string;
   admin: string;
   description: string;
-  country: string
+  logo: {
+    assets: ImageAsset[];
+  } | null;
 };
 
-type GalleryRegisterData = Omit<GallerySignupData, "confirmPassword">;
+type ImageAsset = {
+  uri: string;
+  fileName?: string;
+  mimeType?: string;
+  width?: number;
+  height?: number;
+  fileSize?: number;
+};
+
+type ArtistSignupData = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  logo: {
+    assets: ImageAsset[];
+  } | null;
+  art_style: string | string[];
+  address: IndividualAddressTypes;
+};
+
+type ArtistRegisterData = Pick<ArtistSignupData, "name" | "email" | "password"> & {
+  logo: string
+}
+
+type GalleryRegisterData = Pick<
+  GallerySignupData,
+  "name" | "admin" | "email" | "password" | "description"
+> & {
+  location: GalleryLocation;
+  logo: string
+};
 
 type GalleryWaitlistData = {
   name: string,
@@ -113,7 +152,7 @@ type GalleryWaitlistData = {
 
 type artworkListingType = 'trending' | 'recent' | 'curated';
 
-type RouteIdentifier = "individual" | "gallery";
+type RouteIdentifier = "individual" | "gallery" | "artist";
 
 type userSessionType = {
   name: string,
@@ -162,8 +201,8 @@ type OrderAcceptedStatusTypes = {
   reason?: string;
 };
 type TrackingInformationTypes = {
-  tracking_id: string;
-  tracking_link: string;
+  id: string;
+  link: string;
 };
 type PaymentStatusTypes = {
   status: "pending" | "completed";
@@ -189,7 +228,7 @@ type RouteParamsType = {
 };
 
 type accountsRouteParamsType = {
-  type: "indiviaual" | "gallery";
+  type: "individual" | "gallery" | "artist";
 };
 
 type verifyEmailRouteParamsType = {
@@ -336,17 +375,17 @@ type CreateOrderModelTypes = {
     ArtworkSchemaTypes,
     "artist" | "pricing" | "title" | "url" | "art_id"
   > & { _id: ObjectId };
-  buyer_details: OrderBuyerAndSellerDetails;
-  seller_details: OrderBuyerAndSellerDetails;
+  buyer_details: OrderBuyerAndSellerDetails
+  seller_details: OrderBuyerAndSellerDetails
   order_id: string;
-  status: "processing" | "completed";
+  status: "processing" | "completed" ;
   shipping_details: OrderShippingDetailsTypes;
   payment_information: PaymentStatusTypes;
   order_accepted: OrderAcceptedStatusTypes;
-  createdAt: string;
-  updatedAt: string;
-  availability: boolean;
-};
+  createdAt: string,
+  updatedAt: string,
+  availability: boolean
+}
 
 type PlanProps = {
   name: string;

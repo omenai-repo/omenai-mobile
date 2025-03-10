@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { acceptTermsList } from "../../../../constants/accetTerms.constants";
 import TermsAndConditionItem from "../../../../components/general/TermsAndConditionItem";
@@ -13,6 +13,8 @@ import { screenName } from "constants/screenNames.constants";
 import { useModalStore } from "store/modal/modalStore";
 import uploadGalleryLogoContent from "./uploadGalleryLogo";
 import { gallery_logo_storage } from "appWrite";
+import tw from "twrnc";
+import Loader from "components/general/Loader";
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -23,8 +25,6 @@ export default function TermsAndConditions() {
     setPageIndex,
     isLoading,
     setIsLoading,
-    country,
-    galleryLogo,
     galleryRegisterData,
     clearState,
   } = useGalleryAuthRegisterStore();
@@ -34,19 +34,27 @@ export default function TermsAndConditions() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const { name, email, password, admin, location, description } =
-      galleryRegisterData;
+    const {
+      name,
+      email,
+      password,
+      admin,
+      address,
+      description,
+      country,
+      logo,
+    } = galleryRegisterData;
 
-    if (galleryLogo === null) return;
+    if (logo === null) return;
 
-    const imageparams = {
-      name: galleryLogo.assets[0].fileName,
-      size: galleryLogo.assets[0].fileSize,
-      uri: galleryLogo.assets[0].uri,
-      type: "png",
+    const files = {
+      uri: logo.assets[0].uri,
+      name: logo.assets[0].fileName,
+      type: logo.assets[0].mimeType,
+      size: logo.assets[0].fileSize,
     };
 
-    const fileUploaded = await uploadGalleryLogoContent(imageparams);
+    const fileUploaded = await uploadGalleryLogoContent(files);
 
     if (fileUploaded) {
       let file: { bucketId: string; fileId: string } = {
@@ -59,13 +67,15 @@ export default function TermsAndConditions() {
         email,
         password,
         admin,
-        location: { address: location, country },
         description,
         logo: file.fileId,
+        location: {
+          address,
+          country,
+        },
       };
 
       const results = await registerAccount(payload, "gallery");
-
       if (results?.isOk) {
         const resultsBody = results?.body;
         clearState();
@@ -116,7 +126,8 @@ export default function TermsAndConditions() {
         <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
-          value="Create gallery account"
+          height={50}
+          value="Create my account"
           isDisabled={!selectedTerms.includes(0)}
           onClick={handleSubmit}
         />
@@ -128,7 +139,7 @@ export default function TermsAndConditions() {
 const styles = StyleSheet.create({
   title: {
     fontWeight: "500",
-    fontSize: 20,
+    fontSize: 16,
   },
   buttonsContainer: {
     flexDirection: "row",

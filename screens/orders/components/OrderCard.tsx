@@ -1,6 +1,7 @@
 import {
   Image,
   Linking,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,6 +18,9 @@ import { screenName } from "constants/screenNames.constants";
 import DropDownButton from "./DropDownButton";
 import { useModalStore } from "store/modal/modalStore";
 import StatusPill from "./StatusPill";
+import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
+import { Ionicons } from "@expo/vector-icons";
+import tw from "twrnc";
 
 export default function OrderCard({
   artworkName,
@@ -36,6 +40,7 @@ export default function OrderCard({
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const [showTrackingInfo, setShowTrackingInfo] = useState<boolean>(false);
+  const [confirmOrderModal, setConfirmOrderModal] = useState(false);
   const { updateModal } = useModalStore();
 
   async function openTrackingLink() {
@@ -53,10 +58,10 @@ export default function OrderCard({
     }
   }
 
-  let image_href = getImageFileView(url, 300);
+  let image_href = getImageFileView(url, 700);
 
   return (
-    <View style={{ paddingVertical: 15, gap: 15 }}>
+    <View style={{ paddingVertical: 10, gap: 15 }}>
       <View style={styles.listItem}>
         <Image
           source={{ uri: image_href }}
@@ -91,32 +96,76 @@ export default function OrderCard({
             />
           </View>
           <View style={{ flexWrap: "wrap", marginTop: 15 }}>
-            {state === "pending" && availability ? (
-              payment_information!.status === "completed" ? (
-                tracking_information?.id &&
-                tracking_information.id.length > 0 ? (
-                  <DropDownButton
-                    label="View tracking information"
-                    onPress={setShowTrackingInfo}
-                    value={showTrackingInfo}
-                  />
-                ) : // <Text style={{fontSize: 12, color: colors.primary_black, opacity: 0.6}}>Pending upload tracking info</Text>
-                null
-              ) : (
-                <View>
-                  {shipping_quote?.fees !== "" && (
-                    <FittedBlackButton
-                      height={40}
-                      value="Pay now"
-                      onClick={() =>
-                        navigation.navigate(screenName.payment, { id: orderId })
-                      }
-                      isDisabled={false}
-                    />
-                  )}
+            {!availability ? (
+              <View style={styles.disabledButton}>
+                <Text style={styles.disabledButtonText}>
+                  No action required
+                </Text>
+              </View>
+            ) : (
+              <>
+                {/* Pay Now Button */}
+                <View style={tw`flex-1`}>
+                  {payment_information?.status === "pending" &&
+                    status !== "completed" &&
+                    order_accepted.status === "accepted" && (
+                      <FittedBlackButton
+                        height={40}
+                        value="Pay now"
+                        onClick={() =>
+                          navigation.navigate(screenName.payment, {
+                            id: orderId,
+                          })
+                        }
+                        isDisabled={false}
+                      />
+                    )}
                 </View>
-              )
-            ) : null}
+                {/* Track Order and Confirm Delivery Buttons */}
+                <View style={styles.buttonRow}>
+                  {payment_information?.status === "completed" &&
+                    status !== "completed" &&
+                    !delivery_confirmed &&
+                    tracking_information?.link?.trim() && ( // Checks for non-empty string
+                      <Pressable
+                        onPress={() => setShowTrackingInfo(!showTrackingInfo)}
+                        style={tw`h-[35px] w-[35px] bg-[#000] rounded-full justify-center items-center `}
+                      >
+                        <Ionicons
+                          name="location-outline"
+                          size={18}
+                          color="#fff"
+                        />
+                      </Pressable>
+                    )}
+
+                  {payment_information?.status === "completed" &&
+                    status !== "completed" && // Add status check for consistency
+                    !delivery_confirmed &&
+                    tracking_information?.link?.trim() && (
+                      <FittedBlackButton
+                        height={35}
+                        value="Confirm order delivery"
+                        onClick={() => setConfirmOrderModal(true)}
+                        isDisabled={false}
+                        fontSize={12}
+                        bgColor="#16A34A"
+                      />
+                    )}
+                </View>
+                {/* Awaiting Tracking Information */}
+                {payment_information?.status === "completed" &&
+                  order_accepted.status === "accepted" &&
+                  status !== "completed" &&
+                  tracking_information?.link === "" && (
+                    <View style={styles.disabledButton}>
+                      <Text style={styles.disabledButtonText}>
+                        Awaiting tracking information
+                      </Text>
+                    </View>
+                  )}
+              </>
+            )}
           </View>
         </View>
       </View>
@@ -149,6 +198,11 @@ export default function OrderCard({
           </View>
         </View>
       )}
+      <ConfirmOrderDeliveryModal
+        orderId={orderId}
+        modalVisible={confirmOrderModal}
+        setModalVisible={setConfirmOrderModal}
+      />
     </View>
   );
 }
@@ -178,5 +232,21 @@ const styles = StyleSheet.create({
     color: "#616161",
     fontSize: 12,
     marginTop: 5,
+  },
+  disabledButton: {
+    backgroundColor: "#E0E0E0",
+    borderRadius: 20,
+    height: 30,
+    paddingHorizontal: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  disabledButtonText: {
+    fontSize: 12,
+    color: "#858585",
+  },
+  buttonRow: {
+    flexDirection: "row",
+    gap: 10,
   },
 });

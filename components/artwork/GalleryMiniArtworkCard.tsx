@@ -60,7 +60,7 @@ export default function GalleryMiniArtworkCard({
       activeOpacity={1}
       style={[styles.container]}
       onPress={() => {
-        navigation.push(screenName.artwork, { title: title });
+        navigation.push(screenName.artwork, { title, url });
       }}
     >
       {renderImage ? (

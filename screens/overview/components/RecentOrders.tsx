@@ -25,24 +25,26 @@ export default function RecentOrders({
 
   useEffect(() => {
     setIsLoading(true);
+
     async function handleFetchRecentOrders() {
-      const results = await getOverviewOrders();
-      let data = results.data;
+      try {
+        const results = await getOverviewOrders();
+        if (results?.isOk) {
+          const data = results.data;
 
-      const arr: any[] = [];
-
-      data.map((i: any) => {
-        let stat = i.order_accepted.status === "";
-        if (stat) {
-          if (arr.length !== 3) {
-            arr.push(i);
-          }
+          const filteredData = data
+            .filter((i: any) => i.order_accepted.status === "")
+            .slice(0, 3); // Ensure only 3 items
+          setData(filteredData);
+        } else {
+          setData([]);
         }
-      });
-
-      setData(arr);
-
-      setIsLoading(false);
+      } catch (error) {
+        // console.error("Error fetching recent orders:", error);
+        setData([]); // Handle errors gracefully
+      } finally {
+        setIsLoading(false); // Ensure loading is turned off
+      }
     }
 
     handleFetchRecentOrders();
@@ -52,7 +54,9 @@ export default function RecentOrders({
     return (
       <View style={styles.container}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={{ fontSize: 16, fontWeight: "400", flex: 1 }}>
+          <Text
+            style={{ fontSize: 18, fontWeight: "500", flex: 1, color: "#000" }}
+          >
             Recent orders
           </Text>
           <Feather name="chevron-right" size={20} style={{ opacity: 0.5 }} />
@@ -123,12 +127,7 @@ export default function RecentOrders({
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "500",
-              flex: 1,
-              color: "#000000",
-            }}
+            style={{ fontSize: 18, fontWeight: "500", flex: 1, color: "#000" }}
           >
             Recent orders
           </Text>
@@ -143,7 +142,7 @@ export default function RecentOrders({
                 artworkName={order.artwork_data.title}
                 artist={order.artwork_data.artist}
                 url={order.artwork_data.url}
-                status={"Pending"}
+                status={order.order_accepted.status}
                 amount={utils_formatPrice(order.artwork_data.pricing.usd_price)}
               />
               {index + 1 !== data.length && <Divider />}
@@ -152,7 +151,7 @@ export default function RecentOrders({
         <View
           style={{ flexWrap: "wrap", marginRight: "auto", marginLeft: "auto" }}
         >
-          {data.length > 1 ? (
+          {data.length >= 1 ? (
             <TouchableOpacity
               onPress={() => navigation.navigate(screenName.gallery.orders)}
             >
@@ -183,9 +182,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 15,
     gap: 20,
-    height: 200,
-    justifyContent: "center",
-    alignItems: "center",
     marginBottom: 150,
   },
   pendingButton: {

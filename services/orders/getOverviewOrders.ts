@@ -12,7 +12,7 @@ export async function getOverviewOrders(){
     }
 
     try {
-        const response = await fetch(`${apiUrl}/api/orders/getOrdersByGalleryId`, {
+        const response = await fetch(`${apiUrl}/api/orders/getOrdersBySellerId`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -30,7 +30,6 @@ export async function getOverviewOrders(){
                  data: result.data
                 }
     }catch(error){
-        console.log('error' + error)
         return {
             isOk: false,
             body: {message: 'Error fetching orders'}

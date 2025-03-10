@@ -11,6 +11,7 @@ import { screenName } from "../../constants/screenNames.constants";
 import WithModal from "components/modal/WithModal";
 import ScrollWrapper from "components/general/ScrollWrapper";
 import { StatusBar } from "expo-status-bar";
+import Artist from "./components/artist/Artist";
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -33,13 +34,14 @@ export default function Login() {
           style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}
         >
           <AuthTabs
-            tabs={["As an individual", "As a gallery"]}
+            tabs={["Collector", "Artist", "Gallery"]}
             stateIndex={selectedIndex}
             handleSelect={(e) => setSelectedIndex(e)}
           />
           {/* route depending on state */}
           {selectedIndex === 0 && <Individual />}
-          {selectedIndex === 1 && <Gallery />}
+          {selectedIndex === 1 && <Artist />}
+          {selectedIndex === 2 && <Gallery />}
         </ScrollWrapper>
       </KeyboardAvoidingView>
     </WithModal>

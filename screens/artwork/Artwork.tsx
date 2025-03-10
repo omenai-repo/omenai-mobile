@@ -3,7 +3,6 @@ import {
   Image,
   Platform,
   Pressable,
-  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -39,12 +38,12 @@ import { SvgXml } from "react-native-svg";
 import { backBtnArrow, licenseIcon } from "utils/SvgImages";
 import BackScreenButton from "components/buttons/BackScreenButton";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
-import { ImageZoom } from "@likashefqet/react-native-image-zoom";
+import ZoomArtwork from "./ZoomArtwork";
 
 export default function Artwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
-
+  const { title, url } = route.params as { title: string; url: string };
   const { updateModal } = useModalStore();
   const { userType, userSession } = useAppStore();
 
@@ -54,6 +53,7 @@ export default function Artwork() {
   const [similarArtworksByArtist, setSimilarArtworksByArtist] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const [img, setImg] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     handleFecthSingleArtwork();
@@ -67,8 +67,6 @@ export default function Artwork() {
 
   const handleFecthSingleArtwork = async () => {
     setIsLoading(true);
-
-    const { title } = route.params as RouteParamsType;
 
     const results = await fetchsingleArtwork(title);
 
@@ -192,19 +190,20 @@ export default function Artwork() {
             >
               <View style={{ paddingBottom: 20 }}>
                 <View style={{ paddingHorizontal: 20, marginBottom: 100 }}>
-                  <ImageZoom
-                    // source={{ uri: img }}
-                    uri={img}
-                    style={{
-                      height: imageDimensions.height,
-                      width: imageDimensions.width,
-                      resizeMode: "contain",
-                      alignSelf: "center",
-                      borderRadius: 10,
-                      zIndex: 1000,
-                      backgroundColor: "#f5f5f5",
-                    }}
-                  />
+                  <Pressable onPress={() => setModalVisible(true)}>
+                    <Image
+                      source={{ uri: img }}
+                      style={{
+                        height: imageDimensions.height,
+                        width: imageDimensions.width,
+                        resizeMode: "contain",
+                        alignSelf: "center",
+                        borderRadius: 10,
+                        zIndex: 1000,
+                        backgroundColor: "#f5f5f5",
+                      }}
+                    />
+                  </Pressable>
                   <View style={styles.artworkDetails}>
                     <Text style={styles.artworkTitle}>{data?.title}</Text>
                     <Text style={styles.artworkCreator}>{data?.artist}</Text>
@@ -418,6 +417,11 @@ export default function Artwork() {
           )}
         </View>
       )}
+      <ZoomArtwork
+        url={url}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
     </WithModal>
   );
 }

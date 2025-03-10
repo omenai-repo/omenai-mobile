@@ -16,36 +16,27 @@ export default function Coverage() {
   };
 
   return (
-    <LinearGradient
-      colors={["#FFF50914", "#45FEFE14"]}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <Pressable onPress={handleToggle} style={styles.header}>
         <Text style={styles.title}>Covered by the Omenai Guarantee</Text>
-        <View
-          style={tw`bg-[#FFFFFF] shadow-md shadow-[#FFF5097A] h-[30px] w-[30px] rounded-full justify-center items-center`}
-        >
-          <SvgXml xml={!expand ? downArrIcon : upArrwIcon} />
-        </View>
+
+        <SvgXml xml={!expand ? downArrIcon : upArrwIcon} />
       </Pressable>
-      {expand && (
+      {!expand && (
         <Animated.View
           entering={FadeInDown.duration(600).damping(300)} // Duration in milliseconds
           exiting={FadeOut.duration(500).damping(300)}
           style={tw`mb-[10px]`}
         >
-          <LinearGradient
-            colors={["#FFF508", "#45FEFE"]}
-            start={{ x: 0.2, y: 0.1 }}
-            style={tw`h-[1px] w-full`}
-          />
+          <View style={tw`h-[1px] w-full bg-[#00000033]`} />
+
           <View style={styles.mainContainer}>
             <View style={styles.detailItem}>
-              <Feather name="lock" size={16} color={"#fff"} />
+              <Feather name="lock" size={16} color={"#000"} />
               <Text style={[styles.detailItemText]}>Secure Checkout</Text>
             </View>
             <View style={styles.detailItem}>
-              <Octicons name="verified" size={16} color={"#fff"} />
+              <Octicons name="verified" size={16} color={"#000"} />
               <Text style={[styles.detailItemText]}>
                 Authenticity Guarantee
               </Text>
@@ -55,7 +46,7 @@ export default function Coverage() {
                 textAlign: "center",
                 marginTop: 5,
                 textDecorationLine: "underline",
-                color: "#fff",
+                color: "#000",
               }}
             >
               Learn more
@@ -63,15 +54,17 @@ export default function Coverage() {
           </View>
         </Animated.View>
       )}
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#141414",
+    backgroundColor: "#fff",
     borderRadius: 20,
     paddingHorizontal: 25,
+    borderWidth: 1,
+    borderColor: "#00000033",
   },
   header: {
     paddingVertical: 20,
@@ -81,7 +74,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: colors.white,
+    color: colors.black,
     flex: 1,
   },
   mainContainer: {
@@ -95,7 +88,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   detailItemText: {
-    color: "#fff",
+    color: "#000",
     fontSize: 14,
     lineHeight: 20,
   },

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import AuthTabs from "../../../../components/auth/AuthTabs";
 import IndividualForm from "./individual/IndividualForm";
 import GalleryForm from "./gallery/GalleryForm";
+import ArtistForm from "./artist/ArtistForm";
 
 export default function InputForm() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -10,14 +11,13 @@ export default function InputForm() {
   return (
     <View style={{ flex: 1 }}>
       <AuthTabs
-        tabs={["As an individual", "As a gallery"]}
+        tabs={["Collector", "Artist", "Gallery"]}
         stateIndex={selectedIndex}
         handleSelect={(e) => setSelectedIndex(e)}
       />
       {selectedIndex === 0 && <IndividualForm />}
-      {selectedIndex === 1 && <GalleryForm />}
+      {selectedIndex === 1 && <ArtistForm />}
+      {selectedIndex === 2 && <GalleryForm />}
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

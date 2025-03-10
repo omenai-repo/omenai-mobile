@@ -19,14 +19,11 @@ export async function declineOrderRequest({
             },
             body: JSON.stringify({data, order_id}),
         })
-        .then(async (res) => {
-            const result = await res.json();
-            return { isOk: res.ok, message: result.message, data: result.data};
-        })
-
-        return response
+       
+            const result = await response.json();
+            return { isOk: response.ok, message: result.message, data: result.data};
+  
     }catch(error){
-        console.log('error' + error)
         return {
             isOk: false,
             body: {message: 'Error updating order status'}

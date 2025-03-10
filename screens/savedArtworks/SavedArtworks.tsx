@@ -66,7 +66,6 @@ export default function SavedArtworks() {
   const handleFetchUserSavedArtorks = async () => {
     setIsLoading(true);
     const results = await fetchUserSavedArtworks();
-
     if (results?.isOk) {
       setData(results.data);
     }
@@ -104,7 +103,9 @@ export default function SavedArtworks() {
 
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate(screenName.artwork, { title: name })}
+        onPress={() =>
+          navigation.navigate(screenName.artwork, { title: name, url })
+        }
         activeOpacity={1}
       >
         <View style={styles.savedArtworkItem}>
@@ -217,6 +218,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     gap: 25,
+    marginBottom: 50,
   },
   savedArtworkItem: {
     flexDirection: "row",
