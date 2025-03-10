@@ -11,6 +11,8 @@ import { verifyAddress } from "services/register/verifyAddress";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
 import { useModalStore } from "store/modal/modalStore";
 import { debounce } from "lodash";
+import AuthModal from "components/auth/AuthModal";
+import { checkMarkIcon, errorIcon } from "utils/SvgImages";
 
 const transformedCountries = country_codes.map((item) => ({
   value: item.key,
@@ -29,6 +31,8 @@ const ArtistHomeAddressVerification = () => {
     },
   });
   const [showToolTip, setShowToolTip] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [addressVerified, setAddressVerified] = useState(false);
 
   const { updateModal } = useModalStore();
 
@@ -77,8 +81,8 @@ const ArtistHomeAddressVerification = () => {
   ); // ✅ Delay validation by 500ms
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const payload = {
         type: "pickup",
         countyName: artistRegisterData.address.address_line,
@@ -96,33 +100,25 @@ const ArtistHomeAddressVerification = () => {
           response?.body?.data?.address &&
           response.body.data.address.length !== 0
         ) {
-          setPageIndex(pageIndex + 1);
+          setShowModal(true);
+          setAddressVerified(true);
         } else {
-          updateModal({
-            message:
-              response?.body?.data?.detail ||
-              "Invalid address, please try again.",
-            modalType: "error",
-            showModal: true,
-          });
+          setShowModal(true);
+          setAddressVerified(false);
         }
       } else {
-        updateModal({
-          message:
-            response?.body?.message ||
-            "Something went wrong, please try again.",
-          modalType: "error",
-          showModal: true,
-        });
+        setShowModal(true);
+        setAddressVerified(false);
       }
     } catch (error) {
-      setIsLoading(false);
       console.error("Error verifying address:", error);
       updateModal({
         message: "Network error, please check your connection and try again.",
         modalType: "error",
         showModal: true,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -223,6 +219,30 @@ const ArtistHomeAddressVerification = () => {
           />
         </View>
       )}
+      <AuthModal
+        modalVisible={showModal}
+        setModalVisible={setShowModal}
+        icon={addressVerified ? checkMarkIcon : errorIcon}
+        text={
+          addressVerified
+            ? "Your account has been verified succesfully"
+            : "Your Address could not be verified. Try again."
+        }
+        btn1Text="Go Back"
+        btn2Text={addressVerified ? "Proceed" : "Try Again"}
+        onPress1={() => {
+          setShowModal(false);
+          setPageIndex(pageIndex - 1);
+        }}
+        onPress2={() => {
+          if (addressVerified) {
+            setPageIndex(pageIndex + 1);
+          } else {
+            setShowModal(false);
+            handleSubmit();
+          }
+        }}
+      />
     </View>
   );
 };

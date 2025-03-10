@@ -193,7 +193,7 @@ export default function ShippingDetails({
       </View>
       <SummaryContainer
         buttonTypes="Request price quote"
-        price={pricing.shouldShowPrice === "Yes" ? pricing.price : 0}
+        price={pricing.shouldShowPrice === "Yes" ? pricing.usd_price : 0}
         disableButton={checkIsDisabled()}
       />
     </View>
