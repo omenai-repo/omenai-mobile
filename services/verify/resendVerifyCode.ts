@@ -5,7 +5,7 @@ export async function resendVerifyCode(
     id: string
 ) {
   try {
-    const response = await fetch(`${apiUrl}/api/requests/${route}/verify/resend`, {
+    const res = await fetch(`${apiUrl}/api/requests/${route}/verify/resend`, {
         method: 'POST',
         body: JSON.stringify({author: id }),
         headers: {
@@ -15,7 +15,7 @@ export async function resendVerifyCode(
             "Authorization": authorization
         }
     })
-    .then(async (res) => {
+   
         const data: { message: string } = await res.json();
         const response = {
             isOk: res.ok,
@@ -23,9 +23,7 @@ export async function resendVerifyCode(
         };
 
         return response
-    })
 
-    return response
   }catch(error){
       return {
           isOk: false,
