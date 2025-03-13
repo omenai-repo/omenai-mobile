@@ -57,7 +57,7 @@ export default function Header({
                 { fontFamily: fontNames.dmSans + "Bold" },
               ]}
             >
-              {utils_getInitials(userSession.name)}
+              {utils_getInitials(userSession?.name)}
             </Text>
           </View>
         </TouchableOpacity>
