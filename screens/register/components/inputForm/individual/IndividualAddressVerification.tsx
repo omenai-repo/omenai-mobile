@@ -13,13 +13,15 @@ import { useModalStore } from "store/modal/modalStore";
 import { debounce } from "lodash";
 import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
+import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
+import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
 
 const transformedCountries = country_codes.map((item) => ({
   value: item.key,
   label: item.name,
 }));
 
-const ArtistHomeAddressVerification = () => {
+const IndividualAddressVerification = () => {
   const { height, width } = useWindowDimensions();
   const [formErrors, setFormErrors] = useState<Partial<AddressTypes>>({
     address_line: "",
@@ -38,25 +40,25 @@ const ArtistHomeAddressVerification = () => {
   const {
     pageIndex,
     setPageIndex,
-    artistRegisterData,
-    setHomeAddress,
+    individualRegisterData,
+    setAddress,
     setCity,
     setZipCode,
     setCountry,
     setCountryCode,
     setIsLoading,
     isLoading,
-  } = useArtistAuthRegisterStore();
+  } = useIndividualAuthRegisterStore();
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
     const isFormValid =
       formErrors && Object.values(formErrors).every((error) => error === "");
     const areAllFieldsFilled = Object.values({
-      address_line: artistRegisterData?.address?.address_line,
-      city: artistRegisterData?.address?.city,
-      zip: artistRegisterData?.address?.zip,
-      country: artistRegisterData?.address?.country,
+      address_line: individualRegisterData?.address?.address_line,
+      city: individualRegisterData?.address?.city,
+      zip: individualRegisterData?.address?.zip,
+      country: individualRegisterData?.address?.country,
     }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
@@ -83,11 +85,11 @@ const ArtistHomeAddressVerification = () => {
     setIsLoading(true);
     try {
       const payload = {
-        type: "pickup",
-        countyName: artistRegisterData.address.address_line,
-        cityName: artistRegisterData.address.city,
-        postalCode: artistRegisterData.address.zip,
-        countryCode: artistRegisterData.address.countryCode,
+        type: "delivery",
+        countyName: individualRegisterData.address.address_line,
+        cityName: individualRegisterData.address.city,
+        postalCode: individualRegisterData.address.zip,
+        countryCode: individualRegisterData.address.countryCode,
       };
 
       const response = await verifyAddress(payload);
@@ -124,14 +126,14 @@ const ArtistHomeAddressVerification = () => {
   return (
     <View style={tw``}>
       <Input
-        label="Home Address"
+        label="Collector's Address"
         keyboardType="default"
         onInputChange={(text) => {
-          setHomeAddress(text);
+          setAddress(text);
           handleValidationChecks("general", text);
         }}
-        placeHolder="Input your home address here"
-        value={artistRegisterData?.address?.address_line}
+        placeHolder="Input your gallery address here"
+        value={individualRegisterData?.address?.address_line}
         errorMessage={formErrors?.address_line}
       />
 
@@ -144,7 +146,7 @@ const ArtistHomeAddressVerification = () => {
             handleValidationChecks("general", text);
           }}
           placeHolder="City"
-          value={artistRegisterData?.address?.city}
+          value={individualRegisterData?.address?.city}
           errorMessage={formErrors?.city}
         />
         <Input
@@ -155,7 +157,7 @@ const ArtistHomeAddressVerification = () => {
             handleValidationChecks("general", text);
           }}
           placeHolder="Zip Code"
-          value={artistRegisterData?.address?.zip}
+          value={individualRegisterData?.address?.zip}
           errorMessage={formErrors?.zip}
         />
       </View>
@@ -163,13 +165,13 @@ const ArtistHomeAddressVerification = () => {
       <View style={tw`mt-[20px]`}>
         <CustomSelectPicker
           data={transformedCountries}
-          placeholder="Select country of residence"
-          value={artistRegisterData.address.countryCode}
+          placeholder="Select country of operation"
+          value={individualRegisterData.address.countryCode}
           handleSetValue={(item) => {
             setCountry(item.label);
             setCountryCode(item.value);
           }}
-          label="Country of residence"
+          label="Country of operation"
           search={true}
           searchPlaceholder="Search Country"
           dropdownPosition="top"
@@ -187,40 +189,42 @@ const ArtistHomeAddressVerification = () => {
           onClick={handleSubmit}
         />
       </View>
-
-      <Pressable
-        onPress={() => setShowToolTip(!showToolTip)}
-        style={tw.style(
-          `rounded-full h-[45px] w-[45px] justify-center items-center bg-[#000]`,
-          {
-            top: height / 8,
-            alignSelf: "flex-end",
-          }
-        )}
-      >
-        <Text style={tw`text-[#FFFFFF] text-[20px]`}>?</Text>
-      </Pressable>
-      {showToolTip && (
-        <View
-          style={tw.style(`mr-[80px]`, {
-            top: height / 13,
-            width: width / 2,
-            alignSelf: "flex-end",
-          })}
+      <View>
+        <Pressable
+          onPress={() => setShowToolTip(!showToolTip)}
+          style={tw.style(
+            `rounded-full h-[45px] w-[45px] justify-center items-center bg-[#000]`,
+            {
+              marginTop: height / 5,
+              alignSelf: "flex-end",
+            }
+          )}
         >
-          <View style={tw`rounded-[12px] bg-[#111111] py-[10px] px-[15px]`}>
-            <Text
-              style={tw`text-[10px] text-[#FFFFFF] text-center leading-[15px]`}
-            >
-              We need your home address to {`\n`} properly verify shipping
-              designation
-            </Text>
-          </View>
+          <Text style={tw`text-[#FFFFFF] text-[20px]`}>?</Text>
+        </Pressable>
+        {showToolTip && (
           <View
-            style={tw`w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] rounded-[5px] border-l-[#111111] absolute right-[-17px] top-[15px]`}
-          />
-        </View>
-      )}
+            style={tw.style(`absolute`, {
+              top: height / 5,
+              width: width / 2,
+              alignSelf: "flex-end",
+              right: 80,
+            })}
+          >
+            <View style={tw`rounded-[12px] bg-[#111111] py-[10px] px-[15px]`}>
+              <Text
+                style={tw`text-[10px] text-[#FFFFFF] text-center leading-[15px]`}
+              >
+                We need your home address to {`\n`} properly verify shipping
+                designation
+              </Text>
+            </View>
+            <View
+              style={tw`w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] rounded-[5px] border-l-[#111111] absolute right-[-17px] top-[15px]`}
+            />
+          </View>
+        )}
+      </View>
       <AuthModal
         modalVisible={showModal}
         setModalVisible={setShowModal}
@@ -249,4 +253,4 @@ const ArtistHomeAddressVerification = () => {
   );
 };
 
-export default ArtistHomeAddressVerification;
+export default IndividualAddressVerification;

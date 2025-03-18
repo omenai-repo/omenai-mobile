@@ -8,7 +8,7 @@ type CustomSelectPickerProps = {
   placeholder?: string;
   label: string;
   value: string;
-  handleSetValue: (e: string) => void;
+  handleSetValue: (e: { label: string; value: string }) => void;
   handleBlur?: () => void;
   errorMessage?: string;
   zIndex?: number;
@@ -34,16 +34,16 @@ export default function CustomSelectPicker({
 }: CustomSelectPickerProps) {
   const [open, setOpen] = useState(false);
 
-  const [localValue, setLocalValue] = useState<{
-    label: string;
-    value: string;
-  } | null>(null);
+  // const [localValue, setLocalValue] = useState<{
+  //   label: string;
+  //   value: string;
+  // } | null>(null);
 
-  useEffect(() => {
-    if (localValue) {
-      handleSetValue(localValue.value);
-    }
-  }, [localValue]);
+  // useEffect(() => {
+  //   if (localValue) {
+  //     handleSetValue(localValue.value);
+  //   }
+  // }, [localValue]);
 
   return (
     <View style={{ zIndex: zIndex }}>
@@ -53,8 +53,8 @@ export default function CustomSelectPicker({
         data={data}
         labelField="label"
         valueField="value"
-        onChange={(item: any) => {
-          setLocalValue(item);
+        onChange={(item: { label: string; value: string }) => {
+          handleSetValue(item);
         }}
         search={search}
         searchPlaceholder={searchPlaceholder}

@@ -11,7 +11,10 @@ type GalleryAuthRegisterStoreType = {
     setAdmin: (e: string) => void,
     setAddress: (e: string) => void,
     setDescription: (e: string) => void,
+    setCity: (e: string) => void,
+    setZipCode: (e: string) => void,
     setCountry: (e: string) => void,
+    setCountryCode: (e: string) => void,
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
     selectedTerms: number[],
@@ -32,9 +35,15 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
             password: "",
             confirmPassword: "",
             admin: "",
-            address: "",
+            address: {
+                address_line: "",
+                city: "",
+                country: "",
+                zip: "",
+                countryCode: "",
+                state: ""
+            },
             description: "",
-            country: "", 
             logo: {
                 assets: []
             }
@@ -61,11 +70,23 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
         },
         setAddress: (address: string) => {
             const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, address}})
+            set({galleryRegisterData: {...data, address: {...data.address, address_line: address}}})
         },
         setCountry: (country: string) => {
             const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, country}})
+            set({galleryRegisterData: {...data, address: {...data.address, country: country}}})
+        },
+        setCity: (city: string) => {
+            const data = get().galleryRegisterData
+            set({galleryRegisterData: {...data, address: {...data.address, city}}})
+        },
+        setZipCode: (zipCode: string) => {
+            const data = get().galleryRegisterData
+            set({galleryRegisterData: {...data, address: {...data.address, zip: zipCode}}})
+        },
+        setCountryCode: (countryCode: string) => {
+            const data = get().galleryRegisterData
+            set({galleryRegisterData: {...data, address: {...data.address, countryCode}}})
         },
         setDescription: (description: string) => {
             const data = get().galleryRegisterData
@@ -89,9 +110,15 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
                     password: "",
                     confirmPassword: "",
                     admin: "",
-                    address: "",
+                    address: {
+                        address_line: "",
+                        city: "",
+                        country: "",
+                        zip: "",
+                        countryCode: "",
+                        state: ""
+                    },
                     description: "",
-                    country: "",
                     logo: {
                         assets: []
                     }

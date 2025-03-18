@@ -111,6 +111,7 @@ type IndividualRegisterData = {
   email: string,
   password: string,
   confirmPassword: string
+  address: AddressTypes
 }
 
 type GallerySignupData = {
@@ -118,8 +119,7 @@ type GallerySignupData = {
   email: string;
   password: string;
   confirmPassword: string;
-  address: string;
-  country: string;
+  address: AddressTypes;
   admin: string;
   description: string;
   logo: {

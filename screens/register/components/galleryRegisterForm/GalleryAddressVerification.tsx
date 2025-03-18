@@ -13,13 +13,14 @@ import { useModalStore } from "store/modal/modalStore";
 import { debounce } from "lodash";
 import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
+import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
 
 const transformedCountries = country_codes.map((item) => ({
   value: item.key,
   label: item.name,
 }));
 
-const ArtistHomeAddressVerification = () => {
+const GalleryAddressVerification = () => {
   const { height, width } = useWindowDimensions();
   const [formErrors, setFormErrors] = useState<Partial<AddressTypes>>({
     address_line: "",
@@ -38,25 +39,25 @@ const ArtistHomeAddressVerification = () => {
   const {
     pageIndex,
     setPageIndex,
-    artistRegisterData,
-    setHomeAddress,
+    galleryRegisterData,
+    setAddress,
     setCity,
     setZipCode,
     setCountry,
     setCountryCode,
     setIsLoading,
     isLoading,
-  } = useArtistAuthRegisterStore();
+  } = useGalleryAuthRegisterStore();
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
     const isFormValid =
       formErrors && Object.values(formErrors).every((error) => error === "");
     const areAllFieldsFilled = Object.values({
-      address_line: artistRegisterData?.address?.address_line,
-      city: artistRegisterData?.address?.city,
-      zip: artistRegisterData?.address?.zip,
-      country: artistRegisterData?.address?.country,
+      address_line: galleryRegisterData?.address?.address_line,
+      city: galleryRegisterData?.address?.city,
+      zip: galleryRegisterData?.address?.zip,
+      country: galleryRegisterData?.address?.country,
     }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
@@ -84,10 +85,10 @@ const ArtistHomeAddressVerification = () => {
     try {
       const payload = {
         type: "pickup",
-        countyName: artistRegisterData.address.address_line,
-        cityName: artistRegisterData.address.city,
-        postalCode: artistRegisterData.address.zip,
-        countryCode: artistRegisterData.address.countryCode,
+        countyName: galleryRegisterData.address.address_line,
+        cityName: galleryRegisterData.address.city,
+        postalCode: galleryRegisterData.address.zip,
+        countryCode: galleryRegisterData.address.countryCode,
       };
 
       const response = await verifyAddress(payload);
@@ -124,14 +125,14 @@ const ArtistHomeAddressVerification = () => {
   return (
     <View style={tw``}>
       <Input
-        label="Home Address"
+        label="Gallery Address"
         keyboardType="default"
         onInputChange={(text) => {
-          setHomeAddress(text);
+          setAddress(text);
           handleValidationChecks("general", text);
         }}
-        placeHolder="Input your home address here"
-        value={artistRegisterData?.address?.address_line}
+        placeHolder="Input your gallery address here"
+        value={galleryRegisterData?.address?.address_line}
         errorMessage={formErrors?.address_line}
       />
 
@@ -144,7 +145,7 @@ const ArtistHomeAddressVerification = () => {
             handleValidationChecks("general", text);
           }}
           placeHolder="City"
-          value={artistRegisterData?.address?.city}
+          value={galleryRegisterData?.address?.city}
           errorMessage={formErrors?.city}
         />
         <Input
@@ -155,7 +156,7 @@ const ArtistHomeAddressVerification = () => {
             handleValidationChecks("general", text);
           }}
           placeHolder="Zip Code"
-          value={artistRegisterData?.address?.zip}
+          value={galleryRegisterData?.address?.zip}
           errorMessage={formErrors?.zip}
         />
       </View>
@@ -163,13 +164,13 @@ const ArtistHomeAddressVerification = () => {
       <View style={tw`mt-[20px]`}>
         <CustomSelectPicker
           data={transformedCountries}
-          placeholder="Select country of residence"
-          value={artistRegisterData.address.countryCode}
+          placeholder="Select country of operation"
+          value={galleryRegisterData.address.countryCode}
           handleSetValue={(item) => {
             setCountry(item.label);
             setCountryCode(item.value);
           }}
-          label="Country of residence"
+          label="Country of operation"
           search={true}
           searchPlaceholder="Search Country"
           dropdownPosition="top"
@@ -212,7 +213,7 @@ const ArtistHomeAddressVerification = () => {
             <Text
               style={tw`text-[10px] text-[#FFFFFF] text-center leading-[15px]`}
             >
-              We need your home address to {`\n`} properly verify shipping
+              We need your gallery address to {`\n`} properly verify shipping
               designation
             </Text>
           </View>
@@ -249,4 +250,4 @@ const ArtistHomeAddressVerification = () => {
   );
 };
 
-export default ArtistHomeAddressVerification;
+export default GalleryAddressVerification;
