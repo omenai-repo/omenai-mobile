@@ -6,8 +6,8 @@ export async function createShippingOrder(
     art_id: string,
     seller_id: string,
     save_shipping_address: boolean,
-    shipping_address: IndividualAddressTypes,
-    origin_address: IndividualAddressTypes | null,
+    shipping_address: AddressTypes,
+    origin_address: AddressTypes | null,
     designation: "gallery" | "artist"
 ){
 

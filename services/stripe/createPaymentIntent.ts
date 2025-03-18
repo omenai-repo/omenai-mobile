@@ -2,15 +2,18 @@ import { apiUrl, authorization, originHeader, userAgent } from "../../constants/
 
 export const createPaymentIntent = async (
     amount: number,
-    gallery_id: string,
+    seller_id: string,
     meta: {
-        trans_type: string;
-        user_id: string;
-        user_email: string;
+        buyer_id: string;
+        buyer_email: string;
         art_id: string;
-        gallery_email: string;
-        gallery_name: string;
+        seller_email: string;
+        seller_name: string;
+        seller_id: string,
         artwork_name: string;
+        shipping_cost: number
+        unit_price: number
+        tax_fees: number
     }
 ) => {
   try {
@@ -23,15 +26,15 @@ export const createPaymentIntent = async (
       },
       body: JSON.stringify({
         amount,
-        gallery_id,
+        seller_id,
         meta
       }),
     });
-    console.log({
-      amount,
-      gallery_id,
-      meta
-    })
+    // console.log({
+    //   amount,
+    //   seller_id,
+    //   meta
+    // })
     const result = await res.json();
     return result
   } catch (error: any) {

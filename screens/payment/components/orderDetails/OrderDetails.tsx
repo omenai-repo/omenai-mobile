@@ -22,7 +22,7 @@ export default function OrderDetails({
   data,
   locked,
 }: {
-  data: any;
+  data: CreateOrderModelTypes & { createdAt: string; updatedAt: string };
   locked: boolean;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -35,8 +35,8 @@ export default function OrderDetails({
 
   const total_price_number = utils_calculatePurchaseGrandTotalNumber(
     data.artwork_data.pricing.usd_price,
-    data.shipping_details.quote.fees,
-    data.shipping_details.quote.taxes
+    data.shipping_details.shipment_information.quote.fees,
+    data.shipping_details.shipment_information.quote.taxes
   );
 
   const fetchPaymentSheetParams = async () => {
@@ -44,13 +44,20 @@ export default function OrderDetails({
       total_price_number,
       data.seller_details.id,
       {
-        trans_type: "purchase_payout",
-        user_email: userSession.email,
-        user_id: userSession.id,
+        buyer_email: userSession.email,
+        buyer_id: userSession.id,
         art_id: data.artwork_data.art_id,
-        gallery_email: data.seller_details.email,
-        gallery_name: data.seller_details.name,
+        seller_email: data.seller_details.email,
+        seller_name: data.seller_details.name,
+        seller_id: data.seller_details.id,
+        shipping_cost: +JSON.parse(
+          data.shipping_details.shipment_information.quote.fees
+        ), // will be changed
+        unit_price: data.artwork_data.pricing.usd_price,
         artwork_name: data.artwork_data.title,
+        tax_fees: +JSON.parse(
+          data.shipping_details.shipment_information.quote.taxes
+        ), // will be changed
       }
     );
 
@@ -177,7 +184,11 @@ export default function OrderDetails({
               <Text
                 style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
               >
-                {utils_formatPrice(data.shipping_details.quote.fees)}
+                {utils_formatPrice(
+                  +JSON.parse(
+                    data.shipping_details.shipment_information.quote.fees
+                  )
+                )}
               </Text>
             </View>
             <View style={styles.priceListingItem}>
@@ -187,7 +198,11 @@ export default function OrderDetails({
               <Text
                 style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
               >
-                {utils_formatPrice(data.shipping_details.quote.taxes)}
+                {utils_formatPrice(
+                  +JSON.parse(
+                    data.shipping_details.shipment_information.quote.taxes
+                  )
+                )}
               </Text>
             </View>
           </View>

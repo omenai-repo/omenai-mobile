@@ -1,18 +1,35 @@
 
- type OrderShippingDetailsTypes = {
+type OrderShippingDetailsTypes = {
   addresses: {
-    origin?: IndividualAddressTypes;
-    destination: IndividualAddressTypes;
+    origin: AddressTypes;
+    destination: AddressTypes;
   };
-  tracking: TrackingInformationTypes;
-  quote: ShippingQuoteTypes;
   delivery_confirmed: boolean;
+  additional_information?: string;
+  shipment_information: {
+    carrier: string;
+    shipment_product_code: string;
+    dimensions: {
+      length: number;
+      weight: number;
+      width: number;
+      height: number;
+    };
+    pickup: {
+      additional_information?: string;
+      pickup_max_time: string;
+      pickup_min_time: string;
+    };
+    tracking: TrackingInformationTypes;
+    quote: ShippingQuoteTypes;
+  };
 };
 
 type OrderBuyerAndSellerDetails = {
   id: string;
   name: string;
   email: string;
+  address: AddressTypes;
 };
 
  type OrderAcceptedStatusTypes = {
@@ -26,19 +43,17 @@ type OrderBuyerAndSellerDetails = {
 };
 
  type ShippingQuoteTypes = {
-  package_carrier: string;
   fees: string;
   taxes: string;
-  additional_information?: string;
 };
 
-type IndividualAddressTypes = {
+type AddressTypes = {
   address_line: string;
   city: string;
   country: string;
+  countryCode: string;
   state: string;
   zip: string;
-  [key: string]: string;
 };
 
 type PaymentStatusTypes = {
@@ -130,7 +145,7 @@ type ArtistSignupData = {
     assets: ImageAsset[];
   } | null;
   art_style: string | string[];
-  address: IndividualAddressTypes;
+  address: AddressTypes;
 };
 
 type ArtistRegisterData = Pick<ArtistSignupData, "name" | "email" | "password"> & {
@@ -285,7 +300,7 @@ type OrderCardProps = {
   availability: boolean
 }
 
-type IndividualAddressTypes = {
+type AddressTypes = {
   address_line: string;
   city: string;
   country: string;
@@ -371,15 +386,21 @@ type IndividualProfileUpdateData = {
   preferences?: string[];
 };
 
-type TransactionModelSchemaTypes = {
+type PurchaseTransactionModelSchemaTypes = {
   trans_id: string;
   trans_reference: string;
-  trans_amount: string;
-  trans_owner_id: string;
-  trans_owner_role: "user" | "gallery";
-  trans_gallery_id: string;
-  trans_type: "purchase_payout" | "subscription";
+  trans_initiator_id: string;
+  trans_recipient_id: string;
+  trans_pricing: PurchaseTransactionPricing;
   trans_date: Date;
+  trans_recipient_role: "gallery" | "artist";
+};
+
+type PurchaseTransactionPricing = {
+  unit_price: number;
+  commission: number;
+  shipping_cost: number;
+  amount_total: number;
 };
 
 type ArtworkPriceFilterData = {

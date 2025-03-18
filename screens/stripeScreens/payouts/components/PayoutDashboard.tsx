@@ -8,6 +8,13 @@ import { colors } from "config/colors.config";
 import { fetchTransactions } from "services/transactions/fetchTransactions";
 import ScrollWrapper from "components/general/ScrollWrapper";
 
+type TransactionsTableProps = {
+  transactions: (PurchaseTransactionModelSchemaTypes & {
+    createdAt: string;
+    updatedAt: string;
+  })[];
+};
+
 export default function PayoutDashboard({
   account_id,
   refreshCount,
@@ -20,7 +27,10 @@ export default function PayoutDashboard({
   const [isLoading, setIsLoading] = useState(false);
   const [balance, setBalance] = useState();
   const [transactions, setTransactions] = useState<
-    (TransactionModelSchemaTypes & { createdAt: any; updatedAt: any }[]) | []
+    (PurchaseTransactionModelSchemaTypes & {
+      createdAt: string;
+      updatedAt: string;
+    })[]
   >([]);
 
   useEffect(() => {
@@ -39,7 +49,20 @@ export default function PayoutDashboard({
 
       const transactions_result = await fetchTransactions();
       if (transactions_result?.isOk) {
-        setTransactions(transactions_result.data);
+        setTransactions(
+          transactions_result.data.map(
+            (
+              transaction: PurchaseTransactionModelSchemaTypes & {
+                createdAt: string;
+                updatedAt: string;
+              }
+            ) => ({
+              ...transaction,
+              createdAt: String(transaction.createdAt),
+              updatedAt: String(transaction.updatedAt),
+            })
+          )
+        );
       } else {
         updateModal({
           message: "Something went wrong, please try again or contact support",
