@@ -153,7 +153,7 @@ export default function ShippingDetails({
             data={transformedCountries}
             placeholder="Select your country"
             value={country}
-            handleSetValue={setCountry}
+            handleSetValue={(item) => setCountry(item.value)}
             label="Country"
             search={true}
             searchPlaceholder={"Search Country"}

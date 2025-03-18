@@ -11,6 +11,7 @@ import InputForm from "./inputForm/InputForm";
 import Preferences from "./preferences/Preferences";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import { useIndividualAuthRegisterStore } from "../../../store/auth/register/IndividualAuthRegisterStore";
+import IndividualAddressVerification from "./inputForm/individual/IndividualAddressVerification";
 // import ScrollWrapper from "components/general/ScrollWrapper";
 
 export default function FormController() {
@@ -29,8 +30,9 @@ export default function FormController() {
           keyboardShouldPersistTaps="handled"
         >
           {pageIndex === 0 && <InputForm />}
-          {pageIndex === 1 && <Preferences />}
-          {pageIndex === 2 && <TermsAndConditions />}
+          {pageIndex === 1 && <IndividualAddressVerification />}
+          {pageIndex === 2 && <Preferences />}
+          {pageIndex === 3 && <TermsAndConditions />}
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

@@ -140,7 +140,7 @@ export default function GetStartedWithStripe() {
             label="Country"
             placeholder="Select country"
             data={transformedCountryCodes}
-            handleSetValue={(e) => setCountrySelect(e)}
+            handleSetValue={(e) => setCountrySelect(e.value)}
             value={countrySelect}
           />
         </View>

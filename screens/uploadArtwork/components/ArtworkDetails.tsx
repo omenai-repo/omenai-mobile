@@ -128,8 +128,8 @@ export default function ArtworkDetails() {
               data={mediumListing}
               placeholder="Select medium"
               value={artworkUploadData.medium}
-              handleSetValue={(value) =>
-                updateArtworkUploadData("medium", value)
+              handleSetValue={(item) =>
+                updateArtworkUploadData("medium", item.value)
               }
             />
           </View>
@@ -141,8 +141,8 @@ export default function ArtworkDetails() {
               data={rarityList}
               placeholder="Select rarity"
               value={artworkUploadData.rarity}
-              handleSetValue={(value) =>
-                updateArtworkUploadData("rarity", value)
+              handleSetValue={(item) =>
+                updateArtworkUploadData("rarity", item.value)
               }
             />
           </View>
@@ -152,8 +152,11 @@ export default function ArtworkDetails() {
               data={certificateOfAuthenticitySelectOptions}
               placeholder="Select"
               value={artworkUploadData.certificate_of_authenticity}
-              handleSetValue={(value) =>
-                updateArtworkUploadData("certificate_of_authenticity", value)
+              handleSetValue={(item) =>
+                updateArtworkUploadData(
+                  "certificate_of_authenticity",
+                  item.value
+                )
               }
             />
           </View>
@@ -176,8 +179,8 @@ export default function ArtworkDetails() {
               data={signatureSelectOptions}
               placeholder="Select"
               value={artworkUploadData.signature}
-              handleSetValue={(value) =>
-                updateArtworkUploadData("signature", value)
+              handleSetValue={(item) =>
+                updateArtworkUploadData("signature", item.value)
               }
             />
           </View>
@@ -187,8 +190,8 @@ export default function ArtworkDetails() {
               data={framingList}
               placeholder="Choose frame"
               value={artworkUploadData.framing}
-              handleSetValue={(value) =>
-                updateArtworkUploadData("framing", value)
+              handleSetValue={(item) =>
+                updateArtworkUploadData("framing", item.value)
               }
             />
           </View>

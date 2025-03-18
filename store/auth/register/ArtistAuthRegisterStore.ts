@@ -12,6 +12,7 @@ type ArtistAuthRegisterStoreType = {
     setCity: (e: string) => void,
     setZipCode: (e: string) => void,
     setCountry: (e: string) => void,
+    setCountryCode: (e: string) => void,
     artStyles: string[],
     setArtStyles: (e: string[]) => void,
     setArtistPhoto: (image: any) => void,
@@ -38,6 +39,7 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
                 city: "",
                 country: "",
                 zip: "",
+                countryCode: "",
                 state: ""
             },
             art_style: [],
@@ -75,6 +77,10 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
             const data = get().artistRegisterData
             set({artistRegisterData: {...data, address: {...data.address, country}}})
         },
+        setCountryCode: (countryCode: string) => {
+            const data = get().artistRegisterData
+            set({artistRegisterData: {...data, address: {...data.address, countryCode}}})
+        },
         artStyles: [],
         setArtStyles: (art_style: string[]) => {
             set({artStyles: art_style})
@@ -105,6 +111,7 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
                     city: "",
                     country: "",
                     zip: "",
+                    countryCode: "",
                     state: ""
                 },
                 art_style: [],
