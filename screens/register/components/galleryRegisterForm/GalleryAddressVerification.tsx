@@ -1,5 +1,5 @@
 import { View, Text, Pressable, useWindowDimensions } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import tw from "twrnc";
 import Input from "components/inputs/Input";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
@@ -14,8 +14,8 @@ import { debounce } from "lodash";
 import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
 import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
-import { country_and_states } from "data/country_and_states";
 import { artist_countries_codes_currency } from "data/artist_countries_codes_currency";
+import { State, City, IState, ICity } from "country-state-city";
 
 const transformedCountries = artist_countries_codes_currency.map((item) => ({
   label: item.name,
@@ -52,24 +52,59 @@ const GalleryAddressVerification = () => {
     stateData,
     setStateData,
     isLoading,
+    cityData,
+    setCityData,
   } = useGalleryAuthRegisterStore();
 
   const handleCountrySelect = (item: { label: string; value: string }) => {
     setCountry(item.label);
     setCountryCode(item.value);
 
-    // Find the selected country's states
-    const foundCountry = country_and_states.find(
-      (country) => country.country === item.label
-    );
+    // Reset state and city selections
+    setState("");
+    setCity("");
+
+    // Clear state and city dropdown data
+    setStateData([]);
+    setCityData([]);
+
+    // get the selected country's states
+    const getStates = State.getStatesOfCountry(item.value);
 
     // Set the states dropdown data
     setStateData(
-      foundCountry
-        ? foundCountry.states.map((state) => ({ label: state, value: state }))
+      getStates
+        ? getStates.map((state: IState) => ({
+            label: state.name,
+            value: state.name,
+            isoCode: state.isoCode,
+          }))
         : []
     );
   };
+
+  // 🚀 **Debounced Fetch Cities Function**
+  const fetchCities = useCallback(
+    debounce((countryCode, stateValue) => {
+      const getCities = City.getCitiesOfState(countryCode, stateValue);
+      setCityData(
+        getCities?.map((city: ICity) => ({
+          label: city.name,
+          value: city.name,
+        })) || []
+      );
+    }, 300),
+    []
+  );
+
+  // 🚀 **Handle State Selection**
+  const handleStateSelect = useCallback(
+    (item: { label: string; value: string; isoCode?: string }) => {
+      setState(item.value);
+      fetchCities(galleryRegisterData.address.countryCode, item.isoCode);
+    },
+    [galleryRegisterData.address.countryCode, fetchCities]
+  );
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
@@ -160,6 +195,20 @@ const GalleryAddressVerification = () => {
         />
       </View>
 
+      <View style={tw`mb-[20px]`}>
+        <CustomSelectPicker
+          data={stateData}
+          placeholder="Select state"
+          value={galleryRegisterData.address.state}
+          handleSetValue={handleStateSelect}
+          disable={!galleryRegisterData.address.countryCode}
+          label="State of operation"
+          search={true}
+          searchPlaceholder="Search State"
+          dropdownPosition="top"
+        />
+      </View>
+
       <Input
         label="Gallery Address"
         keyboardType="default"
@@ -173,17 +222,22 @@ const GalleryAddressVerification = () => {
       />
 
       <View style={tw`flex-row items-center gap-[30px] mt-[20px]`}>
-        <Input
-          label="City"
-          keyboardType="default"
-          onInputChange={(text) => {
-            setCity(text);
-            handleValidationChecks("general", text);
-          }}
-          placeHolder="City"
-          value={galleryRegisterData?.address?.city}
-          errorMessage={formErrors?.city}
-        />
+        <View style={tw`flex-1`}>
+          <CustomSelectPicker
+            data={cityData}
+            placeholder="Select city"
+            value={galleryRegisterData.address.city}
+            disable={!galleryRegisterData.address.state}
+            handleSetValue={(item) => {
+              setCity(item.value);
+            }}
+            label="City"
+            search={true}
+            searchPlaceholder="Search City"
+            dropdownPosition="top"
+          />
+        </View>
+
         <Input
           label="Zip Code"
           keyboardType="default"
@@ -194,22 +248,6 @@ const GalleryAddressVerification = () => {
           placeHolder="Zip Code"
           value={galleryRegisterData?.address?.zip}
           errorMessage={formErrors?.zip}
-        />
-      </View>
-
-      <View style={tw`mt-[20px]`}>
-        <CustomSelectPicker
-          data={stateData}
-          placeholder="Select state"
-          value={galleryRegisterData.address.state}
-          handleSetValue={(item) => {
-            setState(item.value);
-          }}
-          disable={!galleryRegisterData.address.countryCode}
-          label="State of operation"
-          search={true}
-          searchPlaceholder="Search State"
-          dropdownPosition="top"
         />
       </View>
 
