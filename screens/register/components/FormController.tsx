@@ -29,10 +29,10 @@ export default function FormController() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* {pageIndex === 0 && <InputForm />} */}
-          {pageIndex === 0 && <IndividualAddressVerification />}
-          {/* {pageIndex === 2 && <Preferences />} */}
-          {/* {pageIndex === 3 && <TermsAndConditions />} */}
+          {pageIndex === 0 && <InputForm />}
+          {pageIndex === 1 && <IndividualAddressVerification />}
+          {pageIndex === 2 && <Preferences />}
+          {pageIndex === 3 && <TermsAndConditions />}
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

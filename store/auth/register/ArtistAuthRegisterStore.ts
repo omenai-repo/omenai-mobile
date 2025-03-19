@@ -13,7 +13,6 @@ type ArtistSignupData = {
         countryCode: string,
         state: string
     },
-    stateData: {label: string, value: string}[],
     art_style: string[],
     logo: any
 }
@@ -34,6 +33,8 @@ type ArtistAuthRegisterStoreType = {
     setCountryCode: (e: string) => void,
     stateData: {label: string, value: string}[], 
     setStateData: (e: {label: string, value: string}[]) => void, 
+    cityData: {label: string, value: string}[], 
+    setCityData: (e: {label: string, value: string}[]) => void, 
     artStyles: string[],
     setArtStyles: (e: string[]) => void,
     setArtistPhoto: (image: any) => void,
@@ -63,7 +64,6 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
                 countryCode: "",
                 state: ""
             },
-            stateData: [],
             art_style: [],
             logo: null
         },
@@ -111,6 +111,10 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
         setStateData: (stateData: {label: string, value: string}[]) => {
             set({stateData})
         },
+        cityData: [],
+        setCityData: (cityData: {label: string, value: string}[]) => {
+            set({cityData})
+        },
         artStyles: [],
         setArtStyles: (art_style: string[]) => {
             set({artStyles: art_style})
@@ -131,6 +135,8 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
             set({
                 isLoading: false,
                 pageIndex: 0,
+                stateData: [],
+                cityData: [],
                 artistRegisterData: {
                 name: "",
                 email: "",
@@ -144,7 +150,6 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
                     countryCode: "",
                     state: ""
                 },
-                stateData: [],
                 art_style: [],
                 logo: null
                 }
