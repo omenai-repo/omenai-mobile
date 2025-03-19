@@ -18,6 +18,8 @@ type GalleryAuthRegisterStoreType = {
     setCountryCode: (e: string) => void,
     stateData: {label: string, value: string}[], 
     setStateData: (e: {label: string, value: string}[]) => void, 
+    cityData: {label: string, value: string}[], 
+    setCityData: (e: {label: string, value: string}[]) => void,
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
     selectedTerms: number[],
@@ -46,7 +48,6 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
                 countryCode: "",
                 state: ""
             },
-            stateData: [],
             description: "",
             logo: {
                 assets: []
@@ -104,6 +105,10 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
         setStateData: (stateData: {label: string, value: string}[]) => {
             set({stateData})
         },
+        cityData: [],
+        setCityData: (cityData: {label: string, value: string}[]) => {
+            set({cityData})
+        },
         isLoading: false,
         setIsLoading: (e: boolean) => {
             set({isLoading: e})
@@ -117,6 +122,7 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
                 isLoading: false,
                 pageIndex: 0,
                 stateData: [],
+                cityData: [],
                 galleryRegisterData: {
                     name: "",
                     email: "",
