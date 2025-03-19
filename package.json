@@ -21,6 +21,7 @@
     "@shopify/flash-list": "1.7.1",
     "@stripe/stripe-react-native": "0.38.6",
     "appwrite": "^13.0.0",
+    "country-state-city": "^3.2.1",
     "crypto-random-string": "^5.0.0",
     "date-fns": "^3.6.0",
     "expo": "~52.0.18",
