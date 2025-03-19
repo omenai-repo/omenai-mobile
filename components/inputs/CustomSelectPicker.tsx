@@ -34,19 +34,6 @@ export default function CustomSelectPicker({
   dropdownPosition,
   disable,
 }: CustomSelectPickerProps) {
-  const [open, setOpen] = useState(false);
-
-  // const [localValue, setLocalValue] = useState<{
-  //   label: string;
-  //   value: string;
-  // } | null>(null);
-
-  // useEffect(() => {
-  //   if (localValue) {
-  //     handleSetValue(localValue.value);
-  //   }
-  // }, [localValue]);
-
   return (
     <View style={{ zIndex: zIndex }}>
       <Text style={styles.label}>{label}</Text>

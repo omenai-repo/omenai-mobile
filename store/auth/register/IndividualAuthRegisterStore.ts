@@ -20,6 +20,8 @@ type IndividualAuthRegisterStoreType = {
     setCountryCode: (e: string) => void,
     stateData: {label: string, value: string}[], 
     setStateData: (e: {label: string, value: string}[]) => void, 
+    cityData: {label: string, value: string}[], 
+    setCityData: (e: {label: string, value: string}[]) => void, 
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
     clearState: () => void
@@ -85,6 +87,10 @@ export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStore
         setStateData: (stateData: {label: string, value: string}[]) => {
             set({stateData})
         },
+        cityData: [],
+        setCityData: (cityData: {label: string, value: string}[]) => {
+            set({cityData})
+        },
         pageIndex: 0,
         setPageIndex: (e: number) => {
             set({pageIndex: e})
@@ -116,6 +122,7 @@ export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStore
                 preferences: [],
                 selectedTerms: [],
                 stateData: [],
+                cityData: []
             })
         }
     })
