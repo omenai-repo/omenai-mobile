@@ -2,7 +2,7 @@ import { apiUrl, authorization, originHeader, userAgent } from "../../constants/
 
 
 export async function registerAccount(
-    payload: IndividualRegisterData | GalleryRegisterData | ArtistRegisterData,
+    payload: Omit<IndividualRegisterData,"confirmPassword">&{preferences: string[]} | GalleryRegisterData | ArtistRegisterData,
     route: "gallery" | "individual" | "artist"
 ){
 

@@ -41,13 +41,15 @@ export default function TermsAndConditions() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const data = {
+    const data: Omit<IndividualRegisterData, "confirmPassword"> & {
+      preferences: string[];
+    } = {
       ...individualRegisterData,
       preferences,
     };
 
     const results = await registerAccount(data, "individual");
-
+    console.log(data);
     if (results?.isOk) {
       const resultsBody = results?.body;
       clearState();

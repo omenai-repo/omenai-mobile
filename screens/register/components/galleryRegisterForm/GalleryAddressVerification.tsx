@@ -14,10 +14,12 @@ import { debounce } from "lodash";
 import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
 import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
+import { country_and_states } from "data/country_and_states";
+import { artist_countries_codes_currency } from "data/artist_countries_codes_currency";
 
-const transformedCountries = country_codes.map((item) => ({
-  value: item.key,
+const transformedCountries = artist_countries_codes_currency.map((item) => ({
   label: item.name,
+  value: item.alpha2,
 }));
 
 const GalleryAddressVerification = () => {
@@ -45,9 +47,29 @@ const GalleryAddressVerification = () => {
     setZipCode,
     setCountry,
     setCountryCode,
+    setState,
     setIsLoading,
+    stateData,
+    setStateData,
     isLoading,
   } = useGalleryAuthRegisterStore();
+
+  const handleCountrySelect = (item: { label: string; value: string }) => {
+    setCountry(item.label);
+    setCountryCode(item.value);
+
+    // Find the selected country's states
+    const foundCountry = country_and_states.find(
+      (country) => country.country === item.label
+    );
+
+    // Set the states dropdown data
+    setStateData(
+      foundCountry
+        ? foundCountry.states.map((state) => ({ label: state, value: state }))
+        : []
+    );
+  };
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
@@ -58,6 +80,7 @@ const GalleryAddressVerification = () => {
       city: galleryRegisterData?.address?.city,
       zip: galleryRegisterData?.address?.zip,
       country: galleryRegisterData?.address?.country,
+      state: galleryRegisterData?.address?.state,
     }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
@@ -85,8 +108,8 @@ const GalleryAddressVerification = () => {
     try {
       const payload = {
         type: "pickup",
-        countyName: galleryRegisterData.address.address_line,
-        cityName: galleryRegisterData.address.city,
+        countyName: galleryRegisterData.address.city,
+        cityName: galleryRegisterData.address.state,
         postalCode: galleryRegisterData.address.zip,
         countryCode: galleryRegisterData.address.countryCode,
       };
@@ -124,6 +147,19 @@ const GalleryAddressVerification = () => {
 
   return (
     <View style={tw``}>
+      <View style={tw`mb-[20px]`}>
+        <CustomSelectPicker
+          data={transformedCountries}
+          placeholder="Select country of operation"
+          value={galleryRegisterData.address.countryCode}
+          handleSetValue={handleCountrySelect}
+          label="Country of operation"
+          search={true}
+          searchPlaceholder="Search Country"
+          dropdownPosition="bottom"
+        />
+      </View>
+
       <Input
         label="Gallery Address"
         keyboardType="default"
@@ -163,16 +199,16 @@ const GalleryAddressVerification = () => {
 
       <View style={tw`mt-[20px]`}>
         <CustomSelectPicker
-          data={transformedCountries}
-          placeholder="Select country of operation"
-          value={galleryRegisterData.address.countryCode}
+          data={stateData}
+          placeholder="Select state"
+          value={galleryRegisterData.address.state}
           handleSetValue={(item) => {
-            setCountry(item.label);
-            setCountryCode(item.value);
+            setState(item.value);
           }}
-          label="Country of operation"
+          disable={!galleryRegisterData.address.countryCode}
+          label="State of operation"
           search={true}
-          searchPlaceholder="Search Country"
+          searchPlaceholder="Search State"
           dropdownPosition="top"
         />
       </View>
@@ -194,7 +230,7 @@ const GalleryAddressVerification = () => {
         style={tw.style(
           `rounded-full h-[45px] w-[45px] justify-center items-center bg-[#000]`,
           {
-            top: height / 8,
+            top: height / 18,
             alignSelf: "flex-end",
           }
         )}
@@ -204,7 +240,7 @@ const GalleryAddressVerification = () => {
       {showToolTip && (
         <View
           style={tw.style(`mr-[80px]`, {
-            top: height / 13,
+            bottom: -8,
             width: width / 2,
             alignSelf: "flex-end",
           })}

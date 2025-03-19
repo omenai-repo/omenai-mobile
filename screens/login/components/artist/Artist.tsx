@@ -43,6 +43,11 @@ export default function Artist() {
           account: { id: resultsBody.id, type: "artist" },
         });
         return;
+      } else if (
+        resultsBody.verified === true &&
+        resultsBody.isOnboardingCompleted === false
+      ) {
+        navigation.navigate("ArtistOnboarding");
       }
 
       const data = {

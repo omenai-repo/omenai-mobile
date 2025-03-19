@@ -148,8 +148,8 @@ type ArtistSignupData = {
   address: AddressTypes;
 };
 
-type ArtistRegisterData = Pick<ArtistSignupData, "name" | "email" | "password"> & {
-  logo: string
+type ArtistRegisterData = Omit<ArtistSignupData, "logo" | "confirmPassword"> & {
+  logo: string,
 }
 
 type GalleryRegisterData = Pick<

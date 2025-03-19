@@ -13,8 +13,11 @@ type GalleryAuthRegisterStoreType = {
     setDescription: (e: string) => void,
     setCity: (e: string) => void,
     setZipCode: (e: string) => void,
+    setState: (e: string) => void,
     setCountry: (e: string) => void,
     setCountryCode: (e: string) => void,
+    stateData: {label: string, value: string}[], 
+    setStateData: (e: {label: string, value: string}[]) => void, 
     isLoading: boolean,
     setIsLoading: (e: boolean) => void,
     selectedTerms: number[],
@@ -43,6 +46,7 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
                 countryCode: "",
                 state: ""
             },
+            stateData: [],
             description: "",
             logo: {
                 assets: []
@@ -80,6 +84,10 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
             const data = get().galleryRegisterData
             set({galleryRegisterData: {...data, address: {...data.address, city}}})
         },
+        setState: (state: string) => {
+            const data = get().galleryRegisterData
+            set({galleryRegisterData: {...data, address: {...data.address, state}}})
+        },
         setZipCode: (zipCode: string) => {
             const data = get().galleryRegisterData
             set({galleryRegisterData: {...data, address: {...data.address, zip: zipCode}}})
@@ -91,6 +99,10 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
         setDescription: (description: string) => {
             const data = get().galleryRegisterData
             set({galleryRegisterData: {...data, description}})
+        },
+        stateData: [],
+        setStateData: (stateData: {label: string, value: string}[]) => {
+            set({stateData})
         },
         isLoading: false,
         setIsLoading: (e: boolean) => {
@@ -104,6 +116,7 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
             set({
                 isLoading: false,
                 pageIndex: 0,
+                stateData: [],
                 galleryRegisterData: {
                     name: "",
                     email: "",

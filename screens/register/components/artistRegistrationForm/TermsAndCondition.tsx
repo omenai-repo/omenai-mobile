@@ -55,7 +55,8 @@ const TermsAndCondition = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const { name, email, password, address, logo } = artistRegisterData;
+    const { name, email, password, address, logo, art_style } =
+      artistRegisterData;
 
     if (logo === null) return;
 
@@ -73,12 +74,13 @@ const TermsAndCondition = () => {
         fileId: fileUploaded.$id,
       };
 
-      const payload = {
+      const payload: ArtistRegisterData = {
         name,
         email,
         password,
         logo: file.fileId,
         address,
+        art_style,
       };
 
       const results = await registerAccount(payload, "artist");

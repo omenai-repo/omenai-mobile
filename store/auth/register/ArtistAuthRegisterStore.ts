@@ -1,5 +1,23 @@
 import { create } from "zustand";
 
+type ArtistSignupData = {
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+    address: {
+        address_line: string,
+        city: string,
+        country: string,
+        zip: string,
+        countryCode: string,
+        state: string
+    },
+    stateData: {label: string, value: string}[],
+    art_style: string[],
+    logo: any
+}
+
 type ArtistAuthRegisterStoreType = {
     pageIndex: number,
     setPageIndex: (e: number) => void,
@@ -10,9 +28,12 @@ type ArtistAuthRegisterStoreType = {
     setConfirmPassword: (e: string) => void,
     setHomeAddress: (e: string) => void,
     setCity: (e: string) => void,
+    setState: (e: string) => void,
     setZipCode: (e: string) => void,
     setCountry: (e: string) => void,
     setCountryCode: (e: string) => void,
+    stateData: {label: string, value: string}[], 
+    setStateData: (e: {label: string, value: string}[]) => void, 
     artStyles: string[],
     setArtStyles: (e: string[]) => void,
     setArtistPhoto: (image: any) => void,
@@ -42,6 +63,7 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
                 countryCode: "",
                 state: ""
             },
+            stateData: [],
             art_style: [],
             logo: null
         },
@@ -69,6 +91,10 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
             const data = get().artistRegisterData
             set({artistRegisterData: {...data, address: {...data.address, city}}})
         },
+        setState: (state: string) => {
+            const data = get().artistRegisterData
+            set({artistRegisterData: {...data, address: {...data.address, state}}})
+        },
         setZipCode: (zipCode: string) => {
             const data = get().artistRegisterData
             set({artistRegisterData: {...data, address: {...data.address, zip: zipCode}}})
@@ -80,6 +106,10 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
         setCountryCode: (countryCode: string) => {
             const data = get().artistRegisterData
             set({artistRegisterData: {...data, address: {...data.address, countryCode}}})
+        },
+        stateData: [],
+        setStateData: (stateData: {label: string, value: string}[]) => {
+            set({stateData})
         },
         artStyles: [],
         setArtStyles: (art_style: string[]) => {
@@ -114,6 +144,7 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
                     countryCode: "",
                     state: ""
                 },
+                stateData: [],
                 art_style: [],
                 logo: null
                 }
