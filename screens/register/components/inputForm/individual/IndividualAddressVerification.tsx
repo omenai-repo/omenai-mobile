@@ -15,6 +15,7 @@ import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
 import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
 import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
+import { country_and_states } from "data/country_and_states";
 
 const transformedCountries = country_codes.map((item) => ({
   value: item.key,
@@ -44,11 +45,31 @@ const IndividualAddressVerification = () => {
     setAddress,
     setCity,
     setZipCode,
+    setState,
     setCountry,
     setCountryCode,
     setIsLoading,
     isLoading,
+    stateData,
+    setStateData,
   } = useIndividualAuthRegisterStore();
+
+  const handleCountrySelect = (item: { label: string; value: string }) => {
+    setCountry(item.label);
+    setCountryCode(item.value);
+
+    // Find the selected country's states
+    const foundCountry = country_and_states.find(
+      (country) => country.country === item.label
+    );
+
+    // Set the states dropdown data
+    setStateData(
+      foundCountry
+        ? foundCountry.states.map((state) => ({ label: state, value: state }))
+        : []
+    );
+  };
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
@@ -59,6 +80,7 @@ const IndividualAddressVerification = () => {
       city: individualRegisterData?.address?.city,
       zip: individualRegisterData?.address?.zip,
       country: individualRegisterData?.address?.country,
+      state: individualRegisterData?.address?.state,
     }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
@@ -86,8 +108,8 @@ const IndividualAddressVerification = () => {
     try {
       const payload = {
         type: "delivery",
-        countyName: individualRegisterData.address.address_line,
-        cityName: individualRegisterData.address.city,
+        countyName: individualRegisterData.address.city,
+        cityName: individualRegisterData.address.state,
         postalCode: individualRegisterData.address.zip,
         countryCode: individualRegisterData.address.countryCode,
       };
@@ -125,6 +147,19 @@ const IndividualAddressVerification = () => {
 
   return (
     <View style={tw``}>
+      <View style={tw`mb-[20px]`}>
+        <CustomSelectPicker
+          data={transformedCountries}
+          placeholder="Select country of residence"
+          value={individualRegisterData.address.countryCode}
+          handleSetValue={handleCountrySelect}
+          label="Country of residence"
+          search={true}
+          searchPlaceholder="Search Country"
+          dropdownPosition="bottom"
+        />
+      </View>
+
       <Input
         label="Collector's Address"
         keyboardType="default"
@@ -164,16 +199,14 @@ const IndividualAddressVerification = () => {
 
       <View style={tw`mt-[20px]`}>
         <CustomSelectPicker
-          data={transformedCountries}
-          placeholder="Select country of operation"
-          value={individualRegisterData.address.countryCode}
-          handleSetValue={(item) => {
-            setCountry(item.label);
-            setCountryCode(item.value);
-          }}
-          label="Country of operation"
+          data={stateData}
+          placeholder="Select state of residence"
+          value={individualRegisterData.address.state}
+          handleSetValue={(item) => setState(item.value)}
+          disable={!individualRegisterData.address.countryCode}
+          label="State of residence"
           search={true}
-          searchPlaceholder="Search Country"
+          searchPlaceholder="Search State"
           dropdownPosition="top"
         />
       </View>
@@ -195,7 +228,7 @@ const IndividualAddressVerification = () => {
           style={tw.style(
             `rounded-full h-[45px] w-[45px] justify-center items-center bg-[#000]`,
             {
-              marginTop: height / 5,
+              marginTop: height / 10,
               alignSelf: "flex-end",
             }
           )}
@@ -205,7 +238,7 @@ const IndividualAddressVerification = () => {
         {showToolTip && (
           <View
             style={tw.style(`absolute`, {
-              top: height / 5,
+              top: height / 10,
               width: width / 2,
               alignSelf: "flex-end",
               right: 80,

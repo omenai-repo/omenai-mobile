@@ -5,7 +5,6 @@ import Input from "components/inputs/Input";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
 import { validate } from "lib/validations/validatorGroup";
 import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import { country_codes } from "json/country_alpha_2_codes";
 import BackFormButton from "components/buttons/BackFormButton";
 import { verifyAddress } from "services/register/verifyAddress";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
@@ -13,10 +12,12 @@ import { useModalStore } from "store/modal/modalStore";
 import { debounce } from "lodash";
 import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
+import { artist_countries_codes_currency } from "data/artist_countries_codes_currency";
+import { country_and_states } from "data/country_and_states";
 
-const transformedCountries = country_codes.map((item) => ({
-  value: item.key,
+const transformedCountries = artist_countries_codes_currency.map((item) => ({
   label: item.name,
+  value: item.alpha2,
 }));
 
 const ArtistHomeAddressVerification = () => {
@@ -44,9 +45,29 @@ const ArtistHomeAddressVerification = () => {
     setZipCode,
     setCountry,
     setCountryCode,
+    setState,
     setIsLoading,
     isLoading,
+    stateData,
+    setStateData,
   } = useArtistAuthRegisterStore();
+
+  const handleCountrySelect = (item: { label: string; value: string }) => {
+    setCountry(item.label);
+    setCountryCode(item.value);
+
+    // Find the selected country's states
+    const foundCountry = country_and_states.find(
+      (country) => country.country === item.label
+    );
+
+    // Set the states dropdown data
+    setStateData(
+      foundCountry
+        ? foundCountry.states.map((state) => ({ label: state, value: state }))
+        : []
+    );
+  };
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
@@ -57,6 +78,7 @@ const ArtistHomeAddressVerification = () => {
       city: artistRegisterData?.address?.city,
       zip: artistRegisterData?.address?.zip,
       country: artistRegisterData?.address?.country,
+      state: artistRegisterData?.address?.state,
     }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
@@ -84,8 +106,8 @@ const ArtistHomeAddressVerification = () => {
     try {
       const payload = {
         type: "pickup",
-        countyName: artistRegisterData.address.address_line,
-        cityName: artistRegisterData.address.city,
+        countyName: artistRegisterData.address.city,
+        cityName: artistRegisterData.address.state,
         postalCode: artistRegisterData.address.zip,
         countryCode: artistRegisterData.address.countryCode,
       };
@@ -123,6 +145,19 @@ const ArtistHomeAddressVerification = () => {
 
   return (
     <View style={tw``}>
+      <View style={tw`mb-[20px]`}>
+        <CustomSelectPicker
+          data={transformedCountries}
+          placeholder="Select country of residence"
+          value={artistRegisterData.address.countryCode}
+          handleSetValue={handleCountrySelect}
+          label="Country of residence"
+          search={true}
+          searchPlaceholder="Search Country"
+          dropdownPosition="bottom"
+        />
+      </View>
+
       <Input
         label="Home Address"
         keyboardType="default"
@@ -162,16 +197,16 @@ const ArtistHomeAddressVerification = () => {
 
       <View style={tw`mt-[20px]`}>
         <CustomSelectPicker
-          data={transformedCountries}
-          placeholder="Select country of residence"
-          value={artistRegisterData.address.countryCode}
+          data={stateData}
+          placeholder="Select state"
+          value={artistRegisterData.address.state}
           handleSetValue={(item) => {
-            setCountry(item.label);
-            setCountryCode(item.value);
+            setState(item.value);
           }}
-          label="Country of residence"
+          disable={!artistRegisterData.address.country}
+          label="State of residence"
           search={true}
-          searchPlaceholder="Search Country"
+          searchPlaceholder="Search state"
           dropdownPosition="top"
         />
       </View>

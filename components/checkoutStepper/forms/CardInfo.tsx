@@ -11,8 +11,13 @@ import { initiateDirectCharge } from "services/subscriptions/subscribeUser/initi
 import { useModalStore } from "store/modal/modalStore";
 import { apiUrl } from "constants/apiUrl.constants";
 import { subscriptionStepperStore } from "store/subscriptionStepper/subscriptionStepperStore";
-import { useRoute } from "@react-navigation/native";
+import {
+  NavigationProp,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import CardNumberInput from "../../../screens/checkout/components/inputs/CardNumberInput";
+import { screenName } from "constants/screenNames.constants";
 
 type cardInfoProps = {
   name: string;
@@ -38,6 +43,7 @@ export default function CardInfo({
   updateCard,
 }: CardInfoProps) {
   const routes = useRoute();
+  const navigation = useNavigation<NavigationProp<any>>();
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
 
@@ -68,7 +74,13 @@ export default function CardInfo({
     } else {
       const parsedCardNumber = cardInfo.cardNumber.replace(/ /g, "");
 
-      let customer = {
+      let customer: {
+        name: string;
+        email: string;
+        gallery_id: string;
+        plan_id?: string;
+        plan_interval?: string;
+      } = {
         name: userSession.name,
         email: userSession.email,
         gallery_id: userSession.id,
@@ -110,6 +122,11 @@ export default function CardInfo({
             modalType: "error",
           });
         } else {
+          if (response.data.data.status === "successful") {
+            set_transaction_id(response.data.data.id);
+            navigation.navigate(screenName.verifyTransaction);
+            return;
+          }
           if (response.data.meta.authorization.mode === "redirect") {
             // redirect user
             set_transaction_id(response.data.data.id);

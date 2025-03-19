@@ -15,6 +15,7 @@ type CustomSelectPickerProps = {
   search?: boolean;
   searchPlaceholder?: string;
   dropdownPosition?: "auto" | "top" | "bottom";
+  disable?: false | true;
 };
 
 type SetStateValue<S> = (prevState: S) => S;
@@ -31,6 +32,7 @@ export default function CustomSelectPicker({
   search,
   searchPlaceholder,
   dropdownPosition,
+  disable,
 }: CustomSelectPickerProps) {
   const [open, setOpen] = useState(false);
 
@@ -63,7 +65,8 @@ export default function CustomSelectPicker({
         placeholderStyle={{
           color: "#858585",
         }}
-        maxHeight={200}
+        disable={disable}
+        maxHeight={250}
         containerStyle={{
           borderRadius: 5,
         }}
