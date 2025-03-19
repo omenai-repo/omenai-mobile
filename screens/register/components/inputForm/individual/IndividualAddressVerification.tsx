@@ -1,11 +1,9 @@
 import { View, Text, Pressable, useWindowDimensions } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import tw from "twrnc";
 import Input from "components/inputs/Input";
-import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
 import { validate } from "lib/validations/validatorGroup";
 import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import { country_codes } from "json/country_alpha_2_codes";
 import BackFormButton from "components/buttons/BackFormButton";
 import { verifyAddress } from "services/register/verifyAddress";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
@@ -13,9 +11,7 @@ import { useModalStore } from "store/modal/modalStore";
 import { debounce } from "lodash";
 import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
-import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
 import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
-import { country_and_states } from "data/country_and_states";
 import {
   Country,
   State,
