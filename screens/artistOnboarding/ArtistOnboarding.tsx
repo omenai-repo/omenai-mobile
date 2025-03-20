@@ -30,6 +30,7 @@ import QuestionContainer from "./QuestionContainer";
 import OverviewContainer from "./OverviewContainer";
 import CVUpload from "./CVUpload";
 import Socials from "./Socials";
+import ConfirmationModal from "./ConfirmationModal";
 
 const { width, height } = Dimensions.get("window");
 
@@ -123,6 +124,7 @@ const ArtistOnboarding = () => {
   >(null);
 
   const [editingSocialKey, setEditingSocialKey] = useState<string | null>(null);
+  const [confirmModal, setConfirmModal] = useState(false);
 
   const openEditModal = (
     key: QuestionKey | "cv" | "social",
@@ -179,6 +181,7 @@ const ArtistOnboarding = () => {
     }
   };
 
+  // Handle Back Button Click
   const handleBack = () => {
     if (stage === "overview") {
       setStage("socials");
@@ -543,6 +546,11 @@ const ArtistOnboarding = () => {
             </Pressable>
           </Pressable>
         </Modal>
+        <ConfirmationModal
+          isModalVisible={confirmModal}
+          setIsModalVisible={setConfirmModal}
+          confirmBtn={() => {}}
+        />
         {/* Navigation Buttons */}
 
         <View
@@ -570,6 +578,8 @@ const ArtistOnboarding = () => {
                 handleCVUpload();
               } else if (stage === "socials") {
                 handleSocials();
+              } else if (stage === "overview") {
+                setConfirmModal(true);
               }
             }}
             disabled={isNextDisabled()}
