@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import React, { useState } from "react";
 import CheckoutStepper from "components/checkoutStepper/CheckoutStepper";
 import WithModal from "components/modal/WithModal";
@@ -13,6 +13,7 @@ import ScrollWrapper from "components/general/ScrollWrapper";
 
 export default function ChangeCard() {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { height } = useWindowDimensions();
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   const { webViewUrl, setWebViewUrl } = subscriptionStepperStore();
@@ -65,7 +66,7 @@ export default function ChangeCard() {
       {webViewUrl && (
         <WebView
           source={{ uri: webViewUrl }}
-          style={{ flex: 1 }}
+          style={{ flex: 1, marginTop: height / 5 }}
           onNavigationStateChange={handleFlutterwaveRedirect}
         />
       )}
