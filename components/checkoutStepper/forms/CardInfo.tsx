@@ -113,6 +113,7 @@ export default function CardInfo({
       };
 
       const response = await initiateDirectCharge(data);
+      setCardInputLoading(false);
       if (response?.isOk) {
         if (response.data.status === "error") {
           console.log(response.data);
@@ -122,19 +123,18 @@ export default function CardInfo({
             modalType: "error",
           });
         } else {
-          if (response.data.data.status === "successful") {
+          if (response?.data?.data?.status === "successful") {
             set_transaction_id(response.data.data.id);
             navigation.navigate(screenName.verifyTransaction);
-            return;
-          }
-          if (response.data.meta.authorization.mode === "redirect") {
-            // redirect user
-            set_transaction_id(response.data.data.id);
-            setWebViewUrl(response.data.meta.authorization.redirect);
           } else {
-            updateAuthorization(response.data.meta.authorization.mode);
+            if (response.data.meta.authorization.mode === "redirect") {
+              set_transaction_id(response.data.data.id);
+              setWebViewUrl(response.data.meta.authorization.redirect);
+            } else {
+              updateAuthorization(response.data.meta.authorization.mode);
+            }
+            handleNext();
           }
-          handleNext();
         }
         update_flw_charge_payload_data(data);
       } else {
