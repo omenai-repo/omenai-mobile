@@ -26,6 +26,10 @@ import {
 import * as DocumentPicker from "expo-document-picker";
 import Input from "components/inputs/Input";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
+import QuestionContainer from "./QuestionContainer";
+import OverviewContainer from "./OverviewContainer";
+import CVUpload from "./CVUpload";
+import Socials from "./Socials";
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,7 +45,7 @@ type OnboardingQuestions = {
   art_fair: "yes" | "no" | "";
 };
 
-type QuestionKey =
+export type QuestionKey =
   | "bio"
   | "graduate"
   | "mfa"
@@ -75,212 +79,6 @@ const questions: { key: QuestionKey; text: string }[] = [
     text: "Have you been featured in an art fair by a Gallery?",
   },
 ];
-
-const Container = ({
-  question,
-  value,
-  onSelect,
-  animatedStyle,
-  questionKey,
-  isModalVisible,
-}: {
-  question: string;
-  value: string;
-  onSelect: (answer: string) => void;
-  animatedStyle: any;
-  questionKey: QuestionKey;
-  isModalVisible?: boolean;
-}) => {
-  return (
-    <Animated.View
-      style={[
-        tw`border border-[#BDBDBDB2] rounded-[16px] py-[25px] self-center`,
-        {
-          width: width - 50,
-          backgroundColor: isModalVisible ? "#ffff" : "#FFFFFFB5",
-        },
-        animatedStyle,
-      ]}
-    >
-      <Text
-        style={tw`text-[16px] text-[#1A1A1A] font-medium text-center px-[50px]`}
-      >
-        {question}
-      </Text>
-      <View style={tw`h-[1px] bg-[#00000033] my-[20px] mx-[40px]`} />
-
-      {/* Conditional Input for Bio, Solo, and Group */}
-      {questionKey === "bio" ||
-      questionKey === "solo" ||
-      questionKey === "group" ? (
-        <>
-          <TextInput
-            style={tw.style(
-              `bg-[#F7F7F7] rounded-[20px] pt-[20px] pl-[20px] mx-[30px]`,
-              questionKey === "solo" || questionKey === "group"
-                ? "py-[15px]"
-                : "h-[97px]",
-              {
-                textAlignVertical: "top",
-              }
-            )}
-            multiline={questionKey === "bio"}
-            keyboardType={
-              questionKey === "solo" || questionKey === "group"
-                ? "numeric"
-                : "default"
-            }
-            placeholder={
-              questionKey === "bio" ? "Write about yourself..." : "Enter number"
-            }
-            value={value}
-            onChangeText={onSelect}
-          />
-          {questionKey === "bio" &&
-            (() => {
-              const wordCount = value
-                .trim()
-                .split(/\s+/)
-                .filter((word) => word !== "").length;
-              const isLimitExceeded = wordCount > 250;
-
-              return (
-                <View>
-                  <Text
-                    style={tw.style(
-                      `text-[12px] text-right mr-[30px] mt-[5px]`,
-                      isLimitExceeded ? "text-[#FF0000]" : "text-[#00000080]"
-                    )}
-                  >
-                    {wordCount}/250 words
-                  </Text>
-
-                  {/* Warning Message */}
-                  {isLimitExceeded && (
-                    <Text
-                      style={tw`text-[12px] text-[#FF0000] text-center mt-[5px]`}
-                    >
-                      You have exceeded the word limit!
-                    </Text>
-                  )}
-                </View>
-              );
-            })()}
-        </>
-      ) : questionKey === "biennale" ? ( // Updated: Special handling for Biennale
-        <View>
-          {["Venice Biennale", "Others", "None"].map((option) => (
-            <Pressable
-              key={option}
-              onPress={() => onSelect(option)}
-              style={tw.style(
-                `py-[10px] justify-center items-center rounded-[20px] mx-[35px]`,
-                value === option && "bg-[#1A1A1A]"
-              )}
-            >
-              <Text
-                style={tw.style(
-                  `text-[16px]`,
-                  value === option && "text-[#FFFFFF]"
-                )}
-              >
-                {option}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      ) : (
-        // Yes/No Buttons for other questions
-        <View>
-          <Pressable
-            onPress={() => onSelect("yes")}
-            style={tw.style(
-              `py-[10px] justify-center items-center rounded-[20px] mx-[35px]`,
-              value === "yes" && "bg-[#1A1A1A]"
-            )}
-          >
-            <Text
-              style={tw.style(
-                `text-[16px]`,
-                value === "yes" && "text-[#FFFFFF]"
-              )}
-            >
-              Yes
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => onSelect("no")}
-            style={tw.style(
-              `py-[10px] justify-center items-center rounded-[20px] mx-[35px]`,
-              value === "no" && "bg-[#1A1A1A]"
-            )}
-          >
-            <Text
-              style={tw.style(
-                `text-[16px]`,
-                value === "no" && "text-[#FFFFFF]"
-              )}
-            >
-              No
-            </Text>
-          </Pressable>
-        </View>
-      )}
-    </Animated.View>
-  );
-};
-
-const OverviewContainer = ({
-  title,
-  data,
-  open,
-  setOpen,
-  index,
-  openModal,
-}: {
-  title: string;
-  data: string;
-  open: boolean;
-  setOpen: () => void;
-  index: string;
-  openModal: () => void;
-}) => {
-  return (
-    <View
-      style={tw.style(
-        `border-t-[1px] border-l-[1px] border-r-[1px] border-[#0000001A] bg-[#fff] p-[15px]`,
-        index === "bio" && "rounded-t-[15px]",
-        index === "CV Document" && "rounded-b-[15px] border-b-[1px]"
-      )}
-    >
-      <View style={tw`flex-row items-center`}>
-        <Text style={tw`text-[15px] text-[#454545] font-bold flex-1`}>
-          {title}
-        </Text>
-        <Pressable
-          onPress={setOpen}
-          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
-        >
-          <SvgXml xml={open ? dropUpIcon : dropdownIcon} />
-        </Pressable>
-      </View>
-
-      <Text style={tw`text-[13px] text-[#00000080] font-semibold mt-[3px]`}>
-        Your answer: {data}
-      </Text>
-
-      {/* Display data when expanded */}
-      {open && (
-        <Pressable
-          onPress={openModal}
-          style={tw`h-[45px] rounded-full bg-[#1A1A1A] justify-center items-center mt-[10px]`}
-        >
-          <Text style={tw`text-white font-bold text-[14px]`}>Edit</Text>
-        </Pressable>
-      )}
-    </View>
-  );
-};
 
 const ArtistOnboarding = () => {
   const [stage, setStage] = useState<
@@ -510,7 +308,7 @@ const ArtistOnboarding = () => {
         </View>
         <View>
           {stage === "questions" ? (
-            <Container
+            <QuestionContainer
               value={String(
                 onboardingQuestions[currentQuestion.key as QuestionKey]
               )}
@@ -520,114 +318,22 @@ const ArtistOnboarding = () => {
               questionKey={currentQuestion.key}
             />
           ) : stage === "cv_upload" ? (
-            <View>
-              <TouchableOpacity
-                onPress={pickDocument}
-                style={tw.style(
-                  `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`,
-                  {
-                    marginHorizontal: width / 12,
-                  }
-                )}
-              >
-                {!cv?.assets && <SvgXml xml={uploadIcon} />}
-
-                <Text
-                  style={tw`text-[12px] text-[#000000] font-medium mt-[15px] text-center mx-[30px]`}
-                >
-                  {cv?.assets
-                    ? cv.assets[0].name.length > 40
-                      ? cv.assets[0].name.slice(0, 40)
-                      : cv.assets[0].name
-                    : "Upload your CV here"}
-                </Text>
-              </TouchableOpacity>
-
-              {/* Warning Box */}
-              <View
-                style={tw.style(
-                  `border border-[#FFA500] mt-[20px] flex-row items-center gap-[10px] bg-[#FFF3E0] rounded-[8px] p-[15px]`,
-                  {
-                    marginHorizontal: width / 12,
-                  }
-                )}
-              >
-                <SvgXml xml={warningIconSm} />
-                <Text
-                  style={tw`text-[14px] text-[#FFA500] font-medium pr-[30px]`}
-                >
-                  Please ensure your CV aligns with the answers you provided in
-                  the last sections
-                </Text>
-              </View>
-            </View>
+            <CVUpload cv={cv} pickDocument={pickDocument} />
           ) : stage === "socials" ? (
-            <View
-              style={tw.style(`gap-[20px] mb-[50px]`, {
-                marginHorizontal: width / 15,
-              })}
-            >
-              <Input
-                label="Instagram"
-                keyboardType="default"
-                onInputChange={(text) =>
-                  setDocumentation((prev) => ({
-                    ...prev,
-                    socials: {
-                      ...prev.socials,
-                      instagram: text,
-                    },
-                  }))
-                }
-                placeHolder="Input your Instagram profile here"
-                value={documentation.socials.instagram}
-              />
-              <Input
-                label="Facebook"
-                keyboardType="default"
-                onInputChange={(text) =>
-                  setDocumentation((prev) => ({
-                    ...prev,
-                    socials: {
-                      ...prev.socials,
-                      facebook: text,
-                    },
-                  }))
-                }
-                placeHolder="Input your facebook profile here"
-                value={documentation.socials.facebook}
-              />
-              <Input
-                label="Linkedin"
-                keyboardType="default"
-                onInputChange={(text) =>
-                  setDocumentation((prev) => ({
-                    ...prev,
-                    socials: {
-                      ...prev.socials,
-                      linkedin: text,
-                    },
-                  }))
-                }
-                placeHolder="Input your linkedin profile here"
-                value={documentation.socials.linkedin}
-              />
-              <Input
-                label="X (Twitter)"
-                keyboardType="default"
-                onInputChange={(text) =>
-                  setDocumentation((prev) => ({
-                    ...prev,
-                    socials: {
-                      ...prev.socials,
-                      twitter: text,
-                    },
-                  }))
-                }
-                placeHolder="Input your x profile here"
-                value={documentation.socials.twitter}
-              />
-            </View>
+            <Socials
+              socials={{
+                instagram: documentation.socials.instagram,
+                twitter: documentation.socials.twitter,
+                linkedin: documentation.socials.linkedin,
+                facebook: documentation.socials.facebook,
+              }}
+              setSocials={(key, value) => {
+                setDocumentation((prev) => ({
+                  ...prev,
+                  socials: { ...prev.socials, [key]: value },
+                }));
+              }}
+            />
           ) : (
             stage === "overview" && (
               <View
@@ -808,7 +514,7 @@ const ArtistOnboarding = () => {
               ) : (
                 /* Default Container for Questions */
                 editingQuestionKey && (
-                  <Container
+                  <QuestionContainer
                     question={
                       questions.find((q) => q.key === editingQuestionKey)
                         ?.text || ""
