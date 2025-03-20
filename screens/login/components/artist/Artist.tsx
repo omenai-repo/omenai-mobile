@@ -42,12 +42,13 @@ export default function Artist() {
         navigation.navigate(screenName.verifyEmail, {
           account: { id: resultsBody.id, type: "artist" },
         });
-        return;
       } else if (
         resultsBody.verified === true &&
         resultsBody.isOnboardingCompleted === false
       ) {
-        navigation.navigate("ArtistOnboarding");
+        setIsLoading(false);
+        navigation.replace("ArtistOnboarding");
+        return;
       }
 
       const data = {

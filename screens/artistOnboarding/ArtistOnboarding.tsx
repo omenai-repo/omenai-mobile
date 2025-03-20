@@ -119,7 +119,10 @@ const Container = ({
               `bg-[#F7F7F7] rounded-[20px] pt-[20px] pl-[20px] mx-[30px]`,
               questionKey === "solo" || questionKey === "group"
                 ? "py-[15px]"
-                : "h-[97px]"
+                : "h-[97px]",
+              {
+                textAlignVertical: "top",
+              }
             )}
             multiline={questionKey === "bio"}
             keyboardType={
@@ -560,7 +563,7 @@ const ArtistOnboarding = () => {
             </View>
           ) : stage === "socials" ? (
             <View
-              style={tw.style(`gap-[20px] mb-[200px]`, {
+              style={tw.style(`gap-[20px] mb-[50px]`, {
                 marginHorizontal: width / 15,
               })}
             >
@@ -629,7 +632,7 @@ const ArtistOnboarding = () => {
             stage === "overview" && (
               <View
                 style={tw.style(
-                  `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px] mb-[150]`,
+                  `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
                   {
                     marginHorizontal: width / 18,
                   }
@@ -834,44 +837,45 @@ const ArtistOnboarding = () => {
             </Pressable>
           </Pressable>
         </Modal>
-      </ScrollView>
-      {/* Navigation Buttons */}
+        {/* Navigation Buttons */}
 
-      <View
-        style={tw.style(`flex-row gap-[30px] absolute bottom-[50px]`, {
-          marginHorizontal: width / 10,
-        })}
-      >
-        {currentQuestionIndex !== 0 && (
+        <View
+          style={tw.style(`flex-row gap-[30px] mb-[100px]`, {
+            marginHorizontal: width / 10,
+            top: height / 25,
+          })}
+        >
+          {currentQuestionIndex !== 0 && (
+            <Pressable
+              onPress={handleBack}
+              style={tw.style(
+                `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`
+              )}
+            >
+              <Text style={tw`text-[#000] font-bold text-[14px]`}>Back</Text>
+            </Pressable>
+          )}
+
           <Pressable
-            onPress={handleBack}
+            onPress={() => {
+              if (stage === "questions") {
+                handleNext();
+              } else if (stage === "cv_upload") {
+                handleCVUpload();
+              } else if (stage === "socials") {
+                handleSocials();
+              }
+            }}
+            disabled={isNextDisabled()}
             style={tw.style(
-              `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`
+              `h-[51px] rounded-full justify-center items-center flex-1`,
+              isNextDisabled() ? "bg-[#B5B5B5]" : "bg-[#1A1A1A]"
             )}
           >
-            <Text style={tw`text-[#000] font-bold text-[14px]`}>Back</Text>
+            <Text style={tw`text-white font-bold text-[14px]`}>Next</Text>
           </Pressable>
-        )}
-
-        <Pressable
-          onPress={() => {
-            if (stage === "questions") {
-              handleNext();
-            } else if (stage === "cv_upload") {
-              handleCVUpload();
-            } else if (stage === "socials") {
-              handleSocials();
-            }
-          }}
-          disabled={isNextDisabled()}
-          style={tw.style(
-            `h-[51px] rounded-full justify-center items-center flex-1`,
-            isNextDisabled() ? "bg-[#B5B5B5]" : "bg-[#1A1A1A]"
-          )}
-        >
-          <Text style={tw`text-white font-bold text-[14px]`}>Next</Text>
-        </Pressable>
-      </View>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
