@@ -5,15 +5,18 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 
 type handleBackCLickProp = {
   handleBackClick: () => void;
+  disabled?: boolean;
 };
 
 export default function BackFormButton({
   handleBackClick,
+  disabled,
 }: handleBackCLickProp) {
   return (
     <TouchableOpacity
       activeOpacity={1}
       style={styles.container}
+      disabled={disabled}
       onPress={handleBackClick}
     >
       <AntDesign name="arrowleft" color={colors.primary_black} size={24} />

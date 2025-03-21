@@ -303,7 +303,7 @@ const ArtistHomeAddressVerification = () => {
         icon={addressVerified ? checkMarkIcon : errorIcon}
         text={
           addressVerified
-            ? "Your account has been verified succesfully"
+            ? "Your Address has been verified succesfully"
             : "Your Address could not be verified. Try again."
         }
         btn1Text="Go Back"
