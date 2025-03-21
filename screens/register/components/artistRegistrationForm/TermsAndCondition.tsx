@@ -119,7 +119,7 @@ const TermsAndCondition = () => {
     return (
       <Pressable onPress={onPress} style={tw`flex-row gap-[15px]`}>
         <SvgXml xml={selectedTerms.includes(id) ? checkedBox : uncheckedBox} />
-        <Text style={tw`text-[14px] text-[#858585] leading-[20px]`}>
+        <Text style={tw`text-[14px] text-[#858585] leading-[20px] mr-[30px]`}>
           {text}
         </Text>
       </Pressable>
@@ -144,7 +144,10 @@ const TermsAndCondition = () => {
       </View>
 
       <View style={tw`flex-row mt-[40px]`}>
-        <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
+        <BackFormButton
+          handleBackClick={() => setPageIndex(pageIndex - 1)}
+          disabled={isLoading}
+        />
         <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}

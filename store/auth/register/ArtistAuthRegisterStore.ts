@@ -35,7 +35,6 @@ type ArtistAuthRegisterStoreType = {
     setStateData: (e: {label: string, value: string}[]) => void, 
     cityData: {label: string, value: string}[], 
     setCityData: (e: {label: string, value: string}[]) => void, 
-    artStyles: string[],
     setArtStyles: (e: string[]) => void,
     setArtistPhoto: (image: any) => void,
     isLoading: boolean,
@@ -115,9 +114,9 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
         setCityData: (cityData: {label: string, value: string}[]) => {
             set({cityData})
         },
-        artStyles: [],
         setArtStyles: (art_style: string[]) => {
-            set({artStyles: art_style})
+            const data = get().artistRegisterData
+            set({artistRegisterData: {...data, art_style}})
         },
         setArtistPhoto: (logo: null) => {
             const data = get().artistRegisterData

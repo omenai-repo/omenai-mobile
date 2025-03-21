@@ -2,10 +2,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { colors } from "../../../../config/colors.config";
 import NextButton from "../../../../components/buttons/NextButton";
-import { artistStyle } from "data/uploadArtworkForm.data";
+import { mediumListing } from "data/uploadArtworkForm.data";
 import tw from "twrnc";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
 import BackFormButton from "components/buttons/BackFormButton";
 
@@ -16,17 +14,17 @@ type TabItemProps = {
 };
 
 const ArtistPreference = () => {
-  const { pageIndex, setPageIndex, artStyles, setArtStyles } =
+  const { pageIndex, setPageIndex, artistRegisterData, setArtStyles } =
     useArtistAuthRegisterStore();
 
   const handleSelect = (value: string) => {
-    if (artStyles.includes(value)) {
-      let arr = [...artStyles];
+    if (artistRegisterData.art_style.includes(value)) {
+      let arr = [...artistRegisterData.art_style];
       let index = arr.indexOf(value);
       arr.splice(index, 1);
       setArtStyles(arr);
-    } else if (artStyles.length < 5) {
-      setArtStyles([...artStyles, value]);
+    } else if (artistRegisterData.art_style.length < 5) {
+      setArtStyles([...artistRegisterData.art_style, value]);
     }
   };
 
@@ -59,12 +57,12 @@ const ArtistPreference = () => {
         Select your art style
       </Text>
       <View style={styles.tabsContainer}>
-        {artistStyle.map((i, idx) => (
+        {mediumListing.map((i, idx) => (
           <TabItem
             name={i.value}
             key={idx}
             onSelect={() => handleSelect(i.value)}
-            isSelected={artStyles.includes(i.value)}
+            isSelected={artistRegisterData.art_style.includes(i.value)}
           />
         ))}
       </View>
@@ -73,7 +71,7 @@ const ArtistPreference = () => {
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <NextButton
-          isDisabled={artStyles.length < 5}
+          isDisabled={artistRegisterData.art_style.length < 5}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>
