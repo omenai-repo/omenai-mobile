@@ -63,29 +63,6 @@ type PaymentStatusTypes = {
   transaction_reference: string;
 };
 
-type ArtistCategorizationUpdateDataTypes = {
-  answers: ArtistCategorizationAnswerTypes;
-  bio: string;
-  documentation: ArtistDocumentationTypes;
-  artist_id: string;
-};
-type ArtistDocumentationTypes = {
-  cv?: string;
-  socials?: { [key?: Socials]: string };
-};
-type Socials = "instagram" | "twitter" | "facebook" | "linkedin";
-
-type ArtistCategorizationAnswerTypes = {
-  graduate: "yes" | "no";
-  mfa: "yes" | "no";
-  solo: number;
-  group: number;
-  museum_collection: "yes" | "no";
-  biennale: "venice" | "other" | "none";
-  museum_exhibition: "yes" | "no";
-  art_fair: "yes" | "no";
-};
-
 
 type ArtworkDimensions = {
   width: string;

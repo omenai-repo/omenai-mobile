@@ -10,15 +10,17 @@ const QuestionContainer = ({
   value,
   onSelect,
   animatedStyle,
-  questionKey,
   isModalVisible,
+  options,
+  isNumber,
 }: {
   question: string;
   value: string;
   onSelect: (answer: string) => void;
   animatedStyle: any;
-  questionKey: QuestionKey;
   isModalVisible?: boolean;
+  options?: string[];
+  isNumber?: boolean;
 }) => {
   const { width } = useWindowDimensions();
   return (
@@ -40,33 +42,23 @@ const QuestionContainer = ({
       <View style={tw`h-[1px] bg-[#00000033] my-[20px] mx-[40px]`} />
 
       {/* Conditional Input for Bio, Solo, and Group */}
-      {questionKey === "bio" ||
-      questionKey === "solo" ||
-      questionKey === "group" ? (
+      {!options ? (
         <>
           <TextInput
             style={tw.style(
               `bg-[#F7F7F7] rounded-[20px] pt-[20px] pl-[20px] mx-[30px]`,
-              questionKey === "solo" || questionKey === "group"
-                ? "py-[15px]"
-                : "h-[97px]",
+              isNumber ? "py-[15px]" : "h-[97px]",
               {
                 textAlignVertical: "top",
               }
             )}
-            multiline={questionKey === "bio"}
-            keyboardType={
-              questionKey === "solo" || questionKey === "group"
-                ? "numeric"
-                : "default"
-            }
-            placeholder={
-              questionKey === "bio" ? "Write about yourself..." : "Enter number"
-            }
+            multiline={!isNumber}
+            keyboardType={isNumber ? "numeric" : "default"}
+            placeholder={!isNumber ? "Write about yourself..." : "Enter number"}
             value={value}
             onChangeText={onSelect}
           />
-          {questionKey === "bio" &&
+          {!isNumber &&
             (() => {
               const wordCount = value
                 .trim()
@@ -97,9 +89,10 @@ const QuestionContainer = ({
               );
             })()}
         </>
-      ) : questionKey === "biennale" ? ( // Updated: Special handling for Biennale
+      ) : (
+        // Updated: Special handling for Biennale
         <View>
-          {["Venice Biennale", "Others", "None"].map((option) => (
+          {options.map((option) => (
             <Pressable
               key={option}
               onPress={() => onSelect(option)}
@@ -118,42 +111,6 @@ const QuestionContainer = ({
               </Text>
             </Pressable>
           ))}
-        </View>
-      ) : (
-        // Yes/No Buttons for other questions
-        <View>
-          <Pressable
-            onPress={() => onSelect("yes")}
-            style={tw.style(
-              `py-[10px] justify-center items-center rounded-[20px] mx-[35px]`,
-              value === "yes" && "bg-[#1A1A1A]"
-            )}
-          >
-            <Text
-              style={tw.style(
-                `text-[16px]`,
-                value === "yes" && "text-[#FFFFFF]"
-              )}
-            >
-              Yes
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => onSelect("no")}
-            style={tw.style(
-              `py-[10px] justify-center items-center rounded-[20px] mx-[35px]`,
-              value === "no" && "bg-[#1A1A1A]"
-            )}
-          >
-            <Text
-              style={tw.style(
-                `text-[16px]`,
-                value === "no" && "text-[#FFFFFF]"
-              )}
-            >
-              No
-            </Text>
-          </Pressable>
         </View>
       )}
     </Animated.View>

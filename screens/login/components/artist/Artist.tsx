@@ -37,17 +37,27 @@ export default function Artist() {
     if (results?.isOk) {
       const resultsBody = results?.body?.data;
 
-      if (resultsBody.verified === false) {
+      if (!resultsBody) {
+        setIsLoading(false);
+        return;
+      }
+
+      const isVerified = Boolean(resultsBody.verified);
+      const isOnboardingCompleted = Boolean(resultsBody.isOnboardingCompleted);
+
+      if (!isVerified) {
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
           account: { id: resultsBody.id, type: "artist" },
         });
-      } else if (
-        resultsBody.verified === true &&
-        resultsBody.isOnboardingCompleted === false
-      ) {
+        return;
+      }
+
+      if (isVerified && !isOnboardingCompleted) {
         setIsLoading(false);
-        navigation.replace("ArtistOnboarding");
+        navigation.replace("ArtistOnboarding", {
+          id: resultsBody.artist_id,
+        });
         return;
       }
 

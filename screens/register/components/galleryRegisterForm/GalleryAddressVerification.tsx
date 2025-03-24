@@ -14,12 +14,11 @@ import { debounce } from "lodash";
 import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
 import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
-import { artist_countries_codes_currency } from "data/artist_countries_codes_currency";
 import { State, City, IState, ICity } from "country-state-city";
 
-const transformedCountries = artist_countries_codes_currency.map((item) => ({
+const transformedCountries = country_codes.map((item) => ({
   label: item.name,
-  value: item.alpha2,
+  value: item.key,
 }));
 
 const GalleryAddressVerification = () => {
