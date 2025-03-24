@@ -1,10 +1,13 @@
-import { View, Text, Animated, Easing, Image, useWindowDimensions } from 'react-native';
+import { View, Text, Animated, useWindowDimensions, Easing } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import tw from 'twrnc';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { Image } from 'react-native';
 import omenaiLogo from '../../assets/omenai-logo.png';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { SvgXml } from 'react-native-svg';
+import { starEffect } from 'utils/SvgImages';
 
-const FirstScreen = ({ onPress }: { onPress: () => void }) => {
+const SuccessComp = ({ onPress }: { onPress: () => void }) => {
   const { height } = useWindowDimensions();
   const fadeAnim = useRef(new Animated.Value(0)).current; // Start opacity at 0
   const scaleAnim = useRef(new Animated.Value(0.5)).current; // Start scale at 0.5
@@ -44,20 +47,25 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
           style={[
             tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
             {
-              marginHorizontal: '10%',
+              marginHorizontal: '5%',
               opacity: fadeAnim, // Apply fade animation
               transform: [{ scale: scaleAnim }], // Apply scale animation
             },
           ]}
         >
-          <Text
-            style={tw`text-[16px] font-medium leading-[25px] text-[#000000] text-center mx-[40px]`}
-          >
-            To help us evaluate your skills and certification in art, please answer a few onboarding
-            questions. This will ensure we properly assess your experience and expertise.
+          <View style={tw`flex-row self-center gap-[20px]`}>
+            <SvgXml xml={starEffect} style={{ transform: [{ scaleX: -1 }] }} />
+            <Text style={tw`text-[18px] text-[#1A1A1A] font-bold`}>Congratulations</Text>
+            <SvgXml xml={starEffect} />
+          </View>
+
+          <Text style={tw`text-[16px] leading-[25px] text-[#00000099] text-center mx-[40px]`}>
+            please wait your details are currently being computed and this process might take up to
+            48 hours, in the main time, you will have partial acess to the dashboard for now, until
+            you are completely verified.
           </Text>
           <View style={tw`mt-[30px] mx-[30px]`}>
-            <FittedBlackButton onClick={onPress} value="Proceed" />
+            <FittedBlackButton onClick={onPress} value="Proceed to Home" />
           </View>
         </Animated.View>
       </View>
@@ -65,4 +73,4 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
   );
 };
 
-export default FirstScreen;
+export default SuccessComp;

@@ -265,14 +265,14 @@ type ArtistCategorizationUpdateDataTypes = {
 };
 
 type ArtistCategorizationAnswerTypes = {
-  graduate: "yes" | "no";
-  mfa: "yes" | "no";
+  graduate: "yes" | "no" | string;
+  mfa: "yes" | "no" | string;
   solo: number;
   group: number;
-  museum_collection: "yes" | "no";
-  biennale: "venice" | "other" | "none";
-  museum_exhibition: "yes" | "no";
-  art_fair: "yes" | "no";
+  museum_collection: "yes" | "no" | string;
+  biennale: "venice" | "other" | "none" | string;
+  museum_exhibition: "yes" | "no" | string;
+  art_fair: "yes" | "no" | string;
 };
 
 type artworkOrderDataTypes = {
