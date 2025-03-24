@@ -1,20 +1,20 @@
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { acceptTermsList } from "../../../../constants/accetTerms.constants";
-import TermsAndConditionItem from "../../../../components/general/TermsAndConditionItem";
-import FittedBlackButton from "../../../../components/buttons/FittedBlackButton";
-import BackFormButton from "../../../../components/buttons/BackFormButton";
-import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
-import { colors } from "../../../../config/colors.config";
-import { registerAccount } from "services/register/registerAccount";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { useModalStore } from "store/modal/modalStore";
-import uploadGalleryLogoContent from "./uploadGalleryLogo";
-import { gallery_logo_storage } from "appWrite";
-import tw from "twrnc";
-import Loader from "components/general/Loader";
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { acceptTermsList } from '../../../../constants/accetTerms.constants';
+import TermsAndConditionItem from '../../../../components/general/TermsAndConditionItem';
+import FittedBlackButton from '../../../../components/buttons/FittedBlackButton';
+import BackFormButton from '../../../../components/buttons/BackFormButton';
+import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/GalleryAuthRegisterStore';
+import { colors } from '../../../../config/colors.config';
+import { registerAccount } from 'services/register/registerAccount';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { useModalStore } from 'store/modal/modalStore';
+import uploadGalleryLogoContent from './uploadGalleryLogo';
+import { gallery_logo_storage } from 'appWrite';
+import tw from 'twrnc';
+import Loader from 'components/general/Loader';
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -34,8 +34,7 @@ export default function TermsAndConditions() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const { name, email, password, admin, address, description, logo } =
-      galleryRegisterData;
+    const { name, email, password, admin, address, description, logo } = galleryRegisterData;
 
     if (logo === null) return;
 
@@ -64,21 +63,21 @@ export default function TermsAndConditions() {
         address,
       };
 
-      const results = await registerAccount(payload, "gallery");
+      const results = await registerAccount(payload, 'gallery');
       if (results?.isOk) {
         const resultsBody = results?.body;
         clearState();
         navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.data, type: "gallery" },
+          account: { id: resultsBody.data, type: 'gallery' },
         });
       } else {
         await gallery_logo_storage.deleteFile(
           process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
-          file.fileId
+          file.fileId,
         );
         updateModal({
           message: results?.body.message,
-          modalType: "error",
+          modalType: 'error',
           showModal: true,
         });
       }
@@ -89,9 +88,7 @@ export default function TermsAndConditions() {
 
   const handleAcceptTerms = (index: number) => {
     if (selectedTerms.includes(index)) {
-      setSelectedTerms(
-        selectedTerms.filter((selectedTab) => selectedTab !== index)
-      );
+      setSelectedTerms(selectedTerms.filter((selectedTab) => selectedTab !== index));
     } else {
       setSelectedTerms([...selectedTerms, index]);
     }
@@ -127,18 +124,18 @@ export default function TermsAndConditions() {
 
 const styles = StyleSheet.create({
   title: {
-    fontWeight: "500",
+    fontWeight: '500',
     fontSize: 16,
   },
   buttonsContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 10,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 60,
   },
   termsContainer: {
     marginTop: 20,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.inputBorder,

@@ -5,13 +5,13 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
-} from "react-native";
-import React from "react";
-import InputForm from "./inputForm/InputForm";
-import Preferences from "./preferences/Preferences";
-import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
-import { useIndividualAuthRegisterStore } from "../../../store/auth/register/IndividualAuthRegisterStore";
-import IndividualAddressVerification from "./inputForm/individual/IndividualAddressVerification";
+} from 'react-native';
+import React from 'react';
+import InputForm from './inputForm/InputForm';
+import Preferences from './preferences/Preferences';
+import TermsAndConditions from './TermsAndConditions/TermsAndConditions';
+import { useIndividualAuthRegisterStore } from '../../../store/auth/register/IndividualAuthRegisterStore';
+import IndividualAddressVerification from './inputForm/individual/IndividualAddressVerification';
 // import ScrollWrapper from "components/general/ScrollWrapper";
 
 export default function FormController() {
@@ -19,7 +19,7 @@ export default function FormController() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
