@@ -17,34 +17,24 @@ import React, { useState, useRef } from "react";
 import tw from "twrnc";
 import omenaiLogo from "../../assets/omenai-logo.png";
 import { SvgXml } from "react-native-svg";
-import {
-  dropdownIcon,
-  dropUpIcon,
-  uploadIcon,
-  warningIconSm,
-} from "utils/SvgImages";
+import { uploadIcon } from "utils/SvgImages";
 import * as DocumentPicker from "expo-document-picker";
-import Input from "components/inputs/Input";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
 import QuestionContainer from "./QuestionContainer";
 import OverviewContainer from "./OverviewContainer";
 import CVUpload from "./CVUpload";
 import Socials from "./Socials";
 import ConfirmationModal from "./ConfirmationModal";
+import uploadArtistDoc from "screens/register/components/artistRegistrationForm/uploadArtistDoc";
+import { useRoute } from "@react-navigation/native";
+import { artistOnboarding } from "services/artistOnboarding/artistOnbaording";
+import { documentation_storage } from "appWrite";
+import { useModalStore } from "store/modal/modalStore";
+import LottieView from "lottie-react-native";
+import loaderAnimation from "../../assets/other/loader-animation.json";
+import LoadingContainer from "./LoadingContainer";
+import FirstScreen from "./FirstScreen";
 
 const { width, height } = Dimensions.get("window");
-
-type OnboardingQuestions = {
-  bio: string | "";
-  graduate: "yes" | "no" | "";
-  mfa: "yes" | "no" | "";
-  solo: number | "";
-  group: number | "";
-  museum_collection: "yes" | "no" | "";
-  biennale: "Venice Biennale" | "Others" | "None" | "";
-  museum_exhibition: "yes" | "no" | "";
-  art_fair: "yes" | "no" | "";
-};
 
 export type QuestionKey =
   | "bio"
@@ -57,47 +47,81 @@ export type QuestionKey =
   | "museum_exhibition"
   | "art_fair";
 
-const questions: { key: QuestionKey; text: string }[] = [
-  { key: "bio", text: "Tell us about yourself and your art style?" },
-  { key: "graduate", text: "Are you a Graduate?" },
-  { key: "mfa", text: "If yes, do you own an MFA (Masters in Fine Arts) ?" },
-  { key: "solo", text: "How many solo exhibitions have you done?" },
+const questions: {
+  key: QuestionKey;
+  text: string;
+  options?: string[];
+  isNumber?: boolean;
+}[] = [
+  { key: "bio", text: "Tell us about yourself and your art style?" }, // Open-ended string input
+  { key: "graduate", text: "Are you a Graduate?", options: ["Yes", "No"] }, // Yes/No buttons
+  {
+    key: "mfa",
+    text: "If yes, do you own an MFA (Masters in Fine Arts)?",
+    options: ["Yes", "No"],
+  },
+  {
+    key: "solo",
+    text: "How many solo exhibitions have you done?",
+    isNumber: true,
+  }, // Numeric input
   {
     key: "group",
     text: "How many group exhibitions have you participated in?",
-  },
+    isNumber: true,
+  }, // Numeric input
   {
     key: "museum_collection",
     text: "Is your artwork in any museum collection?",
+    options: ["Yes", "No"],
   },
-  { key: "biennale", text: "Which Biennale have you been a part of?" },
+  {
+    key: "biennale",
+    text: "Which Biennale have you been a part of?",
+    options: ["Venice Biennale", "Others", "None"],
+  },
   {
     key: "museum_exhibition",
     text: "Has your piece been featured in a museum exhibition?",
+    options: ["Yes", "No"],
   },
   {
     key: "art_fair",
     text: "Have you been featured in an art fair by a Gallery?",
+    options: ["Yes", "No"],
   },
 ];
 
 const ArtistOnboarding = () => {
+  const route = useRoute<{
+    key: string;
+    name: string;
+    params: { id: string };
+  }>();
+  const { id } = route.params;
+  const { updateModal } = useModalStore();
+  const animation = useRef(null);
   const [stage, setStage] = useState<
     "questions" | "cv_upload" | "socials" | "overview"
   >("questions");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [onboardingQuestions, setOnboardingQuestions] =
-    useState<OnboardingQuestions>({
-      bio: "",
-      graduate: "",
-      mfa: "",
-      solo: "",
-      group: "",
-      museum_collection: "",
-      biennale: "",
-      museum_exhibition: "",
-      art_fair: "",
-    });
+  const [onboardingQuestions, setOnboardingQuestions] = useState<
+    Omit<ArtistCategorizationAnswerTypes, "solo" | "group"> & {
+      bio: string;
+      solo: string;
+      group: string;
+    }
+  >({
+    bio: "",
+    graduate: "no",
+    mfa: "no",
+    solo: "",
+    group: "",
+    museum_collection: "no",
+    biennale: "none",
+    museum_exhibition: "no",
+    art_fair: "no",
+  });
   const [cv, setCv] = useState<DocumentPicker.DocumentPickerResult | null>(
     null
   );
@@ -125,6 +149,7 @@ const ArtistOnboarding = () => {
 
   const [editingSocialKey, setEditingSocialKey] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState(false);
+  const [screen, setScreen] = useState(1);
 
   const openEditModal = (
     key: QuestionKey | "cv" | "social",
@@ -275,324 +300,434 @@ const ArtistOnboarding = () => {
     }));
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    if (cv?.assets === null) return;
+
+    const files = {
+      uri: cv?.assets[0].uri,
+      name: cv?.assets[0].name,
+      type: cv?.assets[0].mimeType,
+      size: cv?.assets[0].size,
+    };
+
+    const fileUploaded = await uploadArtistDoc(files);
+
+    if (fileUploaded) {
+      let file: { bucketId: string; fileId: string } = {
+        bucketId: fileUploaded.bucketId,
+        fileId: fileUploaded.$id,
+      };
+
+      const payload: ArtistCategorizationUpdateDataTypes = {
+        answers: {
+          art_fair: onboardingQuestions.art_fair,
+          biennale: onboardingQuestions.biennale,
+          graduate: onboardingQuestions.graduate,
+          group: Number(onboardingQuestions.group),
+          mfa: onboardingQuestions.mfa,
+          museum_collection: onboardingQuestions.museum_collection,
+          museum_exhibition: onboardingQuestions.museum_exhibition,
+          solo: Number(onboardingQuestions.solo),
+        },
+        artist_id: id,
+        bio: onboardingQuestions.bio,
+        documentation: {
+          cv: file.fileId,
+          socials: documentation.socials,
+        },
+      };
+      console.log(payload);
+      // const results = await artistOnboarding(payload);
+      // console.log(results);
+      // if (results?.isOk) {
+      //   const resultsBody = results?.body;
+      //   setOnboardingQuestions({
+      //     bio: "",
+      //     graduate: "no",
+      //     mfa: "no",
+      //     solo: 0,
+      //     group: 0,
+      //     museum_collection: "no",
+      //     biennale: "none",
+      //     museum_exhibition: "no",
+      //     art_fair: "no",
+      //   });
+      //   setDocumentation({
+      //     cv: "",
+      //     socials: {
+      //       instagram: "",
+      //       twitter: "",
+      //       linkedin: "",
+      //       facebook: "",
+      //     },
+      //   });
+      //   // navigation.navigate(screenName.verifyEmail, {
+      //   //   account: { id: resultsBody.data, type: "artist" },
+      //   // });
+      // } else {
+      //   await documentation_storage.deleteFile(
+      //     process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID!,
+      //     file.fileId
+      //   );
+      //   updateModal({
+      //     message: results?.body.message,
+      //     modalType: "error",
+      //     showModal: true,
+      //   });
+      // }
+    }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+  };
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={tw`flex-1 bg-[#F7F7F7]`}
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={tw`mt-[80px] ml-[25px] mb-[60px]`}>
-          <Image
-            style={tw`w-[130px] h-[30px]`}
-            resizeMode="contain"
-            source={omenaiLogo}
-          />
-
-          <Text style={tw`text-[20px] font-medium text-[#000000] mt-[30px]`}>
-            {stage === "questions"
-              ? "Artist Onboarding"
-              : stage === "cv_upload"
-              ? "Upload your CV"
-              : stage === "socials"
-              ? "Upload your Social Handles"
-              : stage === "overview" && "An overview of your Information"}
-          </Text>
-          <Text
-            style={tw`text-[14px] text-[#00000099] mt-[10px] flex-wrap mr-[40px]`}
+    <>
+      {screen === 1 ? (
+        <FirstScreen onPress={() => setScreen(2)} />
+      ) : screen === 2 && !isLoading ? (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={tw`flex-1 bg-[#F7F7F7]`}
+        >
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            {stage === "overview"
-              ? "Please review your information to make sure your information is correct."
-              : "Fill in required details to verify your information & determine your skill level."}
-          </Text>
-        </View>
-        <View>
-          {stage === "questions" ? (
-            <QuestionContainer
-              value={String(
-                onboardingQuestions[currentQuestion.key as QuestionKey]
-              )}
-              question={currentQuestion.text}
-              onSelect={handleAnswer}
-              animatedStyle={{ transform: [{ translateX: animatedValue }] }}
-              questionKey={currentQuestion.key}
-            />
-          ) : stage === "cv_upload" ? (
-            <CVUpload cv={cv} pickDocument={pickDocument} />
-          ) : stage === "socials" ? (
-            <Socials
-              socials={{
-                instagram: documentation.socials.instagram,
-                twitter: documentation.socials.twitter,
-                linkedin: documentation.socials.linkedin,
-                facebook: documentation.socials.facebook,
-              }}
-              setSocials={(key, value) => {
-                setDocumentation((prev) => ({
-                  ...prev,
-                  socials: { ...prev.socials, [key]: value },
-                }));
-              }}
-            />
-          ) : (
-            stage === "overview" && (
-              <View
-                style={tw.style(
-                  `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
-                  {
-                    marginHorizontal: width / 18,
-                  }
-                )}
+            <View style={tw`mt-[80px] ml-[25px] mb-[60px]`}>
+              <Image
+                style={tw`w-[130px] h-[30px]`}
+                resizeMode="contain"
+                source={omenaiLogo}
+              />
+
+              <Text
+                style={tw`text-[20px] font-medium text-[#000000] mt-[30px]`}
               >
-                {/* Map through onboarding questions */}
-                {Object.entries(onboardingQuestions)
-                  .filter(
-                    ([_, value]) =>
-                      typeof value === "string" && value.trim() !== ""
-                  )
-                  .map(([key, value]) => {
-                    // Find the corresponding question text
-                    const questionText =
-                      questions.find((q) => q.key === key)?.text || key;
+                {stage === "questions"
+                  ? "Artist Onboarding"
+                  : stage === "cv_upload"
+                  ? "Upload your CV"
+                  : stage === "socials"
+                  ? "Upload your Social Handles"
+                  : stage === "overview" && "An overview of your Information"}
+              </Text>
+              <Text
+                style={tw`text-[14px] text-[#00000099] mt-[10px] flex-wrap mr-[40px]`}
+              >
+                {stage === "overview"
+                  ? "Please review your information to make sure your information is correct."
+                  : "Fill in required details to verify your information & determine your skill level."}
+              </Text>
+            </View>
+            <View>
+              {stage === "questions" ? (
+                <QuestionContainer
+                  value={String(
+                    onboardingQuestions[currentQuestion.key as QuestionKey]
+                  )}
+                  question={currentQuestion.text}
+                  onSelect={handleAnswer}
+                  animatedStyle={{ transform: [{ translateX: animatedValue }] }}
+                  options={currentQuestion.options}
+                  isNumber={currentQuestion.isNumber}
+                />
+              ) : stage === "cv_upload" ? (
+                <CVUpload cv={cv} pickDocument={pickDocument} />
+              ) : stage === "socials" ? (
+                <Socials
+                  socials={{
+                    instagram: documentation.socials.instagram,
+                    twitter: documentation.socials.twitter,
+                    linkedin: documentation.socials.linkedin,
+                    facebook: documentation.socials.facebook,
+                  }}
+                  setSocials={(key, value) => {
+                    setDocumentation((prev) => ({
+                      ...prev,
+                      socials: { ...prev.socials, [key]: value },
+                    }));
+                  }}
+                />
+              ) : (
+                stage === "overview" && (
+                  <View
+                    style={tw.style(
+                      `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
+                      {
+                        marginHorizontal: width / 18,
+                      }
+                    )}
+                  >
+                    {/* Map through onboarding questions */}
+                    {Object.entries(onboardingQuestions)
+                      .filter(
+                        ([_, value]) =>
+                          typeof value === "string" && value.trim() !== ""
+                      )
+                      .map(([key, value]) => {
+                        // Find the corresponding question text
+                        const questionText =
+                          questions.find((q) => q.key === key)?.text || key;
 
-                    return (
+                        return (
+                          <OverviewContainer
+                            key={key}
+                            index={key}
+                            title={questionText} // Use the actual question text
+                            data={String(value)}
+                            open={openSections[key]}
+                            setOpen={() => toggleSection(key)}
+                            openModal={() => openEditModal(key as QuestionKey)}
+                          />
+                        );
+                      })}
+
+                    {/* Map through documentation */}
+                    {Object.entries(documentation.socials)
+                      .filter(([_, value]) => value.trim() !== "")
+                      .map(([key, value]) => (
+                        <OverviewContainer
+                          key={key}
+                          index={key}
+                          title={key.toUpperCase()}
+                          data={value}
+                          open={openSections[key]}
+                          setOpen={() => toggleSection(key)}
+                          openModal={() => openEditModal("social", key)}
+                        />
+                      ))}
+
+                    {/* CV Section */}
+                    {documentation.cv && (
                       <OverviewContainer
-                        key={key}
-                        index={key}
-                        title={questionText} // Use the actual question text
-                        data={String(value)}
-                        open={openSections[key]}
-                        setOpen={() => toggleSection(key)}
-                        openModal={() => openEditModal(key as QuestionKey)}
+                        index={"CV Document"}
+                        title="CV Document"
+                        data={cv?.assets ? cv.assets[0].name : ""}
+                        open={openSections["cv"]}
+                        setOpen={() => toggleSection("cv")}
+                        openModal={() => openEditModal("cv")}
                       />
-                    );
-                  })}
+                    )}
+                  </View>
+                )
+              )}
 
-                {/* Map through documentation */}
-                {Object.entries(documentation.socials)
-                  .filter(([_, value]) => value.trim() !== "")
-                  .map(([key, value]) => (
-                    <OverviewContainer
-                      key={key}
-                      index={key}
-                      title={key.toUpperCase()}
-                      data={value}
-                      open={openSections[key]}
-                      setOpen={() => toggleSection(key)}
-                      openModal={() => openEditModal("social", key)}
+              {(stage === "questions" ||
+                stage === "cv_upload" ||
+                stage === "socials") && (
+                <View
+                  style={tw.style(
+                    `flex-row justify-center items-center self-center absolute`,
+                    {
+                      top: -30,
+                      width: width - 50, // Fill screen width with 20px margin on each side
+                      marginHorizontal: 20, // Add 20px margin on left and right
+                    }
+                  )}
+                >
+                  {/* Progress indicators for questions */}
+                  {questions.map((_, index) => (
+                    <View
+                      key={index}
+                      style={tw.style(
+                        `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
+                        index <= currentQuestionIndex
+                          ? "bg-[#000]"
+                          : "bg-[#E0E0E0]"
+                      )}
                     />
                   ))}
 
-                {/* CV Section */}
-                {documentation.cv && (
-                  <OverviewContainer
-                    index={"CV Document"}
-                    title="CV Document"
-                    data={cv?.assets ? cv.assets[0].name : ""}
-                    open={openSections["cv"]}
-                    setOpen={() => toggleSection("cv")}
-                    openModal={() => openEditModal("cv")}
-                  />
-                )}
-              </View>
-            )
-          )}
-
-          {(stage === "questions" ||
-            stage === "cv_upload" ||
-            stage === "socials") && (
-            <View
-              style={tw.style(
-                `flex-row justify-center items-center self-center absolute`,
-                {
-                  top: -30,
-                  width: width - 50, // Fill screen width with 20px margin on each side
-                  marginHorizontal: 20, // Add 20px margin on left and right
-                }
-              )}
-            >
-              {/* Progress indicators for questions */}
-              {questions.map((_, index) => (
-                <View
-                  key={index}
-                  style={tw.style(
-                    `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
-                    index <= currentQuestionIndex ? "bg-[#000]" : "bg-[#E0E0E0]"
-                  )}
-                />
-              ))}
-
-              {/* Progress indicator for CV step */}
-              <View
-                style={tw.style(
-                  `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
-                  stage === "cv_upload" || stage === "socials"
-                    ? "bg-[#000]"
-                    : "bg-[#E0E0E0]"
-                )}
-              />
-              {/* Progress indicator for Social step */}
-              <View
-                style={tw.style(
-                  `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
-                  stage === "socials" ? "bg-[#000]" : "bg-[#E0E0E0]"
-                )}
-              />
-            </View>
-          )}
-        </View>
-
-        <Modal
-          visible={isEditModalVisible}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setIsEditModalVisible(false)}
-        >
-          <Pressable
-            onPressOut={() => setIsEditModalVisible(false)}
-            style={tw`flex-1 bg-[#0003] justify-center items-center`}
-          >
-            <Pressable
-              onPress={(e) => e.stopPropagation()}
-              style={tw.style(
-                (editingQuestionKey === "social" ||
-                  editingQuestionKey === "cv") &&
-                  `bg-white p-5 rounded-lg w-[90%]`
-              )}
-            >
-              {editingQuestionKey === "cv" ? (
-                <>
-                  {/* CV Upload Section */}
-                  <TouchableOpacity
-                    onPress={pickDocument}
+                  {/* Progress indicator for CV step */}
+                  <View
                     style={tw.style(
-                      `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`
+                      `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
+                      stage === "cv_upload" || stage === "socials"
+                        ? "bg-[#000]"
+                        : "bg-[#E0E0E0]"
                     )}
-                  >
-                    {!cv?.assets && <SvgXml xml={uploadIcon} />}
-                    <Text
-                      style={tw`text-[12px] text-[#000000] font-medium mt-[15px] text-center mx-[30px]`}
-                    >
-                      {cv?.assets ? cv.assets[0].name : "Upload your CV here"}
-                    </Text>
-                  </TouchableOpacity>
-
-                  {/* <Pressable
-                    onPress={() => setIsEditModalVisible(false)}
-                    style={tw`mt-4 bg-[#1A1A1A] py-2 rounded-lg`}
-                  >
-                    <Text style={tw`text-white text-center`}>Close</Text>
-                  </Pressable> */}
-                </>
-              ) : editingQuestionKey === "social" && editingSocialKey ? (
-                <>
-                  {/* Edit Specific Social Media */}
-                  <Text
-                    style={tw`text-[16px] text-[#1A1A1A] font-medium text-center mb-4`}
-                  >
-                    Edit {editingSocialKey.toUpperCase()}
-                  </Text>
-                  <TextInput
-                    style={tw`bg-[#F7F7F7] rounded-[20px] h-[50px] p-4 mx-[10px]`}
-                    placeholder={`Enter your ${editingSocialKey} link`}
-                    value={documentation.socials[editingSocialKey]}
-                    onChangeText={(text) => {
-                      setDocumentation((prev) => ({
-                        ...prev,
-                        socials: { ...prev.socials, [editingSocialKey]: text },
-                      }));
-                    }}
                   />
-
-                  {/* <Pressable
-                    onPress={() => setIsEditModalVisible(false)}
-                    style={tw`mt-4 bg-[#1A1A1A] py-2 rounded-lg`}
-                  >
-                    <Text style={tw`text-white text-center`}>Close</Text>
-                  </Pressable> */}
-                </>
-              ) : (
-                /* Default Container for Questions */
-                editingQuestionKey && (
-                  <QuestionContainer
-                    question={
-                      questions.find((q) => q.key === editingQuestionKey)
-                        ?.text || ""
-                    }
-                    value={
-                      editingQuestionKey === "social"
-                        ? ""
-                        : String(
-                            onboardingQuestions[
-                              editingQuestionKey as QuestionKey
-                            ]
-                          )
-                    }
-                    onSelect={(answer) => {
-                      setOnboardingQuestions((prev) => ({
-                        ...prev,
-                        [editingQuestionKey]: answer,
-                      }));
-                    }}
-                    animatedStyle={{}} // No need for animation inside the modal
-                    questionKey={editingQuestionKey as QuestionKey}
-                    isModalVisible={isEditModalVisible}
+                  {/* Progress indicator for Social step */}
+                  <View
+                    style={tw.style(
+                      `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
+                      stage === "socials" ? "bg-[#000]" : "bg-[#E0E0E0]"
+                    )}
                   />
-                )
+                </View>
               )}
-            </Pressable>
-          </Pressable>
-        </Modal>
-        <ConfirmationModal
-          isModalVisible={confirmModal}
-          setIsModalVisible={setConfirmModal}
-          confirmBtn={() => {}}
-        />
-        {/* Navigation Buttons */}
+            </View>
 
-        <View
-          style={tw.style(`flex-row gap-[30px] mb-[100px]`, {
-            marginHorizontal: width / 10,
-            top: height / 25,
-          })}
-        >
-          {currentQuestionIndex !== 0 && (
-            <Pressable
-              onPress={handleBack}
-              style={tw.style(
-                `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`
-              )}
+            <Modal
+              visible={isEditModalVisible}
+              transparent={true}
+              animationType="fade"
+              onRequestClose={() => setIsEditModalVisible(false)}
             >
-              <Text style={tw`text-[#000] font-bold text-[14px]`}>Back</Text>
-            </Pressable>
-          )}
+              <Pressable
+                onPressOut={() => setIsEditModalVisible(false)}
+                style={tw`flex-1 bg-[#0003] justify-center items-center`}
+              >
+                <Pressable
+                  onPress={(e) => e.stopPropagation()}
+                  style={tw.style(
+                    (editingQuestionKey === "social" ||
+                      editingQuestionKey === "cv") &&
+                      `bg-white p-5 rounded-lg w-[90%]`
+                  )}
+                >
+                  {editingQuestionKey === "cv" ? (
+                    <>
+                      {/* CV Upload Section */}
+                      <TouchableOpacity
+                        onPress={pickDocument}
+                        style={tw.style(
+                          `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`
+                        )}
+                      >
+                        {!cv?.assets && <SvgXml xml={uploadIcon} />}
+                        <Text
+                          style={tw`text-[12px] text-[#000000] font-medium mt-[15px] text-center mx-[30px]`}
+                        >
+                          {cv?.assets
+                            ? cv.assets[0].name
+                            : "Upload your CV here"}
+                        </Text>
+                      </TouchableOpacity>
 
-          <Pressable
-            onPress={() => {
-              if (stage === "questions") {
-                handleNext();
-              } else if (stage === "cv_upload") {
-                handleCVUpload();
-              } else if (stage === "socials") {
-                handleSocials();
-              } else if (stage === "overview") {
-                setConfirmModal(true);
-              }
-            }}
-            disabled={isNextDisabled()}
-            style={tw.style(
-              `h-[51px] rounded-full justify-center items-center flex-1`,
-              isNextDisabled() ? "bg-[#B5B5B5]" : "bg-[#1A1A1A]"
-            )}
-          >
-            <Text style={tw`text-white font-bold text-[14px]`}>Next</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+                      {/* <Pressable
+                    onPress={() => setIsEditModalVisible(false)}
+                    style={tw`mt-4 bg-[#1A1A1A] py-2 rounded-lg`}
+                  >
+                    <Text style={tw`text-white text-center`}>Close</Text>
+                  </Pressable> */}
+                    </>
+                  ) : editingQuestionKey === "social" && editingSocialKey ? (
+                    <>
+                      {/* Edit Specific Social Media */}
+                      <Text
+                        style={tw`text-[16px] text-[#1A1A1A] font-medium text-center mb-4`}
+                      >
+                        Edit {editingSocialKey.toUpperCase()}
+                      </Text>
+                      <TextInput
+                        style={tw`bg-[#F7F7F7] rounded-[20px] h-[50px] p-4 mx-[10px]`}
+                        placeholder={`Enter your ${editingSocialKey} link`}
+                        value={documentation.socials[editingSocialKey]}
+                        onChangeText={(text) => {
+                          setDocumentation((prev) => ({
+                            ...prev,
+                            socials: {
+                              ...prev.socials,
+                              [editingSocialKey]: text,
+                            },
+                          }));
+                        }}
+                      />
+
+                      {/* <Pressable
+                    onPress={() => setIsEditModalVisible(false)}
+                    style={tw`mt-4 bg-[#1A1A1A] py-2 rounded-lg`}
+                  >
+                    <Text style={tw`text-white text-center`}>Close</Text>
+                  </Pressable> */}
+                    </>
+                  ) : (
+                    /* Default Container for Questions */
+                    editingQuestionKey &&
+                    (() => {
+                      const questionDetails = questions.find(
+                        (q) => q.key === editingQuestionKey
+                      );
+
+                      return (
+                        <QuestionContainer
+                          question={questionDetails?.text || ""}
+                          value={
+                            editingQuestionKey === "social"
+                              ? ""
+                              : String(
+                                  onboardingQuestions[
+                                    editingQuestionKey as QuestionKey
+                                  ]
+                                )
+                          }
+                          onSelect={(answer) => {
+                            setOnboardingQuestions((prev) => ({
+                              ...prev,
+                              [editingQuestionKey]: answer,
+                            }));
+                          }}
+                          animatedStyle={{}} // No need for animation inside the modal
+                          isModalVisible={isEditModalVisible}
+                          options={questionDetails?.options} // ✅ Pass options dynamically
+                          isNumber={questionDetails?.isNumber} // ✅ Pass isNumber dynamically
+                        />
+                      );
+                    })()
+                  )}
+                </Pressable>
+              </Pressable>
+            </Modal>
+            <ConfirmationModal
+              isModalVisible={confirmModal}
+              setIsModalVisible={setConfirmModal}
+              confirmBtn={handleSubmit}
+            />
+            {/* Navigation Buttons */}
+
+            <View
+              style={tw.style(`flex-row gap-[30px] mb-[100px]`, {
+                marginHorizontal: width / 10,
+                top: height / 25,
+              })}
+            >
+              {currentQuestionIndex !== 0 && (
+                <Pressable
+                  onPress={handleBack}
+                  style={tw.style(
+                    `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`
+                  )}
+                >
+                  <Text style={tw`text-[#000] font-bold text-[14px]`}>
+                    Back
+                  </Text>
+                </Pressable>
+              )}
+
+              <Pressable
+                onPress={() => {
+                  if (stage === "questions") {
+                    handleNext();
+                  } else if (stage === "cv_upload") {
+                    handleCVUpload();
+                  } else if (stage === "socials") {
+                    handleSocials();
+                  } else if (stage === "overview") {
+                    setConfirmModal(true);
+                  }
+                }}
+                disabled={isNextDisabled()}
+                style={tw.style(
+                  `h-[51px] rounded-full justify-center items-center flex-1`,
+                  isNextDisabled() ? "bg-[#B5B5B5]" : "bg-[#1A1A1A]"
+                )}
+              >
+                <Text style={tw`text-white font-bold text-[14px]`}>Next</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      ) : (
+        <LoadingContainer />
+      )}
+    </>
   );
 };
 
