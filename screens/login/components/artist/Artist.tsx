@@ -42,7 +42,7 @@ export default function Artist() {
       if (!isVerified) {
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.id, type: 'artist' },
+          account: { id: resultsBody.artist_id, type: 'artist' },
         });
         return;
       }
