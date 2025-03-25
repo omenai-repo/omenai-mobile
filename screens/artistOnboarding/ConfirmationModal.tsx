@@ -1,8 +1,8 @@
-import { View, Text, Pressable, Modal } from "react-native";
-import React from "react";
-import tw from "twrnc";
-import { SvgXml } from "react-native-svg";
-import { warningIconSm } from "utils/SvgImages";
+import { View, Text, Pressable, Modal } from 'react-native';
+import React from 'react';
+import tw from 'twrnc';
+import { SvgXml } from 'react-native-svg';
+import { warningIconSm } from 'utils/SvgImages';
 
 const ConfirmationModal = ({
   isModalVisible,
@@ -26,21 +26,17 @@ const ConfirmationModal = ({
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
-          style={tw.style(
-            `bg-white p-5 border border-[#0000001A] rounded-[14px] w-[80%]`
-          )}
+          style={tw.style(`bg-white p-5 border border-[#0000001A] rounded-[14px] w-[80%]`)}
         >
           <View style={tw`flex-row self-center items-center gap-[20px]`}>
             <SvgXml xml={warningIconSm} />
-            <Text style={tw`text-[16px] text-[#1A1A1A] font-medium`}>
-              Verify your Information
-            </Text>
+            <Text style={tw`text-[16px] text-[#1A1A1A] font-medium`}>Verify your Information</Text>
           </View>
           <View style={tw`bg-[#00000033] h-[1px] my-[25px]`} />
 
           <Text style={tw`text-[14px] text-[#1A1A1A] text-center mx-[30px]`}>
-            Please verify that the information you have entered is accurate, as
-            your outcome relies on the details provided.
+            Please ensure that all the information provided is accurate and correctly reflected in
+            your CV/Resume, as it will directly impact the outcome of your account verification.
           </Text>
 
           <Pressable
