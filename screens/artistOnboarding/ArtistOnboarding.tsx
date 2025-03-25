@@ -186,8 +186,8 @@ const ArtistOnboarding = () => {
     let newIndex = nextIndex;
 
     // If the current question is "graduate" and the answer is "no", skip "mfa" question
-    if (currentKey === 'graduate' && onboardingQuestions.graduate === 'no') {
-      onboardingQuestions.mfa = 'no'; // Automatically set MFA to "No"
+    if (currentKey === 'graduate' && onboardingQuestions.graduate === 'No') {
+      onboardingQuestions.mfa = 'No'; // Automatically set MFA to "No"
       newIndex = nextIndex + 1; // Skip to the next question after MFA
     }
 
@@ -224,7 +224,7 @@ const ArtistOnboarding = () => {
     const previousKey = questions[newIndex]?.key;
 
     // If the previous question was "mfa" and it was skipped, move back again
-    if (previousKey === 'mfa' && onboardingQuestions.graduate === 'no') {
+    if (previousKey === 'mfa' && onboardingQuestions.graduate === 'No') {
       newIndex -= 1; // Skip MFA going back
     }
 
@@ -403,7 +403,7 @@ const ArtistOnboarding = () => {
                 <Text style={tw`text-[14px] text-[#00000099] mt-[10px] flex-wrap mr-[40px]`}>
                   {stage === 'overview'
                     ? 'Please review your information to make sure your information is correct.'
-                    : 'Fill in required details to verify your information & determine your skill level.'}
+                    : 'Fill in the required information to complete your onboarding.'}
                 </Text>
               </View>
               <View>

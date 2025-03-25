@@ -1,29 +1,23 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import LongBlackButton from "../../../../components/buttons/LongBlackButton";
-import Input from "../../../../components/inputs/Input";
-import { useGalleryAuthLoginStore } from "store/auth/login/GalleryAuthLoginStore";
-import PasswordInput from "components/inputs/PasswordInput";
-import WithModal from "components/modal/WithModal";
-import { useAppStore } from "store/app/appStore";
-import { useModalStore } from "store/modal/modalStore";
-import { loginAccount } from "services/login/loginAccount";
-import { utils_storeAsyncData } from "utils/utils_asyncStorage";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { screenName } from "constants/screenNames.constants";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { useArtistAuthLoginStore } from "store/auth/login/ArtistAuthLoginStore";
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import LongBlackButton from '../../../../components/buttons/LongBlackButton';
+import Input from '../../../../components/inputs/Input';
+import { useGalleryAuthLoginStore } from 'store/auth/login/GalleryAuthLoginStore';
+import PasswordInput from 'components/inputs/PasswordInput';
+import WithModal from 'components/modal/WithModal';
+import { useAppStore } from 'store/app/appStore';
+import { useModalStore } from 'store/modal/modalStore';
+import { loginAccount } from 'services/login/loginAccount';
+import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { screenName } from 'constants/screenNames.constants';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { useArtistAuthLoginStore } from 'store/auth/login/ArtistAuthLoginStore';
 
 export default function Artist() {
-  const {
-    artistLoginData,
-    setEmail,
-    setPassword,
-    clearInputs,
-    isLoading,
-    setIsLoading,
-  } = useArtistAuthLoginStore();
+  const { artistLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
+    useArtistAuthLoginStore();
   const { setUserSession, setIsLoggedIn } = useAppStore();
   const { updateModal } = useModalStore();
 
@@ -32,7 +26,7 @@ export default function Artist() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(artistLoginData, "artist");
+    const results = await loginAccount(artistLoginData, 'artist');
     console.log(results);
     if (results?.isOk) {
       const resultsBody = results?.body?.data;
@@ -48,14 +42,14 @@ export default function Artist() {
       if (!isVerified) {
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.id, type: "artist" },
+          account: { id: resultsBody.id, type: 'artist' },
         });
         return;
       }
 
       if (isVerified && !isOnboardingCompleted) {
         setIsLoading(false);
-        navigation.replace("ArtistOnboarding", {
+        navigation.replace('ArtistOnboarding', {
           id: resultsBody.artist_id,
         });
         return;
@@ -75,15 +69,12 @@ export default function Artist() {
         subscription_active: resultsBody.subscription_active,
       };
 
-      const isStored = await utils_storeAsyncData(
-        "userSession",
-        JSON.stringify(data)
-      );
+      const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));
 
       const loginTimeStamp = new Date();
       const isLoginTimeStampStored = await utils_storeAsyncData(
-        "loginTimeStamp",
-        JSON.stringify(loginTimeStamp)
+        'loginTimeStamp',
+        JSON.stringify(loginTimeStamp),
       );
 
       if (isStored && isLoginTimeStampStored) {
@@ -96,7 +87,7 @@ export default function Artist() {
       updateModal({
         message: results?.body.message,
         showModal: true,
-        modalType: "error",
+        modalType: 'error',
       });
     }
 
@@ -123,18 +114,14 @@ export default function Artist() {
         </View>
         <View>
           <LongBlackButton
-            value={isLoading ? "Loading ..." : "Sign In Artist"}
-            isDisabled={
-              artistLoginData.email && artistLoginData.password ? false : true
-            }
+            value={isLoading ? 'Loading ...' : 'Sign In Artist'}
+            isDisabled={artistLoginData.email && artistLoginData.password ? false : true}
             isLoading={isLoading}
             onClick={handleSubmit}
           />
         </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(screenName.forgotPassword, { type: "artist" })
-          }
+          onPress={() => navigation.navigate(screenName.forgotPassword, { type: 'artist' })}
         >
           <Text style={styles.resetText}>Forgot password? Click here</Text>
         </TouchableOpacity>
@@ -150,6 +137,6 @@ const styles = StyleSheet.create({
   },
   resetText: {
     fontSize: 16,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });

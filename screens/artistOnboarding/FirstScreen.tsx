@@ -53,8 +53,9 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
           <Text
             style={tw`text-[16px] font-medium leading-[25px] text-[#000000] text-center mx-[40px]`}
           >
-            To help us evaluate your skills and certification in art, please answer a few onboarding
-            questions. This will ensure we properly assess your experience and expertise.
+            To assist us in evaluating your skills and certifications, please complete a few
+            onboarding questions. This will enable us to accurately assess your experience and
+            expertise.
           </Text>
           <View style={tw`mt-[30px] mx-[30px]`}>
             <FittedBlackButton onClick={onPress} value="Proceed" />
