@@ -6,9 +6,12 @@ import omenaiLogo from '../../assets/omenai-logo.png';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { SvgXml } from 'react-native-svg';
 import { starEffect } from 'utils/SvgImages';
+import { useAppStore } from 'store/app/appStore';
 
-const SuccessComp = ({ onPress }: { onPress: () => void }) => {
+const SuccessComp = () => {
   const { height } = useWindowDimensions();
+  const { setUserSession } = useAppStore();
+
   const fadeAnim = useRef(new Animated.Value(0)).current; // Start opacity at 0
   const scaleAnim = useRef(new Animated.Value(0.5)).current; // Start scale at 0.5
 
@@ -28,6 +31,10 @@ const SuccessComp = ({ onPress }: { onPress: () => void }) => {
       }),
     ]).start();
   }, []);
+
+  const completeOnboarding = () => {
+    setUserSession((prev: any) => ({ ...prev, isOnboardingCompleted: true }));
+  };
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
@@ -60,12 +67,11 @@ const SuccessComp = ({ onPress }: { onPress: () => void }) => {
           </View>
 
           <Text style={tw`text-[16px] leading-[25px] text-[#00000099] text-center mx-[40px]`}>
-            please wait your details are currently being computed and this process might take up to
-            48 hours, in the main time, you will have partial acess to the dashboard for now, until
-            you are completely verified.
+            We have received your information and are currently verifying your details. This process
+            typically takes 24 to 48 hours. We appreciate your patience.
           </Text>
           <View style={tw`mt-[30px] mx-[30px]`}>
-            <FittedBlackButton onClick={onPress} value="Proceed to Home" />
+            <FittedBlackButton onClick={completeOnboarding} value="Proceed to Home" />
           </View>
         </Animated.View>
       </View>

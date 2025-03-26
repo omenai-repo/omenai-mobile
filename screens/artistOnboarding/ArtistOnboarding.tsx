@@ -29,11 +29,10 @@ import { NavigationProp, useNavigation, useRoute } from '@react-navigation/nativ
 import { artistOnboarding } from 'services/artistOnboarding/artistOnbaording';
 import { documentation_storage } from 'appWrite';
 import { useModalStore } from 'store/modal/modalStore';
-import LottieView from 'lottie-react-native';
-import loaderAnimation from '../../assets/other/loader-animation.json';
 import LoadingContainer from './LoadingContainer';
 import FirstScreen from './FirstScreen';
 import SuccessComp from './SuccessComp';
+import { useAppStore } from 'store/app/appStore';
 
 const { width, height } = Dimensions.get('window');
 
@@ -94,13 +93,9 @@ const questions: {
 ];
 
 const ArtistOnboarding = () => {
-  const route = useRoute<{
-    key: string;
-    name: string;
-    params: { id: string };
-  }>();
-  const { id } = route.params;
-  const navigation = useNavigation<NavigationProp<any>>();
+  const { userSession } = useAppStore();
+  const id = userSession.id;
+  const navigation = useNavigation<any>();
   const { updateModal } = useModalStore();
   const [stage, setStage] = useState<'questions' | 'cv_upload' | 'socials' | 'overview'>(
     'questions',
@@ -678,7 +673,7 @@ const ArtistOnboarding = () => {
           <LoadingContainer />
         )
       ) : (
-        screen === 3 && <SuccessComp onPress={() => navigation.navigate('ArtistNavigation')} />
+        screen === 3 && <SuccessComp />
       )}
     </>
   );
