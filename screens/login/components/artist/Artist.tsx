@@ -18,7 +18,7 @@ import { useArtistAuthLoginStore } from 'store/auth/login/ArtistAuthLoginStore';
 export default function Artist() {
   const { artistLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
     useArtistAuthLoginStore();
-  const { setUserSession, setIsLoggedIn } = useAppStore();
+  const { setUserSession, setIsLoggedIn, userSession } = useAppStore();
   const { updateModal } = useModalStore();
 
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -37,20 +37,11 @@ export default function Artist() {
       }
 
       const isVerified = Boolean(resultsBody.verified);
-      const isOnboardingCompleted = Boolean(resultsBody.isOnboardingCompleted);
 
       if (!isVerified) {
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
           account: { id: resultsBody.artist_id, type: 'artist' },
-        });
-        return;
-      }
-
-      if (isVerified && !isOnboardingCompleted) {
-        setIsLoading(false);
-        navigation.replace('ArtistOnboarding', {
-          id: resultsBody.artist_id,
         });
         return;
       }
@@ -61,12 +52,8 @@ export default function Artist() {
         name: resultsBody.name,
         role: resultsBody.role,
         artist_verified: resultsBody.artist_verified,
-        description: resultsBody.description,
-        location: resultsBody.location,
         verified: resultsBody.verified,
-        admin: resultsBody.admin,
-        logo: resultsBody.logo,
-        subscription_active: resultsBody.subscription_active,
+        isOnboardingCompleted: resultsBody.isOnboardingCompleted,
       };
 
       const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));
