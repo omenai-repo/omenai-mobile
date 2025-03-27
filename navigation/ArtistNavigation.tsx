@@ -5,8 +5,11 @@ import {
   Platform,
   GestureResponderEvent,
   Dimensions,
+  Modal,
+  Animated,
+  Easing,
 } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppStore } from 'store/app/appStore';
 import ArtistOnboarding from 'screens/artistOnboarding/ArtistOnboarding';
 import tw from 'twrnc';
@@ -21,6 +24,7 @@ import {
   profileInActive,
   shippingActive,
   shippingInActive,
+  starEffect,
   walletActive,
   walletInActive,
 } from 'utils/SvgImages';
@@ -28,6 +32,8 @@ import ArtistOverview from 'screens/artist/ArtistOverview';
 import { colors } from 'config/colors.config';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { logout } from 'utils/logout.utils';
 
 const { width, height } = Dimensions.get('window');
 
@@ -73,6 +79,35 @@ const BottomTabData = [
 ];
 
 const BottomTabNav = () => {
+  const { userSession } = useAppStore();
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (!userSession.artist_verified) {
+      setModalVisible(true);
+    }
+  }, [userSession.artist_verified]);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Start opacity at 0
+  const scaleAnim = useRef(new Animated.Value(0.5)).current; // Start scale at 0.5
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1, // Fade in
+        duration: 1000,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1, // Scale up to normal
+        duration: 1000,
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   const TabButton = ({
     name,
     activeIcon,
@@ -107,41 +142,73 @@ const BottomTabNav = () => {
   };
 
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarShowLabel: false,
-        headerShown: false,
-        tabBarInactiveTintColor: 'gray',
-        tabBarStyle: {
-          height: 85,
-          backgroundColor: colors.black,
-          bottom: 30,
-          borderRadius: 18,
-          marginHorizontal: width / 20,
-          position: 'absolute',
-          paddingTop: Platform.OS === 'ios' ? 25 : 0,
-        },
-      }}
-    >
-      {BottomTabData.map(({ name, activeIcon, inActiveIcon, component, id }) => (
-        <Tab.Screen
-          key={id}
-          name={name}
-          component={component}
-          options={{
-            tabBarShowLabel: false,
-            tabBarButton: (props) => (
-              <TabButton
-                {...props}
-                activeIcon={activeIcon}
-                inActiveIcon={inActiveIcon}
-                name={name}
-              />
-            ),
-          }}
-        />
-      ))}
-    </Tab.Navigator>
+    <>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarShowLabel: false,
+          headerShown: false,
+          tabBarInactiveTintColor: 'gray',
+          tabBarStyle: {
+            height: 85,
+            backgroundColor: colors.black,
+            bottom: 30,
+            borderRadius: 18,
+            marginHorizontal: width / 20,
+            position: 'absolute',
+            paddingTop: Platform.OS === 'ios' ? 25 : 0,
+          },
+        }}
+      >
+        {BottomTabData.map(({ name, activeIcon, inActiveIcon, component, id }) => (
+          <Tab.Screen
+            key={id}
+            name={name}
+            component={component}
+            options={{
+              tabBarShowLabel: false,
+              tabBarButton: (props) => (
+                <TabButton
+                  {...props}
+                  activeIcon={activeIcon}
+                  inActiveIcon={inActiveIcon}
+                  name={name}
+                />
+              ),
+            }}
+          />
+        ))}
+      </Tab.Navigator>
+
+      <Modal visible={isModalVisible} transparent={true} animationType="fade">
+        <View style={tw`flex-1 bg-[#0003] justify-center items-center`}>
+          <Animated.View
+            style={[
+              tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
+              {
+                marginHorizontal: '5%',
+                opacity: fadeAnim, // Apply fade animation
+                transform: [{ scale: scaleAnim }], // Apply scale animation
+              },
+            ]}
+          >
+            <View style={tw`flex-row self-center gap-[20px]`}>
+              <SvgXml xml={starEffect} style={{ transform: [{ scaleX: -1 }] }} />
+              <Text style={tw`text-[18px] text-[#1A1A1A] font-bold`}>Please wait</Text>
+              <SvgXml xml={starEffect} />
+            </View>
+
+            <Text style={tw`text-[16px] leading-[25px] text-[#00000099] text-center mx-[40px]`}>
+              please wait your details are currently being computed and this process might take up
+              to 48 hours, in the main time, you will have partial acess to the dashboard for now,
+              until you are completely verified.
+            </Text>
+            <View style={tw`mt-[30px] mx-[30px]`}>
+              <FittedBlackButton onClick={logout} value="logout" />
+            </View>
+          </Animated.View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
