@@ -148,7 +148,7 @@ const BottomTabNav = () => {
 const ArtistNavigation = () => {
   const { userSession } = useAppStore();
 
-  if (userSession.isOnboardingCompleted === false) {
+  if (!userSession.isOnboardingCompleted === false) {
     return <ArtistOnboarding />;
   }
 

@@ -263,7 +263,7 @@ const IndividualAddressVerification = () => {
         <Pressable
           onPress={() => setShowToolTip(!showToolTip)}
           style={tw.style(`rounded-full h-[45px] w-[45px] justify-center items-center bg-[#000]`, {
-            marginTop: height / 10,
+            marginTop: height / 15,
             alignSelf: 'flex-end',
           })}
         >
@@ -272,7 +272,7 @@ const IndividualAddressVerification = () => {
         {showToolTip && (
           <View
             style={tw.style(`absolute`, {
-              top: height / 10,
+              top: height / 15,
               width: width / 2,
               alignSelf: 'flex-end',
               right: 80,

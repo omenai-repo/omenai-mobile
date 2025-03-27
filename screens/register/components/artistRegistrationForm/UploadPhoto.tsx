@@ -1,32 +1,40 @@
-import {
-  View,
-  Text,
-  useWindowDimensions,
-  TouchableOpacity,
-} from "react-native";
-import React from "react";
-import tw from "twrnc";
-import { SvgXml } from "react-native-svg";
-import { plusIcon, userProfileIcon } from "utils/SvgImages";
-import NextButton from "components/buttons/NextButton";
-import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
-import BackFormButton from "components/buttons/BackFormButton";
-import * as ImagePicker from "expo-image-picker";
-import { Image } from "react-native";
+import { View, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
+import React from 'react';
+import tw from 'twrnc';
+import { SvgXml } from 'react-native-svg';
+import { plusIcon, userProfileIcon } from 'utils/SvgImages';
+import NextButton from 'components/buttons/NextButton';
+import { useArtistAuthRegisterStore } from 'store/auth/register/ArtistAuthRegisterStore';
+import BackFormButton from 'components/buttons/BackFormButton';
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from 'react-native';
+import { useModalStore } from 'store/modal/modalStore';
 
 const UploadPhoto = () => {
   const { width, height } = useWindowDimensions();
   const { pageIndex, setPageIndex, setArtistPhoto, artistRegisterData } =
     useArtistAuthRegisterStore();
+  const { updateModal } = useModalStore();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+      mediaTypes: ['images'], // Updated syntax, no deprecation
       quality: 1,
     });
 
     if (!result.canceled) {
-      setArtistPhoto(result);
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+
+      // Check if the selected image type is allowed
+      if (result.assets[0].mimeType && allowedTypes.includes(result.assets[0].mimeType)) {
+        setArtistPhoto(result);
+      } else {
+        updateModal({
+          message: 'Please select a PNG, JPEG, or JPG image.',
+          modalType: 'error',
+          showModal: true,
+        });
+      }
     }
   };
 
@@ -43,32 +51,26 @@ const UploadPhoto = () => {
           <>
             <View style={tw`self-center mt-[20px]`}>
               <View
-                style={tw.style(
-                  `rounded-full bg-[#D9D9D9] justify-center items-center`,
-                  {
-                    width: width / 2,
-                    height: height / 4.5,
-                  }
-                )}
+                style={tw.style(`rounded-full bg-[#D9D9D9] justify-center items-center`, {
+                  width: width / 2,
+                  height: height / 4.5,
+                })}
               >
                 <SvgXml xml={userProfileIcon} />
               </View>
               <View
                 style={tw.style(
-                  `h-[45px] bg-[#000000] w-[45px] bottom-[10px] right-[5px] absolute rounded-full justify-center items-center`
+                  `h-[45px] bg-[#000000] w-[45px] bottom-[10px] right-[5px] absolute rounded-full justify-center items-center`,
                 )}
               >
                 <SvgXml xml={plusIcon} />
               </View>
             </View>
             <Text
-              style={tw.style(
-                `text-[18px] text-[#00000099] self-center text-center`,
-                {
-                  width: width / 1.5,
-                  marginTop: height / 20,
-                }
-              )}
+              style={tw.style(`text-[18px] text-[#00000099] self-center text-center`, {
+                width: width / 1.5,
+                marginTop: height / 20,
+              })}
             >
               Photo must be 1040 x 1040 Pixel, proffesionaly looking & clear.
             </Text>
