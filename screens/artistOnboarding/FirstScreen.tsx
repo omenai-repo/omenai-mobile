@@ -1,8 +1,9 @@
-import { View, Text, Animated, Easing, Image, useWindowDimensions } from 'react-native';
+import { View, Text, Animated, Easing, Image, useWindowDimensions, Pressable } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import tw from 'twrnc';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import omenaiLogo from '../../assets/omenai-logo.png';
+import { logout } from 'utils/logout.utils';
 
 const FirstScreen = ({ onPress }: { onPress: () => void }) => {
   const { height } = useWindowDimensions();
@@ -28,13 +29,16 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
-      <Image
-        style={tw.style(`w-[130px] h-[30px] ml-[20px]`, {
+      <View
+        style={tw.style(`flex-row items-center justify-between mx-[25px]`, {
           marginTop: height / 12,
         })}
-        resizeMode="contain"
-        source={omenaiLogo}
-      />
+      >
+        <Image style={tw.style(`w-[130px] h-[30px]`)} resizeMode="contain" source={omenaiLogo} />
+        <Pressable onPress={logout}>
+          <Text style={tw`text-[18px] font-semibold`}>Logout</Text>
+        </Pressable>
+      </View>
       <View
         style={tw.style({
           marginTop: height / 5,
