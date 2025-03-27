@@ -1,30 +1,31 @@
-import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import Input from "components/inputs/Input";
-import LargeInput from "components/inputs/LargeInput";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { galleryProfileUpdate } from "store/gallery/galleryProfileUpdateStore";
-import { updateProfile } from "services/update/updateProfile";
-import WithModal from "components/modal/WithModal";
-import { useModalStore } from "store/modal/modalStore";
-import { logout } from "utils/logout.utils";
-import UploadNewLogo from "./components/GalleryLogo";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { Platform, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { colors } from 'config/colors.config';
+import BackHeaderTitle from 'components/header/BackHeaderTitle';
+import Input from 'components/inputs/Input';
+import LargeInput from 'components/inputs/LargeInput';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { galleryProfileUpdate } from 'store/gallery/galleryProfileUpdateStore';
+import { updateProfile } from 'services/update/updateProfile';
+import WithModal from 'components/modal/WithModal';
+import { useModalStore } from 'store/modal/modalStore';
+import { logout } from 'utils/logout.utils';
+import UploadNewLogo from './components/GalleryLogo';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import { KeyboardAvoidingView } from 'react-native';
+import tw from 'twrnc';
 
 export default function EditGalleryProfile() {
   const [user, setUser] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   const { updateModal } = useModalStore();
 
-  const { updateData, setProfileUpdateData, clearData } =
-    galleryProfileUpdate();
+  const { updateData, setProfileUpdateData, clearData } = galleryProfileUpdate();
 
   useEffect(() => {
     async function handleFetchUserSession() {
-      const user = await utils_getAsyncData("userSession");
+      const user = await utils_getAsyncData('userSession');
       if (user.value) {
         setUser(JSON.parse(user.value));
       }
@@ -36,19 +37,19 @@ export default function EditGalleryProfile() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const { isOk, body } = await updateProfile("gallery", updateData, user.id);
+    const { isOk, body } = await updateProfile('gallery', updateData, user.id);
 
     if (!isOk) {
       //throw error modal
       updateModal({
-        modalType: "error",
+        modalType: 'error',
         message: body.message,
         showModal: true,
       });
     } else {
       //throw succcess modal prompting galleries to re-login
       updateModal({
-        modalType: "success",
+        modalType: 'success',
         message: `${body.message}, please log back in`,
         showModal: true,
       });
@@ -63,67 +64,67 @@ export default function EditGalleryProfile() {
   return (
     <WithModal>
       <BackHeaderTitle title="Gallery profile" callBack={clearData} />
-      <ScrollWrapper
-        style={{
-          flex: 1,
-          paddingHorizontal: 20,
-          paddingTop: 10,
-          marginTop: 10,
-        }}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={tw`flex-1 bg-[#fff]`}
       >
-        <View style={{ gap: 20 }}>
-          <UploadNewLogo logo={user?.logo} />
-          <Input
-            label="Gallery name"
-            value={user?.name || ""}
-            disabled
-            onInputChange={() => void ""}
-          />
-          <Input
-            label="Gallery email address"
-            disabled
-            value={user?.email || ""}
-            onInputChange={() => void ""}
-          />
-          <Input
-            label="Location"
-            placeHolder=""
-            value={updateData?.location || ""}
-            defaultValue={user?.location}
-            onInputChange={(value) => setProfileUpdateData("location", value)}
-          />
-          <Input
-            label="Admin"
-            placeHolder=""
-            value={updateData?.admin || ""}
-            defaultValue={user?.admin}
-            onInputChange={(value) => setProfileUpdateData("admin", value)}
-          />
-          <LargeInput
-            label="Gallery description"
-            placeHolder=""
-            value={updateData?.description || ""}
-            defaultValue={user?.description}
-            onInputChange={(value) =>
-              setProfileUpdateData("description", value)
-            }
-          />
-          <View style={{ marginTop: 30 }}>
-            <LongBlackButton
-              onClick={handleSubmit}
-              value={isLoading ? "Updating..." : "Save changes"}
-              isLoading={isLoading}
-              isDisabled={
-                !updateData.admin &&
-                !updateData.location &&
-                !updateData.description
-              }
+        <ScrollWrapper
+          style={{
+            flex: 1,
+            paddingHorizontal: 20,
+            paddingTop: 10,
+            marginTop: 10,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={{ gap: 20 }}>
+            <UploadNewLogo logo={user?.logo} />
+            <Input
+              label="Gallery name"
+              value={user?.name || ''}
+              disabled
+              onInputChange={() => void ''}
             />
+            <Input
+              label="Gallery email address"
+              disabled
+              value={user?.email || ''}
+              onInputChange={() => void ''}
+            />
+            <LargeInput
+              label="Gallery description"
+              placeHolder=""
+              value={updateData?.description || ''}
+              defaultValue={user?.description}
+              onInputChange={(value) => setProfileUpdateData('description', value)}
+            />
+            <Input
+              label="Location"
+              placeHolder=""
+              value={updateData?.location || ''}
+              defaultValue={user?.location}
+              onInputChange={(value) => setProfileUpdateData('location', value)}
+            />
+            <Input
+              label="Admin"
+              placeHolder=""
+              value={updateData?.admin || ''}
+              defaultValue={user?.admin}
+              onInputChange={(value) => setProfileUpdateData('admin', value)}
+            />
+
+            <View style={{ marginTop: 30 }}>
+              <LongBlackButton
+                onClick={handleSubmit}
+                value={isLoading ? 'Updating...' : 'Save changes'}
+                isLoading={isLoading}
+                isDisabled={!updateData.admin && !updateData.location && !updateData.description}
+              />
+            </View>
           </View>
-        </View>
-        <View style={{ height: 100 }} />
-      </ScrollWrapper>
+          <View style={{ height: 100 }} />
+        </ScrollWrapper>
+      </KeyboardAvoidingView>
     </WithModal>
   );
 }

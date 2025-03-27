@@ -33,6 +33,7 @@ import LoadingContainer from './LoadingContainer';
 import FirstScreen from './FirstScreen';
 import SuccessComp from './SuccessComp';
 import { useAppStore } from 'store/app/appStore';
+import { logout } from 'utils/logout.utils';
 
 const { width, height } = Dimensions.get('window');
 
@@ -392,8 +393,13 @@ const ArtistOnboarding = () => {
               showsVerticalScrollIndicator={false}
               ref={scrollViewRef}
             >
-              <View style={tw`mt-[80px] ml-[25px] mb-[60px]`}>
-                <Image style={tw`w-[130px] h-[30px]`} resizeMode="contain" source={omenaiLogo} />
+              <View style={tw`mt-[80px] mx-[25px] mb-[60px]`}>
+                <View style={tw`flex-row items-center justify-between`}>
+                  <Image style={tw`w-[130px] h-[30px]`} resizeMode="contain" source={omenaiLogo} />
+                  <Pressable onPress={logout}>
+                    <Text style={tw`text-[18px] font-semibold`}>Logout</Text>
+                  </Pressable>
+                </View>
 
                 <Text style={tw`text-[20px] font-medium text-[#000000] mt-[30px]`}>
                   {stage === 'questions'
