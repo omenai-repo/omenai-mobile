@@ -109,14 +109,14 @@ const ArtistOnboarding = () => {
     }
   >({
     bio: '',
-    graduate: 'no',
-    mfa: 'no',
+    graduate: '',
+    mfa: '',
     solo: '',
     group: '',
-    museum_collection: 'no',
-    biennale: 'none',
-    museum_exhibition: 'no',
-    art_fair: 'no',
+    museum_collection: '',
+    biennale: '',
+    museum_exhibition: '',
+    art_fair: '',
   });
   const [cv, setCv] = useState<DocumentPicker.DocumentPickerResult | null>(null);
   const [documentation, setDocumentation] = useState<{
@@ -142,6 +142,12 @@ const ArtistOnboarding = () => {
   const [editingSocialKey, setEditingSocialKey] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState(false);
   const [screen, setScreen] = useState(1);
+
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const resetScroll = () => {
+    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+  };
 
   const openEditModal = (key: QuestionKey | 'cv' | 'social', socialKey?: string) => {
     setEditingQuestionKey(key as QuestionKey);
@@ -199,6 +205,7 @@ const ArtistOnboarding = () => {
   const handleBack = () => {
     if (stage === 'overview') {
       setStage('socials');
+      resetScroll();
       return; // Prevent further execution
     }
 
@@ -253,6 +260,7 @@ const ArtistOnboarding = () => {
       documentation.socials.twitter.trim()
     ) {
       setStage('overview');
+      resetScroll();
     }
   };
 
@@ -332,14 +340,14 @@ const ArtistOnboarding = () => {
         const resultsBody = results?.body;
         setOnboardingQuestions({
           bio: '',
-          graduate: 'no',
-          mfa: 'no',
+          graduate: '',
+          mfa: '',
           solo: '',
           group: '',
-          museum_collection: 'no',
-          biennale: 'none',
-          museum_exhibition: 'no',
-          art_fair: 'no',
+          museum_collection: '',
+          biennale: '',
+          museum_exhibition: '',
+          art_fair: '',
         });
         setDocumentation({
           cv: '',
@@ -382,6 +390,7 @@ const ArtistOnboarding = () => {
               contentContainerStyle={{ flexGrow: 1 }}
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
+              ref={scrollViewRef}
             >
               <View style={tw`mt-[80px] ml-[25px] mb-[60px]`}>
                 <Image style={tw`w-[130px] h-[30px]`} resizeMode="contain" source={omenaiLogo} />

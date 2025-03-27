@@ -82,7 +82,7 @@ export default function VerifyEmail() {
       />
       <ScrollWrapper style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>
         <Input
-          placeHolder="Emter verification token"
+          placeHolder="Enter verification token"
           label="Token"
           onInputChange={(e) => setToken(e)}
           value={token}
