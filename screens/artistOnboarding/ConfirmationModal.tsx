@@ -3,6 +3,7 @@ import React from 'react';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
 import { warningIconSm } from 'utils/SvgImages';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
 
 const ConfirmationModal = ({
   isModalVisible,
@@ -39,14 +40,17 @@ const ConfirmationModal = ({
             your CV/Resume, as it will directly impact the outcome of your account verification.
           </Text>
 
-          <Pressable
+          {/* <Pressable
             onPress={confirmBtn}
             style={tw`rounded-[20px] mt-[30px] border border-[#000000] h-[40px] justify-center items-center`}
           >
             <Text style={tw`text-[14px] text-[#000000] font-medium`}>
               I understand and I wish to Proceed
             </Text>
-          </Pressable>
+          </Pressable> */}
+          <View style={tw`mt-[30px]`}>
+            <FittedBlackButton onClick={confirmBtn} value="I understand and I wish to Proceed" />
+          </View>
         </Pressable>
       </Pressable>
     </Modal>
