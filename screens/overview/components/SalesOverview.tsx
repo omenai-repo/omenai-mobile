@@ -1,24 +1,13 @@
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  View,
-  Animated,
-  Easing,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { getSalesActivityData } from "services/overview/getSalesActivityData";
-import { salesDataAlgorithm } from "utils/utils_salesDataAlgorithm";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import tw from "twrnc";
+import { Dimensions, StyleSheet, Text, View, Animated, Easing } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { getSalesActivityData } from 'services/overview/getSalesActivityData';
+import { salesDataAlgorithm } from 'utils/utils_salesDataAlgorithm';
+import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
+import tw from 'twrnc';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 
-export default function SalesOverview({
-  refreshCount,
-}: {
-  refreshCount: number;
-}) {
+export default function SalesOverview({ refreshCount }: { refreshCount: number }) {
   const [salesOverviewData, setSalesOverviewData] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tooltip, setTooltip] = useState({
@@ -42,18 +31,18 @@ export default function SalesOverview({
   }, [refreshCount]);
 
   const labels = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   const maxValue = Math.max(...salesOverviewData);
 
@@ -65,7 +54,7 @@ export default function SalesOverview({
 
   const formatToK = (num: number) => {
     if (num >= 1000) {
-      return `${(num / 1000).toFixed(1).replace(/\.0$/, "")}K`;
+      return `${(num / 1000).toFixed(1).replace(/\.0$/, '')}K`;
     }
     return num.toString();
   };
@@ -97,21 +86,19 @@ export default function SalesOverview({
           marginHorizontal: 15,
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: "400", marginBottom: 20 }}>
+        {/* <Text style={{ fontSize: 16, fontWeight: "400", marginBottom: 20 }}>
           Sales overview
-        </Text>
-        <View
-          style={{ height: 200, backgroundColor: "#f5f5f5", borderRadius: 16 }}
-        />
+        </Text> */}
+        <View style={{ height: 200, backgroundColor: '#f5f5f5', borderRadius: 16 }} />
       </View>
     );
   }
 
   return (
     <>
-      <Text style={tw`text-[18px] text-[#000] font-medium mb-[10px] mx-[20px]`}>
+      {/* <Text style={tw`text-[18px] text-[#000] font-medium mb-[10px] mx-[20px]`}>
         Sales Overview
-      </Text>
+      </Text> */}
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -125,10 +112,7 @@ export default function SalesOverview({
             {[0, maxValue / 2, maxValue].map((value, index) => (
               <Text
                 key={index}
-                style={[
-                  styles.yAxisLabel,
-                  { bottom: (chartHeight / 2) * index - 8 },
-                ]}
+                style={[styles.yAxisLabel, { bottom: (chartHeight / 2) * index - 8 }]}
               >
                 {formatToK(value)}
               </Text>
@@ -140,7 +124,7 @@ export default function SalesOverview({
             width={chartWidth}
             height={chartHeight}
             style={{
-              backgroundColor: "#242731",
+              backgroundColor: '#242731',
             }}
           >
             <Defs>
@@ -184,9 +168,7 @@ export default function SalesOverview({
               },
             ]}
           >
-            <Text style={styles.tooltipText}>
-              {formatToK(tooltip.value)} Sales
-            </Text>
+            <Text style={styles.tooltipText}>{formatToK(tooltip.value)} Sales</Text>
           </Animated.View>
         )}
 
@@ -199,7 +181,7 @@ export default function SalesOverview({
                 styles.xAxisLabel,
                 {
                   width: barWidth,
-                  textAlign: "center",
+                  textAlign: 'center',
                   left: yAxisWidth + index * barWidth - barWidth + index + 5,
                 },
               ]}
@@ -215,7 +197,7 @@ export default function SalesOverview({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#242731",
+    backgroundColor: '#242731',
     borderRadius: 16,
     paddingTop: 20,
     paddingBottom: 40,
@@ -223,55 +205,55 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 10,
   },
   title: {
     fontSize: 18,
-    color: "#FFFFFF",
-    fontWeight: "600",
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
   chart: {
-    flexDirection: "row",
-    alignItems: "flex-end",
+    flexDirection: 'row',
+    alignItems: 'flex-end',
     height: 100,
-    position: "relative",
+    position: 'relative',
   },
   yAxis: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
-    justifyContent: "space-between",
-    height: "100%",
+    justifyContent: 'space-between',
+    height: '100%',
     zIndex: 10,
   },
   yAxisLabel: {
-    color: "#7C7C8D",
+    color: '#7C7C8D',
     fontSize: 12,
-    textAlign: "right",
-    position: "absolute",
+    textAlign: 'right',
+    position: 'absolute',
     left: 0,
   },
   xAxis: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 10,
-    position: "relative",
+    position: 'relative',
   },
   xAxisLabel: {
-    color: "#7C7C8D",
+    color: '#7C7C8D',
     fontSize: 10,
-    position: "absolute",
+    position: 'absolute',
     bottom: -20,
   },
   tooltip: {
-    position: "absolute",
-    backgroundColor: "#fff",
+    position: 'absolute',
+    backgroundColor: '#fff',
     padding: 8,
     borderRadius: 4,
   },
   tooltipText: {
-    color: "#000",
+    color: '#000',
     fontSize: 12,
   },
 });

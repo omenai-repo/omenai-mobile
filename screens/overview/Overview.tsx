@@ -1,15 +1,14 @@
-import { StyleSheet, Text, RefreshControl, View, Platform } from "react-native";
-import React, { useState } from "react";
-import WithModal from "components/modal/WithModal";
-import Header from "components/header/Header";
-import SalesOverview from "./components/SalesOverview";
-import RecentOrders from "./components/RecentOrders";
-import { HighlightCard } from "./components/HighlightCard";
-import PopularArtworks from "./components/PopularArtworks";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { StyleSheet, Text, RefreshControl, View, Platform } from 'react-native';
+import React, { useState } from 'react';
+import WithModal from 'components/modal/WithModal';
+import Header from 'components/header/Header';
+import SalesOverview from './components/SalesOverview';
+import RecentOrders from './components/RecentOrders';
+import { HighlightCard } from './components/HighlightCard';
+import PopularArtworks from './components/PopularArtworks';
+import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export default function Overview() {
-
   const [refreshCount, setRefreshCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -22,16 +21,14 @@ export default function Overview() {
     <WithModal>
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <Header />
         <View style={styles.container}>
-        <HighlightCard refreshCount={refreshCount} />
+          <HighlightCard refreshCount={refreshCount} />
         </View>
         <SalesOverview refreshCount={refreshCount} />
-        <PopularArtworks refreshCount={refreshCount} />
+        {/* <PopularArtworks refreshCount={refreshCount} /> */}
         <RecentOrders refreshCount={refreshCount} />
       </ScrollWrapper>
     </WithModal>
@@ -43,7 +40,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   contentsContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 20,
     marginTop: 20,
   },
