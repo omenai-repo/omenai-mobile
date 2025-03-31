@@ -1,24 +1,20 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
-import Divider from "components/general/Divider";
-import { getOverviewOrders } from "services/orders/getOverviewOrders";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import OrderCard from "components/gallery/OrderCard";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import tw from "twrnc";
-import { SvgXml } from "react-native-svg";
-import { rightArrowIcon } from "utils/SvgImages";
-import NavBtnComponent from "components/artwork/NavBtnComponent";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Feather } from '@expo/vector-icons';
+import { colors } from 'config/colors.config';
+import Divider from 'components/general/Divider';
+import { getOverviewOrders } from 'services/orders/getOverviewOrders';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import OrderCard from 'components/gallery/OrderCard';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import tw from 'twrnc';
+import { SvgXml } from 'react-native-svg';
+import { rightArrowIcon } from 'utils/SvgImages';
+import NavBtnComponent from 'components/artwork/NavBtnComponent';
 
-export default function RecentOrders({
-  refreshCount,
-}: {
-  refreshCount: number;
-}) {
+export default function RecentOrders({ refreshCount }: { refreshCount: number }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,9 +28,7 @@ export default function RecentOrders({
         if (results?.isOk) {
           const data = results.data;
 
-          const filteredData = data
-            .filter((i: any) => i.order_accepted.status === "")
-            .slice(0, 3); // Ensure only 3 items
+          const filteredData = data.filter((i: any) => i.order_accepted.status === '').slice(0, 3); // Ensure only 3 items
           setData(filteredData);
         } else {
           setData([]);
@@ -53,16 +47,14 @@ export default function RecentOrders({
   if (isLoading)
     return (
       <View style={styles.container}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text
-            style={{ fontSize: 18, fontWeight: "500", flex: 1, color: "#000" }}
-          >
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ fontSize: 18, fontWeight: '500', flex: 1, color: '#000' }}>
             Recent orders
           </Text>
           <Feather name="chevron-right" size={20} style={{ opacity: 0.5 }} />
         </View>
         <View style={{ gap: 20, marginTop: 20 }}>
-          <View style={{ flexDirection: "row", gap: 20 }}>
+          <View style={{ flexDirection: 'row', gap: 20 }}>
             <View
               style={{
                 height: 100,
@@ -89,7 +81,7 @@ export default function RecentOrders({
               />
             </View>
           </View>
-          <View style={{ flexDirection: "row", gap: 20 }}>
+          <View style={{ flexDirection: 'row', gap: 20 }}>
             <View
               style={{
                 height: 100,
@@ -122,13 +114,9 @@ export default function RecentOrders({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate(screenName.gallery.orders)}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text
-            style={{ fontSize: 18, fontWeight: "500", flex: 1, color: "#000" }}
-          >
+      <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.orders)}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ fontSize: 18, fontWeight: '500', flex: 1, color: '#000' }}>
             Recent orders
           </Text>
           <NavBtnComponent onPress={() => {}} />
@@ -148,13 +136,9 @@ export default function RecentOrders({
               {index + 1 !== data.length && <Divider />}
             </View>
           ))}
-        <View
-          style={{ flexWrap: "wrap", marginRight: "auto", marginLeft: "auto" }}
-        >
+        <View style={{ flexWrap: 'wrap', marginRight: 'auto', marginLeft: 'auto' }}>
           {data.length >= 1 ? (
-            <TouchableOpacity
-              onPress={() => navigation.navigate(screenName.gallery.orders)}
-            >
+            <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.orders)}>
               <View style={styles.pendingButton}>
                 <Text>View {data.length} pending orders</Text>
               </View>
@@ -178,7 +162,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     marginTop: 20,
     borderWidth: 1,
-    borderColor: "#00000033",
+    borderColor: '#00000033',
     borderRadius: 20,
     padding: 15,
     gap: 20,
@@ -187,8 +171,8 @@ const styles = StyleSheet.create({
   pendingButton: {
     paddingVertical: 15,
     paddingHorizontal: 30,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
     borderRadius: 40,
-    marginVertical: 20,
+    marginVertical: 80,
   },
 });
