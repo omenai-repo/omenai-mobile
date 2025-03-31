@@ -54,9 +54,7 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
             },
           ]}
         >
-          <Text
-            style={tw`text-[16px] font-medium leading-[25px] text-[#000000] text-center mx-[40px]`}
-          >
+          <Text style={tw`text-[16px] leading-[25px] text-[#00000099] text-center mx-[40px]`}>
             To assist us in evaluating your skills and certifications, please complete a few
             onboarding questions. This will enable us to accurately assess your experience and
             expertise.

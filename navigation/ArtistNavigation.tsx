@@ -193,17 +193,17 @@ const BottomTabNav = () => {
           >
             <View style={tw`flex-row self-center gap-[20px]`}>
               <SvgXml xml={starEffect} style={{ transform: [{ scaleX: -1 }] }} />
-              <Text style={tw`text-[18px] text-[#1A1A1A] font-bold`}>Please wait</Text>
+              <Text style={tw`text-[18px] text-[#1A1A1A] font-bold`}>Verification in progress</Text>
               <SvgXml xml={starEffect} />
             </View>
 
             <Text style={tw`text-[16px] leading-[25px] text-[#00000099] text-center mx-[40px]`}>
-              please wait your details are currently being computed and this process might take up
-              to 48 hours, in the main time, you will have partial acess to the dashboard for now,
-              until you are completely verified.
+              Your profile is currently under verification, which typically takes 24 to 48 hours.
+              You will receive an update via email within this timeframe. We appreciate your
+              patience.
             </Text>
             <View style={tw`mt-[30px] mx-[30px]`}>
-              <FittedBlackButton onClick={logout} value="logout" />
+              <FittedBlackButton onClick={logout} value="Logout" />
             </View>
           </Animated.View>
         </View>
