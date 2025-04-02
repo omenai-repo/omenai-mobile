@@ -82,11 +82,11 @@ const BottomTabNav = () => {
   const { userSession } = useAppStore();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    if (!userSession.artist_verified) {
-      setModalVisible(true);
-    }
-  }, [userSession.artist_verified]);
+  // useEffect(() => {
+  //   if (!userSession.artist_verified) {
+  //     setModalVisible(true);
+  //   }
+  // }, [userSession.artist_verified]);
 
   const fadeAnim = useRef(new Animated.Value(0)).current; // Start opacity at 0
   const scaleAnim = useRef(new Animated.Value(0.5)).current; // Start scale at 0.5
