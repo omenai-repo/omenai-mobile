@@ -31,9 +31,9 @@ import {
 import ArtistOverview from 'screens/artist/ArtistOverview';
 import { colors } from 'config/colors.config';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { logout } from 'utils/logout.utils';
+import { BlurView } from 'expo-blur';
 
 const { width, height } = Dimensions.get('window');
 
@@ -82,11 +82,11 @@ const BottomTabNav = () => {
   const { userSession } = useAppStore();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  // useEffect(() => {
-  //   if (!userSession.artist_verified) {
-  //     setModalVisible(true);
-  //   }
-  // }, [userSession.artist_verified]);
+  useEffect(() => {
+    if (!userSession.artist_verified) {
+      setModalVisible(true);
+    }
+  }, [userSession.artist_verified]);
 
   const fadeAnim = useRef(new Animated.Value(0)).current; // Start opacity at 0
   const scaleAnim = useRef(new Animated.Value(0.5)).current; // Start scale at 0.5
@@ -181,6 +181,7 @@ const BottomTabNav = () => {
 
       <Modal visible={isModalVisible} transparent={true} animationType="fade">
         <View style={tw`flex-1 bg-[#0003] justify-center items-center`}>
+          <BlurView intensity={30} style={tw`absolute top-0 left-0 right-0 bottom-0`} />
           <Animated.View
             style={[
               tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
