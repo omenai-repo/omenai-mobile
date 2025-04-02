@@ -27,7 +27,7 @@ export default function Overview() {
         <View style={styles.container}>
           <HighlightCard refreshCount={refreshCount} />
         </View>
-        <SalesOverview refreshCount={refreshCount} />
+        <SalesOverview refreshCount={refreshCount} userType="gallery" />
         {/* <PopularArtworks refreshCount={refreshCount} /> */}
         <RecentOrders refreshCount={refreshCount} />
       </ScrollWrapper>

@@ -1,4 +1,3 @@
-import { Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';

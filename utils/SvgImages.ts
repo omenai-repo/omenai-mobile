@@ -1,3 +1,18 @@
+export const bullishArrow = `<svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.05291 16.3307L6.88134 11.4317L11.7803 14.2602L16.023 6.91169" stroke="#04910C" stroke-width="1.4" stroke-miterlimit="5.759" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M13.125 7.6875L16.0228 6.91104L16.7992 9.80882" stroke="#04910C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
+export const arrowUpRightWhite = `<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7 17.4023L17 7.40234" stroke="#020617" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7 7.40234H17V17.4023" stroke="#020617" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
+export const arrowUpRight = `<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.5 17.9121L17.5 7.91211" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.5 7.91211H17.5V17.9121" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
 export const profileActive = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11.7951 12.6879C8.81345 12.6879 6.38672 10.2612 6.38672 7.27951C6.38672 4.29783 8.81345 1.87109 11.7951 1.87109C14.7768 1.87109 17.2036 4.29783 17.2036 7.27951C17.2036 10.2612 14.7768 12.6879 11.7951 12.6879ZM11.7951 3.28198C9.59414 3.28198 7.79761 5.07852 7.79761 7.27951C7.79761 9.4805 9.59414 11.277 11.7951 11.277C13.9961 11.277 15.7927 9.4805 15.7927 7.27951C15.7927 5.07852 13.9961 3.28198 11.7951 3.28198Z" fill="white"/>
 <path d="M19.8766 22.0927C19.4909 22.0927 19.1711 21.7729 19.1711 21.3873C19.1711 18.1422 15.8602 15.5085 11.7969 15.5085C7.7335 15.5085 4.42261 18.1422 4.42261 21.3873C4.42261 21.7729 4.10281 22.0927 3.71716 22.0927C3.33152 22.0927 3.01172 21.7729 3.01172 21.3873C3.01172 17.3709 6.9528 14.0977 11.7969 14.0977C16.6409 14.0977 20.582 17.3709 20.582 21.3873C20.582 21.7729 20.2622 22.0927 19.8766 22.0927Z" fill="white"/>
