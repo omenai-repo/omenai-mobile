@@ -59,7 +59,9 @@ const OverviewContainer = ({
   isTotalArtworks: boolean;
 }) => {
   return (
-    <View style={tw`bg-[#000000] border border-[#E7E7E7] p-[20px] rounded-[20px] flex-1`}>
+    <View
+      style={tw`bg-[#000000] min-h-[150px] border border-[#E7E7E7] p-[20px] rounded-[20px] flex-1`}
+    >
       <View style={tw`flex-row items-center gap-[10px]`}>
         <Text style={tw`text-[16px] text-[#FFFFFF] font-semibold flex-1`}>{label}</Text>
         <SvgXml xml={arrowUpRight} />
@@ -80,6 +82,7 @@ const OverviewContainer = ({
 };
 
 const RecentOrderContainer = ({
+  id,
   open,
   setOpen,
   artId,
@@ -87,7 +90,9 @@ const RecentOrderContainer = ({
   price,
   buyerName,
   status,
+  lastId,
 }: {
+  id: number;
   open: boolean;
   setOpen: (e: boolean) => void;
   artId: string;
@@ -95,6 +100,7 @@ const RecentOrderContainer = ({
   price: string;
   buyerName: string;
   status: string;
+  lastId: boolean;
 }) => {
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
@@ -126,11 +132,17 @@ const RecentOrderContainer = ({
   }, [open]);
 
   return (
-    <View style={tw`border border-[#E7E7E7] p-[20px]`}>
+    <View
+      style={tw.style(
+        `border-t-[1px] border-l-[1px] border-r-[1px] border-[#E7E7E7] p-[20px]`,
+        id === 1 && `rounded-t-[15px]`,
+        lastId && `border-b-[1px] rounded-b-[15px]`,
+      )}
+    >
       <View style={tw`flex-row items-center`}>
         <View style={tw`flex-row items-center gap-[10px] flex-1`}>
           <Image
-            source={require('../../assets/images/acrylic_art.jpg')}
+            source={require('../../../assets/images/acrylic_art.jpg')}
             style={tw`h-[42px] w-[42px] rounded-[3px]`}
           />
           <View style={tw`gap-[5px]`}>
@@ -199,7 +211,7 @@ const ArtistOverview = () => {
         <Header />
 
         <View style={tw`flex-row items-center gap-[20px] mx-[15px] mt-[30px] mb-[20px]`}>
-          <OverviewContainer label="Total Artworks Sold" amount="$81.000" isTotalArtworks={true} />
+          <OverviewContainer label="Artworks Sold" amount="$81.000" isTotalArtworks={true} />
           <OverviewContainer label="Available Balance" amount="$5,000" isTotalArtworks={false} />
         </View>
 
@@ -219,6 +231,7 @@ const ArtistOverview = () => {
             return (
               <RecentOrderContainer
                 key={item.id}
+                id={item.id}
                 open={openSection[item.id]}
                 setOpen={() => toggleRecentOrder(item.id)}
                 artId={item.artId}
@@ -226,6 +239,7 @@ const ArtistOverview = () => {
                 buyerName={item.buyerName}
                 price={item.price}
                 status={item.status}
+                lastId={item.id === data[data.length - 1].id}
               />
             );
           })}
