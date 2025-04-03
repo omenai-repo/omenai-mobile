@@ -7,6 +7,7 @@ import { SvgXml } from 'react-native-svg';
 import { arrowUpRightWhite, dropdownIcon, dropUpIcon } from 'utils/SvgImages';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import { useNavigation } from '@react-navigation/native';
+import DeclineOrderModal from './DeclineOrderModal';
 
 const data = [
   {
@@ -265,6 +266,7 @@ const OrderScreen = () => {
   const navigation = useNavigation<any>();
   const [selectTab, setSelectTab] = useState(1);
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
+  const [declineModal, setDeclineModal] = useState(false);
 
   const toggleRecentOrder = (key: number) => {
     setOpenSection((prev) => ({
@@ -302,11 +304,17 @@ const OrderScreen = () => {
                 status={item.status}
                 lastId={item.id === data[data.length - 1].id}
                 acceptBtn={() => navigation.navigate('DimentionsDetails')}
+                declineBtn={() => setDeclineModal(true)}
               />
             );
           })}
         </ScrollWrapper>
       </View>
+      <DeclineOrderModal
+        isModalVisible={declineModal}
+        setIsModalVisible={setDeclineModal}
+        confirmBtn={() => {}}
+      />
     </View>
   );
 };
