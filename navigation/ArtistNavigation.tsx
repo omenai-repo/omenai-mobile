@@ -28,12 +28,14 @@ import {
   walletActive,
   walletInActive,
 } from 'utils/SvgImages';
-import ArtistOverview from 'screens/artist/ArtistOverview';
+import ArtistOverview from 'screens/artist/overview/ArtistOverview';
 import { colors } from 'config/colors.config';
 import { createStackNavigator } from '@react-navigation/stack';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { logout } from 'utils/logout.utils';
 import { BlurView } from 'expo-blur';
+import OrderScreen from 'screens/artist/orders/OrderScreen';
+import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
 
 const { width, height } = Dimensions.get('window');
 
@@ -60,7 +62,7 @@ const BottomTabData = [
     activeIcon: ordersActive,
     inActiveIcon: ordersInActive,
     name: 'Orders',
-    component: ArtistOverview,
+    component: OrderScreen,
   },
   {
     id: 2,
@@ -82,11 +84,11 @@ const BottomTabNav = () => {
   const { userSession } = useAppStore();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    if (!userSession.artist_verified) {
-      setModalVisible(true);
-    }
-  }, [userSession.artist_verified]);
+  // useEffect(() => {
+  //   if (!userSession.artist_verified) {
+  //     setModalVisible(true);
+  //   }
+  // }, [userSession.artist_verified]);
 
   const fadeAnim = useRef(new Animated.Value(0)).current; // Start opacity at 0
   const scaleAnim = useRef(new Animated.Value(0.5)).current; // Start scale at 0.5
@@ -225,6 +227,8 @@ const ArtistNavigation = () => {
       <Stack.Screen name="BottomTabNav" component={BottomTabNav} />
       <Stack.Screen name="ArtistOnboarding" component={ArtistOnboarding} />
       <Stack.Screen name="ArtistOverview" component={ArtistOverview} />
+      <Stack.Screen name="OrderScreen" component={OrderScreen} />
+      <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
     </Stack.Navigator>
   );
 };
