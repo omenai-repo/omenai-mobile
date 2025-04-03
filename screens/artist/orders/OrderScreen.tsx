@@ -8,8 +8,12 @@ import { arrowUpRightWhite, dropdownIcon, dropUpIcon } from 'utils/SvgImages';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import { useNavigation } from '@react-navigation/native';
 import DeclineOrderModal from './DeclineOrderModal';
+import { getOverviewOrders } from 'services/orders/getOverviewOrders';
+import { organizeOrders } from 'utils/utils_splitArray';
+import { artistOrdersStore } from 'store/artist/artistOrdersStore';
+import EmptyOrdersListing from 'screens/galleryOrders/components/EmptyOrdersListing';
 
-const data = [
+const artistData = [
   {
     id: 1,
     artId: '021231',
@@ -112,7 +116,7 @@ const TabSwitcher = ({
       />
 
       {/* Tabs */}
-      {['Pending', 'Completed', 'In Progress'].map((tab, index) => (
+      {['Pending', 'Processing', 'Completed'].map((tab, index) => (
         <Pressable
           key={index}
           onPress={() => setSelectTab(index + 1)}
@@ -156,7 +160,7 @@ const RecentOrderContainer = ({
   setOpen: (e: boolean) => void;
   artId: string;
   artName: string;
-  price: string;
+  price: number;
   buyerName: string;
   status: string;
   lastId: boolean;
@@ -267,6 +271,30 @@ const OrderScreen = () => {
   const [selectTab, setSelectTab] = useState(1);
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
   const [declineModal, setDeclineModal] = useState(false);
+  const [isloading, setIsloading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const { data, setData, selectedTab } = artistOrdersStore();
+
+  useEffect(() => {
+    handleFetchOrders();
+  }, [refreshing]);
+
+  const handleFetchOrders = async () => {
+    setIsloading(true);
+    const results = await getOverviewOrders();
+    let data = results?.data;
+    const parsedOrders = organizeOrders(data);
+
+    setData({
+      pending: parsedOrders.pending,
+      processing: parsedOrders.processing,
+      completed: parsedOrders.completed,
+    });
+
+    setRefreshing(false);
+    setIsloading(false);
+  };
 
   const toggleRecentOrder = (key: number) => {
     setOpenSection((prev) => ({
@@ -285,31 +313,83 @@ const OrderScreen = () => {
 
       <TabSwitcher selectTab={selectTab} setSelectTab={setSelectTab} />
 
-      <View
-        style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
-      >
-        <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px]`}>Your Orders</Text>
-        <ScrollWrapper showsVerticalScrollIndicator={false}>
-          {data.map((item) => {
-            return (
-              <RecentOrderContainer
-                key={item.id}
-                id={item.id}
-                open={openSection[item.id]}
-                setOpen={() => toggleRecentOrder(item.id)}
-                artId={item.artId}
-                artName={item.artworkName}
-                buyerName={item.buyerName}
-                price={item.price}
-                status={item.status}
-                lastId={item.id === data[data.length - 1].id}
-                acceptBtn={() => navigation.navigate('DimentionsDetails')}
-                declineBtn={() => setDeclineModal(true)}
-              />
-            );
-          })}
-        </ScrollWrapper>
-      </View>
+      {data.pending.length === 0 ||
+      data.completed.length === 0 ||
+      (data.processing.length === 0 && !isloading) ? (
+        <EmptyOrdersListing
+          status={selectTab === 1 ? 'pending' : selectTab === 2 ? 'processing' : 'completed'}
+        />
+      ) : (
+        <View
+          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
+        >
+          <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px]`}>Your Orders</Text>
+          <ScrollWrapper showsVerticalScrollIndicator={false}>
+            {selectTab === 1 &&
+              !isloading &&
+              data.pending.map((item, index) => {
+                return (
+                  <RecentOrderContainer
+                    key={item.artwork_data._id}
+                    id={index}
+                    open={openSection[item.artwork_data._id]}
+                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                    artId={item.artwork_data.art_id}
+                    artName={item.artwork_data.title}
+                    buyerName={'jjjj'}
+                    price={item.artwork_data.pricing.usd_price}
+                    status={item.status}
+                    lastId={index === artistData.length - 1}
+                    acceptBtn={() => navigation.navigate('DimentionsDetails')}
+                    declineBtn={() => setDeclineModal(true)}
+                  />
+                );
+              })}
+
+            {selectTab === 2 &&
+              !isloading &&
+              data.processing.map((item, index) => {
+                return (
+                  <RecentOrderContainer
+                    key={item.artwork_data._id}
+                    id={index}
+                    open={openSection[item.artwork_data._id]}
+                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                    artId={item.artwork_data.art_id}
+                    artName={item.artwork_data.title}
+                    buyerName={'jjjj'}
+                    price={item.artwork_data.pricing.usd_price}
+                    status={item.status}
+                    lastId={index === artistData.length - 1}
+                    acceptBtn={() => navigation.navigate('DimentionsDetails')}
+                    declineBtn={() => setDeclineModal(true)}
+                  />
+                );
+              })}
+
+            {selectTab === 3 &&
+              !isloading &&
+              data.completed.map((item, index) => {
+                return (
+                  <RecentOrderContainer
+                    key={item.artwork_data._id}
+                    id={index}
+                    open={openSection[item.artwork_data._id]}
+                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                    artId={item.artwork_data.art_id}
+                    artName={item.artwork_data.title}
+                    buyerName={'jjjj'}
+                    price={item.artwork_data.pricing.usd_price}
+                    status={item.status}
+                    lastId={index === artistData.length - 1}
+                    acceptBtn={() => navigation.navigate('DimentionsDetails')}
+                    declineBtn={() => setDeclineModal(true)}
+                  />
+                );
+              })}
+          </ScrollWrapper>
+        </View>
+      )}
       <DeclineOrderModal
         isModalVisible={declineModal}
         setIsModalVisible={setDeclineModal}
