@@ -1,20 +1,17 @@
-import { RefreshControl, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import HeaderTabs from "./components/HeaderTabs";
-import { getOverviewOrders } from "services/orders/getOverviewOrders";
-import { organizeOrders } from "utils/utils_splitArray";
-import { galleryOrdersStore } from "store/gallery/galleryOrdersStore";
-import WithGalleryModal from "components/modal/WithGalleryModal";
-import {
-  galleryOrderModalStore,
-  galleryOrderModalTypes,
-} from "store/modal/galleryModalStore";
-import PendingOrders from "./components/PendingOrders";
-import ProcessingOrders from "./components/ProcessingOrders";
-import CompletedOrders from "./components/CompletedOrders";
-import EmptyOrdersListing from "./components/EmptyOrdersListing";
-import OrderslistingLoader from "./components/OrderslistingLoader";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { RefreshControl, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import HeaderTabs from './components/HeaderTabs';
+import { getOverviewOrders } from 'services/orders/getOverviewOrders';
+import { organizeOrders } from 'utils/utils_splitArray';
+import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore';
+import WithGalleryModal from 'components/modal/WithGalleryModal';
+import { galleryOrderModalStore, galleryOrderModalTypes } from 'store/modal/galleryModalStore';
+import PendingOrders from './components/PendingOrders';
+import ProcessingOrders from './components/ProcessingOrders';
+import CompletedOrders from './components/CompletedOrders';
+import EmptyOrdersListing from './components/EmptyOrdersListing';
+import OrderslistingLoader from './components/OrderslistingLoader';
+import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export default function GalleryOrdersListing() {
   const [refreshing, setRefreshing] = useState(false);
@@ -57,10 +54,7 @@ export default function GalleryOrdersListing() {
         style={styles.container}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => setRefreshing(true)}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={() => setRefreshing(true)} />
         }
       >
         <View
@@ -69,23 +63,14 @@ export default function GalleryOrdersListing() {
             marginBottom: 150,
           }}
         >
-          {selectedTab === "pending" && !isloading && (
-            <PendingOrders
-              data={data[selectedTab]}
-              handleOpenModal={handleOpenModal}
-            />
+          {selectedTab === 'pending' && !isloading && (
+            <PendingOrders data={data[selectedTab]} handleOpenModal={handleOpenModal} />
           )}
-          {selectedTab === "processing" && !isloading && (
-            <ProcessingOrders
-              data={data[selectedTab]}
-              handleOpenModal={handleOpenModal}
-            />
+          {selectedTab === 'processing' && !isloading && (
+            <ProcessingOrders data={data[selectedTab]} handleOpenModal={handleOpenModal} />
           )}
-          {selectedTab === "completed" && !isloading && (
-            <CompletedOrders
-              data={data[selectedTab]}
-              handleOpenModal={handleOpenModal}
-            />
+          {selectedTab === 'completed' && !isloading && (
+            <CompletedOrders data={data[selectedTab]} handleOpenModal={handleOpenModal} />
           )}
           {data[selectedTab].length === 0 && !isloading && (
             <EmptyOrdersListing status={selectedTab} />
