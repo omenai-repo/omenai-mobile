@@ -259,7 +259,7 @@ const OrderScreen = () => {
   const [selectTab, setSelectTab] = useState(1);
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
   const [declineModal, setDeclineModal] = useState(false);
-  const [isloading, setIsloading] = useState(false);
+  const [isloading, setIsloading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const currentYear = new Date().getFullYear();
@@ -272,7 +272,6 @@ const OrderScreen = () => {
   }, [refreshing]);
 
   const handleFetchOrders = async () => {
-    setIsloading(true);
     const results = await getOverviewOrders();
     let data = results?.data;
     const parsedOrders = organizeOrders(data);
@@ -321,7 +320,9 @@ const OrderScreen = () => {
       <View
         style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
       >
-        {!isloading && currentOrders.length === 0 ? (
+        {isloading ? (
+          <OrderslistingLoader />
+        ) : currentOrders.length === 0 ? (
           <EmptyOrdersListing status={status} />
         ) : (
           <>
@@ -332,36 +333,32 @@ const OrderScreen = () => {
               <OrderYearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
             </View>
 
-            {isloading ? (
-              <OrderslistingLoader />
-            ) : (
-              <FlatList
-                data={currentOrders}
-                keyExtractor={(item) => item.artwork_data._id}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={tw`pb-[30px]`}
-                renderItem={({ item, index }) => (
-                  <RecentOrderContainer
-                    id={index}
-                    url={item.artwork_data.url}
-                    open={openSection[item.artwork_data._id]}
-                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
-                    artId={item.order_id}
-                    artName={item.artwork_data.title}
-                    dateTime={formatIntlDateTime(item.createdAt)}
-                    price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                    status={status}
-                    lastId={index === currentOrders.length - 1}
-                    acceptBtn={
-                      status === 'pending'
-                        ? () => navigation.navigate('DimentionsDetails')
-                        : undefined
-                    }
-                    declineBtn={status === 'pending' ? () => setDeclineModal(true) : undefined}
-                  />
-                )}
-              />
-            )}
+            <FlatList
+              data={currentOrders}
+              keyExtractor={(item) => item.artwork_data._id}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={tw`pb-[30px]`}
+              renderItem={({ item, index }) => (
+                <RecentOrderContainer
+                  id={index}
+                  url={item.artwork_data.url}
+                  open={openSection[item.artwork_data._id]}
+                  setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                  artId={item.order_id}
+                  artName={item.artwork_data.title}
+                  dateTime={formatIntlDateTime(item.createdAt)}
+                  price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+                  status={status}
+                  lastId={index === currentOrders.length - 1}
+                  acceptBtn={
+                    status === 'pending'
+                      ? () => navigation.navigate('DimentionsDetails')
+                      : undefined
+                  }
+                  declineBtn={status === 'pending' ? () => setDeclineModal(true) : undefined}
+                />
+              )}
+            />
           </>
         )}
       </View>
