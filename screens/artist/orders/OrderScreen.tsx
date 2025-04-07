@@ -1,4 +1,4 @@
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, Pressable, FlatList, TouchableOpacity } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import { Image } from 'react-native';
@@ -16,6 +16,7 @@ import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingL
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
+import OrderYearDropdown from './OrderYearDropdown';
 
 const TabSwitcher = ({
   selectTab,
@@ -261,6 +262,9 @@ const OrderScreen = () => {
   const [isloading, setIsloading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+
   const { data, setData } = artistOrdersStore();
 
   useEffect(() => {
@@ -321,7 +325,12 @@ const OrderScreen = () => {
           <EmptyOrdersListing status={status} />
         ) : (
           <>
-            <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px]`}>Your Orders</Text>
+            <View style={tw`flex-row items-center`}>
+              <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
+                Your Orders
+              </Text>
+              <OrderYearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+            </View>
 
             {isloading ? (
               <OrderslistingLoader />
