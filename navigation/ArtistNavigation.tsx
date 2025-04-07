@@ -37,6 +37,7 @@ import { logout } from 'utils/logout.utils';
 import { BlurView } from 'expo-blur';
 import OrderScreen from 'screens/artist/orders/OrderScreen';
 import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
+import WalletScreen from 'screens/artist/wallet/WalletScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -56,7 +57,7 @@ const BottomTabData = [
     activeIcon: walletActive,
     inActiveIcon: walletInActive,
     name: 'Wallet',
-    component: ArtistOverview,
+    component: WalletScreen,
   },
   {
     id: 2,
