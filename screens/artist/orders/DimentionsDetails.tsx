@@ -18,6 +18,7 @@ import { Text } from 'react-native';
 
 type ArtworkDimensionsErrorsType = {
   height: string;
+  length: string;
   width: string;
   weight: string;
 };
@@ -28,6 +29,7 @@ const DimensionsDetails = () => {
     uploadArtworkStore();
   const [formErrors, setFormErrors] = useState<ArtworkDimensionsErrorsType>({
     height: '',
+    length: '',
     width: '',
     weight: '',
   });
@@ -71,23 +73,23 @@ const DimensionsDetails = () => {
           keyboardShouldPersistTaps="handled"
         >
           <View style={tw`mt-[30px] mx-[25px] gap-[30px]`}>
-            {(['height', 'width', 'weight'] as Array<keyof ArtworkDimensionsErrorsType>).map(
-              (field) => (
-                <Input
-                  key={field}
-                  label={field.charAt(0).toUpperCase() + field.slice(1)} // Capitalize label
-                  keyboardType="default"
-                  onInputChange={(text) => {
-                    updateArtworkUploadData(field, text);
-                    handleValidationChecks(field as keyof ArtworkDimensionsErrorsType, text);
-                  }}
-                  placeHolder={`Enter ${field}`}
-                  value={artworkUploadData[field]}
-                  errorMessage={formErrors[field]}
-                  containerStyle={{ flex: 0 }}
-                />
-              ),
-            )}
+            {(
+              ['height', 'length', 'width', 'weight'] as Array<keyof ArtworkDimensionsErrorsType>
+            ).map((field) => (
+              <Input
+                key={field}
+                label={field.charAt(0).toUpperCase() + field.slice(1)} // Capitalize label
+                keyboardType="default"
+                onInputChange={(text) => {
+                  updateArtworkUploadData(field, text);
+                  handleValidationChecks(field as keyof ArtworkDimensionsErrorsType, text);
+                }}
+                placeHolder={`Enter ${field}`}
+                value={artworkUploadData[field]}
+                errorMessage={formErrors[field]}
+                containerStyle={{ flex: 0 }}
+              />
+            ))}
           </View>
 
           <View

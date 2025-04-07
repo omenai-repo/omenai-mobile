@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, FlatList } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import { Image } from 'react-native';
@@ -12,132 +12,93 @@ import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { organizeOrders } from 'utils/utils_splitArray';
 import { artistOrdersStore } from 'store/artist/artistOrdersStore';
 import EmptyOrdersListing from 'screens/galleryOrders/components/EmptyOrdersListing';
-
-const artistData = [
-  {
-    id: 1,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 2,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 3,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 4,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 5,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 6,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 7,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 8,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-];
+import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
+import { getImageFileView } from 'lib/storage/getImageFileView';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 
 const TabSwitcher = ({
   selectTab,
   setSelectTab,
+  pendingCount = 0,
+  processingCount = 0,
 }: {
   selectTab: number;
   setSelectTab: (e: number) => void;
+  pendingCount?: number;
+  processingCount?: number;
 }) => {
-  const animatedValue = useRef(new Animated.Value(selectTab - 1)).current; // Start at current tab index
+  const animatedValue = useRef(new Animated.Value(selectTab - 1)).current;
 
   useEffect(() => {
     Animated.timing(animatedValue, {
-      toValue: selectTab - 1, // Convert tab index to animation position
-      duration: 300, // Smooth transition
-      useNativeDriver: false, // Background color interpolation doesn't support native driver
+      toValue: selectTab - 1,
+      duration: 300,
+      useNativeDriver: false,
     }).start();
   }, [selectTab]);
 
-  const tabWidth = 100 / 3; // Assuming 3 tabs, each takes 1/3rd of the width
+  const tabWidth = 100 / 3;
+
+  const tabs = [
+    { title: 'Pending', count: pendingCount },
+    { title: 'Processing', count: processingCount },
+    { title: 'Completed', count: 0 },
+  ];
 
   return (
-    <View style={tw`relative flex-row items-center bg-[#FFFFFF] p-[20px] mt-[30px] gap-[20px]`}>
-      {/* Animated Indicator */}
+    <View
+      style={tw`relative flex-row items-center bg-[#ffff] p-[10px] mt-[30px] mx-[20px] rounded-[56px]`}
+    >
+      {/* Animated Pill Background */}
       <Animated.View
         style={[
-          tw`absolute h-[40px] bg-[#000] rounded-[56px]`,
+          tw`absolute h-[45px] bg-black rounded-[56px] shadow-md`,
           {
             width: `${tabWidth}%`,
             left: animatedValue.interpolate({
               inputRange: [0, 1, 2],
-              outputRange: ['3%', '38%', '73%'],
+              outputRange: ['3%', '37%', '69%'],
             }),
           },
         ]}
       />
 
-      {/* Tabs */}
-      {['Pending', 'Processing', 'Completed'].map((tab, index) => (
-        <Pressable
-          key={index}
-          onPress={() => setSelectTab(index + 1)}
-          style={tw`flex-1 h-[40px] justify-center items-center rounded-[56px]`}
-        >
-          <Animated.Text
-            style={[
-              tw`text-[13px] font-medium`,
-              {
-                color: animatedValue.interpolate({
-                  inputRange: [index - 1, index, index + 1],
-                  outputRange: ['#00000099', '#FFFFFF', '#00000099'],
-                  extrapolate: 'clamp',
-                }),
-              },
-            ]}
+      {tabs.map((tab, index) => {
+        return (
+          <Pressable
+            key={index}
+            onPress={() => setSelectTab(index + 1)}
+            style={tw`flex-1 justify-center items-center h-[45px]`}
           >
-            {tab}
-          </Animated.Text>
-        </Pressable>
-      ))}
+            <View style={tw`flex-row items-center justify-center relative`}>
+              <Animated.Text
+                style={[
+                  tw`text-[13px] font-medium`,
+                  {
+                    color: animatedValue.interpolate({
+                      inputRange: [index - 1, index, index + 1],
+                      outputRange: ['#00000099', '#FFFFFF', '#00000099'],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                ]}
+              >
+                {tab.title}
+              </Animated.Text>
+
+              {/* Badge */}
+              {tab.count > 0 && (
+                <View
+                  style={tw`absolute -top-[10px] -right-[16px] bg-red-500 rounded-full px-[6px] py-[2px] z-10`}
+                >
+                  <Text style={tw`text-white text-[10px] font-bold`}>{tab.count}</Text>
+                </View>
+              )}
+            </View>
+          </Pressable>
+        );
+      })}
     </View>
   );
 };
@@ -149,31 +110,35 @@ const RecentOrderContainer = ({
   artId,
   artName,
   price,
-  buyerName,
+  dateTime,
   status,
   lastId,
   declineBtn,
   acceptBtn,
+  url,
 }: {
   id: number;
   open: boolean;
   setOpen: (e: boolean) => void;
   artId: string;
   artName: string;
-  price: number;
-  buyerName: string;
-  status: string;
+  price: string;
+  dateTime: string;
+  status: 'pending' | 'processing' | 'completed';
   lastId: boolean;
   declineBtn?: () => void;
   acceptBtn?: () => void;
+  url: string;
 }) => {
+  let image_href = getImageFileView(url, 700);
+
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (open) {
       Animated.timing(animatedHeight, {
-        toValue: 180, // Adjust height based on content
+        toValue: status === 'pending' ? 180 : 120, // Adjust height based on content
         duration: 300,
         useNativeDriver: false,
       }).start();
@@ -196,21 +161,33 @@ const RecentOrderContainer = ({
     }
   }, [open]);
 
+  const statusStyles = {
+    pending: {
+      bg: '#FFBF0040',
+      text: '#1a1a1a',
+    },
+    processing: {
+      bg: '#007AFF20',
+      text: '#007AFF',
+    },
+    completed: {
+      bg: '#00C85120',
+      text: '#00C851',
+    },
+  };
+
   return (
     <Pressable
       onPress={() => setOpen(!open)}
       style={tw.style(
         `border-t-[1px] border-l-[1px] border-r-[1px] border-[#E7E7E7] p-[20px]`,
-        id === 1 && `rounded-t-[15px]`,
+        id === 0 && `rounded-t-[15px]`,
         lastId && `border-b-[1px] rounded-b-[15px]`,
       )}
     >
       <View style={tw`flex-row items-center`}>
         <View style={tw`flex-row items-center gap-[10px] flex-1`}>
-          <Image
-            source={require('../../../assets/images/acrylic_art.jpg')}
-            style={tw`h-[42px] w-[42px] rounded-[3px]`}
-          />
+          <Image source={{ uri: image_href }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
           <View style={tw`gap-[5px]`}>
             <Text style={tw`text-[12px] text-[#454545]`}>{artId}</Text>
             <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{artName}</Text>
@@ -234,32 +211,42 @@ const RecentOrderContainer = ({
             <Text style={tw`text-[14px] text-[#323130] font-bold`}>{price}</Text>
           </View>
           <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Buyer</Text>
-            <Text style={tw`text-[14px] text-[#323130] font-bold`}>{buyerName}</Text>
+            <Text style={tw`text-[14px] text-[#737373]`}>Date</Text>
+            <Text style={tw`text-[14px] text-[#323130] font-bold`}>{dateTime}</Text>
           </View>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
             <View
-              style={tw`rounded-[12px] h-[30px] justify-center items-center bg-[#FFBF0040] px-[12px]`}
+              style={tw.style(`rounded-[12px] h-[30px] justify-center items-center px-[12px]`, {
+                backgroundColor: statusStyles[status].bg,
+              })}
             >
-              <Text style={tw`text-[12px] font-bold text-[#1a1a1a]`}>{status}</Text>
+              <Text
+                style={tw.style(`text-[12px] font-bold`, {
+                  color: statusStyles[status]?.text || '#1a1a1a',
+                })}
+              >
+                {status}
+              </Text>
             </View>
           </View>
 
-          <View style={tw`flex-row items-center gap-[30px]`}>
-            <Pressable
-              onPress={declineBtn}
-              style={tw`h-[40px] justify-center items-center bg-[#C71C16] rounded-[20px] px-[15px] flex-1`}
-            >
-              <Text style={tw`text-[13px] text-[#fff] font-semibold`}>Decline order</Text>
-            </Pressable>
-            <Pressable
-              onPress={acceptBtn}
-              style={tw`h-[40px] justify-center items-center bg-[#00C885] rounded-[20px] px-[15px] flex-1`}
-            >
-              <Text style={tw`text-[13px] text-[#fff] font-semibold`}>Accept order</Text>
-            </Pressable>
-          </View>
+          {status === 'pending' && (
+            <View style={tw`flex-row items-center gap-[30px]`}>
+              <Pressable
+                onPress={declineBtn}
+                style={tw`h-[40px] justify-center items-center bg-[#C71C16] rounded-[20px] px-[15px] flex-1`}
+              >
+                <Text style={tw`text-[13px] text-[#fff] font-semibold`}>Decline order</Text>
+              </Pressable>
+              <Pressable
+                onPress={acceptBtn}
+                style={tw`h-[40px] justify-center items-center bg-[#00C885] rounded-[20px] px-[15px] flex-1`}
+              >
+                <Text style={tw`text-[13px] text-[#fff] font-semibold`}>Accept order</Text>
+              </Pressable>
+            </View>
+          )}
         </View>
       </Animated.View>
     </Pressable>
@@ -274,7 +261,7 @@ const OrderScreen = () => {
   const [isloading, setIsloading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const { data, setData, selectedTab } = artistOrdersStore();
+  const { data, setData } = artistOrdersStore();
 
   useEffect(() => {
     handleFetchOrders();
@@ -303,6 +290,15 @@ const OrderScreen = () => {
     }));
   };
 
+  const getOrders = () => {
+    if (selectTab === 1) return data.pending;
+    if (selectTab === 2) return data.processing;
+    return data.completed;
+  };
+
+  const currentOrders = getOrders();
+  const status = selectTab === 1 ? 'pending' : selectTab === 2 ? 'processing' : 'completed';
+
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <Image
@@ -311,85 +307,56 @@ const OrderScreen = () => {
         source={require('../../../assets/omenai-logo.png')}
       />
 
-      <TabSwitcher selectTab={selectTab} setSelectTab={setSelectTab} />
+      <TabSwitcher
+        selectTab={selectTab}
+        setSelectTab={setSelectTab}
+        pendingCount={data.pending.length}
+        processingCount={data.processing.length}
+      />
 
-      {data.pending.length === 0 ||
-      data.completed.length === 0 ||
-      (data.processing.length === 0 && !isloading) ? (
-        <EmptyOrdersListing
-          status={selectTab === 1 ? 'pending' : selectTab === 2 ? 'processing' : 'completed'}
-        />
-      ) : (
-        <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
-        >
-          <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px]`}>Your Orders</Text>
-          <ScrollWrapper showsVerticalScrollIndicator={false}>
-            {selectTab === 1 &&
-              !isloading &&
-              data.pending.map((item, index) => {
-                return (
+      <View
+        style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
+      >
+        {!isloading && currentOrders.length === 0 ? (
+          <EmptyOrdersListing status={status} />
+        ) : (
+          <>
+            <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px]`}>Your Orders</Text>
+
+            {isloading ? (
+              <OrderslistingLoader />
+            ) : (
+              <FlatList
+                data={currentOrders}
+                keyExtractor={(item) => item.artwork_data._id}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={tw`pb-[30px]`}
+                renderItem={({ item, index }) => (
                   <RecentOrderContainer
-                    key={item.artwork_data._id}
                     id={index}
+                    url={item.artwork_data.url}
                     open={openSection[item.artwork_data._id]}
                     setOpen={() => toggleRecentOrder(item.artwork_data._id)}
-                    artId={item.artwork_data.art_id}
+                    artId={item.order_id}
                     artName={item.artwork_data.title}
-                    buyerName={'jjjj'}
-                    price={item.artwork_data.pricing.usd_price}
-                    status={item.status}
-                    lastId={index === artistData.length - 1}
-                    acceptBtn={() => navigation.navigate('DimentionsDetails')}
-                    declineBtn={() => setDeclineModal(true)}
+                    dateTime={formatIntlDateTime(item.createdAt)}
+                    price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+                    status={status}
+                    lastId={index === currentOrders.length - 1}
+                    acceptBtn={
+                      status === 'pending'
+                        ? () => navigation.navigate('DimentionsDetails')
+                        : undefined
+                    }
+                    declineBtn={status === 'pending' ? () => setDeclineModal(true) : undefined}
                   />
-                );
-              })}
+                )}
+              />
+            )}
+          </>
+        )}
+      </View>
 
-            {selectTab === 2 &&
-              !isloading &&
-              data.processing.map((item, index) => {
-                return (
-                  <RecentOrderContainer
-                    key={item.artwork_data._id}
-                    id={index}
-                    open={openSection[item.artwork_data._id]}
-                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
-                    artId={item.artwork_data.art_id}
-                    artName={item.artwork_data.title}
-                    buyerName={'jjjj'}
-                    price={item.artwork_data.pricing.usd_price}
-                    status={item.status}
-                    lastId={index === artistData.length - 1}
-                    acceptBtn={() => navigation.navigate('DimentionsDetails')}
-                    declineBtn={() => setDeclineModal(true)}
-                  />
-                );
-              })}
-
-            {selectTab === 3 &&
-              !isloading &&
-              data.completed.map((item, index) => {
-                return (
-                  <RecentOrderContainer
-                    key={item.artwork_data._id}
-                    id={index}
-                    open={openSection[item.artwork_data._id]}
-                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
-                    artId={item.artwork_data.art_id}
-                    artName={item.artwork_data.title}
-                    buyerName={'jjjj'}
-                    price={item.artwork_data.pricing.usd_price}
-                    status={item.status}
-                    lastId={index === artistData.length - 1}
-                    acceptBtn={() => navigation.navigate('DimentionsDetails')}
-                    declineBtn={() => setDeclineModal(true)}
-                  />
-                );
-              })}
-          </ScrollWrapper>
-        </View>
-      )}
       <DeclineOrderModal
         isModalVisible={declineModal}
         setIsModalVisible={setDeclineModal}
