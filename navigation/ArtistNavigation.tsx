@@ -8,6 +8,7 @@ import {
   Modal,
   Animated,
   Easing,
+  Pressable,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppStore } from 'store/app/appStore';
@@ -182,34 +183,41 @@ const BottomTabNav = () => {
       </Tab.Navigator>
 
       <Modal visible={isModalVisible} transparent={true} animationType="fade">
-        <View style={tw`flex-1 bg-[#0003] justify-center items-center`}>
+        <Pressable
+          onPressOut={() => setModalVisible(false)}
+          style={tw`flex-1 bg-[#0003] justify-center items-center`}
+        >
           <BlurView intensity={30} style={tw`absolute top-0 left-0 right-0 bottom-0`} />
-          <Animated.View
-            style={[
-              tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
-              {
-                marginHorizontal: '5%',
-                opacity: fadeAnim, // Apply fade animation
-                transform: [{ scale: scaleAnim }], // Apply scale animation
-              },
-            ]}
-          >
-            <View style={tw`flex-row self-center gap-[20px]`}>
-              <SvgXml xml={starEffect} style={{ transform: [{ scaleX: -1 }] }} />
-              <Text style={tw`text-[18px] text-[#1A1A1A] font-bold`}>Verification in progress</Text>
-              <SvgXml xml={starEffect} />
-            </View>
+          <Pressable onPress={(e) => e.stopPropagation()}>
+            <Animated.View
+              style={[
+                tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
+                {
+                  marginHorizontal: '5%',
+                  opacity: fadeAnim, // Apply fade animation
+                  transform: [{ scale: scaleAnim }], // Apply scale animation
+                },
+              ]}
+            >
+              <View style={tw`flex-row self-center gap-[20px]`}>
+                <SvgXml xml={starEffect} style={{ transform: [{ scaleX: -1 }] }} />
+                <Text style={tw`text-[18px] text-[#1A1A1A] font-bold`}>
+                  Verification in progress
+                </Text>
+                <SvgXml xml={starEffect} />
+              </View>
 
-            <Text style={tw`text-[16px] leading-[25px] text-[#00000099] text-center mx-[40px]`}>
-              Your profile is currently under verification, which typically takes 24 to 48 hours.
-              You will receive an update via email within this timeframe. We appreciate your
-              patience.
-            </Text>
-            <View style={tw`mt-[30px] mx-[30px]`}>
-              <FittedBlackButton onClick={logout} value="Logout" />
-            </View>
-          </Animated.View>
-        </View>
+              <Text style={tw`text-[16px] leading-[25px] text-[#00000099] text-center mx-[40px]`}>
+                Your profile is currently under verification, which typically takes 24 to 48 hours.
+                You will receive an update via email within this timeframe. We appreciate your
+                patience.
+              </Text>
+              <View style={tw`mt-[30px] mx-[30px]`}>
+                <FittedBlackButton onClick={logout} value="Logout" />
+              </View>
+            </Animated.View>
+          </Pressable>
+        </Pressable>
       </Modal>
     </>
   );
