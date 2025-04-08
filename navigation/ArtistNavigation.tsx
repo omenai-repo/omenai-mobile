@@ -40,6 +40,11 @@ import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
 import WalletScreen from 'screens/artist/wallet/WalletScreen';
 import WalletHistory from 'screens/artist/wallet/WalletHistory';
 import AddPrimaryAcctScreen from 'screens/artist/wallet/AddPrimaryAcctScreen';
+import ArtistProfileScreen from 'screens/artist/profile/ArtistProfileScreen';
+import { screenName } from 'constants/screenNames.constants';
+import EditGalleryProfile from 'screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile';
+import ChangeGalleryPassword from 'screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword';
+import UploadNewLogo from 'screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo';
 
 const { width, height } = Dimensions.get('window');
 
@@ -72,7 +77,7 @@ const BottomTabData = [
     id: 2,
     activeIcon: shippingActive,
     inActiveIcon: shippingInActive,
-    name: 'Shipping',
+    name: 'Art Upload',
     component: ArtistOverview,
   },
   {
@@ -80,7 +85,7 @@ const BottomTabData = [
     activeIcon: profileActive,
     inActiveIcon: profileInActive,
     name: 'Profile',
-    component: ArtistOverview,
+    component: ArtistProfileScreen,
   },
 ];
 
@@ -242,6 +247,11 @@ const ArtistNavigation = () => {
       <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
       <Stack.Screen name="WalletHistory" component={WalletHistory} />
       <Stack.Screen name="AddPrimaryAcctScreen" component={AddPrimaryAcctScreen} />
+      <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
+      <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen name={screenName.gallery.uploadNewLogo} component={UploadNewLogo} />
+      </Stack.Group>
     </Stack.Navigator>
   );
 };
