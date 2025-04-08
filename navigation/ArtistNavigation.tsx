@@ -38,6 +38,8 @@ import { BlurView } from 'expo-blur';
 import OrderScreen from 'screens/artist/orders/OrderScreen';
 import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
 import WalletScreen from 'screens/artist/wallet/WalletScreen';
+import WalletHistory from 'screens/artist/wallet/WalletHistory';
+import AddPrimaryAcctScreen from 'screens/artist/wallet/AddPrimaryAcctScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -238,6 +240,8 @@ const ArtistNavigation = () => {
       <Stack.Screen name="ArtistOverview" component={ArtistOverview} />
       <Stack.Screen name="OrderScreen" component={OrderScreen} />
       <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
+      <Stack.Screen name="WalletHistory" component={WalletHistory} />
+      <Stack.Screen name="AddPrimaryAcctScreen" component={AddPrimaryAcctScreen} />
     </Stack.Navigator>
   );
 };
