@@ -16,7 +16,7 @@ import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingL
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
-import OrderYearDropdown from './OrderYearDropdown';
+import YearDropdown from './YearDropdown';
 
 const TabSwitcher = ({
   selectTab,
@@ -330,7 +330,7 @@ const OrderScreen = () => {
               <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
                 Your Orders
               </Text>
-              <OrderYearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+              <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
             </View>
 
             <FlatList

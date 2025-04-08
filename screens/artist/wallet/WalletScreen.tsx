@@ -1,10 +1,12 @@
 import { View, Text, Image, Pressable, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
+import { arrowUpRightWhite } from 'utils/SvgImages';
+import { useNavigation } from '@react-navigation/native';
 
-const WalletContainer = () => {
+export const WalletContainer = () => {
   return (
     <View
       style={tw`bg-[#FFFFFF] border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
@@ -26,6 +28,7 @@ const WalletContainer = () => {
 };
 
 const WalletScreen = () => {
+  const navigation = useNavigation<any>();
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <Image
@@ -68,15 +71,23 @@ const WalletScreen = () => {
         </Pressable>
 
         <Pressable
+          onPress={() => navigation.navigate('AddPrimaryAcctScreen')}
           style={tw`border border-[#000000] h-[40px] flex-1 rounded-[18px] justify-center items-center px-[15px]`}
         >
           <Text style={tw`text-[14px] text-[#000000]`}>Add primary Account</Text>
         </Pressable>
       </View>
 
-      <Text style={tw`text-[16px] font-medium text-[#000000] mx-[20px] mt-[40px]`}>
-        Transaction History
-      </Text>
+      <View style={tw`mx-[20px] mt-[40px] flex-row items-center`}>
+        <Text style={tw`text-[15px] font-medium text-[#000000] flex-1`}>Transaction History</Text>
+        <Pressable
+          onPress={() => navigation.navigate('WalletHistory')}
+          style={tw`flex-row items-center gap-[5px]`}
+        >
+          <Text style={tw`text-[15px] text-[#3D3D3D] font-semibold`}>Show All</Text>
+          <SvgXml xml={arrowUpRightWhite} />
+        </Pressable>
+      </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={tw`gap-[20px] mt-[25px] mb-[150px]`}>

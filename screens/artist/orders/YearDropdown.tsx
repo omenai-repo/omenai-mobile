@@ -4,7 +4,7 @@ import { SvgXml } from 'react-native-svg';
 import { dropdownIcon, dropUpIcon } from 'utils/SvgImages';
 import tw from 'twrnc';
 
-const OrderYearDropdown = ({
+const YearDropdown = ({
   selectedYear,
   setSelectedYear,
 }: {
@@ -53,4 +53,4 @@ const OrderYearDropdown = ({
   );
 };
 
-export default OrderYearDropdown;
+export default YearDropdown;
