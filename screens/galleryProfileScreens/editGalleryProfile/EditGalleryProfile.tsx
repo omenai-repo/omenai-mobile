@@ -15,11 +15,13 @@ import UploadNewLogo from './components/GalleryLogo';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import { KeyboardAvoidingView } from 'react-native';
 import tw from 'twrnc';
+import { useAppStore } from 'store/app/appStore';
 
 export default function EditGalleryProfile() {
   const [user, setUser] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   const { updateModal } = useModalStore();
+  const { userType } = useAppStore();
 
   const { updateData, setProfileUpdateData, clearData } = galleryProfileUpdate();
 
@@ -37,7 +39,11 @@ export default function EditGalleryProfile() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const { isOk, body } = await updateProfile('gallery', updateData, user.id);
+    const { isOk, body } = await updateProfile(
+      userType === 'gallery' ? 'gallery' : 'artist',
+      updateData,
+      user.id,
+    );
 
     if (!isOk) {
       //throw error modal
@@ -63,7 +69,10 @@ export default function EditGalleryProfile() {
 
   return (
     <WithModal>
-      <BackHeaderTitle title="Gallery profile" callBack={clearData} />
+      <BackHeaderTitle
+        title={userType === 'gallery' ? 'Gallery profile' : 'Artist profile'}
+        callBack={clearData}
+      />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={tw`flex-1 bg-[#fff]`}
@@ -80,19 +89,19 @@ export default function EditGalleryProfile() {
           <View style={{ gap: 20 }}>
             <UploadNewLogo logo={user?.logo} />
             <Input
-              label="Gallery name"
+              label={userType === 'gallery' ? 'Gallery name' : 'Artist name'}
               value={user?.name || ''}
               disabled
               onInputChange={() => void ''}
             />
             <Input
-              label="Gallery email address"
+              label={userType === 'gallery' ? 'Gallery email address' : 'Artist email address'}
               disabled
               value={user?.email || ''}
               onInputChange={() => void ''}
             />
             <LargeInput
-              label="Gallery description"
+              label={userType === 'gallery' ? 'Gallery description' : 'Artist description'}
               placeHolder=""
               value={updateData?.description || ''}
               defaultValue={user?.description}
@@ -105,20 +114,26 @@ export default function EditGalleryProfile() {
               defaultValue={user?.location}
               onInputChange={(value) => setProfileUpdateData('location', value)}
             />
-            <Input
-              label="Admin"
-              placeHolder=""
-              value={updateData?.admin || ''}
-              defaultValue={user?.admin}
-              onInputChange={(value) => setProfileUpdateData('admin', value)}
-            />
+            {userType === 'gallery' && (
+              <Input
+                label="Admin"
+                placeHolder=""
+                value={updateData?.admin || ''}
+                defaultValue={user?.admin}
+                onInputChange={(value) => setProfileUpdateData('admin', value)}
+              />
+            )}
 
             <View style={{ marginTop: 30 }}>
               <LongBlackButton
                 onClick={handleSubmit}
                 value={isLoading ? 'Updating...' : 'Save changes'}
                 isLoading={isLoading}
-                isDisabled={!updateData.admin && !updateData.location && !updateData.description}
+                isDisabled={
+                  userType === 'gallery'
+                    ? !updateData.admin && !updateData.location && !updateData.description
+                    : !updateData.location && !updateData.description
+                }
               />
             </View>
           </View>

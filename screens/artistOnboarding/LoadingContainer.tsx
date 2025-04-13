@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native';
 import loaderAnimation from '../../assets/other/loader-animation.json';
 import omenaiLogo from '../../assets/omenai-logo.png';
 
-const LoadingContainer = () => {
+const LoadingContainer = ({ label }: { label: string }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Start opacity at 0
   const scaleAnim = useRef(new Animated.Value(0.5)).current; // Start scale at 0.5
 
@@ -55,8 +55,7 @@ const LoadingContainer = () => {
           </Text>
 
           <Text style={tw`text-[16px] text-[#00000099] text-center mx-[40px] mt-[10px]`}>
-            This process might take up to minutes, as we’re trying to compile all your onboarding
-            data.
+            {label}
           </Text>
         </Animated.View>
       </View>
