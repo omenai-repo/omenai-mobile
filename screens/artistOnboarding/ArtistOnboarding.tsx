@@ -685,7 +685,11 @@ const ArtistOnboarding = () => {
             </ScrollView>
           </KeyboardAvoidingView>
         ) : (
-          <LoadingContainer />
+          <LoadingContainer
+            label={
+              'This process might take up to minutes, as we’re trying to compile all your onboarding data.'
+            }
+          />
         )
       ) : (
         screen === 3 && <SuccessComp />
