@@ -48,7 +48,7 @@ export type QuestionKey =
   | 'museum_exhibition'
   | 'art_fair';
 
-const questions: {
+export const questions: {
   key: QuestionKey;
   text: string;
   options?: string[];

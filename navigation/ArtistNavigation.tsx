@@ -46,6 +46,7 @@ import EditGalleryProfile from 'screens/galleryProfileScreens/editGalleryProfile
 import ChangeGalleryPassword from 'screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword';
 import UploadNewLogo from 'screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo';
 import UploadArtworkScreen from 'screens/artist/UploadArtwork/UploadArtworkScreen';
+import EditCredentialsScreen from 'screens/artist/profile/EditCredentialsScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -250,6 +251,7 @@ const ArtistNavigation = () => {
       <Stack.Screen name="AddPrimaryAcctScreen" component={AddPrimaryAcctScreen} />
       <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
+      <Stack.Screen name={'EditCredentialsScreen'} component={EditCredentialsScreen} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name={screenName.gallery.uploadNewLogo} component={UploadNewLogo} />
       </Stack.Group>

@@ -39,7 +39,8 @@ export default function ArtistProfileScreen() {
     if (isLoading) {
       setTimeout(() => {
         setIsLoading(false);
-      }, 10000);
+        navigation.navigate('EditCredentialsScreen');
+      }, 5000);
     }
   }, [isLoading]);
 
