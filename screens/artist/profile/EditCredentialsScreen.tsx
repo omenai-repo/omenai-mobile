@@ -17,6 +17,7 @@ import QuestionContainer from 'screens/artistOnboarding/QuestionContainer';
 import tw from 'twrnc';
 import { uploadIcon } from 'utils/SvgImages';
 import * as DocumentPicker from 'expo-document-picker';
+import LongBlackButton from 'components/buttons/LongBlackButton';
 
 const { width } = Dimensions.get('window');
 
@@ -78,7 +79,7 @@ export default function EditCredentialsScreen() {
       <BackHeaderTitle title="Edit Credentials" />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={tw`pt-[40px] pb-[100px]`}
+        contentContainerStyle={tw`pt-[40px] pb-[150px]`}
       >
         <View
           style={tw.style(`bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`, {
@@ -131,6 +132,14 @@ export default function EditCredentialsScreen() {
           )}
         </View>
       </ScrollView>
+      <View style={tw`left-[30px] right-[30px] bottom-[40px] absolute`}>
+        <LongBlackButton
+          value="Save"
+          onClick={() => {}}
+          isLoading={false}
+          //   isDisabled={checkIsDisabled()}
+        />
+      </View>
 
       {/* Edit Modal */}
       <Modal
