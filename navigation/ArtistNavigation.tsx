@@ -47,6 +47,7 @@ import ChangeGalleryPassword from 'screens/galleryProfileScreens/changeGalleryPa
 import UploadNewLogo from 'screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo';
 import UploadArtworkScreen from 'screens/artist/UploadArtwork/UploadArtworkScreen';
 import EditCredentialsScreen from 'screens/artist/profile/EditCredentialsScreen';
+import UploadArtwork from 'screens/uploadArtwork/UploadArtwork';
 
 const { width, height } = Dimensions.get('window');
 
@@ -80,7 +81,7 @@ const BottomTabData = [
     activeIcon: shippingActive,
     inActiveIcon: shippingInActive,
     name: 'Art Upload',
-    component: UploadArtworkScreen,
+    component: UploadArtwork,
   },
   {
     id: 2,

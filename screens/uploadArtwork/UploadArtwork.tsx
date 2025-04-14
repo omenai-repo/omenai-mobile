@@ -1,49 +1,48 @@
-import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import WithModal from "components/modal/WithModal";
-import HeaderIndicator from "./components/HeaderIndicator";
-import ArtworkDetails from "./components/ArtworkDetails";
-import ArtworkDimensions from "./components/ArtworkDimensions";
-import ArtistDetails from "./components/ArtistDetails";
-import Pricing from "./components/Pricing";
-import UploadImage from "./components/UploadImage";
-import { uploadArtworkStore } from "store/gallery/uploadArtworkStore";
-import uploadImage from "services/artworks/uploadArtworkImage";
-import { createUploadedArtworkData } from "utils/utils_createUploadedArtworkData";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { uploadArtworkData } from "services/artworks/uploadArtworkData";
-import SuccessScreen from "./components/SuccessScreen";
-import { useModalStore } from "store/modal/modalStore";
-import Loader from "components/general/Loader";
-import { useAppStore } from "store/app/appStore";
-import LockScreen from "screens/galleryArtworksListing/components/LockScreen";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import WithModal from 'components/modal/WithModal';
+import HeaderIndicator from './components/HeaderIndicator';
+import ArtworkDetails from './components/ArtworkDetails';
+import ArtworkDimensions from './components/ArtworkDimensions';
+import ArtistDetails from './components/ArtistDetails';
+import Pricing from './components/Pricing';
+import UploadImage from './components/UploadImage';
+import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
+import uploadImage from 'services/artworks/uploadArtworkImage';
+import { createUploadedArtworkData } from 'utils/utils_createUploadedArtworkData';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { uploadArtworkData } from 'services/artworks/uploadArtworkData';
+import SuccessScreen from './components/SuccessScreen';
+import { useModalStore } from 'store/modal/modalStore';
+import Loader from 'components/general/Loader';
+import { useAppStore } from 'store/app/appStore';
+import LockScreen from 'screens/galleryArtworksListing/components/LockScreen';
+import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export default function UploadArtwork() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showLockScreen, setShowLockScreen] = useState(false);
 
-  const { userSession } = useAppStore();
+  const { userSession, userType } = useAppStore();
 
-  const { activeIndex, artworkUploadData, image, isUploaded, setIsUploaded } =
-    uploadArtworkStore();
+  const { activeIndex, artworkUploadData, image, isUploaded, setIsUploaded } = uploadArtworkStore();
   const { updateModal } = useModalStore();
 
   useEffect(() => {
-    handleGalleryVerification();
-  }, []);
-
-  const handleGalleryVerification = () => {
-    if (userSession.gallery_verified && userSession.subscription_active) return;
-
-    setShowLockScreen(true);
-  };
+    if (userType === 'gallery') {
+      const shouldLock = !userSession.gallery_verified || !userSession.subscription_active;
+      setShowLockScreen(shouldLock);
+    } else if (userType === 'artist') {
+      const shouldLock = !userSession.artist_verified || !userSession.verified;
+      setShowLockScreen(shouldLock);
+    }
+  }, [userType, userSession]);
 
   const handleArtworkUpload = async () => {
     setIsLoading(true);
 
-    let userId = "";
-    let session = await utils_getAsyncData("userSession");
+    let userId = '';
+    let session = await utils_getAsyncData('userSession');
     if (session.value) {
       userId = JSON.parse(session.value).id;
     } else {
@@ -54,7 +53,7 @@ export default function UploadArtwork() {
       name: image.assets[0].fileName,
       size: image.assets[0].fileSize,
       uri: image.assets[0].uri,
-      type: "png",
+      type: 'png',
     };
     const fileUploaded = await uploadImage(imageparams);
 
@@ -64,15 +63,10 @@ export default function UploadArtwork() {
         fileId: fileUploaded.$id,
       };
 
-      const data = createUploadedArtworkData(
-        artworkUploadData,
-        file.fileId,
-        userId,
-        {
-          role: "gallery",
-          designation: null,
-        }
-      );
+      const data = createUploadedArtworkData(artworkUploadData, file.fileId, userId, {
+        role: userType === 'artist' ? 'artist' : 'gallery',
+        designation: null,
+      });
       const upload_response = await uploadArtworkData(data);
       if (upload_response.isOk) {
         //display success screen
@@ -81,15 +75,15 @@ export default function UploadArtwork() {
         //toast error
         updateModal({
           message: upload_response.body,
-          modalType: "error",
+          modalType: 'error',
           showModal: true,
         });
       }
     } else {
       //toast something
       updateModal({
-        message: "Error uploading artwork",
-        modalType: "error",
+        message: 'Error uploading artwork',
+        modalType: 'error',
         showModal: true,
       });
     }
