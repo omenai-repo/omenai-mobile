@@ -27,9 +27,7 @@ export default function RecentOrders({ refreshCount }: { refreshCount: number })
         const results = await getOverviewOrders();
         if (results?.isOk) {
           const data = results.data;
-
-          const filteredData = data.filter((i: any) => i.order_accepted.status === '').slice(0, 3); // Ensure only 3 items
-          setData(filteredData);
+          setData(data);
         } else {
           setData([]);
         }
