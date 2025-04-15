@@ -48,6 +48,7 @@ import UploadNewLogo from 'screens/galleryProfileScreens/uploadNewLogo/UploadNew
 import UploadArtworkScreen from 'screens/artist/UploadArtwork/UploadArtworkScreen';
 import EditCredentialsScreen from 'screens/artist/profile/EditCredentialsScreen';
 import UploadArtwork from 'screens/uploadArtwork/UploadArtwork';
+import GalleryArtworksListing from 'screens/galleryArtworksListing/GalleryArtworksListing';
 
 const { width, height } = Dimensions.get('window');
 
@@ -81,7 +82,7 @@ const BottomTabData = [
     activeIcon: shippingActive,
     inActiveIcon: shippingInActive,
     name: 'Art Upload',
-    component: UploadArtwork,
+    component: GalleryArtworksListing,
   },
   {
     id: 2,
@@ -256,6 +257,7 @@ const ArtistNavigation = () => {
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name={screenName.gallery.uploadNewLogo} component={UploadNewLogo} />
       </Stack.Group>
+      <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
     </Stack.Navigator>
   );
 };

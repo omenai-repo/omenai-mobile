@@ -5,7 +5,6 @@ import Header from 'components/header/Header';
 import SalesOverview from './components/SalesOverview';
 import RecentOrders from './components/RecentOrders';
 import { HighlightCard } from './components/HighlightCard';
-import PopularArtworks from './components/PopularArtworks';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export default function Overview() {

@@ -13,6 +13,11 @@ import {
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import SalesOverview from 'screens/overview/components/SalesOverview';
 import { Animated } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { fetchHighlightData } from 'services/overview/fetchHighlightData';
+import { getWalletBalance } from 'services/overview/getWalletBalance';
+import { useAppStore } from 'store/app/appStore';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 
 const data = [
   {
@@ -60,14 +65,15 @@ const OverviewContainer = ({
 }) => {
   return (
     <View
-      style={tw`bg-[#000000] min-h-[150px] border border-[#E7E7E7] p-[20px] rounded-[20px] flex-1`}
+      style={tw`bg-[#000000] min-h-[60px] border border-[#E7E7E7] p-[20px] rounded-[20px] flex-1`}
     >
       <View style={tw`flex-row items-center gap-[10px]`}>
-        <Text style={tw`text-[16px] text-[#FFFFFF] font-semibold flex-1`}>{label}</Text>
-        <SvgXml xml={arrowUpRight} />
+        <Text style={tw`text-[16px] text-[#FFFFFF] font-medium flex-1`}>{label}</Text>
+        {/* <SvgXml xml={arrowUpRight} /> */}
       </View>
 
-      <Text style={tw`text-[24px] text-[#FFFFFF] font-semibold mt-[35px]`}>{amount}</Text>
+      <Text style={tw`text-[24px] text-[#FFFFFF] font-semibold mt-[10px]`}>{amount}</Text>
+
       {/* {isTotalArtworks && (
         <View style={tw`flex-row items-center gap-[5px] mt-[5px]`}>
           <View style={tw`flex-row items-center`}>
@@ -186,9 +192,32 @@ const RecentOrderContainer = ({
 };
 
 const ArtistOverview = () => {
+  const { userSession } = useAppStore();
   const [refreshCount, setRefreshCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
+  const [totalArtwork, setTotalArtwork] = useState(0);
+  const [walletBal, setWalletBal] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    handleFetchHighlightData();
+    handleFetchWalletBal();
+  }, [refreshCount]);
+
+  const handleFetchHighlightData = async () => {
+    // setIsLoading(true)
+    let data1 = await fetchHighlightData('artworks');
+    setTotalArtwork(data1);
+    setIsLoading(false);
+  };
+
+  const handleFetchWalletBal = async () => {
+    // setIsLoading(true)
+    let data1 = await getWalletBalance({ id: userSession.id });
+    setWalletBal(data1.balances.available);
+    setIsLoading(false);
+  };
 
   const onRefresh = useCallback(() => {
     // setRefreshing(true);
@@ -211,8 +240,16 @@ const ArtistOverview = () => {
         <Header />
 
         <View style={tw`flex-row items-center gap-[20px] mx-[15px] mt-[30px] mb-[20px]`}>
-          <OverviewContainer label="Artworks Sold" amount="$81.000" isTotalArtworks={true} />
-          <OverviewContainer label="Available Balance" amount="$5,000" isTotalArtworks={false} />
+          <OverviewContainer
+            label="Total Artworks"
+            amount={totalArtwork.toString()}
+            isTotalArtworks={true}
+          />
+          <OverviewContainer
+            label="Wallet Balance"
+            amount={`${utils_formatPrice(walletBal)}`}
+            isTotalArtworks={false}
+          />
         </View>
 
         <SalesOverview refreshCount={refreshCount} userType="artist" />
