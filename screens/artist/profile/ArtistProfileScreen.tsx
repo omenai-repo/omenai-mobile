@@ -17,6 +17,9 @@ import { changePasswsordIcon, deleteIcon } from 'utils/SvgImages';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import tw from 'twrnc';
 import LoadingContainer from 'screens/artistOnboarding/LoadingContainer';
+import { getEditEligibility } from 'services/update/getEditEligibility';
+import { useModalStore } from 'store/modal/modalStore';
+import EligibityResponseScreen from './EligibityResponseScreen';
 
 type userDataType = {
   name: string;
@@ -25,6 +28,7 @@ type userDataType = {
 
 export default function ArtistProfileScreen() {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { updateModal } = useModalStore();
 
   const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
@@ -34,15 +38,40 @@ export default function ArtistProfileScreen() {
     email: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [eligibilityResponse, setEligibilityResponse] = useState('');
+  const [isEligible, setIsEligible] = useState(false);
+  const [eligibilityData, setEligibilityData] = useState<any>(null);
 
-  useEffect(() => {
-    if (isLoading) {
-      setTimeout(() => {
+  const checkEditEligibility = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getEditEligibility();
+      console.log(response);
+
+      if (response?.isOk) {
+        if (response.body.eligibility.isEligible) {
+          setIsLoading(false);
+          navigation.navigate('EditCredentialsScreen');
+        } else {
+          setIsLoading(false);
+          setEligibilityData(response);
+          setIsEligible(true);
+        }
+      } else {
         setIsLoading(false);
-        navigation.navigate('EditCredentialsScreen');
-      }, 5000);
+        setIsEligible(true);
+        setEligibilityResponse(response?.body.message);
+      }
+    } catch (error: any) {
+      // console.error('Error checking edit eligibility:', error);
+      updateModal({
+        message: error.message,
+        showModal: true,
+        modalType: 'error',
+      });
+      setIsLoading(false);
     }
-  }, [isLoading]);
+  };
 
   useEffect(() => {
     handleFetchUserSession();
@@ -67,77 +96,90 @@ export default function ArtistProfileScreen() {
   return (
     <WithGalleryModal>
       {!isLoading ? (
-        <ScrollWrapper style={styles.mainContainer}>
-          <View style={styles.profileContainer}>
-            {/* {userSession.logo !== "" ? 
+        !isEligible ? (
+          <ScrollWrapper style={styles.mainContainer}>
+            <View style={styles.profileContainer}>
+              {/* {userSession.logo !== "" ? 
             <Logo url={userSession.logo} /> 
             : 
             <Image source={omenaiAvatar} style={styles.image} />
           } */}
-            <Image source={omenaiAvatar} style={styles.image} />
-            <View>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: '500',
-                  color: colors.primary_black,
-                }}
-              >
-                {userData.name}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  marginTop: 5,
-                  marginBottom: 20,
-                  color: '#00000099',
-                }}
-              >
-                {userData.email}
-              </Text>
+              <Image source={omenaiAvatar} style={styles.image} />
+              <View>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '500',
+                    color: colors.primary_black,
+                  }}
+                >
+                  {userData.name}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    marginTop: 5,
+                    marginBottom: 20,
+                    color: '#00000099',
+                  }}
+                >
+                  {userData.email}
+                </Text>
+              </View>
             </View>
-          </View>
-          <View style={tw`flex-row items-center gap-[20px] mt-[35px]`}>
-            <Pressable
-              onPress={() => navigation.navigate(screenName.gallery.editProfile)}
-              style={tw`bg-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
-            >
-              <Text style={tw`text-[16px] text-[#fff]`}>Edit your profile</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setIsLoading(true)}
-              style={tw`border border-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
-            >
-              <Text style={tw`text-[16px] text-[#000000]`}>Edit your credentials</Text>
-            </Pressable>
-          </View>
-          <View style={styles.buttonsContainer}>
-            {/* <Divider /> */}
-            <PageButtonCard
-              name="Change password"
-              subText="Change the password to your account"
-              handlePress={() =>
-                navigation.navigate(screenName.gallery.changePassword, {
-                  routeName: 'gallery',
-                })
-              }
-              svgIcon={changePasswsordIcon}
-            />
-            {/* <Divider /> */}
-            <PageButtonCard
-              name="Delete account"
-              subText="Delete your omenai gallery account"
-              handlePress={() => {
-                setModalType('deleteAccount');
-                setIsVisible(true);
-              }}
-              svgIcon={deleteIcon}
-            />
-          </View>
-          <LongBlackButton value="Log Out" onClick={logout} />
-        </ScrollWrapper>
+            <View style={tw`flex-row items-center gap-[20px] mt-[35px]`}>
+              <Pressable
+                onPress={() => navigation.navigate(screenName.gallery.editProfile)}
+                style={tw`bg-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
+              >
+                <Text style={tw`text-[16px] text-[#fff]`}>Edit your profile</Text>
+              </Pressable>
+              <Pressable
+                // onPress={() => setIsLoading(true)}
+                onPress={() => checkEditEligibility()}
+                style={tw`border border-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
+              >
+                <Text style={tw`text-[16px] text-[#000000]`}>Edit your credentials</Text>
+              </Pressable>
+            </View>
+            <View style={styles.buttonsContainer}>
+              {/* <Divider /> */}
+              <PageButtonCard
+                name="Change password"
+                subText="Change the password to your account"
+                handlePress={() =>
+                  navigation.navigate(screenName.gallery.changePassword, {
+                    routeName: 'gallery',
+                  })
+                }
+                svgIcon={changePasswsordIcon}
+              />
+              {/* <Divider /> */}
+              <PageButtonCard
+                name="Delete account"
+                subText="Delete your omenai gallery account"
+                handlePress={() => {
+                  setModalType('deleteAccount');
+                  setIsVisible(true);
+                }}
+                svgIcon={deleteIcon}
+              />
+            </View>
+            <LongBlackButton value="Log Out" onClick={logout} />
+          </ScrollWrapper>
+        ) : (
+          <EligibityResponseScreen
+            label={
+              eligibilityResponse
+                ? eligibilityResponse
+                : `You’re currently not eligible to update your credentials. Please try again in:`
+            }
+            daysLeft={eligibilityData?.body?.eligibility?.daysLeft}
+            onPress={() => setIsEligible(false)}
+          />
+        )
       ) : (
-        <LoadingContainer label="you can only edit your profile after 365 days, so please be patient, while omenai confirms your status" />
+        <LoadingContainer label={''} />
       )}
     </WithGalleryModal>
   );

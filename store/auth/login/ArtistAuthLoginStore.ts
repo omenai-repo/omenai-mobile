@@ -11,7 +11,7 @@ type ArtistAuthLoginStoreTypes = {
 
 export const useArtistAuthLoginStore = create<ArtistAuthLoginStoreTypes>((set, get) => ({
   artistLoginData: {
-    email: 'adejumoahmad4life@gmail.com',
+    email: 'dantereus1@gmail.com',
     password: 'Test12345@',
   },
   setEmail: (email: string) => {
