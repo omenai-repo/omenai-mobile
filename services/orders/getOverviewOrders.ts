@@ -11,15 +11,14 @@ export async function getOverviewOrders() {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/api/orders/getOrdersBySellerId`, {
-      method: 'POST',
+    const response = await fetch(`${apiUrl}/api/orders/getOrderByFilter?id=${userId}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Origin: originHeader,
         'User-Agent': userAgent,
         Authorization: authorization,
       },
-      body: JSON.stringify({ id: userId }),
     });
 
     const result = await response.json();
