@@ -18,41 +18,42 @@ import { fetchHighlightData } from 'services/overview/fetchHighlightData';
 import { getWalletBalance } from 'services/overview/getWalletBalance';
 import { useAppStore } from 'store/app/appStore';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 
-const data = [
-  {
-    id: 1,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 2,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 3,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-  {
-    id: 4,
-    artId: '021231',
-    artworkName: 'The Milwalk Art (Green)',
-    price: '$32,032',
-    buyerName: 'Moses Khan',
-    status: 'Pending',
-  },
-];
+// const data = [
+//   {
+//     id: 1,
+//     artId: '021231',
+//     artworkName: 'The Milwalk Art (Green)',
+//     price: '$32,032',
+//     buyerName: 'Moses Khan',
+//     status: 'Pending',
+//   },
+//   {
+//     id: 2,
+//     artId: '021231',
+//     artworkName: 'The Milwalk Art (Green)',
+//     price: '$32,032',
+//     buyerName: 'Moses Khan',
+//     status: 'Pending',
+//   },
+//   {
+//     id: 3,
+//     artId: '021231',
+//     artworkName: 'The Milwalk Art (Green)',
+//     price: '$32,032',
+//     buyerName: 'Moses Khan',
+//     status: 'Pending',
+//   },
+//   {
+//     id: 4,
+//     artId: '021231',
+//     artworkName: 'The Milwalk Art (Green)',
+//     price: '$32,032',
+//     buyerName: 'Moses Khan',
+//     status: 'Pending',
+//   },
+// ];
 
 const OverviewContainer = ({
   label,
@@ -87,7 +88,7 @@ const OverviewContainer = ({
   );
 };
 
-const RecentOrderContainer = ({
+export const RecentOrderContainer = ({
   id,
   open,
   setOpen,
@@ -97,6 +98,7 @@ const RecentOrderContainer = ({
   buyerName,
   status,
   lastId,
+  url,
 }: {
   id: number;
   open: boolean;
@@ -107,6 +109,7 @@ const RecentOrderContainer = ({
   buyerName: string;
   status: string;
   lastId: boolean;
+  url: string;
 }) => {
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
@@ -147,10 +150,7 @@ const RecentOrderContainer = ({
     >
       <View style={tw`flex-row items-center`}>
         <View style={tw`flex-row items-center gap-[10px] flex-1`}>
-          <Image
-            source={require('../../../assets/images/acrylic_art.jpg')}
-            style={tw`h-[42px] w-[42px] rounded-[3px]`}
-          />
+          <Image source={{ uri: url }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
           <View style={tw`gap-[5px]`}>
             <Text style={tw`text-[12px] text-[#454545]`}>{artId}</Text>
             <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{artName}</Text>
@@ -199,6 +199,7 @@ const ArtistOverview = () => {
   const [totalArtwork, setTotalArtwork] = useState(0);
   const [walletBal, setWalletBal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
     handleFetchHighlightData();
@@ -218,6 +219,29 @@ const ArtistOverview = () => {
     setWalletBal(data1.balances.available);
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    async function handleFetchRecentOrders() {
+      try {
+        const results = await getOverviewOrders();
+        if (results?.isOk) {
+          const data = results.data;
+          setData(data);
+        } else {
+          setData([]);
+        }
+      } catch (error) {
+        // console.error("Error fetching recent orders:", error);
+        setData([]); // Handle errors gracefully
+      } finally {
+        setIsLoading(false); // Ensure loading is turned off
+      }
+    }
+
+    handleFetchRecentOrders();
+  }, [refreshCount]);
 
   const onRefresh = useCallback(() => {
     // setRefreshing(true);
@@ -254,33 +278,53 @@ const ArtistOverview = () => {
 
         <SalesOverview refreshCount={refreshCount} userType="artist" />
 
-        <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[150px]`}
-        >
-          <View style={tw`flex-row items-center mb-[25px]`}>
-            <Text style={tw`text-[16px] text-[#454545] font-semibold flex-1`}>Recent Orders</Text>
-            <View style={tw`flex-row items-center gap-[3px]`}>
-              <Text style={tw`text-[12px] text-[#3D3D3D] font-semibold`}>Show All</Text>
-              <SvgXml xml={arrowUpRightWhite} />
+        {data.length !== 0 && (
+          <View
+            style={tw`border border-[#E7E7E7] bg-[#FFFFFF] rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[150px]`}
+          >
+            <View style={tw`flex-row items-center mb-[25px]`}>
+              <Text style={tw`text-[16px] text-[#454545] font-semibold flex-1`}>Recent Orders</Text>
+              <View style={tw`flex-row items-center gap-[3px]`}>
+                <Text style={tw`text-[12px] text-[#3D3D3D] font-semibold`}>Show All</Text>
+                <SvgXml xml={arrowUpRightWhite} />
+              </View>
             </View>
+            {data.map((item, index) => {
+              return (
+                <RecentOrderContainer
+                  key={index}
+                  id={index}
+                  url={item.artwork_data.url}
+                  open={openSection[index]}
+                  setOpen={() => toggleRecentOrder(index)}
+                  artId={item.artId}
+                  artName={item.artwork_data.title}
+                  buyerName={'john doe'}
+                  price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+                  status={item.order_accepted.status}
+                  lastId={index === data[data.length - 1].id}
+                />
+              );
+            })}
           </View>
-          {data.map((item) => {
-            return (
-              <RecentOrderContainer
-                key={item.id}
-                id={item.id}
-                open={openSection[item.id]}
-                setOpen={() => toggleRecentOrder(item.id)}
-                artId={item.artId}
-                artName={item.artworkName}
-                buyerName={item.buyerName}
-                price={item.price}
-                status={item.status}
-                lastId={item.id === data[data.length - 1].id}
-              />
-            );
-          })}
-        </View>
+        )}
+
+        {data.length === 0 && (
+          <>
+            <Text style={tw`text-[16px] text-[#454545] font-semibold mt-[20px] mx-[15px]`}>
+              Recent Orders
+            </Text>
+            <View
+              style={tw`border border-[#00000033] bg-[#fff] rounded-[25px] px-[100px] py-[120px] mt-[20px] mx-[15px] mb-[150px]`}
+            >
+              <View
+                style={tw`items-center justify-center py-[15px] px-[15px] bg-[#f5f5f5] rounded-[40px]`}
+              >
+                <Text style={tw`text-[16px] text-center`}>No Recent Orders</Text>
+              </View>
+            </View>
+          </>
+        )}
       </ScrollWrapper>
     </View>
   );

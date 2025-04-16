@@ -13,11 +13,20 @@ import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
 import { rightArrowIcon } from 'utils/SvgImages';
 import NavBtnComponent from 'components/artwork/NavBtnComponent';
+import { RecentOrderContainer } from 'screens/artist/overview/ArtistOverview';
 
 export default function RecentOrders({ refreshCount }: { refreshCount: number }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
+
+  const toggleRecentOrder = (key: number) => {
+    setOpenSection((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -122,18 +131,24 @@ export default function RecentOrders({ refreshCount }: { refreshCount: number })
       </TouchableOpacity>
       <View style={styles.mainContainer}>
         {data.length > 0 &&
-          data.map((order, index) => (
-            <View key={index} style={{ gap: 20 }}>
-              <OrderCard
-                artworkName={order.artwork_data.title}
-                artist={order.artwork_data.artist}
-                url={order.artwork_data.url}
-                status={order.order_accepted.status}
-                amount={utils_formatPrice(order.artwork_data.pricing.usd_price)}
+          data.map((item, index) => {
+            return (
+              <RecentOrderContainer
+                key={index}
+                id={index}
+                url={item.artwork_data.url}
+                open={openSection[index]}
+                setOpen={() => toggleRecentOrder(index)}
+                artId={item.artId}
+                artName={item.artwork_data.title}
+                buyerName={'john doe'}
+                price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+                status={item.order_accepted.status}
+                lastId={index === data[data.length - 1].id}
               />
-              {index + 1 !== data.length && <Divider />}
-            </View>
-          ))}
+            );
+          })}
+
         <View style={{ flexWrap: 'wrap', marginRight: 'auto', marginLeft: 'auto' }}>
           {data.length >= 1 ? (
             <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.orders)}>
