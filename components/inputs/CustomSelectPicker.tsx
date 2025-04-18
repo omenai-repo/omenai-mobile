@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { SetStateAction, useEffect, useState } from "react";
-import { Dropdown } from "react-native-element-dropdown";
-import { colors } from "config/colors.config";
+import { StyleSheet, Text, View } from 'react-native';
+import React, { SetStateAction, useEffect, useState } from 'react';
+import { Dropdown } from 'react-native-element-dropdown';
+import { colors } from 'config/colors.config';
 
 type CustomSelectPickerProps = {
   data: { label: string; value: string }[];
@@ -14,8 +14,9 @@ type CustomSelectPickerProps = {
   zIndex?: number;
   search?: boolean;
   searchPlaceholder?: string;
-  dropdownPosition?: "auto" | "top" | "bottom";
+  dropdownPosition?: 'auto' | 'top' | 'bottom';
   disable?: false | true;
+  renderInputSearch?: any;
 };
 
 type SetStateValue<S> = (prevState: S) => S;
@@ -33,6 +34,7 @@ export default function CustomSelectPicker({
   searchPlaceholder,
   dropdownPosition,
   disable,
+  renderInputSearch,
 }: CustomSelectPickerProps) {
   return (
     <View style={{ zIndex: zIndex }}>
@@ -50,7 +52,7 @@ export default function CustomSelectPicker({
         showsVerticalScrollIndicator={false}
         placeholder={placeholder}
         placeholderStyle={{
-          color: "#858585",
+          color: '#858585',
         }}
         disable={disable}
         maxHeight={250}
@@ -58,8 +60,18 @@ export default function CustomSelectPicker({
           borderRadius: 5,
         }}
         style={styles.container}
+        selectedTextStyle={{
+          color: disable ? '#c0c0c0' : colors.inputLabel,
+        }}
+        renderInputSearch={renderInputSearch}
         dropdownPosition={dropdownPosition}
         keyboardAvoiding={true}
+        flatListProps={{
+          initialNumToRender: 15,
+          maxToRenderPerBatch: 20,
+          windowSize: 10,
+          keyboardShouldPersistTaps: 'handled',
+        }}
       />
       {errorMessage && errorMessage?.length > 0 && (
         <Text style={styles.errorMessage}>{errorMessage}</Text>
@@ -78,13 +90,13 @@ const styles = StyleSheet.create({
     borderColor: colors.inputBorder,
     paddingHorizontal: 20,
     height: 60,
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
     borderRadius: 95,
   },
   errorMessage: {
-    color: "#ff0000",
+    color: '#ff0000',
     marginTop: 2,
   },
 });

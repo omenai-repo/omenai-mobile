@@ -19,6 +19,8 @@ import { getWalletBalance } from 'services/overview/getWalletBalance';
 import { useAppStore } from 'store/app/appStore';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
+import { getImageFileView } from 'lib/storage/getImageFileView';
+import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
 
 // const data = [
 //   {
@@ -107,10 +109,12 @@ export const RecentOrderContainer = ({
   artName: string;
   price: string;
   buyerName: string;
-  status: string;
+  status: 'pending' | 'processing' | 'completed';
   lastId: boolean;
   url: string;
 }) => {
+  let image_href = getImageFileView(url, 700);
+
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
 
@@ -140,17 +144,32 @@ export const RecentOrderContainer = ({
     }
   }, [open]);
 
+  const statusStyles = {
+    pending: {
+      bg: '#FFBF0040',
+      text: '#1a1a1a',
+    },
+    processing: {
+      bg: '#007AFF20',
+      text: '#007AFF',
+    },
+    completed: {
+      bg: '#00C85120',
+      text: '#00C851',
+    },
+  };
+
   return (
     <View
       style={tw.style(
         `border-t-[1px] border-l-[1px] border-r-[1px] border-[#E7E7E7] p-[20px]`,
-        id === 1 && `rounded-t-[15px]`,
+        id === 0 && `rounded-t-[15px]`,
         lastId && `border-b-[1px] rounded-b-[15px]`,
       )}
     >
       <View style={tw`flex-row items-center`}>
         <View style={tw`flex-row items-center gap-[10px] flex-1`}>
-          <Image source={{ uri: url }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
+          <Image source={{ uri: image_href }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
           <View style={tw`gap-[5px]`}>
             <Text style={tw`text-[12px] text-[#454545]`}>{artId}</Text>
             <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{artName}</Text>
@@ -180,9 +199,17 @@ export const RecentOrderContainer = ({
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
             <View
-              style={tw`rounded-[12px] h-[30px] justify-center items-center bg-[#F3FFC8] px-[12px]`}
+              style={tw.style(`rounded-[12px] h-[30px] justify-center items-center px-[12px]`, {
+                backgroundColor: statusStyles[status].bg,
+              })}
             >
-              <Text style={tw`text-[12px] font-bold text-[#28B652]`}>{status}</Text>
+              <Text
+                style={tw.style(`text-[12px] font-bold`, {
+                  color: statusStyles[status]?.text || '#1a1a1a',
+                })}
+              >
+                {status}
+              </Text>
             </View>
           </View>
         </View>
@@ -260,6 +287,7 @@ const ArtistOverview = () => {
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        nestedScrollEnabled={true}
       >
         <Header />
 
@@ -284,28 +312,34 @@ const ArtistOverview = () => {
           >
             <View style={tw`flex-row items-center mb-[25px]`}>
               <Text style={tw`text-[16px] text-[#454545] font-semibold flex-1`}>Recent Orders</Text>
-              <View style={tw`flex-row items-center gap-[3px]`}>
-                <Text style={tw`text-[12px] text-[#3D3D3D] font-semibold`}>Show All</Text>
-                <SvgXml xml={arrowUpRightWhite} />
-              </View>
+              {!isLoading && (
+                <View style={tw`flex-row items-center gap-[3px]`}>
+                  <Text style={tw`text-[12px] text-[#3D3D3D] font-semibold`}>Show All</Text>
+                  <SvgXml xml={arrowUpRightWhite} />
+                </View>
+              )}
             </View>
-            {data.map((item, index) => {
-              return (
-                <RecentOrderContainer
-                  key={index}
-                  id={index}
-                  url={item.artwork_data.url}
-                  open={openSection[index]}
-                  setOpen={() => toggleRecentOrder(index)}
-                  artId={item.artId}
-                  artName={item.artwork_data.title}
-                  buyerName={'john doe'}
-                  price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                  status={item.order_accepted.status}
-                  lastId={index === data[data.length - 1].id}
-                />
-              );
-            })}
+            {isLoading ? (
+              <OrderslistingLoader />
+            ) : (
+              data.map((item, index) => {
+                return (
+                  <RecentOrderContainer
+                    key={index}
+                    id={index}
+                    url={item.artwork_data.url}
+                    open={openSection[item.artwork_data._id]}
+                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                    artId={item.order_id}
+                    artName={item.artwork_data.title}
+                    buyerName={item.buyer_details.name}
+                    price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+                    status={item.status}
+                    lastId={index === data.length - 1}
+                  />
+                );
+              })
+            )}
           </View>
         )}
 
