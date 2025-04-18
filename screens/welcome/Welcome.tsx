@@ -1,28 +1,21 @@
-import {
-  Image,
-  Text,
-  View,
-  Platform,
-  useWindowDimensions,
-  Pressable,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { Image, Text, View, Platform, useWindowDimensions, Pressable } from 'react-native';
+import React, { useEffect, useState } from 'react';
 
-import omenai_logo from "../../assets/omenai-logo.png";
-import onboarding3 from "../../assets/images/onboarding3.jpg";
-import onboarding4 from "../../assets/images/onboarding4.jpg";
-import onboarding5 from "../../assets/images/onboarding5.jpg";
-import onboarding6 from "../../assets/images/onboarding6.jpg";
-import onboarding7 from "../../assets/images/onboarding7.jpg";
-import onboarding8 from "../../assets/images/onboarding8.jpg";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { screenName } from "../../constants/screenNames.constants";
-import { onboardingdata } from "constants/onBoardingData.constants";
-import OnBoardingSection from "./components/OnBoardingSection";
-import { utils_storeAsyncData } from "utils/utils_asyncStorage";
-import { utils_determineOnboardingPages } from "utils/utils_determineOnboardingPages";
-import tw from "twrnc";
+import omenai_logo from '../../assets/omenai-logo.png';
+import onboarding3 from '../../assets/images/onboarding3.jpg';
+import onboarding4 from '../../assets/images/onboarding4.jpg';
+import onboarding5 from '../../assets/images/onboarding5.jpg';
+import onboarding6 from '../../assets/images/onboarding6.jpg';
+import onboarding7 from '../../assets/images/onboarding7.jpg';
+import onboarding8 from '../../assets/images/onboarding8.jpg';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { screenName } from '../../constants/screenNames.constants';
+import { onboardingdata } from 'constants/onBoardingData.constants';
+import OnBoardingSection from './components/OnBoardingSection';
+import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
+import { utils_determineOnboardingPages } from 'utils/utils_determineOnboardingPages';
+import tw from 'twrnc';
 
 export default function Welcome() {
   const { width, height } = useWindowDimensions();
@@ -54,7 +47,7 @@ export default function Welcome() {
         currentIndex={selected}
         onFinish={() => {
           setShowWelcome(true);
-          utils_storeAsyncData("isOnboarded", JSON.stringify(true));
+          utils_storeAsyncData('isOnboarded', JSON.stringify(true));
         }}
         handleNext={() => setSelected((prev) => prev + 1)}
       />
@@ -70,15 +63,15 @@ export default function Welcome() {
               style={{
                 width: width / 3,
                 height: height / 40,
-                alignSelf: "center",
-                marginBottom: Platform.OS === "ios" ? 25 : 20,
+                alignSelf: 'center',
+                marginBottom: Platform.OS === 'ios' ? 25 : 20,
               }}
             />
             <Image
               source={onboarding8}
               style={{
                 width: width / 2.1,
-                height: Platform.OS === "ios" ? 190 : 160,
+                height: Platform.OS === 'ios' ? 190 : 160,
               }}
               resizeMode="contain"
             />
@@ -88,7 +81,7 @@ export default function Welcome() {
             style={{
               width: width / 2.1,
               height: 274,
-              marginTop: Platform.OS === "ios" ? 35 : -40,
+              marginTop: Platform.OS === 'ios' ? 35 : -40,
             }}
             resizeMode="contain"
           />
@@ -99,8 +92,8 @@ export default function Welcome() {
               source={onboarding3}
               style={{
                 width: width / 2.14,
-                height: Platform.OS === "ios" ? 190 : 160,
-                marginTop: Platform.OS === "ios" ? 20 : 10,
+                height: Platform.OS === 'ios' ? 190 : 160,
+                marginTop: Platform.OS === 'ios' ? 20 : 10,
               }}
               resizeMode="contain"
             />
@@ -108,7 +101,7 @@ export default function Welcome() {
               source={onboarding5}
               style={{
                 width: width / 3.2,
-                height: Platform.OS === "ios" ? 190 : 160,
+                height: Platform.OS === 'ios' ? 190 : 160,
                 marginTop: 20,
               }}
               resizeMode="contain"
@@ -119,7 +112,7 @@ export default function Welcome() {
               source={onboarding4}
               style={{
                 width: width / 2.14,
-                height: Platform.OS === "ios" ? 274 : 220,
+                height: Platform.OS === 'ios' ? 274 : 220,
               }}
               resizeMode="contain"
             />
@@ -127,8 +120,8 @@ export default function Welcome() {
               source={onboarding6}
               style={{
                 width: width / 2.14,
-                height: Platform.OS === "ios" ? 190 : 140,
-                marginTop: Platform.OS === "ios" ? 0 : 20,
+                height: Platform.OS === 'ios' ? 190 : 140,
+                marginTop: Platform.OS === 'ios' ? 0 : 20,
               }}
               resizeMode="contain"
             />
@@ -137,32 +130,25 @@ export default function Welcome() {
       </View>
       <View
         style={tw.style(`bg-[#1A1A1A] rounded-[20px]`, {
-          position: "absolute",
-          bottom: Platform.OS === "ios" ? 40 : 20,
+          position: 'absolute',
+          bottom: Platform.OS === 'ios' ? 40 : 20,
           left: 10,
           right: 10,
         })}
       >
         <Text
-          style={tw.style(
-            `text-[32px] text-[#FFFFFF] font-medium text-center`,
-            {
-              paddingHorizontal: Platform.OS === "ios" ? width / 8 : width / 10,
-              paddingTop: Platform.OS === "ios" ? height / 15 : height / 20,
-            }
-          )}
+          style={tw.style(`text-[32px] text-[#FFFFFF] font-medium text-center`, {
+            paddingHorizontal: Platform.OS === 'ios' ? width / 8 : width / 10,
+            paddingTop: Platform.OS === 'ios' ? height / 15 : height / 20,
+          })}
         >
           Find every artwork you desire here
         </Text>
 
-        <Text
-          style={tw.style(`text-[15px] text-[#FFFFFFB2] text-center pt-[25px]`)}
-        >
+        <Text style={tw.style(`text-[15px] text-[#FFFFFFB2] text-center pt-[25px]`)}>
           Buy, Trade, Discover
         </Text>
-        <Text
-          style={tw.style(`text-[15px] text-[#FFFFFFB2] text-center px-[10px]`)}
-        >
+        <Text style={tw.style(`text-[15px] text-[#FFFFFFB2] text-center px-[10px]`)}>
           and experience art like the louvre with a single tap.
         </Text>
 
@@ -172,7 +158,7 @@ export default function Welcome() {
             {
               width: width / 1.2,
               marginTop: height / 20,
-            }
+            },
           )}
           onPress={() => handleNavigation(screenName.login)}
         >
@@ -186,7 +172,7 @@ export default function Welcome() {
               width: width / 1.2,
               marginTop: height / 35,
               marginBottom: height / 15,
-            }
+            },
           )}
           onPress={() => handleNavigation(screenName.register)}
         >

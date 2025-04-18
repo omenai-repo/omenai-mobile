@@ -101,16 +101,40 @@ export default function SalesOverview({
 
   if (isLoading) {
     return (
-      <View
-        style={{
-          paddingBottom: 40,
-          marginHorizontal: 15,
-        }}
-      >
-        {/* <Text style={{ fontSize: 16, fontWeight: "400", marginBottom: 20 }}>
-          Sales overview
-        </Text> */}
-        <View style={{ height: 200, backgroundColor: '#f5f5f5', borderRadius: 16 }} />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={[styles.skeletonBlock, { width: 100, height: 20 }]} />
+        </View>
+
+        <View style={[styles.chart, { justifyContent: 'space-around' }]}>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <View
+              key={i}
+              style={{
+                width: 10,
+                height: Math.random() * 60 + 20,
+                backgroundColor: '#3C3F4E',
+                borderRadius: 4,
+                marginBottom: 5,
+              }}
+            />
+          ))}
+        </View>
+
+        <View style={styles.xAxis}>
+          {Array.from({ length: 12 }).map((_, index) => (
+            <View
+              key={index}
+              style={{
+                width: 20,
+                height: 10,
+                borderRadius: 2,
+                backgroundColor: '#3C3F4E',
+                marginHorizontal: 3,
+              }}
+            />
+          ))}
+        </View>
       </View>
     );
   }
@@ -276,5 +300,9 @@ const styles = StyleSheet.create({
   tooltipText: {
     color: '#000',
     fontSize: 12,
+  },
+  skeletonBlock: {
+    backgroundColor: '#3C3F4E',
+    borderRadius: 4,
   },
 });

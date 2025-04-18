@@ -521,3 +521,14 @@ type NextChargeParams = {
   interval: string;
   id: string;
 };
+
+type WithdrawalAccount = {
+  account_number: string;
+  bank_name: string;
+  account_name: string;
+  bank_id: string;
+  bank_code: string;
+  bank_branch?: string;
+  bank_country: string;
+  beneficiary_id: number;
+};

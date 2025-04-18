@@ -23,7 +23,6 @@ export default function Header({ showNotification }: { showNotification?: boolea
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const { userSession } = useAppStore();
-  console.log(userSession);
   const handleNavigation = () => {
     if (userSession.role === 'gallery') {
       //navigate to gallery profile screen
