@@ -1,5 +1,5 @@
-import { View, Text, TextInput } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, TextInput, Modal, ScrollView } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import Input from 'components/inputs/Input';
 import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
@@ -14,6 +14,8 @@ import { addPrimaryAcct } from 'services/wallet/addPrimaryAcct';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { fetchBankBranches } from 'services/wallet/fetchBankBranches';
 import WithModal from 'components/modal/WithModal';
+import LottieView from 'lottie-react-native';
+import loaderAnimation from '../../../assets/other/loader-animation.json';
 
 type BankOption = {
   label: string;
@@ -63,6 +65,38 @@ const AddPrimaryAcctScreen = () => {
   const [loadAcctName, setLoadAcctName] = useState(false);
   const [addPrimaryAcctLoading, setAddPrimaryAcctLoading] = useState(false);
 
+  const isEditing = !!walletData?.primary_withdrawal_account;
+
+  useEffect(() => {
+    if (isEditing) {
+      const account = walletData.primary_withdrawal_account;
+
+      setAcctName(account.account_name);
+      setAcctNumber(account.account_number);
+      setSelectedBank({
+        label: account.bank_name,
+        value: account.bank_code,
+        id: String(account.bank_id),
+      });
+      setSelectedBranch({
+        label: account.bank_branch,
+        value: account.bank_branch,
+      });
+    }
+  }, [walletData]);
+
+  const animation = useRef(null);
+  const prevAcctNumberRef = useRef('');
+
+  useEffect(() => {
+    if (acctNumber !== prevAcctNumberRef.current) {
+      // Clear acct name only if there was a previously validated name
+      if (acctName) setAcctName('');
+      // Update the previous value
+      prevAcctNumberRef.current = acctNumber;
+    }
+  }, [acctNumber]);
+
   const fetchBankList = async () => {
     setIsLoading(true);
     try {
@@ -109,7 +143,8 @@ const AddPrimaryAcctScreen = () => {
     const fetchBranches = async () => {
       if (selectedBank?.value && supportedCountryCodes.includes(userSession.address.countryCode)) {
         try {
-          const response = await fetchBankBranches(selectedBank.value);
+          setIsLoading(true);
+          const response = await fetchBankBranches(selectedBank.id ?? '');
           if (response?.isOk && Array.isArray(response?.data)) {
             const formatted = response.data
               .map((branch: any) => ({
@@ -122,8 +157,10 @@ const AddPrimaryAcctScreen = () => {
             setBranchList(formatted);
             setFilteredBranchList(formatted);
           }
+          setIsLoading(false);
         } catch (error) {
           console.error('Error fetching branches:', error);
+          setIsLoading(false);
         }
       } else {
         setBranchList([]); // Reset if not supported
@@ -187,7 +224,7 @@ const AddPrimaryAcctScreen = () => {
   };
 
   const handleAddPrimaryAcct = async () => {
-    if (acctName === '') {
+    if (!acctName) {
       updateModal({
         message: 'Please validate account number first',
         showModal: true,
@@ -195,110 +232,84 @@ const AddPrimaryAcctScreen = () => {
       });
       return;
     }
+
     setAddPrimaryAcctLoading(true);
-    const response = await addPrimaryAcct({
+
+    const payload = {
       owner_id: userSession.id,
       account_details: {
-        // bank_code: selectedBank?.value || '',
-        bank_code: '044',
-        // account_number: Number(acctNumber),
-        account_number: '0690000032',
+        bank_code: selectedBank?.value || '',
+        account_number: acctNumber,
         account_name: acctName,
         bank_branch: selectedBranch?.value || '',
         bank_country: userSession.address.countryCode,
         bank_name: selectedBank?.label || '',
         bank_id: selectedBank?.id || '',
       },
-      base_currency: walletData.base_currency,
-    });
-    console.log(response);
+      base_currency: userSession.base_currency,
+    };
+
+    const response = await addPrimaryAcct(payload);
+
+    const successMessage = isEditing
+      ? 'Primary account updated successfully'
+      : 'Primary account added successfully';
+
     if (response?.isOk) {
       updateModal({
-        message: 'Primary account added successfully',
+        message: successMessage,
         showModal: true,
         modalType: 'success',
       });
-      setAcctName('');
-      setAcctNumber('');
-      setSelectedBank(null);
-      setSelectedBranch(null);
-      setFilteredBankList([]);
-      setBranchList([]);
-      setSearchText('');
       navigation.goBack();
     } else {
       updateModal({
-        message: 'Error adding primary account',
+        message: 'Error saving primary account',
         showModal: true,
         modalType: 'error',
       });
     }
+
     setAddPrimaryAcctLoading(false);
   };
 
   return (
     <WithModal>
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <BackHeaderTitle title="Add Primary Account" />
+      <ScrollView
+        contentContainerStyle={tw`flex-1`}
+        showsVerticalScrollIndicator={false}
+        style={tw`bg-[#F7F7F7]`}
+      >
+        <View style={tw`flex-1 bg-[#F7F7F7]`}>
+          <BackHeaderTitle title="Add Primary Account" />
 
-        <View style={tw`mx-[20px] mt-[40px] gap-[20px]`}>
-          <CustomSelectPicker
-            data={
-              userSession?.address
-                ? [
-                    {
-                      label: userSession.address.country,
-                      value: userSession.address.country,
-                    },
-                  ]
-                : []
-            }
-            placeholder="Select country"
-            value={userSession?.address ? userSession.address.country : 'Select country'}
-            handleSetValue={() => {}}
-            label="Country of account origin"
-            disable={true}
-          />
-
-          <CustomSelectPicker
-            data={filteredBankList}
-            placeholder="Select bank name"
-            value={selectedBank?.value || ''}
-            renderInputSearch={() => (
-              <TextInput
-                placeholder="Search bank"
-                value={searchText}
-                style={{
-                  padding: 15,
-                  borderWidth: 1,
-                  borderColor: '#ccc',
-                  backgroundColor: '#fff',
-                  margin: 5,
-                }}
-                onChangeText={(text: string) => {
-                  setSearchText(text);
-                  debouncedSearch(text);
-                }}
-              />
-            )}
-            handleSetValue={(item: { label: string; value: string }) => {
-              setSelectedBank(item);
-            }}
-            label="Bank Name"
-            search={true}
-            searchPlaceholder="Search bank"
-            dropdownPosition="bottom"
-          />
-
-          {supportedCountryCodes.includes(userSession.address.countryCode) && (
+          <View style={tw`mx-[20px] mt-[40px] gap-[20px]`}>
             <CustomSelectPicker
-              data={filteredBranchList}
-              placeholder="Select bank branch"
-              value={selectedBranch?.value || ''}
+              data={
+                userSession?.address
+                  ? [
+                      {
+                        label: userSession.address.country,
+                        value: userSession.address.country,
+                      },
+                    ]
+                  : []
+              }
+              placeholder="Select country"
+              value={userSession?.address ? userSession.address.country : 'Select country'}
+              handleSetValue={() => {}}
+              label="Country of account origin"
+              disable={true}
+            />
+
+            <CustomSelectPicker
+              data={filteredBankList}
+              placeholder="Select bank name"
+              value={selectedBank?.value || ''}
               renderInputSearch={() => (
                 <TextInput
-                  placeholder="Search branch"
-                  value={branchSearchText}
+                  placeholder="Search bank"
+                  value={searchText}
                   style={{
                     padding: 15,
                     borderWidth: 1,
@@ -307,52 +318,108 @@ const AddPrimaryAcctScreen = () => {
                     margin: 5,
                   }}
                   onChangeText={(text: string) => {
-                    handleBranchSearch(text);
+                    setSearchText(text);
+                    debouncedSearch(text);
                   }}
                 />
               )}
-              handleSetValue={(item: BankOption) => {
-                setSelectedBranch(item);
+              handleSetValue={(item: { label: string; value: string }) => {
+                setSelectedBank(item);
+                setSelectedBranch(null);
+                setBranchList([]);
+                setFilteredBranchList([]);
+                setBranchSearchText('');
               }}
-              label="Bank Branch"
+              label="Bank Name"
               search={true}
-              searchPlaceholder="Search branch"
+              searchPlaceholder="Search bank"
               dropdownPosition="bottom"
-              disable={!selectedBank}
             />
-          )}
 
-          <Input
-            label={'Account number'} // Capitalize label
-            keyboardType="default"
-            onInputChange={(text: string) => setAcctNumber(text)}
-            placeHolder={`Enter acct number`}
-            value={acctNumber}
-            errorMessage={''}
-            containerStyle={{ flex: 0 }}
-          />
+            {supportedCountryCodes.includes(userSession.address.countryCode) && (
+              <CustomSelectPicker
+                data={filteredBranchList}
+                placeholder="Select bank branch"
+                value={selectedBranch?.value || ''}
+                renderInputSearch={() => (
+                  <TextInput
+                    placeholder="Search branch"
+                    value={branchSearchText}
+                    style={{
+                      padding: 15,
+                      borderWidth: 1,
+                      borderColor: '#ccc',
+                      backgroundColor: '#fff',
+                      margin: 5,
+                    }}
+                    onChangeText={(text: string) => {
+                      handleBranchSearch(text);
+                      handleBranchSearchDebounced(text);
+                    }}
+                  />
+                )}
+                handleSetValue={(item: BankOption) => {
+                  setSelectedBranch(item);
+                }}
+                label="Bank Branch"
+                search={true}
+                searchPlaceholder="Search branch"
+                dropdownPosition="bottom"
+                disable={!selectedBank}
+              />
+            )}
 
-          {acctName && (
             <Input
-              label={'Account name'}
-              onInputChange={(text: string) => {}}
-              value={acctName}
-              disabled
+              label={'Account number'} // Capitalize label
+              keyboardType="default"
+              onInputChange={(text: string) => setAcctNumber(text)}
+              placeHolder={`Enter acct number`}
+              value={acctNumber}
+              errorMessage={''}
               containerStyle={{ flex: 0 }}
             />
-          )}
-        </View>
 
-        <View style={tw`mt-[50px] mx-[20px]`}>
-          <FittedBlackButton
-            onClick={!acctName ? handleAcctValidation : handleAddPrimaryAcct}
-            value={!acctName ? 'Validate Account' : 'Add Primary Account'}
-            height={50}
-            isDisabled={!acctNumber}
-            isLoading={!acctName ? loadAcctName : addPrimaryAcctLoading}
-          />
+            {acctName && (
+              <Input
+                label={'Account name'}
+                onInputChange={(text: string) => {}}
+                value={acctName}
+                disabled
+                containerStyle={{ flex: 0 }}
+              />
+            )}
+          </View>
+
+          <View style={tw`mt-[50px] mx-[20px]`}>
+            <FittedBlackButton
+              onClick={!acctName ? handleAcctValidation : handleAddPrimaryAcct}
+              value={
+                !acctName
+                  ? 'Validate Account'
+                  : isEditing
+                  ? 'Update Primary Account'
+                  : 'Add Primary Account'
+              }
+              height={50}
+              isDisabled={!acctNumber}
+              isLoading={!acctName ? loadAcctName : addPrimaryAcctLoading}
+            />
+          </View>
         </View>
-      </View>
+        <Modal visible={isLoading} transparent animationType="fade">
+          <View style={tw.style('flex-1 justify-center items-center bg-black bg-opacity-50')}>
+            <LottieView
+              autoPlay
+              ref={animation}
+              style={{
+                width: 250,
+                height: 250,
+              }}
+              source={loaderAnimation}
+            />
+          </View>
+        </Modal>
+      </ScrollView>
     </WithModal>
   );
 };

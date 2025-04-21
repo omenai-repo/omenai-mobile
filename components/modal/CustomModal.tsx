@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
-import Modal from "react-native-modal";
-import React, { ReactNode, useState } from "react";
-import { colors } from "config/colors.config";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import LongWhiteButton from "components/buttons/LongWhiteButton";
-import { modalType, useModalStore } from "store/modal/modalStore";
-import { MaterialIcons } from "@expo/vector-icons";
-import CancelSubscriptionModal from "./modals/CancelSubscriptionModal";
+import { StyleSheet, Text, View } from 'react-native';
+import Modal from 'react-native-modal';
+import React, { ReactNode, useState } from 'react';
+import { colors } from 'config/colors.config';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import LongWhiteButton from 'components/buttons/LongWhiteButton';
+import { modalType, useModalStore } from 'store/modal/modalStore';
+import { MaterialIcons } from '@expo/vector-icons';
+import CancelSubscriptionModal from './modals/CancelSubscriptionModal';
 
 // type ModalProps = {
 //     message: string,
@@ -26,8 +26,8 @@ export default function CustomModal() {
     <Modal
       isVisible={showModal}
       backdropOpacity={0.2}
-      animationIn={retainModal !== null ? "slideInUp" : "slideInDown"}
-      animationOut={retainModal !== null ? "slideOutDown" : "slideOutUp"}
+      animationIn={retainModal !== null ? 'slideInUp' : 'slideInDown'}
+      animationOut={retainModal !== null ? 'slideOutDown' : 'slideOutUp'}
     >
       {!retainModal && (
         <View style={styles.mainContainer}>
@@ -37,30 +37,20 @@ export default function CustomModal() {
                 height: 40,
                 width: 40,
                 borderRadius: 10,
-                backgroundColor: "#eee",
-                alignItems: "center",
-                justifyContent: "center",
+                backgroundColor: '#eee',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              {modalType === "error" && (
-                <MaterialIcons
-                  name="error-outline"
-                  color={"#ff0000"}
-                  size={20}
-                />
+              {modalType === 'error' && (
+                <MaterialIcons name="error-outline" color={'#ff0000'} size={20} />
               )}
-              {modalType === "success" && (
-                <MaterialIcons
-                  name="check-circle-outline"
-                  color={"#008000"}
-                  size={20}
-                />
+              {modalType === 'success' && (
+                <MaterialIcons name="check-circle-outline" color={'#008000'} size={20} />
               )}
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, color: colors.primary_black }}>
-                {modalMessage}
-              </Text>
+              <Text style={{ fontSize: 16, color: colors.primary_black }}>{modalMessage}</Text>
             </View>
           </View>
         </View>
@@ -76,8 +66,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: colors.white,
     borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 15,
   },
   mainContainer: {
