@@ -5,16 +5,14 @@ import { SvgXml } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
 import { arrowUpRightWhite } from 'utils/SvgImages';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { Skeleton } from 'moti/skeleton';
 import { fetchArtistWalletData } from 'services/wallet/fetchArtistWalletData';
-import { set } from 'lodash';
 import { fetchArtistTransactions } from 'services/wallet/fetchArtistTransactions';
 import { useModalStore } from 'store/modal/modalStore';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 import { formatISODate } from 'utils/utils_formatISODate';
 import { MotiView } from 'moti';
 import WithModal from 'components/modal/WithModal';
+import { PinCreationModal } from './PinCreationModal';
 
 export const WalletContainerSkeleton = () => {
   const SkeletonBlock = ({ style }: { style: any }) => (
@@ -109,6 +107,44 @@ const BtnContainer = ({ label, onPress }: { label: string; onPress: () => void }
   );
 };
 
+const AccountDetailsSkeleton = () => {
+  const SkeletonBlock = ({ style }: { style: any }) => (
+    <MotiView
+      from={{ opacity: 0.3 }}
+      animate={{ opacity: 1 }}
+      transition={{ loop: true, type: 'timing', duration: 1000 }}
+      style={[tw`bg-[#E7E7E7] rounded-md`, style]}
+    />
+  );
+
+  return (
+    <View style={tw`mx-[20px] mt-[20px]`}>
+      <View
+        style={tw`bg-[#FFFFFF] border border-[#00000033] rounded-[20px] px-[20px] py-[15px] mb-[20px]`}
+      >
+        <SkeletonBlock style={tw`w-[120px] h-[16px] mb-[10px]`} />
+
+        <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
+          <SkeletonBlock style={tw`flex-1 h-[14px]`} />
+          <SkeletonBlock style={tw`w-[100px] h-[14px]`} />
+        </View>
+
+        {/* <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
+          <SkeletonBlock style={tw`flex-1 h-[14px]`} />
+          <SkeletonBlock style={tw`w-[100px] h-[14px]`} />
+        </View>
+
+        <View style={tw`flex-row items-center gap-[20px] mt-[10px] mb-[20px]`}>
+          <SkeletonBlock style={tw`flex-1 h-[14px]`} />
+          <SkeletonBlock style={tw`w-[120px] h-[14px]`} />
+        </View> */}
+      </View>
+
+      {/* <SkeletonBlock style={tw`h-[40px] rounded-[18px]`} /> */}
+    </View>
+  );
+};
+
 const WalletScreen = () => {
   const { updateModal } = useModalStore();
 
@@ -117,6 +153,24 @@ const WalletScreen = () => {
   const [walletData, setWalletData] = useState<any>(null);
   const [transactions, setTransactions] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [showAvailableBalance, setShowAvailableBalance] = useState(true);
+  const [showPendingBalance, setShowPendingBalance] = useState(true);
+  const [showPinModal, setShowPinModal] = useState(false);
+
+  useEffect(() => {
+    if (walletData && !walletData.wallet_pin) {
+      setShowPinModal(true);
+    }
+  }, [walletData]);
+
+  // Update the withdraw button press handler
+  const handleWithdrawPress = () => {
+    if (!walletData?.primary_withdrawal_account) {
+      navigation.navigate('AddPrimaryAcctScreen', { walletData });
+    } else {
+      navigation.navigate('WithdrawScreen', { walletData });
+    }
+  };
 
   useEffect(() => {
     handleWalletData();
@@ -178,8 +232,9 @@ const WalletScreen = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+        style={tw`flex-1 bg-[#F7F7F7]`}
       >
-        <View style={tw`flex-1 bg-[#F7F7F7]`}>
+        <View>
           <Image
             style={tw.style(`w-[130px] h-[30px] mt-[80px] ml-[20px]`)}
             resizeMode="contain"
@@ -191,16 +246,24 @@ const WalletScreen = () => {
           >
             <View style={tw`flex-row items-center gap-[20px]`}>
               <Text style={tw`text-[19px] text-[#FFFFFF]`}>Available Balance</Text>
-              <Ionicons name="eye-outline" color={'#FFFF'} size={30} />
+              <Pressable onPress={() => setShowAvailableBalance((prev) => !prev)}>
+                <Ionicons
+                  name={showAvailableBalance ? 'eye-outline' : 'eye-off-outline'}
+                  color={'#FFFFFF'}
+                  size={30}
+                />
+              </Pressable>
             </View>
 
             {isLoading ? (
               <View style={tw.style(`h-[30px] w-[150px] mt-[10px]`, skeletonStyle)} />
             ) : (
               <Text style={tw`text-[30px] text-[#FFFFFF] font-bold mt-[10px]`}>
-                {walletData?.available_balance
-                  ? utils_formatPrice(walletData?.available_balance)
-                  : '$0'}
+                {showAvailableBalance
+                  ? walletData?.available_balance
+                    ? utils_formatPrice(walletData?.available_balance)
+                    : '$0'
+                  : '****'}
               </Text>
             )}
 
@@ -208,22 +271,31 @@ const WalletScreen = () => {
               <View style={tw`flex-1`}>
                 <View style={tw`flex-row items-center gap-[20px]`}>
                   <Text style={tw`text-[14px] text-[#FFFFFF]`}>Pending Balance</Text>
-                  <Ionicons name="eye-outline" color={'#FFFF'} size={19} />
+                  <Pressable onPress={() => setShowPendingBalance((prev) => !prev)}>
+                    <Ionicons
+                      name={showPendingBalance ? 'eye-outline' : 'eye-off-outline'}
+                      color={'#FFFFFF'}
+                      size={19}
+                    />
+                  </Pressable>
                 </View>
 
                 {isLoading ? (
                   <View style={tw.style(`h-[25px] w-[100px] mt-[5px]`, skeletonStyle)} />
                 ) : (
                   <Text style={tw`text-[18px] text-[#FFFFFF] font-bold mt-[5px]`}>
-                    {walletData?.pending_balance
-                      ? utils_formatPrice(walletData?.pending_balance)
-                      : '$0'}
+                    {showPendingBalance
+                      ? walletData?.pending_balance
+                        ? utils_formatPrice(walletData?.pending_balance)
+                        : '$0'
+                      : '****'}
                   </Text>
                 )}
               </View>
 
               <Pressable
                 style={tw`justify-center items-center h-[40px] border border-[#FFFFFF] rounded-[18px] px-[15px]`}
+                onPress={handleWithdrawPress}
                 disabled={isLoading}
               >
                 <Text style={tw`text-[14px] text-[#FFFFFF]`}>Withdraw Funds</Text>
@@ -231,14 +303,10 @@ const WalletScreen = () => {
             </View>
           </View>
 
-          <View style={tw`flex-row gap-[30px] mx-[20px] mt-[40px]`}>
-            {/* <Pressable
-          style={tw`bg-[#000000] h-[40px] flex-1 rounded-[18px] justify-center items-center px-[15px]`}
-        >
-          <Text style={tw`text-[14px] text-[#FFFFFF]`}>View Accounts</Text>
-        </Pressable> */}
-
-            {!walletData?.primary_withdrawal_accounts ? (
+          {isLoading ? (
+            <AccountDetailsSkeleton />
+          ) : !walletData?.primary_withdrawal_account ? (
+            <View style={tw`mx-[20px] mt-[40px]`}>
               <BtnContainer
                 onPress={() =>
                   navigation.navigate('AddPrimaryAcctScreen', {
@@ -247,42 +315,55 @@ const WalletScreen = () => {
                 }
                 label="Add primary Account"
               />
-            ) : (
-              <View style={tw`mt-[10px] mx-[20px]`}>
-                <Text style={tw`text-[14px] text-[#000000]`}>Account Details</Text>
+            </View>
+          ) : (
+            <View style={tw`mx-[20px] mt-[20px]`}>
+              <View
+                style={tw`bg-[#FFFFFF] border border-[#00000033] rounded-[20px] px-[20px] pt-[15px] mb-[20px]`}
+              >
+                <Text style={tw`text-[16px] text-[#000000] font-semibold`}>
+                  Primary withdrawal account
+                </Text>
                 <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
-                  <Text style={tw`text-[14px] text-[#000000]`}>Account Number:</Text>
+                  <Text style={tw`text-[14px] text-[#000000] flex-1`}>Account Number:</Text>
                   <Text style={tw`text-[14px] text-[#000000] font-bold`}>
-                    {walletData?.primary_withdrawal_accounts?.account_number}
+                    {walletData?.primary_withdrawal_account?.account_number}
                   </Text>
                 </View>
                 <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
-                  <Text style={tw`text-[14px] text-[#000000]`}>Bank Name:</Text>
+                  <Text style={tw`text-[14px] text-[#000000] flex-1`}>Bank Name:</Text>
                   <Text style={tw`text-[14px] text-[#000000] font-bold`}>
-                    {walletData?.primary_withdrawal_accounts?.bank_name}
+                    {walletData?.primary_withdrawal_account?.bank_name}
                   </Text>
                 </View>
                 <View style={tw`flex-row items-center gap-[20px] mt-[10px] mb-[20px]`}>
-                  <Text style={tw`text-[14px] text-[#000000]`}>Account Name:</Text>
+                  <Text style={tw`text-[14px] text-[#000000] flex-1`}>Account Name:</Text>
                   <Text style={tw`text-[14px] text-[#000000] font-bold`}>
-                    {walletData?.primary_withdrawal_accounts?.account_name}
+                    {walletData?.primary_withdrawal_account?.account_name}
                   </Text>
                 </View>
-
-                <BtnContainer
-                  onPress={() => navigation.navigate('AddPrimaryAcctScreen')}
-                  label="Edit Account Details"
-                />
               </View>
-            )}
-          </View>
+              <BtnContainer
+                onPress={() =>
+                  navigation.navigate('AddPrimaryAcctScreen', {
+                    walletData,
+                  })
+                }
+                label="Change Primary Account"
+              />
+            </View>
+          )}
 
           <View style={tw`mx-[20px] mt-[40px] flex-row items-center`}>
             <Text style={tw`text-[15px] font-medium text-[#000000] flex-1`}>
               Transaction History
             </Text>
             <Pressable
-              onPress={() => navigation.navigate('WalletHistory')}
+              onPress={() =>
+                navigation.navigate('WalletHistory', {
+                  transactions,
+                })
+              }
               style={tw`flex-row items-center gap-[5px]`}
             >
               <Text style={tw`text-[15px] text-[#3D3D3D] font-semibold`}>Show All</Text>
@@ -293,12 +374,12 @@ const WalletScreen = () => {
           <ScrollView showsVerticalScrollIndicator={false}>
             {!isLoading ? (
               <View style={tw`gap-[20px] mt-[25px] mb-[150px]`}>
-                {transactions?.length === 0 && (
+                {transactions?.length === 0 ? (
                   <View style={tw`flex-1 justify-center items-center mt-[50px]`}>
                     <Text style={tw`text-[16px] text-[#000000]`}>No transactions found</Text>
                   </View>
-                )}
-                {transactions?.length > 0 &&
+                ) : (
+                  transactions?.length > 0 &&
                   transactions?.map((item: any, index: number) => {
                     return (
                       <WalletContainer
@@ -308,7 +389,8 @@ const WalletScreen = () => {
                         dateTime={item.createdAt}
                       />
                     );
-                  })}
+                  })
+                )}
               </View>
             ) : (
               <View style={tw`mt-[25px] mb-[150px]`}>
@@ -321,6 +403,12 @@ const WalletScreen = () => {
             )}
           </ScrollView>
         </View>
+        <PinCreationModal
+          visible={showPinModal}
+          setVisible={setShowPinModal}
+          onClose={() => setShowPinModal(false)}
+          walletId={walletData?.wallet_id}
+        />
       </ScrollView>
     </WithModal>
   );

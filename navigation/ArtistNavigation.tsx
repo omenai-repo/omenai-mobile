@@ -49,6 +49,10 @@ import UploadArtworkScreen from 'screens/artist/UploadArtwork/UploadArtworkScree
 import EditCredentialsScreen from 'screens/artist/profile/EditCredentialsScreen';
 import UploadArtwork from 'screens/uploadArtwork/UploadArtwork';
 import GalleryArtworksListing from 'screens/galleryArtworksListing/GalleryArtworksListing';
+import { WithdrawScreen } from 'screens/artist/wallet/WithdrawScreen';
+import { ForgotPinScreen } from 'screens/artist/wallet/ForgotPinScreen';
+import { ResetPinScreen } from 'screens/artist/wallet/ResetPinScreen';
+import { WithdrawalSuccess } from 'screens/artist/wallet/WithdarwalSuccess';
 
 const { width, height } = Dimensions.get('window');
 
@@ -251,6 +255,10 @@ const ArtistNavigation = () => {
       <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
       <Stack.Screen name="WalletHistory" component={WalletHistory} />
       <Stack.Screen name="AddPrimaryAcctScreen" component={AddPrimaryAcctScreen} />
+      <Stack.Screen name={'WithdrawScreen'} component={WithdrawScreen} />
+      <Stack.Screen name={'ForgotPinScreen'} component={ForgotPinScreen} />
+      <Stack.Screen name={'ResetPinScreen'} component={ResetPinScreen} />
+      {/* <Stack.Screen name={'WithdrawalSuccess'} component={WithdrawalSuccess} /> */}
       <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
       <Stack.Screen name={'EditCredentialsScreen'} component={EditCredentialsScreen} />

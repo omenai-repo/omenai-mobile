@@ -55,7 +55,8 @@ export default function Artist() {
         verified: resultsBody.verified,
         isOnboardingCompleted: resultsBody.isOnboardingCompleted,
         address: resultsBody.address,
-        walletId: '0e77a519-e21d-4889-a602-8e8ba44e8597', //change later
+        base_currency: resultsBody.base_currency,
+        walletId: resultsBody.wallet_id,
       };
 
       const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));
