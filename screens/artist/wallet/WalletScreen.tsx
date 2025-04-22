@@ -407,7 +407,6 @@ const WalletScreen = () => {
           visible={showPinModal}
           setVisible={setShowPinModal}
           onClose={() => setShowPinModal(false)}
-          walletId={walletData?.wallet_id}
         />
       </ScrollView>
     </WithModal>

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import tw from 'twrnc';
 import { updateWalletPin } from 'services/wallet/updateWalletPin';
 import { useModalStore } from 'store/modal/modalStore';
@@ -21,6 +21,7 @@ export const ResetPinScreen = ({ navigation }: { navigation: any }) => {
     isConfirm = false,
     keyPress?: 'backspace' | 'input',
   ) => {
+    setError(''); // <-- Clear error on any keypress
     const updated = isConfirm ? [...confirmPin] : [...newPin];
     updated[index] = value;
     isConfirm ? setConfirmPin(updated) : setNewPin(updated);
@@ -36,10 +37,26 @@ export const ResetPinScreen = ({ navigation }: { navigation: any }) => {
 
   const validatePin = (pinArray: string[]) => {
     const pinStr = pinArray.join('');
-    for (let i = 0; i < pinStr.length - 1; i++) {
-      if (parseInt(pinStr[i]) + 1 === parseInt(pinStr[i + 1])) return false;
+
+    // Reject if all digits are the same
+    if (new Set(pinStr).size === 1) {
+      return false;
     }
-    return new Set(pinStr).size === pinStr.length;
+
+    // Check for ascending or descending sequence
+    const isAscending = pinStr
+      .split('')
+      .every((digit, i, arr) => i === 0 || parseInt(digit) === parseInt(arr[i - 1]) + 1);
+
+    const isDescending = pinStr
+      .split('')
+      .every((digit, i, arr) => i === 0 || parseInt(digit) === parseInt(arr[i - 1]) - 1);
+
+    if (isAscending || isDescending) {
+      return false;
+    }
+
+    return true;
   };
 
   const handleResetPin = async () => {
@@ -60,21 +77,21 @@ export const ResetPinScreen = ({ navigation }: { navigation: any }) => {
       setError('PIN cannot be consecutive or repeating numbers');
       return;
     }
-
     setLoading(true);
     try {
-      const response = await updateWalletPin('current_wallet_id', newPinStr);
-      if (response.isOk) {
+      const response = await updateWalletPin(newPinStr);
+      console.log(response);
+      if (response?.isOk) {
         updateModal({
           message: 'PIN reset successfully',
           showModal: true,
           modalType: 'success',
         });
-        navigation.navigate('Wallet');
+        setTimeout(() => navigation.replace('WalletScreen'), 2000);
       } else {
-        setError(response.message || 'Failed to reset PIN');
+        setError(response?.message || 'Failed to reset PIN');
       }
-    } catch {
+    } catch (error: any) {
       setError('An error occurred while resetting PIN');
     } finally {
       setLoading(false);
@@ -84,72 +101,72 @@ export const ResetPinScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Reset Wallet PIN" />
-
-      <View style={tw`mx-[25px]`}>
-        <Text style={tw`mb-4 mt-[40px]`}>
-          Create a new 4-digit wallet PIN that doesn't contain consecutive or repeating numbers
-        </Text>
-
-        <Text style={tw`mb-2`}>Enter new wallet PIN:</Text>
-        <View style={tw`flex-row justify-between mb-6`}>
-          {newPin.map((digit, i) => (
-            <TextInput
-              key={`new-${i}`}
-              ref={(ref) => (newPinRefs.current[i] = ref)}
-              style={tw`w-12 h-12 border rounded text-center text-xl`}
-              keyboardType="numeric"
-              maxLength={1}
-              secureTextEntry
-              value={digit}
-              onChangeText={(text) => handlePinChange(text, i)}
-              onKeyPress={({ nativeEvent }) =>
-                handlePinChange(
-                  nativeEvent.key === 'Backspace' ? '' : newPin[i],
-                  i,
-                  false,
-                  nativeEvent.key === 'Backspace' ? 'backspace' : 'input',
-                )
-              }
-            />
-          ))}
-        </View>
-
-        <Text style={tw`mb-2`}>Confirm new wallet PIN:</Text>
-        <View style={tw`flex-row justify-between mb-6`}>
-          {confirmPin.map((digit, i) => (
-            <TextInput
-              key={`confirm-${i}`}
-              ref={(ref) => (confirmPinRefs.current[i] = ref)}
-              style={tw`w-12 h-12 border rounded text-center text-xl`}
-              keyboardType="numeric"
-              maxLength={1}
-              secureTextEntry
-              value={digit}
-              onChangeText={(text) => handlePinChange(text, i, true)}
-              onKeyPress={({ nativeEvent }) =>
-                handlePinChange(
-                  nativeEvent.key === 'Backspace' ? '' : confirmPin[i],
-                  i,
-                  true,
-                  nativeEvent.key === 'Backspace' ? 'backspace' : 'input',
-                )
-              }
-            />
-          ))}
-        </View>
-
-        {error ? <Text style={tw`text-red-500 mb-4 text-center`}>{error}</Text> : null}
-
-        <Pressable
-          style={tw`bg-[#000] py-4 rounded-lg ${loading ? 'opacity-50' : ''}`}
-          onPress={handleResetPin}
-          disabled={loading}
-        >
-          <Text style={tw`text-white text-center font-semibold text-[16px]`}>
-            {loading ? 'Processing...' : 'Reset PIN'}
+      <ScrollView>
+        <View style={tw`mx-[25px]`}>
+          <Text style={tw`mb-4 mt-[40px] text-[16px]`}>
+            Create a new 4-digit wallet PIN that doesn't contain consecutive or repeating numbers
           </Text>
-        </Pressable>
-      </View>
+
+          <Text style={tw`mb-2 font-semibold`}>Enter new wallet PIN:</Text>
+          <View style={tw`flex-row justify-between mb-[50px]`}>
+            {newPin.map((digit, i) => (
+              <TextInput
+                key={`new-${i}`}
+                ref={(ref) => (newPinRefs.current[i] = ref)}
+                style={tw`w-12 h-12 border rounded-[10px] text-center text-xl`}
+                keyboardType="numeric"
+                maxLength={1}
+                secureTextEntry
+                value={digit}
+                onChangeText={(text) => handlePinChange(text, i)}
+                onKeyPress={({ nativeEvent }) =>
+                  handlePinChange(
+                    nativeEvent.key === 'Backspace' ? '' : newPin[i],
+                    i,
+                    false,
+                    nativeEvent.key === 'Backspace' ? 'backspace' : 'input',
+                  )
+                }
+              />
+            ))}
+          </View>
+
+          <Text style={tw`mb-2 font-semibold`}>Confirm new wallet PIN:</Text>
+          <View style={tw`flex-row justify-between mb-6`}>
+            {confirmPin.map((digit, i) => (
+              <TextInput
+                key={`confirm-${i}`}
+                ref={(ref) => (confirmPinRefs.current[i] = ref)}
+                style={tw`w-12 h-12 border rounded-[10px] text-center text-xl`}
+                keyboardType="numeric"
+                maxLength={1}
+                secureTextEntry
+                value={digit}
+                onChangeText={(text) => handlePinChange(text, i, true)}
+                onKeyPress={({ nativeEvent }) =>
+                  handlePinChange(
+                    nativeEvent.key === 'Backspace' ? '' : confirmPin[i],
+                    i,
+                    true,
+                    nativeEvent.key === 'Backspace' ? 'backspace' : 'input',
+                  )
+                }
+              />
+            ))}
+          </View>
+
+          {error ? <Text style={tw`text-red-500 mb-4 text-center`}>{error}</Text> : null}
+        </View>
+      </ScrollView>
+      <Pressable
+        style={tw`bg-[#000] py-4 rounded-lg mb-[50px] mx-[25px] ${loading ? 'opacity-50' : ''}`}
+        onPress={handleResetPin}
+        disabled={loading}
+      >
+        <Text style={tw`text-white text-center font-semibold text-[16px]`}>
+          {loading ? 'Processing...' : 'Reset PIN'}
+        </Text>
+      </Pressable>
     </View>
   );
 };

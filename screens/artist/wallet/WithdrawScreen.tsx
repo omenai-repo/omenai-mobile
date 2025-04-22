@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, Pressable, Alert, ScrollView } from 'react-native';
 import tw from 'twrnc';
 import { useModalStore } from 'store/modal/modalStore';
 import { createTransfer } from 'services/wallet/createTransfer';
@@ -10,11 +10,31 @@ import { getArtistCurrencySymbol } from 'utils/utils_getArtistCurrencySymbol';
 export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const { walletData } = route.params;
   const [amount, setAmount] = useState('');
-  const [walletPin, setWalletPin] = useState('');
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [rate, setRate] = useState(0);
   const [loading, setLoading] = useState(false);
   const { updateModal } = useModalStore();
+
+  const [pin, setPin] = useState(['', '', '', '']);
+  const pinInputs = useRef<TextInput[]>([]);
+
+  const handlePinChange = (value: string, index: number) => {
+    if (/^\d?$/.test(value)) {
+      const updatedPin = [...pin];
+      updatedPin[index] = value;
+      setPin(updatedPin);
+
+      if (value && index < 3) {
+        pinInputs.current[index + 1].focus();
+      }
+
+      if (index === 3 && value) {
+        // optionally auto-submit
+      }
+    }
+  };
+
+  const walletPin = pin.join('');
 
   useEffect(() => {
     if (amount) {
@@ -29,7 +49,6 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
         destination: walletData.wallet_currency,
         amount: parseFloat(amount),
       });
-      console.log(response);
       if (response.isOk) {
         setConvertedAmount(response.data.source.amount);
         setRate(response.data.rate);
@@ -50,7 +69,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
   };
 
   const handleWithdraw = async () => {
-    if (!amount || !walletPin) {
+    if (!amount || pin.includes('')) {
       updateModal({
         message: 'Please fill all fields',
         showModal: true,
@@ -76,7 +95,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
         currency: 'NGN',
         url: 'https://api.omenai.app/api/webhook/flw-transfer',
         wallet_id: walletData.wallet_id,
-        wallet_pin: walletPin,
+        wallet_pin: pin.join(''),
       };
 
       const response = await createTransfer(payload);
@@ -96,7 +115,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
         }, 2000);
       } else {
         updateModal({
-          message: response.message || 'Withdrawal failed',
+          message: response.data.message || 'Withdrawal failed',
           showModal: true,
           modalType: 'error',
         });
@@ -115,88 +134,109 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Withdraw Funds" />
-      <View style={tw`p-[25px]`}>
-        <View style={tw`mb-6`}>
-          <Text style={tw`mb-2`}>Primary Account Details:</Text>
-          <View style={tw`bg-[#FFFFFF] border border-[#00000033] p-4 rounded-[15px] gap-[8px]`}>
-            <View style={tw`flex-row items-center`}>
-              <Text style={tw`text-[14px] text-[#000000] flex-1`}>Account Number:</Text>
-              <Text style={tw`text-[14px] text-[#000000] font-bold`}>
-                {walletData?.primary_withdrawal_account?.account_number}
-              </Text>
-            </View>
-            <View style={tw`flex-row items-center`}>
-              <Text style={tw`text-[14px] text-[#000000] flex-1`}>Bank Name:</Text>
-              <Text style={tw`text-[14px] text-[#000000] font-bold`}>
-                {walletData?.primary_withdrawal_account?.bank_name}
-              </Text>
-            </View>
-            <View style={tw`flex-row items-center`}>
-              <Text style={tw`text-[14px] text-[#000000] flex-1`}>Account Name:</Text>
-              <Text style={tw`text-[14px] text-[#000000] font-bold`}>
-                {walletData?.primary_withdrawal_account?.account_name}
-              </Text>
+      <ScrollView showsVerticalScrollIndicator={false} style={tw`flex-1`}>
+        <View style={tw`p-[25px]`}>
+          <View style={tw`mb-6`}>
+            <Text style={tw`mb-2`}>Primary Account Details:</Text>
+            <View style={tw`bg-[#FFFFFF] border border-[#00000033] p-4 rounded-[15px] gap-[8px]`}>
+              <View style={tw`flex-row items-center`}>
+                <Text style={tw`text-[14px] text-[#000000] flex-1`}>Account Number:</Text>
+                <Text style={tw`text-[14px] text-[#000000] font-bold`}>
+                  {walletData?.primary_withdrawal_account?.account_number}
+                </Text>
+              </View>
+              <View style={tw`flex-row items-center`}>
+                <Text style={tw`text-[14px] text-[#000000] flex-1`}>Bank Name:</Text>
+                <Text style={tw`text-[14px] text-[#000000] font-bold`}>
+                  {walletData?.primary_withdrawal_account?.bank_name}
+                </Text>
+              </View>
+              <View style={tw`flex-row items-center`}>
+                <Text style={tw`text-[14px] text-[#000000] flex-1`}>Account Name:</Text>
+                <Text style={tw`text-[14px] text-[#000000] font-bold`}>
+                  {walletData?.primary_withdrawal_account?.account_name}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
 
-        <View style={tw`mb-4`}>
-          <Text style={tw`mb-2`}>{`Amount (${getArtistCurrencySymbol(
-            walletData.wallet_currency,
-          )}):`}</Text>
-          <TextInput
-            style={tw`border p-3 rounded-lg`}
-            keyboardType="decimal-pad"
-            value={amount}
-            onChangeText={setAmount}
-            placeholder="Enter amount"
-          />
-        </View>
+          <View style={tw`mb-6`}>
+            <Text style={tw`mb-2`}>Enter Amount</Text>
 
-        <View style={tw`mb-4`}>
-          <Text style={tw`mb-2`}>{`You Get (${getArtistCurrencySymbol(
-            walletData.base_currency,
-          )}):`}</Text>
-          <Text style={tw`text-lg font-bold`}>
-            {convertedAmount
-              ? `${getArtistCurrencySymbol(
+            {/* You Send */}
+            <View style={tw`bg-white border border-[#00000020] rounded-xl p-4`}>
+              <Text style={tw`text-sm mb-1 text-gray-600`}>You Send</Text>
+              <TextInput
+                style={tw`border border-gray-300 rounded-lg px-3 py-3`}
+                keyboardType="decimal-pad"
+                value={amount}
+                onChangeText={setAmount}
+                placeholder="0.00"
+              />
+            </View>
+
+            {/* Convert Button Centered */}
+            <Pressable
+              onPress={fetchTransferRate}
+              style={tw`mt-4 self-center bg-black px-6 py-2 rounded-full`}
+            >
+              <Text style={tw`text-white font-semibold`}>Convert</Text>
+            </Pressable>
+
+            {/* You Get */}
+            <View style={tw`bg-white border border-[#00000020] rounded-xl p-4 mt-4`}>
+              <Text style={tw`text-sm mb-1 text-gray-600`}>You Get</Text>
+              <Text style={tw`text-base font-bold text-black`}>
+                {convertedAmount
+                  ? `${getArtistCurrencySymbol(
+                      walletData.base_currency,
+                    )} ${convertedAmount.toLocaleString()}`
+                  : '--'}
+              </Text>
+            </View>
+
+            {rate > 0 && (
+              <Text style={tw`text-xs mt-2 text-gray-500`}>
+                {`Rate: 1 ${walletData.wallet_currency} = ${getArtistCurrencySymbol(
                   walletData.base_currency,
-                )} ${convertedAmount.toLocaleString()}`
-              : '--'}
-          </Text>
-          {rate > 0 && (
-            <Text style={tw`text-gray-500`}>{`Rate: 1 ${
-              walletData.wallet_currency
-            } = ${getArtistCurrencySymbol(walletData.base_currency)} ${rate.toFixed(2)}`}</Text>
-          )}
-        </View>
+                )} ${rate.toFixed(2)}`}
+              </Text>
+            )}
+          </View>
 
-        <View style={tw`mb-6`}>
-          <Text style={tw`mb-2`}>Wallet PIN:</Text>
-          <TextInput
-            style={tw`border p-3 rounded-lg`}
-            keyboardType="numeric"
-            secureTextEntry
-            maxLength={4}
-            value={walletPin}
-            onChangeText={setWalletPin}
-            placeholder="Enter 4-digit PIN"
-          />
-          <Pressable onPress={() => navigation.navigate('ForgotPinScreen')} style={tw`mt-2`}>
-            <Text style={tw`text-[#000] text-[16px]`}>Forgot PIN?</Text>
+          <View style={tw`mb-6`}>
+            <Text style={tw`mb-2`}>Enter wallet pin</Text>
+            <View style={tw`flex-row justify-between gap-2`}>
+              {pin.map((digit, index) => (
+                <TextInput
+                  key={index}
+                  ref={(ref) => (pinInputs.current[index] = ref!)}
+                  style={tw`w-14 h-14 border border-gray-400 rounded-[15px] text-center text-lg bg-white`}
+                  keyboardType="numeric"
+                  maxLength={1}
+                  secureTextEntry
+                  value={digit}
+                  onChangeText={(val) => handlePinChange(val, index)}
+                  returnKeyType="next"
+                />
+              ))}
+            </View>
+            <Pressable onPress={() => navigation.navigate('ForgotPinScreen')} style={tw`mt-2`}>
+              <Text style={tw`text-[#000] text-center mt-[20px]`}>Forgot PIN?</Text>
+            </Pressable>
+          </View>
+
+          <Pressable
+            style={tw`bg-[#000] py-4 rounded-lg ${loading ? 'opacity-50' : ''}`}
+            onPress={handleWithdraw}
+            disabled={loading}
+          >
+            <Text style={tw`text-white text-center font-bold`}>
+              {loading ? 'Processing...' : 'Withdraw'}
+            </Text>
           </Pressable>
         </View>
-
-        <Pressable
-          style={tw`bg-[#000] py-4 rounded-lg ${loading ? 'opacity-50' : ''}`}
-          onPress={handleWithdraw}
-          disabled={loading}
-        >
-          <Text style={tw`text-white text-center font-bold`}>
-            {loading ? 'Processing...' : 'Withdraw'}
-          </Text>
-        </Pressable>
-      </View>
+      </ScrollView>
     </View>
   );
 };

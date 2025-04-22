@@ -1,18 +1,19 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useEffect, useState, useCallback } from "react";
-import { useAppStore } from "store/app/appStore";
-import { utils_appInit } from "utils/utils_appInit";
-import { useFonts } from "expo-font";
-import IndividualNavigation from "navigation/IndividualNavigation";
-import AuthNavigation from "navigation/AuthNavigation";
-import GalleryNavigation from "navigation/GalleryNavigation";
-import * as Linking from "expo-linking";
-import { screenName } from "constants/screenNames.constants";
-import { StripeProvider } from "@stripe/stripe-react-native";
-import { CopilotProvider } from "react-native-copilot";
-import * as SplashScreen from "expo-splash-screen";
-import ArtistNavigation from "navigation/ArtistNavigation";
+import { NavigationContainer } from '@react-navigation/native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useEffect, useState, useCallback } from 'react';
+import { useAppStore } from 'store/app/appStore';
+import { utils_appInit } from 'utils/utils_appInit';
+import { useFonts } from 'expo-font';
+import IndividualNavigation from 'navigation/IndividualNavigation';
+import AuthNavigation from 'navigation/AuthNavigation';
+import GalleryNavigation from 'navigation/GalleryNavigation';
+import * as Linking from 'expo-linking';
+import { screenName } from 'constants/screenNames.constants';
+import { StripeProvider } from '@stripe/stripe-react-native';
+import { CopilotProvider } from 'react-native-copilot';
+import * as SplashScreen from 'expo-splash-screen';
+import ArtistNavigation from 'navigation/ArtistNavigation';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -26,12 +27,12 @@ export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const { isLoggedIn, userType } = useAppStore();
 
-  const prefix = Linking.createURL("/");
+  const prefix = Linking.createURL('/');
 
   const config = {
     screens: {
-      CancleOrderPayment: "CancleOrderPayment",
-      SuccessOrderPayment: "SuccessOrderPayment",
+      CancleOrderPayment: 'CancleOrderPayment',
+      SuccessOrderPayment: 'SuccessOrderPayment',
     },
   };
 
@@ -41,7 +42,7 @@ export default function App() {
   };
 
   const [fontsLoaded] = useFonts({
-    nunitoSans: require("./assets/fonts/nunito-sans.ttf"),
+    nunitoSans: require('./assets/fonts/nunito-sans.ttf'),
   });
 
   //add logic for conditional routing
@@ -83,18 +84,18 @@ export default function App() {
   return (
     <CopilotProvider>
       <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <StripeProvider
-          publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
-        >
-          <NavigationContainer linking={linking}>
-            {/* AUTH SCREENS */}
-            {!isLoggedIn && <AuthNavigation />}
-            {/* App screens */}
-            {isLoggedIn && userType === "gallery" && <GalleryNavigation />}
-            {isLoggedIn && userType === "user" && <IndividualNavigation />}
-            {isLoggedIn && userType === "artist" && <ArtistNavigation />}
-          </NavigationContainer>
-        </StripeProvider>
+        <BottomSheetModalProvider>
+          <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}>
+            <NavigationContainer linking={linking}>
+              {/* AUTH SCREENS */}
+              {!isLoggedIn && <AuthNavigation />}
+              {/* App screens */}
+              {isLoggedIn && userType === 'gallery' && <GalleryNavigation />}
+              {isLoggedIn && userType === 'user' && <IndividualNavigation />}
+              {isLoggedIn && userType === 'artist' && <ArtistNavigation />}
+            </NavigationContainer>
+          </StripeProvider>
+        </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </CopilotProvider>
   );

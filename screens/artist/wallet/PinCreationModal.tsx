@@ -1,17 +1,17 @@
-import React, { useState, useRef } from 'react';
+import { update } from 'lodash';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Modal, Pressable, TextInput } from 'react-native';
 import { updateWalletPin } from 'services/wallet/updateWalletPin';
+import { useModalStore } from 'store/modal/modalStore';
 import tw from 'twrnc';
 
 export const PinCreationModal = ({
   visible,
   onClose,
-  walletId,
   setVisible,
 }: {
   visible: boolean;
   onClose: () => void;
-  walletId: string;
   setVisible: (visible: boolean) => void;
 }) => {
   const [pin, setPin] = useState<string[]>(['', '', '', '']);
@@ -22,6 +22,16 @@ export const PinCreationModal = ({
   const pinRefs = useRef<Array<TextInput | null>>([]);
   const confirmPinRefs = useRef<Array<TextInput | null>>([]);
 
+  const { updateModal } = useModalStore();
+
+  useEffect(() => {
+    if (!visible) {
+      setPin(['', '', '', '']);
+      setConfirmPin(['', '', '', '']);
+      setError('');
+    }
+  }, [visible]);
+
   const handlePinChange = (
     value: string,
     index: number,
@@ -30,6 +40,8 @@ export const PinCreationModal = ({
     setter = setPin,
     state = pin,
   ) => {
+    setError(''); // <-- Clear error on any keypress
+
     const newArray = [...state];
     newArray[index] = value;
     setter(newArray);
@@ -47,10 +59,26 @@ export const PinCreationModal = ({
 
   const validatePin = (pinArray: string[]) => {
     const pinStr = pinArray.join('');
-    for (let i = 0; i < pinStr.length - 1; i++) {
-      if (parseInt(pinStr[i]) + 1 === parseInt(pinStr[i + 1])) return false;
+
+    // Reject if all digits are the same
+    if (new Set(pinStr).size === 1) {
+      return false;
     }
-    return new Set(pinStr).size === pinStr.length;
+
+    // Check for ascending or descending sequence
+    const isAscending = pinStr
+      .split('')
+      .every((digit, i, arr) => i === 0 || parseInt(digit) === parseInt(arr[i - 1]) + 1);
+
+    const isDescending = pinStr
+      .split('')
+      .every((digit, i, arr) => i === 0 || parseInt(digit) === parseInt(arr[i - 1]) - 1);
+
+    if (isAscending || isDescending) {
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async () => {
@@ -74,9 +102,17 @@ export const PinCreationModal = ({
 
     setLoading(true);
     try {
-      const response = await updateWalletPin(walletId, pinStr);
-      if (response.isOk) onClose();
-      else setError(response.message || 'Failed to set PIN');
+      const response = await updateWalletPin(pinStr);
+      if (response?.isOk) {
+        onClose();
+        updateModal({
+          message: 'PIN set successfully',
+          showModal: true,
+          modalType: 'success',
+        });
+      } else {
+        setError(response?.message || 'Failed to set PIN');
+      }
     } catch {
       setError('An error occurred');
     } finally {
@@ -94,12 +130,12 @@ export const PinCreationModal = ({
           <Text style={tw`text-xl font-bold mb-4`}>Create Wallet PIN</Text>
 
           <Text style={tw`mb-2`}>Enter new wallet PIN:</Text>
-          <View style={tw`flex-row justify-between mb-4`}>
+          <View style={tw`flex-row justify-between mb-[40px]`}>
             {pin.map((digit, i) => (
               <TextInput
                 key={`pin-${i}`}
                 ref={(ref) => (pinRefs.current[i] = ref)}
-                style={tw`w-12 h-12 border rounded text-center text-xl`}
+                style={tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`}
                 keyboardType="numeric"
                 maxLength={1}
                 secureTextEntry
@@ -110,12 +146,12 @@ export const PinCreationModal = ({
           </View>
 
           <Text style={tw`mb-2`}>Confirm wallet PIN:</Text>
-          <View style={tw`flex-row justify-between mb-6`}>
+          <View style={tw`flex-row justify-between mb-[30px]`}>
             {confirmPin.map((digit, i) => (
               <TextInput
                 key={`confirm-${i}`}
                 ref={(ref) => (confirmPinRefs.current[i] = ref)}
-                style={tw`w-12 h-12 border rounded text-center text-xl`}
+                style={tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`}
                 keyboardType="numeric"
                 maxLength={1}
                 secureTextEntry

@@ -8,6 +8,7 @@ export async function verifyOtpCode(otp_pin: string) {
     id = JSON.parse(userSession.value).id;
   }
   if (id.length < 1) return;
+
   try {
     const res = await fetch(`${apiUrl}/api/wallet/pin_recovery/verify_otp_code`, {
       method: 'POST',
@@ -16,7 +17,7 @@ export async function verifyOtpCode(otp_pin: string) {
         'User-Agent': userAgent,
         Authorization: authorization,
       },
-      body: JSON.stringify({ artist_id: id, otp_pin }),
+      body: JSON.stringify({ artist_id: id, otp: otp_pin }),
     });
 
     const result = await res.json();
