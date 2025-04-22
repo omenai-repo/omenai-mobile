@@ -21,7 +21,7 @@ export async function createTransfer(payload: {
 
     const result = await res.json();
 
-    return { isOk: true, data: result };
+    return { isOk: res.ok, data: result };
   } catch (error: any) {
     return {
       isOk: false,

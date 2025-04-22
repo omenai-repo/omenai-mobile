@@ -20,7 +20,7 @@ export async function getTransferRate(params: {
 
     const result = await res.json();
 
-    return { isOk: true, data: result.data };
+    return { isOk: res.ok, data: result.data };
   } catch (error: any) {
     return {
       isOk: false,
