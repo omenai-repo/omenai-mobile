@@ -6,11 +6,12 @@ import YearDropdown from '../orders/YearDropdown';
 import { WalletContainer } from './WalletScreen';
 import { useRoute } from '@react-navigation/native';
 
-const WalletHistory = () => {
+const WalletHistory = ({ navigation }: any) => {
   const { height } = useWindowDimensions();
   const { transactions } = useRoute<any>().params;
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
+
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Transaction History" />
@@ -21,7 +22,7 @@ const WalletHistory = () => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={tw`gap-[20px] mt-[25px] mb-[150px]`}>
+        <View style={tw`gap-[8px] mb-[150px]`}>
           {transactions?.length > 0 ? (
             transactions?.map((item: any, index: number) => {
               return (
@@ -30,6 +31,11 @@ const WalletHistory = () => {
                   status={item.trans_status}
                   amount={item.trans_amount}
                   dateTime={item.createdAt}
+                  onPress={() =>
+                    navigation.navigate('TransactionDetailsScreen', {
+                      transaction: item,
+                    })
+                  }
                 />
               );
             })

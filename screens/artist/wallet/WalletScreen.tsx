@@ -49,13 +49,16 @@ export const WalletContainer = ({
   status,
   dateTime,
   amount,
+  onPress,
 }: {
   status: 'FAILED' | 'PENDING' | 'SUCCESSFUL';
   dateTime: string;
   amount: number;
+  onPress: () => void;
 }) => {
   return (
-    <View
+    <Pressable
+      onPress={onPress}
       style={tw`bg-[#FFFFFF] border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
     >
       <View style={tw`flex-row items-center gap-[15px] flex-1`}>
@@ -92,7 +95,7 @@ export const WalletContainer = ({
       >
         {utils_formatPrice(amount)}
       </Text>
-    </View>
+    </Pressable>
   );
 };
 
@@ -102,7 +105,7 @@ const BtnContainer = ({ label, onPress }: { label: string; onPress: () => void }
       onPress={onPress}
       style={tw`border border-[#000000] h-[40px] flex-1 rounded-[18px] justify-center items-center px-[15px]`}
     >
-      <Text style={tw`text-[14px] text-[#1A1A1A]000]`}>{label}</Text>
+      <Text style={tw`text-[14px] text-[#1A1A1A]]`}>{label}</Text>
     </Pressable>
   );
 };
@@ -321,10 +324,7 @@ const WalletScreen = () => {
                 <View
                   style={tw`bg-[#FFFFFF] border border-[#00000033] rounded-[20px] px-[20px] pt-[15px] mb-[20px]`}
                 >
-                  <Text style={tw`text-[16px] text-[#1A1A1A]000] font-semibold`}>
-                    Primary withdrawal account
-                  </Text>
-                  <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
+                  <View style={tw`flex-row items-center gap-[20px]`}>
                     <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Number:</Text>
                     <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
                       {walletData?.primary_withdrawal_account?.account_number}
@@ -336,7 +336,7 @@ const WalletScreen = () => {
                       {walletData?.primary_withdrawal_account?.bank_name}
                     </Text>
                   </View>
-                  <View style={tw`flex-row items-center gap-[20px] mt-[10px] mb-[20px]`}>
+                  <View style={tw`flex-row items-center gap-[20px] mt-[10px] mb-[15px]`}>
                     <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Name:</Text>
                     <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
                       {walletData?.primary_withdrawal_account?.account_name}
@@ -356,7 +356,7 @@ const WalletScreen = () => {
           </ScrollView>
         </View>
         <View style={tw`flex-1 bg-[#F7F7F7]`}>
-          <View style={tw`mx-[20px] mt-[40px] flex-row items-center`}>
+          <View style={tw`mx-[20px] mt-[30px] pb-[25px] flex-row items-center`}>
             <Text style={tw`text-[15px] font-medium text-[#1A1A1A]000] flex-1`}>
               Transaction History
             </Text>
@@ -374,7 +374,7 @@ const WalletScreen = () => {
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
             {!isLoading ? (
-              <View style={tw`gap-[20px] mt-[25px] mb-[150px]`}>
+              <View style={tw`gap-[8px] mb-[150px]`}>
                 {transactions?.length === 0 ? (
                   <View style={tw`flex-1 justify-center items-center mt-[50px]`}>
                     <Text style={tw`text-[16px] text-[#1A1A1A]000]`}>No transactions found</Text>
@@ -388,15 +388,20 @@ const WalletScreen = () => {
                         status={item.trans_status}
                         amount={item.trans_amount}
                         dateTime={item.createdAt}
+                        onPress={() =>
+                          navigation.navigate('TransactionDetailsScreen', {
+                            transaction: item,
+                          })
+                        }
                       />
                     );
                   })
                 )}
               </View>
             ) : (
-              <View style={tw`mt-[25px] mb-[150px]`}>
+              <View style={tw`mb-[150px]`}>
                 {Array.from({ length: 10 }).map((_, index) => (
-                  <View key={index} style={{ marginBottom: 15 }}>
+                  <View key={index} style={{ marginBottom: 8 }}>
                     <WalletContainerSkeleton />
                   </View>
                 ))}

@@ -1,3 +1,4 @@
+import { BlurView } from 'expo-blur';
 import { update } from 'lodash';
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Modal, Pressable, TextInput } from 'react-native';
@@ -123,6 +124,7 @@ export const PinCreationModal = ({
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={tw`flex-1 justify-center items-center bg-black/50`}>
+        <BlurView intensity={30} style={tw`absolute top-0 left-0 right-0 bottom-0`} />
         <View style={tw`bg-white rounded-2xl p-6 w-4/5`}>
           <Text style={tw`text-xl font-bold mb-4`}>Create Wallet PIN</Text>
 
