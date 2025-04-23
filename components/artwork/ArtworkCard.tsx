@@ -1,24 +1,17 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import LikeComponent from "./LikeComponent";
-import tw from "twrnc";
-import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
-import { fontNames } from "constants/fontNames.constants";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { requestArtworkPrice } from "services/artworks/requestArtworkPrice";
-import { useModalStore } from "store/modal/modalStore";
+import { Image, StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { getImageFileView } from 'lib/storage/getImageFileView';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import LikeComponent from './LikeComponent';
+import tw from 'twrnc';
+import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
+import { fontNames } from 'constants/fontNames.constants';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { requestArtworkPrice } from 'services/artworks/requestArtworkPrice';
+import { useModalStore } from 'store/modal/modalStore';
 
 type ArtworkCardType = {
   title: string;
@@ -68,7 +61,7 @@ export default function ArtworkCard({
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
       const { width, height } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        300
+        300,
       );
       setImageDimensions({ height, width });
       // setRenderDynamicImage(true);
@@ -78,10 +71,10 @@ export default function ArtworkCard({
   const handleRequestPriceQuote = async () => {
     setLoadingPriceQuote(true);
 
-    let userEmail = "";
-    let userName = "";
+    let userEmail = '';
+    let userName = '';
 
-    const userSession = await utils_getAsyncData("userSession");
+    const userSession = await utils_getAsyncData('userSession');
     if (userSession.value) {
       userEmail = JSON.parse(userSession.value).email;
       userName = JSON.parse(userSession.value).name;
@@ -96,23 +89,18 @@ export default function ArtworkCard({
       pricing: price,
     };
 
-    const results = await requestArtworkPrice(
-      artwork_data,
-      userEmail,
-      userName
-    );
+    const results = await requestArtworkPrice(artwork_data, userEmail, userName);
     if (results.isOk) {
       updateModal({
         message: `Price quote for ${artwork_data.title} has been sent to ${userEmail}`,
         showModal: true,
-        modalType: "success",
+        modalType: 'success',
       });
     } else {
       updateModal({
-        message:
-          "Something went wrong, please try again or contact us for assistance.",
+        message: 'Something went wrong, please try again or contact us for assistance.',
         showModal: true,
-        modalType: "error",
+        modalType: 'error',
       });
     }
 
@@ -136,15 +124,13 @@ export default function ArtworkCard({
               // width: imageWidth,
               width: imageDimensions.width,
               height: imageDimensions.height,
-              objectFit: "contain",
+              objectFit: 'contain',
               borderRadius: 5,
-              backgroundColor: "#f5f5f5",
+              backgroundColor: '#f5f5f5',
             }}
             resizeMode="contain"
           />
-          <View
-            style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end p-3`}
-          >
+          <View style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end p-3`}>
             {!galleryView && (
               <View
                 style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
@@ -164,19 +150,17 @@ export default function ArtworkCard({
             <Text
               style={[
                 tw`text-base ${
-                  lightText ? "text-white/90" : "text-[#00000099]"
+                  lightText ? 'text-white/90' : 'text-[#1A1A1A]00099]'
                 } font-medium w-full`,
-                { fontFamily: fontNames.dmSans + "Medium" },
+                { fontFamily: fontNames.dmSans + 'Medium' },
               ]}
             >
               {title}
             </Text>
             <Text
               style={[
-                tw`text-sm ${
-                  lightText ? "text-white/80" : "text-black/70"
-                } w-full`,
-                { fontFamily: fontNames.dmSans + "Regular" },
+                tw`text-sm ${lightText ? 'text-white/80' : 'text-[#1A1A1A]/70'} w-full`,
+                { fontFamily: fontNames.dmSans + 'Regular' },
               ]}
             >
               {artist}
@@ -187,12 +171,12 @@ export default function ArtworkCard({
               <Text
                 style={[
                   tw`text-base font-bold ${
-                    lightText ? "text-white/90" : "text-black/90"
+                    lightText ? 'text-white/90' : 'text-[#1A1A1A]/90'
                   } flex-1`,
-                  { fontFamily: fontNames.dmSans + "Bold" },
+                  { fontFamily: fontNames.dmSans + 'Bold' },
                 ]}
               >
-                {showPrice ? utils_formatPrice(price) : "Price on request"}
+                {showPrice ? utils_formatPrice(price) : 'Price on request'}
               </Text>
             )}
 
@@ -215,7 +199,7 @@ export default function ArtworkCard({
                 >
                   <Text
                     style={[
-                      tw`${lightText ? "text-black" : "text-white"} text-sm`,
+                      tw`${lightText ? "text-[#1A1A1A]" : "text-white"} text-sm`,
                       { fontFamily: fontNames.dmSans + "Medium" },
                     ]}
                   >
@@ -233,7 +217,7 @@ export default function ArtworkCard({
                   <Text
                     style={[
                       tw`text-[#A1A1A1] text-sm`,
-                      { fontFamily: fontNames.dmSans + "Medium" },
+                      { fontFamily: fontNames.dmSans + 'Medium' },
                     ]}
                   >
                     Sold

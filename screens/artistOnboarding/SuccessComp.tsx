@@ -66,7 +66,7 @@ const SuccessComp = () => {
             <SvgXml xml={starEffect} />
           </View>
 
-          <Text style={tw`text-[16px] leading-[25px] text-[#00000099] text-center mx-[40px]`}>
+          <Text style={tw`text-[16px] leading-[25px] text-[#1A1A1A]00099] text-center mx-[40px]`}>
             We have received your information and are currently verifying your details. This process
             typically takes 24 to 48 hours. We appreciate your patience.
           </Text>

@@ -1,28 +1,20 @@
-import {
-  Button,
-  Dimensions,
-  Image,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import React, { memo, useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
-import LikeComponent from "./LikeComponent";
-import tw from "twrnc";
-import { fontNames } from "constants/fontNames.constants";
-import { getNumberOfColumns } from "utils/utils_screen";
-import MiniImage from "./MiniImage";
-import { string } from "zod";
+import { Button, Dimensions, Image, Platform, StyleSheet, Text, View } from 'react-native';
+import React, { memo, useEffect, useState } from 'react';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Feather } from '@expo/vector-icons';
+import { colors } from 'config/colors.config';
+import { getImageFileView } from 'lib/storage/getImageFileView';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
+import LikeComponent from './LikeComponent';
+import tw from 'twrnc';
+import { fontNames } from 'constants/fontNames.constants';
+import { getNumberOfColumns } from 'utils/utils_screen';
+import MiniImage from './MiniImage';
+import { string } from 'zod';
 
 type MiniArtworkCardType = {
   title: string;
@@ -50,7 +42,7 @@ const MiniArtworkCard = memo(
   }: MiniArtworkCardType) => {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-    const screenWidth = Dimensions.get("window").width - 10;
+    const screenWidth = Dimensions.get('window').width - 10;
 
     const dividerNum = getNumberOfColumns();
 
@@ -91,32 +83,32 @@ const MiniArtworkCard = memo(
         <View style={tw`mt-3 w-full px-3`}>
           <Text
             style={[
-              tw`text-base font-medium text-black/90`,
-              { fontFamily: fontNames.dmSans + "Medium" },
+              tw`text-base font-medium text-[#1A1A1A]/90`,
+              { fontFamily: fontNames.dmSans + 'Medium' },
             ]}
           >
             {title}
           </Text>
           <Text
             style={[
-              tw`text-sm text-black/70 my-1`,
-              { fontFamily: fontNames.dmSans + "Regular" },
+              tw`text-sm text-[#1A1A1A]/70 my-1`,
+              { fontFamily: fontNames.dmSans + 'Regular' },
             ]}
           >
             {artist}
           </Text>
           <Text
             style={[
-              tw`text-base font-bold text-black/90`,
-              { fontFamily: fontNames.dmSans + "Bold" },
+              tw`text-base font-bold text-[#1A1A1A]/90`,
+              { fontFamily: fontNames.dmSans + 'Bold' },
             ]}
           >
-            {showPrice ? utils_formatPrice(price) : "Price on request"}
+            {showPrice ? utils_formatPrice(price) : 'Price on request'}
           </Text>
         </View>
       </TouchableOpacity>
     );
-  }
+  },
 );
 
 export default MiniArtworkCard;

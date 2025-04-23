@@ -44,7 +44,7 @@ const ConfirmationModal = ({
             onPress={confirmBtn}
             style={tw`rounded-[20px] mt-[30px] border border-[#000000] h-[40px] justify-center items-center`}
           >
-            <Text style={tw`text-[14px] text-[#000000] font-medium`}>
+            <Text style={tw`text-[14px] text-[#1A1A1A]000] font-medium`}>
               I understand and I wish to Proceed
             </Text>
           </Pressable> */}

@@ -190,11 +190,11 @@ export const RecentOrderContainer = ({
         <View style={tw`gap-[20px] mt-[15px]`}>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#323130] font-bold`}>{price}</Text>
+            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{price}</Text>
           </View>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Buyer</Text>
-            <Text style={tw`text-[14px] text-[#323130] font-bold`}>{buyerName}</Text>
+            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{buyerName}</Text>
           </View>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
@@ -204,11 +204,11 @@ export const RecentOrderContainer = ({
               })}
             >
               <Text
-                style={tw.style(`text-[12px] font-bold`, {
+                style={tw.style(`text-[12px]`, {
                   color: statusStyles[status]?.text || '#1a1a1a',
                 })}
               >
-                {status}
+                {status.charAt(0).toUpperCase() + status.slice(1)}
               </Text>
             </View>
           </View>

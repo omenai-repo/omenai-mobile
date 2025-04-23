@@ -70,11 +70,11 @@ export const WalletContainer = ({
               status === 'FAILED'
                 ? `text-[#FF0000]`
                 : status === 'PENDING'
-                ? `text-[#0000FF]`
+                ? `text-[#007AFF]`
                 : `text-[#008000]`,
             )}
-          >{`Withdrawal ${status.toLowerCase()}`}</Text>
-          <Text style={tw`text-[#00000080] text-[11px] font-medium`}>
+          >{`Withdrawal ${status === 'PENDING' ? 'processing' : status.toLowerCase()}`}</Text>
+          <Text style={tw`text-[#1A1A1A]00080] text-[11px] font-medium`}>
             {formatISODate(dateTime)}
           </Text>
         </View>
@@ -86,7 +86,7 @@ export const WalletContainer = ({
           status === 'FAILED'
             ? `text-[#FF0000]`
             : status === 'PENDING'
-            ? `text-[#0000FF]`
+            ? `text-[#007AFF]`
             : `text-[#008000]`,
         )}
       >
@@ -102,7 +102,7 @@ const BtnContainer = ({ label, onPress }: { label: string; onPress: () => void }
       onPress={onPress}
       style={tw`border border-[#000000] h-[40px] flex-1 rounded-[18px] justify-center items-center px-[15px]`}
     >
-      <Text style={tw`text-[14px] text-[#000000]`}>{label}</Text>
+      <Text style={tw`text-[14px] text-[#1A1A1A]000]`}>{label}</Text>
     </Pressable>
   );
 };
@@ -153,8 +153,8 @@ const WalletScreen = () => {
   const [walletData, setWalletData] = useState<any>(null);
   const [transactions, setTransactions] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [showAvailableBalance, setShowAvailableBalance] = useState(true);
-  const [showPendingBalance, setShowPendingBalance] = useState(true);
+  const [showAvailableBalance, setShowAvailableBalance] = useState(false);
+  const [showPendingBalance, setShowPendingBalance] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
 
   useEffect(() => {
@@ -229,133 +229,135 @@ const WalletScreen = () => {
 
   return (
     <WithModal>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        style={tw`flex-1 bg-[#F7F7F7]`}
-      >
+      <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <View>
-          <Image
-            style={tw.style(`w-[130px] h-[30px] mt-[80px] ml-[20px]`)}
-            resizeMode="contain"
-            source={require('../../../assets/omenai-logo.png')}
-          />
-
-          <View
-            style={tw`bg-[#000000] rounded-[18px] border border-[#E7E7E7] p-[25px] mx-[20px] mt-[30px]`}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
           >
-            <View style={tw`flex-row items-center gap-[20px]`}>
-              <Text style={tw`text-[19px] text-[#FFFFFF]`}>Available Balance</Text>
-              <Pressable onPress={() => setShowAvailableBalance((prev) => !prev)}>
-                <Ionicons
-                  name={showAvailableBalance ? 'eye-outline' : 'eye-off-outline'}
-                  color={'#FFFFFF'}
-                  size={30}
-                />
-              </Pressable>
+            <Image
+              style={tw.style(`w-[130px] h-[30px] mt-[80px] ml-[20px]`)}
+              resizeMode="contain"
+              source={require('../../../assets/omenai-logo.png')}
+            />
+
+            <View
+              style={tw`bg-[#000000] rounded-[18px] border border-[#E7E7E7] p-[25px] mx-[20px] mt-[30px]`}
+            >
+              <View style={tw`flex-row items-center gap-[20px]`}>
+                <Text style={tw`text-[19px] text-[#FFFFFF]`}>Available Balance</Text>
+                <Pressable onPress={() => setShowAvailableBalance((prev) => !prev)}>
+                  <Ionicons
+                    name={showAvailableBalance ? 'eye-outline' : 'eye-off-outline'}
+                    color={'#FFFFFF'}
+                    size={30}
+                  />
+                </Pressable>
+              </View>
+
+              {isLoading ? (
+                <View style={tw.style(`h-[30px] w-[150px] mt-[5px]`, skeletonStyle)} />
+              ) : (
+                <Text style={tw`text-[30px] text-[#FFFFFF] font-bold mt-[5px]`}>
+                  {showAvailableBalance
+                    ? walletData?.available_balance
+                      ? utils_formatPrice(walletData?.available_balance)
+                      : '$0'
+                    : '****'}
+                </Text>
+              )}
+
+              <View style={tw`mt-[35px] flex-row items-center gap-[20px]`}>
+                <View style={tw`flex-1`}>
+                  <View style={tw`flex-row items-center gap-[20px]`}>
+                    <Text style={tw`text-[14px] text-[#FFFFFF]`}>Pending Balance</Text>
+                    <Pressable onPress={() => setShowPendingBalance((prev) => !prev)}>
+                      <Ionicons
+                        name={showPendingBalance ? 'eye-outline' : 'eye-off-outline'}
+                        color={'#FFFFFF'}
+                        size={19}
+                      />
+                    </Pressable>
+                  </View>
+
+                  {isLoading ? (
+                    <View style={tw.style(`h-[25px] w-[100px] mt-[5px]`, skeletonStyle)} />
+                  ) : (
+                    <Text style={tw`text-[18px] text-[#FFFFFF] font-bold mt-[5px]`}>
+                      {showPendingBalance
+                        ? walletData?.pending_balance
+                          ? utils_formatPrice(walletData?.pending_balance)
+                          : '$0'
+                        : '****'}
+                    </Text>
+                  )}
+                </View>
+
+                <Pressable
+                  style={tw`justify-center items-center h-[40px] border border-[#FFFFFF] rounded-[18px] px-[15px]`}
+                  onPress={handleWithdrawPress}
+                  disabled={isLoading}
+                >
+                  <Text style={tw`text-[14px] text-[#FFFFFF]`}>Withdraw Funds</Text>
+                </Pressable>
+              </View>
             </View>
 
             {isLoading ? (
-              <View style={tw.style(`h-[30px] w-[150px] mt-[10px]`, skeletonStyle)} />
+              <AccountDetailsSkeleton />
+            ) : !walletData?.primary_withdrawal_account ? (
+              <View style={tw`mx-[20px] mt-[40px]`}>
+                <BtnContainer
+                  onPress={() =>
+                    navigation.navigate('AddPrimaryAcctScreen', {
+                      walletData,
+                    })
+                  }
+                  label="Add primary Account"
+                />
+              </View>
             ) : (
-              <Text style={tw`text-[30px] text-[#FFFFFF] font-bold mt-[10px]`}>
-                {showAvailableBalance
-                  ? walletData?.available_balance
-                    ? utils_formatPrice(walletData?.available_balance)
-                    : '$0'
-                  : '****'}
-              </Text>
+              <View style={tw`mx-[20px] mt-[20px]`}>
+                <View
+                  style={tw`bg-[#FFFFFF] border border-[#00000033] rounded-[20px] px-[20px] pt-[15px] mb-[20px]`}
+                >
+                  <Text style={tw`text-[16px] text-[#1A1A1A]000] font-semibold`}>
+                    Primary withdrawal account
+                  </Text>
+                  <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
+                    <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Number:</Text>
+                    <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
+                      {walletData?.primary_withdrawal_account?.account_number}
+                    </Text>
+                  </View>
+                  <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
+                    <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Bank Name:</Text>
+                    <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
+                      {walletData?.primary_withdrawal_account?.bank_name}
+                    </Text>
+                  </View>
+                  <View style={tw`flex-row items-center gap-[20px] mt-[10px] mb-[20px]`}>
+                    <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Name:</Text>
+                    <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
+                      {walletData?.primary_withdrawal_account?.account_name}
+                    </Text>
+                  </View>
+                </View>
+                <BtnContainer
+                  onPress={() =>
+                    navigation.navigate('AddPrimaryAcctScreen', {
+                      walletData,
+                    })
+                  }
+                  label="Change Primary Account"
+                />
+              </View>
             )}
-
-            <View style={tw`mt-[50px] flex-row items-center gap-[20px]`}>
-              <View style={tw`flex-1`}>
-                <View style={tw`flex-row items-center gap-[20px]`}>
-                  <Text style={tw`text-[14px] text-[#FFFFFF]`}>Pending Balance</Text>
-                  <Pressable onPress={() => setShowPendingBalance((prev) => !prev)}>
-                    <Ionicons
-                      name={showPendingBalance ? 'eye-outline' : 'eye-off-outline'}
-                      color={'#FFFFFF'}
-                      size={19}
-                    />
-                  </Pressable>
-                </View>
-
-                {isLoading ? (
-                  <View style={tw.style(`h-[25px] w-[100px] mt-[5px]`, skeletonStyle)} />
-                ) : (
-                  <Text style={tw`text-[18px] text-[#FFFFFF] font-bold mt-[5px]`}>
-                    {showPendingBalance
-                      ? walletData?.pending_balance
-                        ? utils_formatPrice(walletData?.pending_balance)
-                        : '$0'
-                      : '****'}
-                  </Text>
-                )}
-              </View>
-
-              <Pressable
-                style={tw`justify-center items-center h-[40px] border border-[#FFFFFF] rounded-[18px] px-[15px]`}
-                onPress={handleWithdrawPress}
-                disabled={isLoading}
-              >
-                <Text style={tw`text-[14px] text-[#FFFFFF]`}>Withdraw Funds</Text>
-              </Pressable>
-            </View>
-          </View>
-
-          {isLoading ? (
-            <AccountDetailsSkeleton />
-          ) : !walletData?.primary_withdrawal_account ? (
-            <View style={tw`mx-[20px] mt-[40px]`}>
-              <BtnContainer
-                onPress={() =>
-                  navigation.navigate('AddPrimaryAcctScreen', {
-                    walletData,
-                  })
-                }
-                label="Add primary Account"
-              />
-            </View>
-          ) : (
-            <View style={tw`mx-[20px] mt-[20px]`}>
-              <View
-                style={tw`bg-[#FFFFFF] border border-[#00000033] rounded-[20px] px-[20px] pt-[15px] mb-[20px]`}
-              >
-                <Text style={tw`text-[16px] text-[#000000] font-semibold`}>
-                  Primary withdrawal account
-                </Text>
-                <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
-                  <Text style={tw`text-[14px] text-[#000000] flex-1`}>Account Number:</Text>
-                  <Text style={tw`text-[14px] text-[#000000] font-bold`}>
-                    {walletData?.primary_withdrawal_account?.account_number}
-                  </Text>
-                </View>
-                <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
-                  <Text style={tw`text-[14px] text-[#000000] flex-1`}>Bank Name:</Text>
-                  <Text style={tw`text-[14px] text-[#000000] font-bold`}>
-                    {walletData?.primary_withdrawal_account?.bank_name}
-                  </Text>
-                </View>
-                <View style={tw`flex-row items-center gap-[20px] mt-[10px] mb-[20px]`}>
-                  <Text style={tw`text-[14px] text-[#000000] flex-1`}>Account Name:</Text>
-                  <Text style={tw`text-[14px] text-[#000000] font-bold`}>
-                    {walletData?.primary_withdrawal_account?.account_name}
-                  </Text>
-                </View>
-              </View>
-              <BtnContainer
-                onPress={() =>
-                  navigation.navigate('AddPrimaryAcctScreen', {
-                    walletData,
-                  })
-                }
-                label="Change Primary Account"
-              />
-            </View>
-          )}
-
+          </ScrollView>
+        </View>
+        <View style={tw`flex-1 bg-[#F7F7F7]`}>
           <View style={tw`mx-[20px] mt-[40px] flex-row items-center`}>
-            <Text style={tw`text-[15px] font-medium text-[#000000] flex-1`}>
+            <Text style={tw`text-[15px] font-medium text-[#1A1A1A]000] flex-1`}>
               Transaction History
             </Text>
             <Pressable
@@ -370,13 +372,12 @@ const WalletScreen = () => {
               <SvgXml xml={arrowUpRightWhite} />
             </Pressable>
           </View>
-
           <ScrollView showsVerticalScrollIndicator={false}>
             {!isLoading ? (
               <View style={tw`gap-[20px] mt-[25px] mb-[150px]`}>
                 {transactions?.length === 0 ? (
                   <View style={tw`flex-1 justify-center items-center mt-[50px]`}>
-                    <Text style={tw`text-[16px] text-[#000000]`}>No transactions found</Text>
+                    <Text style={tw`text-[16px] text-[#1A1A1A]000]`}>No transactions found</Text>
                   </View>
                 ) : (
                   transactions?.length > 0 &&
@@ -408,7 +409,7 @@ const WalletScreen = () => {
           setVisible={setShowPinModal}
           onClose={() => setShowPinModal(false)}
         />
-      </ScrollView>
+      </View>
     </WithModal>
   );
 };

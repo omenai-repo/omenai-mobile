@@ -139,7 +139,7 @@ export default function ArtistProfileScreen() {
                 onPress={() => checkEditEligibility()}
                 style={tw`border border-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
               >
-                <Text style={tw`text-[16px] text-[#000000]`}>Edit your credentials</Text>
+                <Text style={tw`text-[16px] text-[#1A1A1A]000]`}>Edit your credentials</Text>
               </Pressable>
             </View>
             <View style={styles.buttonsContainer}>

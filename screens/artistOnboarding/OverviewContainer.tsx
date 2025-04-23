@@ -1,8 +1,8 @@
-import { View, Text, Pressable } from "react-native";
-import React from "react";
-import tw from "twrnc";
-import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
+import { View, Text, Pressable } from 'react-native';
+import React from 'react';
+import tw from 'twrnc';
+import { SvgXml } from 'react-native-svg';
+import { dropdownIcon, dropUpIcon } from 'utils/SvgImages';
 
 const OverviewContainer = ({
   title,
@@ -23,14 +23,12 @@ const OverviewContainer = ({
     <View
       style={tw.style(
         `border-t-[1px] border-l-[1px] border-r-[1px] border-[#0000001A] bg-[#fff] p-[15px]`,
-        index === "bio" && "rounded-t-[15px]",
-        index === "CV Document" && "rounded-b-[15px] border-b-[1px]"
+        index === 'bio' && 'rounded-t-[15px]',
+        index === 'CV Document' && 'rounded-b-[15px] border-b-[1px]',
       )}
     >
       <View style={tw`flex-row items-center`}>
-        <Text style={tw`text-[15px] text-[#454545] font-bold flex-1`}>
-          {title}
-        </Text>
+        <Text style={tw`text-[15px] text-[#454545] font-bold flex-1`}>{title}</Text>
         <Pressable
           onPress={setOpen}
           style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
@@ -39,7 +37,7 @@ const OverviewContainer = ({
         </Pressable>
       </View>
 
-      <Text style={tw`text-[13px] text-[#00000080] font-semibold mt-[3px]`}>
+      <Text style={tw`text-[13px] text-[#1A1A1A]00080] font-semibold mt-[3px]`}>
         Your answer: {data}
       </Text>
 

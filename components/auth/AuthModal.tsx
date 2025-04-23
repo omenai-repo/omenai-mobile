@@ -1,16 +1,10 @@
-import {
-  View,
-  Text,
-  Modal,
-  Pressable,
-  useWindowDimensions,
-} from "react-native";
-import React from "react";
-import tw from "twrnc";
-import { SvgXml } from "react-native-svg";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { checkMarkIcon } from "utils/SvgImages";
-import { LinearGradient } from "expo-linear-gradient";
+import { View, Text, Modal, Pressable, useWindowDimensions } from 'react-native';
+import React from 'react';
+import tw from 'twrnc';
+import { SvgXml } from 'react-native-svg';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { checkMarkIcon } from 'utils/SvgImages';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const AuthModal = ({
   modalVisible,
@@ -46,29 +40,27 @@ const AuthModal = ({
       >
         <Pressable onPress={(e) => e.stopPropagation()}>
           <LinearGradient
-            colors={["#FFFFFF", "#C4837A33"]}
+            colors={['#FFFFFF', '#C4837A33']}
             start={{ x: 2, y: 1 }}
             end={{ x: 0.1, y: 0.8 }}
             style={tw.style(
               `bg-white p-[25px] self-center rounded-[16px] border-[1.09px] border-[#0000001A]`,
               {
                 width: width - 120,
-              }
+              },
             )}
           >
             <SvgXml xml={icon} style={tw`self-center`} />
-            <Text
-              style={tw`text-[16px] font-medium text-[#000000B2] text-center mt-[20px]`}
-            >
+            <Text style={tw`text-[16px] font-medium text-[#1A1A1A]000B2] text-center mt-[20px]`}>
               {text}
             </Text>
             <View style={tw`flex-row items-center self-center mt-[25px]`}>
               <Pressable onPress={onPress1}>
-                <Text style={tw`text-[15px] text-[#000000]`}>{btn1Text}</Text>
+                <Text style={tw`text-[15px] text-[#1A1A1A]000]`}>{btn1Text}</Text>
               </Pressable>
               <View style={tw`h-[15px] bg-[#00000080] w-[2px] mx-[10px]`} />
               <Pressable onPress={onPress2}>
-                <Text style={tw`text-[15px] text-[#000000]`}>{btn2Text}</Text>
+                <Text style={tw`text-[15px] text-[#1A1A1A]000]`}>{btn2Text}</Text>
               </Pressable>
             </View>
           </LinearGradient>
