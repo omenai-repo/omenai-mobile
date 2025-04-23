@@ -8,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 import tw from 'twrnc';
 import { useModalStore } from 'store/modal/modalStore';
@@ -15,13 +16,16 @@ import { createTransfer } from 'services/wallet/createTransfer';
 import { getTransferRate } from 'services/wallet/getTransferRate';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
 import { getArtistCurrencySymbol } from 'utils/utils_getArtistCurrencySymbol';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
 
 export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const { walletData } = route.params;
+  const { width } = useWindowDimensions();
   const [amount, setAmount] = useState('');
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [rate, setRate] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [loadAmount, setLoadAmount] = useState(false);
   const { updateModal } = useModalStore();
 
   const [pin, setPin] = useState(['', '', '', '']);
@@ -45,14 +49,16 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
 
   const walletPin = pin.join('');
 
-  // useEffect(() => {
-  //   if (amount) {
-  //     fetchTransferRate();
-  //   }
-  // }, [amount]);
+  useEffect(() => {
+    if (!amount) {
+      setConvertedAmount(0);
+      setRate(0);
+    }
+  }, [amount]);
 
   const fetchTransferRate = async () => {
     try {
+      setLoadAmount(true);
       const response = await getTransferRate({
         source: walletData.base_currency,
         destination: walletData.wallet_currency,
@@ -74,6 +80,8 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
         showModal: true,
         modalType: 'error',
       });
+    } finally {
+      setLoadAmount(false);
     }
   };
 
@@ -182,12 +190,23 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
               </View>
 
               {/* Convert Button Centered */}
-              <Pressable
-                onPress={fetchTransferRate}
-                style={tw`mt-4 self-center bg-black px-6 py-3 rounded-full`}
+              <View
+                style={tw.style(`mt-4`, {
+                  marginHorizontal: width / 3.5,
+                })}
               >
-                <Text style={tw`text-white font-semibold`}>Convert</Text>
-              </Pressable>
+                <FittedBlackButton
+                  value="Convert"
+                  isLoading={loadAmount}
+                  fontWeight="600"
+                  isDisabled={!amount ? true : false}
+                  onClick={() => {
+                    if (amount) {
+                      fetchTransferRate();
+                    }
+                  }}
+                />
+              </View>
 
               {/* You Get */}
               <View style={tw`bg-white border border-[#00000020] rounded-xl p-4 mt-4`}>
