@@ -1,8 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useRef } from "react";
-import { colors } from "config/colors.config";
-import LottieView from "lottie-react-native";
-import loaderAnimation from "assets/other/loader-animation.json";
+import { StyleSheet, Text, TextStyle, TouchableOpacity, View } from 'react-native';
+import React, { useRef } from 'react';
+import { colors } from 'config/colors.config';
+import LottieView from 'lottie-react-native';
+import loaderAnimation from 'assets/other/loader-animation.json';
 
 type FittedBlackButtonProps = {
   value: string;
@@ -13,6 +13,7 @@ type FittedBlackButtonProps = {
   height?: number;
   bgColor?: string;
   fontSize?: number;
+  fontWeight?: string;
 };
 
 export default function FittedBlackButton({
@@ -24,6 +25,7 @@ export default function FittedBlackButton({
   height,
   bgColor,
   fontSize,
+  fontWeight,
 }: FittedBlackButtonProps) {
   const animation = useRef(null);
   if (isDisabled || isLoading)
@@ -32,13 +34,23 @@ export default function FittedBlackButton({
         style={[
           styles.container,
 
-          { backgroundColor: "#E0E0E0" },
+          { backgroundColor: '#E0E0E0' },
           height ? { height: height } : null,
         ]}
       >
         {isDisabled ? (
           <>
-            <Text style={[styles.text, { color: "#A1A1A1" }]}>{value}</Text>
+            <Text
+              style={[
+                styles.text,
+                {
+                  color: '#A1A1A1',
+                  fontWeight: fontWeight ? (fontWeight as TextStyle['fontWeight']) : '400',
+                },
+              ]}
+            >
+              {value}
+            </Text>
             {children}
           </>
         ) : (
@@ -60,9 +72,7 @@ export default function FittedBlackButton({
       activeOpacity={0.9}
       style={[
         styles.container,
-        bgColor
-          ? { backgroundColor: `${bgColor}` }
-          : { backgroundColor: "#000" },
+        bgColor ? { backgroundColor: `${bgColor}` } : { backgroundColor: '#000' },
         height ? { height: height } : null,
       ]}
       onPress={onClick}
@@ -70,7 +80,11 @@ export default function FittedBlackButton({
       <Text
         style={[
           styles.text,
-          { color: "#FFFFFF", fontSize: fontSize ? fontSize : 16 },
+          {
+            color: '#FFFFFF',
+            fontSize: fontSize ? fontSize : 16,
+            fontWeight: fontWeight ? (fontWeight as TextStyle['fontWeight']) : '400',
+          },
         ]}
       >
         {value}
@@ -83,11 +97,11 @@ export default function FittedBlackButton({
 const styles = StyleSheet.create({
   container: {
     height: 45,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    alignContent: "center",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    alignContent: 'center',
     borderRadius: 91,
     gap: 10,
     paddingHorizontal: 20,
