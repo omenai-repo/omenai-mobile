@@ -1,44 +1,36 @@
-import {
-  FlatList,
-  Image,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { colors } from "config/colors.config";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import DetailsCard from "./components/detailsCard/DetailsCard";
-import ArtworkCard from "components/artwork/ArtworkCard";
-import { fetchsingleArtwork } from "services/artworks/fetchSingleArtwork";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { SimpleLineIcons } from "@expo/vector-icons";
-import SimilarArtworks from "./components/similarArtworks/SimilarArtworks";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { screenName } from "constants/screenNames.constants";
-import WithModal from "components/modal/WithModal";
-import { requestArtworkPrice } from "services/artworks/requestArtworkPrice";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { useModalStore } from "store/modal/modalStore";
-import SaveArtworkButton from "./components/SaveArtworkButton";
-import Loader from "components/general/Loader";
-import { useAppStore } from "store/app/appStore";
-import Header from "./components/Header";
-import ShippingAndTaxes from "./components/extraDetails/ShippingAndTaxes";
-import Coverage from "./components/extraDetails/Coverage";
-import { createViewHistory } from "services/artworks/viewHistory/createViewHistory";
-import { fetchArtworkByArtist } from "services/artworks/fetchArtworkByArtist";
-import tw from "twrnc";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import { SvgXml } from "react-native-svg";
-import { backBtnArrow, licenseIcon } from "utils/SvgImages";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
-import ZoomArtwork from "./ZoomArtwork";
+import { FlatList, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { colors } from 'config/colors.config';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import DetailsCard from './components/detailsCard/DetailsCard';
+import ArtworkCard from 'components/artwork/ArtworkCard';
+import { fetchsingleArtwork } from 'services/artworks/fetchSingleArtwork';
+import { getImageFileView } from 'lib/storage/getImageFileView';
+import { SimpleLineIcons } from '@expo/vector-icons';
+import SimilarArtworks from './components/similarArtworks/SimilarArtworks';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { screenName } from 'constants/screenNames.constants';
+import WithModal from 'components/modal/WithModal';
+import { requestArtworkPrice } from 'services/artworks/requestArtworkPrice';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { useModalStore } from 'store/modal/modalStore';
+import SaveArtworkButton from './components/SaveArtworkButton';
+import Loader from 'components/general/Loader';
+import { useAppStore } from 'store/app/appStore';
+import Header from './components/Header';
+import ShippingAndTaxes from './components/extraDetails/ShippingAndTaxes';
+import Coverage from './components/extraDetails/Coverage';
+import { createViewHistory } from 'services/artworks/viewHistory/createViewHistory';
+import { fetchArtworkByArtist } from 'services/artworks/fetchArtworkByArtist';
+import tw from 'twrnc';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import { SvgXml } from 'react-native-svg';
+import { backBtnArrow, licenseIcon } from 'utils/SvgImages';
+import BackScreenButton from 'components/buttons/BackScreenButton';
+import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
+import ZoomArtwork from './ZoomArtwork';
 
 export default function Artwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -52,7 +44,7 @@ export default function Artwork() {
   const [data, setData] = useState<ArtworkDataType | null>(null);
   const [similarArtworksByArtist, setSimilarArtworksByArtist] = useState([]);
   const [showMore, setShowMore] = useState(false);
-  const [img, setImg] = useState("");
+  const [img, setImg] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -73,20 +65,11 @@ export default function Artwork() {
     if (results.isOk) {
       const data = results.body.data;
       setData(data);
-      const image_href = getImageFileView(
-        data.url,
-        Platform.OS === "ios" ? 380 : 300
-      );
+      const image_href = getImageFileView(data.url, Platform.OS === 'ios' ? 380 : 300);
       setImg(image_href);
 
       //add this to recently viewed artworks
-      createViewHistory(
-        title,
-        data.artist,
-        data.art_id,
-        userSession.id,
-        data.url
-      );
+      createViewHistory(title, data.artist, data.art_id, userSession.id, data.url);
     } else {
       setData(null);
     }
@@ -117,10 +100,10 @@ export default function Artwork() {
   const handleRequestPriceQuote = async () => {
     setLoadingPriceQuote(true);
 
-    let userEmail = "";
-    let userName = "";
+    let userEmail = '';
+    let userName = '';
 
-    const userSession = await utils_getAsyncData("userSession");
+    const userSession = await utils_getAsyncData('userSession');
     if (userSession.value) {
       userEmail = JSON.parse(userSession.value).email;
       userName = JSON.parse(userSession.value).name;
@@ -134,27 +117,22 @@ export default function Artwork() {
       medium: data!.medium,
       pricing: {
         ...data!.pricing,
-        currency: "USD", // Add default currency if not present
+        currency: 'USD', // Add default currency if not present
       },
     };
 
-    const results = await requestArtworkPrice(
-      artwork_data,
-      userEmail,
-      userName
-    );
+    const results = await requestArtworkPrice(artwork_data, userEmail, userName);
     if (results.isOk) {
       updateModal({
         message: `Price quote for ${artwork_data.title} has been sent to ${userEmail}`,
         showModal: true,
-        modalType: "success",
+        modalType: 'success',
       });
     } else {
       updateModal({
-        message:
-          "Something went wrong, please try again or contact us for assistance.",
+        message: 'Something went wrong, please try again or contact us for assistance.',
         showModal: true,
-        modalType: "error",
+        modalType: 'error',
       });
     }
 
@@ -170,7 +148,7 @@ export default function Artwork() {
     Image.getSize(img, (defaultWidth, defaultHeight) => {
       const { width, height } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        400
+        400,
       );
       setImageDimensions({ height, width });
       // setRenderDynamicImage(true);
@@ -181,13 +159,10 @@ export default function Artwork() {
     <WithModal>
       {!showMore ? (
         <View style={{ flex: 1 }}>
-          <Header art_id={data?.art_id} isGallery={userType === "gallery"} />
+          <Header art_id={data?.art_id} isGallery={userType === 'gallery'} />
           {isLoading && !data && <Loader />}
           {data && (
-            <ScrollWrapper
-              style={styles.scrollContainer}
-              showsVerticalScrollIndicator={false}
-            >
+            <ScrollWrapper style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
               <View style={{ paddingBottom: 20 }}>
                 <View style={{ paddingHorizontal: 20, marginBottom: 100 }}>
                   <Pressable onPress={() => setModalVisible(true)}>
@@ -196,11 +171,11 @@ export default function Artwork() {
                       style={{
                         height: imageDimensions.height,
                         width: imageDimensions.width,
-                        resizeMode: "contain",
-                        alignSelf: "center",
+                        resizeMode: 'contain',
+                        alignSelf: 'center',
                         borderRadius: 10,
                         zIndex: 1000,
-                        backgroundColor: "#f5f5f5",
+                        backgroundColor: '#f5f5f5',
                       }}
                     />
                   </Pressable>
@@ -214,24 +189,20 @@ export default function Artwork() {
                     <Text
                       style={[
                         styles.price,
-                        data?.pricing.shouldShowPrice === "No" &&
-                          userType !== "gallery" && {
+                        data?.pricing.shouldShowPrice === 'No' &&
+                          userType !== 'gallery' && {
                             fontSize: 16,
                             color: colors.grey,
                           },
                       ]}
                     >
-                      {data?.pricing.shouldShowPrice === "Yes" ||
-                      userType === "gallery"
+                      {data?.pricing.shouldShowPrice === 'Yes' || userType === 'gallery'
                         ? utils_formatPrice(Number(data?.pricing.usd_price))
-                        : "Price on request"}
+                        : 'Price on request'}
                     </Text>
-                    <ScrollWrapper
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                    >
+                    <ScrollWrapper horizontal showsHorizontalScrollIndicator={false}>
                       <View style={styles.tagsContainer}>
-                        {data?.certificate_of_authenticity === "Yes" && (
+                        {data?.certificate_of_authenticity === 'Yes' && (
                           <View style={styles.tagItem}>
                             <SvgXml xml={licenseIcon} />
                             <Text style={styles.tagItemText}>
@@ -239,19 +210,12 @@ export default function Artwork() {
                             </Text>
                           </View>
                         )}
-                        <View
-                          style={[
-                            styles.tagItem,
-                            { backgroundColor: "#e5f4ff" },
-                          ]}
-                        >
+                        <View style={[styles.tagItem, { backgroundColor: '#e5f4ff' }]}>
                           <SimpleLineIcons name="frame" size={15} />
-                          <Text
-                            style={[styles.tagItemText, { color: "#30589f" }]}
-                          >
-                            {data?.framing === "Framed"
-                              ? "Frame Included"
-                              : "Artwork is not framed"}
+                          <Text style={[styles.tagItemText, { color: '#30589f' }]}>
+                            {data?.framing === 'Framed'
+                              ? 'Frame Included'
+                              : 'Artwork is not framed'}
                           </Text>
                         </View>
                       </View>
@@ -259,9 +223,9 @@ export default function Artwork() {
                   </View>
                   {isLoading
                     ? null
-                    : userType !== "gallery" &&
+                    : userType !== 'gallery' &&
                       (data?.availability ? (
-                        data?.pricing.shouldShowPrice === "Yes" ? (
+                        data?.pricing.shouldShowPrice === 'Yes' ? (
                           <LongBlackButton
                             value="Purchase artwork"
                             isDisabled={false}
@@ -273,24 +237,16 @@ export default function Artwork() {
                           />
                         ) : (
                           <LongBlackButton
-                            value={
-                              loadingPriceQuote
-                                ? "Requesting ..."
-                                : "Request price"
-                            }
+                            value={loadingPriceQuote ? 'Requesting ...' : 'Request price'}
                             isDisabled={false}
                             onClick={handleRequestPriceQuote}
                             isLoading={loadingPriceQuote}
                           />
                         )
                       ) : (
-                        <LongBlackButton
-                          value="Sold"
-                          isDisabled={true}
-                          onClick={() => {}}
-                        />
+                        <LongBlackButton value="Sold" isDisabled={true} onClick={() => {}} />
                       ))}
-                  {userType !== "gallery" && (
+                  {userType !== 'gallery' && (
                     <SaveArtworkButton
                       likeIds={data.like_IDs || []}
                       art_id={data.art_id}
@@ -298,9 +254,7 @@ export default function Artwork() {
                     />
                   )}
                   <Pressable onPress={() => setShowMore(true)}>
-                    <Text
-                      style={tw`text-[#004617] text-[14px] text-center mt-[20px] underline`}
-                    >
+                    <Text style={tw`text-[#004617] text-[14px] text-center mt-[20px] underline`}>
                       More details about this artwork
                     </Text>
                   </Pressable>
@@ -325,91 +279,82 @@ export default function Artwork() {
             <BackScreenButton handleClick={() => setShowMore(false)} />
           </View>
           {data && (
-            <ScrollWrapper
-              showsVerticalScrollIndicator={false}
-              style={tw`flex-1`}
-            >
+            <ScrollWrapper showsVerticalScrollIndicator={false} style={tw`flex-1`}>
               <View>
                 <View
-                  style={[
-                    styles.detailsContainer,
-                    userType === "gallery" && { paddingBottom: 70 },
-                  ]}
+                  style={[styles.detailsContainer, userType === 'gallery' && { paddingBottom: 70 }]}
                 >
                   <DetailsCard
                     title="Additional details about this artwork"
                     details={[
                       {
-                        name: "Description",
-                        text: data?.artwork_description || "N/A",
+                        name: 'Description',
+                        text: data?.artwork_description || 'N/A',
                       },
-                      { name: "Materials", text: data.materials },
+                      { name: 'Materials', text: data.materials },
                       {
-                        name: "Certificate of authenticity",
+                        name: 'Certificate of authenticity',
                         text:
-                          data?.certificate_of_authenticity === "Yes"
-                            ? "Included"
-                            : "Not included",
+                          data?.certificate_of_authenticity === 'Yes' ? 'Included' : 'Not included',
                       },
-                      { name: "Artwork packaging", text: data?.framing },
+                      { name: 'Artwork packaging', text: data?.framing },
                       {
-                        name: "Signature",
+                        name: 'Signature',
                         text: `Signed ${data?.signature}`,
                       },
-                      { name: "Year", text: data?.year },
+                      { name: 'Year', text: data?.year },
                     ]}
                   />
                   <DetailsCard
                     title="Artist Information"
                     details={[
-                      { name: "Artist name", text: data?.artist },
-                      { name: "Birth Year", text: data?.artist_birthyear },
-                      { name: "Country", text: data?.artist_country_origin },
+                      { name: 'Artist name', text: data?.artist },
+                      { name: 'Birth Year', text: data?.artist_birthyear },
+                      { name: 'Country', text: data?.artist_country_origin },
                     ]}
                   />
                 </View>
-                {userType !== "gallery" &&
-                  similarArtworksByArtist.length > 0 && (
-                    <>
-                      <Text
-                        style={tw.style(
-                          `text-[20px] font-medium text-[#000] mb-[20px] pl-[20px]`
-                        )}
-                      >
-                        Other Works by {data?.artist}
-                      </Text>
+                {userType !== 'gallery' && similarArtworksByArtist.length > 0 && (
+                  <>
+                    <Text
+                      style={tw.style(
+                        `text-[20px] font-medium text-[#1A1A1A]] mb-[20px] pl-[20px]`,
+                      )}
+                    >
+                      Other Works by {data?.artist}
+                    </Text>
 
-                      <FlatList
-                        data={similarArtworksByArtist}
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                        keyExtractor={(_, index) => JSON.stringify(index)}
-                        style={{
-                          marginBottom: 25,
-                        }}
-                        contentContainerStyle={{
-                          paddingRight: 20,
-                        }}
-                        renderItem={({
-                          item,
-                          index,
-                        }: {
-                          item: ArtworkFlatlistItem;
-                          index: number;
-                        }) => (
-                          <ArtworkCard
-                            title={item.title}
-                            url={item.url}
-                            artist={item.artist}
-                            showPrice={item.pricing.shouldShowPrice === "Yes"}
-                            price={item.pricing.usd_price}
-                          />
-                        )}
-                      />
-                    </>
-                  )}
+                    <FlatList
+                      data={similarArtworksByArtist}
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                      keyExtractor={(_, index) => JSON.stringify(index)}
+                      style={{
+                        marginBottom: 25,
+                      }}
+                      contentContainerStyle={{
+                        paddingRight: 20,
+                      }}
+                      renderItem={({
+                        item,
+                        index,
+                      }: {
+                        item: ArtworkFlatlistItem;
+                        index: number;
+                      }) => (
+                        <ArtworkCard
+                          title={item.title}
+                          url={item.url}
+                          artist={item.artist}
+                          showPrice={item.pricing.shouldShowPrice === 'Yes'}
+                          price={item.pricing.usd_price}
+                        />
+                      )}
+                    />
+                  </>
+                )}
 
-                {userType !== "gallery" && (
+                {userType !== 'gallery' && (
                   <SimilarArtworks title={data.title} medium={data?.medium} />
                 )}
               </View>
@@ -417,11 +362,7 @@ export default function Artwork() {
           )}
         </View>
       )}
-      <ZoomArtwork
-        url={url}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      />
+      <ZoomArtwork url={url} modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </WithModal>
   );
 }
@@ -440,46 +381,46 @@ const styles = StyleSheet.create({
   artworkTitle: {
     color: colors.primary_black,
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   artworkCreator: {
     fontSize: 16,
-    color: "#616161",
+    color: '#616161',
     marginTop: 10,
   },
   artworkTags: {
-    color: "#616161",
+    color: '#616161',
     fontSize: 14,
     marginTop: 10,
   },
   tagsContainer: {
     marginTop: 15,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   tagItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 5,
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: "#E7F6EC",
+    backgroundColor: '#E7F6EC',
   },
   tagItemText: {
     color: colors.secondary_text_color,
     fontSize: 12,
   },
   priceTitle: {
-    color: "#616161",
+    color: '#616161',
     fontSize: 14,
     marginTop: 20,
   },
   price: {
     fontSize: 19,
-    fontWeight: "700",
-    color: "#1A1A1A",
+    fontWeight: '700',
+    color: '#1A1A1A',
     marginTop: 10,
   },
   buttonContainer: {
@@ -487,8 +428,8 @@ const styles = StyleSheet.create({
   },
   loaderContainer: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loaderText: {
     fontSize: 16,

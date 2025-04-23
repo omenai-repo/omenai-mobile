@@ -67,7 +67,7 @@ const UploadPhoto = () => {
               </View>
             </View>
             <Text
-              style={tw.style(`text-[18px] text-[#00000099] self-center text-center`, {
+              style={tw.style(`text-[18px] text-[#1A1A1A]00099] self-center text-center`, {
                 width: width / 1.5,
                 marginTop: height / 20,
               })}

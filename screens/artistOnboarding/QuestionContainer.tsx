@@ -85,7 +85,7 @@ const QuestionContainer = ({
                   <Text
                     style={tw.style(
                       `text-[12px] text-right mr-[30px] mt-[5px]`,
-                      isLimitExceeded ? 'text-[#FF0000]' : 'text-[#00000080]',
+                      isLimitExceeded ? 'text-[#FF0000]' : 'text-[#1A1A1A]00080]',
                     )}
                   >
                     {wordCount}/250 words

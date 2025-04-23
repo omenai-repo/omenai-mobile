@@ -101,7 +101,7 @@ export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
         marginHorizontal: (width * 0.5) / 15,
       })}
     >
-      {/* <Text style={tw`text-[18px] text-[#000] font-medium mb-[10px]`}>Overview</Text> */}
+      {/* <Text style={tw`text-[18px] text-[#1A1A1A]] font-medium mb-[10px]`}>Overview</Text> */}
       <View style={tw`flex-row items-center gap-[20px]`}>
         <View
           style={tw.style(

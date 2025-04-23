@@ -298,7 +298,7 @@ const AddPrimaryAcctScreen = () => {
               placeholder="Select country"
               value={userSession?.address ? userSession.address.country : 'Select country'}
               handleSetValue={() => {}}
-              label="Country of account origin"
+              label="Country"
               disable={true}
             />
 

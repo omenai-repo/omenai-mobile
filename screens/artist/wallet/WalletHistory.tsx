@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, useWindowDimensions } from 'react-native';
 import React, { useState } from 'react';
 import tw from 'twrnc';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
@@ -7,6 +7,7 @@ import { WalletContainer } from './WalletScreen';
 import { useRoute } from '@react-navigation/native';
 
 const WalletHistory = () => {
+  const { height } = useWindowDimensions();
   const { transactions } = useRoute<any>().params;
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
@@ -21,7 +22,7 @@ const WalletHistory = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={tw`gap-[20px] mt-[25px] mb-[150px]`}>
-          {transactions?.length > 0 &&
+          {transactions?.length > 0 ? (
             transactions?.map((item: any, index: number) => {
               return (
                 <WalletContainer
@@ -31,7 +32,18 @@ const WalletHistory = () => {
                   dateTime={item.createdAt}
                 />
               );
-            })}
+            })
+          ) : (
+            <View
+              style={tw.style(`flex-1 justify-center items-center`, {
+                marginTop: height / 5,
+              })}
+            >
+              <Text style={tw`text-[18px] text-[#1A1A1A]000] font-medium`}>
+                No transactions found
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>

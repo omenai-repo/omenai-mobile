@@ -401,7 +401,7 @@ const ArtistOnboarding = () => {
                   </Pressable>
                 </View>
 
-                <Text style={tw`text-[20px] font-medium text-[#000000] mt-[30px]`}>
+                <Text style={tw`text-[20px] font-medium text-[#1A1A1A]000] mt-[30px]`}>
                   {stage === 'questions'
                     ? 'Artist Onboarding'
                     : stage === 'cv_upload'
@@ -410,7 +410,7 @@ const ArtistOnboarding = () => {
                     ? 'Upload your Social Handles'
                     : stage === 'overview' && 'An overview of your Information'}
                 </Text>
-                <Text style={tw`text-[14px] text-[#00000099] mt-[10px] flex-wrap mr-[40px]`}>
+                <Text style={tw`text-[14px] text-[#1A1A1A]00099] mt-[10px] flex-wrap mr-[40px]`}>
                   {stage === 'overview'
                     ? 'Please review your information to make sure your information is correct.'
                     : 'Fill in the required information to complete your onboarding.'}
@@ -565,7 +565,7 @@ const ArtistOnboarding = () => {
                         >
                           {!cv?.assets && <SvgXml xml={uploadIcon} />}
                           <Text
-                            style={tw`text-[12px] text-[#000000] font-medium mt-[15px] text-center mx-[30px]`}
+                            style={tw`text-[12px] text-[#1A1A1A]000] font-medium mt-[15px] text-center mx-[30px]`}
                           >
                             {cv?.assets ? cv.assets[0].name : 'Upload your CV here'}
                           </Text>
@@ -657,7 +657,7 @@ const ArtistOnboarding = () => {
                       `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`,
                     )}
                   >
-                    <Text style={tw`text-[#000] font-bold text-[14px]`}>Back</Text>
+                    <Text style={tw`text-[#1A1A1A]] font-bold text-[14px]`}>Back</Text>
                   </Pressable>
                 )}
 

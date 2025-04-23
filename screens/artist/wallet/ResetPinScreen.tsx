@@ -87,7 +87,7 @@ export const ResetPinScreen = ({ navigation }: { navigation: any }) => {
           showModal: true,
           modalType: 'success',
         });
-        setTimeout(() => navigation.replace('WalletScreen'), 2000);
+        setTimeout(() => navigation.pop(2), 2000);
       } else {
         setError(response?.message || 'Failed to reset PIN');
       }
@@ -113,7 +113,7 @@ export const ResetPinScreen = ({ navigation }: { navigation: any }) => {
               <TextInput
                 key={`new-${i}`}
                 ref={(ref) => (newPinRefs.current[i] = ref)}
-                style={tw`w-12 h-12 border rounded-[10px] text-center text-xl`}
+                style={tw`w-14 h-14 border border-gray-400 rounded-[15px] text-center text-xl bg-[#fff]`}
                 keyboardType="numeric"
                 maxLength={1}
                 secureTextEntry
@@ -137,7 +137,7 @@ export const ResetPinScreen = ({ navigation }: { navigation: any }) => {
               <TextInput
                 key={`confirm-${i}`}
                 ref={(ref) => (confirmPinRefs.current[i] = ref)}
-                style={tw`w-12 h-12 border rounded-[10px] text-center text-xl`}
+                style={tw`w-14 h-14 border border-gray-400 rounded-[15px] text-center text-xl bg-[#fff]`}
                 keyboardType="numeric"
                 maxLength={1}
                 secureTextEntry

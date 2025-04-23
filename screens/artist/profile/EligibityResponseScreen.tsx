@@ -51,12 +51,12 @@ const EligibityResponseScreen = ({
             },
           ]}
         >
-          <Text style={tw`text-[18px] text-[#00000099] leading-[20px] text-center mx-[40px]`}>
+          <Text style={tw`text-[18px] text-[#1A1A1A]00099] leading-[20px] text-center mx-[40px]`}>
             {label}
           </Text>
           {daysLeft && (
             <Text
-              style={tw`text-[24px] text-[#000000] font-bold leading-[20px] text-center pt-[20px]`}
+              style={tw`text-[24px] text-[#1A1A1A]000] font-bold leading-[20px] text-center pt-[20px]`}
             >
               {daysLeft} days
             </Text>

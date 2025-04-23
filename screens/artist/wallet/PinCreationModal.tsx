@@ -122,11 +122,8 @@ export const PinCreationModal = ({
 
   return (
     <Modal visible={visible} transparent animationType="fade">
-      <Pressable
-        onPressOut={() => setVisible(false)}
-        style={tw`flex-1 justify-center items-center bg-black/50`}
-      >
-        <Pressable onPress={(e) => e.stopPropagation()} style={tw`bg-white rounded-2xl p-6 w-4/5`}>
+      <View style={tw`flex-1 justify-center items-center bg-black/50`}>
+        <View style={tw`bg-white rounded-2xl p-6 w-4/5`}>
           <Text style={tw`text-xl font-bold mb-4`}>Create Wallet PIN</Text>
 
           <Text style={tw`mb-2`}>Enter new wallet PIN:</Text>
@@ -174,8 +171,8 @@ export const PinCreationModal = ({
               {loading ? 'Processing...' : 'Submit'}
             </Text>
           </Pressable>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 };

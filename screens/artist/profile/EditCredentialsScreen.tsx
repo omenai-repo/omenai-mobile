@@ -169,7 +169,7 @@ export default function EditCredentialsScreen() {
                 >
                   {!cv?.assets && <SvgXml xml={uploadIcon} />}
                   <Text
-                    style={tw`text-[12px] text-[#000000] font-medium mt-[15px] text-center mx-[30px]`}
+                    style={tw`text-[12px] text-[#1A1A1A]000] font-medium mt-[15px] text-center mx-[30px]`}
                   >
                     {cv?.assets ? cv.assets[0].name : documentation.cv}
                   </Text>

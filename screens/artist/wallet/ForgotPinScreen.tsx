@@ -8,6 +8,7 @@ import BackHeaderTitle from 'components/header/BackHeaderTitle';
 import LottieView from 'lottie-react-native';
 import loaderAnimation from '../../../assets/other/loader-animation.json';
 import { OTPInput } from './OTPInput';
+import WithModal from 'components/modal/WithModal';
 
 export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
   const [otp, setOtp] = useState('');
@@ -48,9 +49,9 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
   }, []);
 
   const handleVerifyOtp = async () => {
-    if (otp.length !== 6) {
+    if (otp.length !== 4) {
       updateModal({
-        message: 'Please enter the complete 6-digit OTP',
+        message: 'Please enter the complete 4-digit OTP',
         showModal: true,
         modalType: 'error',
       });
@@ -83,77 +84,79 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
   };
 
   return (
-    <View style={tw`flex-1 bg-[#F7F7F7]`}>
-      <BackHeaderTitle title="Verify OTP" />
+    <WithModal>
+      <View style={tw`flex-1 bg-[#F7F7F7]`}>
+        <BackHeaderTitle title="Verify OTP" />
 
-      <View style={tw`px-[25px] pt-[40px]`}>
-        <Text style={tw`mb-6 text-base text-gray-600`}>
-          An OTP has been sent to your registered email. Please enter the 6-digit code below:
-        </Text>
-
-        <OTPInput ref={otpInputRef} length={4} onChange={setOtp} />
-
-        <Pressable
-          style={tw`bg-black py-4 rounded-lg ${loading ? 'opacity-50' : ''}`}
-          onPress={handleVerifyOtp}
-          disabled={loading || otp.length !== 6}
-        >
-          <Text style={tw`text-white text-center font-bold`}>
-            {loading ? 'Verifying...' : 'Verify OTP'}
+        <View style={tw`px-[25px] pt-[40px]`}>
+          <Text style={tw`mb-6 text-base text-gray-600`}>
+            An OTP has been sent to your registered email. Please enter the 4-digit code below:
           </Text>
-        </Pressable>
 
-        <Pressable
-          onPress={async () => {
-            setLoadOtp(true);
-            try {
-              const response = await sendOtpCode();
-              if (!response?.isOk) {
+          <OTPInput ref={otpInputRef} length={4} onChange={setOtp} />
+
+          <Pressable
+            style={tw`bg-black py-4 rounded-lg ${loading ? 'opacity-50' : ''}`}
+            onPress={handleVerifyOtp}
+            disabled={loading || otp.length !== 4}
+          >
+            <Text style={tw`text-white text-center font-bold`}>
+              {loading ? 'Verifying...' : 'Verify OTP'}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={async () => {
+              setLoadOtp(true);
+              try {
+                const response = await sendOtpCode();
+                if (!response?.isOk) {
+                  updateModal({
+                    message: response?.message || 'Failed to resend OTP',
+                    showModal: true,
+                    modalType: 'error',
+                  });
+                } else {
+                  updateModal({
+                    message: 'New OTP sent successfully',
+                    showModal: true,
+                    modalType: 'success',
+                  });
+                  otpInputRef.current?.clear();
+                }
+              } catch {
                 updateModal({
-                  message: response?.message || 'Failed to resend OTP',
+                  message: 'Error resending OTP',
                   showModal: true,
                   modalType: 'error',
                 });
-              } else {
-                updateModal({
-                  message: 'New OTP sent successfully',
-                  showModal: true,
-                  modalType: 'success',
-                });
-                otpInputRef.current?.clear();
+              } finally {
+                setLoadOtp(false);
               }
-            } catch {
-              updateModal({
-                message: 'Error resending OTP',
-                showModal: true,
-                modalType: 'error',
-              });
-            } finally {
-              setLoadOtp(false);
-            }
-          }}
-          style={tw`mt-4`}
-          disabled={loadOtp}
-        >
-          <Text style={tw`text-[#000] text-center`}>
-            {loadOtp ? 'Sending...' : "Didn't receive code? Resend"}
-          </Text>
-        </Pressable>
-      </View>
-
-      <Modal visible={loadOtp} transparent animationType="fade">
-        <View style={tw`flex-1 justify-center items-center bg-black/50`}>
-          <LottieView
-            autoPlay
-            ref={animation}
-            style={{
-              width: 250,
-              height: 250,
             }}
-            source={loaderAnimation}
-          />
+            style={tw`mt-4`}
+            disabled={loadOtp}
+          >
+            <Text style={tw`text-[#1A1A1A]] text-center`}>
+              {loadOtp ? 'Sending...' : "Didn't receive code? Resend"}
+            </Text>
+          </Pressable>
         </View>
-      </Modal>
-    </View>
+
+        <Modal visible={loadOtp} transparent animationType="fade">
+          <View style={tw`flex-1 justify-center items-center bg-black/50`}>
+            <LottieView
+              autoPlay
+              ref={animation}
+              style={{
+                width: 250,
+                height: 250,
+              }}
+              source={loaderAnimation}
+            />
+          </View>
+        </Modal>
+      </View>
+    </WithModal>
   );
 };

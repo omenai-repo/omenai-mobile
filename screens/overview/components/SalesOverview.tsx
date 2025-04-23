@@ -141,7 +141,7 @@ export default function SalesOverview({
 
   return (
     <>
-      {/* <Text style={tw`text-[18px] text-[#000] font-medium mb-[10px] mx-[20px]`}>
+      {/* <Text style={tw`text-[18px] text-[#1A1A1A]] font-medium mb-[10px] mx-[20px]`}>
         Sales Overview
       </Text> */}
       <View style={styles.container}>

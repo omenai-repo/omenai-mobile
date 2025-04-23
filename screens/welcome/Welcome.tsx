@@ -162,7 +162,7 @@ export default function Welcome() {
           )}
           onPress={() => handleNavigation(screenName.login)}
         >
-          <Text style={tw`text-[#000000] text-[16px]`}>Log In</Text>
+          <Text style={tw`text-[#1A1A1A]000] text-[16px]`}>Log In</Text>
         </Pressable>
 
         <Pressable

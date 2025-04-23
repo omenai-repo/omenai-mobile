@@ -50,11 +50,13 @@ const LoadingContainer = ({ label }: { label: string }) => {
             source={loaderAnimation}
           />
 
-          <Text style={tw`text-[20px] text-[#000000] font-bold text-center mx-[20px] mt-[10px]`}>
+          <Text
+            style={tw`text-[20px] text-[#1A1A1A]000] font-bold text-center mx-[20px] mt-[10px]`}
+          >
             Please wait a moment
           </Text>
 
-          <Text style={tw`text-[16px] text-[#00000099] text-center mx-[40px] mt-[10px]`}>
+          <Text style={tw`text-[16px] text-[#1A1A1A]00099] text-center mx-[40px] mt-[10px]`}>
             {label}
           </Text>
         </Animated.View>

@@ -223,7 +223,9 @@ const BottomTabNav = () => {
                 <SvgXml xml={starEffect} />
               </View>
 
-              <Text style={tw`text-[16px] leading-[25px] text-[#00000099] text-center mx-[40px]`}>
+              <Text
+                style={tw`text-[16px] leading-[25px] text-[#1A1A1A]00099] text-center mx-[40px]`}
+              >
                 Your profile is currently under verification, which typically takes 24 to 48 hours.
                 You will receive an update via email within this timeframe. We appreciate your
                 patience.
@@ -258,7 +260,7 @@ const ArtistNavigation = () => {
       <Stack.Screen name={'WithdrawScreen'} component={WithdrawScreen} />
       <Stack.Screen name={'ForgotPinScreen'} component={ForgotPinScreen} />
       <Stack.Screen name={'ResetPinScreen'} component={ResetPinScreen} />
-      {/* <Stack.Screen name={'WithdrawalSuccess'} component={WithdrawalSuccess} /> */}
+      <Stack.Screen name={'WithdrawalSuccess'} component={WithdrawalSuccess} />
       <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
       <Stack.Screen name={'EditCredentialsScreen'} component={EditCredentialsScreen} />
