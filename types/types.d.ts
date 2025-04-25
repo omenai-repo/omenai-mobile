@@ -532,3 +532,20 @@ type WithdrawalAccount = {
   bank_country: string;
   beneficiary_id: number;
 };
+
+type ArtworkMediumTypes =
+  | 'Photography'
+  | 'Works on paper'
+  | 'Acrylic on canvas/linen/panel'
+  | 'Mixed media on paper/canvas'
+  | 'Sculpture (Resin/plaster/clay)'
+  | 'Oil on canvas/panel'
+  | 'Sculpture (Bronze/stone/metal)';
+
+type ArtistCategory =
+  | 'Emerging'
+  | 'Early Mid-Career'
+  | 'Mid-Career'
+  | 'Late Mid-Career'
+  | 'Established'
+  | 'Elite';

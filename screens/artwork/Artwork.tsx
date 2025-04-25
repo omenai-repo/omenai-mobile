@@ -159,7 +159,7 @@ export default function Artwork() {
     <WithModal>
       {!showMore ? (
         <View style={{ flex: 1 }}>
-          <Header art_id={data?.art_id} isGallery={userType === 'gallery'} />
+          <Header art_id={data?.art_id} isGallery={['gallery', 'artist'].includes(userType)} />
           {isLoading && !data && <Loader />}
           {data && (
             <ScrollWrapper style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -190,13 +190,14 @@ export default function Artwork() {
                       style={[
                         styles.price,
                         data?.pricing.shouldShowPrice === 'No' &&
-                          userType !== 'gallery' && {
+                          !['gallery', 'artist'].includes(userType) && {
                             fontSize: 16,
                             color: colors.grey,
                           },
                       ]}
                     >
-                      {data?.pricing.shouldShowPrice === 'Yes' || userType === 'gallery'
+                      {data?.pricing.shouldShowPrice === 'Yes' ||
+                      ['gallery', 'artist'].includes(userType)
                         ? utils_formatPrice(Number(data?.pricing.usd_price))
                         : 'Price on request'}
                     </Text>
@@ -223,7 +224,7 @@ export default function Artwork() {
                   </View>
                   {isLoading
                     ? null
-                    : userType !== 'gallery' &&
+                    : !['gallery', 'artist'].includes(userType) &&
                       (data?.availability ? (
                         data?.pricing.shouldShowPrice === 'Yes' ? (
                           <LongBlackButton
@@ -246,7 +247,7 @@ export default function Artwork() {
                       ) : (
                         <LongBlackButton value="Sold" isDisabled={true} onClick={() => {}} />
                       ))}
-                  {userType !== 'gallery' && (
+                  {!['gallery', 'artist'].includes(userType) && (
                     <SaveArtworkButton
                       likeIds={data.like_IDs || []}
                       art_id={data.art_id}
@@ -282,7 +283,10 @@ export default function Artwork() {
             <ScrollWrapper showsVerticalScrollIndicator={false} style={tw`flex-1`}>
               <View>
                 <View
-                  style={[styles.detailsContainer, userType === 'gallery' && { paddingBottom: 70 }]}
+                  style={[
+                    styles.detailsContainer,
+                    ['gallery', 'artist'].includes(userType) && { paddingBottom: 70 },
+                  ]}
                 >
                   <DetailsCard
                     title="Additional details about this artwork"
@@ -314,47 +318,48 @@ export default function Artwork() {
                     ]}
                   />
                 </View>
-                {userType !== 'gallery' && similarArtworksByArtist.length > 0 && (
-                  <>
-                    <Text
-                      style={tw.style(
-                        `text-[20px] font-medium text-[#1A1A1A]] mb-[20px] pl-[20px]`,
-                      )}
-                    >
-                      Other Works by {data?.artist}
-                    </Text>
+                {!['gallery', 'artist'].includes(userType) &&
+                  similarArtworksByArtist.length > 0 && (
+                    <>
+                      <Text
+                        style={tw.style(
+                          `text-[20px] font-medium text-[#1A1A1A]] mb-[20px] pl-[20px]`,
+                        )}
+                      >
+                        Other Works by {data?.artist}
+                      </Text>
 
-                    <FlatList
-                      data={similarArtworksByArtist}
-                      horizontal={true}
-                      showsHorizontalScrollIndicator={false}
-                      keyExtractor={(_, index) => JSON.stringify(index)}
-                      style={{
-                        marginBottom: 25,
-                      }}
-                      contentContainerStyle={{
-                        paddingRight: 20,
-                      }}
-                      renderItem={({
-                        item,
-                        index,
-                      }: {
-                        item: ArtworkFlatlistItem;
-                        index: number;
-                      }) => (
-                        <ArtworkCard
-                          title={item.title}
-                          url={item.url}
-                          artist={item.artist}
-                          showPrice={item.pricing.shouldShowPrice === 'Yes'}
-                          price={item.pricing.usd_price}
-                        />
-                      )}
-                    />
-                  </>
-                )}
+                      <FlatList
+                        data={similarArtworksByArtist}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        keyExtractor={(_, index) => JSON.stringify(index)}
+                        style={{
+                          marginBottom: 25,
+                        }}
+                        contentContainerStyle={{
+                          paddingRight: 20,
+                        }}
+                        renderItem={({
+                          item,
+                          index,
+                        }: {
+                          item: ArtworkFlatlistItem;
+                          index: number;
+                        }) => (
+                          <ArtworkCard
+                            title={item.title}
+                            url={item.url}
+                            artist={item.artist}
+                            showPrice={item.pricing.shouldShowPrice === 'Yes'}
+                            price={item.pricing.usd_price}
+                          />
+                        )}
+                      />
+                    </>
+                  )}
 
-                {userType !== 'gallery' && (
+                {!['gallery', 'artist'].includes(userType) && (
                   <SimilarArtworks title={data.title} medium={data?.medium} />
                 )}
               </View>

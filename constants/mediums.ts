@@ -7,17 +7,27 @@ import mixedMedia from 'assets/images/mixed-media.png';
 import ankara from 'assets/images/ankara.png';
 import canvas from 'assets/images/onboarding-3.jpg';
 import ink from 'assets/images/curated_bg.png';
-import unnamed from 'assets/images/unnamed.jpg'
+import unnamed from 'assets/images/unnamed.jpg';
 
-export const mediums = <CatalogCardTypes[]> [
-    {name: 'Mixed media', value: 'Mixed media', image: mixedMedia},
-    {name: 'Paper', value: 'Paper', image: unnamed},
-    {name: 'Ankara', value: 'Ankara', image: ankara},
-    {name: 'Oil', value: 'Oil', image: oil_art},
-    {name: 'Canvas', value: 'Canvas', image: canvas},
-    {name: 'Ink', value: 'Ink', image: ink},
-    {name: 'Photography', value: 'Photography', image: photography_art},
-    {name: 'Charcoal', value: 'Charcoal', image: charcoal_art},
-    {name: 'Fabric', value: 'Fabric', image: fabric_art},
-    {name: 'Acrylic', value: 'Acrylic', image: acrylic_art},
-]
+export const mediums = <CatalogCardTypes[]>[
+  { name: 'Mixed media on paper/canvas', value: 'Mixed media on paper/canvas', image: mixedMedia },
+  { name: 'Works on paper', value: 'Works on paper', image: unnamed },
+  {
+    name: 'Sculpture (Resin/plaster/clay)',
+    value: 'Sculpture (Resin/plaster/clay)',
+    image: ankara,
+  },
+  { name: 'Oil on canvas/panel', value: 'Oil on canvas/panel', image: oil_art },
+  { name: 'Canvas', value: 'Canvas', image: canvas },
+  { name: 'Photography', value: 'Photography', image: photography_art },
+  {
+    name: 'Acrylic on canvas/linen/panel',
+    value: 'Acrylic on canvas/linen/panel',
+    image: acrylic_art,
+  },
+  {
+    name: 'Sculpture (Bronze/stone/metal)',
+    value: 'Sculpture (Bronze/stone/metal)',
+    image: ink,
+  },
+];

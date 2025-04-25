@@ -1,29 +1,24 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-} from "react-native";
-import React from "react";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import { colors } from "config/colors.config";
-import { uploadArtworkStore } from "store/gallery/uploadArtworkStore";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
+import React from 'react';
+import BackScreenButton from 'components/buttons/BackScreenButton';
+import { colors } from 'config/colors.config';
+import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { useAppStore } from 'store/app/appStore';
 
 export default function HeaderIndicator() {
+  const { userType } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { activeIndex, setActiveIndex, isUploaded, clearData } =
-    uploadArtworkStore();
+  const { activeIndex, setActiveIndex, isUploaded, clearData } = uploadArtworkStore();
 
   const titles = [
-    "Upload artwork",
-    "Dimensions",
-    "Pricing",
-    "Artist details",
-    "Upload image",
+    'Upload artwork',
+    'Dimensions',
+    ...(userType !== 'artist' ? ['Pricing'] : []),
+    'Artist details',
+    'Upload image',
+    ...(userType === 'artist' ? ['Artwork Price Review'] : []),
   ];
 
   return (
@@ -47,10 +42,7 @@ export default function HeaderIndicator() {
         {titles.map((_, index) => (
           <View
             key={index}
-            style={[
-              styles.indicator,
-              activeIndex >= index + 1 && { backgroundColor: "#000" },
-            ]}
+            style={[styles.indicator, activeIndex >= index + 1 && { backgroundColor: '#000' }]}
           />
         ))}
       </View>
@@ -61,13 +53,13 @@ export default function HeaderIndicator() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   indicatorContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 5,
     paddingHorizontal: 20,
     marginTop: 20,
@@ -76,15 +68,15 @@ const styles = StyleSheet.create({
     height: 4,
     flex: 1,
     borderRadius: 2,
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
   },
   topTitle: {
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 18,
     color: colors.primary_black,
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });
