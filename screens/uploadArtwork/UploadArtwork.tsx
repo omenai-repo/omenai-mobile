@@ -18,6 +18,7 @@ import Loader from 'components/general/Loader';
 import { useAppStore } from 'store/app/appStore';
 import LockScreen from 'screens/galleryArtworksListing/components/LockScreen';
 import ScrollWrapper from 'components/general/ScrollWrapper';
+import ArtworkPriceReviewScreen from './components/ArtworkPriceReviewScreen';
 
 export default function UploadArtwork() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -25,7 +26,8 @@ export default function UploadArtwork() {
 
   const { userSession, userType } = useAppStore();
 
-  const { activeIndex, artworkUploadData, image, isUploaded, setIsUploaded } = uploadArtworkStore();
+  const { activeIndex, setActiveIndex, artworkUploadData, image, isUploaded, setIsUploaded } =
+    uploadArtworkStore();
   const { updateModal } = useModalStore();
 
   useEffect(() => {
@@ -93,9 +95,20 @@ export default function UploadArtwork() {
   const components = [
     <ArtworkDetails />,
     <ArtworkDimensions />,
-    <Pricing />,
+    ...(userType !== 'artist' ? [<Pricing />] : []),
     <ArtistDetails />,
-    <UploadImage handleUpload={handleArtworkUpload} />,
+    <UploadImage
+      handleUpload={() => {
+        if (userType === 'gallery') {
+          handleArtworkUpload();
+        } else {
+          setActiveIndex(activeIndex + 1);
+        }
+      }}
+    />,
+    ...(userType === 'artist'
+      ? [<ArtworkPriceReviewScreen onConfirm={handleArtworkUpload} />]
+      : []),
   ];
 
   if (showLockScreen) return <LockScreen />;

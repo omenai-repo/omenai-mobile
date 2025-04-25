@@ -54,6 +54,8 @@ import { ForgotPinScreen } from 'screens/artist/wallet/ForgotPinScreen';
 import { ResetPinScreen } from 'screens/artist/wallet/ResetPinScreen';
 import { WithdrawalSuccess } from 'screens/artist/wallet/WithdarwalSuccess';
 import { TransactionDetailsScreen } from 'screens/artist/wallet/TransactionDetailsScreen';
+import Artwork from 'screens/artwork/Artwork';
+import EditArtwork from 'screens/editArtwork/EditArtwork';
 
 const { width, height } = Dimensions.get('window');
 
@@ -270,6 +272,8 @@ const ArtistNavigation = () => {
         <Stack.Screen name={screenName.gallery.uploadNewLogo} component={UploadNewLogo} />
       </Stack.Group>
       <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
+      <Stack.Screen name={screenName.artwork} component={Artwork} />
+      <Stack.Screen name={screenName.gallery.editArtwork} component={EditArtwork} />
     </Stack.Navigator>
   );
 };
