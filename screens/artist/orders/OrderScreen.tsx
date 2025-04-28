@@ -1,12 +1,12 @@
 import { View, Text, Pressable, FlatList, TouchableOpacity } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import { Image } from 'react-native';
 import { Animated } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { arrowUpRightWhite, dropdownIcon, dropUpIcon } from 'utils/SvgImages';
 import ScrollWrapper from 'components/general/ScrollWrapper';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import DeclineOrderModal from './DeclineOrderModal';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { organizeOrders } from 'utils/utils_splitArray';
@@ -267,9 +267,17 @@ const OrderScreen = () => {
 
   const { data, setData } = artistOrdersStore();
 
-  useEffect(() => {
-    handleFetchOrders();
-  }, [refreshing]);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await handleFetchOrders();
+    setRefreshing(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      handleRefresh(); // Auto refresh when screen gains focus
+    }, []),
+  );
 
   const handleFetchOrders = async () => {
     const results = await getOverviewOrders();
@@ -281,8 +289,6 @@ const OrderScreen = () => {
       processing: parsedOrders.processing,
       completed: parsedOrders.completed,
     });
-
-    setRefreshing(false);
     setIsloading(false);
   };
 
@@ -352,7 +358,10 @@ const OrderScreen = () => {
                   lastId={index === currentOrders.length - 1}
                   acceptBtn={
                     status === 'pending'
-                      ? () => navigation.navigate('DimentionsDetails')
+                      ? () =>
+                          navigation.navigate('DimentionsDetails', {
+                            orderId: item.order_id,
+                          })
                       : undefined
                   }
                   declineBtn={status === 'pending' ? () => setDeclineModal(true) : undefined}

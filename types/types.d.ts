@@ -41,9 +41,21 @@ type TrackingInformationTypes = {
   link: string;
 };
 
-type ShippingQuoteTypes = {
-  fees: string;
-  taxes: string;
+type OrderArtworkExhibitionStatus = {
+  is_on_exhibition: boolean;
+  exhibition_end_date: Date;
+};
+
+type HoldStatus = {
+  is_hold: boolean;
+  hold_end_date: Date;
+};
+
+type ShipmentDimensions = {
+  length: number;
+  width: number;
+  height: number;
+  weight: number;
 };
 
 type AddressTypes = {
@@ -218,10 +230,8 @@ type PaymentStatusTypes = {
 };
 
 type ShippingQuoteTypes = {
-  package_carrier: string;
-  shipping_fees: string;
+  fees: string;
   taxes: string;
-  additional_information?: string;
 };
 
 type OrderAcceptedStatusTypes = {
@@ -273,6 +283,10 @@ type artworkOrderDataTypes = {
   artist: string;
   author_id: string;
   art_id: string;
+  role_access: {
+    designation: string;
+    role: 'artist' | 'gallery';
+  };
 };
 
 type OrderCardProps = {
@@ -408,9 +422,10 @@ type CatalogCardTypes = {
 };
 
 type CreateOrderModelTypes = {
-  artwork_data: Pick<ArtworkSchemaTypes, 'artist' | 'pricing' | 'title' | 'url' | 'art_id'> & {
-    _id: ObjectId;
-  };
+  artwork_data: Pick<
+    ArtworkSchemaTypes,
+    'artist' | 'pricing' | 'title' | 'url' | 'art_id' | 'role_access'
+  > & { _id: ObjectId };
   buyer_details: OrderBuyerAndSellerDetails;
   seller_details: OrderBuyerAndSellerDetails;
   order_id: string;
@@ -418,6 +433,9 @@ type CreateOrderModelTypes = {
   shipping_details: OrderShippingDetailsTypes;
   payment_information: PaymentStatusTypes;
   order_accepted: OrderAcceptedStatusTypes;
+  seller_designation: 'artist' | 'gallery';
+  exhibition_status: OrderArtworkExhibitionStatus | null;
+  hold_status: HoldStatus;
   createdAt: string;
   updatedAt: string;
   availability: boolean;

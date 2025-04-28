@@ -113,9 +113,9 @@ export default function ArtworkDimensions() {
           </View>
 
           {/* Displaying only one error in the dimentions inputs */}
-          {(formErrors.depth && <Text style={tw`text-red-700 mt-2`}>{formErrors.depth}</Text>) ||
-            (formErrors.width && <Text style={tw`text-red-700 mt-2`}>{formErrors.width}</Text>) ||
-            (formErrors.height && <Text style={tw`text-red-700 mt-2`}>{formErrors.height}</Text>)}
+          {(formErrors.depth && <Text style={tw`text-[#ff0000] mt-2`}>{formErrors.depth}</Text>) ||
+            (formErrors.width && <Text style={tw`text-[#ff0000] mt-2`}>{formErrors.width}</Text>) ||
+            (formErrors.height && <Text style={tw`text-[#ff0000] mt-2`}>{formErrors.height}</Text>)}
         </View>
         <Input
           label="Weight (in Kg)"

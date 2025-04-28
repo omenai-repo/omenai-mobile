@@ -1,10 +1,10 @@
 export function utils_calculatePurchaseGrandTotal(
   price: number,
   fees: string,
-  taxes: string
+  taxes: string,
 ): string {
-  const taxesValue: number = parseFloat(taxes.replace(/[^0-9.]/g, ""));
-  const feesValue: number = parseFloat(fees.replace(/[^0-9.]/g, ""));
+  const taxesValue: number = parseFloat(taxes.replace(/[^0-9.]/g, ''));
+  const feesValue: number = parseFloat(fees.replace(/[^0-9.]/g, ''));
 
   // Calculate total
   const total: number = price + taxesValue + feesValue;
@@ -17,10 +17,10 @@ export function utils_calculatePurchaseGrandTotal(
 export function utils_calculatePurchaseGrandTotalNumber(
   price: number,
   fees: string,
-  taxes: string
+  taxes: string,
 ): number {
-  const taxesValue: number = parseFloat(taxes.replace(/[^0-9.]/g, ""));
-  const feesValue: number = parseFloat(fees.replace(/[^0-9.]/g, ""));
+  const taxesValue: number = parseFloat(taxes.replace(/[^0-9.]/g, ''));
+  const feesValue: number = parseFloat(fees.replace(/[^0-9.]/g, ''));
 
   // Calculate total
   const total: number = price + taxesValue + feesValue;

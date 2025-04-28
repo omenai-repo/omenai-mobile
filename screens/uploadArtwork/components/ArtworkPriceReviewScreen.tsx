@@ -9,6 +9,8 @@ import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
 import { useAppStore } from 'store/app/appStore';
 import LottieView from 'lottie-react-native';
 import loaderAnimation from '../../../assets/other/loader-animation.json';
+import { extractNumberString } from 'utils/utils_editStringToNumber';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () => void }) {
   const { height } = useWindowDimensions();
@@ -28,21 +30,13 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
 
   const fetchPrice = async () => {
     try {
-      console.log({
-        medium: artworkUploadData.medium,
-        category: userSession.categorization,
-        currency: userSession.base_currency,
-        height: artworkUploadData.height,
-        width: artworkUploadData.width,
-      });
       const response = await getArtworkPriceForArtist({
         medium: artworkUploadData.medium,
         category: userSession.categorization,
         currency: userSession.base_currency,
-        height: artworkUploadData.height,
-        width: artworkUploadData.width,
+        height: parseFloat(extractNumberString(artworkUploadData.height)),
+        width: parseFloat(extractNumberString(artworkUploadData.width)),
       });
-      console.log(response);
       if (response?.isOk) {
         updateArtworkUploadData('price', response?.data.price);
         updateArtworkUploadData('usd_price', response?.data.usd_price);
@@ -51,7 +45,7 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
         setPriceData(response?.data);
       } else {
         updateModal({
-          message: response?.message || 'Failed to fetch price',
+          message: response?.data.message || 'Failed to fetch price',
           modalType: 'error',
           showModal: true,
         });
@@ -83,7 +77,7 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
           }}
           source={loaderAnimation}
         />
-        <Text style={tw`text-lg font-semibold`}>Calculating price...</Text>
+        <Text style={tw`text-lg font-semibold`}>Determining price of art piece...</Text>
       </View>
     );
   }
@@ -101,22 +95,23 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
       <Text style={tw`text-xl font-bold mb-4`}>Proposed Artwork Price</Text>
 
       <View style={tw`bg-white rounded-xl p-5 border border-[#00000020] mb-6`}>
-        <Text style={tw`text-sm text-gray-600 mb-1`}>Platform will list your artwork for:</Text>
+        <Text style={tw`text-sm text-gray-600 mb-1`}>Omenai will list your art piece for:</Text>
         <Text style={tw`text-2xl font-bold text-black`}>
-          {getArtistCurrencySymbol(priceData.currency)}{' '}
-          {Number(priceData.price).toLocaleString(undefined, {
-            maximumFractionDigits: 2,
-          })}
+          ${priceData.usd_price.toLocaleString()}
         </Text>
 
         <Text style={tw`text-sm mt-3 text-gray-500`}>
-          (USD equivalent: ${priceData.usd_price.toLocaleString()})
+          ({userSession.base_currency} equivalent: {getArtistCurrencySymbol(priceData.currency)}{' '}
+          {Number(priceData.price).toLocaleString(undefined, {
+            maximumFractionDigits: 2,
+          })}
+          )
         </Text>
       </View>
 
       <Text style={tw`text-gray-600 text-sm mb-6`}>
-        If you agree to this price, you can go ahead and upload your artwork. Otherwise, tap cancel
-        to review your details.
+        If you agree with the price, you can proceed to upload your piece. If not, tap cancel to
+        review your details.
       </Text>
 
       <View style={tw`flex-row gap-4`}>
@@ -137,6 +132,14 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
         >
           <Text style={tw`text-white font-semibold`}>Upload</Text>
         </Pressable>
+      </View>
+      <View
+        style={tw`flex-row items-start bg-[#FFF3CD] border border-[#FFEEBA] rounded-md p-4 mt-6`}
+      >
+        <Ionicons name="warning-outline" size={24} color="#856404" style={tw`mr-3 mt-1`} />
+        <Text style={tw`flex-1 text-[#856404] text-sm`}>
+          Uploading this piece confirms your agreement to sell it exclusively through Omenai.
+        </Text>
       </View>
     </View>
   );
