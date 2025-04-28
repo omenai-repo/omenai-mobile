@@ -38,6 +38,7 @@
     "expo-splash-screen": "~0.29.18",
     "expo-status-bar": "~2.0.0",
     "expo-updates": "~0.26.10",
+    "flutterwave-react-native": "^1.0.4",
     "lodash": "^4.17.21",
     "lottie-react-native": "7.1.0",
     "moti": "^0.30.0",
@@ -58,7 +59,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-uuid": "^2.0.2",
     "react-native-virtualized-view": "^1.0.0",
-    "react-native-webview": "13.12.5",
+    "react-native-webview": "6.0.2",
     "twrnc": "^4.5.1",
     "zod": "^3.23.8",
     "zustand": "^4.5.2"

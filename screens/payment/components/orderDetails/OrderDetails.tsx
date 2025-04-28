@@ -1,22 +1,30 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { utils_calculatePurchaseGrandTotalNumber } from "utils/utils_calculatePurchaseGrandTotal";
-import { Feather } from "@expo/vector-icons";
-import { useAppStore } from "store/app/appStore";
-import { createOrderLock } from "services/orders/createOrderLock";
-import { useModalStore } from "store/modal/modalStore";
-import { getAppDeepLink } from "config/getAppDeepLink.config";
-import { useStripe } from "@stripe/stripe-react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { createPaymentIntent } from "services/stripe/createPaymentIntent";
-import Loader from "components/general/Loader";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { colors } from 'config/colors.config';
+import BackHeaderTitle from 'components/header/BackHeaderTitle';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { utils_calculatePurchaseGrandTotalNumber } from 'utils/utils_calculatePurchaseGrandTotal';
+import { Feather } from '@expo/vector-icons';
+import { useAppStore } from 'store/app/appStore';
+import { createOrderLock } from 'services/orders/createOrderLock';
+import { useModalStore } from 'store/modal/modalStore';
+import { getAppDeepLink } from 'config/getAppDeepLink.config';
+import { useStripe } from '@stripe/stripe-react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { createPaymentIntent } from 'services/stripe/createPaymentIntent';
+import Loader from 'components/general/Loader';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import { PayWithFlutterwave } from 'flutterwave-react-native';
+import tw from 'twrnc';
+
+interface RedirectParams {
+  status: 'successful' | 'cancelled';
+  transaction_id?: string;
+  tx_ref: string;
+}
 
 export default function OrderDetails({
   data,
@@ -29,19 +37,19 @@ export default function OrderDetails({
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [mainPageLoader, setMainPageLoader] = useState<boolean>(true);
+  const [mainPageLoader, setMainPageLoader] = useState<boolean>(false);
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
 
   const total_price_number = utils_calculatePurchaseGrandTotalNumber(
     data.artwork_data.pricing.usd_price,
-    data.shipping_details.shipment_information.quote.fees,
-    data.shipping_details.shipment_information.quote.taxes
+    data.shipping_details.shipment_information.quote.fees.toString(),
+    data.shipping_details.shipment_information.quote.taxes.toString(),
   );
 
   const fetchPaymentSheetParams = async () => {
     const { paymentIntent, publishableKey } = await createPaymentIntent(
-      total_price_number,
+      Math.ceil(total_price_number * 100) / 100,
       data.seller_details.id,
       {
         buyer_email: userSession.email,
@@ -50,15 +58,11 @@ export default function OrderDetails({
         seller_email: data.seller_details.email,
         seller_name: data.seller_details.name,
         seller_id: data.seller_details.id,
-        shipping_cost: +JSON.parse(
-          data.shipping_details.shipment_information.quote.fees
-        ), // will be changed
+        shipping_cost: +JSON.parse(data.shipping_details.shipment_information.quote.fees), // will be changed
         unit_price: data.artwork_data.pricing.usd_price,
         artwork_name: data.artwork_data.title,
-        tax_fees: +JSON.parse(
-          data.shipping_details.shipment_information.quote.taxes
-        ), // will be changed
-      }
+        tax_fees: +JSON.parse(data.shipping_details.shipment_information.quote.taxes), // will be changed
+      },
     );
 
     return {
@@ -72,7 +76,7 @@ export default function OrderDetails({
     const { paymentIntent, publishableKey } = await fetchPaymentSheetParams();
 
     const { error } = await initPaymentSheet({
-      merchantDisplayName: "Omenai, Inc.",
+      merchantDisplayName: 'Omenai, Inc.',
       paymentIntentClientSecret: paymentIntent,
       // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
       //methods that complete payment after a delay, like SEPA Debit and Sofort.
@@ -80,7 +84,7 @@ export default function OrderDetails({
       defaultBillingDetails: {
         name: userSession.name,
       },
-      returnURL: "omenaimobile://stripe-redirect",
+      returnURL: 'omenaimobile://stripe-redirect',
     });
     if (error) {
       console.log(error.message);
@@ -110,18 +114,18 @@ export default function OrderDetails({
   };
 
   useEffect(() => {
-    initializePaymentSheet();
-  }, []);
+    if (data.seller_designation === 'gallery') {
+      initializePaymentSheet();
+    }
+  }, [data.seller_designation]);
 
   async function handleClickPayNow() {
+    initializePaymentSheet();
     setLoading(true);
 
     const deepLink = getAppDeepLink();
 
-    const get_purchase_lock = await createOrderLock(
-      data.artwork_data.art_id,
-      userSession.id
-    );
+    const get_purchase_lock = await createOrderLock(data.artwork_data.art_id, userSession.id);
     if (get_purchase_lock?.isOk) {
       if (get_purchase_lock.data.lock_data.user_id === userSession.id) {
         //pay with stripe SDK
@@ -130,7 +134,7 @@ export default function OrderDetails({
         // navigation.navigate(screenName.cancleOrderPayment, {art_id: data.artwork_data.art_id})
       } else {
         throwError(
-          "A user is currently processing a purchase transaction on this artwork. Please check back in a few minutes for a status update"
+          'A user is currently processing a purchase transaction on this artwork. Please check back in a few minutes for a status update',
         );
       }
     }
@@ -139,7 +143,11 @@ export default function OrderDetails({
   }
 
   const throwError = (message: string) => {
-    updateModal({ message, modalType: "error", showModal: true });
+    updateModal({ message, modalType: 'error', showModal: true });
+  };
+
+  const handleOnRedirect = (data: RedirectParams) => {
+    console.log(data);
   };
 
   if (mainPageLoader)
@@ -149,8 +157,8 @@ export default function OrderDetails({
         <View
           style={{
             flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
+            alignItems: 'center',
+            justifyContent: 'center',
             paddingHorizontal: 20,
           }}
         >
@@ -168,40 +176,24 @@ export default function OrderDetails({
           <Text style={styles.summaryText}>Summary</Text>
           <View style={styles.priceListing}>
             <View style={styles.priceListingItem}>
-              <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>
-                Price
-              </Text>
-              <Text
-                style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
-              >
+              <Text style={{ fontSize: 14, color: '#616161', flex: 1 }}>Price</Text>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#616161' }}>
                 {utils_formatPrice(data.artwork_data.pricing.usd_price)}
               </Text>
             </View>
             <View style={styles.priceListingItem}>
-              <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>
-                Shipping
-              </Text>
-              <Text
-                style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
-              >
+              <Text style={{ fontSize: 14, color: '#616161', flex: 1 }}>Shipping</Text>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#616161' }}>
                 {utils_formatPrice(
-                  +JSON.parse(
-                    data.shipping_details.shipment_information.quote.fees
-                  )
+                  +JSON.parse(data.shipping_details.shipment_information.quote.fees),
                 )}
               </Text>
             </View>
             <View style={styles.priceListingItem}>
-              <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>
-                Taxes
-              </Text>
-              <Text
-                style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
-              >
+              <Text style={{ fontSize: 14, color: '#616161', flex: 1 }}>Taxes</Text>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#616161' }}>
                 {utils_formatPrice(
-                  +JSON.parse(
-                    data.shipping_details.shipment_information.quote.taxes
-                  )
+                  +JSON.parse(data.shipping_details.shipment_information.quote.taxes),
                 )}
               </Text>
             </View>
@@ -210,7 +202,7 @@ export default function OrderDetails({
             <Text
               style={{
                 fontSize: 16,
-                fontWeight: "500",
+                fontWeight: '500',
                 color: colors.primary_black,
                 flex: 1,
               }}
@@ -220,7 +212,7 @@ export default function OrderDetails({
             <Text
               style={{
                 fontSize: 16,
-                fontWeight: "500",
+                fontWeight: '500',
                 color: colors.primary_black,
               }}
             >
@@ -228,24 +220,34 @@ export default function OrderDetails({
             </Text>
           </View>
           <View style={{ marginTop: 49 }}>
-            <LongBlackButton
-              value="Proceed to payment"
-              onClick={handleClickPayNow}
-              isLoading={loading}
-              isDisabled={locked}
-            />
+            {data.seller_designation === 'gallery' ? (
+              <LongBlackButton
+                value="Proceed to payment"
+                onClick={handleClickPayNow}
+                isLoading={loading}
+                isDisabled={locked}
+              />
+            ) : (
+              <PayWithFlutterwave
+                onRedirect={handleOnRedirect}
+                options={{}}
+                customButton={(props) => (
+                  <TouchableOpacity
+                    style={tw`h-[55px] justify-center items-center bg-[#1a1a1a] rounded-[95px]`}
+                    onPress={props.onPress}
+                    disabled={props.disabled}
+                  >
+                    <Text style={tw`text-[#fff] font-medium`}>Pay with flutterwave</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            )}
             {locked && (
               <View style={styles.LockContainer}>
-                <Feather
-                  name="lock"
-                  color={"#ff000090"}
-                  size={16}
-                  style={{ marginTop: 7 }}
-                />
-                <Text style={{ fontSize: 14, color: "#ff000090", flex: 1 }}>
-                  Another user has initiated a payment transaction on this
-                  artwork. Please refresh your page in a few minutes to confirm
-                  the availability of this artwork.
+                <Feather name="lock" color={'#ff000090'} size={16} style={{ marginTop: 7 }} />
+                <Text style={{ fontSize: 14, color: '#ff000090', flex: 1 }}>
+                  Another user has initiated a payment transaction on this artwork. Please refresh
+                  your page in a few minutes to confirm the availability of this artwork.
                 </Text>
               </View>
             )}
@@ -254,12 +256,12 @@ export default function OrderDetails({
                 marginTop: 30,
                 fontSize: 14,
                 color: colors.grey,
-                textAlign: "center",
+                textAlign: 'center',
               }}
             >
-              In order to prevent multiple transaction attempts for this
-              artwork, we have implemented a queueing system and lock mechanism
-              which prevents other users from accessing the payment portal
+              In order to prevent multiple transaction attempts for this artwork, we have
+              implemented a queueing system and lock mechanism which prevents other users from
+              accessing the payment portal
             </Text>
           </View>
         </View>
@@ -280,7 +282,7 @@ const styles = StyleSheet.create({
     borderColor: colors.inputBorder,
     paddingHorizontal: 20,
     paddingVertical: 30,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
   },
   summaryText: {
     fontSize: 16,
@@ -296,15 +298,15 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   priceListingItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   LockContainer: {
     padding: 10,
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
     borderRadius: 7,
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 15,
     paddingHorizontal: 20,
     marginTop: 20,

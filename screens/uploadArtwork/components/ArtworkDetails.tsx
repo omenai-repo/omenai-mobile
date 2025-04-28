@@ -11,9 +11,11 @@ import {
   framingList,
   mediumListing,
   rarityList,
+  signatureArtistSelectOptions,
   signatureSelectOptions,
 } from 'data/uploadArtworkForm.data';
 import { validate } from 'lib/validations/upload_artwork_input_validator/validator';
+import { useAppStore } from 'store/app/appStore';
 
 type artworkDetailsErrorsType = {
   title: string;
@@ -23,6 +25,7 @@ type artworkDetailsErrorsType = {
 };
 
 export default function ArtworkDetails() {
+  const { userType } = useAppStore();
   const { setActiveIndex, activeIndex, updateArtworkUploadData, artworkUploadData } =
     uploadArtworkStore();
 
@@ -155,7 +158,7 @@ export default function ArtworkDetails() {
           <View style={{ flex: 1 }}>
             <CustomSelectPicker
               label="Signature"
-              data={signatureSelectOptions}
+              data={userType === 'gallery' ? signatureSelectOptions : signatureArtistSelectOptions}
               placeholder="Select"
               value={artworkUploadData.signature}
               dropdownPosition="top"

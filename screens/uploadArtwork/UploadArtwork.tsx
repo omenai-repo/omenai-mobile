@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import WithModal from 'components/modal/WithModal';
 import HeaderIndicator from './components/HeaderIndicator';
@@ -55,7 +55,7 @@ export default function UploadArtwork() {
       name: image.assets[0].fileName,
       size: image.assets[0].fileSize,
       uri: image.assets[0].uri,
-      type: 'png',
+      type: image.assets[0].mimeType,
     };
     const fileUploaded = await uploadImage(imageparams);
 
@@ -116,15 +116,21 @@ export default function UploadArtwork() {
   return (
     <WithModal>
       <HeaderIndicator />
-      <ScrollWrapper
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-        nestedScrollEnabled={true}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
       >
-        {!isLoading && !isUploaded && components[activeIndex - 1]}
-        {!isLoading && isUploaded && <SuccessScreen />}
-        {isLoading && <Loader />}
-      </ScrollWrapper>
+        <ScrollWrapper
+          style={styles.container}
+          nestedScrollEnabled={true}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {!isLoading && !isUploaded && components[activeIndex - 1]}
+          {!isLoading && isUploaded && <SuccessScreen />}
+          {isLoading && <Loader />}
+        </ScrollWrapper>
+      </KeyboardAvoidingView>
     </WithModal>
   );
 }

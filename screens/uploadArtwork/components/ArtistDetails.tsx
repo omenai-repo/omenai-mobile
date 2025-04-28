@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import Input from "components/inputs/Input";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import { uploadArtworkStore } from "store/gallery/uploadArtworkStore";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { countriesListing } from "data/uploadArtworkForm.data";
-import { validate } from "lib/validations/upload_artwork_input_validator/validator";
+import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import Input from 'components/inputs/Input';
+import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
+import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { countriesListing } from 'data/uploadArtworkForm.data';
+import { validate } from 'lib/validations/upload_artwork_input_validator/validator';
+import { useAppStore } from 'store/app/appStore';
 
 type artistDetailsErrorsType = {
   artist: string;
@@ -13,66 +14,61 @@ type artistDetailsErrorsType = {
 };
 
 export default function ArtistDetails() {
-  const {
-    setActiveIndex,
-    activeIndex,
-    updateArtworkUploadData,
-    artworkUploadData,
-  } = uploadArtworkStore();
+  const { userSession } = useAppStore();
+  const { setActiveIndex, activeIndex, updateArtworkUploadData, artworkUploadData } =
+    uploadArtworkStore();
 
   const [formErrors, setFormErrors] = useState<artistDetailsErrorsType>({
-    artist: "",
-    artist_birthyear: "",
+    artist: '',
+    artist_birthyear: '',
   });
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
-    );
+    const isFormValid = Object.values(formErrors).every((error) => error === '');
     const areAllFieldsFilled = Object.values({
       artist: artworkUploadData.artist,
       birth_year: artworkUploadData.artist_birthyear,
-    }).every((value) => value !== "");
+    }).every((value) => value !== '');
 
     return !(isFormValid && areAllFieldsFilled);
   };
 
   const handleValidationChecks = (label: string, value: string) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(label, value);
+    const { success, errors }: { success: boolean; errors: string[] | [] } = validate(label, value);
     if (!success) {
       setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
     } else {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
+      setFormErrors((prev) => ({ ...prev, [label]: '' }));
     }
   };
+
+  useEffect(() => {
+    if (userSession) {
+      updateArtworkUploadData('artist', userSession.name);
+      updateArtworkUploadData('artist_country_origin', userSession.address.country);
+    }
+  }, [userSession]);
 
   return (
     <View style={styles.container}>
       <View style={styles.inputsContainer}>
         <Input
           label="Artist full name"
-          onInputChange={(value) => updateArtworkUploadData("artist", value)}
+          onInputChange={(value) => updateArtworkUploadData('artist', value)}
           placeHolder="Enter artist full name"
           value={artworkUploadData.artist}
-          handleBlur={() =>
-            handleValidationChecks("artist", artworkUploadData.artist)
-          }
+          handleBlur={() => handleValidationChecks('artist', artworkUploadData.artist)}
           errorMessage={formErrors.artist}
+          disabled
         />
         <Input
           label="Artist Birth year"
-          onInputChange={(value) =>
-            updateArtworkUploadData("artist_birthyear", value)
-          }
+          onInputChange={(value) => updateArtworkUploadData('artist_birthyear', value)}
           placeHolder="Enter artist birth year"
           value={artworkUploadData.artist_birthyear}
           handleBlur={() =>
-            handleValidationChecks(
-              "artist_birthyear",
-              artworkUploadData.artist_birthyear
-            )
+            handleValidationChecks('artist_birthyear', artworkUploadData.artist_birthyear)
           }
           errorMessage={formErrors.artist_birthyear}
           keyboardType="decimal-pad"
@@ -80,12 +76,20 @@ export default function ArtistDetails() {
         <View>
           <CustomSelectPicker
             label="Artist Country of origin"
-            handleSetValue={(item) =>
-              updateArtworkUploadData("artist_country_origin", item.value)
-            }
+            handleSetValue={(item) => updateArtworkUploadData('artist_country_origin', item.value)}
             placeholder="Select country"
             value={artworkUploadData.artist_country_origin}
-            data={countriesListing}
+            data={
+              userSession.address
+                ? [
+                    {
+                      label: userSession.address.country,
+                      value: userSession.address.country,
+                    },
+                  ]
+                : []
+            }
+            disable
           />
         </View>
       </View>
@@ -112,7 +116,7 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
   flexInputsContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 20,
   },
 });

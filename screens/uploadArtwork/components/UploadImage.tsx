@@ -6,10 +6,12 @@ import * as ImagePicker from 'expo-image-picker';
 import LongWhiteButton from 'components/buttons/LongWhiteButton';
 import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
 import { useAppStore } from 'store/app/appStore';
+import { useModalStore } from 'store/modal/modalStore';
 
 export default function UploadImage({ handleUpload }: { handleUpload: () => void }) {
   const { image, setImage } = uploadArtworkStore();
   const { userType } = useAppStore();
+  const { updateModal } = useModalStore();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -17,10 +19,19 @@ export default function UploadImage({ handleUpload }: { handleUpload: () => void
       quality: 1,
     });
 
-    // console.log(result);
-
     if (!result.canceled) {
-      setImage(result);
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+
+      // Check if the selected image type is allowed
+      if (result.assets[0].mimeType && allowedTypes.includes(result.assets[0].mimeType)) {
+        setImage(result);
+      } else {
+        updateModal({
+          message: 'Please select a PNG, JPEG, or JPG image.',
+          modalType: 'error',
+          showModal: true,
+        });
+      }
     }
   };
 

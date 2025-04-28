@@ -3,8 +3,8 @@ import { apiUrl, authorization, originHeader, userAgent } from 'constants/apiUrl
 interface ArtworkPriceParams {
   medium: string;
   category: string;
-  height: string;
-  width: string;
+  height: number;
+  width: number;
   currency: string;
 }
 

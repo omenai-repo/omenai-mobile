@@ -6,18 +6,18 @@ import {
   View,
   Platform,
   StatusBar,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import WithModal from "components/modal/WithModal";
-import { Feather } from "@expo/vector-icons";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { fetchAllArtworksById } from "services/artworks/fetchAllArtworksById";
-import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import ArtworksListing from "components/general/ArtworksListing";
+} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import WithModal from 'components/modal/WithModal';
+import { Feather } from '@expo/vector-icons';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { fetchAllArtworksById } from 'services/artworks/fetchAllArtworksById';
+import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import ArtworksListing from 'components/general/ArtworksListing';
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -34,10 +34,16 @@ export default function GalleryArtworksListing() {
     handleFetchGalleryArtworks();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      handleFetchGalleryArtworks();
+    }, []),
+  );
+
   async function handleFetchGalleryArtworks() {
     setIsLoading(true);
     const results = await fetchAllArtworksById();
-    setData(results?.data);
+    setData(results?.data.reverse());
 
     setIsLoading(false);
   }
@@ -47,8 +53,8 @@ export default function GalleryArtworksListing() {
       <SafeAreaView style={styles.safeArea}>
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
             gap: 10,
             paddingHorizontal: 20,
           }}
@@ -57,8 +63,8 @@ export default function GalleryArtworksListing() {
             style={{
               fontSize: 18,
               flex: 1,
-              fontWeight: "500",
-              color: "#000",
+              fontWeight: '500',
+              color: '#000',
             }}
           >
             Artworks
@@ -66,20 +72,16 @@ export default function GalleryArtworksListing() {
           <FittedBlackButton
             value="Upload artwork"
             isDisabled={false}
-            onClick={() =>
-              navigation.navigate(screenName.gallery.uploadArtwork)
-            }
+            onClick={() => navigation.navigate(screenName.gallery.uploadArtwork)}
           >
-            <Feather name="plus" color={"#fff"} size={20} />
+            <Feather name="plus" color={'#fff'} size={20} />
           </FittedBlackButton>
         </View>
       </SafeAreaView>
       <ScrollWrapper
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {isloading ? (
           <MiniArtworkCardLoader />
@@ -102,6 +104,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });

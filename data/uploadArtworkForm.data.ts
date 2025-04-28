@@ -37,6 +37,11 @@ export const signatureSelectOptions: selectItemProp[] = [
   { label: 'No signature', value: 'no signature' },
 ];
 
+export const signatureArtistSelectOptions: selectItemProp[] = [
+  { label: 'By artist', value: 'By artist' },
+  { label: 'No signature', value: 'no signature' },
+];
+
 export const countriesListing: selectItemProp[] = countries.map((country) => ({
   label: country,
   value: country,
