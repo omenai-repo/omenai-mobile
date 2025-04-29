@@ -5,6 +5,7 @@ type GalleryAuthRegisterStoreType = {
   setPageIndex: (e: number) => void;
   galleryRegisterData: GallerySignupData;
   setEmail: (e: string) => void;
+  setPhone: (e: string) => void;
   setName: (e: string) => void;
   setPassword: (e: string) => void;
   setConfirmPassword: (e: string) => void;
@@ -37,6 +38,7 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
   galleryRegisterData: {
     name: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: '',
     admin: '',
@@ -61,6 +63,10 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
   setEmail: (email: string) => {
     const data = get().galleryRegisterData;
     set({ galleryRegisterData: { ...data, email } });
+  },
+  setPhone: (phone: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, phone } });
   },
   setPassword: (password: string) => {
     const data = get().galleryRegisterData;
@@ -131,6 +137,7 @@ export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
       galleryRegisterData: {
         name: '',
         email: '',
+        phone: '',
         password: '',
         confirmPassword: '',
         admin: '',

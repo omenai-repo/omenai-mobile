@@ -16,13 +16,14 @@ import { Country, State, City, ICountry, IState, ICity } from 'country-state-cit
 
 const IndividualAddressVerification = () => {
   const { height, width } = useWindowDimensions();
-  const [formErrors, setFormErrors] = useState<Partial<AddressTypes>>({
+  const [formErrors, setFormErrors] = useState<Partial<AddressTypes & { phone: string }>>({
     address_line: '',
     city: '',
     country: '',
     state: '',
     zip: '',
     countryCode: '',
+    phone: '',
   });
   const [showToolTip, setShowToolTip] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -46,6 +47,7 @@ const IndividualAddressVerification = () => {
     setAddress,
     setCity,
     setZipCode,
+    setPhone,
     setState,
     setCountry,
     setCountryCode,
@@ -120,6 +122,7 @@ const IndividualAddressVerification = () => {
       zip: individualRegisterData?.address?.zip,
       country: individualRegisterData?.address?.country,
       state: individualRegisterData?.address?.state,
+      phone: individualRegisterData?.phone,
     }).every((value) => value !== '');
 
     return !(isFormValid && areAllFieldsFilled);
@@ -148,6 +151,7 @@ const IndividualAddressVerification = () => {
         cityName: individualRegisterData.address.state,
         postalCode: individualRegisterData.address.zip,
         countryCode: individualRegisterData.address.countryCode,
+        phone: individualRegisterData.phone,
       };
 
       const response = await verifyAddress(payload);
@@ -219,7 +223,7 @@ const IndividualAddressVerification = () => {
         errorMessage={formErrors?.address_line}
       />
 
-      <View style={tw`flex-row items-center gap-[30px] mt-[20px]`}>
+      <View style={tw`flex-row items-center gap-[30px] my-[20px]`}>
         <View style={tw`flex-1`}>
           <CustomSelectPicker
             data={cityData}
@@ -247,6 +251,18 @@ const IndividualAddressVerification = () => {
           errorMessage={formErrors?.zip}
         />
       </View>
+
+      <Input
+        label="Phone number"
+        keyboardType="phone-pad"
+        onInputChange={(text) => {
+          setPhone(text);
+          handleValidationChecks('general', text);
+        }}
+        placeHolder="+12345678990"
+        value={individualRegisterData?.phone}
+        errorMessage={formErrors?.phone}
+      />
 
       <View style={tw`flex-row mt-[40px]`}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />

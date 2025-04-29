@@ -34,7 +34,7 @@ export default function TermsAndConditions() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const { name, email, password, admin, address, description, logo } = galleryRegisterData;
+    const { name, email, password, admin, address, description, logo, phone } = galleryRegisterData;
 
     if (logo === null) return;
 
@@ -61,6 +61,7 @@ export default function TermsAndConditions() {
         description,
         logo: file.fileId,
         address,
+        phone,
       };
 
       const results = await registerAccount(payload, 'gallery');

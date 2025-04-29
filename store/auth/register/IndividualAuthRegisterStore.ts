@@ -4,6 +4,7 @@ type IndividualAuthRegisterStoreType = {
   individualRegisterData: IndividualRegisterData;
   setEmail: (e: string) => void;
   setName: (e: string) => void;
+  setPhone: (e: string) => void;
   setPassword: (e: string) => void;
   setConfirmPassword: (e: string) => void;
   pageIndex: number;
@@ -33,6 +34,7 @@ export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStore
     individualRegisterData: {
       name: '',
       email: '',
+      phone: '',
       password: '',
       confirmPassword: '',
       address: {
@@ -52,6 +54,10 @@ export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStore
     setEmail: (email: string) => {
       const data = get().individualRegisterData;
       set({ individualRegisterData: { ...data, email } });
+    },
+    setPhone: (phone: string) => {
+      const data = get().individualRegisterData;
+      set({ individualRegisterData: { ...data, phone } });
     },
     setPassword: (password: string) => {
       const data = get().individualRegisterData;
@@ -120,6 +126,7 @@ export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStore
         individualRegisterData: {
           name: '',
           email: '',
+          phone: '',
           password: '',
           confirmPassword: '',
           address: {

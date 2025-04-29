@@ -53,7 +53,7 @@ const TermsAndCondition = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const { name, email, password, address, logo, art_style } = artistRegisterData;
+    const { name, email, password, address, logo, art_style, phone } = artistRegisterData;
 
     if (logo === null) return;
 
@@ -78,6 +78,7 @@ const TermsAndCondition = () => {
         logo: file.fileId,
         address,
         art_style,
+        phone,
       };
 
       const results = await registerAccount(payload, 'artist');

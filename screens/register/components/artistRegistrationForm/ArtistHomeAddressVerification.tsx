@@ -17,13 +17,14 @@ import { State, City, IState, ICity } from 'country-state-city';
 
 const ArtistHomeAddressVerification = () => {
   const { height, width } = useWindowDimensions();
-  const [formErrors, setFormErrors] = useState<Partial<AddressTypes>>({
+  const [formErrors, setFormErrors] = useState<Partial<AddressTypes & { phone: string }>>({
     address_line: '',
     city: '',
     country: '',
     state: '',
     zip: '',
     countryCode: '',
+    phone: '',
   });
   const [showToolTip, setShowToolTip] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -45,6 +46,7 @@ const ArtistHomeAddressVerification = () => {
     setPageIndex,
     artistRegisterData,
     setHomeAddress,
+    setPhone,
     setCity,
     setZipCode,
     setCountry,
@@ -121,6 +123,7 @@ const ArtistHomeAddressVerification = () => {
       zip: artistRegisterData?.address?.zip,
       country: artistRegisterData?.address?.country,
       state: artistRegisterData?.address?.state,
+      phone: artistRegisterData?.phone,
     }).every((value) => value !== '');
 
     return !(isFormValid && areAllFieldsFilled);
@@ -149,6 +152,7 @@ const ArtistHomeAddressVerification = () => {
         cityName: artistRegisterData.address.state,
         postalCode: artistRegisterData.address.zip,
         countryCode: artistRegisterData.address.countryCode,
+        phone: artistRegisterData.phone,
       };
 
       const response = await verifyAddress(payload);
@@ -220,7 +224,7 @@ const ArtistHomeAddressVerification = () => {
         errorMessage={formErrors?.address_line}
       />
 
-      <View style={tw`flex-row items-center gap-[30px] mt-[20px]`}>
+      <View style={tw`flex-row items-center gap-[30px] my-[20px]`}>
         <View style={tw`flex-1`}>
           <CustomSelectPicker
             data={cityData}
@@ -248,6 +252,18 @@ const ArtistHomeAddressVerification = () => {
           errorMessage={formErrors?.zip}
         />
       </View>
+
+      <Input
+        label="Phone number"
+        keyboardType="phone-pad"
+        onInputChange={(text) => {
+          setPhone(text);
+          handleValidationChecks('general', text);
+        }}
+        placeHolder="+12345678990"
+        value={artistRegisterData?.phone}
+        errorMessage={formErrors?.phone}
+      />
 
       <View style={tw`flex-row mt-[40px]`}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
