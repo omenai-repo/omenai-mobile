@@ -117,6 +117,7 @@ type IndividualRegisterData = {
   password: string;
   confirmPassword: string;
   address: AddressTypes;
+  phone: string;
 };
 
 type GallerySignupData = {
@@ -130,6 +131,7 @@ type GallerySignupData = {
   logo: {
     assets: ImageAsset[];
   } | null;
+  phone: string;
 };
 
 type ImageAsset = {
@@ -151,6 +153,7 @@ type ArtistSignupData = {
   } | null;
   art_style: string | string[];
   address: AddressTypes;
+  phone: string;
 };
 
 type ArtistRegisterData = Omit<ArtistSignupData, 'logo' | 'confirmPassword'> & {

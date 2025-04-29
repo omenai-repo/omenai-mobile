@@ -18,7 +18,7 @@ export default function AccountDetailsInput() {
     setPageIndex,
   } = useIndividualAuthRegisterStore();
 
-  const [formErrors, setFormErrors] = useState<Omit<IndividualRegisterData, 'address'>>({
+  const [formErrors, setFormErrors] = useState<Omit<IndividualRegisterData, 'address' | 'phone'>>({
     name: '',
     email: '',
     password: '',
@@ -28,7 +28,12 @@ export default function AccountDetailsInput() {
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
     const isFormValid = Object.values(formErrors).every((error) => error === '');
-    const areAllFieldsFilled = Object.values(individualRegisterData).every((value) => value !== '');
+    const areAllFieldsFilled = Object.values({
+      email: individualRegisterData.email,
+      name: individualRegisterData.name,
+      password: individualRegisterData.password,
+      confirmPassword: individualRegisterData.confirmPassword,
+    }).every((value) => value !== '');
 
     return !(isFormValid && areAllFieldsFilled);
   };

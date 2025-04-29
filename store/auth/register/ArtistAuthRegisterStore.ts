@@ -8,6 +8,7 @@ type ArtistSignupData = {
   address: AddressTypes;
   art_style: string[];
   logo: any;
+  phone: string;
 };
 
 type ArtistAuthRegisterStoreType = {
@@ -16,6 +17,7 @@ type ArtistAuthRegisterStoreType = {
   artistRegisterData: ArtistSignupData;
   setEmail: (e: string) => void;
   setName: (e: string) => void;
+  setPhone: (e: string) => void;
   setPassword: (e: string) => void;
   setConfirmPassword: (e: string) => void;
   setHomeAddress: (e: string) => void;
@@ -46,6 +48,7 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>((s
   artistRegisterData: {
     name: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: '',
     address: {
@@ -67,6 +70,10 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>((s
   setEmail: (email: string) => {
     const data = get().artistRegisterData;
     set({ artistRegisterData: { ...data, email } });
+  },
+  setPhone: (phone: string) => {
+    const data = get().artistRegisterData;
+    set({ artistRegisterData: { ...data, phone } });
   },
   setPassword: (password: string) => {
     const data = get().artistRegisterData;
@@ -139,6 +146,7 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>((s
       artistRegisterData: {
         name: '',
         email: '',
+        phone: '',
         password: '',
         confirmPassword: '',
         address: {
