@@ -17,6 +17,159 @@ import { getImageFileView } from 'lib/storage/getImageFileView';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 import YearDropdown from './YearDropdown';
+import { Ionicons } from '@expo/vector-icons';
+
+function renderStatusBadge({
+  status,
+  payment_status,
+  tracking_status,
+  order_accepted,
+  delivered,
+}: {
+  status: string;
+  payment_status: string;
+  tracking_status: string;
+  order_accepted: string;
+  delivered: boolean;
+}) {
+  const badgeBaseStyle = tw`flex-row items-center px-3 py-1 rounded-full`;
+
+  if (
+    status === 'pending' &&
+    order_accepted === '' &&
+    payment_status === 'pending' &&
+    tracking_status === ''
+  ) {
+    return (
+      <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
+        <Ionicons name="time-outline" size={14} color="#92400E" style={tw`mr-1`} />
+        <Text style={tw`text-[12px] font-medium text-yellow-800`}>Awaiting acceptance</Text>
+      </View>
+    );
+  }
+
+  if (
+    status === 'processing' &&
+    order_accepted === 'accepted' &&
+    payment_status === 'pending' &&
+    tracking_status === ''
+  ) {
+    return (
+      <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
+        <Ionicons name="alert-circle-outline" size={14} color="#92400E" style={tw`mr-1`} />
+        <Text style={tw`text-[12px] font-medium text-yellow-800`}>Awaiting payment</Text>
+      </View>
+    );
+  }
+
+  if (
+    status === 'processing' &&
+    order_accepted === 'accepted' &&
+    payment_status === 'completed' &&
+    tracking_status === ''
+  ) {
+    return (
+      <View style={[badgeBaseStyle, tw`bg-green-100`]}>
+        <Ionicons name="card-outline" size={14} color="#166534" style={tw`mr-1`} />
+        <Text style={tw`text-[12px] font-medium text-green-800`}>Payment completed</Text>
+      </View>
+    );
+  }
+
+  if (
+    status === 'processing' &&
+    order_accepted === 'accepted' &&
+    payment_status === 'completed' &&
+    tracking_status !== ''
+  ) {
+    return (
+      <View style={[badgeBaseStyle, tw`bg-green-100`]}>
+        <Ionicons name="car-outline" size={14} color="#166534" style={tw`mr-1`} />
+        <Text style={tw`text-[12px] font-medium text-green-800`}>Delivery in progress</Text>
+      </View>
+    );
+  }
+
+  if (
+    status === 'processing' &&
+    order_accepted === '' &&
+    payment_status === 'pending' &&
+    tracking_status === ''
+  ) {
+    return (
+      <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
+        <Ionicons name="information-circle-outline" size={14} color="#92400E" style={tw`mr-1`} />
+        <Text style={tw`text-[12px] font-medium text-yellow-800`}>Action required</Text>
+      </View>
+    );
+  }
+
+  if (status === 'completed' && order_accepted === 'declined') {
+    return (
+      <View style={[badgeBaseStyle, tw`bg-red-200`]}>
+        <Ionicons name="close-circle-outline" size={14} color="#991B1B" style={tw`mr-1`} />
+        <Text style={tw`text-[12px] font-medium text-red-800`}>Order declined</Text>
+      </View>
+    );
+  }
+
+  if (status === 'completed' && order_accepted === 'accepted' && delivered) {
+    return (
+      <View style={[badgeBaseStyle, tw`bg-green-100`]}>
+        <Ionicons name="checkmark-done-outline" size={14} color="#166534" style={tw`mr-1`} />
+        <Text style={tw`text-[12px] font-medium text-green-800`}>Order has been fulfilled</Text>
+      </View>
+    );
+  }
+
+  return null;
+}
+
+const renderButtonAction = ({
+  status,
+  payment_status,
+  tracking_status,
+  order_accepted,
+}: {
+  status: string;
+  payment_status: string;
+  tracking_status: string;
+  order_accepted: string;
+}) => {
+  if (
+    status === 'processing' &&
+    order_accepted === 'accepted' &&
+    payment_status === 'pending' &&
+    tracking_status === ''
+  ) {
+    return null;
+  }
+  if (
+    status === 'processing' &&
+    order_accepted === 'accepted' &&
+    payment_status === 'completed' &&
+    tracking_status === ''
+  ) {
+    return null;
+  }
+  if (
+    status === 'processing' &&
+    order_accepted === 'accepted' &&
+    payment_status === 'completed' &&
+    tracking_status !== ''
+  ) {
+    return 'track';
+  }
+  if (
+    status === 'pending' &&
+    order_accepted === '' &&
+    payment_status === 'pending' &&
+    tracking_status === ''
+  ) {
+    return 'action';
+  }
+  return null;
+};
 
 const TabSwitcher = ({
   selectTab,
@@ -116,7 +269,12 @@ const RecentOrderContainer = ({
   lastId,
   declineBtn,
   acceptBtn,
+  trackBtn,
   url,
+  payment_status,
+  tracking_status,
+  order_accepted,
+  delivered,
 }: {
   id: number;
   open: boolean;
@@ -129,7 +287,12 @@ const RecentOrderContainer = ({
   lastId: boolean;
   declineBtn?: () => void;
   acceptBtn?: () => void;
+  trackBtn?: () => void;
   url: string;
+  payment_status: string;
+  tracking_status: string;
+  order_accepted: string;
+  delivered: boolean;
 }) => {
   let image_href = getImageFileView(url, 700);
 
@@ -139,7 +302,13 @@ const RecentOrderContainer = ({
   useEffect(() => {
     if (open) {
       Animated.timing(animatedHeight, {
-        toValue: status === 'pending' ? 180 : 120, // Adjust height based on content
+        toValue:
+          renderButtonAction({ status, payment_status, tracking_status, order_accepted }) ===
+            'track' ||
+          renderButtonAction({ status, payment_status, tracking_status, order_accepted }) ===
+            'action'
+            ? 180
+            : 120, // Adjust height based on content
         duration: 300,
         useNativeDriver: false,
       }).start();
@@ -161,21 +330,6 @@ const RecentOrderContainer = ({
       }).start();
     }
   }, [open]);
-
-  const statusStyles = {
-    pending: {
-      bg: '#FFBF0040',
-      text: '#1a1a1a',
-    },
-    processing: {
-      bg: '#007AFF20',
-      text: '#007AFF',
-    },
-    completed: {
-      bg: '#00C85120',
-      text: '#00C851',
-    },
-  };
 
   return (
     <Pressable
@@ -217,34 +371,36 @@ const RecentOrderContainer = ({
           </View>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
-            <View
-              style={tw.style(`rounded-[12px] h-[30px] justify-center items-center px-[12px]`, {
-                backgroundColor: statusStyles[status].bg,
-              })}
-            >
-              <Text
-                style={tw.style(`text-[12px]`, {
-                  color: statusStyles[status]?.text || '#1a1a1a',
-                })}
-              >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </Text>
-            </View>
+            {renderStatusBadge({
+              status,
+              payment_status,
+              tracking_status,
+              order_accepted,
+              delivered,
+            })}
           </View>
 
-          {status === 'pending' && (
+          {renderButtonAction({ status, payment_status, tracking_status, order_accepted }) ===
+            'track' && (
+            <Pressable style={tw`bg-black py-3 px-4 rounded-full items-center`} onPress={trackBtn}>
+              <Text style={tw`text-white text-[13px] font-semibold`}>Track this shipment</Text>
+            </Pressable>
+          )}
+
+          {renderButtonAction({ status, payment_status, tracking_status, order_accepted }) ===
+            'action' && (
             <View style={tw`flex-row items-center gap-[30px]`}>
               <Pressable
                 onPress={declineBtn}
                 style={tw`h-[40px] justify-center items-center bg-[#C71C16] rounded-[20px] px-[15px] flex-1`}
               >
-                <Text style={tw`text-[13px] text-[#fff] font-semibold`}>Decline order</Text>
+                <Text style={tw`text-[13px] text-white font-semibold`}>Decline order</Text>
               </Pressable>
               <Pressable
                 onPress={acceptBtn}
                 style={tw`h-[40px] justify-center items-center bg-[#00C885] rounded-[20px] px-[15px] flex-1`}
               >
-                <Text style={tw`text-[13px] text-[#fff] font-semibold`}>Accept order</Text>
+                <Text style={tw`text-[13px] text-white font-semibold`}>Accept order</Text>
               </Pressable>
             </View>
           )}
@@ -359,13 +515,17 @@ const OrderScreen = () => {
                   acceptBtn={
                     status === 'pending'
                       ? () =>
-                          // navigation.navigate('DimentionsDetails', {
-                          //   orderId: item.order_id,
-                          // })
-                          navigation.navigate('ShipmentTrackingScreen')
+                          navigation.navigate('DimentionsDetails', {
+                            orderId: item.order_id,
+                          })
                       : undefined
                   }
                   declineBtn={status === 'pending' ? () => setDeclineModal(true) : undefined}
+                  delivered={item.shipping_details.delivery_confirmed}
+                  order_accepted={item.order_accepted.status}
+                  payment_status={item.payment_information.status}
+                  tracking_status={item.shipping_details.shipment_information.tracking.id}
+                  trackBtn={() => navigation.navigate('ShipmentTrackingScreen')}
                 />
               )}
             />
