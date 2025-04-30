@@ -49,7 +49,11 @@ const DimensionsDetails = () => {
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every((error) => error === '');
+    const isFormValid = Object.values({
+      weight: formErrors.weight,
+      height: formErrors.height,
+      width: formErrors.width,
+    }).every((error) => error === '');
 
     const areAllFieldsFilled = Object.values({
       weight: dimentions.weight,
@@ -67,7 +71,7 @@ const DimensionsDetails = () => {
     } else {
       // Run validation and update error state
       const errors = validateOrderMeasurement(value);
-      setFormErrors((prev) => ({ ...prev, [label]: errors.length > 0 ? '' : errors[0] }));
+      setFormErrors((prev) => ({ ...prev, [label]: errors.length === 0 ? '' : errors }));
     }
   };
 
