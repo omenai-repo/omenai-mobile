@@ -359,9 +359,10 @@ const OrderScreen = () => {
                   acceptBtn={
                     status === 'pending'
                       ? () =>
-                          navigation.navigate('DimentionsDetails', {
-                            orderId: item.order_id,
-                          })
+                          // navigation.navigate('DimentionsDetails', {
+                          //   orderId: item.order_id,
+                          // })
+                          navigation.navigate('ShipmentTrackingScreen')
                       : undefined
                   }
                   declineBtn={status === 'pending' ? () => setDeclineModal(true) : undefined}

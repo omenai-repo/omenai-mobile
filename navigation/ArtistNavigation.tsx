@@ -56,6 +56,7 @@ import { WithdrawalSuccess } from 'screens/artist/wallet/WithdarwalSuccess';
 import { TransactionDetailsScreen } from 'screens/artist/wallet/TransactionDetailsScreen';
 import Artwork from 'screens/artwork/Artwork';
 import EditArtwork from 'screens/editArtwork/EditArtwork';
+import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -257,6 +258,7 @@ const ArtistNavigation = () => {
       <Stack.Screen name="ArtistOnboarding" component={ArtistOnboarding} />
       <Stack.Screen name="ArtistOverview" component={ArtistOverview} />
       <Stack.Screen name="OrderScreen" component={OrderScreen} />
+      <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
       <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
       <Stack.Screen name="WalletHistory" component={WalletHistory} />
       <Stack.Screen name="AddPrimaryAcctScreen" component={AddPrimaryAcctScreen} />
