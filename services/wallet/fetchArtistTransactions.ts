@@ -5,11 +5,13 @@ type fetchArtistTransactionsType = {
   year?: string;
   limit?: number;
   status?: string;
+  page?: number;
 };
 
 export async function fetchArtistTransactions({
   year = '2025',
   limit = 10,
+  page = 1,
   status,
 }: fetchArtistTransactionsType) {
   let wallet_id = '';
@@ -21,7 +23,7 @@ export async function fetchArtistTransactions({
 
   try {
     const res = await fetch(
-      `${apiUrl}/api/wallet/fetch_wallet_transactions?id=${wallet_id}&year=${year}&limit=${limit}&status=${status}`,
+      `${apiUrl}/api/wallet/fetch_wallet_transactions?id=${wallet_id}&year=${year}&limit=${limit}&status=${status}&page=${page}`,
       {
         method: 'GET',
         headers: {

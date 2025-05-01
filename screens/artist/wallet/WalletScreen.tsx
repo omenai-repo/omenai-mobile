@@ -388,11 +388,7 @@ const WalletScreen = () => {
                         status={item.trans_status}
                         amount={item.trans_amount}
                         dateTime={item.createdAt}
-                        onPress={() =>
-                          navigation.navigate('TransactionDetailsScreen', {
-                            transaction: item,
-                          })
-                        }
+                        onPress={() => navigation.navigate('TransactionDetailsScreen')}
                       />
                     );
                   })
