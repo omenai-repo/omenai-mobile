@@ -11,6 +11,7 @@ import { validate } from 'lib/validations/validatorGroup';
 import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import { Country, State, City, ICountry, IState, ICity } from 'country-state-city';
 import { debounce } from 'lodash';
+import { useAppStore } from 'store/app/appStore';
 
 const deliveryOptions = [
   'Shipping',
@@ -119,16 +120,17 @@ export default function ShippingDetails({ data: { pricing } }: { data: artworkOr
     [countryCode, fetchCities],
   );
 
+  const { userSession } = useAppStore();
+
   useEffect(() => {
     fetchUserSessionsData();
-  }, []);
+  }, [userSession]);
 
   const fetchUserSessionsData = async () => {
-    let userSession = await utils_getAsyncData('userSession');
-    if (userSession.value) {
-      const userData = JSON.parse(userSession.value);
-      setName(userData.name);
-      setEmail(userData.email);
+    if (userSession) {
+      setName(userSession.name);
+      setEmail(userSession.email);
+      setDeliveryAddress(userSession.address.address_line);
     }
   };
 

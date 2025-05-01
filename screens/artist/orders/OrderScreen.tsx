@@ -1,14 +1,12 @@
-import { View, Text, Pressable, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, Pressable, FlatList } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import { Image } from 'react-native';
 import { Animated } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { arrowUpRightWhite, dropdownIcon, dropUpIcon } from 'utils/SvgImages';
-import ScrollWrapper from 'components/general/ScrollWrapper';
+import { dropdownIcon, dropUpIcon } from 'utils/SvgImages';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import DeclineOrderModal from './DeclineOrderModal';
-import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { organizeOrders } from 'utils/utils_splitArray';
 import { artistOrdersStore } from 'store/artist/artistOrdersStore';
 import EmptyOrdersListing from 'screens/galleryOrders/components/EmptyOrdersListing';
@@ -18,6 +16,9 @@ import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 import YearDropdown from './YearDropdown';
 import { Ionicons } from '@expo/vector-icons';
+import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
+import { useModalStore } from 'store/modal/modalStore';
+import WithModal from 'components/modal/WithModal';
 
 function renderStatusBadge({
   status,
@@ -417,7 +418,7 @@ const OrderScreen = () => {
   const [declineModal, setDeclineModal] = useState(false);
   const [isloading, setIsloading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
+  const { updateModal } = useModalStore();
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
@@ -436,16 +437,25 @@ const OrderScreen = () => {
   );
 
   const handleFetchOrders = async () => {
-    const results = await getOverviewOrders();
-    let data = results?.data;
-    const parsedOrders = organizeOrders(data);
+    const results = await getOrdersBySellerId();
+    if (results?.isOk) {
+      let data = results?.data;
+      const parsedOrders = organizeOrders(data);
 
-    setData({
-      pending: parsedOrders.pending,
-      processing: parsedOrders.processing,
-      completed: parsedOrders.completed,
-    });
-    setIsloading(false);
+      setData({
+        pending: parsedOrders.pending,
+        processing: parsedOrders.processing,
+        completed: parsedOrders.completed,
+      });
+      setIsloading(false);
+    } else {
+      setIsloading(false);
+      updateModal({
+        message: results?.body?.message ?? '',
+        showModal: true,
+        modalType: 'error',
+      });
+    }
   };
 
   const toggleRecentOrder = (key: number) => {
@@ -465,80 +475,82 @@ const OrderScreen = () => {
   const status = selectTab === 1 ? 'pending' : selectTab === 2 ? 'processing' : 'completed';
 
   return (
-    <View style={tw`flex-1 bg-[#F7F7F7]`}>
-      <Image
-        style={tw.style(`w-[130px] h-[30px] mt-[80px] ml-[20px]`)}
-        resizeMode="contain"
-        source={require('../../../assets/omenai-logo.png')}
-      />
+    <WithModal>
+      <View style={tw`flex-1 bg-[#F7F7F7]`}>
+        <Image
+          style={tw.style(`w-[130px] h-[30px] mt-[80px] ml-[20px]`)}
+          resizeMode="contain"
+          source={require('../../../assets/omenai-logo.png')}
+        />
 
-      <TabSwitcher
-        selectTab={selectTab}
-        setSelectTab={setSelectTab}
-        pendingCount={data.pending.length}
-        processingCount={data.processing.length}
-      />
+        <TabSwitcher
+          selectTab={selectTab}
+          setSelectTab={setSelectTab}
+          pendingCount={data.pending.length}
+          processingCount={data.processing.length}
+        />
 
-      <View
-        style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
-      >
-        {isloading ? (
-          <OrderslistingLoader />
-        ) : currentOrders.length === 0 ? (
-          <EmptyOrdersListing status={status} />
-        ) : (
-          <>
-            <View style={tw`flex-row items-center`}>
-              <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
-                Your Orders
-              </Text>
-              <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
-            </View>
+        <View
+          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
+        >
+          {isloading ? (
+            <OrderslistingLoader />
+          ) : currentOrders.length === 0 ? (
+            <EmptyOrdersListing status={status} />
+          ) : (
+            <>
+              <View style={tw`flex-row items-center`}>
+                <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
+                  Your Orders
+                </Text>
+                <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+              </View>
 
-            <FlatList
-              data={currentOrders}
-              keyExtractor={(item) => item.artwork_data._id}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={tw`pb-[30px]`}
-              renderItem={({ item, index }) => (
-                <RecentOrderContainer
-                  id={index}
-                  url={item.artwork_data.url}
-                  open={openSection[item.artwork_data._id]}
-                  setOpen={() => toggleRecentOrder(item.artwork_data._id)}
-                  artId={item.order_id}
-                  artName={item.artwork_data.title}
-                  dateTime={formatIntlDateTime(item.createdAt)}
-                  price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                  status={status}
-                  lastId={index === currentOrders.length - 1}
-                  acceptBtn={
-                    status === 'pending'
-                      ? () =>
-                          navigation.navigate('DimentionsDetails', {
-                            orderId: item.order_id,
-                          })
-                      : undefined
-                  }
-                  declineBtn={status === 'pending' ? () => setDeclineModal(true) : undefined}
-                  delivered={item.shipping_details.delivery_confirmed}
-                  order_accepted={item.order_accepted.status}
-                  payment_status={item.payment_information.status}
-                  tracking_status={item.shipping_details.shipment_information.tracking.id}
-                  trackBtn={() => navigation.navigate('ShipmentTrackingScreen')}
-                />
-              )}
-            />
-          </>
-        )}
+              <FlatList
+                data={currentOrders}
+                keyExtractor={(item) => item.artwork_data._id}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={tw`pb-[30px]`}
+                renderItem={({ item, index }) => (
+                  <RecentOrderContainer
+                    id={index}
+                    url={item.artwork_data.url}
+                    open={openSection[item.artwork_data._id]}
+                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                    artId={item.order_id}
+                    artName={item.artwork_data.title}
+                    dateTime={formatIntlDateTime(item.createdAt)}
+                    price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+                    status={status}
+                    lastId={index === currentOrders.length - 1}
+                    acceptBtn={
+                      status === 'pending'
+                        ? () =>
+                            navigation.navigate('DimentionsDetails', {
+                              orderId: item.order_id,
+                            })
+                        : undefined
+                    }
+                    declineBtn={status === 'pending' ? () => setDeclineModal(true) : undefined}
+                    delivered={item.shipping_details.delivery_confirmed}
+                    order_accepted={item.order_accepted.status}
+                    payment_status={item.payment_information.status}
+                    tracking_status={item.shipping_details.shipment_information.tracking.id}
+                    trackBtn={() => navigation.navigate('ShipmentTrackingScreen')}
+                  />
+                )}
+              />
+            </>
+          )}
+        </View>
+
+        <DeclineOrderModal
+          isModalVisible={declineModal}
+          setIsModalVisible={setDeclineModal}
+          confirmBtn={() => {}}
+        />
       </View>
-
-      <DeclineOrderModal
-        isModalVisible={declineModal}
-        setIsModalVisible={setDeclineModal}
-        confirmBtn={() => {}}
-      />
-    </View>
+    </WithModal>
   );
 };
 

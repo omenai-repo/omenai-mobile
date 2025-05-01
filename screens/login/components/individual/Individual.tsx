@@ -11,6 +11,7 @@ import { screenName } from '../../../../constants/screenNames.constants';
 import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
 import { useAppStore } from 'store/app/appStore';
 import { useModalStore } from 'store/modal/modalStore';
+import { add } from 'lodash';
 
 export default function Individual() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -42,6 +43,8 @@ export default function Individual() {
         role: resultsBody.role,
         preferences: resultsBody.preferences,
         verified: resultsBody.verified,
+        address: resultsBody.address,
+        phone: resultsBody.phone,
       };
 
       const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));
