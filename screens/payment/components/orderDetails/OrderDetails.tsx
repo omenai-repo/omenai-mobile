@@ -19,6 +19,7 @@ import Loader from 'components/general/Loader';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import { PayWithFlutterwave } from 'flutterwave-react-native';
 import tw from 'twrnc';
+import { generateAlphaDigit } from 'utils/utils_generateToken';
 
 interface RedirectParams {
   status: 'successful' | 'cancelled';
@@ -150,6 +151,16 @@ export default function OrderDetails({
     console.log(data);
   };
 
+  const generateTransactionRef = (length: number) => {
+    let result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return `flw_tx_ref_${result}`;
+  };
+
   if (mainPageLoader)
     return (
       <View style={{ flex: 1 }}>
@@ -230,7 +241,30 @@ export default function OrderDetails({
             ) : (
               <PayWithFlutterwave
                 onRedirect={handleOnRedirect}
-                options={{}}
+                options={{
+                  tx_ref: generateTransactionRef(16),
+                  amount: Math.ceil(total_price_number * 100) / 100,
+                  currency: 'USD',
+                  authorization: 'FLWPUBK_TEST-cda1d63223a02a2ec75376f2b513ff3c-X',
+                  customer: {
+                    email: userSession.email,
+                    name: userSession.name,
+                    phonenumber: userSession.phone,
+                  },
+                  payment_options: 'card',
+                  meta: {
+                    buyer_id: userSession.id,
+                    buyer_email: userSession.email,
+                    seller_email: data.seller_details.email,
+                    seller_name: data.seller_details.name,
+                    seller_id: data.seller_details.id,
+                    artwork_name: data.artwork_data.title,
+                    art_id: data.artwork_data.art_id,
+                    shipping_cost: Number(data.shipping_details.shipment_information.quote.fees),
+                    unit_price: data.artwork_data.pricing.usd_price,
+                    tax_fees: Number(data.shipping_details.shipment_information.quote.taxes),
+                  },
+                }}
                 customButton={(props) => (
                   <TouchableOpacity
                     style={tw`h-[55px] justify-center items-center bg-[#1a1a1a] rounded-[95px]`}
