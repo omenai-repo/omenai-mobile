@@ -1,14 +1,14 @@
-import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import WithModal from "components/modal/WithModal";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import { checkIsStripeOnboarded } from "services/stripe/checkIsStripeOnboarded";
-import Loader from "components/general/Loader";
-import CompleteOnBoarding from "./components/CompleteOnBoarding";
-import { useModalStore } from "store/modal/modalStore";
-import BlockingScreen from "./components/BlockingScreen";
-import PayoutDashboard from "./components/PayoutDashboard";
-import { colors } from "config/colors.config";
+import { StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import WithModal from 'components/modal/WithModal';
+import BackHeaderTitle from 'components/header/BackHeaderTitle';
+import { checkIsStripeOnboarded } from 'services/stripe/checkIsStripeOnboarded';
+import Loader from 'components/general/Loader';
+import CompleteOnBoarding from './components/CompleteOnBoarding';
+import { useModalStore } from 'store/modal/modalStore';
+import BlockingScreen from './components/BlockingScreen';
+import PayoutDashboard from './components/PayoutDashboard';
+import { colors } from 'config/colors.config';
 
 export default function StripePayouts({
   account_id,
@@ -32,8 +32,8 @@ export default function StripePayouts({
         setIsSubmitted(res.details_submitted);
       } else {
         updateModal({
-          message: "Something went wrong, please try again or contact support",
-          modalType: "error",
+          message: 'Something went wrong, please try again or contact support',
+          modalType: 'error',
           showModal: true,
         });
       }
@@ -55,16 +55,11 @@ export default function StripePayouts({
   if (!loading && showScreen)
     return (
       <WithModal>
-        <BackHeaderTitle
-          title={isSubmitted ? "Stripe Payout" : "Complete stripe onboarding"}
-        />
+        <BackHeaderTitle title={isSubmitted ? 'Stripe Payout' : 'Complete stripe onboarding'} />
         <View style={styles.container}>
           {!isSubmitted && <CompleteOnBoarding />}
           {isSubmitted && account_id.length > 0 && (
-            <PayoutDashboard
-              account_id={account_id}
-              refreshCount={refreshCount}
-            />
+            <PayoutDashboard account_id={account_id} refreshCount={refreshCount} />
           )}
         </View>
       </WithModal>

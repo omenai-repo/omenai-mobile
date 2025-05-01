@@ -12,6 +12,7 @@ import CompletedOrders from './components/CompletedOrders';
 import EmptyOrdersListing from './components/EmptyOrdersListing';
 import OrderslistingLoader from './components/OrderslistingLoader';
 import ScrollWrapper from 'components/general/ScrollWrapper';
+import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
 
 export default function GalleryOrdersListing() {
   const [refreshing, setRefreshing] = useState(false);
@@ -27,7 +28,7 @@ export default function GalleryOrdersListing() {
 
   const handleFetchOrders = async () => {
     setIsloading(true);
-    const results = await getOverviewOrders();
+    const results = await getOrdersBySellerId();
     let data = results?.data;
     const parsedOrders = organizeOrders(data);
 
