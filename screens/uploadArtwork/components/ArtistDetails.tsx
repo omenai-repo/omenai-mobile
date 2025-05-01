@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Input from 'components/inputs/Input';
 import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
 import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
@@ -7,6 +7,8 @@ import LongBlackButton from 'components/buttons/LongBlackButton';
 import { countriesListing } from 'data/uploadArtworkForm.data';
 import { validate } from 'lib/validations/upload_artwork_input_validator/validator';
 import { useAppStore } from 'store/app/appStore';
+import { Country, ICountry } from 'country-state-city';
+import { debounce } from 'lodash';
 
 type artistDetailsErrorsType = {
   artist: string;
@@ -23,6 +25,15 @@ export default function ArtistDetails() {
     artist_birthyear: '',
   });
 
+  const transformedCountries = useMemo(
+    () =>
+      Country.getAllCountries().map((item: ICountry) => ({
+        value: item.isoCode,
+        label: item.name,
+      })),
+    [],
+  );
+
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
     const isFormValid = Object.values(formErrors).every((error) => error === '');
@@ -34,19 +45,24 @@ export default function ArtistDetails() {
     return !(isFormValid && areAllFieldsFilled);
   };
 
-  const handleValidationChecks = (label: string, value: string) => {
+  const handleValidationChecks = debounce((label: string, value: string) => {
+    // Clear error if the input is empty
+    if (value.trim() === '') {
+      setFormErrors((prev) => ({ ...prev, [label]: '' }));
+      return;
+    }
+
     const { success, errors }: { success: boolean; errors: string[] | [] } = validate(label, value);
     if (!success) {
       setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
     } else {
       setFormErrors((prev) => ({ ...prev, [label]: '' }));
     }
-  };
+  }, 500);
 
   useEffect(() => {
     if (userSession) {
       updateArtworkUploadData('artist', userSession.name);
-      updateArtworkUploadData('artist_country_origin', userSession.address.country);
     }
   }, [userSession]);
 
@@ -58,18 +74,17 @@ export default function ArtistDetails() {
           onInputChange={(value) => updateArtworkUploadData('artist', value)}
           placeHolder="Enter artist full name"
           value={artworkUploadData.artist}
-          handleBlur={() => handleValidationChecks('artist', artworkUploadData.artist)}
           errorMessage={formErrors.artist}
           disabled
         />
         <Input
           label="Artist Birth year"
-          onInputChange={(value) => updateArtworkUploadData('artist_birthyear', value)}
+          onInputChange={(value) => {
+            updateArtworkUploadData('artist_birthyear', value);
+            handleValidationChecks('artist_birthyear', value);
+          }}
           placeHolder="Enter artist birth year"
           value={artworkUploadData.artist_birthyear}
-          handleBlur={() =>
-            handleValidationChecks('artist_birthyear', artworkUploadData.artist_birthyear)
-          }
           errorMessage={formErrors.artist_birthyear}
           keyboardType="decimal-pad"
         />
@@ -79,17 +94,9 @@ export default function ArtistDetails() {
             handleSetValue={(item) => updateArtworkUploadData('artist_country_origin', item.value)}
             placeholder="Select country"
             value={artworkUploadData.artist_country_origin}
-            data={
-              userSession.address
-                ? [
-                    {
-                      label: userSession.address.country,
-                      value: userSession.address.country,
-                    },
-                  ]
-                : []
-            }
-            disable
+            data={transformedCountries}
+            search={true}
+            searchPlaceholder="Search country"
           />
         </View>
       </View>

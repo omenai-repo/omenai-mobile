@@ -107,9 +107,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
     setLoading(true);
     try {
       const payload = {
-        account_details: walletData.primary_withdrawal_account,
         amount: parseFloat(amount),
-        currency: 'NGN',
         url: 'https://api.omenai.app/api/webhook/flw-transfer',
         wallet_id: walletData.wallet_id,
         wallet_pin: pin.join(''),
