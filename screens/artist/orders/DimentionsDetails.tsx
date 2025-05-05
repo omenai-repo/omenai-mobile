@@ -145,7 +145,11 @@ const DimensionsDetails = () => {
               ).map((field) => (
                 <Input
                   key={field}
-                  label={field.charAt(0).toUpperCase() + field.slice(1)} // Capitalize label
+                  label={
+                    field.charAt(0).toUpperCase() + field.slice(1) + ' ' + field === 'weight'
+                      ? '(kg)'
+                      : '(cm)'
+                  } // Capitalize label
                   keyboardType="default"
                   onInputChange={(text) => {
                     setDimentions((prev) => ({ ...prev, [field]: text }));
