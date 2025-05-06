@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { useModalStore } from 'store/modal/modalStore';
 import uploadGalleryLogoContent from './uploadGalleryLogo';
-import { gallery_logo_storage } from 'appWrite';
+import { gallery_logo_storage } from 'appWrite_config';
 import tw from 'twrnc';
 import Loader from 'components/general/Loader';
 

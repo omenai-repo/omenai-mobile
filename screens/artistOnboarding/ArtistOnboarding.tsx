@@ -27,7 +27,7 @@ import ConfirmationModal from './ConfirmationModal';
 import uploadArtistDoc from 'screens/register/components/artistRegistrationForm/uploadArtistDoc';
 import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { artistOnboarding } from 'services/artistOnboarding/artistOnbaording';
-import { documentation_storage } from 'appWrite';
+import { documentation_storage } from 'appWrite_config';
 import { useModalStore } from 'store/modal/modalStore';
 import LoadingContainer from './LoadingContainer';
 import FirstScreen from './FirstScreen';
@@ -298,13 +298,14 @@ const ArtistOnboarding = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    if (cv?.assets === null) return;
+    if (!cv?.assets || !cv.assets[0].uri || !cv.assets[0].name || !cv.assets[0].mimeType) {
+      return;
+    }
 
     const files = {
-      uri: cv?.assets[0].uri,
-      name: cv?.assets[0].name,
-      type: cv?.assets[0].mimeType,
-      size: cv?.assets[0].size,
+      uri: cv.assets[0].uri,
+      name: cv.assets[0].name,
+      type: cv.assets[0].mimeType,
     };
 
     const fileUploaded = await uploadArtistDoc(files);

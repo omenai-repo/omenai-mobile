@@ -58,6 +58,7 @@ export default function Artist() {
         base_currency: resultsBody.base_currency,
         walletId: resultsBody.wallet_id,
         categorization: resultsBody.categorization,
+        logo: resultsBody.logo,
       };
 
       const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));

@@ -1,4 +1,5 @@
-import { storage } from "../../../lib/editorial/controller/appwrite";
+import { ImageFormat, ImageGravity } from 'appwrite';
+import { storage } from '../../../lib/editorial/controller/appwrite';
 
 export const getEditorialImageFilePreview = (fileId: string, width: number) => {
   const fileData = storage.getFilePreview(
@@ -7,16 +8,16 @@ export const getEditorialImageFilePreview = (fileId: string, width: number) => {
 
     width, // width, will be resized using this value.
     0, // height, ignored when 0
-    "center", // crop center
+    ImageGravity.Center, // crop center
     90, // slight compression
     0, // border width
-    "FFFFFF", // border color
+    'FFFFFF', // border color
     0, // border radius
     1, // full opacity
     0, // no rotation
-    "FFFFFF", // background color
-    "jpg"
+    'FFFFFF', // background color
+    ImageFormat.Jpeg || ImageFormat.Png || ImageFormat.Jpg || ImageFormat.Webp,
   );
 
-  return fileData.href;
+  return fileData;
 };

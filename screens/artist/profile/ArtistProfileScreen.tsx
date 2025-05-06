@@ -20,6 +20,7 @@ import LoadingContainer from 'screens/artistOnboarding/LoadingContainer';
 import { getEditEligibility } from 'services/update/getEditEligibility';
 import { useModalStore } from 'store/modal/modalStore';
 import EligibityResponseScreen from './EligibityResponseScreen';
+import Logo from 'screens/galleryProfileScreens/galleryProfile/components/Logo';
 
 type userDataType = {
   name: string;
@@ -92,19 +93,18 @@ export default function ArtistProfileScreen() {
 
     return;
   };
-
+  console.log(userSession);
   return (
     <WithGalleryModal>
       {!isLoading ? (
         !isEligible ? (
           <ScrollWrapper style={styles.mainContainer}>
             <View style={styles.profileContainer}>
-              {/* {userSession.logo !== "" ? 
-            <Logo url={userSession.logo} /> 
-            : 
-            <Image source={omenaiAvatar} style={styles.image} />
-          } */}
-              <Image source={omenaiAvatar} style={styles.image} />
+              {userSession.logo !== '' ? (
+                <Logo url={userSession.logo} />
+              ) : (
+                <Image source={omenaiAvatar} style={styles.image} />
+              )}
               <View>
                 <Text
                   style={{

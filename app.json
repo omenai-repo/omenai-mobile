@@ -14,9 +14,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.omenai.omenaimobile"
@@ -27,9 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.omenai.omenaimobile",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -47,10 +43,7 @@
       [
         "expo-font",
         {
-          "fonts": [
-            "./assets/fonts/nunito-sans.ttf",
-            "./assets/fonts/DMSans.ttf"
-          ]
+          "fonts": ["./assets/fonts/nunito-sans.ttf", "./assets/fonts/DMSans.ttf"]
         }
       ],
       [
