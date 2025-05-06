@@ -41,55 +41,63 @@ export default function UploadArtwork() {
   }, [userType, userSession]);
 
   const handleArtworkUpload = async () => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    let userId = '';
-    let session = await utils_getAsyncData('userSession');
-    if (session.value) {
-      userId = JSON.parse(session.value).id;
-    } else {
-      return;
-    }
-
-    const imageparams = {
-      name: image.assets[0].fileName,
-      size: image.assets[0].fileSize,
-      uri: image.assets[0].uri,
-      type: image.assets[0].mimeType,
-    };
-    const fileUploaded = await uploadImage(imageparams);
-
-    if (fileUploaded) {
-      let file: { bucketId: string; fileId: string } = {
-        bucketId: fileUploaded.bucketId,
-        fileId: fileUploaded.$id,
-      };
-
-      const data = createUploadedArtworkData(artworkUploadData, file.fileId, userId, {
-        role: userType === 'artist' ? 'artist' : 'gallery',
-        designation: null,
-      });
-      const upload_response = await uploadArtworkData(data);
-      if (upload_response.isOk) {
-        //display success screen
-        setIsUploaded(true);
+      let userId = '';
+      let session = await utils_getAsyncData('userSession');
+      if (session.value) {
+        userId = JSON.parse(session.value).id;
       } else {
-        //toast error
+        return;
+      }
+
+      const imageparams = {
+        name: image.assets[0].fileName,
+        uri: image.assets[0].uri,
+        type: image.assets[0].mimeType,
+      };
+      const fileUploaded = await uploadImage(imageparams);
+      if (fileUploaded) {
+        let file: { bucketId: string; fileId: string } = {
+          bucketId: fileUploaded.bucketId,
+          fileId: fileUploaded.$id,
+        };
+
+        const data = createUploadedArtworkData(artworkUploadData, file.fileId, userId, {
+          role: userType === 'artist' ? 'artist' : 'gallery',
+          designation: null,
+        });
+        const upload_response = await uploadArtworkData(data);
+        if (upload_response.isOk) {
+          //display success screen
+          setIsUploaded(true);
+        } else {
+          //toast error
+          updateModal({
+            message: upload_response.body,
+            modalType: 'error',
+            showModal: true,
+          });
+        }
+      } else {
+        //toast something
         updateModal({
-          message: upload_response.body,
+          message: 'Error uploading artwork',
           modalType: 'error',
           showModal: true,
         });
       }
-    } else {
-      //toast something
+    } catch (error) {
+      console.log(error);
       updateModal({
         message: 'Error uploading artwork',
         modalType: 'error',
         showModal: true,
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const components = [

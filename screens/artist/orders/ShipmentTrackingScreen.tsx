@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { View, Text, Pressable, Image, Dimensions } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import { View, Text, Pressable, Image, Dimensions, Platform } from 'react-native';
+import MapView, { Marker, Polyline, UrlTile } from 'react-native-maps';
 import { SvgXml } from 'react-native-svg';
 import tw from 'twrnc';
 import { locationCrossShair, locationIcon } from 'utils/SvgImages';
@@ -11,12 +11,13 @@ const { width, height } = Dimensions.get('window');
 export default function ShipmentTrackingScreen({ navigation }: any) {
   const origin = { latitude: -20.9176, longitude: 142.7028 }; // Wyoming, AU
   const destination = { latitude: -6.2308, longitude: 106.8314 }; // Bangpak, ID
-
   const routeCoordinates = [origin, { latitude: -12, longitude: 130 }, destination];
+
+  const hasValidCoords =
+    origin?.latitude && origin?.longitude && destination?.latitude && destination?.longitude;
 
   return (
     <View style={tw`flex-1 bg-black`}>
-      {/* Google Map View */}
       <MapView
         style={{ width, height }}
         initialRegion={{
@@ -24,25 +25,31 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
           latitudeDelta: 30,
           longitudeDelta: 30,
         }}
-        customMapStyle={darkMapStyle}
       >
-        <Marker coordinate={origin} title="Current Location" />
-        <Marker coordinate={destination} title="Destination" />
-        <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="#fff" />
+        {/* Use OpenStreetMap tile layer */}
+        <UrlTile
+          urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maximumZ={19}
+          flipY={false}
+          zIndex={-1} // Ensures markers and routes are visible above tiles
+        />
+
+        {hasValidCoords && (
+          <>
+            <Marker coordinate={origin} title="Current Location" />
+            <Marker coordinate={destination} title="Destination" />
+            <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="#000" />
+          </>
+        )}
       </MapView>
 
       {/* Back nav */}
       <Pressable
         onPress={() => navigation.goBack()}
-        style={tw`bg-white w-10 h-10 absolute top-[80px] left-5 rounded-full items-center justify-center`}
+        style={tw`bg-white w-10 h-10 absolute ios:top-[80px] top-[40px] left-5 rounded-full items-center justify-center`}
       >
         <Ionicons name="arrow-back" size={25} color="#000" />
       </Pressable>
-
-      {/* Mid Time Indicator */}
-      {/* <View style={tw`absolute top-[40%] left-[60%] bg-white px-3 py-1 rounded-xl`}>
-        <Text style={tw`text-black font-bold`}>2 Weeks</Text>
-      </View> */}
 
       <View style={tw`absolute bottom-0 left-[25px] right-[25px] gap-[20px]`}>
         {/* Package Info */}
@@ -99,41 +106,8 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
               </View>
             </View>
           </View>
-
-          {/* <Pressable
-            style={tw`bg-black py-4 rounded-xl mt-3`}
-            onPress={() => console.log('Contact Shipper')}
-          >
-            <Text style={tw`text-white text-center font-bold text-base`}>Contact Shipper</Text>
-          </Pressable> */}
         </View>
       </View>
     </View>
   );
 }
-
-// Optional: Dark map style to match the UI design
-const darkMapStyle = [
-  {
-    elementType: 'geometry',
-    stylers: [{ color: '#1d2c4d' }],
-  },
-  {
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#8ec3b9' }],
-  },
-  {
-    elementType: 'labels.text.stroke',
-    stylers: [{ color: '#1a3646' }],
-  },
-  {
-    featureType: 'administrative.country',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#4b6878' }],
-  },
-  {
-    featureType: 'water',
-    elementType: 'geometry',
-    stylers: [{ color: '#0e1626' }],
-  },
-];

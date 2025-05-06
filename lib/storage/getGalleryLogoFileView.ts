@@ -1,11 +1,11 @@
-import { ImageFormat, ImageGravity } from "react-native-appwrite";
-import { gallery_logo_storage } from "appWrite";
+import { gallery_logo_storage } from 'appWrite_config';
+import { ImageFormat, ImageGravity } from 'appwrite';
 
 export const getGalleryLogoFileView = (
   fileId: string,
   width: number,
   height?: number,
-  format?: string
+  format?: string,
 ) => {
   const fileData = gallery_logo_storage.getFilePreview(
     process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
@@ -16,13 +16,13 @@ export const getGalleryLogoFileView = (
     ImageGravity.Center, // crop center
     90, // slight compression
     0, // border width
-    "FFFFFF", // border color
+    'FFFFFF', // border color
     0, // border radius
     1, // full opacity
     0, // no rotation
-    "FFFFFF", // background color
-    ImageFormat.Jpeg
+    'FFFFFF', // background color
+    ImageFormat.Jpeg,
   );
 
-  return fileData.href;
+  return fileData;
 };

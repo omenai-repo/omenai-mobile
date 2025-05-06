@@ -1,5 +1,5 @@
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
 import { colors } from 'config/colors.config';
 import { getGalleryLogoFileView } from 'lib/storage/getGalleryLogoFileView';
 import { Feather } from '@expo/vector-icons';
@@ -8,52 +8,57 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 
 type GalleryLogoProps = {
-    logo: string,
-}
+  logo: string;
+};
 
-export default function GalleryLogo({logo}: GalleryLogoProps) {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+export default function GalleryLogo({ logo }: GalleryLogoProps) {
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
+  let imageUrl = '';
+  if (logo) {
+    imageUrl = getGalleryLogoFileView(logo, 120, 120);
+  }
 
-    let imageUrl = ''
-    if(logo){
-        imageUrl = getGalleryLogoFileView(logo, 120, 120);
-    }
+  console.log(imageUrl);
 
-    console.log(imageUrl)
-
-    return (
-        <TouchableOpacity style={styles.container} activeOpacity={0.8} onPress={() => navigation.navigate(screenName.gallery.uploadNewLogo)}>
-            <ImageBackground source={imageUrl.length > 0 ? {uri: imageUrl} : {uri: ''}} style={styles.image}>
-                <View style={styles.overlay}>
-                    <Feather name='edit-2' size={20} color={colors.white} />
-                </View>
-            </ImageBackground>
-        </TouchableOpacity>
-    )
+  return (
+    <TouchableOpacity
+      style={styles.container}
+      activeOpacity={0.8}
+      onPress={() => navigation.navigate(screenName.gallery.uploadNewLogo)}
+    >
+      <ImageBackground
+        source={imageUrl.length > 0 ? { uri: imageUrl } : { uri: '' }}
+        style={styles.image}
+      >
+        <View style={styles.overlay}>
+          <Feather name="edit-2" size={20} color={colors.white} />
+        </View>
+      </ImageBackground>
+    </TouchableOpacity>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        height: 120,
-        width: 120,
-        marginHorizontal: 'auto',
-        backgroundColor: colors.grey50,
-        marginBottom: 20,
-        borderRadius: 10
-    },
-    image: {
-        height: 120,
-        width: 120,
-        borderRadius: 10,
-        overflow: 'hidden',
-        
-    },
-    overlay: {
-        height: '100%',
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#00000050'
-    }
-})
+  container: {
+    height: 120,
+    width: 120,
+    marginHorizontal: 'auto',
+    backgroundColor: colors.grey50,
+    marginBottom: 20,
+    borderRadius: 10,
+  },
+  image: {
+    height: 120,
+    width: 120,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  overlay: {
+    height: '100%',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#00000050',
+  },
+});

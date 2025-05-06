@@ -1,8 +1,8 @@
-import { Client, Databases, Storage, ID } from 'react-native-appwrite';
+import { Client, Databases, Storage, ID } from 'appwrite';
 const client = new Client();
 
 client
-  .setEndpoint("https://cloud.appwrite.io/v1")
+  .setEndpoint('https://cloud.appwrite.io/v1')
   .setProject(process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_PROJECT_ID!);
 
 export const storage = new Storage(client);

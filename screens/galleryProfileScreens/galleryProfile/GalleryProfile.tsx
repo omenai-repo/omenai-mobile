@@ -1,33 +1,22 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-  Image,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import { PageButtonCard } from "components/buttons/PageButtonCard";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { Feather } from "@expo/vector-icons";
-import { logout } from "utils/logout.utils";
-import WithGalleryModal from "components/modal/WithGalleryModal";
-import { galleryOrderModalStore } from "store/modal/galleryModalStore";
-import { useAppStore } from "store/app/appStore";
-import Logo from "./components/Logo";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import omenaiAvatar from "assets/images/omenai-avatar.png";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import {
-  changePasswsordIcon,
-  deleteIcon
-} from "utils/SvgImages";
-import LongBlackButton from "components/buttons/LongBlackButton";
+import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { colors } from 'config/colors.config';
+import { PageButtonCard } from 'components/buttons/PageButtonCard';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { Feather } from '@expo/vector-icons';
+import { logout } from 'utils/logout.utils';
+import WithGalleryModal from 'components/modal/WithGalleryModal';
+import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
+import { useAppStore } from 'store/app/appStore';
+import Logo from './components/Logo';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import omenaiAvatar from 'assets/images/omenai-avatar.png';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { changePasswsordIcon, deleteIcon } from 'utils/SvgImages';
+import LongBlackButton from 'components/buttons/LongBlackButton';
 
 type userDataType = {
   name: string;
@@ -41,8 +30,8 @@ export default function GalleryProfile() {
   const { userSession } = useAppStore();
 
   const [userData, setuserdata] = useState<userDataType>({
-    name: "",
-    email: "",
+    name: '',
+    email: '',
   });
 
   useEffect(() => {
@@ -50,7 +39,7 @@ export default function GalleryProfile() {
   }, []);
 
   const handleFetchUserSession = async () => {
-    const userSession = await utils_getAsyncData("userSession");
+    const userSession = await utils_getAsyncData('userSession');
 
     if (userSession.isOk === false) return;
 
@@ -69,17 +58,16 @@ export default function GalleryProfile() {
     <WithGalleryModal>
       <ScrollWrapper style={styles.mainContainer}>
         <View style={styles.profileContainer}>
-          {/* {userSession.logo !== "" ? 
-            <Logo url={userSession.logo} /> 
-            : 
+          {userSession.logo !== '' ? (
+            <Logo url={userSession.logo} />
+          ) : (
             <Image source={omenaiAvatar} style={styles.image} />
-          } */}
-          <Image source={omenaiAvatar} style={styles.image} />
+          )}
           <View>
             <Text
               style={{
                 fontSize: 16,
-                fontWeight: "500",
+                fontWeight: '500',
                 color: colors.primary_black,
               }}
             >
@@ -90,7 +78,7 @@ export default function GalleryProfile() {
                 fontSize: 14,
                 marginTop: 5,
                 marginBottom: 20,
-                color: "#00000099",
+                color: '#00000099',
               }}
             >
               {userData.email}
@@ -109,7 +97,7 @@ export default function GalleryProfile() {
             subText="Change the password to your account"
             handlePress={() =>
               navigation.navigate(screenName.gallery.changePassword, {
-                routeName: "gallery",
+                routeName: 'gallery',
               })
             }
             svgIcon={changePasswsordIcon}
@@ -119,7 +107,7 @@ export default function GalleryProfile() {
             name="Delete account"
             subText="Delete your omenai gallery account"
             handlePress={() => {
-              setModalType("deleteAccount");
+              setModalType('deleteAccount');
               setIsVisible(true);
             }}
             svgIcon={deleteIcon}
@@ -137,10 +125,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   profileContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 20,
-    alignItems: "center",
-    paddingTop: Platform.OS === "ios" ? 50 : 50,
+    alignItems: 'center',
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
   },
   image: {
     height: 132,
@@ -160,6 +148,6 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });

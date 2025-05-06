@@ -7,17 +7,18 @@ import LongBlackButton from 'components/buttons/LongBlackButton';
 import { colors } from 'config/colors.config';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { gallery_logo_storage, storage } from 'appWrite';
-import { ID } from 'react-native-appwrite';
+import { gallery_logo_storage, storage } from 'appWrite_config';
+import { ID } from 'appwrite';
 import { updateLogo } from 'services/update/updateLogo';
 import { useAppStore } from 'store/app/appStore';
 import { useModalStore } from 'store/modal/modalStore';
 import { logout } from 'utils/logout.utils';
+import uploadLogo from './uploadLogo';
 
 export default function UploadNewLogo() {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const { userSession } = useAppStore();
+  const { userSession, userType } = useAppStore();
   const { updateModal } = useModalStore();
 
   const [logo, setLogo] = useState<any>(null);
@@ -35,31 +36,27 @@ export default function UploadNewLogo() {
   };
 
   const handleUpload = async () => {
-    setLoading(true);
-
     const logoParams = {
       name: logo.assets[0].fileName,
-      size: logo.assets[0].fileSize,
       uri: logo.assets[0].uri,
-      type: 'png',
+      type: logo.assets[0].mimeType,
     };
 
     try {
-      const logoUpdated = await gallery_logo_storage.createFile(
-        process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
-        ID.unique(),
-        logoParams,
-      );
-
+      setLoading(true);
+      const logoUpdated = await uploadLogo(logoParams);
       if (logoUpdated) {
         let file: { bucketId: string; fileId: string } = {
           bucketId: logoUpdated.bucketId,
           fileId: logoUpdated.$id,
         };
-        const { isOk, body } = await updateLogo({
-          id: userSession.id,
-          url: file.bucketId,
-        });
+        const { isOk, body } = await updateLogo(
+          {
+            id: userSession.id,
+            url: file.fileId,
+          },
+          userType === 'artist' ? 'artist' : userType === 'gallery' ? 'gallery' : 'individual',
+        );
 
         if (!isOk) {
           updateModal({
@@ -77,14 +74,15 @@ export default function UploadNewLogo() {
         }
       }
     } catch (error) {
+      console.log(error);
       updateModal({
         message: 'An error occured, please try again',
         modalType: 'error',
         showModal: true,
       });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleLogout = () => {

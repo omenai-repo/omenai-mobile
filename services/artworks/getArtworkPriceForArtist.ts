@@ -29,7 +29,6 @@ export async function getArtworkPriceForArtist({
     );
 
     const result = await res.json();
-
     return { isOk: res.ok, data: result.data };
   } catch (error: any) {
     return {

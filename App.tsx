@@ -15,6 +15,16 @@ import * as SplashScreen from 'expo-splash-screen';
 import ArtistNavigation from 'navigation/ArtistNavigation';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
+import { Platform } from 'react-native';
+
+if (!Platform.constants) {
+  Platform.constants = {
+    reactNativeVersion: { major: 0, minor: 0, patch: 0 },
+    isTesting: false,
+    // Add other required constants
+  };
+}
+
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
