@@ -1,32 +1,22 @@
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import omenaiAvatar from "../../assets/images/omenai-avatar.png";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import Divider from "components/general/Divider";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { logout } from "utils/logout.utils";
-import { PageButtonCard } from "components/buttons/PageButtonCard";
-import WithModal from "components/modal/WithModal";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import tw from "twrnc";
-import {
-  changePasswsordIcon,
-  orderHistoryIcon,
-  savedArtworksIcon,
-} from "utils/SvgImages";
-import LongBlackButton from "components/buttons/LongBlackButton";
+import { Image, SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { colors } from 'config/colors.config';
+import omenaiAvatar from '../../assets/images/omenai-avatar.png';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import Divider from 'components/general/Divider';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { logout } from 'utils/logout.utils';
+import { PageButtonCard } from 'components/buttons/PageButtonCard';
+import WithModal from 'components/modal/WithModal';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import tw from 'twrnc';
+import { changePasswsordIcon, orderHistoryIcon, savedArtworksIcon } from 'utils/SvgImages';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { useAppStore } from 'store/app/appStore';
+import Logo from 'screens/galleryProfileScreens/galleryProfile/components/Logo';
 
 type userDataType = {
   name: string;
@@ -35,10 +25,10 @@ type userDataType = {
 
 export default function Profile() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-
+  const { userSession } = useAppStore();
   const [userData, setuserdata] = useState<userDataType>({
-    name: "",
-    email: "",
+    name: '',
+    email: '',
   });
 
   useEffect(() => {
@@ -46,7 +36,7 @@ export default function Profile() {
   }, []);
 
   const handleFetchUserSession = async () => {
-    const userSession = await utils_getAsyncData("userSession");
+    const userSession = await utils_getAsyncData('userSession');
 
     if (userSession.isOk === false) return;
 
@@ -60,17 +50,18 @@ export default function Profile() {
 
     return;
   };
-
+  console.log(userSession);
   return (
     <WithModal>
       <ScrollWrapper style={styles.container}>
         <View style={styles.profileContainer}>
-          <Image source={omenaiAvatar} style={styles.image} />
+          <Logo url={userSession?.logo} />
+
           <View>
             <Text
               style={{
                 fontSize: 16,
-                fontWeight: "500",
+                fontWeight: '500',
                 color: colors.primary_black,
               }}
             >
@@ -81,7 +72,7 @@ export default function Profile() {
                 fontSize: 14,
                 marginTop: 5,
                 marginBottom: 20,
-                color: "#00000099",
+                color: '#00000099',
               }}
             >
               {userData.email}
@@ -113,7 +104,7 @@ export default function Profile() {
             subText="Change the password to your account"
             handlePress={() =>
               navigation.navigate(screenName.gallery.changePassword, {
-                routeName: "individual",
+                routeName: 'individual',
               })
             }
             svgIcon={changePasswsordIcon}
@@ -134,15 +125,11 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   profileContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 20,
-    alignItems: "center",
+    alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === "ios" ? 70 : 20,
-  },
-  image: {
-    height: 132,
-    width: 132,
+    paddingTop: Platform.OS === 'ios' ? 70 : 20,
   },
   buttonsContainer: {
     marginTop: 10,
@@ -153,6 +140,6 @@ const styles = StyleSheet.create({
     marginBottom: 150,
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });
