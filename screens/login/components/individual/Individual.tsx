@@ -45,6 +45,7 @@ export default function Individual() {
         verified: resultsBody.verified,
         address: resultsBody.address,
         phone: resultsBody.phone,
+        logo: resultsBody.logo,
       };
 
       const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));

@@ -100,11 +100,8 @@ export default function ArtistProfileScreen() {
         !isEligible ? (
           <ScrollWrapper style={styles.mainContainer}>
             <View style={styles.profileContainer}>
-              {userSession.logo !== '' ? (
-                <Logo url={userSession.logo} />
-              ) : (
-                <Image source={omenaiAvatar} style={styles.image} />
-              )}
+              <Logo url={userSession?.logo} />
+
               <View>
                 <Text
                   style={{
@@ -195,10 +192,6 @@ const styles = StyleSheet.create({
     gap: 20,
     alignItems: 'center',
     paddingTop: Platform.OS === 'ios' ? 50 : 50,
-  },
-  image: {
-    height: 132,
-    width: 132,
   },
   headerContainer: {
     paddingHorizontal: 20,
