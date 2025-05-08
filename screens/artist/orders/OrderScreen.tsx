@@ -536,7 +536,9 @@ const OrderScreen = () => {
                     order_accepted={item.order_accepted.status}
                     payment_status={item.payment_information.status}
                     tracking_status={item.shipping_details.shipment_information.tracking.id}
-                    trackBtn={() => navigation.navigate('ShipmentTrackingScreen')}
+                    trackBtn={() =>
+                      navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })
+                    }
                   />
                 )}
               />
