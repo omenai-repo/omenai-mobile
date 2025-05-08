@@ -1,69 +1,102 @@
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { View, Text, Pressable, Image, Dimensions, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Pressable, Image, Dimensions } from 'react-native';
 import MapView, { Marker, Polyline, UrlTile } from 'react-native-maps';
-import { SvgXml } from 'react-native-svg';
+import { Ionicons } from '@expo/vector-icons';
 import tw from 'twrnc';
-import { locationCrossShair, locationIcon } from 'utils/SvgImages';
+import { SvgXml } from 'react-native-svg';
+import { locationIcon } from 'utils/SvgImages';
+import { getShipmentTracking } from 'services/orders/getShipmentTracking';
+import { getImageFileView } from 'lib/storage/getImageFileView';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { formatEventDate } from 'utils/utils_formatEventDate';
 
 const { width, height } = Dimensions.get('window');
 
-export default function ShipmentTrackingScreen({ navigation }: any) {
-  const origin = { latitude: -20.9176, longitude: 142.7028 }; // Wyoming, AU
-  const destination = { latitude: -6.2308, longitude: 106.8314 }; // Bangpak, ID
-  const routeCoordinates = [origin, { latitude: -12, longitude: 130 }, destination];
+export default function ShipmentTrackingScreen({ navigation, route }: any) {
+  const { orderId } = route.params;
+  const [origin, setOrigin] = useState({
+    latitude: -20.9176,
+    longitude: 142.7028,
+  });
+  const [destination, setDestination] = useState({
+    latitude: -6.2308,
+    longitude: 106.8314,
+  });
+  const [trackingNumber, setTrackingNumber] = useState('');
+  const [artworkData, setArtworkData] = useState<any>(null);
+  const [events, setEvents] = useState<any[]>([]);
+  const [orderDate, setOrderDate] = useState<string>('');
 
-  const hasValidCoords =
-    origin?.latitude && origin?.longitude && destination?.latitude && destination?.longitude;
+  useEffect(() => {
+    const fetchTracking = async () => {
+      const response = await getShipmentTracking(orderId);
 
+      if (response.isOk) {
+        setArtworkData(response.data.artwork_data);
+        setTrackingNumber(response.data.tracking_number);
+        setEvents(response.data.events);
+        setOrderDate(response.data.order_date);
+        setOrigin({
+          latitude: response.data.coordinates.origin.lat,
+          longitude: response.data.coordinates.origin.lng,
+        });
+        setDestination({
+          latitude: response.data.coordinates.destination.lat,
+          longitude: response.data.coordinates.destination.lng,
+        });
+      }
+    };
+
+    fetchTracking();
+  }, [orderId]);
+
+  const hasValidCoords = origin && destination;
+  const image = getImageFileView(artworkData?.url || '', 300);
   return (
     <View style={tw`flex-1 bg-black`}>
       <MapView
         style={{ width, height }}
         initialRegion={{
-          ...origin,
+          latitude: origin?.latitude || 6.55,
+          longitude: origin?.longitude || 3.57,
           latitudeDelta: 30,
           longitudeDelta: 30,
         }}
       >
-        {/* Use OpenStreetMap tile layer */}
-        <UrlTile
-          urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-          maximumZ={19}
-          flipY={false}
-          zIndex={-1} // Ensures markers and routes are visible above tiles
-        />
+        <UrlTile urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" maximumZ={19} />
 
         {hasValidCoords && (
           <>
             <Marker coordinate={origin} title="Current Location" />
             <Marker coordinate={destination} title="Destination" />
-            <Polyline coordinates={routeCoordinates} strokeWidth={5} strokeColor="#000" />
+            <Polyline coordinates={[origin, destination]} strokeWidth={5} strokeColor="#000" />
           </>
         )}
       </MapView>
 
-      {/* Back nav */}
       <Pressable
         onPress={() => navigation.goBack()}
         style={tw`bg-white w-10 h-10 absolute ios:top-[80px] top-[40px] left-5 rounded-full items-center justify-center`}
       >
-        <Ionicons name="arrow-back" size={25} color="#000" />
+        <Ionicons name="arrow-back" size={25} color="#050505" />
       </Pressable>
 
       <View style={tw`absolute bottom-0 left-[25px] right-[25px] gap-[20px]`}>
-        {/* Package Info */}
-        <View style={tw`flex-row items-center bg-white rounded-[20px] px-[20px] py-[15px]`}>
-          <Image
-            source={require('../../../assets/images/acrylic_art.jpg')}
-            style={tw`w-[62px] h-[57px] rounded-[10px]`}
-          />
-          <View style={tw`gap-[3px] ml-[15px]`}>
-            <Text style={tw`text-black font-medium text-[15px]`}>The Bleeding Monarch</Text>
-            <Text style={tw`text-[#000000B2] text-[12px] font-medium`}>Package Number</Text>
-            <Text style={tw`text-[#00000080] text-[12px] font-medium`}>#2234545334</Text>
+        {artworkData && (
+          <View style={tw`flex-row items-center bg-white rounded-[20px] px-[20px] py-[15px]`}>
+            <Image
+              source={{
+                uri: image,
+              }}
+              style={tw`w-[62px] h-[57px] rounded-[10px]`}
+            />
+            <View style={tw`gap-[3px] ml-[15px]`}>
+              <Text style={tw`text-black font-medium text-[15px]`}>{artworkData.title}</Text>
+              <Text style={tw`text-[#000000B2] text-[12px] font-medium`}>Tracking Number</Text>
+              <Text style={tw`text-[#000000] text-[12px] font-bold`}>#{trackingNumber}</Text>
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Bottom Card */}
         <View style={tw`bg-white rounded-t-[24px] pt-4 px-5 pb-8`}>
@@ -79,10 +112,11 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
                 <SvgXml xml={locationIcon} />
               </View>
               <View>
-                <Text style={tw`text-[#00000099] text-[14px] font-medium`}>Current location</Text>
-                <Text style={tw`text-[#000000] text-[16px] font-semibold pr-[100px]`}>
-                  Wyoming, Australia
+                <Text style={tw`text-[#000000] text-[16px] font-semibold`}>Order created</Text>
+                <Text style={tw`text-[#00000099] text-[14px] font-medium pr-[100px]`}>
+                  New Order placed. Awaiting pickup
                 </Text>
+                <Text style={tw`text-[#000000] text-[14px]`}>{orderDate}</Text>
               </View>
             </View>
             <View style={tw`gap-[5px] ml-[20px] my-[10px]`}>
@@ -95,14 +129,18 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
                 style={tw`h-[40px] w-[40px] bg-[#F8F8F8] rounded-full justify-center items-center`}
               >
                 <View
-                  style={tw`h-[24px] w-[24px] bg-[#FFFFFF] rounded-full justify-center items-center`}
+                  style={tw`h-[40px] w-[40px] bg-[#F8F8F8] rounded-full justify-center items-center`}
                 >
-                  <SvgXml xml={locationCrossShair} />
+                  <SvgXml xml={locationIcon} />
                 </View>
               </View>
               <View>
-                <Text style={tw`text-gray-500 text-sm`}>Shipping Destination</Text>
-                <Text style={tw`text-black text-base font-semibold`}>Bangpak, Indonesia.</Text>
+                <Text style={tw`text-[#000000] text-[16px] font-semibold`}>
+                  {events[0]?.description}
+                </Text>
+                <Text style={tw`text-[#00000099] text-[14px] font-medium pr-[100px]`}>
+                  {formatEventDate(`${events[0]?.date} ${events[0]?.time}`)}
+                </Text>
               </View>
             </View>
           </View>
