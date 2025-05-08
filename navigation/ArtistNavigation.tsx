@@ -1,34 +1,11 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Platform,
-  GestureResponderEvent,
-  Dimensions,
-  Modal,
-  Animated,
-  Easing,
-  Pressable,
-} from 'react-native';
+import { View, Text, Platform, Dimensions, Modal, Animated, Easing, Pressable } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppStore } from 'store/app/appStore';
 import ArtistOnboarding from 'screens/artistOnboarding/ArtistOnboarding';
 import tw from 'twrnc';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SvgXml } from 'react-native-svg';
-import {
-  ordersActive,
-  ordersInActive,
-  overviewActive,
-  overviewInActive,
-  profileActive,
-  profileInActive,
-  shippingActive,
-  shippingInActive,
-  starEffect,
-  walletActive,
-  walletInActive,
-} from 'utils/SvgImages';
+import { starEffect } from 'utils/SvgImages';
 import ArtistOverview from 'screens/artist/overview/ArtistOverview';
 import { colors } from 'config/colors.config';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -37,18 +14,14 @@ import { logout } from 'utils/logout.utils';
 import { BlurView } from 'expo-blur';
 import OrderScreen from 'screens/artist/orders/OrderScreen';
 import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
-import WalletScreen from 'screens/artist/wallet/WalletScreen';
 import WalletHistory from 'screens/artist/wallet/WalletHistory';
 import AddPrimaryAcctScreen from 'screens/artist/wallet/AddPrimaryAcctScreen';
-import ArtistProfileScreen from 'screens/artist/profile/ArtistProfileScreen';
 import { screenName } from 'constants/screenNames.constants';
 import EditGalleryProfile from 'screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile';
 import ChangeGalleryPassword from 'screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword';
 import UploadNewLogo from 'screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo';
-import UploadArtworkScreen from 'screens/artist/UploadArtwork/UploadArtworkScreen';
 import EditCredentialsScreen from 'screens/artist/profile/EditCredentialsScreen';
 import UploadArtwork from 'screens/uploadArtwork/UploadArtwork';
-import GalleryArtworksListing from 'screens/galleryArtworksListing/GalleryArtworksListing';
 import { WithdrawScreen } from 'screens/artist/wallet/WithdrawScreen';
 import { ForgotPinScreen } from 'screens/artist/wallet/ForgotPinScreen';
 import { ResetPinScreen } from 'screens/artist/wallet/ResetPinScreen';
@@ -57,49 +30,13 @@ import { TransactionDetailsScreen } from 'screens/artist/wallet/TransactionDetai
 import Artwork from 'screens/artwork/Artwork';
 import EditArtwork from 'screens/editArtwork/EditArtwork';
 import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
+import TabButton from './components/TabButton';
+import { BottomTabDataArtist } from 'utils/BottomTabData';
 
 const { width, height } = Dimensions.get('window');
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
-const BottomTabData = [
-  {
-    id: 1,
-    activeIcon: overviewActive,
-    inActiveIcon: overviewInActive,
-    name: 'Overview',
-    component: ArtistOverview,
-  },
-  {
-    id: 2,
-    activeIcon: walletActive,
-    inActiveIcon: walletInActive,
-    name: 'Wallet',
-    component: WalletScreen,
-  },
-  {
-    id: 2,
-    activeIcon: ordersActive,
-    inActiveIcon: ordersInActive,
-    name: 'Orders',
-    component: OrderScreen,
-  },
-  {
-    id: 2,
-    activeIcon: shippingActive,
-    inActiveIcon: shippingInActive,
-    name: 'Art Upload',
-    component: GalleryArtworksListing,
-  },
-  {
-    id: 2,
-    activeIcon: profileActive,
-    inActiveIcon: profileInActive,
-    name: 'Profile',
-    component: ArtistProfileScreen,
-  },
-];
 
 const BottomTabNav = () => {
   const { userSession } = useAppStore();
@@ -131,39 +68,6 @@ const BottomTabNav = () => {
     ]).start();
   }, []);
 
-  const TabButton = ({
-    name,
-    activeIcon,
-    inActiveIcon,
-    accessibilityState,
-    onPress,
-  }: {
-    name: string;
-    activeIcon: string;
-    inActiveIcon: string;
-    accessibilityState?: any;
-    onPress?: (event: GestureResponderEvent) => void;
-  }) => {
-    const focused = accessibilityState?.selected;
-    return (
-      <TouchableOpacity
-        onPress={(event) => onPress?.(event)}
-        activeOpacity={1}
-        style={tw`items-center flex-1 justify-center`}
-      >
-        <SvgXml xml={focused ? activeIcon : inActiveIcon} />
-        <Text
-          style={[
-            { fontSize: 13, color: colors.grey, fontWeight: '700', marginTop: 10 },
-            focused && { color: colors.white },
-          ]}
-        >
-          {name}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <>
       <Tab.Navigator
@@ -182,7 +86,7 @@ const BottomTabNav = () => {
           },
         }}
       >
-        {BottomTabData.map(({ name, activeIcon, inActiveIcon, component, id }) => (
+        {BottomTabDataArtist.map(({ name, activeIcon, inActiveIcon, component, id }) => (
           <Tab.Screen
             key={id}
             name={name}

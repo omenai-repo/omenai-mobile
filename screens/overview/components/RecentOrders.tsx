@@ -137,26 +137,20 @@ export default function RecentOrders({ refreshCount }: { refreshCount: number })
                 key={index}
                 id={index}
                 url={item.artwork_data.url}
-                open={openSection[index]}
-                setOpen={() => toggleRecentOrder(index)}
-                artId={item.artId}
+                open={openSection[item.artwork_data._id]}
+                setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                artId={item.order_id}
                 artName={item.artwork_data.title}
-                buyerName={'john doe'}
+                buyerName={item.buyer_details.name}
                 price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                status={item.order_accepted.status}
-                lastId={index === data[data.length - 1].id}
+                status={item.status}
+                lastId={index === data.length - 1}
               />
             );
           })}
 
         <View style={{ flexWrap: 'wrap', marginRight: 'auto', marginLeft: 'auto' }}>
-          {data.length >= 1 ? (
-            <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.orders)}>
-              <View style={styles.pendingButton}>
-                <Text>View {data.length} pending orders</Text>
-              </View>
-            </TouchableOpacity>
-          ) : (
+          {data.length < 1 && (
             <View style={styles.pendingButton}>
               <Text>No pending orders</Text>
             </View>

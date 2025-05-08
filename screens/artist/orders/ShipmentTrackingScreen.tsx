@@ -7,7 +7,6 @@ import { SvgXml } from 'react-native-svg';
 import { locationIcon } from 'utils/SvgImages';
 import { getShipmentTracking } from 'services/orders/getShipmentTracking';
 import { getImageFileView } from 'lib/storage/getImageFileView';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { formatEventDate } from 'utils/utils_formatEventDate';
 
 const { width, height } = Dimensions.get('window');
