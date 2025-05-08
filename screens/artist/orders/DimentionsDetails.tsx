@@ -146,9 +146,9 @@ const DimensionsDetails = () => {
                 <Input
                   key={field}
                   label={
-                    field.charAt(0).toUpperCase() + field.slice(1) + ' ' + field === 'weight'
-                      ? '(kg)'
-                      : '(cm)'
+                    field === 'weight'
+                      ? field.charAt(0).toUpperCase() + field.slice(1) + ' ' + '(kg)'
+                      : field.charAt(0).toUpperCase() + field.slice(1) + ' ' + '(cm)'
                   } // Capitalize label
                   keyboardType="default"
                   onInputChange={(text) => {

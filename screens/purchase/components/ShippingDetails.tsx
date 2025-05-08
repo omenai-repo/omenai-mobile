@@ -214,7 +214,7 @@ export default function ShippingDetails({ data: { pricing } }: { data: artworkOr
             label="Country of residence"
             search={true}
             searchPlaceholder="Search Country"
-            dropdownPosition="bottom"
+            dropdownPosition="top"
           />
           <CustomSelectPicker
             data={stateData}
