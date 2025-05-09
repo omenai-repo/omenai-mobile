@@ -22,41 +22,6 @@ import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
 
-// const data = [
-//   {
-//     id: 1,
-//     artId: '021231',
-//     artworkName: 'The Milwalk Art (Green)',
-//     price: '$32,032',
-//     buyerName: 'Moses Khan',
-//     status: 'Pending',
-//   },
-//   {
-//     id: 2,
-//     artId: '021231',
-//     artworkName: 'The Milwalk Art (Green)',
-//     price: '$32,032',
-//     buyerName: 'Moses Khan',
-//     status: 'Pending',
-//   },
-//   {
-//     id: 3,
-//     artId: '021231',
-//     artworkName: 'The Milwalk Art (Green)',
-//     price: '$32,032',
-//     buyerName: 'Moses Khan',
-//     status: 'Pending',
-//   },
-//   {
-//     id: 4,
-//     artId: '021231',
-//     artworkName: 'The Milwalk Art (Green)',
-//     price: '$32,032',
-//     buyerName: 'Moses Khan',
-//     status: 'Pending',
-//   },
-// ];
-
 const OverviewContainer = ({
   label,
   amount,
@@ -109,7 +74,7 @@ export const RecentOrderContainer = ({
   artName: string;
   price: string;
   buyerName: string;
-  status: 'pending' | 'processing' | 'completed';
+  status: 'pending' | 'processing' | 'completed' | 'history';
   lastId: boolean;
   url: string;
 }) => {
@@ -157,6 +122,10 @@ export const RecentOrderContainer = ({
       bg: '#00C85120',
       text: '#00C851',
     },
+    history: {
+      bg: '#00C85120', // same as completed
+      text: '#00C851',
+    },
   };
 
   return (
@@ -192,10 +161,12 @@ export const RecentOrderContainer = ({
             <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
             <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{price}</Text>
           </View>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Buyer</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{buyerName}</Text>
-          </View>
+          {buyerName && (
+            <View style={tw`flex-row items-center gap-[20px]`}>
+              <Text style={tw`text-[14px] text-[#737373]`}>Buyer</Text>
+              <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{buyerName}</Text>
+            </View>
+          )}
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
             <View

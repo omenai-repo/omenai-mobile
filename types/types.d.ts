@@ -43,7 +43,7 @@ type TrackingInformationTypes = {
 
 type OrderArtworkExhibitionStatus = {
   is_on_exhibition: boolean;
-  exhibition_end_date: Date;
+  exhibition_end_date: Date | string;
 };
 
 type HoldStatus = {
