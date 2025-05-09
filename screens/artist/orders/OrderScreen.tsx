@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
 import { useModalStore } from 'store/modal/modalStore';
 import WithModal from 'components/modal/WithModal';
+import TabSwitcher from 'components/orders/TabSwitcher';
 
 function renderStatusBadge({
   status,
@@ -170,92 +171,6 @@ const renderButtonAction = ({
     return 'action';
   }
   return null;
-};
-
-const TabSwitcher = ({
-  selectTab,
-  setSelectTab,
-  pendingCount = 0,
-  processingCount = 0,
-}: {
-  selectTab: number;
-  setSelectTab: (e: number) => void;
-  pendingCount?: number;
-  processingCount?: number;
-}) => {
-  const animatedValue = useRef(new Animated.Value(selectTab - 1)).current;
-
-  useEffect(() => {
-    Animated.timing(animatedValue, {
-      toValue: selectTab - 1,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [selectTab]);
-
-  const tabWidth = 100 / 3;
-
-  const tabs = [
-    { title: 'Pending', count: pendingCount },
-    { title: 'Processing', count: processingCount },
-    { title: 'Completed', count: 0 },
-  ];
-
-  return (
-    <View
-      style={tw`relative flex-row items-center bg-[#ffff] p-[10px] mt-[30px] mx-[20px] rounded-[56px]`}
-    >
-      {/* Animated Pill Background */}
-      <Animated.View
-        style={[
-          tw`absolute h-[45px] bg-black rounded-[56px] shadow-md`,
-          {
-            width: `${tabWidth}%`,
-            left: animatedValue.interpolate({
-              inputRange: [0, 1, 2],
-              outputRange: ['3%', '37%', '69%'],
-            }),
-          },
-        ]}
-      />
-
-      {tabs.map((tab, index) => {
-        return (
-          <Pressable
-            key={index}
-            onPress={() => setSelectTab(index + 1)}
-            style={tw`flex-1 justify-center items-center h-[45px]`}
-          >
-            <View style={tw`flex-row items-center justify-center relative`}>
-              <Animated.Text
-                style={[
-                  tw`text-[13px] font-medium`,
-                  {
-                    color: animatedValue.interpolate({
-                      inputRange: [index - 1, index, index + 1],
-                      outputRange: ['#00000099', '#FFFFFF', '#00000099'],
-                      extrapolate: 'clamp',
-                    }),
-                  },
-                ]}
-              >
-                {tab.title}
-              </Animated.Text>
-
-              {/* Badge */}
-              {tab.count > 0 && (
-                <View
-                  style={tw`absolute -top-[10px] -right-[16px] bg-red-500 rounded-full px-[6px] py-[2px] z-10`}
-                >
-                  <Text style={tw`text-white text-[10px] font-bold`}>{tab.count}</Text>
-                </View>
-              )}
-            </View>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
 };
 
 const RecentOrderContainer = ({
@@ -413,7 +328,7 @@ const RecentOrderContainer = ({
 
 const OrderScreen = () => {
   const navigation = useNavigation<any>();
-  const [selectTab, setSelectTab] = useState(1);
+  const [selectedTab, setSelectedTab] = useState<'pending' | 'processing' | 'completed'>('pending');
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
   const [declineModal, setDeclineModal] = useState(false);
   const [isloading, setIsloading] = useState(true);
@@ -466,13 +381,18 @@ const OrderScreen = () => {
   };
 
   const getOrders = () => {
-    if (selectTab === 1) return data.pending;
-    if (selectTab === 2) return data.processing;
+    if (selectedTab === 'pending') return data.pending;
+    if (selectedTab === 'processing') return data.processing;
     return data.completed;
   };
 
   const currentOrders = getOrders();
-  const status = selectTab === 1 ? 'pending' : selectTab === 2 ? 'processing' : 'completed';
+
+  const artistTabs = [
+    { title: 'Pending', key: 'pending', count: data.pending.length },
+    { title: 'Processing', key: 'processing', count: data.processing.length },
+    { title: 'Completed', key: 'completed' },
+  ];
 
   return (
     <WithModal>
@@ -484,10 +404,9 @@ const OrderScreen = () => {
         />
 
         <TabSwitcher
-          selectTab={selectTab}
-          setSelectTab={setSelectTab}
-          pendingCount={data.pending.length}
-          processingCount={data.processing.length}
+          tabs={artistTabs}
+          selectedKey={selectedTab}
+          setSelectedKey={(key) => setSelectedTab(key as 'pending' | 'processing' | 'completed')}
         />
 
         <View
@@ -496,7 +415,7 @@ const OrderScreen = () => {
           {isloading ? (
             <OrderslistingLoader />
           ) : currentOrders.length === 0 ? (
-            <EmptyOrdersListing status={status} />
+            <EmptyOrdersListing status={selectedTab} />
           ) : (
             <>
               <View style={tw`flex-row items-center`}>
@@ -521,17 +440,17 @@ const OrderScreen = () => {
                     artName={item.artwork_data.title}
                     dateTime={formatIntlDateTime(item.createdAt)}
                     price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                    status={status}
+                    status={selectedTab}
                     lastId={index === currentOrders.length - 1}
                     acceptBtn={
-                      status === 'pending'
+                      selectedTab === 'pending'
                         ? () =>
                             navigation.navigate('DimentionsDetails', {
                               orderId: item.order_id,
                             })
                         : undefined
                     }
-                    declineBtn={status === 'pending' ? () => setDeclineModal(true) : undefined}
+                    declineBtn={selectedTab === 'pending' ? () => setDeclineModal(true) : undefined}
                     delivered={item.shipping_details.delivery_confirmed}
                     order_accepted={item.order_accepted.status}
                     payment_status={item.payment_information.status}
