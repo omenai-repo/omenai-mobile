@@ -1,6 +1,7 @@
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   useWindowDimensions,
   View,
@@ -19,6 +20,8 @@ import { useModalStore } from 'store/modal/modalStore';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import WithModal from 'components/modal/WithModal';
 import { validateOrderMeasurement } from 'lib/validations/upload_artwork_input_validator/validateOrderMeasurement';
+import { useAppStore } from 'store/app/appStore';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -29,6 +32,7 @@ type ArtworkDimensionsErrorsType = {
 
 const DimensionsDetails = () => {
   const { width } = useWindowDimensions();
+  const { userType } = useAppStore();
   const { orderId } = useRoute<any>().params;
   const navigation = useNavigation();
   const [dimentions, setDimentions] = useState({
@@ -44,6 +48,8 @@ const DimensionsDetails = () => {
     weight: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isOnExhibition, setIsOnExhibition] = useState(false);
+  const [expoEndDate, setExpoEndDate] = useState<string>('');
 
   const { updateModal } = useModalStore();
 
@@ -86,7 +92,13 @@ const DimensionsDetails = () => {
           height: parseFloat(dimentions.height),
           weight: parseFloat(dimentions.weight),
         },
-        exhibition_status: null,
+        exhibition_status:
+          userType === 'gallery'
+            ? {
+                is_on_exhibition: isOnExhibition,
+                exhibition_end_date: expoEndDate ? new Date(expoEndDate) : '',
+              }
+            : null,
         hold_status: null,
       };
       const response = await updateShippingQuote(payload);
@@ -162,6 +174,56 @@ const DimensionsDetails = () => {
                 />
               ))}
             </View>
+
+            {userType === 'gallery' && (
+              <View style={tw`mt-5 mx-[25px]`}>
+                <Text style={tw`text-[14px] text-[#858585] mb-[15px]`}>
+                  Is artwork on exhibition?
+                </Text>
+                <View style={tw`flex-row gap-4`}>
+                  <Pressable
+                    onPress={() => setIsOnExhibition(true)}
+                    style={tw.style(
+                      `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`,
+                    )}
+                    disabled={isOnExhibition}
+                  >
+                    <Text style={tw`text-[#1A1A1A]] font-bold text-[14px]`}>Yes</Text>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={() => {
+                      setIsOnExhibition(false);
+                      setExpoEndDate('');
+                    }}
+                    disabled={!isOnExhibition}
+                    style={tw.style(
+                      `h-[51px] rounded-full justify-center bg-[#1A1A1A] items-center flex-1`,
+                    )}
+                  >
+                    <Text style={tw`text-white font-bold text-[14px]`}>No</Text>
+                  </Pressable>
+                </View>
+
+                {isOnExhibition && (
+                  <View style={tw`mt-4`}>
+                    <Text style={tw`text-[14px] text-[#858585] mb-[15px]`}>
+                      Select Exhibition End Date:
+                    </Text>
+                    <DateTimePicker
+                      value={expoEndDate ? new Date(expoEndDate) : new Date()}
+                      mode="datetime"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        if (selectedDate) {
+                          setExpoEndDate(selectedDate.toISOString());
+                        }
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
+            )}
 
             <View
               style={tw.style(

@@ -3,8 +3,8 @@ import { apiUrl, authorization, originHeader, userAgent } from '../../constants/
 interface ShippingTypeProps {
   order_id: string;
   dimensions: ShipmentDimensions;
-  exhibition_status: OrderArtworkExhibitionStatus | null;
-  hold_status: HoldStatus | null;
+  exhibition_status?: OrderArtworkExhibitionStatus | null;
+  hold_status?: HoldStatus | null;
 }
 
 export async function updateShippingQuote({

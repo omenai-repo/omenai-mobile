@@ -25,7 +25,7 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
       duration: 300,
       useNativeDriver: false,
     }).start();
-  }, [selectedKey, tabs]);
+  }, [selectedKey, tabs, animatedValue]);
 
   const tabWidth = 100 / tabs.length;
 
@@ -35,18 +35,21 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
     >
       {/* Animated Pill Background */}
       <Animated.View
-        style={tw.style(`absolute h-[45px] bg-black rounded-[56px] shadow-md`, {
-          width: `${tabWidth}%`,
-          left: animatedValue.interpolate({
-            inputRange: tabs.map((_, i) => i),
-            outputRange: tabs.map((_, i) => `${i * (100 / tabs.length) + 3}%`),
-          }),
-        })}
+        style={[
+          tw`absolute h-[45px] bg-black rounded-[56px] shadow-md`,
+          {
+            width: `${tabWidth}%`,
+            left: animatedValue.interpolate({
+              inputRange: tabs.map((_, i) => i),
+              outputRange: tabs.map((_, i) => `${i * (100 / tabs.length) + 3}%`),
+            }),
+          },
+        ]}
       />
 
       {tabs.map((tab, index) => (
         <Pressable
-          key={tab.key}
+          key={tab.key.toString()}
           onPress={() => setSelectedKey(tab.key)}
           style={tw`flex-1 justify-center items-center h-[45px]`}
         >
@@ -67,11 +70,13 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
             </Animated.Text>
 
             {/* Badge */}
-            {tab.count && tab.count > 0 && (
+            {tab.count !== undefined && tab.count > 0 && (
               <View
                 style={tw`absolute -top-[10px] -right-[16px] bg-red-500 rounded-full px-[6px] py-[2px] z-10`}
               >
-                <Text style={tw`text-white text-[10px] font-bold`}>{tab.count}</Text>
+                <Text style={tw`text-white text-[10px] font-bold`}>
+                  {tab.count > 99 ? '99+' : tab.count}
+                </Text>
               </View>
             )}
           </View>

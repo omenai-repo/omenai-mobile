@@ -173,7 +173,7 @@ const renderButtonAction = ({
   return null;
 };
 
-const RecentOrderContainer = ({
+export const OrderContainer = ({
   id,
   open,
   setOpen,
@@ -431,7 +431,7 @@ const OrderScreen = () => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
                 renderItem={({ item, index }) => (
-                  <RecentOrderContainer
+                  <OrderContainer
                     id={index}
                     url={item.artwork_data.url}
                     open={openSection[item.artwork_data._id]}
