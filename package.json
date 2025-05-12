@@ -15,6 +15,7 @@
     "@gorhom/bottom-sheet": "^5",
     "@likashefqet/react-native-image-zoom": "^4.2.1",
     "@react-native-async-storage/async-storage": "2.1.2",
+    "@react-native-community/datetimepicker": "8.3.0",
     "@react-native-community/slider": "4.5.6",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",

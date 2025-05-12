@@ -124,33 +124,37 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
 
   useEffect(() => {
     if (open) {
-      let baseHeight = status === 'completed' ? 80 : 140;
-      if (showTrackingInfo) {
-        baseHeight += 50;
-      }
+      // Calculate height based on current state
+      const baseHeight = status === 'completed' ? 80 : !order_accepted ? 80 : 140;
+      const finalHeight = showTrackingInfo ? baseHeight + 50 : baseHeight;
 
-      Animated.timing(animatedHeight, {
-        toValue: baseHeight,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-
-      Animated.timing(animatedOpacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
+      // Start animations together
+      Animated.parallel([
+        Animated.timing(animatedHeight, {
+          toValue: finalHeight,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(animatedOpacity, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+      ]).start();
     } else {
-      Animated.timing(animatedHeight, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-      Animated.timing(animatedOpacity, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: false,
-      }).start();
+      // Close animations
+      Animated.parallel([
+        Animated.timing(animatedHeight, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(animatedOpacity, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: false,
+        }),
+      ]).start();
     }
   }, [open, showTrackingInfo]);
 
@@ -223,7 +227,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             payment_information === 'completed' &&
             !delivery_confirmed &&
             tracking_information.link.trim() && (
-              <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
+              <View style={{ flexDirection: 'row', gap: 10 }}>
                 <Pressable
                   onPress={() => setShowTrackingInfo(!showTrackingInfo)}
                   style={tw`h-[35px] w-[35px] bg-[#000] rounded-full justify-center items-center`}
@@ -246,10 +250,10 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             order_accepted === 'accepted' &&
             status !== 'completed' &&
             !tracking_information.link && (
-              <View
-                style={{ marginTop: 10, padding: 10, backgroundColor: '#f3f3f3', borderRadius: 5 }}
-              >
-                <Text style={{ color: '#666' }}>Awaiting tracking information</Text>
+              <View style={{ padding: 10, backgroundColor: '#f3f3f3', borderRadius: 91 }}>
+                <Text style={{ color: '#666', textAlign: 'center' }}>
+                  Awaiting tracking information
+                </Text>
               </View>
             )}
         </View>
