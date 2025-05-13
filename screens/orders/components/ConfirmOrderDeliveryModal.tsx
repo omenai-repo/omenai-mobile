@@ -36,12 +36,12 @@ const ConfirmOrderDeliveryModal = ({
           showModal: true,
         });
       } else {
+        setRefreshTrigger(refreshTrigger + 1);
         updateModal({
           message: response.message,
           modalType: 'success',
           showModal: true,
         });
-        setRefreshTrigger(refreshTrigger + 1);
       }
     } catch (error) {
       updateModal({

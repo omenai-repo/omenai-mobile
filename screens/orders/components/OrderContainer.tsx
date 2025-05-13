@@ -1,18 +1,16 @@
 // RecentOrderContainer.tsx
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, Pressable, Animated, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, Image, Pressable, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { SvgXml } from 'react-native-svg';
 import tw from 'twrnc';
 import { getImageFileView } from 'lib/storage/getImageFileView';
-import { useModalStore } from 'store/modal/modalStore';
 import { dropdownIcon, dropUpIcon } from 'utils/SvgImages';
 import StatusPill from './StatusPill';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { screenName } from 'constants/screenNames.constants';
-import { colors } from 'config/colors.config';
 import ConfirmOrderDeliveryModal from './ConfirmOrderDeliveryModal';
 
 interface OrderContainerProps {
@@ -62,9 +60,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   const image_href = getImageFileView(url, 700);
   const [remainingTime, setRemainingTime] = useState<number>(0);
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const [showTrackingInfo, setShowTrackingInfo] = useState<boolean>(false);
   const [confirmOrderModal, setConfirmOrderModal] = useState(false);
-  const { updateModal } = useModalStore();
 
   const expiresAt = holdStatus
     ? new Date(holdStatus.hold_end_date)
@@ -107,27 +103,14 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
     return null;
   };
 
-  async function openTrackingLink() {
-    const url = tracking_information?.link || '';
-    const validUrl = await Linking.canOpenURL(url);
-    if (validUrl) {
-      Linking.openURL(url);
-    } else {
-      updateModal({
-        message: 'Invalid tracking link',
-        modalType: 'error',
-        showModal: true,
-      });
-    }
-  }
-
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (open) {
       // Calculate height based on current state
-      const baseHeight = status === 'completed' ? 80 : !order_accepted ? 80 : 140;
+      const baseHeight =
+        status === 'completed' ? 80 : !order_accepted ? 80 : delivery_confirmed ? 80 : 140;
 
       // Start animations together
       Animated.parallel([
