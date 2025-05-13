@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback } from 'react';
 import {
   FlatList,
   View,
@@ -7,13 +7,13 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   RefreshControl,
-} from "react-native";
-import MiniArtworkCard from "components/artwork/MiniArtworkCard";
-import EmptyArtworks from "./EmptyArtworks";
-import Loader from "./Loader";
-import { debounce } from "lodash";
-import tw from "twrnc";
-import { getNumberOfColumns } from "utils/utils_screen";
+} from 'react-native';
+import MiniArtworkCard from 'components/artwork/MiniArtworkCard';
+import EmptyArtworks from './EmptyArtworks';
+import Loader from './Loader';
+import { debounce } from 'lodash';
+import tw from 'twrnc';
+import { getNumberOfColumns } from 'utils/utils_screen';
 
 const NUM_COLUMNS = getNumberOfColumns(); // Number of columns in the masonry layout
 
@@ -51,14 +51,13 @@ export default function ArtworksListing({
   // Debounced callback for onEndReached
   const debouncedOnEndReached = useMemo(
     () => (onEndReached ? debounce(onEndReached, 300) : null),
-    [onEndReached]
+    [onEndReached],
   );
 
   // Detect when the user scrolls near the bottom
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const isCloseToBottom =
-      layoutMeasurement.height + contentOffset.y >= contentSize.height - 200; // Trigger 200px before bottom
+    const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 200; // Trigger 200px before bottom
     if (isCloseToBottom && debouncedOnEndReached) {
       debouncedOnEndReached();
     }
@@ -74,11 +73,12 @@ export default function ArtworksListing({
             title={item.title}
             url={item.url}
             artist={item.artist}
-            showPrice={item.pricing.shouldShowPrice === "Yes"}
+            showPrice={item.pricing.shouldShowPrice === 'Yes'}
             price={item.pricing.usd_price}
             impressions={item.impressions}
             like_IDs={item.like_IDs}
             art_id={item.art_id}
+            availability={item.availability}
           />
         </View>
       )}
@@ -96,9 +96,7 @@ export default function ArtworksListing({
       onScroll={handleScroll}
       scrollEventThrottle={16} // Higher frequency scroll event
       showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
     >
       <View style={styles.container}>
         {/* Render each column */}
@@ -117,8 +115,8 @@ export default function ArtworksListing({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row", // Arrange columns horizontally
-    justifyContent: "space-between",
+    flexDirection: 'row', // Arrange columns horizontally
+    justifyContent: 'space-between',
   },
   column: {
     flex: 1 / NUM_COLUMNS, // Each column takes equal space
