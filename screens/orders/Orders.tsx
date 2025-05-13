@@ -16,6 +16,7 @@ import OrderContainer from './components/OrderContainer';
 export type OrderTabsTypes = 'Pending' | 'Order history';
 
 export default function Orders() {
+  const navigation = useNavigation<any>();
   // const { isLoading, setIsLoading, refreshTrigger } = useOrderStore();
   const [refreshing, setRefreshing] = useState(false);
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
@@ -156,6 +157,9 @@ export default function Orders() {
                     orderId={item.order_id}
                     holdStatus={item.hold_status}
                     updatedAt={item.updatedAt}
+                    trackBtn={() =>
+                      navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })
+                    }
                   />
                 )}
               />

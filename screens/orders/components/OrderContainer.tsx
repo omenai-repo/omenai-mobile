@@ -36,6 +36,7 @@ interface OrderContainerProps {
   orderId: string;
   holdStatus: HoldStatus | null;
   updatedAt: string;
+  trackBtn: () => void;
 }
 
 const OrderContainer: React.FC<OrderContainerProps> = ({
@@ -56,6 +57,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   orderId,
   holdStatus,
   updatedAt,
+  trackBtn,
 }) => {
   const image_href = getImageFileView(url, 700);
   const [remainingTime, setRemainingTime] = useState<number>(0);
@@ -126,12 +128,11 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
     if (open) {
       // Calculate height based on current state
       const baseHeight = status === 'completed' ? 80 : !order_accepted ? 80 : 140;
-      const finalHeight = showTrackingInfo ? baseHeight + 50 : baseHeight;
 
       // Start animations together
       Animated.parallel([
         Animated.timing(animatedHeight, {
-          toValue: finalHeight,
+          toValue: baseHeight,
           duration: 300,
           useNativeDriver: false,
         }),
@@ -156,7 +157,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         }),
       ]).start();
     }
-  }, [open, showTrackingInfo]);
+  }, [open]);
 
   return (
     <View
@@ -229,7 +230,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             tracking_information.link.trim() && (
               <View style={{ flexDirection: 'row', gap: 10 }}>
                 <Pressable
-                  onPress={() => setShowTrackingInfo(!showTrackingInfo)}
+                  onPress={trackBtn}
                   style={tw`h-[35px] w-[35px] bg-[#000] rounded-full justify-center items-center`}
                 >
                   <Ionicons name="location-outline" size={18} color="#fff" />
@@ -258,24 +259,6 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             )}
         </View>
 
-        {showTrackingInfo && (
-          <View style={{ gap: 10, marginTop: 10 }}>
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              <Text style={{ fontSize: 14, color: colors.primary_black }}>Tracking ID:</Text>
-              <Text style={{ flex: 1, fontSize: 14, color: colors.primary_black }}>
-                {tracking_information?.id}
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              <Text style={{ fontSize: 14, color: colors.primary_black }}>Tracking link:</Text>
-              <TouchableOpacity style={{ flexWrap: 'wrap', flex: 1 }} onPress={openTrackingLink}>
-                <Text style={{ fontSize: 14, color: '#0000ff90' }}>
-                  {tracking_information.link}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
         <ConfirmOrderDeliveryModal
           orderId={orderId}
           modalVisible={confirmOrderModal}
