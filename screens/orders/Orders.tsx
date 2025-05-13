@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Platform, Image, FlatList } from 'react-native';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { colors } from 'config/colors.config';
 import { getOrdersForUser } from 'services/orders/getOrdersForUser';
 import WithModal from 'components/modal/WithModal';
@@ -12,34 +12,32 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import YearDropdown from 'screens/artist/orders/YearDropdown';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import OrderContainer from './components/OrderContainer';
+import { useOrderStore } from 'store/orders/Orders';
 
-export type OrderTabsTypes = 'Pending' | 'Order history';
+export type OrderTabsTypes = 'pending' | 'history';
 
 export default function Orders() {
   const navigation = useNavigation<any>();
-  // const { isLoading, setIsLoading, refreshTrigger } = useOrderStore();
+  const { isLoading, setIsLoading, refreshTrigger, selectedTab, setSelectedTab, data, setData } =
+    useOrderStore();
   const [refreshing, setRefreshing] = useState(false);
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
-  const [selectedTab, setSelectedTab] = useState<'pending' | 'history'>('pending');
-  const [isloading, setIsloading] = useState(true);
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
   const { updateModal } = useModalStore();
-
-  const [data, setData] = useState<{
-    pendingOrders: CreateOrderModelTypes[];
-    completedOrders: CreateOrderModelTypes[];
-  }>({
-    pendingOrders: [],
-    completedOrders: [],
-  });
 
   const handleRefresh = async () => {
     setRefreshing(true);
     await handleFetchOrders();
     setRefreshing(false);
   };
+
+  useEffect(() => {
+    if (refreshTrigger) {
+      handleFetchOrders();
+    }
+  }, [refreshTrigger]);
 
   useFocusEffect(
     useCallback(() => {
@@ -48,7 +46,7 @@ export default function Orders() {
   );
 
   const handleFetchOrders = async () => {
-    setIsloading(true);
+    setIsLoading(true);
 
     const results = await getOrdersForUser();
 
@@ -67,13 +65,13 @@ export default function Orders() {
           !order.availability ||
           order.status === 'completed',
       );
-      setIsloading(false);
+      setIsLoading(false);
       setData({
         pendingOrders: pending_orders,
         completedOrders: completed_orders,
       });
     } else {
-      setIsloading(false);
+      setIsLoading(false);
       updateModal({
         message: 'Something went wrong fetching orders, reload page',
         modalType: 'error',
@@ -120,7 +118,7 @@ export default function Orders() {
         <View
           style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
         >
-          {isloading ? (
+          {isLoading ? (
             <OrderslistingLoader />
           ) : currentOrders.length === 0 ? (
             <EmptyOrdersListing status={selectedTab} />
