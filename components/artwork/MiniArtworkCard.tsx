@@ -1,20 +1,15 @@
-import { Button, Dimensions, Image, Platform, StyleSheet, Text, View } from 'react-native';
-import React, { memo, useEffect, useState } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Feather } from '@expo/vector-icons';
-import { colors } from 'config/colors.config';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import React, { memo } from 'react';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
 import LikeComponent from './LikeComponent';
 import tw from 'twrnc';
 import { fontNames } from 'constants/fontNames.constants';
 import { getNumberOfColumns } from 'utils/utils_screen';
 import MiniImage from './MiniImage';
-import { string } from 'zod';
 
 type MiniArtworkCardType = {
   title: string;
@@ -26,6 +21,7 @@ type MiniArtworkCardType = {
   impressions: number;
   like_IDs: string[];
   galleryView?: boolean;
+  availability: boolean;
 };
 
 const MiniArtworkCard = memo(
@@ -39,6 +35,7 @@ const MiniArtworkCard = memo(
     impressions,
     like_IDs,
     galleryView = false,
+    availability,
   }: MiniArtworkCardType) => {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
@@ -97,14 +94,29 @@ const MiniArtworkCard = memo(
           >
             {artist}
           </Text>
-          <Text
-            style={[
-              tw`text-base font-bold text-[#1A1A1A]/90`,
-              { fontFamily: fontNames.dmSans + 'Bold' },
-            ]}
-          >
-            {showPrice ? utils_formatPrice(price) : 'Price on request'}
-          </Text>
+          {availability && (
+            <Text
+              style={[
+                tw`text-base font-bold text-[#1A1A1A]/90`,
+                { fontFamily: fontNames.dmSans + 'Bold' },
+              ]}
+            >
+              {showPrice ? utils_formatPrice(price) : 'Price on request'}
+            </Text>
+          )}
+          {!availability && (
+            <View
+              style={tw.style(`rounded-full bg-[#E0E0E0] px-5 py-2 mt-2`, {
+                width: screenWidth / 6,
+              })}
+            >
+              <Text
+                style={[tw`text-[#A1A1A1] text-sm`, { fontFamily: fontNames.dmSans + 'Medium' }]}
+              >
+                Sold
+              </Text>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     );
