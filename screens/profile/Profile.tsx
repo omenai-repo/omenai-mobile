@@ -50,7 +50,7 @@ export default function Profile() {
 
     return;
   };
-  console.log(userSession);
+
   return (
     <WithModal>
       <ScrollWrapper style={styles.container}>

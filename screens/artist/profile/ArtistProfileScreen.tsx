@@ -47,7 +47,6 @@ export default function ArtistProfileScreen() {
     try {
       setIsLoading(true);
       const response = await getEditEligibility();
-      console.log(response);
 
       if (response?.isOk) {
         if (response.body.eligibility.isEligible) {
@@ -93,7 +92,7 @@ export default function ArtistProfileScreen() {
 
     return;
   };
-  console.log(userSession);
+
   return (
     <WithGalleryModal>
       {!isLoading ? (
@@ -132,7 +131,6 @@ export default function ArtistProfileScreen() {
                 <Text style={tw`text-[16px] text-[#fff]`}>Edit your profile</Text>
               </Pressable>
               <Pressable
-                // onPress={() => setIsLoading(true)}
                 onPress={() => checkEditEligibility()}
                 style={tw`border border-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
               >

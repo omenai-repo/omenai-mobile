@@ -13,6 +13,21 @@ import { Country, State, City, ICountry, IState, ICity } from 'country-state-cit
 import { debounce } from 'lodash';
 import { useAppStore } from 'store/app/appStore';
 
+interface SessionAddress {
+  address_line: string;
+  zip: string;
+  country: string;
+  countryCode: string;
+  stateCode: string;
+  city: string;
+}
+
+interface UserSession {
+  name: string;
+  email: string;
+  address: SessionAddress;
+}
+
 const deliveryOptions = [
   'Shipping',
   // 'Pickup'
@@ -123,14 +138,61 @@ export default function ShippingDetails({ data: { pricing } }: { data: artworkOr
   const { userSession } = useAppStore();
 
   useEffect(() => {
-    fetchUserSessionsData();
+    if (
+      userSession &&
+      userSession.address.country &&
+      userSession.address.countryCode &&
+      userSession.address.stateCode
+    ) {
+      populateFormFromSession(userSession);
+    }
   }, [userSession]);
 
-  const fetchUserSessionsData = async () => {
-    if (userSession) {
-      setName(userSession.name);
-      setEmail(userSession.email);
-      setDeliveryAddress(userSession.address.address_line);
+  const populateFormFromSession = async (session: UserSession) => {
+    // Set user-level fields
+    setName(session.name);
+    setEmail(session.email);
+    setDeliveryAddress(session.address.address_line);
+    setZipCode(session.address.zip);
+
+    // ✅ Set Country
+    const countryItem = Country.getAllCountries().find(
+      (c) => c.isoCode === session.address.countryCode,
+    );
+    if (!countryItem) return;
+
+    const selectedCountry = {
+      label: countryItem.name,
+      value: countryItem.isoCode,
+    };
+    setCountry(selectedCountry.label);
+    setCountryCode(selectedCountry.value);
+
+    // 🌎 Get and set states
+    const states = State.getStatesOfCountry(selectedCountry.value) || [];
+    const mappedStates = states.map((state: IState) => ({
+      label: state.name,
+      value: state.name,
+      isoCode: state.isoCode,
+    }));
+    setStateData(mappedStates);
+
+    const selectedState = mappedStates.find((state) => state.isoCode === session.address.stateCode);
+    if (selectedState) {
+      setState(selectedState.value);
+      setStateCode(selectedState.isoCode);
+
+      // 🏙️ Get and set cities
+      const cities = City.getCitiesOfState(selectedCountry.value, selectedState.isoCode) || [];
+      const mappedCities = cities.map((city: ICity) => ({
+        label: city.name,
+        value: city.name,
+      }));
+      setCityData(mappedCities);
+
+      // 🏠 Set city if valid
+      const foundCity = mappedCities.find((c) => c.value === session.address.city);
+      if (foundCity) setCity(foundCity.value);
     }
   };
 
