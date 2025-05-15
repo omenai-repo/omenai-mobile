@@ -59,6 +59,7 @@ export default function Artist() {
         walletId: resultsBody.wallet_id,
         categorization: resultsBody.categorization,
         logo: resultsBody.logo,
+        phone: resultsBody.phone,
       };
 
       const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));

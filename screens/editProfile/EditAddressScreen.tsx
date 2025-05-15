@@ -16,6 +16,8 @@ import { Country, State, City, ICountry, IState, ICity } from 'country-state-cit
 import { useAppStore } from 'store/app/appStore';
 import { useNavigation } from '@react-navigation/native';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
+import { updateProfile } from 'services/update/updateProfile';
+import { logout } from 'utils/logout.utils';
 
 const EditAddressScreen = () => {
   const navigation = useNavigation<any>();
@@ -197,6 +199,46 @@ const EditAddressScreen = () => {
     }
   };
 
+  const signOut = () => {
+    setTimeout(() => {
+      logout();
+    }, 3500);
+  };
+
+  const handleUpdate = async () => {
+    setIsLoading(true);
+
+    const data = {
+      address: {
+        address_line: addressLine,
+        city: city,
+        state: stateName,
+        country: country,
+        zip: zipCode,
+        countryCode: countryCode,
+        stateCode: stateCode,
+      },
+    };
+    const result = await updateProfile('individual', data, userSession.id);
+
+    if (result.isOk) {
+      setIsLoading(false);
+      updateModal({
+        message: 'Address updated successfully, sign in to view update',
+        modalType: 'success',
+        showModal: true,
+      });
+      signOut();
+    } else {
+      setIsLoading(false);
+      updateModal({
+        message: result.body.message,
+        modalType: 'error',
+        showModal: true,
+      });
+    }
+  };
+
   return (
     <View style={tw`flex-1 bg-white`}>
       <BackHeaderTitle title="Edit Address" />
@@ -298,6 +340,8 @@ const EditAddressScreen = () => {
           }}
           onPress2={() => {
             if (addressVerified) {
+              setShowModal(false);
+              handleUpdate();
             } else {
               setShowModal(false);
               handleSubmit();

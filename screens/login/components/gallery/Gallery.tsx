@@ -50,6 +50,8 @@ export default function Gallery() {
         admin: resultsBody.admin,
         logo: resultsBody.logo,
         subscription_active: resultsBody.subscription_active,
+        address: resultsBody.address,
+        phone: resultsBody.phone,
       };
 
       const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));

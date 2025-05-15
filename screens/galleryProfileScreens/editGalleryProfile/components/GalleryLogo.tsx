@@ -19,8 +19,6 @@ export default function GalleryLogo({ logo }: GalleryLogoProps) {
     imageUrl = getGalleryLogoFileView(logo, 120, 120);
   }
 
-  console.log(imageUrl);
-
   return (
     <TouchableOpacity
       style={styles.container}

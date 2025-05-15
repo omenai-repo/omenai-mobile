@@ -32,6 +32,7 @@ import EditArtwork from 'screens/editArtwork/EditArtwork';
 import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
 import TabButton from './components/TabButton';
 import { BottomTabDataArtist } from 'utils/BottomTabData';
+import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -172,6 +173,7 @@ const ArtistNavigation = () => {
       <Stack.Screen name={'WithdrawalSuccess'} component={WithdrawalSuccess} />
       <Stack.Screen name={'TransactionDetailsScreen'} component={TransactionDetailsScreen} />
       <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
+      <Stack.Screen name={'EditAddressScreen'} component={EditAddressScreen} />
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
       <Stack.Screen name={'EditCredentialsScreen'} component={EditCredentialsScreen} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
