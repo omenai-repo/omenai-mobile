@@ -42,6 +42,7 @@ import {
 import { BottomTabDataIndividual } from 'utils/BottomTabData';
 import TabButton from './components/TabButton';
 import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
+import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -141,6 +142,7 @@ export default function IndividualNavigation() {
       <Stack.Screen name={screenName.cancleOrderPayment} component={CancleOrderPayment} />
       <Stack.Screen name={screenName.successOrderPayment} component={SuccessOrderPayment} />
       <Stack.Screen name={screenName.editProfile} component={EditProfile} />
+      <Stack.Screen name={'EditAddressScreen'} component={EditAddressScreen} />
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
       <Stack.Screen name={screenName.artworksMedium} component={ArtworksMedium} />
       <Stack.Screen name={screenName.editorial} component={Editorial} />
