@@ -21,6 +21,7 @@ import { getEditEligibility } from 'services/update/getEditEligibility';
 import { useModalStore } from 'store/modal/modalStore';
 import EligibityResponseScreen from './EligibityResponseScreen';
 import Logo from 'screens/galleryProfileScreens/galleryProfile/components/Logo';
+import { Ionicons } from '@expo/vector-icons';
 
 type userDataType = {
   name: string;
@@ -138,6 +139,13 @@ export default function ArtistProfileScreen() {
               </Pressable>
             </View>
             <View style={styles.buttonsContainer}>
+              {/* <Divider /> */}
+              <PageButtonCard
+                name="View Credentials"
+                subText="View your credentials"
+                handlePress={() => navigation.navigate('ViewCredentialsScreen')}
+                Icon={<Ionicons name="eye-outline" size={24} color={colors.primary_black} />}
+              />
               {/* <Divider /> */}
               <PageButtonCard
                 name="Change password"
