@@ -16,55 +16,52 @@ import ScrollWrapper from 'components/general/ScrollWrapper';
 import { KeyboardAvoidingView } from 'react-native';
 import tw from 'twrnc';
 import { useAppStore } from 'store/app/appStore';
+import { useNavigation } from '@react-navigation/native';
 
 export default function EditGalleryProfile() {
-  const [user, setUser] = useState<any>({});
+  const navigation = useNavigation<any>();
   const [isLoading, setIsLoading] = useState(false);
   const { updateModal } = useModalStore();
-  const { userType } = useAppStore();
+  const { userType, userSession } = useAppStore();
 
   const { updateData, setProfileUpdateData, clearData } = galleryProfileUpdate();
 
-  useEffect(() => {
-    async function handleFetchUserSession() {
-      const user = await utils_getAsyncData('userSession');
-      if (user.value) {
-        setUser(JSON.parse(user.value));
-      }
-    }
-
-    handleFetchUserSession();
-  }, []);
-
   const handleSubmit = async () => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
+      const { isOk, body } = await updateProfile(
+        userType === 'gallery' ? 'gallery' : 'artist',
+        updateData,
+        userSession.id,
+      );
 
-    const { isOk, body } = await updateProfile(
-      userType === 'gallery' ? 'gallery' : 'artist',
-      updateData,
-      user.id,
-    );
-
-    if (!isOk) {
-      //throw error modal
+      if (!isOk) {
+        //throw error modal
+        updateModal({
+          modalType: 'error',
+          message: body.message,
+          showModal: true,
+        });
+      } else {
+        //throw succcess modal prompting galleries to re-login
+        updateModal({
+          modalType: 'success',
+          message: `${body.message}, please log back in`,
+          showModal: true,
+        });
+        setTimeout(() => {
+          logout();
+        }, 3500);
+      }
+    } catch (e) {
       updateModal({
         modalType: 'error',
-        message: body.message,
+        message: 'Something went wrong. Please try again later.',
         showModal: true,
       });
-    } else {
-      //throw succcess modal prompting galleries to re-login
-      updateModal({
-        modalType: 'success',
-        message: `${body.message}, please log back in`,
-        showModal: true,
-      });
-      setTimeout(() => {
-        logout();
-      }, 3500);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
@@ -87,39 +84,55 @@ export default function EditGalleryProfile() {
           showsVerticalScrollIndicator={false}
         >
           <View style={{ gap: 20 }}>
-            <UploadNewLogo logo={user?.logo} />
+            <UploadNewLogo logo={userSession?.logo} />
             <Input
               label={userType === 'gallery' ? 'Gallery name' : 'Artist name'}
-              value={user?.name || ''}
+              value={userSession?.name || ''}
               disabled
               onInputChange={() => void ''}
             />
             <Input
               label={userType === 'gallery' ? 'Gallery email address' : 'Artist email address'}
               disabled
-              value={user?.email || ''}
+              value={userSession?.email || ''}
               onInputChange={() => void ''}
             />
-            <LargeInput
-              label={userType === 'gallery' ? 'Gallery description' : 'Artist description'}
-              placeHolder=""
-              value={updateData?.description || ''}
-              defaultValue={user?.description}
-              onInputChange={(value) => setProfileUpdateData('description', value)}
-            />
+            {userType === 'gallery' && (
+              <LargeInput
+                label={userType === 'gallery' ? 'Gallery description' : 'Artist description'}
+                value={updateData?.description ?? userSession?.description ?? ''}
+                onInputChange={(value) => setProfileUpdateData('description', value)}
+              />
+            )}
+            <View style={{ marginTop: 10, gap: 10 }}>
+              <Input
+                label="Address"
+                value={userSession.address?.address_line || ''}
+                disabled
+                onInputChange={() => {}}
+              />
+              <LongBlackButton
+                value="Edit address"
+                onClick={() =>
+                  navigation.navigate('EditAddressScreen', { currentAddress: userSession.address })
+                }
+                isDisabled={false}
+              />
+            </View>
             <Input
-              label="Location"
-              placeHolder=""
-              value={updateData?.location || ''}
-              defaultValue={user?.location}
-              onInputChange={(value) => setProfileUpdateData('location', value)}
+              label="Phone number"
+              value={updateData?.phone || ''}
+              defaultValue={userSession?.phone}
+              keyboardType="phone-pad"
+              onInputChange={(value) => setProfileUpdateData('phone', value)}
             />
+
             {userType === 'gallery' && (
               <Input
                 label="Admin"
                 placeHolder=""
                 value={updateData?.admin || ''}
-                defaultValue={user?.admin}
+                defaultValue={userSession?.admin}
                 onInputChange={(value) => setProfileUpdateData('admin', value)}
               />
             )}
@@ -131,8 +144,8 @@ export default function EditGalleryProfile() {
                 isLoading={isLoading}
                 isDisabled={
                   userType === 'gallery'
-                    ? !updateData.admin && !updateData.location && !updateData.description
-                    : !updateData.location && !updateData.description
+                    ? !updateData.admin && !updateData.phone && !updateData.description
+                    : !updateData.phone && !updateData.description
                 }
               />
             </View>

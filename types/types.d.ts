@@ -384,9 +384,9 @@ type ShippingQuoteTypes = {
   additional_information?: string;
 };
 type GalleryProfileUpdateData = {
-  location?: string;
   admin?: string;
   description?: string;
+  phone?: string;
 };
 
 type IndividualProfileUpdateData = {

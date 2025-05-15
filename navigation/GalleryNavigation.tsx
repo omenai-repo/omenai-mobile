@@ -28,6 +28,7 @@ import VerifyTransaction from 'screens/verifyTransaction/VerifyTransaction';
 import ChangeCard from 'screens/subscriptions/changeCard/ChangeCard';
 import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
 import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
+import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -172,6 +173,7 @@ export default function GalleryNavigation() {
       <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
       <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
       <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
+      <Stack.Screen name={'EditAddressScreen'} component={EditAddressScreen} />
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
       <Stack.Screen name={screenName.gallery.subscriptions} component={Subscriptions} />
       <Stack.Screen name={screenName.gallery.billing} component={Billing} />
