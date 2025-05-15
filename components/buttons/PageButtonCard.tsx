@@ -1,9 +1,9 @@
-import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { SvgXml } from "react-native-svg";
-import { rightArrowIcon, savedArtworksIcon } from "utils/SvgImages";
-import tw from "twrnc";
+import { Feather } from '@expo/vector-icons';
+import { colors } from 'config/colors.config';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SvgXml } from 'react-native-svg';
+import { rightArrowIcon, savedArtworksIcon } from 'utils/SvgImages';
+import tw from 'twrnc';
 
 type PageButtonItemProps = {
   name: string;
@@ -11,7 +11,8 @@ type PageButtonItemProps = {
   handlePress: () => void;
   logout?: boolean;
   children?: React.ReactNode;
-  svgIcon: string;
+  svgIcon?: string;
+  Icon?: React.ReactNode;
 };
 
 export const PageButtonCard = ({
@@ -21,26 +22,25 @@ export const PageButtonCard = ({
   logout,
   children,
   svgIcon,
+  Icon,
 }: PageButtonItemProps) => {
   return (
     <TouchableOpacity activeOpacity={1} onPress={handlePress}>
       <View style={[styles.pageButtonItem]}>
         <View style={{ flex: 1 }}>
           <View style={tw`flex-row items-center gap-[15px]`}>
-            <SvgXml xml={svgIcon} />
+            {!svgIcon ? Icon : <SvgXml xml={svgIcon} />}
             <Text
               style={[
                 { fontSize: 16, color: colors.primary_black },
-                logout && { color: "#ff0000" },
+                logout && { color: '#ff0000' },
               ]}
             >
               {name}
             </Text>
           </View>
           {subText && (
-            <Text style={{ fontSize: 14, color: "#00000099", marginTop: 10 }}>
-              {subText}
-            </Text>
+            <Text style={{ fontSize: 14, color: '#00000099', marginTop: 10 }}>{subText}</Text>
           )}
         </View>
         {children ? children : <SvgXml xml={rightArrowIcon} />}
@@ -52,8 +52,8 @@ export const PageButtonCard = ({
 const styles = StyleSheet.create({
   pageButtonItem: {
     padding: 20,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
 });

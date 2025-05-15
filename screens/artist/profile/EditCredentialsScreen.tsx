@@ -1,5 +1,5 @@
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Dimensions,
@@ -18,6 +18,9 @@ import tw from 'twrnc';
 import { uploadIcon } from 'utils/SvgImages';
 import * as DocumentPicker from 'expo-document-picker';
 import LongBlackButton from 'components/buttons/LongBlackButton';
+import { getArtistCredentials } from 'services/artistOnboarding/getArtistCredentials';
+import LottieView from 'lottie-react-native';
+import loaderAnimation from '../../../assets/other/loader-animation.json';
 
 const { width } = Dimensions.get('window');
 
@@ -29,30 +32,35 @@ export default function EditCredentialsScreen() {
   >(null);
   const [editingSocialKey, setEditingSocialKey] = useState<string | null>(null);
   const [cv, setCv] = useState<DocumentPicker.DocumentPickerResult | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [credentials, setCredentials] = useState<any>(null);
 
   // Dummy onboarding questions
   const [onboardingQuestions, setOnboardingQuestions] = useState<{ [key in QuestionKey]?: string }>(
     {
-      bio: 'I’m a contemporary artist exploring abstract forms.',
-      graduate: 'Yes',
-      mfa: 'No',
-      solo: '3',
-      group: '5',
-      museum_collection: 'No',
-      biennale: 'None',
-      museum_exhibition: 'Yes',
-      art_fair: 'Yes',
+      bio: '',
+      graduate: '',
+      mfa: '',
+      solo: '',
+      group: '',
+      museum_collection: '',
+      biennale: '',
+      museum_exhibition: '',
+      art_fair: '',
     },
   );
 
   // Dummy documentation
   const [documentation, setDocumentation] = useState({
     socials: {
-      instagram: '@dummy_artist',
-      twitter: '@artbydummy',
+      instagram: '',
+      twitter: '',
+      facebook: '',
+      linkedin: '',
     },
-    cv: 'dummy_cv.pdf',
+    cv: '',
   });
+  const animation = useRef(null);
 
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -73,6 +81,69 @@ export default function EditCredentialsScreen() {
     setCv(result);
     setDocumentation((prev) => ({ ...prev, cv: result.assets[0].uri }));
   };
+
+  useEffect(() => {
+    const fetchCredentials = async () => {
+      try {
+        const res = await getArtistCredentials();
+        const data = res?.body?.credentials;
+        if (!data) return;
+
+        setCredentials(data);
+        const answers = data.categorization.answers;
+
+        setOnboardingQuestions({
+          graduate: answers.graduate,
+          mfa: answers.mfa,
+          solo: String(answers.solo),
+          group: String(answers.group),
+          museum_collection: answers.museum_collection,
+          biennale: answers.biennale,
+          museum_exhibition: answers.museum_exhibition,
+          art_fair: answers.art_fair,
+        });
+        setDocumentation({
+          socials: {
+            instagram: data.documentation.socials.instagram,
+            twitter: data.documentation.socials.twitter,
+            facebook: data.documentation.socials.facebook,
+            linkedin: data.documentation.socials.linkedin,
+          },
+          cv: data.documentation.cv,
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCredentials();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={tw`flex-1 bg-[#F7F7F7] justify-center items-center`}>
+        <LottieView
+          autoPlay
+          ref={animation}
+          style={{
+            width: 300,
+            height: 300,
+          }}
+          source={loaderAnimation}
+        />
+      </View>
+    );
+  }
+
+  if (!credentials) {
+    return (
+      <View style={tw`flex-1 justify-center items-center`}>
+        <Text>No credentials available.</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
