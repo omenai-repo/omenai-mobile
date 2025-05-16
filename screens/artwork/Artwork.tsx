@@ -307,6 +307,13 @@ export default function Artwork() {
                         text: `Signed ${data?.signature}`,
                       },
                       { name: 'Year', text: data?.year },
+                      { name: 'Height', text: data?.dimensions.height },
+                      { name: 'Width', text: data?.dimensions.width },
+                      ...(data?.dimensions.depth
+                        ? [{ name: 'Depth', text: data?.dimensions.depth }]
+                        : []),
+                      { name: 'Weight', text: data?.dimensions.weight },
+                      { name: 'Rarity', text: data?.rarity },
                     ]}
                   />
                   <DetailsCard
