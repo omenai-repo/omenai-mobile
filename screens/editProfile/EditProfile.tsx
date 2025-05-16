@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import React, { useState } from 'react';
 import WithModal from 'components/modal/WithModal';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
@@ -141,12 +141,50 @@ export default function EditProfile() {
             }}
           />
           <View style={{ marginTop: 10, gap: 10 }}>
-            <Input
-              label="Address"
-              value={userSession.address?.address_line || ''}
-              disabled
-              onInputChange={() => {}}
-            />
+            <View style={tw`mb-2`}>
+              <Text style={tw`text-sm font-semibold text-[#858585] mb-1`}>Full Address</Text>
+              <View style={tw`bg-gray-100 p-4 rounded-lg border border-gray-300`}>
+                {userSession.address.address_line ? (
+                  <Text style={tw`text-gray-800`}>
+                    <Text style={tw`font-semibold`}>Address: </Text>
+                    {userSession.address.address_line}
+                    {'\n'}
+                  </Text>
+                ) : null}
+
+                {userSession.address.city ? (
+                  <Text style={tw`text-gray-800`}>
+                    <Text style={tw`font-semibold`}>City: </Text>
+                    {userSession.address.city}
+                    {'\n'}
+                  </Text>
+                ) : null}
+
+                {userSession.address.state ? (
+                  <Text style={tw`text-gray-800`}>
+                    <Text style={tw`font-semibold`}>State: </Text>
+                    {userSession.address.state}
+                    {'\n'}
+                  </Text>
+                ) : null}
+
+                {userSession.address.zip ? (
+                  <Text style={tw`text-gray-800`}>
+                    <Text style={tw`font-semibold`}>Zip Code: </Text>
+                    {userSession.address.zip}
+                    {'\n'}
+                  </Text>
+                ) : null}
+
+                {userSession.address.country ? (
+                  <Text style={tw`text-gray-800`}>
+                    <Text style={tw`font-semibold`}>Country: </Text>
+                    {userSession.address.country}
+                  </Text>
+                ) : null}
+              </View>
+            </View>
+
             <LongBlackButton
               value="Edit address"
               onClick={() =>

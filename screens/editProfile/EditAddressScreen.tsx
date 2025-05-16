@@ -1,4 +1,12 @@
-import { View, Text, Pressable, useWindowDimensions } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  useWindowDimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import tw from 'twrnc';
 import Input from 'components/inputs/Input';
@@ -48,6 +56,31 @@ const EditAddressScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { updateModal } = useModalStore();
+
+  const originalAddress = useMemo(
+    () => ({
+      addressLine: userSession.address.address_line || '',
+      city: userSession.address.city || '',
+      zipCode: userSession.address.zip || '',
+      country: userSession.address.country || '',
+      countryCode: userSession.address.countryCode || '',
+      state: userSession.address.state || '',
+      stateCode: userSession.address.stateCode || '',
+    }),
+    [userSession],
+  );
+
+  const hasAddressChanged = useMemo(() => {
+    return (
+      addressLine !== originalAddress.addressLine ||
+      city !== originalAddress.city ||
+      zipCode !== originalAddress.zipCode ||
+      country !== originalAddress.country ||
+      countryCode !== originalAddress.countryCode ||
+      stateName !== originalAddress.state ||
+      stateCode !== originalAddress.stateCode
+    );
+  }, [addressLine, city, zipCode, country, countryCode, stateName, stateCode, originalAddress]);
 
   useEffect(() => {
     if (countryCode) {
@@ -133,7 +166,6 @@ const EditAddressScreen = () => {
   };
 
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
     const isFormValid = formErrors && Object.values(formErrors).every((error) => error === '');
     const areAllFieldsFilled = Object.values({
       address_line: addressLine,
@@ -143,7 +175,7 @@ const EditAddressScreen = () => {
       state: stateName,
     }).every((value) => value !== '');
 
-    return !(isFormValid && areAllFieldsFilled);
+    return !(isFormValid && areAllFieldsFilled && hasAddressChanged);
   };
 
   const handleValidationChecks = debounce((label: string, value: string, confirm?: string) => {
@@ -161,6 +193,7 @@ const EditAddressScreen = () => {
   }, 500); // ✅ Delay validation by 500ms
 
   const handleSubmit = async () => {
+    if (!hasAddressChanged) return;
     setIsLoading(true);
     try {
       const payload = {
@@ -242,113 +275,125 @@ const EditAddressScreen = () => {
   return (
     <View style={tw`flex-1 bg-white`}>
       <BackHeaderTitle title="Edit Address" />
-      <View style={tw`px-[20px] mt-[20px] flex-1 gap-[20px]`}>
-        <CustomSelectPicker
-          data={transformedCountries}
-          placeholder="Select country of residence"
-          value={countryCode}
-          handleSetValue={handleCountrySelect}
-          label="Country of residence"
-          search={true}
-          searchPlaceholder="Search Country"
-          dropdownPosition="bottom"
-        />
-
-        <CustomSelectPicker
-          data={stateData}
-          placeholder="Select state of residence"
-          value={stateName}
-          handleSetValue={handleStateSelect}
-          disable={!countryCode}
-          label="State of residence"
-          search={true}
-          searchPlaceholder="Search State"
-          dropdownPosition="top"
-        />
-
-        <View style={tw`flex-row`}>
-          <Input
-            label="Collector's Address"
-            keyboardType="default"
-            onInputChange={(text) => {
-              setAddressLine(text);
-              handleValidationChecks('general', text);
-            }}
-            placeHolder="Input your gallery address here"
-            value={addressLine}
-            errorMessage={formErrors?.address_line}
-          />
-        </View>
-
-        <View style={tw`flex-row items-center gap-[30px]`}>
-          <View style={tw`flex-1`}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={tw`flex-1`}
+      >
+        <ScrollView
+          nestedScrollEnabled={true}
+          style={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={tw`px-[20px] mt-[20px] flex-1 gap-[20px]`}>
             <CustomSelectPicker
-              data={cityData}
-              placeholder="Select city"
-              value={city}
-              disable={!stateName}
-              handleSetValue={(item) => {
-                if (item.value !== city) {
-                  setCity(item.value);
-                  setZipCode('');
+              data={transformedCountries}
+              placeholder="Select country of residence"
+              value={countryCode}
+              handleSetValue={handleCountrySelect}
+              label="Country of residence"
+              search={true}
+              searchPlaceholder="Search Country"
+              dropdownPosition="bottom"
+            />
+
+            <CustomSelectPicker
+              data={stateData}
+              placeholder="Select state of residence"
+              value={stateName}
+              handleSetValue={handleStateSelect}
+              disable={!countryCode}
+              label="State of residence"
+              search={true}
+              searchPlaceholder="Search State"
+              dropdownPosition="bottom"
+            />
+
+            <View style={tw`flex-row`}>
+              <Input
+                label="Address"
+                keyboardType="default"
+                onInputChange={(text) => {
+                  setAddressLine(text);
+                  handleValidationChecks('general', text);
+                }}
+                placeHolder="Input your gallery address here"
+                value={addressLine}
+                errorMessage={formErrors?.address_line}
+              />
+            </View>
+
+            <View style={tw`flex-row items-center gap-[30px]`}>
+              <View style={tw`flex-1`}>
+                <CustomSelectPicker
+                  data={cityData}
+                  placeholder="Select city"
+                  value={city}
+                  disable={!stateName}
+                  handleSetValue={(item) => {
+                    if (item.value !== city) {
+                      setCity(item.value);
+                      setZipCode('');
+                    }
+                  }}
+                  label="City"
+                  search={true}
+                  searchPlaceholder="Search City"
+                  dropdownPosition="top"
+                />
+              </View>
+              <View style={tw`flex-1`}>
+                <Input
+                  label="Zip Code"
+                  keyboardType="number-pad"
+                  onInputChange={(text) => {
+                    setZipCode(text);
+                    handleValidationChecks('general', text);
+                  }}
+                  placeHolder="Zip Code"
+                  value={zipCode}
+                  errorMessage={formErrors?.zip}
+                />
+              </View>
+            </View>
+
+            <View style={tw`flex-1 mt-[20px]`}>
+              <FittedBlackButton
+                isLoading={isLoading}
+                height={50}
+                value="Verify Address"
+                isDisabled={checkIsDisabled()}
+                onClick={handleSubmit}
+              />
+            </View>
+
+            <AuthModal
+              modalVisible={showModal}
+              setModalVisible={setShowModal}
+              icon={addressVerified ? checkMarkIcon : errorIcon}
+              text={
+                addressVerified
+                  ? 'Your Address has been verified succesfully'
+                  : 'Your Address could not be verified. Try again.'
+              }
+              btn1Text="Cancel"
+              btn2Text={addressVerified ? 'Update Address' : 'Try Again'}
+              onPress1={() => {
+                setShowModal(false);
+              }}
+              onPress2={() => {
+                if (addressVerified) {
+                  setShowModal(false);
+                  handleUpdate();
+                } else {
+                  setShowModal(false);
+                  handleSubmit();
                 }
               }}
-              label="City"
-              search={true}
-              searchPlaceholder="Search City"
-              dropdownPosition="top"
             />
           </View>
-          <View style={tw`flex-1`}>
-            <Input
-              label="Zip Code"
-              keyboardType="default"
-              onInputChange={(text) => {
-                setZipCode(text);
-                handleValidationChecks('general', text);
-              }}
-              placeHolder="Zip Code"
-              value={zipCode}
-              errorMessage={formErrors?.zip}
-            />
-          </View>
-        </View>
-
-        <View style={tw`flex-1 mt-[20px]`}>
-          <FittedBlackButton
-            isLoading={isLoading}
-            height={50}
-            value="Verify Address"
-            isDisabled={checkIsDisabled()}
-            onClick={handleSubmit}
-          />
-        </View>
-
-        <AuthModal
-          modalVisible={showModal}
-          setModalVisible={setShowModal}
-          icon={addressVerified ? checkMarkIcon : errorIcon}
-          text={
-            addressVerified
-              ? 'Your Address has been verified succesfully'
-              : 'Your Address could not be verified. Try again.'
-          }
-          btn1Text="Cancel"
-          btn2Text={addressVerified ? 'Update Address' : 'Try Again'}
-          onPress1={() => {
-            setShowModal(false);
-          }}
-          onPress2={() => {
-            if (addressVerified) {
-              setShowModal(false);
-              handleUpdate();
-            } else {
-              setShowModal(false);
-              handleSubmit();
-            }
-          }}
-        />
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 };
