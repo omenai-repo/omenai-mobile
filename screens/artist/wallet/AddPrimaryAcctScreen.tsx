@@ -371,7 +371,7 @@ const AddPrimaryAcctScreen = () => {
 
             <Input
               label={'Account number'} // Capitalize label
-              keyboardType="default"
+              keyboardType="numeric"
               onInputChange={(text: string) => setAcctNumber(text)}
               placeHolder={`Enter acct number`}
               value={acctNumber}

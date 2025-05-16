@@ -81,10 +81,10 @@ export default function ArtworkDimensions() {
     <View style={styles.container}>
       <View style={styles.inputsContainer}>
         <View>
-          <Text style={styles.label}>Dimensions</Text>
           <View style={styles.flexInputsContainer}>
-            <NoLabelInput
+            <Input
               placeHolder="Height"
+              label="Height"
               onInputChange={(value) => {
                 updateArtworkUploadData('height', value);
                 handleValidationChecks('height', artworkUploadData.height);
@@ -92,8 +92,9 @@ export default function ArtworkDimensions() {
               value={artworkUploadData.height}
               errorMessage={formErrors.height}
             />
-            <NoLabelInput
+            <Input
               placeHolder="Width"
+              label="Width"
               onInputChange={(value) => {
                 updateArtworkUploadData('width', value);
                 handleValidationChecks('width', artworkUploadData.width);
@@ -101,8 +102,9 @@ export default function ArtworkDimensions() {
               value={artworkUploadData.width}
               errorMessage={formErrors.width}
             />
-            <NoLabelInput
+            <Input
               placeHolder="Depth"
+              label="Depth"
               onInputChange={(value) => {
                 updateArtworkUploadData('depth', value);
                 handleValidationChecks('depth', artworkUploadData.depth);
@@ -118,7 +120,7 @@ export default function ArtworkDimensions() {
             (formErrors.height && <Text style={tw`text-[#ff0000] mt-2`}>{formErrors.height}</Text>)}
         </View>
         <Input
-          label="Weight (in Kg)"
+          label="Weight"
           onInputChange={(value) => {
             updateArtworkUploadData('weight', value);
             handleValidationChecks('weight', artworkUploadData.weight);
