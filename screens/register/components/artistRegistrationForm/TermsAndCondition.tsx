@@ -15,6 +15,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { gallery_logo_storage } from 'appWrite_config';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import Loader from 'components/general/Loader';
+import uploadLogo from 'screens/galleryProfileScreens/uploadNewLogo/uploadLogo';
 
 const TermsAndCondition = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -51,58 +52,65 @@ const TermsAndCondition = () => {
   const { updateModal } = useModalStore();
 
   const handleSubmit = async () => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const { name, email, password, address, logo, art_style, phone } = artistRegisterData;
+      const { name, email, password, address, logo, art_style, phone } = artistRegisterData;
 
-    if (logo === null) return;
+      if (logo === null) return;
 
-    const files = {
-      uri: logo.assets[0].uri,
-      name: logo.assets[0].fileName,
-      type: logo.assets[0].mimeType,
-      size: logo.assets[0].fileSize,
-    };
-    const fileUploaded = await uploadGalleryLogoContent(files);
-
-    if (fileUploaded) {
-      let file: { bucketId: string; fileId: string } = {
-        bucketId: fileUploaded.bucketId,
-        fileId: fileUploaded.$id,
+      const files = {
+        uri: logo.assets[0].uri,
+        name: logo.assets[0].fileName,
+        type: logo.assets[0].mimeType,
       };
+      const fileUploaded = await uploadLogo(files);
 
-      const payload: ArtistRegisterData = {
-        name,
-        email,
-        password,
-        logo: file.fileId,
-        address,
-        art_style,
-        phone,
-      };
+      if (fileUploaded) {
+        let file: { bucketId: string; fileId: string } = {
+          bucketId: fileUploaded.bucketId,
+          fileId: fileUploaded.$id,
+        };
 
-      const results = await registerAccount(payload, 'artist');
-      console.log(results);
-      if (results?.isOk) {
-        const resultsBody = results?.body;
-        clearState();
-        navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.data, type: 'artist' },
-        });
-      } else {
-        await gallery_logo_storage.deleteFile(
-          process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
-          file.fileId,
-        );
-        updateModal({
-          message: results?.body.message,
-          modalType: 'error',
-          showModal: true,
-        });
+        const payload: ArtistRegisterData = {
+          name,
+          email,
+          password,
+          logo: file.fileId,
+          address,
+          art_style,
+          phone,
+        };
+
+        const results = await registerAccount(payload, 'artist');
+        console.log(results);
+        if (results?.isOk) {
+          const resultsBody = results?.body;
+          clearState();
+          navigation.navigate(screenName.verifyEmail, {
+            account: { id: resultsBody.data, type: 'artist' },
+          });
+        } else {
+          await gallery_logo_storage.deleteFile(
+            process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
+            file.fileId,
+          );
+          updateModal({
+            message: results?.body.message,
+            modalType: 'error',
+            showModal: true,
+          });
+        }
       }
+    } catch (error: any) {
+      updateModal({
+        message: error.message,
+        modalType: 'error',
+        showModal: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const Conatiner = ({ onPress, text, id }: { onPress: () => void; text: string; id: number }) => {

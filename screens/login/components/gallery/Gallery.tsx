@@ -45,7 +45,6 @@ export default function Gallery() {
         role: resultsBody.role,
         gallery_verified: resultsBody.gallery_verified,
         description: resultsBody.description,
-        location: resultsBody.location,
         verified: resultsBody.verified,
         admin: resultsBody.admin,
         logo: resultsBody.logo,

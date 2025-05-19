@@ -136,8 +136,8 @@ type GallerySignupData = {
 
 type ImageAsset = {
   uri: string;
-  fileName?: string;
-  mimeType?: string;
+  fileName: string;
+  mimeType: string;
   width?: number;
   height?: number;
   fileSize?: number;
