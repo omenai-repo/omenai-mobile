@@ -14,6 +14,7 @@ import { CopilotProvider } from 'react-native-copilot';
 import * as SplashScreen from 'expo-splash-screen';
 import ArtistNavigation from 'navigation/ArtistNavigation';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { Platform } from 'react-native';
 
@@ -91,21 +92,25 @@ export default function App() {
     return null;
   }
 
+  const queryClient = new QueryClient();
+
   return (
     <CopilotProvider>
       <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <BottomSheetModalProvider>
-          <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}>
-            <NavigationContainer linking={linking}>
-              {/* AUTH SCREENS */}
-              {!isLoggedIn && <AuthNavigation />}
-              {/* App screens */}
-              {isLoggedIn && userType === 'gallery' && <GalleryNavigation />}
-              {isLoggedIn && userType === 'user' && <IndividualNavigation />}
-              {isLoggedIn && userType === 'artist' && <ArtistNavigation />}
-            </NavigationContainer>
-          </StripeProvider>
-        </BottomSheetModalProvider>
+        <QueryClientProvider client={queryClient}>
+          <BottomSheetModalProvider>
+            <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}>
+              <NavigationContainer linking={linking}>
+                {/* AUTH SCREENS */}
+                {!isLoggedIn && <AuthNavigation />}
+                {/* App screens */}
+                {isLoggedIn && userType === 'gallery' && <GalleryNavigation />}
+                {isLoggedIn && userType === 'user' && <IndividualNavigation />}
+                {isLoggedIn && userType === 'artist' && <ArtistNavigation />}
+              </NavigationContainer>
+            </StripeProvider>
+          </BottomSheetModalProvider>
+        </QueryClientProvider>
       </GestureHandlerRootView>
     </CopilotProvider>
   );

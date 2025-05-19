@@ -1,40 +1,89 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Octicons } from '@expo/vector-icons'
-import LongBlackButton from 'components/buttons/LongBlackButton'
-import { colors } from 'config/colors.config'
-import BackScreenButton from 'components/buttons/BackScreenButton'
-import { StackNavigationProp } from '@react-navigation/stack'
-import { useNavigation } from '@react-navigation/native'
+import { View, Text, TouchableOpacity, ActivityIndicator, useWindowDimensions } from 'react-native';
+import React, { useState } from 'react';
+import tw from 'twrnc';
+import BackScreenButton from 'components/buttons/BackScreenButton';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { verifyGalleryRequest } from 'services/verify/verifyGalleryRequest';
+import WithModal from 'components/modal/WithModal';
+import { useModalStore } from 'store/modal/modalStore';
+import { useAppStore } from 'store/app/appStore';
 
-export default function LockScreen() {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+export default function LockScreen({ name }: { name: string }) {
+  const { height } = useWindowDimensions();
+  const navigation = useNavigation<any>();
+  const [loading, setLoading] = useState(false);
+  const { updateModal } = useModalStore();
+  const { userType } = useAppStore();
 
-    return (
-        <View style={{flex: 1, backgroundColor: colors.white}}>
-            <SafeAreaView>
-                <View style={{paddingHorizontal: 20}}>
-                    <BackScreenButton handleClick={() => navigation.goBack()} />
-                </View>
-            </SafeAreaView>
-            <View style={styles.container}>
-                <Octicons name='shield-lock' size={40} color={colors.primary_black} />
-                <Text style={{fontSize: 16, textAlign: 'center', marginVertical: 30, color: colors.primary_black}}>Your account is being verified, an agent will reach out to you within 24 hours.</Text>
-                {/* <Text style={{fontSize: 16, textAlign: 'center', marginTop: 10, marginBottom: 50}}>To expedite this process, please click the ' Request gallery verification ' button below</Text> */}
-                <LongBlackButton
-                    value='Request gallery verification'
-                    onClick={() => void('')}
-                />
-            </View>
-        </View>
-    )
-}
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        marginTop: 120
+  async function handleRequestGalleryVerification() {
+    setLoading(true);
+    try {
+      const response = await verifyGalleryRequest(name);
+      if (!response?.isOk) {
+        updateModal({
+          message: 'Error sending verification reminder',
+          modalType: 'error',
+          showModal: true,
+        });
+      } else {
+        updateModal({
+          message: 'Verification reminder sent successfully',
+          modalType: 'success',
+          showModal: true,
+        });
+        navigation.goBack();
+      }
+    } catch (error) {
+      console.error('Error sending verification reminder:', error);
+      updateModal({
+        message: 'Error sending verification reminder',
+        modalType: 'error',
+        showModal: true,
+      });
+    } finally {
+      setLoading(false);
     }
-})
+  }
+
+  return (
+    <WithModal>
+      <View style={tw`flex-1 bg-[#fff] pt-[60px] android:pt-[80px] px-[25px]`}>
+        <BackScreenButton handleClick={() => navigation.goBack()} />
+        <View
+          style={tw.style(
+            `items-center justify-center bg-neutral-900 mt-10 rounded-2xl px-[30px] py-[40px]`,
+            {
+              marginTop: height / 5,
+            },
+          )}
+        >
+          <Ionicons name="shield" size={35} color="white" />
+          <Text style={tw`text-white text-center my-4`}>
+            Your account is being verified. An agent will reach out within 24 hours.
+          </Text>
+          {userType === 'gallery' && (
+            <>
+              <Text style={tw`text-white text-center mb-4`}>
+                To expedite, click <Text style={tw`font-bold`}>'Send Verification Reminder'</Text>{' '}
+                below.
+              </Text>
+
+              <TouchableOpacity
+                style={tw`bg-white px-6 py-3 rounded-full ${loading ? 'opacity-50' : ''}`}
+                disabled={loading}
+                onPress={handleRequestGalleryVerification}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#000" />
+                ) : (
+                  <Text style={tw`text-black`}>Send Verification Reminder</Text>
+                )}
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+      </View>
+    </WithModal>
+  );
+}

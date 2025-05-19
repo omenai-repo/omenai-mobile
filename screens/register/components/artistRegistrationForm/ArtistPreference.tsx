@@ -23,7 +23,7 @@ const ArtistPreference = () => {
       let index = arr.indexOf(value);
       arr.splice(index, 1);
       setArtStyles(arr);
-    } else if (artistRegisterData.art_style.length < 5) {
+    } else if (artistRegisterData.art_style.length < 1) {
       setArtStyles([...artistRegisterData.art_style, value]);
     }
   };
@@ -65,7 +65,7 @@ const ArtistPreference = () => {
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <NextButton
-          isDisabled={artistRegisterData.art_style.length < 5}
+          isDisabled={artistRegisterData.art_style.length < 1}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

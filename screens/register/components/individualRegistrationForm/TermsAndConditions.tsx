@@ -47,7 +47,7 @@ export default function TermsAndConditions() {
       const resultsBody = results?.body;
       clearState();
       navigation.navigate(screenName.verifyEmail, {
-        account: { id: resultsBody.id, type: 'individual' },
+        account: { id: resultsBody.data, type: 'individual' },
       });
     } else {
       updateModal({

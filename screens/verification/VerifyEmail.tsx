@@ -27,7 +27,7 @@ export default function VerifyEmail() {
   const handleVerifyToken = async () => {
     setIsLoading(true);
     const results = await verifyEmail({ params: account.id, token: token }, account.type);
-    console.log(results, 'll');
+
     if (results.isOk) {
       updateModal({
         message: results.body.message,
