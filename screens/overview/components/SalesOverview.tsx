@@ -66,6 +66,7 @@ export default function SalesOverview({
     'Dec',
   ];
   const maxValue = Math.max(...salesOverviewData);
+  const safeMaxValue = maxValue === 0 ? 1 : maxValue;
 
   // Chart configuration
   const chartWidth = width - 40;
@@ -139,6 +140,16 @@ export default function SalesOverview({
     );
   }
 
+  if (salesOverviewData.every((val) => val === 0)) {
+    return (
+      <View style={styles.container}>
+        <Text style={[styles.title, { textAlign: 'center', marginTop: 40, marginBottom: 20 }]}>
+          No sales data available for this year.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <>
       {/* <Text style={tw`text-[18px] text-[#1A1A1A]] font-medium mb-[10px] mx-[20px]`}>
@@ -180,7 +191,7 @@ export default function SalesOverview({
             </Defs>
 
             {salesOverviewData.map((value, index) => {
-              const barHeight = (value / maxValue) * chartHeight;
+              const barHeight = (value / safeMaxValue) * chartHeight;
               const x = yAxisWidth + index * barWidth - barWidth + index + 10;
               const y = chartHeight - barHeight;
 

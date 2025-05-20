@@ -336,6 +336,7 @@ const OrderScreen = () => {
   const { updateModal } = useModalStore();
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [orderId, setOrderId] = useState('');
 
   const { data, setData } = artistOrdersStore();
 
@@ -450,7 +451,14 @@ const OrderScreen = () => {
                             })
                         : undefined
                     }
-                    declineBtn={selectedTab === 'pending' ? () => setDeclineModal(true) : undefined}
+                    declineBtn={
+                      selectedTab === 'pending'
+                        ? () => {
+                            setDeclineModal(true);
+                            setOrderId(item.order_id);
+                          }
+                        : undefined
+                    }
                     delivered={item.shipping_details.delivery_confirmed}
                     order_accepted={item.order_accepted.status}
                     payment_status={item.payment_information.status}
@@ -468,7 +476,8 @@ const OrderScreen = () => {
         <DeclineOrderModal
           isModalVisible={declineModal}
           setIsModalVisible={setDeclineModal}
-          confirmBtn={() => {}}
+          orderId={orderId}
+          refresh={handleFetchOrders}
         />
       </View>
     </WithModal>
