@@ -22,6 +22,8 @@ import WithModal from 'components/modal/WithModal';
 import { validateOrderMeasurement } from 'lib/validations/upload_artwork_input_validator/validateOrderMeasurement';
 import { useAppStore } from 'store/app/appStore';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import UnitDropdown from './UnitDropdown';
+import { convertDimensionsToStandard } from 'utils/convertUnits';
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -35,12 +37,24 @@ const DimensionsDetails = () => {
   const { userType } = useAppStore();
   const { orderId } = useRoute<any>().params;
   const navigation = useNavigation();
+  const [units, setUnits] = useState<{
+    height: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+    width: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+    length: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+    weight: 'kg' | 'g' | 'lb';
+  }>({
+    height: 'cm',
+    width: 'cm',
+    length: 'cm',
+    weight: 'kg',
+  });
   const [dimentions, setDimentions] = useState({
     length: '',
     width: '',
     height: '',
     weight: '',
   });
+
   const [formErrors, setFormErrors] = useState<ArtworkDimensionsErrorsType>({
     height: '',
     length: '',
@@ -82,16 +96,12 @@ const DimensionsDetails = () => {
   };
 
   const handleSubmit = async () => {
+    const converted = convertDimensionsToStandard(dimentions, units);
     try {
       setIsLoading(true);
       const payload = {
         order_id: orderId,
-        dimensions: {
-          length: parseFloat(dimentions.length),
-          width: parseFloat(dimentions.width),
-          height: parseFloat(dimentions.height),
-          weight: parseFloat(dimentions.weight),
-        },
+        dimensions: converted,
         exhibition_status:
           userType === 'gallery'
             ? {
@@ -152,27 +162,52 @@ const DimensionsDetails = () => {
             keyboardShouldPersistTaps="handled"
           >
             <View style={tw`mt-[30px] mx-[25px] gap-[30px]`}>
-              {(
-                ['height', 'length', 'width', 'weight'] as Array<keyof ArtworkDimensionsErrorsType>
-              ).map((field) => (
-                <Input
-                  key={field}
-                  label={
-                    field === 'weight'
-                      ? field.charAt(0).toUpperCase() + field.slice(1) + ' ' + '(kg)'
-                      : field.charAt(0).toUpperCase() + field.slice(1) + ' ' + '(cm)'
-                  } // Capitalize label
-                  keyboardType="default"
-                  onInputChange={(text) => {
-                    setDimentions((prev) => ({ ...prev, [field]: text }));
-                    handleValidationChecks(field as keyof ArtworkDimensionsErrorsType, text);
-                  }}
-                  placeHolder={`Enter ${field}`}
-                  value={dimentions[field]}
-                  errorMessage={formErrors[field]}
-                  containerStyle={{ flex: 0 }}
-                />
+              {(['height', 'length', 'width'] as Array<keyof typeof dimentions>).map((field) => (
+                <View key={field} style={tw`flex-row gap-3`}>
+                  <View style={tw`flex-5`}>
+                    <Input
+                      label={`${field.charAt(0).toUpperCase() + field.slice(1)} (${units[field]})`}
+                      keyboardType="numeric"
+                      onInputChange={(text) => {
+                        setDimentions((prev) => ({ ...prev, [field]: text }));
+                        handleValidationChecks(field, text);
+                      }}
+                      placeHolder={`Enter ${field}`}
+                      value={dimentions[field]}
+                      errorMessage={formErrors[field]}
+                    />
+                  </View>
+                  <UnitDropdown
+                    units={['cm', 'mm', 'm', 'in', 'ft']}
+                    selectedUnit={units[field]}
+                    onSelect={(val) => setUnits((prev) => ({ ...prev, [field]: val }))}
+                  />
+                </View>
               ))}
+
+              {/* Weight field separately */}
+              <View style={tw`flex-row items-center gap-3`}>
+                <View style={tw`flex-5`}>
+                  <Input
+                    label={`Weight (${units.weight})`}
+                    keyboardType="numeric"
+                    onInputChange={(text) => {
+                      setDimentions((prev) => ({ ...prev, weight: text }));
+                      handleValidationChecks('weight', text);
+                    }}
+                    placeHolder="Enter weight"
+                    value={dimentions.weight}
+                    errorMessage={formErrors.weight}
+                  />
+                </View>
+                <UnitDropdown
+                  units={['kg', 'g', 'lb']}
+                  selectedUnit={units.weight}
+                  onSelect={(val: string) =>
+                    setUnits((prev) => ({ ...prev, weight: val as 'kg' | 'g' | 'lb' }))
+                  }
+                />
+              </View>
             </View>
 
             {userType === 'gallery' && (

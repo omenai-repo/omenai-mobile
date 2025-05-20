@@ -1,3 +1,17 @@
+type Units = {
+  height: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+  width: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+  length: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+  weight: 'kg' | 'g' | 'lb';
+};
+
+type RawValues = {
+  height: string;
+  width: string;
+  length: string;
+  weight: string;
+};
+
 export function convertToCm(value: string, unit: 'cm' | 'mm' | 'm' | 'in' | 'ft'): number {
   const num = parseFloat(value);
   if (isNaN(num)) return 0;
@@ -33,3 +47,12 @@ export function convertToKg(value: string, unit: 'kg' | 'g' | 'lb'): number {
       return num;
   }
 }
+
+export const convertDimensionsToStandard = (values: RawValues, units: Units) => {
+  return {
+    height: convertToCm(values.height, units.height),
+    width: convertToCm(values.width, units.width),
+    length: convertToCm(values.length, units.length),
+    weight: convertToKg(values.weight, units.weight),
+  };
+};

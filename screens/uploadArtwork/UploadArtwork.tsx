@@ -100,8 +100,6 @@ export default function UploadArtwork() {
     refetchOnWindowFocus: false,
   });
 
-  if (!loadGalleryCheck) console.log(isConfirmed, 'ppp');
-
   const handleArtworkUpload = async () => {
     try {
       setIsLoading(true);

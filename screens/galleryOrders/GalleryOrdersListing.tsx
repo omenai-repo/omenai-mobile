@@ -36,6 +36,7 @@ export default function GalleryOrdersListing() {
   const { updateModal } = useModalStore();
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [orderId, setOrderId] = useState('');
 
   useEffect(() => {
     handleFetchOrders();
@@ -55,12 +56,6 @@ export default function GalleryOrdersListing() {
 
     setRefreshing(false);
     setIsloading(false);
-  };
-
-  const handleOpenModal = (modal: galleryOrderModalTypes, order_id: string) => {
-    setIsVisible(true);
-    setModalType(modal);
-    setCurrentId(order_id);
   };
 
   const toggleRecentOrder = (key: number) => {
@@ -98,34 +93,6 @@ export default function GalleryOrdersListing() {
           selectedKey={selectedTab}
           setSelectedKey={(key) => setSelectedTab(key as 'pending' | 'processing' | 'completed')}
         />
-        {/* <ScrollWrapper
-          style={styles.container}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={() => setRefreshing(true)} />
-          }
-        >
-          <View
-            style={{
-              marginTop: 20,
-              marginBottom: 150,
-            }}
-          >
-            {selectedTab === 'pending' && !isloading && (
-              <PendingOrders data={data[selectedTab]} handleOpenModal={handleOpenModal} />
-            )}
-            {selectedTab === 'processing' && !isloading && (
-              <ProcessingOrders data={data[selectedTab]} handleOpenModal={handleOpenModal} />
-            )}
-            {selectedTab === 'completed' && !isloading && (
-              <CompletedOrders data={data[selectedTab]} handleOpenModal={handleOpenModal} />
-            )}
-            {data[selectedTab].length === 0 && !isloading && (
-              <EmptyOrdersListing status={selectedTab} />
-            )}
-            {isloading && <OrderslistingLoader />}
-          </View>
-        </ScrollWrapper> */}
 
         <View
           style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
@@ -168,7 +135,14 @@ export default function GalleryOrdersListing() {
                             })
                         : undefined
                     }
-                    declineBtn={selectedTab === 'pending' ? () => setDeclineModal(true) : undefined}
+                    declineBtn={
+                      selectedTab === 'pending'
+                        ? () => {
+                            setDeclineModal(true);
+                            setOrderId(item.order_id);
+                          }
+                        : undefined
+                    }
                     delivered={item.shipping_details.delivery_confirmed}
                     order_accepted={item.order_accepted.status}
                     payment_status={item.payment_information.status}
@@ -186,16 +160,10 @@ export default function GalleryOrdersListing() {
         <DeclineOrderModal
           isModalVisible={declineModal}
           setIsModalVisible={setDeclineModal}
-          confirmBtn={() => {}}
+          orderId={orderId}
+          refresh={handleFetchOrders}
         />
       </View>
     </WithModal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-});

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { colors } from 'config/colors.config';
 import Input from 'components/inputs/Input';
@@ -8,6 +8,9 @@ import NoLabelInput from 'components/inputs/NoLabelInput';
 import { validate } from 'lib/validations/upload_artwork_input_validator/validator';
 import tw from 'twrnc';
 import { useAppStore } from 'store/app/appStore';
+import UnitDropdown from 'screens/artist/orders/UnitDropdown';
+import { validateOrderMeasurement } from 'lib/validations/upload_artwork_input_validator/validateOrderMeasurement';
+import { convertToCm, convertToKg } from 'utils/convertUnits';
 
 type artworkDimensionsErrorsType = {
   height: string;
@@ -18,9 +21,24 @@ type artworkDimensionsErrorsType = {
 
 export default function ArtworkDimensions() {
   const { userType } = useAppStore();
-  const { setActiveIndex, activeIndex, artworkUploadData, updateArtworkUploadData } =
-    uploadArtworkStore();
-
+  const { setActiveIndex, activeIndex, updateArtworkUploadData } = uploadArtworkStore();
+  const [units, setUnits] = useState<{
+    height: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+    width: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+    depth: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+    weight: 'kg' | 'g' | 'lb';
+  }>({
+    height: 'cm',
+    width: 'cm',
+    depth: 'cm',
+    weight: 'kg',
+  });
+  const [dimentions, setDimentions] = useState({
+    depth: '',
+    width: '',
+    height: '',
+    weight: '',
+  });
   const [formErrors, setFormErrors] = useState<artworkDimensionsErrorsType>({
     weight: '',
     depth: '',
@@ -36,106 +54,131 @@ export default function ArtworkDimensions() {
       width: formErrors.width,
     }).every((error) => error === '');
     const areAllFieldsFilled = Object.values({
-      weight: artworkUploadData.weight,
-      height: artworkUploadData.height,
-      width: artworkUploadData.width,
+      weight: dimentions.weight,
+      height: dimentions.height,
+      width: dimentions.width,
     }).every((value) => value !== '');
 
     return !(isFormValid && areAllFieldsFilled);
   };
 
-  const handleValidationChecks = (label: string, value: string) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } = validate(label, value);
-    if (!success) {
-      setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
-    } else {
+  const handleValidationChecks = (label: keyof artworkDimensionsErrorsType, value: string) => {
+    if (value.trim() === '') {
+      // If the input is empty, clear the error
       setFormErrors((prev) => ({ ...prev, [label]: '' }));
+    } else {
+      // Run validation and update error state
+      const errors = validateOrderMeasurement(value);
+      setFormErrors((prev) => ({ ...prev, [label]: errors.length === 0 ? '' : errors }));
     }
   };
 
   useEffect(() => {
-    if (artworkUploadData.height) {
-      handleValidationChecks('height', artworkUploadData.height);
+    if (dimentions.height) {
+      handleValidationChecks('height', dimentions.height);
     }
-  }, [artworkUploadData.height]);
+  }, [dimentions.height]);
 
   useEffect(() => {
-    if (artworkUploadData.width) {
-      handleValidationChecks('width', artworkUploadData.width);
+    if (dimentions.width) {
+      handleValidationChecks('width', dimentions.width);
     }
-  }, [artworkUploadData.width]);
+  }, [dimentions.width]);
 
   useEffect(() => {
-    if (artworkUploadData.depth) {
-      handleValidationChecks('depth', artworkUploadData.depth || '');
+    if (dimentions.depth) {
+      handleValidationChecks('depth', dimentions.depth || '');
     }
-  }, [artworkUploadData.depth]);
+  }, [dimentions.depth]);
 
   useEffect(() => {
-    if (artworkUploadData.weight) {
-      handleValidationChecks('weight', artworkUploadData.weight);
+    if (dimentions.weight) {
+      handleValidationChecks('weight', dimentions.weight);
     }
-  }, [artworkUploadData.weight]);
+  }, [dimentions.weight]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputsContainer}>
-        <View>
-          <View style={styles.flexInputsContainer}>
-            <Input
-              placeHolder="Height"
-              label="Height"
-              onInputChange={(value) => {
-                updateArtworkUploadData('height', value);
-                handleValidationChecks('height', artworkUploadData.height);
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={tw`flex-1`}
+      >
+        <ScrollView
+          nestedScrollEnabled={true}
+          style={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={tw`gap-[30px]`}>
+            {(['height', 'width', 'depth'] as Array<keyof typeof dimentions>).map((field) => (
+              <View key={field} style={tw`flex-row gap-3`}>
+                <View style={tw`flex-5`}>
+                  <Input
+                    label={`${field.charAt(0).toUpperCase() + field.slice(1)} (${units[field]})`}
+                    keyboardType="numeric"
+                    onInputChange={(text) => {
+                      setDimentions((prev) => ({ ...prev, [field]: text }));
+                      handleValidationChecks(field, text);
+                    }}
+                    placeHolder={`Enter ${field}`}
+                    value={dimentions[field]}
+                    errorMessage={formErrors[field]}
+                  />
+                </View>
+                <UnitDropdown
+                  units={['cm', 'mm', 'm', 'in', 'ft']}
+                  selectedUnit={units[field]}
+                  onSelect={(val) => setUnits((prev) => ({ ...prev, [field]: val }))}
+                />
+              </View>
+            ))}
+
+            {/* Weight field separately */}
+            <View style={tw`flex-row items-center gap-3`}>
+              <View style={tw`flex-5`}>
+                <Input
+                  label={`Weight (${units.weight})`}
+                  keyboardType="numeric"
+                  onInputChange={(text) => {
+                    setDimentions((prev) => ({ ...prev, weight: text }));
+                    handleValidationChecks('weight', text);
+                  }}
+                  placeHolder="Enter weight"
+                  value={dimentions.weight}
+                  errorMessage={formErrors.weight}
+                />
+              </View>
+              <UnitDropdown
+                units={['kg', 'g', 'lb']}
+                selectedUnit={units.weight}
+                onSelect={(val: string) =>
+                  setUnits((prev) => ({ ...prev, weight: val as 'kg' | 'g' | 'lb' }))
+                }
+              />
+            </View>
+          </View>
+          <View style={tw`mt-[60px] mb-[150px]`}>
+            <LongBlackButton
+              value="Proceed"
+              onClick={() => {
+                const heightInCm = convertToCm(dimentions.height, units.height);
+                const widthInCm = convertToCm(dimentions.width, units.width);
+                const depthInCm = convertToCm(dimentions.depth, units.depth);
+                const weightInKg = convertToKg(dimentions.weight, units.weight);
+
+                updateArtworkUploadData('height', `${heightInCm}cm`);
+                updateArtworkUploadData('width', `${widthInCm}cm`);
+                updateArtworkUploadData('depth', `${depthInCm}cm`);
+                updateArtworkUploadData('weight', `${weightInKg}kg`);
+
+                setActiveIndex(activeIndex + 1);
               }}
-              value={artworkUploadData.height}
-              errorMessage={formErrors.height}
-            />
-            <Input
-              placeHolder="Width"
-              label="Width"
-              onInputChange={(value) => {
-                updateArtworkUploadData('width', value);
-                handleValidationChecks('width', artworkUploadData.width);
-              }}
-              value={artworkUploadData.width}
-              errorMessage={formErrors.width}
-            />
-            <Input
-              placeHolder="Depth"
-              label="Depth"
-              onInputChange={(value) => {
-                updateArtworkUploadData('depth', value);
-                handleValidationChecks('depth', artworkUploadData.depth);
-              }}
-              value={artworkUploadData.depth || ''}
-              errorMessage={formErrors.depth}
+              isLoading={false}
+              isDisabled={checkIsDisabled()}
             />
           </View>
-
-          {/* Displaying only one error in the dimentions inputs */}
-          {(formErrors.depth && <Text style={tw`text-[#ff0000] mt-2`}>{formErrors.depth}</Text>) ||
-            (formErrors.width && <Text style={tw`text-[#ff0000] mt-2`}>{formErrors.width}</Text>) ||
-            (formErrors.height && <Text style={tw`text-[#ff0000] mt-2`}>{formErrors.height}</Text>)}
-        </View>
-        <Input
-          label="Weight"
-          onInputChange={(value) => {
-            updateArtworkUploadData('weight', value);
-            handleValidationChecks('weight', artworkUploadData.weight);
-          }}
-          placeHolder="Enter weight of artwork"
-          value={artworkUploadData.weight}
-          errorMessage={formErrors.weight}
-        />
-      </View>
-      <LongBlackButton
-        value="Proceed"
-        onClick={() => setActiveIndex(activeIndex + 1)}
-        isLoading={false}
-        isDisabled={checkIsDisabled()}
-      />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
