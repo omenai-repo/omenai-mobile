@@ -55,7 +55,8 @@ const TermsAndCondition = () => {
     try {
       setIsLoading(true);
 
-      const { name, email, password, address, logo, art_style, phone } = artistRegisterData;
+      const { name, email, password, address, logo, art_style, phone, base_currency } =
+        artistRegisterData;
 
       if (logo === null) return;
 
@@ -79,6 +80,7 @@ const TermsAndCondition = () => {
           logo: file.fileId,
           address,
           art_style,
+          base_currency,
           phone,
         };
 

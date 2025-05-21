@@ -7,28 +7,7 @@ import tw from 'twrnc';
 
 const { width } = Dimensions.get('window');
 
-const artistData = [
-  { Revenue: 0, name: 'Jan' },
-  { Revenue: 0, name: 'Feb' },
-  { Revenue: 6124, name: 'Mar' },
-  { Revenue: 0, name: 'Apr' },
-  { Revenue: 0, name: 'May' },
-  { Revenue: 0, name: 'Jun' },
-  { Revenue: 0, name: 'Jul' },
-  { Revenue: 0, name: 'Aug' },
-  { Revenue: 0, name: 'Sep' },
-  { Revenue: 0, name: 'Oct' },
-  { Revenue: 0, name: 'Nov' },
-  { Revenue: 0, name: 'Dec' },
-];
-
-export default function SalesOverview({
-  refreshCount,
-  userType,
-}: {
-  refreshCount: number;
-  userType: string;
-}) {
+export default function SalesOverview({ refreshCount }: { refreshCount: number }) {
   const [salesOverviewData, setSalesOverviewData] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tooltip, setTooltip] = useState({
@@ -43,7 +22,7 @@ export default function SalesOverview({
     setIsLoading(true);
     async function handleFetchSalesData() {
       const data = await getSalesActivityData();
-      const activityData = userType === 'gallery' ? salesDataAlgorithm(data.data) : artistData;
+      const activityData = salesDataAlgorithm(data.data);
       const arr = activityData.map((month) => month.Revenue);
       setSalesOverviewData(arr);
       setIsLoading(false);

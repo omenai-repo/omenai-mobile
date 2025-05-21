@@ -6,8 +6,9 @@ type ArtistSignupData = {
   password: string;
   confirmPassword: string;
   address: AddressTypes;
-  art_style: string[];
+  art_style: string;
   logo: any;
+  base_currency: string;
   phone: string;
 };
 
@@ -27,11 +28,12 @@ type ArtistAuthRegisterStoreType = {
   setCountry: (e: string) => void;
   setCountryCode: (e: string) => void;
   setStateCode: (e: string) => void;
+  setBaseCurrency: (e: string) => void;
   stateData: { label: string; value: string }[];
   setStateData: (e: { label: string; value: string }[]) => void;
   cityData: { label: string; value: string }[];
   setCityData: (e: { label: string; value: string }[]) => void;
-  setArtStyles: (e: string[]) => void;
+  setArtStyles: (e: string) => void;
   setArtistPhoto: (image: any) => void;
   isLoading: boolean;
   setIsLoading: (e: boolean) => void;
@@ -60,7 +62,8 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>((s
       state: '',
       stateCode: '',
     },
-    art_style: [],
+    art_style: '',
+    base_currency: '',
     logo: null,
   },
   setName: (name: string) => {
@@ -113,6 +116,10 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>((s
     const data = get().artistRegisterData;
     set({ artistRegisterData: { ...data, address: { ...data.address, stateCode } } });
   },
+  setBaseCurrency: (base_currency: string) => {
+    const data = get().artistRegisterData;
+    set({ artistRegisterData: { ...data, base_currency } });
+  },
   stateData: [],
   setStateData: (stateData: { label: string; value: string }[]) => {
     set({ stateData });
@@ -121,7 +128,7 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>((s
   setCityData: (cityData: { label: string; value: string }[]) => {
     set({ cityData });
   },
-  setArtStyles: (art_style: string[]) => {
+  setArtStyles: (art_style: string) => {
     const data = get().artistRegisterData;
     set({ artistRegisterData: { ...data, art_style } });
   },
@@ -158,7 +165,8 @@ export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>((s
           state: '',
           stateCode: '',
         },
-        art_style: [],
+        art_style: '',
+        base_currency: '',
         logo: null,
       },
     });

@@ -7,21 +7,25 @@ import { getArtistCredentials } from 'services/artistOnboarding/getArtistCredent
 import loaderAnimation from '../../../assets/other/loader-animation.json';
 import { QuestionKey, questions } from 'screens/artistOnboarding/ArtistOnboarding';
 import ViewItem from './ViewItem';
+import { getDocFileView } from 'lib/storage/getDocFileView';
 
 const { width } = Dimensions.get('window');
 
 export default function ViewCredentialsScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [credentials, setCredentials] = useState<any>(null);
+  const [cv, setCv] = useState('');
   const animation = useRef(null);
 
   useEffect(() => {
     const fetchCredentials = async () => {
       try {
         const res = await getArtistCredentials();
-        const data = res?.body?.credentials;
+        const data = res?.body;
         if (!data) return;
         setCredentials(data);
+        const cvUrl = getDocFileView(data.documentation.cv);
+        setCv(cvUrl);
       } catch (err) {
         console.error(err);
       } finally {
@@ -53,7 +57,7 @@ export default function ViewCredentialsScreen() {
     );
   }
 
-  const answers = credentials.categorization.answers;
+  const answers = credentials.credentials.categorization.answers;
   const documentation = credentials.documentation;
 
   return (
@@ -76,14 +80,12 @@ export default function ViewCredentialsScreen() {
           })}
 
           {/* Social Links */}
-          {/* {Object.entries(documentation?.socials).map(([key, value]) =>
+          {Object.entries(documentation?.socials).map(([key, value]) =>
             value ? <ViewItem key={key} title={key.toUpperCase()} value={String(value)} /> : null,
-          )} */}
+          )}
 
           {/* CV */}
-          {/* {documentation?.cv && (
-            <ViewItem title="CV Document" value={documentation.cv} isDownloadable />
-          )} */}
+          {cv && <ViewItem title="CV Document" value={cv} isDownloadable />}
         </View>
       </ScrollView>
     </View>
