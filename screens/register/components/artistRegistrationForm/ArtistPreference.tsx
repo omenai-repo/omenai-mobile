@@ -18,14 +18,9 @@ const ArtistPreference = () => {
     useArtistAuthRegisterStore();
 
   const handleSelect = (value: string) => {
-    if (artistRegisterData.art_style.includes(value)) {
-      let arr = [...artistRegisterData.art_style];
-      let index = arr.indexOf(value);
-      arr.splice(index, 1);
-      setArtStyles(arr);
-    } else if (artistRegisterData.art_style.length < 1) {
-      setArtStyles([...artistRegisterData.art_style, value]);
-    }
+    // If the selected value is already selected, deselect it
+    // Otherwise, select the new value (replacing any previous selection)
+    setArtStyles(artistRegisterData.art_style === value ? '' : value);
   };
 
   const TabItem = ({ name, isSelected, onSelect }: TabItemProps) => {
@@ -56,7 +51,7 @@ const ArtistPreference = () => {
             name={i.value}
             key={idx}
             onSelect={() => handleSelect(i.value)}
-            isSelected={artistRegisterData.art_style.includes(i.value)}
+            isSelected={artistRegisterData.art_style === i.value}
           />
         ))}
       </View>
@@ -65,7 +60,7 @@ const ArtistPreference = () => {
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <NextButton
-          isDisabled={artistRegisterData.art_style.length < 1}
+          isDisabled={!artistRegisterData.art_style} // Disabled if nothing is selected
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

@@ -57,7 +57,9 @@ export const OTPInput = forwardRef(({ length = 6, onChange }: OTPInputProps, ref
       {Array.from({ length }).map((_, index) => (
         <TextInput
           key={index}
-          ref={(el) => (inputs.current[index] = el as TextInput)}
+          ref={(el) => {
+            inputs.current[index] = el as TextInput;
+          }}
           style={[
             tw`w-14 h-14 border border-gray-400 rounded-[15px] text-center text-xl bg-[#fff]`,
           ]}

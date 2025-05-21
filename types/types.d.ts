@@ -153,6 +153,7 @@ type ArtistSignupData = {
   } | null;
   art_style: string | string[];
   address: AddressTypes;
+  base_currency: string;
   phone: string;
 };
 

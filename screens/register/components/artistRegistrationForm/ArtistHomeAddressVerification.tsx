@@ -37,6 +37,7 @@ const ArtistHomeAddressVerification = () => {
       artist_countries_codes_currency.map((item) => ({
         value: item.alpha2,
         label: item.name,
+        currency: item.currency,
       })),
     [],
   );
@@ -59,11 +60,15 @@ const ArtistHomeAddressVerification = () => {
     cityData,
     setCityData,
     setStateCode,
+    setBaseCurrency,
   } = useArtistAuthRegisterStore();
-
-  const handleCountrySelect = (item: { label: string; value: string }) => {
+  console.log(artistRegisterData.base_currency);
+  const handleCountrySelect = (item: { label: string; value: string; currency?: string }) => {
     setCountry(item.label);
     setCountryCode(item.value);
+    if (item.currency) {
+      setBaseCurrency(item.currency);
+    }
 
     // Reset state and city selections
     setState('');
@@ -208,7 +213,7 @@ const ArtistHomeAddressVerification = () => {
           label="State of residence"
           search={true}
           searchPlaceholder="Search state"
-          dropdownPosition="top"
+          dropdownPosition="bottom"
         />
       </View>
 
@@ -237,7 +242,7 @@ const ArtistHomeAddressVerification = () => {
             label="City"
             search={true}
             searchPlaceholder="Search City"
-            dropdownPosition="top"
+            dropdownPosition="bottom"
           />
         </View>
         <Input

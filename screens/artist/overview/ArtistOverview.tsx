@@ -275,7 +275,7 @@ const ArtistOverview = () => {
           />
         </View>
 
-        <SalesOverview refreshCount={refreshCount} userType="artist" />
+        <SalesOverview refreshCount={refreshCount} />
 
         {data.length !== 0 && (
           <View
