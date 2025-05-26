@@ -125,14 +125,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 20,
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
   },
   headerContainer: {
     paddingHorizontal: 20,
   },
   mainContainer: {
     paddingHorizontal: 20,
-    marginTop: 20,
     flex: 1,
   },
   buttonsContainer: {
