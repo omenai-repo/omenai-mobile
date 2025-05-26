@@ -10,8 +10,6 @@ import WithGalleryModal from 'components/modal/WithGalleryModal';
 import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
 import { useAppStore } from 'store/app/appStore';
 import ScrollWrapper from 'components/general/ScrollWrapper';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import omenaiAvatar from 'assets/images/omenai-avatar.png';
 import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import { changePasswsordIcon, deleteIcon } from 'utils/SvgImages';
 import LongBlackButton from 'components/buttons/LongBlackButton';
@@ -124,7 +122,7 @@ export default function ArtistProfileScreen() {
                 </Text>
               </View>
             </View>
-            <View style={tw`flex-row items-center gap-[20px] mt-[35px]`}>
+            <View style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}>
               <Pressable
                 onPress={() => navigation.navigate(screenName.gallery.editProfile)}
                 style={tw`bg-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
@@ -168,7 +166,9 @@ export default function ArtistProfileScreen() {
                 svgIcon={deleteIcon}
               />
             </View>
-            <LongBlackButton value="Log Out" onClick={logout} />
+            <View style={tw`mb-[150px]`}>
+              <LongBlackButton value="Log Out" onClick={logout} />
+            </View>
           </ScrollWrapper>
         ) : (
           <EligibityResponseScreen
@@ -197,14 +197,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 20,
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    flexWrap: 'wrap',
   },
   headerContainer: {
     paddingHorizontal: 20,
   },
   mainContainer: {
     paddingHorizontal: 20,
-    marginTop: 20,
     flex: 1,
   },
   buttonsContainer: {

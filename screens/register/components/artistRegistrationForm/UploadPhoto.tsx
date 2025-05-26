@@ -52,8 +52,8 @@ const UploadPhoto = () => {
             <View style={tw`self-center mt-[20px]`}>
               <View
                 style={tw.style(`rounded-full bg-[#D9D9D9] justify-center items-center`, {
-                  width: width / 2,
-                  height: height / 4.5,
+                  width: 200,
+                  height: 200,
                 })}
               >
                 <SvgXml xml={userProfileIcon} />
