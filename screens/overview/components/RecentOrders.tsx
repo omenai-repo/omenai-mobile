@@ -34,6 +34,7 @@ export default function RecentOrders({ refreshCount }: { refreshCount: number })
     async function handleFetchRecentOrders() {
       try {
         const results = await getOverviewOrders();
+        console.log(results);
         if (results?.isOk) {
           const data = results.data;
           setData(data);
