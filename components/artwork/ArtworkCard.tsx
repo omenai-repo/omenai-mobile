@@ -121,7 +121,6 @@ export default function ArtworkCard({
           <Image
             source={{ uri: image_href }}
             style={{
-              // width: imageWidth,
               width: imageDimensions.width,
               height: imageDimensions.height,
               objectFit: 'contain',
@@ -213,16 +212,18 @@ export default function ArtworkCard({
               )}  */}
 
               {!availiablity && (
-                <View style={tw`rounded-full bg-[#E0E0E0] px-5 py-2 mt-2`}>
-                  <Text
-                    style={[
-                      tw`text-[#A1A1A1] text-sm`,
-                      { fontFamily: fontNames.dmSans + 'Medium' },
-                    ]}
-                  >
-                    Sold
-                  </Text>
-                </View>
+                // <View style={tw`rounded-full bg-[#E0E0E0] px-5 py-2 mt-2`}>
+                <Text
+                  style={[
+                    tw`text-base font-bold ${
+                      lightText ? 'text-white/90' : 'text-[#1A1A1A]/90'
+                    } flex-1`,
+                    { fontFamily: fontNames.dmSans + 'Bold' },
+                  ]}
+                >
+                  Sold
+                </Text>
+                // </View>
               )}
             </View>
           </View>
