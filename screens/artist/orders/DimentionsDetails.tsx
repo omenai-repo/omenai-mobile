@@ -64,6 +64,7 @@ const DimensionsDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOnExhibition, setIsOnExhibition] = useState(false);
   const [expoEndDate, setExpoEndDate] = useState<string>('');
+  const [isChecked, setIsChecked] = useState(false);
 
   const { updateModal } = useModalStore();
 
@@ -81,7 +82,7 @@ const DimensionsDetails = () => {
       width: dimentions.width,
     }).every((value) => value !== '');
 
-    return !(isFormValid && areAllFieldsFilled);
+    return !(isFormValid && areAllFieldsFilled && isChecked);
   };
 
   const handleValidationChecks = (label: keyof ArtworkDimensionsErrorsType, value: string) => {
@@ -260,20 +261,23 @@ const DimensionsDetails = () => {
               </View>
             )}
 
-            <View
-              style={tw.style(
-                `border border-[#FFA500] mt-[30px] flex-row items-center gap-[10px] bg-[#FFF3E0] rounded-[8px] p-[15px]`,
-                {
-                  marginHorizontal: width / 12,
-                },
-              )}
+            <Pressable
+              onPress={() => setIsChecked(!isChecked)}
+              style={tw.style(`mt-[30px] flex-row items-start gap-[12px] mx-[25px]`)}
             >
-              <SvgXml xml={warningIconSm} />
-              <Text style={tw`text-[14px] text-[#FFA500] font-medium pr-[30px]`}>
+              {/* Checkbox circle */}
+              <View
+                style={tw`w-[20px] h-[20px] rounded-full border-2 border-[#858585] items-center justify-center mt-[2px]`}
+              >
+                {/* Inner checkmark (conditionally visible) */}
+                {isChecked && <View style={tw`w-[12px] h-[12px] rounded-full bg-[#1a1a1a]`} />}
+              </View>
+
+              <Text style={tw`text-[14px] text-[#858585] font-medium flex-1`}>
                 By accepting this order, you have agreed to have this piece ready for shipping &
                 pickup
               </Text>
-            </View>
+            </Pressable>
 
             <View style={tw`mt-[60px] mx-[25px] mb-[150px]`}>
               <LongBlackButton

@@ -250,7 +250,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
             </View>
 
             <Pressable
-              style={tw`bg-[#000] py-4 rounded-lg ${loading ? 'opacity-50' : ''}`}
+              style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${loading ? 'opacity-50' : ''}`}
               onPress={handleWithdraw}
               disabled={loading}
             >

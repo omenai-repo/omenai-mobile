@@ -29,6 +29,8 @@ export default function ArtworkDetails() {
   const { setActiveIndex, activeIndex, updateArtworkUploadData, artworkUploadData } =
     uploadArtworkStore();
 
+  const [year, setYear] = useState<string>('');
+
   const [formErrors, setFormErrors] = useState<artworkDetailsErrorsType>({
     title: '',
     description: '',
@@ -108,8 +110,11 @@ export default function ArtworkDetails() {
             <Input
               label="Year"
               placeHolder="Enter year of creation"
-              value={artworkUploadData.year.toString()}
-              onInputChange={(value) => updateArtworkUploadData('year', value)}
+              value={year}
+              onInputChange={(value) => {
+                setYear(value);
+                updateArtworkUploadData('year', value);
+              }}
               errorMessage={formErrors.year}
             />
           </View>

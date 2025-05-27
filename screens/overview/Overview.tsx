@@ -6,6 +6,7 @@ import SalesOverview from './components/SalesOverview';
 import RecentOrders from './components/RecentOrders';
 import { HighlightCard } from './components/HighlightCard';
 import ScrollWrapper from 'components/general/ScrollWrapper';
+import PopularArtworks from './components/PopularArtworks';
 
 export default function Overview() {
   const [refreshCount, setRefreshCount] = useState(0);
@@ -27,7 +28,7 @@ export default function Overview() {
           <HighlightCard refreshCount={refreshCount} />
         </View>
         <SalesOverview refreshCount={refreshCount} />
-        {/* <PopularArtworks refreshCount={refreshCount} /> */}
+        <PopularArtworks refreshCount={refreshCount} />
         <RecentOrders refreshCount={refreshCount} />
       </ScrollWrapper>
     </WithModal>

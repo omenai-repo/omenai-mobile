@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
 import React from 'react';
 import BackScreenButton from 'components/buttons/BackScreenButton';
 import { colors } from 'config/colors.config';
@@ -22,7 +22,7 @@ export default function HeaderIndicator() {
   ];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <View style={styles.container}>
         <BackScreenButton
           handleClick={() => {
@@ -46,7 +46,7 @@ export default function HeaderIndicator() {
           />
         ))}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -77,6 +77,6 @@ const styles = StyleSheet.create({
     color: colors.primary_black,
   },
   safeArea: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? 40 : 80,
   },
 });
