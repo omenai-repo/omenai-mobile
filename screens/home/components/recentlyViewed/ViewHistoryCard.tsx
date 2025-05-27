@@ -1,11 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { colors } from "config/colors.config";
-import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { getImageFileView } from 'lib/storage/getImageFileView';
+import { colors } from 'config/colors.config';
+import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
 
 export default function ViewHistoryCard({
   url,
@@ -31,7 +31,7 @@ export default function ViewHistoryCard({
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
       const { width, height } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        300
+        300,
       );
       setImageDimensions({ height, width });
       // setRenderDynamicImage(true);
@@ -58,9 +58,7 @@ export default function ViewHistoryCard({
           resizeMode="cover"
         />
         <View style={styles.mainDetailsContainer}>
-          <Text style={{ fontSize: 14, color: colors.primary_black }}>
-            {artwork}
-          </Text>
+          <Text style={{ fontSize: 14, color: colors.primary_black }}>{artwork}</Text>
           <Text
             style={{
               fontSize: 12,
@@ -83,7 +81,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     padding: 10,
     borderRadius: 10,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: '#f0f0f0',
   },
   mainDetailsContainer: {
     marginTop: 10,

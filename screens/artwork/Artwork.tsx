@@ -148,7 +148,7 @@ export default function Artwork() {
     Image.getSize(img, (defaultWidth, defaultHeight) => {
       const { width, height } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        400,
+        250, //change to 400 later
       );
       setImageDimensions({ height, width });
       // setRenderDynamicImage(true);
