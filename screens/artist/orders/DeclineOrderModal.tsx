@@ -77,7 +77,7 @@ const DeclineOrderModal = ({
           style={tw.style(`bg-white p-[30px] border border-[#0000001A] rounded-[14px] w-[80%]`)}
         >
           <LargeInput
-            label="Reason for declining order"
+            label="Tell us your reason for declining this order"
             placeHolder="Input reason"
             value={declineReason}
             defaultValue={declineReason}

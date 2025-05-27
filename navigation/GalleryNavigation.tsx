@@ -139,7 +139,7 @@ export default function GalleryNavigation() {
           tabBarStyle: {
             height: 82,
             backgroundColor: colors.black,
-            bottom: 30,
+            bottom: Platform.OS === 'ios' ? 30 : 50,
             borderRadius: 18,
             marginHorizontal: width / 18,
             position: 'absolute',

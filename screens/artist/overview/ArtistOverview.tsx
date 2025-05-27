@@ -258,7 +258,6 @@ const ArtistOverview = () => {
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        nestedScrollEnabled={true}
       >
         <Header />
 

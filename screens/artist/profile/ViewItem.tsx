@@ -113,7 +113,7 @@ export default function ViewItem({
       <Text style={tw`text-[#1A1A1A] text-[14px] font-bold mb-1`}>{title}</Text>
       <View style={tw`flex-row justify-between items-center bg-[#F4F4F4] rounded-[10px] p-3`}>
         <Text style={tw`text-[13px] text-[#333] flex-1 mr-2`} numberOfLines={1}>
-          {value}
+          {title === 'CV Document' ? 'Pdf file' : value}
         </Text>
         {isDownloadable && (
           <TouchableOpacity

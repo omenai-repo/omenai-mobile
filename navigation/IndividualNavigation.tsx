@@ -83,7 +83,7 @@ export default function IndividualNavigation() {
           tabBarStyle: {
             height: 85,
             backgroundColor: colors.black,
-            bottom: 30,
+            bottom: Platform.OS === 'ios' ? 30 : 50,
             borderRadius: 18,
             marginHorizontal: width / 20,
             position: 'absolute',

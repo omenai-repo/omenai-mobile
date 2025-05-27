@@ -399,7 +399,7 @@ const OrderScreen = () => {
     <WithModal>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <Image
-          style={tw.style(`w-[130px] h-[30px] mt-[80px] ml-[20px]`)}
+          style={tw.style(`w-[130px] h-[30px] mt-[80px]  android:mt-[40px] ml-[20px]`)}
           resizeMode="contain"
           source={require('../../../assets/omenai-logo.png')}
         />

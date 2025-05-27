@@ -233,13 +233,13 @@ const WalletScreen = () => {
   return (
     <WithModal>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <View>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-          >
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+        >
+          <View>
             <Image
-              style={tw.style(`w-[130px] h-[30px] mt-[80px] ml-[20px]`)}
+              style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
               resizeMode="contain"
               source={require('../../../assets/omenai-logo.png')}
             />
@@ -253,7 +253,7 @@ const WalletScreen = () => {
                   <Ionicons
                     name={showAvailableBalance ? 'eye-outline' : 'eye-off-outline'}
                     color={'#FFFFFF'}
-                    size={30}
+                    size={25}
                   />
                 </Pressable>
               </View>
@@ -261,7 +261,7 @@ const WalletScreen = () => {
               {isLoading ? (
                 <View style={tw.style(`h-[30px] w-[150px] mt-[5px]`, skeletonStyle)} />
               ) : (
-                <Text style={tw`text-[30px] text-[#FFFFFF] font-bold mt-[5px]`}>
+                <Text style={tw`text-[20px] text-[#FFFFFF] font-bold mt-[5px]`}>
                   {showAvailableBalance
                     ? walletData?.available_balance
                       ? utils_formatPrice(walletData?.available_balance)
@@ -272,7 +272,7 @@ const WalletScreen = () => {
 
               <View style={tw`mt-[35px] flex-row items-center gap-[20px]`}>
                 <View style={tw`flex-1`}>
-                  <View style={tw`flex-row items-center gap-[20px]`}>
+                  <View style={tw`flex-row items-center gap-[15px]`}>
                     <Text style={tw`text-[14px] text-[#FFFFFF]`}>Pending Balance</Text>
                     <Pressable onPress={() => setShowPendingBalance((prev) => !prev)}>
                       <Ionicons
@@ -297,11 +297,11 @@ const WalletScreen = () => {
                 </View>
 
                 <Pressable
-                  style={tw`justify-center items-center h-[40px] border border-[#FFFFFF] rounded-[18px] px-[15px]`}
+                  style={tw`justify-center items-center h-[40px] border border-[#FFFFFF] rounded-[18px] px-[10px]`}
                   onPress={handleWithdrawPress}
                   disabled={isLoading}
                 >
-                  <Text style={tw`text-[14px] text-[#FFFFFF]`}>Withdraw Funds</Text>
+                  <Text style={tw`text-[12px] text-[#FFFFFF]`}>Withdraw Funds</Text>
                 </Pressable>
               </View>
             </View>
@@ -353,65 +353,73 @@ const WalletScreen = () => {
                 />
               </View>
             )}
-          </ScrollView>
-        </View>
-        <View style={tw`flex-1 bg-[#F7F7F7]`}>
-          <View style={tw`mx-[20px] mt-[30px] pb-[25px] flex-row items-center`}>
-            <Text style={tw`text-[15px] font-medium text-[#1A1A1A]000] flex-1`}>
-              Transaction History
-            </Text>
-            <Pressable
-              onPress={() =>
-                navigation.navigate('WalletHistory', {
-                  transactions,
-                })
-              }
-              style={tw`flex-row items-center gap-[5px]`}
-            >
-              <Text style={tw`text-[15px] text-[#3D3D3D] font-semibold`}>Show All</Text>
-              <SvgXml xml={arrowUpRightWhite} />
-            </Pressable>
           </View>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {!isLoading ? (
-              <View style={tw`gap-[8px] mb-[150px]`}>
-                {transactions?.length === 0 ? (
-                  <View style={tw`flex-1 justify-center items-center mt-[50px]`}>
-                    <Text style={tw`text-[16px] text-[#1A1A1A]000]`}>No transactions found</Text>
+          <View style={tw`flex-1 bg-[#F7F7F7]`}>
+            <View style={tw`mx-[20px] mt-[30px] pb-[25px] flex-row items-center`}>
+              <Text style={tw`text-[15px] font-medium text-[#1A1A1A]000] flex-1`}>
+                Transaction History
+              </Text>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('WalletHistory', {
+                    transactions,
+                  })
+                }
+                style={tw`flex-row items-center gap-[5px]`}
+              >
+                <Text style={tw`text-[15px] text-[#3D3D3D] font-semibold`}>Show All</Text>
+                <SvgXml xml={arrowUpRightWhite} />
+              </Pressable>
+            </View>
+
+            {/* Transaction List with fixed height and independent scrolling */}
+            <View style={tw`max-h-[400px]`}>
+              <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
+                {!isLoading ? (
+                  <View style={tw`gap-[8px] mb-[150px]`}>
+                    {transactions?.length === 0 ? (
+                      <View style={tw`flex-1 justify-center items-center mt-[50px]`}>
+                        <Text style={tw`text-[16px] text-[#1A1A1A]000]`}>
+                          No transactions found
+                        </Text>
+                      </View>
+                    ) : (
+                      transactions?.length > 0 &&
+                      transactions?.map((item: any, index: number) => {
+                        return (
+                          <WalletContainer
+                            key={index}
+                            status={item.trans_status}
+                            amount={item.trans_amount}
+                            dateTime={item.createdAt}
+                            onPress={() =>
+                              navigation.navigate('TransactionDetailsScreen', {
+                                transaction: item,
+                              })
+                            }
+                          />
+                        );
+                      })
+                    )}
                   </View>
                 ) : (
-                  transactions?.length > 0 &&
-                  transactions?.map((item: any, index: number) => {
-                    return (
-                      <WalletContainer
-                        key={index}
-                        status={item.trans_status}
-                        amount={item.trans_amount}
-                        dateTime={item.createdAt}
-                        onPress={() =>
-                          navigation.navigate('TransactionDetailsScreen', { transaction: item })
-                        }
-                      />
-                    );
-                  })
-                )}
-              </View>
-            ) : (
-              <View style={tw`mb-[150px]`}>
-                {Array.from({ length: 10 }).map((_, index) => (
-                  <View key={index} style={{ marginBottom: 8 }}>
-                    <WalletContainerSkeleton />
+                  <View style={tw`mb-[150px]`}>
+                    {Array.from({ length: 10 }).map((_, index) => (
+                      <View key={index} style={{ marginBottom: 8 }}>
+                        <WalletContainerSkeleton />
+                      </View>
+                    ))}
                   </View>
-                ))}
-              </View>
-            )}
-          </ScrollView>
-        </View>
-        <PinCreationModal
-          visible={showPinModal}
-          setVisible={setShowPinModal}
-          onClose={() => setShowPinModal(false)}
-        />
+                )}
+              </ScrollView>
+            </View>
+          </View>
+          <PinCreationModal
+            visible={showPinModal}
+            setVisible={setShowPinModal}
+            onClose={() => setShowPinModal(false)}
+          />
+        </ScrollView>
       </View>
     </WithModal>
   );

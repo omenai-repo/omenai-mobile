@@ -31,35 +31,33 @@ export default function Header({ showNotification }: { showNotification?: boolea
     }
 
     if (userSession.role === 'artist') {
-      //navigate to gallery profile screen
-      navigation.navigate(screenName.gallery.profile);
+      //navigate to artist profile screen
+      navigation.navigate('Profile');
       return;
     }
     navigation.navigate(screenName.profile);
   };
 
   return (
-    <SafeAreaView>
-      <View style={styles.mainContainer}>
-        <View style={tailwind`flex-1`}>
-          <Image style={tailwind`w-[130px] h-[30px]`} resizeMode="contain" source={omenaiLogo} />
-        </View>
-        <TouchableOpacity onPress={handleNavigation} activeOpacity={0.7}>
-          <View
-            style={tailwind`bg-[#f0f0f0] h-[40px] w-[40px] rounded-full flex items-center justify-center`}
-          >
-            <Text
-              style={[
-                tailwind`text-sm font-bold text-center`,
-                { fontFamily: fontNames.dmSans + 'Bold' },
-              ]}
-            >
-              {utils_getInitials(userSession?.name)}
-            </Text>
-          </View>
-        </TouchableOpacity>
+    <View style={styles.mainContainer}>
+      <View style={tailwind`flex-1`}>
+        <Image style={tailwind`w-[130px] h-[30px]`} resizeMode="contain" source={omenaiLogo} />
       </View>
-    </SafeAreaView>
+      <TouchableOpacity onPress={handleNavigation} activeOpacity={0.7}>
+        <View
+          style={tailwind`bg-[#f0f0f0] h-[40px] w-[40px] rounded-full flex items-center justify-center`}
+        >
+          <Text
+            style={[
+              tailwind`text-sm font-bold text-center`,
+              { fontFamily: fontNames.dmSans + 'Bold' },
+            ]}
+          >
+            {utils_getInitials(userSession?.name)}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -70,6 +68,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: 'center',
     gap: 20,
-    marginTop: 5,
+    marginTop: Platform.OS === 'ios' ? 80 : 40,
   },
 });

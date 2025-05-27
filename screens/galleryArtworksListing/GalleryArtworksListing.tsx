@@ -50,34 +50,33 @@ export default function GalleryArtworksListing() {
 
   return (
     <WithModal>
-      <SafeAreaView style={styles.safeArea}>
-        <View
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 10,
+          paddingHorizontal: 20,
+          marginTop: Platform.OS === 'ios' ? 80 : 40,
+        }}
+      >
+        <Text
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 10,
-            paddingHorizontal: 20,
+            fontSize: 18,
+            flex: 1,
+            fontWeight: '500',
+            color: '#000',
           }}
         >
-          <Text
-            style={{
-              fontSize: 18,
-              flex: 1,
-              fontWeight: '500',
-              color: '#000',
-            }}
-          >
-            Artworks
-          </Text>
-          <FittedBlackButton
-            value="Upload artwork"
-            isDisabled={false}
-            onClick={() => navigation.navigate(screenName.gallery.uploadArtwork)}
-          >
-            <Feather name="plus" color={'#fff'} size={20} />
-          </FittedBlackButton>
-        </View>
-      </SafeAreaView>
+          Artworks
+        </Text>
+        <FittedBlackButton
+          value="Upload artwork"
+          isDisabled={false}
+          onClick={() => navigation.navigate(screenName.gallery.uploadArtwork)}
+        >
+          <Feather name="plus" color={'#fff'} size={20} />
+        </FittedBlackButton>
+      </View>
       <ScrollWrapper
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
@@ -98,12 +97,7 @@ export default function GalleryArtworksListing() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
-    // paddingHorizontal: 5,
-    // backgroundColor: '#ff0000',
     paddingTop: 20,
     marginTop: 20,
-  },
-  safeArea: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });
