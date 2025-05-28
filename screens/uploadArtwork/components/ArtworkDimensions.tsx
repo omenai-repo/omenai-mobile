@@ -19,31 +19,25 @@ type artworkDimensionsErrorsType = {
   weight: string;
 };
 
+type DimensionUnit = 'cm' | 'mm' | 'm' | 'in' | 'ft';
+type WeightUnit = 'kg' | 'g' | 'lb';
+
 export default function ArtworkDimensions() {
-  const { userType } = useAppStore();
   const { setActiveIndex, activeIndex, updateArtworkUploadData } = uploadArtworkStore();
-  const [units, setUnits] = useState<{
-    height: 'cm' | 'mm' | 'm' | 'in' | 'ft';
-    width: 'cm' | 'mm' | 'm' | 'in' | 'ft';
-    depth: 'cm' | 'mm' | 'm' | 'in' | 'ft';
-    weight: 'kg' | 'g' | 'lb';
-  }>({
-    height: 'cm',
-    width: 'cm',
-    depth: 'cm',
-    weight: 'kg',
-  });
+  const [dimensionUnit, setDimensionUnit] = useState<DimensionUnit>('cm');
+  const [weightUnit, setWeightUnit] = useState<WeightUnit>('kg');
   const [dimentions, setDimentions] = useState({
     depth: '',
     width: '',
     height: '',
     weight: '',
   });
+
   const [formErrors, setFormErrors] = useState<artworkDimensionsErrorsType>({
-    weight: '',
-    depth: '',
     height: '',
+    depth: '',
     width: '',
+    weight: '',
   });
 
   const checkIsDisabled = () => {
@@ -52,11 +46,13 @@ export default function ArtworkDimensions() {
       weight: formErrors.weight,
       height: formErrors.height,
       width: formErrors.width,
+      depth: formErrors.depth,
     }).every((error) => error === '');
     const areAllFieldsFilled = Object.values({
       weight: dimentions.weight,
       height: dimentions.height,
       width: dimentions.width,
+      depth: dimentions.depth,
     }).every((value) => value !== '');
 
     return !(isFormValid && areAllFieldsFilled);
@@ -109,51 +105,55 @@ export default function ArtworkDimensions() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={tw`gap-[30px]`}>
-            {(['height', 'width', 'depth'] as Array<keyof typeof dimentions>).map((field) => (
-              <View key={field} style={tw`flex-row gap-3`}>
-                <View style={tw`flex-5`}>
-                  <Input
-                    label={`${field.charAt(0).toUpperCase() + field.slice(1)} (${units[field]})`}
-                    keyboardType="numeric"
-                    onInputChange={(text) => {
-                      setDimentions((prev) => ({ ...prev, [field]: text }));
-                      handleValidationChecks(field, text);
-                    }}
-                    placeHolder={`Enter ${field}`}
-                    value={dimentions[field]}
-                    errorMessage={formErrors[field]}
-                  />
-                </View>
+          <View style={tw`gap-[10px]`}>
+            {/* Unit selection dropdowns at the top */}
+            <View style={tw`flex-row gap-4 mb-4`}>
+              <View style={tw`flex-1`}>
+                <Text style={tw`text-[14px] text-[#858585] mb-2`}>Dimension Unit</Text>
                 <UnitDropdown
                   units={['cm', 'mm', 'm', 'in', 'ft']}
-                  selectedUnit={units[field]}
-                  onSelect={(val) => setUnits((prev) => ({ ...prev, [field]: val }))}
+                  selectedUnit={dimensionUnit}
+                  onSelect={(val) => setDimensionUnit(val)}
+                />
+              </View>
+              <View style={tw`flex-1`}>
+                <Text style={tw`text-[14px] text-[#858585] mb-2`}>Weight Unit</Text>
+                <UnitDropdown
+                  units={['kg', 'g', 'lb']}
+                  selectedUnit={weightUnit}
+                  onSelect={(val) => setWeightUnit(val)}
+                />
+              </View>
+            </View>
+
+            {(['height', 'width', 'depth'] as Array<keyof typeof dimentions>).map((field) => (
+              <View key={field}>
+                <Input
+                  label={`${field.charAt(0).toUpperCase() + field.slice(1)} (${dimensionUnit})`}
+                  keyboardType="numeric"
+                  onInputChange={(text) => {
+                    setDimentions((prev) => ({ ...prev, [field]: text }));
+                    handleValidationChecks(field, text);
+                  }}
+                  placeHolder={`Enter ${field}`}
+                  value={dimentions[field]}
+                  errorMessage={formErrors[field]}
                 />
               </View>
             ))}
 
-            {/* Weight field separately */}
-            <View style={tw`flex-row items-center gap-3`}>
-              <View style={tw`flex-5`}>
-                <Input
-                  label={`Weight (${units.weight})`}
-                  keyboardType="numeric"
-                  onInputChange={(text) => {
-                    setDimentions((prev) => ({ ...prev, weight: text }));
-                    handleValidationChecks('weight', text);
-                  }}
-                  placeHolder="Enter weight"
-                  value={dimentions.weight}
-                  errorMessage={formErrors.weight}
-                />
-              </View>
-              <UnitDropdown
-                units={['kg', 'g', 'lb']}
-                selectedUnit={units.weight}
-                onSelect={(val: string) =>
-                  setUnits((prev) => ({ ...prev, weight: val as 'kg' | 'g' | 'lb' }))
-                }
+            {/* Weight field */}
+            <View>
+              <Input
+                label={`Weight (${weightUnit})`}
+                keyboardType="numeric"
+                onInputChange={(text) => {
+                  setDimentions((prev) => ({ ...prev, weight: text }));
+                  handleValidationChecks('weight', text);
+                }}
+                placeHolder="Enter weight"
+                value={dimentions.weight}
+                errorMessage={formErrors.weight}
               />
             </View>
           </View>
@@ -161,10 +161,10 @@ export default function ArtworkDimensions() {
             <LongBlackButton
               value="Proceed"
               onClick={() => {
-                const heightInCm = convertToCm(dimentions.height, units.height);
-                const widthInCm = convertToCm(dimentions.width, units.width);
-                const depthInCm = convertToCm(dimentions.depth, units.depth);
-                const weightInKg = convertToKg(dimentions.weight, units.weight);
+                const heightInCm = convertToCm(dimentions.height, dimensionUnit);
+                const widthInCm = convertToCm(dimentions.width, dimensionUnit);
+                const depthInCm = convertToCm(dimentions.depth, dimensionUnit);
+                const weightInKg = convertToKg(dimentions.weight, weightUnit);
 
                 updateArtworkUploadData('height', `${heightInCm}cm`);
                 updateArtworkUploadData('width', `${widthInCm}cm`);

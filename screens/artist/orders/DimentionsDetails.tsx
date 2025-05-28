@@ -32,22 +32,16 @@ type ArtworkDimensionsErrorsType = {
   weight: string;
 };
 
+type DimensionUnit = 'cm' | 'mm' | 'm' | 'in' | 'ft';
+type WeightUnit = 'kg' | 'g' | 'lb';
+
 const DimensionsDetails = () => {
   const { width } = useWindowDimensions();
   const { userType } = useAppStore();
   const { orderId } = useRoute<any>().params;
   const navigation = useNavigation();
-  const [units, setUnits] = useState<{
-    height: 'cm' | 'mm' | 'm' | 'in' | 'ft';
-    width: 'cm' | 'mm' | 'm' | 'in' | 'ft';
-    length: 'cm' | 'mm' | 'm' | 'in' | 'ft';
-    weight: 'kg' | 'g' | 'lb';
-  }>({
-    height: 'cm',
-    width: 'cm',
-    length: 'cm',
-    weight: 'kg',
-  });
+  const [dimensionUnit, setDimensionUnit] = useState<DimensionUnit>('cm');
+  const [weightUnit, setWeightUnit] = useState<WeightUnit>('kg');
   const [dimentions, setDimentions] = useState({
     length: '',
     width: '',
@@ -97,6 +91,12 @@ const DimensionsDetails = () => {
   };
 
   const handleSubmit = async () => {
+    const units = {
+      height: dimensionUnit,
+      width: dimensionUnit,
+      length: dimensionUnit,
+      weight: weightUnit,
+    };
     const converted = convertDimensionsToStandard(dimentions, units);
     try {
       setIsLoading(true);
@@ -162,51 +162,55 @@ const DimensionsDetails = () => {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            <View style={tw`mt-[30px] mx-[25px] gap-[30px]`}>
-              {(['height', 'length', 'width'] as Array<keyof typeof dimentions>).map((field) => (
-                <View key={field} style={tw`flex-row gap-3`}>
-                  <View style={tw`flex-5`}>
-                    <Input
-                      label={`${field.charAt(0).toUpperCase() + field.slice(1)} (${units[field]})`}
-                      keyboardType="numeric"
-                      onInputChange={(text) => {
-                        setDimentions((prev) => ({ ...prev, [field]: text }));
-                        handleValidationChecks(field, text);
-                      }}
-                      placeHolder={`Enter ${field}`}
-                      value={dimentions[field]}
-                      errorMessage={formErrors[field]}
-                    />
-                  </View>
+            <View style={tw`mt-[30px] mx-[25px] gap-[10px] z-50`}>
+              {/* Unit selection dropdowns at the top */}
+              <View style={tw`flex-row gap-4 mb-4`}>
+                <View style={tw`flex-1`}>
+                  <Text style={tw`text-[14px] text-[#858585] mb-[10px]`}>Dimension Unit</Text>
                   <UnitDropdown
                     units={['cm', 'mm', 'm', 'in', 'ft']}
-                    selectedUnit={units[field]}
-                    onSelect={(val) => setUnits((prev) => ({ ...prev, [field]: val }))}
+                    selectedUnit={dimensionUnit}
+                    onSelect={(val) => setDimensionUnit(val)}
+                  />
+                </View>
+                <View style={tw`flex-1`}>
+                  <Text style={tw`text-[14px] text-[#858585] mb-[10px]`}>Weight Unit</Text>
+                  <UnitDropdown
+                    units={['kg', 'g', 'lb']}
+                    selectedUnit={weightUnit}
+                    onSelect={(val) => setWeightUnit(val)}
+                  />
+                </View>
+              </View>
+
+              {(['height', 'length', 'width'] as Array<keyof typeof dimentions>).map((field) => (
+                <View key={field}>
+                  <Input
+                    label={`${field.charAt(0).toUpperCase() + field.slice(1)} (${dimensionUnit})`}
+                    keyboardType="numeric"
+                    onInputChange={(text) => {
+                      setDimentions((prev) => ({ ...prev, [field]: text }));
+                      handleValidationChecks(field, text);
+                    }}
+                    placeHolder={`Enter ${field}`}
+                    value={dimentions[field]}
+                    errorMessage={formErrors[field]}
                   />
                 </View>
               ))}
 
-              {/* Weight field separately */}
-              <View style={tw`flex-row items-center gap-3`}>
-                <View style={tw`flex-5`}>
-                  <Input
-                    label={`Weight (${units.weight})`}
-                    keyboardType="numeric"
-                    onInputChange={(text) => {
-                      setDimentions((prev) => ({ ...prev, weight: text }));
-                      handleValidationChecks('weight', text);
-                    }}
-                    placeHolder="Enter weight"
-                    value={dimentions.weight}
-                    errorMessage={formErrors.weight}
-                  />
-                </View>
-                <UnitDropdown
-                  units={['kg', 'g', 'lb']}
-                  selectedUnit={units.weight}
-                  onSelect={(val: string) =>
-                    setUnits((prev) => ({ ...prev, weight: val as 'kg' | 'g' | 'lb' }))
-                  }
+              {/* Weight field */}
+              <View>
+                <Input
+                  label={`Weight (${weightUnit})`}
+                  keyboardType="numeric"
+                  onInputChange={(text) => {
+                    setDimentions((prev) => ({ ...prev, weight: text }));
+                    handleValidationChecks('weight', text);
+                  }}
+                  placeHolder="Enter weight"
+                  value={dimentions.weight}
+                  errorMessage={formErrors.weight}
                 />
               </View>
             </View>
