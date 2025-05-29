@@ -1,4 +1,13 @@
-import { FlatList, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -32,12 +41,36 @@ import BackScreenButton from 'components/buttons/BackScreenButton';
 import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
 import ZoomArtwork from './ZoomArtwork';
 
+// Helper function to determine if device is in tablet landscape mode
+const useTabletLandscape = () => {
+  const [dimensions, setDimensions] = useState(Dimensions.get('window'));
+  const [isTabletLandscape, setIsTabletLandscape] = useState(false);
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setDimensions(window);
+    });
+
+    return () => subscription?.remove();
+  }, []);
+
+  useEffect(() => {
+    const { width, height } = dimensions;
+    const isLandscape = width > height;
+    // const isTabletSize = Math.min(width, height) >= 768; // Tablet threshold
+    setIsTabletLandscape(isLandscape);
+  }, [dimensions]);
+
+  return { isTabletLandscape, screenWidth: dimensions.width, screenHeight: dimensions.height };
+};
+
 export default function Artwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { title, url } = route.params as { title: string; url: string };
   const { updateModal } = useModalStore();
   const { userType, userSession } = useAppStore();
+  const { isTabletLandscape, screenWidth } = useTabletLandscape();
 
   const [isLoading, setIsLoading] = useState(false);
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
@@ -145,15 +178,130 @@ export default function Artwork() {
   });
 
   useEffect(() => {
-    Image.getSize(img, (defaultWidth, defaultHeight) => {
-      const { width, height } = resizeImageDimensions(
-        { width: defaultWidth, height: defaultHeight },
-        250, //change to 400 later
-      );
-      setImageDimensions({ height, width });
-      // setRenderDynamicImage(true);
-    });
-  }, [img]);
+    if (img) {
+      Image.getSize(img, (defaultWidth, defaultHeight) => {
+        const targetSize = isTabletLandscape ? 400 : 250;
+        const { width, height } = resizeImageDimensions(
+          { width: defaultWidth, height: defaultHeight },
+          targetSize,
+        );
+        setImageDimensions({ height, width });
+      });
+    }
+  }, [img, isTabletLandscape]);
+
+  // Render image section
+  const renderImageSection = () => (
+    <View style={isTabletLandscape ? styles.tabletImageContainer : styles.mobileImageContainer}>
+      <Pressable onPress={() => setModalVisible(true)}>
+        <Image
+          source={{ uri: img }}
+          style={[
+            {
+              height: imageDimensions.height,
+              width: imageDimensions.width,
+              resizeMode: 'contain',
+              alignSelf: 'center',
+              borderRadius: 10,
+              backgroundColor: '#f5f5f5',
+            },
+            isTabletLandscape && styles.tabletImage,
+          ]}
+        />
+      </Pressable>
+    </View>
+  );
+
+  // Render content section
+  const renderContentSection = () => (
+    <View style={isTabletLandscape ? styles.tabletContentContainer : styles.mobileContentContainer}>
+      <View style={styles.artworkDetails}>
+        <Text style={styles.artworkTitle}>{data?.title}</Text>
+        <Text style={styles.artworkCreator}>{data?.artist}</Text>
+        <Text style={styles.artworkTags}>
+          {data?.medium} | {data?.rarity}
+        </Text>
+        <Text style={styles.priceTitle}>Price</Text>
+        <Text
+          style={[
+            styles.price,
+            data?.pricing.shouldShowPrice === 'No' &&
+              !['gallery', 'artist'].includes(userType) && {
+                fontSize: 16,
+                color: colors.grey,
+              },
+          ]}
+        >
+          {data?.pricing.shouldShowPrice === 'Yes' || ['gallery', 'artist'].includes(userType)
+            ? utils_formatPrice(Number(data?.pricing.usd_price))
+            : 'Price on request'}
+        </Text>
+        <ScrollWrapper horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.tagsContainer}>
+            {data?.certificate_of_authenticity === 'Yes' && (
+              <View style={styles.tagItem}>
+                <SvgXml xml={licenseIcon} />
+                <Text style={styles.tagItemText}>Certificate of authencity availiable</Text>
+              </View>
+            )}
+            <View style={[styles.tagItem, { backgroundColor: '#e5f4ff' }]}>
+              <SimpleLineIcons name="frame" size={15} />
+              <Text style={[styles.tagItemText, { color: '#30589f' }]}>
+                {data?.framing === 'Framed' ? 'Frame Included' : 'Artwork is not framed'}
+              </Text>
+            </View>
+          </View>
+        </ScrollWrapper>
+      </View>
+
+      {/* Action buttons */}
+      <View style={styles.buttonContainer}>
+        {isLoading
+          ? null
+          : !['gallery', 'artist'].includes(userType) &&
+            (data?.availability ? (
+              data?.pricing.shouldShowPrice === 'Yes' ? (
+                <LongBlackButton
+                  value="Purchase artwork"
+                  isDisabled={false}
+                  onClick={() =>
+                    navigation.navigate(screenName.purchaseArtwork, {
+                      title: data?.title,
+                    })
+                  }
+                />
+              ) : (
+                <LongBlackButton
+                  value={loadingPriceQuote ? 'Requesting ...' : 'Request price'}
+                  isDisabled={false}
+                  onClick={handleRequestPriceQuote}
+                  isLoading={loadingPriceQuote}
+                />
+              )
+            ) : (
+              <LongBlackButton value="Sold" isDisabled={true} onClick={() => {}} />
+            ))}
+        {!['gallery', 'artist'].includes(userType) && (
+          <SaveArtworkButton
+            likeIds={data?.like_IDs || []}
+            art_id={data?.art_id}
+            impressions={data?.impressions || 0}
+          />
+        )}
+      </View>
+
+      <Pressable onPress={() => setShowMore(true)}>
+        <Text style={tw`text-[#004617] text-[14px] text-center mt-[20px] underline`}>
+          More details about this artwork
+        </Text>
+      </Pressable>
+
+      <View style={tw`mt-[50px] gap-[25px]`}>
+        <ShippingAndTaxes />
+        <Coverage />
+      </View>
+    </View>
+  );
 
   return (
     <WithModal>
@@ -164,107 +312,19 @@ export default function Artwork() {
           {data && (
             <ScrollWrapper style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
               <View style={{ paddingBottom: 20 }}>
-                <View style={{ paddingHorizontal: 20, marginBottom: 100 }}>
-                  <Pressable onPress={() => setModalVisible(true)}>
-                    <Image
-                      source={{ uri: img }}
-                      style={{
-                        height: imageDimensions.height,
-                        width: imageDimensions.width,
-                        resizeMode: 'contain',
-                        alignSelf: 'center',
-                        borderRadius: 10,
-                        zIndex: 1000,
-                        backgroundColor: '#f5f5f5',
-                      }}
-                    />
-                  </Pressable>
-                  <View style={styles.artworkDetails}>
-                    <Text style={styles.artworkTitle}>{data?.title}</Text>
-                    <Text style={styles.artworkCreator}>{data?.artist}</Text>
-                    <Text style={styles.artworkTags}>
-                      {data?.medium} | {data?.rarity}
-                    </Text>
-                    <Text style={styles.priceTitle}>Price</Text>
-                    <Text
-                      style={[
-                        styles.price,
-                        data?.pricing.shouldShowPrice === 'No' &&
-                          !['gallery', 'artist'].includes(userType) && {
-                            fontSize: 16,
-                            color: colors.grey,
-                          },
-                      ]}
-                    >
-                      {data?.pricing.shouldShowPrice === 'Yes' ||
-                      ['gallery', 'artist'].includes(userType)
-                        ? utils_formatPrice(Number(data?.pricing.usd_price))
-                        : 'Price on request'}
-                    </Text>
-                    <ScrollWrapper horizontal showsHorizontalScrollIndicator={false}>
-                      <View style={styles.tagsContainer}>
-                        {data?.certificate_of_authenticity === 'Yes' && (
-                          <View style={styles.tagItem}>
-                            <SvgXml xml={licenseIcon} />
-                            <Text style={styles.tagItemText}>
-                              Certificate of authencity availiable
-                            </Text>
-                          </View>
-                        )}
-                        <View style={[styles.tagItem, { backgroundColor: '#e5f4ff' }]}>
-                          <SimpleLineIcons name="frame" size={15} />
-                          <Text style={[styles.tagItemText, { color: '#30589f' }]}>
-                            {data?.framing === 'Framed'
-                              ? 'Frame Included'
-                              : 'Artwork is not framed'}
-                          </Text>
-                        </View>
-                      </View>
-                    </ScrollWrapper>
+                {isTabletLandscape ? (
+                  // Tablet Landscape Layout: Side by side
+                  <View style={styles.tabletLandscapeContainer}>
+                    {renderImageSection()}
+                    {renderContentSection()}
                   </View>
-                  {isLoading
-                    ? null
-                    : !['gallery', 'artist'].includes(userType) &&
-                      (data?.availability ? (
-                        data?.pricing.shouldShowPrice === 'Yes' ? (
-                          <LongBlackButton
-                            value="Purchase artwork"
-                            isDisabled={false}
-                            onClick={() =>
-                              navigation.navigate(screenName.purchaseArtwork, {
-                                title: data?.title,
-                              })
-                            }
-                          />
-                        ) : (
-                          <LongBlackButton
-                            value={loadingPriceQuote ? 'Requesting ...' : 'Request price'}
-                            isDisabled={false}
-                            onClick={handleRequestPriceQuote}
-                            isLoading={loadingPriceQuote}
-                          />
-                        )
-                      ) : (
-                        <LongBlackButton value="Sold" isDisabled={true} onClick={() => {}} />
-                      ))}
-                  {!['gallery', 'artist'].includes(userType) && (
-                    <SaveArtworkButton
-                      likeIds={data.like_IDs || []}
-                      art_id={data.art_id}
-                      impressions={data.impressions || 0}
-                    />
-                  )}
-                  <Pressable onPress={() => setShowMore(true)}>
-                    <Text style={tw`text-[#004617] text-[14px] text-center mt-[20px] underline`}>
-                      More details about this artwork
-                    </Text>
-                  </Pressable>
-
-                  <View style={tw`mt-[50px] gap-[25px]`}>
-                    <ShippingAndTaxes />
-                    <Coverage />
+                ) : (
+                  // Mobile/Portrait Layout: Stacked
+                  <View style={{ paddingHorizontal: 20, marginBottom: 100 }}>
+                    {renderImageSection()}
+                    {renderContentSection()}
                   </View>
-                </View>
+                )}
               </View>
             </ScrollWrapper>
           )}
@@ -382,9 +442,35 @@ export default function Artwork() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
-    // paddingHorizontal: 20,
     backgroundColor: colors.white,
     marginTop: 25,
+  },
+  // Tablet Landscape Styles
+  tabletLandscapeContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingBottom: 100,
+    gap: 30,
+  },
+  tabletImageContainer: {
+    flex: 0.5,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  tabletContentContainer: {
+    flex: 0.5,
+    paddingLeft: 20,
+  },
+  tabletImage: {
+    maxWidth: '100%',
+    maxHeight: 500,
+  },
+  // Mobile/Portrait Styles
+  mobileImageContainer: {
+    alignItems: 'center',
+  },
+  mobileContentContainer: {
+    // Default mobile styles
   },
   artworkDetails: {
     marginTop: 25,
