@@ -9,11 +9,8 @@ import {
 import React, { useState } from 'react';
 import tw from 'twrnc';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { validate } from 'lib/validations/upload_artwork_input_validator/validator';
 import Input from 'components/inputs/Input';
 import LongBlackButton from 'components/buttons/LongBlackButton';
-import { SvgXml } from 'react-native-svg';
-import { warningIconSm } from 'utils/SvgImages';
 import { Text } from 'react-native';
 import { updateShippingQuote } from 'services/orders/updateShippingQuote';
 import { useModalStore } from 'store/modal/modalStore';
@@ -21,9 +18,10 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import WithModal from 'components/modal/WithModal';
 import { validateOrderMeasurement } from 'lib/validations/upload_artwork_input_validator/validateOrderMeasurement';
 import { useAppStore } from 'store/app/appStore';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import UnitDropdown from './UnitDropdown';
 import { convertDimensionsToStandard } from 'utils/convertUnits';
+import { format } from 'date-fns';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -57,13 +55,27 @@ const DimensionsDetails = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isOnExhibition, setIsOnExhibition] = useState(false);
-  const [expoEndDate, setExpoEndDate] = useState<string>('');
+  const [expoEndDate, setExpoEndDate] = useState<Date | null>(null);
   const [isChecked, setIsChecked] = useState(false);
+
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const { updateModal } = useModalStore();
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date: Date) => {
+    setExpoEndDate(date);
+    hideDatePicker();
+  };
+
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
     const isFormValid = Object.values({
       weight: formErrors.weight,
       height: formErrors.height,
@@ -81,10 +93,8 @@ const DimensionsDetails = () => {
 
   const handleValidationChecks = (label: keyof ArtworkDimensionsErrorsType, value: string) => {
     if (value.trim() === '') {
-      // If the input is empty, clear the error
       setFormErrors((prev) => ({ ...prev, [label]: '' }));
     } else {
-      // Run validation and update error state
       const errors = validateOrderMeasurement(value);
       setFormErrors((prev) => ({ ...prev, [label]: errors.length === 0 ? '' : errors }));
     }
@@ -107,13 +117,12 @@ const DimensionsDetails = () => {
           userType === 'gallery'
             ? {
                 is_on_exhibition: isOnExhibition,
-                exhibition_end_date: expoEndDate ? new Date(expoEndDate) : '',
+                exhibition_end_date: expoEndDate || '',
               }
             : null,
         hold_status: null,
       };
       const response = await updateShippingQuote(payload);
-      console.log(response);
       if (response.isOk) {
         updateModal({
           message: 'Order accepted successfully',
@@ -224,24 +233,38 @@ const DimensionsDetails = () => {
                   <Pressable
                     onPress={() => setIsOnExhibition(true)}
                     style={tw.style(
-                      `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`,
+                      'h-[51px] rounded-full justify-center items-center flex-1 border-2',
+                      isOnExhibition ? 'bg-black border-black' : 'bg-[#F7F7F7] border-[#000000]',
                     )}
-                    disabled={isOnExhibition}
                   >
-                    <Text style={tw`text-[#1A1A1A]] font-bold text-[14px]`}>Yes</Text>
+                    <Text
+                      style={tw.style(
+                        'font-bold text-[14px]',
+                        isOnExhibition ? 'text-white' : 'text-[#1A1A1A]',
+                      )}
+                    >
+                      Yes
+                    </Text>
                   </Pressable>
 
                   <Pressable
                     onPress={() => {
                       setIsOnExhibition(false);
-                      setExpoEndDate('');
+                      setExpoEndDate(null);
                     }}
-                    disabled={!isOnExhibition}
                     style={tw.style(
-                      `h-[51px] rounded-full justify-center bg-[#1A1A1A] items-center flex-1`,
+                      'h-[51px] rounded-full justify-center items-center flex-1 border-2',
+                      !isOnExhibition ? 'bg-black border-black' : 'bg-[#F7F7F7] border-[#000000]',
                     )}
                   >
-                    <Text style={tw`text-white font-bold text-[14px]`}>No</Text>
+                    <Text
+                      style={tw.style(
+                        'font-bold text-[14px]',
+                        !isOnExhibition ? 'text-white' : 'text-[#1A1A1A]',
+                      )}
+                    >
+                      No
+                    </Text>
                   </Pressable>
                 </View>
 
@@ -250,15 +273,27 @@ const DimensionsDetails = () => {
                     <Text style={tw`text-[14px] text-[#858585] mb-[15px]`}>
                       Select Exhibition End Date:
                     </Text>
-                    <DateTimePicker
-                      value={expoEndDate ? new Date(expoEndDate) : new Date()}
+
+                    <Pressable
+                      onPress={showDatePicker}
+                      style={tw`bg-white border border-[#D1D5DB] rounded-lg px-4 py-3`}
+                    >
+                      <Text style={tw`text-[#1A1A1A]`}>
+                        {expoEndDate
+                          ? format(expoEndDate, 'MMM dd, yyyy - hh:mm a')
+                          : 'Select date and time'}
+                      </Text>
+                    </Pressable>
+
+                    <DateTimePickerModal
+                      isVisible={isDatePickerVisible}
                       mode="datetime"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        if (selectedDate) {
-                          setExpoEndDate(selectedDate.toISOString());
-                        }
-                      }}
+                      onConfirm={handleConfirm}
+                      onCancel={hideDatePicker}
+                      minimumDate={new Date()}
+                      display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                      confirmTextIOS="Confirm"
+                      cancelTextIOS="Cancel"
                     />
                   </View>
                 )}
@@ -269,11 +304,9 @@ const DimensionsDetails = () => {
               onPress={() => setIsChecked(!isChecked)}
               style={tw.style(`mt-[30px] flex-row items-start gap-[12px] mx-[25px]`)}
             >
-              {/* Checkbox circle */}
               <View
                 style={tw`w-[20px] h-[20px] rounded-full border-2 border-[#858585] items-center justify-center mt-[2px]`}
               >
-                {/* Inner checkmark (conditionally visible) */}
                 {isChecked && <View style={tw`w-[12px] h-[12px] rounded-full bg-[#1a1a1a]`} />}
               </View>
 

@@ -1,13 +1,13 @@
-import { StyleSheet, View } from "react-native";
-import React, { useState } from "react";
-import CardInfo from "./forms/CardInfo";
-import OTPForm from "./forms/OTPForm";
-import AvsNoauthInput from "./forms/AvsNoauthInput";
-import AuthPinInput from "./forms/AuthPinInput";
-import { subscriptionStepperStore } from "store/subscriptionStepper/subscriptionStepperStore";
+import { StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
+import CardInfo from './forms/CardInfo';
+import OTPForm from './forms/OTPForm';
+import AvsNoauthInput from './forms/AvsNoauthInput';
+import AuthPinInput from './forms/AuthPinInput';
+import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
 
 type CheckoutStepperProps = {
-  plan: PlanProps;
+  plan?: PlanProps;
   setVerificationScreen: () => void;
   activeIndex: number;
   setActiveIndex: (index: any) => void;
@@ -23,19 +23,17 @@ export default function CheckoutStepper({
 }: CheckoutStepperProps) {
   const [isLastStep, setIsLastStep] = useState(false);
   const [validateChargeAuthorization, setValidateChargeAuthorization] =
-    useState<ValidateChargeTypes>("");
+    useState<ValidateChargeTypes>('');
 
   const { set_transaction_id } = subscriptionStepperStore();
 
   const handleNext = () => {
     !isLastStep &&
-      setActiveIndex((cur) =>
-        cur + validateChargeAuthorization !== "redirect" ? 1 : 3
-      );
+      setActiveIndex((cur: number) => cur + (validateChargeAuthorization !== 'redirect' ? 1 : 3));
   };
 
   const handlePinClick = () => {
-    !isLastStep && setActiveIndex((cur) => cur + 1);
+    !isLastStep && setActiveIndex((cur: number) => cur + 1);
   };
 
   return (
@@ -50,13 +48,13 @@ export default function CheckoutStepper({
       )}
       {activeIndex === 1 && (
         <View>
-          {validateChargeAuthorization === "pin" && (
+          {validateChargeAuthorization === 'pin' && (
             <AuthPinInput
               handleNext={handlePinClick}
               updateFinalAuthorization={setValidateChargeAuthorization}
             />
           )}
-          {validateChargeAuthorization === "avs_noauth" && (
+          {validateChargeAuthorization === 'avs_noauth' && (
             <AvsNoauthInput
               updateFinalAuthorization={setValidateChargeAuthorization}
               handleNext={handleNext}
@@ -64,9 +62,9 @@ export default function CheckoutStepper({
           )}
         </View>
       )}
-      {activeIndex === 2 && (
+      {activeIndex === 0 && (
         <View>
-          {validateChargeAuthorization === "otp" && (
+          {validateChargeAuthorization === 'otp' && (
             <OTPForm
               handleNext={() => {
                 setVerificationScreen();

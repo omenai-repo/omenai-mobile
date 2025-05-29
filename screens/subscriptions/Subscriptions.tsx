@@ -1,21 +1,14 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import InActiveSubscription from "./features/InActiveSubscription";
-import { useAppStore } from "store/app/appStore";
-import ActiveSubscriptions from "./features/ActiveSubscriptions";
-import WithModal from "components/modal/WithModal";
-import ActiveSubLoader from "./components/ActiveSubLoader";
-import { useModalStore } from "store/modal/modalStore";
-import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscriptionData";
-import { useIsFocused } from "@react-navigation/native";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import InActiveSubscription from './features/InActiveSubscription';
+import { useAppStore } from 'store/app/appStore';
+import ActiveSubscriptions from './features/ActiveSubscriptions';
+import WithModal from 'components/modal/WithModal';
+import ActiveSubLoader from './components/ActiveSubLoader';
+import { useModalStore } from 'store/modal/modalStore';
+import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData';
+import { useIsFocused } from '@react-navigation/native';
+import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export default function Subscriptions() {
   const isFocused = useIsFocused();
@@ -39,8 +32,8 @@ export default function Subscriptions() {
       } else {
         //something went wrong
         updateModal({
-          message: "No active subscription",
-          modalType: "error",
+          message: 'No active subscription',
+          modalType: 'error',
           showModal: true,
         });
       }
@@ -55,22 +48,17 @@ export default function Subscriptions() {
 
   return (
     <WithModal>
-      <SafeAreaView style={styles.safeArea}>
+      <View style={styles.safeArea}>
         <View style={styles.headerContainer}>
-          <Text style={{ fontSize: 20, textAlign: "center" }}>
-            Subscription & Billing
-          </Text>
+          <Text style={{ fontSize: 20, textAlign: 'center' }}>Subscription & Billing</Text>
         </View>
-      </SafeAreaView>
+      </View>
       {loading ? (
         <View style={{ padding: 20 }}>
           <ActiveSubLoader />
         </View>
       ) : (
-        <ScrollWrapper
-          style={styles.mainContainer}
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollWrapper style={styles.mainContainer} showsVerticalScrollIndicator={false}>
           {isSubActive ? (
             <ActiveSubscriptions subscriptionData={subscriptionData} />
           ) : (
@@ -93,6 +81,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? 50 : 80,
   },
 });
