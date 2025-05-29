@@ -80,7 +80,7 @@ const BottomTabNav = () => {
           tabBarStyle: {
             height: 85,
             backgroundColor: colors.black,
-            bottom: Platform.OS === 'ios' ? 30 : 50,
+            bottom: 30,
             borderRadius: 18,
             marginHorizontal: width / 20,
             position: 'absolute',
