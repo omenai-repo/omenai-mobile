@@ -41,6 +41,8 @@ import BackScreenButton from 'components/buttons/BackScreenButton';
 import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
 import ZoomArtwork from './ZoomArtwork';
 
+const { width, height } = Dimensions.get('window');
+
 // Helper function to determine if device is in tablet landscape mode
 const useTabletLandscape = () => {
   const [dimensions, setDimensions] = useState(Dimensions.get('window'));
@@ -55,9 +57,8 @@ const useTabletLandscape = () => {
   }, []);
 
   useEffect(() => {
-    const { width, height } = dimensions;
     const isLandscape = width > height;
-    // const isTabletSize = Math.min(width, height) >= 768; // Tablet threshold
+
     setIsTabletLandscape(isLandscape);
   }, [dimensions]);
 
@@ -71,6 +72,7 @@ export default function Artwork() {
   const { updateModal } = useModalStore();
   const { userType, userSession } = useAppStore();
   const { isTabletLandscape, screenWidth } = useTabletLandscape();
+  const isTabletSize = Math.min(width) >= 768; // Tablet threshold
 
   const [isLoading, setIsLoading] = useState(false);
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
@@ -255,39 +257,52 @@ export default function Artwork() {
       </View>
 
       {/* Action buttons */}
-      <View style={styles.buttonContainer}>
-        {isLoading
-          ? null
-          : !['gallery', 'artist'].includes(userType) &&
-            (data?.availability ? (
-              data?.pricing.shouldShowPrice === 'Yes' ? (
-                <LongBlackButton
-                  value="Purchase artwork"
-                  isDisabled={false}
-                  onClick={() =>
-                    navigation.navigate(screenName.purchaseArtwork, {
-                      title: data?.title,
-                    })
-                  }
-                />
+      <View
+        style={[
+          styles.buttonContainer,
+          isTabletSize && {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 30,
+          },
+        ]}
+      >
+        <View style={tw`flex-1`}>
+          {isLoading
+            ? null
+            : !['gallery', 'artist'].includes(userType) &&
+              (data?.availability ? (
+                data?.pricing.shouldShowPrice === 'Yes' ? (
+                  <LongBlackButton
+                    value="Purchase artwork"
+                    isDisabled={false}
+                    onClick={() =>
+                      navigation.navigate(screenName.purchaseArtwork, {
+                        title: data?.title,
+                      })
+                    }
+                  />
+                ) : (
+                  <LongBlackButton
+                    value={loadingPriceQuote ? 'Requesting ...' : 'Request price'}
+                    isDisabled={false}
+                    onClick={handleRequestPriceQuote}
+                    isLoading={loadingPriceQuote}
+                  />
+                )
               ) : (
-                <LongBlackButton
-                  value={loadingPriceQuote ? 'Requesting ...' : 'Request price'}
-                  isDisabled={false}
-                  onClick={handleRequestPriceQuote}
-                  isLoading={loadingPriceQuote}
-                />
-              )
-            ) : (
-              <LongBlackButton value="Sold" isDisabled={true} onClick={() => {}} />
-            ))}
-        {!['gallery', 'artist'].includes(userType) && (
-          <SaveArtworkButton
-            likeIds={data?.like_IDs || []}
-            art_id={data?.art_id}
-            impressions={data?.impressions || 0}
-          />
-        )}
+                <LongBlackButton value="Sold" isDisabled={true} onClick={() => {}} />
+              ))}
+        </View>
+        <View style={tw`flex-1`}>
+          {!['gallery', 'artist'].includes(userType) && (
+            <SaveArtworkButton
+              likeIds={data?.like_IDs || []}
+              art_id={data?.art_id}
+              impressions={data?.impressions || 0}
+            />
+          )}
+        </View>
       </View>
 
       <Pressable onPress={() => setShowMore(true)}>

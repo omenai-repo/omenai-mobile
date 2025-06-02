@@ -1,9 +1,9 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import React from "react";
-import TransactionCard from "./TransactionCard";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
-import { convertPriceStringToNumber } from "utils/utils_priceStringToNumberConverter";
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import TransactionCard from './TransactionCard';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
+import { convertPriceStringToNumber } from 'utils/utils_priceStringToNumberConverter';
 
 type TransactionsTableProps = {
   transactions: (PurchaseTransactionModelSchemaTypes & {
@@ -18,21 +18,20 @@ export default function Transactions({ transactions }: TransactionsTableProps) {
       transaction: PurchaseTransactionModelSchemaTypes & {
         createdAt: any;
         updatedAt: string;
-      }
+      },
     ) => {
       const table = {
         id: transaction.trans_id,
         date: formatIntlDateTime(transaction.trans_date),
-        gross: transaction.trans_pricing.unit_price,
+        gross: utils_formatPrice(transaction.trans_pricing.unit_price),
         net: utils_formatPrice(
-          transaction.trans_pricing.unit_price -
-            transaction.trans_pricing.commission
+          transaction.trans_pricing.unit_price - transaction.trans_pricing.commission,
         ),
         commission: transaction.trans_pricing.commission,
-        status: "Completed",
+        status: 'Completed',
       };
       return table;
-    }
+    },
   );
 
   return (

@@ -9,15 +9,15 @@ import {
   FlatList,
   TouchableOpacity,
   Linking,
-} from "react-native";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { colors } from "config/colors.config";
-import { getPromotionalData } from "services/promotional/getPromotionalContent";
-import { getPromotionalFileView } from "lib/storage/getPromotionalsFileView";
-import BannerLoader from "./BannerLoader";
-import BannerCard from "./BannerCard";
+} from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { colors } from 'config/colors.config';
+import { getPromotionalData } from 'services/promotional/getPromotionalContent';
+import { getPromotionalFileView } from 'lib/storage/getPromotionalsFileView';
+import BannerLoader from './BannerLoader';
+import BannerCard from './BannerCard';
 
-const { width: windowWidth } = Dimensions.get("window");
+const { width: windowWidth } = Dimensions.get('window');
 const ITEM_WIDTH = windowWidth - 50; // Width of each item, adjust this to your needs
 const CENTER_OFFSET = (windowWidth - ITEM_WIDTH) / 2;
 
@@ -33,7 +33,6 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState([]);
-
 
   useMemo(() => {
     setData([]);
@@ -94,7 +93,7 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
             decelerationRate="fast"
             onScroll={onScroll}
             scrollEventThrottle={16}
-            contentContainerStyle={{paddingRight: 15}}
+            contentContainerStyle={{ paddingRight: 15 }}
           />
         )}
       </View>
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
   container: {
     height: 250,
     backgroundColor: colors.primary_black,
-    flexDirection: "row",
+    flexDirection: 'row',
     width: windowWidth,
   },
   imageContainer: {
@@ -129,28 +128,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   button: {
     borderWidth: 1,
     borderColor: colors.white,
     borderRadius: 30,
-    flexWrap: "wrap",
+    flexWrap: 'wrap',
     paddingHorizontal: 15,
     paddingVertical: 8,
     marginTop: 30,
   },
   indicatorsContainer: {
     marginTop: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
     gap: 10,
   },
   indicator: {
     height: 8,
     width: 8,
     borderRadius: 5,
-    backgroundColor: "#ddd",
+    backgroundColor: '#ddd',
   },
 });

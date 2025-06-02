@@ -94,7 +94,7 @@ const MiniArtworkCard = memo(
           >
             {artist}
           </Text>
-          {availability && (
+          {availability ? (
             <Text
               style={[
                 tw`text-base font-bold text-[#1A1A1A]/90`,
@@ -103,19 +103,17 @@ const MiniArtworkCard = memo(
             >
               {showPrice ? utils_formatPrice(price) : 'Price on request'}
             </Text>
-          )}
-          {!availability && (
-            <View
-              style={tw.style(`rounded-full bg-[#E0E0E0] px-5 py-2 mt-2`, {
-                width: screenWidth / 6,
-              })}
-            >
+          ) : (
+            !availability && (
               <Text
-                style={[tw`text-[#A1A1A1] text-sm`, { fontFamily: fontNames.dmSans + 'Medium' }]}
+                style={[
+                  tw`text-base font-bold text-[#1A1A1A]/90`,
+                  { fontFamily: fontNames.dmSans + 'Bold' },
+                ]}
               >
                 Sold
               </Text>
-            </View>
+            )
           )}
         </View>
       </TouchableOpacity>

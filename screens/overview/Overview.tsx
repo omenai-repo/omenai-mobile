@@ -28,8 +28,8 @@ export default function Overview() {
           <HighlightCard refreshCount={refreshCount} />
         </View>
         <SalesOverview refreshCount={refreshCount} />
-        <PopularArtworks refreshCount={refreshCount} />
         <RecentOrders refreshCount={refreshCount} />
+        <PopularArtworks refreshCount={refreshCount} />
       </ScrollWrapper>
     </WithModal>
   );
