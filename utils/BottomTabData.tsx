@@ -30,6 +30,11 @@ import Catalog from 'screens/catalog/Catalog';
 import SearchResults from 'screens/searchResults/SearchResults';
 import Orders from 'screens/orders/Orders';
 import Profile from 'screens/profile/Profile';
+import Overview from 'screens/overview/Overview';
+import GalleryOrdersListing from 'screens/galleryOrders/GalleryOrdersListing';
+import Subscriptions from 'screens/subscriptions/Subscriptions';
+import GalleryProfile from 'screens/galleryProfileScreens/galleryProfile/GalleryProfile';
+import StripePayouts from 'screens/stripeScreens/payouts/StripePayouts';
 
 export const BottomTabDataArtist = [
   {
@@ -57,7 +62,7 @@ export const BottomTabDataArtist = [
     id: 2,
     activeIcon: shippingActive,
     inActiveIcon: shippingInActive,
-    name: 'Art Upload',
+    name: 'Artworks',
     component: GalleryArtworksListing,
   },
   {
@@ -104,5 +109,50 @@ export const BottomTabDataIndividual = [
     inActiveIcon: profileIconFocused,
     name: 'Profile',
     component: Profile,
+  },
+];
+
+export const BottomTabDataGallery = [
+  {
+    id: 1,
+    name: 'Overview',
+    activeIcon: overviewActive,
+    inActiveIcon: overviewInActive,
+    component: Overview,
+  },
+  {
+    id: 2,
+    name: 'Artworks',
+    activeIcon: shippingActive,
+    inActiveIcon: shippingInActive,
+    component: GalleryArtworksListing,
+  },
+  {
+    id: 3,
+    name: 'Orders',
+    activeIcon: ordersActive,
+    inActiveIcon: ordersInActive,
+    component: GalleryOrdersListing,
+  },
+  {
+    id: 4,
+    name: 'Sub',
+    activeIcon: ordersActive,
+    inActiveIcon: ordersInActive,
+    component: Subscriptions,
+  },
+  {
+    id: 5,
+    name: 'Payouts',
+    activeIcon: walletActive,
+    inActiveIcon: walletInActive,
+    component: StripePayouts,
+  },
+  {
+    id: 6,
+    name: 'Profile',
+    activeIcon: profileActive,
+    inActiveIcon: profileInActive,
+    component: GalleryProfile,
   },
 ];

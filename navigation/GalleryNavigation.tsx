@@ -29,6 +29,8 @@ import ChangeCard from 'screens/subscriptions/changeCard/ChangeCard';
 import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
 import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
 import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
+import { BottomTabDataGallery } from 'utils/BottomTabData';
+import TabButton from './components/TabButton';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -112,47 +114,36 @@ export default function GalleryNavigation() {
     const { width } = useWindowDimensions();
     return (
       <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused }) => {
-            let iconName = '';
-
-            if (route.name === screenName.gallery.overview) {
-              iconName = 'grid-outline';
-            } else if (route.name === screenName.gallery.artworks) {
-              iconName = 'briefcase-outline';
-            } else if (route.name === screenName.gallery.orders) {
-              iconName = 'package';
-            } else if (route.name === screenName.gallery.profile) {
-              iconName = 'user';
-            } else if (route.name === screenName.gallery.subscriptions) {
-              iconName = 'card-outline';
-            } else if (route.name === screenName.gallery.stripePayouts) {
-              iconName = 'wallet-outline';
-            }
-
-            return <CustomTabBarIcon title={route.name} name={iconName} focused={focused} />;
-          },
-          tabBarLabel: () => null,
-          tabBarActiveTintColor: colors.primary_black,
+        screenOptions={{
+          tabBarShowLabel: false,
           headerShown: false,
           tabBarInactiveTintColor: 'gray',
           tabBarStyle: {
-            height: 82,
+            height: 100,
             backgroundColor: colors.black,
-            bottom: 30,
-            borderRadius: 18,
-            marginHorizontal: width / 18,
+            paddingHorizontal: 20,
             position: 'absolute',
-            paddingTop: Platform.OS === 'ios' ? 25 : 0,
           },
-        })}
+        }}
       >
-        <Tab.Screen component={Overview} name={screenName.gallery.overview} />
-        <Tab.Screen component={GalleryArtworksListing} name={screenName.gallery.artworks} />
-        <Tab.Screen component={GalleryOrdersListing} name={screenName.gallery.orders} />
-        <Tab.Screen component={Subscriptions} name={screenName.gallery.subscriptions} />
-        <Tab.Screen component={StripePayoutScreen} name={screenName.gallery.stripePayouts} />
-        <Tab.Screen component={GalleryProfile} name={screenName.gallery.profile} />
+        {BottomTabDataGallery.map(({ name, activeIcon, inActiveIcon, component, id }) => (
+          <Tab.Screen
+            key={id}
+            name={name}
+            component={name === 'Payouts' ? StripePayoutScreen : component}
+            options={{
+              tabBarShowLabel: false,
+              tabBarButton: (props) => (
+                <TabButton
+                  {...props}
+                  activeIcon={activeIcon}
+                  inActiveIcon={inActiveIcon}
+                  name={name}
+                />
+              ),
+            }}
+          />
+        ))}
       </Tab.Navigator>
     );
   };
