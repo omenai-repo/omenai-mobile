@@ -78,13 +78,10 @@ const BottomTabNav = () => {
           headerShown: false,
           tabBarInactiveTintColor: 'gray',
           tabBarStyle: {
-            height: 85,
+            height: 100,
             backgroundColor: colors.black,
-            bottom: 30,
-            borderRadius: 18,
-            marginHorizontal: width / 20,
+            paddingHorizontal: 20,
             position: 'absolute',
-            paddingTop: Platform.OS === 'ios' ? 25 : 0,
           },
         }}
       >

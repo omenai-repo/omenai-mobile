@@ -1,7 +1,9 @@
-import { colors } from 'config/colors.config';
-import { GestureResponderEvent, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, GestureResponderEvent } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import tw from 'twrnc';
+import { colors } from 'config/colors.config';
+import { curvedTabBg } from 'utils/SvgImages';
 
 const TabButton = ({
   name,
@@ -17,21 +19,28 @@ const TabButton = ({
   onPress?: (event: GestureResponderEvent) => void;
 }) => {
   const focused = accessibilityState?.selected;
+
   return (
     <TouchableOpacity
       onPress={(event) => onPress?.(event)}
       activeOpacity={1}
-      style={tw`items-center flex-1 justify-center`}
+      style={tw`flex-1 items-center justify-end pb-3`} // align items bottom
     >
-      <SvgXml xml={focused ? activeIcon : inActiveIcon} />
-      <Text
+      {focused && (
+        <View style={tw`absolute top-[-17px]`}>
+          <SvgXml xml={curvedTabBg} width={100} height={60} />
+        </View>
+      )}
+
+      <View
         style={[
-          { fontSize: 13, color: colors.grey, fontWeight: '700', marginTop: 10 },
-          focused && { color: colors.white },
+          tw`items-center justify-center`,
+          focused && tw`absolute top-[-35px] bg-[#000000] rounded-full w-[48px] h-[48px]`, // bump icon up into the curve
         ]}
       >
-        {name}
-      </Text>
+        <SvgXml xml={focused ? activeIcon : inActiveIcon} width={26} height={26} />
+      </View>
+      {focused && <Text style={[tw`text-white mt-2 font-bold`, { fontSize: 13 }]}>{name}</Text>}
     </TouchableOpacity>
   );
 };
