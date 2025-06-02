@@ -1,5 +1,5 @@
 import { FlatList, Image, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import HeaderTabs from './components/HeaderTabs';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { organizeOrders } from 'utils/utils_splitArray';
@@ -17,7 +17,7 @@ import WithModal from 'components/modal/WithModal';
 import TabSwitcher from 'components/orders/TabSwitcher';
 import tw from 'twrnc';
 import DeclineOrderModal from 'screens/artist/orders/DeclineOrderModal';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useModalStore } from 'store/modal/modalStore';
 import YearDropdown from 'screens/artist/orders/YearDropdown';
 import { OrderContainer } from 'screens/artist/orders/OrderScreen';
@@ -38,9 +38,17 @@ export default function GalleryOrdersListing() {
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [orderId, setOrderId] = useState('');
 
-  useEffect(() => {
-    handleFetchOrders();
-  }, [refreshing]);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await handleFetchOrders();
+    setRefreshing(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      handleRefresh(); // Auto refresh when screen gains focus
+    }, []),
+  );
 
   const handleFetchOrders = async () => {
     setIsloading(true);

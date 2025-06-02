@@ -61,27 +61,31 @@ export default function SalesOverview({ refreshCount }: { refreshCount: number }
   };
 
   const handleBarPress = (x: number, y: number, value: number) => {
-    setTooltip({ visible: true, x, y, value });
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 200,
-      easing: Easing.ease,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const hideTooltip = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.ease,
-      useNativeDriver: true,
-    }).start(() => setTooltip({ ...tooltip, visible: false }));
+    if (tooltip.visible && tooltip.value === value && tooltip.x === x) {
+      // Hide if already visible on same bar
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }).start(() => {
+        setTooltip({ ...tooltip, visible: false });
+      });
+    } else {
+      // Show new tooltip
+      setTooltip({ visible: true, x, y, value });
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 200,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.skeletonContainer}>
         <View style={styles.header}>
           <View style={[styles.skeletonBlock, { width: 100, height: 20 }]} />
         </View>
@@ -93,7 +97,7 @@ export default function SalesOverview({ refreshCount }: { refreshCount: number }
               style={{
                 width: 10,
                 height: Math.random() * 60 + 20,
-                backgroundColor: '#3C3F4E',
+                backgroundColor: '#E0E0E0',
                 borderRadius: 4,
                 marginBottom: 5,
               }}
@@ -109,7 +113,7 @@ export default function SalesOverview({ refreshCount }: { refreshCount: number }
                 width: 20,
                 height: 10,
                 borderRadius: 2,
-                backgroundColor: '#3C3F4E',
+                backgroundColor: '#E0E0E0',
                 marginHorizontal: 3,
               }}
             />
@@ -183,8 +187,7 @@ export default function SalesOverview({ refreshCount }: { refreshCount: number }
                   height={barHeight}
                   fill="url(#barGradient)"
                   rx={4}
-                  onPressIn={() => handleBarPress(x + barWidth / 2, y, value)}
-                  onPressOut={hideTooltip}
+                  onPress={() => handleBarPress(x + barWidth / 2, y, value)}
                 />
               );
             })}
@@ -239,6 +242,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginHorizontal: 15,
   },
+  skeletonContainer: {
+    backgroundColor: '#FAFAFA',
+    borderRadius: 16,
+    paddingTop: 20,
+    paddingBottom: 40,
+    paddingHorizontal: 10,
+    marginHorizontal: 15,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 4,
+    // elevation: 2,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -292,7 +311,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   skeletonBlock: {
-    backgroundColor: '#3C3F4E',
+    backgroundColor: '#E0E0E0',
     borderRadius: 4,
   },
 });

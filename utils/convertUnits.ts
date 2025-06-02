@@ -1,7 +1,7 @@
 type Units = {
-  height: 'cm' | 'mm' | 'm' | 'in' | 'ft';
-  width: 'cm' | 'mm' | 'm' | 'in' | 'ft';
-  length: 'cm' | 'mm' | 'm' | 'in' | 'ft';
+  height: 'cm' | 'm' | 'in' | 'ft';
+  width: 'cm' | 'm' | 'in' | 'ft';
+  length: 'cm' | 'm' | 'in' | 'ft';
   weight: 'kg' | 'g' | 'lb';
 };
 
@@ -12,15 +12,13 @@ type RawValues = {
   weight: string;
 };
 
-export function convertToCm(value: string, unit: 'cm' | 'mm' | 'm' | 'in' | 'ft'): number {
+export function convertToCm(value: string, unit: 'cm' | 'm' | 'in' | 'ft'): number {
   const num = parseFloat(value);
   if (isNaN(num)) return 0;
 
   switch (unit) {
     case 'cm':
       return num;
-    case 'mm':
-      return num / 10;
     case 'm':
       return num * 100;
     case 'in':

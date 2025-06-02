@@ -30,7 +30,7 @@ type ArtworkDimensionsErrorsType = {
   weight: string;
 };
 
-type DimensionUnit = 'cm' | 'mm' | 'm' | 'in' | 'ft';
+type DimensionUnit = 'cm' | 'm' | 'in' | 'ft';
 type WeightUnit = 'kg' | 'g' | 'lb';
 
 const DimensionsDetails = () => {
@@ -53,6 +53,19 @@ const DimensionsDetails = () => {
     width: '',
     weight: '',
   });
+
+  const dimensionUnits = [
+    { label: 'centimeter (cm)', value: 'cm' },
+    { label: 'meter (m)', value: 'm' },
+    { label: 'inch (in)', value: 'in' },
+    { label: 'feet (ft)', value: 'ft' },
+  ];
+
+  const weightUnits = [
+    { label: 'kilogram (kg)', value: 'kg' },
+    { label: 'gram (g)', value: 'g' },
+    { label: 'pound (lb)', value: 'lb' },
+  ];
   const [isLoading, setIsLoading] = useState(false);
   const [isOnExhibition, setIsOnExhibition] = useState(false);
   const [expoEndDate, setExpoEndDate] = useState<Date | null>(null);
@@ -177,17 +190,17 @@ const DimensionsDetails = () => {
                 <View style={tw`flex-1`}>
                   <Text style={tw`text-[14px] text-[#858585] mb-[10px]`}>Dimension Unit</Text>
                   <UnitDropdown
-                    units={['cm', 'mm', 'm', 'in', 'ft']}
+                    units={dimensionUnits}
                     selectedUnit={dimensionUnit}
-                    onSelect={(val) => setDimensionUnit(val)}
+                    onSelect={(unit) => setDimensionUnit(unit as DimensionUnit)}
                   />
                 </View>
                 <View style={tw`flex-1`}>
                   <Text style={tw`text-[14px] text-[#858585] mb-[10px]`}>Weight Unit</Text>
                   <UnitDropdown
-                    units={['kg', 'g', 'lb']}
+                    units={weightUnits}
                     selectedUnit={weightUnit}
-                    onSelect={(val) => setWeightUnit(val)}
+                    onSelect={(unit) => setWeightUnit(unit as WeightUnit)}
                   />
                 </View>
               </View>
@@ -300,21 +313,28 @@ const DimensionsDetails = () => {
               </View>
             )}
 
-            <Pressable
-              onPress={() => setIsChecked(!isChecked)}
-              style={tw.style(`mt-[30px] flex-row items-start gap-[12px] mx-[25px]`)}
-            >
-              <View
-                style={tw`w-[20px] h-[20px] rounded-full border-2 border-[#858585] items-center justify-center mt-[2px]`}
-              >
-                {isChecked && <View style={tw`w-[12px] h-[12px] rounded-full bg-[#1a1a1a]`} />}
+            <View style={tw`mt-[30px] mx-[25px]`}>
+              {/* Warning Container */}
+              <View style={tw`bg-[#FFF4E5] border border-[#FFA500] p-[14px] rounded-[8px]`}>
+                <Text style={tw`text-[#A65B00] text-[14px] font-medium`}>
+                  By accepting this order, you have agreed to have this piece ready for shipping &
+                  pickup.
+                </Text>
               </View>
 
-              <Text style={tw`text-[14px] text-[#858585] font-medium flex-1`}>
-                By accepting this order, you have agreed to have this piece ready for shipping &
-                pickup
-              </Text>
-            </Pressable>
+              {/* Agree and Continue Checkbox */}
+              <Pressable
+                onPress={() => setIsChecked(!isChecked)}
+                style={tw`mt-[18px] flex-row items-center gap-[12px]`}
+              >
+                <View
+                  style={tw`w-[20px] h-[20px] rounded-full border-2 border-[#858585] items-center justify-center`}
+                >
+                  {isChecked && <View style={tw`w-[12px] h-[12px] rounded-full bg-[#1a1a1a]`} />}
+                </View>
+                <Text style={tw`text-[14px] text-[#858585] font-medium`}>I agree and continue</Text>
+              </Pressable>
+            </View>
 
             <View style={tw`mt-[60px] mx-[25px] mb-[150px]`}>
               <LongBlackButton

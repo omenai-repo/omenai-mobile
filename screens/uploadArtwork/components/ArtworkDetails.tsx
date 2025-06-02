@@ -105,6 +105,15 @@ export default function ArtworkDetails() {
           value={artworkUploadData.artwork_description || ''}
           errorMessage={formErrors.description}
         />
+        <View style={{ flex: 1 }}>
+          <CustomSelectPicker
+            label="Medium"
+            data={mediumListing}
+            placeholder="Select medium"
+            value={artworkUploadData.medium}
+            handleSetValue={(item) => updateArtworkUploadData('medium', item.value)}
+          />
+        </View>
         <View style={[styles.flexInputsContainer]}>
           <View style={{ flex: 1 }}>
             <Input
@@ -118,13 +127,13 @@ export default function ArtworkDetails() {
               errorMessage={formErrors.year}
             />
           </View>
-          <View style={{ flex: 1 }}>
-            <CustomSelectPicker
-              label="Medium"
-              data={mediumListing}
-              placeholder="Select medium"
-              value={artworkUploadData.medium}
-              handleSetValue={(item) => updateArtworkUploadData('medium', item.value)}
+          <View style={{ zIndex: 3, flex: 1 }}>
+            <Input
+              label="Materials"
+              onInputChange={(value) => updateArtworkUploadData('materials', value)}
+              placeHolder="Enter the materials used (separate each with a comma)"
+              value={artworkUploadData.materials}
+              errorMessage={formErrors.materials}
             />
           </View>
         </View>
@@ -150,15 +159,7 @@ export default function ArtworkDetails() {
             />
           </View>
         </View>
-        <View style={{ zIndex: 3 }}>
-          <Input
-            label="Materials"
-            onInputChange={(value) => updateArtworkUploadData('materials', value)}
-            placeHolder="Enter the materials used (separate each with a comma)"
-            value={artworkUploadData.materials}
-            errorMessage={formErrors.materials}
-          />
-        </View>
+
         <View style={[styles.flexInputsContainer, { zIndex: 4 }]}>
           <View style={{ flex: 1 }}>
             <CustomSelectPicker

@@ -1,28 +1,18 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import Loader from "components/general/Loader";
-import { Feather } from "@expo/vector-icons";
-import { isLoading } from "expo-font";
-import ArtworkCardLoader from "components/general/ArtworkCardLoader";
-import { fetchPopularArtworks } from "services/artworks/fetchPopularArtworks";
-import ArtworkCard from "components/artwork/ArtworkCard";
-import EmptyArtworks from "components/general/EmptyArtworks";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import NavBtnComponent from "components/artwork/NavBtnComponent";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import Loader from 'components/general/Loader';
+import { Feather } from '@expo/vector-icons';
+import { isLoading } from 'expo-font';
+import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
+import { fetchPopularArtworks } from 'services/artworks/fetchPopularArtworks';
+import ArtworkCard from 'components/artwork/ArtworkCard';
+import EmptyArtworks from 'components/general/EmptyArtworks';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import NavBtnComponent from 'components/artwork/NavBtnComponent';
 
-export default function PopularArtworks({
-  refreshCount,
-}: {
-  refreshCount: number;
-}) {
+export default function PopularArtworks({ refreshCount }: { refreshCount: number }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -42,19 +32,15 @@ export default function PopularArtworks({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate(screenName.gallery.artworks)}
-      >
+      <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.artworks)}>
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
             paddingHorizontal: 20,
           }}
         >
-          <Text
-            style={{ fontSize: 18, fontWeight: "500", flex: 1, color: "#000" }}
-          >
+          <Text style={{ fontSize: 18, fontWeight: '500', flex: 1, color: '#000' }}>
             Popular artworks
           </Text>
           <NavBtnComponent onPress={() => {}} />
@@ -64,19 +50,13 @@ export default function PopularArtworks({
       {!isLoading && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({
-            item,
-            index,
-          }: {
-            item: ArtworkFlatlistItem;
-            index: number;
-          }) => {
+          renderItem={({ item, index }: { item: ArtworkFlatlistItem; index: number }) => {
             return (
               <ArtworkCard
                 title={item.title}
                 url={item.url}
                 artist={item.artist}
-                showPrice={item.pricing.shouldShowPrice === "Yes"}
+                showPrice={item.pricing.shouldShowPrice === 'Yes'}
                 price={item.pricing.usd_price}
                 impressions={item.impressions}
                 like_IDs={item.like_IDs}
@@ -100,6 +80,6 @@ export default function PopularArtworks({
 const styles = StyleSheet.create({
   container: {
     paddingTop: 25,
-    paddingBottom: 20,
+    paddingBottom: 150,
   },
 });

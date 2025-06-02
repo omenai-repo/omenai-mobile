@@ -19,7 +19,7 @@ type artworkDimensionsErrorsType = {
   weight: string;
 };
 
-type DimensionUnit = 'cm' | 'mm' | 'm' | 'in' | 'ft';
+type DimensionUnit = 'cm' | 'm' | 'in' | 'ft';
 type WeightUnit = 'kg' | 'g' | 'lb';
 
 export default function ArtworkDimensions() {
@@ -39,6 +39,19 @@ export default function ArtworkDimensions() {
     width: '',
     weight: '',
   });
+
+  const dimensionUnits = [
+    { label: 'centimeter (cm)', value: 'cm' },
+    { label: 'meter (m)', value: 'm' },
+    { label: 'inch (in)', value: 'in' },
+    { label: 'feet (ft)', value: 'ft' },
+  ];
+
+  const weightUnits = [
+    { label: 'kilogram (kg)', value: 'kg' },
+    { label: 'gram (g)', value: 'g' },
+    { label: 'pound (lb)', value: 'lb' },
+  ];
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
@@ -111,17 +124,17 @@ export default function ArtworkDimensions() {
               <View style={tw`flex-1`}>
                 <Text style={tw`text-[14px] text-[#858585] mb-2`}>Dimension Unit</Text>
                 <UnitDropdown
-                  units={['cm', 'mm', 'm', 'in', 'ft']}
+                  units={dimensionUnits}
                   selectedUnit={dimensionUnit}
-                  onSelect={(val) => setDimensionUnit(val)}
+                  onSelect={(unit) => setDimensionUnit(unit as DimensionUnit)}
                 />
               </View>
               <View style={tw`flex-1`}>
                 <Text style={tw`text-[14px] text-[#858585] mb-2`}>Weight Unit</Text>
                 <UnitDropdown
-                  units={['kg', 'g', 'lb']}
+                  units={weightUnits}
                   selectedUnit={weightUnit}
-                  onSelect={(val) => setWeightUnit(val)}
+                  onSelect={(unit) => setWeightUnit(unit as WeightUnit)}
                 />
               </View>
             </View>
