@@ -122,14 +122,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    paddingTop: 40,
   },
   profileContainer: {
     flexDirection: 'row',
     gap: 20,
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'ios' ? 70 : 20,
+    paddingTop: Platform.OS === 'ios' ? 80 : 50,
   },
   buttonsContainer: {
     marginTop: 10,

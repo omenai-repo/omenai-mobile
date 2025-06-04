@@ -24,23 +24,21 @@ export default function Home() {
 
   return (
     <WithModal>
-      <View style={tw`pt-[40] flex-1`}>
-        <ScrollWrapper
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        >
-          <Header />
-          <Banner reloadCount={refreshCount} />
-          <NewArtworksListing refreshCount={refreshCount} />
-          <FeaturedGalleries />
-          <TrendingArtworks limit={28} refreshCount={refreshCount} />
-          <CuratedArtworksListing limit={20} refreshCount={refreshCount} />
-          <CatalogListing />
-          <Editorials />
-          <RecentlyViewedArtworks refreshCount={refreshCount} />
-          <View style={{ height: 100 }} />
-        </ScrollWrapper>
-      </View>
+      <ScrollWrapper
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        <Header />
+        <Banner reloadCount={refreshCount} />
+        <NewArtworksListing refreshCount={refreshCount} />
+        <FeaturedGalleries />
+        <TrendingArtworks limit={28} refreshCount={refreshCount} />
+        <CuratedArtworksListing limit={20} refreshCount={refreshCount} />
+        <CatalogListing />
+        <Editorials />
+        <RecentlyViewedArtworks refreshCount={refreshCount} />
+        <View style={{ height: 100 }} />
+      </ScrollWrapper>
     </WithModal>
   );
 }

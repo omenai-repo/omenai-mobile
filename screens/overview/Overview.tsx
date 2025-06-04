@@ -39,9 +39,4 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
   },
-  contentsContainer: {
-    flexDirection: 'row',
-    gap: 20,
-    marginTop: 20,
-  },
 });
