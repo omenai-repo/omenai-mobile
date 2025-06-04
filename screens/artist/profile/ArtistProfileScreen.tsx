@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 20,
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingTop: Platform.OS === 'ios' ? 80 : 50,
     flexWrap: 'wrap',
   },
   headerContainer: {
@@ -211,8 +211,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 50,
     gap: 20,
-  },
-  safeArea: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });
