@@ -1,13 +1,12 @@
-import { Image, Text, View, Platform, useWindowDimensions, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
-
-import omenai_logo from '../../assets/omenai-logo.png';
-import onboarding3 from '../../assets/images/onboarding3.jpg';
-import onboarding4 from '../../assets/images/onboarding4.jpg';
-import onboarding5 from '../../assets/images/onboarding5.jpg';
-import onboarding6 from '../../assets/images/onboarding6.jpg';
-import onboarding7 from '../../assets/images/onboarding7.jpg';
-import onboarding8 from '../../assets/images/onboarding8.jpg';
+import {
+  View,
+  Text,
+  Platform,
+  useWindowDimensions,
+  Pressable,
+  ImageBackground,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { screenName } from '../../constants/screenNames.constants';
@@ -15,7 +14,16 @@ import { onboardingdata } from 'constants/onBoardingData.constants';
 import OnBoardingSection from './components/OnBoardingSection';
 import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
 import { utils_determineOnboardingPages } from 'utils/utils_determineOnboardingPages';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import tw from 'twrnc';
+
+const AnimatedImage = Animated.createAnimatedComponent(ImageBackground);
 
 export default function Welcome() {
   const { width, height } = useWindowDimensions();
@@ -23,16 +31,30 @@ export default function Welcome() {
 
   const [selected, setSelected] = useState(0);
   const [showWelcome, setShowWelcome] = useState(false);
+  const imageWidth = width * 1.5; // Wider image for horizontal movement
+  const translateX = useSharedValue(0);
+
+  useEffect(() => {
+    // Animate from 0 to negative offset then reverse
+    translateX.value = withRepeat(
+      withTiming(-imageWidth + width, {
+        duration: 10000,
+        easing: Easing.inOut(Easing.ease),
+      }),
+      -1,
+      true,
+    );
+  }, []);
+
+  const animatedImageStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
 
   useEffect(() => {
     async function handleOnboardingCheck() {
       const isOnboarded = await utils_determineOnboardingPages();
-
-      if (isOnboarded) {
-        setShowWelcome(true);
-      }
+      if (isOnboarded) setShowWelcome(true);
     }
-
     handleOnboardingCheck();
   }, []);
 
@@ -40,7 +62,7 @@ export default function Welcome() {
     navigation.navigate(value);
   };
 
-  if (!showWelcome)
+  if (!showWelcome) {
     return (
       <OnBoardingSection
         data={onboardingdata[selected]}
@@ -52,82 +74,27 @@ export default function Welcome() {
         handleNext={() => setSelected((prev) => prev + 1)}
       />
     );
+  }
 
   return (
-    <View style={tw`flex-1 bg-[#FFFFFF]`}>
-      <View>
-        <View style={tw`flex-row justify-between`}>
-          <View style={tw`mt-[70px] android:mt-[20px]`}>
-            <Image
-              source={omenai_logo}
-              style={{
-                width: width / 3,
-                height: height / 40,
-                alignSelf: 'center',
-                marginBottom: Platform.OS === 'ios' ? 25 : 20,
-              }}
-            />
-            <Image
-              source={onboarding8}
-              style={{
-                width: width / 2.1,
-                height: Platform.OS === 'ios' ? 190 : 160,
-              }}
-              resizeMode="contain"
-            />
-          </View>
-          <Image
-            source={onboarding7}
-            style={{
-              width: width / 2.1,
-              height: 274,
-              marginTop: Platform.OS === 'ios' ? 35 : -40,
-            }}
-            resizeMode="contain"
-          />
-        </View>
-        <View style={tw`flex-row justify-between`}>
-          <View>
-            <Image
-              source={onboarding3}
-              style={{
-                width: width / 2.14,
-                height: Platform.OS === 'ios' ? 190 : 160,
-                marginTop: Platform.OS === 'ios' ? 20 : 10,
-              }}
-              resizeMode="contain"
-            />
-            <Image
-              source={onboarding5}
-              style={{
-                width: width / 3.2,
-                height: Platform.OS === 'ios' ? 190 : 160,
-                marginTop: 20,
-              }}
-              resizeMode="contain"
-            />
-          </View>
-          <View>
-            <Image
-              source={onboarding4}
-              style={{
-                width: width / 2.14,
-                height: Platform.OS === 'ios' ? 274 : 220,
-              }}
-              resizeMode="contain"
-            />
-            <Image
-              source={onboarding6}
-              style={{
-                width: width / 2.14,
-                height: Platform.OS === 'ios' ? 190 : 140,
-                marginTop: Platform.OS === 'ios' ? 0 : 20,
-              }}
-              resizeMode="contain"
-            />
-          </View>
-        </View>
-      </View>
+    <View style={tw`flex-1`}>
+      {/* Animated full-screen artwork */}
+      <AnimatedImage
+        source={require('../../assets/images/onboarding-3.jpg')}
+        resizeMode="cover"
+        style={[
+          {
+            width: imageWidth,
+            height,
+            position: 'absolute',
+            left: 0,
+            top: 0,
+          },
+          animatedImageStyle,
+        ]}
+      />
+
+      {/* Bottom content container */}
       <View
         style={tw.style(`bg-[#1A1A1A] rounded-[20px]`, {
           position: 'absolute',
@@ -145,10 +112,10 @@ export default function Welcome() {
           Find every artwork you desire here
         </Text>
 
-        <Text style={tw.style(`text-[15px] text-[#FFFFFFB2] text-center pt-[25px]`)}>
+        <Text style={tw`text-[15px] text-[#FFFFFFB2] text-center pt-[25px]`}>
           Buy, Trade, Discover
         </Text>
-        <Text style={tw.style(`text-[15px] text-[#FFFFFFB2] text-center px-[10px]`)}>
+        <Text style={tw`text-[15px] text-[#FFFFFFB2] text-center px-[10px]`}>
           and experience art like the louvre with a single tap.
         </Text>
 
@@ -162,7 +129,7 @@ export default function Welcome() {
           )}
           onPress={() => handleNavigation(screenName.login)}
         >
-          <Text style={tw`text-[#1A1A1A]000] text-[16px]`}>Log In</Text>
+          <Text style={tw`text-[#1A1A1A] text-[16px]`}>Log In</Text>
         </Pressable>
 
         <Pressable
