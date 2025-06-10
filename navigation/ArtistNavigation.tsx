@@ -1,4 +1,4 @@
-import { View, Text, Platform, Dimensions, Modal, Animated, Easing, Pressable } from 'react-native';
+import { View, Text, Modal, Animated, Easing, Pressable } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppStore } from 'store/app/appStore';
 import ArtistOnboarding from 'screens/artistOnboarding/ArtistOnboarding';
@@ -7,7 +7,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SvgXml } from 'react-native-svg';
 import { starEffect } from 'utils/SvgImages';
 import ArtistOverview from 'screens/artist/overview/ArtistOverview';
-import { colors } from 'config/colors.config';
 import { createStackNavigator } from '@react-navigation/stack';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { logout } from 'utils/logout.utils';
@@ -30,12 +29,10 @@ import { TransactionDetailsScreen } from 'screens/artist/wallet/TransactionDetai
 import Artwork from 'screens/artwork/Artwork';
 import EditArtwork from 'screens/editArtwork/EditArtwork';
 import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
-import TabButton from './components/TabButton';
 import { BottomTabDataArtist } from 'utils/BottomTabData';
 import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import ViewCredentialsScreen from 'screens/artist/profile/ViewCredentials';
-
-const { width, height } = Dimensions.get('window');
+import CustomTabBar from './components/TabButton';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -73,33 +70,18 @@ const BottomTabNav = () => {
   return (
     <>
       <Tab.Navigator
+        tabBar={(props) => <CustomTabBar {...props} tabData={BottomTabDataArtist} />}
         screenOptions={{
-          tabBarShowLabel: false,
           headerShown: false,
-          tabBarInactiveTintColor: 'gray',
-          tabBarStyle: {
-            height: 100,
-            backgroundColor: colors.black,
-            paddingHorizontal: 20,
-            position: 'absolute',
-          },
         }}
       >
-        {BottomTabDataArtist.map(({ name, activeIcon, inActiveIcon, component, id }) => (
+        {BottomTabDataArtist.map(({ name, component, id }) => (
           <Tab.Screen
             key={id}
             name={name}
             component={component}
             options={{
               tabBarShowLabel: false,
-              tabBarButton: (props) => (
-                <TabButton
-                  {...props}
-                  activeIcon={activeIcon}
-                  inActiveIcon={inActiveIcon}
-                  name={name}
-                />
-              ),
             }}
           />
         ))}

@@ -80,7 +80,7 @@ export default function Welcome() {
     <View style={tw`flex-1`}>
       {/* Animated full-screen artwork */}
       <AnimatedImage
-        source={require('../../assets/images/onboarding-3.jpg')}
+        source={require('../../assets/images/mixed-media.png')}
         resizeMode="cover"
         style={[
           {
