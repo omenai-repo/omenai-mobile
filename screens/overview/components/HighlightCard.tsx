@@ -1,10 +1,9 @@
-import { colors } from 'config/colors.config';
+import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import { SvgXml } from 'react-native-svg';
+import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
 import { fetchHighlightData } from 'services/overview/fetchHighlightData';
 import tw from 'twrnc';
-import { notesIcon, walletIcon } from 'utils/SvgImages';
 
 type HighlightCardProps = {
   refreshCount: number;
@@ -12,8 +11,12 @@ type HighlightCardProps = {
 
 export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
   const { width } = useWindowDimensions();
+  const cardWidth = (width - 55) / 2; // 20px margin + 15px gap + 20px margin
+
   const [totalArtwork, setTotalArtwork] = useState(0);
   const [soldArtwork, setSoldArtwork] = useState(0);
+  const [revenue, setRevenue] = useState(0);
+  const [net, setNet] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,149 +24,140 @@ export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
   }, [refreshCount]);
 
   const handleFetchHighlightData = async () => {
-    // setIsLoading(true)
-    let data1 = await fetchHighlightData('artworks');
-    let data2 = await fetchHighlightData('sales');
+    setIsLoading(true);
+    const data1 = await fetchHighlightData('artworks');
+    const data2 = await fetchHighlightData('sales');
+    const data3 = await fetchHighlightData('net');
+    const data4 = await fetchHighlightData('revenue');
     setTotalArtwork(data1);
     setSoldArtwork(data2);
+    setRevenue(data4);
+    setNet(data3);
     setIsLoading(false);
   };
 
-  const CardComp = ({ title, icon, amount }: { title: string; icon: string; amount: number }) => {
+  const CardComp = ({
+    title,
+    icon,
+    amount,
+    color,
+  }: {
+    title: string;
+    icon: keyof typeof Ionicons.glyphMap;
+    amount: number;
+    color: string;
+  }) => {
     return (
-      <View>
-        <View
-          style={tw`h-[44px] self-center w-[44px] bg-[#FFFFFF] rounded-full justify-center items-center`}
-        >
-          <SvgXml xml={icon} />
+      <Animated.View
+        entering={FadeInUp.delay(100)}
+        style={[
+          tw`bg-black border border-[#ffffff10] rounded-[12px] px-[14px] py-[16px]`,
+          { width: cardWidth },
+        ]}
+      >
+        <View style={tw`flex-row justify-between items-center`}>
+          {/* Left: Text Column */}
+          <View style={tw`flex-1`}>
+            <Text style={tw`text-[13px] text-[#FFFFFF99] mb-[2px]`}>{title}</Text>
+            <Text style={tw`text-[18px] text-white font-bold`}>{amount.toLocaleString()}</Text>
+          </View>
+
+          {/* Right: Icon */}
+          <View
+            style={[
+              tw`h-[36px] w-[36px] rounded-full justify-center items-center`,
+              { backgroundColor: `${color}22` },
+            ]}
+          >
+            <Ionicons name={icon} size={18} color={color} />
+          </View>
         </View>
-        <Text style={tw`text-[17px] text-[#FFFFFF99] mt-[10px]`}>{title}</Text>
-        <Text style={tw`text-[20px] text-[#FFFFFF] font-bold mt-[10px] text-center`}>{amount}</Text>
-      </View>
+      </Animated.View>
     );
   };
 
-  if (isLoading)
+  if (isLoading) {
     return (
-      <View style={tw`flex-row mx-[20px] gap-[20px]`}>
-        <View style={styles.card}>
-          <View
-            style={{ height: 40, width: 40, backgroundColor: colors.grey50, alignSelf: 'center' }}
-          />
-          <View
-            style={{
-              width: '70%',
-              height: 15,
-              backgroundColor: colors.grey50,
-              marginTop: 10,
-              alignSelf: 'center',
-            }}
-          />
-          <View
-            style={{
-              width: '30%',
-              height: 10,
-              backgroundColor: colors.grey50,
-              marginTop: 10,
-              alignSelf: 'center',
-            }}
-          />
+      <View style={tw`mx-[20px]`}>
+        <View style={tw`flex-row gap-[15px] mb-[15px]`}>
+          {[0, 1].map((idx) => (
+            <Animated.View
+              key={`loading-top-${idx}`}
+              entering={FadeIn.delay(idx * 100)}
+              style={[styles.skeletonCard, { width: cardWidth }]}
+            >
+              <View style={{ flex: 1 }}>
+                <View style={styles.skeletonLine} />
+                <View style={[styles.skeletonLine, { width: '50%', marginTop: 6 }]} />
+              </View>
+              <View style={styles.skeletonCircle} />
+            </Animated.View>
+          ))}
         </View>
-        <View style={styles.card}>
-          <View
-            style={{ height: 40, width: 40, backgroundColor: colors.grey50, alignSelf: 'center' }}
-          />
-          <View
-            style={{
-              width: '70%',
-              height: 15,
-              backgroundColor: colors.grey50,
-              marginTop: 10,
-              alignSelf: 'center',
-            }}
-          />
-          <View
-            style={{
-              width: '30%',
-              height: 10,
-              backgroundColor: colors.grey50,
-              marginTop: 10,
-              alignSelf: 'center',
-            }}
-          />
+        <View style={tw`flex-row gap-[15px]`}>
+          {[2, 3].map((idx) => (
+            <Animated.View
+              key={`loading-bottom-${idx}`}
+              entering={FadeIn.delay(idx * 100)}
+              style={[styles.skeletonCard, { width: cardWidth }]}
+            >
+              <View style={{ flex: 1 }}>
+                <View style={styles.skeletonLine} />
+                <View style={[styles.skeletonLine, { width: '50%', marginTop: 6 }]} />
+              </View>
+              <View style={styles.skeletonCircle} />
+            </Animated.View>
+          ))}
         </View>
       </View>
     );
+  }
 
   return (
-    <View
-      style={tw.style({
-        marginHorizontal: (width * 0.5) / 15,
-      })}
-    >
-      {/* <Text style={tw`text-[18px] text-[#1A1A1A]] font-medium mb-[10px]`}>Overview</Text> */}
-      <View style={tw`flex-row items-center gap-[20px]`}>
-        <View
-          style={tw.style(
-            `bg-[#000000] border-1 flex-1 border-[#0000001A] rounded-[16px] items-center py-[25px] px-[20px]`,
-          )}
-        >
-          <CardComp title="Total Art works" icon={notesIcon} amount={totalArtwork} />
-        </View>
-        <View
-          style={tw.style(
-            `bg-[#000000] border-1 flex-1 border-[#0000001A] rounded-[16px] items-center py-[25px] px-[20px]`,
-          )}
-        >
-          <CardComp title="Sold Artworks" icon={walletIcon} amount={soldArtwork} />
-        </View>
+    <View style={tw`mx-[20px]`}>
+      <View style={tw`flex-row gap-[15px] mb-[15px]`}>
+        <CardComp title="Revenue" icon="cash-outline" amount={revenue} color="#00C851" />
+        <CardComp title="Net Earnings" icon="stats-chart-outline" amount={net} color="#FF4444" />
+      </View>
+      <View style={tw`flex-row gap-[15px]`}>
+        <CardComp
+          title="Total Artworks"
+          icon="color-palette-outline"
+          amount={totalArtwork}
+          color="#FFA500"
+        />
+        <CardComp
+          title="Sold Artworks"
+          icon="pricetags-outline"
+          amount={soldArtwork}
+          color="#00BFFF"
+        />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    backgroundColor: '#FAFAFA',
-    borderRadius: 8,
-    padding: 25,
+  skeletonCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  iconContainer: {
-    height: 40,
-    width: 40,
+  skeletonCircle: {
+    height: 36,
+    width: 36,
+    borderRadius: 18,
+    backgroundColor: '#333',
+    marginLeft: 10,
+  },
+  skeletonLine: {
+    height: 10,
+    width: '70%',
     borderRadius: 4,
-    backgroundColor: colors.primary_black,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardTitle: {
-    color: '#1a1a1a',
-    fontSize: 12,
-    marginTop: 15,
-  },
-  cardAmount: {
-    fontSize: 18,
-    fontWeight: '500',
-    flex: 1,
-  },
-  statsDisplay: {
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 6,
-  },
-  percentageContainer: {
-    backgroundColor: '#E7F6EC',
-    borderRadius: 10,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-  },
-  percentageNumber: {
-    color: '#0F973D',
-    fontSize: 14,
-    fontWeight: '500',
+    backgroundColor: '#333',
   },
 });
