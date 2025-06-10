@@ -1,18 +1,13 @@
-import { Platform, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Text, useWindowDimensions, View } from 'react-native';
 import React from 'react';
 import { screenName } from 'constants/screenNames.constants';
-import { Feather } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import Catalog from 'screens/catalog/Catalog';
-import Profile from 'screens/profile/Profile';
 import SavedArtworks from 'screens/savedArtworks/SavedArtworks';
 import PurchaseArtwork from 'screens/purchase/PurchaseArtwork';
 import { colors } from 'config/colors.config';
-import Home from 'screens/home/Home';
 import Artwork from 'screens/artwork/Artwork';
 import SearchResults from 'screens/searchResults/SearchResults';
-import Orders from 'screens/orders/Orders';
 import Payment from 'screens/payment/Payment';
 import Filter from 'components/filter/Filter';
 import Notifications from 'screens/notifications/Notifications';
@@ -27,22 +22,10 @@ import ArtworkCategoriesFilterModal from 'screens/artworkCategories/components/f
 import Collections from 'screens/collections/Collections';
 import ChangeGalleryPassword from 'screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword';
 import { SvgXml } from 'react-native-svg';
-import {
-  catalogueIcon,
-  catalogueIconFocused,
-  homeIcon,
-  homeIconFocused,
-  orderIcon,
-  orderIconFocused,
-  profileIcon,
-  profileIconFocused,
-  searchIcon,
-  searchIconFocused,
-} from 'utils/SvgImages';
 import { BottomTabDataIndividual } from 'utils/BottomTabData';
-import TabButton from './components/TabButton';
 import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
 import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
+import CustomTabBar from './components/TabButton';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -76,33 +59,18 @@ export default function IndividualNavigation() {
     const { width } = useWindowDimensions();
     return (
       <Tab.Navigator
+        tabBar={(props) => <CustomTabBar {...props} tabData={BottomTabDataIndividual} />}
         screenOptions={{
-          tabBarShowLabel: false,
           headerShown: false,
-          tabBarInactiveTintColor: 'gray',
-          tabBarStyle: {
-            height: 100,
-            backgroundColor: colors.black,
-            paddingHorizontal: 20,
-            position: 'absolute',
-          },
         }}
       >
-        {BottomTabDataIndividual.map(({ name, activeIcon, inActiveIcon, component, id }) => (
+        {BottomTabDataIndividual.map(({ name, component, id }) => (
           <Tab.Screen
             key={id}
             name={name}
             component={component}
             options={{
               tabBarShowLabel: false,
-              tabBarButton: (props) => (
-                <TabButton
-                  {...props}
-                  activeIcon={activeIcon}
-                  inActiveIcon={inActiveIcon}
-                  name={name}
-                />
-              ),
             }}
           />
         ))}

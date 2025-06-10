@@ -4,17 +4,13 @@ import { StackNavigationProp, createStackNavigator } from '@react-navigation/sta
 import { colors } from 'config/colors.config';
 import { screenName } from 'constants/screenNames.constants';
 import { useEffect, useRef, useState } from 'react';
-import { Platform, Text, View, useWindowDimensions } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import Artwork from 'screens/artwork/Artwork';
 import Billing from 'screens/billing/Billing';
 import Checkout from 'screens/checkout/Checkout';
-import GalleryArtworksListing from 'screens/galleryArtworksListing/GalleryArtworksListing';
 import GalleryOrder from 'screens/galleryOrder/GalleryOrder';
-import GalleryOrdersListing from 'screens/galleryOrders/GalleryOrdersListing';
 import ChangeGalleryPassword from 'screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword';
 import EditGalleryProfile from 'screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile';
-import GalleryProfile from 'screens/galleryProfileScreens/galleryProfile/GalleryProfile';
-import Overview from 'screens/overview/Overview';
 import GetStartedWithStripe from 'screens/stripeScreens/getStartedWithStripe/GetStartedWithStripe';
 import Subscriptions from 'screens/subscriptions/Subscriptions';
 import UploadArtwork from 'screens/uploadArtwork/UploadArtwork';
@@ -30,7 +26,7 @@ import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen
 import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
 import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import { BottomTabDataGallery } from 'utils/BottomTabData';
-import TabButton from './components/TabButton';
+import CustomTabBar from './components/TabButton';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -114,33 +110,18 @@ export default function GalleryNavigation() {
     const { width } = useWindowDimensions();
     return (
       <Tab.Navigator
+        tabBar={(props) => <CustomTabBar {...props} tabData={BottomTabDataGallery} />}
         screenOptions={{
-          tabBarShowLabel: false,
           headerShown: false,
-          tabBarInactiveTintColor: 'gray',
-          tabBarStyle: {
-            height: 100,
-            backgroundColor: colors.black,
-            paddingHorizontal: 20,
-            position: 'absolute',
-          },
         }}
       >
-        {BottomTabDataGallery.map(({ name, activeIcon, inActiveIcon, component, id }) => (
+        {BottomTabDataGallery.map(({ name, component, id }) => (
           <Tab.Screen
             key={id}
             name={name}
-            component={name === 'Payouts' ? StripePayoutScreen : component}
+            component={component}
             options={{
               tabBarShowLabel: false,
-              tabBarButton: (props) => (
-                <TabButton
-                  {...props}
-                  activeIcon={activeIcon}
-                  inActiveIcon={inActiveIcon}
-                  name={name}
-                />
-              ),
             }}
           />
         ))}
