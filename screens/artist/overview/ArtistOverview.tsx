@@ -1,59 +1,17 @@
-import { View, Text, RefreshControl, Image, Pressable } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, RefreshControl, Image, Pressable } from 'react-native';
 import tw from 'twrnc';
-import Header from 'components/header/Header';
 import { SvgXml } from 'react-native-svg';
-import {
-  arrowUpRight,
-  arrowUpRightWhite,
-  bullishArrow,
-  dropdownIcon,
-  dropUpIcon,
-} from 'utils/SvgImages';
+import { dropdownIcon, dropUpIcon, arrowUpRightWhite } from 'utils/SvgImages';
+import Header from 'components/header/Header';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import SalesOverview from 'screens/overview/components/SalesOverview';
 import { Animated } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { fetchHighlightData } from 'services/overview/fetchHighlightData';
-import { getWalletBalance } from 'services/overview/getWalletBalance';
-import { useAppStore } from 'store/app/appStore';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
-
-const OverviewContainer = ({
-  label,
-  amount,
-  isTotalArtworks,
-}: {
-  label: string;
-  amount: string;
-  isTotalArtworks: boolean;
-}) => {
-  return (
-    <View
-      style={tw`bg-[#000000] min-h-[60px] border border-[#E7E7E7] p-[20px] rounded-[20px] flex-1`}
-    >
-      <View style={tw`flex-row items-center gap-[10px]`}>
-        <Text style={tw`text-[16px] text-[#FFFFFF] font-medium flex-1`}>{label}</Text>
-        {/* <SvgXml xml={arrowUpRight} /> */}
-      </View>
-
-      <Text style={tw`text-[24px] text-[#FFFFFF] font-semibold mt-[10px]`}>{amount}</Text>
-
-      {/* {isTotalArtworks && (
-        <View style={tw`flex-row items-center gap-[5px] mt-[5px]`}>
-          <View style={tw`flex-row items-center`}>
-            <SvgXml xml={bullishArrow} />
-            <Text style={tw`text-[12px] text-[#04910C] font-bold`}>10.6%</Text>
-          </View>
-          <Text style={tw`text-[12px] text-[#FFFFFF]`}>From last week</Text>
-        </View>
-      )} */}
-    </View>
-  );
-};
+import { HighlightCard } from './HighlightCard';
 
 export const RecentOrderContainer = ({
   id,
@@ -78,15 +36,14 @@ export const RecentOrderContainer = ({
   lastId: boolean;
   url: string;
 }) => {
-  let image_href = getImageFileView(url, 700);
-
+  const image_href = getImageFileView(url, 700);
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (open) {
       Animated.timing(animatedHeight, {
-        toValue: 120, // Adjust height based on content
+        toValue: 120,
         duration: 300,
         useNativeDriver: false,
       }).start();
@@ -110,30 +67,18 @@ export const RecentOrderContainer = ({
   }, [open]);
 
   const statusStyles = {
-    pending: {
-      bg: '#FFBF0040',
-      text: '#1a1a1a',
-    },
-    processing: {
-      bg: '#007AFF20',
-      text: '#007AFF',
-    },
-    completed: {
-      bg: '#00C85120',
-      text: '#00C851',
-    },
-    history: {
-      bg: '#00C85120', // same as completed
-      text: '#00C851',
-    },
+    pending: { bg: '#FFBF0040', text: '#1a1a1a' },
+    processing: { bg: '#007AFF20', text: '#007AFF' },
+    completed: { bg: '#00C85120', text: '#00C851' },
+    history: { bg: '#00C85120', text: '#00C851' },
   };
 
   return (
     <View
       style={tw.style(
-        `border-t-[1px] border-l-[1px] border-r-[1px] border-[#E7E7E7] p-[20px]`,
+        `border-t border-l border-r border-[#E7E7E7] p-[20px]`,
         id === 0 && `rounded-t-[15px]`,
-        lastId && `border-b-[1px] rounded-b-[15px]`,
+        lastId && `border-b rounded-b-[15px]`,
       )}
     >
       <View style={tw`flex-row items-center`}>
@@ -152,7 +97,6 @@ export const RecentOrderContainer = ({
         </Pressable>
       </View>
 
-      {/* Animated Dropdown */}
       <Animated.View
         style={{ height: animatedHeight, opacity: animatedOpacity, overflow: 'hidden' }}
       >
@@ -174,11 +118,7 @@ export const RecentOrderContainer = ({
                 backgroundColor: statusStyles[status].bg,
               })}
             >
-              <Text
-                style={tw.style(`text-[12px]`, {
-                  color: statusStyles[status]?.text || '#1a1a1a',
-                })}
-              >
+              <Text style={tw.style(`text-[12px]`, { color: statusStyles[status]?.text })}>
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </Text>
             </View>
@@ -190,67 +130,31 @@ export const RecentOrderContainer = ({
 };
 
 const ArtistOverview = () => {
-  const { userSession } = useAppStore();
   const [refreshCount, setRefreshCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
-  const [totalArtwork, setTotalArtwork] = useState(0);
-  const [walletBal, setWalletBal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    handleFetchHighlightData();
-    handleFetchWalletBal();
+    fetchRecentOrders();
   }, [refreshCount]);
 
-  const handleFetchHighlightData = async () => {
-    // setIsLoading(true)
-    let data1 = await fetchHighlightData('artworks');
-    setTotalArtwork(data1);
-    setIsLoading(false);
-  };
-
-  const handleFetchWalletBal = async () => {
-    // setIsLoading(true)
-    let data1 = await getWalletBalance({ id: userSession.id });
-    setWalletBal(data1.balances.available);
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
+  const fetchRecentOrders = async () => {
     setIsLoading(true);
-
-    async function handleFetchRecentOrders() {
-      try {
-        const results = await getOverviewOrders();
-        if (results?.isOk) {
-          const data = results.data;
-          setData(data);
-        } else {
-          setData([]);
-        }
-      } catch (error) {
-        // console.error("Error fetching recent orders:", error);
-        setData([]); // Handle errors gracefully
-      } finally {
-        setIsLoading(false); // Ensure loading is turned off
-      }
+    try {
+      const results = await getOverviewOrders();
+      setData(results?.isOk ? results.data : []);
+    } catch {
+      setData([]);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    handleFetchRecentOrders();
-  }, [refreshCount]);
-
-  const onRefresh = useCallback(() => {
-    // setRefreshing(true);
-    setRefreshCount((prev) => prev + 1);
-  }, []);
-
+  const onRefresh = useCallback(() => setRefreshCount((prev) => prev + 1), []);
   const toggleRecentOrder = (key: number) => {
-    setOpenSection((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setOpenSection((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
@@ -261,21 +165,12 @@ const ArtistOverview = () => {
       >
         <Header />
 
-        <View style={tw`flex-row items-center gap-[20px] mx-[15px] mt-[30px] mb-[20px]`}>
-          <OverviewContainer
-            label="Total Artworks"
-            amount={totalArtwork.toString()}
-            isTotalArtworks={true}
-          />
-          <OverviewContainer
-            label="Wallet Balance"
-            amount={`${utils_formatPrice(walletBal)}`}
-            isTotalArtworks={false}
-          />
-        </View>
+        {/* Highlight Cards */}
+        <HighlightCard refreshCount={refreshCount} />
 
         <SalesOverview refreshCount={refreshCount} />
 
+        {/* Recent Orders */}
         {data.length !== 0 && (
           <View
             style={tw`border border-[#E7E7E7] bg-[#FFFFFF] rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[150px]`}
@@ -289,31 +184,30 @@ const ArtistOverview = () => {
                 </View>
               )}
             </View>
+
             {isLoading ? (
               <OrderslistingLoader />
             ) : (
-              data.map((item, index) => {
-                return (
-                  <RecentOrderContainer
-                    key={index}
-                    id={index}
-                    url={item.artwork_data.url}
-                    open={openSection[item.artwork_data._id]}
-                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
-                    artId={item.order_id}
-                    artName={item.artwork_data.title}
-                    buyerName={item.buyer_details.name}
-                    price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                    status={item.status}
-                    lastId={index === data.length - 1}
-                  />
-                );
-              })
+              data.map((item, index) => (
+                <RecentOrderContainer
+                  key={index}
+                  id={index}
+                  url={item.artwork_data.url}
+                  open={openSection[item.artwork_data._id]}
+                  setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                  artId={item.order_id}
+                  artName={item.artwork_data.title}
+                  buyerName={item.buyer_details.name}
+                  price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+                  status={item.status}
+                  lastId={index === data.length - 1}
+                />
+              ))
             )}
           </View>
         )}
 
-        {data.length === 0 && (
+        {data.length === 0 && !isLoading && (
           <>
             <Text style={tw`text-[16px] text-[#454545] font-semibold mt-[20px] mx-[15px]`}>
               Recent Orders
