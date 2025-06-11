@@ -1,5 +1,5 @@
 import { fetchAllArtworksById } from 'services/artworks/fetchAllArtworksById';
-import { fetchIncomeData } from 'services/requests/fetchIncomeData';
+import { fetchIncomeData } from 'services/overview/fetchIncomeData';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { getSalesHighlightData } from './getSalesHighlightData';
 
