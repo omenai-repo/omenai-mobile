@@ -51,7 +51,7 @@ const MiniArtworkCard = memo(
     return (
       <TouchableOpacity
         activeOpacity={1}
-        style={tw`flex flex-col items-center pb-[20px]`}
+        style={tw`flex flex-col pb-[20px]`}
         onPress={() => navigation.push(screenName.artwork, { title, url })}
       >
         <View style={tw`rounded-[5px] overflow-hidden relative`}>
