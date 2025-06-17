@@ -26,6 +26,7 @@ import { BottomTabDataIndividual } from 'utils/BottomTabData';
 import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
 import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import CustomTabBar from './components/TabButton';
+import DetailsScreen from 'screens/home/components/DetailScreen';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -112,6 +113,7 @@ export default function IndividualNavigation() {
       <Stack.Screen name={screenName.artworksMedium} component={ArtworksMedium} />
       <Stack.Screen name={screenName.editorial} component={Editorial} />
       <Stack.Screen name={screenName.collections} component={Collections} />
+      <Stack.Screen name={'DetailsScreen'} component={DetailsScreen} />
     </Stack.Navigator>
   );
 }
