@@ -12,6 +12,7 @@ import CatalogListing from './components/CatalogListing';
 import RecentlyViewedArtworks from './components/recentlyViewed/RecentlyViewedArtworks';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import tw from 'twrnc';
+import FeaturedArtists from './components/featuredArtists/FeaturedArtists';
 
 export default function Home() {
   const [refreshCount, setRefreshCount] = useState(0);
@@ -32,6 +33,7 @@ export default function Home() {
         <Banner reloadCount={refreshCount} />
         <NewArtworksListing refreshCount={refreshCount} />
         <FeaturedGalleries />
+        <FeaturedArtists />
         <TrendingArtworks limit={28} refreshCount={refreshCount} />
         <CuratedArtworksListing limit={20} refreshCount={refreshCount} />
         <CatalogListing />
