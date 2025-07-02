@@ -117,6 +117,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', // Arrange columns horizontally
     justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    gap: 10,
   },
   column: {
     flex: 1 / NUM_COLUMNS, // Each column takes equal space

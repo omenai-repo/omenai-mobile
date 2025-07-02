@@ -77,7 +77,7 @@ const MiniArtworkCard = memo(
             )}
           </View>
         </View>
-        <View style={tw`mt-3 w-full px-3`}>
+        <View style={tw`mt-3 w-full`}>
           <Text
             style={[
               tw`text-base font-medium text-[#1A1A1A]/90`,

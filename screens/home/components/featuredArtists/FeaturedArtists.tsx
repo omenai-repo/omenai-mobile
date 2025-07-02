@@ -8,10 +8,15 @@ import { getImageFileView } from 'lib/storage/getImageFileView';
 import { getGalleryLogoFileView } from 'lib/storage/getGalleryLogoFileView';
 
 type Artist = {
-  _id: string;
-  artist_id: string;
-  logo: string;
-  name: string;
+  author_id: string;
+  mostLikedArtwork: {
+    url: string;
+    artworkId: string;
+    birthyear: string;
+    country: string;
+  };
+  artist: string;
+  totalLikes: number;
 };
 
 export default function FeaturedArtists() {
@@ -25,20 +30,32 @@ export default function FeaturedArtists() {
   const fetchArtists = async () => {
     const res = await getFeaturedArtists();
     if (res?.isOk && Array.isArray(res.data)) {
+      console.log(res.data);
       setArtists(res.data);
     } else {
       console.warn('Failed to fetch featured artists');
     }
   };
 
-  const ArtistCard = ({ image, name }: { image: string; name: string }) => {
-    const image_href = getGalleryLogoFileView(image, 200);
+  const ArtistCard = ({
+    image,
+    name,
+    details,
+  }: {
+    image: string;
+    name: string;
+    details: {
+      birthyear: string;
+      country: string;
+    };
+  }) => {
+    const image_href = getImageFileView(image, 200);
     return (
       <View style={styles.artistCard}>
         <Image source={{ uri: image_href }} style={styles.artistImage} />
         <View style={styles.artistInfo}>
           <Text style={styles.artistName}>{name}</Text>
-          {/* <Text style={styles.artistGenre}>Visual Artist</Text> */}
+          <Text style={styles.artistDetails}>{details.country + ' b.' + details.birthyear}</Text>
         </View>
       </View>
     );
@@ -63,16 +80,20 @@ export default function FeaturedArtists() {
             onPress={() =>
               navigation.navigate('DetailsScreen', {
                 type: 'artist',
-                id: item.artist_id,
-                name: item.name,
-                logo: item.logo,
+                id: item.author_id,
+                name: item.artist,
+                logo: item.mostLikedArtwork.url,
               })
             }
           >
-            <ArtistCard image={item.logo} name={item.name} />
+            <ArtistCard
+              image={item.mostLikedArtwork.url}
+              name={item.artist}
+              details={item.mostLikedArtwork}
+            />
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => item.author_id}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingRight: 20, paddingTop: 20 }}
@@ -85,30 +106,25 @@ const styles = StyleSheet.create({
   artistCard: {
     width: 150,
     marginLeft: 20,
-    alignItems: 'center',
   },
   artistImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 2,
-    borderColor: colors.primary_black,
+    width: '100%',
+    height: 200,
+    borderRadius: 5,
+    backgroundColor: '#eee',
   },
   artistInfo: {
     marginTop: 10,
-    alignItems: 'center',
   },
   artistName: {
     fontSize: 14,
     fontWeight: '600',
     color: colors.primary_black,
-    textAlign: 'center',
   },
-  artistGenre: {
+  artistDetails: {
     fontSize: 12,
     color: '#858585',
     fontFamily: fontNames.dmSans + 'Regular',
     marginTop: 4,
-    textAlign: 'center',
   },
 });

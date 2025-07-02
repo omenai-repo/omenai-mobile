@@ -2,7 +2,7 @@ import { apiUrl, authorization, originHeader, userAgent } from '../../constants/
 
 export async function getFeaturedArtists() {
   try {
-    const res = await fetch(`${apiUrl}/api/requests/artist/fetchFeaturedArtists`, {
+    const res = await fetch(`${apiUrl}/api/requests/artist/fetchTrendingArtists`, {
       method: 'GET',
       headers: {
         Origin: originHeader,
