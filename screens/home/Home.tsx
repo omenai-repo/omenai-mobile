@@ -32,7 +32,7 @@ export default function Home() {
         <Header />
         <Banner reloadCount={refreshCount} />
         <NewArtworksListing refreshCount={refreshCount} />
-        <FeaturedGalleries />
+        {/* <FeaturedGalleries /> */}
         <FeaturedArtists />
         <TrendingArtworks limit={28} refreshCount={refreshCount} />
         <CuratedArtworksListing limit={20} refreshCount={refreshCount} />
