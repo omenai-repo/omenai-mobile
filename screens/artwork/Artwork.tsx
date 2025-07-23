@@ -230,7 +230,7 @@ export default function Artwork() {
             data?.pricing.shouldShowPrice === 'No' &&
               !['gallery', 'artist'].includes(userType) && {
                 fontSize: 16,
-                color: colors.grey,
+                color: colors.black,
               },
           ]}
         >
@@ -298,7 +298,7 @@ export default function Artwork() {
           {!['gallery', 'artist'].includes(userType) && (
             <SaveArtworkButton
               likeIds={data?.like_IDs || []}
-              art_id={data?.art_id}
+              art_id={data?.art_id || ''}
               impressions={data?.impressions || 0}
             />
           )}

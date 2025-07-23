@@ -30,7 +30,6 @@ export default function FeaturedArtists() {
   const fetchArtists = async () => {
     const res = await getFeaturedArtists();
     if (res?.isOk && Array.isArray(res.data)) {
-      console.log(res.data);
       setArtists(res.data);
     } else {
       console.warn('Failed to fetch featured artists');

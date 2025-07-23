@@ -28,12 +28,6 @@ import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import { BottomTabDataGallery } from 'utils/BottomTabData';
 import CustomTabBar from './components/TabButton';
 
-type CustomTabBarIconProps = {
-  name: any;
-  focused: boolean;
-  title: string;
-};
-
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -80,42 +74,15 @@ export default function GalleryNavigation() {
     return;
   }
 
-  const CustomTabBarIcon = ({ name, focused, title }: CustomTabBarIconProps) => {
-    let icon = (
-      <Ionicons name={name} size={focused ? 25 : 22} color={focused ? colors.white : colors.grey} />
-    );
-    if (title === screenName.gallery.orders || title === screenName.gallery.profile) {
-      icon = (
-        <Feather
-          name={name}
-          size={focused ? 25 : 22}
-          color={focused ? colors.white : colors.grey}
-        />
-      );
-    }
-
-    return <View style={{ alignItems: 'center', gap: 5 }}>{icon}</View>;
-  };
-
-  const StripePayoutScreen = () => {
-    return (
-      <StripePayouts
-        showScreen={account.connected_account_id !== null && account.gallery_verified}
-        account_id={account.connected_account_id || ''}
-      />
-    );
-  };
-
   const GalleryTabNavigationScreens = () => {
-    const { width } = useWindowDimensions();
     return (
       <Tab.Navigator
-        tabBar={(props) => <CustomTabBar {...props} tabData={BottomTabDataGallery} />}
+        tabBar={(props) => <CustomTabBar {...props} tabData={BottomTabDataGallery(account)} />}
         screenOptions={{
           headerShown: false,
         }}
       >
-        {BottomTabDataGallery.map(({ name, component, id }) => (
+        {BottomTabDataGallery(account).map(({ name, component, id }) => (
           <Tab.Screen
             key={id}
             name={name}

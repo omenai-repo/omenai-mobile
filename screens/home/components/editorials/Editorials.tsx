@@ -1,44 +1,19 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "../../../../config/colors.config";
-import { Feather } from "@expo/vector-icons";
-import galleryImage from "../../../../assets/images/gallery-banner.png";
-import { FlatList } from "react-native-gesture-handler";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { colors } from '../../../../config/colors.config';
+import { Feather } from '@expo/vector-icons';
+import galleryImage from '../../../../assets/images/gallery-banner.png';
+import { FlatList } from 'react-native-gesture-handler';
 
-import gallery_one from "../../../../assets/images/gallery_one.png";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import EditorialCard, {
-  EditorialCardProps,
-} from "components/editorials/EditorialCard";
-import Loader from "components/general/Loader";
-import { listEditorials } from "lib/editorial/lib/getAllBlogArticles";
-import ArtworkCardLoader from "components/general/ArtworkCardLoader";
-import { fontNames } from "constants/fontNames.constants";
-
-const data = [
-  {
-    image:
-      "https://thesun.my/binrepository/web-page-3-art-economy-art_4236330_20240603074729.jpg",
-    articleHeader: "Meet XinJin Pi, Chineese painter",
-    writer: "Oluwafemi",
-    content: "",
-  },
-  {
-    image: "https://www.artnews.com/wp-content/uploads/2024/05/IMG_1784.jpg",
-    articleHeader: "Women Art taking over london",
-    writer: "Moses Martin",
-    content: "",
-  },
-  {
-    image:
-      "https://www.artnews.com/wp-content/uploads/2024/05/Fini_ART523873.jpeg?w=762",
-    articleHeader: "Black and White paintings on the rise",
-    writer: "Adeyinka Moses",
-    content: "",
-  },
-];
+import gallery_one from '../../../../assets/images/gallery_one.png';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import EditorialCard, { EditorialCardProps } from 'components/editorials/EditorialCard';
+import Loader from 'components/general/Loader';
+import { listEditorials } from 'lib/editorial/lib/getAllBlogArticles';
+import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
+import { fontNames } from 'constants/fontNames.constants';
 
 export default function Editorials() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -65,7 +40,7 @@ export default function Editorials() {
     });
 
     // const parsedList = editorialList.slice(0,2)
-
+    // console.log({ ...editorials, content: '' });
     setData(editorialList);
 
     setIsLoading(false);
@@ -75,13 +50,20 @@ export default function Editorials() {
     <View style={{ marginTop: 40, marginBottom: 10 }}>
       <View
         style={{
-          flexDirection: "row",
-          alignItems: "center",
+          flexDirection: 'row',
+          alignItems: 'center',
           gap: 10,
           paddingHorizontal: 20,
         }}
       >
-        <Text style={{ fontSize: 18, fontWeight: 500, flex: 1, fontFamily: fontNames.dmSans + 'Medium' }}>
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: 500,
+            flex: 1,
+            fontFamily: fontNames.dmSans + 'Medium',
+          }}
+        >
           Editorials
         </Text>
         {/* <Feather name='chevron-right' color={colors.grey} size={20} /> */}
@@ -115,21 +97,21 @@ export default function Editorials() {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   seeMoreButton: {
     height: 50,
     backgroundColor: colors.white,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
     borderRadius: 30,
     gap: 10,
   },
   featuredListing: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 20,
     marginTop: 20,
   },
@@ -138,19 +120,19 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   cardDetails: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 7,
     marginTop: 10,
   },
   image: {
-    width: "100%",
+    width: '100%',
     height: 300,
   },
   cardButton: {
     marginTop: 25,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 5,
     borderBottomWidth: 1,
     borderBottomColor: colors.primary_black,

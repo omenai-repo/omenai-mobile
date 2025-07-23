@@ -104,7 +104,7 @@ export default function Orders() {
     <WithModal>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <Image
-          style={tw.style(`w-[130px] h-[30px] mt-[80px] ml-[20px]`)}
+          style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
           resizeMode="contain"
           source={require('../../assets/omenai-logo.png')}
         />
@@ -116,7 +116,7 @@ export default function Orders() {
         />
 
         <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
+          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px] android:mb-[20px]`}
         >
           {isLoading ? (
             <OrderslistingLoader />
@@ -136,30 +136,32 @@ export default function Orders() {
                 keyExtractor={(item) => item.artwork_data._id}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
-                renderItem={({ item, index }) => (
-                  <OrderContainer
-                    id={index}
-                    url={item.artwork_data.url}
-                    open={openSection[item.artwork_data._id]}
-                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
-                    artId={item.order_id}
-                    artName={item.artwork_data.title}
-                    price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                    status={item.status}
-                    lastId={index === currentOrders.length - 1}
-                    order_accepted={item.order_accepted.status}
-                    availability={item.availability}
-                    delivery_confirmed={item.shipping_details.delivery_confirmed}
-                    tracking_information={item.shipping_details.shipment_information.tracking}
-                    payment_information={item.payment_information.status}
-                    orderId={item.order_id}
-                    holdStatus={item.hold_status}
-                    updatedAt={item.updatedAt}
-                    trackBtn={() =>
-                      navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })
-                    }
-                  />
-                )}
+                renderItem={({ item, index }) => {
+                  return (
+                    <OrderContainer
+                      id={index}
+                      url={item.artwork_data.url}
+                      open={openSection[item.artwork_data._id]}
+                      setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                      artId={item.order_id}
+                      artName={item.artwork_data.title}
+                      price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+                      status={item.status}
+                      lastId={index === currentOrders.length - 1}
+                      order_accepted={item.order_accepted.status}
+                      availability={item.availability}
+                      delivery_confirmed={item.shipping_details.delivery_confirmed}
+                      tracking_information={item.shipping_details.shipment_information.tracking}
+                      payment_information={item.payment_information.status}
+                      orderId={item.order_id}
+                      holdStatus={item.hold_status}
+                      updatedAt={item.updatedAt}
+                      trackBtn={() =>
+                        navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })
+                      }
+                    />
+                  );
+                }}
               />
             </>
           )}
