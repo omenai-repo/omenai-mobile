@@ -1,26 +1,18 @@
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { Image, SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
 
-import successImage from "assets/icons/success_check.png";
-import errorImage from "assets/icons/error.png";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { subscriptionStepperStore } from "store/subscriptionStepper/subscriptionStepperStore";
-import { verifyFlwTransaction } from "services/subscriptions/verifyFlwTransaction";
-import Loader from "components/general/Loader";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { useAppStore } from "store/app/appStore";
-import { utils_storeAsyncData } from "utils/utils_asyncStorage";
-import { colors } from "config/colors.config";
+import successImage from 'assets/icons/success_check.png';
+import errorImage from 'assets/icons/error.png';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
+import { verifyFlwTransaction } from 'services/subscriptions/verifyFlwTransaction';
+import Loader from 'components/general/Loader';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { useAppStore } from 'store/app/appStore';
+import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
+import { colors } from 'config/colors.config';
 
 export default function VerifyTransaction() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -53,14 +45,14 @@ export default function VerifyTransaction() {
     };
 
     setUserSession(newUserSession);
-    utils_storeAsyncData("userSession", JSON.stringify(newUserSession));
+    utils_storeAsyncData('userSession', JSON.stringify(newUserSession));
 
     //clear the checkout stepper store
     reset();
 
     navigation.popToTop();
   }
-
+  console.log(verified, 'verified');
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -69,7 +61,7 @@ export default function VerifyTransaction() {
             <Loader />
             <Text
               style={{
-                alignSelf: "center",
+                alignSelf: 'center',
               }}
             >
               Verification in progress...please wait
@@ -78,14 +70,12 @@ export default function VerifyTransaction() {
         )}
         {!loading && verified && (
           <View style={{ paddingHorizontal: 20, paddingTop: 50 }}>
-            <Text style={{ fontSize: 16, textAlign: "center" }}>
-              {verified.message}
-            </Text>
+            <Text style={{ fontSize: 16, textAlign: 'center' }}>{verified.message}</Text>
             {verified !== null && (
               <Image
                 style={{
                   height: 100,
-                  alignSelf: "center",
+                  alignSelf: 'center',
                   marginTop: 10,
                   marginBottom: 30,
                 }}
@@ -93,10 +83,7 @@ export default function VerifyTransaction() {
                 source={verified.isOk ? successImage : errorImage}
               />
             )}
-            <LongBlackButton
-              value="Continue"
-              onClick={handleViewSubscription}
-            />
+            <LongBlackButton value="Continue" onClick={handleViewSubscription} />
           </View>
         )}
       </SafeAreaView>
@@ -110,6 +97,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });

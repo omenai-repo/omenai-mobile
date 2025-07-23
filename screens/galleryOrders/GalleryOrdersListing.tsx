@@ -91,7 +91,7 @@ export default function GalleryOrdersListing() {
     <WithModal>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <Image
-          style={tw.style(`w-[130px] h-[30px] mt-[80px] ml-[20px]`)}
+          style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
           resizeMode="contain"
           source={require('../../assets/omenai-logo.png')}
         />
@@ -103,7 +103,7 @@ export default function GalleryOrdersListing() {
         />
 
         <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
+          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px] android:mb-[20px]`}
         >
           {isloading ? (
             <OrderslistingLoader />

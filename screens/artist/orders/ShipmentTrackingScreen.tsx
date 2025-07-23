@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, Image, Dimensions } from 'react-native';
-import MapView, { Marker, Polyline, UrlTile } from 'react-native-maps';
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE, UrlTile } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
@@ -29,7 +29,7 @@ export default function ShipmentTrackingScreen({ navigation, route }: any) {
   useEffect(() => {
     const fetchTracking = async () => {
       const response = await getShipmentTracking(orderId);
-
+      console.log(response.data.events, 'origin');
       if (response.isOk) {
         setArtworkData(response.data.artwork_data);
         setTrackingNumber(response.data.tracking_number);
@@ -61,8 +61,9 @@ export default function ShipmentTrackingScreen({ navigation, route }: any) {
           latitudeDelta: 30,
           longitudeDelta: 30,
         }}
+        provider={PROVIDER_GOOGLE}
       >
-        <UrlTile urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" maximumZ={19} />
+        {/* <UrlTile urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" maximumZ={19} /> */}
 
         {hasValidCoords && (
           <>

@@ -1,1 +1,1 @@
-# omenai-mobile
+# omenai-app

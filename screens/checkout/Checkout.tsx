@@ -1,22 +1,22 @@
-import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import WithModal from "components/modal/WithModal";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import CheckoutSummary from "./components/CheckoutSummary";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { getSinglePlanData } from "services/subscriptions/getSinglePlanData";
-import Loader from "components/general/Loader";
-import EmptyArtworks from "components/general/EmptyArtworks";
-import { useModalStore } from "store/modal/modalStore";
-import { subscriptionStepperStore } from "store/subscriptionStepper/subscriptionStepperStore";
-import WebView from "react-native-webview";
-import MigrationUpgradeCheckoutItem from "./components/MigrationCheckouts/MigrationUpgradeCheckoutItem";
-import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscriptionData";
-import { useAppStore } from "store/app/appStore";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { screenName } from "constants/screenNames.constants";
-import CheckoutStepper from "components/checkoutStepper/CheckoutStepper";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import WithModal from 'components/modal/WithModal';
+import BackHeaderTitle from 'components/header/BackHeaderTitle';
+import CheckoutSummary from './components/CheckoutSummary';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { getSinglePlanData } from 'services/subscriptions/getSinglePlanData';
+import Loader from 'components/general/Loader';
+import EmptyArtworks from 'components/general/EmptyArtworks';
+import { useModalStore } from 'store/modal/modalStore';
+import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
+import WebView from 'react-native-webview';
+import MigrationUpgradeCheckoutItem from './components/MigrationCheckouts/MigrationUpgradeCheckoutItem';
+import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData';
+import { useAppStore } from 'store/app/appStore';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { screenName } from 'constants/screenNames.constants';
+import CheckoutStepper from 'components/checkoutStepper/CheckoutStepper';
+import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export default function Checkout() {
   const route = useRoute();
@@ -27,9 +27,7 @@ export default function Checkout() {
   const [verificationScreen, setVerificationScreen] = useState<boolean>(false);
 
   const [plan, setPlan] = useState<SubscriptionPlanDataTypes | null>(null);
-  const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(
-    null
-  );
+  const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(null);
 
   const { updateModal } = useModalStore();
   const { webViewUrl, setWebViewUrl } = subscriptionStepperStore();
@@ -49,12 +47,11 @@ export default function Checkout() {
       setLoading(true);
       const plan = await getSinglePlanData(plan_id);
       const subResults = await retrieveSubscriptionData(userSession.id);
-
       if (!plan?.isOk && !subResults?.isOk) {
         //throw error
         updateModal({
-          message: "Something went wrong",
-          modalType: "error",
+          message: 'Something went wrong',
+          modalType: 'error',
           showModal: true,
         });
       } else {
@@ -69,7 +66,7 @@ export default function Checkout() {
   }, [reloadCount]);
 
   const handleFlutterwaveRedirect = (event: any) => {
-    if (event.canGoBack && event.navigationType === "formsubmit") {
+    if (event.canGoBack && event.navigationType === 'formsubmit') {
       setWebViewUrl(null);
       // setVerificationScreen(true)
       navigation.navigate(screenName.verifyTransaction);
@@ -88,11 +85,7 @@ export default function Checkout() {
             {!loading && plan !== null && (
               <View>
                 {action ? (
-                  <MigrationUpgradeCheckoutItem
-                    plan={plan}
-                    interval={tab}
-                    sub_data={subData}
-                  />
+                  <MigrationUpgradeCheckoutItem plan={plan} interval={tab} sub_data={subData} />
                 ) : (
                   <View>
                     <CheckoutStepper
@@ -104,20 +97,13 @@ export default function Checkout() {
                       }
                       updateCard={false}
                     />
-                    <CheckoutSummary
-                      name={plan.name}
-                      pricing={plan.pricing}
-                      interval={tab}
-                    />
+                    <CheckoutSummary name={plan.name} pricing={plan.pricing} interval={tab} />
                   </View>
                 )}
               </View>
             )}
             {!loading && plan === null && (
-              <EmptyArtworks
-                size={70}
-                writeUp="An unexpected error occured, reload page"
-              />
+              <EmptyArtworks size={70} writeUp="An unexpected error occured, reload page" />
             )}
           </ScrollWrapper>
         </View>

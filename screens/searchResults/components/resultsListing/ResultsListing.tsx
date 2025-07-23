@@ -1,9 +1,9 @@
-import { StyleSheet, View } from "react-native";
-import React from "react";
-import { FlatList } from "react-native-gesture-handler";
-import MiniArtworkCard from "components/artwork/MiniArtworkCard";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import { MasonryFlashList } from "@shopify/flash-list";
+import { StyleSheet, View } from 'react-native';
+import React from 'react';
+import { FlatList } from 'react-native-gesture-handler';
+import MiniArtworkCard from 'components/artwork/MiniArtworkCard';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import { MasonryFlashList } from '@shopify/flash-list';
 
 export default function ResultsListing({ data }: { data: any[] }) {
   return (
@@ -62,17 +62,18 @@ export default function ResultsListing({ data }: { data: any[] }) {
         estimatedItemSize={400}
         onEndReachedThreshold={0.1}
         renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
-          <View style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
+          <View style={{ flex: 1, alignItems: 'center', paddingBottom: 20 }}>
             <MiniArtworkCard
               title={item.title}
               url={item.url}
               artist={item.artist}
-              showPrice={item.pricing.shouldShowPrice === "Yes"}
+              showPrice={item.pricing.shouldShowPrice === 'Yes'}
               price={item.pricing.usd_price}
               impressions={item.impressions}
               like_IDs={item.like_IDs}
               art_id={item.art_id}
               galleryView
+              availability={item.availability}
             />
           </View>
         )}
@@ -87,10 +88,10 @@ export default function ResultsListing({ data }: { data: any[] }) {
 
 const styles = StyleSheet.create({
   artworksContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: "auto",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 'auto',
     gap: 15,
     marginTop: 10,
   },

@@ -68,6 +68,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: 'center',
     gap: 20,
-    marginTop: Platform.OS === 'ios' ? 80 : 50,
+    marginTop: Platform.OS === 'ios' ? 80 : 40,
   },
 });

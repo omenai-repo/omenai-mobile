@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 95,
     marginTop: 10,
+    color: colors.black,
   },
   errorMessage: {
     color: '#ff0000',
