@@ -350,6 +350,15 @@ type editorialListingType = {
   url: string;
 };
 
+type EditorialSchemaTypes = {
+  headline: string;
+  summary: string;
+  cover: string;
+  date: Date | string;
+  content: string;
+  slug: string;
+};
+
 type ArtworkUploadStateTypes = {
   artist: string;
   year: number;
