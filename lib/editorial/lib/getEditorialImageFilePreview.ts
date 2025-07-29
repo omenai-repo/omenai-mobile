@@ -2,27 +2,26 @@ import { ImageFormat, ImageGravity } from 'appwrite';
 import { storage } from '../../../lib/editorial/controller/appwrite';
 
 export const getEditorialImageFilePreview = (fileId: string, width: number) => {
-  // const fileData = EDITORIAL_BUCKET_ID(
-  //   process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!,
-  //   fileId,
-
-  //   width, // width, will be resized using this value.
-  //   0, // height, ignored when 0
-  //   ImageGravity.Center, // crop center
-  //   90, // slight compression
-  //   0, // border width
-  //   'FFFFFF', // border color
-  //   0, // border radius
-  //   1, // full opacity
-  //   0, // no rotation
-  //   'FFFFFF', // background color
-  //   ImageFormat.Jpeg || ImageFormat.Png || ImageFormat.Jpg || ImageFormat.Webp,
-  // );
-
-  const fileData = storage.getFileView(
+  const fileData = storage.getFilePreview(
     process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!,
     fileId,
+    width, // width, will be resized using this value.
+    0, // height, ignored when 0
+    ImageGravity.Center, // crop center
+    90, // slight compression
+    0, // border width
+    'FFFFFF', // border color
+    0, // border radius
+    1, // full opacity
+    0, // no rotation
+    'FFFFFF', // background color
+    ImageFormat.Jpeg || ImageFormat.Png || ImageFormat.Jpg || ImageFormat.Webp,
   );
+
+  // const fileData = storage.getFileView(
+  //   process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!,
+  //   fileId,
+  // );
 
   return fileData;
 };
