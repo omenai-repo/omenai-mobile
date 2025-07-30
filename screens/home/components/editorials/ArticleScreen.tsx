@@ -29,14 +29,10 @@ const ArticleScreen: React.FC<Props> = () => {
   const readTime = getReadTime(article.content);
 
   return (
-    <View style={tw`pt-[40px] android:pt-[60px] flex-1 bg-[#fff]`}>
+    <View style={tw`pt-[40px] flex-1 bg-[#fff]`}>
       <BackHeaderTitle title="" />
       <ScrollView>
-        <Image
-          source={{ uri: imageUrl }}
-          style={tw`w-full h-80 rounded-b-3xl`}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: imageUrl }} style={tw`w-full h-80 px-4`} resizeMode="cover" />
 
         <View style={tw`px-4 mt-4`}>
           <Text style={tw`text-black text-2xl font-bold leading-tight`}>{article.headline}</Text>
@@ -50,7 +46,7 @@ const ArticleScreen: React.FC<Props> = () => {
           )}
         </View>
 
-        <View style={tw`px-4 mt-6`}>
+        <View style={tw`px-4 mt-6 mb-[50px]`}>
           <RenderHtml
             contentWidth={width}
             source={{ html: article.content || '' }}
