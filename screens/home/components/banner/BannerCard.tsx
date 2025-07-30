@@ -15,24 +15,24 @@ type BannerItemProps = {
 };
 
 const { width: windowWidth } = Dimensions.get('window');
+const SIDE_PADDING = 15;
+const CARD_WIDTH = windowWidth - SIDE_PADDING * 2;
 
 const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: BannerItemProps) => {
   const image_href = getPromotionalFileView(image, 800);
 
   return (
     <View
-      style={tw.style(`w-[${windowWidth - 50}px] pl-[15px]`, {
-        width: subheadline.length <= 20 ? windowWidth - 50 : windowWidth - 10,
+      style={tw.style({
+        width: CARD_WIDTH, // ensures one card per screen
       })}
     >
       <ImageBackground
         source={{ uri: image_href }}
-        // source={require('../../../../assets/images/gallery_one.png')}
         style={tw`h-[200px]`}
         imageStyle={tw`rounded-[12px]`}
         resizeMode="cover"
       >
-        {/* Overlay */}
         <View style={tw`bg-black bg-opacity-50 flex-1 rounded-[12px] pt-[30px] pl-[20px]`}>
           <Text
             style={[
@@ -44,7 +44,7 @@ const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: Ban
           </Text>
           <Text
             style={[
-              tw`text-white text-[13px] mt-1 pr-[120px]`,
+              tw`text-white text-[13px] mt-1 pr-[100px]`,
               { fontFamily: fontNames.dmSans + 'Regular' },
             ]}
           >
@@ -52,7 +52,7 @@ const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: Ban
           </Text>
 
           <TouchableOpacity
-            // onPress={() => handleClick(image_href)}
+            onPress={() => handleClick(image_href)}
             style={tw`mt-4 flex-row bg-black bg-opacity-20 items-center gap-2 px-4 py-2 rounded-full w-[110px]`}
           >
             <Text style={tw`text-white text-[13px] font-semibold`}>Explore</Text>
