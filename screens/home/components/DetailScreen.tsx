@@ -110,15 +110,29 @@ const DetailsScreen = () => {
   });
 
   useEffect(() => {
+    let isMounted = true;
+
     if (image_href) {
-      Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-        const { width, height } = resizeImageDimensions(
-          { width: defaultWidth, height: defaultHeight },
-          250,
-        );
-        setImageDimensions({ height, width });
-      });
+      Image.getSize(
+        image_href,
+        (defaultWidth, defaultHeight) => {
+          if (!isMounted) return;
+          const { width, height } = resizeImageDimensions(
+            { width: defaultWidth, height: defaultHeight },
+            250, // maxWidth
+            250, // optional maxHeight to fully constrain
+          );
+          setImageDimensions({ width, height });
+        },
+        (error) => {
+          console.warn('Failed to get image size:', error?.message || error);
+        },
+      );
     }
+
+    return () => {
+      isMounted = false; // clean up to avoid setting state after unmount
+    };
   }, [image_href]);
 
   return (

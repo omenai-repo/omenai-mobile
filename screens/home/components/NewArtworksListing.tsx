@@ -1,23 +1,19 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native-gesture-handler";
-import ArtworkCard from "components/artwork/ArtworkCard";
-import { fetchArtworks } from "services/artworks/fetchArtworks";
-import { colors } from "config/colors.config";
-import ArtworkCardLoader from "components/general/ArtworkCardLoader";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
-import { screenName } from "constants/screenNames.constants";
-import ViewAllCategoriesButton from "components/buttons/ViewAllCategoriesButton";
-import EmptyArtworks from "components/general/EmptyArtworks";
-import { fontNames } from "constants/fontNames.constants";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList } from 'react-native-gesture-handler';
+import ArtworkCard from 'components/artwork/ArtworkCard';
+import { fetchArtworks } from 'services/artworks/fetchArtworks';
+import { colors } from 'config/colors.config';
+import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
+import { screenName } from 'constants/screenNames.constants';
+import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
+import EmptyArtworks from 'components/general/EmptyArtworks';
+import { fontNames } from 'constants/fontNames.constants';
 
-export default function NewArtworksListing({
-  refreshCount,
-}: {
-  refreshCount?: number;
-}) {
+export default function NewArtworksListing({ refreshCount }: { refreshCount?: number }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,7 +26,7 @@ export default function NewArtworksListing({
   const handleFetchArtworks = async () => {
     setIsLoading(true);
 
-    const results = await fetchArtworks({ listingType: "recent", page: 1 });
+    const results = await fetchArtworks({ listingType: 'recent', page: 1 });
 
     if (results.isOk) {
       const resData = results.body.data;
@@ -47,8 +43,8 @@ export default function NewArtworksListing({
       <TouchableOpacity onPress={() => navigation.navigate(screenName.catalog)}>
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
             gap: 10,
             paddingHorizontal: 20,
           }}
@@ -58,7 +54,7 @@ export default function NewArtworksListing({
               fontSize: 18,
               fontWeight: 500,
               flex: 1,
-              fontFamily: fontNames.dmSans + "Medium",
+              fontFamily: fontNames.dmSans + 'Medium',
             }}
           >
             New artworks for you
@@ -70,19 +66,13 @@ export default function NewArtworksListing({
       {!isLoading && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({
-            item,
-            index,
-          }: {
-            item: ArtworkFlatlistItem;
-            index: number;
-          }) => {
+          renderItem={({ item, index }: { item: ArtworkFlatlistItem; index: number }) => {
             return (
               <ArtworkCard
                 title={item.title}
                 url={item.url}
                 artist={item.artist}
-                showPrice={item.pricing.shouldShowPrice === "Yes"}
+                showPrice={item.pricing.shouldShowPrice === 'Yes'}
                 price={item.pricing.usd_price}
                 availiablity={item.availability}
                 impressions={item.impressions}
@@ -96,6 +86,9 @@ export default function NewArtworksListing({
           showsHorizontalScrollIndicator={false}
           style={{ marginTop: 20 }}
           contentContainerStyle={{ paddingRight: 20 }}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          windowSize={5}
         />
       )}
       {!isLoading && data.length < 1 && (

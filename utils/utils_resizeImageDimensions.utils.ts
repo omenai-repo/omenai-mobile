@@ -1,20 +1,23 @@
 interface Dimensions {
-    width: number;
-    height: number;
+  width: number;
+  height: number;
 }
-  
-export function resizeImageDimensions(dimensions: Dimensions, heightLimit: number): Dimensions {
-    const { width, height } = dimensions;
 
-    // If the height is within the limit, return the original dimensions
-    if (height <= heightLimit) {
-        return { width, height };
-    }
+export function resizeImageDimensions(
+  dimensions: Dimensions,
+  maxWidth: number,
+  maxHeight: number,
+): Dimensions {
+  const { width, height } = dimensions;
+  const aspectRatio = width / height;
 
-    const aspectRatio = width / height;
+  let newWidth = maxWidth;
+  let newHeight = newWidth / aspectRatio;
 
-    const newHeight = heightLimit;
-    const newWidth = Math.round(newHeight * aspectRatio);
+  if (newHeight > maxHeight) {
+    newHeight = maxHeight;
+    newWidth = newHeight * aspectRatio;
+  }
 
-    return { width: newWidth, height: newHeight };
+  return { width: Math.round(newWidth), height: Math.round(newHeight) };
 }

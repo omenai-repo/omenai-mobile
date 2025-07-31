@@ -31,7 +31,7 @@ export default function RecentlyViewedArtworks({ refreshCount }: { refreshCount?
       if (results?.isOk) {
         const resData = results.data;
 
-        setData(resData.splice(0, 20));
+        setData(resData.splice(0, 10));
       }
 
       setIsLoading(false);

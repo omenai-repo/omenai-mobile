@@ -28,14 +28,27 @@ export default function ViewHistoryCard({
   });
 
   useEffect(() => {
-    Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-      const { width, height } = resizeImageDimensions(
-        { width: defaultWidth, height: defaultHeight },
-        300,
-      );
-      setImageDimensions({ height, width });
-      // setRenderDynamicImage(true);
-    });
+    let isMounted = true;
+
+    Image.getSize(
+      image_href,
+      (defaultWidth, defaultHeight) => {
+        if (!isMounted) return;
+        const { width, height } = resizeImageDimensions(
+          { width: defaultWidth, height: defaultHeight },
+          300,
+          300, // Optional maxHeight
+        );
+        setImageDimensions({ height, width });
+      },
+      (error) => {
+        console.warn('Failed to get image size for history card:', error?.message || error);
+      },
+    );
+
+    return () => {
+      isMounted = false;
+    };
   }, [image_href]);
 
   return (
