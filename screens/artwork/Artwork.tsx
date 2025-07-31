@@ -182,7 +182,7 @@ export default function Artwork() {
   useEffect(() => {
     if (img) {
       Image.getSize(img, (defaultWidth, defaultHeight) => {
-        const targetSize = isTabletLandscape ? 400 : 250;
+        const targetSize = isTabletLandscape ? 400 : 400;
         const { width, height } = resizeImageDimensions(
           { width: defaultWidth, height: defaultHeight },
           targetSize,
