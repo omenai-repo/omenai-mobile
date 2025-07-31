@@ -29,9 +29,18 @@ export default function Editorials() {
   const handleFetchEditorials = async () => {
     setIsLoading(true);
 
-    const editorials: any = await listEditorials();
-    // console.log({ ...editorials, content: '' });
-    setData(editorials);
+    try {
+      const editorials: any = await listEditorials();
+
+      // Ensure it's always an array, even if undefined/null
+      const safeData = Array.isArray(editorials) ? editorials : [];
+
+      setData(safeData);
+    } catch (error) {
+      console.warn('Failed to fetch editorials:', error);
+      setData([]); // fail-safe fallback
+    }
+
     setIsLoading(false);
   };
 
