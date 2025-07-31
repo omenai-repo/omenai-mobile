@@ -35,6 +35,7 @@ interface OrderContainerProps {
   holdStatus: HoldStatus | null;
   updatedAt: string;
   trackBtn: () => void;
+  order_decline_reason?: string;
 }
 
 const OrderContainer: React.FC<OrderContainerProps> = ({
@@ -56,6 +57,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   holdStatus,
   updatedAt,
   trackBtn,
+  order_decline_reason = '',
 }) => {
   const image_href = getImageFileView(url, 700);
   const [remainingTime, setRemainingTime] = useState<number>(0);
@@ -176,7 +178,6 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
             <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{price}</Text>
           </View>
-
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
             <View style={{ flexWrap: 'wrap' }}>
@@ -190,7 +191,9 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
               />
             </View>
           </View>
-
+          {order_accepted === 'declined' && (
+            <Text style={{ color: '#ff0000', fontSize: 14 }}>Reason: {order_decline_reason}</Text>
+          )}
           {availability &&
             payment_information === 'pending' &&
             order_accepted === 'accepted' &&
@@ -206,7 +209,6 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
                 isDisabled={false}
               />
             )}
-
           {availability &&
             payment_information === 'completed' &&
             !delivery_confirmed &&
@@ -228,7 +230,6 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
                 />
               </View>
             )}
-
           {availability &&
             payment_information === 'completed' &&
             order_accepted === 'accepted' &&
