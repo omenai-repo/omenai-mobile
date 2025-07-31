@@ -48,7 +48,7 @@ export default function ArtworkCard({
 }: ArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
-  const image_href = getImageFileView(url, 270);
+  const image_href = getImageFileView(url, 400);
 
   const { updateModal } = useModalStore();
 
@@ -59,14 +59,19 @@ export default function ArtworkCard({
 
   useEffect(() => {
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-      const { width, height } = resizeImageDimensions(
+      const screenWidth = Dimensions.get('window').width;
+      const cardWidth = width > 0 ? width : screenWidth * 0.7; // fallback to 70% of screen
+      const maxHeight = 300;
+
+      const { width: resizedWidth, height: resizedHeight } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        300,
+        cardWidth,
+        maxHeight,
       );
-      setImageDimensions({ height, width });
-      // setRenderDynamicImage(true);
+
+      setImageDimensions({ height: resizedHeight, width: resizedWidth });
     });
-  }, [image_href]);
+  }, [image_href, width]);
 
   const handleRequestPriceQuote = async () => {
     setLoadingPriceQuote(true);
@@ -112,7 +117,7 @@ export default function ArtworkCard({
       <View style={tw`flex-1`} />
       <TouchableOpacity
         activeOpacity={1}
-        style={[tw`ml-[20px] rounded-2xl`, width > 0 && { width: width }]}
+        style={[tw`ml-[20px] rounded-2xl`, { width: imageDimensions.width }]}
         onPress={() => {
           navigation.push(screenName.artwork, { title, url });
         }}
@@ -144,7 +149,7 @@ export default function ArtworkCard({
             )}
           </View>
         </View>
-        <View style={tw`mt-[15px]`}>
+        <View style={[tw`mt-[15px]`, { width: imageDimensions.width }]}>
           <View style={tw`flex-wrap w-[${imageDimensions.width}px]`}>
             <Text
               style={[

@@ -182,15 +182,19 @@ export default function Artwork() {
   useEffect(() => {
     if (img) {
       Image.getSize(img, (defaultWidth, defaultHeight) => {
-        const targetSize = isTabletLandscape ? 400 : 400;
+        const maxWidth = screenWidth - 40; // 20 padding left + right
+        const maxHeight = isTabletLandscape ? 500 : 400;
+
         const { width, height } = resizeImageDimensions(
           { width: defaultWidth, height: defaultHeight },
-          targetSize,
+          maxWidth,
+          maxHeight,
         );
-        setImageDimensions({ height, width });
+
+        setImageDimensions({ width, height });
       });
     }
-  }, [img, isTabletLandscape]);
+  }, [img, isTabletLandscape, screenWidth]);
 
   // Render image section
   const renderImageSection = () => (

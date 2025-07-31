@@ -78,7 +78,7 @@ export default function Catalog() {
     const response = await fetchPaginatedArtworks(paginationCount + 1, filterOptions);
     if (response?.isOk) {
       const arr = [...artworks, ...response.data];
-
+      console.log(arr);
       setArtworks(arr);
       updatePaginationCount('inc');
       setPageCount(response.count);
