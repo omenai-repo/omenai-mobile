@@ -19,7 +19,7 @@ const getReadTime = (content: string) => {
   return Math.ceil(wordCount / 200);
 };
 
-const ArticleScreen: React.FC<Props> = () => {
+const ArticleScreen = () => {
   const { article } = useRoute().params as { article: EditorialSchemaTypes };
   const { width } = useWindowDimensions();
   const imageUrl = getEditorialImageFilePreview(article.cover, 1000);
@@ -38,7 +38,7 @@ const ArticleScreen: React.FC<Props> = () => {
           <Text style={tw`text-black text-2xl font-bold leading-tight`}>{article.headline}</Text>
 
           <Text style={tw`text-black text-sm mt-2`}>
-            By Omenai Team • {formattedDate} • {readTime} min read
+            By Iyanuoluwa Adenle • {formattedDate} • {readTime} min read
           </Text>
 
           {!!article.summary && (
