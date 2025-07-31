@@ -31,9 +31,7 @@ export default function RecentlyViewedArtworks({ refreshCount }: { refreshCount?
       if (results?.isOk) {
         const resData = results.data;
 
-        const reversedArray = resData.slice().reverse();
-
-        setData(reversedArray.splice(0, 20));
+        setData(resData.splice(0, 20));
       }
 
       setIsLoading(false);
