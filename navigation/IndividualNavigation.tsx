@@ -28,6 +28,7 @@ import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import CustomTabBar from './components/TabButton';
 import DetailsScreen from 'screens/home/components/DetailScreen';
 import ArticleScreen from 'screens/home/components/editorials/ArticleScreen';
+import AllEditorialsScreen from 'screens/home/components/editorials/AllEditorialsScreen';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -114,6 +115,7 @@ export default function IndividualNavigation() {
       <Stack.Screen name={screenName.artworksMedium} component={ArtworksMedium} />
       <Stack.Screen name={screenName.editorial} component={Editorial} />
       <Stack.Screen name={'ArticleScreen'} component={ArticleScreen} />
+      <Stack.Screen name={'AllEditorialsScreen'} component={AllEditorialsScreen} />
       <Stack.Screen name={screenName.collections} component={Collections} />
       <Stack.Screen name={'DetailsScreen'} component={DetailsScreen} />
     </Stack.Navigator>

@@ -12,7 +12,7 @@ type EditorialCardProps = {
 };
 
 export default function EditorialCard({ cover, headline, width, onPress }: EditorialCardProps) {
-  const imageUrl = getEditorialImageFilePreview(cover, width);
+  const imageUrl = getEditorialImageFilePreview(cover, 500);
 
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
