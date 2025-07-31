@@ -34,7 +34,7 @@ export default function StatusPill({
     return (
       <View style={[styles.pill, { backgroundColor: '#ff000020' }]}>
         <Feather name="x-circle" size={14} />
-        <Text style={styles.text}>Order declined by Gallery</Text>
+        <Text style={styles.text}>Order declined</Text>
       </View>
     );
   }

@@ -47,24 +47,43 @@ export default function Orders() {
 
   const handleFetchOrders = async () => {
     setIsLoading(true);
+    const pending_orders: any = [];
+    const completed_orders: any = [];
 
     const results = await getOrdersForUser();
 
     if (results?.isOk) {
       const data = results.data;
 
-      const pending_orders = data.filter(
-        (order: CreateOrderModelTypes) =>
-          !order.shipping_details.delivery_confirmed &&
-          order.availability &&
-          order.status !== 'completed',
-      );
-      const completed_orders = data.filter(
-        (order: CreateOrderModelTypes) =>
-          order.shipping_details.delivery_confirmed ||
-          !order.availability ||
-          order.status === 'completed',
-      );
+      // const pending_orders = data.filter(
+      //   (order: CreateOrderModelTypes) =>
+      //     !order.shipping_details.delivery_confirmed &&
+      //     order.availability &&
+      //     order.status !== 'completed',
+      // );
+      // const completed_orders = data.filter(
+      //   (order: CreateOrderModelTypes) =>
+      //     order.shipping_details.delivery_confirmed ||
+      //     !order.availability ||
+      //     order.status === 'completed',
+      // );
+      data.forEach((order: CreateOrderModelTypes) => {
+        if (order.order_accepted.status === '') {
+          pending_orders.push(order);
+        } else if (
+          order.order_accepted.status === 'accepted' &&
+          !order.shipping_details.delivery_confirmed
+        ) {
+          pending_orders.push(order);
+        } else if (
+          (order.order_accepted.status === 'accepted' &&
+            order.status === 'completed' &&
+            order.shipping_details.delivery_confirmed) ||
+          order.order_accepted.status === 'declined'
+        ) {
+          completed_orders.push(order);
+        }
+      });
       setIsLoading(false);
       setData({
         pendingOrders: pending_orders,
@@ -156,6 +175,7 @@ export default function Orders() {
                       orderId={item.order_id}
                       holdStatus={item.hold_status}
                       updatedAt={item.updatedAt}
+                      order_decline_reason={item.order_accepted.reason}
                       trackBtn={() =>
                         navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })
                       }
