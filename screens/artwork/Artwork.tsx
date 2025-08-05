@@ -208,7 +208,7 @@ export default function Artwork() {
               width: imageDimensions.width,
               resizeMode: 'contain',
               alignSelf: 'center',
-              borderRadius: 10,
+              borderRadius: 5,
               backgroundColor: '#f5f5f5',
             },
             isTabletLandscape && styles.tabletImage,

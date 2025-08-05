@@ -17,6 +17,9 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { Platform } from 'react-native';
+import { configureNotificationHandling } from 'notifications/NotificationService';
+import { useNotifications } from 'hooks/useNotifications';
+import { registerForPushToken } from 'notifications/registerForPushToken';
 
 if (!Platform.constants) {
   Platform.constants = {
@@ -36,7 +39,21 @@ SplashScreen.setOptions({
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const { isLoggedIn, userType } = useAppStore();
+  const { isLoggedIn, userType, setExpoPushToken } = useAppStore();
+
+  configureNotificationHandling(); // Set up global handler
+  useNotifications(); // Register listeners
+
+  useEffect(() => {
+    const initPush = async () => {
+      const token = await registerForPushToken();
+      if (token) {
+        setExpoPushToken(token);
+      }
+    };
+
+    initPush();
+  }, []);
 
   const prefix = Linking.createURL('/');
 

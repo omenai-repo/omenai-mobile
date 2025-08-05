@@ -29,6 +29,8 @@ export default {
         foregroundImage: './assets/omenai-logo.png',
         backgroundColor: '#ffffff',
       },
+      googleServicesFile: './google-services.json',
+      useNextNotificationsApi: true,
       package: 'com.omenai.omenaimobile',
       permissions: ['android.permission.RECORD_AUDIO'],
       versionCode: 4,
