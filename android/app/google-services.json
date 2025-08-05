@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "49402443940",
+    "project_id": "omenai-inc",
+    "storage_bucket": "omenai-inc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49402443940:android:c17423a488e4e2cc620e31",
+        "android_client_info": {
+          "package_name": "com.omenai.omenaimobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZv7oGyQO1rMdYESuV7pJaf-vsvOivuPY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

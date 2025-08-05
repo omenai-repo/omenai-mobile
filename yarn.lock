@@ -3352,7 +3352,7 @@ expo-modules-core@2.4.2:
   dependencies:
     invariant "^2.2.4"
 
-expo-notifications@~0.31.1:
+expo-notifications@~0.31.4:
   version "0.31.4"
   resolved "https://registry.yarnpkg.com/expo-notifications/-/expo-notifications-0.31.4.tgz#295a4345f7fea6ff974df9005790dda1d17ce00e"
   integrity sha512-NnGKIFGpgZU66qfiFUyjEBYsS77VahURpSSeWEOLt+P1zOaUFlgx2XqS+dxH3/Bn1Vm7TMj04qKsK5KvzR/8Lw==
