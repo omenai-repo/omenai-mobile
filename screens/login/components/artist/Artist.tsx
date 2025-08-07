@@ -18,7 +18,7 @@ import { useArtistAuthLoginStore } from 'store/auth/login/ArtistAuthLoginStore';
 export default function Artist() {
   const { artistLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
     useArtistAuthLoginStore();
-  const { setUserSession, setIsLoggedIn, userSession } = useAppStore();
+  const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
   const { updateModal } = useModalStore();
 
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -26,7 +26,10 @@ export default function Artist() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(artistLoginData, 'artist');
+    const results = await loginAccount(
+      { ...artistLoginData, device_push_token: expoPushToken ?? '' },
+      'artist',
+    );
     console.log(results);
     if (results?.isOk) {
       const resultsBody = results?.body?.data;

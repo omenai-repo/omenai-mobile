@@ -10,7 +10,6 @@ import Artwork from 'screens/artwork/Artwork';
 import SearchResults from 'screens/searchResults/SearchResults';
 import Payment from 'screens/payment/Payment';
 import Filter from 'components/filter/Filter';
-import Notifications from 'screens/notifications/Notifications';
 import EditorialsListing from 'screens/editorialsListing/EditorialsListing';
 import CancleOrderPayment from 'screens/payment/components/cancel/CancleOrderPayment';
 import SuccessOrderPayment from 'screens/payment/components/success/SuccessOrderPayment';
@@ -29,6 +28,7 @@ import CustomTabBar from './components/TabButton';
 import DetailsScreen from 'screens/home/components/DetailScreen';
 import ArticleScreen from 'screens/home/components/editorials/ArticleScreen';
 import AllEditorialsScreen from 'screens/home/components/editorials/AllEditorialsScreen';
+import NotificationScreen from 'screens/notifications/NotificationScreen';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -104,7 +104,7 @@ export default function IndividualNavigation() {
       <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} />
       <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} />
       <Stack.Screen name={screenName.payment} component={Payment} />
-      <Stack.Screen name={screenName.notifications} component={Notifications} />
+      <Stack.Screen name={'NotificationScreen'} component={NotificationScreen} />
       <Stack.Screen name={screenName.editorialsListing} component={EditorialsListing} />
       <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
       <Stack.Screen name={screenName.cancleOrderPayment} component={CancleOrderPayment} />

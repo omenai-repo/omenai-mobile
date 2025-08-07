@@ -18,13 +18,16 @@ export default function Individual() {
 
   const { individualLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
     useIndividualAuthLoginStore();
-  const { setUserSession, setIsLoggedIn } = useAppStore();
+  const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
   const { updateModal } = useModalStore();
 
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(individualLoginData, 'individual');
+    const results = await loginAccount(
+      { ...individualLoginData, device_push_token: expoPushToken ?? '' },
+      'individual',
+    );
 
     if (results?.isOk) {
       const resultsBody = results?.body?.data;

@@ -1,41 +1,18 @@
-import {
-  Image,
-  StyleSheet,
-  View,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
+import { Image, StyleSheet, View, Platform, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { colors } from '../../config/colors.config';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons';
 
 import omenaiLogo from '../../assets/omenai-logo.png';
 import tailwind from 'twrnc';
-import { fontNames } from '../../constants/fontNames.constants';
-import { useAppStore } from 'store/app/appStore';
-import { utils_getInitials } from 'utils/utils_sortFunctions';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { screenName } from 'constants/screenNames.constants';
 
-export default function Header({ showNotification }: { showNotification?: boolean }) {
+export default function Header({ showNotification = true }: { showNotification?: boolean }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const { userSession } = useAppStore();
-  const handleNavigation = () => {
-    if (userSession.role === 'gallery') {
-      //navigate to gallery profile screen
-      navigation.navigate(screenName.gallery.profile);
-      return;
-    }
-
-    if (userSession.role === 'artist') {
-      //navigate to artist profile screen
-      navigation.navigate('Profile');
-      return;
-    }
-    navigation.navigate(screenName.profile);
+  const handleNotificationPress = () => {
+    navigation.navigate('NotificationScreen');
   };
 
   return (
@@ -43,20 +20,16 @@ export default function Header({ showNotification }: { showNotification?: boolea
       <View style={tailwind`flex-1`}>
         <Image style={tailwind`w-[130px] h-[30px]`} resizeMode="contain" source={omenaiLogo} />
       </View>
-      <TouchableOpacity onPress={handleNavigation} activeOpacity={0.7}>
-        <View
-          style={tailwind`bg-[#f0f0f0] h-[40px] w-[40px] rounded-full flex items-center justify-center`}
-        >
-          <Text
-            style={[
-              tailwind`text-sm font-bold text-center`,
-              { fontFamily: fontNames.dmSans + 'Bold' },
-            ]}
+
+      {showNotification && (
+        <TouchableOpacity onPress={handleNotificationPress} activeOpacity={0.7}>
+          <View
+            style={tailwind`bg-[#f0f0f0] h-[40px] w-[40px] rounded-full flex items-center justify-center`}
           >
-            {utils_getInitials(userSession?.name)}
-          </Text>
-        </View>
-      </TouchableOpacity>
+            <Ionicons name="notifications-outline" size={22} color="#1A1A1A" />
+          </View>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

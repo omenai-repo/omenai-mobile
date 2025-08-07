@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 export default function Gallery() {
   const { galleryLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
     useGalleryAuthLoginStore();
-  const { setUserSession, setIsLoggedIn } = useAppStore();
+  const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
   const { updateModal } = useModalStore();
 
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -25,7 +25,10 @@ export default function Gallery() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(galleryLoginData, 'gallery');
+    const results = await loginAccount(
+      { ...galleryLoginData, device_push_token: expoPushToken ?? '' },
+      'gallery',
+    );
 
     if (results?.isOk) {
       const resultsBody = results?.body?.data;
