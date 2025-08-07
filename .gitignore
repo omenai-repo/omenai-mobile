@@ -17,6 +17,7 @@ web-build/
 *.keystore
 *.mobileprovision
 
+
 # Metro
 .metro-health-check*
 
@@ -39,3 +40,4 @@ yarn-error.*
 .expo
 dist/
 web-build/
+omenai-inc-firebase-adminsdk-fbsvc-0b4f7da24e.json

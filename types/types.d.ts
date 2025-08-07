@@ -99,16 +99,19 @@ type ArtworkPricing = {
 type IndividualLoginData = {
   email: string;
   password: string;
+  device_push_token: string;
 };
 
 type GalleryLoginData = {
   email: string;
   password: string;
+  device_push_token: string;
 };
 
 type ArtistLoginData = {
   email: string;
   password: string;
+  device_push_token: string;
 };
 
 type IndividualRegisterData = {
