@@ -20,6 +20,8 @@ import { Platform } from 'react-native';
 import { configureNotificationHandling } from 'notifications/NotificationService';
 import { useNotifications } from 'hooks/useNotifications';
 import { registerForPushToken } from 'notifications/registerForPushToken';
+import { navigationRef } from 'navigation/RootNavigation';
+import { useNotificationHandler } from 'hooks/useNotificationHandler';
 
 if (!Platform.constants) {
   Platform.constants = {
@@ -38,6 +40,7 @@ SplashScreen.setOptions({
 });
 
 export default function App() {
+  useNotificationHandler(); // Set up notification handler
   const [appIsReady, setAppIsReady] = useState(false);
   const { isLoggedIn, userType, setExpoPushToken } = useAppStore();
 
@@ -117,7 +120,7 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
           <BottomSheetModalProvider>
             <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}>
-              <NavigationContainer linking={linking}>
+              <NavigationContainer ref={navigationRef} linking={linking}>
                 {/* AUTH SCREENS */}
                 {!isLoggedIn && <AuthNavigation />}
                 {/* App screens */}

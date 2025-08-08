@@ -33,6 +33,7 @@ import { BottomTabDataArtist } from 'utils/BottomTabData';
 import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import ViewCredentialsScreen from 'screens/artist/profile/ViewCredentials';
 import CustomTabBar from './components/TabButton';
+import NotificationScreen from 'screens/notifications/NotificationScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -139,9 +140,10 @@ const ArtistNavigation = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="BottomTabNav" component={BottomTabNav} />
+      <Stack.Screen name="Artist" component={BottomTabNav} />
       <Stack.Screen name="ArtistOnboarding" component={ArtistOnboarding} />
       <Stack.Screen name="ArtistOverview" component={ArtistOverview} />
+      <Stack.Screen name={'NotificationScreen'} component={NotificationScreen} />
       <Stack.Screen name="OrderScreen" component={OrderScreen} />
       <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
       <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
