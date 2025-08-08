@@ -27,6 +27,7 @@ import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
 import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import { BottomTabDataGallery } from 'utils/BottomTabData';
 import CustomTabBar from './components/TabButton';
+import NotificationScreen from 'screens/notifications/NotificationScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -107,6 +108,7 @@ export default function GalleryNavigation() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Gallery" component={GalleryTabNavigationScreens} options={hideHeader} />
       <Stack.Screen name={screenName.artwork} component={Artwork} />
+      <Stack.Screen name={'NotificationScreen'} component={NotificationScreen} />
       <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
       <Stack.Screen name={screenName.gallery.order} component={GalleryOrder} />
       <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
