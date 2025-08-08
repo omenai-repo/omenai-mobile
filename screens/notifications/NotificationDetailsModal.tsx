@@ -19,7 +19,7 @@ type NotificationDetailsModalProps = {
   notification: {
     title: string;
     body: string;
-    date: string;
+    sentAt: string;
   } | null;
 };
 
@@ -57,7 +57,7 @@ const NotificationDetailsModal = ({
                   </Text>
 
                   <Text style={tw`text-[13px] text-[#999] mb-[15px]`}>
-                    {formatEventDate(notification.date)}
+                    {formatEventDate(notification.sentAt)}
                   </Text>
 
                   <Text style={tw`text-[15px] text-[#3D3D3D] leading-[22px]`}>
