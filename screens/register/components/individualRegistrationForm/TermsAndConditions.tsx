@@ -15,6 +15,7 @@ import tw from 'twrnc';
 import { screenName } from '../../../../constants/screenNames.constants';
 import { useModalStore } from 'store/modal/modalStore';
 import Loader from 'components/general/Loader';
+import { useAppStore } from 'store/app/appStore';
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -30,15 +31,18 @@ export default function TermsAndConditions() {
     clearState,
   } = useIndividualAuthRegisterStore();
   const { updateModal } = useModalStore();
+  const { expoPushToken } = useAppStore();
 
   const handleSubmit = async () => {
     setIsLoading(true);
 
     const data: Omit<IndividualRegisterData, 'confirmPassword'> & {
       preferences: string[];
+      device_push_token: string;
     } = {
       ...individualRegisterData,
       preferences,
+      device_push_token: expoPushToken ?? '',
     };
 
     const results = await registerAccount(data, 'individual');
