@@ -162,6 +162,7 @@ type ArtistSignupData = {
 
 type ArtistRegisterData = Omit<ArtistSignupData, 'logo' | 'confirmPassword'> & {
   logo: string;
+  device_push_token: string;
 };
 
 type GalleryRegisterData = Pick<

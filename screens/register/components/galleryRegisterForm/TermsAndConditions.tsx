@@ -16,6 +16,7 @@ import { gallery_logo_storage } from 'appWrite_config';
 import tw from 'twrnc';
 import Loader from 'components/general/Loader';
 import uploadLogo from 'screens/galleryProfileScreens/uploadNewLogo/uploadLogo';
+import { useAppStore } from 'store/app/appStore';
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -31,6 +32,7 @@ export default function TermsAndConditions() {
   } = useGalleryAuthRegisterStore();
 
   const { updateModal } = useModalStore();
+  const { expoPushToken } = useAppStore();
 
   const handleSubmit = async () => {
     try {
@@ -64,6 +66,7 @@ export default function TermsAndConditions() {
           logo: file.fileId,
           address,
           phone,
+          device_push_token: expoPushToken,
         };
 
         const results = await registerAccount(payload, 'gallery');

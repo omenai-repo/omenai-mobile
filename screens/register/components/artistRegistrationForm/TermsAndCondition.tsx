@@ -16,6 +16,7 @@ import { gallery_logo_storage } from 'appWrite_config';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import Loader from 'components/general/Loader';
 import uploadLogo from 'screens/galleryProfileScreens/uploadNewLogo/uploadLogo';
+import { useAppStore } from 'store/app/appStore';
 
 const TermsAndCondition = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -29,6 +30,7 @@ const TermsAndCondition = () => {
     clearState,
     isLoading,
   } = useArtistAuthRegisterStore();
+  const { expoPushToken } = useAppStore();
 
   const checks = [
     {
@@ -82,6 +84,7 @@ const TermsAndCondition = () => {
           art_style,
           base_currency,
           phone,
+          device_push_token: expoPushToken ?? '',
         };
 
         const results = await registerAccount(payload, 'artist');
