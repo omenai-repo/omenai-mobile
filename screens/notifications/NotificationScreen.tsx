@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import tw from 'twrnc';
-import { useNavigation } from '@react-navigation/native';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
 import { formatEventDate } from 'utils/utils_formatEventDate';
 import NotificationDetailsModal from './NotificationDetailsModal';
@@ -25,14 +24,28 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+// ⬇️ Root-level navigation helper (same one you use in useNotificationHandler)
+import { navigate } from 'navigation/RootNavigation';
+
+/** Match your push payload contract */
+type AccessType = 'artist' | 'gallery' | 'collector';
+
+type NotificationDataType = {
+  type: 'wallet' | 'orders' | 'subscriptions' | 'updates';
+  access_type: AccessType;
+  metadata: any; // e.g. { orderId, date, ... }
+  userId: string;
+};
+
 type Notification = {
   id: string;
   title: string;
   body: string;
   sentAt: string;
-  type: string;
+  type: string; // keep if API returns this
   read: boolean;
   readAt?: string;
+  data?: NotificationDataType; // ⬅️ add data to align with push payload
 };
 
 type Props = {
@@ -93,6 +106,50 @@ const AnimatedNotificationItem = ({ item, index, onPress }: Props) => {
   );
 };
 
+/** Centralized router — mirrors Expo notification response logic */
+function routeFromNotification(data?: NotificationDataType) {
+  if (!data?.type || !data?.access_type) return;
+
+  const { type, access_type } = data;
+
+  if (type === 'wallet') {
+    if (access_type === 'artist') {
+      navigate('Artist', { screen: 'WalletScreen' });
+    } else if (access_type === 'gallery') {
+      navigate('Gallery', { screen: 'Payouts' });
+    }
+  } else if (type === 'orders') {
+    if (access_type === 'gallery') {
+      navigate('Gallery', { screen: 'Orders' });
+    } else if (access_type === 'artist') {
+      navigate('Artist', { screen: 'Orders' });
+    } else {
+      navigate('Individual', { screen: 'Orders' });
+    }
+  } else if (type === 'subscriptions') {
+    if (access_type === 'gallery') {
+      navigate('Gallery', { screen: 'SubscriptionScreen' });
+    }
+  } else if (type === 'updates') {
+    if (access_type === 'artist') {
+      navigate('Artist', { screen: 'NotificationScreen' });
+    } else if (access_type === 'gallery') {
+      navigate('Gallery', { screen: 'NotificationScreen' });
+    } else if (access_type === 'collector') {
+      navigate('Individual', { screen: 'NotificationScreen' });
+    }
+  } else {
+    // Fallback hubs
+    if (access_type === 'artist') {
+      navigate('Artist');
+    } else if (access_type === 'gallery') {
+      navigate('Gallery');
+    } else if (access_type === 'collector') {
+      navigate('Individual');
+    }
+  }
+}
+
 const NotificationScreen = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -125,13 +182,15 @@ const NotificationScreen = () => {
   }, []);
 
   const handlePress = async (item: Notification) => {
+    // Optimistic mark-as-read
     setNotifications((prev) =>
       prev.map((n) =>
         n.id === item.id ? { ...n, read: true, readAt: new Date().toISOString() } : n,
       ),
     );
-    setSelectedNotification(item);
-    setModalVisible(true);
+
+    // Navigate based on data payload (mirrors push handler)
+    routeFromNotification(item.data);
 
     try {
       await updateNotification({
@@ -170,7 +229,7 @@ const NotificationScreen = () => {
   };
 
   return (
-    <View style={tw`flex-1 bg-[#F7F7F7] pt-[60px] android:pt-[40px]`}>
+    <View style={tw`flex-1 bg-[#F7F7F7] pt-[60px] android:pt-[15px]`}>
       <BackHeaderTitle title="Notifications" />
 
       {loading ? (
@@ -178,7 +237,7 @@ const NotificationScreen = () => {
       ) : (
         <FlatList
           data={notifications}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item, index }) => renderNotificationItem({ item, index })}
           ListEmptyComponent={renderEmptyComponent}
           contentContainerStyle={tw`pt-[20px] pb-[40px]`}
