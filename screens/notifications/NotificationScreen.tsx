@@ -152,8 +152,8 @@ function routeFromNotification(data?: NotificationDataType) {
 
 const NotificationScreen = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  // const [modalVisible, setModalVisible] = useState(false);
+  // const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { userType } = useAppStore();
@@ -248,11 +248,11 @@ const NotificationScreen = () => {
         />
       )}
 
-      <NotificationDetailsModal
+      {/* <NotificationDetailsModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         notification={selectedNotification}
-      />
+      /> */}
     </View>
   );
 };

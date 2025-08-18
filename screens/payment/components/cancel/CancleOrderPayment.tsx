@@ -1,15 +1,15 @@
-import { Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { releaseOrderLock } from "services/orders/releaseOrderLock";
-import { useAppStore } from "store/app/appStore";
-import { useModalStore } from "store/modal/modalStore";
-import { colors } from "config/colors.config";
-import { RefreshControl } from "react-native-gesture-handler";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { screenName } from "constants/screenNames.constants";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { releaseOrderLock } from 'services/orders/releaseOrderLock';
+import { useAppStore } from 'store/app/appStore';
+import { useModalStore } from 'store/modal/modalStore';
+import { colors } from 'config/colors.config';
+import { RefreshControl } from 'react-native-gesture-handler';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { screenName } from 'constants/screenNames.constants';
+import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export default function CancleOrderPayment() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -30,8 +30,8 @@ export default function CancleOrderPayment() {
 
       if (!res?.isOk) {
         updateModal({
-          message: "Something went wrong, please refresh your page",
-          modalType: "error",
+          message: 'Something went wrong, please refresh your page',
+          modalType: 'error',
           showModal: true,
         });
       }
@@ -56,8 +56,8 @@ export default function CancleOrderPayment() {
       >
         <View
           style={{
-            alignItems: "center",
-            justifyContent: "center",
+            alignItems: 'center',
+            justifyContent: 'center',
             marginTop: 100,
           }}
         >
@@ -73,19 +73,18 @@ export default function CancleOrderPayment() {
           </Text>
           <Text
             style={{
-              textAlign: "center",
+              textAlign: 'center',
               marginTop: 10,
               color: colors.grey,
               marginBottom: 40,
             }}
           >
-            The payment for this artwork has been cancled, you can always try
-            again later
+            The payment for this artwork has been cancled, you can always try again later
           </Text>
           <LongBlackButton
             value="Return home"
             isLoading={isLoading}
-            onClick={() => navigation.navigate(screenName.home)}
+            onClick={() => navigation.navigate('Individual')}
           />
         </View>
       </ScrollWrapper>
