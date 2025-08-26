@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack';
 import { colors } from 'config/colors.config';
 import { screenName } from 'constants/screenNames.constants';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, useWindowDimensions } from 'react-native';
 import Artwork from 'screens/artwork/Artwork';
 import Billing from 'screens/billing/Billing';
@@ -49,54 +49,55 @@ export default function GalleryNavigation() {
   });
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('state', (e) => {
-      const currentRoute = e.data.state?.routes[e.data.state.index].name;
-
-      if (currentRoute !== prevRouteRef.current) {
-        handleGetAccountID();
-        prevRouteRef.current = currentRoute;
-      }
-    });
-
-    return unsubscribe;
-  }, [navigation]);
+    handleGetAccountID();
+  }, []);
 
   async function handleGetAccountID() {
     const userSession = await utils_getAsyncData('userSession');
-    if (userSession.value) {
-      const res = await getAccountID(JSON.parse(userSession.value).email);
-      if (res?.data) {
-        setAccount({
-          connected_account_id: res.data.connected_account_id,
-          gallery_verified: res.data.gallery_verified,
-        });
+    if (!userSession.value) return;
+
+    const res = await getAccountID(JSON.parse(userSession.value).email);
+    if (!res?.data) return;
+
+    setAccount((prev) => {
+      const next = {
+        connected_account_id: res.data.connected_account_id,
+        gallery_verified: res.data.gallery_verified,
+      };
+      // avoid needless re-renders (tab remount) if nothing changed
+      if (
+        prev.connected_account_id === next.connected_account_id &&
+        prev.gallery_verified === next.gallery_verified
+      ) {
+        return prev;
       }
-    }
-    return;
+      return next;
+    });
   }
 
-  const GalleryTabNavigationScreens = () => {
+  const tabs = useMemo(
+    () => BottomTabDataGallery(account),
+    [account.connected_account_id, account.gallery_verified],
+  );
+
+  const GalleryTabNavigationScreens = useCallback(() => {
     return (
       <Tab.Navigator
-        tabBar={(props) => <CustomTabBar {...props} tabData={BottomTabDataGallery(account)} />}
-        screenOptions={{
-          headerShown: false,
-        }}
+        tabBar={(props) => <CustomTabBar {...props} tabData={tabs} />}
+        screenOptions={{ headerShown: false }}
       >
-        {BottomTabDataGallery(account).map(({ name, component, id, initialParams }) => (
+        {tabs.map(({ name, component, id, initialParams }) => (
           <Tab.Screen
             key={id}
             name={name}
             component={component}
             initialParams={initialParams}
-            options={{
-              tabBarShowLabel: false,
-            }}
+            options={{ tabBarShowLabel: false }}
           />
         ))}
       </Tab.Navigator>
     );
-  };
+  }, [tabs]);
 
   if (account.connected_account_id === null && account.gallery_verified)
     return (
