@@ -191,6 +191,7 @@ export const OrderContainer = ({
   tracking_status,
   order_accepted,
   delivered,
+  order_decline_reason,
 }: {
   id: number;
   open: boolean;
@@ -209,6 +210,7 @@ export const OrderContainer = ({
   tracking_status: string;
   order_accepted: string;
   delivered: boolean;
+  order_decline_reason?: string;
 }) => {
   let image_href = getImageFileView(url, 700);
 
@@ -223,6 +225,8 @@ export const OrderContainer = ({
             'track' ||
           renderButtonAction({ status, payment_status, tracking_status, order_accepted }) ===
             'action'
+            ? 180
+            : order_accepted === 'declined'
             ? 180
             : 120, // Adjust height based on content
         duration: 300,
@@ -295,6 +299,9 @@ export const OrderContainer = ({
               delivered,
             })}
           </View>
+          {order_accepted === 'declined' && (
+            <Text style={{ color: '#ff0000', fontSize: 14 }}>Reason: {order_decline_reason}</Text>
+          )}
 
           {renderButtonAction({ status, payment_status, tracking_status, order_accepted }) ===
             'track' && (
@@ -428,7 +435,7 @@ const OrderScreen = () => {
 
               <FlatList
                 data={currentOrders}
-                keyExtractor={(item) => item.artwork_data._id}
+                keyExtractor={(item) => item.order_id}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
                 renderItem={({ item, index }) => (
@@ -461,6 +468,7 @@ const OrderScreen = () => {
                     }
                     delivered={item.shipping_details.delivery_confirmed}
                     order_accepted={item.order_accepted.status}
+                    order_decline_reason={item.order_accepted.reason}
                     payment_status={item.payment_information.status}
                     tracking_status={item.shipping_details.shipment_information.tracking.id}
                     trackBtn={() =>
