@@ -10,7 +10,9 @@ export async function fetchHighlightData(tag: string) {
   }
   if (tag === 'net') {
     const result = await fetchIncomeData('gallery');
-    return result?.isOk ? utils_formatPrice(result.data.netIncome) : utils_formatPrice(0);
+    return result?.isOk && result.data.netIncome !== null
+      ? utils_formatPrice(result.data.netIncome)
+      : utils_formatPrice(0);
   }
   if (tag === 'revenue') {
     const result = await fetchIncomeData('gallery');
