@@ -29,6 +29,7 @@ export default function PasswordInput({
         <TextInput
           style={styles.input}
           placeholder={placeHolder}
+          placeholderTextColor={'#858585'}
           onChangeText={onInputChange}
           secureTextEntry={!showPassword}
           autoCapitalize="none"

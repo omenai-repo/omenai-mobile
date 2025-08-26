@@ -31,7 +31,7 @@ export default function NoSubscriptionBlock() {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('Gallery', {
-                screen: screenName.gallery.subscriptions,
+                screen: 'Sub',
               })
             }
             style={tw`bg-white rounded-full h-10 px-6 w-full items-center justify-center`}

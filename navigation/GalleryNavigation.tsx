@@ -83,11 +83,12 @@ export default function GalleryNavigation() {
           headerShown: false,
         }}
       >
-        {BottomTabDataGallery(account).map(({ name, component, id }) => (
+        {BottomTabDataGallery(account).map(({ name, component, id, initialParams }) => (
           <Tab.Screen
             key={id}
             name={name}
             component={component}
+            initialParams={initialParams}
             options={{
               tabBarShowLabel: false,
             }}

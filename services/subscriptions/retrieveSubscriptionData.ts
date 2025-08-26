@@ -1,14 +1,13 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
 
 export async function retrieveSubscriptionData(gallery_id: string) {
   try {
-
     const res = await fetch(`${apiUrl}/api/subscriptions/retrieveSubData`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
+        Origin: originHeader,
+        'User-Agent': userAgent,
+        Authorization: authorization,
       },
       body: JSON.stringify({ gallery_id }),
     });

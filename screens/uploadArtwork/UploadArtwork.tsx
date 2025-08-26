@@ -71,7 +71,7 @@ export default function UploadArtwork() {
         // Start retrieving subscription data while fetching Stripe onboarding status
         const [response, sub_check] = await Promise.all([
           checkIsStripeOnboarded(acc?.data.connected_account_id), // Dependent on account ID
-          retrieveSubscriptionData(userSession?.gallery_id), // Independent
+          retrieveSubscriptionData(userSession?.id), // Independent
         ]);
 
         if (!response?.isOk || !sub_check?.isOk) {
@@ -183,7 +183,8 @@ export default function UploadArtwork() {
   const shouldShowSubscriptionBlock = userSession?.gallery_verified && !isConfirmed?.isSubActive;
   const shouldShowMixedVerification = !userSession?.gallery_verified && isConfirmed?.isSubActive;
   const canUpload = userSession?.gallery_verified && isConfirmed?.isSubActive;
-
+  console.log(canUpload);
+  console.log(isConfirmed);
   return (
     <WithModal>
       {userType === 'gallery' && (
