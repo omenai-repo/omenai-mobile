@@ -8,7 +8,7 @@ import {
   StatusBar,
   Dimensions,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { colors } from 'config/colors.config';
 import { artworkActionStore } from 'store/artworks/ArtworkActionStore';
 import { artworkStore } from 'store/artworks/ArtworkStore';
@@ -22,6 +22,7 @@ import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import ArtworksListing from 'components/general/ArtworksListing';
 import tailwind from 'twrnc';
+import { useFocusEffect } from '@react-navigation/native';
 
 type TagItemProps = {
   name: string;
@@ -42,25 +43,14 @@ export default function Catalog() {
 
   const { width } = Dimensions.get('screen');
 
-  useEffect(() => {
-    handleFecthArtworks();
-    updatePaginationCount('reset');
-  }, [reloadCount]);
-
-  const handleFecthArtworks = async () => {
+  const handleFetchArtworks = useCallback(async () => {
     setIsLoading(true);
-    clearAllFilters();
     setArtworks([]);
-    const response = await fetchPaginatedArtworks(1, {
-      medium: [],
-      price: [],
-      rarity: [],
-      year: [],
-    });
+    updatePaginationCount('reset');
+    const response = await fetchPaginatedArtworks(1, filterOptions);
     if (response?.isOk) {
       setArtworks(response.data);
       setPageCount(response.count);
-    } else {
       updateModal({
         message: 'Error fetching artworks, reload page again',
         modalType: 'error',
@@ -68,30 +58,24 @@ export default function Catalog() {
       });
     }
     setIsLoading(false);
-  };
+  }, [filterOptions, setArtworks, setIsLoading, setPageCount, updatePaginationCount]);
+
+  // Refetch whenever screen is focused OR filters change
+  useFocusEffect(
+    useCallback(() => {
+      handleFetchArtworks();
+    }, [handleFetchArtworks]),
+  );
 
   const handlePagination = async () => {
     if (artworks.length < 1) return;
-
     setLoadingmore(true);
-
     const response = await fetchPaginatedArtworks(paginationCount + 1, filterOptions);
     if (response?.isOk) {
-      const arr = [...artworks, ...response.data];
-      console.log(arr);
-      setArtworks(arr);
+      setArtworks([...artworks, ...response.data]);
       updatePaginationCount('inc');
       setPageCount(response.count);
-    } else {
-      //throw error
-      console.log(response);
-      // updateModal({
-      //   message: response?.message,
-      //   showModal: true,
-      //   modalType: "error",
-      // });
     }
-
     setLoadingmore(false);
   };
 
@@ -111,7 +95,7 @@ export default function Catalog() {
               data={artworks}
               loadingMore={loadingMore}
               onEndReached={handlePagination}
-              onRefresh={handleFecthArtworks}
+              onRefresh={handleFetchArtworks}
             />
           )}
         </View>
