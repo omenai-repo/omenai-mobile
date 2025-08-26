@@ -34,7 +34,7 @@ import Overview from 'screens/overview/Overview';
 import GalleryOrdersListing from 'screens/galleryOrders/GalleryOrdersListing';
 import Subscriptions from 'screens/subscriptions/Subscriptions';
 import GalleryProfile from 'screens/galleryProfileScreens/galleryProfile/GalleryProfile';
-import StripePayouts from 'screens/stripeScreens/payouts/StripePayouts';
+import StripePayoutsTab from 'screens/stripeScreens/payouts/StripePayoutsTab';
 
 export const BottomTabDataArtist = [
   {
@@ -146,12 +146,8 @@ export const BottomTabDataGallery = (account: any) => [
     name: 'Payouts',
     activeIcon: walletActive,
     inActiveIcon: walletInActive,
-    component: () => (
-      <StripePayouts
-        showScreen={account?.connected_account_id !== null && account?.gallery_verified}
-        account_id={account?.connected_account_id || ''}
-      />
-    ),
+    component: StripePayoutsTab,
+    initialParams: { account },
   },
   {
     id: 6,

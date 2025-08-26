@@ -39,6 +39,7 @@ export default {
           apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID,
         },
       },
+      softwareKeyboardLayoutMode: 'pan',
     },
     web: {
       favicon: './assets/favicon.png',
