@@ -120,7 +120,7 @@ export default function GalleryOrdersListing() {
 
               <FlatList
                 data={currentOrders}
-                keyExtractor={(item) => item.artwork_data._id}
+                keyExtractor={(item) => item.order_id}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
                 renderItem={({ item, index }) => (
@@ -133,6 +133,7 @@ export default function GalleryOrdersListing() {
                     artName={item.artwork_data.title}
                     dateTime={formatIntlDateTime(item.createdAt)}
                     price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+                    order_decline_reason={item.order_accepted.reason}
                     status={selectedTab}
                     lastId={index === currentOrders.length - 1}
                     acceptBtn={
