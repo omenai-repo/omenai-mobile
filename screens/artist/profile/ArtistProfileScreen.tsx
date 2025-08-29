@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View, Platform, StatusBar, Image, Pressable } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Platform, Image, Pressable } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
 import { colors } from 'config/colors.config';
 import { PageButtonCard } from 'components/buttons/PageButtonCard';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { logout } from 'utils/logout.utils';
 import WithGalleryModal from 'components/modal/WithGalleryModal';
@@ -33,20 +33,37 @@ export default function ArtistProfileScreen() {
   const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
 
-  const [userData, setuserdata] = useState<userDataType>({
-    name: '',
-    email: '',
-  });
+  const [userData, setuserdata] = useState<userDataType>({ name: '', email: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [eligibilityResponse, setEligibilityResponse] = useState('');
   const [isEligible, setIsEligible] = useState(false);
   const [eligibilityData, setEligibilityData] = useState<any>(null);
 
+  // --- single-flight guard for credential check ---
+  const checkingRef = useRef(false);
+
+  const handleFetchUserSession = useCallback(async () => {
+    const stored = await utils_getAsyncData('userSession');
+    if (stored.isOk === false) return;
+    if (stored.value) {
+      const parsed = JSON.parse(stored.value);
+      setuserdata({ name: parsed.name, email: parsed.email });
+    }
+  }, []);
+
+  // Refetch user session whenever this screen regains focus
+  useFocusEffect(
+    useCallback(() => {
+      handleFetchUserSession();
+    }, [handleFetchUserSession]),
+  );
+
   const checkEditEligibility = async () => {
+    if (checkingRef.current) return; // prevent double taps
+    checkingRef.current = true;
     try {
       setIsLoading(true);
       const response = await getEditEligibility();
-
       if (response?.isOk) {
         if (response.body.eligibility.isEligible) {
           setIsLoading(false);
@@ -59,37 +76,18 @@ export default function ArtistProfileScreen() {
       } else {
         setIsLoading(false);
         setIsEligible(true);
-        setEligibilityResponse(response?.body.message);
+        setEligibilityResponse(response?.body?.message ?? 'You are not eligible at this time.');
       }
     } catch (error: any) {
-      // console.error('Error checking edit eligibility:', error);
       updateModal({
-        message: error.message,
+        message: error?.message ?? 'Something went wrong',
         showModal: true,
         modalType: 'error',
       });
       setIsLoading(false);
+    } finally {
+      checkingRef.current = false;
     }
-  };
-
-  useEffect(() => {
-    handleFetchUserSession();
-  }, []);
-
-  const handleFetchUserSession = async () => {
-    const userSession = await utils_getAsyncData('userSession');
-
-    if (userSession.isOk === false) return;
-
-    if (userSession.value) {
-      const parsedUserSessions = JSON.parse(userSession.value);
-      setuserdata({
-        name: parsedUserSessions.name,
-        email: parsedUserSessions.email,
-      });
-    }
-
-    return;
   };
 
   return (
@@ -101,61 +99,46 @@ export default function ArtistProfileScreen() {
               <Logo url={userSession?.logo} />
 
               <View>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: '500',
-                    color: colors.primary_black,
-                  }}
-                >
+                <Text style={{ fontSize: 16, fontWeight: '500', color: colors.primary_black }}>
                   {userData.name}
                 </Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    marginTop: 5,
-                    marginBottom: 20,
-                    color: '#00000099',
-                  }}
-                >
+                <Text style={{ fontSize: 14, marginTop: 5, marginBottom: 20, color: '#00000099' }}>
                   {userData.email}
                 </Text>
               </View>
             </View>
+
             <View style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}>
               <Pressable
                 onPress={() => navigation.navigate(screenName.gallery.editProfile)}
                 style={tw`bg-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
               >
-                <Text style={tw`text-[16px] text-[#fff]`}>Edit your profile</Text>
+                <Text style={tw`text-[16px] text-white`}>Edit your profile</Text>
               </Pressable>
+
               <Pressable
-                onPress={() => checkEditEligibility()}
-                style={tw`border border-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
+                onPress={checkEditEligibility}
+                style={tw`border border-black rounded-[23px] flex-1 h-[47px] justify-center items-center`}
               >
-                <Text style={tw`text-[16px] text-[#1A1A1A]000]`}>Edit your credentials</Text>
+                <Text style={tw`text-[16px] text-[#1A1A1A]`}>Edit your credentials</Text>
               </Pressable>
             </View>
+
             <View style={styles.buttonsContainer}>
-              {/* <Divider /> */}
               <PageButtonCard
                 name="View Credentials"
                 subText="View your credentials"
                 handlePress={() => navigation.navigate('ViewCredentialsScreen')}
                 Icon={<Ionicons name="eye-outline" size={24} color={colors.primary_black} />}
               />
-              {/* <Divider /> */}
               <PageButtonCard
                 name="Change password"
                 subText="Change the password to your account"
                 handlePress={() =>
-                  navigation.navigate(screenName.gallery.changePassword, {
-                    routeName: 'gallery',
-                  })
+                  navigation.navigate(screenName.gallery.changePassword, { routeName: 'gallery' })
                 }
                 svgIcon={changePasswsordIcon}
               />
-              {/* <Divider /> */}
               <PageButtonCard
                 name="Delete account"
                 subText="Delete your omenai gallery account"
@@ -166,6 +149,7 @@ export default function ArtistProfileScreen() {
                 svgIcon={deleteIcon}
               />
             </View>
+
             <View style={tw`mb-[150px]`}>
               <LongBlackButton value="Log Out" onClick={logout} />
             </View>
@@ -173,16 +157,15 @@ export default function ArtistProfileScreen() {
         ) : (
           <EligibityResponseScreen
             label={
-              eligibilityResponse
-                ? eligibilityResponse
-                : `You’re currently not eligible to update your credentials. Please try again in:`
+              eligibilityResponse ||
+              `You’re currently not eligible to update your credentials. Please try again in:`
             }
             daysLeft={eligibilityData?.body?.eligibility?.daysLeft}
             onPress={() => setIsEligible(false)}
           />
         )
       ) : (
-        <LoadingContainer label={''} />
+        <LoadingContainer label="" />
       )}
     </WithGalleryModal>
   );

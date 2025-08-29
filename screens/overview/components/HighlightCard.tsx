@@ -7,9 +7,10 @@ import tw from 'twrnc';
 
 type HighlightCardProps = {
   refreshCount: number;
+  onLoadingChange?: (loading: boolean) => void;
 };
 
-export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
+export const HighlightCard = ({ refreshCount, onLoadingChange }: HighlightCardProps) => {
   const { width } = useWindowDimensions();
   const cardWidth = (width - 55) / 2; // 20px margin + 15px gap + 20px margin
 
@@ -20,21 +21,34 @@ export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    handleFetchHighlightData();
+    let cancelled = false;
+    const run = async () => {
+      setIsLoading(true);
+      onLoadingChange?.(true);
+      try {
+        const [data1, data2, data3, data4] = await Promise.all([
+          fetchHighlightData('artworks'),
+          fetchHighlightData('sales'),
+          fetchHighlightData('net'),
+          fetchHighlightData('revenue'),
+        ]);
+        if (cancelled) return;
+        setTotalArtwork(data1);
+        setSoldArtwork(data2);
+        setNet(data3);
+        setRevenue(data4);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+          onLoadingChange?.(false);
+        }
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
   }, [refreshCount]);
-
-  const handleFetchHighlightData = async () => {
-    setIsLoading(true);
-    const data1 = await fetchHighlightData('artworks');
-    const data2 = await fetchHighlightData('sales');
-    const data3 = await fetchHighlightData('net');
-    const data4 = await fetchHighlightData('revenue');
-    setTotalArtwork(data1);
-    setSoldArtwork(data2);
-    setRevenue(data4);
-    setNet(data3);
-    setIsLoading(false);
-  };
 
   const CardComp = ({
     title,

@@ -19,22 +19,22 @@ type Artist = {
   totalLikes: number;
 };
 
-export default function FeaturedArtists() {
+const FeaturedArtists = () => {
   const navigation = useNavigation<any>();
   const [artists, setArtists] = useState<Artist[]>([]);
 
   useEffect(() => {
-    fetchArtists();
+    let alive = true;
+    (async () => {
+      const res = await getFeaturedArtists();
+      if (alive && res?.isOk && Array.isArray(res.data)) {
+        setArtists(res.data);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
   }, []);
-
-  const fetchArtists = async () => {
-    const res = await getFeaturedArtists();
-    if (res?.isOk && Array.isArray(res.data)) {
-      setArtists(res.data);
-    } else {
-      console.warn('Failed to fetch featured artists');
-    }
-  };
 
   const ArtistCard = ({
     image,
@@ -119,7 +119,7 @@ export default function FeaturedArtists() {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   artistCard: {
@@ -147,3 +147,5 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
+
+export default React.memo(FeaturedArtists);

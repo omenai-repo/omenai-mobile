@@ -33,20 +33,13 @@ export default function CuratedArtworksListing({
 
   const handleFetchArtworks = async () => {
     setIsLoading(true);
-
     const results = await fetchCuratedArtworks({ page: 1 });
 
     if (results) {
-      const resData = results.data;
-
-      setData(resData.splice(0, limit));
-      if (resData.length >= 20) {
-        setshowMoreButton(true);
-      }
-    } else {
-      console.log(results);
+      const resData = results.data ?? [];
+      setData(resData.slice(0, limit));
+      setshowMoreButton(resData.length >= 20);
     }
-
     setIsLoading(false);
   };
 

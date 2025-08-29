@@ -7,7 +7,7 @@ import { fetchHighlightData } from 'services/overview/fetchHighlightData';
 import { fetchArtistHighlightData } from 'services/overview/fetchArtistHighlightData';
 
 type HighlightCardProps = {
-  refreshCount: number;
+  refreshCount: boolean;
 };
 
 export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {

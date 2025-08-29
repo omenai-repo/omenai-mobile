@@ -20,23 +20,29 @@ export default function NewArtworksListing({ refreshCount }: { refreshCount?: nu
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    let inFlight = false;
+    let alive = true;
+
+    const handleFetchArtworks = async () => {
+      if (inFlight) return;
+      inFlight = true;
+      setIsLoading(true);
+      const results = await fetchArtworks({ listingType: 'recent', page: 1 });
+      if (alive) {
+        if (results.isOk) {
+          const resData = results.body.data ?? [];
+          setData(resData); // don’t mutate with splice here
+        }
+        setIsLoading(false);
+      }
+      inFlight = false;
+    };
+
     handleFetchArtworks();
+    return () => {
+      alive = false;
+    };
   }, [refreshCount]);
-
-  const handleFetchArtworks = async () => {
-    setIsLoading(true);
-
-    const results = await fetchArtworks({ listingType: 'recent', page: 1 });
-
-    if (results.isOk) {
-      const resData = results.body.data;
-      setData(resData);
-    } else {
-      console.log(results);
-    }
-
-    setIsLoading(false);
-  };
 
   return (
     <View style={styles.container}>

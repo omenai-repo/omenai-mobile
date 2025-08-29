@@ -1,5 +1,5 @@
 import { View, Text, Image, Pressable, ScrollView, RefreshControl } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
@@ -29,17 +29,12 @@ export const WalletContainerSkeleton = () => {
       style={tw`bg-[#FFFFFF] border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
     >
       <View style={tw`flex-row items-center gap-[15px] flex-1`}>
-        {/* Image placeholder */}
         <SkeletonBlock style={tw`w-[50px] h-[50px] rounded-[10px]`} />
-
-        {/* Text placeholders */}
         <View style={tw`gap-[5px]`}>
           <SkeletonBlock style={tw`w-[150px] h-[14px]`} />
           <SkeletonBlock style={tw`w-[100px] h-[10px]`} />
         </View>
       </View>
-
-      {/* Amount placeholder */}
       <SkeletonBlock style={tw`w-[80px] h-[15px]`} />
     </View>
   );
@@ -126,32 +121,19 @@ const AccountDetailsSkeleton = () => {
         style={tw`bg-[#FFFFFF] border border-[#00000033] rounded-[20px] px-[20px] py-[15px] mb-[20px]`}
       >
         <SkeletonBlock style={tw`w-[120px] h-[16px] mb-[10px]`} />
-
         <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
           <SkeletonBlock style={tw`flex-1 h-[14px]`} />
           <SkeletonBlock style={tw`w-[100px] h-[14px]`} />
         </View>
-
-        {/* <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
-          <SkeletonBlock style={tw`flex-1 h-[14px]`} />
-          <SkeletonBlock style={tw`w-[100px] h-[14px]`} />
-        </View>
-
-        <View style={tw`flex-row items-center gap-[20px] mt-[10px] mb-[20px]`}>
-          <SkeletonBlock style={tw`flex-1 h-[14px]`} />
-          <SkeletonBlock style={tw`w-[120px] h-[14px]`} />
-        </View> */}
       </View>
-
-      {/* <SkeletonBlock style={tw`h-[40px] rounded-[18px]`} /> */}
     </View>
   );
 };
 
 const WalletScreen = () => {
   const { updateModal } = useModalStore();
-
   const navigation = useNavigation<any>();
+
   const [isLoading, setIsLoading] = useState(false);
   const [walletData, setWalletData] = useState<any>(null);
   const [transactions, setTransactions] = useState<any>(null);
@@ -160,73 +142,83 @@ const WalletScreen = () => {
   const [showPendingBalance, setShowPendingBalance] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
 
+  // show PIN modal when wallet data loads and pin is missing
   useEffect(() => {
-    if (walletData && !walletData.wallet_pin) {
-      setShowPinModal(true);
-    }
+    if (walletData && !walletData.wallet_pin) setShowPinModal(true);
   }, [walletData]);
 
-  // Update the withdraw button press handler
-  const handleWithdrawPress = () => {
+  // single-flight + mounted guards
+  const inFlightRef = useRef(false);
+  const mountedRef = useRef(true);
+  useEffect(
+    () => () => {
+      mountedRef.current = false;
+    },
+    [],
+  );
+
+  const handleWalletData = useCallback(async () => {
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
+
+    try {
+      if (mountedRef.current) setIsLoading(true);
+      const [response1, response2] = await Promise.all([
+        fetchArtistWalletData(),
+        fetchArtistTransactions({ status: 'all' }),
+      ]);
+
+      if (mountedRef.current) {
+        if (response1?.isOk) {
+          setWalletData(response1.data);
+        } else {
+          updateModal({
+            message: 'Error fetching wallet data',
+            showModal: true,
+            modalType: 'error',
+          });
+        }
+
+        if (response2?.isOk) {
+          setTransactions(response2.data);
+        } else {
+          updateModal({
+            message: 'Error fetching transactions',
+            showModal: true,
+            modalType: 'error',
+          });
+        }
+      }
+    } catch (error) {
+      if (mountedRef.current) {
+        updateModal({ message: 'Error fetching wallet data', showModal: true, modalType: 'error' });
+      }
+    } finally {
+      if (mountedRef.current) setIsLoading(false);
+      inFlightRef.current = false;
+    }
+  }, [updateModal]);
+
+  const handleRefresh = useCallback(async () => {
+    if (inFlightRef.current) return;
+    setRefreshing(true);
+    await handleWalletData();
+    if (mountedRef.current) setRefreshing(false);
+  }, [handleWalletData]);
+
+  useFocusEffect(
+    useCallback(() => {
+      handleRefresh();
+    }, [handleRefresh]),
+  );
+
+  const handleWithdrawPress = useCallback(() => {
     if (!walletData?.primary_withdrawal_account) {
       navigation.navigate('AddPrimaryAcctScreen', { walletData });
     } else {
       navigation.navigate('WithdrawScreen', { walletData });
     }
-  };
-
-  useEffect(() => {
-    handleWalletData();
-  }, []);
-
-  const handleWalletData = async () => {
-    try {
-      setIsLoading(true);
-      const [response1, response2] = await Promise.all([
-        fetchArtistWalletData(),
-        fetchArtistTransactions({ status: 'all' }),
-      ]);
-      // console.log({ response1, response2 });
-      setIsLoading(false);
-      if (response1?.isOk) {
-        setWalletData(response1?.data);
-      } else {
-        updateModal({
-          message: 'Error fetching wallet data',
-          showModal: true,
-          modalType: 'error',
-        });
-      }
-      if (response2?.isOk) {
-        setTransactions(response2?.data);
-      } else {
-        updateModal({
-          message: 'Error fetching transactions',
-          showModal: true,
-          modalType: 'error',
-        });
-      }
-    } catch (error) {
-      updateModal({
-        message: 'Error fetching wallet data',
-        showModal: true,
-        modalType: 'error',
-      });
-      setIsLoading(false);
-    }
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await handleWalletData();
-    setRefreshing(false);
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      handleRefresh(); // Auto refresh when screen gains focus
-    }, []),
-  );
+  }, [navigation, walletData]);
 
   const skeletonStyle = tw`bg-[#ffffff20] rounded-[10px]`;
 
@@ -311,11 +303,7 @@ const WalletScreen = () => {
             ) : !walletData?.primary_withdrawal_account ? (
               <View style={tw`mx-[20px] mt-[40px]`}>
                 <BtnContainer
-                  onPress={() =>
-                    navigation.navigate('AddPrimaryAcctScreen', {
-                      walletData,
-                    })
-                  }
+                  onPress={() => navigation.navigate('AddPrimaryAcctScreen', { walletData })}
                   label="Add primary Account"
                 />
               </View>
@@ -344,27 +332,20 @@ const WalletScreen = () => {
                   </View>
                 </View>
                 <BtnContainer
-                  onPress={() =>
-                    navigation.navigate('AddPrimaryAcctScreen', {
-                      walletData,
-                    })
-                  }
+                  onPress={() => navigation.navigate('AddPrimaryAcctScreen', { walletData })}
                   label="Change Primary Account"
                 />
               </View>
             )}
           </View>
+
           <View style={tw`flex-1 bg-[#F7F7F7]`}>
             <View style={tw`mx-[20px] mt-[30px] pb-[25px] flex-row items-center`}>
               <Text style={tw`text-[15px] font-medium text-[#1A1A1A]000] flex-1`}>
                 Transaction History
               </Text>
               <Pressable
-                onPress={() =>
-                  navigation.navigate('WalletHistory', {
-                    transactions,
-                  })
-                }
+                onPress={() => navigation.navigate('WalletHistory', { transactions })}
                 style={tw`flex-row items-center gap-[5px]`}
               >
                 <Text style={tw`text-[15px] text-[#3D3D3D] font-semibold`}>Show All</Text>
@@ -372,9 +353,8 @@ const WalletScreen = () => {
               </Pressable>
             </View>
 
-            {/* Transaction List with fixed height and independent scrolling */}
             <View style={tw`max-h-[400px]`}>
-              <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
+              <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
                 {!isLoading ? (
                   <View style={tw`gap-[8px] mb-[150px]`}>
                     {transactions?.length === 0 ? (
@@ -384,22 +364,17 @@ const WalletScreen = () => {
                         </Text>
                       </View>
                     ) : (
-                      transactions?.length > 0 &&
-                      transactions?.map((item: any, index: number) => {
-                        return (
-                          <WalletContainer
-                            key={index}
-                            status={item.trans_status}
-                            amount={item.trans_amount}
-                            dateTime={item.createdAt}
-                            onPress={() =>
-                              navigation.navigate('TransactionDetailsScreen', {
-                                transaction: item,
-                              })
-                            }
-                          />
-                        );
-                      })
+                      transactions?.map((item: any, index: number) => (
+                        <WalletContainer
+                          key={index}
+                          status={item.trans_status}
+                          amount={item.trans_amount}
+                          dateTime={item.createdAt}
+                          onPress={() =>
+                            navigation.navigate('TransactionDetailsScreen', { transaction: item })
+                          }
+                        />
+                      ))
                     )}
                   </View>
                 ) : (
@@ -414,6 +389,7 @@ const WalletScreen = () => {
               </ScrollView>
             </View>
           </View>
+
           <PinCreationModal
             visible={showPinModal}
             setVisible={setShowPinModal}
