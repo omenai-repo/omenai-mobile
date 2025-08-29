@@ -6,7 +6,6 @@ import omenaiAvatar from '../../../../assets/images/omenai-avatar.png';
 
 export default function Logo({ url }: { url: string }) {
   const image = url ? getGalleryLogoFileView(url, 120, 120) : null;
-  console.log(image);
   return (
     <Image
       source={image ? { uri: image } : omenaiAvatar}

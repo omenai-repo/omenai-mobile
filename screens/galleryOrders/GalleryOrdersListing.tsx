@@ -1,76 +1,95 @@
-import { FlatList, Image, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
-import HeaderTabs from './components/HeaderTabs';
-import { getOverviewOrders } from 'services/orders/getOverviewOrders';
-import { organizeOrders } from 'utils/utils_splitArray';
-import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore';
-import WithGalleryModal from 'components/modal/WithGalleryModal';
-import { galleryOrderModalStore, galleryOrderModalTypes } from 'store/modal/galleryModalStore';
-import PendingOrders from './components/PendingOrders';
-import ProcessingOrders from './components/ProcessingOrders';
-import CompletedOrders from './components/CompletedOrders';
-import EmptyOrdersListing from './components/EmptyOrdersListing';
-import OrderslistingLoader from './components/OrderslistingLoader';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
+import { FlatList, Image, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import tw from 'twrnc';
 import WithModal from 'components/modal/WithModal';
 import TabSwitcher from 'components/orders/TabSwitcher';
-import tw from 'twrnc';
-import DeclineOrderModal from 'screens/artist/orders/DeclineOrderModal';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useModalStore } from 'store/modal/modalStore';
+import OrderslistingLoader from './components/OrderslistingLoader';
+import EmptyOrdersListing from './components/EmptyOrdersListing';
 import YearDropdown from 'screens/artist/orders/YearDropdown';
+import { galleryOrdersStore } from 'store/gallery/galleryOrdersStore';
+import { useModalStore } from 'store/modal/modalStore';
+import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
+import { organizeOrders } from 'utils/utils_splitArray';
+import DeclineOrderModal from 'screens/artist/orders/DeclineOrderModal';
 import { OrderContainer } from 'screens/artist/orders/OrderScreen';
 import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 
 export default function GalleryOrdersListing() {
   const { data, setData } = galleryOrdersStore();
-  const { setIsVisible, setModalType, setCurrentId } = galleryOrderModalStore();
   const navigation = useNavigation<any>();
+  const { updateModal } = useModalStore();
+
   const [selectedTab, setSelectedTab] = useState<'pending' | 'processing' | 'completed'>('pending');
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
   const [declineModal, setDeclineModal] = useState(false);
-  const [isloading, setIsloading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { updateModal } = useModalStore();
+  const [orderId, setOrderId] = useState('');
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
-  const [orderId, setOrderId] = useState('');
 
-  const handleRefresh = async () => {
+  // guards
+  const inFlightRef = useRef(false);
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const handleFetchOrders = useCallback(async () => {
+    if (inFlightRef.current) return; // single-flight guard
+    inFlightRef.current = true;
+
+    // show skeleton only for the very first load
+    setIsLoading((prev) => prev || true);
+
+    try {
+      const results = await getOrdersBySellerId();
+      const raw = results?.data ?? [];
+
+      const parsed = organizeOrders(raw);
+
+      if (!isMountedRef.current) return;
+      setData({
+        pending: parsed.pending,
+        processing: parsed.processing,
+        completed: parsed.completed,
+      });
+    } catch (e: any) {
+      if (!isMountedRef.current) return;
+      updateModal({
+        message: 'Error fetching orders. Please try again.',
+        modalType: 'error',
+        showModal: true,
+      });
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+        inFlightRef.current = false;
+      }
+    }
+  }, [setData, updateModal]);
+
+  const handleRefresh = useCallback(async () => {
+    if (inFlightRef.current) return; // don’t double-run while a fetch is in progress
     setRefreshing(true);
     await handleFetchOrders();
-    setRefreshing(false);
-  };
+    if (isMountedRef.current) setRefreshing(false);
+  }, [handleFetchOrders]);
 
   useFocusEffect(
     useCallback(() => {
-      handleRefresh(); // Auto refresh when screen gains focus
-    }, []),
+      // Runs once per focus; guarded to avoid double fetches
+      handleRefresh();
+      // no cleanup needed
+    }, [handleRefresh]),
   );
 
-  const handleFetchOrders = async () => {
-    setIsloading(true);
-    const results = await getOrdersBySellerId();
-    let data = results?.data;
-    const parsedOrders = organizeOrders(data);
-
-    setData({
-      pending: parsedOrders.pending,
-      processing: parsedOrders.processing,
-      completed: parsedOrders.completed,
-    });
-
-    setRefreshing(false);
-    setIsloading(false);
-  };
-
   const toggleRecentOrder = (key: number) => {
-    setOpenSection((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setOpenSection((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const getOrders = () => {
@@ -105,7 +124,7 @@ export default function GalleryOrdersListing() {
         <View
           style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px] android:mb-[20px]`}
         >
-          {isloading ? (
+          {isLoading ? (
             <OrderslistingLoader />
           ) : currentOrders.length === 0 ? (
             <EmptyOrdersListing status={selectedTab} />
@@ -122,6 +141,8 @@ export default function GalleryOrdersListing() {
                 data={currentOrders}
                 keyExtractor={(item) => item.order_id}
                 showsVerticalScrollIndicator={false}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
                 contentContainerStyle={tw`pb-[30px]`}
                 renderItem={({ item, index }) => (
                   <OrderContainer

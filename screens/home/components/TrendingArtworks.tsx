@@ -1,17 +1,17 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native-gesture-handler";
-import ArtworkCard from "components/artwork/ArtworkCard";
-import { fetchArtworks } from "services/artworks/fetchArtworks";
-import { colors } from "config/colors.config";
-import ArtworkCardLoader from "components/general/ArtworkCardLoader";
-import { Feather } from "@expo/vector-icons";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import ViewAllCategoriesButton from "components/buttons/ViewAllCategoriesButton";
-import EmptyArtworks from "components/general/EmptyArtworks";
-import { fontNames } from "constants/fontNames.constants";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList } from 'react-native-gesture-handler';
+import ArtworkCard from 'components/artwork/ArtworkCard';
+import { fetchArtworks } from 'services/artworks/fetchArtworks';
+import { colors } from 'config/colors.config';
+import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
+import { Feather } from '@expo/vector-icons';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
+import EmptyArtworks from 'components/general/EmptyArtworks';
+import { fontNames } from 'constants/fontNames.constants';
 
 export default function TrendingArtworks({
   refreshCount,
@@ -33,20 +33,13 @@ export default function TrendingArtworks({
 
   const handleFetchArtworks = async () => {
     setIsLoading(true);
-
-    const results = await fetchArtworks({ listingType: "trending", page: 1 });
+    const results = await fetchArtworks({ listingType: 'trending', page: 1 });
 
     if (results.isOk) {
-      const resData = results.body.data;
-
-      setData(resData.splice(0, limit));
-      if (resData.length >= 20) {
-        setshowMoreButton(true);
-      }
-    } else {
-      console.log(results);
+      const resData = results.body.data ?? [];
+      setData(resData.slice(0, limit));
+      setshowMoreButton(resData.length >= 20);
     }
-
     setIsLoading(false);
   };
 
@@ -55,14 +48,14 @@ export default function TrendingArtworks({
       <TouchableOpacity
         onPress={() =>
           navigation.navigate(screenName.artworkCategories, {
-            title: "trending",
+            title: 'trending',
           })
         }
       >
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
             gap: 10,
             paddingHorizontal: 20,
           }}
@@ -72,7 +65,7 @@ export default function TrendingArtworks({
               fontSize: 18,
               fontWeight: 500,
               flex: 1,
-              fontFamily: fontNames.dmSans + "Medium",
+              fontFamily: fontNames.dmSans + 'Medium',
             }}
           >
             Trending Artworks
@@ -84,13 +77,7 @@ export default function TrendingArtworks({
       {!isLoading && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({
-            item,
-            index,
-          }: {
-            item: ArtworkFlatlistItem;
-            index: number;
-          }) => {
+          renderItem={({ item, index }: { item: ArtworkFlatlistItem; index: number }) => {
             if (index + 1 === data.length && showMoreButton) {
               return (
                 <ViewAllCategoriesButton
@@ -104,7 +91,7 @@ export default function TrendingArtworks({
                 title={item.title}
                 url={item.url}
                 artist={item.artist}
-                showPrice={item.pricing.shouldShowPrice === "Yes"}
+                showPrice={item.pricing.shouldShowPrice === 'Yes'}
                 price={item.pricing.usd_price}
                 availiablity={item.availability}
                 impressions={item.impressions}

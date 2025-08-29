@@ -1,13 +1,5 @@
-import {
-  RefreshControl,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-} from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, View, Platform } from 'react-native';
 import WithModal from 'components/modal/WithModal';
 import { Feather } from '@expo/vector-icons';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
@@ -21,32 +13,46 @@ import ArtworksListing from 'components/general/ArtworksListing';
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const [isloading, setIsLoading] = useState<boolean>(false);
-  const [data, setData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<any[]>([]);
+  const inFlight = useRef(false); // single-flight guard
+  const isMounted = useRef(true);
 
-  const onRefresh = React.useCallback(() => {
-    // setRefreshing(true);
-    handleFetchGalleryArtworks();
-  }, []);
+  const handleFetchGalleryArtworks = useCallback(async (opts?: { isPull?: boolean }) => {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    try {
+      // show skeleton only for first load or non-pull refresh
+      if (!opts?.isPull) setIsLoading(true);
 
-  useEffect(() => {
-    handleFetchGalleryArtworks();
+      const results = await fetchAllArtworksById();
+      const list = results?.data ?? [];
+      if (isMounted.current) {
+        setData([...list].reverse());
+      }
+    } catch (e) {
+      console.error('Failed to fetch gallery artworks', e);
+    } finally {
+      if (isMounted.current) {
+        setIsLoading(false);
+      }
+      inFlight.current = false;
+    }
   }, []);
 
   useFocusEffect(
     useCallback(() => {
+      isMounted.current = true;
       handleFetchGalleryArtworks();
-    }, []),
+      return () => {
+        isMounted.current = false;
+      };
+    }, [handleFetchGalleryArtworks]),
   );
 
-  async function handleFetchGalleryArtworks() {
-    setIsLoading(true);
-    const results = await fetchAllArtworksById();
-    setData(results?.data.reverse());
-
-    setIsLoading(false);
-  }
+  const onRefresh = useCallback(async () => {
+    await handleFetchGalleryArtworks({ isPull: true });
+  }, [handleFetchGalleryArtworks]);
 
   return (
     <WithModal>
@@ -59,16 +65,7 @@ export default function GalleryArtworksListing() {
           marginTop: Platform.OS === 'ios' ? 80 : 40,
         }}
       >
-        <Text
-          style={{
-            fontSize: 18,
-            flex: 1,
-            fontWeight: '500',
-            color: '#000',
-          }}
-        >
-          Artworks
-        </Text>
+        <Text style={{ fontSize: 18, flex: 1, fontWeight: '500', color: '#000' }}>Artworks</Text>
         <FittedBlackButton
           value="Upload artwork"
           isDisabled={false}
@@ -77,16 +74,14 @@ export default function GalleryArtworksListing() {
           <Feather name="plus" color={'#fff'} size={20} />
         </FittedBlackButton>
       </View>
-      <ScrollWrapper
-        style={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        {isloading ? (
+
+      <ScrollWrapper style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        {isLoading ? (
           <MiniArtworkCardLoader />
         ) : (
           <View style={{ paddingBottom: 130, paddingHorizontal: 10 }}>
-            <ArtworksListing data={data} />
+            {/* Let the list manage pull-to-refresh */}
+            <ArtworksListing data={data} onRefresh={onRefresh} />
           </View>
         )}
       </ScrollWrapper>

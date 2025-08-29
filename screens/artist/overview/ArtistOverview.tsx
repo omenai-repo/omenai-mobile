@@ -12,6 +12,7 @@ import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
 import { HighlightCard } from './HighlightCard';
+import { useFocusEffect } from '@react-navigation/native';
 
 export const RecentOrderContainer = ({
   id,
@@ -27,7 +28,7 @@ export const RecentOrderContainer = ({
 }: {
   id: number;
   open: boolean;
-  setOpen: (e: boolean) => void;
+  setOpen: () => void;
   artId: string;
   artName: string;
   price: string;
@@ -90,7 +91,7 @@ export const RecentOrderContainer = ({
           </View>
         </View>
         <Pressable
-          onPress={() => setOpen(!open)}
+          onPress={setOpen}
           style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
         >
           <SvgXml xml={open ? dropUpIcon : dropdownIcon} />
@@ -130,7 +131,6 @@ export const RecentOrderContainer = ({
 };
 
 const ArtistOverview = () => {
-  const [refreshCount, setRefreshCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -138,11 +138,13 @@ const ArtistOverview = () => {
 
   useEffect(() => {
     fetchRecentOrders();
-  }, [refreshCount]);
+  }, []);
 
-  const fetchRecentOrders = async () => {
-    setIsLoading(true);
+  const fetchRecentOrders = useCallback(async () => {
+    // When called by initial mount, show main loader
+    // When called by pull-to-refresh, we’ll manage refreshing separately
     try {
+      if (!refreshing) setIsLoading(true);
       const results = await getOverviewOrders();
       setData(results?.isOk ? results.data : []);
     } catch {
@@ -150,12 +152,20 @@ const ArtistOverview = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [refreshing]);
 
-  const onRefresh = useCallback(() => setRefreshCount((prev) => prev + 1), []);
-  const toggleRecentOrder = (key: number) => {
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await fetchRecentOrders();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [fetchRecentOrders]);
+
+  const toggleRecentOrder = useCallback((key: number) => {
     setOpenSection((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  }, []);
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
@@ -166,9 +176,9 @@ const ArtistOverview = () => {
         <Header />
 
         {/* Highlight Cards */}
-        <HighlightCard refreshCount={refreshCount} />
+        <HighlightCard refreshCount={refreshing} />
 
-        <SalesOverview refreshCount={refreshCount} />
+        <SalesOverview refreshCount={refreshing} />
 
         {/* Recent Orders */}
         {data.length !== 0 && (

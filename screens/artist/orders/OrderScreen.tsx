@@ -336,9 +336,9 @@ export const OrderContainer = ({
 const OrderScreen = () => {
   const navigation = useNavigation<any>();
   const [selectedTab, setSelectedTab] = useState<'pending' | 'processing' | 'completed'>('pending');
-  const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
+  const [openSection, setOpenSection] = useState<Record<string, boolean>>({}); // key can be string _id
   const [declineModal, setDeclineModal] = useState(false);
-  const [isloading, setIsloading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { updateModal } = useModalStore();
   const currentYear = new Date().getFullYear();
@@ -347,54 +347,73 @@ const OrderScreen = () => {
 
   const { data, setData } = artistOrdersStore();
 
-  const handleRefresh = async () => {
+  // single-flight + unmount guard
+  const inFlight = useRef(false);
+  const alive = useRef(true);
+  useEffect(
+    () => () => {
+      alive.current = false;
+    },
+    [],
+  );
+
+  const handleFetchOrders = useCallback(async () => {
+    if (inFlight.current) return; // prevent duplicate calls
+    inFlight.current = true;
+    try {
+      if (isLoading === true && !refreshing) {
+        setIsLoading(true);
+      }
+
+      const results = await getOrdersBySellerId();
+      if (results?.isOk) {
+        const parsed = organizeOrders(results.data);
+        if (alive.current) {
+          setData({
+            pending: parsed.pending,
+            processing: parsed.processing,
+            completed: parsed.completed,
+          });
+          setIsLoading(false);
+        }
+      } else {
+        if (alive.current) {
+          setIsLoading(false);
+          updateModal({
+            message: results?.body?.message ?? 'Failed to load orders',
+            showModal: true,
+            modalType: 'error',
+          });
+        }
+      }
+    } finally {
+      inFlight.current = false;
+    }
+  }, [setData, updateModal, isLoading, refreshing]);
+
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     await handleFetchOrders();
     setRefreshing(false);
-  };
+  }, [handleFetchOrders]);
 
   useFocusEffect(
     useCallback(() => {
-      handleRefresh(); // Auto refresh when screen gains focus
-    }, []),
+      // fetch once per focus; single-flight stops accidental duplicates
+      handleRefresh();
+    }, [handleRefresh]),
   );
 
-  const handleFetchOrders = async () => {
-    const results = await getOrdersBySellerId();
-    if (results?.isOk) {
-      let data = results?.data;
-      const parsedOrders = organizeOrders(data);
+  const toggleRecentOrder = useCallback((key: string) => {
+    setOpenSection((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
 
-      setData({
-        pending: parsedOrders.pending,
-        processing: parsedOrders.processing,
-        completed: parsedOrders.completed,
-      });
-      setIsloading(false);
-    } else {
-      setIsloading(false);
-      updateModal({
-        message: results?.body?.message ?? '',
-        showModal: true,
-        modalType: 'error',
-      });
-    }
-  };
-
-  const toggleRecentOrder = (key: number) => {
-    setOpenSection((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const getOrders = () => {
-    if (selectedTab === 'pending') return data.pending;
-    if (selectedTab === 'processing') return data.processing;
-    return data.completed;
-  };
-
-  const currentOrders = getOrders();
+  const currentOrders =
+    selectedTab === 'pending'
+      ? data.pending
+      : selectedTab === 'processing'
+      ? data.processing
+      : data.completed;
 
   const artistTabs = [
     { title: 'Pending', key: 'pending', count: data.pending.length },
@@ -420,7 +439,7 @@ const OrderScreen = () => {
         <View
           style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
         >
-          {isloading ? (
+          {isLoading ? (
             <OrderslistingLoader />
           ) : currentOrders.length === 0 ? (
             <EmptyOrdersListing status={selectedTab} />

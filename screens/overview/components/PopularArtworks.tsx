@@ -12,22 +12,37 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import NavBtnComponent from 'components/artwork/NavBtnComponent';
 
-export default function PopularArtworks({ refreshCount }: { refreshCount: number }) {
+export default function PopularArtworks({
+  refreshCount,
+  onLoadingChange,
+}: {
+  refreshCount: number;
+  onLoadingChange?: (l: boolean) => void;
+}) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    setIsLoading(true);
-    async function handleFetchGalleryPopularArtworks() {
-      const results = await fetchPopularArtworks();
-      setData(results.data);
-
-      setIsLoading(false);
-    }
-
-    handleFetchGalleryPopularArtworks();
+    let cancelled = false;
+    const run = async () => {
+      setIsLoading(true);
+      onLoadingChange?.(true);
+      try {
+        const results = await fetchPopularArtworks();
+        if (!cancelled) setData(results.data ?? []);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+          onLoadingChange?.(false);
+        }
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
   }, [refreshCount]);
 
   return (

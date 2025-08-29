@@ -7,7 +7,13 @@ import tw from 'twrnc';
 
 const { width } = Dimensions.get('window');
 
-export default function SalesOverview({ refreshCount }: { refreshCount: number }) {
+export default function SalesOverview({
+  refreshCount,
+  onLoadingChange,
+}: {
+  refreshCount: number;
+  onLoadingChange?: (l: boolean) => void;
+}) {
   const [salesOverviewData, setSalesOverviewData] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tooltip, setTooltip] = useState({
@@ -19,15 +25,26 @@ export default function SalesOverview({ refreshCount }: { refreshCount: number }
   const [fadeAnim] = useState(new Animated.Value(0)); // For tooltip animation
 
   useEffect(() => {
-    setIsLoading(true);
-    async function handleFetchSalesData() {
-      const data = await getSalesActivityData();
-      const activityData = salesDataAlgorithm(data.data);
-      const arr = activityData.map((month) => month.Revenue);
-      setSalesOverviewData(arr);
-      setIsLoading(false);
-    }
-    handleFetchSalesData();
+    let cancelled = false;
+    const handle = async () => {
+      setIsLoading(true);
+      onLoadingChange?.(true);
+      try {
+        const data = await getSalesActivityData();
+        const activityData = salesDataAlgorithm(data.data);
+        const arr = activityData.map((m) => m.Revenue);
+        if (!cancelled) setSalesOverviewData(arr);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+          onLoadingChange?.(false);
+        }
+      }
+    };
+    handle();
+    return () => {
+      cancelled = true;
+    };
   }, [refreshCount]);
 
   const labels = [

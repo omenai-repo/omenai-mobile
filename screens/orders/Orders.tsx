@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Platform, Image, FlatList } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { colors } from 'config/colors.config';
 import { getOrdersForUser } from 'services/orders/getOrdersForUser';
 import WithModal from 'components/modal/WithModal';
@@ -21,103 +21,131 @@ export default function Orders() {
   const { isLoading, setIsLoading, refreshTrigger, selectedTab, setSelectedTab, data, setData } =
     useOrderStore();
   const [refreshing, setRefreshing] = useState(false);
-  const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
+  const [openSection, setOpenSection] = useState<{ [key: string]: boolean }>({});
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
-
   const { updateModal } = useModalStore();
 
-  const handleRefresh = async () => {
+  // ---- single-flight guard to prevent overlapping fetches
+  const inFlightRef = useRef(false);
+
+  const partitionOrders = useCallback((list: CreateOrderModelTypes[]) => {
+    const pending: CreateOrderModelTypes[] = [];
+    const completed: CreateOrderModelTypes[] = [];
+
+    list.forEach((order) => {
+      if (order.order_accepted.status === '') {
+        pending.push(order);
+      } else if (
+        order.order_accepted.status === 'accepted' &&
+        !order.shipping_details.delivery_confirmed
+      ) {
+        pending.push(order);
+      } else if (
+        (order.order_accepted.status === 'accepted' &&
+          order.status === 'completed' &&
+          order.shipping_details.delivery_confirmed) ||
+        order.order_accepted.status === 'declined'
+      ) {
+        completed.push(order);
+      }
+    });
+
+    return { pending, completed };
+  }, []);
+
+  const handleFetchOrders = useCallback(async () => {
+    if (inFlightRef.current) return; // guard
+    inFlightRef.current = true;
+
+    setIsLoading(true);
+    try {
+      const results = await getOrdersForUser();
+      if (results?.isOk) {
+        const list = results.data as CreateOrderModelTypes[];
+        const { pending, completed } = partitionOrders(list);
+        setData({ pendingOrders: pending, completedOrders: completed });
+      } else {
+        updateModal({
+          message: 'Something went wrong fetching orders, reload page',
+          modalType: 'error',
+          showModal: true,
+        });
+      }
+    } finally {
+      setIsLoading(false);
+      inFlightRef.current = false;
+    }
+  }, [partitionOrders, setData, setIsLoading, updateModal]);
+
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     await handleFetchOrders();
     setRefreshing(false);
-  };
+  }, [handleFetchOrders]);
 
-  useEffect(() => {
-    if (refreshTrigger) {
-      handleFetchOrders();
-    }
-  }, [refreshTrigger]);
-
+  // Single source of truth: fetch on focus
   useFocusEffect(
     useCallback(() => {
-      handleRefresh(); // Auto refresh when screen gains focus
-    }, []),
+      handleFetchOrders();
+    }, [handleFetchOrders]),
   );
 
-  const handleFetchOrders = async () => {
-    setIsLoading(true);
-    const pending_orders: any = [];
-    const completed_orders: any = [];
+  // Optional external refresh trigger — guarded so it won’t double-call with focus
+  useEffect(() => {
+    if (refreshTrigger) handleFetchOrders();
+  }, [refreshTrigger, handleFetchOrders]);
 
-    const results = await getOrdersForUser();
+  const toggleRecentOrder = useCallback((key: string | number) => {
+    const k = String(key);
+    setOpenSection((prev) => ({ ...prev, [k]: !prev[k] }));
+  }, []);
 
-    if (results?.isOk) {
-      const data = results.data;
-
-      // const pending_orders = data.filter(
-      //   (order: CreateOrderModelTypes) =>
-      //     !order.shipping_details.delivery_confirmed &&
-      //     order.availability &&
-      //     order.status !== 'completed',
-      // );
-      // const completed_orders = data.filter(
-      //   (order: CreateOrderModelTypes) =>
-      //     order.shipping_details.delivery_confirmed ||
-      //     !order.availability ||
-      //     order.status === 'completed',
-      // );
-      data.forEach((order: CreateOrderModelTypes) => {
-        if (order.order_accepted.status === '') {
-          pending_orders.push(order);
-        } else if (
-          order.order_accepted.status === 'accepted' &&
-          !order.shipping_details.delivery_confirmed
-        ) {
-          pending_orders.push(order);
-        } else if (
-          (order.order_accepted.status === 'accepted' &&
-            order.status === 'completed' &&
-            order.shipping_details.delivery_confirmed) ||
-          order.order_accepted.status === 'declined'
-        ) {
-          completed_orders.push(order);
-        }
-      });
-      setIsLoading(false);
-      setData({
-        pendingOrders: pending_orders,
-        completedOrders: completed_orders,
-      });
-    } else {
-      setIsLoading(false);
-      updateModal({
-        message: 'Something went wrong fetching orders, reload page',
-        modalType: 'error',
-        showModal: true,
-      });
-    }
-  };
-
-  const toggleRecentOrder = (key: number) => {
-    setOpenSection((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const getOrders = () => {
+  const currentOrders = useMemo(() => {
     if (selectedTab === 'pending') return data.pendingOrders;
     if (selectedTab === 'history') return data.completedOrders;
     return data.completedOrders;
-  };
+  }, [data.pendingOrders, data.completedOrders, selectedTab]);
 
-  const currentOrders = getOrders();
+  const collectorTabs = useMemo(
+    () => [
+      { title: 'Pending', key: 'pending', count: data.pendingOrders.length },
+      { title: 'Order History', key: 'history' },
+    ],
+    [data.pendingOrders.length],
+  );
 
-  const collectorTabs = [
-    { title: 'Pending', key: 'pending', count: data.pendingOrders.length },
-    { title: 'Order History', key: 'history' },
-  ];
+  const renderItem = useCallback(
+    ({ item, index }: { item: any; index: number }) => (
+      <OrderContainer
+        id={index}
+        url={item.artwork_data.url}
+        open={!!openSection[item.artwork_data._id]}
+        setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+        artId={item.order_id}
+        artName={item.artwork_data.title}
+        price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
+        status={item.status}
+        lastId={index === currentOrders.length - 1}
+        order_accepted={item.order_accepted.status}
+        availability={item.availability}
+        delivery_confirmed={item.shipping_details.delivery_confirmed}
+        tracking_information={item.shipping_details.shipment_information.tracking}
+        payment_information={item.payment_information.status}
+        orderId={item.order_id}
+        holdStatus={item.hold_status}
+        updatedAt={item.updatedAt}
+        order_decline_reason={item.order_accepted.reason}
+        trackBtn={() => navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })}
+      />
+    ),
+    [currentOrders.length, navigation, openSection, toggleRecentOrder],
+  );
+
+  const keyExtractor = useCallback(
+    (item: any) => `${item.order_id}::${item.artwork_data._id}`, // stable & unique across tabs
+    [],
+  );
 
   return (
     <WithModal>
@@ -152,36 +180,10 @@ export default function Orders() {
 
               <FlatList
                 data={currentOrders}
-                keyExtractor={(item) => item.artwork_data._id}
+                keyExtractor={keyExtractor}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
-                renderItem={({ item, index }) => {
-                  return (
-                    <OrderContainer
-                      id={index}
-                      url={item.artwork_data.url}
-                      open={openSection[item.artwork_data._id]}
-                      setOpen={() => toggleRecentOrder(item.artwork_data._id)}
-                      artId={item.order_id}
-                      artName={item.artwork_data.title}
-                      price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                      status={item.status}
-                      lastId={index === currentOrders.length - 1}
-                      order_accepted={item.order_accepted.status}
-                      availability={item.availability}
-                      delivery_confirmed={item.shipping_details.delivery_confirmed}
-                      tracking_information={item.shipping_details.shipment_information.tracking}
-                      payment_information={item.payment_information.status}
-                      orderId={item.order_id}
-                      holdStatus={item.hold_status}
-                      updatedAt={item.updatedAt}
-                      order_decline_reason={item.order_accepted.reason}
-                      trackBtn={() =>
-                        navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })
-                      }
-                    />
-                  );
-                }}
+                renderItem={renderItem}
               />
             </>
           )}

@@ -64,14 +64,17 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
   }, []);
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
+    let isMounted = true;
+    setLoading(true);
+    (async () => {
       const res = await getPromotionalData();
+      if (!isMounted) return;
       if (res?.isOk) setData(res.data);
       setLoading(false);
-    }
-
-    fetchData();
+    })();
+    return () => {
+      isMounted = false;
+    };
   }, [reloadCount]);
 
   useEffect(() => {
@@ -79,7 +82,12 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
       startAutoplay();
       return () => stopAutoplay();
     }
+    // ensure no stale interval keeps running
+    stopAutoplay();
   }, [data]);
+
+  // also ensure we clear interval on unmount of the component itself
+  useEffect(() => () => stopAutoplay(), []);
 
   const handleClick = async (url: string) => {
     const supported = await Linking.canOpenURL(url);

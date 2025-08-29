@@ -15,7 +15,13 @@ import { rightArrowIcon } from 'utils/SvgImages';
 import NavBtnComponent from 'components/artwork/NavBtnComponent';
 import { RecentOrderContainer } from 'screens/artist/overview/ArtistOverview';
 
-export default function RecentOrders({ refreshCount }: { refreshCount: number }) {
+export default function RecentOrders({
+  refreshCount,
+  onLoadingChange,
+}: {
+  refreshCount: number;
+  onLoadingChange?: (l: boolean) => void;
+}) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,27 +35,24 @@ export default function RecentOrders({ refreshCount }: { refreshCount: number })
   };
 
   useEffect(() => {
-    setIsLoading(true);
-
-    async function handleFetchRecentOrders() {
+    let cancelled = false;
+    const run = async () => {
+      setIsLoading(true);
+      onLoadingChange?.(true);
       try {
         const results = await getOverviewOrders();
-        console.log(results);
-        if (results?.isOk) {
-          const data = results.data;
-          setData(data);
-        } else {
-          setData([]);
-        }
-      } catch (error) {
-        // console.error("Error fetching recent orders:", error);
-        setData([]); // Handle errors gracefully
+        if (!cancelled) setData(results?.isOk ? results.data : []);
       } finally {
-        setIsLoading(false); // Ensure loading is turned off
+        if (!cancelled) {
+          setIsLoading(false);
+          onLoadingChange?.(false);
+        }
       }
-    }
-
-    handleFetchRecentOrders();
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
   }, [refreshCount]);
 
   if (isLoading)
