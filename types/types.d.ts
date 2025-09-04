@@ -435,7 +435,7 @@ type ArtworkPriceFilterData = {
 type CatalogCardTypes = {
   name: string;
   value: string;
-  image: string;
+  image: any;
 };
 
 type CreateOrderModelTypes = {
