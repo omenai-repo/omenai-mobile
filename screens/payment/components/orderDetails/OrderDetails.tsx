@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { colors } from 'config/colors.config';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
 import LongBlackButton from 'components/buttons/LongBlackButton';
@@ -9,17 +9,16 @@ import { Feather } from '@expo/vector-icons';
 import { useAppStore } from 'store/app/appStore';
 import { createOrderLock } from 'services/orders/createOrderLock';
 import { useModalStore } from 'store/modal/modalStore';
-import { getAppDeepLink } from 'config/getAppDeepLink.config';
 import { useStripe } from '@stripe/stripe-react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { createPaymentIntent } from 'services/stripe/createPaymentIntent';
 import Loader from 'components/general/Loader';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import { PayWithFlutterwave } from 'flutterwave-react-native';
 import tw from 'twrnc';
-import { generateAlphaDigit } from 'utils/utils_generateToken';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface RedirectParams {
   status: 'successful' | 'cancelled';
@@ -35,17 +34,32 @@ export default function OrderDetails({
   locked: boolean;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const queryClient = useQueryClient();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [mainPageLoader, setMainPageLoader] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [mainPageLoader, setMainPageLoader] = useState(false);
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
 
+  // --- prevent double init of Stripe sheet
+  const initOnceRef = useRef(false);
+
+  const feesNum = Number(
+    typeof data.shipping_details.shipment_information.quote.fees === 'string'
+      ? JSON.parse(data.shipping_details.shipment_information.quote.fees)
+      : data.shipping_details.shipment_information.quote.fees,
+  );
+  const taxesNum = Number(
+    typeof data.shipping_details.shipment_information.quote.taxes === 'string'
+      ? JSON.parse(data.shipping_details.shipment_information.quote.taxes)
+      : data.shipping_details.shipment_information.quote.taxes,
+  );
+
   const total_price_number = utils_calculatePurchaseGrandTotalNumber(
     data.artwork_data.pricing.usd_price,
-    data.shipping_details.shipment_information.quote.fees.toString(),
-    data.shipping_details.shipment_information.quote.taxes.toString(),
+    String(feesNum),
+    String(taxesNum),
   );
 
   const fetchPaymentSheetParams = async () => {
@@ -59,106 +73,106 @@ export default function OrderDetails({
         seller_email: data.seller_details.email,
         seller_name: data.seller_details.name,
         seller_id: data.seller_details.id,
-        shipping_cost: +JSON.parse(data.shipping_details.shipment_information.quote.fees), // will be changed
+        shipping_cost: feesNum,
         unit_price: data.artwork_data.pricing.usd_price,
         artwork_name: data.artwork_data.title,
-        tax_fees: +JSON.parse(data.shipping_details.shipment_information.quote.taxes), // will be changed
+        tax_fees: taxesNum,
       },
     );
-
-    return {
-      paymentIntent,
-      publishableKey,
-    };
+    return { paymentIntent, publishableKey };
   };
 
   const initializePaymentSheet = async () => {
+    if (initOnceRef.current) return; // guard
+    initOnceRef.current = true;
+
     setMainPageLoader(true);
-    const { paymentIntent, publishableKey } = await fetchPaymentSheetParams();
+    const { paymentIntent } = await fetchPaymentSheetParams();
 
     const { error } = await initPaymentSheet({
       merchantDisplayName: 'Omenai, Inc.',
       paymentIntentClientSecret: paymentIntent,
-      // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
-      //methods that complete payment after a delay, like SEPA Debit and Sofort.
       allowsDelayedPaymentMethods: true,
-      defaultBillingDetails: {
-        name: userSession.name,
-      },
+      defaultBillingDetails: { name: userSession.name },
       returnURL: 'omenaimobile://stripe-redirect',
     });
+
     if (error) {
+      initOnceRef.current = false; // allow retry if init failed
       console.log(error.message);
       throwError(error.message);
-      setTimeout(() => {
-        navigation.goBack();
-      }, 3500);
+      setTimeout(() => navigation.goBack(), 3500);
     } else {
       setMainPageLoader(false);
     }
   };
 
+  const invalidateOrdersEverywhere = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['orders', userSession.id] });
+    await queryClient.invalidateQueries({ queryKey: ['artwork', data.artwork_data.title] });
+  };
+
+  const goToSuccessAndRefreshOrders = async () => {
+    await invalidateOrdersEverywhere();
+    navigation.navigate(screenName.successOrderPayment);
+  };
+
+  const goToCancelAndBack = () => {
+    navigation.goBack();
+    navigation.navigate(screenName.cancleOrderPayment, {
+      art_id: data.artwork_data.art_id,
+    });
+  };
+
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
-
     if (error) {
-      navigation.goBack();
-      navigation.navigate(screenName.cancleOrderPayment, {
-        art_id: data.artwork_data.art_id,
-      });
+      goToCancelAndBack();
     } else {
-      navigation.goBack();
-      navigation.navigate(screenName.successOrderPayment);
+      await goToSuccessAndRefreshOrders();
     }
-
     setLoading(false);
   };
 
   useEffect(() => {
+    // Auto-init Stripe for gallery sellers (once)
     if (data.seller_designation === 'gallery') {
       initializePaymentSheet();
     }
   }, [data.seller_designation]);
 
   async function handleClickPayNow() {
-    initializePaymentSheet();
-    setLoading(true);
+    try {
+      setLoading(true);
+      // ensure sheet is ready (idempotent)
+      await initializePaymentSheet();
 
-    const deepLink = getAppDeepLink();
-
-    const get_purchase_lock = await createOrderLock(data.artwork_data.art_id, userSession.id);
-    if (get_purchase_lock?.isOk) {
-      if (get_purchase_lock.data.lock_data.user_id === userSession.id) {
-        //pay with stripe SDK
-        openPaymentSheet();
-        // navigation.goBack()
-        // navigation.navigate(screenName.cancleOrderPayment, {art_id: data.artwork_data.art_id})
-      } else {
-        throwError(
-          'A user is currently processing a purchase transaction on this artwork. Please check back in a few minutes for a status update',
-        );
+      const get_purchase_lock = await createOrderLock(data.artwork_data.art_id, userSession.id);
+      if (get_purchase_lock?.isOk) {
+        if (get_purchase_lock.data.lock_data.user_id === userSession.id) {
+          await openPaymentSheet();
+        } else {
+          throwError(
+            'A user is currently processing a purchase transaction on this artwork. Please check back in a few minutes for a status update',
+          );
+        }
       }
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   const throwError = (message: string) => {
     updateModal({ message, modalType: 'error', showModal: true });
   };
 
-  const handleOnRedirect = (data: RedirectParams) => {
-    console.log(data);
-  };
-
-  const generateTransactionRef = (length: number) => {
-    let result = '';
-    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  // Flutterwave handler — also refresh Orders on success
+  const handleOnRedirect = async (p: RedirectParams) => {
+    if (p.status === 'successful') {
+      await goToSuccessAndRefreshOrders();
+    } else {
+      goToCancelAndBack();
     }
-    return `flw_tx_ref_${result}`;
   };
 
   if (mainPageLoader)
@@ -166,12 +180,7 @@ export default function OrderDetails({
       <View style={{ flex: 1 }}>
         <BackHeaderTitle title="Confirm order details" />
         <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingHorizontal: 20,
-          }}
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 }}
         >
           <Loader />
           <Text style={{ fontSize: 16 }}>Initializing Payment ...</Text>
@@ -185,6 +194,7 @@ export default function OrderDetails({
       <ScrollWrapper style={styles.container}>
         <View style={styles.summaryContainer}>
           <Text style={styles.summaryText}>Summary</Text>
+
           <View style={styles.priceListing}>
             <View style={styles.priceListingItem}>
               <Text style={{ fontSize: 14, color: '#616161', flex: 1 }}>Price</Text>
@@ -195,41 +205,26 @@ export default function OrderDetails({
             <View style={styles.priceListingItem}>
               <Text style={{ fontSize: 14, color: '#616161', flex: 1 }}>Shipping</Text>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '#616161' }}>
-                {utils_formatPrice(
-                  +JSON.parse(data.shipping_details.shipment_information.quote.fees),
-                )}
+                {utils_formatPrice(feesNum)}
               </Text>
             </View>
             <View style={styles.priceListingItem}>
               <Text style={{ fontSize: 14, color: '#616161', flex: 1 }}>Taxes</Text>
               <Text style={{ fontSize: 14, fontWeight: '500', color: '#616161' }}>
-                {utils_formatPrice(
-                  +JSON.parse(data.shipping_details.shipment_information.quote.taxes),
-                )}
+                {utils_formatPrice(taxesNum)}
               </Text>
             </View>
           </View>
+
           <View style={styles.priceListingItem}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '500',
-                color: colors.primary_black,
-                flex: 1,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: '500', color: colors.primary_black, flex: 1 }}>
               Subtotal
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '500',
-                color: colors.primary_black,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: '500', color: colors.primary_black }}>
               {utils_formatPrice(total_price_number)}
             </Text>
           </View>
+
           <View style={{ marginTop: 49 }}>
             {data.seller_designation === 'gallery' ? (
               <LongBlackButton
@@ -242,7 +237,7 @@ export default function OrderDetails({
               <PayWithFlutterwave
                 onRedirect={handleOnRedirect}
                 options={{
-                  tx_ref: generateTransactionRef(16),
+                  tx_ref: `flw_tx_ref_${Math.random().toString(36).slice(2, 10)}`,
                   amount: Math.ceil(total_price_number * 100) / 100,
                   currency: 'USD',
                   authorization: 'FLWPUBK_TEST-cda1d63223a02a2ec75376f2b513ff3c-X',
@@ -260,9 +255,9 @@ export default function OrderDetails({
                     seller_id: data.seller_details.id,
                     artwork_name: data.artwork_data.title,
                     art_id: data.artwork_data.art_id,
-                    shipping_cost: Number(data.shipping_details.shipment_information.quote.fees),
+                    shipping_cost: feesNum,
                     unit_price: data.artwork_data.pricing.usd_price,
-                    tax_fees: Number(data.shipping_details.shipment_information.quote.taxes),
+                    tax_fees: taxesNum,
                   },
                 }}
                 customButton={(props) => (
@@ -276,6 +271,7 @@ export default function OrderDetails({
                 )}
               />
             )}
+
             {locked && (
               <View style={styles.LockContainer}>
                 <Feather name="lock" color={'#ff000090'} size={16} style={{ marginTop: 7 }} />
@@ -285,14 +281,7 @@ export default function OrderDetails({
                 </Text>
               </View>
             )}
-            <Text
-              style={{
-                marginTop: 30,
-                fontSize: 14,
-                color: colors.grey,
-                textAlign: 'center',
-              }}
-            >
+            <Text style={{ marginTop: 30, fontSize: 14, color: colors.grey, textAlign: 'center' }}>
               In order to prevent multiple transaction attempts for this artwork, we have
               implemented a queueing system and lock mechanism which prevents other users from
               accessing the payment portal
@@ -305,12 +294,7 @@ export default function OrderDetails({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-    paddingTop: 15,
-    marginTop: 15,
-    flex: 1,
-  },
+  container: { paddingHorizontal: 20, paddingTop: 15, marginTop: 15, flex: 1 },
   summaryContainer: {
     borderWidth: 1,
     borderColor: colors.inputBorder,
@@ -318,11 +302,7 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
     backgroundColor: '#FAFAFA',
   },
-  summaryText: {
-    fontSize: 16,
-    color: colors.primary_black,
-    fontWeight: 500,
-  },
+  summaryText: { fontSize: 16, color: colors.primary_black, fontWeight: '500' },
   priceListing: {
     marginVertical: 20,
     paddingVertical: 20,
@@ -331,11 +311,7 @@ const styles = StyleSheet.create({
     borderColor: colors.grey50,
     gap: 20,
   },
-  priceListingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
+  priceListingItem: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   LockContainer: {
     padding: 10,
     backgroundColor: '#eee',

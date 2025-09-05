@@ -1,17 +1,13 @@
-import { Image, StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { colors } from "config/colors.config";
-import mailIcon from "../../../assets/images/forgot-password-email-success.png";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
+import { Image, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { colors } from 'config/colors.config';
+import mailIcon from '../../../assets/images/forgot-password-email-success.png';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
 
-export default function PriceQuoteSent({
-  handleClick,
-}: {
-  handleClick: () => void;
-}) {
+export default function PriceQuoteSent({ handleClick }: { handleClick: () => void }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   return (
@@ -21,15 +17,15 @@ export default function PriceQuoteSent({
         <Text
           style={{
             fontSize: 16,
-            textAlign: "center",
+            textAlign: 'center',
             color: colors.primary_black,
           }}
         >
-          Order request has been successfully recieved and is being processed.
-          We will get back to you within 24hours
+          Order request has been successfully recieved and is being processed. We will get back to
+          you within 24hours
         </Text>
         <Image style={{ marginTop: 40, marginBottom: 60 }} source={mailIcon} />
-        <LongBlackButton value="Return to home" onClick={handleClick} />
+        <LongBlackButton value="Return to catalog" onClick={handleClick} />
       </View>
     </View>
   );
@@ -42,9 +38,9 @@ const styles = StyleSheet.create({
   },
   titleHeader: {
     fontSize: 20,
-    fontWeight: "500",
+    fontWeight: '500',
     color: colors.primary_black,
-    textAlign: "center",
+    textAlign: 'center',
   },
   summaryContainer: {
     borderWidth: 1,
@@ -52,7 +48,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     paddingHorizontal: 20,
     paddingVertical: 30,
-    backgroundColor: "#FAFAFA",
-    alignItems: "center",
+    backgroundColor: '#FAFAFA',
+    alignItems: 'center',
   },
 });
