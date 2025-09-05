@@ -1,93 +1,81 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, Dimensions } from 'react-native';
+import { keepPreviousData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { colors } from 'config/colors.config';
-import { artworkActionStore } from 'store/artworks/ArtworkActionStore';
-import { artworkStore } from 'store/artworks/ArtworkStore';
-import { filterStore } from 'store/artworks/FilterStore';
-import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
 import FilterButton from 'components/filter/FilterButton';
 import WithModal from 'components/modal/WithModal';
-import { useModalStore } from 'store/modal/modalStore';
 import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader';
 import ArtworksListing from 'components/general/ArtworksListing';
 import tailwind from 'twrnc';
 import { useFocusEffect } from '@react-navigation/native';
+import { filterStore } from 'store/artworks/FilterStore';
+import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
+
+type FetchResult = {
+  isOk: boolean;
+  data: any[];
+  count: number; // total pages
+  message?: string;
+};
+
+// single fetcher used by useInfiniteQuery
+async function fetchPage({
+  pageParam,
+  filters,
+}: {
+  pageParam: number;
+  filters: any;
+}): Promise<FetchResult> {
+  const res = await fetchPaginatedArtworks(pageParam, filters);
+  return res;
+}
 
 export default function Catalog() {
-  const { paginationCount, updatePaginationCount } = artworkActionStore();
-  const { updateModal } = useModalStore();
-  const { setArtworks, artworks, isLoading, setPageCount, setIsLoading, pageCount } =
-    artworkStore();
-  const [loadingMore, setLoadingmore] = useState<boolean>(false);
-  const { filterOptions } = filterStore();
-
-  const inFlight = useRef(false);
   const { width } = Dimensions.get('screen');
+  const { filterOptions } = filterStore();
+  const queryClient = useQueryClient();
 
-  const handleFetchArtworks = useCallback(async () => {
-    if (inFlight.current) return;
-    inFlight.current = true;
+  // memoize filters in the key to avoid re-renders from new object refs
+  const filterKey = useMemo(() => filterOptions, [JSON.stringify(filterOptions)]);
 
-    try {
-      setIsLoading(true);
-      setArtworks([]);
-      updatePaginationCount('reset');
+  const { data, isLoading, isFetchingNextPage, refetch, fetchNextPage, hasNextPage, status } =
+    useInfiniteQuery({
+      queryKey: ['catalog', filterKey],
+      queryFn: ({ pageParam = 1 }) => fetchPage({ pageParam, filters: filterOptions }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPages) => {
+        if (!lastPage?.isOk) return undefined;
+        const totalPages = lastPage.count ?? 1;
+        const next = allPages.length + 1;
+        return next <= totalPages ? next : undefined;
+      },
+      // Keep cached data visible when filters change (better UX)
+      placeholderData: keepPreviousData,
+    });
 
-      const response = await fetchPaginatedArtworks(1, filterOptions);
-
-      if (response?.isOk) {
-        setArtworks(response.data);
-        setPageCount(response.count);
-      } else {
-        updateModal({
-          message: response?.message || 'Error fetching artworks. Please try again.',
-          modalType: 'error',
-          showModal: true,
-        });
-      }
-    } finally {
-      setIsLoading(false);
-      inFlight.current = false;
-    }
-  }, [filterOptions, setArtworks, setIsLoading, setPageCount, updatePaginationCount, updateModal]);
-
-  // Refetch whenever screen is focused OR filters change
+  // optional: refetch on focus only if there's no data in cache
   useFocusEffect(
     useCallback(() => {
-      handleFetchArtworks();
-    }, [handleFetchArtworks]),
+      if (!data?.pages?.length) {
+        refetch();
+      }
+    }, [data?.pages?.length, refetch]),
   );
 
-  const handlePagination = useCallback(async () => {
-    if (inFlight.current) return;
-    if (artworks.length < 1) return;
-    setLoadingmore(true);
-    setTimeout(() => {
-      setLoadingmore(false);
-    }, 1000);
-    // stop if we’re already on/over the last page
-    if (pageCount && paginationCount >= pageCount) return;
+  const flatData = useMemo(
+    () => (data?.pages || []).flatMap((p) => (p?.isOk ? p.data : [])),
+    [data?.pages],
+  );
 
-    inFlight.current = true;
-    try {
-      const response = await fetchPaginatedArtworks(paginationCount + 1, filterOptions);
-      if (response?.isOk) {
-        setArtworks([...artworks, ...response.data]);
-        updatePaginationCount('inc');
-        setPageCount(response.count);
-      }
-    } finally {
-      inFlight.current = false;
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
-  }, [
-    artworks.length,
-    pageCount,
-    paginationCount,
-    filterOptions,
-    setArtworks,
-    updatePaginationCount,
-    setPageCount,
-  ]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const handleRefresh = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
 
   return (
     <WithModal>
@@ -99,14 +87,14 @@ export default function Catalog() {
         </View>
 
         <View style={tailwind`z-5 flex-1 w-[${width}px]`}>
-          {isLoading ? (
+          {isLoading && flatData.length === 0 ? (
             <MiniArtworkCardLoader />
           ) : (
             <ArtworksListing
-              data={artworks}
-              loadingMore={loadingMore}
-              onEndReached={handlePagination}
-              onRefresh={handleFetchArtworks}
+              data={flatData}
+              loadingMore={isFetchingNextPage}
+              onEndReached={handleEndReached}
+              onRefresh={handleRefresh}
             />
           )}
         </View>

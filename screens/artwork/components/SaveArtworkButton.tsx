@@ -4,7 +4,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { utils_handleFetchUserID } from 'utils/utils_asyncStorage';
-import useLikedState from 'custom/hooks/useLikedState';
+import useLikedState from 'hooks/useLikedState';
 import { SvgXml } from 'react-native-svg';
 import { heartIcon } from 'utils/SvgImages';
 import tw from 'twrnc';

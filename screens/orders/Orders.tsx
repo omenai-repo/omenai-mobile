@@ -1,119 +1,44 @@
-import { StyleSheet, Text, View, Platform, Image, FlatList } from 'react-native';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { colors } from 'config/colors.config';
-import { getOrdersForUser } from 'services/orders/getOrdersForUser';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Image, FlatList, Text, View, StyleSheet, Platform } from 'react-native';
+import tw from 'twrnc';
 import WithModal from 'components/modal/WithModal';
 import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
-import { useModalStore } from 'store/modal/modalStore';
-import tw from 'twrnc';
 import TabSwitcher from 'components/orders/TabSwitcher';
 import EmptyOrdersListing from 'screens/galleryOrders/components/EmptyOrdersListing';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import YearDropdown from 'screens/artist/orders/YearDropdown';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import OrderContainer from './components/OrderContainer';
-import { useOrderStore } from 'store/orders/Orders';
+import { useNavigation } from '@react-navigation/native';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { useCollectorOrders } from 'hooks/useCollectorOrders';
+import { colors } from 'config/colors.config';
 
 export type OrderTabsTypes = 'pending' | 'history';
 
 export default function Orders() {
   const navigation = useNavigation<any>();
-  const { isLoading, setIsLoading, refreshTrigger, selectedTab, setSelectedTab, data, setData } =
-    useOrderStore();
-  const [refreshing, setRefreshing] = useState(false);
-  const [openSection, setOpenSection] = useState<{ [key: string]: boolean }>({});
-  const currentYear = new Date().getFullYear();
-  const [selectedYear, setSelectedYear] = useState(currentYear);
-  const { updateModal } = useModalStore();
+  const { data, isLoading, isRefetching, refetch, invalidate } = useCollectorOrders();
 
-  // ---- single-flight guard to prevent overlapping fetches
-  const inFlightRef = useRef(false);
+  const [selectedTab, setSelectedTab] = useState<OrderTabsTypes>('pending');
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
 
-  const partitionOrders = useCallback((list: CreateOrderModelTypes[]) => {
-    const pending: CreateOrderModelTypes[] = [];
-    const completed: CreateOrderModelTypes[] = [];
+  const currentOrders = useMemo(() => {
+    if (!data) return [];
+    return selectedTab === 'pending' ? data.pendingOrders : data.completedOrders;
+  }, [data, selectedTab]);
 
-    list.forEach((order) => {
-      if (order.order_accepted.status === '') {
-        pending.push(order);
-      } else if (
-        order.order_accepted.status === 'accepted' &&
-        !order.shipping_details.delivery_confirmed
-      ) {
-        pending.push(order);
-      } else if (
-        (order.order_accepted.status === 'accepted' &&
-          order.status === 'completed' &&
-          order.shipping_details.delivery_confirmed) ||
-        order.order_accepted.status === 'declined'
-      ) {
-        completed.push(order);
-      }
-    });
-
-    return { pending, completed };
-  }, []);
-
-  const handleFetchOrders = useCallback(async () => {
-    if (inFlightRef.current) return; // guard
-    inFlightRef.current = true;
-
-    setIsLoading(true);
-    try {
-      const results = await getOrdersForUser();
-      if (results?.isOk) {
-        const list = results.data as CreateOrderModelTypes[];
-        const { pending, completed } = partitionOrders(list);
-        setData({ pendingOrders: pending, completedOrders: completed });
-      } else {
-        updateModal({
-          message: 'Something went wrong fetching orders, reload page',
-          modalType: 'error',
-          showModal: true,
-        });
-      }
-    } finally {
-      setIsLoading(false);
-      inFlightRef.current = false;
-    }
-  }, [partitionOrders, setData, setIsLoading, updateModal]);
-
-  const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await handleFetchOrders();
-    setRefreshing(false);
-  }, [handleFetchOrders]);
-
-  // Single source of truth: fetch on focus
-  useFocusEffect(
-    useCallback(() => {
-      handleFetchOrders();
-    }, [handleFetchOrders]),
+  const collectorTabs = useMemo(
+    () => [
+      { title: 'Pending', key: 'pending', count: data?.pendingOrders.length ?? 0 },
+      { title: 'Order History', key: 'history' },
+    ],
+    [data?.pendingOrders.length],
   );
-
-  // Optional external refresh trigger — guarded so it won’t double-call with focus
-  useEffect(() => {
-    if (refreshTrigger) handleFetchOrders();
-  }, [refreshTrigger, handleFetchOrders]);
 
   const toggleRecentOrder = useCallback((key: string | number) => {
     const k = String(key);
     setOpenSection((prev) => ({ ...prev, [k]: !prev[k] }));
   }, []);
-
-  const currentOrders = useMemo(() => {
-    if (selectedTab === 'pending') return data.pendingOrders;
-    if (selectedTab === 'history') return data.completedOrders;
-    return data.completedOrders;
-  }, [data.pendingOrders, data.completedOrders, selectedTab]);
-
-  const collectorTabs = useMemo(
-    () => [
-      { title: 'Pending', key: 'pending', count: data.pendingOrders.length },
-      { title: 'Order History', key: 'history' },
-    ],
-    [data.pendingOrders.length],
-  );
 
   const renderItem = useCallback(
     ({ item, index }: { item: any; index: number }) => (
@@ -142,10 +67,13 @@ export default function Orders() {
     [currentOrders.length, navigation, openSection, toggleRecentOrder],
   );
 
-  const keyExtractor = useCallback(
-    (item: any) => `${item.order_id}::${item.artwork_data._id}`, // stable & unique across tabs
-    [],
-  );
+  const keyExtractor = useCallback((item: any) => `${item.order_id}::${item.artwork_data._id}`, []);
+
+  // Pull-to-refresh handler: invalidate cache, then refetch
+  const onRefresh = useCallback(async () => {
+    await invalidate();
+    await refetch();
+  }, [invalidate, refetch]);
 
   return (
     <WithModal>
@@ -159,7 +87,7 @@ export default function Orders() {
         <TabSwitcher
           tabs={collectorTabs}
           selectedKey={selectedTab}
-          setSelectedKey={(key) => setSelectedTab(key as 'pending' | 'history')}
+          setSelectedKey={(key) => setSelectedTab(key as OrderTabsTypes)}
         />
 
         <View
@@ -184,6 +112,8 @@ export default function Orders() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
                 renderItem={renderItem}
+                refreshing={isRefetching}
+                onRefresh={onRefresh}
               />
             </>
           )}
@@ -192,60 +122,3 @@ export default function Orders() {
     </WithModal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  mainContainer: {
-    paddingHorizontal: 20,
-    flex: 1,
-    paddingTop: Platform.OS === 'android' ? 15 : 10,
-    marginBottom: 150,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#EAE8E8',
-    borderRadius: 30,
-    padding: 10,
-    gap: 10,
-  },
-  tabItem: {
-    height: 44,
-    flex: 1,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  tabItemText: {
-    color: '#858585',
-    fontSize: 14,
-  },
-  loadingContainer: {
-    height: 500,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  safeArea: {
-    paddingTop: 80,
-  },
-  disabledButton: {
-    backgroundColor: '#E0E0E0',
-    borderRadius: 20,
-    height: 30,
-    paddingHorizontal: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  disabledButtonText: {
-    fontSize: 12,
-    color: '#858585',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-});

@@ -14,9 +14,9 @@ import { CopilotProvider } from 'react-native-copilot';
 import * as SplashScreen from 'expo-splash-screen';
 import ArtistNavigation from 'navigation/ArtistNavigation';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import { configureNotificationHandling } from 'notifications/NotificationService';
 import { useNotifications } from 'hooks/useNotifications';
 import { registerForPushToken } from 'notifications/registerForPushToken';
@@ -108,11 +108,31 @@ export default function App() {
     }
   }, [appIsReady]);
 
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 3 * 60 * 1000, // 3 min: no refetch on re-focus within this window
+            gcTime: 10 * 60 * 1000, // 10 min: keep cached in memory
+            refetchOnMount: false,
+            refetchOnReconnect: false,
+            refetchOnWindowFocus: false, // RN: safe to disable
+          },
+        },
+      }),
+  );
+
+  useEffect(() => {
+    const unsubscribe = AppState.addEventListener('change', (state) => {
+      focusManager.setFocused(state === 'active');
+    });
+    return () => unsubscribe.remove();
+  }, []);
+
   if (!appIsReady) {
     return null;
   }
-
-  const queryClient = new QueryClient();
 
   return (
     <CopilotProvider>
