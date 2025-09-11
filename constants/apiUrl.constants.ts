@@ -1,5 +1,4 @@
-export const apiUrl = 'https://7bfb86a96bb2.ngrok-free.app';
-// export const apiUrl = 'https://api.omenai.app';
+export const apiUrl = 'https://api.omenai.app';
 export const originHeader = 'https://omenai.app/';
 export const userAgent = '__X-Omenai-App';
 export const authorization =
