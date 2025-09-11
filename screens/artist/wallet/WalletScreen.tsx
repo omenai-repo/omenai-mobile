@@ -1,10 +1,10 @@
 import { View, Text, Image, Pressable, ScrollView, RefreshControl } from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
 import { arrowUpRightWhite } from 'utils/SvgImages';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { fetchArtistWalletData } from 'services/wallet/fetchArtistWalletData';
 import { fetchArtistTransactions } from 'services/wallet/fetchArtistTransactions';
 import { useModalStore } from 'store/modal/modalStore';
@@ -13,6 +13,7 @@ import { formatISODate } from 'utils/utils_formatISODate';
 import { MotiView } from 'moti';
 import WithModal from 'components/modal/WithModal';
 import { PinCreationModal } from './PinCreationModal';
+import { useIsFetching, useQuery } from '@tanstack/react-query';
 
 export const WalletContainerSkeleton = () => {
   const SkeletonBlock = ({ style }: { style: any }) => (
@@ -23,10 +24,9 @@ export const WalletContainerSkeleton = () => {
       style={[tw`bg-[#E7E7E7] rounded-md`, style]}
     />
   );
-
   return (
     <View
-      style={tw`bg-[#FFFFFF] border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
+      style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
     >
       <View style={tw`flex-row items-center gap-[15px] flex-1`}>
         <SkeletonBlock style={tw`w-[50px] h-[50px] rounded-[10px]`} />
@@ -50,60 +50,54 @@ export const WalletContainer = ({
   dateTime: string;
   amount: number;
   onPress: () => void;
-}) => {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={tw`bg-[#FFFFFF] border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
-    >
-      <View style={tw`flex-row items-center gap-[15px] flex-1`}>
-        <Image
-          source={require('../../../assets/images/african-artwork.jpg')}
-          style={tw`w-[50px] h-[50px] rounded-[10px]`}
-        />
-        <View>
-          <Text
-            style={tw.style(
-              `text-[16px] font-medium`,
-              status === 'FAILED'
-                ? `text-[#FF0000]`
-                : status === 'PENDING'
-                ? `text-[#007AFF]`
-                : `text-[#008000]`,
-            )}
-          >{`Withdrawal ${status === 'PENDING' ? 'processing' : status.toLowerCase()}`}</Text>
-          <Text style={tw`text-[#1A1A1A]00080] text-[11px] font-medium`}>
-            {formatISODate(dateTime)}
-          </Text>
-        </View>
+}) => (
+  <Pressable
+    onPress={onPress}
+    style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
+  >
+    <View style={tw`flex-row items-center gap-[15px] flex-1`}>
+      <Image
+        source={require('../../../assets/images/african-artwork.jpg')}
+        style={tw`w-[50px] h-[50px] rounded-[10px]`}
+      />
+      <View>
+        <Text
+          style={tw.style(
+            `text-[16px] font-medium`,
+            status === 'FAILED'
+              ? `text-[#FF0000]`
+              : status === 'PENDING'
+              ? `text-[#007AFF]`
+              : `text-[#008000]`,
+          )}
+        >{`Withdrawal ${status === 'PENDING' ? 'processing' : status.toLowerCase()}`}</Text>
+        <Text style={tw`text-[11px] font-medium text-[#1A1A1A]`}>{formatISODate(dateTime)}</Text>
       </View>
+    </View>
 
-      <Text
-        style={tw.style(
-          `text-[15px] font-medium`,
-          status === 'FAILED'
-            ? `text-[#FF0000]`
-            : status === 'PENDING'
-            ? `text-[#007AFF]`
-            : `text-[#008000]`,
-        )}
-      >
-        {utils_formatPrice(amount)}
-      </Text>
-    </Pressable>
-  );
-};
-
-const BtnContainer = ({ label, onPress }: { label: string; onPress: () => void }) => {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={tw`border border-[#000000] h-[40px] flex-1 rounded-[18px] justify-center items-center px-[15px]`}
+    <Text
+      style={tw.style(
+        `text-[15px] font-medium`,
+        status === 'FAILED'
+          ? `text-[#FF0000]`
+          : status === 'PENDING'
+          ? `text-[#007AFF]`
+          : `text-[#008000]`,
+      )}
     >
-      <Text style={tw`text-[14px] text-[#1A1A1A]]`}>{label}</Text>
-    </Pressable>
-  );
-};
+      {utils_formatPrice(amount)}
+    </Text>
+  </Pressable>
+);
+
+const BtnContainer = ({ label, onPress }: { label: string; onPress: () => void }) => (
+  <Pressable
+    onPress={onPress}
+    style={tw`border border-[#000] h-[40px] flex-1 rounded-[18px] justify-center items-center px-[15px]`}
+  >
+    <Text style={tw`text-[14px] text-[#1A1A1A]`}>{label}</Text>
+  </Pressable>
+);
 
 const AccountDetailsSkeleton = () => {
   const SkeletonBlock = ({ style }: { style: any }) => (
@@ -114,11 +108,10 @@ const AccountDetailsSkeleton = () => {
       style={[tw`bg-[#E7E7E7] rounded-md`, style]}
     />
   );
-
   return (
     <View style={tw`mx-[20px] mt-[20px]`}>
       <View
-        style={tw`bg-[#FFFFFF] border border-[#00000033] rounded-[20px] px-[20px] py-[15px] mb-[20px]`}
+        style={tw`bg-white border border-[#00000033] rounded-[20px] px-[20px] py-[15px] mb-[20px]`}
       >
         <SkeletonBlock style={tw`w-[120px] h-[16px] mb-[10px]`} />
         <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
@@ -130,87 +123,83 @@ const AccountDetailsSkeleton = () => {
   );
 };
 
+// ---------- Query Keys
+const WALLET_QK = ['wallet', 'artist'] as const;
+const TXNS_QK = ['wallet', 'artist', 'txns', { status: 'all' }] as const;
+
 const WalletScreen = () => {
   const { updateModal } = useModalStore();
   const navigation = useNavigation<any>();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [walletData, setWalletData] = useState<any>(null);
-  const [transactions, setTransactions] = useState<any>(null);
-  const [refreshing, setRefreshing] = useState(false);
   const [showAvailableBalance, setShowAvailableBalance] = useState(false);
   const [showPendingBalance, setShowPendingBalance] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
+
+  // ---- Wallet
+  const {
+    data: walletData,
+    isLoading: walletLoading,
+    refetch: refetchWallet,
+  } = useQuery({
+    queryKey: WALLET_QK,
+    queryFn: async () => {
+      const res = await fetchArtistWalletData();
+      if (!res?.isOk) {
+        updateModal({ message: 'Error fetching wallet data', showModal: true, modalType: 'error' });
+        throw new Error('wallet fetch failed');
+      }
+      return res.data;
+    },
+    // Keep it fresh but DO respect staleness rules
+    staleTime: 15_000, // 15s
+    gcTime: 10 * 60_000, // 10m
+    refetchOnMount: true, // only if stale
+    refetchOnWindowFocus: true, // only if stale
+    refetchOnReconnect: true, // only if stale
+  });
+
+  const {
+    data: transactions,
+    isLoading: txnsLoading,
+    refetch: refetchTxns,
+  } = useQuery({
+    queryKey: TXNS_QK,
+    queryFn: async () => {
+      const res = await fetchArtistTransactions({ status: 'all' });
+      if (!res?.isOk) {
+        updateModal({
+          message: 'Error fetching transactions',
+          showModal: true,
+          modalType: 'error',
+        });
+        throw new Error('txns fetch failed');
+      }
+      return res.data;
+    },
+    staleTime: 30_000, // 30s
+    gcTime: 10 * 60_000, // 10m
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+  });
+
+  // Spinner should reflect only these two queries being (re)fetched
+
+  const isFetchingWallet = useIsFetching({ queryKey: WALLET_QK }) > 0;
+  const isFetchingTxns = useIsFetching({ queryKey: TXNS_QK }) > 0;
+
+  const isRefreshing = isFetchingWallet || isFetchingTxns;
+
+  // Pull-to-refresh
+  const onRefresh = useCallback(
+    () => Promise.all([refetchWallet(), refetchTxns()]),
+    [refetchWallet, refetchTxns],
+  );
 
   // show PIN modal when wallet data loads and pin is missing
   useEffect(() => {
     if (walletData && !walletData.wallet_pin) setShowPinModal(true);
   }, [walletData]);
-
-  // single-flight + mounted guards
-  const inFlightRef = useRef(false);
-  const mountedRef = useRef(true);
-  useEffect(
-    () => () => {
-      mountedRef.current = false;
-    },
-    [],
-  );
-
-  const handleWalletData = useCallback(async () => {
-    if (inFlightRef.current) return;
-    inFlightRef.current = true;
-
-    try {
-      if (mountedRef.current) setIsLoading(true);
-      const [response1, response2] = await Promise.all([
-        fetchArtistWalletData(),
-        fetchArtistTransactions({ status: 'all' }),
-      ]);
-
-      if (mountedRef.current) {
-        if (response1?.isOk) {
-          setWalletData(response1.data);
-        } else {
-          updateModal({
-            message: 'Error fetching wallet data',
-            showModal: true,
-            modalType: 'error',
-          });
-        }
-
-        if (response2?.isOk) {
-          setTransactions(response2.data);
-        } else {
-          updateModal({
-            message: 'Error fetching transactions',
-            showModal: true,
-            modalType: 'error',
-          });
-        }
-      }
-    } catch (error) {
-      if (mountedRef.current) {
-        updateModal({ message: 'Error fetching wallet data', showModal: true, modalType: 'error' });
-      }
-    } finally {
-      if (mountedRef.current) setIsLoading(false);
-      inFlightRef.current = false;
-    }
-  }, [updateModal]);
-
-  const handleRefresh = useCallback(async () => {
-    if (inFlightRef.current) return;
-    setRefreshing(true);
-    await handleWalletData();
-    if (mountedRef.current) setRefreshing(false);
-  }, [handleWalletData]);
-
-  useFocusEffect(
-    useCallback(() => {
-      handleRefresh();
-    }, [handleRefresh]),
-  );
 
   const handleWithdrawPress = useCallback(() => {
     if (!walletData?.primary_withdrawal_account) {
@@ -220,6 +209,7 @@ const WalletScreen = () => {
     }
   }, [navigation, walletData]);
 
+  const isLoading = walletLoading || txnsLoading;
   const skeletonStyle = tw`bg-[#ffffff20] rounded-[10px]`;
 
   return (
@@ -227,7 +217,15 @@ const WalletScreen = () => {
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+              tintColor="#000"
+              colors={['#000']}
+              size={40}
+            />
+          }
         >
           <View>
             <Image
@@ -236,15 +234,16 @@ const WalletScreen = () => {
               source={require('../../../assets/omenai-logo.png')}
             />
 
+            {/* Balances card */}
             <View
-              style={tw`bg-[#000000] rounded-[18px] border border-[#E7E7E7] p-[25px] mx-[20px] mt-[30px]`}
+              style={tw`bg-black rounded-[18px] border border-[#E7E7E7] p-[25px] mx-[20px] mt-[30px]`}
             >
               <View style={tw`flex-row items-center gap-[20px]`}>
-                <Text style={tw`text-[19px] text-[#FFFFFF]`}>Available Balance</Text>
-                <Pressable onPress={() => setShowAvailableBalance((prev) => !prev)}>
+                <Text style={tw`text-[19px] text-white`}>Available Balance</Text>
+                <Pressable onPress={() => setShowAvailableBalance((p) => !p)}>
                   <Ionicons
                     name={showAvailableBalance ? 'eye-outline' : 'eye-off-outline'}
-                    color={'#FFFFFF'}
+                    color={'#fff'}
                     size={25}
                   />
                 </Pressable>
@@ -253,7 +252,7 @@ const WalletScreen = () => {
               {isLoading ? (
                 <View style={tw.style(`h-[30px] w-[150px] mt-[5px]`, skeletonStyle)} />
               ) : (
-                <Text style={tw`text-[20px] text-[#FFFFFF] font-bold mt-[5px]`}>
+                <Text style={tw`text-[20px] text-white font-bold mt-[5px]`}>
                   {showAvailableBalance
                     ? walletData?.available_balance
                       ? utils_formatPrice(walletData?.available_balance)
@@ -265,11 +264,11 @@ const WalletScreen = () => {
               <View style={tw`mt-[35px] flex-row items-center gap-[20px]`}>
                 <View style={tw`flex-1`}>
                   <View style={tw`flex-row items-center gap-[15px]`}>
-                    <Text style={tw`text-[14px] text-[#FFFFFF]`}>Pending Balance</Text>
-                    <Pressable onPress={() => setShowPendingBalance((prev) => !prev)}>
+                    <Text style={tw`text-[14px] text-white`}>Pending Balance</Text>
+                    <Pressable onPress={() => setShowPendingBalance((p) => !p)}>
                       <Ionicons
                         name={showPendingBalance ? 'eye-outline' : 'eye-off-outline'}
-                        color={'#FFFFFF'}
+                        color={'#fff'}
                         size={19}
                       />
                     </Pressable>
@@ -278,7 +277,7 @@ const WalletScreen = () => {
                   {isLoading ? (
                     <View style={tw.style(`h-[25px] w-[100px] mt-[5px]`, skeletonStyle)} />
                   ) : (
-                    <Text style={tw`text-[18px] text-[#FFFFFF] font-bold mt-[5px]`}>
+                    <Text style={tw`text-[18px] text-white font-bold mt-[5px]`}>
                       {showPendingBalance
                         ? walletData?.pending_balance
                           ? utils_formatPrice(walletData?.pending_balance)
@@ -289,15 +288,16 @@ const WalletScreen = () => {
                 </View>
 
                 <Pressable
-                  style={tw`justify-center items-center h-[40px] border border-[#FFFFFF] rounded-[18px] px-[10px]`}
+                  style={tw`justify-center items-center h-[40px] border border-white rounded-[18px] px-[10px]`}
                   onPress={handleWithdrawPress}
                   disabled={isLoading}
                 >
-                  <Text style={tw`text-[12px] text-[#FFFFFF]`}>Withdraw Funds</Text>
+                  <Text style={tw`text-[12px] text-white`}>Withdraw Funds</Text>
                 </Pressable>
               </View>
             </View>
 
+            {/* Account card */}
             {isLoading ? (
               <AccountDetailsSkeleton />
             ) : !walletData?.primary_withdrawal_account ? (
@@ -310,23 +310,23 @@ const WalletScreen = () => {
             ) : (
               <View style={tw`mx-[20px] mt-[20px]`}>
                 <View
-                  style={tw`bg-[#FFFFFF] border border-[#00000033] rounded-[20px] px-[20px] pt-[15px] mb-[20px]`}
+                  style={tw`bg-white border border-[#00000033] rounded-[20px] px-[20px] pt-[15px] mb-[20px]`}
                 >
                   <View style={tw`flex-row items-center gap-[20px]`}>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Number:</Text>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
+                    <Text style={tw`text-[14px] flex-1`}>Account Number:</Text>
+                    <Text style={tw`text-[14px] font-bold`}>
                       {walletData?.primary_withdrawal_account?.account_number}
                     </Text>
                   </View>
                   <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Bank Name:</Text>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
+                    <Text style={tw`text-[14px] flex-1`}>Bank Name:</Text>
+                    <Text style={tw`text-[14px] font-bold`}>
                       {walletData?.primary_withdrawal_account?.bank_name}
                     </Text>
                   </View>
                   <View style={tw`flex-row items-center gap-[20px] mt-[10px] mb-[15px]`}>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Name:</Text>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
+                    <Text style={tw`text-[14px] flex-1`}>Account Name:</Text>
+                    <Text style={tw`text-[14px] font-bold`}>
                       {walletData?.primary_withdrawal_account?.account_name}
                     </Text>
                   </View>
@@ -339,11 +339,10 @@ const WalletScreen = () => {
             )}
           </View>
 
+          {/* Transactions */}
           <View style={tw`flex-1 bg-[#F7F7F7]`}>
             <View style={tw`mx-[20px] mt-[30px] pb-[25px] flex-row items-center`}>
-              <Text style={tw`text-[15px] font-medium text-[#1A1A1A]000] flex-1`}>
-                Transaction History
-              </Text>
+              <Text style={tw`text-[15px] font-medium flex-1`}>Transaction History</Text>
               <Pressable
                 onPress={() => navigation.navigate('WalletHistory', { transactions })}
                 style={tw`flex-row items-center gap-[5px]`}
@@ -357,11 +356,9 @@ const WalletScreen = () => {
               <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
                 {!isLoading ? (
                   <View style={tw`gap-[8px] mb-[150px]`}>
-                    {transactions?.length === 0 ? (
+                    {(transactions?.length ?? 0) === 0 ? (
                       <View style={tw`flex-1 justify-center items-center mt-[50px]`}>
-                        <Text style={tw`text-[16px] text-[#1A1A1A]000]`}>
-                          No transactions found
-                        </Text>
+                        <Text style={tw`text-[16px]`}>No transactions found</Text>
                       </View>
                     ) : (
                       transactions?.map((item: any, index: number) => (
@@ -379,8 +376,8 @@ const WalletScreen = () => {
                   </View>
                 ) : (
                   <View style={tw`mb-[150px]`}>
-                    {Array.from({ length: 10 }).map((_, index) => (
-                      <View key={index} style={{ marginBottom: 8 }}>
+                    {Array.from({ length: 10 }).map((_, i) => (
+                      <View key={i} style={{ marginBottom: 8 }}>
                         <WalletContainerSkeleton />
                       </View>
                     ))}

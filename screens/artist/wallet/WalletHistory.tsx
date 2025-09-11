@@ -1,43 +1,51 @@
-import { View, Text, ScrollView, useWindowDimensions, FlatList } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, Text, useWindowDimensions, FlatList, RefreshControl } from 'react-native';
+import React, { useMemo, useState } from 'react';
 import tw from 'twrnc';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
 import YearDropdown from '../orders/YearDropdown';
 import { WalletContainer } from './WalletScreen';
-import { useRoute } from '@react-navigation/native';
 import { fetchArtistTransactions } from 'services/wallet/fetchArtistTransactions';
 import Loader from 'components/general/Loader';
+import { useInfiniteQuery } from '@tanstack/react-query';
+
+const BASE_TXNS_QK = ['wallet', 'artist', 'txns'] as const;
+const txnsKey = (year: number) => [...BASE_TXNS_QK, { status: 'all', year }] as const;
+
+const PAGE_SIZE = 10; // assuming API default is 10
 
 const WalletHistory = ({ navigation }: any) => {
   const { height } = useWindowDimensions();
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const { data, isLoading, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage, refetch } =
+    useInfiniteQuery({
+      queryKey: txnsKey(selectedYear),
+      queryFn: async ({ pageParam = 1 }: { pageParam?: number }) => {
+        const res = await fetchArtistTransactions({
+          page: Number(pageParam),
+          status: 'all',
+          year: String(selectedYear),
+        });
+        if (!res?.isOk) throw new Error('Failed to fetch transactions');
+        const items = Array.isArray(res.data) ? res.data : [];
+        return {
+          items,
+          nextPage: items.length === PAGE_SIZE ? Number(pageParam) + 1 : undefined,
+        };
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage: { nextPage?: number }) => lastPage.nextPage,
+      staleTime: 30_000,
+      gcTime: 10 * 60_000,
+      refetchOnMount: true, // only if stale
+      refetchOnWindowFocus: true, // only if stale
+      refetchOnReconnect: true, // only if stale
+    });
 
-  const fetchMoreTransactions = async () => {
-    if (loading || !hasMore) return;
+  const transactions = useMemo(() => (data?.pages ?? []).flatMap((p) => p.items), [data]);
 
-    setLoading(true);
-    const response = await fetchArtistTransactions({ page, status: 'all' });
-
-    if (response?.isOk && response.data.length > 0) {
-      setTransactions((prev) => [...prev, ...response.data]);
-      setPage((prev) => prev + 1);
-      setHasMore(response.data.length === 10); // API returns 10 by default
-    } else {
-      setHasMore(false);
-    }
-
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchMoreTransactions();
-  }, []);
+  const showEmpty = !isLoading && transactions.length === 0;
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
@@ -48,10 +56,11 @@ const WalletHistory = ({ navigation }: any) => {
         <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
       </View>
 
-      {transactions?.length > 0 && (
+      {/* List */}
+      {transactions.length > 0 && (
         <FlatList
           data={transactions}
-          keyExtractor={(item, index) => `${item.trans_id}-${index}`}
+          keyExtractor={(item, index) => `${item.trans_id ?? item.id ?? 'txn'}-${index}`}
           renderItem={({ item }) => (
             <WalletContainer
               status={item.trans_status}
@@ -62,23 +71,36 @@ const WalletHistory = ({ navigation }: any) => {
           )}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={tw`gap-[8px] pb-[100px]`}
-          onEndReached={fetchMoreTransactions}
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+          }}
           onEndReachedThreshold={0.6}
-          ListFooterComponent={loading ? <Loader size={200} height={100} /> : null}
+          ListFooterComponent={isFetchingNextPage ? <Loader size={200} height={100} /> : null}
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching && !isFetchingNextPage}
+              onRefresh={() => refetch()}
+              tintColor="#000"
+              colors={['#000']}
+              size={40}
+            />
+          }
         />
       )}
 
-      {transactions?.length === 0 && !loading && (
+      {/* Empty state */}
+      {showEmpty && (
         <View
           style={tw.style(`justify-center items-center`, {
             marginTop: height / 4,
           })}
         >
-          <Text style={tw`text-[18px] text-[#1A1A1A]000] font-medium`}>No transactions found</Text>
+          <Text style={tw`text-[18px] text-[#1A1A1A] font-medium`}>No transactions found</Text>
         </View>
       )}
 
-      {loading && transactions?.length === 0 && (
+      {/* Initial loader */}
+      {isLoading && transactions.length === 0 && (
         <View
           style={tw.style(`justify-center items-center`, {
             marginTop: height / 4,
