@@ -1,13 +1,12 @@
 import React, { useMemo, useCallback } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, Dimensions } from 'react-native';
-import { keepPreviousData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { colors } from 'config/colors.config';
 import FilterButton from 'components/filter/FilterButton';
 import WithModal from 'components/modal/WithModal';
 import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader';
 import ArtworksListing from 'components/general/ArtworksListing';
 import tailwind from 'twrnc';
-import { useFocusEffect } from '@react-navigation/native';
 import { filterStore } from 'store/artworks/FilterStore';
 import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
 
@@ -18,7 +17,7 @@ type FetchResult = {
   message?: string;
 };
 
-// single fetcher used by useInfiniteQuery
+// Single fetcher for useInfiniteQuery
 async function fetchPage({
   pageParam,
   filters,
@@ -26,19 +25,17 @@ async function fetchPage({
   pageParam: number;
   filters: any;
 }): Promise<FetchResult> {
-  const res = await fetchPaginatedArtworks(pageParam, filters);
-  return res;
+  return fetchPaginatedArtworks(pageParam, filters);
 }
 
 export default function Catalog() {
   const { width } = Dimensions.get('screen');
   const { filterOptions } = filterStore();
-  const queryClient = useQueryClient();
 
-  // memoize filters in the key to avoid re-renders from new object refs
+  // Stable key part for filters (changes only when content actually changes)
   const filterKey = useMemo(() => filterOptions, [JSON.stringify(filterOptions)]);
 
-  const { data, isLoading, isFetchingNextPage, refetch, fetchNextPage, hasNextPage, status } =
+  const { data, isLoading, isFetchingNextPage, refetch, fetchNextPage, hasNextPage } =
     useInfiniteQuery({
       queryKey: ['catalog', filterKey],
       queryFn: ({ pageParam = 1 }) => fetchPage({ pageParam, filters: filterOptions }),
@@ -49,18 +46,16 @@ export default function Catalog() {
         const next = allPages.length + 1;
         return next <= totalPages ? next : undefined;
       },
-      // Keep cached data visible when filters change (better UX)
-      placeholderData: keepPreviousData,
-    });
 
-  // optional: refetch on focus only if there's no data in cache
-  useFocusEffect(
-    useCallback(() => {
-      if (!data?.pages?.length) {
-        refetch();
-      }
-    }, [data?.pages?.length, refetch]),
-  );
+      // Keep showing the previous list while new filters load
+      // (keepPreviousData (symbol) is fine for useQuery; for infinite queries we pass the previous data through)
+      placeholderData: (prev) => prev,
+      staleTime: 30_000, // serve cached for 30s before considered stale
+      gcTime: 10 * 60_000, // keep in cache for 10m after unused
+      refetchOnMount: true, // only if stale
+      refetchOnReconnect: true, // only if stale
+      refetchOnWindowFocus: true, // only if stale
+    });
 
   const flatData = useMemo(
     () => (data?.pages || []).flatMap((p) => (p?.isOk ? p.data : [])),
@@ -68,13 +63,11 @@ export default function Catalog() {
   );
 
   const handleEndReached = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleRefresh = useCallback(async () => {
-    await refetch();
+    await refetch(); // pull-to-refresh
   }, [refetch]);
 
   return (

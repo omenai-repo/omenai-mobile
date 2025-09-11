@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Image, FlatList, Text, View, StyleSheet, Platform } from 'react-native';
+import { Image, FlatList, Text, View } from 'react-native';
 import tw from 'twrnc';
 import WithModal from 'components/modal/WithModal';
 import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
@@ -16,29 +16,45 @@ export type OrderTabsTypes = 'pending' | 'history';
 
 export default function Orders() {
   const navigation = useNavigation<any>();
-  const { data, isLoading, isRefetching, refetch, invalidate } = useCollectorOrders();
+  const { data, isLoading, isRefetching, refetch } = useCollectorOrders();
 
   const [selectedTab, setSelectedTab] = useState<OrderTabsTypes>('pending');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
 
-  const currentOrders = useMemo(() => {
+  // Choose list by tab
+  const tabOrders = useMemo(() => {
     if (!data) return [];
-    return selectedTab === 'pending' ? data.pendingOrders : data.completedOrders;
+    return selectedTab === 'pending' ? data.pendingOrders ?? [] : data.completedOrders ?? [];
   }, [data, selectedTab]);
 
+  // Client-side year filter (optional but handy)
+  const currentOrders = useMemo(() => {
+    if (!Array.isArray(tabOrders)) return [];
+    return tabOrders.filter((o) => {
+      const dt = new Date(o?.updatedAt ?? o?.createdAt ?? Date.now());
+      return dt.getFullYear() === selectedYear;
+    });
+  }, [tabOrders, selectedYear]);
+
+  // Tabs (guard length)
   const collectorTabs = useMemo(
     () => [
-      { title: 'Pending', key: 'pending', count: data?.pendingOrders.length ?? 0 },
+      { title: 'Pending', key: 'pending', count: data?.pendingOrders?.length ?? 0 },
       { title: 'Order History', key: 'history' },
     ],
-    [data?.pendingOrders.length],
+    [data?.pendingOrders?.length],
   );
 
   const toggleRecentOrder = useCallback((key: string | number) => {
     const k = String(key);
     setOpenSection((prev) => ({ ...prev, [k]: !prev[k] }));
   }, []);
+
+  const keyExtractor = useCallback(
+    (item: any) => `${item.order_id}::${item.artwork_data?._id ?? 'na'}`,
+    [],
+  );
 
   const renderItem = useCallback(
     ({ item, index }: { item: any; index: number }) => (
@@ -67,13 +83,10 @@ export default function Orders() {
     [currentOrders.length, navigation, openSection, toggleRecentOrder],
   );
 
-  const keyExtractor = useCallback((item: any) => `${item.order_id}::${item.artwork_data._id}`, []);
-
-  // Pull-to-refresh handler: invalidate cache, then refetch
+  // Pull-to-refresh
   const onRefresh = useCallback(async () => {
-    await invalidate();
     await refetch();
-  }, [invalidate, refetch]);
+  }, [refetch]);
 
   return (
     <WithModal>
