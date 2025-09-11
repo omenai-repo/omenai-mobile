@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Platform } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 import WithModal from 'components/modal/WithModal';
 import { Feather } from '@expo/vector-icons';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
@@ -10,49 +10,47 @@ import { fetchAllArtworksById } from 'services/artworks/fetchAllArtworksById';
 import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import ArtworksListing from 'components/general/ArtworksListing';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useModalStore } from 'store/modal/modalStore';
+
+const ARTWORKS_QK = ['artworks', 'galleryOrArtist', 'all'] as const;
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState<any[]>([]);
-  const inFlight = useRef(false); // single-flight guard
-  const isMounted = useRef(true);
+  const { updateModal } = useModalStore();
 
-  const handleFetchGalleryArtworks = useCallback(async (opts?: { isPull?: boolean }) => {
-    if (inFlight.current) return;
-    inFlight.current = true;
-    try {
-      // show skeleton only for first load or non-pull refresh
-      if (!opts?.isPull) setIsLoading(true);
-
-      const results = await fetchAllArtworksById();
-      const list = results?.data ?? [];
-      if (isMounted.current) {
-        setData([...list].reverse());
+  const artworksQuery = useQuery({
+    queryKey: ARTWORKS_QK,
+    queryFn: async () => {
+      try {
+        const res = await fetchAllArtworksById();
+        if (!res?.isOk) throw new Error('Failed to fetch artworks');
+        return Array.isArray(res.data) ? res.data : [];
+      } catch (e: any) {
+        updateModal({
+          message: e?.message ?? 'Failed to fetch artworks',
+          showModal: true,
+          modalType: 'error',
+        });
+        return [];
       }
-    } catch (e) {
-      console.error('Failed to fetch gallery artworks', e);
-    } finally {
-      if (isMounted.current) {
-        setIsLoading(false);
-      }
-      inFlight.current = false;
-    }
-  }, []);
+    },
+    // show cached immediately; keep it fresh but not spammy
+    staleTime: 30_000,
+    gcTime: 10 * 60_000,
+    refetchOnMount: true, // only if stale
+    refetchOnReconnect: true, // only if stale
+    refetchOnWindowFocus: true, // only if stale
+    select: (list: any[]) => [...list].reverse(), // keep your reverse order
+  });
 
-  useFocusEffect(
-    useCallback(() => {
-      isMounted.current = true;
-      handleFetchGalleryArtworks();
-      return () => {
-        isMounted.current = false;
-      };
-    }, [handleFetchGalleryArtworks]),
-  );
-
+  // Pull-to-refresh: force a network refetch now
   const onRefresh = useCallback(async () => {
-    await handleFetchGalleryArtworks({ isPull: true });
-  }, [handleFetchGalleryArtworks]);
+    await artworksQuery.refetch();
+  }, [artworksQuery]);
+
+  const isInitialLoading = artworksQuery.isLoading && !artworksQuery.data;
+  const data = artworksQuery.data ?? [];
 
   return (
     <WithModal>
@@ -76,11 +74,10 @@ export default function GalleryArtworksListing() {
       </View>
 
       <ScrollWrapper style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        {isLoading ? (
+        {isInitialLoading ? (
           <MiniArtworkCardLoader />
         ) : (
           <View style={{ paddingBottom: 130, paddingHorizontal: 10 }}>
-            {/* Let the list manage pull-to-refresh */}
             <ArtworksListing data={data} onRefresh={onRefresh} />
           </View>
         )}

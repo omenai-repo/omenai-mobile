@@ -19,7 +19,7 @@ import { useAppStore } from 'store/app/appStore';
 import LockScreen from 'screens/galleryArtworksListing/components/LockScreen';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import ArtworkPriceReviewScreen from './components/ArtworkPriceReviewScreen';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAccountID } from 'services/stripe/getAccountID';
 import { checkIsStripeOnboarded } from 'services/stripe/checkIsStripeOnboarded';
 import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData';
@@ -29,6 +29,7 @@ export default function UploadArtwork() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showLockScreen, setShowLockScreen] = useState(false);
   const [shouldPreCheck, setShouldPreCheck] = useState(false);
+  const queryClient = useQueryClient();
 
   const { userSession, userType } = useAppStore();
 
@@ -131,6 +132,7 @@ export default function UploadArtwork() {
         const upload_response = await uploadArtworkData(data);
         if (upload_response.isOk) {
           //display success screen
+          await queryClient.invalidateQueries({ queryKey: ['artworks', 'galleryOrArtist', 'all'] });
           setIsUploaded(true);
         } else {
           //toast error
@@ -183,8 +185,7 @@ export default function UploadArtwork() {
   const shouldShowSubscriptionBlock = userSession?.gallery_verified && !isConfirmed?.isSubActive;
   const shouldShowMixedVerification = !userSession?.gallery_verified && isConfirmed?.isSubActive;
   const canUpload = userSession?.gallery_verified && isConfirmed?.isSubActive;
-  console.log(canUpload);
-  console.log(isConfirmed);
+
   return (
     <WithModal>
       {userType === 'gallery' && (

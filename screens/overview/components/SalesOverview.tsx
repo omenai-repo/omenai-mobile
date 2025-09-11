@@ -11,7 +11,7 @@ export default function SalesOverview({
   refreshCount,
   onLoadingChange,
 }: {
-  refreshCount: number;
+  refreshCount: boolean;
   onLoadingChange?: (l: boolean) => void;
 }) {
   const [salesOverviewData, setSalesOverviewData] = useState<number[]>([]);
