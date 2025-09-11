@@ -1,14 +1,12 @@
-import { View, Text, Pressable, FlatList } from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, Pressable, FlatList, RefreshControl, Image } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
 import tw from 'twrnc';
-import { Image } from 'react-native';
 import { Animated } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { dropdownIcon, dropUpIcon } from 'utils/SvgImages';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import DeclineOrderModal from './DeclineOrderModal';
 import { organizeOrders } from 'utils/utils_splitArray';
-import { artistOrdersStore } from 'store/artist/artistOrdersStore';
 import EmptyOrdersListing from 'screens/galleryOrders/components/EmptyOrdersListing';
 import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
 import { getImageFileView } from 'lib/storage/getImageFileView';
@@ -20,6 +18,10 @@ import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
 import { useModalStore } from 'store/modal/modalStore';
 import WithModal from 'components/modal/WithModal';
 import TabSwitcher from 'components/orders/TabSwitcher';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+// ----------------- Query Key
+const ORDERS_QK = ['orders', 'artist'] as const;
 
 function renderStatusBadge({
   status,
@@ -27,15 +29,8 @@ function renderStatusBadge({
   tracking_status,
   order_accepted,
   delivered,
-}: {
-  status: string;
-  payment_status: string;
-  tracking_status: string;
-  order_accepted: string;
-  delivered: boolean;
-}) {
+}: any) {
   const badgeBaseStyle = tw`flex-row items-center px-3 py-1 rounded-full`;
-
   if (
     status === 'pending' &&
     order_accepted === '' &&
@@ -49,7 +44,6 @@ function renderStatusBadge({
       </View>
     );
   }
-
   if (
     status === 'processing' &&
     order_accepted === 'accepted' &&
@@ -63,7 +57,6 @@ function renderStatusBadge({
       </View>
     );
   }
-
   if (
     status === 'processing' &&
     order_accepted === 'accepted' &&
@@ -77,7 +70,6 @@ function renderStatusBadge({
       </View>
     );
   }
-
   if (
     status === 'processing' &&
     order_accepted === 'accepted' &&
@@ -91,7 +83,6 @@ function renderStatusBadge({
       </View>
     );
   }
-
   if (
     status === 'processing' &&
     order_accepted === '' &&
@@ -105,7 +96,6 @@ function renderStatusBadge({
       </View>
     );
   }
-
   if (status === 'completed' && order_accepted === 'declined') {
     return (
       <View style={[badgeBaseStyle, tw`bg-red-200`]}>
@@ -114,7 +104,6 @@ function renderStatusBadge({
       </View>
     );
   }
-
   if (status === 'completed' && order_accepted === 'accepted' && delivered) {
     return (
       <View style={[badgeBaseStyle, tw`bg-green-100`]}>
@@ -123,21 +112,10 @@ function renderStatusBadge({
       </View>
     );
   }
-
   return null;
 }
 
-const renderButtonAction = ({
-  status,
-  payment_status,
-  tracking_status,
-  order_accepted,
-}: {
-  status: string;
-  payment_status: string;
-  tracking_status: string;
-  order_accepted: string;
-}) => {
+const renderButtonAction = ({ status, payment_status, tracking_status, order_accepted }: any) => {
   if (
     status === 'processing' &&
     order_accepted === 'accepted' &&
@@ -173,62 +151,41 @@ const renderButtonAction = ({
   return null;
 };
 
-export const OrderContainer = ({
-  id,
-  open,
-  setOpen,
-  artId,
-  artName,
-  price,
-  dateTime,
-  status,
-  lastId,
-  declineBtn,
-  acceptBtn,
-  trackBtn,
-  url,
-  payment_status,
-  tracking_status,
-  order_accepted,
-  delivered,
-  order_decline_reason,
-}: {
-  id: number;
-  open: boolean;
-  setOpen: (e: boolean) => void;
-  artId: string;
-  artName: string;
-  price: string;
-  dateTime: string;
-  status: 'pending' | 'processing' | 'completed';
-  lastId: boolean;
-  declineBtn?: () => void;
-  acceptBtn?: () => void;
-  trackBtn?: () => void;
-  url: string;
-  payment_status: string;
-  tracking_status: string;
-  order_accepted: string;
-  delivered: boolean;
-  order_decline_reason?: string;
-}) => {
-  let image_href = getImageFileView(url, 700);
+export const OrderContainer = (props: any) => {
+  const {
+    id,
+    open,
+    setOpen,
+    artId,
+    artName,
+    price,
+    dateTime,
+    status,
+    lastId,
+    declineBtn,
+    acceptBtn,
+    trackBtn,
+    url,
+    payment_status,
+    tracking_status,
+    order_accepted,
+    delivered,
+    order_decline_reason,
+  } = props;
 
-  const animatedHeight = useRef(new Animated.Value(0)).current;
-  const animatedOpacity = useRef(new Animated.Value(0)).current;
+  const image_href = getImageFileView(url, 700);
+  const animatedHeight = React.useRef(new Animated.Value(0)).current;
+  const animatedOpacity = React.useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
+  React.useEffect(() => {
+    const wantsButtons = ['track', 'action'].includes(
+      renderButtonAction({ status, payment_status, tracking_status, order_accepted }) as any,
+    );
+    const targetHeight = wantsButtons ? 180 : order_accepted === 'declined' ? 180 : 120;
+
     if (open) {
       Animated.timing(animatedHeight, {
-        toValue:
-          renderButtonAction({ status, payment_status, tracking_status, order_accepted }) ===
-            'track' ||
-          renderButtonAction({ status, payment_status, tracking_status, order_accepted }) ===
-            'action'
-            ? 180
-            : order_accepted === 'declined'
-            ? 180
-            : 120, // Adjust height based on content
+        toValue: targetHeight,
         duration: 300,
         useNativeDriver: false,
       }).start();
@@ -249,7 +206,7 @@ export const OrderContainer = ({
         useNativeDriver: false,
       }).start();
     }
-  }, [open]);
+  }, [open, status, payment_status, tracking_status, order_accepted]);
 
   return (
     <Pressable
@@ -272,11 +229,13 @@ export const OrderContainer = ({
           onPress={() => setOpen(!open)}
           style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
         >
-          <SvgXml xml={open ? dropUpIcon : dropdownIcon} />
+          {/* Guard SvgXml prop just in case */}
+          {typeof (open ? dropUpIcon : dropdownIcon) === 'string' ? (
+            <SvgXml xml={open ? dropUpIcon : dropdownIcon} />
+          ) : null}
         </Pressable>
       </View>
 
-      {/* Animated Dropdown */}
       <Animated.View
         style={{ height: animatedHeight, opacity: animatedOpacity, overflow: 'hidden' }}
       >
@@ -314,13 +273,13 @@ export const OrderContainer = ({
             'action' && (
             <View style={tw`flex-row items-center gap-[30px]`}>
               <Pressable
-                onPress={declineBtn}
+                onPress={props.declineBtn}
                 style={tw`h-[40px] justify-center items-center bg-[#C71C16] rounded-[20px] px-[15px] flex-1`}
               >
                 <Text style={tw`text-[13px] text-white font-semibold`}>Decline order</Text>
               </Pressable>
               <Pressable
-                onPress={acceptBtn}
+                onPress={props.acceptBtn}
                 style={tw`h-[40px] justify-center items-center bg-[#00C885] rounded-[20px] px-[15px] flex-1`}
               >
                 <Text style={tw`text-[13px] text-white font-semibold`}>Accept order</Text>
@@ -335,97 +294,84 @@ export const OrderContainer = ({
 
 const OrderScreen = () => {
   const navigation = useNavigation<any>();
-  const [selectedTab, setSelectedTab] = useState<'pending' | 'processing' | 'completed'>('pending');
-  const [openSection, setOpenSection] = useState<Record<string, boolean>>({}); // key can be string _id
-  const [declineModal, setDeclineModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const { updateModal } = useModalStore();
-  const currentYear = new Date().getFullYear();
-  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const queryClient = useQueryClient();
+
+  const [selectedTab, setSelectedTab] = useState<'pending' | 'processing' | 'completed'>('pending');
+  const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
+  const [declineModal, setDeclineModal] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [orderId, setOrderId] = useState('');
 
-  const { data, setData } = artistOrdersStore();
-
-  // single-flight + unmount guard
-  const inFlight = useRef(false);
-  const alive = useRef(true);
-  useEffect(
-    () => () => {
-      alive.current = false;
+  // Fetch all orders once (per cache lifecycle); UI filters by tab
+  const ordersQuery = useQuery({
+    queryKey: ORDERS_QK,
+    queryFn: async () => {
+      try {
+        const res = await getOrdersBySellerId();
+        if (!res?.isOk) throw new Error(res?.body?.message ?? 'Failed to load orders');
+        return res.data;
+      } catch (err: any) {
+        updateModal({
+          message: err?.message ?? 'Failed to load orders',
+          showModal: true,
+          modalType: 'error',
+        });
+      }
     },
-    [],
+    staleTime: 30_000,
+    gcTime: 10 * 60_000,
+    refetchOnMount: true, // only if stale
+    refetchOnReconnect: true, // only if stale
+    refetchOnWindowFocus: true, // only if stale
+  });
+
+  // Pull-to-refresh: force a refetch now
+  const onRefresh = useCallback(() => ordersQuery.refetch(), [ordersQuery]);
+
+  // Split into tabs (memoized)
+  const { pending, processing, completed } = useMemo(() => {
+    const parsed = organizeOrders(Array.isArray(ordersQuery.data) ? ordersQuery.data : []);
+    return parsed;
+  }, [ordersQuery.data]);
+
+  // (Optional) Filter by year if needed
+  const filterByYear = useCallback(
+    (arr: any[]) => {
+      if (!Array.isArray(arr)) return [];
+      return arr.filter((o) => {
+        const dt = new Date(o.createdAt);
+        return dt.getFullYear() === selectedYear;
+      });
+    },
+    [selectedYear],
   );
 
-  const handleFetchOrders = useCallback(async () => {
-    if (inFlight.current) return; // prevent duplicate calls
-    inFlight.current = true;
-    try {
-      if (isLoading === true && !refreshing) {
-        setIsLoading(true);
-      }
+  const currentOrders =
+    selectedTab === 'pending'
+      ? filterByYear(pending)
+      : selectedTab === 'processing'
+      ? filterByYear(processing)
+      : filterByYear(completed);
 
-      const results = await getOrdersBySellerId();
-      if (results?.isOk) {
-        const parsed = organizeOrders(results.data);
-        if (alive.current) {
-          setData({
-            pending: parsed.pending,
-            processing: parsed.processing,
-            completed: parsed.completed,
-          });
-          setIsLoading(false);
-        }
-      } else {
-        if (alive.current) {
-          setIsLoading(false);
-          updateModal({
-            message: results?.body?.message ?? 'Failed to load orders',
-            showModal: true,
-            modalType: 'error',
-          });
-        }
-      }
-    } finally {
-      inFlight.current = false;
-    }
-  }, [setData, updateModal, isLoading, refreshing]);
-
-  const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await handleFetchOrders();
-    setRefreshing(false);
-  }, [handleFetchOrders]);
-
-  useFocusEffect(
-    useCallback(() => {
-      // fetch once per focus; single-flight stops accidental duplicates
-      handleRefresh();
-    }, [handleRefresh]),
-  );
+  const artistTabs = [
+    { title: 'Pending', key: 'pending', count: pending?.length ?? 0 },
+    { title: 'Processing', key: 'processing', count: processing?.length ?? 0 },
+    { title: 'Completed', key: 'completed' },
+  ];
 
   const toggleRecentOrder = useCallback((key: string) => {
     setOpenSection((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  const currentOrders =
-    selectedTab === 'pending'
-      ? data.pending
-      : selectedTab === 'processing'
-      ? data.processing
-      : data.completed;
-
-  const artistTabs = [
-    { title: 'Pending', key: 'pending', count: data.pending.length },
-    { title: 'Processing', key: 'processing', count: data.processing.length },
-    { title: 'Completed', key: 'completed' },
-  ];
+  const isInitialLoading = ordersQuery.isLoading && !ordersQuery.data;
+  const isRefreshing = ordersQuery.isFetching && !!ordersQuery.data; // background spinner
 
   return (
     <WithModal>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <Image
-          style={tw.style(`w-[130px] h-[30px] mt-[80px]  android:mt-[40px] ml-[20px]`)}
+          style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
           resizeMode="contain"
           source={require('../../../assets/omenai-logo.png')}
         />
@@ -439,7 +385,7 @@ const OrderScreen = () => {
         <View
           style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px]`}
         >
-          {isLoading ? (
+          {isInitialLoading ? (
             <OrderslistingLoader />
           ) : currentOrders.length === 0 ? (
             <EmptyOrdersListing status={selectedTab} />
@@ -457,6 +403,15 @@ const OrderScreen = () => {
                 keyExtractor={(item) => item.order_id}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={isRefreshing}
+                    onRefresh={onRefresh}
+                    tintColor="#000"
+                    colors={['#000']}
+                    size={40}
+                  />
+                }
                 renderItem={({ item, index }) => (
                   <OrderContainer
                     id={index}
@@ -471,10 +426,7 @@ const OrderScreen = () => {
                     lastId={index === currentOrders.length - 1}
                     acceptBtn={
                       selectedTab === 'pending'
-                        ? () =>
-                            navigation.navigate('DimentionsDetails', {
-                              orderId: item.order_id,
-                            })
+                        ? () => navigation.navigate('DimentionsDetails', { orderId: item.order_id })
                         : undefined
                     }
                     declineBtn={
@@ -504,7 +456,7 @@ const OrderScreen = () => {
           isModalVisible={declineModal}
           setIsModalVisible={setDeclineModal}
           orderId={orderId}
-          refresh={handleFetchOrders}
+          refresh={() => queryClient.invalidateQueries({ queryKey: ORDERS_QK })}
         />
       </View>
     </WithModal>
