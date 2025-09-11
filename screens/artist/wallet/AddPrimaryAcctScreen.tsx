@@ -16,6 +16,7 @@ import { fetchBankBranches } from 'services/wallet/fetchBankBranches';
 import WithModal from 'components/modal/WithModal';
 import LottieView from 'lottie-react-native';
 import loaderAnimation from '../../../assets/other/loader-animation.json';
+import { useQueryClient } from '@tanstack/react-query';
 
 type BankOption = {
   label: string;
@@ -46,6 +47,10 @@ const supportedCountryCodes = [
   // 'NG',
 ];
 
+const WALLET_QK = ['wallet', 'artist'] as const;
+const TXNS_QK = ['wallet', 'artist', 'txns', { status: 'all' }] as const;
+const BASE_TXNS_QK = ['wallet', 'artist', 'txns'] as const;
+
 const AddPrimaryAcctScreen = () => {
   const navigation = useNavigation();
   const { walletData } = useRoute().params as { walletData: any };
@@ -64,6 +69,7 @@ const AddPrimaryAcctScreen = () => {
   const [acctName, setAcctName] = useState('');
   const [loadAcctName, setLoadAcctName] = useState(false);
   const [addPrimaryAcctLoading, setAddPrimaryAcctLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const isEditing = !!walletData?.primary_withdrawal_account;
 
@@ -208,8 +214,8 @@ const AddPrimaryAcctScreen = () => {
     }
 
     setLoadAcctName(true);
-    // const response = await validateBankAcct(selectedBank.value, acctNumber);
-    const response = await validateBankAcct('044', '0690000032');
+    const response = await validateBankAcct(selectedBank.value, acctNumber);
+    // const response = await validateBankAcct('044', '0690000032');
 
     if (response?.isOk) {
       setAcctName(response.data.account_name);
@@ -261,6 +267,11 @@ const AddPrimaryAcctScreen = () => {
         showModal: true,
         modalType: 'success',
       });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: WALLET_QK }),
+        queryClient.invalidateQueries({ queryKey: TXNS_QK }),
+        queryClient.invalidateQueries({ queryKey: BASE_TXNS_QK }),
+      ]);
       navigation.goBack();
     } else {
       updateModal({
