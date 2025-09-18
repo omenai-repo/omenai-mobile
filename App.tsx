@@ -139,7 +139,10 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <QueryClientProvider client={queryClient}>
           <BottomSheetModalProvider>
-            <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}>
+            <StripeProvider
+              publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
+              urlScheme="omenaimobile"
+            >
               <NavigationContainer ref={navigationRef} linking={linking}>
                 {/* AUTH SCREENS */}
                 {!isLoggedIn && <AuthNavigation />}

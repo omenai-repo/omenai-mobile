@@ -1,92 +1,160 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { colors } from 'config/colors.config'
-import { fetchSubscriptionTransactions } from 'services/transactions/fetchSubscriptionTransactions'
-import { useAppStore } from 'store/app/appStore'
-import Loader from 'components/general/Loader'
-import omenai_logo from 'assets/icons/omenai_logo_cut.png';
-import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime'
-import { utils_formatPrice } from 'utils/utils_priceFormatter'
+import React, { useMemo } from 'react';
+import { View, Text, ActivityIndicator, FlatList, Platform } from 'react-native';
+import tw from 'twrnc';
+import { Ionicons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
+import { useAppStore } from 'store/app/appStore';
+import { formatISODate } from 'utils/utils_formatISODate';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { fetchSubscriptionTransactions } from 'services/transactions/fetchSubscriptionTransactions';
+
+// ---- types (adjust if your service returns differently)
+type Txn = {
+  trans_id: string;
+  status: 'successful' | 'failed' | 'pending' | string;
+  date: string; // ISO
+  amount: number;
+  currency?: string; // optional
+};
 
 export default function TransactionsListing() {
-    const { userSession } = useAppStore();
+  const { userSession: user } = useAppStore();
 
-    const [loading, setLoading] = useState(false);
-    const [transactions, setTransactions] = useState([])
+  const {
+    data: transactions,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['fetch_sub_trans', user?.id],
+    queryFn: async () => {
+      const res = await fetchSubscriptionTransactions(user.id);
+      if (res?.isOk) return res.data as Txn[];
+      throw new Error(res?.message || 'Something went wrong');
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+    gcTime: 0,
+  });
 
-    useEffect(() => {
-        async function handleFetchTransaction(){
-            setLoading(true)
-            const res = await fetchSubscriptionTransactions(userSession.id);
+  const list = useMemo(() => {
+    if (!transactions) return [];
+    // mirror web: newest last → reverse for top-down timeline
+    return [...transactions].reverse();
+  }, [transactions]);
 
-            if(res?.isOk){
-                setTransactions(res.data);
-            }
-            setLoading(false)
-        };
-
-        handleFetchTransaction()
-    }, [])
-
+  if (isLoading) {
     return (
-        <View style={styles.container}>
-            <View style={styles.topContainer}>
-                <View style={styles.planTitleContainer}>
-                    <Text style={{fontSize: 16, color: colors.primary_black}}>Transaction history</Text>
-                </View>
-            </View>
-            <View style={styles.bottomContainer}>
-                {loading && <Loader height={100} />}
-                {(!loading && transactions.length > 0) && (
-                    <View style={{gap: 15}}>
-                        {transactions.map((transaction: any, index) => (
-                            <View key={index} style={styles.transaction}>
-                                <View style={{flex: 1, flexDirection: 'row', gap: 10}}>
-                                    <Image source={omenai_logo} style={styles.omenaiLogo} />
-                                    <View style={{gap: 5}}>
-                                        <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>{transaction.trans_id}</Text>
-                                        <Text style={{opacity: 0.7}}>{formatIntlDateTime(transaction.date)}</Text>
-                                    </View>
-                                </View>
-                                <Text>{transaction.amount}.00</Text>
-                            </View>
-                        ))}
-                    </View>
-                )}
-            </View>
+      <View
+        style={tw`bg-white rounded-2xl border border-slate-200 p-6 items-center justify-center`}
+      >
+        <ActivityIndicator />
+        <Text style={tw`mt-2 text-slate-600`}>Loading transactions…</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={tw`bg-white rounded-2xl border border-slate-200 p-6`}>
+        <Text style={tw`text-base font-semibold text-slate-900 mb-2`}>
+          Recent Transaction Activity
+        </Text>
+        <View
+          style={tw`items-center justify-center py-10 rounded-xl bg-red-50 border border-red-200`}
+        >
+          <Ionicons name="alert-circle" size={28} color="#b91c1c" />
+          <Text style={tw`mt-2 text-red-700`}>
+            {(error as Error)?.message ?? 'Failed to load transactions'}
+          </Text>
         </View>
-    )
+      </View>
+    );
+  }
+
+  return (
+    <View style={[tw`bg-white rounded-2xl border border-slate-200 p-6`, shadow()]}>
+      <Text style={tw`text-base font-semibold text-slate-900 mb-4`}>
+        Recent Transaction Activity
+      </Text>
+
+      {list.length === 0 ? (
+        <View style={tw`items-center justify-center py-12`}>
+          <Ionicons name="receipt-outline" size={36} color="#64748b" />
+          <Text style={tw`mt-2 text-slate-500`}>No transactions found</Text>
+        </View>
+      ) : (
+        <View style={tw`relative`}>
+          {/* timeline line */}
+          <View style={tw`absolute left-6 top-0 bottom-0 w-0.5 bg-slate-200`} />
+
+          <FlatList
+            data={list}
+            keyExtractor={(item) => item.trans_id}
+            contentContainerStyle={tw`pr-1`}
+            renderItem={({ item, index }) => <Row item={item} index={index} />}
+            ItemSeparatorComponent={() => <View style={tw`h-3`} />}
+          />
+        </View>
+      )}
+    </View>
+  );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        borderWidth: 1,
-        borderColor: colors.grey50,
-        borderRadius: 10,
+function Row({ item, index }: { item: Txn; index: number }) {
+  const statusText =
+    item.status === 'successful'
+      ? 'Payment processed successfully'
+      : item.status === 'failed'
+      ? 'Payment failed'
+      : 'Payment pending';
+
+  const statusColor =
+    item.status === 'successful'
+      ? tw`text-green-600`
+      : item.status === 'failed'
+      ? tw`text-red-600`
+      : tw`text-amber-600`;
+
+  // match web default "USD" formatting when currency not provided
+  const amountLabel = utils_formatPrice(item.amount, item.currency ?? 'USD');
+
+  return (
+    <View style={tw`relative flex-row items-start pb-3`}>
+      {/* dot / index */}
+      <View style={tw`mr-4`}>
+        <View
+          style={tw`w-10 h-10 bg-white border-2 border-slate-300 rounded-full items-center justify-center`}
+        >
+          <Text style={tw`text-xs font-semibold text-slate-600`}>{index + 1}</Text>
+        </View>
+      </View>
+
+      {/* card */}
+      <View style={tw`flex-1 bg-slate-50 rounded-lg p-4`}>
+        <View style={tw`flex-row items-start justify-between`}>
+          <View style={tw`flex-shrink`}>
+            <Text style={tw`text-[11px] font-semibold text-slate-500`}>#{item.trans_id}</Text>
+            <Text style={[tw`text-[11px] font-medium mt-0.5`, statusColor]}>{statusText}</Text>
+            <Text style={tw`text-[11px] text-slate-600 mt-1`}>{formatISODate(item.date)}</Text>
+          </View>
+
+          <Text style={tw`text-slate-900 font-semibold`}>{amountLabel}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+function shadow() {
+  return Platform.select({
+    ios: {
+      shadowColor: '#000',
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 6 },
     },
-    topContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 15
-    },
-    planTitleContainer: {
-        flex: 1,
-        gap: 10,
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    bottomContainer: {
-        padding: 20,
-        borderTopWidth: 1,
-        borderTopColor: colors.grey50
-    },
-    transaction: {
-        flexDirection: 'row',
-        gap: 10
-    },
-    omenaiLogo: {
-        height: 30,
-        width: 30,
-        marginTop: 5
-    },
-})
+    android: { elevation: 3 },
+    default: {},
+  });
+}

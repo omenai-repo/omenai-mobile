@@ -1,5 +1,5 @@
 type PlanChangeResult = {
-  action: "upgrade" | "downgrade";
+  action: 'upgrade' | 'downgrade';
   shouldCharge: boolean;
 };
 
@@ -11,26 +11,25 @@ const planTiers = {
 
 export function utils_determinePlanChange(
   currentPlan: string,
-  currentInterval: "monthly" | "yearly",
+  currentInterval: 'monthly' | 'yearly',
   newPrice: number,
-  newInterval: "monthly" | "yearly"
+  newInterval: 'monthly' | 'yearly',
+  status: SubscriptionModelSchemaTypes['status'],
 ): PlanChangeResult {
   const currentPlanData = planTiers[currentPlan as keyof typeof planTiers];
   const currentPrice = currentPlanData[`${currentInterval}Price`];
 
-  const planOrder = ["basic", "pro", "premium"];
+  const planOrder = ['basic', 'pro', 'premium'];
   const currentPlanIndex = planOrder.indexOf(currentPlan);
   const newPlanIndex = planOrder.findIndex(
-    (plan) =>
-      planTiers[plan as keyof typeof planTiers][`${newInterval}Price`] ===
-      newPrice
+    (plan) => planTiers[plan as keyof typeof planTiers][`${newInterval}Price`] === newPrice,
   );
 
   const isUpgrade = newPlanIndex >= currentPlanIndex;
-  const shouldCharge = newPrice > currentPrice;
+  const shouldCharge = status === 'expired' || newPrice > currentPrice;
 
   return {
-    action: isUpgrade ? "upgrade" : "downgrade",
+    action: isUpgrade ? 'upgrade' : 'downgrade',
     shouldCharge,
   };
 }

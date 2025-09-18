@@ -28,6 +28,8 @@ import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import { BottomTabDataGallery } from 'utils/BottomTabData';
 import CustomTabBar from './components/TabButton';
 import NotificationScreen from 'screens/notifications/NotificationScreen';
+import PaymentMethodChangeScreen from 'screens/subscriptions/components/PaymentMethodChangeScreen';
+import BillingVerificationScreen from 'screens/subscriptions/components/BillingVerificationScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -120,7 +122,9 @@ export default function GalleryNavigation() {
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
       <Stack.Screen name={screenName.gallery.subscriptions} component={Subscriptions} />
       <Stack.Screen name={screenName.gallery.billing} component={Billing} />
+      <Stack.Screen name={'PaymentMethodChangeScreen'} component={PaymentMethodChangeScreen} />
       <Stack.Screen name={screenName.checkout} component={Checkout} />
+      <Stack.Screen name={'BillingVerificationScreen'} component={BillingVerificationScreen} />
       <Stack.Screen name={screenName.connectStripe} component={GetStartedWithStripe} />
       <Stack.Screen name={screenName.gallery.editArtwork} component={EditArtwork} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>

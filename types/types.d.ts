@@ -461,7 +461,7 @@ type CreateOrderModelTypes = {
 type PlanProps = {
   name: string;
   pricing: { annual_price: string; monthly_price: string };
-  benefits: string[];
+  benefits: SubscriptionPlanDataTypes['benefits'];
   currency: string;
   plan_id: string;
   _id: string;
@@ -501,31 +501,41 @@ type PinAuthorizationData = {
 
 type SubscriptionModelSchemaTypes = {
   customer: {
-    id: number;
     name: string;
     phone_number?: string;
     email: string;
-    created_at: string;
     gallery_id: string;
   };
+  subscription_id: string;
+  stripe_customer_id: string;
   start_date: Date;
   expiry_date: Date;
-  status: 'active' | 'cancelled' | 'expired';
-  card: SubscriptionCardDetails;
-  payment: SubscriptionPaymentTypes;
+  status: 'active' | 'canceled' | 'expired' | 'incomplete';
+  paymentMethod: Stripe.PaymentMethod | null;
   plan_details: {
     type: string;
     value: { monthly_price: string; annual_price: string };
     currency: string;
     interval: 'monthly' | 'yearly';
   };
-  next_charge_params: {
-    value: number;
-    currency: string;
-    type: string;
-    interval: 'monthly' | 'yearly';
-    plan_id: string;
-  };
+  next_charge_params: NextChargeParams;
+  upload_tracker: UploadTrackingTypes;
+};
+
+type UploadTrackingTypes = {
+  limit: number;
+  next_reset_date: Date | string;
+  upload_count: number;
+};
+
+type SubscriptionTransactionModelSchemaTypes = {
+  trans_id: string;
+  payment_ref: string;
+  amount: number;
+  gallery_id: string;
+  date: Date;
+  status: 'successful' | 'failed' | 'processing';
+  stripe_customer_id: string;
 };
 
 type SubscriptionPlanDataTypes = {
@@ -536,7 +546,10 @@ type SubscriptionPlanDataTypes = {
   };
   plan_id: string;
   currency: string;
-  benefits: string[];
+  benefits: {
+    annual: string[];
+    monthly: string[];
+  };
 };
 
 type SubscriptionTokenizationTypes = {

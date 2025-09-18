@@ -1,39 +1,55 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import CardDetails from '../components/CardDetails';
-import PlanDetails from '../components/PlanDetails';
-import ManageSubscriptionsSection from '../components/ManageSubscriptionsSection';
-import { useAppStore } from 'store/app/appStore';
-import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData';
-import ActiveSubLoader from '../components/ActiveSubLoader';
-import { useModalStore } from 'store/modal/modalStore';
-import UpcomingBilling from '../components/UpcomingBilling';
+import React, { useState } from 'react';
+import { View, ScrollView } from 'react-native';
+import tw from 'twrnc';
+import { PaymentMethod } from '@stripe/stripe-js';
+import { BillingCard } from '../components/BillingCard';
+import SubDetail from '../components/SubDetail';
+import UpcomingSub from '../components/UpcomingSub';
 import BillingInfo from '../components/BillingInfo';
 import TransactionsListing from '../components/TransactionsListing';
-import { useIsFocused } from '@react-navigation/native';
+import CancelSubscriptionModal from '../components/CancelSubscriptionModal';
 
-export default function ActiveSubscriptions({ subscriptionData }: { subscriptionData: any }) {
-  if (subscriptionData)
-    return (
-      <View style={{ gap: 20, marginBottom: 100 }}>
-        <CardDetails cardData={subscriptionData.card} />
-        <PlanDetails
-          sub_status={subscriptionData.status}
-          plan_details={subscriptionData.plan_details}
-          end_date={subscriptionData.expiry_date}
-          payment={subscriptionData.payment}
-        />
-        <UpcomingBilling
-          plan_details={subscriptionData.plan_details}
-          end_date={subscriptionData.expiry_date}
-          payment={subscriptionData.payment}
-          next_charge_params={subscriptionData.next_charge_params}
-          sub_status={subscriptionData.status}
-        />
-        <BillingInfo />
-        <TransactionsListing />
+type SubscriptionActiveThemeProps = {
+  subscription_data: any & { createdAt: string; updatedAt: string };
+  subscription_plan: any & { createdAt: string; updatedAt: string; plan_id: string };
+};
+
+export default function SubscriptionActiveThemeRN({
+  subscription_data,
+  subscription_plan,
+}: SubscriptionActiveThemeProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <ScrollView contentContainerStyle={tw`px-4 py-5`} showsVerticalScrollIndicator={false}>
+      <View style={tw`w-full`}>
+        {/* responsive grid substitute using stacked blocks */}
+        <View style={tw`gap-4`}>
+          <View style={tw`gap-3`}>
+            <BillingCard
+              paymentMethod={subscription_data.paymentMethod as PaymentMethod}
+              plan_id={subscription_plan?.plan_id}
+              plan_interval={subscription_data.plan_details.interval}
+            />
+
+            <SubDetail sub_data={subscription_data} onOpenCancelModal={() => setOpen(true)} />
+          </View>
+
+          <View style={tw`gap-3`}>
+            <UpcomingSub sub_data={subscription_data} />
+            <BillingInfo />
+          </View>
+
+          <CancelSubscriptionModal
+            visible={open}
+            onClose={() => setOpen(false)}
+            subEnd={subscription_data.expiry_date}
+          />
+        </View>
+
+        <View style={tw`mt-4`}>
+          <TransactionsListing />
+        </View>
       </View>
-    );
+    </ScrollView>
+  );
 }
-
-const styles = StyleSheet.create({});
