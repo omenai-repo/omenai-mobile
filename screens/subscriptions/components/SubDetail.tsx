@@ -162,9 +162,9 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
       <View style={tw`flex-row mt-4`}>
         {isEndedPast ? (
           <Pressable
-            onPress={() => {
-              navigation.navigate(screenName.gallery.billing, { plan_action: 'reactivation' });
-            }}
+            onPress={() =>
+              navigation.navigate(screenName.gallery.billing, { plan_action: 'reactivation' })
+            }
             style={({ pressed }) =>
               tw.style(
                 `flex-1 h-11 rounded-lg items-center justify-center bg-blue-600`,
@@ -180,7 +180,9 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
           !isPendingCancel && (
             <>
               <Pressable
-                onPress={() => navigation.navigate('BillingPlans')}
+                onPress={() =>
+                  navigation.navigate(screenName.gallery.billing, { plan_action: null })
+                }
                 style={({ pressed }) =>
                   tw.style(
                     `flex-1 h-11 rounded-lg items-center justify-center bg-slate-100`,

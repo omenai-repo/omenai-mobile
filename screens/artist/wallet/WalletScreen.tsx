@@ -214,7 +214,7 @@ const WalletScreen = () => {
 
   return (
     <WithModal>
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
+      <View style={tw`flex-1 bg-[#F7F7F7] pt-[80px] android:pt-[40px]`}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -228,11 +228,11 @@ const WalletScreen = () => {
           }
         >
           <View>
-            <Image
+            {/* <Image
               style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
               resizeMode="contain"
               source={require('../../../assets/omenai-logo.png')}
-            />
+            /> */}
 
             {/* Balances card */}
             <View

@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   mainContainer: {
-    paddingHorizontal: 20,
     marginTop: 20,
     flex: 1,
   },

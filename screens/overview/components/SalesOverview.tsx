@@ -1,97 +1,64 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, Animated, Easing } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
+import { useQuery } from '@tanstack/react-query';
 import { getSalesActivityData } from 'services/overview/getSalesActivityData';
 import { salesDataAlgorithm } from 'utils/utils_salesDataAlgorithm';
-import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
-import tw from 'twrnc';
+import { QK } from 'screens/artist/overview/ArtistOverview';
 
 const { width } = Dimensions.get('window');
 
 export default function SalesOverview({
-  refreshCount,
   onLoadingChange,
 }: {
-  refreshCount: boolean;
   onLoadingChange?: (l: boolean) => void;
 }) {
-  const [salesOverviewData, setSalesOverviewData] = useState<number[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [tooltip, setTooltip] = useState({
-    visible: false,
-    x: 0,
-    y: 0,
-    value: 0,
+  const query = useQuery({
+    queryKey: QK.salesOverview,
+    queryFn: async () => {
+      const res = await getSalesActivityData();
+      return salesDataAlgorithm(res.data).map((m) => m.Revenue) as number[];
+    },
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
-  const [fadeAnim] = useState(new Animated.Value(0)); // For tooltip animation
 
   useEffect(() => {
-    let cancelled = false;
-    const handle = async () => {
-      setIsLoading(true);
-      onLoadingChange?.(true);
-      try {
-        const data = await getSalesActivityData();
-        const activityData = salesDataAlgorithm(data.data);
-        const arr = activityData.map((m) => m.Revenue);
-        if (!cancelled) setSalesOverviewData(arr);
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-          onLoadingChange?.(false);
-        }
-      }
-    };
-    handle();
-    return () => {
-      cancelled = true;
-    };
-  }, [refreshCount]);
+    onLoadingChange?.(query.isFetching || (query.isLoading && !query.data));
+  }, [query.isFetching, query.isLoading, query.data, onLoadingChange]);
 
-  const labels = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  const maxValue = Math.max(...salesOverviewData);
-  const safeMaxValue = maxValue === 0 ? 1 : maxValue;
+  const data = query.data ?? [];
+  const labels = useMemo(
+    () => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    [],
+  );
+  const maxValue = Math.max(0, ...data);
+  const safeMax = maxValue || 1;
 
-  // Chart configuration
   const chartWidth = width - 40;
   const chartHeight = 100;
   const yAxisWidth = 40;
-  const barWidth = (chartWidth - yAxisWidth) / salesOverviewData.length;
+  const barWidth = data.length ? (chartWidth - yAxisWidth) / data.length : 1;
 
-  const formatToK = (num: number) => {
-    if (num >= 1000) {
-      return `$${(num / 1000).toFixed(1).replace(/\.0$/, '')}K`;
-    }
-    return num.toString();
-  };
+  const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: 0 });
+  const [fade] = useState(new Animated.Value(0));
+  const fmt = (n: number) =>
+    n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0$/, '')}K` : `${n}`;
 
-  const handleBarPress = (x: number, y: number, value: number) => {
+  const toggleTip = (x: number, y: number, value: number) => {
     if (tooltip.visible && tooltip.value === value && tooltip.x === x) {
-      // Hide if already visible on same bar
-      Animated.timing(fadeAnim, {
+      Animated.timing(fade, {
         toValue: 0,
         duration: 200,
         easing: Easing.ease,
         useNativeDriver: true,
-      }).start(() => {
-        setTooltip({ ...tooltip, visible: false });
-      });
+      }).start(() => setTooltip((t) => ({ ...t, visible: false })));
     } else {
-      // Show new tooltip
       setTooltip({ visible: true, x, y, value });
-      Animated.timing(fadeAnim, {
+      Animated.timing(fade, {
         toValue: 1,
         duration: 200,
         easing: Easing.ease,
@@ -100,13 +67,12 @@ export default function SalesOverview({
     }
   };
 
-  if (isLoading) {
+  if (query.isLoading && !query.data) {
     return (
       <View style={styles.skeletonContainer}>
         <View style={styles.header}>
           <View style={[styles.skeletonBlock, { width: 100, height: 20 }]} />
         </View>
-
         <View style={[styles.chart, { justifyContent: 'space-around' }]}>
           {Array.from({ length: 12 }).map((_, i) => (
             <View
@@ -121,11 +87,10 @@ export default function SalesOverview({
             />
           ))}
         </View>
-
         <View style={styles.xAxis}>
-          {Array.from({ length: 12 }).map((_, index) => (
+          {Array.from({ length: 12 }).map((_, i) => (
             <View
-              key={index}
+              key={i}
               style={{
                 width: 20,
                 height: 10,
@@ -140,7 +105,7 @@ export default function SalesOverview({
     );
   }
 
-  if (salesOverviewData.every((val) => val === 0)) {
+  if (data.every((v) => v === 0)) {
     return (
       <View style={styles.container}>
         <Text style={[styles.title, { textAlign: 'center', marginTop: 40, marginBottom: 20 }]}>
@@ -151,102 +116,71 @@ export default function SalesOverview({
   }
 
   return (
-    <>
-      {/* <Text style={tw`text-[18px] text-[#1A1A1A]] font-medium mb-[10px] mx-[20px]`}>
-        Sales Overview
-      </Text> */}
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Sales</Text>
-        </View>
-
-        {/* Chart */}
-        <View style={styles.chart}>
-          {/* Y-Axis */}
-          <View style={styles.yAxis}>
-            {[0, maxValue / 2, maxValue].map((value, index) => (
-              <Text
-                key={index}
-                style={[styles.yAxisLabel, { bottom: (chartHeight / 2) * index - 8 }]}
-              >
-                {formatToK(value)}
-              </Text>
-            ))}
-          </View>
-
-          {/* Bars */}
-          <Svg
-            width={chartWidth}
-            height={chartHeight}
-            style={{
-              backgroundColor: '#242731',
-            }}
-          >
-            <Defs>
-              <LinearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor="#8668E1" stopOpacity="1" />
-                <Stop offset="1" stopColor="#232630" stopOpacity="0.5" />
-              </LinearGradient>
-            </Defs>
-
-            {salesOverviewData.map((value, index) => {
-              const barHeight = (value / safeMaxValue) * chartHeight;
-              const x = yAxisWidth + index * barWidth - barWidth + index + 10;
-              const y = chartHeight - barHeight;
-
-              return (
-                <Rect
-                  key={index}
-                  x={x}
-                  y={y}
-                  width={barWidth - 10}
-                  height={barHeight}
-                  fill="url(#barGradient)"
-                  rx={4}
-                  onPress={() => handleBarPress(x + barWidth / 2, y, value)}
-                />
-              );
-            })}
-          </Svg>
-        </View>
-
-        {/* Tooltip */}
-        {tooltip.visible && (
-          <Animated.View
-            style={[
-              styles.tooltip,
-              {
-                opacity: fadeAnim,
-                left: tooltip.x,
-                top: tooltip.y,
-              },
-            ]}
-          >
-            <Text style={styles.tooltipText}>{formatToK(tooltip.value)} Sales</Text>
-          </Animated.View>
-        )}
-
-        {/* X-Axis */}
-        <View style={styles.xAxis}>
-          {labels.map((label, index) => (
-            <Text
-              key={index}
-              style={[
-                styles.xAxisLabel,
-                {
-                  width: barWidth,
-                  textAlign: 'center',
-                  left: yAxisWidth + index * barWidth - barWidth + index + 5,
-                },
-              ]}
-            >
-              {label}
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Sales</Text>
+      </View>
+      <View style={styles.chart}>
+        <View style={styles.yAxis}>
+          {[0, maxValue / 2, maxValue].map((v, idx) => (
+            <Text key={idx} style={[styles.yAxisLabel, { bottom: (chartHeight / 2) * idx - 8 }]}>
+              {fmt(v)}
             </Text>
           ))}
         </View>
+
+        <Svg width={chartWidth} height={chartHeight} style={{ backgroundColor: '#242731' }}>
+          <Defs>
+            <LinearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor="#8668E1" stopOpacity="1" />
+              <Stop offset="1" stopColor="#232630" stopOpacity="0.5" />
+            </LinearGradient>
+          </Defs>
+
+          {data.map((value, i) => {
+            const barH = (value / safeMax) * chartHeight;
+            const x = yAxisWidth + i * barWidth - barWidth + i + 10;
+            const y = chartHeight - barH;
+            return (
+              <Rect
+                key={i}
+                x={x}
+                y={y}
+                width={barWidth - 10}
+                height={barH}
+                fill="url(#barGradient)"
+                rx={4}
+                onPress={() => toggleTip(x + barWidth / 2, y, value)}
+              />
+            );
+          })}
+        </Svg>
       </View>
-    </>
+
+      {tooltip.visible && (
+        <Animated.View style={[styles.tooltip, { opacity: fade, left: tooltip.x, top: tooltip.y }]}>
+          <Text style={styles.tooltipText}>{fmt(tooltip.value)} Sales</Text>
+        </Animated.View>
+      )}
+
+      <View style={styles.xAxis}>
+        {labels.map((l, i) => (
+          <Text
+            key={i}
+            style={[
+              styles.xAxisLabel,
+              {
+                width: barWidth,
+                textAlign: 'center',
+                left: yAxisWidth + i * barWidth - barWidth + i + 5,
+              },
+            ]}
+          >
+            {l}
+          </Text>
+        ))}
+      </View>
+    </View>
   );
 }
 
@@ -266,31 +200,10 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     paddingHorizontal: 10,
     marginHorizontal: 15,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 4,
-    // elevation: 2,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  chart: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: 100,
-    position: 'relative',
-  },
+  header: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  title: { fontSize: 18, color: '#FFFFFF', fontWeight: '600' },
+  chart: { flexDirection: 'row', alignItems: 'flex-end', height: 100, position: 'relative' },
   yAxis: {
     position: 'absolute',
     left: 0,
@@ -298,37 +211,15 @@ const styles = StyleSheet.create({
     height: '100%',
     zIndex: 10,
   },
-  yAxisLabel: {
-    color: '#7C7C8D',
-    fontSize: 12,
-    textAlign: 'right',
-    position: 'absolute',
-    left: 0,
-  },
+  yAxisLabel: { color: '#7C7C8D', fontSize: 12, textAlign: 'right', position: 'absolute', left: 0 },
   xAxis: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
     position: 'relative',
   },
-  xAxisLabel: {
-    color: '#7C7C8D',
-    fontSize: 10,
-    position: 'absolute',
-    bottom: -20,
-  },
-  tooltip: {
-    position: 'absolute',
-    backgroundColor: '#fff',
-    padding: 8,
-    borderRadius: 4,
-  },
-  tooltipText: {
-    color: '#000',
-    fontSize: 12,
-  },
-  skeletonBlock: {
-    backgroundColor: '#E0E0E0',
-    borderRadius: 4,
-  },
+  xAxisLabel: { color: '#7C7C8D', fontSize: 10, position: 'absolute', bottom: -20 },
+  tooltip: { position: 'absolute', backgroundColor: '#fff', padding: 8, borderRadius: 4 },
+  tooltipText: { color: '#000', fontSize: 12 },
+  skeletonBlock: { backgroundColor: '#E0E0E0', borderRadius: 4 },
 });
