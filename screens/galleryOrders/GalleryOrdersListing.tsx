@@ -90,12 +90,12 @@ export default function GalleryOrdersListing() {
 
   return (
     <WithModal>
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <Image
+      <View style={tw`flex-1 bg-[#F7F7F7] pt-[80px] android:pt-[40px]`}>
+        {/* <Image
           style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
           resizeMode="contain"
           source={require('../../assets/omenai-logo.png')}
-        />
+        /> */}
 
         <TabSwitcher
           tabs={galleryTabs}

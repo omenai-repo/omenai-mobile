@@ -1,41 +1,47 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+// screens/overview/HighlightCard.tsx
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
 import tw from 'twrnc';
-import { fetchHighlightData } from 'services/overview/fetchHighlightData';
+import { Ionicons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
 import { fetchArtistHighlightData } from 'services/overview/fetchArtistHighlightData';
+import { QK } from './ArtistOverview';
 
-type HighlightCardProps = {
-  refreshCount: boolean;
-};
-
-export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
+export const HighlightCard = ({ onLoadingChange }: { onLoadingChange?: (l: boolean) => void }) => {
   const { width } = useWindowDimensions();
   const cardWidth = (width - 55) / 2;
 
-  const [soldArtwork, setSoldArtwork] = useState(0);
-  const [revenue, setRevenue] = useState(0);
-  const [net, setNet] = useState(0);
-  const [wallet, setWallet] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const qSales = useQuery({
+    queryKey: QK.highlight('sales'),
+    queryFn: () => fetchArtistHighlightData('sales'),
+  });
+  const qNet = useQuery({
+    queryKey: QK.highlight('net'),
+    queryFn: () => fetchArtistHighlightData('net'),
+  });
+  const qRev = useQuery({
+    queryKey: QK.highlight('revenue'),
+    queryFn: () => fetchArtistHighlightData('revenue'),
+  });
+  const qBal = useQuery({
+    queryKey: QK.highlight('balance'),
+    queryFn: () => fetchArtistHighlightData('balance'),
+  });
+
+  const isLoading = qSales.isLoading || qNet.isLoading || qRev.isLoading || qBal.isLoading;
+  const isFetching = qSales.isFetching || qNet.isFetching || qRev.isFetching || qBal.isFetching;
 
   useEffect(() => {
-    handleFetchHighlightData();
-  }, [refreshCount]);
+    onLoadingChange?.(
+      isFetching || (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data)),
+    );
+  }, [isLoading, isFetching, qSales.data, qNet.data, qRev.data, qBal.data, onLoadingChange]);
 
-  const handleFetchHighlightData = async () => {
-    setIsLoading(true);
-    const data2 = await fetchArtistHighlightData('sales');
-    const data3 = await fetchArtistHighlightData('net');
-    const data4 = await fetchArtistHighlightData('revenue');
-    const data5 = await fetchArtistHighlightData('balance');
-    setSoldArtwork(data2);
-    setRevenue(data4);
-    setNet(data3);
-    setWallet(data5);
-    setIsLoading(false);
-  };
+  const soldArtwork = qSales.data ?? 0;
+  const net = qNet.data ?? 0;
+  const revenue = qRev.data ?? 0;
+  const wallet = qBal.data ?? 0;
 
   const CardComp = ({
     title,
@@ -47,34 +53,32 @@ export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
     icon: keyof typeof Ionicons.glyphMap;
     amount: number | string;
     color: string;
-  }) => {
-    return (
-      <Animated.View
-        entering={FadeInUp.delay(100)}
-        style={[
-          tw`bg-black border border-[#ffffff10] rounded-[12px] px-[14px] py-[16px]`,
-          { width: cardWidth },
-        ]}
-      >
-        <View style={tw`flex-row justify-between items-center`}>
-          <View style={tw`flex-1`}>
-            <Text style={tw`text-[13px] text-[#FFFFFF99] mb-[2px]`}>{title}</Text>
-            <Text style={tw`text-[18px] text-white font-bold`}>{amount}</Text>
-          </View>
-          <View
-            style={[
-              tw`h-[36px] w-[36px] rounded-full justify-center items-center`,
-              { backgroundColor: `${color}22` },
-            ]}
-          >
-            <Ionicons name={icon} size={18} color={color} />
-          </View>
+  }) => (
+    <Animated.View
+      // entering={FadeInUp.delay(100)}
+      style={[
+        tw`bg-black border border-[#ffffff10] rounded-[12px] px-[14px] py-[16px]`,
+        { width: cardWidth },
+      ]}
+    >
+      <View style={tw`flex-row justify-between items-center`}>
+        <View style={tw`flex-1`}>
+          <Text style={tw`text-[13px] text-[#FFFFFF99] mb-[2px]`}>{title}</Text>
+          <Text style={tw`text-[18px] text-white font-bold`}>{amount}</Text>
         </View>
-      </Animated.View>
-    );
-  };
+        <View
+          style={[
+            tw`h-[36px] w-[36px] rounded-full justify-center items-center`,
+            { backgroundColor: `${color}22` },
+          ]}
+        >
+          <Ionicons name={icon} size={18} color={color} />
+        </View>
+      </View>
+    </Animated.View>
+  );
 
-  if (isLoading) {
+  if (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data)) {
     return (
       <View style={tw`mx-[20px] mt-[20px]`}>
         {[0, 1].map((row) => (
@@ -84,7 +88,7 @@ export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
               return (
                 <Animated.View
                   key={`loading-${idx}`}
-                  entering={FadeIn.delay(idx * 100)}
+                  // entering={FadeIn.delay(idx * 100)}
                   style={[styles.skeletonCard, { width: cardWidth }]}
                 >
                   <View style={{ flex: 1 }}>
@@ -137,10 +141,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     marginLeft: 10,
   },
-  skeletonLine: {
-    height: 10,
-    width: '70%',
-    borderRadius: 4,
-    backgroundColor: '#333',
-  },
+  skeletonLine: { height: 10, width: '70%', borderRadius: 4, backgroundColor: '#333' },
 });

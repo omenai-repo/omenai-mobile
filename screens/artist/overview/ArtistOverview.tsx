@@ -1,18 +1,25 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, RefreshControl, Image, Pressable } from 'react-native';
+// screens/overview/ArtistOverview.tsx
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { View, Text, RefreshControl, Image, Pressable, Animated } from 'react-native';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
 import { dropdownIcon, dropUpIcon, arrowUpRightWhite } from 'utils/SvgImages';
 import Header from 'components/header/Header';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import SalesOverview from 'screens/overview/components/SalesOverview';
-import { Animated } from 'react-native';
-import { getOverviewOrders } from 'services/orders/getOverviewOrders';
+import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { getImageFileView } from 'lib/storage/getImageFileView';
-import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
 import { HighlightCard } from './HighlightCard';
-import { useFocusEffect } from '@react-navigation/native';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getOverviewOrders } from 'services/orders/getOverviewOrders';
+
+export const QK = {
+  highlight: (slice: 'sales' | 'net' | 'revenue' | 'balance') =>
+    ['overview', 'highlight', slice] as const,
+  salesOverview: ['overview', 'salesOverview'] as const,
+  overviewOrders: ['overview', 'orders', 'recent'] as const,
+};
 
 export const RecentOrderContainer = ({
   id,
@@ -41,38 +48,22 @@ export const RecentOrderContainer = ({
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    if (open) {
-      Animated.timing(animatedHeight, {
-        toValue: 120,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-      Animated.timing(animatedOpacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-    } else {
-      Animated.timing(animatedHeight, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-      Animated.timing(animatedOpacity, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: false,
-      }).start();
-    }
-  }, [open]);
+  React.useEffect(() => {
+    const to = open ? 120 : 0;
+    Animated.timing(animatedHeight, { toValue: to, duration: 300, useNativeDriver: false }).start();
+    Animated.timing(animatedOpacity, {
+      toValue: open ? 1 : 0,
+      duration: open ? 200 : 150,
+      useNativeDriver: false,
+    }).start();
+  }, [open, animatedHeight, animatedOpacity]);
 
   const statusStyles = {
     pending: { bg: '#FFBF0040', text: '#1a1a1a' },
     processing: { bg: '#007AFF20', text: '#007AFF' },
     completed: { bg: '#00C85120', text: '#00C851' },
     history: { bg: '#00C85120', text: '#00C851' },
-  };
+  } as const;
 
   return (
     <View
@@ -106,7 +97,7 @@ export const RecentOrderContainer = ({
             <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
             <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{price}</Text>
           </View>
-          {buyerName && (
+          {!!buyerName && (
             <View style={tw`flex-row items-center gap-[20px]`}>
               <Text style={tw`text-[14px] text-[#737373]`}>Buyer</Text>
               <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{buyerName}</Text>
@@ -119,7 +110,7 @@ export const RecentOrderContainer = ({
                 backgroundColor: statusStyles[status].bg,
               })}
             >
-              <Text style={tw.style(`text-[12px]`, { color: statusStyles[status]?.text })}>
+              <Text style={tw.style(`text-[12px]`, { color: statusStyles[status].text })}>
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </Text>
             </View>
@@ -131,37 +122,38 @@ export const RecentOrderContainer = ({
 };
 
 const ArtistOverview = () => {
-  const [refreshing, setRefreshing] = useState(false);
-  const [openSection, setOpenSection] = useState<{ [key: number]: boolean }>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<any[]>([]);
+  const queryClient = useQueryClient();
+  const [openSection, setOpenSection] = useState<Record<number, boolean>>({});
 
-  useEffect(() => {
-    fetchRecentOrders();
-  }, []);
+  // Recent orders via query
+  const ordersQuery = useQuery({
+    queryKey: QK.overviewOrders,
+    queryFn: async () => {
+      const res = await getOverviewOrders();
+      return res?.isOk ? res.data : [];
+    },
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
+  });
 
-  const fetchRecentOrders = useCallback(async () => {
-    // When called by initial mount, show main loader
-    // When called by pull-to-refresh, we’ll manage refreshing separately
-    try {
-      if (!refreshing) setIsLoading(true);
-      const results = await getOverviewOrders();
-      setData(results?.isOk ? results.data : []);
-    } catch {
-      setData([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [refreshing]);
+  const isLoadingOrders = ordersQuery.isLoading && !ordersQuery.data;
+  const data = ordersQuery.data ?? [];
+
+  const isAnyFetching = ordersQuery.isFetching; // You can OR in other components’ isFetching if you want a unified spinner
 
   const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    try {
-      await fetchRecentOrders();
-    } finally {
-      setRefreshing(false);
-    }
-  }, [fetchRecentOrders]);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: QK.highlight('sales') }),
+      queryClient.invalidateQueries({ queryKey: QK.highlight('net') }),
+      queryClient.invalidateQueries({ queryKey: QK.highlight('revenue') }),
+      queryClient.invalidateQueries({ queryKey: QK.highlight('balance') }),
+      queryClient.invalidateQueries({ queryKey: QK.salesOverview }),
+      queryClient.invalidateQueries({ queryKey: QK.overviewOrders }),
+    ]);
+  }, [queryClient]);
 
   const toggleRecentOrder = useCallback((key: number) => {
     setOpenSection((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -171,14 +163,13 @@ const ArtistOverview = () => {
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={isAnyFetching} onRefresh={onRefresh} />}
       >
         <Header />
 
-        {/* Highlight Cards */}
-        <HighlightCard refreshCount={refreshing} />
-
-        <SalesOverview refreshCount={refreshing} />
+        {/* Highlight Cards & Sales chart use their own queries and report loading via onLoadingChange if needed */}
+        <HighlightCard />
+        <SalesOverview />
 
         {/* Recent Orders */}
         {data.length !== 0 && (
@@ -187,7 +178,7 @@ const ArtistOverview = () => {
           >
             <View style={tw`flex-row items-center mb-[25px]`}>
               <Text style={tw`text-[16px] text-[#454545] font-semibold flex-1`}>Recent Orders</Text>
-              {!isLoading && (
+              {!isLoadingOrders && (
                 <View style={tw`flex-row items-center gap-[3px]`}>
                   <Text style={tw`text-[12px] text-[#3D3D3D] font-semibold`}>Show All</Text>
                   <SvgXml xml={arrowUpRightWhite} />
@@ -195,15 +186,15 @@ const ArtistOverview = () => {
               )}
             </View>
 
-            {isLoading ? (
+            {isLoadingOrders ? (
               <OrderslistingLoader />
             ) : (
-              data.map((item, index) => (
+              data.map((item: any, index: number) => (
                 <RecentOrderContainer
                   key={index}
                   id={index}
                   url={item.artwork_data.url}
-                  open={openSection[item.artwork_data._id]}
+                  open={!!openSection[item.artwork_data._id]}
                   setOpen={() => toggleRecentOrder(item.artwork_data._id)}
                   artId={item.order_id}
                   artName={item.artwork_data.title}
@@ -217,7 +208,7 @@ const ArtistOverview = () => {
           </View>
         )}
 
-        {data.length === 0 && !isLoading && (
+        {data.length === 0 && !isLoadingOrders && (
           <>
             <Text style={tw`text-[16px] text-[#454545] font-semibold mt-[20px] mx-[15px]`}>
               Recent Orders
