@@ -323,7 +323,7 @@ export default function Checkout() {
           modalType: 'success',
         });
         await queryClient.invalidateQueries({ queryKey: ['subscription_precheck'] });
-        navigation.goBack();
+        navigation.pop(2);
       }
     } catch (e: any) {
       updateModal({
