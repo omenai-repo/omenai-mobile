@@ -130,7 +130,6 @@ export default function GalleryOrdersListing() {
                     onRefresh={() => ordersQuery.refetch()}
                     tintColor="#000"
                     colors={['#000']}
-                    size={40}
                   />
                 }
                 renderItem={({ item, index }) => (

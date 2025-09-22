@@ -82,7 +82,6 @@ const WalletHistory = ({ navigation }: any) => {
               onRefresh={() => refetch()}
               tintColor="#000"
               colors={['#000']}
-              size={40}
             />
           }
         />
