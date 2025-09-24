@@ -40,7 +40,6 @@ export default function Register() {
 
   return (
     <WithModal>
-      <StatusBar style="light" />
       <AuthHeader
         title="Create an account"
         subTitle="Fill in required details and create an account"

@@ -4,6 +4,7 @@ import BackScreenButton from 'components/buttons/BackScreenButton';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from 'config/colors.config';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type BackHeaderTitleProps = {
   title: string;
@@ -12,9 +13,14 @@ type BackHeaderTitleProps = {
 
 export default function BackHeaderTitle({ title, callBack }: BackHeaderTitleProps) {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View
+      style={{
+        paddingTop: insets.top + 16,
+      }}
+    >
       <View style={styles.topContainer}>
         <BackScreenButton
           handleClick={() => {
@@ -25,7 +31,7 @@ export default function BackHeaderTitle({ title, callBack }: BackHeaderTitleProp
         <Text style={styles.topTitle}>{title}</Text>
         <View style={{ width: 50 }} />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -42,8 +48,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.primary_black,
     textTransform: 'capitalize',
-  },
-  safeArea: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });

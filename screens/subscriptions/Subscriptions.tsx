@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Platform } from 'react-native';
-import React from 'react';
+import React, { use } from 'react';
 import InActiveSubscription from './features/InActiveSubscription';
 import { useAppStore } from 'store/app/appStore';
 import ActiveSubscriptions from './features/ActiveSubscriptions';
@@ -11,10 +11,12 @@ import ScrollWrapper from 'components/general/ScrollWrapper';
 import { getAccountID } from 'services/stripe/getAccountID';
 import { checkIsStripeOnboarded } from 'services/stripe/checkIsStripeOnboarded';
 import { useQuery } from '@tanstack/react-query';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Subscriptions() {
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
+  const insets = useSafeAreaInsets();
 
   const { data: isConfirmed, isLoading } = useQuery({
     queryKey: ['subscription_precheck'],
@@ -72,7 +74,11 @@ export default function Subscriptions() {
 
   return (
     <WithModal>
-      <View style={styles.safeArea}>
+      <View
+        style={{
+          paddingTop: insets.top + 16,
+        }}
+      >
         <View style={styles.headerContainer}>
           <Text style={{ fontSize: 20, textAlign: 'center' }}>Subscription & Billing</Text>
         </View>
@@ -105,8 +111,5 @@ const styles = StyleSheet.create({
   mainContainer: {
     marginTop: 20,
     flex: 1,
-  },
-  safeArea: {
-    paddingTop: Platform.OS === 'android' ? 50 : 80,
   },
 });

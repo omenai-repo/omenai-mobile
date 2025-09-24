@@ -15,6 +15,7 @@ import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import { changePasswsordIcon, deleteIcon } from 'utils/SvgImages';
 import LongBlackButton from 'components/buttons/LongBlackButton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type UserData = { name: string; email: string };
 
@@ -22,6 +23,7 @@ export default function GalleryProfile() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
+  const insets = useSafeAreaInsets();
 
   const [userData, setUserData] = useState<UserData>({
     name: userSession?.name ?? '',
@@ -62,7 +64,7 @@ export default function GalleryProfile() {
   return (
     <WithGalleryModal>
       <ScrollWrapper style={styles.mainContainer}>
-        <View style={styles.profileContainer}>
+        <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
           <Logo url={userSession?.logo} />
 
           <View>
@@ -114,10 +116,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 20,
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 80 : 50,
   },
   headerContainer: { paddingHorizontal: 20 },
   mainContainer: { paddingHorizontal: 20, flex: 1 },
   buttonsContainer: { marginTop: 10, marginBottom: 50, gap: 20 },
-  safeArea: { paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
 });

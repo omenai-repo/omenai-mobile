@@ -14,6 +14,7 @@ import { MotiView } from 'moti';
 import WithModal from 'components/modal/WithModal';
 import { PinCreationModal } from './PinCreationModal';
 import { useIsFetching, useQuery } from '@tanstack/react-query';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const WalletContainerSkeleton = () => {
   const SkeletonBlock = ({ style }: { style: any }) => (
@@ -130,6 +131,7 @@ const TXNS_QK = ['wallet', 'artist', 'txns', { status: 'all' }] as const;
 const WalletScreen = () => {
   const { updateModal } = useModalStore();
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
 
   const [showAvailableBalance, setShowAvailableBalance] = useState(false);
   const [showPendingBalance, setShowPendingBalance] = useState(false);
@@ -214,7 +216,7 @@ const WalletScreen = () => {
 
   return (
     <WithModal>
-      <View style={tw`flex-1 bg-[#F7F7F7] pt-[80px] android:pt-[40px]`}>
+      <View style={tw.style(`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 })}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           refreshControl={

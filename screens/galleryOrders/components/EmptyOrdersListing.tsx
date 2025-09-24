@@ -21,6 +21,6 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
     alignItems: 'center',
-    paddingTop: height / 6,
+    paddingTop: height / 5,
   },
 });

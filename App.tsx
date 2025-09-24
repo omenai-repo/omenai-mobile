@@ -22,6 +22,7 @@ import { useNotifications } from 'hooks/useNotifications';
 import { registerForPushToken } from 'notifications/registerForPushToken';
 import { navigationRef } from 'navigation/RootNavigation';
 import { useNotificationHandler } from 'hooks/useNotificationHandler';
+import { StatusBar } from 'expo-status-bar';
 
 if (!Platform.constants) {
   Platform.constants = {
@@ -136,6 +137,7 @@ export default function App() {
 
   return (
     <CopilotProvider>
+      <StatusBar style="auto" />
       <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <QueryClientProvider client={queryClient}>
           <BottomSheetModalProvider>

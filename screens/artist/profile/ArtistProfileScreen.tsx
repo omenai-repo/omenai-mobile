@@ -20,6 +20,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import EligibityResponseScreen from './EligibityResponseScreen';
 import Logo from 'screens/galleryProfileScreens/galleryProfile/components/Logo';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type userDataType = {
   name: string;
@@ -32,6 +33,7 @@ export default function ArtistProfileScreen() {
 
   const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
+  const insets = useSafeAreaInsets();
 
   const [userData, setuserdata] = useState<userDataType>({ name: '', email: '' });
   const [isLoading, setIsLoading] = useState(false);
@@ -95,7 +97,7 @@ export default function ArtistProfileScreen() {
       {!isLoading ? (
         !isEligible ? (
           <ScrollWrapper style={styles.mainContainer}>
-            <View style={styles.profileContainer}>
+            <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
               <Logo url={userSession?.logo} />
 
               <View>
@@ -180,7 +182,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 20,
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 80 : 50,
     flexWrap: 'wrap',
   },
   headerContainer: {

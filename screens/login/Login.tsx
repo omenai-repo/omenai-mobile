@@ -20,7 +20,6 @@ export default function Login() {
 
   return (
     <WithModal>
-      <StatusBar style="light" />
       <AuthHeader
         title="Welcome Back"
         subTitle="Access your account so you can start purchasing artwork"

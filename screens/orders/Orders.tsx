@@ -11,12 +11,14 @@ import { useNavigation } from '@react-navigation/native';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { useCollectorOrders } from 'hooks/useCollectorOrders';
 import { colors } from 'config/colors.config';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type OrderTabsTypes = 'pending' | 'history';
 
 export default function Orders() {
   const navigation = useNavigation<any>();
   const { data, isLoading, isRefetching, refetch } = useCollectorOrders();
+  const insets = useSafeAreaInsets();
 
   const [selectedTab, setSelectedTab] = useState<OrderTabsTypes>('pending');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -90,7 +92,7 @@ export default function Orders() {
 
   return (
     <WithModal>
-      <View style={tw`flex-1 bg-[#F7F7F7] pt-[80px] android:pt-[40px]`}>
+      <View style={tw.style(`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 })}>
         {/* <Image
           style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
           resizeMode="contain"
@@ -104,7 +106,7 @@ export default function Orders() {
         />
 
         <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px] android:mb-[20px]`}
+          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
         >
           {isLoading ? (
             <OrderslistingLoader />

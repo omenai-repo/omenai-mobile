@@ -6,11 +6,13 @@ import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { useAppStore } from 'store/app/appStore';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function HeaderIndicator() {
   const { userType } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { activeIndex, setActiveIndex, isUploaded, clearData } = uploadArtworkStore();
+  const insets = useSafeAreaInsets();
 
   const titles = [
     'Upload artwork',
@@ -22,7 +24,11 @@ export default function HeaderIndicator() {
   ];
 
   return (
-    <View style={styles.safeArea}>
+    <View
+      style={{
+        paddingTop: insets.top + 16,
+      }}
+    >
       <View style={styles.container}>
         <BackScreenButton
           handleClick={() => {
@@ -75,8 +81,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     color: colors.primary_black,
-  },
-  safeArea: {
-    paddingTop: Platform.OS === 'android' ? 40 : 80,
   },
 });

@@ -30,9 +30,7 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
   const tabWidth = 100 / tabs.length;
 
   return (
-    <View
-      style={tw`relative flex-row items-center bg-white p-[10px] mt-[30px] mx-[20px] rounded-[56px]`}
-    >
+    <View style={tw`relative flex-row items-center bg-white p-[10px] mx-[20px] rounded-[56px]`}>
       {/* Animated Pill Background */}
       <Animated.View
         style={[

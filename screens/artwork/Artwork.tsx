@@ -85,10 +85,7 @@ export default function Artwork() {
   });
 
   // 2) Fetch other works by the same artist (depends on artwork)
-  const {
-    data: similarArtworksByArtist = [],
-    isLoading: isLoadingArtistWorks,
-  } = useQuery({
+  const { data: similarArtworksByArtist = [], isLoading: isLoadingArtistWorks } = useQuery({
     queryKey: ['artist-artworks', artwork?.artist],
     enabled: !!artwork?.artist,
     queryFn: async () => {
@@ -106,10 +103,15 @@ export default function Artwork() {
     if (!userSession?.id) return;
     viewedRef.current = true;
     // Fire-and-forget; don’t block UI
-    createViewHistory(artwork.title, artwork.artist, artwork.art_id, userSession.id, artwork.url)
-      .catch(() => {
-        // silent fail
-      });
+    createViewHistory(
+      artwork.title,
+      artwork.artist,
+      artwork.art_id,
+      userSession.id,
+      artwork.url,
+    ).catch(() => {
+      // silent fail
+    });
   }, [artwork, userSession?.id]);
 
   const imageUri = useMemo(
@@ -189,7 +191,9 @@ export default function Artwork() {
 
   const renderContentSection = () =>
     artwork ? (
-      <View style={isTabletLandscape ? styles.tabletContentContainer : styles.mobileContentContainer}>
+      <View
+        style={isTabletLandscape ? styles.tabletContentContainer : styles.mobileContentContainer}
+      >
         <View style={styles.artworkDetails}>
           <Text style={styles.artworkTitle}>{artwork.title}</Text>
           <Text style={styles.artworkCreator}>{artwork.artist}</Text>
@@ -342,14 +346,19 @@ export default function Artwork() {
                       { name: 'Materials', text: artwork.materials },
                       {
                         name: 'Certificate of authenticity',
-                        text: artwork.certificate_of_authenticity === 'Yes' ? 'Included' : 'Not included',
+                        text:
+                          artwork.certificate_of_authenticity === 'Yes'
+                            ? 'Included'
+                            : 'Not included',
                       },
                       { name: 'Artwork packaging', text: artwork.framing },
                       { name: 'Signature', text: `Signed ${artwork.signature}` },
                       { name: 'Year', text: artwork.year },
                       { name: 'Height', text: artwork.dimensions.height },
                       { name: 'Width', text: artwork.dimensions.width },
-                      ...(artwork.dimensions.depth ? [{ name: 'Depth', text: artwork.dimensions.depth }] : []),
+                      ...(artwork.dimensions.depth
+                        ? [{ name: 'Depth', text: artwork.dimensions.depth }]
+                        : []),
                       { name: 'Weight', text: artwork.dimensions.weight },
                       { name: 'Rarity', text: artwork.rarity },
                     ]}
@@ -364,31 +373,32 @@ export default function Artwork() {
                   />
                 </View>
 
-                {!['gallery', 'artist'].includes(userType) && similarArtworksByArtist.length > 0 && (
-                  <>
-                    <Text style={tw`text-[20px] font-medium text-[#1A1A1A] mb-[20px] pl-[20px]`}>
-                      Other Works by {artwork.artist}
-                    </Text>
+                {!['gallery', 'artist'].includes(userType) &&
+                  similarArtworksByArtist.length > 0 && (
+                    <>
+                      <Text style={tw`text-[20px] font-medium text-[#1A1A1A] mb-[20px] pl-[20px]`}>
+                        Other Works by {artwork.artist}
+                      </Text>
 
-                    <FlatList
-                      data={similarArtworksByArtist}
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      keyExtractor={(_, i) => String(i)}
-                      style={{ marginBottom: 25 }}
-                      contentContainerStyle={{ paddingRight: 20 }}
-                      renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
-                        <ArtworkCard
-                          title={item.title}
-                          url={item.url}
-                          artist={item.artist}
-                          showPrice={item.pricing.shouldShowPrice === 'Yes'}
-                          price={item.pricing.usd_price}
-                        />
-                      )}
-                    />
-                  </>
-                )}
+                      <FlatList
+                        data={similarArtworksByArtist}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        keyExtractor={(_, i) => String(i)}
+                        style={{ marginBottom: 25 }}
+                        contentContainerStyle={{ paddingRight: 20 }}
+                        renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
+                          <ArtworkCard
+                            title={item.title}
+                            url={item.url}
+                            artist={item.artist}
+                            showPrice={item.pricing.shouldShowPrice === 'Yes'}
+                            price={item.pricing.usd_price}
+                          />
+                        )}
+                      />
+                    </>
+                  )}
 
                 {!['gallery', 'artist'].includes(userType) && (
                   <SimilarArtworks title={artwork.title} medium={artwork.medium} />
