@@ -1,117 +1,75 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Animated,
-  FlatList,
-  View,
-  Linking,
-  Dimensions,
-  StyleSheet,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-} from 'react-native';
-import { colors } from 'config/colors.config';
+import { Animated, FlatList, View, Linking, Dimensions, StyleSheet } from 'react-native';
+import { useQuery } from '@tanstack/react-query';
 import { getPromotionalData } from 'services/promotional/getPromotionalContent';
 import BannerLoader from './BannerLoader';
 import BannerCard from './BannerCard';
+import { HOME_QK } from '../../Home';
+import { colors } from 'config/colors.config';
 
 const { width: windowWidth } = Dimensions.get('window');
 const SIDE_PADDING = 15;
 const CARD_GAP = 15;
 const CARD_WIDTH = windowWidth - SIDE_PADDING * 2;
 
-type BannerItemProps = {
-  image?: string;
-  headline: string;
-  subheadline: string;
-  cta: string;
-};
+type BannerItemProps = { image?: string; headline: string; subheadline: string; cta: string };
 
-export default function Banner({ reloadCount }: { reloadCount: number }) {
-  const [data, setData] = useState<BannerItemProps[]>([]);
-  const [loading, setLoading] = useState(false);
+export default function Banner() {
+  const { data = [], isLoading } = useQuery({
+    queryKey: HOME_QK.banner,
+    queryFn: async () => {
+      const res = await getPromotionalData();
+      return res?.isOk ? (res.data as BannerItemProps[]) : [];
+    },
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+  });
+
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
+  const scrollXValueRef = useRef(0);
   const autoplayRef = useRef<NodeJS.Timeout | null>(null);
 
-  const startAutoplay = () => {
-    stopAutoplay();
-
-    autoplayRef.current = setInterval(() => {
-      const totalCards = data.length;
-      const nextIndex = Math.round(scrollXValueRef.current / (CARD_WIDTH + CARD_GAP)) + 1;
-
-      const offset = nextIndex < totalCards ? nextIndex * (CARD_WIDTH + CARD_GAP) : 0; // Reset to first card when at end
-
-      flatListRef.current?.scrollToOffset({
-        offset,
-        animated: true,
-      });
-    }, 5000);
-  };
+  useEffect(() => {
+    const sub = scrollX.addListener(({ value }) => (scrollXValueRef.current = value));
+    return () => {
+      scrollX.removeListener(sub);
+    };
+  }, [scrollX]);
 
   const stopAutoplay = () => {
     if (autoplayRef.current) clearInterval(autoplayRef.current);
   };
-
-  const scrollXValueRef = useRef(0);
-
-  useEffect(() => {
-    scrollX.addListener(({ value }) => {
-      scrollXValueRef.current = value;
-    });
-
-    return () => scrollX.removeAllListeners();
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-    (async () => {
-      const res = await getPromotionalData();
-      if (!isMounted) return;
-      if (res?.isOk) setData(res.data);
-      setLoading(false);
-    })();
-    return () => {
-      isMounted = false;
-    };
-  }, [reloadCount]);
-
-  useEffect(() => {
-    if (data.length > 1) {
-      startAutoplay();
-      return () => stopAutoplay();
-    }
-    // ensure no stale interval keeps running
+  const startAutoplay = () => {
     stopAutoplay();
+    if (data.length <= 1) return;
+    autoplayRef.current = setInterval(() => {
+      const total = data.length;
+      const nextIndex = Math.round(scrollXValueRef.current / (CARD_WIDTH + CARD_GAP)) + 1;
+      const offset = nextIndex < total ? nextIndex * (CARD_WIDTH + CARD_GAP) : 0;
+      flatListRef.current?.scrollToOffset({ offset, animated: true });
+    }, 5000);
+  };
+
+  useEffect(() => {
+    startAutoplay();
+    return stopAutoplay;
   }, [data]);
 
-  // also ensure we clear interval on unmount of the component itself
-  useEffect(() => () => stopAutoplay(), []);
-
   const handleClick = async (url: string) => {
-    const supported = await Linking.canOpenURL(url);
-    if (supported) await Linking.openURL(url);
+    if (await Linking.canOpenURL(url)) Linking.openURL(url);
   };
 
   return (
     <View>
       <View style={{ marginTop: 20 }}>
-        {loading && data.length === 0 && <BannerLoader />}
+        {isLoading && data.length === 0 && <BannerLoader />}
 
-        {!loading && data.length > 0 && (
+        {!isLoading && data.length > 0 && (
           <Animated.FlatList
             ref={flatListRef}
             data={data}
-            renderItem={({ item }) => (
-              <BannerCard
-                cta={item.cta}
-                headline={item.headline}
-                subheadline={item.subheadline}
-                image={item.image}
-                handleClick={handleClick}
-              />
-            )}
+            renderItem={({ item }) => <BannerCard {...item} handleClick={handleClick} />}
             keyExtractor={(_, index) => `banner-${index}`}
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -122,15 +80,13 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
               useNativeDriver: false,
             })}
             scrollEventThrottle={16}
-            contentContainerStyle={{
-              paddingHorizontal: SIDE_PADDING,
-            }}
+            contentContainerStyle={{ paddingHorizontal: SIDE_PADDING }}
             ItemSeparatorComponent={() => <View style={{ width: CARD_GAP }} />}
           />
         )}
       </View>
 
-      {/* Pagination Dots */}
+      {/* Pagination */}
       <View style={styles.indicatorsContainer}>
         {data.map((_, i) => {
           const inputRange = [
@@ -138,29 +94,20 @@ export default function Banner({ reloadCount }: { reloadCount: number }) {
             (CARD_WIDTH + CARD_GAP) * i,
             (CARD_WIDTH + CARD_GAP) * (i + 1),
           ];
-
           const dotWidth = scrollX.interpolate({
             inputRange,
             outputRange: [8, 16, 8],
             extrapolate: 'clamp',
           });
-
           const dotColor = scrollX.interpolate({
             inputRange,
             outputRange: ['#D1D5DB', colors.primary_black, '#D1D5DB'],
             extrapolate: 'clamp',
           });
-
           return (
             <Animated.View
               key={i}
-              style={[
-                styles.indicator,
-                {
-                  width: dotWidth,
-                  backgroundColor: dotColor,
-                },
-              ]}
+              style={[styles.indicator, { width: dotWidth, backgroundColor: dotColor }]}
             />
           );
         })}
@@ -176,9 +123,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  indicator: {
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 4,
-  },
+  indicator: { height: 8, borderRadius: 4, marginHorizontal: 4 },
 });

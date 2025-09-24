@@ -15,6 +15,7 @@ import { OrderContainer } from 'screens/artist/orders/OrderScreen';
 import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const GALLERY_ORDERS_QK = ['orders', 'gallery'] as const;
 
@@ -22,6 +23,7 @@ export default function GalleryOrdersListing() {
   const navigation = useNavigation<any>();
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
+  const insets = useSafeAreaInsets();
 
   const [selectedTab, setSelectedTab] = useState<'pending' | 'processing' | 'completed'>('pending');
   const [openSection, setOpenSection] = useState<{ [key: string]: boolean }>({});
@@ -90,7 +92,7 @@ export default function GalleryOrdersListing() {
 
   return (
     <WithModal>
-      <View style={tw`flex-1 bg-[#F7F7F7] pt-[80px] android:pt-[40px]`}>
+      <View style={tw.style(`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 })}>
         {/* <Image
           style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
           resizeMode="contain"
@@ -104,7 +106,7 @@ export default function GalleryOrdersListing() {
         />
 
         <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[140px] android:mb-[20px]`}
+          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
         >
           {isInitialLoading ? (
             <OrderslistingLoader />

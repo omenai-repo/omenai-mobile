@@ -1,58 +1,38 @@
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
+import React from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors } from 'config/colors.config';
-import { fontNames } from 'constants/fontNames.constants';
+import { useQuery } from '@tanstack/react-query';
 import { listEditorials } from 'lib/editorial/lib/getAllBlogArticles';
 import EditorialCard from 'components/editorials/EditorialCard';
 import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
+import { colors } from 'config/colors.config';
+import { fontNames } from 'constants/fontNames.constants';
 import { Feather } from '@expo/vector-icons';
-
-export type EditorialSchemaTypes = {
-  headline: string;
-  summary?: string;
-  cover: string;
-  date: Date | string;
-  content: string;
-  slug: string;
-};
+import { HOME_QK } from 'screens/home/Home';
 
 export default function Editorials() {
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [data, setData] = useState<EditorialSchemaTypes[]>([]);
+  const navigation = useNavigation<any>();
 
-  useEffect(() => {
-    handleFetchEditorials();
-  }, []);
-
-  const handleFetchEditorials = async () => {
-    setIsLoading(true);
-    try {
+  const { data: data = [], isLoading } = useQuery({
+    queryKey: HOME_QK.editorials,
+    queryFn: async () => {
       const editorials: any = await listEditorials();
-      const safeData = Array.isArray(editorials) ? editorials : [];
-      setData(safeData.slice(0, 5));
-    } catch (error) {
-      console.warn('Failed to fetch editorials:', error);
-      setData([]);
-    }
-    setIsLoading(false);
-  };
+      const safe = Array.isArray(editorials) ? editorials : [];
+      return safe.slice(0, 5);
+    },
+    staleTime: 5 * 60_000,
+    gcTime: 15 * 60_000,
+  });
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.headerRow}
-        onPress={() =>
-          navigation.navigate('AllEditorialsScreen', {
-            editorials: data,
-          })
-        }
+        disabled={data.length === 0}
+        onPress={() => navigation.navigate('AllEditorialsScreen', { editorials: data })}
         hitSlop={10}
       >
         <Text style={styles.headerText}>Editorials</Text>
-
         <Feather name="chevron-right" color={colors.grey} size={20} />
       </TouchableOpacity>
 
@@ -61,7 +41,7 @@ export default function Editorials() {
       {!isLoading && data.length > 0 && (
         <FlatList
           data={data}
-          keyExtractor={(_, index) => `editorial-${index}`}
+          keyExtractor={(_, i) => `editorial-${i}`}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.flatListContainer}
@@ -71,46 +51,31 @@ export default function Editorials() {
                 cover={item.cover}
                 headline={item.headline}
                 width={280}
-                onPress={() => {
-                  navigation.navigate('ArticleScreen', {
-                    article: item,
-                  });
-                }}
+                onPress={() => navigation.navigate('ArticleScreen', { article: item })}
               />
             </View>
           )}
         />
+      )}
+
+      {!isLoading && data.length === 0 && (
+        <View style={{ padding: 30 }}>
+          <Text style={{ color: colors.grey, textAlign: 'center' }}>No editorials available</Text>
+        </View>
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-    marginBottom: 10,
-  },
+  container: { marginTop: 40, marginBottom: 10 },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
     justifyContent: 'space-between',
   },
-  headerText: {
-    fontSize: 18,
-    fontWeight: '500',
-    fontFamily: fontNames.dmSans + 'Medium',
-  },
-  seeAllText: {
-    fontSize: 14,
-    color: colors.primary_black,
-    fontFamily: fontNames.dmSans + 'Medium',
-  },
-  flatListContainer: {
-    paddingRight: 20,
-    marginTop: 20,
-  },
-  cardWrapper: {
-    marginLeft: 20,
-  },
+  headerText: { fontSize: 18, fontWeight: '500', fontFamily: fontNames.dmSans + 'Medium' },
+  flatListContainer: { paddingRight: 20, marginTop: 20 },
+  cardWrapper: { marginLeft: 20 },
 });

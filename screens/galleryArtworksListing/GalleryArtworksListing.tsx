@@ -12,12 +12,14 @@ import ScrollWrapper from 'components/general/ScrollWrapper';
 import ArtworksListing from 'components/general/ArtworksListing';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useModalStore } from 'store/modal/modalStore';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ARTWORKS_QK = ['artworks', 'galleryOrArtist', 'all'] as const;
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateModal } = useModalStore();
+  const insets = useSafeAreaInsets();
 
   const artworksQuery = useQuery({
     queryKey: ARTWORKS_QK,
@@ -60,7 +62,7 @@ export default function GalleryArtworksListing() {
           alignItems: 'center',
           gap: 10,
           paddingHorizontal: 20,
-          marginTop: Platform.OS === 'ios' ? 80 : 40,
+          paddingTop: insets.top + 16,
         }}
       >
         <Text style={{ fontSize: 18, flex: 1, fontWeight: '500', color: '#000' }}>Artworks</Text>

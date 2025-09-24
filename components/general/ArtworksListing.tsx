@@ -14,6 +14,7 @@ import Loader from './Loader';
 import { debounce } from 'lodash';
 import tw from 'twrnc';
 import { getNumberOfColumns } from 'utils/utils_screen';
+import { useAppStore } from 'store/app/appStore';
 
 const NUM_COLUMNS = getNumberOfColumns();
 
@@ -28,6 +29,7 @@ export default function ArtworksListing({
   onRefresh?: () => Promise<void>;
   loadingMore?: boolean;
 }) {
+  const { userType } = useAppStore();
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -83,6 +85,7 @@ export default function ArtworksListing({
             like_IDs={item.like_IDs}
             art_id={item.art_id}
             availability={item.availability}
+            galleryView={userType === 'user' ? true : false}
           />
         </View>
       )}

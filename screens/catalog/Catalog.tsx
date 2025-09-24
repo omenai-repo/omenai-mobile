@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Dimensions } from 'react-native';
-import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { colors } from 'config/colors.config';
 import FilterButton from 'components/filter/FilterButton';
 import WithModal from 'components/modal/WithModal';
@@ -9,6 +9,7 @@ import ArtworksListing from 'components/general/ArtworksListing';
 import tailwind from 'twrnc';
 import { filterStore } from 'store/artworks/FilterStore';
 import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type FetchResult = {
   isOk: boolean;
@@ -31,6 +32,7 @@ async function fetchPage({
 export default function Catalog() {
   const { width } = Dimensions.get('screen');
   const { filterOptions } = filterStore();
+  const insets = useSafeAreaInsets();
 
   // Stable key part for filters (changes only when content actually changes)
   const filterKey = useMemo(() => filterOptions, [JSON.stringify(filterOptions)]);
@@ -72,7 +74,7 @@ export default function Catalog() {
 
   return (
     <WithModal>
-      <SafeAreaView style={styles.mainContainer}>
+      <View style={[styles.mainContainer, { marginTop: insets.top + 16 }]}>
         <View style={{ zIndex: 100, paddingHorizontal: 20, width: '100%' }}>
           <FilterButton>
             <Text style={styles.headerText}>Catalog</Text>
@@ -91,7 +93,7 @@ export default function Catalog() {
             />
           )}
         </View>
-      </SafeAreaView>
+      </View>
     </WithModal>
   );
 }
@@ -100,12 +102,10 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: 40,
   },
   headerText: {
     fontSize: 18,
     fontWeight: '500',
     color: colors.primary_black,
-    paddingVertical: 20,
   },
 });

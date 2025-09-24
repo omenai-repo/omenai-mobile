@@ -1,5 +1,5 @@
 import { Image, StyleSheet, View, Platform, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { use } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,16 +7,18 @@ import { Ionicons } from '@expo/vector-icons';
 import omenaiLogo from '../../assets/omenai-logo.png';
 import tailwind from 'twrnc';
 import { screenName } from 'constants/screenNames.constants';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Header({ showNotification = true }: { showNotification?: boolean }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const insets = useSafeAreaInsets();
 
   const handleNotificationPress = () => {
     navigation.navigate('NotificationScreen');
   };
 
   return (
-    <View style={styles.mainContainer}>
+    <View style={[styles.mainContainer, { marginTop: insets.top + 16 }]}>
       <View style={tailwind`flex-1`}>
         <Image style={tailwind`w-[130px] h-[30px]`} resizeMode="contain" source={omenaiLogo} />
       </View>
@@ -41,6 +43,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: 'center',
     gap: 20,
-    marginTop: Platform.OS === 'ios' ? 80 : 40,
   },
 });

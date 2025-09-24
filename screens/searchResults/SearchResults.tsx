@@ -1,26 +1,20 @@
-import {
-  Alert,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "../../config/colors.config";
-import { useSearchStore } from "store/search/searchStore";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { fetchSearchKeyWordResults } from "services/search/fetchSearchKeywordResults";
-import ResultsListing from "./components/resultsListing/ResultsListing";
-import SearchInput from "components/inputs/SearchInput";
-import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
-import EmptyArtworks from "components/general/EmptyArtworks";
+import { Alert, SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { colors } from '../../config/colors.config';
+import { useSearchStore } from 'store/search/searchStore';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { fetchSearchKeyWordResults } from 'services/search/fetchSearchKeywordResults';
+import ResultsListing from './components/resultsListing/ResultsListing';
+import SearchInput from 'components/inputs/SearchInput';
+import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader';
+import EmptyArtworks from 'components/general/EmptyArtworks';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SearchResults() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { searchQuery, setIsLoading, isLoading } = useSearchStore();
+  const insets = useSafeAreaInsets();
 
   const [data, setData] = useState<any[]>([]);
   const [dataLength, setDataLength] = useState(0);
@@ -52,15 +46,13 @@ export default function SearchResults() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
       <View style={{ paddingHorizontal: 15 }}>
         <SearchInput />
         {searchQuery.length > 0 ? (
           <>
             <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
-            <Text style={{ fontSize: 16, color: colors.grey }}>
-              {dataLength} results found
-            </Text>
+            <Text style={{ fontSize: 16, color: colors.grey }}>{dataLength} results found</Text>
           </>
         ) : (
           <View>
@@ -85,7 +77,7 @@ export default function SearchResults() {
             size={100}
             writeUp={
               searchQuery.length < 3 && dataLength === 0
-                ? "Please enter at least 3 characters to search..."
+                ? 'Please enter at least 3 characters to search...'
                 : `Can't find artwork you're looking for, try checking for mispellings`
             }
           />
@@ -99,16 +91,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    paddingTop: Platform.OS === "ios" ? 80 : 50,
   },
   headerText: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: '500',
     color: colors.primary_black,
     paddingVertical: 20,
   },
   artworksContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 20,
   },
   singleColumn: {
@@ -117,10 +108,10 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     height: 200,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });

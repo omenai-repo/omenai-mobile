@@ -1,64 +1,44 @@
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { FlatList } from 'react-native-gesture-handler';
-import ArtworkCard from 'components/artwork/ArtworkCard';
-import { fetchArtworks } from 'services/artworks/fetchArtworks';
-import { colors } from 'config/colors.config';
-import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
-import curatedBg from 'assets/images/curated_bg.png';
-import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
-import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
-import { screenName } from 'constants/screenNames.constants';
-import EmptyArtworks from 'components/general/EmptyArtworks';
-import { StackNavigationProp } from '@react-navigation/stack';
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
+import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
+import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
+import EmptyArtworks from 'components/general/EmptyArtworks';
+import ArtworkCard from 'components/artwork/ArtworkCard';
+import { colors } from 'config/colors.config';
+import { screenName } from 'constants/screenNames.constants';
 import { fontNames } from 'constants/fontNames.constants';
+import { HOME_QK } from '../Home';
 
-export default function CuratedArtworksListing({
-  refreshCount,
-  limit,
-}: {
-  refreshCount?: number;
-  limit: number;
-}) {
-  const [isLoading, setIsLoading] = useState(false);
-  const navigation = useNavigation<StackNavigationProp<any>>();
+export default function CuratedArtworksListing({ limit }: { limit: number }) {
+  const navigation = useNavigation<any>();
 
-  const [data, setData] = useState<any[]>([]);
-  const [showMoreButton, setshowMoreButton] = useState(false);
+  const { data = [], isLoading } = useQuery({
+    queryKey: HOME_QK.curated(limit),
+    queryFn: async () => {
+      const res = await fetchCuratedArtworks({ page: 1 });
+      return res?.data ?? [];
+    },
+    select: (rows) => rows.slice(0, limit),
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+  });
 
-  useEffect(() => {
-    handleFetchArtworks();
-  }, [refreshCount]);
-
-  const handleFetchArtworks = async () => {
-    setIsLoading(true);
-    const results = await fetchCuratedArtworks({ page: 1 });
-
-    if (results) {
-      const resData = results.data ?? [];
-      setData(resData.slice(0, limit));
-      setshowMoreButton(resData.length >= 20);
-    }
-    setIsLoading(false);
-  };
+  const showMoreButton = data.length >= limit;
 
   return (
     <View style={styles.mainContainer}>
       <TouchableOpacity
         activeOpacity={0.7}
         style={{ paddingHorizontal: 20 }}
-        onPress={() =>
-          navigation.navigate(screenName.artworkCategories, {
-            title: 'curated',
-          })
-        }
+        onPress={() => navigation.navigate(screenName.artworkCategories, { title: 'curated' })}
       >
         <Text
           style={{
             fontSize: 18,
-            fontWeight: 500,
-            flex: 1,
+            fontWeight: '500',
             color: colors.white,
             fontFamily: fontNames.dmSans + 'Medium',
           }}
@@ -77,22 +57,25 @@ export default function CuratedArtworksListing({
           Explore artworks based off your interests and interactions within the past days
         </Text>
       </TouchableOpacity>
+
       <View style={{ marginTop: 20 }}>
         {isLoading && <ArtworkCardLoader />}
         {!isLoading && data.length > 0 && (
           <FlatList
             data={data}
-            renderItem={({ item, index }: { item: ArtworkFlatlistItem; index: number }) => {
-              if (index + 1 === limit && showMoreButton) {
-                return (
-                  <ViewAllCategoriesButton
-                    label="View all curated artworks"
-                    listingType="curated"
-                    darkMode
-                  />
-                );
-              }
-              return (
+            keyExtractor={(_, i) => `curated-${i}`}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{ marginTop: 20 }}
+            contentContainerStyle={{ paddingRight: 20 }}
+            renderItem={({ item, index }) =>
+              index + 1 === limit && showMoreButton ? (
+                <ViewAllCategoriesButton
+                  label="View all curated artworks"
+                  listingType="curated"
+                  darkMode
+                />
+              ) : (
                 <ArtworkCard
                   title={item.title}
                   url={item.url}
@@ -100,19 +83,13 @@ export default function CuratedArtworksListing({
                   showPrice={item.pricing.shouldShowPrice === 'Yes'}
                   price={item.pricing.usd_price}
                   availiablity={item.availability}
-                  lightText={true}
-                  // width={310}
+                  lightText
                   impressions={item.impressions}
                   like_IDs={item.like_IDs}
                   art_id={item.art_id}
                 />
-              );
-            }}
-            keyExtractor={(_, index) => JSON.stringify(index)}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 20 }}
-            contentContainerStyle={{ paddingRight: 20 }}
+              )
+            }
           />
         )}
         {!isLoading && data.length < 1 && (
@@ -124,10 +101,6 @@ export default function CuratedArtworksListing({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-    backgroundColor: colors.primary_black,
-  },
   mainContainer: {
     paddingBottom: 50,
     backgroundColor: colors.black,

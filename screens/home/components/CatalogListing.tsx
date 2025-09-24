@@ -1,19 +1,12 @@
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React from "react";
-import { mediums } from "constants/mediums";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { colors } from "config/colors.config";
-import { Feather } from "@expo/vector-icons";
-import { fontNames } from "constants/fontNames.constants";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { mediums } from 'constants/mediums';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { colors } from 'config/colors.config';
+import { Feather } from '@expo/vector-icons';
+import { fontNames } from 'constants/fontNames.constants';
 
 export default function CatalogListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -30,10 +23,7 @@ export default function CatalogListing() {
         }
       >
         <View style={styles.container}>
-          <Image
-            source={image}
-            style={{ width: 220, height: 220, borderRadius: 5 }}
-          />
+          <Image source={image} style={{ width: 220, height: 220, borderRadius: 5 }} />
           <Text style={{ fontSize: 14, marginTop: 10 }}>{name}</Text>
         </View>
       </TouchableOpacity>
@@ -42,13 +32,11 @@ export default function CatalogListing() {
 
   return (
     <View style={{ marginTop: 40 }}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate(screenName.collections)}
-      >
+      <TouchableOpacity onPress={() => navigation.navigate(screenName.collections)}>
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
             gap: 10,
             paddingHorizontal: 20,
           }}
@@ -58,7 +46,7 @@ export default function CatalogListing() {
               fontSize: 18,
               fontWeight: 500,
               flex: 1,
-              fontFamily: fontNames.dmSans + "Medium",
+              fontFamily: fontNames.dmSans + 'Medium',
             }}
           >
             Art Collections
@@ -68,19 +56,8 @@ export default function CatalogListing() {
       </TouchableOpacity>
       <FlatList
         data={mediums}
-        renderItem={({
-          item,
-          index,
-        }: {
-          item: CatalogCardTypes;
-          index: number;
-        }) => (
-          <CatalogCard
-            name={item.name}
-            image={item.image}
-            key={index}
-            value={item.value}
-          />
+        renderItem={({ item, index }: { item: CatalogCardTypes; index: number }) => (
+          <CatalogCard name={item.name} image={item.image} key={index} value={item.value} />
         )}
         keyExtractor={(_, index) => JSON.stringify(index)}
         horizontal={true}
