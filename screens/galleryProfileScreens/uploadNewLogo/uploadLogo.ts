@@ -9,12 +9,12 @@ const uploadLogo = async (file: { uri: string; name: string; type: string }) => 
   } as any); // TS expects a `File`, so we cast
 
   const res = await fetch(
-    `https://cloud.appwrite.io/v1/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID}/files`,
+    `https://cloud.appwrite.io/v1/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID}/files`,
     {
       method: 'POST',
       headers: {
-        'X-Appwrite-Project': process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_CLIENT_ID!,
-        'X-Appwrite-Key': process.env.EXPO_PUBLIC_APPWRITE_LOGO_UPLOAD_KEY!,
+        'X-Appwrite-Project': process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
+        'X-Appwrite-Key': process.env.EXPO_PUBLIC_APPWRITE_UPLOAD_KEY!,
       },
       body: formData,
     },

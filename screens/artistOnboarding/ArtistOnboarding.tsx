@@ -27,7 +27,7 @@ import ConfirmationModal from './ConfirmationModal';
 import uploadArtistDoc from 'screens/register/components/artistRegistrationForm/uploadArtistDoc';
 import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { artistOnboarding } from 'services/artistOnboarding/artistOnbaording';
-import { documentation_storage } from 'appWrite_config';
+import { storage } from 'appWrite_config';
 import { useModalStore } from 'store/modal/modalStore';
 import LoadingContainer from './LoadingContainer';
 import FirstScreen from './FirstScreen';
@@ -362,10 +362,10 @@ const ArtistOnboarding = () => {
         });
         setScreen(3);
       } else {
-        await documentation_storage.deleteFile(
-          process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID!,
-          file.fileId,
-        );
+        await storage.deleteFile({
+          bucketId: process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID!,
+          fileId: file.fileId,
+        });
         updateModal({
           message: results?.body.message,
           modalType: 'error',

@@ -29,7 +29,7 @@ const ArticleScreen = () => {
   const readTime = getReadTime(article.content);
 
   return (
-    <View style={tw`pt-[40px] flex-1 bg-[#fff]`}>
+    <View style={tw`flex-1 bg-[#fff]`}>
       <BackHeaderTitle title="" />
       <ScrollView>
         <Image source={{ uri: imageUrl }} style={tw`w-full h-80 px-4`} resizeMode="cover" />
