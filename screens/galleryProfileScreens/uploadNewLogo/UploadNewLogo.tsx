@@ -1,23 +1,24 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { colors } from "config/colors.config";
-import { Feather } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { gallery_logo_storage, storage } from "appWrite";
-import { ID } from "react-native-appwrite";
-import { updateLogo } from "services/update/updateLogo";
-import { useAppStore } from "store/app/appStore";
-import { useModalStore } from "store/modal/modalStore";
-import { logout } from "utils/logout.utils";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import BackScreenButton from 'components/buttons/BackScreenButton';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { colors } from 'config/colors.config';
+import { Feather } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { gallery_logo_storage, storage } from 'appWrite_config';
+import { ID } from 'appwrite';
+import { updateLogo } from 'services/update/updateLogo';
+import { useAppStore } from 'store/app/appStore';
+import { useModalStore } from 'store/modal/modalStore';
+import { logout } from 'utils/logout.utils';
+import uploadLogo from './uploadLogo';
 
 export default function UploadNewLogo() {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const { userSession } = useAppStore();
+  const { userSession, userType } = useAppStore();
   const { updateModal } = useModalStore();
 
   const [logo, setLogo] = useState<any>(null);
@@ -25,7 +26,7 @@ export default function UploadNewLogo() {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       quality: 1,
     });
 
@@ -35,56 +36,53 @@ export default function UploadNewLogo() {
   };
 
   const handleUpload = async () => {
-    setLoading(true);
-
     const logoParams = {
       name: logo.assets[0].fileName,
-      size: logo.assets[0].fileSize,
       uri: logo.assets[0].uri,
-      type: "png",
+      type: logo.assets[0].mimeType,
     };
 
     try {
-      const logoUpdated = await gallery_logo_storage.createFile(
-        process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
-        ID.unique(),
-        logoParams
-      );
-
+      setLoading(true);
+      const logoUpdated = await uploadLogo(logoParams);
       if (logoUpdated) {
         let file: { bucketId: string; fileId: string } = {
           bucketId: logoUpdated.bucketId,
           fileId: logoUpdated.$id,
         };
-        const { isOk, body } = await updateLogo({
-          id: userSession.id,
-          url: file.bucketId,
-        });
+        const { isOk, body } = await updateLogo(
+          {
+            id: userSession.id,
+            url: file.fileId,
+          },
+          userType === 'artist' ? 'artist' : userType === 'gallery' ? 'gallery' : 'individual',
+        );
 
         if (!isOk) {
           updateModal({
             message: body.message,
-            modalType: "error",
+            modalType: 'error',
             showModal: true,
           });
         } else {
           updateModal({
             message: `${body.message}... Please log back in`,
-            modalType: "success",
+            modalType: 'success',
             showModal: true,
           });
           handleLogout();
         }
       }
     } catch (error) {
+      console.log(error);
       updateModal({
-        message: "An error occured, please try again",
-        modalType: "error",
+        message: 'An error occured, please try again',
+        modalType: 'error',
         showModal: true,
       });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleLogout = () => {
@@ -101,9 +99,7 @@ export default function UploadNewLogo() {
           {logo === null ? (
             <View style={styles.imageContainer}>
               <Feather name="image" size={30} color={colors.grey} />
-              <Text style={{ color: colors.primary_black }}>
-                Select from gallery
-              </Text>
+              <Text style={{ color: colors.primary_black }}>Select from gallery</Text>
             </View>
           ) : (
             <Image source={{ uri: logo.assets[0].uri }} style={styles.logo} />
@@ -128,19 +124,19 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     height: 200,
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
     borderColor: colors.grey,
     borderRadius: 7,
 
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: 10,
-    borderStyle: "dashed",
+    borderStyle: 'dashed',
   },
   logo: {
-    width: "100%",
-    objectFit: "contain",
+    width: '100%',
+    objectFit: 'contain',
     height: 400,
   },
 });

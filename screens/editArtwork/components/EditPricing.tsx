@@ -145,8 +145,8 @@ export default function EditPricing({ art_id }: { art_id: string }) {
               data={transformedCurrencies}
               placeholder="Select"
               value={currency}
-              handleSetValue={(value) => {
-                setCurrency(value);
+              handleSetValue={(item) => {
+                setCurrency(item.value);
                 setPrice(0);
               }}
             />
@@ -187,7 +187,7 @@ export default function EditPricing({ art_id }: { art_id: string }) {
             data={displayPrice}
             placeholder="Select"
             value={shouldShowPrice}
-            handleSetValue={(value) => setShouldShowPrice(value)}
+            handleSetValue={(item) => setShouldShowPrice(item.value)}
           />
         </View>
         <Text style={{ fontSize: 12, color: "#ff0000" }}>

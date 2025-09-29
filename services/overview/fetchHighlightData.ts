@@ -1,25 +1,26 @@
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { getArtworkHighlightData } from "./getArtworkHighlightData";
-import { getSalesHighlightData } from "./getSalesHighlightData";
-
+import { fetchAllArtworksById } from 'services/artworks/fetchAllArtworksById';
+import { fetchIncomeData } from 'services/overview/fetchIncomeData';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { getSalesHighlightData } from './getSalesHighlightData';
 
 export async function fetchHighlightData(tag: string) {
-
-  let sessionId = '';
-  const userSession = await utils_getAsyncData('userSession')
-  if(userSession.value){
-    sessionId = JSON.parse(userSession.value).id
-  }else{
-    return
+  if (tag === 'artworks') {
+    const result = await fetchAllArtworksById();
+    return result?.isOk ? result.data?.length ?? 0 : 0;
+  }
+  if (tag === 'net') {
+    const result = await fetchIncomeData('gallery');
+    return result?.isOk && result.data.netIncome !== null
+      ? utils_formatPrice(result.data.netIncome)
+      : utils_formatPrice(0);
+  }
+  if (tag === 'revenue') {
+    const result = await fetchIncomeData('gallery');
+    return result?.isOk ? utils_formatPrice(result.data.salesRevenue) : utils_formatPrice(0);
   }
 
-  if (tag === "artworks") {
-    const result = await getArtworkHighlightData({sessionId: sessionId});
-    if(result)return result.data.length;
-  }
-
-  if (tag === "sales") {
-    const result = await getSalesHighlightData({sessionId: sessionId});
-    if(result)return result.data.length;
+  if (tag === 'sales') {
+    const result = await getSalesHighlightData();
+    return result?.isOk ? result.data.length : 0;
   }
 }

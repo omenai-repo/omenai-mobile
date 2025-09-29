@@ -1,106 +1,164 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 type GalleryAuthRegisterStoreType = {
-    pageIndex: number,
-    setPageIndex: (e: number) => void,
-    galleryRegisterData: GallerySignupData,
-    setEmail: (e: string) => void,
-    setName: (e: string) => void,
-    setPassword: (e: string) => void,
-    setConfirmPassword: (e: string) => void,
-    setAdmin: (e: string) => void,
-    setAddress: (e: string) => void,
-    setDescription: (e: string) => void,
-    setCountry: (e: string) => void,
-    isLoading: boolean,
-    setIsLoading: (e: boolean) => void,
-    selectedTerms: number[],
-    setSelectedTerms: (e: number[]) => void,
-    clearState: () => void,
-    setGalleryLogo: (image: any) => void,
-}
+  pageIndex: number;
+  setPageIndex: (e: number) => void;
+  galleryRegisterData: GallerySignupData;
+  setEmail: (e: string) => void;
+  setPhone: (e: string) => void;
+  setName: (e: string) => void;
+  setPassword: (e: string) => void;
+  setConfirmPassword: (e: string) => void;
+  setAdmin: (e: string) => void;
+  setAddress: (e: string) => void;
+  setDescription: (e: string) => void;
+  setCity: (e: string) => void;
+  setZipCode: (e: string) => void;
+  setState: (e: string) => void;
+  setCountry: (e: string) => void;
+  setCountryCode: (e: string) => void;
+  setStateCode: (e: string) => void;
+  stateData: { label: string; value: string }[];
+  setStateData: (e: { label: string; value: string }[]) => void;
+  cityData: { label: string; value: string }[];
+  setCityData: (e: { label: string; value: string }[]) => void;
+  isLoading: boolean;
+  setIsLoading: (e: boolean) => void;
+  selectedTerms: number[];
+  setSelectedTerms: (e: number[]) => void;
+  clearState: () => void;
+  setGalleryLogo: (image: any) => void;
+};
 
-export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>(
-    (set, get) => ({
-        pageIndex: 0,
-        setPageIndex: (e: number) => {
-            set({pageIndex: e})
+export const useGalleryAuthRegisterStore = create<GalleryAuthRegisterStoreType>((set, get) => ({
+  pageIndex: 0,
+  setPageIndex: (e: number) => {
+    set({ pageIndex: e });
+  },
+  galleryRegisterData: {
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    admin: '',
+    address: {
+      address_line: '',
+      city: '',
+      country: '',
+      zip: '',
+      countryCode: '',
+      state: '',
+      stateCode: '',
+    },
+    description: '',
+    logo: {
+      assets: [],
+    },
+  },
+  setName: (name: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, name } });
+  },
+  setEmail: (email: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, email } });
+  },
+  setPhone: (phone: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, phone } });
+  },
+  setPassword: (password: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, password } });
+  },
+  setConfirmPassword: (confirmPassword: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, confirmPassword } });
+  },
+  setAdmin: (admin: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, admin } });
+  },
+  setAddress: (address: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, address: { ...data.address, address_line: address } } });
+  },
+  setCountry: (country: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, address: { ...data.address, country: country } } });
+  },
+  setCity: (city: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, address: { ...data.address, city } } });
+  },
+  setState: (state: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, address: { ...data.address, state } } });
+  },
+  setZipCode: (zipCode: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, address: { ...data.address, zip: zipCode } } });
+  },
+  setCountryCode: (countryCode: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, address: { ...data.address, countryCode } } });
+  },
+  setStateCode: (stateCode: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, address: { ...data.address, stateCode } } });
+  },
+  setDescription: (description: string) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, description } });
+  },
+  stateData: [],
+  setStateData: (stateData: { label: string; value: string }[]) => {
+    set({ stateData });
+  },
+  cityData: [],
+  setCityData: (cityData: { label: string; value: string }[]) => {
+    set({ cityData });
+  },
+  isLoading: false,
+  setIsLoading: (e: boolean) => {
+    set({ isLoading: e });
+  },
+  selectedTerms: [],
+  setSelectedTerms: (e: number[]) => {
+    set({ selectedTerms: e });
+  },
+  clearState: () => {
+    set({
+      isLoading: false,
+      pageIndex: 0,
+      stateData: [],
+      cityData: [],
+      galleryRegisterData: {
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        confirmPassword: '',
+        admin: '',
+        address: {
+          address_line: '',
+          city: '',
+          country: '',
+          zip: '',
+          countryCode: '',
+          state: '',
+          stateCode: '',
         },
-        galleryRegisterData: {
-            name: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            admin: "",
-            address: "",
-            description: "",
-            country: "", 
-            logo: {
-                assets: []
-            }
+        description: '',
+        logo: {
+          assets: [],
         },
-        setName: (name: string) => {
-            const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, name}})
-        },
-        setEmail: (email: string) => {
-            const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, email}})
-        },
-        setPassword: (password: string) => {
-            const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, password}})
-        },
-        setConfirmPassword: (confirmPassword: string) => {
-            const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, confirmPassword}})
-        },
-        setAdmin: (admin: string) => {
-            const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, admin}})
-        },
-        setAddress: (address: string) => {
-            const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, address}})
-        },
-        setCountry: (country: string) => {
-            const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, country}})
-        },
-        setDescription: (description: string) => {
-            const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, description}})
-        },
-        isLoading: false,
-        setIsLoading: (e: boolean) => {
-            set({isLoading: e})
-        },
-        selectedTerms: [],
-        setSelectedTerms: (e: number[]) => {
-            set({selectedTerms: e})
-        },
-        clearState: () => {
-            set({
-                isLoading: false,
-                pageIndex: 0,
-                galleryRegisterData: {
-                    name: "",
-                    email: "",
-                    password: "",
-                    confirmPassword: "",
-                    admin: "",
-                    address: "",
-                    description: "",
-                    country: "",
-                    logo: {
-                        assets: []
-                    }
-                }
-            })
-        },
-        setGalleryLogo: (logo: any) => { 
-            const data = get().galleryRegisterData
-            set({galleryRegisterData: {...data, logo}})
-        },
-    })
-)
+      },
+    });
+  },
+  setGalleryLogo: (logo: any) => {
+    const data = get().galleryRegisterData;
+    set({ galleryRegisterData: { ...data, logo } });
+  },
+}));

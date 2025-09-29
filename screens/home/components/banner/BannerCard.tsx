@@ -1,85 +1,67 @@
-import {
-  Dimensions,
-  Image,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import React, { memo } from "react";
-import { colors } from "config/colors.config";
-import tw from "twrnc";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { getPromotionalFileView } from "lib/storage/getPromotionalsFileView";
-import { fontNames } from "constants/fontNames.constants";
-import { AntDesign } from "@expo/vector-icons";
+import { Dimensions, ImageBackground, Text, TouchableOpacity, View } from 'react-native';
+import React, { memo } from 'react';
+import { AntDesign } from '@expo/vector-icons';
+import tw from 'twrnc';
+import { getPromotionalFileView } from 'lib/storage/getPromotionalsFileView';
+import { fontNames } from 'constants/fontNames.constants';
+import { colors } from 'config/colors.config';
 
 type BannerItemProps = {
-  image?: string;
+  image: string;
   headline: string;
   subheadline: string;
   cta: string;
   handleClick: (url: string) => void;
 };
 
-const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
+const { width: windowWidth } = Dimensions.get('window');
+const SIDE_PADDING = 15;
+const CARD_WIDTH = windowWidth - SIDE_PADDING * 2;
 
-const BannerCard = memo(
-  ({ image, headline, subheadline, cta, handleClick }: BannerItemProps) => {
-    const image_href = getPromotionalFileView(image, 500);
+const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: BannerItemProps) => {
+  const image_href = getPromotionalFileView(image, 800);
 
-    return (
-      <View
-        style={tw.style(`w-[${windowWidth - 50}px] pl-[15px]`, {
-          width: subheadline.length <= 20 ? windowWidth - 50 : windowWidth - 10,
-        })}
+  return (
+    <View
+      style={tw.style({
+        width: CARD_WIDTH, // ensures one card per screen
+      })}
+    >
+      <ImageBackground
+        source={{ uri: image_href }}
+        style={tw`h-[200px]`}
+        imageStyle={tw`rounded-[12px]`}
+        resizeMode="cover"
       >
-        <View
-          style={tw`bg-[#000000] rounded-[10px] p-[13px] flex-row gap-[15px]`}
-        >
-          <View style={tw`flex-1 justify-center`}>
-            <Text
-              style={[
-                tw`font-bold text-[#FFFFFF] text-[15px]`,
-                { fontFamily: fontNames.dmSans + "SemiBold" },
-              ]}
-            >
-              {headline}
-            </Text>
-            <Text
-              style={[
-                tw`mt-2 text-[13px] text-[#FFFFFF]`,
-                { fontFamily: fontNames.dmSans + "Regular" },
-              ]}
-            >
-              {subheadline}
-            </Text>
-            <View
-              style={tw`flex-row items-center mt-[15px] rounded-[26px] bg-[#0000] border-[1px] border-[#fff] px-[5px] py-[10px] justify-center items-center gap-[10px] mr-[35px]`}
-            >
-              <Text style={tw`text-[13px] text-[#fff] font-medium`}>
-                Explore
-              </Text>
-              <AntDesign name="arrowright" color={colors.white} size={15} />
-            </View>
-          </View>
-          <View style={tw`justify-center`}>
-            <Image
-              source={{ uri: image_href }}
-              style={tw.style(`rounded-[4px]`, {
-                width:
-                  Platform.OS === "android"
-                    ? windowWidth - 240
-                    : windowWidth - 280,
-                height: 135,
-              })}
-              resizeMode="cover"
-            />
-          </View>
+        <View style={tw`bg-black bg-opacity-50 flex-1 rounded-[12px] pt-[30px] pl-[20px]`}>
+          <Text
+            style={[
+              tw`text-white text-[18px] font-bold`,
+              { fontFamily: fontNames.dmSans + 'Bold' },
+            ]}
+          >
+            {headline}
+          </Text>
+          <Text
+            style={[
+              tw`text-white text-[13px] mt-1 pr-[100px]`,
+              { fontFamily: fontNames.dmSans + 'Regular' },
+            ]}
+          >
+            {subheadline}
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => handleClick(image_href)}
+            style={tw`mt-4 flex-row bg-black bg-opacity-20 items-center gap-2 px-4 py-2 rounded-full w-[110px]`}
+          >
+            <Text style={tw`text-white text-[13px] font-semibold`}>Explore</Text>
+            <AntDesign name="arrowright" color="#fff" size={15} />
+          </TouchableOpacity>
         </View>
-      </View>
-    );
-  }
-);
+      </ImageBackground>
+    </View>
+  );
+});
 
 export default BannerCard;

@@ -1,162 +1,149 @@
-import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
-import { SvgXml } from "react-native-svg";
-import { fetchHighlightData } from "services/overview/fetchHighlightData";
-import tw from "twrnc";
-import { notesIcon, walletIcon } from "utils/SvgImages";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useMemo } from 'react';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
+import { fetchHighlightData } from 'services/overview/fetchHighlightData';
+import tw from 'twrnc';
+import { useQueries } from '@tanstack/react-query';
+import { QK } from '../Overview';
 
 type HighlightCardProps = {
-  refreshCount: number;
+  onLoadingChange?: (loading: boolean) => void;
 };
 
-export const HighlightCard = ({ refreshCount }: HighlightCardProps) => {
+export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
   const { width } = useWindowDimensions();
-  const [totalArtwork, setTotalArtwork] = useState(0);
-  const [soldArtwork, setSoldArtwork] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const cardWidth = (width - 55) / 2;
+
+  const results = useQueries({
+    queries: (['artworks', 'sales', 'net', 'revenue'] as const).map((slice) => ({
+      queryKey: QK.highlight(slice),
+      queryFn: () => fetchHighlightData(slice),
+      staleTime: 30_000,
+      gcTime: 10 * 60_000,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: true,
+      select: (d: number) => d ?? 0,
+    })),
+  });
+
+  const isFetchingAny = results.some((r) => r.isFetching);
+  const isLoadingAny = results.some((r) => r.isLoading && !r.data);
 
   useEffect(() => {
-    handleFetchHighlightData();
-  }, [refreshCount]);
+    onLoadingChange?.(isFetchingAny || isLoadingAny);
+  }, [isFetchingAny, isLoadingAny, onLoadingChange]);
 
-  const handleFetchHighlightData = async () => {
-    // setIsLoading(true)
-    let data1 = await fetchHighlightData("artworks");
-    let data2 = await fetchHighlightData("sales");
-    setTotalArtwork(data1);
-    setSoldArtwork(data2);
-    setIsLoading(false);
-  };
+  const [artworks, sales, net, revenue] = results.map((r) => r.data ?? 0);
 
   const CardComp = ({
     title,
     icon,
     amount,
+    color,
   }: {
     title: string;
-    icon: string;
+    icon: keyof typeof Ionicons.glyphMap;
     amount: number;
-  }) => {
-    return (
-      <View>
-        <View
-          style={tw`h-[44px] self-center w-[44px] bg-[#FFFFFF] rounded-full justify-center items-center`}
-        >
-          <SvgXml xml={icon} />
+    color: string;
+  }) => (
+    <Animated.View
+      // entering={FadeInUp.delay(100)}
+      style={[
+        tw`bg-black border border-[#ffffff10] rounded-[12px] px-[14px] py-[16px]`,
+        { width: cardWidth },
+      ]}
+    >
+      <View style={tw`flex-row justify-between items-center`}>
+        <View style={tw`flex-1`}>
+          <Text style={tw`text-[13px] text-[#FFFFFF99] mb-[2px]`}>{title}</Text>
+          <Text style={tw`text-[18px] text-white font-bold`}>{amount.toLocaleString()}</Text>
         </View>
-        <Text style={tw`text-[17px] text-[#FFFFFF99] mt-[10px]`}>{title}</Text>
-        <Text
-          style={tw`text-[20px] text-[#FFFFFF] font-bold mt-[10px] text-center`}
+        <View
+          style={[
+            tw`h-[36px] w-[36px] rounded-full justify-center items-center`,
+            { backgroundColor: `${color}22` },
+          ]}
         >
-          {amount}
-        </Text>
+          <Ionicons name={icon} size={18} color={color} />
+        </View>
       </View>
-    );
-  };
+    </Animated.View>
+  );
 
-  if (isLoading)
+  if (isLoadingAny) {
     return (
-      <View style={styles.card}>
-        <View
-          style={{ height: 40, width: 40, backgroundColor: colors.grey50 }}
-        />
-        <View
-          style={{
-            width: "70%",
-            height: 15,
-            backgroundColor: colors.grey50,
-            marginTop: 10,
-          }}
-        />
-        <View
-          style={{
-            width: "30%",
-            height: 10,
-            backgroundColor: colors.grey50,
-            marginTop: 10,
-          }}
-        />
+      <View style={tw`mx-[20px]`}>
+        <View style={tw`flex-row gap-[15px] mb-[15px]`}>
+          {[0, 1].map((idx) => (
+            <Animated.View
+              key={`loading-top-${idx}`}
+              // entering={FadeIn.delay(idx * 100)}
+              style={[styles.skeletonCard, { width: cardWidth }]}
+            >
+              <View style={{ flex: 1 }}>
+                <View style={styles.skeletonLine} />
+                <View style={[styles.skeletonLine, { width: '50%', marginTop: 6 }]} />
+              </View>
+              <View style={styles.skeletonCircle} />
+            </Animated.View>
+          ))}
+        </View>
+        <View style={tw`flex-row gap-[15px]`}>
+          {[2, 3].map((idx) => (
+            <Animated.View
+              key={`loading-bottom-${idx}`}
+              // entering={FadeIn.delay(idx * 100)}
+              style={[styles.skeletonCard, { width: cardWidth }]}
+            >
+              <View style={{ flex: 1 }}>
+                <View style={styles.skeletonLine} />
+                <View style={[styles.skeletonLine, { width: '50%', marginTop: 6 }]} />
+              </View>
+              <View style={styles.skeletonCircle} />
+            </Animated.View>
+          ))}
+        </View>
       </View>
     );
+  }
 
   return (
-    <View
-      style={tw.style({
-        marginHorizontal: (width * 0.5) / 15,
-      })}
-    >
-      <Text style={tw`text-[18px] text-[#000] font-medium mb-[10px]`}>
-        Overview
-      </Text>
-      <View
-        style={tw.style(
-          `bg-[#1A1A1A] justify-between border-1 border-[#0000001A] rounded-[16px] flex-row items-center py-[25px] px-[20px]`
-        )}
-      >
-        <View>
-          <CardComp
-            title="Total Art works"
-            icon={notesIcon}
-            amount={totalArtwork}
-          />
-        </View>
-        <View>
-          <CardComp
-            title="Sold Artworks"
-            icon={walletIcon}
-            amount={soldArtwork}
-          />
-        </View>
+    <View style={tw`mx-[20px]`}>
+      <View style={tw`flex-row gap-[15px] mb-[15px]`}>
+        <CardComp title="Revenue" icon="cash-outline" amount={revenue} color="#00C851" />
+        <CardComp title="Net Earnings" icon="stats-chart-outline" amount={net} color="#FF4444" />
+      </View>
+      <View style={tw`flex-row gap-[15px]`}>
+        <CardComp
+          title="Total Artworks"
+          icon="color-palette-outline"
+          amount={artworks}
+          color="#FFA500"
+        />
+        <CardComp title="Sold Artworks" icon="pricetags-outline" amount={sales} color="#00BFFF" />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-    borderRadius: 8,
-    padding: 15,
-    marginHorizontal: 20,
+  skeletonCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  iconContainer: {
-    height: 40,
-    width: 40,
-    borderRadius: 4,
-    backgroundColor: colors.primary_black,
-    alignItems: "center",
-    justifyContent: "center",
+  skeletonCircle: {
+    height: 36,
+    width: 36,
+    borderRadius: 18,
+    backgroundColor: '#333',
+    marginLeft: 10,
   },
-  cardTitle: {
-    color: "#1a1a1a",
-    fontSize: 12,
-    marginTop: 15,
-  },
-  cardAmount: {
-    fontSize: 18,
-    fontWeight: "500",
-    flex: 1,
-  },
-  statsDisplay: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 6,
-  },
-  percentageContainer: {
-    backgroundColor: "#E7F6EC",
-    borderRadius: 10,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-  },
-  percentageNumber: {
-    color: "#0F973D",
-    fontSize: 14,
-    fontWeight: "500",
-  },
+  skeletonLine: { height: 10, width: '70%', borderRadius: 4, backgroundColor: '#333' },
 });

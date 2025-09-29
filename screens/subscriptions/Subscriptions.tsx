@@ -1,78 +1,99 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import InActiveSubscription from "./features/InActiveSubscription";
-import { useAppStore } from "store/app/appStore";
-import ActiveSubscriptions from "./features/ActiveSubscriptions";
-import WithModal from "components/modal/WithModal";
-import ActiveSubLoader from "./components/ActiveSubLoader";
-import { useModalStore } from "store/modal/modalStore";
-import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscriptionData";
-import { useIsFocused } from "@react-navigation/native";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { StyleSheet, Text, View, Platform } from 'react-native';
+import React, { use } from 'react';
+import InActiveSubscription from './features/InActiveSubscription';
+import { useAppStore } from 'store/app/appStore';
+import ActiveSubscriptions from './features/ActiveSubscriptions';
+import WithModal from 'components/modal/WithModal';
+import ActiveSubLoader from './components/ActiveSubLoader';
+import { useModalStore } from 'store/modal/modalStore';
+import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import { getAccountID } from 'services/stripe/getAccountID';
+import { checkIsStripeOnboarded } from 'services/stripe/checkIsStripeOnboarded';
+import { useQuery } from '@tanstack/react-query';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Subscriptions() {
-  const isFocused = useIsFocused();
-
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
+  const insets = useSafeAreaInsets();
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [isSubActive, setIsSubActive] = useState(false);
-  const [subscriptionData, setSubscriptionData] = useState<any>();
+  const { data: isConfirmed, isLoading } = useQuery({
+    queryKey: ['subscription_precheck'],
+    queryFn: async () => {
+      try {
+        // Fetch account ID first, as it's required for the next call
+        const acc: any = await getAccountID(userSession.email);
+        if (!acc?.isOk) {
+          updateModal({
+            message: 'Something went wrong, Please refresh again',
+            modalType: 'error',
+            showModal: true,
+          });
+        }
 
-  useEffect(() => {
-    async function handleFetchSubData() {
-      setLoading(true);
+        // Start retrieving subscription data while fetching Stripe onboarding status
+        const [response, sub_check]: any = await Promise.all([
+          checkIsStripeOnboarded(acc.data.connected_account_id), // Dependent on account ID
+          retrieveSubscriptionData(userSession.id), // Independent
+        ]);
 
-      const res = await retrieveSubscriptionData(userSession.id);
+        if (!response?.isOk || !sub_check?.isOk) {
+          updateModal({
+            message: 'Something went wrong, Please refresh again',
+            modalType: 'error',
+            showModal: true,
+          });
+        }
 
-      if (res?.isOk && res.data !== null) {
-        setIsSubActive(true);
-        setSubscriptionData(res.data);
-      } else {
-        //something went wrong
+        return {
+          isSubmitted: response.details_submitted,
+          id: acc.data.connected_account_id,
+          isSubActive: sub_check?.data?.subscription_id ? true : false,
+          subscription_data: sub_check.data,
+          subscription_plan: sub_check.plan,
+        };
+      } catch (error) {
         updateModal({
-          message: "No active subscription",
-          modalType: "error",
+          message: 'Something went wrong, Please refresh again',
+          modalType: 'error',
           showModal: true,
         });
+        // Return a default object to satisfy the return type
+        return {
+          isSubmitted: false,
+          id: '',
+          isSubActive: false,
+          subscription_data: null,
+          subscription_plan: null,
+        };
       }
-
-      setLoading(false);
-    }
-
-    if (isFocused) {
-      handleFetchSubData();
-    }
-  }, [isFocused]);
+    },
+    refetchOnWindowFocus: true,
+  });
 
   return (
     <WithModal>
-      <SafeAreaView style={styles.safeArea}>
+      <View
+        style={{
+          paddingTop: insets.top + 16,
+        }}
+      >
         <View style={styles.headerContainer}>
-          <Text style={{ fontSize: 20, textAlign: "center" }}>
-            Subscription & Billing
-          </Text>
+          <Text style={{ fontSize: 20, textAlign: 'center' }}>Subscription & Billing</Text>
         </View>
-      </SafeAreaView>
-      {loading ? (
+      </View>
+      {isLoading ? (
         <View style={{ padding: 20 }}>
           <ActiveSubLoader />
         </View>
       ) : (
-        <ScrollWrapper
-          style={styles.mainContainer}
-          showsVerticalScrollIndicator={false}
-        >
-          {isSubActive ? (
-            <ActiveSubscriptions subscriptionData={subscriptionData} />
+        <ScrollWrapper style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+          {isConfirmed?.isSubActive ? (
+            <ActiveSubscriptions
+              subscription_data={isConfirmed?.subscription_data}
+              subscription_plan={isConfirmed?.subscription_plan}
+            />
           ) : (
             <InActiveSubscription />
           )}
@@ -88,11 +109,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   mainContainer: {
-    paddingHorizontal: 20,
     marginTop: 20,
     flex: 1,
-  },
-  safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
 });

@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { AntDesign, Feather, MaterialIcons } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';
+import { colors } from 'config/colors.config';
 
 type StatusPillProps = {
   status: string;
@@ -22,7 +22,7 @@ export default function StatusPill({
 }: StatusPillProps) {
   if (!availability) {
     return (
-      <View style={[styles.pill, { backgroundColor: "#00800015" }]}>
+      <View style={[styles.pill, { backgroundColor: '#00800015' }]}>
         <Feather name="x-circle" size={14} />
         <Text style={styles.text}>Artwork unavailable for purchase</Text>
       </View>
@@ -30,19 +30,19 @@ export default function StatusPill({
   }
 
   // Order declined case
-  if (order_accepted === "declined") {
+  if (order_accepted === 'declined') {
     return (
-      <View style={[styles.pill, { backgroundColor: "#ff000020" }]}>
+      <View style={[styles.pill, { backgroundColor: '#ff000020' }]}>
         <Feather name="x-circle" size={14} />
-        <Text style={styles.text}>Order declined by Gallery</Text>
+        <Text style={styles.text}>Order declined</Text>
       </View>
     );
   }
 
   // Order completion case
-  if (status === "completed" && delivery_confirmed) {
+  if (status === 'completed' && delivery_confirmed) {
     return (
-      <View style={[styles.pill, { backgroundColor: "#00800015" }]}>
+      <View style={[styles.pill, { backgroundColor: '#00800015' }]}>
         <AntDesign name="checkcircleo" size={14} />
         <Text style={styles.text}>Order has been completed</Text>
       </View>
@@ -50,9 +50,9 @@ export default function StatusPill({
   }
 
   // Payment pending after acceptance
-  if (order_accepted === "accepted" && payment_status === "pending") {
+  if (order_accepted === 'accepted' && payment_status === 'pending') {
     return (
-      <View style={[styles.pill, { backgroundColor: "#FFBF0040" }]}>
+      <View style={[styles.pill, { backgroundColor: '#FFBF0040' }]}>
         <MaterialIcons name="info-outline" size={14} />
         <Text style={styles.text}>Awaiting payment</Text>
       </View>
@@ -60,9 +60,9 @@ export default function StatusPill({
   }
 
   // Payment completed but no tracking
-  if (payment_status === "completed" && !tracking_status) {
+  if (payment_status === 'completed' && !tracking_status) {
     return (
-      <View style={[styles.pill, { backgroundColor: "#00800020" }]}>
+      <View style={[styles.pill, { backgroundColor: '#00800020' }]}>
         <AntDesign name="checkcircleo" size={14} />
         <Text style={styles.text}>Payment completed</Text>
       </View>
@@ -70,13 +70,9 @@ export default function StatusPill({
   }
 
   // Tracking added but not delivered
-  if (
-    payment_status === "completed" &&
-    tracking_status &&
-    !delivery_confirmed
-  ) {
+  if (payment_status === 'completed' && tracking_status && !delivery_confirmed) {
     return (
-      <View style={[styles.pill, { backgroundColor: "#00800015" }]}>
+      <View style={[styles.pill, { backgroundColor: '#00800015' }]}>
         <AntDesign name="checkcircleo" size={14} />
         <Text style={styles.text}>Delivery in progress</Text>
       </View>
@@ -86,7 +82,7 @@ export default function StatusPill({
   // Order Fulfilled
   if (delivery_confirmed) {
     return (
-      <View style={[styles.pill, { backgroundColor: "#00800020" }]}>
+      <View style={[styles.pill, { backgroundColor: '#00800020' }]}>
         <AntDesign name="checkcircleo" size={14} />
         <Text style={styles.text}> This order has been fulfilled</Text>
       </View>
@@ -96,7 +92,7 @@ export default function StatusPill({
   // Order in Review
   if (!order_accepted) {
     return (
-      <View style={[styles.pill, { backgroundColor: "#FFBF0040" }]}>
+      <View style={[styles.pill, { backgroundColor: '#FFBF0040' }]}>
         <MaterialIcons name="info-outline" size={14} />
         <Text style={styles.text}>Order in review</Text>
       </View>
@@ -110,8 +106,8 @@ const styles = StyleSheet.create({
   pill: {
     paddingHorizontal: 10,
     paddingVertical: 5,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 5,
     borderRadius: 20,
   },

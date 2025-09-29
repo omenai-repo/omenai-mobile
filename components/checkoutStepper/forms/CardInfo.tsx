@@ -1,18 +1,19 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { Dispatch, SetStateAction, useState } from "react";
-import Input from "components/inputs/Input";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { Entypo, Feather, Fontisto } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
-import { generateAlphaDigit } from "utils/utils_generateToken";
-import { utils_hasEmptyString } from "utils/utils_hasEmptyString";
-import { useAppStore } from "store/app/appStore";
-import { initiateDirectCharge } from "services/subscriptions/subscribeUser/initiateDirectCharge";
-import { useModalStore } from "store/modal/modalStore";
-import { apiUrl } from "constants/apiUrl.constants";
-import { subscriptionStepperStore } from "store/subscriptionStepper/subscriptionStepperStore";
-import { useRoute } from "@react-navigation/native";
-import CardNumberInput from "../../../screens/checkout/components/inputs/CardNumberInput";
+import { StyleSheet, Text, View } from 'react-native';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import Input from 'components/inputs/Input';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { Entypo, Feather, Fontisto } from '@expo/vector-icons';
+import { colors } from 'config/colors.config';
+import { generateAlphaDigit } from 'utils/utils_generateToken';
+import { utils_hasEmptyString } from 'utils/utils_hasEmptyString';
+import { useAppStore } from 'store/app/appStore';
+import { initiateDirectCharge } from 'services/subscriptions/subscribeUser/initiateDirectCharge';
+import { useModalStore } from 'store/modal/modalStore';
+import { apiUrl } from 'constants/apiUrl.constants';
+import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
+import CardNumberInput from '../../../screens/checkout/components/inputs/CardNumberInput';
+import { screenName } from 'constants/screenNames.constants';
 
 type cardInfoProps = {
   name: string;
@@ -24,10 +25,8 @@ type cardInfoProps = {
 
 type CardInfoProps = {
   handleNext: () => void;
-  plan: PlanProps;
-  updateAuthorization: Dispatch<
-    SetStateAction<"redirect" | "avs_noauth" | "pin" | "otp" | "">
-  >;
+  plan?: PlanProps;
+  updateAuthorization: Dispatch<SetStateAction<'redirect' | 'avs_noauth' | 'pin' | 'otp' | ''>>;
   updateCard: boolean;
 };
 
@@ -38,6 +37,7 @@ export default function CardInfo({
   updateCard,
 }: CardInfoProps) {
   const routes = useRoute();
+  const navigation = useNavigation<NavigationProp<any>>();
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
 
@@ -47,11 +47,11 @@ export default function CardInfo({
     subscriptionStepperStore();
 
   const [cardInfo, setCardInfo] = useState<cardInfoProps>({
-    name: "",
-    cardNumber: "",
-    expiryMonth: "",
-    year: "",
-    cvv: "",
+    name: '',
+    cardNumber: '',
+    expiryMonth: '',
+    year: '',
+    cvv: '',
   });
   const [cardInputLoading, setCardInputLoading] = useState(false);
 
@@ -61,14 +61,20 @@ export default function CardInfo({
     if (utils_hasEmptyString(cardInfo)) {
       //throw error
       updateModal({
-        message: "Make sure all input fields are filled",
-        modalType: "error",
+        message: 'Make sure all input fields are filled',
+        modalType: 'error',
         showModal: true,
       });
     } else {
-      const parsedCardNumber = cardInfo.cardNumber.replace(/ /g, "");
+      const parsedCardNumber = cardInfo.cardNumber.replace(/ /g, '');
 
-      let customer = {
+      let customer: {
+        name: string;
+        email: string;
+        gallery_id: string;
+        plan_id?: string;
+        plan_interval?: string;
+      } = {
         name: userSession.name,
         email: userSession.email,
         gallery_id: userSession.id,
@@ -91,40 +97,45 @@ export default function CardInfo({
         year: cardInfo.year.slice(2, 4),
         tx_ref: ref,
         amount: updateCard
-          ? "1"
-          : params?.tab === "monthly"
-          ? plan.pricing.monthly_price
-          : plan.pricing.annual_price,
+          ? '1'
+          : params?.tab === 'monthly'
+          ? plan?.pricing.monthly_price
+          : plan?.pricing.annual_price,
         customer,
         redirect: `${apiUrl}/dashboard/gallery/billing`,
-        charge_type: updateCard ? "card_change" : null,
+        charge_type: updateCard ? 'card_change' : null,
       };
 
       const response = await initiateDirectCharge(data);
+      setCardInputLoading(false);
       if (response?.isOk) {
-        if (response.data.status === "error") {
+        if (response.data.status === 'error') {
           console.log(response.data);
           updateModal({
             message: response.data.message,
             showModal: true,
-            modalType: "error",
+            modalType: 'error',
           });
         } else {
-          if (response.data.meta.authorization.mode === "redirect") {
-            // redirect user
+          if (response?.data?.data?.status === 'successful') {
             set_transaction_id(response.data.data.id);
-            setWebViewUrl(response.data.meta.authorization.redirect);
+            navigation.navigate(screenName.verifyTransaction);
           } else {
-            updateAuthorization(response.data.meta.authorization.mode);
+            if (response.data.meta.authorization.mode === 'redirect') {
+              set_transaction_id(response.data.data.id);
+              setWebViewUrl(response.data.meta.authorization.redirect);
+            } else {
+              updateAuthorization(response.data.meta.authorization.mode);
+            }
+            handleNext();
           }
-          handleNext();
         }
         update_flw_charge_payload_data(data);
       } else {
         updateModal({
-          message: "Something went wrong",
+          message: 'Something went wrong',
           showModal: true,
-          modalType: "error",
+          modalType: 'error',
         });
       }
     }
@@ -133,14 +144,16 @@ export default function CardInfo({
   };
 
   return (
-    <View>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+    <View
+      style={{
+        paddingBottom: 100,
+      }}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={{ fontSize: 16, flex: 1 }}>Payment Method</Text>
         <View style={styles.secureForm}>
           <Fontisto name="locked" size={10} />
-          <Text style={{ fontSize: 12, color: colors.primary_black }}>
-            Secure form
-          </Text>
+          <Text style={{ fontSize: 12, color: colors.primary_black }}>Secure form</Text>
         </View>
       </View>
       <View style={styles.formContainer}>
@@ -157,16 +170,12 @@ export default function CardInfo({
                     placeHolder='Enter the card number'
                     keyboardType="number-pad"
                 /> */}
-        <CardNumberInput
-          onChange={(e) => setCardInfo((prev) => ({ ...prev, cardNumber: e }))}
-        />
-        <View style={{ flexDirection: "row", gap: 20 }}>
+        <CardNumberInput onChange={(e) => setCardInfo((prev) => ({ ...prev, cardNumber: e }))} />
+        <View style={{ flexDirection: 'row', gap: 20 }}>
           <View style={{ flex: 1 }}>
             <Input
               label="Expiry month"
-              onInputChange={(e) =>
-                setCardInfo((prev) => ({ ...prev, expiryMonth: e }))
-              }
+              onInputChange={(e) => setCardInfo((prev) => ({ ...prev, expiryMonth: e }))}
               value={cardInfo.expiryMonth}
               placeHolder="MM"
               keyboardType="number-pad"
@@ -175,9 +184,7 @@ export default function CardInfo({
           <View style={{ flex: 1 }}>
             <Input
               label="Expiry year"
-              onInputChange={(e) =>
-                setCardInfo((prev) => ({ ...prev, year: e }))
-              }
+              onInputChange={(e) => setCardInfo((prev) => ({ ...prev, year: e }))}
               value={cardInfo.year}
               placeHolder="YYYY"
               keyboardType="number-pad"
@@ -192,11 +199,7 @@ export default function CardInfo({
           keyboardType="number-pad"
         />
       </View>
-      <LongBlackButton
-        onClick={handleCardSubmit}
-        value="Submit"
-        isLoading={cardInputLoading}
-      />
+      <LongBlackButton onClick={handleCardSubmit} value="Submit" isLoading={cardInputLoading} />
     </View>
   );
 }
@@ -208,8 +211,8 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   secureForm: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 5,
   },
 });

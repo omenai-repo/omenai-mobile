@@ -1,9 +1,9 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { utils_handleFetchUserID } from "utils/utils_asyncStorage";
-import useLikedState from "custom/hooks/useLikedState";
-import { AntDesign } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { utils_handleFetchUserID } from 'utils/utils_asyncStorage';
+import useLikedState from 'hooks/useLikedState';
+import { AntDesign } from '@expo/vector-icons';
+import { colors } from 'config/colors.config';
 
 export type LikeComponentProps = {
   likeIds: string[];
@@ -18,7 +18,7 @@ export default function LikeComponent({
   impressions,
   lightText,
 }: LikeComponentProps) {
-  const [sessionId, setSessionId] = useState("");
+  const [sessionId, setSessionId] = useState('');
 
   useEffect(() => {
     handleFetchUserSessionData();
@@ -29,17 +29,11 @@ export default function LikeComponent({
     setSessionId(userId);
   };
 
-  const { likedState, handleLike } = useLikedState(
-    impressions,
-    likeIds,
-    sessionId,
-    art_id
-  );
+  const { likedState, handleLike } = useLikedState(impressions, likeIds, sessionId, art_id);
 
   return (
     <>
-      {(sessionId === undefined ||
-        (sessionId && !likedState.ids.includes(sessionId))) && (
+      {(sessionId === undefined || (sessionId && !likedState.ids.includes(sessionId))) && (
         <TouchableOpacity onPress={() => handleLike(true)}>
           <AntDesign
             size={15}
@@ -50,7 +44,7 @@ export default function LikeComponent({
       )}
       {sessionId !== undefined && likedState.ids.includes(sessionId) && (
         <TouchableOpacity onPress={() => handleLike(false)}>
-          <AntDesign size={15} color={"#ff0000"} name="heart" />
+          <AntDesign size={15} color={'#ff0000'} name="heart" />
         </TouchableOpacity>
       )}
     </>

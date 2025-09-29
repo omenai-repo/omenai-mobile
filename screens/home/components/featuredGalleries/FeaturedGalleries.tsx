@@ -1,114 +1,84 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React from "react";
-import { colors } from "../../../../config/colors.config";
-import { Feather } from "@expo/vector-icons";
-import galleryImage from "../../../../assets/images/gallery-banner.png";
-import { FlatList } from "react-native-gesture-handler";
+import { Image, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { colors } from '../../../../config/colors.config';
+import { fontNames } from 'constants/fontNames.constants';
+import { useNavigation } from '@react-navigation/native';
+import { getFeaturedGalleries } from 'services/overview/fetchFeaturedGallery';
+import { getGalleryLogoFileView } from 'lib/storage/getGalleryLogoFileView';
 
-import gallery_one from "../../../../assets/images/gallery_one.png";
-import gallery_two from "../../../../assets/images/gallery_two.png";
-import gallery_three from "../../../../assets/images/gallery_three.jpg";
-import gallery_four from "../../../../assets/images/gallery_four.jpg";
-import { fontNames } from "constants/fontNames.constants";
-
-const data = [
-  {
-    image: gallery_one,
-    name: "Midas",
-    location: "1035 Manchester, London",
-  },
-  {
-    image: gallery_two,
-    name: "The Expresso Gallery",
-    location: "25 Expresso, Dublin",
-  },
-  {
-    image: gallery_three,
-    name: "Midas",
-    location: "London",
-  },
-  {
-    image: gallery_four,
-    name: "The Boys",
-    location: "New york, USA",
-  },
-];
-
-type GalleryCardProps = {
-  image: string;
+type Gallery = {
+  gallery_id: string;
   name: string;
-  location: string;
+  logo: string;
 };
 
 export default function FeaturedGalleries() {
-  const Gallery = ({ image, name, location }: GalleryCardProps) => {
+  const navigation = useNavigation<any>();
+  const [galleries, setGalleries] = useState<Gallery[]>([]);
+
+  useEffect(() => {
+    fetchGalleries();
+  }, []);
+
+  const fetchGalleries = async () => {
+    const res = await getFeaturedGalleries();
+    if (res?.isOk) {
+      setGalleries(res.data);
+    }
+  };
+
+  const GalleryCard = ({ item }: { item: Gallery }) => {
+    const image_href = getGalleryLogoFileView(item.logo, 200);
     return (
-      <View style={styles.gallery}>
-        <Image source={image} style={styles.image} />
-        <View style={styles.contentContainer}>
-          <Text style={{ fontSize: 14, color: colors.primary_black }}>
-            {name}
-          </Text>
-          <Text style={{ fontSize: 12, marginTop: 5, color: "#858585", fontFamily: fontNames.dmSans + 'Regular' }}>
-            {location}
-          </Text>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('DetailsScreen', {
+            type: 'gallery',
+            id: item.gallery_id,
+            name: item.name,
+            logo: item.logo,
+          })
+        }
+      >
+        <View style={styles.gallery}>
+          <Image source={{ uri: image_href }} style={styles.image} />
+          <View style={styles.contentContainer}>
+            <Text style={{ fontSize: 14, color: colors.primary_black }}>{item.name}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
   return (
     <View style={{ marginTop: 40 }}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
-          paddingHorizontal: 20,
-        }}
-      >
-        <Text style={{ fontSize: 18, fontWeight: 500, flex: 1 }}>
-          Featured Galleries
-        </Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Featured Galleries</Text>
       </View>
       <FlatList
-        data={data}
-        renderItem={({ item }: { item: GalleryCardProps }) => (
-          <Gallery
-            name={item.name}
-            image={item.image}
-            location={item.location}
-          />
-        )}
-        keyExtractor={(_, index) => JSON.stringify(index)}
-        horizontal={true}
+        data={galleries}
+        renderItem={({ item }) => <GalleryCard item={item} />}
+        keyExtractor={(item) => item.gallery_id}
+        horizontal
         showsHorizontalScrollIndicator={false}
-        style={{ marginTop: 20 }}
         contentContainerStyle={{ paddingRight: 20 }}
+        style={{ marginTop: 20 }}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
+    paddingHorizontal: 20,
   },
-  seeMoreButton: {
-    height: 50,
-    backgroundColor: colors.white,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    borderRadius: 30,
-    gap: 10,
-  },
-  featuredListing: {
-    flexDirection: "row",
-    gap: 20,
-    marginTop: 20,
+  headerText: {
+    fontSize: 18,
+    fontWeight: '500',
+    flex: 1,
   },
   gallery: {
     flex: 1,
@@ -119,8 +89,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   image: {
-    width: "100%",
+    width: '100%',
     height: 200,
-    borderRadius: 5
+    borderRadius: 5,
+    backgroundColor: '#eee',
   },
 });

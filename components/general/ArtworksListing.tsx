@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import {
   FlatList,
   View,
@@ -7,82 +7,89 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   RefreshControl,
-} from "react-native";
-import MiniArtworkCard from "components/artwork/MiniArtworkCard";
-import EmptyArtworks from "./EmptyArtworks";
-import Loader from "./Loader";
-import { debounce } from "lodash";
-import tw from "twrnc";
-import { getNumberOfColumns } from "utils/utils_screen";
+} from 'react-native';
+import MiniArtworkCard from 'components/artwork/MiniArtworkCard';
+import EmptyArtworks from './EmptyArtworks';
+import Loader from './Loader';
+import { debounce } from 'lodash';
+import tw from 'twrnc';
+import { getNumberOfColumns } from 'utils/utils_screen';
+import { useAppStore } from 'store/app/appStore';
 
-const NUM_COLUMNS = getNumberOfColumns(); // Number of columns in the masonry layout
+const NUM_COLUMNS = getNumberOfColumns();
 
 export default function ArtworksListing({
   data,
-  loadingMore,
   onEndReached,
   onRefresh,
+  loadingMore,
 }: {
   data: ArtworkSchemaTypes[];
-  loadingMore?: boolean;
   onEndReached?: () => void;
   onRefresh?: () => Promise<void>;
+  loadingMore?: boolean;
 }) {
+  const { userType } = useAppStore();
   const [refreshing, setRefreshing] = useState(false);
 
-  // Handle pull-to-refresh
   const handleRefresh = useCallback(async () => {
-    if (onRefresh) {
-      setRefreshing(true);
+    if (!onRefresh) return;
+    setRefreshing(true);
+    try {
       await onRefresh();
+    } finally {
       setRefreshing(false);
     }
   }, [onRefresh]);
 
-  // Split data into columns
   const columnsData = useMemo(() => {
-    const columns = Array.from({ length: NUM_COLUMNS }, () => [] as any[]);
+    const columns = Array.from({ length: NUM_COLUMNS }, () => [] as ArtworkSchemaTypes[]);
     data.forEach((item, index) => {
-      columns[index % NUM_COLUMNS].push(item); // Distribute items evenly
+      columns[index % NUM_COLUMNS].push(item);
     });
     return columns;
   }, [data]);
 
-  // Debounced callback for onEndReached
-  const debouncedOnEndReached = useMemo(
-    () => (onEndReached ? debounce(onEndReached, 300) : null),
-    [onEndReached]
-  );
+  const debouncedOnEndReached = useMemo(() => {
+    if (!onEndReached) return null;
+    const fn = debounce(onEndReached, 300, { leading: false, trailing: true });
+    return fn;
+  }, [onEndReached]);
 
-  // Detect when the user scrolls near the bottom
+  useEffect(() => {
+    return () => {
+      debouncedOnEndReached?.cancel?.();
+    };
+  }, [debouncedOnEndReached]);
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!debouncedOnEndReached) return;
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const isCloseToBottom =
-      layoutMeasurement.height + contentOffset.y >= contentSize.height - 200; // Trigger 200px before bottom
-    if (isCloseToBottom && debouncedOnEndReached) {
-      debouncedOnEndReached();
-    }
+    const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 200;
+    if (isCloseToBottom) debouncedOnEndReached();
   };
 
   const renderColumn = (columnData: any[]) => (
     <FlatList
       data={columnData}
-      keyExtractor={(item) => item.art_id.toString()}
+      keyExtractor={(item) => String(item.art_id)}
       renderItem={({ item }) => (
         <View style={styles.itemContainer}>
           <MiniArtworkCard
             title={item.title}
             url={item.url}
             artist={item.artist}
-            showPrice={item.pricing.shouldShowPrice === "Yes"}
+            showPrice={item.pricing.shouldShowPrice === 'Yes'}
             price={item.pricing.usd_price}
             impressions={item.impressions}
             like_IDs={item.like_IDs}
             art_id={item.art_id}
+            availability={item.availability}
+            galleryView={userType === 'user' ? true : false}
           />
         </View>
       )}
-      scrollEnabled={false} // Disable individual column scrolling
+      scrollEnabled={false}
       showsVerticalScrollIndicator={false}
     />
   );
@@ -94,14 +101,11 @@ export default function ArtworksListing({
   return (
     <ScrollView
       onScroll={handleScroll}
-      scrollEventThrottle={16} // Higher frequency scroll event
+      scrollEventThrottle={16}
       showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
     >
       <View style={styles.container}>
-        {/* Render each column */}
         {columnsData.map((column, index) => (
           <View key={index} style={styles.column}>
             {renderColumn(column)}
@@ -117,14 +121,16 @@ export default function ArtworksListing({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row", // Arrange columns horizontally
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    gap: 10,
   },
   column: {
-    flex: 1 / NUM_COLUMNS, // Each column takes equal space
+    flex: 1 / NUM_COLUMNS,
     paddingHorizontal: 4,
   },
   itemContainer: {
-    marginBottom: 8, // Spacing between items vertically
+    marginBottom: 8,
   },
 });

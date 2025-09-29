@@ -1,35 +1,33 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import { useIndividualAuthLoginStore } from "../../../../store/auth/login/IndividualAuthLoginStore";
-import PasswordInput from "../../../../components/inputs/PasswordInput";
-import Input from "../../../../components/inputs/Input";
-import LongBlackButton from "../../../../components/buttons/LongBlackButton";
-import { loginAccount } from "../../../../services/login/loginAccount";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { screenName } from "../../../../constants/screenNames.constants";
-import { utils_storeAsyncData } from "utils/utils_asyncStorage";
-import { useAppStore } from "store/app/appStore";
-import { useModalStore } from "store/modal/modalStore";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { useIndividualAuthLoginStore } from '../../../../store/auth/login/IndividualAuthLoginStore';
+import PasswordInput from '../../../../components/inputs/PasswordInput';
+import Input from '../../../../components/inputs/Input';
+import LongBlackButton from '../../../../components/buttons/LongBlackButton';
+import { loginAccount } from '../../../../services/login/loginAccount';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { screenName } from '../../../../constants/screenNames.constants';
+import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
+import { useAppStore } from 'store/app/appStore';
+import { useModalStore } from 'store/modal/modalStore';
+import { add } from 'lodash';
 
 export default function Individual() {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const {
-    individualLoginData,
-    setEmail,
-    setPassword,
-    clearInputs,
-    isLoading,
-    setIsLoading,
-  } = useIndividualAuthLoginStore();
-  const { setUserSession, setIsLoggedIn } = useAppStore();
+  const { individualLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
+    useIndividualAuthLoginStore();
+  const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
   const { updateModal } = useModalStore();
 
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(individualLoginData, "individual");
+    const results = await loginAccount(
+      { ...individualLoginData, device_push_token: expoPushToken ?? '' },
+      'individual',
+    );
 
     if (results?.isOk) {
       const resultsBody = results?.body?.data;
@@ -37,7 +35,7 @@ export default function Individual() {
       if (resultsBody.verified === false) {
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.id, type: "individual" },
+          account: { id: resultsBody.user_id, type: 'individual' },
         });
         return;
       }
@@ -48,17 +46,17 @@ export default function Individual() {
         role: resultsBody.role,
         preferences: resultsBody.preferences,
         verified: resultsBody.verified,
+        address: resultsBody.address,
+        phone: resultsBody.phone,
+        logo: resultsBody.logo,
       };
 
-      const isStored = await utils_storeAsyncData(
-        "userSession",
-        JSON.stringify(data)
-      );
+      const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));
 
       const loginTimeStamp = new Date();
       const isLoginTimeStampStored = await utils_storeAsyncData(
-        "loginTimeStamp",
-        JSON.stringify(loginTimeStamp)
+        'loginTimeStamp',
+        JSON.stringify(loginTimeStamp),
       );
 
       if (isStored && isLoginTimeStampStored) {
@@ -71,7 +69,7 @@ export default function Individual() {
       updateModal({
         message: results?.body.message,
         showModal: true,
-        modalType: "error",
+        modalType: 'error',
       });
     }
 
@@ -97,19 +95,15 @@ export default function Individual() {
       </View>
       <View style={{ gap: 40 }}>
         <LongBlackButton
-          value={isLoading ? "Loading..." : "Log In"}
-          isDisabled={
-            individualLoginData.email && individualLoginData.password
-              ? false
-              : true
-          }
+          value={isLoading ? 'Loading...' : 'Log In'}
+          isDisabled={individualLoginData.email && individualLoginData.password ? false : true}
           onClick={handleSubmit}
           isLoading={isLoading}
         />
         <TouchableOpacity
           onPress={() =>
             navigation.navigate(screenName.forgotPassword, {
-              type: "individual",
+              type: 'individual',
             })
           }
         >
@@ -127,6 +121,6 @@ const styles = StyleSheet.create({
   },
   resetText: {
     fontSize: 16,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });

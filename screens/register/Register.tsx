@@ -1,41 +1,72 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { colors } from "../../config/colors.config";
-import AuthHeader from "../../components/auth/AuthHeader";
-import FormController from "./components/FormController";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { screenName } from "../../constants/screenNames.constants";
-import CustomModal from "components/modal/CustomModal";
-import { useModalStore } from "store/modal/modalStore";
-import WithModal from "components/modal/WithModal";
-import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
-import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
-import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
-import { StatusBar } from "expo-status-bar";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { colors } from '../../config/colors.config';
+import AuthHeader from '../../components/auth/AuthHeader';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { screenName } from '../../constants/screenNames.constants';
+import WithModal from 'components/modal/WithModal';
+import { useIndividualAuthRegisterStore } from 'store/auth/register/IndividualAuthRegisterStore';
+import { useGalleryAuthRegisterStore } from 'store/auth/register/GalleryAuthRegisterStore';
+import { useArtistAuthRegisterStore } from 'store/auth/register/ArtistAuthRegisterStore';
+import { StatusBar } from 'expo-status-bar';
+import InputForm from './components/inputForm/InputForm';
+
+type RootStackParamList = {
+  [screenName.welcome]: undefined;
+  [screenName.register]: undefined;
+};
 
 export default function Register() {
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  const { clearState: clearIndividualState } = useIndividualAuthRegisterStore();
-  const { clearState: clearGalleryState } = useGalleryAuthRegisterStore();
-  const { clearState: clearArtistState } = useArtistAuthRegisterStore();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const { clearState: clearIndividualState, pageIndex: collectorPage } =
+    useIndividualAuthRegisterStore();
+  const { clearState: clearGalleryState, pageIndex: galleryPage } = useGalleryAuthRegisterStore();
+  const { clearState: clearArtistState, pageIndex: artistPage } = useArtistAuthRegisterStore();
+
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    scrollViewRef.current?.scrollTo?.({ y: 0, animated: false });
+  }, [collectorPage, galleryPage, artistPage]);
 
   return (
     <WithModal>
-      <StatusBar style="light" />
       <AuthHeader
         title="Create an account"
         subTitle="Fill in required details and create an account"
         handleBackClick={() => {
           navigation.navigate(screenName.welcome);
-
-          //clears registration form data
           clearGalleryState();
           clearArtistState();
           clearIndividualState();
         }}
       />
-      <FormController />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+        style={styles.container}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            ref={scrollViewRef}
+            nestedScrollEnabled
+            style={{ flexGrow: 1 }}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            <InputForm />
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </WithModal>
   );
 }

@@ -1,6 +1,6 @@
-import { Platform, StyleSheet, Text, TextInput, View } from "react-native";
-import React from "react";
-import { colors } from "../../config/colors.config";
+import { Platform, StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from 'react-native';
+import React from 'react';
+import { colors } from '../../config/colors.config';
 
 type InputProps = {
   label: string;
@@ -10,6 +10,7 @@ type InputProps = {
   errorMessage?: string;
   handleBlur?: () => void;
   defaultValue?: string;
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
 export default function LargeInput({
@@ -20,9 +21,10 @@ export default function LargeInput({
   errorMessage,
   handleBlur,
   defaultValue,
+  containerStyle,
 }: InputProps) {
   return (
-    <View>
+    <View style={[{ flex: 1 }, containerStyle]}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         onChangeText={onInputChange}
@@ -50,18 +52,18 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 140,
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
     paddingHorizontal: 20,
     paddingTop: 15,
     borderRadius: 5,
     marginTop: 10,
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
   },
   errorMessage: {
-    color: "#ff0000",
+    color: '#ff0000',
     marginTop: 2,
   },
 });

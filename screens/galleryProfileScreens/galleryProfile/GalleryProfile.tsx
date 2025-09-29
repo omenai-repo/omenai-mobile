@@ -1,100 +1,80 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-  Image,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import { PageButtonCard } from "components/buttons/PageButtonCard";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { Feather } from "@expo/vector-icons";
-import { logout } from "utils/logout.utils";
-import WithGalleryModal from "components/modal/WithGalleryModal";
-import { galleryOrderModalStore } from "store/modal/galleryModalStore";
-import { useAppStore } from "store/app/appStore";
-import Logo from "./components/Logo";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import omenaiAvatar from "assets/images/omenai-avatar.png";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import {
-  changePasswsordIcon,
-  deleteIcon
-} from "utils/SvgImages";
-import LongBlackButton from "components/buttons/LongBlackButton";
+import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar, Image } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { colors } from 'config/colors.config';
+import { PageButtonCard } from 'components/buttons/PageButtonCard';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import { logout } from 'utils/logout.utils';
+import WithGalleryModal from 'components/modal/WithGalleryModal';
+import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
+import { useAppStore } from 'store/app/appStore';
+import Logo from './components/Logo';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { changePasswsordIcon, deleteIcon } from 'utils/SvgImages';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-type userDataType = {
-  name: string;
-  email: string;
-};
+type UserData = { name: string; email: string };
 
 export default function GalleryProfile() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-
   const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
+  const insets = useSafeAreaInsets();
 
-  const [userData, setuserdata] = useState<userDataType>({
-    name: "",
-    email: "",
+  const [userData, setUserData] = useState<UserData>({
+    name: userSession?.name ?? '',
+    email: userSession?.email ?? '',
   });
 
-  useEffect(() => {
-    handleFetchUserSession();
-  }, []);
+  // Single source of truth: refresh on focus (not on mount)
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
 
-  const handleFetchUserSession = async () => {
-    const userSession = await utils_getAsyncData("userSession");
+      const fetchUserSession = async () => {
+        try {
+          const stored = await utils_getAsyncData('userSession');
+          if (stored?.isOk === false || !stored?.value) return;
 
-    if (userSession.isOk === false) return;
+          const parsed = JSON.parse(stored.value);
+          if (!active) return;
 
-    if (userSession.value) {
-      const parsedUserSessions = JSON.parse(userSession.value);
-      setuserdata({
-        name: parsedUserSessions.name,
-        email: parsedUserSessions.email,
-      });
-    }
+          // Only update if changed to avoid re-renders
+          setUserData((prev) =>
+            prev.name === parsed.name && prev.email === parsed.email
+              ? prev
+              : { name: parsed.name, email: parsed.email },
+          );
+        } catch {
+          // silently ignore; UI still shows store values
+        }
+      };
 
-    return;
-  };
+      fetchUserSession();
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
 
   return (
     <WithGalleryModal>
       <ScrollWrapper style={styles.mainContainer}>
-        <View style={styles.profileContainer}>
-          {/* {userSession.logo !== "" ? 
-            <Logo url={userSession.logo} /> 
-            : 
-            <Image source={omenaiAvatar} style={styles.image} />
-          } */}
-          <Image source={omenaiAvatar} style={styles.image} />
+        <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
+          <Logo url={userSession?.logo} />
+
           <View>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                color: colors.primary_black,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: '500', color: colors.primary_black }}>
               {userData.name}
             </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                marginTop: 5,
-                marginBottom: 20,
-                color: "#00000099",
-              }}
-            >
+            <Text style={{ fontSize: 14, marginTop: 5, marginBottom: 20, color: '#00000099' }}>
               {userData.email}
             </Text>
+
             <FittedBlackButton
               value="Edit profile"
               isDisabled={false}
@@ -102,29 +82,28 @@ export default function GalleryProfile() {
             />
           </View>
         </View>
+
         <View style={styles.buttonsContainer}>
-          {/* <Divider /> */}
           <PageButtonCard
             name="Change password"
             subText="Change the password to your account"
             handlePress={() =>
-              navigation.navigate(screenName.gallery.changePassword, {
-                routeName: "gallery",
-              })
+              navigation.navigate(screenName.gallery.changePassword, { routeName: 'gallery' })
             }
             svgIcon={changePasswsordIcon}
           />
-          {/* <Divider /> */}
+
           <PageButtonCard
             name="Delete account"
             subText="Delete your omenai gallery account"
             handlePress={() => {
-              setModalType("deleteAccount");
+              setModalType('deleteAccount');
               setIsVisible(true);
             }}
             svgIcon={deleteIcon}
           />
         </View>
+
         <LongBlackButton value="Log Out" onClick={logout} />
       </ScrollWrapper>
     </WithGalleryModal>
@@ -132,34 +111,13 @@ export default function GalleryProfile() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
+  container: { flex: 1, backgroundColor: colors.white },
   profileContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 20,
-    alignItems: "center",
-    paddingTop: Platform.OS === "ios" ? 50 : 50,
+    alignItems: 'center',
   },
-  image: {
-    height: 132,
-    width: 132,
-  },
-  headerContainer: {
-    paddingHorizontal: 20,
-  },
-  mainContainer: {
-    paddingHorizontal: 20,
-    marginTop: 20,
-    flex: 1,
-  },
-  buttonsContainer: {
-    marginTop: 10,
-    marginBottom: 50,
-    gap: 20,
-  },
-  safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
+  headerContainer: { paddingHorizontal: 20 },
+  mainContainer: { paddingHorizontal: 20, flex: 1 },
+  buttonsContainer: { marginTop: 10, marginBottom: 50, gap: 20 },
 });

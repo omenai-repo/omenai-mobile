@@ -1,20 +1,13 @@
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React from "react";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import { colors } from "config/colors.config";
-import { mediums } from "constants/mediums";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import { getNumberOfColumns } from "utils/utils_screen";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import BackHeaderTitle from 'components/header/BackHeaderTitle';
+import { colors } from 'config/colors.config';
+import { mediums } from 'constants/mediums';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { screenName } from 'constants/screenNames.constants';
+import ScrollWrapper from 'components/general/ScrollWrapper';
+import { getNumberOfColumns } from 'utils/utils_screen';
 
 export default function Collections() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -31,7 +24,7 @@ export default function Collections() {
         }
       >
         <View style={styles.cardContainer}>
-          <Image source={image} style={{ width: "100%", height: 150 }} />
+          <Image source={image} style={{ width: '100%', height: 150 }} />
           <Text style={{ fontSize: 14, marginTop: 10 }}>{name}</Text>
         </View>
       </TouchableOpacity>
@@ -45,19 +38,8 @@ export default function Collections() {
         <FlatList
           data={mediums}
           numColumns={getNumberOfColumns()}
-          renderItem={({
-            item,
-            index,
-          }: {
-            item: CatalogCardTypes;
-            index: number;
-          }) => (
-            <CatalogCard
-              name={item.name}
-              image={item.image}
-              key={index}
-              value={item.value}
-            />
+          renderItem={({ item, index }: { item: CatalogCardTypes; index: number }) => (
+            <CatalogCard name={item.name} image={item.image} key={index} value={item.value} />
           )}
           keyExtractor={(item) => item.name}
         />
@@ -77,8 +59,8 @@ const styles = StyleSheet.create({
     paddingTop: 15,
   },
   cardContainer: {
-    maxWidth: "100%",
-    minWidth: "50%",
+    maxWidth: '100%',
+    minWidth: '50%',
     paddingHorizontal: 10,
     marginTop: 20,
   },

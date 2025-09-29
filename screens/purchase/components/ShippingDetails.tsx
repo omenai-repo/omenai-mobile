@@ -1,42 +1,58 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import CustomPicker from "components/general/CustomPicker";
-import Input from "components/inputs/Input";
-import CustomChecker from "components/inputs/CustomChecker";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import { countriesListing } from "constants/countries.constants";
-import SummaryContainer from "./SummaryContainer";
-import { useOrderSummaryStore } from "store/orders/OrderSummaryStore";
-import { validate } from "lib/validations/validatorGroup";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { country_codes } from "json/country_alpha_2_codes";
+import { StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { colors } from 'config/colors.config';
+import CustomPicker from 'components/general/CustomPicker';
+import Input from 'components/inputs/Input';
+import CustomChecker from 'components/inputs/CustomChecker';
+import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
+import SummaryContainer from './SummaryContainer';
+import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore';
+import { validate } from 'lib/validations/validatorGroup';
+import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { Country, State, City, ICountry, IState, ICity } from 'country-state-city';
+import { debounce } from 'lodash';
+import { useAppStore } from 'store/app/appStore';
+
+interface SessionAddress {
+  address_line: string;
+  zip: string;
+  country: string;
+  countryCode: string;
+  stateCode: string;
+  city: string;
+}
+
+interface UserSession {
+  name: string;
+  email: string;
+  address: SessionAddress;
+}
 
 const deliveryOptions = [
-  "Shipping",
+  'Shipping',
   // 'Pickup'
 ];
 
-type deliveryModeTypes = "Shipping" | "Pickup";
+type deliveryModeTypes = 'Shipping' | 'Pickup';
 
-const transformedCountries = country_codes.map((item) => ({
-  value: item.key,
-  label: item.name,
-}));
-
-export default function ShippingDetails({
-  data: { pricing },
-}: {
-  data: artworkOrderDataTypes;
-}) {
+export default function ShippingDetails({ data: { pricing } }: { data: artworkOrderDataTypes }) {
   const [formErrors, setFormErrors] = useState({
-    name: "",
-    email: "",
-    address: "",
-    zipCode: "",
-    city: "",
-    state: "",
+    name: '',
+    email: '',
+    address: '',
+    zipCode: '',
+    city: '',
+    state: '',
   });
+
+  const transformedCountries = useMemo(
+    () =>
+      Country.getAllCountries().map((item: ICountry) => ({
+        value: item.isoCode,
+        label: item.name,
+      })),
+    [],
+  );
 
   const {
     deliveryMode,
@@ -48,35 +64,141 @@ export default function ShippingDetails({
     address,
     setDeliveryAddress,
     country,
+    countryCode,
     setCountry,
+    setCountryCode,
     city,
     setCity,
     zipCode,
     setZipCode,
     state,
+    stateData,
+    cityData,
     setState,
+    setStateData,
+    setCityData,
+    setStateCode,
     saveShippingAddress,
     setSaveShippingAddress,
   } = useOrderSummaryStore();
 
-  useEffect(() => {
-    fetchUserSessionsData();
-  }, []);
+  const handleCountrySelect = (item: { label: string; value: string }) => {
+    setCountry(item.label);
+    setCountryCode(item.value);
 
-  const fetchUserSessionsData = async () => {
-    let userSession = await utils_getAsyncData("userSession");
-    if (userSession.value) {
-      const userData = JSON.parse(userSession.value);
-      setName(userData.name);
-      setEmail(userData.email);
+    // Reset state and city selections
+    setState('');
+    setCity('');
+
+    // Clear state and city dropdown data
+    setStateData([]);
+    setCityData([]);
+
+    // get the selected country's states
+    const getStates = State.getStatesOfCountry(item.value);
+
+    // Set the states dropdown data
+    setStateData(
+      getStates
+        ? getStates.map((state: IState) => ({
+            label: state.name,
+            value: state.name,
+            isoCode: state.isoCode,
+          }))
+        : [],
+    );
+  };
+
+  // 🚀 **Debounced Fetch Cities Function**
+  const fetchCities = useCallback(
+    debounce((countryCode, stateValue) => {
+      const getCities = City.getCitiesOfState(countryCode, stateValue);
+      setCityData(
+        getCities?.map((city: ICity) => ({
+          label: city.name,
+          value: city.name,
+        })) || [],
+      );
+    }, 300),
+    [],
+  );
+
+  // 🚀 **Handle State Selection**
+  const handleStateSelect = useCallback(
+    (item: { label: string; value: string; isoCode?: string }) => {
+      setState(item.value);
+      if (item.isoCode) {
+        setStateCode(item.isoCode);
+      }
+      fetchCities(countryCode, item.isoCode);
+    },
+    [countryCode, fetchCities],
+  );
+
+  const { userSession } = useAppStore();
+
+  useEffect(() => {
+    if (
+      userSession &&
+      userSession.address.country &&
+      userSession.address.countryCode &&
+      userSession.address.stateCode
+    ) {
+      populateFormFromSession(userSession);
+    }
+  }, [userSession]);
+
+  const populateFormFromSession = async (session: UserSession) => {
+    // Set user-level fields
+    setName(session.name);
+    setEmail(session.email);
+    setDeliveryAddress(session.address.address_line);
+    setZipCode(session.address.zip);
+
+    // ✅ Set Country
+    const countryItem = Country.getAllCountries().find(
+      (c) => c.isoCode === session.address.countryCode,
+    );
+    if (!countryItem) return;
+
+    const selectedCountry = {
+      label: countryItem.name,
+      value: countryItem.isoCode,
+    };
+    setCountry(selectedCountry.label);
+    setCountryCode(selectedCountry.value);
+
+    // 🌎 Get and set states
+    const states = State.getStatesOfCountry(selectedCountry.value) || [];
+    const mappedStates = states.map((state: IState) => ({
+      label: state.name,
+      value: state.name,
+      isoCode: state.isoCode,
+    }));
+    setStateData(mappedStates);
+
+    const selectedState = mappedStates.find((state) => state.isoCode === session.address.stateCode);
+    if (selectedState) {
+      setState(selectedState.value);
+      setStateCode(selectedState.isoCode);
+
+      // 🏙️ Get and set cities
+      const cities = City.getCitiesOfState(selectedCountry.value, selectedState.isoCode) || [];
+      const mappedCities = cities.map((city: ICity) => ({
+        label: city.name,
+        value: city.name,
+      }));
+      setCityData(mappedCities);
+
+      // 🏠 Set city if valid
+      const foundCity = mappedCities.find((c) => c.value === session.address.city);
+      if (foundCity) setCity(foundCity.value);
     }
   };
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
-    );
+    const isFormValid = Object.values(formErrors).every((error) => error === '');
     const areAllFieldsFilled = Object.values({
       name: name,
       email: email,
@@ -85,22 +207,21 @@ export default function ShippingDetails({
       city: city,
       state: state,
       zipCode: zipCode,
-    }).every((value) => value !== "");
+    }).every((value) => value !== '');
 
     return !(isFormValid && areAllFieldsFilled);
   };
 
-  const handleValidationChecks = (
-    label: string,
-    value: string,
-    confirm?: string
-  ) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(value, label, confirm);
+  const handleValidationChecks = (label: string, value: string, confirm?: string) => {
+    const { success, errors }: { success: boolean; errors: string[] | [] } = validate(
+      value,
+      label,
+      confirm,
+    );
     if (!success) {
       setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
     } else {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
+      setFormErrors((prev) => ({ ...prev, [label]: '' }));
     }
   };
 
@@ -108,9 +229,7 @@ export default function ShippingDetails({
     <View style={styles.container}>
       <Text style={styles.titleHeader}>Shipping Details</Text>
       <View style={styles.shippingDetailsContainer}>
-        <Text style={{ fontSize: 16, fontWeight: 500, color: colors.grey }}>
-          Delivery Mode
-        </Text>
+        <Text style={{ fontSize: 16, fontWeight: 500, color: colors.grey }}>Delivery Mode</Text>
         <View style={styles.pickerContainer}>
           {deliveryOptions.map((option, index) => (
             <CustomPicker
@@ -128,7 +247,7 @@ export default function ShippingDetails({
             placeHolder="Enter your full name"
             onInputChange={() => null}
             disabled
-            handleBlur={() => handleValidationChecks("name", name)}
+            handleBlur={() => handleValidationChecks('name', name)}
             errorMessage={formErrors.name}
           />
           <Input
@@ -138,7 +257,7 @@ export default function ShippingDetails({
             onInputChange={() => null}
             disabled
             keyboardType="email-address"
-            handleBlur={() => handleValidationChecks("email", email)}
+            handleBlur={() => handleValidationChecks('email', email)}
             errorMessage={formErrors.email}
           />
           <Input
@@ -146,34 +265,42 @@ export default function ShippingDetails({
             value={address}
             placeHolder="Enter your delivery address"
             onInputChange={setDeliveryAddress}
-            handleBlur={() => handleValidationChecks("address", address)}
+            handleBlur={() => handleValidationChecks('address', address)}
             errorMessage={formErrors.address}
           />
           <CustomSelectPicker
             data={transformedCountries}
-            placeholder="Select your country"
-            value={country}
-            handleSetValue={setCountry}
-            label="Country"
+            placeholder="Select country of residence"
+            value={countryCode}
+            handleSetValue={handleCountrySelect}
+            label="Country of residence"
             search={true}
-            searchPlaceholder={"Search Country"}
+            searchPlaceholder="Search Country"
             dropdownPosition="top"
           />
-          <Input
-            label="State"
+          <CustomSelectPicker
+            data={stateData}
+            placeholder="Select state of residence"
             value={state}
-            placeHolder="Enter your state"
-            onInputChange={setState}
-            handleBlur={() => handleValidationChecks("state", state)}
-            errorMessage={formErrors.state}
+            handleSetValue={handleStateSelect}
+            disable={!countryCode}
+            label="State of residence"
+            search={true}
+            searchPlaceholder="Search State"
+            dropdownPosition="top"
           />
-          <Input
-            label="City"
+          <CustomSelectPicker
+            data={cityData}
+            placeholder="Select city"
             value={city}
-            placeHolder="Enter your city"
-            onInputChange={setCity}
-            handleBlur={() => handleValidationChecks("city", city)}
-            errorMessage={formErrors.city}
+            disable={!state}
+            handleSetValue={(item) => {
+              setCity(item.value);
+            }}
+            label="City"
+            search={true}
+            searchPlaceholder="Search City"
+            dropdownPosition="top"
           />
           <Input
             label="Zip Code"
@@ -181,7 +308,7 @@ export default function ShippingDetails({
             placeHolder="123456"
             onInputChange={setZipCode}
             keyboardType="number-pad"
-            handleBlur={() => handleValidationChecks("zipCode", zipCode)}
+            handleBlur={() => handleValidationChecks('zipCode', zipCode)}
             errorMessage={formErrors.zipCode}
           />
           <CustomChecker
@@ -193,7 +320,7 @@ export default function ShippingDetails({
       </View>
       <SummaryContainer
         buttonTypes="Request price quote"
-        price={pricing.shouldShowPrice === "Yes" ? pricing.usd_price : 0}
+        price={pricing.shouldShowPrice === 'Yes' ? pricing.usd_price : 0}
         disableButton={checkIsDisabled()}
       />
     </View>
@@ -219,8 +346,8 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
   },
   pickerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 40,
     marginTop: 20,
   },

@@ -1,78 +1,48 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native-gesture-handler";
-import ArtworkCard from "components/artwork/ArtworkCard";
-import { fetchArtworks } from "services/artworks/fetchArtworks";
-import { colors } from "config/colors.config";
-import ArtworkCardLoader from "components/general/ArtworkCardLoader";
-import { Feather } from "@expo/vector-icons";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import ViewAllCategoriesButton from "components/buttons/ViewAllCategoriesButton";
-import EmptyArtworks from "components/general/EmptyArtworks";
-import { fontNames } from "constants/fontNames.constants";
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
+import { fetchArtworks } from 'services/artworks/fetchArtworks';
+import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
+import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
+import EmptyArtworks from 'components/general/EmptyArtworks';
+import ArtworkCard from 'components/artwork/ArtworkCard';
+import { Feather } from '@expo/vector-icons';
+import { colors } from 'config/colors.config';
+import { screenName } from 'constants/screenNames.constants';
+import { fontNames } from 'constants/fontNames.constants';
+import { HOME_QK } from '../Home';
 
-export default function TrendingArtworks({
-  refreshCount,
-  limit,
-}: {
-  refreshCount?: number;
-  limit: number;
-}) {
-  const navigation = useNavigation<StackNavigationProp<any>>();
+export default function TrendingArtworks({ limit }: { limit: number }) {
+  const navigation = useNavigation<any>();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const { data = [], isLoading } = useQuery({
+    queryKey: HOME_QK.trending(limit),
+    queryFn: async () => {
+      const res = await fetchArtworks({ listingType: 'trending', page: 1 });
+      return res?.isOk ? res.body.data ?? [] : [];
+    },
+    select: (rows) => rows.slice(0, limit),
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+  });
 
-  const [data, setData] = useState([]);
-  const [showMoreButton, setshowMoreButton] = useState(false);
-
-  useEffect(() => {
-    handleFetchArtworks();
-  }, [refreshCount]);
-
-  const handleFetchArtworks = async () => {
-    setIsLoading(true);
-
-    const results = await fetchArtworks({ listingType: "trending", page: 1 });
-
-    if (results.isOk) {
-      const resData = results.body.data;
-
-      setData(resData.splice(0, limit));
-      if (resData.length >= 20) {
-        setshowMoreButton(true);
-      }
-    } else {
-      console.log(results);
-    }
-
-    setIsLoading(false);
-  };
+  const showMoreButton = data.length >= limit;
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={() =>
-          navigation.navigate(screenName.artworkCategories, {
-            title: "trending",
-          })
-        }
+        onPress={() => navigation.navigate(screenName.artworkCategories, { title: 'trending' })}
       >
         <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            paddingHorizontal: 20,
-          }}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20 }}
         >
           <Text
             style={{
               fontSize: 18,
-              fontWeight: 500,
+              fontWeight: '500',
               flex: 1,
-              fontFamily: fontNames.dmSans + "Medium",
+              fontFamily: fontNames.dmSans + 'Medium',
             }}
           >
             Trending Artworks
@@ -80,46 +50,37 @@ export default function TrendingArtworks({
           <Feather name="chevron-right" color={colors.grey} size={20} />
         </View>
       </TouchableOpacity>
+
       {isLoading && <ArtworkCardLoader />}
+
       {!isLoading && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({
-            item,
-            index,
-          }: {
-            item: ArtworkFlatlistItem;
-            index: number;
-          }) => {
-            if (index + 1 === data.length && showMoreButton) {
-              return (
-                <ViewAllCategoriesButton
-                  label="View all trending artworks"
-                  listingType="trending"
-                />
-              );
-            }
-            return (
+          keyExtractor={(_, i) => `trend-${i}`}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginTop: 20 }}
+          contentContainerStyle={{ paddingRight: 20 }}
+          renderItem={({ item, index }) =>
+            index + 1 === data.length && showMoreButton ? (
+              <ViewAllCategoriesButton label="View all trending artworks" listingType="trending" />
+            ) : (
               <ArtworkCard
                 title={item.title}
                 url={item.url}
                 artist={item.artist}
-                showPrice={item.pricing.shouldShowPrice === "Yes"}
+                showPrice={item.pricing.shouldShowPrice === 'Yes'}
                 price={item.pricing.usd_price}
                 availiablity={item.availability}
                 impressions={item.impressions}
                 like_IDs={item.like_IDs}
                 art_id={item.art_id}
               />
-            );
-          }}
-          keyExtractor={(_, index) => JSON.stringify(index)}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 20 }}
-          contentContainerStyle={{ paddingRight: 20 }}
+            )
+          }
         />
       )}
+
       {!isLoading && data.length < 1 && (
         <EmptyArtworks size={70} writeUp="No trending artworks at the moment" />
       )}
@@ -127,8 +88,4 @@ export default function TrendingArtworks({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-  },
-});
+const styles = StyleSheet.create({ container: { marginTop: 40 } });

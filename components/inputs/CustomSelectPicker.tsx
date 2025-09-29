@@ -1,20 +1,22 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { SetStateAction, useEffect, useState } from "react";
-import { Dropdown } from "react-native-element-dropdown";
-import { colors } from "config/colors.config";
+import { StyleSheet, Text, View } from 'react-native';
+import React, { SetStateAction, useEffect, useState } from 'react';
+import { Dropdown } from 'react-native-element-dropdown';
+import { colors } from 'config/colors.config';
 
 type CustomSelectPickerProps = {
   data: { label: string; value: string }[];
   placeholder?: string;
   label: string;
   value: string;
-  handleSetValue: (e: string) => void;
+  handleSetValue: (e: { label: string; value: string }) => void;
   handleBlur?: () => void;
   errorMessage?: string;
   zIndex?: number;
   search?: boolean;
   searchPlaceholder?: string;
-  dropdownPosition?: "auto" | "top" | "bottom";
+  dropdownPosition?: 'auto' | 'top' | 'bottom';
+  disable?: false | true;
+  renderInputSearch?: any;
 };
 
 type SetStateValue<S> = (prevState: S) => S;
@@ -31,20 +33,9 @@ export default function CustomSelectPicker({
   search,
   searchPlaceholder,
   dropdownPosition,
+  disable,
+  renderInputSearch,
 }: CustomSelectPickerProps) {
-  const [open, setOpen] = useState(false);
-
-  const [localValue, setLocalValue] = useState<{
-    label: string;
-    value: string;
-  } | null>(null);
-
-  useEffect(() => {
-    if (localValue) {
-      handleSetValue(localValue.value);
-    }
-  }, [localValue]);
-
   return (
     <View style={{ zIndex: zIndex }}>
       <Text style={styles.label}>{label}</Text>
@@ -53,23 +44,34 @@ export default function CustomSelectPicker({
         data={data}
         labelField="label"
         valueField="value"
-        onChange={(item: any) => {
-          setLocalValue(item);
+        onChange={(item: { label: string; value: string }) => {
+          handleSetValue(item);
         }}
         search={search}
         searchPlaceholder={searchPlaceholder}
         showsVerticalScrollIndicator={false}
         placeholder={placeholder}
         placeholderStyle={{
-          color: "#858585",
+          color: '#858585',
         }}
-        maxHeight={200}
+        disable={disable}
+        maxHeight={250}
         containerStyle={{
           borderRadius: 5,
         }}
         style={styles.container}
+        selectedTextStyle={{
+          color: disable ? '#c0c0c0' : colors.inputLabel,
+        }}
+        renderInputSearch={renderInputSearch}
         dropdownPosition={dropdownPosition}
         keyboardAvoiding={true}
+        flatListProps={{
+          initialNumToRender: 15,
+          maxToRenderPerBatch: 20,
+          windowSize: 10,
+          keyboardShouldPersistTaps: 'handled',
+        }}
       />
       {errorMessage && errorMessage?.length > 0 && (
         <Text style={styles.errorMessage}>{errorMessage}</Text>
@@ -88,13 +90,13 @@ const styles = StyleSheet.create({
     borderColor: colors.inputBorder,
     paddingHorizontal: 20,
     height: 60,
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
     borderRadius: 95,
   },
   errorMessage: {
-    color: "#ff0000",
+    color: '#ff0000',
     marginTop: 2,
   },
 });

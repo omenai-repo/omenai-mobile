@@ -1,168 +1,111 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  RefreshControl,
-  Platform,
-  StatusBar,
-  Dimensions,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import { artworkActionStore } from "store/artworks/ArtworkActionStore";
-import { artworkStore } from "store/artworks/ArtworkStore";
-import { filterStore } from "store/artworks/FilterStore";
-import { fetchPaginatedArtworks } from "services/artworks/fetchPaginatedArtworks";
-import FilterButton from "components/filter/FilterButton";
-import Loader from "components/general/Loader";
-import WithModal from "components/modal/WithModal";
-import { useModalStore } from "store/modal/modalStore";
-import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import ArtworksListing from "components/general/ArtworksListing";
-import tailwind from "twrnc";
+import React, { useMemo, useCallback } from 'react';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { colors } from 'config/colors.config';
+import FilterButton from 'components/filter/FilterButton';
+import WithModal from 'components/modal/WithModal';
+import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader';
+import ArtworksListing from 'components/general/ArtworksListing';
+import tailwind from 'twrnc';
+import { filterStore } from 'store/artworks/FilterStore';
+import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-type TagItemProps = {
-  name: string;
-  isSelected: boolean;
+type FetchResult = {
+  isOk: boolean;
+  data: any[];
+  count: number; // total pages
+  message?: string;
 };
 
-const tags = ["All collections", "Live arts", "Sculptures"];
+// Single fetcher for useInfiniteQuery
+async function fetchPage({
+  pageParam,
+  filters,
+}: {
+  pageParam: number;
+  filters: any;
+}): Promise<FetchResult> {
+  return fetchPaginatedArtworks(pageParam, filters);
+}
 
 export default function Catalog() {
-  const { paginationCount, updatePaginationCount } = artworkActionStore();
-  const { updateModal } = useModalStore();
-  const {
-    setArtworks,
-    artworks,
-    isLoading,
-    setPageCount,
-    setIsLoading,
-    pageCount,
-  } = artworkStore();
-  const { filterOptions, clearAllFilters } = filterStore();
-  const [reloadCount, setReloadCount] = useState<number>(0);
+  const { width } = Dimensions.get('screen');
+  const { filterOptions } = filterStore();
+  const insets = useSafeAreaInsets();
 
-  const [loadingMore, setLoadingmore] = useState<boolean>(false);
+  // Stable key part for filters (changes only when content actually changes)
+  const filterKey = useMemo(() => filterOptions, [JSON.stringify(filterOptions)]);
 
-  const { width } = Dimensions.get("screen");
+  const { data, isLoading, isFetchingNextPage, refetch, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ['catalog', filterKey],
+      queryFn: ({ pageParam = 1 }) => fetchPage({ pageParam, filters: filterOptions }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPages) => {
+        if (!lastPage?.isOk) return undefined;
+        const totalPages = lastPage.count ?? 1;
+        const next = allPages.length + 1;
+        return next <= totalPages ? next : undefined;
+      },
 
-  useEffect(() => {
-    handleFecthArtworks();
-    updatePaginationCount("reset");
-  }, [reloadCount]);
-
-  const handleFecthArtworks = async () => {
-    setIsLoading(true);
-    clearAllFilters();
-    setArtworks([]);
-    const response = await fetchPaginatedArtworks(1, {
-      medium: [],
-      price: [],
-      rarity: [],
-      year: [],
+      // Keep showing the previous list while new filters load
+      // (keepPreviousData (symbol) is fine for useQuery; for infinite queries we pass the previous data through)
+      placeholderData: (prev) => prev,
+      staleTime: 30_000, // serve cached for 30s before considered stale
+      gcTime: 10 * 60_000, // keep in cache for 10m after unused
+      refetchOnMount: true, // only if stale
+      refetchOnReconnect: true, // only if stale
+      refetchOnWindowFocus: true, // only if stale
     });
-    if (response?.isOk) {
-      setArtworks(response.data);
-      setPageCount(response.count);
-    } else {
-      updateModal({
-        message: "Error fetching artworks, reload page again",
-        modalType: "error",
-        showModal: true,
-      });
-    }
-    setIsLoading(false);
-  };
 
-  const handlePagination = async () => {
-    if (artworks.length < 1) return;
+  const flatData = useMemo(
+    () => (data?.pages || []).flatMap((p) => (p?.isOk ? p.data : [])),
+    [data?.pages],
+  );
 
-    setLoadingmore(true);
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    const response = await fetchPaginatedArtworks(
-      paginationCount + 1,
-      filterOptions
-    );
-    if (response?.isOk) {
-      const arr = [...artworks, ...response.data];
-
-      setArtworks(arr);
-      updatePaginationCount("inc");
-      setPageCount(response.count);
-    } else {
-      //throw error
-      console.log(response);
-      // updateModal({
-      //   message: response?.message,
-      //   showModal: true,
-      //   modalType: "error",
-      // });
-    }
-
-    setLoadingmore(false);
-  };
+  const handleRefresh = useCallback(async () => {
+    await refetch(); // pull-to-refresh
+  }, [refetch]);
 
   return (
     <WithModal>
-      <SafeAreaView style={styles.mainContainer}>
-        <View style={{ zIndex: 100, paddingHorizontal: 20, width: "100%" }}>
+      <View style={[styles.mainContainer, { marginTop: insets.top + 16 }]}>
+        <View style={{ zIndex: 100, paddingHorizontal: 20, width: '100%' }}>
           <FilterButton>
             <Text style={styles.headerText}>Catalog</Text>
           </FilterButton>
         </View>
-        <View style={tailwind`z-[5] flex-1 w-[${width}px]`}>
-          {isLoading ? (
+
+        <View style={tailwind`z-5 flex-1 w-[${width}px]`}>
+          {isLoading && flatData.length === 0 ? (
             <MiniArtworkCardLoader />
           ) : (
             <ArtworksListing
-              data={artworks}
-              loadingMore={loadingMore}
-              onEndReached={handlePagination}
-              onRefresh={handleFecthArtworks}
+              data={flatData}
+              loadingMore={isFetchingNextPage}
+              onEndReached={handleEndReached}
+              onRefresh={handleRefresh}
             />
           )}
         </View>
-      </SafeAreaView>
+      </View>
     </WithModal>
   );
 }
 
 const styles = StyleSheet.create({
-  topContainer: {
-    paddingHorizontal: 20,
-  },
-  introText: {
-    fontSize: 28,
-    fontWeight: "500",
-    color: colors.primary_black,
-    maxWidth: 290,
-    paddingVertical: 40,
-  },
   mainContainer: {
-    // paddingHorizontal: 10,
     flex: 1,
-    alignItems: "center",
-    paddingTop: 40,
-  },
-  tagItem: {
-    backgroundColor: "#FAFAFA",
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    marginRight: 10,
-  },
-  tagText: {
-    fontSize: 12,
-    color: colors.primary_black,
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: '500',
     color: colors.primary_black,
-    paddingVertical: 20,
   },
 });

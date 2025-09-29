@@ -1,23 +1,27 @@
-import acrylic_art from 'assets/images/acrylic_art.jpg';
-import charcoal_art from 'assets/images/charcoal_art.jpg';
-import oil_art from 'assets/images/oil_art.jpg';
-import photography_art from 'assets/images/photography_art.jpg';
-import fabric_art from 'assets/images/fabric_art.jpg';
-import mixedMedia from 'assets/images/mixed-media.png';
-import ankara from 'assets/images/ankara.png';
-import canvas from 'assets/images/onboarding-3.jpg';
-import ink from 'assets/images/curated_bg.png';
-import unnamed from 'assets/images/unnamed.jpg'
+import acrylic_art from 'assets/images/acrylic_art.webp';
+import oil_art from 'assets/images/oil_art.webp';
+import photography_art from 'assets/images/photography_art.webp';
+import mixedMedia from 'assets/images/mixed_media_art.webp';
+import sculpture from 'assets/images/bronze_art.webp';
+import resin from 'assets/images/resin_art.webp';
 
-export const mediums = <CatalogCardTypes[]> [
-    {name: 'Mixed media', value: 'Mixed media', image: mixedMedia},
-    {name: 'Paper', value: 'Paper', image: unnamed},
-    {name: 'Ankara', value: 'Ankara', image: ankara},
-    {name: 'Oil', value: 'Oil', image: oil_art},
-    {name: 'Canvas', value: 'Canvas', image: canvas},
-    {name: 'Ink', value: 'Ink', image: ink},
-    {name: 'Photography', value: 'Photography', image: photography_art},
-    {name: 'Charcoal', value: 'Charcoal', image: charcoal_art},
-    {name: 'Fabric', value: 'Fabric', image: fabric_art},
-    {name: 'Acrylic', value: 'Acrylic', image: acrylic_art},
-]
+export const mediums = <CatalogCardTypes[]>[
+  { name: 'Mixed media on paper/canvas', value: 'Mixed media on paper/canvas', image: mixedMedia },
+  {
+    name: 'Sculpture (Resin/plaster/clay)',
+    value: 'Sculpture (Resin/plaster/clay)',
+    image: resin,
+  },
+  { name: 'Oil on canvas/panel', value: 'Oil on canvas/panel', image: oil_art },
+  { name: 'Photography', value: 'Photography', image: photography_art },
+  {
+    name: 'Acrylic on canvas/linen/panel',
+    value: 'Acrylic on canvas/linen/panel',
+    image: acrylic_art,
+  },
+  {
+    name: 'Sculpture (Bronze/stone/metal)',
+    value: 'Sculpture (Bronze/stone/metal)',
+    image: sculpture,
+  },
+];

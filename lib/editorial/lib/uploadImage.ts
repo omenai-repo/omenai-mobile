@@ -1,4 +1,4 @@
-import { storage, ID } from "../../../lib/editorial/controller/appwrite";
+import { storage, ID } from '../../../lib/editorial/controller/appwrite';
 
 export const uploadImage = async (file: File | undefined) => {
   if (file === undefined) return;
@@ -7,7 +7,7 @@ export const uploadImage = async (file: File | undefined) => {
     .createFile(
       process.env.EXPO_PUBLIC_NEXT_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!,
       ID.unique(),
-      file
+      file,
     )
     .then(
       function (response) {
@@ -15,7 +15,7 @@ export const uploadImage = async (file: File | undefined) => {
       },
       function (error) {
         console.log(error); // Failure
-      }
+      },
     );
 
   return imageUploadPromise;

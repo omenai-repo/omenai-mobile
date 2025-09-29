@@ -7,24 +7,25 @@ import {
   View,
   Platform,
   StatusBar,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import WithModal from "components/modal/WithModal";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { colors } from "config/colors.config";
-import { listEditorials } from "lib/editorial/lib/getAllBlogArticles";
-import Loader from "components/general/Loader";
-import EditorialCard from "components/editorials/EditorialCard";
-import EmptyArtworks from "components/general/EmptyArtworks";
+} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import WithModal from 'components/modal/WithModal';
+import BackScreenButton from 'components/buttons/BackScreenButton';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { colors } from 'config/colors.config';
+import { listEditorials } from 'lib/editorial/lib/getAllBlogArticles';
+import Loader from 'components/general/Loader';
+import EditorialCard from 'components/editorials/EditorialCard';
+import EmptyArtworks from 'components/general/EmptyArtworks';
+import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export default function EditorialsListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<editorialListingType[]>([]);
 
-  const screenWidth = Dimensions.get("window").width;
+  const screenWidth = Dimensions.get('window').width;
 
   useEffect(() => {
     handleFetchEditorials();
@@ -54,8 +55,8 @@ export default function EditorialsListing() {
         <View
           style={{
             paddingHorizontal: 20,
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
             gap: 20,
           }}
         >
@@ -112,12 +113,12 @@ export default function EditorialsListing() {
 const styles = StyleSheet.create({
   headerText: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: '500',
     color: colors.primary_black,
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
   },
   safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });

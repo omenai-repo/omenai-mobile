@@ -1,29 +1,23 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import LongBlackButton from "../../../../components/buttons/LongBlackButton";
-import Input from "../../../../components/inputs/Input";
-import { useGalleryAuthLoginStore } from "store/auth/login/GalleryAuthLoginStore";
-import PasswordInput from "components/inputs/PasswordInput";
-import WithModal from "components/modal/WithModal";
-import { useAppStore } from "store/app/appStore";
-import { useModalStore } from "store/modal/modalStore";
-import { loginAccount } from "services/login/loginAccount";
-import { utils_storeAsyncData } from "utils/utils_asyncStorage";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { screenName } from "constants/screenNames.constants";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import LongBlackButton from '../../../../components/buttons/LongBlackButton';
+import Input from '../../../../components/inputs/Input';
+import { useGalleryAuthLoginStore } from 'store/auth/login/GalleryAuthLoginStore';
+import PasswordInput from 'components/inputs/PasswordInput';
+import WithModal from 'components/modal/WithModal';
+import { useAppStore } from 'store/app/appStore';
+import { useModalStore } from 'store/modal/modalStore';
+import { loginAccount } from 'services/login/loginAccount';
+import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { screenName } from 'constants/screenNames.constants';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Gallery() {
-  const {
-    galleryLoginData,
-    setEmail,
-    setPassword,
-    clearInputs,
-    isLoading,
-    setIsLoading,
-  } = useGalleryAuthLoginStore();
-  const { setUserSession, setIsLoggedIn } = useAppStore();
+  const { galleryLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
+    useGalleryAuthLoginStore();
+  const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
   const { updateModal } = useModalStore();
 
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -31,7 +25,10 @@ export default function Gallery() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(galleryLoginData, "gallery");
+    const results = await loginAccount(
+      { ...galleryLoginData, device_push_token: expoPushToken ?? '' },
+      'gallery',
+    );
 
     if (results?.isOk) {
       const resultsBody = results?.body?.data;
@@ -39,7 +36,7 @@ export default function Gallery() {
       if (resultsBody.verified === false) {
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.id, type: "gallery" },
+          account: { id: resultsBody.gallery_id, type: 'gallery' },
         });
         return;
       }
@@ -51,22 +48,20 @@ export default function Gallery() {
         role: resultsBody.role,
         gallery_verified: resultsBody.gallery_verified,
         description: resultsBody.description,
-        location: resultsBody.location,
         verified: resultsBody.verified,
         admin: resultsBody.admin,
         logo: resultsBody.logo,
         subscription_active: resultsBody.subscription_active,
+        address: resultsBody.address,
+        phone: resultsBody.phone,
       };
 
-      const isStored = await utils_storeAsyncData(
-        "userSession",
-        JSON.stringify(data)
-      );
+      const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));
 
       const loginTimeStamp = new Date();
       const isLoginTimeStampStored = await utils_storeAsyncData(
-        "loginTimeStamp",
-        JSON.stringify(loginTimeStamp)
+        'loginTimeStamp',
+        JSON.stringify(loginTimeStamp),
       );
 
       if (isStored && isLoginTimeStampStored) {
@@ -79,7 +74,7 @@ export default function Gallery() {
       updateModal({
         message: results?.body.message,
         showModal: true,
-        modalType: "error",
+        modalType: 'error',
       });
     }
 
@@ -106,18 +101,14 @@ export default function Gallery() {
         </View>
         <View>
           <LongBlackButton
-            value={isLoading ? "Loading ..." : "Sign In Gallery"}
-            isDisabled={
-              galleryLoginData.email && galleryLoginData.password ? false : true
-            }
+            value={isLoading ? 'Loading ...' : 'Sign In Gallery'}
+            isDisabled={galleryLoginData.email && galleryLoginData.password ? false : true}
             isLoading={isLoading}
             onClick={handleSubmit}
           />
         </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(screenName.forgotPassword, { type: "gallery" })
-          }
+          onPress={() => navigation.navigate(screenName.forgotPassword, { type: 'gallery' })}
         >
           <Text style={styles.resetText}>Forgot password? Click here</Text>
         </TouchableOpacity>
@@ -133,6 +124,6 @@ const styles = StyleSheet.create({
   },
   resetText: {
     fontSize: 16,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });

@@ -18,9 +18,7 @@ const transformedCountries = country_codes.map((item) => ({
 export default function ExtraGalleryDetailsInput() {
   const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({
     admin: "",
-    address: "",
     description: "",
-    country: "",
   });
 
   const {
@@ -28,8 +26,6 @@ export default function ExtraGalleryDetailsInput() {
     setPageIndex,
     galleryRegisterData,
     setAdmin,
-    setAddress,
-    setCountry,
     setDescription,
   } = useGalleryAuthRegisterStore();
 
@@ -40,9 +36,7 @@ export default function ExtraGalleryDetailsInput() {
     );
     const areAllFieldsFilled = Object.values({
       admin: galleryRegisterData.admin,
-      location: galleryRegisterData.address,
       description: galleryRegisterData.description,
-      country: galleryRegisterData.country,
     }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
@@ -79,27 +73,7 @@ export default function ExtraGalleryDetailsInput() {
           value={galleryRegisterData.admin}
           errorMessage={formErrors.admin}
         />
-        <CustomSelectPicker
-          data={transformedCountries}
-          placeholder="Select country of operation"
-          value={galleryRegisterData.country}
-          handleSetValue={setCountry}
-          search={true}
-          searchPlaceholder="Search country"
-          label="Country of operation"
-          dropdownPosition="top"
-        />
-        <Input
-          label={`Gallery address`}
-          keyboardType="default"
-          onInputChange={(text) => {
-            setAddress(text);
-            handleValidationChecks("location", text);
-          }}
-          placeHolder="Enter gallery address"
-          value={galleryRegisterData.address}
-          errorMessage={formErrors.address}
-        />
+
         <LargeInput
           label={`Gallery Description`}
           onInputChange={(text) => {

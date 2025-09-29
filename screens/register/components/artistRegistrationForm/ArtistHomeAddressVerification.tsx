@@ -1,34 +1,30 @@
-import { View, Text, Pressable, useWindowDimensions } from "react-native";
-import React, { useEffect, useState } from "react";
-import tw from "twrnc";
-import Input from "components/inputs/Input";
-import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
-import { validate } from "lib/validations/validatorGroup";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import { country_codes } from "json/country_alpha_2_codes";
-import BackFormButton from "components/buttons/BackFormButton";
-import { verifyAddress } from "services/register/verifyAddress";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import { useModalStore } from "store/modal/modalStore";
-import { debounce } from "lodash";
-import AuthModal from "components/auth/AuthModal";
-import { checkMarkIcon, errorIcon } from "utils/SvgImages";
-
-const transformedCountries = country_codes.map((item) => ({
-  value: item.key,
-  label: item.name,
-}));
+import { View, Text, Pressable, useWindowDimensions } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import tw from 'twrnc';
+import Input from 'components/inputs/Input';
+import { useArtistAuthRegisterStore } from 'store/auth/register/ArtistAuthRegisterStore';
+import { validate } from 'lib/validations/validatorGroup';
+import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
+import BackFormButton from 'components/buttons/BackFormButton';
+import { verifyAddress } from 'services/register/verifyAddress';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { useModalStore } from 'store/modal/modalStore';
+import { debounce } from 'lodash';
+import AuthModal from 'components/auth/AuthModal';
+import { checkMarkIcon, errorIcon } from 'utils/SvgImages';
+import { artist_countries_codes_currency } from 'data/artist_countries_codes_currency';
+import { State, City, IState, ICity } from 'country-state-city';
 
 const ArtistHomeAddressVerification = () => {
   const { height, width } = useWindowDimensions();
-  const [formErrors, setFormErrors] = useState<Partial<ArtistSignupData>>({
-    address: {
-      address_line: "",
-      city: "",
-      country: "",
-      state: "",
-      zip: "",
-    },
+  const [formErrors, setFormErrors] = useState<Partial<AddressTypes & { phone: string }>>({
+    address_line: '',
+    city: '',
+    country: '',
+    state: '',
+    zip: '',
+    countryCode: '',
+    phone: '',
   });
   const [showToolTip, setShowToolTip] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -36,59 +32,132 @@ const ArtistHomeAddressVerification = () => {
 
   const { updateModal } = useModalStore();
 
+  const transformedCountries = useMemo(
+    () =>
+      artist_countries_codes_currency.map((item) => ({
+        value: item.alpha2,
+        label: item.name,
+        currency: item.currency,
+      })),
+    [],
+  );
+
   const {
     pageIndex,
     setPageIndex,
     artistRegisterData,
     setHomeAddress,
+    setPhone,
     setCity,
     setZipCode,
     setCountry,
+    setCountryCode,
+    setState,
     setIsLoading,
     isLoading,
+    stateData,
+    setStateData,
+    cityData,
+    setCityData,
+    setStateCode,
+    setBaseCurrency,
   } = useArtistAuthRegisterStore();
+  console.log(artistRegisterData.base_currency);
+  const handleCountrySelect = (item: { label: string; value: string; currency?: string }) => {
+    setCountry(item.label);
+    setCountryCode(item.value);
+    if (item.currency) {
+      setBaseCurrency(item.currency);
+    }
+
+    // Reset state and city selections
+    setState('');
+    setCity('');
+
+    // Clear state and city dropdown data
+    setStateData([]);
+    setCityData([]);
+
+    // get the selected country's states
+    const getStates = State.getStatesOfCountry(item.value);
+
+    // Set the states dropdown data
+    setStateData(
+      getStates
+        ? getStates.map((state: IState) => ({
+            label: state.name,
+            value: state.name,
+            isoCode: state.isoCode,
+          }))
+        : [],
+    );
+  };
+
+  // 🚀 **Debounced Fetch Cities Function**
+  const fetchCities = useCallback(
+    debounce((countryCode, stateValue) => {
+      const getCities = City.getCitiesOfState(countryCode, stateValue);
+      setCityData(
+        getCities?.map((city: ICity) => ({
+          label: city.name,
+          value: city.name,
+        })) || [],
+      );
+    }, 300),
+    [],
+  );
+
+  // 🚀 **Handle State Selection**
+  const handleStateSelect = useCallback(
+    (item: { label: string; value: string; isoCode?: string }) => {
+      setState(item.value);
+      if (item.isoCode) {
+        setStateCode(item.isoCode);
+      }
+      fetchCities(artistRegisterData.address.countryCode, item.isoCode);
+    },
+    [artistRegisterData.address.countryCode, fetchCities],
+  );
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
-    const isFormValid =
-      formErrors.address &&
-      Object.values(formErrors.address).every((error) => error === "");
+    const isFormValid = formErrors && Object.values(formErrors).every((error) => error === '');
     const areAllFieldsFilled = Object.values({
       address_line: artistRegisterData?.address?.address_line,
       city: artistRegisterData?.address?.city,
       zip: artistRegisterData?.address?.zip,
       country: artistRegisterData?.address?.country,
-    }).every((value) => value !== "");
+      state: artistRegisterData?.address?.state,
+      phone: artistRegisterData?.phone,
+    }).every((value) => value !== '');
 
     return !(isFormValid && areAllFieldsFilled);
   };
 
-  const handleValidationChecks = debounce(
-    (label: string, value: string, confirm?: string) => {
-      // Clear error if the input is empty
-      if (value.trim() === "") {
-        setFormErrors((prev) => ({ ...prev, [label]: "" }));
-        return;
-      }
+  const handleValidationChecks = debounce((label: string, value: string, confirm?: string) => {
+    // Clear error if the input is empty
+    if (value.trim() === '') {
+      setFormErrors((prev) => ({ ...prev, [label]: '' }));
+      return;
+    }
 
-      const { success, errors } = validate(value, label, confirm);
-      setFormErrors((prev) => ({
-        ...prev,
-        [label]: errors.length > 0 ? errors[0] : "",
-      }));
-    },
-    500
-  ); // ✅ Delay validation by 500ms
+    const { success, errors } = validate(value, label, confirm);
+    setFormErrors((prev) => ({
+      ...prev,
+      [label]: errors.length > 0 ? errors[0] : '',
+    }));
+  }, 500); // ✅ Delay validation by 500ms
 
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
       const payload = {
-        type: "pickup",
-        countyName: artistRegisterData.address.address_line,
-        cityName: artistRegisterData.address.city,
+        type: 'pickup',
+        countyName: artistRegisterData.address.city,
+        cityName: artistRegisterData.address.state,
         postalCode: artistRegisterData.address.zip,
-        countryCode: artistRegisterData.address.country,
+        countryCode: artistRegisterData.address.countryCode,
+        phone: artistRegisterData.phone,
       };
 
       const response = await verifyAddress(payload);
@@ -96,10 +165,7 @@ const ArtistHomeAddressVerification = () => {
       setIsLoading(false);
 
       if (response?.isOk) {
-        if (
-          response?.body?.data?.address &&
-          response.body.data.address.length !== 0
-        ) {
+        if (response?.body?.data?.address && response.body.data.address.length !== 0) {
           setShowModal(true);
           setAddressVerified(true);
         } else {
@@ -111,10 +177,10 @@ const ArtistHomeAddressVerification = () => {
         setAddressVerified(false);
       }
     } catch (error) {
-      console.error("Error verifying address:", error);
+      console.error('Error verifying address:', error);
       updateModal({
-        message: "Network error, please check your connection and try again.",
-        modalType: "error",
+        message: 'Network error, please check your connection and try again.',
+        modalType: 'error',
         showModal: true,
       });
     } finally {
@@ -124,55 +190,85 @@ const ArtistHomeAddressVerification = () => {
 
   return (
     <View style={tw``}>
+      <View style={tw`mb-[20px]`}>
+        <CustomSelectPicker
+          data={transformedCountries}
+          placeholder="Select country of residence"
+          value={artistRegisterData.address.countryCode}
+          handleSetValue={handleCountrySelect}
+          label="Country of residence"
+          search={true}
+          searchPlaceholder="Search Country"
+          dropdownPosition="bottom"
+        />
+      </View>
+
+      <View style={tw`mb-[20px]`}>
+        <CustomSelectPicker
+          data={stateData}
+          placeholder="Select state"
+          value={artistRegisterData.address.state}
+          handleSetValue={handleStateSelect}
+          disable={!artistRegisterData.address.country}
+          label="State of residence"
+          search={true}
+          searchPlaceholder="Search state"
+          dropdownPosition="bottom"
+        />
+      </View>
+
       <Input
         label="Home Address"
         keyboardType="default"
         onInputChange={(text) => {
           setHomeAddress(text);
-          handleValidationChecks("general", text);
+          handleValidationChecks('general', text);
         }}
         placeHolder="Input your home address here"
         value={artistRegisterData?.address?.address_line}
-        errorMessage={formErrors.address?.address_line}
+        errorMessage={formErrors?.address_line}
       />
 
-      <View style={tw`flex-row items-center gap-[30px] mt-[20px]`}>
-        <Input
-          label="City"
-          keyboardType="default"
-          onInputChange={(text) => {
-            setCity(text);
-            handleValidationChecks("general", text);
-          }}
-          placeHolder="City"
-          value={artistRegisterData?.address?.city}
-          errorMessage={formErrors.address?.city}
-        />
+      <View style={tw`flex-row items-center gap-[30px] my-[20px]`}>
+        <View style={tw`flex-1`}>
+          <CustomSelectPicker
+            data={cityData}
+            placeholder="Select city"
+            value={artistRegisterData.address.city}
+            disable={!artistRegisterData.address.state}
+            handleSetValue={(item) => {
+              setCity(item.value);
+            }}
+            label="City"
+            search={true}
+            searchPlaceholder="Search City"
+            dropdownPosition="bottom"
+          />
+        </View>
         <Input
           label="Zip Code"
           keyboardType="default"
           onInputChange={(text) => {
             setZipCode(text);
-            handleValidationChecks("general", text);
+            handleValidationChecks('general', text);
           }}
           placeHolder="Zip Code"
           value={artistRegisterData?.address?.zip}
-          errorMessage={formErrors.address?.zip}
+          errorMessage={formErrors?.zip}
         />
       </View>
 
-      <View style={tw`mt-[20px]`}>
-        <CustomSelectPicker
-          data={transformedCountries}
-          placeholder="Select country of residence"
-          value={artistRegisterData.address.country}
-          handleSetValue={setCountry}
-          label="Country of residence"
-          search={true}
-          searchPlaceholder="Search Country"
-          dropdownPosition="top"
-        />
-      </View>
+      <Input
+        label="Phone number"
+        keyboardType="phone-pad"
+        onInputChange={(text) => {
+          setPhone(text);
+          handleValidationChecks('general', text);
+        }}
+        placeHolder="+12345678990"
+        value={artistRegisterData?.phone}
+        errorMessage={formErrors?.phone}
+      />
 
       <View style={tw`flex-row mt-[40px]`}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
@@ -188,13 +284,10 @@ const ArtistHomeAddressVerification = () => {
 
       <Pressable
         onPress={() => setShowToolTip(!showToolTip)}
-        style={tw.style(
-          `rounded-full h-[45px] w-[45px] justify-center items-center bg-[#000]`,
-          {
-            top: height / 8,
-            alignSelf: "flex-end",
-          }
-        )}
+        style={tw.style(`rounded-full h-[45px] w-[45px] justify-center items-center bg-[#000]`, {
+          top: height / 8,
+          alignSelf: 'flex-end',
+        })}
       >
         <Text style={tw`text-[#FFFFFF] text-[20px]`}>?</Text>
       </Pressable>
@@ -203,15 +296,12 @@ const ArtistHomeAddressVerification = () => {
           style={tw.style(`mr-[80px]`, {
             top: height / 13,
             width: width / 2,
-            alignSelf: "flex-end",
+            alignSelf: 'flex-end',
           })}
         >
           <View style={tw`rounded-[12px] bg-[#111111] py-[10px] px-[15px]`}>
-            <Text
-              style={tw`text-[10px] text-[#FFFFFF] text-center leading-[15px]`}
-            >
-              We need your home address to {`\n`} properly verify shipping
-              designation
+            <Text style={tw`text-[10px] text-[#FFFFFF] text-center leading-[15px]`}>
+              We need your home address to {`\n`} properly verify shipping designation
             </Text>
           </View>
           <View
@@ -225,11 +315,11 @@ const ArtistHomeAddressVerification = () => {
         icon={addressVerified ? checkMarkIcon : errorIcon}
         text={
           addressVerified
-            ? "Your account has been verified succesfully"
-            : "Your Address could not be verified. Try again."
+            ? 'Your Address has been verified succesfully'
+            : 'Your Address could not be verified. Try again.'
         }
         btn1Text="Go Back"
-        btn2Text={addressVerified ? "Proceed" : "Try Again"}
+        btn2Text={addressVerified ? 'Proceed' : 'Try Again'}
         onPress1={() => {
           setShowModal(false);
           setPageIndex(pageIndex - 1);

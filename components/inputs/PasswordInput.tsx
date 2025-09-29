@@ -1,13 +1,7 @@
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useState } from "react";
-import { colors } from "../../config/colors.config";
-import Feather from "@expo/vector-icons/Feather";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { colors } from '../../config/colors.config';
+import Feather from '@expo/vector-icons/Feather';
 
 type PasswordInputProps = {
   label: string;
@@ -35,6 +29,7 @@ export default function PasswordInput({
         <TextInput
           style={styles.input}
           placeholder={placeHolder}
+          placeholderTextColor={'#858585'}
           onChangeText={onInputChange}
           secureTextEntry={!showPassword}
           autoCapitalize="none"
@@ -45,15 +40,11 @@ export default function PasswordInput({
           style={styles.hideButton}
           onPress={() => setShowPassword((prev) => !prev)}
         >
-          <Feather
-            name={showPassword ? "eye" : "eye-off"}
-            size={16}
-            color="#858585"
-          />
+          <Feather name={showPassword ? 'eye' : 'eye-off'} size={16} color="#858585" />
         </TouchableOpacity>
       </View>
       {errorMessage && errorMessage?.length > 0 && (
-        <Text style={styles.errorMessage}>{errorMessage || ""}</Text>
+        <Text style={styles.errorMessage}>{errorMessage || ''}</Text>
       )}
     </View>
   );
@@ -66,30 +57,31 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 60,
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    backgroundColor: "#FAFAFA",
-    overflow: "hidden",
+    backgroundColor: '#FAFAFA',
+    overflow: 'hidden',
     borderRadius: 95,
     marginTop: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   input: {
     flex: 1,
-    height: "100%",
+    height: '100%',
     paddingHorizontal: 20,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
+    color: '#000',
   },
   hideButton: {
     width: 50,
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   errorMessage: {
-    color: "#ff0000",
+    color: '#ff0000',
     marginTop: 2,
   },
 });

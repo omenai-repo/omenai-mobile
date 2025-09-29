@@ -1,19 +1,25 @@
-import { OrderTabsTypes } from "screens/orders/Orders";
-import { create } from "zustand";
+import { OrderTabsTypes } from 'screens/orders/Orders';
+import { create } from 'zustand';
 
 type OrdersStoreTypes = {
   selectedTab: OrderTabsTypes;
   setSelectedTab: (e: OrderTabsTypes) => void;
   isLoading: boolean;
   setIsLoading: (e: boolean) => void;
-  data: any[];
-  setData: (e: any[]) => void;
+  data: {
+    pendingOrders: CreateOrderModelTypes[];
+    completedOrders: CreateOrderModelTypes[];
+  };
+  setData: (e: {
+    pendingOrders: CreateOrderModelTypes[];
+    completedOrders: CreateOrderModelTypes[];
+  }) => void;
   refreshTrigger: number;
   setRefreshTrigger: (e: number) => void;
 };
 
 export const useOrderStore = create<OrdersStoreTypes>((set, get) => ({
-  selectedTab: "Pending",
+  selectedTab: 'pending',
   setSelectedTab: (e: OrderTabsTypes) => {
     set({ selectedTab: e });
   },
@@ -21,8 +27,14 @@ export const useOrderStore = create<OrdersStoreTypes>((set, get) => ({
   setIsLoading: (e: boolean) => {
     set({ isLoading: e });
   },
-  data: [],
-  setData: (e: any[]) => {
+  data: {
+    completedOrders: [],
+    pendingOrders: [],
+  },
+  setData: (e: {
+    pendingOrders: CreateOrderModelTypes[];
+    completedOrders: CreateOrderModelTypes[];
+  }) => {
     set({ data: e });
   },
   refreshTrigger: 0,

@@ -1,53 +1,79 @@
-
- type OrderShippingDetailsTypes = {
+type OrderShippingDetailsTypes = {
   addresses: {
-    origin?: IndividualAddressTypes;
-    destination: IndividualAddressTypes;
+    origin: AddressTypes;
+    destination: AddressTypes;
   };
-  tracking: TrackingInformationTypes;
-  quote: ShippingQuoteTypes;
   delivery_confirmed: boolean;
+  additional_information?: string;
+  shipment_information: {
+    carrier: string;
+    shipment_product_code: string;
+    dimensions: {
+      length: number;
+      weight: number;
+      width: number;
+      height: number;
+    };
+    pickup: {
+      additional_information?: string;
+      pickup_max_time: string;
+      pickup_min_time: string;
+    };
+    tracking: TrackingInformationTypes;
+    quote: ShippingQuoteTypes;
+  };
 };
 
 type OrderBuyerAndSellerDetails = {
   id: string;
   name: string;
   email: string;
+  address: AddressTypes;
 };
 
- type OrderAcceptedStatusTypes = {
-  status: "accepted" | "declined" | "";
+type OrderAcceptedStatusTypes = {
+  status: 'accepted' | 'declined' | '';
   reason?: string;
 };
 
- type TrackingInformationTypes = {
+type TrackingInformationTypes = {
   id: string;
   link: string;
 };
 
- type ShippingQuoteTypes = {
-  package_carrier: string;
-  fees: string;
-  taxes: string;
-  additional_information?: string;
+type OrderArtworkExhibitionStatus = {
+  is_on_exhibition: boolean;
+  exhibition_end_date: Date | string;
 };
 
-type IndividualAddressTypes = {
+type HoldStatus = {
+  is_hold: boolean;
+  hold_end_date: Date;
+};
+
+type ShipmentDimensions = {
+  length: number;
+  width: number;
+  height: number;
+  weight: number;
+};
+
+type AddressTypes = {
   address_line: string;
   city: string;
   country: string;
+  countryCode: string;
   state: string;
+  stateCode: string;
   zip: string;
-  [key: string]: string;
 };
 
 type PaymentStatusTypes = {
-  status: "pending" | "completed";
+  status: 'pending' | 'completed';
   transaction_value: string;
   transaction_date: string;
   transaction_reference: string;
 };
-
 
 type ArtworkDimensions = {
   width: string;
@@ -56,16 +82,10 @@ type ArtworkDimensions = {
   weight: string;
 };
 
-type ArtistCategorization =
-  | "emerging"
-  | "early-mid"
-  | "mid"
-  | "late-mid"
-  | "established"
-  | "elite";
+type ArtistCategorization = 'emerging' | 'early-mid' | 'mid' | 'late-mid' | 'established' | 'elite';
 
 type RoleAccess = {
-  role: "artist" | "gallery";
+  role: 'artist' | 'gallery';
   designation: ArtistCategorization | null;
 };
 
@@ -73,49 +93,54 @@ type ArtworkPricing = {
   price: number;
   usd_price: number;
   currency: string;
-  shouldShowPrice: "Yes" | "No" | string;
+  shouldShowPrice: 'Yes' | 'No' | string;
 };
 
 type IndividualLoginData = {
   email: string;
   password: string;
+  device_push_token: string;
 };
 
 type GalleryLoginData = {
   email: string;
   password: string;
+  device_push_token: string;
 };
 
 type ArtistLoginData = {
   email: string;
   password: string;
+  device_push_token: string;
 };
 
 type IndividualRegisterData = {
-  name: string,
-  email: string,
-  password: string,
-  confirmPassword: string
-}
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  address: AddressTypes;
+  phone: string;
+};
 
 type GallerySignupData = {
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
-  address: string;
-  country: string;
+  address: AddressTypes;
   admin: string;
   description: string;
   logo: {
     assets: ImageAsset[];
   } | null;
+  phone: string;
 };
 
 type ImageAsset = {
   uri: string;
-  fileName?: string;
-  mimeType?: string;
+  fileName: string;
+  mimeType: string;
   width?: number;
   height?: number;
   fileSize?: number;
@@ -130,74 +155,75 @@ type ArtistSignupData = {
     assets: ImageAsset[];
   } | null;
   art_style: string | string[];
-  address: IndividualAddressTypes;
+  address: AddressTypes;
+  base_currency: string;
+  phone: string;
 };
 
-type ArtistRegisterData = Pick<ArtistSignupData, "name" | "email" | "password"> & {
-  logo: string
-}
+type ArtistRegisterData = Omit<ArtistSignupData, 'logo' | 'confirmPassword'> & {
+  logo: string;
+  device_push_token: string;
+};
 
 type GalleryRegisterData = Pick<
   GallerySignupData,
-  "name" | "admin" | "email" | "password" | "description"
+  'name' | 'admin' | 'email' | 'password' | 'description'
 > & {
-  location: GalleryLocation;
-  logo: string
+  logo: string;
 };
 
 type GalleryWaitlistData = {
-  name: string,
-  email: string
-}
+  name: string;
+  email: string;
+};
 
 type artworkListingType = 'trending' | 'recent' | 'curated';
 
-type RouteIdentifier = "individual" | "gallery" | "artist";
+type RouteIdentifier = 'individual' | 'gallery' | 'artist';
 
 type userSessionType = {
-  name: string,
-  id: string,
-  email: string,
-  
-}
+  name: string;
+  id: string;
+  email: string;
+};
 type ArtworkDataType = {
-  title: string,
-  artist: string,
-  artist_country_origin: string,
-  availability: boolean,
-  artist_birthyear: string,
-  artwork_description: string,
-  pricing: {price: number, shouldShowPrice: "Yes" | "No", usd_price: number},
-  year: string,
-  dimensions: {depth: string, height: string, width: string, weight: string},
-  framing: string,
-  carrier: string,
-  rarity: string,
-  materials: string,
-  medium: string,
-  signature: string,
-  updatedAt: string,
-  url: string,
-  certificate_of_authenticity: "Yes" | 'No',
+  title: string;
+  artist: string;
+  artist_country_origin: string;
+  availability: boolean;
+  artist_birthyear: string;
+  artwork_description: string;
+  pricing: { price: number; shouldShowPrice: 'Yes' | 'No'; usd_price: number };
+  year: string;
+  dimensions: { depth: string; height: string; width: string; weight: string };
+  framing: string;
+  carrier: string;
+  rarity: string;
+  materials: string;
+  medium: string;
+  signature: string;
+  updatedAt: string;
+  url: string;
+  certificate_of_authenticity: 'Yes' | 'No';
   art_id: string;
   author_id: string;
   impressions?: number;
   like_IDs?: string[];
-}
+};
 
 type ArtworkFlatlistItem = {
-  title: string,
-  artist: string,
-  pricing: {price: number, shouldShowPrice: "Yes" | "No", usd_price: number},
-  url: string,
-  availability: boolean,
+  title: string;
+  artist: string;
+  pricing: { price: number; shouldShowPrice: 'Yes' | 'No'; usd_price: number };
+  url: string;
+  availability: boolean;
   art_id: string;
   impressions: number;
   like_IDs: string[];
-}
+};
 
 type OrderAcceptedStatusTypes = {
-  status: "accepted" | "declined" | "";
+  status: 'accepted' | 'declined' | '';
   reason?: string;
 };
 type TrackingInformationTypes = {
@@ -205,21 +231,19 @@ type TrackingInformationTypes = {
   link: string;
 };
 type PaymentStatusTypes = {
-  status: "pending" | "completed";
+  status: 'pending' | 'completed';
   transaction_value: string;
   transaction_date: string;
   transaction_reference: string;
 };
 
 type ShippingQuoteTypes = {
-  package_carrier: string;
-  shipping_fees: string;
+  fees: string;
   taxes: string;
-  additional_information?: string;
 };
 
 type OrderAcceptedStatusTypes = {
-  status: "accepted" | "declined" | "";
+  status: 'accepted' | 'declined' | '';
   reason?: string;
 };
 
@@ -228,39 +252,68 @@ type RouteParamsType = {
 };
 
 type accountsRouteParamsType = {
-  type: "individual" | "gallery" | "artist";
+  type: 'individual' | 'gallery' | 'artist';
 };
 
 type verifyEmailRouteParamsType = {
-  account: {id: string, type: RouteIdentifier}
-}
+  account: { id: string; type: RouteIdentifier };
+};
+
+type ArtistDocumentationTypes = {
+  cv?: string;
+  socials?: { [key?: Socials]: string };
+};
+
+type Socials = 'instagram' | 'twitter' | 'facebook' | 'linkedin';
+
+type ArtistCategorizationUpdateDataTypes = {
+  answers: ArtistCategorizationAnswerTypes;
+  bio: string;
+  documentation: ArtistDocumentationTypes;
+  artist_id: string;
+};
+
+type ArtistCategorizationAnswerTypes = {
+  graduate: 'yes' | 'no' | string;
+  mfa: 'yes' | 'no' | string;
+  solo: number;
+  group: number;
+  museum_collection: 'yes' | 'no' | string;
+  biennale: 'venice' | 'other' | 'none' | string;
+  museum_exhibition: 'yes' | 'no' | string;
+  art_fair: 'yes' | 'no' | string;
+};
 
 type artworkOrderDataTypes = {
-  pricing: {shouldShowPrice: "Yes" | "No", price: number, usd_price: number},
-  url: string,
-  title: string,
-  artist: string,
-  author_id: string,
-  art_id: string
-}
+  pricing: { shouldShowPrice: 'Yes' | 'No'; price: number; usd_price: number };
+  url: string;
+  title: string;
+  artist: string;
+  author_id: string;
+  art_id: string;
+  role_access: {
+    designation: string;
+    role: 'artist' | 'gallery';
+  };
+};
 
 type OrderCardProps = {
-  artworkName: string,
-  artworkPrice: number,
-  dateOrdered: string,
-  url: string,
-  orderId: string,
-  status: string,
-  state: "pending" | "history",
+  artworkName: string;
+  artworkPrice: number;
+  dateOrdered: string;
+  url: string;
+  orderId: string;
+  status: string;
+  state: 'pending' | 'history';
   payment_information?: PaymentStatusTypes;
   tracking_information?: TrackingInformationTypes;
   shipping_quote?: ShippingQuoteTypes;
   order_accepted: OrderAcceptedStatusTypes;
   delivery_confirmed: boolean;
-  availability: boolean
-}
+  availability: boolean;
+};
 
-type IndividualAddressTypes = {
+type AddressTypes = {
   address_line: string;
   city: string;
   country: string;
@@ -294,12 +347,21 @@ type ArtworkSchemaTypes = {
 };
 
 type editorialListingType = {
-  title: string,
-  id: string,
-  author: string,
-  date: string,
-  url: string,
-}
+  title: string;
+  id: string;
+  author: string;
+  date: string;
+  url: string;
+};
+
+type EditorialSchemaTypes = {
+  headline: string;
+  summary: string;
+  cover: string;
+  date: Date | string;
+  content: string;
+  slug: string;
+};
 
 type ArtworkUploadStateTypes = {
   artist: string;
@@ -314,7 +376,7 @@ type ArtworkUploadStateTypes = {
   weight: string;
   price: number;
   usd_price: number;
-  shouldShowPrice: "Yes" | "No" | string;
+  shouldShowPrice: 'Yes' | 'No' | string;
   artist_birthyear: string;
   artist_country_origin: string;
   certificate_of_authenticity: string;
@@ -326,7 +388,7 @@ type ArtworkUploadStateTypes = {
 };
 
 type OrderAcceptedStatusTypes = {
-  status: "accepted" | "declined" | "";
+  status: 'accepted' | 'declined' | '';
   reason?: string;
 };
 type ShippingQuoteTypes = {
@@ -336,9 +398,9 @@ type ShippingQuoteTypes = {
   additional_information?: string;
 };
 type GalleryProfileUpdateData = {
-  location?: string;
   admin?: string;
   description?: string;
+  phone?: string;
 };
 
 type IndividualProfileUpdateData = {
@@ -346,58 +408,67 @@ type IndividualProfileUpdateData = {
   preferences?: string[];
 };
 
-type TransactionModelSchemaTypes = {
+type PurchaseTransactionModelSchemaTypes = {
   trans_id: string;
   trans_reference: string;
-  trans_amount: string;
-  trans_owner_id: string;
-  trans_owner_role: "user" | "gallery";
-  trans_gallery_id: string;
-  trans_type: "purchase_payout" | "subscription";
+  trans_initiator_id: string;
+  trans_recipient_id: string;
+  trans_pricing: PurchaseTransactionPricing;
   trans_date: Date;
+  trans_recipient_role: 'gallery' | 'artist';
+};
+
+type PurchaseTransactionPricing = {
+  unit_price: number;
+  commission: number;
+  shipping_cost: number;
+  amount_total: number;
 };
 
 type ArtworkPriceFilterData = {
-  "pricing.price": number;
-  "pricing.usd_price": number;
-  "pricing.shouldShowPrice": string;
-  "pricing.currency": string;
+  'pricing.price': number;
+  'pricing.usd_price': number;
+  'pricing.shouldShowPrice': string;
+  'pricing.currency': string;
 };
 
 type CatalogCardTypes = {
-  name: string, 
-  value: string,
-  image: string
-}
+  name: string;
+  value: string;
+  image: any;
+};
 
 type CreateOrderModelTypes = {
   artwork_data: Pick<
     ArtworkSchemaTypes,
-    "artist" | "pricing" | "title" | "url" | "art_id"
+    'artist' | 'pricing' | 'title' | 'url' | 'art_id' | 'role_access'
   > & { _id: ObjectId };
-  buyer_details: OrderBuyerAndSellerDetails
-  seller_details: OrderBuyerAndSellerDetails
+  buyer_details: OrderBuyerAndSellerDetails;
+  seller_details: OrderBuyerAndSellerDetails;
   order_id: string;
-  status: "processing" | "completed" ;
+  status: 'processing' | 'completed';
   shipping_details: OrderShippingDetailsTypes;
   payment_information: PaymentStatusTypes;
   order_accepted: OrderAcceptedStatusTypes;
-  createdAt: string,
-  updatedAt: string,
-  availability: boolean
-}
+  seller_designation: 'artist' | 'gallery';
+  exhibition_status: OrderArtworkExhibitionStatus | null;
+  hold_status: HoldStatus;
+  createdAt: string;
+  updatedAt: string;
+  availability: boolean;
+};
 
 type PlanProps = {
   name: string;
-  pricing: {annual_price: string, monthly_price: string}
-  benefits: string[];
-  currency: string,
-  plan_id: string,
-  _id: string
+  pricing: { annual_price: string; monthly_price: string };
+  benefits: SubscriptionPlanDataTypes['benefits'];
+  currency: string;
+  plan_id: string;
+  _id: string;
 };
 
-type ValidateChargeTypes = "redirect" | "pin" | "avs_noauth" | "otp" | ""
-type FinalChargeAuthTypes = "redirect" | "otp" | ""
+type ValidateChargeTypes = 'redirect' | 'pin' | 'avs_noauth' | 'otp' | '';
+type FinalChargeAuthTypes = 'redirect' | 'otp' | '';
 
 type FLWDirectChargeDataTypes = CardInputTypes & {
   card: string;
@@ -415,7 +486,7 @@ type FLWDirectChargeDataTypes = CardInputTypes & {
 };
 
 type AvsAuthorizationData = {
-  mode: "avs_noauth";
+  mode: 'avs_noauth';
   country?: string;
   state?: string;
   city?: string;
@@ -424,37 +495,47 @@ type AvsAuthorizationData = {
 };
 
 type PinAuthorizationData = {
-  mode: "pin";
+  mode: 'pin';
   pin: string;
 };
 
 type SubscriptionModelSchemaTypes = {
   customer: {
-    id: number;
     name: string;
     phone_number?: string;
     email: string;
-    created_at: string;
     gallery_id: string;
   };
+  subscription_id: string;
+  stripe_customer_id: string;
   start_date: Date;
   expiry_date: Date;
-  status: "active" | "cancelled" | "expired";
-  card: SubscriptionCardDetails;
-  payment: SubscriptionPaymentTypes;
+  status: 'active' | 'canceled' | 'expired' | 'incomplete';
+  paymentMethod: Stripe.PaymentMethod | null;
   plan_details: {
     type: string;
     value: { monthly_price: string; annual_price: string };
     currency: string;
-    interval: "monthly" | "yearly";
+    interval: 'monthly' | 'yearly';
   };
-  next_charge_params: {
-    value: number;
-    currency: string;
-    type: string;
-    interval: "monthly" | "yearly";
-    plan_id: string;
-  };
+  next_charge_params: NextChargeParams;
+  upload_tracker: UploadTrackingTypes;
+};
+
+type UploadTrackingTypes = {
+  limit: number;
+  next_reset_date: Date | string;
+  upload_count: number;
+};
+
+type SubscriptionTransactionModelSchemaTypes = {
+  trans_id: string;
+  payment_ref: string;
+  amount: number;
+  gallery_id: string;
+  date: Date;
+  status: 'successful' | 'failed' | 'processing';
+  stripe_customer_id: string;
 };
 
 type SubscriptionPlanDataTypes = {
@@ -465,7 +546,10 @@ type SubscriptionPlanDataTypes = {
   };
   plan_id: string;
   currency: string;
-  benefits: string[];
+  benefits: {
+    annual: string[];
+    monthly: string[];
+  };
 };
 
 type SubscriptionTokenizationTypes = {
@@ -485,3 +569,31 @@ type NextChargeParams = {
   interval: string;
   id: string;
 };
+
+type WithdrawalAccount = {
+  account_number: string;
+  bank_name: string;
+  account_name: string;
+  bank_id: string;
+  bank_code: string;
+  bank_branch?: string;
+  bank_country: string;
+  beneficiary_id: number;
+};
+
+type ArtworkMediumTypes =
+  | 'Photography'
+  | 'Works on paper'
+  | 'Acrylic on canvas/linen/panel'
+  | 'Mixed media on paper/canvas'
+  | 'Sculpture (Resin/plaster/clay)'
+  | 'Oil on canvas/panel'
+  | 'Sculpture (Bronze/stone/metal)';
+
+type ArtistCategory =
+  | 'Emerging'
+  | 'Early Mid-Career'
+  | 'Mid-Career'
+  | 'Late Mid-Career'
+  | 'Established'
+  | 'Elite';

@@ -5,36 +5,15 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
-} from "react-native";
-import React from "react";
-import InputForm from "./inputForm/InputForm";
-import Preferences from "./preferences/Preferences";
-import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
-import { useIndividualAuthRegisterStore } from "../../../store/auth/register/IndividualAuthRegisterStore";
-// import ScrollWrapper from "components/general/ScrollWrapper";
+} from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import InputForm from './inputForm/InputForm';
+import { useGalleryAuthRegisterStore } from 'store/auth/register/GalleryAuthRegisterStore';
+import { useArtistAuthRegisterStore } from 'store/auth/register/ArtistAuthRegisterStore';
+import { useIndividualAuthRegisterStore } from 'store/auth/register/IndividualAuthRegisterStore';
 
 export default function FormController() {
-  const { pageIndex } = useIndividualAuthRegisterStore();
-
-  return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          nestedScrollEnabled={true}
-          style={{ flexGrow: 1, paddingHorizontal: 20, marginTop: 20 }}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {pageIndex === 0 && <InputForm />}
-          {pageIndex === 1 && <Preferences />}
-          {pageIndex === 2 && <TermsAndConditions />}
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
-  );
+  return <InputForm />;
 }
 
 const styles = StyleSheet.create({

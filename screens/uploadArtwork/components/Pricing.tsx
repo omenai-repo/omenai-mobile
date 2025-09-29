@@ -115,8 +115,8 @@ export default function Pricing() {
               data={transformedCurrencies}
               placeholder="Select"
               value={artworkUploadData.currency}
-              handleSetValue={(value) => {
-                updateArtworkUploadData("currency", value);
+              handleSetValue={(item) => {
+                updateArtworkUploadData("currency", item.value);
                 updateArtworkUploadData("price", 0);
               }}
             />
@@ -161,8 +161,8 @@ export default function Pricing() {
             data={displayPrice}
             placeholder="Select"
             value={artworkUploadData.shouldShowPrice}
-            handleSetValue={(value) =>
-              updateArtworkUploadData("shouldShowPrice", value)
+            handleSetValue={(item) =>
+              updateArtworkUploadData("shouldShowPrice", item.value)
             }
           />
         </View>

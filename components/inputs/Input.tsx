@@ -1,12 +1,14 @@
 import {
   KeyboardTypeOptions,
+  StyleProp,
   StyleSheet,
   Text,
   TextInput,
   View,
-} from "react-native";
-import React from "react";
-import { colors } from "../../config/colors.config";
+  ViewStyle,
+} from 'react-native';
+import React from 'react';
+import { colors } from '../../config/colors.config';
 
 type InputProps = {
   label: string;
@@ -18,6 +20,7 @@ type InputProps = {
   handleBlur?: () => void;
   disabled?: boolean;
   defaultValue?: string;
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
 export default function Input({
@@ -30,15 +33,16 @@ export default function Input({
   handleBlur,
   disabled,
   defaultValue,
+  containerStyle,
 }: InputProps) {
   return (
-    <View style={{ zIndex: 100, flex: 1 }}>
+    <View style={[{ zIndex: 100, flex: 1 }, containerStyle]}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         onChangeText={onInputChange}
         placeholder={placeHolder}
-        placeholderTextColor={"#858585"}
-        style={[styles.inputContainer, disabled && { color: "#1a1a1a70" }]}
+        placeholderTextColor={'#858585'}
+        style={[styles.inputContainer, disabled && { color: '#1a1a1a70' }]}
         keyboardType={keyboardType}
         autoCapitalize="none"
         value={defaultValue ? undefined : value}
@@ -47,7 +51,7 @@ export default function Input({
         editable={!disabled}
       />
       {errorMessage && errorMessage?.length > 0 && (
-        <Text style={styles.errorMessage}>{errorMessage || ""}</Text>
+        <Text style={styles.errorMessage}>{errorMessage || ''}</Text>
       )}
     </View>
   );
@@ -60,16 +64,17 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 60,
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
     paddingHorizontal: 20,
     borderRadius: 95,
     marginTop: 10,
+    color: colors.black,
   },
   errorMessage: {
-    color: "#ff0000",
+    color: '#ff0000',
     marginTop: 2,
   },
 });

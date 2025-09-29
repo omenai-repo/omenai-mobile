@@ -1,47 +1,52 @@
-import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar} from 'react-native'
-import React from 'react'
-import BackScreenButton from 'components/buttons/BackScreenButton'
+import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
+import React from 'react';
+import BackScreenButton from 'components/buttons/BackScreenButton';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from 'config/colors.config';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type BackHeaderTitleProps = {
-    title: string,
-    callBack?: () => void
-}
+  title: string;
+  callBack?: () => void;
+};
 
-export default function BackHeaderTitle({title, callBack}: BackHeaderTitleProps) {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+export default function BackHeaderTitle({ title, callBack }: BackHeaderTitleProps) {
+  const navigation = useNavigation<StackNavigationProp<any>>();
+  const insets = useSafeAreaInsets();
 
-    return (
-        <SafeAreaView style={styles.safeArea}>
-            <View style={styles.topContainer}>
-                <BackScreenButton handleClick={() => {
-                    navigation.goBack()
-                    callBack && callBack()
-                }} />
-                <Text style={styles.topTitle}>{title}</Text>
-                <View style={{width: 50}} />
-            </View>
-        </SafeAreaView>
-    )
+  return (
+    <View
+      style={{
+        paddingTop: insets.top + 16,
+      }}
+    >
+      <View style={styles.topContainer}>
+        <BackScreenButton
+          handleClick={() => {
+            navigation.goBack();
+            callBack && callBack();
+          }}
+        />
+        <Text style={styles.topTitle}>{title}</Text>
+        <View style={{ width: 50 }} />
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    topContainer: {
-        paddingHorizontal: 20,
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    topTitle: {
-        flex: 1,
-        textAlign: 'center',
-        fontSize: 16,
-        fontWeight: '500',
-        color: colors.primary_black,
-        textTransform: 'capitalize',
-    },
-    safeArea: {
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    }
-})
+  topContainer: {
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  topTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '500',
+    color: colors.primary_black,
+    textTransform: 'capitalize',
+  },
+});
