@@ -17,7 +17,7 @@ export default function Editorials() {
     queryKey: HOME_QK.editorials,
     queryFn: async () => {
       const editorials: any = await listEditorials();
-      const safe = Array.isArray(editorials) ? editorials : [];
+      const safe = Array.isArray(editorials.data) ? editorials.data : [];
       return safe.slice(0, 5);
     },
     staleTime: 5 * 60_000,

@@ -12,7 +12,7 @@ import { registerAccount } from 'services/register/registerAccount';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { screenName } from 'constants/screenNames.constants';
-import { gallery_logo_storage } from 'appWrite_config';
+import { storage } from 'appWrite_config';
 import { useAppStore } from 'store/app/appStore';
 
 const TermsAndCondition = () => {
@@ -90,10 +90,10 @@ const TermsAndCondition = () => {
             account: { id: results.body.data, type: 'artist' },
           });
         } else {
-          await gallery_logo_storage.deleteFile(
-            process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
-            fileUploaded.$id,
-          );
+          await storage.deleteFile({
+            bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
+            fileId: fileUploaded.$id,
+          });
           updateModal({
             message: results?.body.message,
             modalType: 'error',

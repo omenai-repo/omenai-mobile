@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { useModalStore } from 'store/modal/modalStore';
 import uploadGalleryLogoContent from './uploadGalleryLogo';
-import { gallery_logo_storage } from 'appWrite_config';
+import { storage } from 'appWrite_config';
 import tw from 'twrnc';
 import Loader from 'components/general/Loader';
 import uploadLogo from 'screens/galleryProfileScreens/uploadNewLogo/uploadLogo';
@@ -77,10 +77,10 @@ export default function TermsAndConditions() {
             account: { id: resultsBody.data, type: 'gallery' },
           });
         } else {
-          await gallery_logo_storage.deleteFile(
-            process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
-            file.fileId,
-          );
+          await storage.deleteFile({
+            bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
+            fileId: file.fileId,
+          });
           updateModal({
             message: results?.body.message,
             modalType: 'error',
