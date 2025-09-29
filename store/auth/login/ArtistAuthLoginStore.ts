@@ -10,9 +10,15 @@ type ArtistAuthLoginStoreTypes = {
 };
 
 export const useArtistAuthLoginStore = create<ArtistAuthLoginStoreTypes>((set, get) => ({
+  // artistLoginData: {
+  //   email: 'adejumoahmad4life@gmail.com',
+  //   password: 'Test12345@',
+  //   device_push_token: '',
+  // },
   artistLoginData: {
-    email: 'adejumoahmad4life@gmail.com',
-    password: 'Test12345@',
+    email: '',
+    password: '',
+    device_push_token: '',
   },
   setEmail: (email: string) => {
     const prevData = get().artistLoginData;
@@ -23,7 +29,7 @@ export const useArtistAuthLoginStore = create<ArtistAuthLoginStoreTypes>((set, g
     set({ artistLoginData: { ...prevData, password: password } });
   },
   clearInputs: () => {
-    set({ artistLoginData: { email: '', password: '' } });
+    set({ artistLoginData: { email: '', password: '', device_push_token: '' } });
   },
   isLoading: false,
   setIsLoading: (e: boolean) => {
