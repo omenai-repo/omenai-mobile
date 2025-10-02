@@ -19,6 +19,7 @@ import ScrollWrapper from 'components/general/ScrollWrapper';
 import { PayWithFlutterwave } from 'flutterwave-react-native';
 import tw from 'twrnc';
 import { useQueryClient } from '@tanstack/react-query';
+import VerifyTransactionModal from '../VerifyTransactionModal';
 
 interface RedirectParams {
   status: 'successful' | 'cancelled';
@@ -36,6 +37,9 @@ export default function OrderDetails({
   const navigation = useNavigation<StackNavigationProp<any>>();
   const queryClient = useQueryClient();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [verifyState, setVerifyState] = useState<{ visible: boolean; txId?: string | null }>({
+    visible: false,
+  });
 
   const [loading, setLoading] = useState(false);
   const [mainPageLoader, setMainPageLoader] = useState(false);
@@ -169,7 +173,7 @@ export default function OrderDetails({
   // Flutterwave handler — also refresh Orders on success
   const handleOnRedirect = async (p: RedirectParams) => {
     if (p.status === 'successful') {
-      await goToSuccessAndRefreshOrders();
+      setVerifyState({ visible: true, txId: p.transaction_id ?? null });
     } else {
       goToCancelAndBack();
     }
@@ -289,6 +293,23 @@ export default function OrderDetails({
           </View>
         </View>
       </ScrollWrapper>
+      <VerifyTransactionModal
+        visible={verifyState.visible}
+        transactionId={verifyState.txId}
+        onGoToDashboard={async () => {
+          setVerifyState((s) => ({ ...s, visible: false }));
+          await invalidateOrdersEverywhere();
+          navigation.navigate(screenName.gallery.orders);
+        }}
+        onGoHome={async () => {
+          setVerifyState((s) => ({ ...s, visible: false }));
+          await invalidateOrdersEverywhere();
+          navigation.navigate('Individual', {
+            screen: 'Overview',
+          });
+        }}
+        onDismiss={() => setVerifyState((s) => ({ ...s, visible: false }))}
+      />
     </View>
   );
 }
