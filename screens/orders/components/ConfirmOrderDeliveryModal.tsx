@@ -7,6 +7,7 @@ import loaderAnimation from 'assets/other/loader-animation.json';
 import { confirmOrderDelivery } from 'services/orders/confirmOrderDelivery';
 import { useModalStore } from 'store/modal/modalStore';
 import { useOrderStore } from 'store/orders/Orders';
+import { useCollectorOrders } from 'hooks/useCollectorOrders';
 
 type ConfirmDeliveryProps = {
   orderId: string;
@@ -23,6 +24,7 @@ const ConfirmOrderDeliveryModal = ({
   const animation = useRef(null);
   const [loading, setLoading] = useState(false);
   const { updateModal } = useModalStore();
+  const { invalidate } = useCollectorOrders();
   const { setRefreshTrigger, refreshTrigger } = useOrderStore();
 
   async function confirmDelivery() {
@@ -36,7 +38,7 @@ const ConfirmOrderDeliveryModal = ({
           showModal: true,
         });
       } else {
-        setRefreshTrigger(refreshTrigger + 1);
+        await invalidate();
         updateModal({
           message: response.message,
           modalType: 'success',
