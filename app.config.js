@@ -31,7 +31,7 @@ export default {
       },
       googleServicesFile: './google-services.json',
       useNextNotificationsApi: true,
-      package: 'com.omenai.omenaimobile',
+      package: 'com.omenai.omenaiapp',
       permissions: ['android.permission.RECORD_AUDIO'],
       versionCode: 17,
       config: {
@@ -76,6 +76,14 @@ export default {
             backgroundColor: '#1a1a1a',
           },
           imageWidth: 200,
+        },
+      ],
+      [
+        '@sentry/react-native/expo',
+        {
+          url: 'https://sentry.io/',
+          project: 'react-native',
+          organization: 'omenai',
         },
       ],
     ],
