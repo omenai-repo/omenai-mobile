@@ -23,6 +23,26 @@ import { registerForPushToken } from 'notifications/registerForPushToken';
 import { navigationRef } from 'navigation/RootNavigation';
 import { useNotificationHandler } from 'hooks/useNotificationHandler';
 import { StatusBar } from 'expo-status-bar';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://574c844d2d0b2e85a03f0af7904e0479@o4510158375419904.ingest.de.sentry.io/4510158405632080',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 if (!Platform.constants) {
   Platform.constants = {
@@ -40,7 +60,7 @@ SplashScreen.setOptions({
   fade: true,
 });
 
-export default function App() {
+export default Sentry.wrap(function App() {
   useNotificationHandler(); // Set up notification handler
   const [appIsReady, setAppIsReady] = useState(false);
   const { isLoggedIn, userType, setExpoPushToken } = useAppStore();
@@ -159,4 +179,4 @@ export default function App() {
       </GestureHandlerRootView>
     </CopilotProvider>
   );
-}
+});
