@@ -13,6 +13,7 @@ import ArtworksListing from 'components/general/ArtworksListing';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useModalStore } from 'store/modal/modalStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Sentry from '@sentry/react-native';
 
 const ARTWORKS_QK = ['artworks', 'galleryOrArtist', 'all'] as const;
 
@@ -29,6 +30,7 @@ export default function GalleryArtworksListing() {
         if (!res?.isOk) throw new Error('Failed to fetch artworks');
         return Array.isArray(res.data) ? res.data : [];
       } catch (e: any) {
+        Sentry.captureException(e);
         updateModal({
           message: e?.message ?? 'Failed to fetch artworks',
           showModal: true,

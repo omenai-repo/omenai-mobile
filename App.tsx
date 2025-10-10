@@ -33,7 +33,7 @@ Sentry.init({
   sendDefaultPii: true,
 
   // Enable Logs
-  enableLogs: true,
+  // enableLogs: true,
 
   // Configure Session Replay
   replaysSessionSampleRate: 0.1,
