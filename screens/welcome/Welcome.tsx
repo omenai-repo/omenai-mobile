@@ -38,7 +38,7 @@ export default function Welcome() {
     // Animate from 0 to negative offset then reverse
     translateX.value = withRepeat(
       withTiming(-imageWidth + width, {
-        duration: 10000,
+        duration: 15000,
         easing: Easing.inOut(Easing.ease),
       }),
       -1,
