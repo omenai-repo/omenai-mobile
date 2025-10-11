@@ -10,7 +10,7 @@ import { colors } from 'config/colors.config';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { fontNames } from 'constants/fontNames.constants';
-import { HOME_QK } from '../Home';
+import { HOME_QK } from 'utils/queryKeys';
 
 export default function NewArtworksListing() {
   const navigation = useNavigation<any>();

@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import NavBtnComponent from 'components/artwork/NavBtnComponent';
 import { useQuery } from '@tanstack/react-query';
-import { QK } from '../Overview';
+import { QK } from 'utils/queryKeys';
 
 export default function PopularArtworks({
   onLoadingChange,

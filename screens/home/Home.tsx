@@ -12,16 +12,7 @@ import CatalogListing from './components/CatalogListing';
 import RecentlyViewedArtworks from './components/recentlyViewed/RecentlyViewedArtworks';
 import FeaturedArtists from './components/featuredArtists/FeaturedArtists';
 import Editorials from './components/editorials/Editorials';
-
-export const HOME_QK = {
-  banner: ['home', 'banner'] as const,
-  newArtworks: ['home', 'newArtworks'] as const,
-  trending: (limit: number) => ['home', 'trending', { limit }] as const,
-  curated: (limit: number) => ['home', 'curated', { limit }] as const,
-  featuredArtists: ['home', 'featuredArtists'] as const,
-  editorials: ['home', 'editorials'] as const,
-  recentlyViewed: (userId?: string) => ['home', 'recentlyViewed', { userId }] as const,
-};
+import { HOME_QK } from 'utils/queryKeys';
 
 export default function Home() {
   const [refreshing, setRefreshing] = useState(false);

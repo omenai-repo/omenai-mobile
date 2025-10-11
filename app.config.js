@@ -86,6 +86,12 @@ export default {
           organization: 'omenai',
         },
       ],
+      [
+        'expo-web-browser',
+        {
+          experimentalLauncherActivity: true,
+        },
+      ],
     ],
   },
 };

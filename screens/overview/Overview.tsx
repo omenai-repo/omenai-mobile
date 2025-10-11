@@ -8,14 +8,7 @@ import { HighlightCard } from './components/HighlightCard';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import PopularArtworks from './components/PopularArtworks';
 import { useQueryClient } from '@tanstack/react-query';
-
-export const QK = {
-  highlight: (slice: 'artworks' | 'sales' | 'net' | 'revenue') =>
-    ['overview', 'highlight', slice] as const,
-  salesOverview: ['overview', 'salesOverview'] as const,
-  overviewOrders: ['overview', 'orders', 'recent'] as const,
-  popularArtworks: ['overview', 'popularArtworks'] as const,
-};
+import { QK } from 'utils/queryKeys';
 
 export default function Overview() {
   const [refreshing, setRefreshing] = useState(false);
@@ -25,10 +18,10 @@ export default function Overview() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([
-      qc.invalidateQueries({ queryKey: QK.highlight('artworks') }),
-      qc.invalidateQueries({ queryKey: QK.highlight('sales') }),
-      qc.invalidateQueries({ queryKey: QK.highlight('net') }),
-      qc.invalidateQueries({ queryKey: QK.highlight('revenue') }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('artworks') }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('sales') }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('net') }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('revenue') }),
       qc.invalidateQueries({ queryKey: QK.salesOverview }),
       qc.invalidateQueries({ queryKey: QK.overviewOrders }),
       qc.invalidateQueries({ queryKey: QK.popularArtworks }),

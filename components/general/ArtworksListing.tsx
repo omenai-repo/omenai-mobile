@@ -86,6 +86,11 @@ export default function ArtworksListing({
             art_id={item.art_id}
             availability={item.availability}
             galleryView={userType === 'user' ? true : false}
+            countdown={
+              item.exclusivity_status?.exclusivity_end_date
+                ? (item.exclusivity_status.exclusivity_end_date as Date)
+                : null
+            }
           />
         </View>
       )}

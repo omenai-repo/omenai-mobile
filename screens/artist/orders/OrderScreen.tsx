@@ -30,13 +30,20 @@ function renderStatusBadge({
   tracking_status,
   order_accepted,
   delivered,
-}: any) {
+}: {
+  status?: string;
+  payment_status?: string;
+  tracking_status?: string | null;
+  order_accepted?: string;
+  delivered?: boolean;
+}) {
   const badgeBaseStyle = tw`flex-row items-center px-3 py-1 rounded-full`;
+
   if (
     status === 'pending' &&
-    order_accepted === '' &&
+    (order_accepted ?? '') === '' &&
     payment_status === 'pending' &&
-    tracking_status === ''
+    !tracking_status
   ) {
     return (
       <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
@@ -45,11 +52,12 @@ function renderStatusBadge({
       </View>
     );
   }
+
   if (
     status === 'processing' &&
     order_accepted === 'accepted' &&
     payment_status === 'pending' &&
-    tracking_status === ''
+    !tracking_status
   ) {
     return (
       <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
@@ -58,11 +66,12 @@ function renderStatusBadge({
       </View>
     );
   }
+
   if (
     status === 'processing' &&
     order_accepted === 'accepted' &&
     payment_status === 'completed' &&
-    tracking_status === ''
+    !tracking_status
   ) {
     return (
       <View style={[badgeBaseStyle, tw`bg-green-100`]}>
@@ -71,11 +80,12 @@ function renderStatusBadge({
       </View>
     );
   }
+
   if (
     status === 'processing' &&
     order_accepted === 'accepted' &&
     payment_status === 'completed' &&
-    tracking_status !== ''
+    tracking_status
   ) {
     return (
       <View style={[badgeBaseStyle, tw`bg-green-100`]}>
@@ -84,11 +94,12 @@ function renderStatusBadge({
       </View>
     );
   }
+
   if (
     status === 'processing' &&
-    order_accepted === '' &&
+    (order_accepted ?? '') === '' &&
     payment_status === 'pending' &&
-    tracking_status === ''
+    !tracking_status
   ) {
     return (
       <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
@@ -97,7 +108,8 @@ function renderStatusBadge({
       </View>
     );
   }
-  if (status === 'completed' && order_accepted === 'declined') {
+
+  if ((order_accepted ?? '') === 'declined') {
     return (
       <View style={[badgeBaseStyle, tw`bg-red-200`]}>
         <Ionicons name="close-circle-outline" size={14} color="#991B1B" style={tw`mr-1`} />
@@ -105,6 +117,7 @@ function renderStatusBadge({
       </View>
     );
   }
+
   if (status === 'completed' && order_accepted === 'accepted' && delivered) {
     return (
       <View style={[badgeBaseStyle, tw`bg-green-100`]}>
@@ -113,6 +126,7 @@ function renderStatusBadge({
       </View>
     );
   }
+
   return null;
 }
 
@@ -121,7 +135,7 @@ const renderButtonAction = ({ status, payment_status, tracking_status, order_acc
     status === 'processing' &&
     order_accepted === 'accepted' &&
     payment_status === 'pending' &&
-    tracking_status === ''
+    tracking_status === null
   ) {
     return null;
   }
@@ -129,7 +143,7 @@ const renderButtonAction = ({ status, payment_status, tracking_status, order_acc
     status === 'processing' &&
     order_accepted === 'accepted' &&
     payment_status === 'completed' &&
-    tracking_status === ''
+    tracking_status === null
   ) {
     return null;
   }
@@ -137,7 +151,7 @@ const renderButtonAction = ({ status, payment_status, tracking_status, order_acc
     status === 'processing' &&
     order_accepted === 'accepted' &&
     payment_status === 'completed' &&
-    tracking_status !== ''
+    tracking_status !== null
   ) {
     return 'track';
   }
@@ -145,7 +159,7 @@ const renderButtonAction = ({ status, payment_status, tracking_status, order_acc
     status === 'pending' &&
     order_accepted === '' &&
     payment_status === 'pending' &&
-    tracking_status === ''
+    tracking_status === null
   ) {
     return 'action';
   }
@@ -172,6 +186,7 @@ export const OrderContainer = (props: any) => {
     order_accepted,
     delivered,
     order_decline_reason,
+    exclusivity_type,
   } = props;
 
   const image_href = getImageFileView(url, 700);
@@ -182,7 +197,7 @@ export const OrderContainer = (props: any) => {
     const wantsButtons = ['track', 'action'].includes(
       renderButtonAction({ status, payment_status, tracking_status, order_accepted }) as any,
     );
-    const targetHeight = wantsButtons ? 180 : order_accepted === 'declined' ? 180 : 120;
+    const targetHeight = wantsButtons ? 220 : order_accepted === 'declined' ? 155 : 120;
 
     if (open) {
       Animated.timing(animatedHeight, {
@@ -263,6 +278,12 @@ export const OrderContainer = (props: any) => {
             <Text style={{ color: '#ff0000', fontSize: 14 }}>Reason: {order_decline_reason}</Text>
           )}
 
+          {exclusivity_type === 'exclusive' && order_accepted?.status !== 'declined' && (
+            <Text style={tw`text-[13px] text-amber-500 mt-2`}>
+              This artpiece is still within its exclusivity period
+            </Text>
+          )}
+
           {renderButtonAction({ status, payment_status, tracking_status, order_accepted }) ===
             'track' && (
             <Pressable style={tw`bg-black py-3 px-4 rounded-full items-center`} onPress={trackBtn}>
@@ -304,8 +325,18 @@ const OrderScreen = () => {
   const [declineModal, setDeclineModal] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [orderId, setOrderId] = useState('');
+  const [orderModalMetadata, setOrderModalMetadata] = useState({
+    is_current_order_exclusive: false,
+    art_id: '',
+    seller_designation: '',
+  });
 
-  // Fetch all orders once (per cache lifecycle); UI filters by tab
+  const isArtworkExclusiveDate = (createdAt: string | Date) => {
+    const created = new Date(createdAt).getTime();
+    const diffDays = (Date.now() - created) / (1000 * 60 * 60 * 24);
+    return diffDays <= 90;
+  };
+
   const ordersQuery = useQuery({
     queryKey: ORDERS_QK,
     queryFn: async () => {
@@ -337,7 +368,6 @@ const OrderScreen = () => {
     return parsed;
   }, [ordersQuery.data]);
 
-  // (Optional) Filter by year if needed
   const filterByYear = useCallback(
     (arr: any[]) => {
       if (!Array.isArray(arr)) return [];
@@ -433,8 +463,17 @@ const OrderScreen = () => {
                     declineBtn={
                       selectedTab === 'pending'
                         ? () => {
-                            setDeclineModal(true);
+                            const isExclusive =
+                              item?.artwork_data?.exclusivity_status?.exclusivity_type ===
+                                'exclusive' && isArtworkExclusiveDate(item.createdAt);
+
                             setOrderId(item.order_id);
+                            setOrderModalMetadata({
+                              is_current_order_exclusive: isExclusive,
+                              art_id: item.artwork_data?.art_id,
+                              seller_designation: item.seller_designation || 'artist',
+                            });
+                            setDeclineModal(true);
                           }
                         : undefined
                     }
@@ -445,6 +484,9 @@ const OrderScreen = () => {
                     tracking_status={item.shipping_details.shipment_information.tracking.id}
                     trackBtn={() =>
                       navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })
+                    }
+                    exclusivity_type={
+                      item?.artwork_data?.exclusivity_status?.exclusivity_type || 'non-exclusive'
                     }
                   />
                 )}
@@ -457,6 +499,7 @@ const OrderScreen = () => {
           isModalVisible={declineModal}
           setIsModalVisible={setDeclineModal}
           orderId={orderId}
+          orderModalMetadata={orderModalMetadata}
           refresh={() => queryClient.invalidateQueries({ queryKey: ORDERS_QK })}
         />
       </View>

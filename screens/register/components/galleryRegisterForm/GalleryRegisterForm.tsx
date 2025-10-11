@@ -11,10 +11,10 @@ export default function GalleryRegisterForm() {
   const { pageIndex } = useGalleryAuthRegisterStore();
 
   const forms = [
-    <AccountDetailsInput />,
-    <GalleryAddressVerification />,
-    <ExtraGalleryDetailsInput />,
-    <UploadLogo />,
+    // <AccountDetailsInput />,
+    // <GalleryAddressVerification />,
+    // <ExtraGalleryDetailsInput />,
+    // <UploadLogo />,
     <TermsAndConditions />,
   ];
 

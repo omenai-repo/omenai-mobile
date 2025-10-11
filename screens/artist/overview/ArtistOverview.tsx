@@ -13,13 +13,7 @@ import { getImageFileView } from 'lib/storage/getImageFileView';
 import { HighlightCard } from './HighlightCard';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
-
-export const QK = {
-  highlight: (slice: 'sales' | 'net' | 'revenue' | 'balance') =>
-    ['overview', 'highlight', slice] as const,
-  salesOverview: ['overview', 'salesOverview'] as const,
-  overviewOrders: ['overview', 'orders', 'recent'] as const,
-};
+import { QK } from 'utils/queryKeys';
 
 export const RecentOrderContainer = ({
   id,
@@ -146,10 +140,10 @@ const ArtistOverview = () => {
 
   const onRefresh = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: QK.highlight('sales') }),
-      queryClient.invalidateQueries({ queryKey: QK.highlight('net') }),
-      queryClient.invalidateQueries({ queryKey: QK.highlight('revenue') }),
-      queryClient.invalidateQueries({ queryKey: QK.highlight('balance') }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('sales') }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('net') }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('revenue') }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('balance') }),
       queryClient.invalidateQueries({ queryKey: QK.salesOverview }),
       queryClient.invalidateQueries({ queryKey: QK.overviewOrders }),
     ]);
