@@ -30,6 +30,11 @@ export default function GalleryOrdersListing() {
   const [declineModal, setDeclineModal] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [orderModalMetadata, setOrderModalMetadata] = useState({
+    is_current_order_exclusive: false,
+    art_id: '',
+    seller_designation: 'gallery',
+  });
 
   // Fetch all gallery orders; UI will split into tabs + filter by year.
   const ordersQuery = useQuery({
@@ -155,8 +160,13 @@ export default function GalleryOrdersListing() {
                     declineBtn={
                       selectedTab === 'pending'
                         ? () => {
-                            setDeclineModal(true);
+                            setOrderModalMetadata({
+                              is_current_order_exclusive: false,
+                              art_id: item.artwork_data?.art_id,
+                              seller_designation: item.seller_designation || 'gallery',
+                            });
                             setOrderId(item.order_id);
+                            setDeclineModal(true);
                           }
                         : undefined
                     }
@@ -178,6 +188,7 @@ export default function GalleryOrdersListing() {
           isModalVisible={declineModal}
           setIsModalVisible={setDeclineModal}
           orderId={orderId}
+          orderModalMetadata={orderModalMetadata}
           refresh={() => queryClient.invalidateQueries({ queryKey: GALLERY_ORDERS_QK })}
         />
       </View>

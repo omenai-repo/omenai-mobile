@@ -8,7 +8,7 @@ import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
 import { colors } from 'config/colors.config';
 import { fontNames } from 'constants/fontNames.constants';
 import { Feather } from '@expo/vector-icons';
-import { HOME_QK } from 'screens/home/Home';
+import { HOME_QK } from 'utils/queryKeys';
 
 export default function Editorials() {
   const navigation = useNavigation<any>();

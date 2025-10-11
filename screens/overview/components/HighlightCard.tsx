@@ -5,7 +5,7 @@ import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
 import { fetchHighlightData } from 'services/overview/fetchHighlightData';
 import tw from 'twrnc';
 import { useQueries } from '@tanstack/react-query';
-import { QK } from '../Overview';
+import { QK } from 'utils/queryKeys';
 
 type HighlightCardProps = {
   onLoadingChange?: (loading: boolean) => void;
@@ -17,7 +17,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
 
   const results = useQueries({
     queries: (['artworks', 'sales', 'net', 'revenue'] as const).map((slice) => ({
-      queryKey: QK.highlight(slice),
+      queryKey: QK.highlightGallery(slice),
       queryFn: () => fetchHighlightData(slice),
       staleTime: 30_000,
       gcTime: 10 * 60_000,

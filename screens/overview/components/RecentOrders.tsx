@@ -10,7 +10,7 @@ import NavBtnComponent from 'components/artwork/NavBtnComponent';
 import { RecentOrderContainer } from 'screens/artist/overview/ArtistOverview';
 import { useQuery } from '@tanstack/react-query';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
-import { QK } from '../Overview';
+import { QK } from 'utils/queryKeys';
 
 export default function RecentOrders({
   onLoadingChange,

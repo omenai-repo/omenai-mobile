@@ -6,7 +6,7 @@ import { colors } from 'config/colors.config';
 import { fontNames } from 'constants/fontNames.constants';
 import { getFeaturedArtists } from 'services/overview/fetchFeaturedArtist';
 import { getImageFileView } from 'lib/storage/getImageFileView';
-import { HOME_QK } from '../../Home';
+import { HOME_QK } from 'utils/queryKeys';
 
 type Artist = {
   author_id: string;

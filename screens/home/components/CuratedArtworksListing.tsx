@@ -10,7 +10,7 @@ import ArtworkCard from 'components/artwork/ArtworkCard';
 import { colors } from 'config/colors.config';
 import { screenName } from 'constants/screenNames.constants';
 import { fontNames } from 'constants/fontNames.constants';
-import { HOME_QK } from '../Home';
+import { HOME_QK } from 'utils/queryKeys';
 
 export default function CuratedArtworksListing({ limit }: { limit: number }) {
   const navigation = useNavigation<any>();

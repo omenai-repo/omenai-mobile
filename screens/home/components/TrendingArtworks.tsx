@@ -11,7 +11,7 @@ import { Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import { screenName } from 'constants/screenNames.constants';
 import { fontNames } from 'constants/fontNames.constants';
-import { HOME_QK } from '../Home';
+import { HOME_QK } from 'utils/queryKeys';
 
 export default function TrendingArtworks({ limit }: { limit: number }) {
   const navigation = useNavigation<any>();

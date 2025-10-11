@@ -4,7 +4,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { useQuery } from '@tanstack/react-query';
 import { getSalesActivityData } from 'services/overview/getSalesActivityData';
 import { salesDataAlgorithm } from 'utils/utils_salesDataAlgorithm';
-import { QK } from 'screens/artist/overview/ArtistOverview';
+import { QK } from 'utils/queryKeys';
 
 const { width } = Dimensions.get('window');
 

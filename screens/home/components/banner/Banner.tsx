@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getPromotionalData } from 'services/promotional/getPromotionalContent';
 import BannerLoader from './BannerLoader';
 import BannerCard from './BannerCard';
-import { HOME_QK } from '../../Home';
 import { colors } from 'config/colors.config';
+import { HOME_QK } from 'utils/queryKeys';
 
 const { width: windowWidth } = Dimensions.get('window');
 const SIDE_PADDING = 15;
