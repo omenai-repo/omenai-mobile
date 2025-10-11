@@ -1,9 +1,9 @@
-const { getDefaultConfig } = require('metro-config');
+const { getSentryExpoConfig } = require('@sentry/react-native/metro');
 
 module.exports = (async () => {
   const {
     resolver: { sourceExts, assetExts },
-  } = await getDefaultConfig();
+  } = await getSentryExpoConfig();
 
   return {
     resolver: {
