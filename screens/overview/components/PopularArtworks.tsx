@@ -10,6 +10,7 @@ import { screenName } from 'constants/screenNames.constants';
 import NavBtnComponent from 'components/artwork/NavBtnComponent';
 import { useQuery } from '@tanstack/react-query';
 import { QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 export default function PopularArtworks({
   onLoadingChange,
@@ -17,9 +18,10 @@ export default function PopularArtworks({
   onLoadingChange?: (l: boolean) => void;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { userSession } = useAppStore();
 
   const query = useQuery({
-    queryKey: QK.popularArtworks,
+    queryKey: QK.popularArtworks(userSession?.id),
     queryFn: async () => {
       const res = await fetchPopularArtworks();
       return res?.data ?? [];

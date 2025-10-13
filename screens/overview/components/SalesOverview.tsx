@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getSalesActivityData } from 'services/overview/getSalesActivityData';
 import { salesDataAlgorithm } from 'utils/utils_salesDataAlgorithm';
 import { QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 const { width } = Dimensions.get('window');
 
@@ -13,8 +14,10 @@ export default function SalesOverview({
 }: {
   onLoadingChange?: (l: boolean) => void;
 }) {
+  const { userSession } = useAppStore();
+
   const query = useQuery({
-    queryKey: QK.salesOverview,
+    queryKey: QK.salesOverview(userSession?.id),
     queryFn: async () => {
       const res = await getSalesActivityData();
       return salesDataAlgorithm(res.data).map((m) => m.Revenue) as number[];

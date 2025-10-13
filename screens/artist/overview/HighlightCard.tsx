@@ -7,25 +7,27 @@ import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { fetchArtistHighlightData } from 'services/overview/fetchArtistHighlightData';
 import { QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 export const HighlightCard = ({ onLoadingChange }: { onLoadingChange?: (l: boolean) => void }) => {
   const { width } = useWindowDimensions();
   const cardWidth = (width - 55) / 2;
+  const { userSession } = useAppStore();
 
   const qSales = useQuery({
-    queryKey: QK.highlightArtist('sales'),
+    queryKey: QK.highlightArtist('sales', userSession?.id),
     queryFn: () => fetchArtistHighlightData('sales'),
   });
   const qNet = useQuery({
-    queryKey: QK.highlightArtist('net'),
+    queryKey: QK.highlightArtist('net', userSession?.id),
     queryFn: () => fetchArtistHighlightData('net'),
   });
   const qRev = useQuery({
-    queryKey: QK.highlightArtist('revenue'),
+    queryKey: QK.highlightArtist('revenue', userSession?.id),
     queryFn: () => fetchArtistHighlightData('revenue'),
   });
   const qBal = useQuery({
-    queryKey: QK.highlightArtist('balance'),
+    queryKey: QK.highlightArtist('balance', userSession?.id),
     queryFn: () => fetchArtistHighlightData('balance'),
   });
 

@@ -14,13 +14,18 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useModalStore } from 'store/modal/modalStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Sentry from '@sentry/react-native';
-
-const ARTWORKS_QK = ['artworks', 'galleryOrArtist', 'all'] as const;
+import { useAppStore } from 'store/app/appStore';
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateModal } = useModalStore();
   const insets = useSafeAreaInsets();
+  const { userSession, userType } = useAppStore();
+
+  const ARTWORKS_QK = useMemo(
+    () => ['artworks', userSession.id, userType],
+    [userSession?.id, userType],
+  );
 
   const artworksQuery = useQuery({
     queryKey: ARTWORKS_QK,

@@ -6,6 +6,7 @@ import { fetchHighlightData } from 'services/overview/fetchHighlightData';
 import tw from 'twrnc';
 import { useQueries } from '@tanstack/react-query';
 import { QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 type HighlightCardProps = {
   onLoadingChange?: (loading: boolean) => void;
@@ -14,10 +15,11 @@ type HighlightCardProps = {
 export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
   const { width } = useWindowDimensions();
   const cardWidth = (width - 55) / 2;
+  const { userSession } = useAppStore();
 
   const results = useQueries({
     queries: (['artworks', 'sales', 'net', 'revenue'] as const).map((slice) => ({
-      queryKey: QK.highlightGallery(slice),
+      queryKey: QK.highlightGallery(slice, userSession?.id),
       queryFn: () => fetchHighlightData(slice),
       staleTime: 30_000,
       gcTime: 10 * 60_000,

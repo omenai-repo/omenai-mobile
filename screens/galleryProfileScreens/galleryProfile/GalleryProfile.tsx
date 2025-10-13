@@ -16,6 +16,7 @@ import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import { changePasswsordIcon, deleteIcon } from 'utils/SvgImages';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useQueryClient } from '@tanstack/react-query';
 
 type UserData = { name: string; email: string };
 
@@ -24,6 +25,7 @@ export default function GalleryProfile() {
   const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
 
   const [userData, setUserData] = useState<UserData>({
     name: userSession?.name ?? '',
@@ -104,7 +106,13 @@ export default function GalleryProfile() {
           />
         </View>
 
-        <LongBlackButton value="Log Out" onClick={logout} />
+        <LongBlackButton
+          value="Log Out"
+          onClick={() => {
+            queryClient.clear();
+            logout();
+          }}
+        />
       </ScrollWrapper>
     </WithGalleryModal>
   );

@@ -14,6 +14,7 @@ import { HighlightCard } from './HighlightCard';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 export const RecentOrderContainer = ({
   id,
@@ -118,10 +119,11 @@ export const RecentOrderContainer = ({
 const ArtistOverview = () => {
   const queryClient = useQueryClient();
   const [openSection, setOpenSection] = useState<Record<number, boolean>>({});
+  const { userSession } = useAppStore();
 
   // Recent orders via query
   const ordersQuery = useQuery({
-    queryKey: QK.overviewOrders,
+    queryKey: QK.overviewOrders(userSession?.id),
     queryFn: async () => {
       const res = await getOverviewOrders();
       return res?.isOk ? res.data : [];
@@ -140,12 +142,12 @@ const ArtistOverview = () => {
 
   const onRefresh = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('sales') }),
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('net') }),
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('revenue') }),
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('balance') }),
-      queryClient.invalidateQueries({ queryKey: QK.salesOverview }),
-      queryClient.invalidateQueries({ queryKey: QK.overviewOrders }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('sales', userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('net', userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('revenue', userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('balance', userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.salesOverview(userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.overviewOrders(userSession?.id) }),
     ]);
   }, [queryClient]);
 

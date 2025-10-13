@@ -10,7 +10,6 @@ import tw from 'twrnc';
 import { fontNames } from 'constants/fontNames.constants';
 import { getNumberOfColumns } from 'utils/utils_screen';
 import MiniImage from './MiniImage';
-import * as WebBrowser from 'expo-web-browser';
 import { extendArtworkExclusivity } from 'services/artworks/extendArtworkExclusivity';
 import { useModalStore } from 'store/modal/modalStore';
 
@@ -397,7 +396,7 @@ const ExclusivityCountdown = memo(({ expiresAt, art_id }: { expiresAt: Date; art
         <Text
           style={[tw`text-[#1A1A1A]/70 text-[10px]`, { fontFamily: fontNames.dmSans + 'Medium' }]}
         >
-          Ends in:
+          Exclusivity period ends in:
         </Text>
       </View>
       <View style={tw`flex-row gap-1`}>
