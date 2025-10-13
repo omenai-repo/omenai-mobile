@@ -9,12 +9,14 @@ import { colors } from 'config/colors.config';
 import { fontNames } from 'constants/fontNames.constants';
 import { Feather } from '@expo/vector-icons';
 import { HOME_QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 export default function Editorials() {
   const navigation = useNavigation<any>();
+  const { userSession } = useAppStore();
 
   const { data: data = [], isLoading } = useQuery({
-    queryKey: HOME_QK.editorials,
+    queryKey: HOME_QK.editorials(userSession?.id),
     queryFn: async () => {
       const editorials: any = await listEditorials();
       const safe = Array.isArray(editorials.data) ? editorials.data : [];

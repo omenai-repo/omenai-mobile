@@ -134,8 +134,6 @@ export default Sentry.wrap(function App() {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 3 * 60 * 1000, // 3 min: no refetch on re-focus within this window
-            gcTime: 10 * 60 * 1000, // 10 min: keep cached in memory
             refetchOnMount: false,
             refetchOnReconnect: false,
             refetchOnWindowFocus: false, // RN: safe to disable

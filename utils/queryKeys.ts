@@ -1,19 +1,39 @@
 export const QK = {
-  highlightGallery: (slice: 'artworks' | 'sales' | 'net' | 'revenue') =>
-    ['overview', 'highlight', slice] as const,
-  highlightArtist: (slice: 'sales' | 'net' | 'revenue' | 'balance') =>
-    ['overview', 'highlight', slice] as const,
-  salesOverview: ['overview', 'salesOverview'] as const,
-  overviewOrders: ['overview', 'orders', 'recent'] as const,
-  popularArtworks: ['overview', 'popularArtworks'] as const,
+  highlightGallery: (slice: 'artworks' | 'sales' | 'net' | 'revenue', userId?: string) => [
+    'overview',
+    'highlight',
+    'gallery',
+    slice,
+    userId,
+  ],
+
+  highlightArtist: (slice: 'sales' | 'net' | 'revenue' | 'balance', userId?: string) => [
+    'overview',
+    'highlight',
+    'artist',
+    slice,
+    userId,
+  ],
+
+  salesOverview: (userId?: string) => ['overview', 'salesOverview', userId],
+
+  overviewOrders: (userId?: string) => ['overview', 'orders', 'recent', userId],
+
+  popularArtworks: (userId?: string) => ['overview', 'popularArtworks', userId],
 };
 
 export const HOME_QK = {
-  banner: ['home', 'banner'] as const,
-  newArtworks: ['home', 'newArtworks'] as const,
-  trending: (limit: number) => ['home', 'trending', { limit }] as const,
-  curated: (limit: number) => ['home', 'curated', { limit }] as const,
-  featuredArtists: ['home', 'featuredArtists'] as const,
-  editorials: ['home', 'editorials'] as const,
-  recentlyViewed: (userId?: string) => ['home', 'recentlyViewed', { userId }] as const,
+  banner: (userId?: string) => ['home', 'banner', userId],
+
+  newArtworks: (userId?: string) => ['home', 'newArtworks', userId],
+
+  trending: (limit: number, userId?: string) => ['home', 'trending', limit, userId],
+
+  curated: (limit: number, userId?: string) => ['home', 'curated', limit, userId],
+
+  featuredArtists: (userId?: string) => ['home', 'featuredArtists', userId],
+
+  editorials: (userId?: string) => ['home', 'editorials', userId],
+
+  recentlyViewed: (userId?: string) => ['home', 'recentlyViewed', userId],
 };

@@ -197,7 +197,7 @@ export const OrderContainer = (props: any) => {
     const wantsButtons = ['track', 'action'].includes(
       renderButtonAction({ status, payment_status, tracking_status, order_accepted }) as any,
     );
-    const targetHeight = wantsButtons ? 220 : order_accepted === 'declined' ? 155 : 120;
+    const targetHeight = wantsButtons ? 180 : order_accepted === 'declined' ? 155 : 120;
 
     if (open) {
       Animated.timing(animatedHeight, {
@@ -236,7 +236,7 @@ export const OrderContainer = (props: any) => {
       <View style={tw`flex-row items-center`}>
         <View style={tw`flex-row items-center gap-[10px] flex-1`}>
           <Image source={{ uri: image_href }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
-          <View style={tw`gap-[5px]`}>
+          <View style={tw`gap-[5px] pr-[20px]`}>
             <Text style={tw`text-[12px] text-[#454545]`}>{artId}</Text>
             <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{artName}</Text>
           </View>

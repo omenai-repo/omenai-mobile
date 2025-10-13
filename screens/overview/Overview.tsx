@@ -9,22 +9,24 @@ import ScrollWrapper from 'components/general/ScrollWrapper';
 import PopularArtworks from './components/PopularArtworks';
 import { useQueryClient } from '@tanstack/react-query';
 import { QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 export default function Overview() {
   const [refreshing, setRefreshing] = useState(false);
   const inflight = useRef(0);
   const qc = useQueryClient();
+  const { userSession } = useAppStore();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([
-      qc.invalidateQueries({ queryKey: QK.highlightGallery('artworks') }),
-      qc.invalidateQueries({ queryKey: QK.highlightGallery('sales') }),
-      qc.invalidateQueries({ queryKey: QK.highlightGallery('net') }),
-      qc.invalidateQueries({ queryKey: QK.highlightGallery('revenue') }),
-      qc.invalidateQueries({ queryKey: QK.salesOverview }),
-      qc.invalidateQueries({ queryKey: QK.overviewOrders }),
-      qc.invalidateQueries({ queryKey: QK.popularArtworks }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('artworks', userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('sales', userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('net', userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('revenue', userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.salesOverview(userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.overviewOrders(userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.popularArtworks(userSession?.id) }),
     ]);
   }, [qc]);
 

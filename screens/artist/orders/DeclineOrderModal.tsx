@@ -5,11 +5,32 @@ import { useModalStore } from 'store/modal/modalStore';
 import { declineOrderRequest } from 'services/orders/declineOrderRequest';
 
 const declineReasonMapping: Record<string, string> = {
-  'Buyer requested cancellation': 'Buyer cancelled the order',
-  'Buyer provided wrong address': 'Invalid shipping address provided by buyer',
-  'Artwork damaged': 'Artwork damaged prior to shipping',
-  'Pricing error': 'There was a pricing error',
-  Other: 'Other reason',
+  // 1. Artist’s personal attachment
+  'I’ve decided to keep this artwork':
+    'The artist has decided to retain this piece and it’s no longer available for sale.',
+
+  // 2. Outdated or no longer representative
+  'This artwork no longer represents my current work':
+    'The artist has chosen to withdraw this piece from sale.',
+
+  // 3. Reserved for an exhibition
+  'I need this artwork for an upcoming exhibition or event':
+    'The artwork has been reserved for an upcoming exhibition or event.',
+
+  // 7. Already sold elsewhere
+  'This artwork has already been sold elsewhere':
+    'This artwork has recently been sold and is no longer available.',
+
+  // 8. Damaged or missing
+  'The artwork is damaged or missing': 'This artwork is currently unavailable for purchase.',
+
+  // 10. Under exclusivity or gallery contract
+  'This artwork is under an exclusivity or gallery agreement':
+    'This artwork is currently under an exclusive arrangement and cannot be sold at this time.',
+
+  // 19. Paused selling
+  'I’ve paused selling on Omenai for now':
+    'The artist has temporarily paused new orders on the platform.',
 };
 
 type OrderModalMetadata = {
@@ -176,12 +197,12 @@ const DeclineOrderModal = ({
               <Text style={tw`text-[13px] text-[#6B7280] mb-3`}>
                 Please choose a reason that best explains why you're declining this order.
               </Text>
-              <ScrollView style={tw`max-h-[220px] mb-3`}>
+              <ScrollView style={tw`max-h-[220px] mb-4`}>
                 {reasons.map((r, idx) => (
                   <Pressable
                     key={idx}
                     onPress={() => toggleReason(r)}
-                    style={tw`flex-row items-start gap-[10px] mb-3`}
+                    style={tw`flex-row items-start gap-[10px] mb-4`}
                   >
                     <View
                       style={tw`h-[20px] w-[20px] rounded-[4px] border border-[#E5E7EB] justify-center items-center ${
@@ -192,7 +213,7 @@ const DeclineOrderModal = ({
                     </View>
                     <View style={tw`flex-1`}>
                       <Text style={tw`text-[14px]`}>{r}</Text>
-                      <Text style={tw`text-[12px] text-[#6B7280]`}>{declineReasonMapping[r]}</Text>
+                      {/* <Text style={tw`text-[12px] text-[#6B7280]`}>{declineReasonMapping[r]}</Text> */}
                     </View>
                   </Pressable>
                 ))}
@@ -202,7 +223,7 @@ const DeclineOrderModal = ({
                 <View style={tw`p-[10px] bg-red-50 border border-red-100 rounded-[8px]`}>
                   <Text style={tw`text-[13px] text-[#B91C1C]`}>
                     <Text style={tw`font-semibold`}>Client interpretation:</Text>{' '}
-                    {selectedReason === 'Other' ? 'Other' : declineReasonMapping[selectedReason]}
+                    {declineReasonMapping[selectedReason]}
                   </Text>
                 </View>
               ) : null}

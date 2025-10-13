@@ -10,16 +10,16 @@ type ArtistAuthLoginStoreTypes = {
 };
 
 export const useArtistAuthLoginStore = create<ArtistAuthLoginStoreTypes>((set, get) => ({
-  artistLoginData: {
-    email: 'adejumoahmad4life@gmail.com',
-    password: 'Test12345@',
-    device_push_token: '',
-  },
   // artistLoginData: {
-  //   email: '',
-  //   password: '',
+  //   email: 'adejumoahmad4life@gmail.com',
+  //   password: 'Test12345@',
   //   device_push_token: '',
   // },
+  artistLoginData: {
+    email: '',
+    password: '',
+    device_push_token: '',
+  },
   setEmail: (email: string) => {
     const prevData = get().artistLoginData;
     set({ artistLoginData: { ...prevData, email: email } });
