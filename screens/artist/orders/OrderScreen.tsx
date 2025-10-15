@@ -177,8 +177,6 @@ export const OrderContainer = (props: any) => {
     dateTime,
     status,
     lastId,
-    declineBtn,
-    acceptBtn,
     trackBtn,
     url,
     payment_status,
@@ -197,7 +195,14 @@ export const OrderContainer = (props: any) => {
     const wantsButtons = ['track', 'action'].includes(
       renderButtonAction({ status, payment_status, tracking_status, order_accepted }) as any,
     );
-    const targetHeight = wantsButtons ? 180 : order_accepted === 'declined' ? 155 : 120;
+    const targetHeight =
+      wantsButtons && exclusivity_type === 'exclusive'
+        ? 220
+        : exclusivity_type === 'non-exclusive' && wantsButtons
+        ? 180
+        : order_accepted === 'declined'
+        ? 155
+        : 120;
 
     if (open) {
       Animated.timing(animatedHeight, {
