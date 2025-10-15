@@ -4,7 +4,7 @@ export default {
     scheme: 'omenaimobile',
     slug: 'omenai-app',
     owner: 'omenai',
-    version: '1.1.17',
+    version: '1.1.20',
     orientation: 'portrait',
     newArchEnabled: true,
     icon: './assets/icon.png',
@@ -19,7 +19,7 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.omenai.omenaimobile',
-      buildNumber: '1.1.17',
+      buildNumber: '1.1.20',
       config: {
         googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS,
       },
@@ -33,7 +33,7 @@ export default {
       useNextNotificationsApi: true,
       package: 'com.omenai.omenaiapp',
       permissions: ['android.permission.RECORD_AUDIO'],
-      versionCode: 19,
+      versionCode: 20,
       config: {
         googleMaps: {
           apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID,
@@ -49,7 +49,7 @@ export default {
         projectId: 'cfba8b4b-06f7-460a-8fa2-f8671ea18107',
       },
     },
-    runtimeVersion: '1.1.17',
+    runtimeVersion: '1.1.20',
     updates: {
       url: 'https://u.expo.dev/cfba8b4b-06f7-460a-8fa2-f8671ea18107',
     },
