@@ -79,7 +79,12 @@ export default function Orders() {
         holdStatus={item.hold_status}
         updatedAt={item.updatedAt}
         order_decline_reason={item.order_accepted.reason}
-        trackBtn={() => navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })}
+        trackBtn={() =>
+          navigation.navigate('ShipmentTrackingScreen', {
+            orderId: item.order_id,
+            tracking_id: item.shipping_details.shipment_information.tracking.id,
+          })
+        }
       />
     ),
     [currentOrders.length, navigation, openSection, toggleRecentOrder],
