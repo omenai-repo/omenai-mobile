@@ -488,7 +488,10 @@ const OrderScreen = () => {
                     payment_status={item.payment_information.status}
                     tracking_status={item.shipping_details.shipment_information.tracking.id}
                     trackBtn={() =>
-                      navigation.navigate('ShipmentTrackingScreen', { orderId: item.order_id })
+                      navigation.navigate('ShipmentTrackingScreen', {
+                        orderId: item.order_id,
+                        tracking_id: item.shipping_details.shipment_information.tracking.id,
+                      })
                     }
                     exclusivity_type={
                       item?.artwork_data?.exclusivity_status?.exclusivity_type || 'non-exclusive'
