@@ -86,6 +86,11 @@ export default function ArtworksListing({
             art_id={item.art_id}
             availability={item.availability}
             galleryView={userType === 'user' ? true : false}
+            countdown={
+              item.exclusivity_status?.exclusivity_end_date
+                ? (item.exclusivity_status.exclusivity_end_date as Date)
+                : null
+            }
           />
         </View>
       )}
@@ -103,7 +108,14 @@ export default function ArtworksListing({
       onScroll={handleScroll}
       scrollEventThrottle={16}
       showsVerticalScrollIndicator={false}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          tintColor="#000"
+          colors={['#000']}
+        />
+      }
     >
       <View style={styles.container}>
         {columnsData.map((column, index) => (

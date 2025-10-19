@@ -16,6 +16,7 @@ import { changePasswsordIcon, orderHistoryIcon, savedArtworksIcon } from 'utils/
 import { PageButtonCard } from 'components/buttons/PageButtonCard';
 import omenaiAvatar from '../../assets/images/omenai-avatar.png';
 import { logout } from 'utils/logout.utils';
+import { useQueryClient } from '@tanstack/react-query';
 
 type Nav = StackNavigationProp<any>;
 
@@ -23,6 +24,7 @@ export default function Profile() {
   const navigation = useNavigation<Nav>();
   const insets = useSafeAreaInsets();
   const { userSession } = useAppStore();
+  const queryClient = useQueryClient();
 
   const name = userSession?.name ?? '';
   const email = userSession?.email ?? '';
@@ -85,7 +87,13 @@ export default function Profile() {
           />
 
           <View style={tw`mt-[20px]`} />
-          <LongBlackButton value="Log Out" onClick={logout} />
+          <LongBlackButton
+            value="Log Out"
+            onClick={() => {
+              queryClient.clear();
+              logout();
+            }}
+          />
           <View style={tw`h-[200px]`} />
         </View>
       </ScrollWrapper>

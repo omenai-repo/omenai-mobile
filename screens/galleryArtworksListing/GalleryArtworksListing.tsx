@@ -13,13 +13,19 @@ import ArtworksListing from 'components/general/ArtworksListing';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useModalStore } from 'store/modal/modalStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const ARTWORKS_QK = ['artworks', 'galleryOrArtist', 'all'] as const;
+import * as Sentry from '@sentry/react-native';
+import { useAppStore } from 'store/app/appStore';
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateModal } = useModalStore();
   const insets = useSafeAreaInsets();
+  const { userSession, userType } = useAppStore();
+
+  const ARTWORKS_QK = useMemo(
+    () => ['artworks', userSession.id, userType],
+    [userSession?.id, userType],
+  );
 
   const artworksQuery = useQuery({
     queryKey: ARTWORKS_QK,
@@ -29,6 +35,7 @@ export default function GalleryArtworksListing() {
         if (!res?.isOk) throw new Error('Failed to fetch artworks');
         return Array.isArray(res.data) ? res.data : [];
       } catch (e: any) {
+        Sentry.captureException(e);
         updateModal({
           message: e?.message ?? 'Failed to fetch artworks',
           showModal: true,

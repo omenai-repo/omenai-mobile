@@ -21,6 +21,7 @@ import EligibityResponseScreen from './EligibityResponseScreen';
 import Logo from 'screens/galleryProfileScreens/galleryProfile/components/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useQueryClient } from '@tanstack/react-query';
 
 type userDataType = {
   name: string;
@@ -34,6 +35,7 @@ export default function ArtistProfileScreen() {
   const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
 
   const [userData, setuserdata] = useState<userDataType>({ name: '', email: '' });
   const [isLoading, setIsLoading] = useState(false);
@@ -153,7 +155,13 @@ export default function ArtistProfileScreen() {
             </View>
 
             <View style={tw`mb-[150px]`}>
-              <LongBlackButton value="Log Out" onClick={logout} />
+              <LongBlackButton
+                value="Log Out"
+                onClick={() => {
+                  queryClient.clear();
+                  logout();
+                }}
+              />
             </View>
           </ScrollWrapper>
         ) : (

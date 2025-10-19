@@ -10,13 +10,15 @@ import ArtworkCard from 'components/artwork/ArtworkCard';
 import { colors } from 'config/colors.config';
 import { screenName } from 'constants/screenNames.constants';
 import { fontNames } from 'constants/fontNames.constants';
-import { HOME_QK } from '../Home';
+import { HOME_QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 export default function CuratedArtworksListing({ limit }: { limit: number }) {
   const navigation = useNavigation<any>();
+  const { userSession } = useAppStore();
 
   const { data = [], isLoading } = useQuery({
-    queryKey: HOME_QK.curated(limit),
+    queryKey: HOME_QK.curated(limit, userSession?.id),
     queryFn: async () => {
       const res = await fetchCuratedArtworks({ page: 1 });
       return res?.data ?? [];
