@@ -41,3 +41,4 @@ yarn-error.*
 dist/
 web-build/
 omenai-inc-firebase-adminsdk-fbsvc-0b4f7da24e.json
+.env.local

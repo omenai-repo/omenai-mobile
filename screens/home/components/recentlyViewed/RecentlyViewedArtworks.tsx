@@ -6,7 +6,7 @@ import { useAppStore } from 'store/app/appStore';
 import ViewHistoryCard from './ViewHistoryCard';
 import EmptyArtworks from 'components/general/EmptyArtworks';
 import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
-import { HOME_QK } from '../../Home';
+import { HOME_QK } from 'utils/queryKeys';
 
 type ViewHistoryItem = { art_id: string; url: string; artist: string; artwork: string };
 

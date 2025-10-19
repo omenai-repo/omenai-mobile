@@ -6,7 +6,8 @@ import { colors } from 'config/colors.config';
 import { fontNames } from 'constants/fontNames.constants';
 import { getFeaturedArtists } from 'services/overview/fetchFeaturedArtist';
 import { getImageFileView } from 'lib/storage/getImageFileView';
-import { HOME_QK } from '../../Home';
+import { HOME_QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 type Artist = {
   author_id: string;
@@ -17,8 +18,10 @@ type Artist = {
 
 const FeaturedArtists = () => {
   const navigation = useNavigation<any>();
+  const { userSession } = useAppStore();
+
   const { data: artists = [] } = useQuery({
-    queryKey: HOME_QK.featuredArtists,
+    queryKey: HOME_QK.featuredArtists(userSession?.id),
     queryFn: async () => {
       const res = await getFeaturedArtists();
       return res?.isOk && Array.isArray(res.data) ? (res.data as Artist[]) : [];

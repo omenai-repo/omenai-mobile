@@ -1,5 +1,5 @@
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
-import React, { useEffect } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
 import { acceptTermsList } from '../../../../constants/accetTerms.constants';
 import TermsAndConditionItem from '../../../../components/general/TermsAndConditionItem';
 import FittedBlackButton from '../../../../components/buttons/FittedBlackButton';
@@ -11,12 +11,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { useModalStore } from 'store/modal/modalStore';
-import uploadGalleryLogoContent from './uploadGalleryLogo';
 import { storage } from 'appWrite_config';
 import tw from 'twrnc';
-import Loader from 'components/general/Loader';
 import uploadLogo from 'screens/galleryProfileScreens/uploadNewLogo/uploadLogo';
 import { useAppStore } from 'store/app/appStore';
+import * as WebBrowser from 'expo-web-browser';
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -107,6 +106,19 @@ export default function TermsAndConditions() {
     }
   };
 
+  // Open the Terms of Use and Privacy Policy link inside the app
+  const openLegalLink = async () => {
+    try {
+      await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=gallery');
+    } catch (error) {
+      updateModal({
+        showModal: true,
+        modalType: 'error',
+        message: 'Something went wrong while opening the Terms of Agreement.',
+      });
+    }
+  };
+
   return (
     <View>
       <Text style={styles.title}>Accept terms and conditions</Text>
@@ -120,6 +132,14 @@ export default function TermsAndConditions() {
           />
         ))}
       </View>
+
+      {/* ⬇️ Link to Privacy Policy and Terms of Use */}
+      <Pressable onPress={openLegalLink} style={tw`mt-[20px]`}>
+        <Text style={tw`text-[14px] text-[#007AFF] text-center underline`}>
+          Read our Privacy Policy and Terms of Use
+        </Text>
+      </Pressable>
+
       <View style={styles.buttonsContainer}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />

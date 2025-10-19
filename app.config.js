@@ -4,7 +4,7 @@ export default {
     scheme: 'omenaimobile',
     slug: 'omenai-app',
     owner: 'omenai',
-    version: '1.1.12',
+    version: '1.1.21',
     orientation: 'portrait',
     newArchEnabled: true,
     icon: './assets/icon.png',
@@ -19,7 +19,7 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.omenai.omenaimobile',
-      buildNumber: '1.1.12',
+      buildNumber: '1.1.21',
       config: {
         googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS,
       },
@@ -31,9 +31,9 @@ export default {
       },
       googleServicesFile: './google-services.json',
       useNextNotificationsApi: true,
-      package: 'com.omenai.omenaimobile',
+      package: 'com.omenai.omenaiapp',
       permissions: ['android.permission.RECORD_AUDIO'],
-      versionCode: 14,
+      versionCode: 21,
       config: {
         googleMaps: {
           apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID,
@@ -49,7 +49,7 @@ export default {
         projectId: 'cfba8b4b-06f7-460a-8fa2-f8671ea18107',
       },
     },
-    runtimeVersion: '1.1.12',
+    runtimeVersion: '1.1.21',
     updates: {
       url: 'https://u.expo.dev/cfba8b4b-06f7-460a-8fa2-f8671ea18107',
     },
@@ -76,6 +76,20 @@ export default {
             backgroundColor: '#1a1a1a',
           },
           imageWidth: 200,
+        },
+      ],
+      [
+        '@sentry/react-native/expo',
+        {
+          url: 'https://sentry.io/',
+          project: 'react-native',
+          organization: 'omenai',
+        },
+      ],
+      [
+        'expo-web-browser',
+        {
+          experimentalLauncherActivity: true,
         },
       ],
     ],

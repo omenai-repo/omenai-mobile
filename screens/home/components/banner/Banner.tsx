@@ -4,8 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { getPromotionalData } from 'services/promotional/getPromotionalContent';
 import BannerLoader from './BannerLoader';
 import BannerCard from './BannerCard';
-import { HOME_QK } from '../../Home';
 import { colors } from 'config/colors.config';
+import { HOME_QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 const { width: windowWidth } = Dimensions.get('window');
 const SIDE_PADDING = 15;
@@ -15,8 +16,9 @@ const CARD_WIDTH = windowWidth - SIDE_PADDING * 2;
 type BannerItemProps = { image?: string; headline: string; subheadline: string; cta: string };
 
 export default function Banner() {
+  const { userSession } = useAppStore();
   const { data = [], isLoading } = useQuery({
-    queryKey: HOME_QK.banner,
+    queryKey: HOME_QK.banner(userSession?.id),
     queryFn: async () => {
       const res = await getPromotionalData();
       return res?.isOk ? (res.data as BannerItemProps[]) : [];

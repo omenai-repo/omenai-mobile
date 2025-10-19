@@ -1,21 +1,19 @@
-import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, Linking, Pressable } from 'react-native';
+import React from 'react';
+import * as WebBrowser from 'expo-web-browser';
 import FittedBlackButton from '../../../../components/buttons/FittedBlackButton';
 import BackFormButton from '../../../../components/buttons/BackFormButton';
 import { colors } from '../../../../config/colors.config';
 import { acceptTermsList } from '../../../../constants/accetTerms.constants';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
 import { registerAccount } from '../../../../services/register/registerAccount';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import TermsAndConditionItem from '../../../../components/general/TermsAndConditionItem';
-import tw from 'twrnc';
-
 import { screenName } from '../../../../constants/screenNames.constants';
 import { useModalStore } from 'store/modal/modalStore';
-import Loader from 'components/general/Loader';
 import { useAppStore } from 'store/app/appStore';
+import tw from 'twrnc';
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -72,9 +70,22 @@ export default function TermsAndConditions() {
     }
   };
 
+  const openLegalLink = async () => {
+    try {
+      await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=collector');
+    } catch (error) {
+      updateModal({
+        showModal: true,
+        modalType: 'error',
+        message: 'Something went wrong while opening the Terms of Agreement.',
+      });
+    }
+  };
+
   return (
     <View style={{ marginTop: 20 }}>
       <Text style={styles.title}>Accept terms and conditions</Text>
+
       <View style={styles.termsContainer}>
         {acceptTermsList.map((i, idx) => (
           <TermsAndConditionItem
@@ -85,6 +96,13 @@ export default function TermsAndConditions() {
           />
         ))}
       </View>
+
+      {/* Added privacy & terms links */}
+      <Pressable onPress={openLegalLink} style={tw`mt-[20px]`}>
+        <Text style={tw`text-[14px] text-[#007AFF] text-center underline`}>
+          Read our Privacy Policy and Terms of Use
+        </Text>
+      </Pressable>
 
       <View style={styles.buttonsContainer}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />

@@ -10,7 +10,8 @@ import NavBtnComponent from 'components/artwork/NavBtnComponent';
 import { RecentOrderContainer } from 'screens/artist/overview/ArtistOverview';
 import { useQuery } from '@tanstack/react-query';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
-import { QK } from '../Overview';
+import { QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 export default function RecentOrders({
   onLoadingChange,
@@ -19,9 +20,10 @@ export default function RecentOrders({
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [openSection, setOpenSection] = useState<{ [key: string]: boolean }>({});
+  const { userSession } = useAppStore();
 
   const query = useQuery({
-    queryKey: QK.overviewOrders,
+    queryKey: QK.overviewOrders(userSession?.id),
     queryFn: async () => {
       const res = await getOverviewOrders();
       return res?.isOk ? res.data : [];

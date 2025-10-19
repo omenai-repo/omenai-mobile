@@ -10,13 +10,15 @@ import { colors } from 'config/colors.config';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { fontNames } from 'constants/fontNames.constants';
-import { HOME_QK } from '../Home';
+import { HOME_QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
 
 export default function NewArtworksListing() {
   const navigation = useNavigation<any>();
+  const { userSession } = useAppStore();
 
   const { data = [], isLoading } = useQuery({
-    queryKey: HOME_QK.newArtworks,
+    queryKey: HOME_QK.newArtworks(userSession?.id),
     queryFn: async () => {
       const results = await fetchArtworks({ listingType: 'recent', page: 1 });
       return results?.isOk ? results.body.data ?? [] : [];
