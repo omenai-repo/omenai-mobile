@@ -107,11 +107,13 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
 
         return (
           <Pressable
-            key={`${char}-${index}`}
+            key={`otp-${index}`}
             disabled={disabled}
             onPress={handlePress}
             style={generatePinCodeContainerStyle(isFocusedContainer, char)}
             testID="otp-input"
+            accessibilityRole="button"
+            accessibilityLabel={`PIN digit ${index + 1}`}
           >
             {isFocusedInput && !hideStick ? (
               <VerticalStick
@@ -146,6 +148,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
         secureTextEntry={secureTextEntry}
         autoComplete={Platform.OS === 'android' ? 'sms-otp' : 'one-time-code'}
         editable={!disabled}
+        caretHidden={true}
         testID="otp-input-hidden"
         onFocus={handleFocus}
         onBlur={handleBlur}
