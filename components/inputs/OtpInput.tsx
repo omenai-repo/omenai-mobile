@@ -40,7 +40,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   } = theme;
 
   const [lastTypedIndex, setLastTypedIndex] = useState<number | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevTextRef = useRef(text);
 
   useImperativeHandle(ref, () => ({ clear, focus, setValue: setTextWithRef, blur }));
@@ -139,13 +139,13 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
         value={text}
         onChangeText={handleTextChange}
         maxLength={numberOfDigits}
-        inputMode={type === 'numeric' ? 'numeric' : 'text'}
+        keyboardType={type === 'numeric' ? 'number-pad' : 'default'}
         textContentType="oneTimeCode"
         ref={inputRef}
         autoFocus={autoFocus}
         secureTextEntry={secureTextEntry}
         autoComplete={Platform.OS === 'android' ? 'sms-otp' : 'one-time-code'}
-        readOnly={disabled}
+        editable={!disabled}
         testID="otp-input-hidden"
         onFocus={handleFocus}
         onBlur={handleBlur}
