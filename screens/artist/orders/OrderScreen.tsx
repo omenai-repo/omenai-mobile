@@ -1,22 +1,16 @@
 import {
   View,
   Text,
-  Pressable,
   FlatList,
   RefreshControl,
-  Image,
 } from "react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import tw from "twrnc";
-import { Animated } from "react-native";
-import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import DeclineOrderModal from "./DeclineOrderModal";
 import { organizeOrders } from "utils/utils_splitArray";
 import EmptyOrdersListing from "screens/galleryOrders/components/EmptyOrdersListing";
 import OrderslistingLoader from "screens/galleryOrders/components/OrderslistingLoader";
-import { getImageFileView } from "lib/storage/getImageFileView";
 import { utils_formatPrice } from "utils/utils_priceFormatter";
 import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
 import YearDropdown from "./YearDropdown";
@@ -26,8 +20,6 @@ import WithModal from "components/modal/WithModal";
 import TabSwitcher from "components/orders/TabSwitcher";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import StatusBadge from "components/orders/StatusBadge";
-import OrderActions from "components/orders/OrderActions";
 import OrderContainer from "components/orders/OrderContainer";
 import { isArtworkExclusiveDate } from "utils/utils_orderHelpers";
 import { ORDERS_QK } from "utils/queryKeys";
@@ -71,6 +63,7 @@ const OrderScreen = () => {
           showModal: true,
           modalType: "error",
         });
+        throw err;
       }
     },
     staleTime: 30_000,
@@ -127,11 +120,6 @@ const OrderScreen = () => {
       <View
         style={tw.style(`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 })}
       >
-        {/* <Image
-          style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
-          resizeMode="contain"
-          source={require('../../../assets/omenai-logo.png')}
-        /> */}
 
         <TabSwitcher
           tabs={artistTabs}
@@ -182,22 +170,22 @@ const OrderScreen = () => {
                 renderItem={({ item, index }) => (
                   <OrderContainer
                     id={index}
-                    url={item.artwork_data.url}
-                    open={openSection[item.artwork_data._id]}
-                    setOpen={() => toggleRecentOrder(item.artwork_data._id)}
-                    artId={item.order_id}
-                    artName={item.artwork_data.title}
-                    dateTime={formatIntlDateTime(item.createdAt)}
+                    url={item?.artwork_data?.url}
+                    open={openSection[item?.artwork_data?._id]}
+                    setOpen={() => toggleRecentOrder(item?.artwork_data?._id)}
+                    artId={item?.order_id}
+                    artName={item?.artwork_data?.title}
+                    dateTime={formatIntlDateTime(item?.createdAt)}
                     price={utils_formatPrice(
-                      item.artwork_data.pricing.usd_price
+                      item?.artwork_data?.pricing?.usd_price
                     )}
                     status={selectedTab}
                     lastId={index === currentOrders.length - 1}
                     acceptBtn={
                       selectedTab === "pending"
                         ? () =>
-                            navigation.navigate("DimentionsDetails", {
-                              orderId: item.order_id,
+                            navigation.navigate("DimensionsDetails", {
+                              orderId: item?.order_id,
                             })
                         : undefined
                     }
@@ -207,32 +195,32 @@ const OrderScreen = () => {
                             const isExclusive =
                               item?.artwork_data?.exclusivity_status
                                 ?.exclusivity_type === "exclusive" &&
-                              isArtworkExclusiveDate(item.createdAt);
+                              isArtworkExclusiveDate(item?.createdAt);
 
-                            setOrderId(item.order_id);
+                            setOrderId(item?.order_id);
                             setOrderModalMetadata({
                               is_current_order_exclusive: isExclusive,
-                              art_id: item.artwork_data?.art_id,
+                              art_id: item?.artwork_data?.art_id,
                               seller_designation:
-                                item.seller_designation || "artist",
+                                item?.seller_designation || "artist",
                             });
                             setDeclineModal(true);
                           }
                         : undefined
                     }
-                    delivered={item.shipping_details.delivery_confirmed}
-                    order_accepted={item.order_accepted.status}
-                    order_decline_reason={item.order_accepted.reason}
-                    payment_status={item.payment_information.status}
+                    delivered={item?.shipping_details?.delivery_confirmed}
+                    order_accepted={item?.order_accepted?.status}
+                    order_decline_reason={item?.order_accepted?.reason}
+                    payment_status={item?.payment_information?.status}
                     tracking_status={
-                      item.shipping_details.shipment_information.tracking.id
+                      item?.shipping_details?.shipment_information?.tracking?.id
                     }
                     trackBtn={() =>
                       navigation.navigate("ShipmentTrackingScreen", {
-                        orderId: item.order_id,
+                        orderId: item?.order_id,
                         tracking_id:
-                          item.shipping_details.shipment_information.tracking
-                            .id,
+                          item?.shipping_details?.shipment_information?.tracking
+                            ?.id,
                       })
                     }
                     exclusivity_type={
