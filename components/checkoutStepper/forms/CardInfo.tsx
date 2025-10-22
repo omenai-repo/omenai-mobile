@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import Input from 'components/inputs/Input';
 import LongBlackButton from 'components/buttons/LongBlackButton';
-import { Entypo, Feather, Fontisto } from '@expo/vector-icons';
+import { Fontisto } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import { generateAlphaDigit } from 'utils/utils_generateToken';
 import { utils_hasEmptyString } from 'utils/utils_hasEmptyString';

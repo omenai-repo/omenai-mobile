@@ -7,7 +7,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "sentry:upload:dist": "npx sentry-expo-upload-sourcemaps dist"
+    "sentry:upload:dist": "npx sentry-expo-upload-sourcemaps dist",
+    "lint": "expo lint"
   },
   "dependencies": {
     "@expo/config": "^11.0.0",
@@ -85,6 +86,8 @@
     "@tanstack/eslint-plugin-query": "^5.74.7",
     "@types/lodash": "^4.17.13",
     "@types/react": "~19.0.10",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~9.2.0",
     "react-native-dotenv": "^3.4.11",
     "typescript": "~5.8.3"
   },

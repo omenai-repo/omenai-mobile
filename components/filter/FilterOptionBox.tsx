@@ -1,10 +1,8 @@
-import { filterStore } from "store/artworks/FilterStore";
-import { hasFilterValue } from "utils/utils_checkIfFilterExists";
-import { ChangeEvent } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { colors } from "config/colors.config";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Feather } from "@expo/vector-icons";
+import { filterStore } from 'store/artworks/FilterStore';
+import { hasFilterValue } from 'utils/utils_checkIfFilterExists';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { colors } from 'config/colors.config';
+import { Feather } from '@expo/vector-icons';
 
 type FilterOptionBoxTypes = {
   filters: FilterValueType[];
@@ -17,21 +15,13 @@ type FilterValueType = {
 };
 
 type FilterItemProps = {
-  name: string,
-  isChecked: boolean,
-  handleClick: (e: boolean) => void
-}
-export default function FilterOptionBox({
-  filters,
-  label,
-}: FilterOptionBoxTypes) {
-
-  const {
-    updateFilter,
-    setSelectedFilters,
-    removeSingleFilterSelection,
-    selectedFilters,
-  } = filterStore();
+  name: string;
+  isChecked: boolean;
+  handleClick: (e: boolean) => void;
+};
+export default function FilterOptionBox({ filters, label }: FilterOptionBoxTypes) {
+  const { updateFilter, setSelectedFilters, removeSingleFilterSelection, selectedFilters } =
+    filterStore();
 
   const handleChange = (e: boolean, filter: string, value: string) => {
     if (e) {
@@ -43,17 +33,18 @@ export default function FilterOptionBox({
     }
   };
 
-
-  const Item = ({name, isChecked, handleClick}: FilterItemProps) => {
-    return(
+  const Item = ({ name, isChecked, handleClick }: FilterItemProps) => {
+    return (
       <TouchableOpacity onPress={() => handleClick(!isChecked)}>
         <View style={styles.itemContainer}>
-          <View style={[styles.checkBox, isChecked && {backgroundColor: colors.primary_black}]}>{isChecked && <Feather name="check" size={15} color={colors.white} />}</View>
-          <Text style={{fontSize: 16}}>{name}</Text>
+          <View style={[styles.checkBox, isChecked && { backgroundColor: colors.primary_black }]}>
+            {isChecked && <Feather name="check" size={15} color={colors.white} />}
+          </View>
+          <Text style={{ fontSize: 16 }}>{name}</Text>
         </View>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -81,12 +72,12 @@ const styles = StyleSheet.create({
     padding: 15,
     gap: 15,
     marginTop: 10,
-    borderRadius: 15
+    borderRadius: 15,
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10
+    gap: 10,
   },
   checkBox: {
     height: 20,
@@ -96,6 +87,6 @@ const styles = StyleSheet.create({
     borderColor: colors.inputBorder,
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
-    justifyContent: 'center'
-  }
-})
+    justifyContent: 'center',
+  },
+});

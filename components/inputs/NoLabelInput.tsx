@@ -1,4 +1,4 @@
-import { KeyboardTypeOptions, StyleSheet, Text, View, Dimensions } from 'react-native';
+import { KeyboardTypeOptions, StyleSheet, View } from 'react-native';
 import React from 'react';
 import { colors } from 'config/colors.config';
 import { TextInput } from 'react-native-gesture-handler';

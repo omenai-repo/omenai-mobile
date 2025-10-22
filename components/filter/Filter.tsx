@@ -1,15 +1,6 @@
-import {
-  Image,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
 import { colors } from 'config/colors.config';
-import sortIcon from '../../assets/icons/sort-icon.png';
 import { Feather } from '@expo/vector-icons';
 import { filterStore } from 'store/artworks/FilterStore';
 import PriceFilter from './PriceFilter';
@@ -28,10 +19,6 @@ import ScrollWrapper from 'components/general/ScrollWrapper';
 
 type FilterProps = {
   children?: React.ReactNode;
-};
-
-type FilterSelectProps = {
-  name: string;
 };
 
 export default function Filter({ children }: FilterProps) {

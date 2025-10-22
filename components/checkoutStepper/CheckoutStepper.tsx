@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import React, { useState } from 'react';
 import CardInfo from './forms/CardInfo';
 import OTPForm from './forms/OTPForm';
@@ -21,7 +21,7 @@ export default function CheckoutStepper({
   setActiveIndex,
   updateCard,
 }: CheckoutStepperProps) {
-  const [isLastStep, setIsLastStep] = useState(false);
+  const [isLastStep] = useState(false);
   const [validateChargeAuthorization, setValidateChargeAuthorization] =
     useState<ValidateChargeTypes>('');
 
@@ -78,5 +78,3 @@ export default function CheckoutStepper({
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

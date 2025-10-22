@@ -1,9 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import React, { useEffect } from 'react';
 import CustomModal from './CustomModal';
 import { useModalStore } from 'store/modal/modalStore';
 import { colors } from 'config/colors.config';
-import WebViewModal from './WebViewModal';
 import ConfirmationModal from './ConfirmationModal';
 
 export type WithModalProps = {
@@ -16,16 +15,15 @@ export default function WithModal({ children }: WithModalProps) {
 
   useEffect(() => {
     if (showModal && retainModal === null) {
+      const closeModal = () => {
+        //close modal after 3.5 seconds
+        setTimeout(() => {
+          updateModal({ message: '', showModal: false, modalType: '' });
+        }, 2500);
+      };
       closeModal();
     }
-  }, [showModal]);
-
-  const closeModal = () => {
-    //close modal after 3.5 seconds
-    setTimeout(() => {
-      updateModal({ message: '', showModal: false, modalType: '' });
-    }, 2500);
-  };
+  }, [showModal, retainModal, updateModal]);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.white }}>
@@ -35,5 +33,3 @@ export default function WithModal({ children }: WithModalProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});
