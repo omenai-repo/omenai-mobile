@@ -50,7 +50,8 @@ export const useOtpInput = (props: OtpInputProps) => {
 
   const setTextWithRef = (value: string) => {
     const normalizedValue = value.length > numberOfDigits ? value.slice(0, numberOfDigits) : value;
-    handleTextChange(normalizedValue);
+    const sanitizedValue = type && regexMap[type] ? normalizedValue.replace(regexMap[type], '') : normalizedValue;
+    setText(sanitizedValue);
   };
 
   const clear = () => setText('');
