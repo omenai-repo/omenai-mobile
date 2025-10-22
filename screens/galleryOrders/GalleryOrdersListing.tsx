@@ -158,7 +158,7 @@ export default function GalleryOrdersListing() {
                     lastId={index === currentOrders.length - 1}
                     acceptBtn={
                       selectedTab === 'pending'
-                        ? () => navigation.navigate('DimentionsDetails', { orderId: item.order_id })
+                        ? () => navigation.navigate('DimensionsDetails', { orderId: item.order_id })
                         : undefined
                     }
                     declineBtn={
