@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React, { SetStateAction, useEffect, useState } from 'react';
+import React from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from 'config/colors.config';
 
@@ -18,8 +18,6 @@ type CustomSelectPickerProps = {
   disable?: false | true;
   renderInputSearch?: any;
 };
-
-type SetStateValue<S> = (prevState: S) => S;
 
 export default function CustomSelectPicker({
   value,
