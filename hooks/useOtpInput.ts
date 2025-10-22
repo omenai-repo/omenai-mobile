@@ -1,5 +1,4 @@
 import { useState, useRef, useMemo } from 'react';
-import { Keyboard } from 'react-native';
 import type { OtpInputProps } from '../types/otp';
 
 const regexMap = {
@@ -14,7 +13,6 @@ export const useOtpInput = (props: OtpInputProps) => {
     onFilled,
     numberOfDigits = 6,
     disabled,
-    autoFocus = true,
     blurOnFilled,
     type,
     onFocus,
@@ -23,7 +21,7 @@ export const useOtpInput = (props: OtpInputProps) => {
   } = props;
   
   const [text, setText] = useState('');
-  const [isFocused, setIsFocused] = useState(autoFocus);
+  const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<any>(null);
   const focusedInputIndex = text.length;
   
@@ -33,9 +31,6 @@ export const useOtpInput = (props: OtpInputProps) => {
   );
 
   const handlePress = () => {
-    if (!Keyboard.isVisible()) {
-      Keyboard.dismiss();
-    }
     inputRef.current?.focus();
   };
 
