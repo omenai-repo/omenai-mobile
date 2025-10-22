@@ -1,5 +1,5 @@
-import { Linking, StyleSheet, Text, View } from 'react-native';
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { Fontisto } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import Input from 'components/inputs/Input';
@@ -11,9 +11,6 @@ import { generateAlphaDigit } from 'utils/utils_generateToken';
 import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
 import { validateChargeAuthorization } from 'services/subscriptions/subscribeUser/validateChargeAuthorization';
 import { useModalStore } from 'store/modal/modalStore';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from 'constants/screenNames.constants';
 import { debounce } from 'lodash';
 
 type AvsNoauthInputProps = {
@@ -25,8 +22,6 @@ export default function AvsNoauthInput({
   handleNext,
   updateFinalAuthorization,
 }: AvsNoauthInputProps) {
-  const navigation = useNavigation<StackNavigationProp<any>>();
-
   const [address_info, set_address_info] = useState<{
     city: string;
     address: string;
@@ -87,20 +82,17 @@ export default function AvsNoauthInput({
         : [],
     );
   };
-  console.log(address_info);
+
   // Debounced Fetch Cities Function
-  const fetchCities = useCallback(
-    debounce((countryCode: string, stateIsoCode: string) => {
-      const getCities = City.getCitiesOfState(countryCode, stateIsoCode);
-      setCityData(
-        getCities?.map((city: ICity) => ({
-          label: city.name,
-          value: city.name,
-        })) || [],
-      );
-    }, 300),
-    [],
-  );
+  const fetchCities = debounce((countryCode: string, stateIsoCode: string) => {
+    const getCities = City.getCitiesOfState(countryCode, stateIsoCode);
+    setCityData(
+      getCities?.map((city: ICity) => ({
+        label: city.name,
+        value: city.name,
+      })) || [],
+    );
+  }, 300);
 
   const handleStateSelect = (item: { label: string; value: string; isoCode?: string }) => {
     set_address_info((prev) => ({

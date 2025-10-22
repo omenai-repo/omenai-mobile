@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import { Image, Text, View, TouchableOpacity, Dimensions } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -9,9 +9,6 @@ import LikeComponent from './LikeComponent';
 import tw from 'twrnc';
 import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
 import { fontNames } from 'constants/fontNames.constants';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
-import { requestArtworkPrice } from 'services/artworks/requestArtworkPrice';
-import { useModalStore } from 'store/modal/modalStore';
 
 type ArtworkCardType = {
   title: string;
@@ -44,13 +41,9 @@ export default function ArtworkCard({
   like_IDs,
   galleryView = false,
   availiablity,
-  medium,
 }: ArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const image_href = getImageFileView(url, 400);
-
-  const { updateModal } = useModalStore();
 
   const [imageDimensions, setImageDimensions] = useState({
     width: 250,
@@ -72,45 +65,6 @@ export default function ArtworkCard({
       setImageDimensions({ height: resizedHeight, width: resizedWidth });
     });
   }, [image_href, width]);
-
-  const handleRequestPriceQuote = async () => {
-    setLoadingPriceQuote(true);
-
-    let userEmail = '';
-    let userName = '';
-
-    const userSession = await utils_getAsyncData('userSession');
-    if (userSession.value) {
-      userEmail = JSON.parse(userSession.value).email;
-      userName = JSON.parse(userSession.value).name;
-    } else return;
-
-    const artwork_data = {
-      title: title,
-      artist: artist,
-      art_id: art_id,
-      url: url,
-      medium: medium,
-      pricing: price,
-    };
-
-    const results = await requestArtworkPrice(artwork_data, userEmail, userName);
-    if (results.isOk) {
-      updateModal({
-        message: `Price quote for ${artwork_data.title} has been sent to ${userEmail}`,
-        showModal: true,
-        modalType: 'success',
-      });
-    } else {
-      updateModal({
-        message: 'Something went wrong, please try again or contact us for assistance.',
-        showModal: true,
-        modalType: 'error',
-      });
-    }
-
-    setLoadingPriceQuote(false);
-  };
 
   return (
     <View>

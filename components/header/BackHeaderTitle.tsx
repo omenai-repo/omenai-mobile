@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import BackScreenButton from 'components/buttons/BackScreenButton';
 import { StackNavigationProp } from '@react-navigation/stack';

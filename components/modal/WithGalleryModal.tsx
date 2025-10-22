@@ -1,25 +1,19 @@
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import React from "react";
-import { colors } from "config/colors.config";
-import { WithModalProps } from "./WithModal";
-import { galleryOrderModalStore } from "store/modal/galleryModalStore";
-import Modal from "react-native-modal";
-import { SafeAreaView } from "react-native-safe-area-context";
-import DeclineOrderModal from "./gallery/DeclineOrderModal";
-import ProvideShippingQuoteModal from "./gallery/ProvideShippingQuoteModal";
-import ProvideTrackingInfo from "./gallery/ProvideTrackingInfo";
-import OrderDetailsModal from "./gallery/OrderDetailsModal";
-import DeleteAccountModal from "./gallery/DeleteAccountModal";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { StyleSheet, View, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import React from 'react';
+import { colors } from 'config/colors.config';
+import { WithModalProps } from './WithModal';
+import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
+import Modal from 'react-native-modal';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import DeclineOrderModal from './gallery/DeclineOrderModal';
+import ProvideShippingQuoteModal from './gallery/ProvideShippingQuoteModal';
+import ProvideTrackingInfo from './gallery/ProvideTrackingInfo';
+import OrderDetailsModal from './gallery/OrderDetailsModal';
+import DeleteAccountModal from './gallery/DeleteAccountModal';
+import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export default function WithGalleryModal({ children }: WithModalProps) {
-  const { isVisible, modalType, setModalType } = galleryOrderModalStore();
+  const { isVisible, modalType } = galleryOrderModalStore();
 
   const modals = {
     decline: <DeclineOrderModal />,
@@ -36,12 +30,12 @@ export default function WithGalleryModal({ children }: WithModalProps) {
       <Modal
         isVisible={isVisible}
         backdropOpacity={0.2}
-        animationIn={"slideInUp"}
-        animationOut={"slideOutDown"}
+        animationIn={'slideInUp'}
+        animationOut={'slideOutDown'}
       >
         <View style={styles.container}>
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.container}
           >
             <ScrollWrapper>
@@ -60,20 +54,20 @@ export default function WithGalleryModal({ children }: WithModalProps) {
 
 const styles = StyleSheet.create({
   container: {
-    width: Dimensions.get("window").width,
+    width: Dimensions.get('window').width,
     left: -10,
-    height: Dimensions.get("window").height,
-    justifyContent: "flex-end",
+    height: Dimensions.get('window').height,
+    justifyContent: 'flex-end',
   },
   scrollContainer: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-    justifyContent: "flex-end",
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+    justifyContent: 'flex-end',
   },
   mainContainer: {
     // height: 200,
-    width: "100%",
-    backgroundColor: "#fff",
+    width: '100%',
+    backgroundColor: '#fff',
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
