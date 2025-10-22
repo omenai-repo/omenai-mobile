@@ -21,7 +21,6 @@ import TabSwitcher from "components/orders/TabSwitcher";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import OrderContainer from "components/orders/OrderContainer";
-import { isArtworkExclusiveDate } from "utils/utils_orderHelpers";
 import { ORDERS_QK } from "utils/queryKeys";
 
 const OrderScreen = () => {
@@ -68,15 +67,12 @@ const OrderScreen = () => {
     },
     staleTime: 30_000,
     gcTime: 10 * 60_000,
-    refetchOnMount: true, // only if stale
-    refetchOnReconnect: true, // only if stale
-    refetchOnWindowFocus: true, // only if stale
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 
-  // Pull-to-refresh: force a refetch now
   const onRefresh = useCallback(() => ordersQuery.refetch(), [ordersQuery]);
-
-  // Split into tabs (memoized)
   const { pending, processing, completed } = useMemo(() => {
     const parsed = organizeOrders(
       Array.isArray(ordersQuery.data) ? ordersQuery.data : []
@@ -113,7 +109,7 @@ const OrderScreen = () => {
   }, []);
 
   const isInitialLoading = ordersQuery.isLoading && !ordersQuery.data;
-  const isRefreshing = ordersQuery.isFetching && !!ordersQuery.data; // background spinner
+  const isRefreshing = ordersQuery.isFetching && !!ordersQuery.data;
 
   return (
     <WithModal>

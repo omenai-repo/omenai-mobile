@@ -21,7 +21,6 @@ export default function WithModal({ children }: WithModalProps) {
   }, [showModal]);
 
   const closeModal = () => {
-    //close modal after 3.5 seconds
     setTimeout(() => {
       updateModal({ message: '', showModal: false, modalType: '' });
     }, 2500);
