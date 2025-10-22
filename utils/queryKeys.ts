@@ -37,3 +37,5 @@ export const HOME_QK = {
 
   recentlyViewed: (userId?: string) => ['home', 'recentlyViewed', userId],
 };
+
+export const ORDERS_QK = ['orders', 'artist'] as const;
