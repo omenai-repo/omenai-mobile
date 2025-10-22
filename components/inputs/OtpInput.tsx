@@ -43,6 +43,8 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevTextRef = useRef(text);
 
+  const baseContainerStyle = tw`w-14 h-14 border border-gray-400 rounded-[15px] bg-white flex items-center justify-center`;
+
   useImperativeHandle(ref, () => ({ clear, focus, setValue: setTextWithRef, blur }));
 
   useEffect(() => {
@@ -71,8 +73,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   }, [secureTextEntry]);
 
   const generatePinCodeContainerStyle = (isFocusedContainer: boolean, char: string) => {
-    const baseStyle = tw`w-14 h-14 border border-gray-400 rounded-[15px] bg-white flex items-center justify-center`;
-    const stylesArray = [baseStyle, pinCodeContainerStyle];
+    const stylesArray = [baseContainerStyle, pinCodeContainerStyle];
     
     if (focusColor && isFocusedContainer) {
       stylesArray.push({ borderColor: focusColor });
@@ -138,6 +139,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
         );
       })}
       <TextInput
+        {...textInputProps}
         value={text}
         onChangeText={handleTextChange}
         maxLength={numberOfDigits}
@@ -152,7 +154,6 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
         testID="otp-input-hidden"
         onFocus={handleFocus}
         onBlur={handleBlur}
-        {...textInputProps}
         style={[
           tw`absolute opacity-0 w-full h-full`,
           textInputProps?.style,
