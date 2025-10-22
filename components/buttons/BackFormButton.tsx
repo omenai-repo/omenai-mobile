@@ -1,17 +1,14 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import { colors } from "../../config/colors.config";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { colors } from '../../config/colors.config';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 type handleBackCLickProp = {
   handleBackClick: () => void;
   disabled?: boolean;
 };
 
-export default function BackFormButton({
-  handleBackClick,
-  disabled,
-}: handleBackCLickProp) {
+export default function BackFormButton({ handleBackClick, disabled }: handleBackCLickProp) {
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -30,8 +27,8 @@ const styles = StyleSheet.create({
     width: 70,
     borderWidth: 1,
     borderColor: colors.primary_black,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 95,
   },
 });
