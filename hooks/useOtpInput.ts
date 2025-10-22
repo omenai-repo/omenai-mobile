@@ -5,6 +5,7 @@ const regexMap = {
   alpha: /[^a-zA-Z]/g,
   numeric: /[^\d]/g,
   alphanumeric: /[^a-zA-Z\d]/g,
+  text: /[^\w\s]/g,
 };
 
 export const useOtpInput = (props: OtpInputProps) => {
@@ -36,7 +37,7 @@ export const useOtpInput = (props: OtpInputProps) => {
 
   const handleTextChange = (value: string) => {
     if (disabled) return;
-    const sanitizedValue = type ? value.replace(regexMap[type], '') : value;
+    const sanitizedValue = type && regexMap[type] ? value.replace(regexMap[type], '') : value;
     if (sanitizedValue.length <= numberOfDigits) {
       setText(sanitizedValue);
       onTextChange?.(sanitizedValue);

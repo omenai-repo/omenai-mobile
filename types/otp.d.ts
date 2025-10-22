@@ -17,7 +17,7 @@ export interface OtpInputProps {
   disabled?: boolean;
   textInputProps?: TextInputProps;
   textProps?: TextProps;
-  type?: 'alpha' | 'numeric' | 'alphanumeric';
+  type?: 'alpha' | 'numeric' | 'alphanumeric' | 'text';
   placeholder?: string;
 }
 
@@ -46,4 +46,4 @@ export interface VerticalStickProps {
   focusStickBlinkingDuration?: number;
 }
 
-export type OtpInputType = 'alpha' | 'numeric' | 'alphanumeric';
+export type OtpInputType = 'alpha' | 'numeric' | 'alphanumeric' | 'text';
