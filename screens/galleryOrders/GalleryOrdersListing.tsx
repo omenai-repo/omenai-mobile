@@ -11,7 +11,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
 import { organizeOrders } from 'utils/utils_splitArray';
 import DeclineOrderModal from 'screens/artist/orders/DeclineOrderModal';
-import { OrderContainer } from 'screens/artist/orders/OrderScreen';
+import OrderContainer from 'components/orders/OrderContainer';
 import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -128,7 +128,11 @@ export default function GalleryOrdersListing() {
 
               <FlatList
                 data={currentOrders}
-                keyExtractor={(item) => item.order_id}
+                keyExtractor={(item, index) =>
+                  item?.order_id?.toString?.() ??
+                  item?.artwork_data?._id ??
+                  `order-index-${index}`
+                }
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
                 refreshControl={
