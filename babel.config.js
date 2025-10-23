@@ -16,10 +16,12 @@ module.exports = function (api) {
           envName: 'APP_ENV',
           moduleName: '@env',
           path: '.env',
-          blocklist: null,
-          allowlist: null,
-          blacklist: null, // DEPRECATED
-          whitelist: null, // DEPRECATED
+          allowlist: [
+            'EXPO_PUBLIC_API_BASE',
+            'EXPO_PUBLIC_API_ORIGIN', 
+            'EXPO_PUBLIC_API_USER_AGENT',
+            'EXPO_PUBLIC_API_AUTHORIZATION'
+          ],
           safe: false,
           allowUndefined: true,
           verbose: false,
