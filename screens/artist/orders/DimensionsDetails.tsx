@@ -16,12 +16,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import WithModal from 'components/modal/WithModal';
 import { validateOrderMeasurement } from 'lib/validations/upload_artwork_input_validator/validateOrderMeasurement';
 import { useAppStore } from 'store/app/appStore';
-import UnitDropdown from './UnitDropdown';
 import { convertDimensionsToStandard } from 'utils/convertUnits';
 import { format } from 'date-fns';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import ToggleButton from 'components/forms/ToggleButton';
 import DimensionInput from 'components/forms/DimensionInput';
+import UnitDropdownField from 'components/forms/UnitDropdownField';
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -186,22 +186,18 @@ const DimensionsDetails = () => {
             <View style={tw`mt-[30px] mx-[25px] gap-[10px] z-50`}>
               {/* Unit selection dropdowns at the top */}
               <View style={tw`flex-row gap-4 mb-4`}>
-                <View style={tw`flex-1`}>
-                  <Text style={tw`text-[14px] text-[#858585] mb-[10px]`}>Dimension Unit</Text>
-                  <UnitDropdown
-                    units={dimensionUnits}
-                    selectedUnit={dimensionUnit}
-                    onSelect={(unit) => setDimensionUnit(unit as DimensionUnit)}
-                  />
-                </View>
-                <View style={tw`flex-1`}>
-                  <Text style={tw`text-[14px] text-[#858585] mb-[10px]`}>Weight Unit</Text>
-                  <UnitDropdown
-                    units={weightUnits}
-                    selectedUnit={weightUnit}
-                    onSelect={(unit) => setWeightUnit(unit as WeightUnit)}
-                  />
-                </View>
+                <UnitDropdownField
+                  label="Dimension Unit"
+                  units={dimensionUnits}
+                  selectedUnit={dimensionUnit}
+                  onSelect={(unit) => setDimensionUnit(unit as DimensionUnit)}
+                />
+                <UnitDropdownField
+                  label="Weight Unit"
+                  units={weightUnits}
+                  selectedUnit={weightUnit}
+                  onSelect={(unit) => setWeightUnit(unit as WeightUnit)}
+                />
               </View>
 
               {(['height', 'length', 'width'] as Array<keyof typeof dimentions>).map((field) => (
