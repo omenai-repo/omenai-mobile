@@ -15,7 +15,7 @@ import { getAccountID } from 'services/stripe/getAccountID';
 import { utils_getAsyncData } from 'utils/utils_asyncStorage';
 import UploadNewLogo from 'screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo';
 import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
-import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
+import DimensionsDetails from 'screens/artist/orders/DimensionsDetails';
 import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import { BottomTabDataGallery } from 'utils/BottomTabData';
 import CustomTabBar from './components/TabButton';
@@ -106,7 +106,7 @@ export default function GalleryNavigation() {
       <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
       <Stack.Screen name={screenName.gallery.order} component={GalleryOrder} />
       <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
-      <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
+      <Stack.Screen name="DimensionsDetails" component={DimensionsDetails} />
       <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
       <Stack.Screen name={'EditAddressScreen'} component={EditAddressScreen} />
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import { getNumberOfColumns } from 'utils/utils_screen';
@@ -23,15 +24,39 @@ export default function MiniArtworkCardLoader() {
 
   return (
     <View style={styles.container}>
+=======
+import { View } from "react-native";
+import React from "react";
+import { getNumberOfColumns } from "utils/utils_screen";
+import { MasonryFlashList } from "@shopify/flash-list";
+import MiniArtworkCard from "./MiniArtworkCard";
+import tw from "twrnc";
+
+const renderLoaderItem = () => (
+  <View style={tw`flex-1 items-center pb-5`}>
+    <MiniArtworkCard />
+  </View>
+);
+
+export default function MiniArtworkCardLoader() {
+  const dummyArr = new Array(20).fill("loader");
+
+  return (
+    <View style={tw`flex-1`}>
+>>>>>>> 9641e18ed4aa9701cebed1d5268dce601cf368f2
       <MasonryFlashList
         data={dummyArr}
         estimatedItemSize={20}
         onEndReachedThreshold={0.1}
+<<<<<<< HEAD
         renderItem={() => (
           <View style={{ flex: 1, alignItems: 'center', paddingBottom: 20 }}>
             <Card />
           </View>
         )}
+=======
+        renderItem={renderLoaderItem}
+>>>>>>> 9641e18ed4aa9701cebed1d5268dce601cf368f2
         keyExtractor={(_, index) => JSON.stringify(index)}
         showsVerticalScrollIndicator={false}
         numColumns={getNumberOfColumns()}
@@ -39,6 +64,7 @@ export default function MiniArtworkCardLoader() {
     </View>
   );
 }
+<<<<<<< HEAD
 
 const styles = StyleSheet.create({
   container: {
@@ -55,3 +81,5 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 });
+=======
+>>>>>>> 9641e18ed4aa9701cebed1d5268dce601cf368f2

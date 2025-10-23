@@ -12,7 +12,7 @@ import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { logout } from 'utils/logout.utils';
 import { BlurView } from 'expo-blur';
 import OrderScreen from 'screens/artist/orders/OrderScreen';
-import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
+import DimensionsDetails from 'screens/artist/orders/DimensionsDetails';
 import WalletHistory from 'screens/artist/wallet/WalletHistory';
 import AddPrimaryAcctScreen from 'screens/artist/wallet/AddPrimaryAcctScreen';
 import { screenName } from 'constants/screenNames.constants';
@@ -146,7 +146,7 @@ const ArtistNavigation = () => {
       <Stack.Screen name={'NotificationScreen'} component={NotificationScreen} />
       <Stack.Screen name="OrderScreen" component={OrderScreen} />
       <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
-      <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
+      <Stack.Screen name="DimensionsDetails" component={DimensionsDetails} />
       <Stack.Screen name="WalletHistory" component={WalletHistory} />
       <Stack.Screen name="AddPrimaryAcctScreen" component={AddPrimaryAcctScreen} />
       <Stack.Screen name={'WithdrawScreen'} component={WithdrawScreen} />
