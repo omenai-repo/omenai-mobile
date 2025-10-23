@@ -209,7 +209,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
                 isDisabled={false}
               />
             )}
-          {/* {availability &&
+          {availability &&
             payment_information === 'completed' &&
             !delivery_confirmed &&
             tracking_information.link.trim() && (
@@ -229,7 +229,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
                   bgColor="#16A34A"
                 />
               </View>
-            )} */}
+            )}
           {availability &&
             payment_information === 'completed' &&
             order_accepted === 'accepted' &&
