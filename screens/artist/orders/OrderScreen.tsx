@@ -91,12 +91,20 @@ const OrderScreen = () => {
     [selectedYear]
   );
 
-  const currentOrders =
-    selectedTab === "pending"
-      ? filterByYear(pending)
-      : selectedTab === "processing"
-      ? filterByYear(processing)
-      : filterByYear(completed);
+  const getCurrentOrders = () => {
+    switch (selectedTab) {
+      case "pending":
+        return filterByYear(pending);
+      case "processing":
+        return filterByYear(processing);
+      case "completed":
+        return filterByYear(completed);
+      default:
+        return [];
+    }
+  };
+
+  const currentOrders = getCurrentOrders();
 
   const artistTabs = [
     { title: "Pending", key: "pending", count: pending?.length ?? 0 },

@@ -184,7 +184,6 @@ const DimensionsDetails = () => {
             keyboardShouldPersistTaps="handled"
           >
             <View style={tw`mt-[30px] mx-[25px] gap-[10px] z-50`}>
-              {/* Unit selection dropdowns at the top */}
               <View style={tw`flex-row gap-4 mb-4`}>
                 <UnitDropdownField
                   label="Dimension Unit"
@@ -276,7 +275,6 @@ const DimensionsDetails = () => {
             )}
 
             <View style={tw`mt-[30px] mx-[25px]`}>
-              {/* Warning Container */}
               <View style={tw`bg-[#FFF4E5] border border-[#FFA500] p-[14px] rounded-[8px]`}>
                 <Text style={tw`text-[#A65B00] text-[14px] font-medium`}>
                   By accepting this order, you have agreed to have this piece ready for shipping &
@@ -284,7 +282,6 @@ const DimensionsDetails = () => {
                 </Text>
               </View>
 
-              {/* Agree and Continue Checkbox */}
               <Pressable
                 onPress={() => setIsChecked(!isChecked)}
                 style={tw`mt-[18px] flex-row items-center gap-[12px]`}

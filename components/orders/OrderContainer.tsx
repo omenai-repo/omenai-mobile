@@ -32,6 +32,8 @@ export const OrderContainer = (props: OrderContainerProps) => {
   const image_href = getImageFileView(url, 700);
   const animatedOpacity = React.useRef(new Animated.Value(0)).current;
   const animatedMaxHeight = React.useRef(new Animated.Value(0)).current;
+  
+  const currentIcon = open ? dropUpIcon : dropdownIcon;
 
   React.useEffect(() => {
     if (open) {
@@ -92,9 +94,7 @@ export const OrderContainer = (props: OrderContainerProps) => {
           </View>
         </View>
         <View style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}>
-          {typeof (open ? dropUpIcon : dropdownIcon) === 'string' ? (
-            <SvgXml xml={open ? dropUpIcon : dropdownIcon} />
-          ) : null}
+          {typeof currentIcon === 'string' && <SvgXml xml={currentIcon} />}
         </View>
       </View>
 
