@@ -17,6 +17,8 @@ import BackHeaderTitle from 'components/header/BackHeaderTitle';
 import { getArtistCurrencySymbol } from 'utils/utils_getArtistCurrencySymbol';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { useQueryClient } from '@tanstack/react-query';
+import OtpInput from 'components/inputs/OtpInput';
+import type { OtpInputRef } from 'types/otp';
 
 const WALLET_QK = ['wallet', 'artist'] as const;
 const TXNS_QK = ['wallet', 'artist', 'txns', { status: 'all' }] as const;
@@ -34,19 +36,8 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
 
   const queryClient = useQueryClient();
 
-  const [pin, setPin] = useState(['', '', '', '']);
-  const pinInputs = useRef<TextInput[]>([]);
-
-  const handlePinChange = (value: string, index: number) => {
-    if (/^\d?$/.test(value)) {
-      const updatedPin = [...pin];
-      updatedPin[index] = value;
-      setPin(updatedPin);
-      if (value && index < 3) pinInputs.current[index + 1]?.focus();
-    }
-  };
-
-  const walletPin = pin.join('');
+  const [walletPin, setWalletPin] = useState('');
+  const otpRef = useRef<OtpInputRef>(null);
 
   useEffect(() => {
     if (!amount) {
@@ -81,7 +72,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
   };
 
   const handleWithdraw = async () => {
-    if (!amount || pin.includes('')) {
+    if (!amount || !walletPin) {
       updateModal({ message: 'Please fill all fields', showModal: true, modalType: 'error' });
       return;
     }
@@ -216,23 +207,21 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
 
             <View style={tw`mb-[50px]`}>
               <Text style={tw`mb-2 font-medium`}>Enter wallet pin</Text>
-              <View style={tw`flex-row justify-between gap-2`}>
-                {pin.map((digit, index) => (
-                  <TextInput
-                    key={index}
-                    ref={(ref) => {
-                      pinInputs.current[index] = ref!;
-                    }}
-                    style={tw`w-14 h-14 border border-gray-400 rounded-[15px] text-center text-lg bg-white`}
-                    keyboardType="numeric"
-                    maxLength={1}
-                    secureTextEntry
-                    value={digit}
-                    onChangeText={(val) => handlePinChange(val, index)}
-                    returnKeyType="next"
-                  />
-                ))}
-              </View>
+              <OtpInput
+                ref={otpRef}
+                numberOfDigits={4}
+                onTextChange={setWalletPin}
+                onFilled={(text) => setWalletPin(text)}
+                type="numeric"
+                secureTextEntry={true}
+                secureTextEntryDelay={1000}
+                focusColor="#000000"
+                theme={{
+                  pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-[15px] bg-white`,
+                  pinCodeTextStyle: tw`text-lg text-center`,
+                  focusedPinCodeContainerStyle: tw`border-black border-2`,
+                }}
+              />
               <Pressable onPress={() => navigation.navigate('ForgotPinScreen')} style={tw`mt-2`}>
                 <Text style={tw`text-blue-500 text-center mt-[20px]`}>Forgot PIN?</Text>
               </Pressable>
