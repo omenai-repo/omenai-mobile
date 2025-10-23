@@ -306,7 +306,7 @@ const ExclusivityCountdown = memo(({ expiresAt, art_id }: { expiresAt: Date; art
               <View
                 style={tw`flex-row items-center justify-center text-xs text-gray-500 gap-3 mb-3`}
               >
-                <View style={tw`flex-row items-center gap-1 ${acknowledgment ? '' : ''}`}>
+                <View style={tw`flex-row items-center gap-1`}>
                   <Text style={[tw`${acknowledgment ? 'text-green-600' : 'text-gray-400'}`]}>
                     ✓
                   </Text>
