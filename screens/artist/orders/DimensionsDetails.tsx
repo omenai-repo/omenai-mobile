@@ -3,15 +3,13 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  useWindowDimensions,
   View,
+  Text
 } from 'react-native';
 import React, { useState } from 'react';
 import tw from 'twrnc';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import Input from 'components/inputs/Input';
 import LongBlackButton from 'components/buttons/LongBlackButton';
-import { Text } from 'react-native';
 import { updateShippingQuote } from 'services/orders/updateShippingQuote';
 import { useModalStore } from 'store/modal/modalStore';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -22,6 +20,8 @@ import UnitDropdown from './UnitDropdown';
 import { convertDimensionsToStandard } from 'utils/convertUnits';
 import { format } from 'date-fns';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import ToggleButton from 'components/forms/ToggleButton';
+import DimensionInput from 'components/forms/DimensionInput';
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -34,7 +34,6 @@ type DimensionUnit = 'cm' | 'm' | 'in' | 'ft';
 type WeightUnit = 'kg' | 'g' | 'lb';
 
 const DimensionsDetails = () => {
-  const { width } = useWindowDimensions();
   const { userType } = useAppStore();
   const { orderId } = useRoute<any>().params;
   const navigation = useNavigation();
@@ -71,16 +70,16 @@ const DimensionsDetails = () => {
   const [expoEndDate, setExpoEndDate] = useState<Date | null>(null);
   const [isChecked, setIsChecked] = useState(false);
 
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
   const { updateModal } = useModalStore();
 
   const showDatePicker = () => {
-    setDatePickerVisibility(true);
+    setIsDatePickerVisible(true);
   };
 
   const hideDatePicker = () => {
-    setDatePickerVisibility(false);
+    setIsDatePickerVisible(false);
   };
 
   const handleConfirm = (date: Date) => {
@@ -206,35 +205,25 @@ const DimensionsDetails = () => {
               </View>
 
               {(['height', 'length', 'width'] as Array<keyof typeof dimentions>).map((field) => (
-                <View key={field}>
-                  <Input
-                    label={`${field.charAt(0).toUpperCase() + field.slice(1)} (${dimensionUnit})`}
-                    keyboardType="numeric"
-                    onInputChange={(text) => {
-                      setDimentions((prev) => ({ ...prev, [field]: text }));
-                      handleValidationChecks(field, text);
-                    }}
-                    placeHolder={`Enter ${field}`}
-                    value={dimentions[field]}
-                    errorMessage={formErrors[field]}
-                  />
-                </View>
+                <DimensionInput
+                  key={field}
+                  field={field}
+                  unit={dimensionUnit}
+                  value={dimentions[field]}
+                  errorMessage={formErrors[field]}
+                  onInputChange={(text) => setDimentions((prev) => ({ ...prev, [field]: text }))}
+                  onValidation={(text) => handleValidationChecks(field, text)}
+                />
               ))}
 
-              {/* Weight field */}
-              <View>
-                <Input
-                  label={`Weight (${weightUnit})`}
-                  keyboardType="numeric"
-                  onInputChange={(text) => {
-                    setDimentions((prev) => ({ ...prev, weight: text }));
-                    handleValidationChecks('weight', text);
-                  }}
-                  placeHolder="Enter weight"
-                  value={dimentions.weight}
-                  errorMessage={formErrors.weight}
-                />
-              </View>
+              <DimensionInput
+                field="weight"
+                unit={weightUnit}
+                value={dimentions.weight}
+                errorMessage={formErrors.weight}
+                onInputChange={(text) => setDimentions((prev) => ({ ...prev, weight: text }))}
+                onValidation={(text) => handleValidationChecks('weight', text)}
+              />
             </View>
 
             {userType === 'gallery' && (
@@ -243,42 +232,19 @@ const DimensionsDetails = () => {
                   Is artwork on exhibition?
                 </Text>
                 <View style={tw`flex-row gap-4`}>
-                  <Pressable
+                  <ToggleButton
+                    label="Yes"
+                    isSelected={isOnExhibition}
                     onPress={() => setIsOnExhibition(true)}
-                    style={tw.style(
-                      'h-[51px] rounded-full justify-center items-center flex-1 border-2',
-                      isOnExhibition ? 'bg-black border-black' : 'bg-[#F7F7F7] border-[#000000]',
-                    )}
-                  >
-                    <Text
-                      style={tw.style(
-                        'font-bold text-[14px]',
-                        isOnExhibition ? 'text-white' : 'text-[#1A1A1A]',
-                      )}
-                    >
-                      Yes
-                    </Text>
-                  </Pressable>
-
-                  <Pressable
+                  />
+                  <ToggleButton
+                    label="No"
+                    isSelected={!isOnExhibition}
                     onPress={() => {
                       setIsOnExhibition(false);
                       setExpoEndDate(null);
                     }}
-                    style={tw.style(
-                      'h-[51px] rounded-full justify-center items-center flex-1 border-2',
-                      !isOnExhibition ? 'bg-black border-black' : 'bg-[#F7F7F7] border-[#000000]',
-                    )}
-                  >
-                    <Text
-                      style={tw.style(
-                        'font-bold text-[14px]',
-                        !isOnExhibition ? 'text-white' : 'text-[#1A1A1A]',
-                      )}
-                    >
-                      No
-                    </Text>
-                  </Pressable>
+                  />
                 </View>
 
                 {isOnExhibition && (
