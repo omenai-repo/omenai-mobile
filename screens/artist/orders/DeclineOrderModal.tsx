@@ -213,7 +213,6 @@ const DeclineOrderModal = ({
                     </View>
                     <View style={tw`flex-1`}>
                       <Text style={tw`text-[14px]`}>{r}</Text>
-                      {/* <Text style={tw`text-[12px] text-[#6B7280]`}>{declineReasonMapping[r]}</Text> */}
                     </View>
                   </Pressable>
                 ))}
