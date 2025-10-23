@@ -41,7 +41,7 @@ export default function AuthTabs({
       {tabs.map((i, idx) => (
         <TabItem
           name={i}
-          key={idx}
+          key={`tab-${idx}`}
           onClick={() => handleSelect(idx)}
           isSelected={stateIndex === idx}
         />
