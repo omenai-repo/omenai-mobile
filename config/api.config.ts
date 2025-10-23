@@ -28,10 +28,10 @@ try {
 }
 
 export const apiConfig = {
-  baseUrl: EXPO_PUBLIC_API_BASE!,
-  origin: EXPO_PUBLIC_API_ORIGIN!,
-  userAgent: EXPO_PUBLIC_API_USER_AGENT!,
-  authorization: EXPO_PUBLIC_API_AUTHORIZATION!,
+  baseUrl: EXPO_PUBLIC_API_BASE,
+  origin: EXPO_PUBLIC_API_ORIGIN,
+  userAgent: EXPO_PUBLIC_API_USER_AGENT,
+  authorization: EXPO_PUBLIC_API_AUTHORIZATION,
 } as const;
 
 export const apiUrl = apiConfig.baseUrl;
