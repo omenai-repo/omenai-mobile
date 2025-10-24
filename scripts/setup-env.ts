@@ -12,6 +12,7 @@ EXPO_PUBLIC_URL_PRODUCTION=https://omenai-web.vercel.app
 
 # API Configuration
 EXPO_PUBLIC_API_BASE=your_api_base_url
+EXPO_PUBLIC_API_STAGING_BASE=your_staging_api_base_url
 EXPO_PUBLIC_API_ORIGIN=your_api_origin
 EXPO_PUBLIC_API_USER_AGENT=your_api_user_agent
 EXPO_PUBLIC_API_AUTHORIZATION=your_api_authorization

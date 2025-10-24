@@ -1,6 +1,8 @@
 export interface EnvironmentConfig {
   urlDevelopment: string;
   urlProduction: string;
+  apiBase: string;
+  apiStagingBase: string;
   authSecret: string;
   mongodbPassword: string;
   upstashRedisRestUrl: string;

@@ -18,6 +18,7 @@ module.exports = function (api) {
           path: '.env',
           allowlist: [
             'EXPO_PUBLIC_API_BASE',
+            'EXPO_PUBLIC_API_STAGING_BASE',
             'EXPO_PUBLIC_API_ORIGIN', 
             'EXPO_PUBLIC_API_USER_AGENT',
             'EXPO_PUBLIC_API_AUTHORIZATION',
@@ -47,7 +48,8 @@ module.exports = function (api) {
             'EXPO_PUBLIC_STRIPE_SK',
             'EXPO_PUBLIC_STRIPE_PK',
             'EXPO_PUBLIC_DEEPLINK_DEVELOPMENT',
-            'EXPO_PUBLIC_ENV'
+            'EXPO_PUBLIC_ENV',
+            'EXPO_PUBLIC_SENDGRID_API_KEY'
           ],
           safe: false,
           allowUndefined: true,
