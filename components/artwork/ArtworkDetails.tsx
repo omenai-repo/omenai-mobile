@@ -5,11 +5,11 @@ import { fontNames } from 'constants/fontNames.constants';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 
 interface ArtworkDetailsProps {
-  title: string;
-  artist: string;
-  availability: boolean;
-  showPrice: boolean;
-  price: number;
+  readonly title: string;
+  readonly artist: string;
+  readonly availability: boolean;
+  readonly showPrice: boolean;
+  readonly price: number;
 }
 
 export default function ArtworkDetails({
@@ -18,7 +18,7 @@ export default function ArtworkDetails({
   availability,
   showPrice,
   price,
-}: ArtworkDetailsProps) {
+}: Readonly<ArtworkDetailsProps>) {
   return (
     <View style={tw`mt-3 w-full`}>
       <Text

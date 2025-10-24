@@ -1,4 +1,4 @@
-import { Dimensions, TouchableOpacity, View } from 'react-native';
+import { Dimensions, TouchableOpacity } from 'react-native';
 import React, { memo, useMemo } from 'react';
 import { getImageFileView } from 'lib/storage/getImageFileView';
 import { StackNavigationProp } from '@react-navigation/stack';
