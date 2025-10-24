@@ -2,6 +2,8 @@ import Constants from 'expo-constants';
 import {
   EXPO_PUBLIC_URL_DEVELOPMENT,
   EXPO_PUBLIC_URL_PRODUCTION,
+  EXPO_PUBLIC_API_BASE,
+  EXPO_PUBLIC_API_STAGING_BASE,
   EXPO_PUBLIC_AUTH_SECRET,
   EXPO_PUBLIC_MONGODB_PASSWORD,
   EXPO_PUBLIC_UPSTASH_REDIS_REST_URL,
@@ -33,6 +35,8 @@ const validateEnvironmentVariables = () => {
   const requiredEnvVars = {
     EXPO_PUBLIC_URL_DEVELOPMENT,
     EXPO_PUBLIC_URL_PRODUCTION,
+    EXPO_PUBLIC_API_BASE,
+    EXPO_PUBLIC_API_STAGING_BASE,
     EXPO_PUBLIC_AUTH_SECRET,
     EXPO_PUBLIC_MONGODB_PASSWORD,
     EXPO_PUBLIC_UPSTASH_REDIS_REST_URL,
@@ -84,6 +88,8 @@ const getEnvironmentConfig = (): EnvironmentConfig => {
   return {
     urlDevelopment: EXPO_PUBLIC_URL_DEVELOPMENT!,
     urlProduction: EXPO_PUBLIC_URL_PRODUCTION!,
+    apiBase: EXPO_PUBLIC_API_BASE!,
+    apiStagingBase: EXPO_PUBLIC_API_STAGING_BASE!,
     authSecret: EXPO_PUBLIC_AUTH_SECRET!,
     mongodbPassword: EXPO_PUBLIC_MONGODB_PASSWORD!,
     upstashRedisRestUrl: EXPO_PUBLIC_UPSTASH_REDIS_REST_URL!,
