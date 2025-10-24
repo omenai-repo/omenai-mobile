@@ -6,10 +6,10 @@ import { useModalStore } from 'store/modal/modalStore';
 import { extendArtworkExclusivity } from 'services/artworks/extendArtworkExclusivity';
 
 interface ExclusivityExtensionModalProps {
-  visible: boolean;
-  onClose: () => void;
-  art_id: string;
-  onSuccess: () => void;
+  readonly visible: boolean;
+  readonly onClose: () => void;
+  readonly art_id: string;
+  readonly onSuccess: () => void;
 }
 
 const CheckboxItem = ({ 
@@ -74,7 +74,7 @@ export default function ExclusivityExtensionModal({
   onClose, 
   art_id, 
   onSuccess 
-}: ExclusivityExtensionModalProps) {
+}: Readonly<ExclusivityExtensionModalProps>) {
   const [acknowledgment, setAcknowledgment] = useState(false);
   const [penaltyConsent, setPenaltyConsent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -105,7 +105,7 @@ export default function ExclusivityExtensionModal({
 
       const result = await extendArtworkExclusivity(art_id);
 
-      if (!result || !result.isOk) {
+      if (!result?.isOk) {
         updateModal({
           showModal: true,
           modalType: 'error',

@@ -86,7 +86,7 @@ export default memo(function ExclusivityCountdown({ expiresAt, art_id }: Exclusi
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const now = new Date().getTime();
+      const now = Date.now();
       const expiryTime = new Date(expiresAt).getTime();
       const difference = expiryTime - now;
 

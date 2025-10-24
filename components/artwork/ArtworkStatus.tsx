@@ -4,10 +4,10 @@ import tw from 'twrnc';
 import { fontNames } from 'constants/fontNames.constants';
 
 interface ArtworkStatusProps {
-  availability: boolean;
+  readonly availability: boolean;
 }
 
-export default function ArtworkStatus({ availability }: ArtworkStatusProps) {
+export default function ArtworkStatus({ availability }: Readonly<ArtworkStatusProps>) {
   return (
     <View style={tw`mt-3 pt-3 border-t border-gray-200`}>
       <View style={tw`flex-row items-center justify-between`}>

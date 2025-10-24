@@ -5,12 +5,12 @@ import MiniImage from './MiniImage';
 import LikeComponent from './LikeComponent';
 
 interface ArtworkImageProps {
-  imageWidth: number;
-  image_href: string;
-  galleryView: boolean;
-  art_id: string;
-  impressions: number;
-  like_IDs: string[];
+  readonly imageWidth: number;
+  readonly image_href: string;
+  readonly galleryView: boolean;
+  readonly art_id: string;
+  readonly impressions: number;
+  readonly like_IDs: string[];
 }
 
 export default function ArtworkImage({
@@ -20,7 +20,7 @@ export default function ArtworkImage({
   art_id,
   impressions,
   like_IDs,
-}: ArtworkImageProps) {
+}: Readonly<ArtworkImageProps>) {
   return (
     <View style={tw`rounded-[5px] overflow-hidden relative`}>
       <View style={tw`w-full flex items-center justify-center`}>
