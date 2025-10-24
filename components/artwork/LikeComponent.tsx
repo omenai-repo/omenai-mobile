@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { utils_handleFetchUserID } from 'utils/utils_asyncStorage';
 import useLikedState from 'hooks/useLikedState';
@@ -50,5 +50,3 @@ export default function LikeComponent({
     </>
   );
 }
-
-const styles = StyleSheet.create({});

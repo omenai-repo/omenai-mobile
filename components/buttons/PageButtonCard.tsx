@@ -1,8 +1,7 @@
-import { Feather } from '@expo/vector-icons';
 import { colors } from 'config/colors.config';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { rightArrowIcon, savedArtworksIcon } from 'utils/SvgImages';
+import { rightArrowIcon } from 'utils/SvgImages';
 import tw from 'twrnc';
 
 type PageButtonItemProps = {

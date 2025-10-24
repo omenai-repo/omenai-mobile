@@ -184,8 +184,8 @@ const ExclusivityCountdown = memo(({ expiresAt, art_id }: { expiresAt: Date; art
                     { fontFamily: fontNames.dmSans + 'Regular' },
                   ]}
                 >
-                  Review and accept the terms below to renew your artwork's 90-day exclusivity
-                  period.
+                  {`Review and accept the terms below to renew your artwork's 90-day exclusivity
+                  period.`}
                 </Text>
               </View>
 
@@ -470,6 +470,8 @@ const ExclusivityCountdown = memo(({ expiresAt, art_id }: { expiresAt: Date; art
   );
 });
 
+ExclusivityCountdown.displayName = 'ExclusivityCountdown';
+
 const MiniArtworkCard = memo(
   ({
     url,
@@ -604,5 +606,7 @@ const MiniArtworkCard = memo(
     );
   },
 );
+
+MiniArtworkCard.displayName = 'MiniArtworkCard';
 
 export default MiniArtworkCard;
