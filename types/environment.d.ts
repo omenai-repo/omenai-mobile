@@ -1,0 +1,29 @@
+export interface EnvironmentConfig {
+  urlDevelopment: string;
+  urlProduction: string;
+  authSecret: string;
+  mongodbPassword: string;
+  upstashRedisRestUrl: string;
+  upstashRedisRestToken: string;
+  appwriteClientId: string;
+  appwriteBucketId: string;
+  appwriteEditorialBucketId: string;
+  appwriteEditorialDatabaseId: string;
+  appwriteEditorialCollectionId: string;
+  appwritePromotionalBucketId: string;
+  appwriteLogoBucketId: string;
+  appwriteDocumentationBucketId: string;
+  appwriteUploadKey: string;
+  gmailAddress: string;
+  gmailAppPass: string;
+  resendApiKey: string;
+  flwTestPublicKey: string;
+  flwTestSecretKey: string;
+  flwTestEncryptionKey: string;
+  flwPaymentPlanId: string;
+  flwSecretHash: string;
+  stripeSecretKey: string;
+  stripePublicKey: string;
+  deeplinkDevelopment: string;
+  environment: string;
+}
