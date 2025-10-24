@@ -2,8 +2,6 @@ import { View, Text, Modal, Pressable, useWindowDimensions } from 'react-native'
 import React from 'react';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { checkMarkIcon } from 'utils/SvgImages';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const AuthModal = ({
@@ -25,7 +23,7 @@ const AuthModal = ({
   onPress1: () => void;
   onPress2: () => void;
 }) => {
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   return (
     <Modal

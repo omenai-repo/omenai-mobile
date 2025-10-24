@@ -1,4 +1,4 @@
-import { Platform, StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from 'react-native';
 import React from 'react';
 import { colors } from '../../config/colors.config';
 

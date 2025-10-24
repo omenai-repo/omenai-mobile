@@ -1,8 +1,8 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React from "react";
-import WebView from "react-native-webview";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import { useModalStore } from "store/modal/modalStore";
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+import React from 'react';
+import WebView from 'react-native-webview';
+import BackScreenButton from 'components/buttons/BackScreenButton';
+import { useModalStore } from 'store/modal/modalStore';
 
 export default function WebViewModal({ url }: { url: string | null }) {
   const { setWebViewUrl } = useModalStore();
@@ -13,10 +13,7 @@ export default function WebViewModal({ url }: { url: string | null }) {
         <View style={styles.topContainer}>
           <BackScreenButton cancle handleClick={() => setWebViewUrl(null)} />
         </View>
-        <WebView
-          source={{ uri: "https://omenai-web.vercel.app/" + url }}
-          style={{ flex: 1 }}
-        />
+        <WebView source={{ uri: 'https://omenai-web.vercel.app/' + url }} style={{ flex: 1 }} />
       </SafeAreaView>
     );
 }

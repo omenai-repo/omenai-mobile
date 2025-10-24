@@ -1,15 +1,14 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import { galleryOrderModalStore } from "store/modal/galleryModalStore";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import Input from "components/inputs/Input";
-import CloseButton from "components/buttons/CloseButton";
-import CompletedModal from "./CompletedModal";
-import { provideTrackingInfo } from "services/orders/provideTrackingInfo";
+import { Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
+import LongBlackButton from 'components/buttons/LongBlackButton';
+import Input from 'components/inputs/Input';
+import CloseButton from 'components/buttons/CloseButton';
+import CompletedModal from './CompletedModal';
+import { provideTrackingInfo } from 'services/orders/provideTrackingInfo';
 
 export default function ProvideTrackingInfo() {
-  const { clear, trackingInfoForm, updateTrackingInfoForm, currentId } =
-    galleryOrderModalStore();
+  const { clear, trackingInfoForm, updateTrackingInfoForm, currentId } = galleryOrderModalStore();
   const [isLoading, setIsLoading] = useState(false);
   const [completed, setCompleted] = useState(false);
 
@@ -17,7 +16,7 @@ export default function ProvideTrackingInfo() {
     const areAllFieldsFilled = Object.values({
       id: trackingInfoForm.id,
       link: trackingInfoForm.link,
-    }).every((value) => value !== "");
+    }).every((value) => value !== '');
 
     return !areAllFieldsFilled;
   };
@@ -41,7 +40,7 @@ export default function ProvideTrackingInfo() {
 
   return (
     <View>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <Text style={{ fontSize: 16, flex: 1 }}>Tracking Information</Text>
         <CloseButton handlePress={clear} />
       </View>
@@ -53,13 +52,13 @@ export default function ProvideTrackingInfo() {
             <Input
               label="Package tracking link"
               placeHolder="Please provide tracking link for this order"
-              onInputChange={(e) => updateTrackingInfoForm("link", e)}
+              onInputChange={(e) => updateTrackingInfoForm('link', e)}
               value={trackingInfoForm.link}
             />
             <Input
               label="Tracking ID"
               placeHolder="Please provide tracking ID for this package"
-              onInputChange={(e) => updateTrackingInfoForm("id", e)}
+              onInputChange={(e) => updateTrackingInfoForm('id', e)}
               value={trackingInfoForm.id}
             />
           </View>
@@ -69,7 +68,7 @@ export default function ProvideTrackingInfo() {
         <LongBlackButton value="Dismiss" onClick={clear} />
       ) : (
         <LongBlackButton
-          value={isLoading ? "Loading..." : "Submit"}
+          value={isLoading ? 'Loading...' : 'Submit'}
           onClick={handleSubmit}
           isDisabled={checkIsDisabled()}
           isLoading={isLoading}
@@ -78,5 +77,3 @@ export default function ProvideTrackingInfo() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

@@ -1,11 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
-import React, { ReactNode, useState } from 'react';
+import React from 'react';
 import { colors } from 'config/colors.config';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import LongWhiteButton from 'components/buttons/LongWhiteButton';
-import { modalType, useModalStore } from 'store/modal/modalStore';
+import { useModalStore } from 'store/modal/modalStore';
 import { MaterialIcons } from '@expo/vector-icons';
 import CancelSubscriptionModal from './modals/CancelSubscriptionModal';
 
@@ -18,7 +15,7 @@ import CancelSubscriptionModal from './modals/CancelSubscriptionModal';
 export default function CustomModal() {
   const { showModal, modalMessage, modalType, retainModal } = useModalStore();
 
-  const modals: { [key: string]: JSX.Element } = {
+  const modals: { [key: string]: React.ReactElement } = {
     cancleSubscription: <CancelSubscriptionModal />,
   };
 
