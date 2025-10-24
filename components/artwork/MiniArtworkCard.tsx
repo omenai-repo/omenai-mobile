@@ -25,7 +25,6 @@ type MiniArtworkCardType = {
   countdown?: Date | null;
 };
 
-
 const MiniArtworkCard = memo(
   ({
     url,

@@ -1,12 +1,11 @@
-import { Image, StyleSheet, View, Platform, TouchableOpacity } from 'react-native';
-import React, { use } from 'react';
+import { Image, StyleSheet, View, TouchableOpacity } from 'react-native';
+import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 
 import omenaiLogo from '../../assets/omenai-logo.png';
 import tailwind from 'twrnc';
-import { screenName } from 'constants/screenNames.constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Header({ showNotification = true }: { showNotification?: boolean }) {
