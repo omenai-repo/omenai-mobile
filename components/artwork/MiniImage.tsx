@@ -1,6 +1,6 @@
 import { useImage, Image } from "expo-image";
 import { useMemo } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 export default function MiniImage({
   maxWidth,
