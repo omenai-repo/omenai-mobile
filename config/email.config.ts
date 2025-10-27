@@ -7,11 +7,11 @@ import {
 
 export const emailConfig = {
   gmail: {
-    address: EXPO_PUBLIC_GMAIL_ADDRESS!,
-    appPassword: EXPO_PUBLIC_GMAIL_APP_PASS!,
+    address: EXPO_PUBLIC_GMAIL_ADDRESS,
+    appPassword: EXPO_PUBLIC_GMAIL_APP_PASS,
   },
   resend: {
-    apiKey: EXPO_PUBLIC_RESEND_API_KEY!,
+    apiKey: EXPO_PUBLIC_RESEND_API_KEY,
   },
 } as const;
 
