@@ -98,7 +98,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
 
   return (
     <View style={[tw`flex-row justify-between gap-2`, containerStyle, inputsContainerStyle]}>
-      {Array(numberOfDigits).fill(0).map((_, index) => {
+      {new Array(numberOfDigits).fill(0).map((_, index) => {
         const isPlaceholderCell = !!placeholder && !text?.[index];
         const char = isPlaceholderCell ? placeholder?.[index] || ' ' : text[index];
         const isFocusedInput = index === focusedInputIndex && !disabled && isFocused;
