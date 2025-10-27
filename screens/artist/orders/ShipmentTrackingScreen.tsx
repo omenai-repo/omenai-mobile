@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -27,12 +27,11 @@ interface TrackingData {
   tracking_number: string;
   events: TrackingEvent[];
   order_date: string;
-  shipping_details: OrderShippingDetailsTypes &
-    OrderShippingDetailsTypes & {
-      shipment_information: {
-        planned_shipping_date: string;
-      };
+  shipping_details: OrderShippingDetailsTypes & {
+    shipment_information: OrderShippingDetailsTypes['shipment_information'] & {
+      planned_shipping_date: string;
     };
+  };
 }
 
 function SkeletonRow({ widthPct = '100%', height = 14, borderRadius = 8 }: any) {
@@ -84,7 +83,6 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
     const response = await getTrackingData(trackingInput.trim());
 
     if (response.isOk && response.data) {
-      console.log(response.data.shipping_details);
       setTrackingData(response.data);
     } else {
       setError(response.message || 'Unable to find tracking information');

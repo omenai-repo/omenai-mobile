@@ -120,14 +120,14 @@ export default function GetStartedWithStripe() {
           <Input
             label="Full Name"
             placeHolder=""
-            onInputChange={() => void ''}
+            onInputChange={() => {}}
             value={gallerySession?.name || ''}
             disabled
           />
           <Input
             label="Email address"
             placeHolder=""
-            onInputChange={() => void ''}
+            onInputChange={() => {}}
             value={gallerySession?.email || ''}
             disabled
           />
