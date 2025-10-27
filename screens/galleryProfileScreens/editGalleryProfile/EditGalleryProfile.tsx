@@ -89,13 +89,13 @@ export default function EditGalleryProfile() {
               label={userType === 'gallery' ? 'Gallery name' : 'Artist name'}
               value={userSession?.name || ''}
               disabled
-              onInputChange={() => void ''}
+              onInputChange={() => {}}
             />
             <Input
               label={userType === 'gallery' ? 'Gallery email address' : 'Artist email address'}
               disabled
               value={userSession?.email || ''}
-              onInputChange={() => void ''}
+              onInputChange={() => {}}
             />
             {userType === 'gallery' && (
               <LargeInput
