@@ -52,7 +52,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
       const response = await getTransferRate({
         source: walletData.base_currency,
         destination: walletData.wallet_currency,
-        amount: parseFloat(amount),
+        amount: Number.parseFloat(amount),
       });
       if (response.isOk) {
         setConvertedAmount(response.data.source.amount);
@@ -84,7 +84,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
     setLoading(true);
     try {
       const payload = {
-        amount: parseFloat(amount),
+        amount: Number.parseFloat(amount),
         url: 'https://api.omenai.app/api/webhook/flw-transfer',
         wallet_id: walletData.wallet_id,
         wallet_pin: walletPin,

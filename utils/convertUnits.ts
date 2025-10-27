@@ -13,8 +13,8 @@ type RawValues = {
 };
 
 export function convertToCm(value: string, unit: 'cm' | 'm' | 'in' | 'ft'): number {
-  const num = parseFloat(value);
-  if (isNaN(num)) return 0;
+  const num = Number.parseFloat(value);
+  if (Number.isNaN(num)) return 0;
 
   switch (unit) {
     case 'cm':
@@ -31,8 +31,8 @@ export function convertToCm(value: string, unit: 'cm' | 'm' | 'in' | 'ft'): numb
 }
 
 export function convertToKg(value: string, unit: 'kg' | 'g' | 'lb'): number {
-  const num = parseFloat(value);
-  if (isNaN(num)) return 0;
+  const num = Number.parseFloat(value);
+  if (Number.isNaN(num)) return 0;
 
   switch (unit) {
     case 'kg':
