@@ -39,8 +39,8 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
   const canProceed = acknowledgment && penaltyConsent && priceConsent;
 
   // prepare query inputs
-  const heightNum = parseFloat(extractNumberString(artworkUploadData.height));
-  const widthNum = parseFloat(extractNumberString(artworkUploadData.width));
+  const heightNum = Number.parseFloat(extractNumberString(artworkUploadData.height));
+  const widthNum = Number.parseFloat(extractNumberString(artworkUploadData.width));
 
   // Use tanstack/react-query for fetching price
   const {

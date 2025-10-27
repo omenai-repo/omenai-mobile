@@ -8,7 +8,7 @@ type OTPInputProps = {
 };
 
 export const OTPInput = forwardRef(({ length = 6, onChange }: OTPInputProps, ref) => {
-  const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
+  const [otp, setOtp] = useState<string[]>(new Array(length).fill(''));
   const inputs = useRef<TextInput[]>([]);
 
   useImperativeHandle(ref, () => ({
@@ -18,7 +18,7 @@ export const OTPInput = forwardRef(({ length = 6, onChange }: OTPInputProps, ref
       }
     },
     clear: () => {
-      setOtp(Array(length).fill(''));
+      setOtp(new Array(length).fill(''));
       onChange('');
       if (inputs.current[0]) {
         inputs.current[0].focus();
