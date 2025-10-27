@@ -107,7 +107,7 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
 
     const date = new Date(cleanedString);
 
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       return 'Error: Invalid Date could not be parsed.';
     }
 

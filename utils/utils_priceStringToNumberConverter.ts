@@ -9,7 +9,7 @@ export function convertPriceStringToNumber(priceString: string): number {
   const priceNumber = parseFloat(priceWithoutCommas);
 
   // Handle potential parsing errors (non-numeric characters)
-  if (isNaN(priceNumber)) {
+  if (Number.isNaN(priceNumber)) {
     throw new Error("Invalid price format. Please enter a valid number.");
   }
 
