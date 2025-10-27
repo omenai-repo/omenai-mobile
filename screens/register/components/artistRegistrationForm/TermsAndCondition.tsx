@@ -1,5 +1,4 @@
 import { View, Text, Pressable } from 'react-native';
-import React from 'react';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
 import { checkedBox, uncheckedBox } from 'utils/SvgImages';
