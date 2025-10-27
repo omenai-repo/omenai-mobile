@@ -42,7 +42,7 @@ const sessionValidator = (loginDate: string) => {
     const parsedLoginData = new Date(loginDate);
 
     // Check if date is valid
-    if (isNaN(parsedLoginData.getTime())) {
+    if (Number.isNaN(parsedLoginData.getTime())) {
       return false;
     }
 
