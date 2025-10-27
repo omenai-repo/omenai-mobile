@@ -11,15 +11,15 @@ import {
 
 export const paymentConfig = {
   flutterwave: {
-    testPublicKey: EXPO_PUBLIC_FLW_TEST_PUBLIC_KEY!,
-    testSecretKey: EXPO_PUBLIC_FLW_TEST_SECRET_KEY!,
-    testEncryptionKey: EXPO_PUBLIC_FLW_TEST_ENCRYPTION_KEY!,
-    paymentPlanId: EXPO_PUBLIC_FLW_PAYMENT_PLAN_ID!,
-    secretHash: EXPO_PUBLIC_FLW_SECRET_HASH!,
+    testPublicKey: EXPO_PUBLIC_FLW_TEST_PUBLIC_KEY,
+    testSecretKey: EXPO_PUBLIC_FLW_TEST_SECRET_KEY,
+    testEncryptionKey: EXPO_PUBLIC_FLW_TEST_ENCRYPTION_KEY,
+    paymentPlanId: EXPO_PUBLIC_FLW_PAYMENT_PLAN_ID,
+    secretHash: EXPO_PUBLIC_FLW_SECRET_HASH,
   },
   stripe: {
-    secretKey: EXPO_PUBLIC_STRIPE_SK!,
-    publicKey: EXPO_PUBLIC_STRIPE_PK!,
+    secretKey: EXPO_PUBLIC_STRIPE_SK,
+    publicKey: EXPO_PUBLIC_STRIPE_PK,
   },
 } as const;
 

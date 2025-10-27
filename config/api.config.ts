@@ -8,9 +8,9 @@ import {
 } from "@env";
 
 const getApiUrl = () => {
-  return EXPO_PUBLIC_ENV !== "production"
-    ? EXPO_PUBLIC_API_STAGING_BASE
-    : EXPO_PUBLIC_API_BASE;
+  return EXPO_PUBLIC_ENV === "production"
+    ? EXPO_PUBLIC_API_BASE
+    : EXPO_PUBLIC_API_STAGING_BASE;
 };
 
 export const apiConfig = {

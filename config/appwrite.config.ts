@@ -11,16 +11,16 @@ import {
 } from '@env';
 
 export const appwriteConfig = {
-  clientId: EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
-  bucketId: EXPO_PUBLIC_APPWRITE_BUCKET_ID!,
-  editorialBucketId: EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!,
-  editorialDatabaseId: EXPO_PUBLIC_APPWRITE_EDITORIAL_DATABASE_ID!,
-  editorialCollectionId: EXPO_PUBLIC_APPWRITE_EDITORIAL_COLLECTION_ID!,
-  promotionalBucketId: EXPO_PUBLIC_APPWRITE_PROMOTIONAL_BUCKET_ID!,
-  logoBucketId: EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
-  documentationBucketId: EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID!,
-  uploadKey: EXPO_PUBLIC_APPWRITE_UPLOAD_KEY!,
+  clientId: EXPO_PUBLIC_APPWRITE_CLIENT_ID,
+  bucketId: EXPO_PUBLIC_APPWRITE_BUCKET_ID,
+  editorialBucketId: EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID,
+  editorialDatabaseId: EXPO_PUBLIC_APPWRITE_EDITORIAL_DATABASE_ID,
+  editorialCollectionId: EXPO_PUBLIC_APPWRITE_EDITORIAL_COLLECTION_ID,
+  promotionalBucketId: EXPO_PUBLIC_APPWRITE_PROMOTIONAL_BUCKET_ID,
+  logoBucketId: EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID,
+  documentationBucketId: EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID,
+  uploadKey: EXPO_PUBLIC_APPWRITE_UPLOAD_KEY,
 } as const;
 
 export const getAppwriteEndpoint = () => 'https://cloud.appwrite.io/v1';
-export const getAppwriteProjectId = () => EXPO_PUBLIC_APPWRITE_CLIENT_ID!;
+export const getAppwriteProjectId = () => EXPO_PUBLIC_APPWRITE_CLIENT_ID;

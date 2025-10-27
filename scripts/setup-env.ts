@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-import * as fs from 'fs';
-import * as path from 'path';
+import { writeFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 const envTemplate = `# Environment Configuration
 EXPO_PUBLIC_ENV=development
@@ -60,18 +60,18 @@ EXPO_PUBLIC_DEEPLINK_DEVELOPMENT=exp://172.20.10.2:8081
 
 const environments = ['local', 'staging', 'production'];
 
-environments.forEach(env => {
+for (const env of environments) {
   const filename = `.env.${env}`;
-  const filepath = path.join(process.cwd(), filename);
+  const filepath = join(process.cwd(), filename);
   
-  if (!fs.existsSync(filepath)) {
-    const content = envTemplate.replace('EXPO_PUBLIC_ENV=development', `EXPO_PUBLIC_ENV=${env === 'local' ? 'development' : env}`);
-    fs.writeFileSync(filepath, content);
-    console.log(`✅ Created ${filename}`);
-  } else {
+  if (existsSync(filepath)) {
     console.log(`⚠️  ${filename} already exists, skipping...`);
+  } else {
+    const content = envTemplate.replace('EXPO_PUBLIC_ENV=development', `EXPO_PUBLIC_ENV=${env === 'local' ? 'development' : env}`);
+    writeFileSync(filepath, content);
+    console.log(`✅ Created ${filename}`);
   }
-});
+}
 
 console.log('\n🎉 Environment setup complete!');
 console.log('\n📝 Next steps:');
