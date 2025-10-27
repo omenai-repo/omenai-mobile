@@ -1,5 +1,4 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
 import CloseButton from 'components/buttons/CloseButton';
 import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
 import LongWhiteButton from 'components/buttons/LongWhiteButton';
@@ -65,7 +64,7 @@ export default function OrderDetailsModal() {
           </>
         )}
         {(!artworkDetails.type || artworkDetails.type.length < 1) && (
-          <LongBlackButton onClick={() => void ''} value="No required action" isDisabled />
+          <LongBlackButton onClick={() => {}} value="No required action" isDisabled />
         )}
       </View>
     </View>

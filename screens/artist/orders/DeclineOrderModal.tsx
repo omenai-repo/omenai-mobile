@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
 import tw from 'twrnc';
 import { useModalStore } from 'store/modal/modalStore';
@@ -69,74 +69,93 @@ const DeclineOrderModal = ({
 
   const getSubmittedReason = () => {
     if (orderModalMetadata.is_current_order_exclusive) {
-      // when exclusive & checkbox checked we override reason
       return checked ? 'Artwork is no longer available' : '';
     }
     return selectedReason ? declineReasonMapping[selectedReason] : '';
   };
 
-  const handleDecline = async () => {
-    // Validation
-    if (orderModalMetadata.is_current_order_exclusive) {
-      if (!checked) {
-        updateModal({
-          message: 'Please confirm that the artwork has been sold off-platform to proceed.',
-          showModal: true,
-          modalType: 'error',
-        });
-        return;
-      }
-    } else {
-      const reason = getSubmittedReason();
-      if (!reason) {
-        updateModal({
-          message: 'Please select a reason for declining this order.',
-          showModal: true,
-          modalType: 'error',
-        });
-        return;
-      }
+  const validateExclusiveOrder = () => {
+    if (!checked) {
+      updateModal({
+        message: 'Please confirm that the artwork has been sold off-platform to proceed.',
+        showModal: true,
+        modalType: 'error',
+      });
+      return false;
     }
+    return true;
+  };
+
+  const validateNonExclusiveOrder = () => {
+    const reason = getSubmittedReason();
+    if (!reason) {
+      updateModal({
+        message: 'Please select a reason for declining this order.',
+        showModal: true,
+        modalType: 'error',
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const submitDeclineOrder = async () => {
+    const data = {
+      status: 'declined' as 'declined',
+      reason: getSubmittedReason(),
+    };
+    const seller_designation: 'artist' | 'gallery' =
+      orderModalMetadata.seller_designation === 'gallery' ? 'gallery' : 'artist';
+    const art_id = orderModalMetadata.art_id || '';
+
+    const res = await declineOrderRequest(data, orderId, seller_designation, art_id);
+
+    if (res?.isOk) {
+      updateModal({
+        message: res.message || 'Order declined successfully',
+        showModal: true,
+        modalType: 'success',
+      });
+      setIsModalVisible(false);
+      refresh();
+      setChecked(false);
+      setSelectedReason(null);
+    } else {
+      updateModal({
+        message: res?.message || 'Failed to decline order',
+        showModal: true,
+        modalType: 'error',
+      });
+    }
+  };
+
+  const handleDecline = async () => {
+    const isValid = orderModalMetadata.is_current_order_exclusive
+      ? validateExclusiveOrder()
+      : validateNonExclusiveOrder();
+
+    if (!isValid) return;
 
     setLoading(true);
     try {
-      const data = {
-        status: 'declined' as 'declined',
-        reason: getSubmittedReason(),
-      };
-      const seller_designation: 'artist' | 'gallery' =
-        orderModalMetadata.seller_designation === 'gallery' ? 'gallery' : 'artist';
-      const art_id = orderModalMetadata.art_id || '';
-
-      const res = await declineOrderRequest(data, orderId, seller_designation, art_id);
-      setLoading(false);
-
-      if (res?.isOk) {
-        updateModal({
-          message: res.message || 'Order declined successfully',
-          showModal: true,
-          modalType: 'success',
-        });
-        setIsModalVisible(false);
-        refresh();
-        // reset internal state
-        setChecked(false);
-        setSelectedReason(null);
-      } else {
-        updateModal({
-          message: res?.message || 'Failed to decline order',
-          showModal: true,
-          modalType: 'error',
-        });
-      }
+      await submitDeclineOrder();
     } catch (err: any) {
-      setLoading(false);
       updateModal({
         message: err?.message || 'Something went wrong. Try again later.',
         showModal: true,
         modalType: 'error',
       });
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const getButtonBackground = () => {
+    if (loading) return 'bg-gray-300';
+    if (orderModalMetadata.is_current_order_exclusive) {
+      return checked ? 'bg-[#C71C16]' : 'bg-[#E5E7E7]';
+    }
+    return selectedReason ? 'bg-[#C71C16]' : 'bg-[#E5E7E7]';
   };
 
   return (
@@ -233,18 +252,7 @@ const DeclineOrderModal = ({
           <Pressable
             onPress={handleDecline}
             disabled={loading}
-            style={tw.style(
-              `h-[46px] justify-center items-center rounded-[10px] mt-[16px]`,
-              loading
-                ? 'bg-gray-300'
-                : orderModalMetadata.is_current_order_exclusive
-                ? checked
-                  ? 'bg-[#C71C16]'
-                  : 'bg-[#E5E7E7]'
-                : selectedReason
-                ? 'bg-[#C71C16]'
-                : 'bg-[#E5E7E7]',
-            )}
+            style={tw.style(`h-[46px] justify-center items-center rounded-[10px] mt-[16px]`, getButtonBackground())}
           >
             <Text style={tw`text-white text-[15px] font-semibold`}>
               {loading ? 'Declining...' : 'Decline order request'}
