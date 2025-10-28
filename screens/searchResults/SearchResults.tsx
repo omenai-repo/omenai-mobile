@@ -1,5 +1,6 @@
-import { Alert, SafeAreaView, StyleSheet, Text, View, Platform, StatusBar } from 'react-native';
+import { Alert, Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import * as Sentry from '@sentry/react-native';
 import { colors } from '../../config/colors.config';
 import { useSearchStore } from 'store/search/searchStore';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -30,19 +31,45 @@ export default function SearchResults() {
 
   const handleFetchSearch = async () => {
     setIsLoading(true);
-    const results = await fetchSearchKeyWordResults(searchQuery);
 
-    let arr = [];
+    // Breadcrumb: user initiated a search
+    Sentry.addBreadcrumb({
+      category: 'search',
+      message: `Search initiated for "${searchQuery}"`,
+      level: 'info',
+    });
 
-    if (results.isOk) {
-      arr = results.body.data;
-      setData(arr);
-      setDataLength(arr.length);
-    } else {
-      Alert.alert(results.body);
+    try {
+      const results = await fetchSearchKeyWordResults(searchQuery);
+
+      if (results?.isOk) {
+        const arr = results.body.data ?? [];
+        setData(arr);
+        setDataLength(arr.length);
+
+        Sentry.addBreadcrumb({
+          category: 'search',
+          message: `Search completed for "${searchQuery}" - ${arr.length} results`,
+          level: 'info',
+        });
+      } else {
+        Sentry.setContext('searchResponse', { query: searchQuery, response: results });
+        Sentry.captureMessage(`Search API returned non-ok for "${searchQuery}"`, 'error');
+
+        Alert.alert(results?.body ?? 'Something went wrong while searching');
+      }
+    } catch (err: any) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: `Search threw exception for "${searchQuery}"`,
+        level: 'error',
+      });
+      Sentry.captureException(err);
+
+      Alert.alert(err?.message ?? 'An unexpected error occurred while searching');
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (

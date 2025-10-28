@@ -9,6 +9,7 @@ import { useModalStore } from 'store/modal/modalStore';
 import BlockingScreen from './components/BlockingScreen';
 import PayoutDashboard from './components/PayoutDashboard';
 import { colors } from 'config/colors.config';
+import * as Sentry from '@sentry/react-native';
 
 export default function StripePayouts({
   account_id,
@@ -27,17 +28,31 @@ export default function StripePayouts({
   useEffect(() => {
     async function handleOnBoardingCheck() {
       setLoading(true);
-      const res = await checkIsStripeOnboarded(account_id);
-      if (res?.isOk) {
-        setIsSubmitted(res.details_submitted);
-      } else {
-        updateModal({
-          message: 'Something went wrong, please try again or contact support',
-          modalType: 'error',
-          showModal: true,
+      try {
+        const res = await checkIsStripeOnboarded(account_id);
+        if (!res?.isOk) {
+          Sentry.setContext('stripeOnboard', {
+            account_id,
+            response: res,
+          });
+          Sentry.captureMessage(`Stripe onboard check failed for account ${account_id}`, 'error');
+
+          updateModal({
+            message: 'Something went wrong, please try again or contact support',
+            modalType: 'error',
+            showModal: true,
+          });
+        } else {
+          setIsSubmitted(res.details_submitted);
+        }
+      } catch (error: any) {
+        Sentry.setContext('stripeOnboardCatch', {
+          account_id,
         });
+        Sentry.captureException(error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
 
     handleOnBoardingCheck();

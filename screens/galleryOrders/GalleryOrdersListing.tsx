@@ -1,5 +1,5 @@
 import { FlatList, Image, Text, View, RefreshControl } from 'react-native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
 import WithModal from 'components/modal/WithModal';
@@ -16,6 +16,8 @@ import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Sentry from '@sentry/react-native';
+import { useAppStore } from 'store/app/appStore';
 
 const GALLERY_ORDERS_QK = ['orders', 'gallery'] as const;
 
@@ -24,6 +26,7 @@ export default function GalleryOrdersListing() {
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
+  const { userSession: user } = useAppStore();
 
   const [selectedTab, setSelectedTab] = useState<'pending' | 'processing' | 'completed'>('pending');
   const [openSection, setOpenSection] = useState<{ [key: string]: boolean }>({});
@@ -36,20 +39,52 @@ export default function GalleryOrdersListing() {
     seller_designation: 'gallery',
   });
 
-  // Fetch all gallery orders; UI will split into tabs + filter by year.
   const ordersQuery = useQuery({
     queryKey: GALLERY_ORDERS_QK,
     queryFn: async () => {
+      Sentry.addBreadcrumb({
+        category: 'network',
+        message: 'getOrdersBySellerId - start',
+        level: 'info',
+      });
+
       try {
         const res = await getOrdersBySellerId();
-        if (!res?.isOk) throw new Error('Failed to fetch orders');
+        if (!res?.isOk) {
+          Sentry.setContext('getOrdersBySellerIdResponse', { response: res, userId: user?.id });
+          Sentry.captureMessage('getOrdersBySellerId returned non-ok response', 'error');
+
+          updateModal({
+            message: 'Failed to fetch orders',
+            showModal: true,
+            modalType: 'error',
+          });
+
+          return [];
+        }
+
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'getOrdersBySellerId - success',
+          level: 'info',
+        });
+
         return Array.isArray(res.data) ? res.data : [];
       } catch (e: any) {
+        Sentry.addBreadcrumb({
+          category: 'exception',
+          message: 'getOrdersBySellerId - exception',
+          level: 'error',
+        });
+        Sentry.setContext('getOrdersBySellerIdCatch', { userId: user?.id });
+        Sentry.captureException(e);
+
         updateModal({
           message: e?.message ?? 'Failed to fetch orders',
           showModal: true,
           modalType: 'error',
         });
+
         return [];
       }
     },
@@ -66,7 +101,6 @@ export default function GalleryOrdersListing() {
     return parsed;
   }, [ordersQuery.data]);
 
-  // Optional: filter rows by year
   const filterByYear = useCallback(
     (arr: any[]) => {
       if (!Array.isArray(arr)) return [];
@@ -107,7 +141,14 @@ export default function GalleryOrdersListing() {
         <TabSwitcher
           tabs={galleryTabs}
           selectedKey={selectedTab}
-          setSelectedKey={(key) => setSelectedTab(key as 'pending' | 'processing' | 'completed')}
+          setSelectedKey={(key) => {
+            Sentry.addBreadcrumb({
+              category: 'ui',
+              message: `Tab switched to ${key}`,
+              level: 'info',
+            });
+            setSelectedTab(key as 'pending' | 'processing' | 'completed');
+          }}
         />
 
         <View
@@ -123,22 +164,37 @@ export default function GalleryOrdersListing() {
                 <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
                   Your Orders
                 </Text>
-                <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+                <YearDropdown
+                  selectedYear={selectedYear}
+                  setSelectedYear={(y) => {
+                    Sentry.addBreadcrumb({
+                      category: 'ui',
+                      message: `Year filter changed to ${y}`,
+                      level: 'info',
+                    });
+                    setSelectedYear(y);
+                  }}
+                />
               </View>
 
               <FlatList
                 data={currentOrders}
                 keyExtractor={(item, index) =>
-                  item?.order_id?.toString?.() ??
-                  item?.artwork_data?._id ??
-                  `order-index-${index}`
+                  item?.order_id?.toString?.() ?? item?.artwork_data?._id ?? `order-index-${index}`
                 }
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
                 refreshControl={
                   <RefreshControl
                     refreshing={isRefreshing}
-                    onRefresh={() => ordersQuery.refetch()}
+                    onRefresh={() => {
+                      Sentry.addBreadcrumb({
+                        category: 'network',
+                        message: 'User triggered orders refresh',
+                        level: 'info',
+                      });
+                      ordersQuery.refetch();
+                    }}
                     tintColor="#000"
                     colors={['#000']}
                   />
@@ -158,12 +214,24 @@ export default function GalleryOrdersListing() {
                     lastId={index === currentOrders.length - 1}
                     acceptBtn={
                       selectedTab === 'pending'
-                        ? () => navigation.navigate('DimensionsDetails', { orderId: item.order_id })
+                        ? () => {
+                            Sentry.addBreadcrumb({
+                              category: 'order',
+                              message: `Accept pressed for order ${item.order_id}`,
+                              level: 'info',
+                            });
+                            navigation.navigate('DimensionsDetails', { orderId: item.order_id });
+                          }
                         : undefined
                     }
                     declineBtn={
                       selectedTab === 'pending'
                         ? () => {
+                            Sentry.addBreadcrumb({
+                              category: 'order',
+                              message: `Decline initiated for order ${item.order_id}`,
+                              level: 'info',
+                            });
                             setOrderModalMetadata({
                               is_current_order_exclusive: false,
                               art_id: item.artwork_data?.art_id,

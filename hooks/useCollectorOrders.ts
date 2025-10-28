@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getOrdersForUser } from 'services/orders/getOrdersForUser';
 import { useAppStore } from 'store/app/appStore';
+import * as Sentry from '@sentry/react-native';
 
 type Partitioned = {
   pendingOrders: CreateOrderModelTypes[];
@@ -37,16 +38,28 @@ export function useCollectorOrders() {
   const query = useQuery({
     queryKey: ['orders', userId],
     queryFn: async () => {
-      const res = await getOrdersForUser();
-      if (!res?.isOk) throw new Error('Failed to fetch orders');
-      return res.data as CreateOrderModelTypes[];
+      try {
+        const res = await getOrdersForUser();
+        if (!res?.isOk) throw new Error('Failed to fetch orders');
+        return res.data as CreateOrderModelTypes[];
+      } catch (error: any) {
+        Sentry.captureException(error);
+        throw error;
+      }
     },
-    select: partition,
+    select: (data) => {
+      try {
+        return partition(data);
+      } catch (error: any) {
+        Sentry.captureException(error);
+        throw error;
+      }
+    },
   });
 
   const invalidate = useCallback(
     () => queryClient.invalidateQueries({ queryKey: ['orders', userId] }),
-    [queryClient],
+    [queryClient, userId],
   );
 
   return { ...query, invalidate };

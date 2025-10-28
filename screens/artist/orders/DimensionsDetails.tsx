@@ -1,12 +1,6 @@
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  View,
-  Text
-} from 'react-native';
-import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
 import LongBlackButton from 'components/buttons/LongBlackButton';
@@ -34,7 +28,7 @@ type DimensionUnit = 'cm' | 'm' | 'in' | 'ft';
 type WeightUnit = 'kg' | 'g' | 'lb';
 
 const DimensionsDetails = () => {
-  const { userType } = useAppStore();
+  const { userType, userSession } = useAppStore();
   const { orderId } = useRoute<any>().params;
   const navigation = useNavigation();
   const [dimensionUnit, setDimensionUnit] = useState<DimensionUnit>('cm');
@@ -74,7 +68,17 @@ const DimensionsDetails = () => {
 
   const { updateModal } = useModalStore();
 
+  // Breadcrumb: screen opened
+  useEffect(() => {
+    Sentry.addBreadcrumb({
+      category: 'ui.screen',
+      message: 'DimensionsDetails opened',
+      level: 'info',
+    });
+  }, []);
+
   const showDatePicker = () => {
+    Sentry.addBreadcrumb({ category: 'ui', message: 'Date picker opened', level: 'info' });
     setIsDatePickerVisible(true);
   };
 
@@ -83,6 +87,11 @@ const DimensionsDetails = () => {
   };
 
   const handleConfirm = (date: Date) => {
+    Sentry.addBreadcrumb({
+      category: 'ui',
+      message: `Date picker confirmed: ${date.toISOString()}`,
+      level: 'info',
+    });
     setExpoEndDate(date);
     hideDatePicker();
   };
@@ -120,8 +129,17 @@ const DimensionsDetails = () => {
       weight: weightUnit,
     };
     const converted = convertDimensionsToStandard(dimentions, units);
+
+    // Breadcrumb: user started submit
+    Sentry.addBreadcrumb({
+      category: 'user.action',
+      message: 'Submitting dimensions for order',
+      level: 'info',
+    });
+
     try {
       setIsLoading(true);
+
       const payload = {
         order_id: orderId,
         dimensions: converted,
@@ -134,8 +152,21 @@ const DimensionsDetails = () => {
             : null,
         hold_status: null,
       };
+
+      Sentry.setContext('updateShippingQuotePayload', {
+        payload,
+        userId: userSession?.id ?? null,
+      });
+
       const response = await updateShippingQuote(payload);
-      if (response.isOk) {
+
+      if (response?.isOk) {
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: `updateShippingQuote succeeded for order ${orderId}`,
+          level: 'info',
+        });
+
         updateModal({
           message: 'Order accepted successfully',
           modalType: 'success',
@@ -151,6 +182,9 @@ const DimensionsDetails = () => {
           navigation.goBack();
         }, 2000);
       } else {
+        Sentry.setContext('updateShippingQuoteResponse', { response, orderId });
+        Sentry.captureMessage(`updateShippingQuote returned non-ok for order ${orderId}`, 'error');
+
         updateModal({
           message: response.message,
           modalType: 'error',
@@ -158,8 +192,16 @@ const DimensionsDetails = () => {
         });
       }
     } catch (error: any) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'updateShippingQuote threw exception',
+        level: 'error',
+      });
+      Sentry.setContext('updateShippingQuoteCatch', { orderId, payload: dimentions });
+      Sentry.captureException(error);
+
       updateModal({
-        message: error.message,
+        message: error?.message ?? 'Something went wrong.',
         modalType: 'error',
         showModal: true,
       });
@@ -189,13 +231,27 @@ const DimensionsDetails = () => {
                   label="Dimension Unit"
                   units={dimensionUnits}
                   selectedUnit={dimensionUnit}
-                  onSelect={(unit) => setDimensionUnit(unit as DimensionUnit)}
+                  onSelect={(unit) => {
+                    Sentry.addBreadcrumb({
+                      category: 'ui',
+                      message: `Dimension unit changed to ${unit}`,
+                      level: 'info',
+                    });
+                    setDimensionUnit(unit as DimensionUnit);
+                  }}
                 />
                 <UnitDropdownField
                   label="Weight Unit"
                   units={weightUnits}
                   selectedUnit={weightUnit}
-                  onSelect={(unit) => setWeightUnit(unit as WeightUnit)}
+                  onSelect={(unit) => {
+                    Sentry.addBreadcrumb({
+                      category: 'ui',
+                      message: `Weight unit changed to ${unit}`,
+                      level: 'info',
+                    });
+                    setWeightUnit(unit as WeightUnit);
+                  }}
                 />
               </View>
 
@@ -230,12 +286,24 @@ const DimensionsDetails = () => {
                   <ToggleButton
                     label="Yes"
                     isSelected={isOnExhibition}
-                    onPress={() => setIsOnExhibition(true)}
+                    onPress={() => {
+                      Sentry.addBreadcrumb({
+                        category: 'ui',
+                        message: 'Exhibition toggle: Yes',
+                        level: 'info',
+                      });
+                      setIsOnExhibition(true);
+                    }}
                   />
                   <ToggleButton
                     label="No"
                     isSelected={!isOnExhibition}
                     onPress={() => {
+                      Sentry.addBreadcrumb({
+                        category: 'ui',
+                        message: 'Exhibition toggle: No',
+                        level: 'info',
+                      });
                       setIsOnExhibition(false);
                       setExpoEndDate(null);
                     }}
@@ -283,7 +351,14 @@ const DimensionsDetails = () => {
               </View>
 
               <Pressable
-                onPress={() => setIsChecked(!isChecked)}
+                onPress={() => {
+                  Sentry.addBreadcrumb({
+                    category: 'ui',
+                    message: `Agree checkbox toggled: ${!isChecked}`,
+                    level: 'info',
+                  });
+                  setIsChecked(!isChecked);
+                }}
                 style={tw`mt-[18px] flex-row items-center gap-[12px]`}
               >
                 <View

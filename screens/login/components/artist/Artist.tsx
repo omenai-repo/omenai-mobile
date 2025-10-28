@@ -1,19 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
+import * as Sentry from '@sentry/react-native';
 import LongBlackButton from '../../../../components/buttons/LongBlackButton';
 import Input from '../../../../components/inputs/Input';
-import { useGalleryAuthLoginStore } from 'store/auth/login/GalleryAuthLoginStore';
+import { useArtistAuthLoginStore } from 'store/auth/login/ArtistAuthLoginStore';
 import PasswordInput from 'components/inputs/PasswordInput';
 import WithModal from 'components/modal/WithModal';
 import { useAppStore } from 'store/app/appStore';
 import { useModalStore } from 'store/modal/modalStore';
 import { loginAccount } from 'services/login/loginAccount';
 import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { screenName } from 'constants/screenNames.constants';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { useArtistAuthLoginStore } from 'store/auth/login/ArtistAuthLoginStore';
 
 export default function Artist() {
   const { artistLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
@@ -26,15 +25,38 @@ export default function Artist() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(
-      { ...artistLoginData, device_push_token: expoPushToken ?? '' },
-      'artist',
-    );
-    console.log(results);
-    if (results?.isOk) {
+    Sentry.addBreadcrumb({
+      category: 'auth',
+      message: 'artist login attempt',
+      level: 'info',
+    });
+
+    try {
+      const results = await loginAccount(
+        { ...artistLoginData, device_push_token: expoPushToken ?? '' },
+        'artist',
+      );
+
+      if (!results?.isOk) {
+        Sentry.setContext('artistLoginResponse', {
+          body: results?.body ?? null,
+          status: results?.isOk ?? null,
+        });
+        Sentry.captureMessage('artist loginAccount returned non-ok response', 'error');
+
+        updateModal({
+          message: results?.body?.message,
+          showModal: true,
+          modalType: 'error',
+        });
+        return;
+      }
+
       const resultsBody = results?.body?.data;
 
       if (!resultsBody) {
+        Sentry.setContext('artistLoginMissingBody', { response: results });
+        Sentry.captureMessage('artist login returned ok but missing body.data', 'error');
         setIsLoading(false);
         return;
       }
@@ -42,6 +64,12 @@ export default function Artist() {
       const isVerified = Boolean(resultsBody.verified);
 
       if (!isVerified) {
+        Sentry.addBreadcrumb({
+          category: 'auth',
+          message: 'artist unverified - navigating to verifyEmail',
+          level: 'info',
+        });
+
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
           account: { id: resultsBody.artist_id, type: 'artist' },
@@ -74,20 +102,62 @@ export default function Artist() {
       );
 
       if (isStored && isLoginTimeStampStored) {
+        if (__DEV__) {
+          Sentry.setUser({
+            id: String(data.id),
+            email: data.email,
+            username: data.name,
+          });
+        } else {
+          Sentry.setUser({ id: String(data.id) });
+        }
+
+        setUserSession(data);
+        setIsLoggedIn(true);
+        clearInputs();
+
+        Sentry.addBreadcrumb({
+          category: 'auth',
+          message: 'artist login succeeded',
+          level: 'info',
+        });
+      } else {
+        Sentry.setContext('artistLoginStorage', {
+          isStored,
+          isLoginTimeStampStored,
+        });
+        Sentry.captureMessage('Failed to persist artist login session to async storage', 'error');
+
+        if (__DEV__) {
+          Sentry.setUser({
+            id: String(data.id),
+            email: data.email,
+            username: data.name,
+          });
+        } else {
+          Sentry.setUser({ id: String(data.id) });
+        }
+
         setUserSession(data);
         setIsLoggedIn(true);
         clearInputs();
       }
-    } else {
-      // Alert.alert(results?.body.message)
+    } catch (error: any) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'exception during artist login',
+        level: 'error',
+      });
+      Sentry.captureException(error);
+
       updateModal({
-        message: results?.body.message,
+        message: error?.message ?? 'An unexpected error occurred. Please try again.',
         showModal: true,
         modalType: 'error',
       });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (

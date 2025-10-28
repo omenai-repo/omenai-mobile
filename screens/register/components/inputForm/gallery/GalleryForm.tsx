@@ -1,12 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import GalleryWaitList from "../../galleryWaitlist/GalleryWaitList";
-import GalleryRegisterForm from "../../galleryRegisterForm/GalleryRegisterForm";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import LongBlackButton from "../../../../../components/buttons/LongBlackButton";
-import Input from "../../../../../components/inputs/Input";
-import { UseGalleryAuthStore } from "../../../../../store/auth/login/galleryAuthStore";
-import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import GalleryWaitList from '../../galleryWaitlist/GalleryWaitList';
+import GalleryRegisterForm from '../../galleryRegisterForm/GalleryRegisterForm';
+import LongBlackButton from '../../../../../components/buttons/LongBlackButton';
+import Input from '../../../../../components/inputs/Input';
+import { UseGalleryAuthStore } from '../../../../../store/auth/login/galleryAuthStore';
+import { useGalleryAuthRegisterStore } from 'store/auth/register/GalleryAuthRegisterStore';
 
 export default function GalleryForm() {
   const { pageIndex } = useGalleryAuthRegisterStore();
@@ -21,9 +20,7 @@ export default function GalleryForm() {
           onPress={() => setShowWaitlistForm((prev) => !prev)}
         >
           <Text style={styles.toggleText}>
-            {showWaitlistForm
-              ? "Register gallery account"
-              : "Join our waitlist"}
+            {showWaitlistForm ? 'Register gallery account' : 'Join our waitlist'}
           </Text>
         </TouchableOpacity>
       )}
@@ -41,7 +38,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   toggleText: {
-    textAlign: "center",
+    textAlign: 'center',
     opacity: 0.8,
   },
 });

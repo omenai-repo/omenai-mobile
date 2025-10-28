@@ -10,6 +10,7 @@ import tailwind from 'twrnc';
 import { filterStore } from 'store/artworks/FilterStore';
 import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Sentry from '@sentry/react-native';
 
 type FetchResult = {
   isOk: boolean;
@@ -18,7 +19,6 @@ type FetchResult = {
   message?: string;
 };
 
-// Single fetcher for useInfiniteQuery
 async function fetchPage({
   pageParam,
   filters,
@@ -26,7 +26,15 @@ async function fetchPage({
   pageParam: number;
   filters: any;
 }): Promise<FetchResult> {
-  return fetchPaginatedArtworks(pageParam, filters);
+  const res = await fetchPaginatedArtworks(pageParam, filters);
+
+  if (!res?.isOk) {
+    Sentry.setContext('fetchPaginatedArtworks', { pageParam, filters, response: res });
+    Sentry.captureMessage(`fetchPaginatedArtworks returned non-ok on page ${pageParam}`, 'error');
+    throw new Error(res?.message || 'Failed to fetch artworks');
+  }
+
+  return res;
 }
 
 export default function Catalog() {
@@ -49,8 +57,6 @@ export default function Catalog() {
         return next <= totalPages ? next : undefined;
       },
 
-      // Keep showing the previous list while new filters load
-      // (keepPreviousData (symbol) is fine for useQuery; for infinite queries we pass the previous data through)
       placeholderData: (prev) => prev,
       staleTime: 30_000, // serve cached for 30s before considered stale
       gcTime: 10 * 60_000, // keep in cache for 10m after unused
@@ -65,10 +71,21 @@ export default function Catalog() {
   );
 
   const handleEndReached = useCallback(() => {
+    Sentry.addBreadcrumb({
+      category: 'ui',
+      message: 'Catalog reached end, attempting to fetch next page',
+      level: 'info',
+    });
+
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleRefresh = useCallback(async () => {
+    Sentry.addBreadcrumb({
+      category: 'ui',
+      message: 'Catalog pull-to-refresh triggered',
+      level: 'info',
+    });
     await refetch(); // pull-to-refresh
   }, [refetch]);
 

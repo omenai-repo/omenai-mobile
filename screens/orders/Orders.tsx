@@ -30,7 +30,6 @@ export default function Orders() {
     return selectedTab === 'pending' ? data.pendingOrders ?? [] : data.completedOrders ?? [];
   }, [data, selectedTab]);
 
-  // Client-side year filter (optional but handy)
   const currentOrders = useMemo(() => {
     if (!Array.isArray(tabOrders)) return [];
     return tabOrders.filter((o) => {

@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
+import * as Sentry from '@sentry/react-native';
 import LongBlackButton from '../../../../components/buttons/LongBlackButton';
 import Input from '../../../../components/inputs/Input';
 import { useGalleryAuthLoginStore } from 'store/auth/login/GalleryAuthLoginStore';
@@ -9,7 +10,6 @@ import { useAppStore } from 'store/app/appStore';
 import { useModalStore } from 'store/modal/modalStore';
 import { loginAccount } from 'services/login/loginAccount';
 import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { screenName } from 'constants/screenNames.constants';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
@@ -25,15 +25,42 @@ export default function Gallery() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(
-      { ...galleryLoginData, device_push_token: expoPushToken ?? '' },
-      'gallery',
-    );
+    Sentry.addBreadcrumb({
+      category: 'auth',
+      message: 'gallery login attempt',
+      level: 'info',
+    });
 
-    if (results?.isOk) {
+    try {
+      const results = await loginAccount(
+        { ...galleryLoginData, device_push_token: expoPushToken ?? '' },
+        'gallery',
+      );
+
+      if (!results?.isOk) {
+        Sentry.setContext('galleryLoginResponse', {
+          body: results?.body ?? null,
+          status: results?.isOk ?? null,
+        });
+        Sentry.captureMessage('gallery loginAccount returned non-ok response', 'error');
+
+        updateModal({
+          message: results?.body?.message,
+          showModal: true,
+          modalType: 'error',
+        });
+        return;
+      }
+
       const resultsBody = results?.body?.data;
 
       if (resultsBody.verified === false) {
+        Sentry.addBreadcrumb({
+          category: 'auth',
+          message: 'gallery unverified - navigating to verifyEmail',
+          level: 'info',
+        });
+
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
           account: { id: resultsBody.gallery_id, type: 'gallery' },
@@ -65,20 +92,62 @@ export default function Gallery() {
       );
 
       if (isStored && isLoginTimeStampStored) {
+        if (__DEV__) {
+          Sentry.setUser({
+            id: String(data.id),
+            email: data.email,
+            username: data.name,
+          });
+        } else {
+          Sentry.setUser({ id: String(data.id) });
+        }
+
+        setUserSession(data);
+        setIsLoggedIn(true);
+        clearInputs();
+
+        Sentry.addBreadcrumb({
+          category: 'auth',
+          message: 'gallery login succeeded',
+          level: 'info',
+        });
+      } else {
+        Sentry.setContext('galleryLoginStorage', {
+          isStored,
+          isLoginTimeStampStored,
+        });
+        Sentry.captureMessage('Failed to persist gallery login session to async storage', 'error');
+
+        if (__DEV__) {
+          Sentry.setUser({
+            id: String(data.id),
+            email: data.email,
+            username: data.name,
+          });
+        } else {
+          Sentry.setUser({ id: String(data.id) });
+        }
+
         setUserSession(data);
         setIsLoggedIn(true);
         clearInputs();
       }
-    } else {
-      // Alert.alert(results?.body.message)
+    } catch (error: any) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'exception during gallery login',
+        level: 'error',
+      });
+      Sentry.captureException(error);
+
       updateModal({
-        message: results?.body.message,
+        message: error?.message ?? 'An unexpected error occurred. Please try again.',
         showModal: true,
         modalType: 'error',
       });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (

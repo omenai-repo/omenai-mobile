@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
+import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import { useModalStore } from 'store/modal/modalStore';
 import { declineOrderRequest } from 'services/orders/declineOrderRequest';
@@ -75,6 +76,16 @@ const DeclineOrderModal = ({
     return selectedReason ? declineReasonMapping[selectedReason] : '';
   };
 
+  useEffect(() => {
+    if (isModalVisible) {
+      Sentry.addBreadcrumb({
+        category: 'ui.modal',
+        message: 'DeclineOrderModal opened',
+        level: 'info',
+      });
+    }
+  }, [isModalVisible]);
+
   const handleDecline = async () => {
     // Validation
     if (orderModalMetadata.is_current_order_exclusive) {
@@ -99,6 +110,13 @@ const DeclineOrderModal = ({
     }
 
     setLoading(true);
+
+    Sentry.addBreadcrumb({
+      category: 'user.action',
+      message: 'User confirmed decline order',
+      level: 'info',
+    });
+
     try {
       const data = {
         status: 'declined' as 'declined',
@@ -108,10 +126,24 @@ const DeclineOrderModal = ({
         orderModalMetadata.seller_designation === 'gallery' ? 'gallery' : 'artist';
       const art_id = orderModalMetadata.art_id || '';
 
+      Sentry.setContext('declineOrderRequest', {
+        payload: data,
+        orderId,
+        seller_designation,
+        art_id,
+      });
+
       const res = await declineOrderRequest(data, orderId, seller_designation, art_id);
+
       setLoading(false);
 
       if (res?.isOk) {
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: `declineOrderRequest succeeded for order ${orderId}`,
+          level: 'info',
+        });
+
         updateModal({
           message: res.message || 'Order declined successfully',
           showModal: true,
@@ -123,6 +155,9 @@ const DeclineOrderModal = ({
         setChecked(false);
         setSelectedReason(null);
       } else {
+        Sentry.setContext('declineOrderResponse', { response: res, orderId });
+        Sentry.captureMessage(`declineOrderRequest returned non-ok for order ${orderId}`, 'error');
+
         updateModal({
           message: res?.message || 'Failed to decline order',
           showModal: true,
@@ -131,6 +166,15 @@ const DeclineOrderModal = ({
       }
     } catch (err: any) {
       setLoading(false);
+
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'declineOrderRequest threw exception',
+        level: 'error',
+      });
+      Sentry.setContext('declineOrderCatch', { orderId, metadata: orderModalMetadata });
+      Sentry.captureException(err);
+
       updateModal({
         message: err?.message || 'Something went wrong. Try again later.',
         showModal: true,

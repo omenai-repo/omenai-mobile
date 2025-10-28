@@ -1,5 +1,6 @@
 import { View, Text, useWindowDimensions, FlatList, RefreshControl } from 'react-native';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
 import YearDropdown from '../orders/YearDropdown';
@@ -22,25 +23,60 @@ const WalletHistory = ({ navigation }: any) => {
     useInfiniteQuery({
       queryKey: txnsKey(selectedYear),
       queryFn: async ({ pageParam = 1 }: { pageParam?: number }) => {
-        const res = await fetchArtistTransactions({
-          page: Number(pageParam),
-          status: 'all',
-          year: String(selectedYear),
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: `fetchArtistTransactions - start (page ${pageParam}, year ${selectedYear})`,
+          level: 'info',
         });
-        if (!res?.isOk) throw new Error('Failed to fetch transactions');
-        const items = Array.isArray(res.data) ? res.data : [];
-        return {
-          items,
-          nextPage: items.length === PAGE_SIZE ? Number(pageParam) + 1 : undefined,
-        };
+
+        try {
+          const res = await fetchArtistTransactions({
+            page: Number(pageParam),
+            status: 'all',
+            year: String(selectedYear),
+          });
+
+          if (!res?.isOk) {
+            Sentry.setContext('fetchArtistTransactionsResponse', {
+              page: pageParam,
+              year: selectedYear,
+              responseMessage: res?.message ?? null,
+            });
+            Sentry.captureMessage(
+              `fetchArtistTransactions returned non-ok for year ${selectedYear}, page ${pageParam}`,
+              'error',
+            );
+            throw new Error(res?.message || 'Failed to fetch transactions');
+          }
+
+          Sentry.addBreadcrumb({
+            category: 'network',
+            message: `fetchArtistTransactions - success (page ${pageParam})`,
+            level: 'info',
+          });
+
+          const items = Array.isArray(res.data) ? res.data : [];
+          return {
+            items,
+            nextPage: items.length === PAGE_SIZE ? Number(pageParam) + 1 : undefined,
+          };
+        } catch (err: any) {
+          Sentry.addBreadcrumb({
+            category: 'exception',
+            message: `fetchArtistTransactions - exception (page ${pageParam})`,
+            level: 'error',
+          });
+          Sentry.captureException(err);
+          throw err;
+        }
       },
       initialPageParam: 1,
       getNextPageParam: (lastPage: { nextPage?: number }) => lastPage.nextPage,
       staleTime: 30_000,
       gcTime: 10 * 60_000,
-      refetchOnMount: true, // only if stale
-      refetchOnWindowFocus: true, // only if stale
-      refetchOnReconnect: true, // only if stale
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
     });
 
   const transactions = useMemo(() => (data?.pages ?? []).flatMap((p) => p.items), [data]);
@@ -53,7 +89,17 @@ const WalletHistory = ({ navigation }: any) => {
 
       <View style={tw`mt-[20px] flex-row items-center mr-[20px]`}>
         <View style={tw`flex-1`} />
-        <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+        <YearDropdown
+          selectedYear={selectedYear}
+          setSelectedYear={(y: number) => {
+            Sentry.addBreadcrumb({
+              category: 'ui',
+              message: `YearDropdown changed to ${y}`,
+              level: 'info',
+            });
+            setSelectedYear(y);
+          }}
+        />
       </View>
 
       {/* List */}
@@ -66,20 +112,41 @@ const WalletHistory = ({ navigation }: any) => {
               status={item.trans_status}
               amount={item.trans_amount}
               dateTime={item.createdAt}
-              onPress={() => navigation.navigate('TransactionDetailsScreen', { transaction: item })}
+              onPress={() => {
+                Sentry.addBreadcrumb({
+                  category: 'navigation',
+                  message: `TransactionDetails opened for ${item.trans_id ?? item.id}`,
+                  level: 'info',
+                });
+                navigation.navigate('TransactionDetailsScreen', { transaction: item });
+              }}
             />
           )}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={tw`gap-[8px] pb-[100px]`}
           onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+            if (hasNextPage && !isFetchingNextPage) {
+              Sentry.addBreadcrumb({
+                category: 'ui',
+                message: 'WalletHistory end reached - fetchNextPage',
+                level: 'info',
+              });
+              fetchNextPage();
+            }
           }}
           onEndReachedThreshold={0.6}
           ListFooterComponent={isFetchingNextPage ? <Loader size={200} height={100} /> : null}
           refreshControl={
             <RefreshControl
               refreshing={isFetching && !isFetchingNextPage}
-              onRefresh={() => refetch()}
+              onRefresh={() => {
+                Sentry.addBreadcrumb({
+                  category: 'ui',
+                  message: 'WalletHistory pull-to-refresh',
+                  level: 'info',
+                });
+                return refetch();
+              }}
               tintColor="#000"
               colors={['#000']}
             />

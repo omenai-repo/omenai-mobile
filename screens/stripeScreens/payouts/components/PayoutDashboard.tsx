@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import * as Sentry from '@sentry/react-native';
 import BalanceBox from './BalanceBox';
 import Transactions from './Transactions';
 import { useModalStore } from 'store/modal/modalStore';
@@ -7,13 +8,6 @@ import { retrieveBalance } from 'services/stripe/retrieveBalance';
 import { colors } from 'config/colors.config';
 import { fetchTransactions } from 'services/transactions/fetchTransactions';
 import ScrollWrapper from 'components/general/ScrollWrapper';
-
-type TransactionsTableProps = {
-  transactions: (PurchaseTransactionModelSchemaTypes & {
-    createdAt: string;
-    updatedAt: string;
-  })[];
-};
 
 export default function PayoutDashboard({
   account_id,
@@ -36,43 +30,78 @@ export default function PayoutDashboard({
   useEffect(() => {
     async function handleFetchBalance() {
       setIsLoading(true);
-      const balance_result = await retrieveBalance(account_id);
-      if (balance_result?.isOk) {
-        setBalance(balance_result.data);
-      } else {
+      try {
+        const balance_result = await retrieveBalance(account_id);
+        if (!balance_result?.isOk) {
+          Sentry.setContext('stripeBalance', {
+            account_id,
+            response: balance_result,
+          });
+          Sentry.captureMessage(`retrieveBalance failed for account ${account_id}`, 'error');
+
+          updateModal({
+            message: 'Something went wrong, please try again or contact support',
+            modalType: 'error',
+            showModal: true,
+          });
+        } else {
+          setBalance(balance_result.data);
+        }
+
+        // Breadcrumb before fetching transactions
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'fetchTransactions called',
+          level: 'info',
+        });
+
+        const transactions_result = await fetchTransactions();
+        // console.log(transactions_result);
+        if (!transactions_result?.isOk) {
+          Sentry.setContext('transactionsFetch', {
+            response: transactions_result,
+          });
+          Sentry.captureMessage('fetchTransactions returned non-ok response', 'error');
+
+          updateModal({
+            message: 'Something went wrong, please try again or contact support',
+            modalType: 'error',
+            showModal: true,
+          });
+        } else {
+          setTransactions(
+            transactions_result.data.map(
+              (
+                transaction: PurchaseTransactionModelSchemaTypes & {
+                  createdAt: string;
+                  updatedAt: string;
+                },
+              ) => ({
+                ...transaction,
+                createdAt: String(transaction.createdAt),
+                updatedAt: String(transaction.updatedAt),
+              }),
+            ),
+          );
+        }
+      } catch (error: any) {
+        // capture unexpected errors
+        Sentry.setContext('payoutDashboardCatch', { account_id, refreshCount });
+        Sentry.addBreadcrumb({
+          category: 'exception',
+          message: 'Unhandled error in PayoutDashboard handleFetchBalance',
+          level: 'error',
+        });
+        Sentry.captureException(error);
+
         updateModal({
           message: 'Something went wrong, please try again or contact support',
           modalType: 'error',
           showModal: true,
         });
+      } finally {
+        setIsLoading(false);
       }
-
-      const transactions_result = await fetchTransactions();
-      console.log(transactions_result);
-      if (transactions_result?.isOk) {
-        setTransactions(
-          transactions_result.data.map(
-            (
-              transaction: PurchaseTransactionModelSchemaTypes & {
-                createdAt: string;
-                updatedAt: string;
-              },
-            ) => ({
-              ...transaction,
-              createdAt: String(transaction.createdAt),
-              updatedAt: String(transaction.updatedAt),
-            }),
-          ),
-        );
-      } else {
-        updateModal({
-          message: 'Something went wrong, please try again or contact support',
-          modalType: 'error',
-          showModal: true,
-        });
-      }
-
-      setIsLoading(false);
     }
 
     handleFetchBalance();

@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
+import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
@@ -31,6 +32,17 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
   // animations
   const fade = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.96)).current;
+
+  // breadcrumb when modal open
+  useEffect(() => {
+    if (visible) {
+      Sentry.addBreadcrumb({
+        category: 'ui.modal',
+        message: 'CancelSubscriptionModal opened',
+        level: 'info',
+      });
+    }
+  }, [visible]);
 
   useEffect(() => {
     if (visible) {
@@ -61,16 +73,58 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
     if (loading) return;
     setLoading(true);
     setErr(null);
+
+    Sentry.addBreadcrumb({
+      category: 'user.action',
+      message: 'User confirmed subscription cancellation',
+      level: 'info',
+    });
+
     try {
+      Sentry.setContext('cancelSubscriptionRequest', {
+        userId: userSession?.id,
+        email: userSession?.email,
+        subEnd: String(subEnd),
+      });
+
       const res = await cancelSubscription(userSession.id);
+
       if (!res?.isOk) {
+        Sentry.setContext('cancelSubscriptionResponse', { response: res, userId: userSession?.id });
+        Sentry.captureMessage(
+          `cancelSubscription returned non-ok for user ${userSession?.id}`,
+          'error',
+        );
+
         setErr(res?.message || 'Failed to cancel subscription.');
+
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: `cancelSubscription non-ok: ${res?.message ?? 'no message'}`,
+          level: 'error',
+        });
       } else {
-        // Refresh any dependent queries
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'cancelSubscription succeeded',
+          level: 'info',
+        });
+
         qc.invalidateQueries({ queryKey: ['subscription_precheck'] });
         onClose();
       }
     } catch (e: any) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'cancelSubscription threw exception',
+        level: 'error',
+      });
+      Sentry.setContext('cancelSubscriptionCatch', {
+        userId: userSession?.id,
+        subEnd: String(subEnd),
+      });
+      Sentry.captureException(e);
+
       setErr(e?.message ?? 'Something went wrong.');
     } finally {
       setLoading(false);

@@ -1,27 +1,23 @@
-import {
-  View,
-  Text,
-  FlatList,
-  RefreshControl,
-} from "react-native";
-import React, { useCallback, useMemo, useState } from "react";
-import tw from "twrnc";
-import { useNavigation } from "@react-navigation/native";
-import DeclineOrderModal from "./DeclineOrderModal";
-import { organizeOrders } from "utils/utils_splitArray";
-import EmptyOrdersListing from "screens/galleryOrders/components/EmptyOrdersListing";
-import OrderslistingLoader from "screens/galleryOrders/components/OrderslistingLoader";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
-import YearDropdown from "./YearDropdown";
-import { getOrdersBySellerId } from "services/orders/getOrdersBySellerId";
-import { useModalStore } from "store/modal/modalStore";
-import WithModal from "components/modal/WithModal";
-import TabSwitcher from "components/orders/TabSwitcher";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import OrderContainer from "components/orders/OrderContainer";
-import { ORDERS_QK } from "utils/queryKeys";
+import { View, Text, FlatList, RefreshControl } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import tw from 'twrnc';
+import { useNavigation } from '@react-navigation/native';
+import DeclineOrderModal from './DeclineOrderModal';
+import { organizeOrders } from 'utils/utils_splitArray';
+import EmptyOrdersListing from 'screens/galleryOrders/components/EmptyOrdersListing';
+import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
+import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
+import YearDropdown from './YearDropdown';
+import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
+import { useModalStore } from 'store/modal/modalStore';
+import WithModal from 'components/modal/WithModal';
+import TabSwitcher from 'components/orders/TabSwitcher';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import OrderContainer from 'components/orders/OrderContainer';
+import { ORDERS_QK } from 'utils/queryKeys';
+import * as Sentry from '@sentry/react-native';
 
 const OrderScreen = () => {
   const navigation = useNavigation<any>();
@@ -29,17 +25,15 @@ const OrderScreen = () => {
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
 
-  const [selectedTab, setSelectedTab] = useState<
-    "pending" | "processing" | "completed"
-  >("pending");
+  const [selectedTab, setSelectedTab] = useState<'pending' | 'processing' | 'completed'>('pending');
   const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
   const [declineModal, setDeclineModal] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [orderId, setOrderId] = useState("");
+  const [orderId, setOrderId] = useState('');
   const [orderModalMetadata, setOrderModalMetadata] = useState({
     is_current_order_exclusive: false,
-    art_id: "",
-    seller_designation: "",
+    art_id: '',
+    seller_designation: '',
   });
 
   const isArtworkExclusiveDate = (createdAt: string | Date) => {
@@ -51,16 +45,39 @@ const OrderScreen = () => {
   const ordersQuery = useQuery({
     queryKey: ORDERS_QK,
     queryFn: async () => {
+      Sentry.addBreadcrumb({
+        category: 'network',
+        message: 'getOrdersBySellerId - start',
+        level: 'info',
+      });
+
       try {
         const res = await getOrdersBySellerId();
-        if (!res?.isOk)
-          throw new Error(res?.body?.message ?? "Failed to load orders");
+        if (!res?.isOk) {
+          Sentry.setContext('getOrdersBySellerIdResponse', { response: res });
+          Sentry.captureMessage('getOrdersBySellerId returned non-ok response', 'error');
+          throw new Error(res?.body?.message ?? 'Failed to load orders');
+        }
+
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'getOrdersBySellerId - success',
+          level: 'info',
+        });
+
         return res.data;
       } catch (err: any) {
+        Sentry.addBreadcrumb({
+          category: 'exception',
+          message: 'getOrdersBySellerId - exception',
+          level: 'error',
+        });
+        Sentry.captureException(err);
+
         updateModal({
-          message: err?.message ?? "Failed to load orders",
+          message: err?.message ?? 'Failed to load orders',
           showModal: true,
-          modalType: "error",
+          modalType: 'error',
         });
         throw err;
       }
@@ -72,11 +89,17 @@ const OrderScreen = () => {
     refetchOnWindowFocus: true,
   });
 
-  const onRefresh = useCallback(() => ordersQuery.refetch(), [ordersQuery]);
+  const onRefresh = useCallback(() => {
+    Sentry.addBreadcrumb({
+      category: 'ui',
+      message: 'Orders pull-to-refresh triggered',
+      level: 'info',
+    });
+    ordersQuery.refetch();
+  }, [ordersQuery]);
+
   const { pending, processing, completed } = useMemo(() => {
-    const parsed = organizeOrders(
-      Array.isArray(ordersQuery.data) ? ordersQuery.data : []
-    );
+    const parsed = organizeOrders(Array.isArray(ordersQuery.data) ? ordersQuery.data : []);
     return parsed;
   }, [ordersQuery.data]);
 
@@ -88,16 +111,16 @@ const OrderScreen = () => {
         return dt.getFullYear() === selectedYear;
       });
     },
-    [selectedYear]
+    [selectedYear],
   );
 
   const getCurrentOrders = () => {
     switch (selectedTab) {
-      case "pending":
+      case 'pending':
         return filterByYear(pending);
-      case "processing":
+      case 'processing':
         return filterByYear(processing);
-      case "completed":
+      case 'completed':
         return filterByYear(completed);
       default:
         return [];
@@ -107,9 +130,9 @@ const OrderScreen = () => {
   const currentOrders = getCurrentOrders();
 
   const artistTabs = [
-    { title: "Pending", key: "pending", count: pending?.length ?? 0 },
-    { title: "Processing", key: "processing", count: processing?.length ?? 0 },
-    { title: "Completed", key: "completed" },
+    { title: 'Pending', key: 'pending', count: pending?.length ?? 0 },
+    { title: 'Processing', key: 'processing', count: processing?.length ?? 0 },
+    { title: 'Completed', key: 'completed' },
   ];
 
   const toggleRecentOrder = useCallback((key: string) => {
@@ -121,16 +144,18 @@ const OrderScreen = () => {
 
   return (
     <WithModal>
-      <View
-        style={tw.style(`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 })}
-      >
-
+      <View style={tw.style(`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 })}>
         <TabSwitcher
           tabs={artistTabs}
           selectedKey={selectedTab}
-          setSelectedKey={(key) =>
-            setSelectedTab(key as "pending" | "processing" | "completed")
-          }
+          setSelectedKey={(key) => {
+            Sentry.addBreadcrumb({
+              category: 'ui',
+              message: `Tab switched to ${key}`,
+              level: 'info',
+            });
+            setSelectedTab(key as 'pending' | 'processing' | 'completed');
+          }}
         />
 
         <View
@@ -143,23 +168,26 @@ const OrderScreen = () => {
           ) : (
             <>
               <View style={tw`flex-row items-center`}>
-                <Text
-                  style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}
-                >
+                <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
                   Your Orders
                 </Text>
                 <YearDropdown
                   selectedYear={selectedYear}
-                  setSelectedYear={setSelectedYear}
+                  setSelectedYear={(y) => {
+                    Sentry.addBreadcrumb({
+                      category: 'ui',
+                      message: `Year filter changed to ${y}`,
+                      level: 'info',
+                    });
+                    setSelectedYear(y);
+                  }}
                 />
               </View>
 
               <FlatList
                 data={currentOrders}
                 keyExtractor={(item, index) =>
-                  item?.order_id?.toString?.() ??
-                  item?.artwork_data?._id ??
-                  `order-${index}`
+                  item?.order_id?.toString?.() ?? item?.artwork_data?._id ?? `order-${index}`
                 }
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
@@ -168,7 +196,7 @@ const OrderScreen = () => {
                     refreshing={isRefreshing}
                     onRefresh={onRefresh}
                     tintColor="#000"
-                    colors={["#000"]}
+                    colors={['#000']}
                   />
                 }
                 renderItem={({ item, index }) => (
@@ -180,33 +208,28 @@ const OrderScreen = () => {
                     artId={item?.order_id}
                     artName={item?.artwork_data?.title}
                     dateTime={formatIntlDateTime(item?.createdAt)}
-                    price={utils_formatPrice(
-                      item?.artwork_data?.pricing?.usd_price
-                    )}
+                    price={utils_formatPrice(item?.artwork_data?.pricing?.usd_price)}
                     status={selectedTab}
                     lastId={index === currentOrders.length - 1}
                     acceptBtn={
-                      selectedTab === "pending"
+                      selectedTab === 'pending'
                         ? () =>
-                            navigation.navigate("DimensionsDetails", {
+                            navigation.navigate('DimensionsDetails', {
                               orderId: item?.order_id,
                             })
                         : undefined
                     }
                     declineBtn={
-                      selectedTab === "pending"
+                      selectedTab === 'pending'
                         ? () => {
                             const isExclusive =
-                              item?.artwork_data?.exclusivity_status
-                                ?.exclusivity_type === "exclusive" &&
-                              isArtworkExclusiveDate(item?.createdAt);
-
+                              item?.artwork_data?.exclusivity_status?.exclusivity_type ===
+                                'exclusive' && isArtworkExclusiveDate(item?.createdAt);
                             setOrderId(item?.order_id);
                             setOrderModalMetadata({
                               is_current_order_exclusive: isExclusive,
                               art_id: item?.artwork_data?.art_id,
-                              seller_designation:
-                                item?.seller_designation || "artist",
+                              seller_designation: item?.seller_designation || 'artist',
                             });
                             setDeclineModal(true);
                           }
@@ -216,20 +239,15 @@ const OrderScreen = () => {
                     order_accepted={item?.order_accepted?.status}
                     order_decline_reason={item?.order_accepted?.reason}
                     payment_status={item?.payment_information?.status}
-                    tracking_status={
-                      item?.shipping_details?.shipment_information?.tracking?.id
-                    }
+                    tracking_status={item?.shipping_details?.shipment_information?.tracking?.id}
                     trackBtn={() =>
-                      navigation.navigate("ShipmentTrackingScreen", {
+                      navigation.navigate('ShipmentTrackingScreen', {
                         orderId: item?.order_id,
-                        tracking_id:
-                          item?.shipping_details?.shipment_information?.tracking
-                            ?.id,
+                        tracking_id: item?.shipping_details?.shipment_information?.tracking?.id,
                       })
                     }
                     exclusivity_type={
-                      item?.artwork_data?.exclusivity_status
-                        ?.exclusivity_type || "non-exclusive"
+                      item?.artwork_data?.exclusivity_status?.exclusivity_type || 'non-exclusive'
                     }
                   />
                 )}

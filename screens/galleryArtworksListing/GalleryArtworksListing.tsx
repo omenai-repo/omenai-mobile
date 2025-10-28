@@ -44,16 +44,15 @@ export default function GalleryArtworksListing() {
         return [];
       }
     },
-    // show cached immediately; keep it fresh but not spammy
+
     staleTime: 30_000,
     gcTime: 10 * 60_000,
-    refetchOnMount: true, // only if stale
-    refetchOnReconnect: true, // only if stale
-    refetchOnWindowFocus: true, // only if stale
-    select: (list: any[]) => [...list].reverse(), // keep your reverse order
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
+    select: (list: any[]) => [...list].reverse(),
   });
 
-  // Pull-to-refresh: force a network refetch now
   const onRefresh = useCallback(async () => {
     await artworksQuery.refetch();
   }, [artworksQuery]);

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import { useStripe } from '@stripe/stripe-react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -12,7 +13,7 @@ import SuccessPaymentModal from './SuccessPaymentModal';
 export default function PaymentMethodChangeScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const { planId, planInterval } = route.params;
+  const { planId, planInterval } = route.params ?? {};
 
   const queryClient = useQueryClient();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -32,47 +33,104 @@ export default function PaymentMethodChangeScreen() {
 
   const fetchSetupIntent = useCallback(async () => {
     setError(null);
-    setSheetReady(false); // reset readiness on new fetch
+    setSheetReady(false);
+
+    Sentry.addBreadcrumb({
+      category: 'stripe',
+      message: 'createPaymentMethodSetupIntent - start',
+      level: 'info',
+    });
+
     try {
       const intent = await createPaymentMethodSetupIntent();
+
       if (!intent?.isOk || !intent?.client_secret) {
-        throw new Error('Unable to create a setup intent.');
+        Sentry.setContext('createSetupIntent', { response: intent });
+        Sentry.captureMessage(
+          'createPaymentMethodSetupIntent returned non-ok or missing client_secret',
+          'error',
+        );
+
+        setError('Unable to create a setup intent.');
+        return null;
       }
+
       setClientSecret(intent.client_secret);
+
+      Sentry.addBreadcrumb({
+        category: 'stripe',
+        message: 'createPaymentMethodSetupIntent - success',
+        level: 'info',
+      });
+
       return intent.client_secret;
     } catch (e: any) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'createPaymentMethodSetupIntent - exception',
+        level: 'error',
+      });
+      Sentry.captureException(e);
       setError(e?.message ?? 'Failed to start payment setup.');
       return null;
     }
-  }, []); // it doesn't use user props; keep deps empty so it runs once
+  }, []);
 
   const initializeSheet = useCallback(
     async (secret: string) => {
       setSheetReady(false);
-      const { error: initError } = await initPaymentSheet({
-        merchantDisplayName: displayName,
-        setupIntentClientSecret: secret,
-        // applePay: { merchantCountryCode: 'US' },
-        // googlePay: { merchantCountryCode: 'US', testEnv: __DEV__ },
-        style: 'automatic',
-        returnURL: 'omenai://stripe-redirect', // iOS only
-        defaultBillingDetails: {
-          name: user?.name ?? '',
-          email: user?.email ?? '',
-        },
+
+      Sentry.addBreadcrumb({
+        category: 'stripe',
+        message: 'initPaymentSheet - start',
+        level: 'info',
       });
 
-      if (initError) {
-        console.warn('[initPaymentSheet] error:', initError);
-        setError(initError.message);
+      try {
+        const { error: initError } = await initPaymentSheet({
+          merchantDisplayName: displayName,
+          setupIntentClientSecret: secret,
+          style: 'automatic',
+          returnURL: 'omenai://stripe-redirect', // iOS only
+          defaultBillingDetails: {
+            name: user?.name ?? '',
+            email: user?.email ?? '',
+          },
+        });
+
+        if (initError) {
+          Sentry.setContext('initPaymentSheet', { error: initError, userId: user?.id });
+          Sentry.captureMessage(`initPaymentSheet error: ${initError.message}`, 'error');
+
+          console.warn('[initPaymentSheet] error:', initError);
+          setError(initError.message);
+          setSheetReady(false);
+          return false;
+        }
+
+        Sentry.addBreadcrumb({
+          category: 'stripe',
+          message: 'initPaymentSheet - success',
+          level: 'info',
+        });
+
+        setSheetReady(true);
+        return true;
+      } catch (e: any) {
+        Sentry.addBreadcrumb({
+          category: 'exception',
+          message: 'initPaymentSheet - exception',
+          level: 'error',
+        });
+        Sentry.setContext('initPaymentSheetCatch', { userId: user?.id });
+        Sentry.captureException(e);
+
+        setError(e?.message ?? 'Could not initialize payment sheet.');
         setSheetReady(false);
         return false;
       }
-
-      setSheetReady(true);
-      return true;
     },
-    [displayName, initPaymentSheet, user?.email, user?.name],
+    [displayName, initPaymentSheet, user?.email, user?.name, user?.id],
   );
 
   useEffect(() => {
@@ -100,6 +158,7 @@ export default function PaymentMethodChangeScreen() {
         const ok = await initializeSheet(clientSecret);
         if (!ok) return;
       } else {
+        setError('Payment sheet not ready.');
         return;
       }
     }
@@ -107,19 +166,66 @@ export default function PaymentMethodChangeScreen() {
     setPresenting(true);
     setError(null);
 
-    const { error: presentErr } = await presentPaymentSheet();
-    setPresenting(false);
+    Sentry.addBreadcrumb({
+      category: 'stripe',
+      message: 'presentPaymentSheet - start',
+      level: 'info',
+    });
 
-    if (presentErr) {
-      if (presentErr.code !== 'Canceled') setError(presentErr.message);
-      return;
+    try {
+      const { error: presentErr } = await presentPaymentSheet();
+      setPresenting(false);
+
+      if (presentErr) {
+        if (presentErr.code !== 'Canceled') {
+          Sentry.setContext('presentPaymentSheet', { error: presentErr, userId: user?.id });
+          Sentry.captureMessage(`presentPaymentSheet error: ${presentErr.message}`, 'error');
+        }
+        setError(presentErr.message);
+        return;
+      }
+
+      Sentry.addBreadcrumb({
+        category: 'stripe',
+        message: 'presentPaymentSheet - success',
+        level: 'info',
+      });
+
+      // success -> refresh any data that depends on the PM
+      const setupIntentId = clientSecret?.split('_secret_')[0] ?? null;
+
+      Sentry.addBreadcrumb({
+        category: 'stripe',
+        message: 'updatePaymentMethod - start',
+        level: 'info',
+      });
+
+      try {
+        await updatePaymentMethod(setupIntentId!);
+        Sentry.addBreadcrumb({
+          category: 'stripe',
+          message: 'updatePaymentMethod - success',
+          level: 'info',
+        });
+      } catch (e: any) {
+        Sentry.setContext('updatePaymentMethod', { setupIntentId, userId: user?.id });
+        Sentry.captureException(e);
+        setError('Payment updated locally but failed to persist. Please contact support.');
+      }
+
+      setSuccessVisible(true);
+    } catch (e: any) {
+      setPresenting(false);
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'presentPaymentSheet - exception',
+        level: 'error',
+      });
+      Sentry.setContext('presentPaymentSheetCatch', { userId: user?.id });
+      Sentry.captureException(e);
+      setError(e?.message ?? 'An unexpected error occurred.');
     }
-
-    // success -> refresh any data that depends on the PM
-    const setupIntentId = clientSecret?.split('_secret_')[0] ?? null;
-    await updatePaymentMethod(setupIntentId!);
-    setSuccessVisible(true);
-  }, [sheetReady, clientSecret, initializeSheet, presentPaymentSheet, navigation, queryClient]);
+  }, [sheetReady, clientSecret, initializeSheet, presentPaymentSheet, user?.id]);
 
   return (
     <>
@@ -143,7 +249,7 @@ export default function PaymentMethodChangeScreen() {
           )}
 
           <Pressable
-            disabled={initializing || presenting || !sheetReady} // CHANGED
+            disabled={initializing || presenting || !sheetReady}
             onPress={handleOpenSheet}
             style={({ pressed }) =>
               tw.style(
@@ -163,7 +269,6 @@ export default function PaymentMethodChangeScreen() {
         visible={successVisible}
         onPrimaryPress={() => {
           setSuccessVisible(false);
-          // refresh + go back to billing
           queryClient.invalidateQueries({ queryKey: ['subscription_precheck'] });
           navigation.goBack();
         }}

@@ -1,5 +1,6 @@
 import { View, Text, Image, Pressable, ScrollView, RefreshControl } from 'react-native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
@@ -145,14 +146,45 @@ const WalletScreen = () => {
   } = useQuery({
     queryKey: WALLET_QK,
     queryFn: async () => {
-      const res = await fetchArtistWalletData();
-      if (!res?.isOk) {
-        updateModal({ message: 'Error fetching wallet data', showModal: true, modalType: 'error' });
-        throw new Error('wallet fetch failed');
+      Sentry.addBreadcrumb({
+        category: 'network',
+        message: 'fetchArtistWalletData - start',
+        level: 'info',
+      });
+      try {
+        const res = await fetchArtistWalletData();
+        if (!res?.isOk) {
+          Sentry.setContext('fetchArtistWalletDataResponse', { response: res });
+          Sentry.captureMessage('fetchArtistWalletData returned non-ok', 'error');
+          updateModal({
+            message: 'Error fetching wallet data',
+            showModal: true,
+            modalType: 'error',
+          });
+          throw new Error('wallet fetch failed');
+        }
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'fetchArtistWalletData - success',
+          level: 'info',
+        });
+        return res.data;
+      } catch (err: any) {
+        Sentry.addBreadcrumb({
+          category: 'exception',
+          message: 'fetchArtistWalletData - exception',
+          level: 'error',
+        });
+        Sentry.captureException(err);
+        updateModal({
+          message: err?.message ?? 'Error fetching wallet data',
+          showModal: true,
+          modalType: 'error',
+        });
+        throw err;
       }
-      return res.data;
     },
-    // Keep it fresh but DO respect staleness rules
+
     staleTime: 15_000, // 15s
     gcTime: 10 * 60_000, // 10m
     refetchOnMount: true, // only if stale
@@ -167,16 +199,43 @@ const WalletScreen = () => {
   } = useQuery({
     queryKey: TXNS_QK,
     queryFn: async () => {
-      const res = await fetchArtistTransactions({ status: 'all' });
-      if (!res?.isOk) {
+      Sentry.addBreadcrumb({
+        category: 'network',
+        message: 'fetchArtistTransactions - start',
+        level: 'info',
+      });
+      try {
+        const res = await fetchArtistTransactions({ status: 'all' });
+        if (!res?.isOk) {
+          Sentry.setContext('fetchArtistTransactionsResponse', { response: res });
+          Sentry.captureMessage('fetchArtistTransactions returned non-ok', 'error');
+          updateModal({
+            message: 'Error fetching transactions',
+            showModal: true,
+            modalType: 'error',
+          });
+          throw new Error('txns fetch failed');
+        }
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'fetchArtistTransactions - success',
+          level: 'info',
+        });
+        return res.data;
+      } catch (err: any) {
+        Sentry.addBreadcrumb({
+          category: 'exception',
+          message: 'fetchArtistTransactions - exception',
+          level: 'error',
+        });
+        Sentry.captureException(err);
         updateModal({
-          message: 'Error fetching transactions',
+          message: err?.message ?? 'Error fetching transactions',
           showModal: true,
           modalType: 'error',
         });
-        throw new Error('txns fetch failed');
+        throw err;
       }
-      return res.data;
     },
     staleTime: 30_000, // 30s
     gcTime: 10 * 60_000, // 10m
@@ -186,24 +245,35 @@ const WalletScreen = () => {
   });
 
   // Spinner should reflect only these two queries being (re)fetched
-
   const isFetchingWallet = useIsFetching({ queryKey: WALLET_QK }) > 0;
   const isFetchingTxns = useIsFetching({ queryKey: TXNS_QK }) > 0;
 
   const isRefreshing = isFetchingWallet || isFetchingTxns;
 
   // Pull-to-refresh
-  const onRefresh = useCallback(
-    () => Promise.all([refetchWallet(), refetchTxns()]),
-    [refetchWallet, refetchTxns],
-  );
+  const onRefresh = useCallback(() => {
+    Sentry.addBreadcrumb({
+      category: 'ui',
+      message: 'Wallet pull-to-refresh triggered',
+      level: 'info',
+    });
+    return Promise.all([refetchWallet(), refetchTxns()]);
+  }, [refetchWallet, refetchTxns]);
 
   // show PIN modal when wallet data loads and pin is missing
   useEffect(() => {
-    if (walletData && !walletData.wallet_pin) setShowPinModal(true);
+    if (walletData && !walletData.wallet_pin) {
+      Sentry.addBreadcrumb({
+        category: 'ui.modal',
+        message: 'PinCreationModal opened (missing pin)',
+        level: 'info',
+      });
+      setShowPinModal(true);
+    }
   }, [walletData]);
 
   const handleWithdrawPress = useCallback(() => {
+    Sentry.addBreadcrumb({ category: 'ui', message: 'Withdraw pressed', level: 'info' });
     if (!walletData?.primary_withdrawal_account) {
       navigation.navigate('AddPrimaryAcctScreen', { walletData });
     } else {
@@ -229,19 +299,22 @@ const WalletScreen = () => {
           }
         >
           <View>
-            {/* <Image
-              style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
-              resizeMode="contain"
-              source={require('../../../assets/omenai-logo.png')}
-            /> */}
-
             {/* Balances card */}
             <View
               style={tw`bg-black rounded-[18px] border border-[#E7E7E7] p-[25px] mx-[20px] mt-[30px]`}
             >
               <View style={tw`flex-row items-center gap-[20px]`}>
                 <Text style={tw`text-[19px] text-white`}>Available Balance</Text>
-                <Pressable onPress={() => setShowAvailableBalance((p) => !p)}>
+                <Pressable
+                  onPress={() => {
+                    Sentry.addBreadcrumb({
+                      category: 'ui',
+                      message: `Toggle available balance ${!showAvailableBalance}`,
+                      level: 'info',
+                    });
+                    setShowAvailableBalance((p) => !p);
+                  }}
+                >
                   <Ionicons
                     name={showAvailableBalance ? 'eye-outline' : 'eye-off-outline'}
                     color={'#fff'}
@@ -266,7 +339,16 @@ const WalletScreen = () => {
                 <View style={tw`flex-1`}>
                   <View style={tw`flex-row items-center gap-[15px]`}>
                     <Text style={tw`text-[14px] text-white`}>Pending Balance</Text>
-                    <Pressable onPress={() => setShowPendingBalance((p) => !p)}>
+                    <Pressable
+                      onPress={() => {
+                        Sentry.addBreadcrumb({
+                          category: 'ui',
+                          message: `Toggle pending balance ${!showPendingBalance}`,
+                          level: 'info',
+                        });
+                        setShowPendingBalance((p) => !p);
+                      }}
+                    >
                       <Ionicons
                         name={showPendingBalance ? 'eye-outline' : 'eye-off-outline'}
                         color={'#fff'}
@@ -304,7 +386,14 @@ const WalletScreen = () => {
             ) : !walletData?.primary_withdrawal_account ? (
               <View style={tw`mx-[20px] mt-[40px]`}>
                 <BtnContainer
-                  onPress={() => navigation.navigate('AddPrimaryAcctScreen', { walletData })}
+                  onPress={() => {
+                    Sentry.addBreadcrumb({
+                      category: 'ui',
+                      message: 'Navigate AddPrimaryAcctScreen',
+                      level: 'info',
+                    });
+                    navigation.navigate('AddPrimaryAcctScreen', { walletData });
+                  }}
                   label="Add primary Account"
                 />
               </View>
@@ -333,7 +422,14 @@ const WalletScreen = () => {
                   </View>
                 </View>
                 <BtnContainer
-                  onPress={() => navigation.navigate('AddPrimaryAcctScreen', { walletData })}
+                  onPress={() => {
+                    Sentry.addBreadcrumb({
+                      category: 'ui',
+                      message: 'Change Primary Account pressed',
+                      level: 'info',
+                    });
+                    navigation.navigate('AddPrimaryAcctScreen', { walletData });
+                  }}
                   label="Change Primary Account"
                 />
               </View>
@@ -345,7 +441,14 @@ const WalletScreen = () => {
             <View style={tw`mx-[20px] mt-[30px] pb-[25px] flex-row items-center`}>
               <Text style={tw`text-[15px] font-medium flex-1`}>Transaction History</Text>
               <Pressable
-                onPress={() => navigation.navigate('WalletHistory', { transactions })}
+                onPress={() => {
+                  Sentry.addBreadcrumb({
+                    category: 'ui',
+                    message: 'Show All transactions pressed',
+                    level: 'info',
+                  });
+                  navigation.navigate('WalletHistory', { transactions });
+                }}
                 style={tw`flex-row items-center gap-[5px]`}
               >
                 <Text style={tw`text-[15px] text-[#3D3D3D] font-semibold`}>Show All</Text>
@@ -368,9 +471,14 @@ const WalletScreen = () => {
                           status={item.trans_status}
                           amount={item.trans_amount}
                           dateTime={item.createdAt}
-                          onPress={() =>
-                            navigation.navigate('TransactionDetailsScreen', { transaction: item })
-                          }
+                          onPress={() => {
+                            Sentry.addBreadcrumb({
+                              category: 'navigation',
+                              message: `Transaction details opened for ${item.trans_id}`,
+                              level: 'info',
+                            });
+                            navigation.navigate('TransactionDetailsScreen', { transaction: item });
+                          }}
                         />
                       ))
                     )}
@@ -390,8 +498,22 @@ const WalletScreen = () => {
 
           <PinCreationModal
             visible={showPinModal}
-            setVisible={setShowPinModal}
-            onClose={() => setShowPinModal(false)}
+            setVisible={(v: boolean) => {
+              Sentry.addBreadcrumb({
+                category: 'ui.modal',
+                message: `PinCreationModal visibility changed: ${v}`,
+                level: 'info',
+              });
+              setShowPinModal(v);
+            }}
+            onClose={() => {
+              Sentry.addBreadcrumb({
+                category: 'ui.modal',
+                message: 'PinCreationModal closed',
+                level: 'info',
+              });
+              setShowPinModal(false);
+            }}
           />
         </ScrollView>
       </View>

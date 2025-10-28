@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View, Linking, Pressable } from 'react-native';
 import React from 'react';
+import * as Sentry from '@sentry/react-native';
 import * as WebBrowser from 'expo-web-browser';
 import FittedBlackButton from '../../../../components/buttons/FittedBlackButton';
 import BackFormButton from '../../../../components/buttons/BackFormButton';
@@ -34,6 +35,12 @@ export default function TermsAndConditions() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
+    Sentry.addBreadcrumb({
+      category: 'user.action',
+      message: 'Collector attempted account registration',
+      level: 'info',
+    });
+
     const data: Omit<IndividualRegisterData, 'confirmPassword'> & {
       preferences: string[];
       device_push_token: string;
@@ -43,26 +50,66 @@ export default function TermsAndConditions() {
       device_push_token: expoPushToken ?? '',
     };
 
-    const results = await registerAccount(data, 'individual');
-    console.log(data);
-    if (results?.isOk) {
-      const resultsBody = results?.body;
-      clearState();
-      navigation.navigate(screenName.verifyEmail, {
-        account: { id: resultsBody.data, type: 'individual' },
+    Sentry.setContext('registerAttempt', {
+      email: individualRegisterData.email ?? null,
+      name: individualRegisterData.name ?? null,
+      preferences,
+      selectedTerms,
+    });
+
+    try {
+      const results = await registerAccount(data, 'individual');
+
+      if (results?.isOk) {
+        const resultsBody = results?.body;
+        clearState();
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'registerAccount succeeded',
+          level: 'info',
+        });
+        navigation.navigate(screenName.verifyEmail, {
+          account: { id: resultsBody.data, type: 'individual' },
+        });
+      } else {
+        Sentry.setContext('registerResponse', {
+          status: results?.isOk ?? null,
+          message: results?.body?.message ?? null,
+        });
+        Sentry.captureMessage('registerAccount returned non-ok', 'error');
+
+        updateModal({
+          message: results?.body.message,
+          modalType: 'error',
+          showModal: true,
+        });
+      }
+    } catch (err: any) {
+      // unexpected exception
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'registerAccount threw exception',
+        level: 'error',
       });
-    } else {
+      Sentry.captureException(err);
+
       updateModal({
-        message: results?.body.message,
+        message: err?.message ?? 'Something went wrong during registration',
         modalType: 'error',
         showModal: true,
       });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleAcceptTerms = (index: number) => {
+    Sentry.addBreadcrumb({
+      category: 'ui',
+      message: `Toggled terms checkbox ${index}`,
+      level: 'info',
+    });
+
     if (selectedTerms.includes(index)) {
       setSelectedTerms(selectedTerms.filter((selectedTab) => selectedTab !== index));
     } else {
@@ -71,9 +118,22 @@ export default function TermsAndConditions() {
   };
 
   const openLegalLink = async () => {
+    Sentry.addBreadcrumb({
+      category: 'navigation',
+      message: 'Opening legal link (collector)',
+      level: 'info',
+    });
+
     try {
       await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=collector');
     } catch (error) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'openLegalLink failed',
+        level: 'error',
+      });
+      Sentry.captureException(error);
+
       updateModal({
         showModal: true,
         modalType: 'error',

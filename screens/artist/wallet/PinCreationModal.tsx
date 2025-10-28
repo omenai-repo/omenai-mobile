@@ -1,10 +1,11 @@
 import { BlurView } from 'expo-blur';
-import { update } from 'lodash';
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Modal, Pressable, TextInput } from 'react-native';
+import * as Sentry from '@sentry/react-native';
 import { updateWalletPin } from 'services/wallet/updateWalletPin';
 import { useModalStore } from 'store/modal/modalStore';
 import tw from 'twrnc';
+import { useAppStore } from 'store/app/appStore';
 
 export const PinCreationModal = ({
   visible,
@@ -24,12 +25,24 @@ export const PinCreationModal = ({
   const confirmPinRefs = useRef<Array<TextInput | null>>([]);
 
   const { updateModal } = useModalStore();
+  const { userSession } = useAppStore();
 
   useEffect(() => {
     if (!visible) {
       setPin(['', '', '', '']);
       setConfirmPin(['', '', '', '']);
       setError('');
+      Sentry.addBreadcrumb({
+        category: 'ui.modal',
+        message: 'PinCreationModal closed',
+        level: 'info',
+      });
+    } else {
+      Sentry.addBreadcrumb({
+        category: 'ui.modal',
+        message: 'PinCreationModal opened',
+        level: 'info',
+      });
     }
   }, [visible]);
 
@@ -101,10 +114,30 @@ export const PinCreationModal = ({
       return;
     }
 
+    // Breadcrumb: user initiated submit
+    Sentry.addBreadcrumb({
+      category: 'user.action',
+      message: 'User submitted wallet PIN',
+      level: 'info',
+    });
+
+    Sentry.setContext('pinAction', {
+      userId: userSession?.id ?? null,
+      pinLength: pinStr.length,
+      confirmMatches: pinStr === confirmPinStr,
+    });
+
     setLoading(true);
     try {
-      const response = await updateWalletPin(pinStr);
+      const response = await updateWalletPin(pinStr); // DO NOT log pinStr anywhere
+
       if (response?.isOk) {
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'updateWalletPin succeeded',
+          level: 'info',
+        });
+
         onClose();
         updateModal({
           message: 'PIN set successfully',
@@ -112,9 +145,19 @@ export const PinCreationModal = ({
           modalType: 'success',
         });
       } else {
+        Sentry.setContext('updateWalletPinResponse', { message: response?.message || null });
+        Sentry.captureMessage('updateWalletPin returned non-ok', 'error');
+
         setError(response?.message || 'Failed to set PIN');
       }
-    } catch {
+    } catch (err: any) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'updateWalletPin threw exception',
+        level: 'error',
+      });
+      Sentry.captureException(err);
+
       setError('An error occurred');
     } finally {
       setLoading(false);
@@ -133,7 +176,9 @@ export const PinCreationModal = ({
             {pin.map((digit, i) => (
               <TextInput
                 key={`pin-${i}`}
-                ref={(ref) => (pinRefs.current[i] = ref)}
+                ref={(ref) => {
+                  pinRefs.current[i] = ref;
+                }}
                 style={tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`}
                 keyboardType="numeric"
                 maxLength={1}
@@ -149,7 +194,9 @@ export const PinCreationModal = ({
             {confirmPin.map((digit, i) => (
               <TextInput
                 key={`confirm-${i}`}
-                ref={(ref) => (confirmPinRefs.current[i] = ref)}
+                ref={(ref) => {
+                  confirmPinRefs.current[i] = ref;
+                }}
                 style={tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`}
                 keyboardType="numeric"
                 maxLength={1}

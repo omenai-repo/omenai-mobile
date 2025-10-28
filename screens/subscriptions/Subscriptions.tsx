@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, Platform } from 'react-native';
-import React, { use } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import * as Sentry from '@sentry/react-native';
 import InActiveSubscription from './features/InActiveSubscription';
 import { useAppStore } from 'store/app/appStore';
 import ActiveSubscriptions from './features/ActiveSubscriptions';
@@ -22,44 +23,97 @@ export default function Subscriptions() {
     queryKey: ['subscription_precheck'],
     queryFn: async () => {
       try {
-        // Fetch account ID first, as it's required for the next call
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'getAccountID called',
+          level: 'info',
+        });
+
         const acc: any = await getAccountID(userSession.email);
+
         if (!acc?.isOk) {
+          Sentry.setContext('getAccountID', { response: acc, email: userSession.email });
+          Sentry.captureMessage('getAccountID returned non-ok response', 'error');
+
           updateModal({
             message: 'Something went wrong, Please refresh again',
             modalType: 'error',
             showModal: true,
           });
+
+          return {
+            isSubmitted: false,
+            id: '',
+            isSubActive: false,
+            subscription_data: null,
+            subscription_plan: null,
+          };
         }
+
+        const connectedAccountId = acc.data?.connected_account_id;
+
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'Starting parallel requests for stripe onboarding & subscription data',
+          level: 'info',
+        });
 
         // Start retrieving subscription data while fetching Stripe onboarding status
         const [response, sub_check]: any = await Promise.all([
-          checkIsStripeOnboarded(acc.data.connected_account_id), // Dependent on account ID
+          checkIsStripeOnboarded(connectedAccountId), // Dependent on account ID
           retrieveSubscriptionData(userSession.id), // Independent
         ]);
 
         if (!response?.isOk || !sub_check?.isOk) {
+          Sentry.setContext('subscriptionPrecheck', {
+            stripeOnboardResponse: response,
+            subscriptionResponse: sub_check,
+            connectedAccountId,
+            userId: userSession.id,
+          });
+          Sentry.captureMessage('One or more subscription precheck calls returned non-ok', 'error');
+
           updateModal({
             message: 'Something went wrong, Please refresh again',
             modalType: 'error',
             showModal: true,
           });
+
+          return {
+            isSubmitted: !!response?.details_submitted,
+            id: connectedAccountId ?? '',
+            isSubActive: !!sub_check?.data?.subscription_id,
+            subscription_data: sub_check?.data ?? null,
+            subscription_plan: sub_check?.plan ?? null,
+          };
         }
 
         return {
           isSubmitted: response.details_submitted,
-          id: acc.data.connected_account_id,
+          id: connectedAccountId,
           isSubActive: sub_check?.data?.subscription_id ? true : false,
           subscription_data: sub_check.data,
           subscription_plan: sub_check.plan,
         };
-      } catch (error) {
+      } catch (error: any) {
+        Sentry.addBreadcrumb({
+          category: 'exception',
+          message: 'Unhandled error in subscription_precheck',
+          level: 'error',
+        });
+
+        Sentry.setContext('subscriptionPrecheckCatch', {
+          userId: userSession?.id,
+          email: userSession?.email,
+        });
+        Sentry.captureException(error);
+
         updateModal({
           message: 'Something went wrong, Please refresh again',
           modalType: 'error',
           showModal: true,
         });
-        // Return a default object to satisfy the return type
+
         return {
           isSubmitted: false,
           id: '',

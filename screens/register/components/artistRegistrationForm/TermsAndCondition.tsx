@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from 'react-native';
 import React from 'react';
+import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
 import { checkedBox, uncheckedBox } from 'utils/SvgImages';
@@ -47,6 +48,12 @@ const TermsAndCondition = () => {
   ];
 
   const handleCheckPress = (id: number) => {
+    Sentry.addBreadcrumb({
+      category: 'ui',
+      message: `Toggled artist terms checkbox ${id}`,
+      level: 'info',
+    });
+
     if (selectedTerms.includes(id)) {
       setSelectedTerms(selectedTerms.filter((checkId: number) => checkId !== id));
     } else {
@@ -58,53 +65,139 @@ const TermsAndCondition = () => {
     try {
       setIsLoading(true);
 
+      Sentry.addBreadcrumb({
+        category: 'user.action',
+        message: 'Artist registration initiated',
+        level: 'info',
+      });
+
       const { name, email, password, address, logo, art_style, phone, base_currency } =
         artistRegisterData;
 
-      if (logo === null) return;
+      if (!logo) {
+        Sentry.addBreadcrumb({
+          category: 'validation',
+          message: 'Artist registration aborted: missing logo',
+          level: 'warning',
+        });
+        updateModal({
+          message: 'Please upload a logo before proceeding',
+          modalType: 'error',
+          showModal: true,
+        });
+        setIsLoading(false);
+        return;
+      }
 
+      // prepare file for upload
       const files = {
         uri: logo.assets[0].uri,
         name: logo.assets[0].fileName,
         type: logo.assets[0].mimeType,
       };
+
+      Sentry.addBreadcrumb({
+        category: 'network',
+        message: 'uploadLogo - start',
+        level: 'info',
+      });
+
       const fileUploaded = await uploadLogo(files);
 
-      if (fileUploaded) {
-        const payload = {
-          name,
-          email,
-          password,
-          logo: fileUploaded.$id,
-          address,
-          art_style,
-          base_currency,
-          phone,
-          device_push_token: expoPushToken ?? '',
-        };
+      if (!fileUploaded) {
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'uploadLogo - returned falsy result',
+          level: 'error',
+        });
+        updateModal({
+          message: 'Failed to upload logo. Please try again.',
+          modalType: 'error',
+          showModal: true,
+        });
+        setIsLoading(false);
+        return;
+      }
 
-        const results = await registerAccount(payload, 'artist');
+      Sentry.addBreadcrumb({
+        category: 'network',
+        message: `uploadLogo - success (fileId: ${fileUploaded.$id})`,
+        level: 'info',
+      });
 
-        if (results?.isOk) {
-          clearState();
-          navigation.navigate(screenName.verifyEmail, {
-            account: { id: results.body.data, type: 'artist' },
-          });
-        } else {
+      const payload = {
+        name,
+        email,
+        password,
+        logo: fileUploaded.$id,
+        address,
+        art_style,
+        base_currency,
+        phone,
+        device_push_token: expoPushToken ?? '',
+      };
+
+      Sentry.addBreadcrumb({
+        category: 'network',
+        message: 'registerAccount - start',
+        level: 'info',
+      });
+
+      const results = await registerAccount(payload, 'artist');
+
+      if (results?.isOk) {
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'registerAccount succeeded',
+          level: 'info',
+        });
+
+        clearState();
+        navigation.navigate(screenName.verifyEmail, {
+          account: { id: results.body.data, type: 'artist' },
+        });
+      } else {
+        try {
           await storage.deleteFile({
             bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
             fileId: fileUploaded.$id,
           });
-          updateModal({
-            message: results?.body.message,
-            modalType: 'error',
-            showModal: true,
+          Sentry.addBreadcrumb({
+            category: 'network',
+            message: `uploadLogo cleaned up (fileId: ${fileUploaded.$id})`,
+            level: 'info',
           });
+        } catch (cleanupErr) {
+          Sentry.addBreadcrumb({
+            category: 'exception',
+            message: `Failed to cleanup uploaded logo ${fileUploaded.$id}`,
+            level: 'warning',
+          });
+          Sentry.captureException(cleanupErr);
         }
+
+        Sentry.setContext('registerResponse', {
+          status: results?.isOk ?? null,
+          message: results?.body?.message ?? null,
+        });
+        Sentry.captureMessage('registerAccount returned non-ok (artist)', 'error');
+
+        updateModal({
+          message: results?.body.message,
+          modalType: 'error',
+          showModal: true,
+        });
       }
     } catch (error: any) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'Artist registration threw exception',
+        level: 'error',
+      });
+      Sentry.captureException(error);
+
       updateModal({
-        message: error.message,
+        message: error?.message ?? 'Something went wrong during registration',
         modalType: 'error',
         showModal: true,
       });
@@ -125,9 +218,22 @@ const TermsAndCondition = () => {
 
   // Open the Terms of Use and Privacy Policy link inside the app
   const openLegalLink = async () => {
+    Sentry.addBreadcrumb({
+      category: 'navigation',
+      message: 'Opening legal link (artist)',
+      level: 'info',
+    });
+
     try {
       await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=artist');
     } catch (error) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'openLegalLink failed',
+        level: 'error',
+      });
+      Sentry.captureException(error);
+
       updateModal({
         showModal: true,
         modalType: 'error',

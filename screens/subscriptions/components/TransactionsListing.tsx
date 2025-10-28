@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { View, Text, ActivityIndicator, FlatList, Platform } from 'react-native';
+import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
@@ -8,13 +9,12 @@ import { formatISODate } from 'utils/utils_formatISODate';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { fetchSubscriptionTransactions } from 'services/transactions/fetchSubscriptionTransactions';
 
-// ---- types (adjust if your service returns differently)
 type Txn = {
   trans_id: string;
   status: 'successful' | 'failed' | 'pending' | string;
-  date: string; // ISO
+  date: string;
   amount: number;
-  currency?: string; // optional
+  currency?: string;
 };
 
 export default function TransactionsListing() {
@@ -28,18 +28,52 @@ export default function TransactionsListing() {
   } = useQuery({
     queryKey: ['fetch_sub_trans', user?.id],
     queryFn: async () => {
-      const res = await fetchSubscriptionTransactions(user.id);
-      if (res?.isOk) return res.data as Txn[];
-      throw new Error(res?.message || 'Something went wrong');
+      Sentry.addBreadcrumb({
+        category: 'network',
+        message: 'fetchSubscriptionTransactions - start',
+        level: 'info',
+      });
+
+      try {
+        const res = await fetchSubscriptionTransactions(user.id);
+
+        if (!res?.isOk) {
+          Sentry.setContext('fetchSubscriptionTransactionsResponse', {
+            userId: user?.id,
+            response: res,
+          });
+          Sentry.captureMessage(
+            `fetchSubscriptionTransactions returned non-ok for user ${user?.id}`,
+            'error',
+          );
+          throw new Error(res?.message || 'Failed to fetch subscription transactions');
+        }
+
+        Sentry.addBreadcrumb({
+          category: 'network',
+          message: 'fetchSubscriptionTransactions - success',
+          level: 'info',
+        });
+
+        return res.data as Txn[];
+      } catch (e: any) {
+        Sentry.addBreadcrumb({
+          category: 'exception',
+          message: 'fetchSubscriptionTransactions - exception',
+          level: 'error',
+        });
+        Sentry.captureException(e);
+        throw e;
+      }
     },
     refetchOnWindowFocus: false,
     staleTime: 0,
     gcTime: 0,
+    enabled: !!user?.id,
   });
 
   const list = useMemo(() => {
     if (!transactions) return [];
-    // mirror web: newest last → reverse for top-down timeline
     return [...transactions].reverse();
   }, [transactions]);
 
@@ -116,7 +150,6 @@ function Row({ item, index }: { item: Txn; index: number }) {
       ? tw`text-red-600`
       : tw`text-amber-600`;
 
-  // match web default "USD" formatting when currency not provided
   const amountLabel = utils_formatPrice(item.amount, item.currency ?? 'USD');
 
   return (

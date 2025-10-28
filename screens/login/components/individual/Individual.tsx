@@ -1,5 +1,6 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
+import * as Sentry from '@sentry/react-native';
 import { useIndividualAuthLoginStore } from '../../../../store/auth/login/IndividualAuthLoginStore';
 import PasswordInput from '../../../../components/inputs/PasswordInput';
 import Input from '../../../../components/inputs/Input';
@@ -11,7 +12,6 @@ import { screenName } from '../../../../constants/screenNames.constants';
 import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
 import { useAppStore } from 'store/app/appStore';
 import { useModalStore } from 'store/modal/modalStore';
-import { add } from 'lodash';
 
 export default function Individual() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -24,21 +24,49 @@ export default function Individual() {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const results = await loginAccount(
-      { ...individualLoginData, device_push_token: expoPushToken ?? '' },
-      'individual',
-    );
+    Sentry.addBreadcrumb({
+      category: 'auth',
+      message: 'collector login attempt',
+      level: 'info',
+    });
 
-    if (results?.isOk) {
+    try {
+      const results = await loginAccount(
+        { ...individualLoginData, device_push_token: expoPushToken ?? '' },
+        'individual',
+      );
+
+      if (!results?.isOk) {
+        Sentry.setContext('loginAccountResponse', {
+          body: results?.body ?? null,
+          status: results?.isOk ?? null,
+        });
+        Sentry.captureMessage('loginAccount returned non-ok response', 'error');
+
+        updateModal({
+          message: results?.body?.message,
+          showModal: true,
+          modalType: 'error',
+        });
+        return;
+      }
+
       const resultsBody = results?.body?.data;
 
       if (resultsBody.verified === false) {
+        Sentry.addBreadcrumb({
+          category: 'auth',
+          message: 'user unverified - navigating to verifyEmail',
+          level: 'info',
+        });
+
         setIsLoading(false);
         navigation.navigate(screenName.verifyEmail, {
           account: { id: resultsBody.user_id, type: 'individual' },
         });
         return;
       }
+
       const data = {
         id: resultsBody.user_id,
         email: resultsBody.email,
@@ -51,6 +79,7 @@ export default function Individual() {
         logo: resultsBody.logo,
       };
 
+      // Store session
       const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));
 
       const loginTimeStamp = new Date();
@@ -60,20 +89,61 @@ export default function Individual() {
       );
 
       if (isStored && isLoginTimeStampStored) {
+        if (__DEV__) {
+          Sentry.setUser({
+            id: String(data.id),
+            email: data.email,
+            username: data.name,
+          });
+        } else {
+          Sentry.setUser({ id: String(data.id) });
+        }
+        setUserSession(data);
+        setIsLoggedIn(true);
+        clearInputs();
+
+        Sentry.addBreadcrumb({
+          category: 'auth',
+          message: 'collector login succeeded',
+          level: 'info',
+        });
+      } else {
+        Sentry.setContext('loginStorage', {
+          isStored,
+          isLoginTimeStampStored,
+        });
+        Sentry.captureMessage('Failed to persist login session to async storage', 'error');
+
+        if (__DEV__) {
+          Sentry.setUser({
+            id: String(data.id),
+            email: data.email,
+            username: data.name,
+          });
+        } else {
+          Sentry.setUser({ id: String(data.id) });
+        }
+
         setUserSession(data);
         setIsLoggedIn(true);
         clearInputs();
       }
-    } else {
-      // Alert.alert(results?.body.message)
+    } catch (error: any) {
+      Sentry.addBreadcrumb({
+        category: 'exception',
+        message: 'exception during individual login',
+        level: 'error',
+      });
+      Sentry.captureException(error);
+
       updateModal({
-        message: results?.body.message,
+        message: error?.message ?? 'An unexpected error occurred. Please try again.',
         showModal: true,
         modalType: 'error',
       });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
