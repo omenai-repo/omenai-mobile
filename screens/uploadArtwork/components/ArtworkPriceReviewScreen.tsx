@@ -1,12 +1,9 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   View,
   Text,
   Pressable,
   useWindowDimensions,
-  Linking,
-  Alert as RNAlert,
-  TouchableOpacity,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
@@ -39,8 +36,8 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
   const canProceed = acknowledgment && penaltyConsent && priceConsent;
 
   // prepare query inputs
-  const heightNum = parseFloat(extractNumberString(artworkUploadData.height));
-  const widthNum = parseFloat(extractNumberString(artworkUploadData.width));
+  const heightNum = Number.parseFloat(extractNumberString(artworkUploadData.height));
+  const widthNum = Number.parseFloat(extractNumberString(artworkUploadData.width));
 
   // Use tanstack/react-query for fetching price
   const {

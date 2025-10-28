@@ -70,44 +70,42 @@ const DeclineOrderModal = ({
 
   const getSubmittedReason = () => {
     if (orderModalMetadata.is_current_order_exclusive) {
-      // when exclusive & checkbox checked we override reason
       return checked ? 'Artwork is no longer available' : '';
     }
     return selectedReason ? declineReasonMapping[selectedReason] : '';
   };
 
-  useEffect(() => {
-    if (isModalVisible) {
-      Sentry.addBreadcrumb({
-        category: 'ui.modal',
-        message: 'DeclineOrderModal opened',
-        level: 'info',
+  const validateExclusiveOrder = () => {
+    if (!checked) {
+      updateModal({
+        message: 'Please confirm that the artwork has been sold off-platform to proceed.',
+        showModal: true,
+        modalType: 'error',
       });
+      return false;
     }
-  }, [isModalVisible]);
+    return true;
+  };
+
+  const validateNonExclusiveOrder = () => {
+    const reason = getSubmittedReason();
+    if (!reason) {
+      updateModal({
+        message: 'Please select a reason for declining this order.',
+        showModal: true,
+        modalType: 'error',
+      });
+      return false;
+    }
+    return true;
+  };
 
   const handleDecline = async () => {
-    // Validation
-    if (orderModalMetadata.is_current_order_exclusive) {
-      if (!checked) {
-        updateModal({
-          message: 'Please confirm that the artwork has been sold off-platform to proceed.',
-          showModal: true,
-          modalType: 'error',
-        });
-        return;
-      }
-    } else {
-      const reason = getSubmittedReason();
-      if (!reason) {
-        updateModal({
-          message: 'Please select a reason for declining this order.',
-          showModal: true,
-          modalType: 'error',
-        });
-        return;
-      }
-    }
+    const isValid = orderModalMetadata.is_current_order_exclusive
+      ? validateExclusiveOrder()
+      : validateNonExclusiveOrder();
+
+    if (!isValid) return;
 
     setLoading(true);
 
@@ -180,7 +178,17 @@ const DeclineOrderModal = ({
         showModal: true,
         modalType: 'error',
       });
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const getButtonBackground = () => {
+    if (loading) return 'bg-gray-300';
+    if (orderModalMetadata.is_current_order_exclusive) {
+      return checked ? 'bg-[#C71C16]' : 'bg-[#E5E7E7]';
+    }
+    return selectedReason ? 'bg-[#C71C16]' : 'bg-[#E5E7E7]';
   };
 
   return (
@@ -279,15 +287,7 @@ const DeclineOrderModal = ({
             disabled={loading}
             style={tw.style(
               `h-[46px] justify-center items-center rounded-[10px] mt-[16px]`,
-              loading
-                ? 'bg-gray-300'
-                : orderModalMetadata.is_current_order_exclusive
-                ? checked
-                  ? 'bg-[#C71C16]'
-                  : 'bg-[#E5E7E7]'
-                : selectedReason
-                ? 'bg-[#C71C16]'
-                : 'bg-[#E5E7E7]',
+              getButtonBackground(),
             )}
           >
             <Text style={tw`text-white text-[15px] font-semibold`}>

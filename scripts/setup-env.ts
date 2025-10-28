@@ -1,43 +1,9 @@
-# Omenai Mobile App
+#!/usr/bin/env ts-node
 
-## 🚀 Quick Start
+import { writeFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
-### 1. Environment Setup
-```bash
-# Setup environment files
-npm run setup:env
-
-# Edit the generated files with your actual values
-# .env.local - Development
-# .env.staging - Staging  
-# .env.production - Production
-```
-
-### 2. Install Dependencies
-```bash
-yarn install
-```
-
-### 3. Run Project
-```bash
-# Development
-yarn start
-
-# iOS
-yarn ios
-
-# Android
-yarn android
-```
-
-## 🔧 Environment Configuration
-
-The app uses environment variables for secure configuration. All sensitive data is stored in environment files and never committed to version control.
-
-### Required Environment Variables
-
-```bash
-# Environment
+const envTemplate = `# Environment Configuration
 EXPO_PUBLIC_ENV=development
 
 # API URLs
@@ -90,26 +56,26 @@ EXPO_PUBLIC_STRIPE_PK=your_stripe_public_key
 
 # Deep Links
 EXPO_PUBLIC_DEEPLINK_DEVELOPMENT=exp://172.20.10.2:8081
-```
+`;
 
-## 🏗️ Build Commands
+const environments = ['local', 'staging', 'production'];
 
-```bash
-# Development build
-npm run build:dev
+for (const env of environments) {
+  const filename = `.env.${env}`;
+  const filepath = join(process.cwd(), filename);
+  
+  if (existsSync(filepath)) {
+    console.log(`⚠️  ${filename} already exists, skipping...`);
+  } else {
+    const content = envTemplate.replace('EXPO_PUBLIC_ENV=development', `EXPO_PUBLIC_ENV=${env === 'local' ? 'development' : env}`);
+    writeFileSync(filepath, content);
+    console.log(`✅ Created ${filename}`);
+  }
+}
 
-# Staging build  
-npm run build:staging
-
-# Production build
-npm run build:prod
-```
-
-## 🔐 Security
-
-- All sensitive data is stored in environment files
-- Environment files are gitignored and never committed
-- Different configurations for each environment
-- Easy secret rotation without code changes
-
-**Note**: App will fail if environment variables are missing.
+console.log('\n🎉 Environment setup complete!');
+console.log('\n📝 Next steps:');
+console.log('1. Edit .env.local with your development values');
+console.log('2. Edit .env.staging with your staging values');
+console.log('3. Edit .env.production with your production values');
+console.log('4. Pleaseeeeeeeee!!!!!! Never commit these files to version control!');
