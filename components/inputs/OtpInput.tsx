@@ -92,14 +92,14 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   };
 
   const placeholderStyle = {
-    opacity: !!placeholder ? 0.5 : pinCodeTextStyle?.opacity || 1,
-    ...(!!placeholder ? placeholderTextStyle : {}),
+    opacity: placeholder ? 0.5 : pinCodeTextStyle?.opacity || 1,
+    ...(placeholder ? placeholderTextStyle : {}),
   };
 
   return (
     <View style={[tw`flex-row justify-between gap-2`, containerStyle, inputsContainerStyle]}>
       {new Array(numberOfDigits).fill(0).map((_, index) => {
-        const isPlaceholderCell = !!placeholder && !text?.[index];
+        const isPlaceholderCell = placeholder && !text?.[index];
         const char = isPlaceholderCell ? placeholder?.[index] || ' ' : text[index];
         const isFocusedInput = index === focusedInputIndex && !disabled && isFocused;
         const isFilledLastInput = text.length === numberOfDigits && index === text.length - 1;
