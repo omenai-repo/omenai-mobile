@@ -110,7 +110,7 @@ export default function TermsAndConditions() {
   const openLegalLink = async () => {
     try {
       await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=gallery');
-    } catch (error) {
+    } catch {
       updateModal({
         showModal: true,
         modalType: 'error',
