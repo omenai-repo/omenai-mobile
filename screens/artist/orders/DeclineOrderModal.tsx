@@ -101,7 +101,7 @@ const DeclineOrderModal = ({
 
   const submitDeclineOrder = async () => {
     const data = {
-      status: 'declined' as 'declined',
+      status: 'declined' as const,
       reason: getSubmittedReason(),
     };
     const seller_designation: 'artist' | 'gallery' =
@@ -217,9 +217,9 @@ const DeclineOrderModal = ({
                 Please choose a reason that best explains why you're declining this order.
               </Text>
               <ScrollView style={tw`max-h-[220px] mb-4`}>
-                {reasons.map((r, idx) => (
+                {reasons.map((r) => (
                   <Pressable
-                    key={idx}
+                    key={r}
                     onPress={() => toggleReason(r)}
                     style={tw`flex-row items-start gap-[10px] mb-4`}
                   >
