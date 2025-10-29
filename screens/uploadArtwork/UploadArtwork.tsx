@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import WithModal from 'components/modal/WithModal';
 import HeaderIndicator from './components/HeaderIndicator';
 import ArtworkDetails from './components/ArtworkDetails';
@@ -181,13 +181,13 @@ export default function UploadArtwork() {
   };
 
   const components = [
-    <ArtworkDetails />,
-    <ArtworkDimensions />,
-    ...(userType !== 'artist' ? [<Pricing />] : []),
-    <ArtistDetails />,
-    <UploadImage handleUpload={handleUpload} />,
+    <ArtworkDetails key="artwork-details" />,
+    <ArtworkDimensions key="artwork-dimensions" />,
+    ...(userType !== 'artist' ? [<Pricing key="pricing" />] : []),
+    <ArtistDetails key="artist-details" />,
+    <UploadImage key="upload-image" handleUpload={handleUpload} />,
     ...(userType === 'artist'
-      ? [<ArtworkPriceReviewScreen onConfirm={handleArtworkUpload} />]
+      ? [<ArtworkPriceReviewScreen key="price-review" onConfirm={handleArtworkUpload} />]
       : []),
   ];
 
