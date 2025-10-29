@@ -126,7 +126,7 @@ const TermsAndCondition = () => {
   const openLegalLink = async () => {
     try {
       await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=artist');
-    } catch (error) {
+    } catch {
       updateModal({
         showModal: true,
         modalType: 'error',
