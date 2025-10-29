@@ -19,6 +19,20 @@ type FilterItemProps = {
   isChecked: boolean;
   handleClick: (e: boolean) => void;
 };
+
+const FilterItem = ({ name, isChecked, handleClick }: Readonly<FilterItemProps>) => {
+  return (
+    <TouchableOpacity onPress={() => handleClick(!isChecked)}>
+      <View style={styles.itemContainer}>
+        <View style={[styles.checkBox, isChecked && { backgroundColor: colors.primary_black }]}>
+          {isChecked && <Feather name="check" size={15} color={colors.white} />}
+        </View>
+        <Text style={{ fontSize: 16 }}>{name}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 export default function FilterOptionBox({ filters, label }: Readonly<FilterOptionBoxTypes>) {
   const { updateFilter, setSelectedFilters, removeSingleFilterSelection, selectedFilters } =
     filterStore();
@@ -32,26 +46,13 @@ export default function FilterOptionBox({ filters, label }: Readonly<FilterOptio
     }
   };
 
-  const Item = ({ name, isChecked, handleClick }: Readonly<FilterItemProps>) => {
-    return (
-      <TouchableOpacity onPress={() => handleClick(!isChecked)}>
-        <View style={styles.itemContainer}>
-          <View style={[styles.checkBox, isChecked && { backgroundColor: colors.primary_black }]}>
-            {isChecked && <Feather name="check" size={15} color={colors.white} />}
-          </View>
-          <Text style={{ fontSize: 16 }}>{name}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <View style={styles.container}>
       {filters.map((filter, index) => (
-        <Item
+        <FilterItem
           name={filter.option}
           isChecked={hasFilterValue(selectedFilters, filter.option)}
-          handleClick={(e) => handleChange(e, filter.option, JSON.stringify(filter.value))}
+          handleClick={(e: boolean) => handleChange(e, filter.option, JSON.stringify(filter.value))}
           key={index}
         />
       ))}
