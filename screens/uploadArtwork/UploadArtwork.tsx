@@ -183,7 +183,7 @@ export default function UploadArtwork() {
   const components = [
     <ArtworkDetails key="artwork-details" />,
     <ArtworkDimensions key="artwork-dimensions" />,
-    ...(userType !== 'artist' ? [<Pricing key="pricing" />] : []),
+    ...(userType === 'artist' ? [] : [<Pricing key="pricing" />]),
     <ArtistDetails key="artist-details" />,
     <UploadImage key="upload-image" handleUpload={handleUpload} />,
     ...(userType === 'artist'
