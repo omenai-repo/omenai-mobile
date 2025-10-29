@@ -66,7 +66,7 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
         width: widthNum,
       });
 
-      if (!response || !response.isOk) {
+      if (!response?.isOk) {
         throw new Error(response?.data?.message || 'Failed to fetch price');
       }
 
