@@ -13,7 +13,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { screenName } from 'constants/screenNames.constants';
 import { storage } from 'appWrite_config';
 import { useAppStore } from 'store/app/appStore';
-import * as WebBrowser from 'expo-web-browser';
+import LegalLinkButton from 'components/general/LegalLinkButton';
 
 const TermsAndCondition = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -122,18 +122,6 @@ const TermsAndCondition = () => {
   const isProceedDisabled =
     !selectedTerms.includes(0) || !selectedTerms.includes(2) || !selectedTerms.includes(1);
 
-  // Open the Terms of Use and Privacy Policy link inside the app
-  const openLegalLink = async () => {
-    try {
-      await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=artist');
-    } catch {
-      updateModal({
-        showModal: true,
-        modalType: 'error',
-        message: 'Something went wrong while opening the Terms of Agreement.',
-      });
-    }
-  };
 
   return (
     <View>
@@ -168,12 +156,7 @@ const TermsAndCondition = () => {
         ))}
       </View>
 
-      {/* ⬇️ Link to Privacy Policy and Terms of Use */}
-      <Pressable onPress={openLegalLink} style={tw`mt-[20px]`}>
-        <Text style={tw`text-[14px] text-[#007AFF] text-center underline`}>
-          Read our Privacy Policy and Terms of Use
-        </Text>
-      </Pressable>
+      <LegalLinkButton entity="artist" updateModal={updateModal} />
 
       {/* ⬇️ Navigation Buttons */}
       <View style={tw`flex-row mt-[40px]`}>
