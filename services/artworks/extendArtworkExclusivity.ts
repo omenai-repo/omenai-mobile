@@ -20,7 +20,7 @@ export async function extendArtworkExclusivity(art_id: string) {
       message: result.message,
       data: result.data,
     };
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
       message: 'An error was encountered, please try again later or contact support',

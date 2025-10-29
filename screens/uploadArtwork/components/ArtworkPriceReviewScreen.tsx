@@ -84,7 +84,7 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
   const openTerms = async () => {
     try {
       await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=artist');
-    } catch (err) {
+    } catch {
       updateModal({
         showModal: true,
         modalType: 'error',
