@@ -47,7 +47,6 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
     data: priceData,
     isLoading,
     isError,
-    error,
     refetch,
   } = useQuery({
     queryKey: [
