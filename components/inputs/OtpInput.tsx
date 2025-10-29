@@ -42,6 +42,16 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   const [lastTypedIndex, setLastTypedIndex] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevTextRef = useRef(text);
+  const cellKeysRef = useRef<{ count: number; keys: string[] }>({ count: 0, keys: [] });
+
+  // Generate stable unique keys per numberOfDigits value
+  if (cellKeysRef.current.count !== numberOfDigits) {
+    cellKeysRef.current = {
+      count: numberOfDigits,
+      keys: Array.from({ length: numberOfDigits }, () => `otp-${Math.random().toString(36).substring(2, 11)}`),
+    };
+  }
+  const cellKeys = cellKeysRef.current.keys;
 
   const baseContainerStyle = tw`w-14 h-14 border border-gray-400 rounded-[15px] bg-white flex items-center justify-center`;
 
@@ -98,7 +108,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
 
   return (
     <View style={[tw`flex-row justify-between gap-2`, containerStyle, inputsContainerStyle]}>
-      {new Array(numberOfDigits).fill(0).map((_, index) => {
+      {cellKeys.map((cellKey, index) => {
         const isPlaceholderCell = placeholder && !text?.[index];
         const char = isPlaceholderCell ? placeholder?.[index] || ' ' : text[index];
         const isFocusedInput = index === focusedInputIndex && !disabled && isFocused;
@@ -108,7 +118,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
 
         return (
           <Pressable
-            key={`otp-${index}`}
+            key={cellKey}
             disabled={disabled}
             onPress={handlePress}
             style={generatePinCodeContainerStyle(isFocusedContainer, char)}
