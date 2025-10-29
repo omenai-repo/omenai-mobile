@@ -32,7 +32,9 @@ export default function PayoutDashboard({
       setIsLoading(true);
       try {
         const balance_result = await retrieveBalance(account_id);
-        if (!balance_result?.isOk) {
+        if (balance_result?.isOk) {
+          setBalance(balance_result.data);
+        } else {
           Sentry.setContext('stripeBalance', {
             account_id,
             response: balance_result,
@@ -44,8 +46,6 @@ export default function PayoutDashboard({
             modalType: 'error',
             showModal: true,
           });
-        } else {
-          setBalance(balance_result.data);
         }
 
         // Breadcrumb before fetching transactions
@@ -56,19 +56,7 @@ export default function PayoutDashboard({
         });
 
         const transactions_result = await fetchTransactions();
-        // console.log(transactions_result);
-        if (!transactions_result?.isOk) {
-          Sentry.setContext('transactionsFetch', {
-            response: transactions_result,
-          });
-          Sentry.captureMessage('fetchTransactions returned non-ok response', 'error');
-
-          updateModal({
-            message: 'Something went wrong, please try again or contact support',
-            modalType: 'error',
-            showModal: true,
-          });
-        } else {
+        if (transactions_result?.isOk) {
           setTransactions(
             transactions_result.data.map(
               (
@@ -83,6 +71,17 @@ export default function PayoutDashboard({
               }),
             ),
           );
+        } else {
+          Sentry.setContext('transactionsFetch', {
+            response: transactions_result,
+          });
+          Sentry.captureMessage('fetchTransactions returned non-ok response', 'error');
+
+          updateModal({
+            message: 'Something went wrong, please try again or contact support',
+            modalType: 'error',
+            showModal: true,
+          });
         }
       } catch (error: any) {
         // capture unexpected errors

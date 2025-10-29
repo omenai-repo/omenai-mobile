@@ -167,13 +167,13 @@ const TermsAndCondition = () => {
             message: `uploadLogo cleaned up (fileId: ${fileUploaded.$id})`,
             level: 'info',
           });
-        } catch (cleanupErr) {
+        } catch (error) {
           Sentry.addBreadcrumb({
             category: 'exception',
             message: `Failed to cleanup uploaded logo ${fileUploaded.$id}`,
             level: 'warning',
           });
-          Sentry.captureException(cleanupErr);
+          Sentry.captureException(error);
         }
 
         Sentry.setContext('registerResponse', {

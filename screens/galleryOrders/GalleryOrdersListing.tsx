@@ -1,6 +1,6 @@
-import { FlatList, Image, Text, View, RefreshControl } from 'react-native';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { FlatList, Text, View, RefreshControl } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
 import WithModal from 'components/modal/WithModal';
 import TabSwitcher from 'components/orders/TabSwitcher';

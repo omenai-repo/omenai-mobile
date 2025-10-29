@@ -2,8 +2,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
-import { SvgXml } from 'react-native-svg';
-import { checkedBox, uncheckedBox } from 'utils/SvgImages';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import BackFormButton from 'components/buttons/BackFormButton';
 import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/GalleryAuthRegisterStore';
@@ -134,13 +132,13 @@ export default function TermsAndConditions() {
               message: `uploadLogo cleaned up (fileId: ${file.fileId})`,
               level: 'info',
             });
-          } catch (cleanupErr) {
+          } catch (error) {
             Sentry.addBreadcrumb({
               category: 'exception',
               message: `Failed to cleanup uploaded logo ${file.fileId}`,
               level: 'warning',
             });
-            Sentry.captureException(cleanupErr);
+            Sentry.captureException(error);
           }
 
           Sentry.setContext('registerResponse', {

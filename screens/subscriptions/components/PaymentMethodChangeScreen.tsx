@@ -3,7 +3,7 @@ import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import { useStripe } from '@stripe/stripe-react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAppStore } from 'store/app/appStore';
 import { createPaymentMethodSetupIntent } from 'services/stripe/createPaymentMethodSetupIntent';
@@ -12,8 +12,6 @@ import SuccessPaymentModal from './SuccessPaymentModal';
 
 export default function PaymentMethodChangeScreen() {
   const navigation = useNavigation<any>();
-  const route = useRoute<any>();
-  const { planId, planInterval } = route.params ?? {};
 
   const queryClient = useQueryClient();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();

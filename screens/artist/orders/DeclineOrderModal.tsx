@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
@@ -116,8 +116,11 @@ const DeclineOrderModal = ({
     });
 
     try {
-      const data = {
-        status: 'declined' as 'declined',
+      const data: {
+        status: '' | 'declined' | 'accepted';
+        reason: string;
+      } = {
+        status: 'declined',
         reason: getSubmittedReason(),
       };
       const seller_designation: 'artist' | 'gallery' =

@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, ActivityIndicator, FlatList, Platform } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';

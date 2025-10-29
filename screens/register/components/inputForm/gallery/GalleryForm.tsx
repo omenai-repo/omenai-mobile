@@ -2,9 +2,6 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import GalleryWaitList from '../../galleryWaitlist/GalleryWaitList';
 import GalleryRegisterForm from '../../galleryRegisterForm/GalleryRegisterForm';
-import LongBlackButton from '../../../../../components/buttons/LongBlackButton';
-import Input from '../../../../../components/inputs/Input';
-import { UseGalleryAuthStore } from '../../../../../store/auth/login/galleryAuthStore';
 import { useGalleryAuthRegisterStore } from 'store/auth/register/GalleryAuthRegisterStore';
 
 export default function GalleryForm() {

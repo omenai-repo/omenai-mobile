@@ -30,7 +30,9 @@ export default function StripePayouts({
       setLoading(true);
       try {
         const res = await checkIsStripeOnboarded(account_id);
-        if (!res?.isOk) {
+        if (res?.isOk) {
+          setIsSubmitted(res.details_submitted);
+        } else {
           Sentry.setContext('stripeOnboard', {
             account_id,
             response: res,
@@ -42,8 +44,6 @@ export default function StripePayouts({
             modalType: 'error',
             showModal: true,
           });
-        } else {
-          setIsSubmitted(res.details_submitted);
         }
       } catch (error: any) {
         Sentry.setContext('stripeOnboardCatch', {

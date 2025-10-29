@@ -1,5 +1,5 @@
 import { View, Text, useWindowDimensions, FlatList, RefreshControl } from 'react-native';
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState } from 'react';
 import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import BackHeaderTitle from 'components/header/BackHeaderTitle';
