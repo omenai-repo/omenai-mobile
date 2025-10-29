@@ -181,13 +181,13 @@ export default function UploadArtwork() {
   };
 
   const components = [
-    <ArtworkDetails />,
-    <ArtworkDimensions />,
-    ...(userType !== 'artist' ? [<Pricing />] : []),
-    <ArtistDetails />,
-    <UploadImage handleUpload={handleUpload} />,
+    <ArtworkDetails key="artwork-details" />,
+    <ArtworkDimensions key="artwork-dimensions" />,
+    ...(userType !== 'artist' ? [<Pricing key="pricing" />] : []),
+    <ArtistDetails key="artist-details" />,
+    <UploadImage key="upload-image" handleUpload={handleUpload} />,
     ...(userType === 'artist'
-      ? [<ArtworkPriceReviewScreen onConfirm={handleArtworkUpload} />]
+      ? [<ArtworkPriceReviewScreen key="price-review" onConfirm={handleArtworkUpload} />]
       : []),
   ];
 
