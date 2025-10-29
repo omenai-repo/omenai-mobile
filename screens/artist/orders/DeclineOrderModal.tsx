@@ -101,7 +101,7 @@ const DeclineOrderModal = ({
     setLoading(true);
     try {
       const data = {
-        status: 'declined' as 'declined',
+        status: 'declined' as const,
         reason: getSubmittedReason(),
       };
       const seller_designation: 'artist' | 'gallery' =
