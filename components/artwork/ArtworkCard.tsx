@@ -15,11 +15,8 @@ type ArtworkCardType = {
   url: string;
   price: number;
   artist: string;
-  rarity?: string;
-  medium?: string;
   showPrice?: boolean;
   availiablity?: boolean;
-  showTags?: boolean;
   lightText?: boolean;
   width?: number;
   art_id?: string;
@@ -94,7 +91,7 @@ export default function ArtworkCard({
                 style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
               >
                 <LikeComponent
-                  art_id={art_id}
+                  art_id={art_id || ''}
                   impressions={impressions || 0}
                   likeIds={like_IDs || []}
                   lightText={true}
