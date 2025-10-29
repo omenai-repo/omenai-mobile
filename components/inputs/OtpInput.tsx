@@ -42,13 +42,15 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   const [lastTypedIndex, setLastTypedIndex] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevTextRef = useRef(text);
-  const cellKeysRef = useRef<{ count: number; keys: string[] }>({ count: 0, keys: [] });
+  const cellKeysRef = useRef<{ count: number; keys: string[]; timestamp: number }>({ count: 0, keys: [], timestamp: Date.now() });
 
   // Generate stable unique keys per numberOfDigits value
   if (cellKeysRef.current.count !== numberOfDigits) {
+    const timestamp = Date.now();
     cellKeysRef.current = {
       count: numberOfDigits,
-      keys: Array.from({ length: numberOfDigits }, () => `otp-${Math.random().toString(36).substring(2, 11)}`),
+      timestamp,
+      keys: Array.from({ length: numberOfDigits }, (_, i) => `otp-${timestamp}-${i}`),
     };
   }
   const cellKeys = cellKeysRef.current.keys;
