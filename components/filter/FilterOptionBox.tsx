@@ -5,7 +5,7 @@ import { colors } from 'config/colors.config';
 import { Feather } from '@expo/vector-icons';
 
 type FilterOptionBoxTypes = {
-  filters: FilterValueType[];
+  filters: ReadonlyArray<FilterValueType>;
   label: string;
 };
 
@@ -19,7 +19,7 @@ type FilterItemProps = {
   isChecked: boolean;
   handleClick: (e: boolean) => void;
 };
-export default function FilterOptionBox({ filters, label }: FilterOptionBoxTypes) {
+export default function FilterOptionBox({ filters, label }: Readonly<FilterOptionBoxTypes>) {
   const { updateFilter, setSelectedFilters, removeSingleFilterSelection, selectedFilters } =
     filterStore();
 
@@ -28,12 +28,11 @@ export default function FilterOptionBox({ filters, label }: FilterOptionBoxTypes
       updateFilter(label, value);
       setSelectedFilters(value, filter, label);
     } else {
-      // removeFilter(label, e.target.value);
       removeSingleFilterSelection(filter);
     }
   };
 
-  const Item = ({ name, isChecked, handleClick }: FilterItemProps) => {
+  const Item = ({ name, isChecked, handleClick }: Readonly<FilterItemProps>) => {
     return (
       <TouchableOpacity onPress={() => handleClick(!isChecked)}>
         <View style={styles.itemContainer}>
@@ -66,8 +65,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    // position: 'absolute',
-    // top: '100%',
     zIndex: 500,
     padding: 15,
     gap: 15,
