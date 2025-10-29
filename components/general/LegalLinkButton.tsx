@@ -8,7 +8,7 @@ type LegalLinkButtonProps = {
   updateModal: (e: updateModalProps) => void;
 };
 
-export default function LegalLinkButton({ entity, updateModal }: LegalLinkButtonProps) {
+export default function LegalLinkButton({ entity, updateModal }: Readonly<LegalLinkButtonProps>) {
   return (
     <Pressable onPress={() => openLegalLink(entity, updateModal)} style={tw`mt-[20px]`}>
       <Text style={tw`text-[14px] text-[#007AFF] text-center underline`}>
