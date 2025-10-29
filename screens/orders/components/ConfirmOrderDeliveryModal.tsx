@@ -6,7 +6,6 @@ import LottieView from 'lottie-react-native';
 import loaderAnimation from 'assets/other/loader-animation.json';
 import { confirmOrderDelivery } from 'services/orders/confirmOrderDelivery';
 import { useModalStore } from 'store/modal/modalStore';
-import { useOrderStore } from 'store/orders/Orders';
 import { useCollectorOrders } from 'hooks/useCollectorOrders';
 
 type ConfirmDeliveryProps = {
@@ -20,12 +19,11 @@ const ConfirmOrderDeliveryModal = ({
   modalVisible,
   setModalVisible,
 }: ConfirmDeliveryProps) => {
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const animation = useRef(null);
   const [loading, setLoading] = useState(false);
   const { updateModal } = useModalStore();
   const { invalidate } = useCollectorOrders();
-  const { setRefreshTrigger, refreshTrigger } = useOrderStore();
 
   async function confirmDelivery() {
     setLoading(true);
