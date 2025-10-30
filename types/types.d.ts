@@ -179,6 +179,7 @@ type GalleryRegisterData = Pick<
   'name' | 'admin' | 'email' | 'password' | 'description'
 > & {
   logo: string;
+  device_push_token: string;
 };
 
 type GalleryWaitlistData = {
@@ -606,3 +607,9 @@ type ArtistCategory =
   | 'Late Mid-Career'
   | 'Established'
   | 'Elite';
+
+type updateModalProps = {
+  message: string;
+  showModal: boolean;
+  modalType: modalType | '';
+};

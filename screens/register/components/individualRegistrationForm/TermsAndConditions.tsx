@@ -1,19 +1,18 @@
-import { StyleSheet, Text, TouchableOpacity, View, Linking, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 import React from 'react';
 import * as Sentry from '@sentry/react-native';
 import * as WebBrowser from 'expo-web-browser';
-import FittedBlackButton from '../../../../components/buttons/FittedBlackButton';
-import BackFormButton from '../../../../components/buttons/BackFormButton';
-import { colors } from '../../../../config/colors.config';
-import { acceptTermsList } from '../../../../constants/accetTerms.constants';
-import { useIndividualAuthRegisterStore } from '../../../../store/auth/register/IndividualAuthRegisterStore';
-import { registerAccount } from '../../../../services/register/registerAccount';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import TermsAndConditionItem from '../../../../components/general/TermsAndConditionItem';
-import { screenName } from '../../../../constants/screenNames.constants';
+import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import BackFormButton from 'components/buttons/BackFormButton';
+import { colors } from 'config/colors.config';
+import { acceptTermsList } from 'constants/accetTerms.constants';
+import TermsAndConditionItem from 'components/general/TermsAndConditionItem';
+import { useIndividualAuthRegisterStore } from 'store/auth/register/IndividualAuthRegisterStore';
 import { useModalStore } from 'store/modal/modalStore';
 import { useAppStore } from 'store/app/appStore';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import { handleRegister } from 'utils/handleRegister';
 import tw from 'twrnc';
 
 export default function TermsAndConditions() {
@@ -32,108 +31,19 @@ export default function TermsAndConditions() {
   const { updateModal } = useModalStore();
   const { expoPushToken } = useAppStore();
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-
-    Sentry.addBreadcrumb({
-      category: 'user.action',
-      message: 'Collector attempted account registration',
-      level: 'info',
-    });
-
-    const data: Omit<IndividualRegisterData, 'confirmPassword'> & {
-      preferences: string[];
-      device_push_token: string;
-    } = {
-      ...individualRegisterData,
-      preferences,
-      device_push_token: expoPushToken ?? '',
-    };
-
-    Sentry.setContext('registerAttempt', {
-      email: individualRegisterData.email ?? null,
-      name: individualRegisterData.name ?? null,
-      preferences,
-      selectedTerms,
-    });
-
-    try {
-      const results = await registerAccount(data, 'individual');
-
-      if (results?.isOk) {
-        const resultsBody = results?.body;
-        clearState();
-        Sentry.addBreadcrumb({
-          category: 'network',
-          message: 'registerAccount succeeded',
-          level: 'info',
-        });
-        navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.data, type: 'individual' },
-        });
-      } else {
-        Sentry.setContext('registerResponse', {
-          status: results?.isOk ?? null,
-          message: results?.body?.message ?? null,
-        });
-        Sentry.captureMessage('registerAccount returned non-ok', 'error');
-
-        updateModal({
-          message: results?.body.message,
-          modalType: 'error',
-          showModal: true,
-        });
-      }
-    } catch (err: any) {
-      // unexpected exception
-      Sentry.addBreadcrumb({
-        category: 'exception',
-        message: 'registerAccount threw exception',
-        level: 'error',
-      });
-      Sentry.captureException(err);
-
-      updateModal({
-        message: err?.message ?? 'Something went wrong during registration',
-        modalType: 'error',
-        showModal: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleAcceptTerms = (index: number) => {
-    Sentry.addBreadcrumb({
-      category: 'ui',
-      message: `Toggled terms checkbox ${index}`,
-      level: 'info',
-    });
-
     if (selectedTerms.includes(index)) {
-      setSelectedTerms(selectedTerms.filter((selectedTab) => selectedTab !== index));
+      setSelectedTerms(selectedTerms.filter((i) => i !== index));
     } else {
       setSelectedTerms([...selectedTerms, index]);
     }
   };
 
   const openLegalLink = async () => {
-    Sentry.addBreadcrumb({
-      category: 'navigation',
-      message: 'Opening legal link (collector)',
-      level: 'info',
-    });
-
     try {
       await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=collector');
     } catch (error) {
-      Sentry.addBreadcrumb({
-        category: 'exception',
-        message: 'openLegalLink failed',
-        level: 'error',
-      });
       Sentry.captureException(error);
-
       updateModal({
         showModal: true,
         modalType: 'error',
@@ -142,22 +52,40 @@ export default function TermsAndConditions() {
     }
   };
 
+  const data: Omit<IndividualRegisterData, 'confirmPassword'> & {
+    preferences: string[];
+    device_push_token: string;
+  } = {
+    ...individualRegisterData,
+    preferences,
+    device_push_token: expoPushToken ?? '',
+  };
+
+  const handleSubmit = () =>
+    handleRegister({
+      accountType: 'individual',
+      navigation,
+      payload: data,
+      setIsLoading,
+      clearState,
+      updateModal,
+    });
+
   return (
     <View style={{ marginTop: 20 }}>
       <Text style={styles.title}>Accept terms and conditions</Text>
 
       <View style={styles.termsContainer}>
-        {acceptTermsList.map((i, idx) => (
+        {acceptTermsList.map((text, idx) => (
           <TermsAndConditionItem
-            writeUp={i}
             key={idx}
+            writeUp={text}
             isSelected={selectedTerms.includes(idx)}
             handleSelect={() => handleAcceptTerms(idx)}
           />
         ))}
       </View>
 
-      {/* Added privacy & terms links */}
       <Pressable onPress={openLegalLink} style={tw`mt-[20px]`}>
         <Text style={tw`text-[14px] text-[#007AFF] text-center underline`}>
           Read our Privacy Policy and Terms of Use
