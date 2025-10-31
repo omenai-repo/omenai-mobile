@@ -1,4 +1,4 @@
-import { editorial_database } from 'appWrite_config';
+import { editorial_database } from "appWrite_config";
 
 export async function listEditorials() {
   try {
@@ -10,10 +10,10 @@ export async function listEditorials() {
     const result = (await response).rows;
 
     return { isOk: true, data: result };
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
-      message: 'Something went wrong, please contact IT team',
+      message: "Something went wrong, please contact IT team",
     };
   }
 }

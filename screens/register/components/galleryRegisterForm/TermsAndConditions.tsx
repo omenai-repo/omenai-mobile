@@ -1,21 +1,19 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import { Text, View } from 'react-native';
 import { acceptTermsList } from '../../../../constants/accetTerms.constants';
 import TermsAndConditionItem from '../../../../components/general/TermsAndConditionItem';
 import FittedBlackButton from '../../../../components/buttons/FittedBlackButton';
 import BackFormButton from '../../../../components/buttons/BackFormButton';
 import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/GalleryAuthRegisterStore';
-import { colors } from '../../../../config/colors.config';
 import { registerAccount } from 'services/register/registerAccount';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { useModalStore } from 'store/modal/modalStore';
 import { storage } from 'appWrite_config';
-import tw from 'twrnc';
 import uploadLogo from 'screens/galleryProfileScreens/uploadNewLogo/uploadLogo';
 import { useAppStore } from 'store/app/appStore';
-import * as WebBrowser from 'expo-web-browser';
+import LegalLinkButton from '../../../../components/general/LegalLinkButton';
+import { termsAndConditionsStyles } from '../../../../components/general/TermsAndConditionsStyles';
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -106,23 +104,10 @@ export default function TermsAndConditions() {
     }
   };
 
-  // Open the Terms of Use and Privacy Policy link inside the app
-  const openLegalLink = async () => {
-    try {
-      await WebBrowser.openBrowserAsync('https://omenai.app/legal?ent=gallery');
-    } catch (error) {
-      updateModal({
-        showModal: true,
-        modalType: 'error',
-        message: 'Something went wrong while opening the Terms of Agreement.',
-      });
-    }
-  };
-
   return (
     <View>
-      <Text style={styles.title}>Accept terms and conditions</Text>
-      <View style={styles.termsContainer}>
+      <Text style={termsAndConditionsStyles.title}>Accept terms and conditions</Text>
+      <View style={termsAndConditionsStyles.termsContainer}>
         {acceptTermsList.map((i, idx) => (
           <TermsAndConditionItem
             writeUp={i}
@@ -133,14 +118,9 @@ export default function TermsAndConditions() {
         ))}
       </View>
 
-      {/* ⬇️ Link to Privacy Policy and Terms of Use */}
-      <Pressable onPress={openLegalLink} style={tw`mt-[20px]`}>
-        <Text style={tw`text-[14px] text-[#007AFF] text-center underline`}>
-          Read our Privacy Policy and Terms of Use
-        </Text>
-      </Pressable>
+      <LegalLinkButton entity="gallery" updateModal={updateModal} />
 
-      <View style={styles.buttonsContainer}>
+      <View style={termsAndConditionsStyles.buttonsContainer}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <FittedBlackButton
@@ -154,26 +134,3 @@ export default function TermsAndConditions() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontWeight: '500',
-    fontSize: 16,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
-    marginTop: 60,
-  },
-  termsContainer: {
-    marginTop: 20,
-    backgroundColor: '#FAFAFA',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
-    gap: 30,
-  },
-});

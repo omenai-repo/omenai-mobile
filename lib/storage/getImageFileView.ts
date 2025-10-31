@@ -12,7 +12,7 @@ export const getImageFileView = (
     fileId: fileId,
 
     width: width, // width, will be resized using this value.
-    height: height ? height : 0, // height, ignored when 0
+    height: height ?? 0, // height, ignored when 0
     gravity: ImageGravity.Center, // crop center
     quality: 90, // slight compression
     borderWidth: 0, // border width

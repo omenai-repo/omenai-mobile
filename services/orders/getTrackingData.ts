@@ -24,7 +24,7 @@ export async function getTrackingData(orderId: string) {
         shipping_details: result.shipping_details,
       },
     };
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
       message: 'An error was encountered, please try again later or contact support',
