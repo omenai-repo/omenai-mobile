@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, View } from "react-native";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import Modal from "react-native-modal";
 
 export default function ConfirmationModal({
