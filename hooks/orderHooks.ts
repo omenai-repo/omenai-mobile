@@ -24,7 +24,7 @@ export const useOrdersQuery = (updateModal: any) =>
     gcTime: 10 * 60_000,
   });
 
-export const useFilteredOrders = (orders: any[] = [], tab: string, year: number) => {
+export const useFilteredOrders = (tab: string, year: number, orders: any[] = []) => {
   const { pending, processing, completed } = useMemo(
     () => organizeOrders(Array.isArray(orders) ? orders : []),
     [orders],

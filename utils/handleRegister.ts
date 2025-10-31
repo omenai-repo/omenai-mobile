@@ -57,7 +57,7 @@ export const handleRegister = async ({
       }
 
       uploadedFile = { bucketId: fileUploaded.bucketId, fileId: fileUploaded.$id };
-      (payload as GalleryRegisterData | ArtistRegisterData).logo = uploadedFile.fileId;
+      payload.logo = uploadedFile.fileId;
     }
 
     // Register API

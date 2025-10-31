@@ -1,5 +1,5 @@
 import { useQuery, useIsFetching } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as Sentry from '@sentry/react-native';
 import { fetchArtistWalletData } from 'services/wallet/fetchArtistWalletData';
 import { useModalStore } from 'store/modal/modalStore';

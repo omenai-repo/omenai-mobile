@@ -113,7 +113,7 @@ export default function ArtistTermsAndCondition() {
       {/* Checks */}
       <View style={tw`border border-[#E0E0E0] bg-[#FAFAFA] rounded-[8px] p-[20px] gap-[25px]`}>
         {checks.map((text, idx) => (
-          <Pressable key={idx} onPress={() => toggleCheck(idx)} style={tw`flex-row gap-[15px]`}>
+          <Pressable key={text} onPress={() => toggleCheck(idx)} style={tw`flex-row gap-[15px]`}>
             <SvgXml xml={selectedTerms.includes(idx) ? checkedBox : uncheckedBox} />
             <Text style={tw`text-[14px] text-[#858585] leading-[20px] mr-[30px]`}>{text}</Text>
           </Pressable>
