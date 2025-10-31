@@ -1,23 +1,22 @@
 import { View, Text, FlatList, RefreshControl } from 'react-native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import DeclineOrderModal from './DeclineOrderModal';
-import { organizeOrders } from 'utils/utils_splitArray';
 import EmptyOrdersListing from 'screens/galleryOrders/components/EmptyOrdersListing';
 import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 import YearDropdown from './YearDropdown';
-import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
 import { useModalStore } from 'store/modal/modalStore';
 import WithModal from 'components/modal/WithModal';
 import TabSwitcher from 'components/orders/TabSwitcher';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import OrderContainer from 'components/orders/OrderContainer';
 import { ORDERS_QK } from 'utils/queryKeys';
 import * as Sentry from '@sentry/react-native';
+import { useFilteredOrders, useOrdersQuery } from 'hooks/orderHooks';
 
 const OrderScreen = () => {
   const navigation = useNavigation<any>();
@@ -36,58 +35,13 @@ const OrderScreen = () => {
     seller_designation: '',
   });
 
-  const isArtworkExclusiveDate = (createdAt: string | Date) => {
-    const created = new Date(createdAt).getTime();
-    const diffDays = (Date.now() - created) / (1000 * 60 * 60 * 24);
-    return diffDays <= 90;
-  };
+  const ordersQuery = useOrdersQuery(updateModal);
 
-  const ordersQuery = useQuery({
-    queryKey: ORDERS_QK,
-    queryFn: async () => {
-      Sentry.addBreadcrumb({
-        category: 'network',
-        message: 'getOrdersBySellerId - start',
-        level: 'info',
-      });
-
-      try {
-        const res = await getOrdersBySellerId();
-        if (!res?.isOk) {
-          Sentry.setContext('getOrdersBySellerIdResponse', { response: res });
-          Sentry.captureMessage('getOrdersBySellerId returned non-ok response', 'error');
-          throw new Error(res?.body?.message ?? 'Failed to load orders');
-        }
-
-        Sentry.addBreadcrumb({
-          category: 'network',
-          message: 'getOrdersBySellerId - success',
-          level: 'info',
-        });
-
-        return res.data;
-      } catch (err: any) {
-        Sentry.addBreadcrumb({
-          category: 'exception',
-          message: 'getOrdersBySellerId - exception',
-          level: 'error',
-        });
-        Sentry.captureException(err);
-
-        updateModal({
-          message: err?.message ?? 'Failed to load orders',
-          showModal: true,
-          modalType: 'error',
-        });
-        throw err;
-      }
-    },
-    staleTime: 30_000,
-    gcTime: 10 * 60_000,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    refetchOnWindowFocus: true,
-  });
+  const { pending, processing, currentOrders } = useFilteredOrders(
+    ordersQuery.data,
+    selectedTab,
+    selectedYear,
+  );
 
   const onRefresh = useCallback(() => {
     Sentry.addBreadcrumb({
@@ -98,36 +52,20 @@ const OrderScreen = () => {
     ordersQuery.refetch();
   }, [ordersQuery]);
 
-  const { pending, processing, completed } = useMemo(() => {
-    const parsed = organizeOrders(Array.isArray(ordersQuery.data) ? ordersQuery.data : []);
-    return parsed;
-  }, [ordersQuery.data]);
+  const handleDecline = useCallback((item: any) => {
+    const created = new Date(item?.createdAt).getTime();
+    const diffDays = (Date.now() - created) / (1000 * 60 * 60 * 24);
+    const isExclusive =
+      item?.artwork_data?.exclusivity_status?.exclusivity_type === 'exclusive' && diffDays <= 90;
 
-  const filterByYear = useCallback(
-    (arr: any[]) => {
-      if (!Array.isArray(arr)) return [];
-      return arr.filter((o) => {
-        const dt = new Date(o.createdAt);
-        return dt.getFullYear() === selectedYear;
-      });
-    },
-    [selectedYear],
-  );
-
-  const getCurrentOrders = () => {
-    switch (selectedTab) {
-      case 'pending':
-        return filterByYear(pending);
-      case 'processing':
-        return filterByYear(processing);
-      case 'completed':
-        return filterByYear(completed);
-      default:
-        return [];
-    }
-  };
-
-  const currentOrders = getCurrentOrders();
+    setOrderId(item?.order_id);
+    setOrderModalMetadata({
+      is_current_order_exclusive: isExclusive,
+      art_id: item?.artwork_data?.art_id,
+      seller_designation: item?.seller_designation || 'artist',
+    });
+    setDeclineModal(true);
+  }, []);
 
   const artistTabs = [
     { title: 'Pending', key: 'pending', count: pending?.length ?? 0 },
@@ -219,22 +157,7 @@ const OrderScreen = () => {
                             })
                         : undefined
                     }
-                    declineBtn={
-                      selectedTab === 'pending'
-                        ? () => {
-                            const isExclusive =
-                              item?.artwork_data?.exclusivity_status?.exclusivity_type ===
-                                'exclusive' && isArtworkExclusiveDate(item?.createdAt);
-                            setOrderId(item?.order_id);
-                            setOrderModalMetadata({
-                              is_current_order_exclusive: isExclusive,
-                              art_id: item?.artwork_data?.art_id,
-                              seller_designation: item?.seller_designation || 'artist',
-                            });
-                            setDeclineModal(true);
-                          }
-                        : undefined
-                    }
+                    declineBtn={selectedTab === 'pending' ? () => handleDecline(item) : undefined}
                     delivered={item?.shipping_details?.delivery_confirmed}
                     order_accepted={item?.order_accepted?.status}
                     order_decline_reason={item?.order_accepted?.reason}

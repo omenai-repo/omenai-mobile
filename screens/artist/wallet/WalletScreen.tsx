@@ -1,5 +1,5 @@
 import { View, Text, Image, Pressable, ScrollView, RefreshControl } from 'react-native';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as Sentry from '@sentry/react-native';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
@@ -11,36 +11,14 @@ import { fetchArtistTransactions } from 'services/wallet/fetchArtistTransactions
 import { useModalStore } from 'store/modal/modalStore';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { formatISODate } from 'utils/utils_formatISODate';
-import { MotiView } from 'moti';
 import WithModal from 'components/modal/WithModal';
 import { PinCreationModal } from './PinCreationModal';
 import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-export const WalletContainerSkeleton = () => {
-  const SkeletonBlock = ({ style }: { style: any }) => (
-    <MotiView
-      from={{ opacity: 0.3 }}
-      animate={{ opacity: 1 }}
-      transition={{ loop: true, type: 'timing', duration: 800 }}
-      style={[tw`bg-[#E7E7E7] rounded-md`, style]}
-    />
-  );
-  return (
-    <View
-      style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
-    >
-      <View style={tw`flex-row items-center gap-[15px] flex-1`}>
-        <SkeletonBlock style={tw`w-[50px] h-[50px] rounded-[10px]`} />
-        <View style={tw`gap-[5px]`}>
-          <SkeletonBlock style={tw`w-[150px] h-[14px]`} />
-          <SkeletonBlock style={tw`w-[100px] h-[10px]`} />
-        </View>
-      </View>
-      <SkeletonBlock style={tw`w-[80px] h-[15px]`} />
-    </View>
-  );
-};
+import { WalletContainerSkeleton } from './components/WalletContainerSkeleton';
+import { AccountDetailsSkeleton } from './components/AccountDetailsSkeleton';
+import { useArtistTransactionsQuery } from 'hooks/useArtistTransactionsQuery';
+import { useArtistWalletQuery } from 'hooks/useArtistWalletQuery';
 
 export const WalletContainer = ({
   status,
@@ -101,30 +79,6 @@ const BtnContainer = ({ label, onPress }: { label: string; onPress: () => void }
   </Pressable>
 );
 
-const AccountDetailsSkeleton = () => {
-  const SkeletonBlock = ({ style }: { style: any }) => (
-    <MotiView
-      from={{ opacity: 0.3 }}
-      animate={{ opacity: 1 }}
-      transition={{ loop: true, type: 'timing', duration: 1000 }}
-      style={[tw`bg-[#E7E7E7] rounded-md`, style]}
-    />
-  );
-  return (
-    <View style={tw`mx-[20px] mt-[20px]`}>
-      <View
-        style={tw`bg-white border border-[#00000033] rounded-[20px] px-[20px] py-[15px] mb-[20px]`}
-      >
-        <SkeletonBlock style={tw`w-[120px] h-[16px] mb-[10px]`} />
-        <View style={tw`flex-row items-center gap-[20px] mt-[10px]`}>
-          <SkeletonBlock style={tw`flex-1 h-[14px]`} />
-          <SkeletonBlock style={tw`w-[100px] h-[14px]`} />
-        </View>
-      </View>
-    </View>
-  );
-};
-
 // ---------- Query Keys
 const WALLET_QK = ['wallet', 'artist'] as const;
 const TXNS_QK = ['wallet', 'artist', 'txns', { status: 'all' }] as const;
@@ -136,117 +90,16 @@ const WalletScreen = () => {
 
   const [showAvailableBalance, setShowAvailableBalance] = useState(false);
   const [showPendingBalance, setShowPendingBalance] = useState(false);
-  const [showPinModal, setShowPinModal] = useState(false);
-
-  // ---- Wallet
-  const {
-    data: walletData,
-    isLoading: walletLoading,
-    refetch: refetchWallet,
-  } = useQuery({
-    queryKey: WALLET_QK,
-    queryFn: async () => {
-      Sentry.addBreadcrumb({
-        category: 'network',
-        message: 'fetchArtistWalletData - start',
-        level: 'info',
-      });
-      try {
-        const res = await fetchArtistWalletData();
-        if (!res?.isOk) {
-          Sentry.setContext('fetchArtistWalletDataResponse', { response: res });
-          Sentry.captureMessage('fetchArtistWalletData returned non-ok', 'error');
-          updateModal({
-            message: 'Error fetching wallet data',
-            showModal: true,
-            modalType: 'error',
-          });
-          throw new Error('wallet fetch failed');
-        }
-        Sentry.addBreadcrumb({
-          category: 'network',
-          message: 'fetchArtistWalletData - success',
-          level: 'info',
-        });
-        return res.data;
-      } catch (err: any) {
-        Sentry.addBreadcrumb({
-          category: 'exception',
-          message: 'fetchArtistWalletData - exception',
-          level: 'error',
-        });
-        Sentry.captureException(err);
-        updateModal({
-          message: err?.message ?? 'Error fetching wallet data',
-          showModal: true,
-          modalType: 'error',
-        });
-        throw err;
-      }
-    },
-
-    staleTime: 15_000, // 15s
-    gcTime: 10 * 60_000, // 10m
-    refetchOnMount: true, // only if stale
-    refetchOnWindowFocus: true, // only if stale
-    refetchOnReconnect: true, // only if stale
-  });
 
   const {
-    data: transactions,
-    isLoading: txnsLoading,
-    refetch: refetchTxns,
-  } = useQuery({
-    queryKey: TXNS_QK,
-    queryFn: async () => {
-      Sentry.addBreadcrumb({
-        category: 'network',
-        message: 'fetchArtistTransactions - start',
-        level: 'info',
-      });
-      try {
-        const res = await fetchArtistTransactions({ status: 'all' });
-        if (!res?.isOk) {
-          Sentry.setContext('fetchArtistTransactionsResponse', { response: res });
-          Sentry.captureMessage('fetchArtistTransactions returned non-ok', 'error');
-          updateModal({
-            message: 'Error fetching transactions',
-            showModal: true,
-            modalType: 'error',
-          });
-          throw new Error('txns fetch failed');
-        }
-        Sentry.addBreadcrumb({
-          category: 'network',
-          message: 'fetchArtistTransactions - success',
-          level: 'info',
-        });
-        return res.data;
-      } catch (err: any) {
-        Sentry.addBreadcrumb({
-          category: 'exception',
-          message: 'fetchArtistTransactions - exception',
-          level: 'error',
-        });
-        Sentry.captureException(err);
-        updateModal({
-          message: err?.message ?? 'Error fetching transactions',
-          showModal: true,
-          modalType: 'error',
-        });
-        throw err;
-      }
-    },
-    staleTime: 30_000, // 30s
-    gcTime: 10 * 60_000, // 10m
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-  });
-
-  // Spinner should reflect only these two queries being (re)fetched
-  const isFetchingWallet = useIsFetching({ queryKey: WALLET_QK }) > 0;
-  const isFetchingTxns = useIsFetching({ queryKey: TXNS_QK }) > 0;
+    walletData,
+    walletLoading,
+    refetchWallet,
+    isFetchingWallet,
+    showPinModal,
+    setShowPinModal,
+  } = useArtistWalletQuery();
+  const { transactions, txnsLoading, refetchTxns, isFetchingTxns } = useArtistTransactionsQuery();
 
   const isRefreshing = isFetchingWallet || isFetchingTxns;
 

@@ -212,7 +212,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
           {availability &&
             payment_information === 'completed' &&
             !delivery_confirmed &&
-            tracking_information.link.trim() && (
+            tracking_information.link && (
               <View style={{ flexDirection: 'row', gap: 10 }}>
                 <Pressable
                   onPress={trackBtn}

@@ -10,16 +10,16 @@ type GalleryAuthLoginStoreTypes = {
 };
 
 export const useGalleryAuthLoginStore = create<GalleryAuthLoginStoreTypes>((set, get) => ({
-  // galleryLoginData: {
-  //   email: 'dantereus1@gmail.com',
-  //   password: 'Test12345@',
-  //   device_push_token: '',
-  // },
   galleryLoginData: {
-    email: '',
-    password: '',
+    email: 'dantereus1@gmail.com',
+    password: 'Test12345@',
     device_push_token: '',
   },
+  // galleryLoginData: {
+  //   email: '',
+  //   password: '',
+  //   device_push_token: '',
+  // },
   setEmail: (email: string) => {
     const prevData = get().galleryLoginData;
     set({ galleryLoginData: { ...prevData, email: email } });

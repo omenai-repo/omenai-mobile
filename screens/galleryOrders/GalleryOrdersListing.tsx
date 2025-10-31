@@ -1,5 +1,5 @@
 import { FlatList, Text, View, RefreshControl } from 'react-native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
 import WithModal from 'components/modal/WithModal';
@@ -8,16 +8,14 @@ import OrderslistingLoader from './components/OrderslistingLoader';
 import EmptyOrdersListing from './components/EmptyOrdersListing';
 import YearDropdown from 'screens/artist/orders/YearDropdown';
 import { useModalStore } from 'store/modal/modalStore';
-import { getOrdersBySellerId } from 'services/orders/getOrdersBySellerId';
-import { organizeOrders } from 'utils/utils_splitArray';
 import DeclineOrderModal from 'screens/artist/orders/DeclineOrderModal';
 import OrderContainer from 'components/orders/OrderContainer';
 import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Sentry from '@sentry/react-native';
-import { useAppStore } from 'store/app/appStore';
+import { useFilteredOrders, useOrdersQuery } from 'hooks/orderHooks';
 
 const GALLERY_ORDERS_QK = ['orders', 'gallery'] as const;
 
@@ -26,7 +24,6 @@ export default function GalleryOrdersListing() {
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
-  const { userSession: user } = useAppStore();
 
   const [selectedTab, setSelectedTab] = useState<'pending' | 'processing' | 'completed'>('pending');
   const [openSection, setOpenSection] = useState<{ [key: string]: boolean }>({});
@@ -39,82 +36,13 @@ export default function GalleryOrdersListing() {
     seller_designation: 'gallery',
   });
 
-  const ordersQuery = useQuery({
-    queryKey: GALLERY_ORDERS_QK,
-    queryFn: async () => {
-      Sentry.addBreadcrumb({
-        category: 'network',
-        message: 'getOrdersBySellerId - start',
-        level: 'info',
-      });
+  const ordersQuery = useOrdersQuery(updateModal);
 
-      try {
-        const res = await getOrdersBySellerId();
-        if (!res?.isOk) {
-          Sentry.setContext('getOrdersBySellerIdResponse', { response: res, userId: user?.id });
-          Sentry.captureMessage('getOrdersBySellerId returned non-ok response', 'error');
-
-          updateModal({
-            message: 'Failed to fetch orders',
-            showModal: true,
-            modalType: 'error',
-          });
-
-          return [];
-        }
-
-        Sentry.addBreadcrumb({
-          category: 'network',
-          message: 'getOrdersBySellerId - success',
-          level: 'info',
-        });
-
-        return Array.isArray(res.data) ? res.data : [];
-      } catch (e: any) {
-        Sentry.addBreadcrumb({
-          category: 'exception',
-          message: 'getOrdersBySellerId - exception',
-          level: 'error',
-        });
-        Sentry.setContext('getOrdersBySellerIdCatch', { userId: user?.id });
-        Sentry.captureException(e);
-
-        updateModal({
-          message: e?.message ?? 'Failed to fetch orders',
-          showModal: true,
-          modalType: 'error',
-        });
-
-        return [];
-      }
-    },
-    staleTime: 30_000,
-    gcTime: 10 * 60_000,
-    refetchOnMount: true, // only if stale
-    refetchOnReconnect: true, // only if stale
-    refetchOnWindowFocus: true, // only if stale
-  });
-
-  // Split into tabs once
-  const { pending, processing, completed } = useMemo(() => {
-    const parsed = organizeOrders(ordersQuery.data ?? []);
-    return parsed;
-  }, [ordersQuery.data]);
-
-  const filterByYear = useCallback(
-    (arr: any[]) => {
-      if (!Array.isArray(arr)) return [];
-      return arr.filter((o) => new Date(o.createdAt).getFullYear() === selectedYear);
-    },
-    [selectedYear],
+  const { pending, processing, currentOrders } = useFilteredOrders(
+    ordersQuery.data,
+    selectedTab,
+    selectedYear,
   );
-
-  const currentOrders =
-    selectedTab === 'pending'
-      ? filterByYear(pending)
-      : selectedTab === 'processing'
-      ? filterByYear(processing)
-      : filterByYear(completed);
 
   const galleryTabs = [
     { title: 'Pending', key: 'pending', count: pending?.length ?? 0 },
@@ -215,11 +143,6 @@ export default function GalleryOrdersListing() {
                     acceptBtn={
                       selectedTab === 'pending'
                         ? () => {
-                            Sentry.addBreadcrumb({
-                              category: 'order',
-                              message: `Accept pressed for order ${item.order_id}`,
-                              level: 'info',
-                            });
                             navigation.navigate('DimensionsDetails', { orderId: item.order_id });
                           }
                         : undefined
@@ -227,11 +150,6 @@ export default function GalleryOrdersListing() {
                     declineBtn={
                       selectedTab === 'pending'
                         ? () => {
-                            Sentry.addBreadcrumb({
-                              category: 'order',
-                              message: `Decline initiated for order ${item.order_id}`,
-                              level: 'info',
-                            });
                             setOrderModalMetadata({
                               is_current_order_exclusive: false,
                               art_id: item.artwork_data?.art_id,
