@@ -55,9 +55,8 @@ export default function Profile() {
   }, [navigation]);
 
   const goToDeleteAccount = useCallback(() => {
-    console.log("goToDeleteAccount");
-    // navigation.navigate(screenName.deleteAccount, { routeName: 'individual' });
-  }, []);
+    navigation.navigate(screenName.deleteAccount, { routeName: 'individual' });
+  }, [navigation]);
 
   const menuItems = useMemo(
     () => [
