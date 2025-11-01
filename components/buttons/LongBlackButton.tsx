@@ -1,7 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TextStyle, TouchableOpacity, View } from "react-native";
 import React, { useRef } from "react";
 import { colors } from "../../config/colors.config";
 import LottieView from "lottie-react-native";
+import tw from "twrnc";
 import loaderAnimation from "../../assets/other/loader-animation.json";
 
 type LongBlackButtonProps = {
@@ -10,59 +11,60 @@ type LongBlackButtonProps = {
   onClick: () => void;
   isLoading?: boolean;
   bgColor?: string;
+  textColor?: string;
+  fontSize?: number;
+  fontWeight?: string | TextStyle["fontWeight"];
+  disabledBgColor?: string;
+  disabledTextColor?: string;
 };
 
 export default function LongBlackButton({
   value,
   onClick,
-  isDisabled,
-  isLoading,
-  bgColor,
+  isDisabled = false,
+  isLoading = false,
+  bgColor = colors.primary_black,
+  textColor = colors.white,
+  fontSize = 14,
+  fontWeight = "400",
+  disabledBgColor = "#E0E0E0",
+  disabledTextColor = "#A1A1A1",
 }: LongBlackButtonProps) {
   const animation = useRef(null);
 
-  if (isDisabled || isLoading)
+  const backgroundColor = isDisabled || isLoading ? disabledBgColor : bgColor;
+
+  const containerStyle = [
+    tw`h-[55px] w-full flex items-center justify-center rounded-[95px]`,
+    { backgroundColor },
+  ];
+
+  const textStyle = {
+    color: isDisabled ? disabledTextColor : textColor,
+    fontSize,
+    fontWeight: fontWeight as TextStyle["fontWeight"],
+  };
+
+  if (isDisabled || isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: "#E0E0E0" }]}>
+      <View style={containerStyle}>
         {isDisabled ? (
-          <Text style={[styles.text, { color: "#A1A1A1" }]}>{value}</Text>
+          <Text style={textStyle}>{value}</Text>
         ) : (
           <LottieView
             autoPlay
             ref={animation}
-            style={{
-              width: 100,
-              height: 100,
-            }}
+            style={tw`w-[100px] h-[100px]`}
             source={loaderAnimation}
           />
         )}
       </View>
     );
+  }
 
   return (
-    <TouchableOpacity
-      activeOpacity={1}
-      style={[styles.container, bgColor ? { backgroundColor: bgColor } : null]}
-      onPress={onClick}
-    >
-      <Text style={styles.text}>{value}</Text>
+    <TouchableOpacity activeOpacity={1} style={containerStyle} onPress={onClick}>
+      <Text style={textStyle}>{value}</Text>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 55,
-    width: "100%",
-    backgroundColor: colors.primary_black,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 95,
-  },
-  text: {
-    color: colors.white,
-    fontSize: 14,
-  },
-});
