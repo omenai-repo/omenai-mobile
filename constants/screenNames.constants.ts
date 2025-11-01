@@ -30,6 +30,7 @@ export const screenName = {
   artworksMedium: 'artworks-medium',
   artworkCategories: 'artwork-categories',
   verifyTransaction: 'verify-transaction',
+  deleteAccount: 'delete-account',
   gallery: {
     overview: 'Overview',
     artworks: 'Artworks',
