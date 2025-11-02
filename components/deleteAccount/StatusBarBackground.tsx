@@ -2,12 +2,12 @@ import React from "react";
 import { Animated, View } from "react-native";
 import tw from "twrnc";
 
-type StatusBarBackgroundProps = {
+type StatusBarBackgroundProps = Readonly<{
   insets: { top: number };
   opacity: Animated.AnimatedInterpolation<number>;
   shadowOpacity: Animated.AnimatedInterpolation<number>;
   elevation: Animated.AnimatedInterpolation<number>;
-};
+}>;
 
 export default function StatusBarBackground({
   insets,

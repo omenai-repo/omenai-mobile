@@ -3,12 +3,12 @@ import { Text, TouchableOpacity, View } from "react-native";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
 
-type RadioButtonProps = {
+type RadioButtonProps = Readonly<{
   label: string;
   isSelected: boolean;
   onPress: () => void;
   size?: "default" | "small";
-};
+}>;
 
 export default function RadioButton({
   label,
