@@ -5,11 +5,11 @@ import LongBlackButton from 'components/buttons/LongBlackButton';
 import { colors } from 'config/colors.config';
 import { BlurView } from 'expo-blur';
 
-type DeleteConfirmationModalProps = {
+type DeleteConfirmationModalProps = Readonly<{
   isVisible: boolean;
   onClose: () => void;
   onConfirmDelete: () => void;
-};
+}>;
 
 export default function DeleteConfirmationModal({
   isVisible,
