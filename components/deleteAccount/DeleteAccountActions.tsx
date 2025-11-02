@@ -3,11 +3,11 @@ import { Text, TouchableOpacity, View } from "react-native";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
 
-type DeleteAccountActionsProps = {
+type DeleteAccountActionsProps = Readonly<{
   onCancel: () => void;
   onContinue: () => void;
   isContinueDisabled: boolean;
-};
+}>;
 
 export default function DeleteAccountActions({
   onCancel,

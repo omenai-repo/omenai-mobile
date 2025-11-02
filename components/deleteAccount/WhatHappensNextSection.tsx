@@ -13,9 +13,9 @@ type WhatHappensNextItemWithHandler = WhatHappensNextItem & {
   onLinkPress?: () => void;
 };
 
-type WhatHappensNextSectionProps = {
+type WhatHappensNextSectionProps = Readonly<{
   onPrivacyPolicyPress?: () => void;
-};
+}>;
 
 export default function WhatHappensNextSection({
   onPrivacyPolicyPress,

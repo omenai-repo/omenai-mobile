@@ -3,6 +3,8 @@ import { Text, View } from "react-native";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
 
+type DeleteAccountHeaderProps = Readonly<Record<string, never>>;
+
 export default function DeleteAccountHeader() {
   return (
     <View style={tw`mb-5 flex-row items-center gap-3`}>

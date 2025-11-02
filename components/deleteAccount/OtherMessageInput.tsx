@@ -5,10 +5,10 @@ import { colors } from "config/colors.config";
 import { MAX_MESSAGE_LENGTH } from "constants/deleteAccount.constants";
 import DeleteAccountCard from "./DeleteAccountCard";
 
-type OtherMessageInputProps = {
+type OtherMessageInputProps = Readonly<{
   message: string;
   onMessageChange: (text: string) => void;
-};
+}>;
 
 export default function OtherMessageInput({
   message,

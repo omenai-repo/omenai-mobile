@@ -2,10 +2,10 @@ import React from "react";
 import { View, ViewStyle } from "react-native";
 import tw from "twrnc";
 
-type DeleteAccountCardProps = {
+type DeleteAccountCardProps = Readonly<{
   children: React.ReactNode;
   style?: ViewStyle | ViewStyle[];
-};
+}>;
 
 export default function DeleteAccountCard({
   children,
