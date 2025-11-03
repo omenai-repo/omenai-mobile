@@ -3,23 +3,23 @@ import { Text, View, Linking } from "react-native";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
 import {
-  whatHappensNextItems,
-  WhatHappensNextItem,
+  deletionProcessSteps,
+  DeletionProcessStep,
   PRIVACY_POLICY_URL
 } from "constants/deleteAccount.constants";
 import DeleteAccountCard from "./DeleteAccountCard";
 
-type WhatHappensNextItemWithHandler = WhatHappensNextItem & {
+type DeletionProcessStepWithHandler = DeletionProcessStep & {
   onLinkPress?: () => void;
 };
 
-type WhatHappensNextSectionProps = Readonly<{
+type DeletionProcessStepsProps = Readonly<{
   onPrivacyPolicyPress?: () => void;
 }>;
 
-export default function WhatHappensNextSection({
+export default function DeletionProcessSteps({
   onPrivacyPolicyPress,
-}: WhatHappensNextSectionProps) {
+}: DeletionProcessStepsProps) {
   const handlePrivacyPolicyPress = useCallback(() => {
     if (onPrivacyPolicyPress) {
       onPrivacyPolicyPress();
@@ -28,8 +28,8 @@ export default function WhatHappensNextSection({
     }
   }, [onPrivacyPolicyPress]);
 
-  const itemsWithHandlers = useMemo<WhatHappensNextItemWithHandler[]>(() => {
-    return whatHappensNextItems.map((item) => ({
+  const itemsWithHandlers = useMemo<DeletionProcessStepWithHandler[]>(() => {
+    return deletionProcessSteps.map((item) => ({
       ...item,
       onLinkPress: item.linkText ? handlePrivacyPolicyPress : undefined,
     }));
@@ -43,7 +43,7 @@ export default function WhatHappensNextSection({
         What happens next
       </Text>
       <View style={tw`gap-4`}>
-        {itemsWithHandlers.map((item: WhatHappensNextItemWithHandler, index: number) => (
+        {itemsWithHandlers.map((item: DeletionProcessStepWithHandler, index: number) => (
           <View key={item.id} style={tw`flex-row items-start`}>
             <View
               style={tw`w-6 h-6 rounded-full items-center justify-center mr-3 mt-0.5 flex-shrink-0 bg-[${colors.grey50}]`}

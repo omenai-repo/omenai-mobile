@@ -3,8 +3,6 @@ import { Text, View } from "react-native";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
 
-type DeleteAccountHeaderProps = Readonly<Record<string, never>>;
-
 export default function DeleteAccountHeader() {
   return (
     <View style={tw`mb-5 flex-row items-center gap-3`}>
@@ -23,7 +21,7 @@ export default function DeleteAccountHeader() {
           Delete your account
         </Text>
         <Text style={tw`leading-6 text-[${colors.grey}]`}>
-          You&apos;ll lose access to Omenai app.
+          This permanent action will delete your profile and all associated data.
         </Text>
       </View>
     </View>
