@@ -70,7 +70,7 @@ export default function CommitmentsModal({
   }
 
   const formatType = (type: string): string =>
-    type.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+    type.replaceAll("_", " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
   const generateCommitmentKey = (type: string, description: string): string => {
     const normalizedDescription = description
