@@ -80,7 +80,7 @@ export default function CommitmentsModal({
   const generateCommitmentKey = (type: string, description: string): string => {
     const descriptionHash = description
       .split("")
-      .reduce((hash, char) => hash + char.charCodeAt(0), 0)
+      .reduce((hash, char) => hash + (char.codePointAt(0) ?? 0), 0)
       .toString(36);
     return `${type}-${descriptionHash}`;
   };
