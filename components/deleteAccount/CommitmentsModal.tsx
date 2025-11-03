@@ -72,6 +72,15 @@ export default function CommitmentsModal({
   const formatType = (type: string): string =>
     type.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
+  const generateCommitmentKey = (type: string, description: string): string => {
+    const normalizedDescription = description
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/gi, "")
+      .toLowerCase()
+      .substring(0, 50);
+    return `${type}-${normalizedDescription}`;
+  };
+
   const renderBackdrop = (props: any) => (
     <BottomSheetBackdrop
       {...props}
@@ -120,8 +129,14 @@ export default function CommitmentsModal({
         </View>
 
         <View style={tw`gap-3 mb-6`}>
-          {commitments.map((commitment, index) => (
-            <View key={index} style={tw`flex-row items-start gap-3`}>
+          {commitments.map((commitment) => (
+            <View
+              key={generateCommitmentKey(
+                commitment.type,
+                commitment.description
+              )}
+              style={tw`flex-row items-start gap-3`}
+            >
               <View style={tw`mt-1`}>
                 <Entypo name="warning" size={20} color="#D97706" />
               </View>
