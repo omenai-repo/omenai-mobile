@@ -19,7 +19,7 @@ export default function OtherMessageInput({
       <Text
         style={tw`text-[15px] font-semibold mb-3 text-[${colors.primary_black}]`}
       >
-        Tell us more
+        Why are you leaving?
       </Text>
       <TextInput
         style={[
@@ -46,4 +46,3 @@ export default function OtherMessageInput({
     </DeleteAccountCard>
   );
 }
-
