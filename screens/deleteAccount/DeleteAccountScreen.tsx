@@ -5,6 +5,7 @@ import {
   Platform,
   Animated,
   Linking,
+  Text,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -19,7 +20,18 @@ import DeletionReasonSection from "components/deleteAccount/DeletionReasonSectio
 import OtherMessageInput from "components/deleteAccount/OtherMessageInput";
 import DeleteAccountActions from "components/deleteAccount/DeleteAccountActions";
 import StatusBarBackground from "components/deleteAccount/StatusBarBackground";
+import CommitmentsModal from "components/deleteAccount/CommitmentsModal";
 import { PRIVACY_POLICY_URL } from "constants/deleteAccount.constants";
+import { deleteAccount } from "services/requests/deleteAccount";
+import { useAppStore } from "store/app/appStore";
+import { useModalStore } from "store/modal/modalStore";
+import { logout } from "utils/logout.utils";
+
+type Commitment = {
+  type: string;
+  description: string;
+  metadata?: Record<string, any>;
+};
 
 export default function DeleteAccountScreen() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -29,8 +41,15 @@ export default function DeleteAccountScreen() {
     routeName: "individual",
   };
 
+  const { userSession } = useAppStore();
+  const { updateModal } = useModalStore();
+
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [otherMessage, setOtherMessage] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [commitments, setCommitments] = useState<Commitment[] | null>(null);
+  const [showCommitments, setShowCommitments] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const statusBarOpacity = scrollY.interpolate({
@@ -60,7 +79,85 @@ export default function DeleteAccountScreen() {
 
   const handleContinueToDelete = () => {
     if (selectedReason) {
-      navigation.goBack();
+      confirmDeletion();
+    }
+  };
+
+  const confirmDeletion = async () => {
+    if (!selectedReason || !userSession?.id) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setCommitments(null);
+
+    try {
+      const payload = {
+        id: userSession.id,
+        reason:
+          selectedReason.toLowerCase() === "other"
+            ? otherMessage
+            : selectedReason,
+      };
+
+      const response = await deleteAccount(
+        routeName as "individual" | "gallery" | "artist",
+        payload.id,
+        payload.reason
+      );
+
+      if (response.status === 409) {
+        // Commitments returned
+        const commitmentsList: Commitment[] =
+          response.commitments?.commitments || response.commitments || [];
+        setCommitments(commitmentsList);
+        setShowCommitments(true);
+        setLoading(false);
+        return;
+      }
+
+      if (response.status === 202 || response.isOk) {
+        setShowCommitments(false);
+        setLoading(false);
+
+        // Show success message
+        updateModal({
+          message:
+            response.message ||
+            "Account deletion request submitted successfully",
+          showModal: true,
+          modalType: "success",
+        });
+
+        // Sign out and navigate after a delay
+        setTimeout(() => {
+          logout();
+          navigation.navigate("Login" as never);
+        }, 2000);
+
+        return;
+      }
+
+      // Fallback error
+      setError(response.message || "Unable to process deletion request");
+      updateModal({
+        message: response.message || "Unable to process deletion request",
+        showModal: true,
+        modalType: "error",
+      });
+    } catch (err: any) {
+      const errorMessage =
+        err?.message ||
+        "Network error encountered, please try again or contact support";
+      setError(errorMessage);
+      updateModal({
+        message: errorMessage,
+        showModal: true,
+        modalType: "error",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,16 +208,33 @@ export default function DeleteAccountScreen() {
                 onMessageChange={setOtherMessage}
               />
             )}
+            {error && (
+              <View style={tw`px-5 mb-4`}>
+                <View
+                  style={tw`p-4 bg-red-50 rounded-lg border border-red-200`}
+                >
+                  <Text style={tw`text-red-600 text-sm`}>{error}</Text>
+                </View>
+              </View>
+            )}
           </View>
         </ScrollWrapper>
 
         <DeleteAccountActions
           onCancel={() => navigation.goBack()}
           onContinue={handleContinueToDelete}
-          isContinueDisabled={isContinueDisabled}
+          isContinueDisabled={isContinueDisabled || loading}
+        />
+
+        <CommitmentsModal
+          isVisible={showCommitments}
+          commitments={commitments || []}
+          onClose={() => {
+            setShowCommitments(false);
+            setCommitments(null);
+          }}
         />
       </View>
     </KeyboardAvoidingView>
   );
 }
-
