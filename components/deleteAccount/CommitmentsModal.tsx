@@ -69,16 +69,20 @@ export default function CommitmentsModal({
     return null;
   }
 
-  const formatType = (type: string): string =>
-    type.replaceAll("_", " ").replace(/\b\w/g, (char) => char.toUpperCase());
+  const formatType = (type: string): string => {
+    return type
+      .split("_")
+      .filter(Boolean)
+      .map((word) => word[0].toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
 
   const generateCommitmentKey = (type: string, description: string): string => {
-    const normalizedDescription = description
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/gi, "")
-      .toLowerCase()
-      .substring(0, 50);
-    return `${type}-${normalizedDescription}`;
+    const descriptionHash = description
+      .split("")
+      .reduce((hash, char) => hash + char.charCodeAt(0), 0)
+      .toString(36);
+    return `${type}-${descriptionHash}`;
   };
 
   const renderBackdrop = (props: any) => (
