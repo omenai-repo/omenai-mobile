@@ -24,6 +24,7 @@ import DetailsScreen from 'screens/home/components/DetailScreen';
 import ArticleScreen from 'screens/home/components/editorials/ArticleScreen';
 import AllEditorialsScreen from 'screens/home/components/editorials/AllEditorialsScreen';
 import NotificationScreen from 'screens/notifications/NotificationScreen';
+import DeleteAccountScreen from 'screens/deleteAccount/DeleteAccountScreen';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -108,6 +109,7 @@ export default function IndividualNavigation() {
       <Stack.Screen name={'AllEditorialsScreen'} component={AllEditorialsScreen} />
       <Stack.Screen name={screenName.collections} component={Collections} />
       <Stack.Screen name={'DetailsScreen'} component={DetailsScreen} />
+      <Stack.Screen name={screenName.deleteAccount} component={DeleteAccountScreen} />
     </Stack.Navigator>
   );
 }
