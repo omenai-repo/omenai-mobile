@@ -60,20 +60,6 @@ export default function DeleteAccountScreen() {
 
   const handleContinueToDelete = () => {
     if (selectedReason) {
-      // TODO: Call delete account service based on routeName
-      // if (routeName === 'individual') {
-      //   deleteIndividualAccount(selectedReason, otherMessage);
-      // } else if (routeName === 'artist') {
-      //   deleteArtistAccount(selectedReason, otherMessage);
-      // } else if (routeName === 'gallery') {
-      //   deleteGalleryAccount(selectedReason, otherMessage);
-      // }
-      console.log("Deleting account:", {
-        routeName,
-        selectedReason,
-        otherMessage,
-      });
-      // Navigate back or to success screen after deletion
       navigation.goBack();
     }
   };
