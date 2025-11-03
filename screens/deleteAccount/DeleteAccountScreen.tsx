@@ -14,7 +14,7 @@ import { StatusBar } from "expo-status-bar";
 
 import ScrollWrapper from "components/general/ScrollWrapper";
 import DeleteAccountHeader from "components/deleteAccount/DeleteAccountHeader";
-import WhatHappensNextSection from "components/deleteAccount/WhatHappensNextSection";
+import DeletionProcessSteps from "components/deleteAccount/DeletionProcessSteps";
 import WhyLeavingSection from "components/deleteAccount/WhyLeavingSection";
 import OtherMessageInput from "components/deleteAccount/OtherMessageInput";
 import DeleteAccountActions from "components/deleteAccount/DeleteAccountActions";
@@ -112,7 +112,7 @@ export default function DeleteAccountScreen() {
         >
           <View style={[tw`px-5`, { paddingTop: insets.top + 24 }]}>
             <DeleteAccountHeader />
-            <WhatHappensNextSection
+            <DeletionProcessSteps
               onPrivacyPolicyPress={handlePrivacyPolicyPress}
             />
             <WhyLeavingSection
