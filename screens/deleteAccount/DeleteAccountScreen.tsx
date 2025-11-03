@@ -14,8 +14,8 @@ import { StatusBar } from "expo-status-bar";
 
 import ScrollWrapper from "components/general/ScrollWrapper";
 import DeleteAccountHeader from "components/deleteAccount/DeleteAccountHeader";
-import WhatHappensNextSection from "components/deleteAccount/WhatHappensNextSection";
-import WhyLeavingSection from "components/deleteAccount/WhyLeavingSection";
+import DeletionProcessSteps from "components/deleteAccount/DeletionProcessSteps";
+import DeletionReasonSection from "components/deleteAccount/DeletionReasonSection";
 import OtherMessageInput from "components/deleteAccount/OtherMessageInput";
 import DeleteAccountActions from "components/deleteAccount/DeleteAccountActions";
 import StatusBarBackground from "components/deleteAccount/StatusBarBackground";
@@ -60,20 +60,6 @@ export default function DeleteAccountScreen() {
 
   const handleContinueToDelete = () => {
     if (selectedReason) {
-      // TODO: Call delete account service based on routeName
-      // if (routeName === 'individual') {
-      //   deleteIndividualAccount(selectedReason, otherMessage);
-      // } else if (routeName === 'artist') {
-      //   deleteArtistAccount(selectedReason, otherMessage);
-      // } else if (routeName === 'gallery') {
-      //   deleteGalleryAccount(selectedReason, otherMessage);
-      // }
-      console.log("Deleting account:", {
-        routeName,
-        selectedReason,
-        otherMessage,
-      });
-      // Navigate back or to success screen after deletion
       navigation.goBack();
     }
   };
@@ -112,10 +98,10 @@ export default function DeleteAccountScreen() {
         >
           <View style={[tw`px-5`, { paddingTop: insets.top + 24 }]}>
             <DeleteAccountHeader />
-            <WhatHappensNextSection
+            <DeletionProcessSteps
               onPrivacyPolicyPress={handlePrivacyPolicyPress}
             />
-            <WhyLeavingSection
+            <DeletionReasonSection
               selectedReason={selectedReason}
               onReasonSelect={handleReasonSelect}
             />
