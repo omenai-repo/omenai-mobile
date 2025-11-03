@@ -11,7 +11,7 @@ export const reasons: ReasonOption[] = [
   { id: "other", label: "Other" },
 ];
 
-export type WhatHappensNextItem = {
+export type DeletionProcessStep = {
   id: string;
   text: string;
   boldText?: string;
@@ -19,7 +19,7 @@ export type WhatHappensNextItem = {
   textAfter?: string;
 };
 
-export const whatHappensNextItems: WhatHappensNextItem[] = [
+export const deletionProcessSteps: DeletionProcessStep[] = [
   {
     id: "check_commitments",
     text: "We will check for any outstanding commitments (Orders paid for and processing).",

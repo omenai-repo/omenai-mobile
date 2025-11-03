@@ -6,15 +6,15 @@ import RadioButton from "components/general/RadioButton";
 import { reasons, ReasonOption } from "constants/deleteAccount.constants";
 import DeleteAccountCard from "./DeleteAccountCard";
 
-type WhyLeavingSectionProps = Readonly<{
+type DeletionReasonSectionProps = Readonly<{
   selectedReason: string | null;
   onReasonSelect: (id: string) => void;
 }>;
 
-export default function WhyLeavingSection({
+export default function DeletionReasonSection({
   selectedReason,
   onReasonSelect,
-}: WhyLeavingSectionProps) {
+}: DeletionReasonSectionProps) {
   return (
     <DeleteAccountCard>
       <Text
