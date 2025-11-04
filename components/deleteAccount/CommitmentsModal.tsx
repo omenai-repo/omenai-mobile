@@ -10,12 +10,6 @@ import { colors } from "config/colors.config";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import LongBlackButton from "components/buttons/LongBlackButton";
 
-type Commitment = {
-  type: string;
-  description: string;
-  metadata?: Record<string, any>;
-};
-
 type CommitmentsModalProps = Readonly<{
   isVisible: boolean;
   commitments: Commitment[];

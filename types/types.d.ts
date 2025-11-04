@@ -606,3 +606,9 @@ type ArtistCategory =
   | 'Late Mid-Career'
   | 'Established'
   | 'Elite';
+
+type Commitment = {
+  type: string;
+  description: string;
+  metadata?: Record<string, any>;
+};

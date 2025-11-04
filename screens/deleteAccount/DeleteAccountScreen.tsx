@@ -22,15 +22,9 @@ import DeleteAccountActions from "components/deleteAccount/DeleteAccountActions"
 import StatusBarBackground from "components/deleteAccount/StatusBarBackground";
 import CommitmentsModal from "components/deleteAccount/CommitmentsModal";
 import { PRIVACY_POLICY_URL } from "constants/deleteAccount.constants";
-import { deleteAccount } from "services/requests/deleteAccount";
+import { deleteAccount, type DeleteAccountResponse } from "services/requests/deleteAccount";
 import { useAppStore } from "store/app/appStore";
 import { useModalStore } from "store/modal/modalStore";
-
-type Commitment = {
-  type: string;
-  description: string;
-  metadata?: Record<string, any>;
-};
 
 export default function DeleteAccountScreen() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -100,16 +94,16 @@ export default function DeleteAccountScreen() {
             : selectedReason,
       };
 
-      const response = await deleteAccount(
+      const response: DeleteAccountResponse = await deleteAccount(
         routeName as "individual" | "gallery" | "artist",
         payload.id,
         payload.reason
       );
 
       if (response.status === 409) {
-        // Commitments returned
-        const commitmentsList: Commitment[] =
-          response.commitments?.commitments || response.commitments || [];
+        const commitmentsList: Commitment[] = Array.isArray(response?.commitments)
+          ? response.commitments
+          : response?.commitments?.commitments ?? [];
         setCommitments(commitmentsList);
         setShowCommitments(true);
         setLoading(false);
@@ -128,7 +122,6 @@ export default function DeleteAccountScreen() {
         return;
       }
 
-      // Fallback error
       setError(response.message || "Unable to process deletion request");
       updateModal({
         message: response.message || "Unable to process deletion request",
