@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Platform, Image, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 import React, { useCallback, useRef, useState } from 'react';
 import { colors } from 'config/colors.config';
 import { PageButtonCard } from 'components/buttons/PageButtonCard';
@@ -7,11 +7,10 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { logout } from 'utils/logout.utils';
 import WithGalleryModal from 'components/modal/WithGalleryModal';
-import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
 import { useAppStore } from 'store/app/appStore';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import { utils_getAsyncData } from 'utils/utils_asyncStorage';
-import { changePasswsordIcon, deleteIcon } from 'utils/SvgImages';
+import { changePasswsordIcon, getDeleteIcon } from 'utils/SvgImages';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import tw from 'twrnc';
 import LoadingContainer from 'screens/artistOnboarding/LoadingContainer';
@@ -32,7 +31,6 @@ export default function ArtistProfileScreen() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateModal } = useModalStore();
 
-  const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
@@ -147,10 +145,9 @@ export default function ArtistProfileScreen() {
                 name="Delete account"
                 subText="Delete your omenai gallery account"
                 handlePress={() => {
-                  setModalType('deleteAccount');
-                  setIsVisible(true);
+                  navigation.navigate(screenName.deleteAccount, { routeName: 'artist' });
                 }}
-                svgIcon={deleteIcon}
+                svgIcon={getDeleteIcon("#292D32")}
               />
             </View>
 

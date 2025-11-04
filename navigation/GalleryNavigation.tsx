@@ -23,6 +23,7 @@ import NotificationScreen from 'screens/notifications/NotificationScreen';
 import PaymentMethodChangeScreen from 'screens/subscriptions/components/PaymentMethodChangeScreen';
 import BillingVerificationScreen from 'screens/subscriptions/components/BillingVerificationScreen';
 import EditArtwork from 'screens/editArtwork/EditArtwork';
+import DeleteAccountScreen from 'screens/deleteAccount/DeleteAccountScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -117,6 +118,7 @@ export default function GalleryNavigation() {
       <Stack.Screen name={'BillingVerificationScreen'} component={BillingVerificationScreen} />
       <Stack.Screen name={screenName.connectStripe} component={GetStartedWithStripe} />
       <Stack.Screen name={screenName.gallery.editArtwork} component={EditArtwork} />
+      <Stack.Screen name={screenName.deleteAccount} component={DeleteAccountScreen} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name={screenName.gallery.uploadNewLogo} component={UploadNewLogo} />
       </Stack.Group>
