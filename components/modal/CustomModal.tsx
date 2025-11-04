@@ -5,18 +5,14 @@ import { colors } from 'config/colors.config';
 import { useModalStore } from 'store/modal/modalStore';
 import { MaterialIcons } from '@expo/vector-icons';
 import CancelSubscriptionModal from './modals/CancelSubscriptionModal';
-
-// type ModalProps = {
-//     message: string,
-//     isVisible: boolean,
-//     modalType: modalType
-// }
+import DeleteAccountSuccessModal from './modals/DeleteAccountSuccessModal';
 
 export default function CustomModal() {
   const { showModal, modalMessage, modalType, retainModal } = useModalStore();
 
   const modals: { [key: string]: React.ReactElement } = {
     cancleSubscription: <CancelSubscriptionModal />,
+    deleteAccountSuccess: <DeleteAccountSuccessModal />,
   };
 
   return (

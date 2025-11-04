@@ -34,6 +34,7 @@ import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
 import ViewCredentialsScreen from 'screens/artist/profile/ViewCredentials';
 import CustomTabBar from './components/TabButton';
 import NotificationScreen from 'screens/notifications/NotificationScreen';
+import DeleteAccountScreen from 'screens/deleteAccount/DeleteAccountScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -165,6 +166,7 @@ const ArtistNavigation = () => {
       <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
       <Stack.Screen name={screenName.artwork} component={Artwork} />
       <Stack.Screen name={screenName.gallery.editArtwork} component={EditArtwork} />
+      <Stack.Screen name={screenName.deleteAccount} component={DeleteAccountScreen} />
     </Stack.Navigator>
   );
 };
