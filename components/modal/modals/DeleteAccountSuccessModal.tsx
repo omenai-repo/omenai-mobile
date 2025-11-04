@@ -32,6 +32,8 @@ export default function DeleteAccountSuccessModal() {
           tw`rounded-xl shadow-lg w-full max-w-[448px]`,
           { backgroundColor: colors.white },
         ]}
+        accessibilityRole="alert"
+        accessibilityLiveRegion="polite"
       >
         <View style={tw`p-6`}>
           <View style={tw`items-center mb-4`}>
