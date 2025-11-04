@@ -7,12 +7,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import CancelSubscriptionModal from './modals/CancelSubscriptionModal';
 import DeleteAccountSuccessModal from './modals/DeleteAccountSuccessModal';
 
-// type ModalProps = {
-//     message: string,
-//     isVisible: boolean,
-//     modalType: modalType
-// }
-
 export default function CustomModal() {
   const { showModal, modalMessage, modalType, retainModal } = useModalStore();
 

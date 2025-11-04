@@ -1,10 +1,10 @@
 import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
 
 export type DeleteAccountResponse = {
-  isOk: boolean;
-  message: string;
-  commitments?: any;
   status: number;
+  isOk?: boolean;
+  message?: string;
+  commitments?: { commitments?: Commitment[] } | Commitment[];
 };
 
 export async function deleteAccount(
