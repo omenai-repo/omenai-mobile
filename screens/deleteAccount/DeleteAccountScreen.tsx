@@ -25,7 +25,6 @@ import { PRIVACY_POLICY_URL } from "constants/deleteAccount.constants";
 import { deleteAccount } from "services/requests/deleteAccount";
 import { useAppStore } from "store/app/appStore";
 import { useModalStore } from "store/modal/modalStore";
-import { logout } from "utils/logout.utils";
 
 type Commitment = {
   type: string;
@@ -42,7 +41,7 @@ export default function DeleteAccountScreen() {
   };
 
   const { userSession } = useAppStore();
-  const { updateModal } = useModalStore();
+  const { updateModal, setRetainModal } = useModalStore();
 
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [otherMessage, setOtherMessage] = useState<string>("");
@@ -121,20 +120,10 @@ export default function DeleteAccountScreen() {
         setShowCommitments(false);
         setLoading(false);
 
-        // Show success message
-        updateModal({
-          message:
-            response.message ||
-            "Account deletion request submitted successfully",
+        setRetainModal({
+          retainModal: "deleteAccountSuccess",
           showModal: true,
-          modalType: "success",
         });
-
-        // Sign out and navigate after a delay
-        setTimeout(() => {
-          logout();
-          navigation.navigate("Login" as never);
-        }, 2000);
 
         return;
       }
