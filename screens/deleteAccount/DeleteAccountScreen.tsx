@@ -8,7 +8,6 @@ import {
   Text,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import tw from "twrnc";
 import { StatusBar } from "expo-status-bar";
@@ -25,9 +24,10 @@ import { PRIVACY_POLICY_URL } from "constants/deleteAccount.constants";
 import { deleteAccount, type DeleteAccountResponse } from "services/requests/deleteAccount";
 import { useAppStore } from "store/app/appStore";
 import { useModalStore } from "store/modal/modalStore";
+import type { RootNavigationProp } from "types/navigation";
 
 export default function DeleteAccountScreen() {
-  const navigation = useNavigation<StackNavigationProp<any>>();
+  const navigation = useNavigation<RootNavigationProp>();
   const route = useRoute();
   const insets = useSafeAreaInsets();
   const { routeName } = (route.params as { routeName?: string }) || {

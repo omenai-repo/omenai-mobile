@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { logout } from "utils/logout.utils";
 import { useModalStore } from "store/modal/modalStore";
 import { colors } from "config/colors.config";
 import tw from "twrnc";
+import type { RootNavigationProp } from "types/navigation";
 
 export default function DeleteAccountSuccessModal() {
   const [countdown, setCountdown] = useState(10);
-  const navigation = useNavigation<StackNavigationProp<any>>();
+  const navigation = useNavigation<RootNavigationProp>();
   const { clear } = useModalStore();
 
   useEffect(() => {
     if (countdown <= 0) {
       clear();
       logout();
-      navigation.navigate("Login" as never);
+      navigation.navigate("Login");
       return;
     }
 
