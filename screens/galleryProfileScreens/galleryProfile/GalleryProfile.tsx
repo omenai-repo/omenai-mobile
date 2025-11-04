@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, Platform, StatusBar, Image } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import { colors } from 'config/colors.config';
 import { PageButtonCard } from 'components/buttons/PageButtonCard';
@@ -7,13 +7,12 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
 import { logout } from 'utils/logout.utils';
 import WithGalleryModal from 'components/modal/WithGalleryModal';
-import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
 import { useAppStore } from 'store/app/appStore';
 import Logo from './components/Logo';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import FittedBlackButton from 'components/buttons/FittedBlackButton';
 import { utils_getAsyncData } from 'utils/utils_asyncStorage';
-import { changePasswsordIcon, deleteIcon } from 'utils/SvgImages';
+import { changePasswsordIcon, getDeleteIcon } from 'utils/SvgImages';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,7 +21,6 @@ type UserData = { name: string; email: string };
 
 export default function GalleryProfile() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { setIsVisible, setModalType } = galleryOrderModalStore();
   const { userSession } = useAppStore();
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
@@ -99,10 +97,9 @@ export default function GalleryProfile() {
             name="Delete account"
             subText="Delete your omenai gallery account"
             handlePress={() => {
-              setModalType('deleteAccount');
-              setIsVisible(true);
+              navigation.navigate(screenName.deleteAccount, { routeName: 'gallery' });
             }}
-            svgIcon={deleteIcon}
+            svgIcon={getDeleteIcon("#292D32")}
           />
         </View>
 
