@@ -33,10 +33,10 @@ jobs:
         run: yarn install
 
       - name: 🔨 Build iOS
-        run: eas build --platform ios --profile production --non-interactive --no-update
+        run: eas build --platform ios --profile production --non-interactive
 
       - name: 🔨 Build Android
-        run: eas build --platform android --profile production --non-interactive --no-update
+        run: eas build --platform android --profile production --non-interactive
 
   submit-ios:
     name: Submit iOS to TestFlight
