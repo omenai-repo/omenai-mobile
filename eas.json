@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 9.0.10"
+    "version": ">= 9.0.10",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -21,11 +22,29 @@
         "buildType": "apk"
       }
     },
+    "staging": {
+      "distribution": "store",
+      "env": {
+        "EXPO_PUBLIC_ENV": "staging"
+      },
+      "channel": "preview",
+      "ios": {
+        "credentialsSource": "remote"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "production": {
+      "distribution": "store",
       "env": {
         "EXPO_PUBLIC_ENV": "production"
       },
+      "ios": {
+        "credentialsSource": "remote"
+      },
       "android": {
+        "buildType": "aab",
         "credentialsSource": "local"
       },
       "channel": "production"
