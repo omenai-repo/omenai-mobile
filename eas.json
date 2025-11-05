@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 9.0.10"
+    "version": ">= 9.0.10",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -21,6 +22,20 @@
         "buildType": "apk"
       }
     },
+    "staging": {
+      "channel": "preview",
+      "distribution": "internal",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_ENV": "staging"
+      },
+      "android": {
+        "credentialsSource": "remote"
+      },
+      "ios": {
+        "credentialsSource": "remote"
+      }
+    },
     "production": {
       "env": {
         "EXPO_PUBLIC_ENV": "production"
@@ -28,7 +43,8 @@
       "android": {
         "credentialsSource": "local"
       },
-      "channel": "production"
+      "channel": "production",
+      "autoIncrement": true
     }
   },
   "submit": {
