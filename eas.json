@@ -23,16 +23,17 @@
       }
     },
     "staging": {
+      "distribution": "store",
       "channel": "preview",
-      "distribution": "internal",
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_ENV": "staging"
       },
-      "android": {
+      "ios": {
         "credentialsSource": "remote"
       },
-      "ios": {
+      "android": {
+        "buildType": "apk",
         "credentialsSource": "remote"
       }
     },
