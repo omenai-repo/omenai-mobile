@@ -33,7 +33,7 @@
         "credentialsSource": "remote"
       },
       "android": {
-        "buildType": "aab",
+        "buildType": "apk",
         "credentialsSource": "remote"
       }
     },
