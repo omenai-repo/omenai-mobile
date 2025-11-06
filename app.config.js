@@ -20,6 +20,9 @@ export default {
       supportsTablet: true,
       bundleIdentifier: 'com.omenai.omenaimobile',
       buildNumber: '1.1.22',
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
       config: {
         googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS,
       },
