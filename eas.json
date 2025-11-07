@@ -19,21 +19,29 @@
       },
       "channel": "preview",
       "android": {
-        "buildType": "abb"
+        "buildType": "apk"
       }
     },
-    "staging": {
+    "staging-ios": {
       "distribution": "store",
-      "channel": "preview",
+      "channel": "staging",
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_ENV": "staging"
       },
       "ios": {
         "credentialsSource": "remote"
+      }
+    },
+    "staging-android": {
+      "distribution": "internal",
+      "channel": "staging",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_ENV": "staging"
       },
       "android": {
-        "buildType": "aab",
+        "buildType": "apk",
         "credentialsSource": "remote"
       }
     },
