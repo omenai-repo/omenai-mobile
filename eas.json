@@ -42,7 +42,7 @@
       },
       "android": {
         "buildType": "apk",
-        "credentialsSource": "remote"
+        "credentialsSource": "local"
       }
     },
     "production": {
