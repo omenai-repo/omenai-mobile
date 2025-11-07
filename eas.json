@@ -57,6 +57,8 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {},
+    "preview": {},
+    "staging-ios": {}
   }
 }
