@@ -65,5 +65,5 @@ jobs:
         run: yarn install
 
       - name: 📱 Submit to TestFlight
-        run: eas submit --platform ios --latest --non-interactive
+        run: eas submit --platform ios --latest --profile staging-ios --non-interactive
 
