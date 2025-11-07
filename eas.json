@@ -24,7 +24,7 @@
     },
     "staging": {
       "distribution": "store",
-      "channel": "preview",
+      "channel": "staging",
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_ENV": "staging"
@@ -33,7 +33,7 @@
         "credentialsSource": "remote"
       },
       "android": {
-        "buildType": "apk",
+        "buildType": "aab",
         "credentialsSource": "remote"
       }
     },
