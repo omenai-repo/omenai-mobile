@@ -19,12 +19,12 @@
       },
       "channel": "preview",
       "android": {
-        "buildType": "apk"
+        "buildType": "abb"
       }
     },
     "staging": {
       "distribution": "store",
-      "channel": "staging",
+      "channel": "preview",
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_ENV": "staging"
