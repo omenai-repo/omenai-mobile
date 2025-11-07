@@ -35,8 +35,8 @@ jobs:
       - name: 🔨 Build iOS
         run: eas build --platform ios --profile staging-ios --non-interactive
 
-      - name: 🔨 Build Android
-        run: eas build --platform android --profile staging-android --non-interactive
+      # - name: 🔨 Build Android
+      #   run: eas build --platform android --profile staging-android --non-interactive
 
   submit-ios:
     name: Submit iOS to TestFlight
