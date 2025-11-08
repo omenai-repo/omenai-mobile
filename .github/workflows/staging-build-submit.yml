@@ -40,3 +40,6 @@ jobs:
 
       - name: 📱 Submit to TestFlight
         run: eas submit --platform ios --latest --profile staging-ios --non-interactive
+
+      - name: 📱 Submit to Google Play Console
+        run: eas submit --platform android --latest --profile staging-ios --non-interactive
