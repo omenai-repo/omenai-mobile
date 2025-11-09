@@ -57,7 +57,11 @@
     }
   },
   "submit": {
-    "production": {},
+    "production": {
+      "android": {
+        "track": "production"
+      }
+    },
     "preview": {},
     "staging-ios": {
       "ios": {
