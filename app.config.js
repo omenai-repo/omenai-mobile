@@ -22,11 +22,6 @@ export default {
       buildNumber: "1.1.22",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
-        NSLocationWhenInUseUsageDescription:
-          "Omenai app uses your location to deliver orders directly to your doorstep.",
-      },
-      config: {
-        googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS,
       },
     },
     android: {
@@ -39,11 +34,6 @@ export default {
       package: "com.omenai.omenaiapp",
       permissions: ["android.permission.RECORD_AUDIO"],
       versionCode: 22,
-      config: {
-        googleMaps: {
-          apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID,
-        },
-      },
       softwareKeyboardLayoutMode: "pan",
     },
     web: {
