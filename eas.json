@@ -63,6 +63,11 @@
       "ios": {
         "ascAppId": "6748387089"
       }
+    },
+    "staging-android": {
+      "android": {
+        "track": "internal"
+      }
     }
   }
 }
