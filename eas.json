@@ -1,7 +1,7 @@
 {
   "cli": {
     "version": ">= 9.0.10",
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
@@ -25,7 +25,6 @@
     "staging-ios": {
       "distribution": "store",
       "channel": "staging",
-      "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_ENV": "staging"
       },
@@ -36,7 +35,6 @@
     "staging-android": {
       "distribution": "internal",
       "channel": "staging",
-      "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_ENV": "staging"
       },
@@ -52,8 +50,7 @@
       "android": {
         "credentialsSource": "remote"
       },
-      "channel": "production",
-      "autoIncrement": true
+      "channel": "production"
     }
   },
   "submit": {
