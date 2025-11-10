@@ -1,10 +1,17 @@
+import {
+  APP_VERSION,
+  ANDROID_VERSION_CODE,
+  IOS_BUILD_NUMBER,
+  RUNTIME_VERSION,
+} from "./constants/version.constants";
+
 export default {
   expo: {
     name: "OMENAI",
     scheme: "omenaimobile",
     slug: "omenai-app",
     owner: "omenai",
-    version: "1.1.22",
+    version: APP_VERSION,
     orientation: "portrait",
     newArchEnabled: true,
     icon: "./assets/icon.png",
@@ -19,7 +26,7 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.omenai.omenaimobile",
-      buildNumber: "1.1.22",
+      buildNumber: IOS_BUILD_NUMBER,
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
       },
@@ -33,7 +40,7 @@ export default {
       useNextNotificationsApi: true,
       package: "com.omenai.omenaiapp",
       permissions: ["android.permission.RECORD_AUDIO"],
-      versionCode: 22,
+      versionCode: ANDROID_VERSION_CODE,
       softwareKeyboardLayoutMode: "pan",
     },
     web: {
@@ -44,7 +51,7 @@ export default {
         projectId: "cfba8b4b-06f7-460a-8fa2-f8671ea18107",
       },
     },
-    runtimeVersion: "1.1.22",
+    runtimeVersion: RUNTIME_VERSION,
     updates: {
       url: "https://u.expo.dev/cfba8b4b-06f7-460a-8fa2-f8671ea18107",
     },
