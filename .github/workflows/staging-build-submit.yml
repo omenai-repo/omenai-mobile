@@ -32,14 +32,14 @@ jobs:
       - name: 📦 Install dependencies
         run: yarn install
 
-      - name: 🔨 Build iOS
-        run: eas build --platform ios --profile staging-ios --non-interactive
-
-      - name: 📱 Submit to TestFlight
-        run: eas submit --platform ios --latest --profile staging-ios --non-interactive
-
       - name: 🔨 Build Android
         run: eas build --platform android --profile staging-android --non-interactive
 
       - name: 📱 Submit to Google Play Console
         run: eas submit --platform android --latest --profile staging-android --non-interactive
+
+      - name: 🔨 Build iOS
+        run: eas build --platform ios --profile staging-ios --non-interactive
+
+      - name: 📱 Submit to TestFlight
+        run: eas submit --platform ios --latest --profile staging-ios --non-interactive
