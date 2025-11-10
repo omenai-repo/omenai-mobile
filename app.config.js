@@ -1,9 +1,9 @@
-import {
+const {
   APP_VERSION,
   ANDROID_VERSION_CODE,
   IOS_BUILD_NUMBER,
   RUNTIME_VERSION,
-} from "./constants/version.constants";
+} = require("./constants/version.constants");
 
 export default {
   expo: {
