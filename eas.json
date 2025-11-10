@@ -33,7 +33,7 @@
       }
     },
     "staging-android": {
-      "distribution": "internal",
+      "distribution": "store",
       "channel": "staging",
       "env": {
         "EXPO_PUBLIC_ENV": "staging"

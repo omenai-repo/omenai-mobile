@@ -36,8 +36,20 @@ jobs:
         id: build-ios
         run: |
           # Build and capture output
+          set +e  # Don't exit on error immediately
           BUILD_OUTPUT=$(eas build --platform ios --profile production --non-interactive --wait 2>&1)
+          BUILD_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+          
           echo "$BUILD_OUTPUT"
+          
+          # Check if build command failed
+          if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            echo "❌ Build command failed with exit code $BUILD_EXIT_CODE"
+            echo "Build output:"
+            echo "$BUILD_OUTPUT"
+            exit $BUILD_EXIT_CODE
+          fi
           
           # Extract build ID using multiple methods for reliability
           # Method 1: Extract from URL pattern (builds/xxxxx-xxxxx-xxxxx)
@@ -73,8 +85,20 @@ jobs:
         id: build-android
         run: |
           # Build and capture output
+          set +e  # Don't exit on error immediately
           BUILD_OUTPUT=$(eas build --platform android --profile production --non-interactive --wait 2>&1)
+          BUILD_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+          
           echo "$BUILD_OUTPUT"
+          
+          # Check if build command failed
+          if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            echo "❌ Build command failed with exit code $BUILD_EXIT_CODE"
+            echo "Build output:"
+            echo "$BUILD_OUTPUT"
+            exit $BUILD_EXIT_CODE
+          fi
           
           # Extract build ID using multiple methods for reliability
           # Method 1: Extract from URL pattern (builds/xxxxx-xxxxx-xxxxx)
