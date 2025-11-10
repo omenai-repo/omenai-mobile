@@ -39,7 +39,7 @@
         "EXPO_PUBLIC_ENV": "staging"
       },
       "android": {
-        "buildType": "aab",
+        "buildType": "app-bundle",
         "credentialsSource": "remote"
       }
     },
