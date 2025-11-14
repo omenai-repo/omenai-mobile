@@ -7,6 +7,20 @@ import { useRegistrationHandler } from "hooks/useRegistrationHandler";
 import { useTermsSelection } from "hooks/useTermsSelection";
 import { TermsAndConditionsForm } from "components/register/TermsAndConditionsForm";
 
+type CheckboxItemProps = {
+  readonly onPress: () => void;
+  readonly text: string;
+  readonly id: number;
+  readonly isSelected: boolean;
+};
+
+const CheckboxItem = ({ onPress, text, isSelected }: Readonly<CheckboxItemProps>) => (
+  <Pressable onPress={onPress} style={tw`flex-row gap-[15px]`}>
+    <SvgXml xml={isSelected ? checkedBox : uncheckedBox} />
+    <Text style={tw`text-[14px] text-[#858585] leading-[20px] mr-[30px]`}>{text}</Text>
+  </Pressable>
+);
+
 const TermsAndCondition = () => {
   const {
     selectedTerms,
@@ -45,21 +59,6 @@ const TermsAndCondition = () => {
     handleRegister(artistRegisterData, clearState, setIsLoading);
   };
 
-  const CheckboxItem = ({
-    onPress,
-    text,
-    id,
-  }: {
-    onPress: () => void;
-    text: string;
-    id: number;
-  }) => (
-    <Pressable onPress={onPress} style={tw`flex-row gap-[15px]`}>
-      <SvgXml xml={selectedTerms.includes(id) ? checkedBox : uncheckedBox} />
-      <Text style={tw`text-[14px] text-[#858585] leading-[20px] mr-[30px]`}>{text}</Text>
-    </Pressable>
-  );
-
   const isProceedDisabled =
     !selectedTerms.includes(0) || !selectedTerms.includes(2) || !selectedTerms.includes(1);
 
@@ -84,6 +83,7 @@ const TermsAndCondition = () => {
       key={item.id}
       id={item.id}
       text={item.text}
+      isSelected={selectedTerms.includes(item.id)}
       onPress={() => handleCheckPress(item.id)}
     />
   );

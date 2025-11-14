@@ -28,27 +28,46 @@ export default function LongBlackButton({
 }: LongBlackButtonProps) {
   const animation = useRef(null);
 
+  const isInactive = isDisabled || isLoading;
+
+  let backgroundColor: string;
+  if (isInactive) {
+    backgroundColor = "#E0E0E0";
+  } else if (outline) {
+    backgroundColor = "transparent";
+  } else {
+    backgroundColor = colors.primary_black;
+  }
+
+  let textColor: string;
+  if (isInactive) {
+    textColor = "#A1A1A1";
+  } else if (outline) {
+    textColor = borderColor;
+  } else {
+    textColor = colors.white;
+  }
+
+  let outlineBorderColor: string;
+  if (isInactive) {
+    outlineBorderColor = "#A1A1A1";
+  } else {
+    outlineBorderColor = borderColor;
+  }
+
   const defaultContainerStyle: ViewStyle = {
     height: 46,
-    backgroundColor: isDisabled || isLoading 
-      ? '#E0E0E0' 
-      : outline 
-        ? 'transparent' 
-        : colors.primary_black,
-    ...(outline && { 
-      borderWidth: 1, 
-      borderColor: isDisabled || isLoading ? '#A1A1A1' : borderColor 
+    backgroundColor,
+    ...(outline && {
+      borderWidth: 1,
+      borderColor: outlineBorderColor,
     }),
   };
 
   const defaultTextStyle: TextStyle = {
-    color: isDisabled || isLoading 
-      ? '#A1A1A1' 
-      : outline 
-        ? borderColor 
-        : colors.white,
+    color: textColor,
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
   };
 
   const containerStyle = [
@@ -59,7 +78,7 @@ export default function LongBlackButton({
 
   const mergedTextStyle = [defaultTextStyle, textStyle];
 
-  if (isDisabled || isLoading) {
+  if (isInactive) {
     return (
       <View style={containerStyle}>
         {isDisabled ? (

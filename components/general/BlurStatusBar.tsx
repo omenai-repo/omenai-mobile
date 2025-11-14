@@ -4,10 +4,10 @@ import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type BlurStatusBarProps = {
-  scrollY?: Animated.Value;
-  intensity?: number;
-  tint?: "light" | "dark" | "default";
-  threshold?: number;
+  readonly scrollY?: Animated.Value;
+  readonly intensity?: number;
+  readonly tint?: "light" | "dark" | "default";
+  readonly threshold?: number;
 };
 
 export default function BlurStatusBar({
@@ -15,7 +15,7 @@ export default function BlurStatusBar({
   intensity = 80,
   tint = "light",
   threshold = 0,
-}: BlurStatusBarProps) {
+}: Readonly<BlurStatusBarProps>) {
   const insets = useSafeAreaInsets();
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -51,6 +51,15 @@ export default function BlurStatusBar({
       })
     : 3;
 
+  let backgroundColor: string;
+  if (tint === "dark") {
+    backgroundColor = "rgba(0, 0, 0, 0.7)";
+  } else if (tint === "default") {
+    backgroundColor = "rgba(255, 255, 255, 0.9)";
+  } else {
+    backgroundColor = "rgba(255, 255, 255, 0.85)";
+  }
+
   return (
     <Animated.View
       style={[
@@ -69,22 +78,13 @@ export default function BlurStatusBar({
     >
       <View style={{ overflow: "hidden", height: "100%" }}>
         {Platform.OS === "ios" ? (
-          <BlurView
-            intensity={intensity}
-            tint={tint}
-            style={StyleSheet.absoluteFill}
-          />
+          <BlurView intensity={intensity} tint={tint} style={StyleSheet.absoluteFill} />
         ) : (
           <View
             style={[
               StyleSheet.absoluteFill,
               {
-                backgroundColor:
-                  tint === "dark"
-                    ? "rgba(0, 0, 0, 0.7)"
-                    : tint === "default"
-                    ? "rgba(255, 255, 255, 0.9)"
-                    : "rgba(255, 255, 255, 0.85)",
+                backgroundColor,
               },
             ]}
           />

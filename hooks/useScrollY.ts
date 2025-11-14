@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Animated, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { useRef } from "react";
+import { Animated } from "react-native";
 
 /**
  * Hook to create and manage scroll Y position for blur effects
@@ -15,4 +15,3 @@ export function useScrollY() {
 
   return { scrollY, onScroll };
 }
-

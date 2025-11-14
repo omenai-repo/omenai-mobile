@@ -5,11 +5,11 @@ import { AntDesign } from "@expo/vector-icons";
 import tw from "twrnc";
 
 type NextButtonProps = {
-  isDisabled: boolean;
-  handleButtonClick: () => void;
+  readonly isDisabled: boolean;
+  readonly handleButtonClick: () => void;
 };
 
-export default function NextButton({ isDisabled, handleButtonClick }: NextButtonProps) {
+export default function NextButton({ isDisabled, handleButtonClick }: Readonly<NextButtonProps>) {
   if (isDisabled)
     return (
       <View

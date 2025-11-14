@@ -6,9 +6,9 @@ import { TermsAndConditionsForm } from "components/register/TermsAndConditionsFo
 
 export default function TermsAndConditions({
   hideBackButton = false,
-}: {
+}: Readonly<{
   hideBackButton?: boolean;
-}) {
+}>) {
   const {
     selectedTerms,
     setSelectedTerms,
