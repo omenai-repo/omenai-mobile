@@ -1,8 +1,6 @@
 import { View } from "react-native";
 import React, { useMemo, useState } from "react";
 import tw from "twrnc";
-import Input from "components/inputs/Input";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
 import { country_codes } from "json/country_alpha_2_codes";
 import BackFormButton from "components/buttons/BackFormButton";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
@@ -13,6 +11,7 @@ import { useAddressForm } from "hooks/useAddressForm";
 import { useLocationSelection } from "hooks/useLocationSelection";
 import { useAddressVerification } from "hooks/useAddressVerification";
 import { AddressTooltip } from "components/general/AddressTooltip";
+import { AddressFormFields } from "components/register/AddressFormFields";
 
 const GalleryAddressVerification = () => {
   const [showToolTip, setShowToolTip] = useState(false);
@@ -77,85 +76,32 @@ const GalleryAddressVerification = () => {
 
   return (
     <View style={tw``}>
-      <View style={tw`mb-[20px]`}>
-        <CustomSelectPicker
-          data={transformedCountries}
-          placeholder="Select country of operation"
-          value={galleryRegisterData.address.countryCode}
-          handleSetValue={handleCountrySelect}
-          label="Country of operation"
-          search={true}
-          searchPlaceholder="Search Country"
-          dropdownPosition="bottom"
-        />
-      </View>
-
-      <View style={tw`mb-[20px]`}>
-        <CustomSelectPicker
-          data={stateData}
-          placeholder="Select state"
-          value={galleryRegisterData.address.state}
-          handleSetValue={handleStateSelect}
-          disable={!galleryRegisterData.address.countryCode}
-          label="State of operation"
-          search={true}
-          searchPlaceholder="Search State"
-          dropdownPosition="top"
-        />
-      </View>
-
-      <Input
-        label="Gallery Address"
-        keyboardType="default"
-        onInputChange={(text) => {
+      <AddressFormFields
+        countryData={transformedCountries}
+        stateData={stateData}
+        cityData={cityData}
+        addressData={galleryRegisterData.address}
+        phone={galleryRegisterData.phone}
+        formErrors={formErrors}
+        onCountrySelect={handleCountrySelect}
+        onStateSelect={handleStateSelect}
+        onCitySelect={(item) => setCity(item.value)}
+        onAddressChange={(text) => {
           setAddress(text);
           handleValidationChecks("general", text);
         }}
-        placeHolder="Input your gallery address here"
-        value={galleryRegisterData?.address?.address_line}
-        errorMessage={formErrors?.address_line}
-      />
-
-      <View style={tw`flex-row items-center gap-[30px] my-[20px]`}>
-        <View style={tw`flex-1`}>
-          <CustomSelectPicker
-            data={cityData}
-            placeholder="Select city"
-            value={galleryRegisterData.address.city}
-            disable={!galleryRegisterData.address.state}
-            handleSetValue={(item) => {
-              setCity(item.value);
-            }}
-            label="City"
-            search={true}
-            searchPlaceholder="Search City"
-            dropdownPosition="top"
-          />
-        </View>
-
-        <Input
-          label="Zip Code"
-          keyboardType="default"
-          onInputChange={(text) => {
-            setZipCode(text);
-            handleValidationChecks("general", text);
-          }}
-          placeHolder="Zip Code"
-          value={galleryRegisterData?.address?.zip}
-          errorMessage={formErrors?.zip}
-        />
-      </View>
-
-      <Input
-        label="Phone number"
-        keyboardType="phone-pad"
-        onInputChange={(text) => {
+        onZipChange={(text) => {
+          setZipCode(text);
+          handleValidationChecks("general", text);
+        }}
+        onPhoneChange={(text) => {
           setPhone(text);
           handleValidationChecks("general", text);
         }}
-        placeHolder="+12345678990"
-        value={galleryRegisterData?.phone}
-        errorMessage={formErrors?.phone}
+        addressLabel="Gallery Address"
+        addressPlaceholder="Input your gallery address here"
+        countryLabel="Country of operation"
+        stateLabel="State of operation"
       />
 
       <View style={tw`flex-row mt-10 justify-between items-center`}>
