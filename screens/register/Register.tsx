@@ -5,20 +5,18 @@ import {
   ScrollView,
   StyleSheet,
   TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import React, { useEffect, useRef } from 'react';
-import { colors } from '../../config/colors.config';
-import AuthHeader from '../../components/auth/AuthHeader';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from '../../constants/screenNames.constants';
-import WithModal from 'components/modal/WithModal';
-import { useIndividualAuthRegisterStore } from 'store/auth/register/IndividualAuthRegisterStore';
-import { useGalleryAuthRegisterStore } from 'store/auth/register/GalleryAuthRegisterStore';
-import { useArtistAuthRegisterStore } from 'store/auth/register/ArtistAuthRegisterStore';
-import { StatusBar } from 'expo-status-bar';
-import InputForm from './components/inputForm/InputForm';
+} from "react-native";
+import React, { useEffect, useRef } from "react";
+import { colors } from "../../config/colors.config";
+import AuthHeader from "../../components/auth/AuthHeader";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { screenName } from "../../constants/screenNames.constants";
+import WithModal from "components/modal/WithModal";
+import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
+import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
+import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
+import InputForm from "./components/inputForm/InputForm";
 
 type RootStackParamList = {
   [screenName.welcome]: undefined;
@@ -51,8 +49,8 @@ export default function Register() {
         }}
       />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
         style={styles.container}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

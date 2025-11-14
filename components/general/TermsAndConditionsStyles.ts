@@ -1,26 +1,11 @@
-import { StyleSheet } from 'react-native';
-import { colors } from 'config/colors.config';
+import tw from "twrnc";
+import { colors } from "config/colors.config";
 
-export const termsAndConditionsStyles = StyleSheet.create({
-  title: {
-    fontWeight: '500',
-    fontSize: 16,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
-    marginTop: 60,
-  },
-  termsContainer: {
-    marginTop: 20,
-    backgroundColor: '#FAFAFA',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
-    gap: 30,
-  },
-});
-
+export const termsAndConditionsStyles = {
+  title: [tw`font-medium text-base`, { color: colors.primary_black }],
+  buttonsContainer: tw`flex-row gap-2.5 items-center justify-between mt-10`,
+  termsContainer: [
+    tw`mt-3 bg-[#FAFAFA] rounded-lg border px-3 py-4`,
+    { borderColor: colors.inputBorder, gap: 30 },
+  ],
+};

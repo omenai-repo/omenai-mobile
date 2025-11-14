@@ -1,14 +1,7 @@
-import {
-  KeyboardTypeOptions,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  ViewStyle,
-} from 'react-native';
-import React from 'react';
-import { colors } from '../../config/colors.config';
+import { KeyboardTypeOptions, StyleProp, Text, TextInput, View, ViewStyle } from "react-native";
+import React from "react";
+import tw from "twrnc";
+import { colors } from "config/colors.config";
 
 type InputProps = {
   label: string;
@@ -36,13 +29,17 @@ export default function Input({
   containerStyle,
 }: InputProps) {
   return (
-    <View style={[{ zIndex: 100, flex: 1 }, containerStyle]}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={[tw`z-[100] flex-1`, containerStyle]}>
+      <Text style={[tw`text-sm`, { color: colors.grey }]}>{label}</Text>
       <TextInput
         onChangeText={onInputChange}
         placeholder={placeHolder}
-        placeholderTextColor={'#858585'}
-        style={[styles.inputContainer, disabled && { color: '#1a1a1a70' }]}
+        placeholderTextColor={colors.grey}
+        style={[
+          tw`h-11 w-full border bg-[#FAFAFA] px-3 rounded-lg mt-2.5 text-black`,
+          { borderColor: colors.inputBorder },
+          disabled && tw`text-[#1a1a1a70]`,
+        ]}
         keyboardType={keyboardType}
         autoCapitalize="none"
         value={defaultValue ? undefined : value}
@@ -51,30 +48,8 @@ export default function Input({
         editable={!disabled}
       />
       {errorMessage && errorMessage?.length > 0 && (
-        <Text style={styles.errorMessage}>{errorMessage || ''}</Text>
+        <Text style={tw`text-red-500 mt-0.5`}>{errorMessage || ""}</Text>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: 14,
-    color: colors.inputLabel,
-  },
-  inputContainer: {
-    height: 60,
-    width: '100%',
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    backgroundColor: '#FAFAFA',
-    paddingHorizontal: 20,
-    borderRadius: 95,
-    marginTop: 10,
-    color: colors.black,
-  },
-  errorMessage: {
-    color: '#ff0000',
-    marginTop: 2,
-  },
-});

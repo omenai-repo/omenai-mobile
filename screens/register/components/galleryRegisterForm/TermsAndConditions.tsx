@@ -1,21 +1,26 @@
-import { Text, View } from 'react-native';
-import { acceptTermsList } from '../../../../constants/accetTerms.constants';
-import TermsAndConditionItem from '../../../../components/general/TermsAndConditionItem';
-import FittedBlackButton from '../../../../components/buttons/FittedBlackButton';
-import BackFormButton from '../../../../components/buttons/BackFormButton';
-import { useGalleryAuthRegisterStore } from '../../../../store/auth/register/GalleryAuthRegisterStore';
-import { registerAccount } from 'services/register/registerAccount';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { useModalStore } from 'store/modal/modalStore';
-import { storage } from 'appWrite_config';
-import uploadLogo from 'screens/galleryProfileScreens/uploadNewLogo/uploadLogo';
-import { useAppStore } from 'store/app/appStore';
-import LegalLinkButton from '../../../../components/general/LegalLinkButton';
-import { termsAndConditionsStyles } from '../../../../components/general/TermsAndConditionsStyles';
+import { Text, View } from "react-native";
+import { acceptTermsList } from "../../../../constants/accetTerms.constants";
+import TermsAndConditionItem from "../../../../components/general/TermsAndConditionItem";
+import FittedBlackButton from "../../../../components/buttons/FittedBlackButton";
+import BackFormButton from "../../../../components/buttons/BackFormButton";
+import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
+import { registerAccount } from "services/register/registerAccount";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "constants/screenNames.constants";
+import { useModalStore } from "store/modal/modalStore";
+import { storage } from "appWrite_config";
+import uploadLogo from "screens/galleryProfileScreens/uploadNewLogo/uploadLogo";
+import { useAppStore } from "store/app/appStore";
+import LegalLinkButton from "../../../../components/general/LegalLinkButton";
+import { termsAndConditionsStyles } from "../../../../components/general/TermsAndConditionsStyles";
+import tw from "twrnc";
 
-export default function TermsAndConditions() {
+export default function TermsAndConditions({
+  hideBackButton = false,
+}: {
+  hideBackButton?: boolean;
+}) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const {
     selectedTerms,
@@ -66,12 +71,12 @@ export default function TermsAndConditions() {
           device_push_token: expoPushToken,
         };
 
-        const results = await registerAccount(payload, 'gallery');
+        const results = await registerAccount(payload, "gallery");
         if (results?.isOk) {
           const resultsBody = results?.body;
           clearState();
           navigation.navigate(screenName.verifyEmail, {
-            account: { id: resultsBody.data, type: 'gallery' },
+            account: { id: resultsBody.data, type: "gallery" },
           });
         } else {
           await storage.deleteFile({
@@ -80,7 +85,7 @@ export default function TermsAndConditions() {
           });
           updateModal({
             message: results?.body.message,
-            modalType: 'error',
+            modalType: "error",
             showModal: true,
           });
         }
@@ -88,7 +93,7 @@ export default function TermsAndConditions() {
     } catch (error: any) {
       updateModal({
         message: error.message,
-        modalType: 'error',
+        modalType: "error",
         showModal: true,
       });
     } finally {
@@ -121,14 +126,13 @@ export default function TermsAndConditions() {
       <LegalLinkButton entity="gallery" updateModal={updateModal} />
 
       <View style={termsAndConditionsStyles.buttonsContainer}>
-        <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
-        <View style={{ flex: 1 }} />
+        {!hideBackButton && <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />}
         <FittedBlackButton
           isLoading={isLoading}
-          height={50}
           value="Create my account"
           isDisabled={!selectedTerms.includes(0)}
           onClick={handleSubmit}
+          style={hideBackButton && tw`w-full`}
         />
       </View>
     </View>
