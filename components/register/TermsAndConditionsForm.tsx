@@ -51,13 +51,14 @@ export const TermsAndConditionsForm = ({
 
       <View style={termsAndConditionsStyles.termsContainer}>
         {termsList.map((item, idx) => {
+          const key = `term-${Date.now()}-${idx}`;
           if (customTermsRenderer) {
-            return <View key={idx}>{customTermsRenderer(item, idx)}</View>;
+            return <View key={key}>{customTermsRenderer(item, idx)}</View>;
           }
           return (
             <TermsAndConditionItem
               writeUp={typeof item === "string" ? item : item.text}
-              key={idx}
+              key={key}
               isSelected={selectedTerms.includes(idx)}
               handleSelect={() => onToggleTerm(idx)}
             />

@@ -1,10 +1,6 @@
 import { View } from "react-native";
 import React, { useMemo, useState } from "react";
-import tw from "twrnc";
-import BackFormButton from "components/buttons/BackFormButton";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import AuthModal from "components/auth/AuthModal";
-import { checkMarkIcon, errorIcon } from "utils/SvgImages";
+
 import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
 import { Country, ICountry } from "country-state-city";
 import { useAddressForm } from "hooks/useAddressForm";
@@ -12,6 +8,8 @@ import { useLocationSelection } from "hooks/useLocationSelection";
 import { useAddressVerification } from "hooks/useAddressVerification";
 import { AddressTooltip } from "components/general/AddressTooltip";
 import { AddressFormFields } from "components/register/AddressFormFields";
+import { AddressVerificationModal } from "components/register/AddressVerificationModal";
+import { AddressVerificationActions } from "components/register/AddressVerificationActions";
 
 const IndividualAddressVerification = () => {
   const [showToolTip, setShowToolTip] = useState(false);
@@ -77,7 +75,7 @@ const IndividualAddressVerification = () => {
   };
 
   return (
-    <View style={tw``}>
+    <View>
       <AddressFormFields
         countryData={transformedCountries}
         stateData={stateData}
@@ -104,18 +102,12 @@ const IndividualAddressVerification = () => {
         addressPlaceholder="Input your gallery address here"
       />
 
-      <View style={tw`flex-row mt-10 justify-between items-center`}>
-        <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
-        <FittedBlackButton
-          isLoading={isLoading}
-          value="Verify Address"
-          isDisabled={
-            !checkIsFormValid(individualRegisterData.address, individualRegisterData.phone)
-          }
-          onClick={handleSubmit}
-          style={tw`h-11`}
-        />
-      </View>
+      <AddressVerificationActions
+        isLoading={isLoading}
+        isDisabled={!checkIsFormValid(individualRegisterData.address, individualRegisterData.phone)}
+        onBack={() => setPageIndex(pageIndex - 1)}
+        onSubmit={handleSubmit}
+      />
 
       <AddressTooltip
         showToolTip={showToolTip}
@@ -123,26 +115,14 @@ const IndividualAddressVerification = () => {
         tooltipText="We need your home address to properly verify shipping designation"
       />
 
-      <AuthModal
-        modalVisible={showModal}
-        setModalVisible={setShowModal}
-        icon={addressVerified ? checkMarkIcon : errorIcon}
-        text={
-          addressVerified
-            ? "Your account has been verified succesfully"
-            : "Your Address could not be verified. Try again."
-        }
-        btn1Text="Go Back"
-        btn2Text={addressVerified ? "Proceed" : "Try Again"}
-        onPress1={handleModalGoBack}
-        onPress2={() => {
-          if (addressVerified) {
-            handleModalProceed();
-          } else {
-            setShowModal(false);
-            handleSubmit();
-          }
-        }}
+      <AddressVerificationModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        addressVerified={addressVerified}
+        handleModalGoBack={handleModalGoBack}
+        handleModalProceed={handleModalProceed}
+        handleSubmit={handleSubmit}
+        successMessage="Your account has been verified succesfully"
       />
     </View>
   );
