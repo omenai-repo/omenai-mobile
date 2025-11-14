@@ -1,35 +1,21 @@
-import { View, Text, Pressable, useWindowDimensions } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { View } from "react-native";
+import React, { useMemo, useState } from "react";
 import tw from "twrnc";
 import Input from "components/inputs/Input";
-import { validate } from "lib/validations/validatorGroup";
 import CustomSelectPicker from "components/inputs/CustomSelectPicker";
 import BackFormButton from "components/buttons/BackFormButton";
-import { verifyAddress } from "services/register/verifyAddress";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
-import { useModalStore } from "store/modal/modalStore";
-import { debounce } from "lodash";
 import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
 import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
-import { Country, State, City, ICountry, IState, ICity } from "country-state-city";
+import { Country, ICountry } from "country-state-city";
+import { useAddressForm } from "hooks/useAddressForm";
+import { useLocationSelection } from "hooks/useLocationSelection";
+import { useAddressVerification } from "hooks/useAddressVerification";
+import { AddressTooltip } from "components/general/AddressTooltip";
 
 const IndividualAddressVerification = () => {
-  const { width } = useWindowDimensions();
-  const [formErrors, setFormErrors] = useState<Partial<AddressTypes & { phone: string }>>({
-    address_line: "",
-    city: "",
-    country: "",
-    state: "",
-    zip: "",
-    countryCode: "",
-    phone: "",
-  });
   const [showToolTip, setShowToolTip] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [addressVerified, setAddressVerified] = useState(false);
-
-  const { updateModal } = useModalStore();
 
   const transformedCountries = useMemo(
     () =>
@@ -60,133 +46,35 @@ const IndividualAddressVerification = () => {
     setStateCode,
   } = useIndividualAuthRegisterStore();
 
-  const handleCountrySelect = (item: { label: string; value: string }) => {
-    setCountry(item.label);
-    setCountryCode(item.value);
+  const { formErrors, handleValidationChecks, checkIsFormValid } = useAddressForm();
 
-    // Reset state and city selections
-    setState("");
-    setCity("");
-
-    // Clear state and city dropdown data
-    setStateData([]);
-    setCityData([]);
-
-    // get the selected country's states
-    const getStates = State.getStatesOfCountry(item.value);
-
-    // Set the states dropdown data
-    setStateData(
-      getStates
-        ? getStates.map((state: IState) => ({
-            label: state.name,
-            value: state.name,
-            isoCode: state.isoCode,
-          }))
-        : []
-    );
-  };
-
-  // 🚀 **Debounced Fetch Cities Function**
-  const fetchCities = useMemo(
-    () =>
-      debounce((countryCode, stateValue) => {
-        const getCities = City.getCitiesOfState(countryCode, stateValue);
-        setCityData(
-          getCities?.map((city: ICity) => ({
-            label: city.name,
-            value: city.name,
-          })) || []
-        );
-      }, 300),
-    [setCityData]
-  );
-
-  useEffect(() => {
-    return () => {
-      fetchCities.cancel();
-    };
-  }, [fetchCities]);
-
-  // 🚀 **Handle State Selection**
-  const handleStateSelect = useCallback(
-    (item: { label: string; value: string; isoCode?: string }) => {
-      setState(item.value);
-      if (item.isoCode) {
-        setStateCode(item.isoCode);
-      }
-      fetchCities(individualRegisterData.address.countryCode, item.isoCode);
+  const { handleCountrySelect, handleStateSelect } = useLocationSelection(
+    {
+      countryCode: individualRegisterData.address.countryCode,
+      state: individualRegisterData.address.state,
     },
-    [individualRegisterData.address.countryCode, fetchCities, setState, setStateCode]
+    {
+      setState,
+      setStateCode,
+      setCity,
+      setCountry,
+      setCountryCode,
+      setStateData,
+      setCityData,
+    }
   );
 
-  const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
-    const isFormValid = formErrors && Object.values(formErrors).every((error) => error === "");
-    const areAllFieldsFilled = Object.values({
-      address_line: individualRegisterData?.address?.address_line,
-      city: individualRegisterData?.address?.city,
-      zip: individualRegisterData?.address?.zip,
-      country: individualRegisterData?.address?.country,
-      state: individualRegisterData?.address?.state,
-      phone: individualRegisterData?.phone,
-    }).every((value) => value !== "");
+  const {
+    showModal,
+    setShowModal,
+    addressVerified,
+    handleVerifyAddress,
+    handleModalProceed,
+    handleModalGoBack,
+  } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
 
-    return !(isFormValid && areAllFieldsFilled);
-  };
-
-  const handleValidationChecks = debounce((label: string, value: string, confirm?: string) => {
-    // Clear error if the input is empty
-    if (value.trim() === "") {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-      return;
-    }
-
-    const { errors } = validate(value, label, confirm);
-    setFormErrors((prev) => ({
-      ...prev,
-      [label]: errors.length > 0 ? errors[0] : "",
-    }));
-  }, 500); // ✅ Delay validation by 500ms
-
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    try {
-      const payload = {
-        type: "delivery",
-        countyName: individualRegisterData.address.city,
-        cityName: individualRegisterData.address.state,
-        postalCode: individualRegisterData.address.zip,
-        countryCode: individualRegisterData.address.countryCode,
-        phone: individualRegisterData.phone,
-      };
-
-      const response = await verifyAddress(payload);
-
-      setIsLoading(false);
-
-      if (response?.isOk) {
-        if (response?.body?.data?.address && response.body.data.address.length !== 0) {
-          setShowModal(true);
-          setAddressVerified(true);
-        } else {
-          setShowModal(true);
-          setAddressVerified(false);
-        }
-      } else {
-        setShowModal(true);
-        setAddressVerified(false);
-      }
-    } catch (error) {
-      console.error("Error verifying address:", error);
-      updateModal({
-        message: "Network error, please check your connection and try again.",
-        modalType: "error",
-        showModal: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSubmit = () => {
+    handleVerifyAddress(individualRegisterData.address, individualRegisterData.phone, "delivery");
   };
 
   return (
@@ -276,31 +164,20 @@ const IndividualAddressVerification = () => {
         <FittedBlackButton
           isLoading={isLoading}
           value="Verify Address"
-          isDisabled={checkIsDisabled()}
+          isDisabled={
+            !checkIsFormValid(individualRegisterData.address, individualRegisterData.phone)
+          }
           onClick={handleSubmit}
           style={tw`h-11`}
         />
       </View>
-      <View style={tw`mt-5 mb-3 mr-3`}>
-        <Pressable
-          onPress={() => setShowToolTip(!showToolTip)}
-          style={tw`rounded-full h-11 w-11 justify-center items-center bg-black self-end`}
-        >
-          <Text style={tw`text-white text-xl`}>?</Text>
-        </Pressable>
-        {showToolTip && (
-          <View style={[tw`absolute top-0 right-16`, { width: width / 2 }]}>
-            <View style={tw`rounded-[12px] bg-[#111111] py-2.5 px-4`}>
-              <Text style={tw`text-[10px] text-white text-center leading-[15px]`}>
-                We need your home address to {`\n`} properly verify shipping designation
-              </Text>
-            </View>
-            <View
-              style={tw`w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] rounded-[5px] border-l-[#111111] absolute right-[-17px] top-[15px]`}
-            />
-          </View>
-        )}
-      </View>
+
+      <AddressTooltip
+        showToolTip={showToolTip}
+        setShowToolTip={setShowToolTip}
+        tooltipText="We need your home address to properly verify shipping designation"
+      />
+
       <AuthModal
         modalVisible={showModal}
         setModalVisible={setShowModal}
@@ -312,13 +189,10 @@ const IndividualAddressVerification = () => {
         }
         btn1Text="Go Back"
         btn2Text={addressVerified ? "Proceed" : "Try Again"}
-        onPress1={() => {
-          setShowModal(false);
-          setPageIndex(pageIndex - 1);
-        }}
+        onPress1={handleModalGoBack}
         onPress2={() => {
           if (addressVerified) {
-            setPageIndex(pageIndex + 1);
+            handleModalProceed();
           } else {
             setShowModal(false);
             handleSubmit();
