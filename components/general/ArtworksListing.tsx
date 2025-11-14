@@ -126,7 +126,7 @@ export default function ArtworksListing({
       </View>
       {/* Loader at the bottom */}
       {loadingMore && <Loader size={150} height={0} />}
-      <View style={tw`mb-[150px]`} />
+      <View style={tw`mb-5px]`} />
     </ScrollView>
   );
 }

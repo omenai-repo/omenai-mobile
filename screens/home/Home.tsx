@@ -14,11 +14,14 @@ import FeaturedArtists from './components/featuredArtists/FeaturedArtists';
 import Editorials from './components/editorials/Editorials';
 import { HOME_QK } from 'utils/queryKeys';
 import { useAppStore } from 'store/app/appStore';
+import BlurStatusBar from 'components/general/BlurStatusBar';
+import { useScrollY } from 'hooks/useScrollY';
 
 export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
   const { userSession } = useAppStore();
+  const { scrollY, onScroll } = useScrollY();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -40,9 +43,11 @@ export default function Home() {
 
   return (
     <WithModal>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onScroll={onScroll}
       >
         <Header />
         <Banner />
@@ -53,7 +58,6 @@ export default function Home() {
         <CatalogListing />
         <Editorials />
         <RecentlyViewedArtworks />
-        <View style={{ height: 100 }} />
       </ScrollWrapper>
     </WithModal>
   );

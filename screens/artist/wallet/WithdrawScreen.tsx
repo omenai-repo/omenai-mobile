@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -8,26 +8,32 @@ import {
   KeyboardAvoidingView,
   Platform,
   useWindowDimensions,
-} from 'react-native';
-import tw from 'twrnc';
-import { useModalStore } from 'store/modal/modalStore';
-import { createTransfer } from 'services/wallet/createTransfer';
-import { getTransferRate } from 'services/wallet/getTransferRate';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { getArtistCurrencySymbol } from 'utils/utils_getArtistCurrencySymbol';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import { useQueryClient } from '@tanstack/react-query';
-import OtpInput from 'components/inputs/OtpInput';
-import type { OtpInputRef } from 'types/otp';
+} from "react-native";
+import tw from "twrnc";
+import { useModalStore } from "store/modal/modalStore";
+import { createTransfer } from "services/wallet/createTransfer";
+import { getTransferRate } from "services/wallet/getTransferRate";
+import BackHeaderTitle from "components/header/BackHeaderTitle";
+import { getArtistCurrencySymbol } from "utils/utils_getArtistCurrencySymbol";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
+import { useQueryClient } from "@tanstack/react-query";
+import OtpInput from "components/inputs/OtpInput";
+import type { OtpInputRef } from "types/otp";
 
-const WALLET_QK = ['wallet', 'artist'] as const;
-const TXNS_QK = ['wallet', 'artist', 'txns', { status: 'all' }] as const;
-const BASE_TXNS_QK = ['wallet', 'artist', 'txns'] as const;
+const WALLET_QK = ["wallet", "artist"] as const;
+const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
+const BASE_TXNS_QK = ["wallet", "artist", "txns"] as const;
 
-export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: any }) => {
+export const WithdrawScreen = ({
+  route,
+  navigation,
+}: {
+  route: any;
+  navigation: any;
+}) => {
   const { walletData } = route.params;
   const { width } = useWindowDimensions();
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState("");
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [rate, setRate] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -36,7 +42,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
 
   const queryClient = useQueryClient();
 
-  const [walletPin, setWalletPin] = useState('');
+  const [walletPin, setWalletPin] = useState("");
   const otpRef = useRef<OtpInputRef>(null);
 
   useEffect(() => {
@@ -59,13 +65,17 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
         setRate(response.data.rate);
       } else {
         updateModal({
-          message: 'Failed to get exchange rate',
+          message: "Failed to get exchange rate",
           showModal: true,
-          modalType: 'error',
+          modalType: "error",
         });
       }
     } catch {
-      updateModal({ message: 'Error fetching exchange rate', showModal: true, modalType: 'error' });
+      updateModal({
+        message: "Error fetching exchange rate",
+        showModal: true,
+        modalType: "error",
+      });
     } finally {
       setLoadAmount(false);
     }
@@ -73,11 +83,19 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
 
   const handleWithdraw = async () => {
     if (!amount || !walletPin) {
-      updateModal({ message: 'Please fill all fields', showModal: true, modalType: 'error' });
+      updateModal({
+        message: "Please fill all fields",
+        showModal: true,
+        modalType: "error",
+      });
       return;
     }
     if (walletPin.length !== 4) {
-      updateModal({ message: 'PIN must be 4 digits', showModal: true, modalType: 'error' });
+      updateModal({
+        message: "PIN must be 4 digits",
+        showModal: true,
+        modalType: "error",
+      });
       return;
     }
 
@@ -85,7 +103,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
     try {
       const payload = {
         amount: Number.parseFloat(amount),
-        url: 'https://api.omenai.app/api/webhook/flw-transfer',
+        url: "https://api.omenai.app/api/webhook/flw-transfer",
         wallet_id: walletData.wallet_id,
         wallet_pin: walletPin,
       };
@@ -98,16 +116,20 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
           queryClient.invalidateQueries({ queryKey: TXNS_QK }),
           queryClient.invalidateQueries({ queryKey: BASE_TXNS_QK }),
         ]);
-        navigation.navigate('WithdrawalSuccess');
+        navigation.navigate("WithdrawalSuccess");
       } else {
         updateModal({
-          message: response.data?.message || 'Withdrawal failed',
+          message: response.data?.message || "Withdrawal failed",
           showModal: true,
-          modalType: 'error',
+          modalType: "error",
         });
       }
     } catch {
-      updateModal({ message: 'An error occurred', showModal: true, modalType: 'error' });
+      updateModal({
+        message: "An error occurred",
+        showModal: true,
+        modalType: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -117,7 +139,7 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Withdraw Funds" />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={tw`flex-1`}
       >
         <ScrollView
@@ -128,21 +150,29 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
           <View style={tw`p-[25px]`}>
             <View style={tw`mb-6`}>
               <Text style={tw`mb-2 font-medium`}>Primary Account Details</Text>
-              <View style={tw`bg-[#FFFFFF] border border-[#00000033] p-4 rounded-[15px] gap-[8px]`}>
+              <View
+                style={tw`bg-[#FFFFFF] border border-[#00000033] p-4 rounded-[15px] gap-[8px]`}
+              >
                 <View style={tw`flex-row items-center`}>
-                  <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Number:</Text>
+                  <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>
+                    Account Number:
+                  </Text>
                   <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
                     {walletData?.primary_withdrawal_account?.account_number}
                   </Text>
                 </View>
                 <View style={tw`flex-row items-center`}>
-                  <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Bank Name:</Text>
+                  <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>
+                    Bank Name:
+                  </Text>
                   <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
                     {walletData?.primary_withdrawal_account?.bank_name}
                   </Text>
                 </View>
                 <View style={tw`flex-row items-center`}>
-                  <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Name:</Text>
+                  <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>
+                    Account Name:
+                  </Text>
                   <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
                     {walletData?.primary_withdrawal_account?.account_name}
                   </Text>
@@ -154,7 +184,9 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
               <Text style={tw`mb-2 font-medium`}>Enter Amount</Text>
 
               {/* You Send */}
-              <View style={tw`bg-white border border-[#00000020] rounded-xl p-4`}>
+              <View
+                style={tw`bg-white border border-[#00000020] rounded-xl p-4`}
+              >
                 <Text style={tw`text-sm mb-1 text-gray-600`}>You Send</Text>
                 <TextInput
                   style={tw`py-3 text-base font-bold text-[#1A1A1A]`}
@@ -166,40 +198,36 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
               </View>
 
               {/* Convert Button Centered */}
-              <View
-                style={tw.style(`mt-4`, {
-                  marginHorizontal: width / 3.5,
-                })}
-              >
+              <View style={[tw`mt-4`, { marginHorizontal: width / 3.5 }]}>
                 <FittedBlackButton
                   value="Convert"
                   isLoading={loadAmount}
-                  fontWeight="600"
                   isDisabled={!amount ? true : false}
-                  onClick={() => {
-                    if (amount) {
-                      fetchTransferRate();
-                    }
-                  }}
+                  onClick={() => amount && fetchTransferRate()}
+                  textStyle={{ fontWeight: "600" }}
                 />
               </View>
 
               {/* You Get */}
-              <View style={tw`bg-white border border-[#00000020] rounded-xl p-4 mt-4`}>
+              <View
+                style={tw`bg-white border border-[#00000020] rounded-xl p-4 mt-4`}
+              >
                 <Text style={tw`text-sm mb-1 text-gray-600`}>You Get</Text>
                 <Text style={tw`text-base font-bold text-[#1A1A1A]`}>
                   {convertedAmount
                     ? `${getArtistCurrencySymbol(
-                        walletData.base_currency,
+                        walletData.base_currency
                       )} ${convertedAmount.toLocaleString()}`
-                    : '--'}
+                    : "--"}
                 </Text>
               </View>
 
               {rate > 0 && (
                 <Text style={tw`text-xs mt-2 text-gray-500`}>
-                  {`Rate: 1 ${walletData.wallet_currency} = ${getArtistCurrencySymbol(
-                    walletData.base_currency,
+                  {`Rate: 1 ${
+                    walletData.wallet_currency
+                  } = ${getArtistCurrencySymbol(
+                    walletData.base_currency
                   )} ${rate.toFixed(2)}`}
                 </Text>
               )}
@@ -222,17 +250,24 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
                   focusedPinCodeContainerStyle: tw`border-black border-2`,
                 }}
               />
-              <Pressable onPress={() => navigation.navigate('ForgotPinScreen')} style={tw`mt-2`}>
-                <Text style={tw`text-blue-500 text-center mt-[20px]`}>Forgot PIN?</Text>
+              <Pressable
+                onPress={() => navigation.navigate("ForgotPinScreen")}
+                style={tw`mt-2`}
+              >
+                <Text style={tw`text-blue-500 text-center mt-[20px]`}>
+                  Forgot PIN?
+                </Text>
               </Pressable>
             </View>
             <Pressable
-              style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${loading ? 'opacity-50' : ''}`}
+              style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${
+                loading ? "opacity-50" : ""
+              }`}
               onPress={handleWithdraw}
               disabled={loading}
             >
               <Text style={tw`text-white text-center font-bold`}>
-                {loading ? 'Processing...' : 'Withdraw'}
+                {loading ? "Processing..." : "Withdraw"}
               </Text>
             </Pressable>
           </View>

@@ -41,6 +41,8 @@ import { licenseIcon } from 'utils/SvgImages';
 import BackScreenButton from 'components/buttons/BackScreenButton';
 import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
 import ZoomArtwork from './ZoomArtwork';
+import BlurStatusBar from 'components/general/BlurStatusBar';
+import { useScrollY } from 'hooks/useScrollY';
 
 type RouteParams = { title: string; url: string };
 
@@ -67,6 +69,7 @@ export default function Artwork() {
   const [showMore, setShowMore] = useState(false);
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const { scrollY, onScroll } = useScrollY();
 
   // 1) Fetch the artwork (cached; no re-fetch during staleTime window from App.tsx)
   const {
@@ -296,12 +299,17 @@ export default function Artwork() {
     <WithModal>
       {!showMore ? (
         <View style={{ flex: 1 }}>
+          <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
           <Header art_id={artwork?.art_id} isGallery={['gallery', 'artist'].includes(userType)} />
 
           {loadingMain && <Loader />}
 
           {artwork && (
-            <ScrollWrapper style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+            <ScrollWrapper
+              style={styles.scrollContainer}
+              showsVerticalScrollIndicator={false}
+              onScroll={onScroll}
+            >
               <View style={{ paddingBottom: 20 }}>
                 {isTabletLandscape ? (
                   <View style={styles.tabletLandscapeContainer}>
@@ -309,7 +317,7 @@ export default function Artwork() {
                     {renderContentSection()}
                   </View>
                 ) : (
-                  <View style={{ paddingHorizontal: 20, marginBottom: 100 }}>
+                  <View style={{ paddingHorizontal: 20 }}>
                     {renderImageSection()}
                     {renderContentSection()}
                   </View>
@@ -326,12 +334,17 @@ export default function Artwork() {
         </View>
       ) : (
         <View style={tw`flex-1`}>
+          <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
           <View style={tw`pt-[60px] android:pt-[40px] pl-[25px]`}>
             <BackScreenButton handleClick={() => setShowMore(false)} />
           </View>
 
           {artwork && (
-            <ScrollWrapper showsVerticalScrollIndicator={false} style={tw`flex-1`}>
+            <ScrollWrapper
+              showsVerticalScrollIndicator={false}
+              style={tw`flex-1`}
+              onScroll={onScroll}
+            >
               <View>
                 <View
                   style={[
@@ -423,7 +436,6 @@ const styles = StyleSheet.create({
   tabletLandscapeContainer: {
     flexDirection: 'row',
     paddingHorizontal: 20,
-    paddingBottom: 100,
     gap: 30,
   },
   tabletImageContainer: {

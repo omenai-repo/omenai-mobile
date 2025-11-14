@@ -15,6 +15,9 @@ import WithModal from 'components/modal/WithModal';
 import { PinCreationModal } from './PinCreationModal';
 import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import BlurStatusBar from 'components/general/BlurStatusBar';
+import { useScrollY } from 'hooks/useScrollY';
+import ScrollWrapper from 'components/general/ScrollWrapper';
 
 export const WalletContainerSkeleton = () => {
   const SkeletonBlock = ({ style }: { style: any }) => (
@@ -132,6 +135,7 @@ const WalletScreen = () => {
   const { updateModal } = useModalStore();
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();
+  const { scrollY, onScroll } = useScrollY();
 
   const [showAvailableBalance, setShowAvailableBalance] = useState(false);
   const [showPendingBalance, setShowPendingBalance] = useState(false);
@@ -216,8 +220,9 @@ const WalletScreen = () => {
 
   return (
     <WithModal>
-      <View style={tw.style(`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 })}>
-        <ScrollView
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+      <View style={tw`flex-1 bg-[#F7F7F7]`}>
+        <ScrollWrapper
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -227,6 +232,8 @@ const WalletScreen = () => {
               colors={['#000']}
             />
           }
+          onScroll={onScroll}
+          style={{ paddingTop: insets.top + 16 }}
         >
           <View>
             {/* <Image
@@ -393,7 +400,7 @@ const WalletScreen = () => {
             setVisible={setShowPinModal}
             onClose={() => setShowPinModal(false)}
           />
-        </ScrollView>
+        </ScrollWrapper>
       </View>
     </WithModal>
   );
