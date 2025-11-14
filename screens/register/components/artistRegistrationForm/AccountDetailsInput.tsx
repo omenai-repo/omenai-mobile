@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import React, { useState } from "react";
 import NextButton from "../../../../components/buttons/NextButton";
 import { validate } from "../../../../lib/validations/validatorGroup";
@@ -6,6 +6,7 @@ import Input from "../../../../components/inputs/Input";
 import PasswordInput from "../../../../components/inputs/PasswordInput";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
 import { debounce } from "lodash";
+import tw from "twrnc";
 
 const AccountDetailsInput = () => {
   const [formErrors, setFormErrors] = useState<Partial<ArtistSignupData>>({
@@ -48,7 +49,7 @@ const AccountDetailsInput = () => {
         return;
       }
 
-      const { success, errors } = validate(value, label, confirm);
+      const { errors } = validate(value, label, confirm);
       setFormErrors((prev) => ({
         ...prev,
         [label]: errors.length > 0 ? errors[0] : "",
@@ -58,8 +59,8 @@ const AccountDetailsInput = () => {
   ); // ✅ Delay validation by 500ms
 
   return (
-    <View style={{ gap: 40 }}>
-      <View style={{ gap: 20 }}>
+    <View style={tw`gap-10`}>
+      <View style={tw`gap-5`}>
         <Input
           label="Artist Name"
           keyboardType="default"
@@ -107,8 +108,7 @@ const AccountDetailsInput = () => {
           errorMessage={formErrors.confirmPassword}
         />
       </View>
-      <View style={styles.buttonsContainer}>
-        <View style={{ flex: 1 }} />
+      <View style={tw`flex-row gap-2.5 justify-end`}>
         <NextButton
           isDisabled={checkIsDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
@@ -117,13 +117,5 @@ const AccountDetailsInput = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  buttonsContainer: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-  },
-});
 
 export default AccountDetailsInput;

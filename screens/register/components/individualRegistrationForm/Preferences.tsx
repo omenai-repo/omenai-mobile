@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import React from "react";
 import { colors } from "../../../../config/colors.config";
 import BackFormButton from "../../../../components/buttons/BackFormButton";
@@ -6,9 +6,6 @@ import NextButton from "../../../../components/buttons/NextButton";
 import { useIndividualAuthRegisterStore } from "../../../../store/auth/register/IndividualAuthRegisterStore";
 import { mediumListing } from "data/uploadArtworkForm.data";
 import tw from "twrnc";
-import { useModalStore } from "store/modal/modalStore";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 
 type TabItemProps = {
   name: string;
@@ -17,10 +14,7 @@ type TabItemProps = {
 };
 
 export default function Preferences() {
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  const { pageIndex, setPageIndex, preferences, setPreferences } =
-    useIndividualAuthRegisterStore();
-  const { updateModal } = useModalStore();
+  const { pageIndex, setPageIndex, preferences, setPreferences } = useIndividualAuthRegisterStore();
 
   const handleSelect = (value: string) => {
     if (preferences.includes(value)) {
@@ -33,35 +27,34 @@ export default function Preferences() {
     }
   };
 
-  const TabItem = ({ name, isSelected, onSelect }: TabItemProps) => {
-    if (isSelected)
-      return (
-        <TouchableOpacity
-          style={[styles.tabItem, styles.selectedTabItem]}
-          activeOpacity={0.7}
-          onPress={onSelect}
-        >
-          <Text style={{ fontSize: 12, color: "#fff" }}>{name}</Text>
-        </TouchableOpacity>
-      );
-
-    return (
-      <TouchableOpacity
-        style={styles.tabItem}
-        activeOpacity={0.7}
-        onPress={onSelect}
-      >
-        <Text style={{ fontSize: 12, color: "#1a1a1a" }}>{name}</Text>
-      </TouchableOpacity>
-    );
-  };
+  const TabItem = ({ name, isSelected, onSelect }: TabItemProps) => (
+    <Pressable
+      onPress={onSelect}
+      style={[
+        tw`h-10 px-5 rounded-lg border items-center justify-center`,
+        { borderColor: colors.inputBorder },
+        isSelected ? { backgroundColor: colors.black } : { backgroundColor: "#FAFAFA" },
+      ]}
+      accessibilityRole="button"
+      accessibilityState={{ selected: isSelected }}
+    >
+      <Text style={[tw`text-xs`, { color: isSelected ? colors.white : colors.primary_black }]}>
+        {name}
+      </Text>
+    </Pressable>
+  );
 
   return (
-    <View style={{ marginTop: 20 }}>
-      <Text style={tw`text-[#1A1A1A] text-[20px] font-medium`}>
+    <View>
+      <Text style={[tw`text-xl font-medium`, { color: colors.primary_black }]}>
         Select your art preference
       </Text>
-      <View style={styles.tabsContainer}>
+      <View
+        style={[
+          tw`mt-3 bg-[#FAFAFA] rounded-lg border p-3 flex-row flex-wrap`,
+          { borderColor: colors.inputBorder, rowGap: 10, columnGap: 10 },
+        ]}
+      >
         {mediumListing.map((i, idx) => (
           <TabItem
             name={i.value}
@@ -71,9 +64,8 @@ export default function Preferences() {
           />
         ))}
       </View>
-      <View style={styles.buttonsContainer}>
+      <View style={tw`flex-row gap-2.5 items-center mt-10 justify-between`}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
-        <View style={{ flex: 1 }} />
         <NextButton
           isDisabled={preferences.length < 5}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
@@ -82,42 +74,3 @@ export default function Preferences() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    color: colors.primary_black,
-    fontSize: 16,
-  },
-  tabsContainer: {
-    marginTop: 20,
-    backgroundColor: "#FAFAFA",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    rowGap: 25,
-    columnGap: 10,
-  },
-  tabItem: {
-    height: 40,
-    paddingHorizontal: 20,
-    backgroundColor: "#FAFAFA",
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  selectedTabItem: {
-    backgroundColor: colors.black,
-  },
-  buttonsContainer: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-    marginTop: 40,
-  },
-});

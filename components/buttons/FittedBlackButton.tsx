@@ -1,8 +1,8 @@
-import { Text, TextStyle, TouchableOpacity, View } from 'react-native';
-import React, { useRef } from 'react';
-import LottieView from 'lottie-react-native';
-import tw from 'twrnc';
-import loaderAnimation from 'assets/other/loader-animation.json';
+import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import React, { useRef } from "react";
+import LottieView from "lottie-react-native";
+import tw from "twrnc";
+import loaderAnimation from "assets/other/loader-animation.json";
 
 type FittedBlackButtonProps = {
   value: string;
@@ -10,13 +10,8 @@ type FittedBlackButtonProps = {
   onClick: () => void;
   isLoading?: boolean;
   children?: React.ReactNode;
-  height?: number;
-  bgColor?: string;
-  textColor?: string;
-  fontSize?: number;
-  fontWeight?: string | TextStyle['fontWeight'];
-  disabledBgColor?: string;
-  disabledTextColor?: string;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 };
 
 export default function FittedBlackButton({
@@ -25,35 +20,36 @@ export default function FittedBlackButton({
   onClick,
   isLoading = false,
   children,
-  height = 45,
-  bgColor = '#000000',
-  textColor = '#FFFFFF',
-  fontSize = 16,
-  fontWeight = '400',
-  disabledBgColor = '#E0E0E0',
-  disabledTextColor = '#A1A1A1',
+  style,
+  textStyle,
 }: FittedBlackButtonProps) {
   const animation = useRef(null);
 
-  const backgroundColor = isDisabled || isLoading ? disabledBgColor : bgColor;
-  
+  const defaultContainerStyle: ViewStyle = {
+    height: 44,
+    backgroundColor: isDisabled || isLoading ? "#E0E0E0" : "#000000",
+  };
+
+  const defaultTextStyle: TextStyle = {
+    color: isDisabled || isLoading ? "#A1A1A1" : "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "400",
+  };
+
   const containerStyle = [
-    tw`flex flex-row items-center justify-center rounded-[91px] gap-[10px] px-5`,
-    { height, backgroundColor },
+    tw`flex flex-row items-center justify-center rounded-lg gap-[10px] px-5`,
+    defaultContainerStyle,
+    style,
   ];
 
-  const textStyle = {
-    color: isDisabled ? disabledTextColor : textColor,
-    fontSize,
-    fontWeight: fontWeight as TextStyle['fontWeight'],
-  };
+  const mergedTextStyle = [defaultTextStyle, textStyle];
 
   if (isDisabled || isLoading) {
     return (
       <View style={containerStyle}>
         {isDisabled ? (
           <>
-            <Text style={textStyle}>{value}</Text>
+            <Text style={mergedTextStyle}>{value}</Text>
             {children}
           </>
         ) : (
@@ -70,7 +66,7 @@ export default function FittedBlackButton({
 
   return (
     <TouchableOpacity activeOpacity={0.9} style={containerStyle} onPress={onClick}>
-      <Text style={textStyle}>{value}</Text>
+      <Text style={mergedTextStyle}>{value}</Text>
       {children}
     </TouchableOpacity>
   );

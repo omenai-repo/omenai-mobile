@@ -411,9 +411,9 @@ const AddPrimaryAcctScreen = () => {
                   ? 'Update Primary Account'
                   : 'Add Primary Account'
               }
-              height={50}
               isDisabled={!acctNumber}
               isLoading={!acctName ? loadAcctName : addPrimaryAcctLoading}
+              style={{ height: 50 }}
             />
           </View>
         </View>

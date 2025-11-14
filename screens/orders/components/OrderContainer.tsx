@@ -199,14 +199,13 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             order_accepted === 'accepted' &&
             remainingTime > 0 && (
               <FittedBlackButton
-                height={40}
                 value="Pay now"
                 onClick={() =>
                   navigation.navigate(screenName.payment, {
                     id: orderId,
                   })
                 }
-                isDisabled={false}
+                style={{ height: 40 }}
               />
             )}
           {availability &&
@@ -221,12 +220,10 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
                   <Ionicons name="location-outline" size={18} color="#fff" />
                 </Pressable>
                 <FittedBlackButton
-                  height={35}
                   value="Confirm order delivery"
                   onClick={() => setConfirmOrderModal(true)}
-                  isDisabled={false}
-                  fontSize={12}
-                  bgColor="#16A34A"
+                  style={{ height: 35, backgroundColor: '#16A34A' }}
+                  textStyle={{ fontSize: 12 }}
                 />
               </View>
             )}
