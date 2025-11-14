@@ -22,6 +22,8 @@ import { PageButtonCard } from "components/buttons/PageButtonCard";
 import omenaiAvatar from "../../assets/images/omenai-avatar.png";
 import { logout } from "utils/logout.utils";
 import { useQueryClient } from "@tanstack/react-query";
+import BlurStatusBar from "components/general/BlurStatusBar";
+import { useScrollY } from "hooks/useScrollY";
 
 type Nav = StackNavigationProp<any>;
 
@@ -30,6 +32,7 @@ export default function Profile() {
   const insets = useSafeAreaInsets();
   const { userSession } = useAppStore();
   const queryClient = useQueryClient();
+  const { scrollY, onScroll } = useScrollY();
 
   const name = userSession?.name ?? "";
   const email = userSession?.email ?? "";
@@ -90,6 +93,7 @@ export default function Profile() {
 
   return (
     <WithModal>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}
       >

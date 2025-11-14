@@ -15,6 +15,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
 import { QK } from 'utils/queryKeys';
 import { useAppStore } from 'store/app/appStore';
+import BlurStatusBar from 'components/general/BlurStatusBar';
+import { useScrollY } from 'hooks/useScrollY';
 
 export const RecentOrderContainer = ({
   id,
@@ -120,6 +122,7 @@ const ArtistOverview = () => {
   const queryClient = useQueryClient();
   const [openSection, setOpenSection] = useState<Record<number, boolean>>({});
   const { userSession } = useAppStore();
+  const { scrollY, onScroll } = useScrollY();
 
   // Recent orders via query
   const ordersQuery = useQuery({
@@ -157,9 +160,11 @@ const ArtistOverview = () => {
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={isAnyFetching} onRefresh={onRefresh} />}
+        onScroll={onScroll}
       >
         <Header />
 
