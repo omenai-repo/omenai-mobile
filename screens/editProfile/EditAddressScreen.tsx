@@ -360,10 +360,10 @@ const EditAddressScreen = () => {
             <View style={tw`flex-1 mt-[20px]`}>
               <FittedBlackButton
                 isLoading={isLoading}
-                height={50}
                 value="Verify Address"
                 isDisabled={checkIsDisabled()}
                 onClick={handleSubmit}
+                style={{ height: 50 }}
               />
             </View>
 

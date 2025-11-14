@@ -1,19 +1,19 @@
-import { View, Text, Pressable } from 'react-native';
-import tw from 'twrnc';
-import { SvgXml } from 'react-native-svg';
-import { checkedBox, uncheckedBox } from 'utils/SvgImages';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import BackFormButton from 'components/buttons/BackFormButton';
-import { useArtistAuthRegisterStore } from 'store/auth/register/ArtistAuthRegisterStore';
-import { useModalStore } from 'store/modal/modalStore';
-import uploadLogo from 'screens/galleryProfileScreens/uploadNewLogo/uploadLogo';
-import { registerAccount } from 'services/register/registerAccount';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from 'constants/screenNames.constants';
-import { storage } from 'appWrite_config';
-import { useAppStore } from 'store/app/appStore';
-import LegalLinkButton from 'components/general/LegalLinkButton';
+import { View, Text, Pressable } from "react-native";
+import tw from "twrnc";
+import { SvgXml } from "react-native-svg";
+import { checkedBox, uncheckedBox } from "utils/SvgImages";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
+import BackFormButton from "components/buttons/BackFormButton";
+import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
+import { useModalStore } from "store/modal/modalStore";
+import uploadLogo from "screens/galleryProfileScreens/uploadNewLogo/uploadLogo";
+import { registerAccount } from "services/register/registerAccount";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { screenName } from "constants/screenNames.constants";
+import { storage } from "appWrite_config";
+import { useAppStore } from "store/app/appStore";
+import LegalLinkButton from "components/general/LegalLinkButton";
 
 const TermsAndCondition = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -33,15 +33,15 @@ const TermsAndCondition = () => {
   const checks = [
     {
       id: 0,
-      text: 'I have read and agree to the terms stated above.',
+      text: "I have read and agree to the terms stated above.",
     },
     {
       id: 1,
-      text: 'By ticking this box, I accept the Terms of use and Privacy Policy of creating an account with Omenai.',
+      text: "By ticking this box, I accept the Terms of use and Privacy Policy of creating an account with Omenai.",
     },
     {
       id: 2,
-      text: 'By ticking this box, I agree to subscribing to Omenai’s mailing list and receiving promotional emails.',
+      text: "By ticking this box, I agree to subscribing to Omenai’s mailing list and receiving promotional emails.",
     },
   ];
 
@@ -79,15 +79,15 @@ const TermsAndCondition = () => {
           art_style,
           base_currency,
           phone,
-          device_push_token: expoPushToken ?? '',
+          device_push_token: expoPushToken ?? "",
         };
 
-        const results = await registerAccount(payload, 'artist');
+        const results = await registerAccount(payload, "artist");
 
         if (results?.isOk) {
           clearState();
           navigation.navigate(screenName.verifyEmail, {
-            account: { id: results.body.data, type: 'artist' },
+            account: { id: results.body.data, type: "artist" },
           });
         } else {
           await storage.deleteFile({
@@ -96,7 +96,7 @@ const TermsAndCondition = () => {
           });
           updateModal({
             message: results?.body.message,
-            modalType: 'error',
+            modalType: "error",
             showModal: true,
           });
         }
@@ -104,7 +104,7 @@ const TermsAndCondition = () => {
     } catch (error: any) {
       updateModal({
         message: error.message,
-        modalType: 'error',
+        modalType: "error",
         showModal: true,
       });
     } finally {
@@ -121,7 +121,6 @@ const TermsAndCondition = () => {
 
   const isProceedDisabled =
     !selectedTerms.includes(0) || !selectedTerms.includes(2) || !selectedTerms.includes(1);
-
 
   return (
     <View>
@@ -144,7 +143,7 @@ const TermsAndCondition = () => {
 
       {/* ⬇️ Checkboxes */}
       <View
-        style={tw`border-[0.96px] border-[#E0E0E0] bg-[#FAFAFA] rounded-[8px] pl-[15px] pr-[25px] pt-[20px] py-[30px] gap-[25px]`}
+        style={tw`border-[0.96px] border-[#E0E0E0] bg-[#FAFAFA] rounded-[8px] px-3 py-4 gap-2.5`}
       >
         {checks.map((item) => (
           <Conatiner
@@ -159,12 +158,10 @@ const TermsAndCondition = () => {
       <LegalLinkButton entity="artist" updateModal={updateModal} />
 
       {/* ⬇️ Navigation Buttons */}
-      <View style={tw`flex-row mt-[40px]`}>
+      <View style={tw`flex-row mt-[40px] justify-between items-center`}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} disabled={isLoading} />
-        <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
-          height={50}
           value="Proceed"
           isDisabled={isProceedDisabled}
           onClick={handleSubmit}

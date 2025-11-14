@@ -263,10 +263,10 @@ const GalleryAddressVerification = () => {
         <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
-          height={50}
           value="Verify Address"
           isDisabled={checkIsDisabled()}
           onClick={handleSubmit}
+          style={{ height: 50 }}
         />
       </View>
 

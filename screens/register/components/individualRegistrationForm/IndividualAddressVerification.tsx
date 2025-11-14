@@ -1,29 +1,29 @@
-import { View, Text, Pressable, useWindowDimensions } from 'react-native';
-import React, { useCallback, useMemo, useState } from 'react';
-import tw from 'twrnc';
-import Input from 'components/inputs/Input';
-import { validate } from 'lib/validations/validatorGroup';
-import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
-import BackFormButton from 'components/buttons/BackFormButton';
-import { verifyAddress } from 'services/register/verifyAddress';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import { useModalStore } from 'store/modal/modalStore';
-import { debounce } from 'lodash';
-import AuthModal from 'components/auth/AuthModal';
-import { checkMarkIcon, errorIcon } from 'utils/SvgImages';
-import { useIndividualAuthRegisterStore } from 'store/auth/register/IndividualAuthRegisterStore';
-import { Country, State, City, ICountry, IState, ICity } from 'country-state-city';
+import { View, Text, Pressable, useWindowDimensions } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import tw from "twrnc";
+import Input from "components/inputs/Input";
+import { validate } from "lib/validations/validatorGroup";
+import CustomSelectPicker from "components/inputs/CustomSelectPicker";
+import BackFormButton from "components/buttons/BackFormButton";
+import { verifyAddress } from "services/register/verifyAddress";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
+import { useModalStore } from "store/modal/modalStore";
+import { debounce } from "lodash";
+import AuthModal from "components/auth/AuthModal";
+import { checkMarkIcon, errorIcon } from "utils/SvgImages";
+import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
+import { Country, State, City, ICountry, IState, ICity } from "country-state-city";
 
 const IndividualAddressVerification = () => {
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const [formErrors, setFormErrors] = useState<Partial<AddressTypes & { phone: string }>>({
-    address_line: '',
-    city: '',
-    country: '',
-    state: '',
-    zip: '',
-    countryCode: '',
-    phone: '',
+    address_line: "",
+    city: "",
+    country: "",
+    state: "",
+    zip: "",
+    countryCode: "",
+    phone: "",
   });
   const [showToolTip, setShowToolTip] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -37,7 +37,7 @@ const IndividualAddressVerification = () => {
         value: item.isoCode,
         label: item.name,
       })),
-    [],
+    []
   );
 
   const {
@@ -65,8 +65,8 @@ const IndividualAddressVerification = () => {
     setCountryCode(item.value);
 
     // Reset state and city selections
-    setState('');
-    setCity('');
+    setState("");
+    setCity("");
 
     // Clear state and city dropdown data
     setStateData([]);
@@ -83,23 +83,30 @@ const IndividualAddressVerification = () => {
             value: state.name,
             isoCode: state.isoCode,
           }))
-        : [],
+        : []
     );
   };
 
   // 🚀 **Debounced Fetch Cities Function**
-  const fetchCities = useCallback(
-    debounce((countryCode, stateValue) => {
-      const getCities = City.getCitiesOfState(countryCode, stateValue);
-      setCityData(
-        getCities?.map((city: ICity) => ({
-          label: city.name,
-          value: city.name,
-        })) || [],
-      );
-    }, 300),
-    [],
+  const fetchCities = useMemo(
+    () =>
+      debounce((countryCode, stateValue) => {
+        const getCities = City.getCitiesOfState(countryCode, stateValue);
+        setCityData(
+          getCities?.map((city: ICity) => ({
+            label: city.name,
+            value: city.name,
+          })) || []
+        );
+      }, 300),
+    [setCityData]
   );
+
+  useEffect(() => {
+    return () => {
+      fetchCities.cancel();
+    };
+  }, [fetchCities]);
 
   // 🚀 **Handle State Selection**
   const handleStateSelect = useCallback(
@@ -110,12 +117,12 @@ const IndividualAddressVerification = () => {
       }
       fetchCities(individualRegisterData.address.countryCode, item.isoCode);
     },
-    [individualRegisterData.address.countryCode, fetchCities],
+    [individualRegisterData.address.countryCode, fetchCities, setState, setStateCode]
   );
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
-    const isFormValid = formErrors && Object.values(formErrors).every((error) => error === '');
+    const isFormValid = formErrors && Object.values(formErrors).every((error) => error === "");
     const areAllFieldsFilled = Object.values({
       address_line: individualRegisterData?.address?.address_line,
       city: individualRegisterData?.address?.city,
@@ -123,22 +130,22 @@ const IndividualAddressVerification = () => {
       country: individualRegisterData?.address?.country,
       state: individualRegisterData?.address?.state,
       phone: individualRegisterData?.phone,
-    }).every((value) => value !== '');
+    }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
   };
 
   const handleValidationChecks = debounce((label: string, value: string, confirm?: string) => {
     // Clear error if the input is empty
-    if (value.trim() === '') {
-      setFormErrors((prev) => ({ ...prev, [label]: '' }));
+    if (value.trim() === "") {
+      setFormErrors((prev) => ({ ...prev, [label]: "" }));
       return;
     }
 
-    const { success, errors } = validate(value, label, confirm);
+    const { errors } = validate(value, label, confirm);
     setFormErrors((prev) => ({
       ...prev,
-      [label]: errors.length > 0 ? errors[0] : '',
+      [label]: errors.length > 0 ? errors[0] : "",
     }));
   }, 500); // ✅ Delay validation by 500ms
 
@@ -146,7 +153,7 @@ const IndividualAddressVerification = () => {
     setIsLoading(true);
     try {
       const payload = {
-        type: 'delivery',
+        type: "delivery",
         countyName: individualRegisterData.address.city,
         cityName: individualRegisterData.address.state,
         postalCode: individualRegisterData.address.zip,
@@ -171,10 +178,10 @@ const IndividualAddressVerification = () => {
         setAddressVerified(false);
       }
     } catch (error) {
-      console.error('Error verifying address:', error);
+      console.error("Error verifying address:", error);
       updateModal({
-        message: 'Network error, please check your connection and try again.',
-        modalType: 'error',
+        message: "Network error, please check your connection and try again.",
+        modalType: "error",
         showModal: true,
       });
     } finally {
@@ -184,7 +191,7 @@ const IndividualAddressVerification = () => {
 
   return (
     <View style={tw``}>
-      <View style={tw`mb-[20px]`}>
+      <View style={tw`mb-5`}>
         <CustomSelectPicker
           data={transformedCountries}
           placeholder="Select country of residence"
@@ -197,7 +204,7 @@ const IndividualAddressVerification = () => {
         />
       </View>
 
-      <View style={tw`mb-[20px]`}>
+      <View style={tw`mb-5`}>
         <CustomSelectPicker
           data={stateData}
           placeholder="Select state of residence"
@@ -216,15 +223,15 @@ const IndividualAddressVerification = () => {
         keyboardType="default"
         onInputChange={(text) => {
           setAddress(text);
-          handleValidationChecks('general', text);
+          handleValidationChecks("general", text);
         }}
         placeHolder="Input your gallery address here"
         value={individualRegisterData?.address?.address_line}
         errorMessage={formErrors?.address_line}
       />
 
-      <View style={tw`flex-row items-center gap-[30px] my-[20px]`}>
-        <View style={tw`flex-1`}>
+      <View style={tw`flex-row items-center gap-[30px] my-5`}>
+        <View style={tw`flex-grow`}>
           <CustomSelectPicker
             data={cityData}
             placeholder="Select city"
@@ -244,7 +251,7 @@ const IndividualAddressVerification = () => {
           keyboardType="default"
           onInputChange={(text) => {
             setZipCode(text);
-            handleValidationChecks('general', text);
+            handleValidationChecks("general", text);
           }}
           placeHolder="Zip Code"
           value={individualRegisterData?.address?.zip}
@@ -257,45 +264,34 @@ const IndividualAddressVerification = () => {
         keyboardType="phone-pad"
         onInputChange={(text) => {
           setPhone(text);
-          handleValidationChecks('general', text);
+          handleValidationChecks("general", text);
         }}
         placeHolder="+12345678990"
         value={individualRegisterData?.phone}
         errorMessage={formErrors?.phone}
       />
 
-      <View style={tw`flex-row mt-[40px]`}>
+      <View style={tw`flex-row mt-10 justify-between items-center`}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
-        <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
-          height={50}
           value="Verify Address"
           isDisabled={checkIsDisabled()}
           onClick={handleSubmit}
+          style={tw`h-11`}
         />
       </View>
-      <View>
+      <View style={tw`mt-5 mb-3 mr-3`}>
         <Pressable
           onPress={() => setShowToolTip(!showToolTip)}
-          style={tw.style(`rounded-full h-[45px] w-[45px] justify-center items-center bg-[#000]`, {
-            marginTop: height / 15,
-            alignSelf: 'flex-end',
-          })}
+          style={tw`rounded-full h-11 w-11 justify-center items-center bg-black self-end`}
         >
-          <Text style={tw`text-[#FFFFFF] text-[20px]`}>?</Text>
+          <Text style={tw`text-white text-xl`}>?</Text>
         </Pressable>
         {showToolTip && (
-          <View
-            style={tw.style(`absolute`, {
-              top: height / 15,
-              width: width / 2,
-              alignSelf: 'flex-end',
-              right: 80,
-            })}
-          >
-            <View style={tw`rounded-[12px] bg-[#111111] py-[10px] px-[15px]`}>
-              <Text style={tw`text-[10px] text-[#FFFFFF] text-center leading-[15px]`}>
+          <View style={[tw`absolute top-0 right-16`, { width: width / 2 }]}>
+            <View style={tw`rounded-[12px] bg-[#111111] py-2.5 px-4`}>
+              <Text style={tw`text-[10px] text-white text-center leading-[15px]`}>
                 We need your home address to {`\n`} properly verify shipping designation
               </Text>
             </View>
@@ -311,11 +307,11 @@ const IndividualAddressVerification = () => {
         icon={addressVerified ? checkMarkIcon : errorIcon}
         text={
           addressVerified
-            ? 'Your account has been verified succesfully'
-            : 'Your Address could not be verified. Try again.'
+            ? "Your account has been verified succesfully"
+            : "Your Address could not be verified. Try again."
         }
         btn1Text="Go Back"
-        btn2Text={addressVerified ? 'Proceed' : 'Try Again'}
+        btn2Text={addressVerified ? "Proceed" : "Try Again"}
         onPress1={() => {
           setShowModal(false);
           setPageIndex(pageIndex - 1);
