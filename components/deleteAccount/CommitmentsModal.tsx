@@ -155,8 +155,6 @@ export default function CommitmentsModal({
         <LongBlackButton
           value="I understand, Go back"
           onClick={onClose}
-          bgColor={colors.primary_black}
-          textColor={colors.white}
         />
       </BottomSheetView>
     </BottomSheetModal>

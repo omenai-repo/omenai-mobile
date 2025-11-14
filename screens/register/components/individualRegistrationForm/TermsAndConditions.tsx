@@ -12,6 +12,7 @@ import { useModalStore } from "store/modal/modalStore";
 import { useAppStore } from "store/app/appStore";
 import LegalLinkButton from "../../../../components/general/LegalLinkButton";
 import { termsAndConditionsStyles } from "../../../../components/general/TermsAndConditionsStyles";
+import tw from "twrnc";
 
 export default function TermsAndConditions() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -61,17 +62,14 @@ export default function TermsAndConditions() {
 
   const handleAcceptTerms = (index: number) => {
     if (selectedTerms.includes(index)) {
-      setSelectedTerms(
-        selectedTerms.filter((selectedTab) => selectedTab !== index)
-      );
+      setSelectedTerms(selectedTerms.filter((selectedTab) => selectedTab !== index));
     } else {
       setSelectedTerms([...selectedTerms, index]);
     }
   };
 
-
   return (
-    <View style={{ marginTop: 20 }}>
+    <View>
       <Text style={termsAndConditionsStyles.title}>Accept terms and conditions</Text>
 
       <View style={termsAndConditionsStyles.termsContainer}>
@@ -89,10 +87,8 @@ export default function TermsAndConditions() {
 
       <View style={termsAndConditionsStyles.buttonsContainer}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
-        <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
-          height={50}
           value="Create my account"
           isDisabled={!selectedTerms.includes(0)}
           onClick={handleSubmit}

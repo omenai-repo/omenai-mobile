@@ -1,7 +1,8 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
-import { colors } from '../../config/colors.config';
-import Feather from '@expo/vector-icons/Feather';
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import Feather from "@expo/vector-icons/Feather";
+import tw from "twrnc";
+import { colors } from "../../config/colors.config";
 
 type PasswordInputProps = {
   label: string;
@@ -24,12 +25,20 @@ export default function PasswordInput({
 
   return (
     <View>
-      <Text style={styles.label}>{label}</Text>
-      <View style={styles.inputContainer}>
+      <Text style={[tw`text-sm`, { color: colors.inputLabel }]}>{label}</Text>
+      <View
+        style={[
+          tw`h-[46px] w-full border bg-[#FAFAFA] overflow-hidden rounded-lg mt-2.5 flex-row items-center`,
+          { borderColor: colors.inputBorder },
+        ]}
+      >
         <TextInput
-          style={styles.input}
+          style={[
+            tw`flex-1 h-full px-3 bg-transparent`,
+            { color: colors.black },
+          ]}
           placeholder={placeHolder}
-          placeholderTextColor={'#858585'}
+          placeholderTextColor={colors.inputLabel}
           onChangeText={onInputChange}
           secureTextEntry={!showPassword}
           autoCapitalize="none"
@@ -37,51 +46,19 @@ export default function PasswordInput({
           onBlur={handleBlur}
         />
         <TouchableOpacity
-          style={styles.hideButton}
+          style={tw`w-[50px] h-full items-center justify-center`}
           onPress={() => setShowPassword((prev) => !prev)}
         >
-          <Feather name={showPassword ? 'eye' : 'eye-off'} size={16} color="#858585" />
+          <Feather
+            name={showPassword ? "eye" : "eye-off"}
+            size={16}
+            color={colors.inputLabel}
+          />
         </TouchableOpacity>
       </View>
       {errorMessage && errorMessage?.length > 0 && (
-        <Text style={styles.errorMessage}>{errorMessage || ''}</Text>
+        <Text style={tw`text-red-500 mt-0.5`}>{errorMessage || ""}</Text>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: 14,
-    color: colors.inputLabel,
-  },
-  inputContainer: {
-    height: 60,
-    width: '100%',
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    backgroundColor: '#FAFAFA',
-    overflow: 'hidden',
-    borderRadius: 95,
-    marginTop: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  input: {
-    flex: 1,
-    height: '100%',
-    paddingHorizontal: 20,
-    backgroundColor: 'transparent',
-    color: '#000',
-  },
-  hideButton: {
-    width: 50,
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorMessage: {
-    color: '#ff0000',
-    marginTop: 2,
-  },
-});

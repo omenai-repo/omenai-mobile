@@ -1,30 +1,30 @@
-import { View, Text, Pressable, useWindowDimensions } from 'react-native';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import tw from 'twrnc';
-import Input from 'components/inputs/Input';
-import { useArtistAuthRegisterStore } from 'store/auth/register/ArtistAuthRegisterStore';
-import { validate } from 'lib/validations/validatorGroup';
-import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
-import BackFormButton from 'components/buttons/BackFormButton';
-import { verifyAddress } from 'services/register/verifyAddress';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import { useModalStore } from 'store/modal/modalStore';
-import { debounce } from 'lodash';
-import AuthModal from 'components/auth/AuthModal';
-import { checkMarkIcon, errorIcon } from 'utils/SvgImages';
-import { artist_countries_codes_currency } from 'data/artist_countries_codes_currency';
-import { State, City, IState, ICity } from 'country-state-city';
+import { View, Text, Pressable, useWindowDimensions } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import tw from "twrnc";
+import Input from "components/inputs/Input";
+import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
+import { validate } from "lib/validations/validatorGroup";
+import CustomSelectPicker from "components/inputs/CustomSelectPicker";
+import BackFormButton from "components/buttons/BackFormButton";
+import { verifyAddress } from "services/register/verifyAddress";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
+import { useModalStore } from "store/modal/modalStore";
+import { debounce } from "lodash";
+import AuthModal from "components/auth/AuthModal";
+import { checkMarkIcon, errorIcon } from "utils/SvgImages";
+import { artist_countries_codes_currency } from "data/artist_countries_codes_currency";
+import { State, City, IState, ICity } from "country-state-city";
 
 const ArtistHomeAddressVerification = () => {
   const { height, width } = useWindowDimensions();
   const [formErrors, setFormErrors] = useState<Partial<AddressTypes & { phone: string }>>({
-    address_line: '',
-    city: '',
-    country: '',
-    state: '',
-    zip: '',
-    countryCode: '',
-    phone: '',
+    address_line: "",
+    city: "",
+    country: "",
+    state: "",
+    zip: "",
+    countryCode: "",
+    phone: "",
   });
   const [showToolTip, setShowToolTip] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -39,7 +39,7 @@ const ArtistHomeAddressVerification = () => {
         label: item.name,
         currency: item.currency,
       })),
-    [],
+    []
   );
 
   const {
@@ -71,8 +71,8 @@ const ArtistHomeAddressVerification = () => {
     }
 
     // Reset state and city selections
-    setState('');
-    setCity('');
+    setState("");
+    setCity("");
 
     // Clear state and city dropdown data
     setStateData([]);
@@ -89,7 +89,7 @@ const ArtistHomeAddressVerification = () => {
             value: state.name,
             isoCode: state.isoCode,
           }))
-        : [],
+        : []
     );
   };
 
@@ -101,10 +101,10 @@ const ArtistHomeAddressVerification = () => {
         getCities?.map((city: ICity) => ({
           label: city.name,
           value: city.name,
-        })) || [],
+        })) || []
       );
     }, 300),
-    [],
+    []
   );
 
   // 🚀 **Handle State Selection**
@@ -116,12 +116,12 @@ const ArtistHomeAddressVerification = () => {
       }
       fetchCities(artistRegisterData.address.countryCode, item.isoCode);
     },
-    [artistRegisterData.address.countryCode, fetchCities],
+    [artistRegisterData.address.countryCode, fetchCities]
   );
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
-    const isFormValid = formErrors && Object.values(formErrors).every((error) => error === '');
+    const isFormValid = formErrors && Object.values(formErrors).every((error) => error === "");
     const areAllFieldsFilled = Object.values({
       address_line: artistRegisterData?.address?.address_line,
       city: artistRegisterData?.address?.city,
@@ -129,22 +129,22 @@ const ArtistHomeAddressVerification = () => {
       country: artistRegisterData?.address?.country,
       state: artistRegisterData?.address?.state,
       phone: artistRegisterData?.phone,
-    }).every((value) => value !== '');
+    }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
   };
 
   const handleValidationChecks = debounce((label: string, value: string, confirm?: string) => {
     // Clear error if the input is empty
-    if (value.trim() === '') {
-      setFormErrors((prev) => ({ ...prev, [label]: '' }));
+    if (value.trim() === "") {
+      setFormErrors((prev) => ({ ...prev, [label]: "" }));
       return;
     }
 
-    const { success, errors } = validate(value, label, confirm);
+    const { errors } = validate(value, label, confirm);
     setFormErrors((prev) => ({
       ...prev,
-      [label]: errors.length > 0 ? errors[0] : '',
+      [label]: errors.length > 0 ? errors[0] : "",
     }));
   }, 500); // ✅ Delay validation by 500ms
 
@@ -152,7 +152,7 @@ const ArtistHomeAddressVerification = () => {
     setIsLoading(true);
     try {
       const payload = {
-        type: 'pickup',
+        type: "pickup",
         countyName: artistRegisterData.address.city,
         cityName: artistRegisterData.address.state,
         postalCode: artistRegisterData.address.zip,
@@ -177,10 +177,10 @@ const ArtistHomeAddressVerification = () => {
         setAddressVerified(false);
       }
     } catch (error) {
-      console.error('Error verifying address:', error);
+      console.error("Error verifying address:", error);
       updateModal({
-        message: 'Network error, please check your connection and try again.',
-        modalType: 'error',
+        message: "Network error, please check your connection and try again.",
+        modalType: "error",
         showModal: true,
       });
     } finally {
@@ -189,8 +189,8 @@ const ArtistHomeAddressVerification = () => {
   };
 
   return (
-    <View style={tw``}>
-      <View style={tw`mb-[20px]`}>
+    <View>
+      <View style={tw`mb-5`}>
         <CustomSelectPicker
           data={transformedCountries}
           placeholder="Select country of residence"
@@ -203,13 +203,13 @@ const ArtistHomeAddressVerification = () => {
         />
       </View>
 
-      <View style={tw`mb-[20px]`}>
+      <View style={tw`mb-5`}>
         <CustomSelectPicker
           data={stateData}
           placeholder="Select state"
           value={artistRegisterData.address.state}
           handleSetValue={handleStateSelect}
-          disable={!artistRegisterData.address.country}
+          disable={!artistRegisterData.address.countryCode}
           label="State of residence"
           search={true}
           searchPlaceholder="Search state"
@@ -222,15 +222,15 @@ const ArtistHomeAddressVerification = () => {
         keyboardType="default"
         onInputChange={(text) => {
           setHomeAddress(text);
-          handleValidationChecks('general', text);
+          handleValidationChecks("general", text);
         }}
         placeHolder="Input your home address here"
         value={artistRegisterData?.address?.address_line}
         errorMessage={formErrors?.address_line}
       />
 
-      <View style={tw`flex-row items-center gap-[30px] my-[20px]`}>
-        <View style={tw`flex-1`}>
+      <View style={tw`flex-row items-center gap-[30px] my-5`}>
+        <View style={tw`flex-grow`}>
           <CustomSelectPicker
             data={cityData}
             placeholder="Select city"
@@ -250,7 +250,7 @@ const ArtistHomeAddressVerification = () => {
           keyboardType="default"
           onInputChange={(text) => {
             setZipCode(text);
-            handleValidationChecks('general', text);
+            handleValidationChecks("general", text);
           }}
           placeHolder="Zip Code"
           value={artistRegisterData?.address?.zip}
@@ -263,63 +263,55 @@ const ArtistHomeAddressVerification = () => {
         keyboardType="phone-pad"
         onInputChange={(text) => {
           setPhone(text);
-          handleValidationChecks('general', text);
+          handleValidationChecks("general", text);
         }}
         placeHolder="+12345678990"
         value={artistRegisterData?.phone}
         errorMessage={formErrors?.phone}
       />
 
-      <View style={tw`flex-row mt-[40px]`}>
+      <View style={tw`flex-row mt-10 items-center justify-between`}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
-        <View style={{ flex: 1 }} />
         <FittedBlackButton
           isLoading={isLoading}
-          height={50}
           value="Verify Address"
           isDisabled={checkIsDisabled()}
           onClick={handleSubmit}
+          style={tw`h-11`}
         />
       </View>
 
-      <Pressable
-        onPress={() => setShowToolTip(!showToolTip)}
-        style={tw.style(`rounded-full h-[45px] w-[45px] justify-center items-center bg-[#000]`, {
-          top: height / 8,
-          alignSelf: 'flex-end',
-        })}
-      >
-        <Text style={tw`text-[#FFFFFF] text-[20px]`}>?</Text>
-      </Pressable>
-      {showToolTip && (
-        <View
-          style={tw.style(`mr-[80px]`, {
-            top: height / 13,
-            width: width / 2,
-            alignSelf: 'flex-end',
-          })}
+      <View style={tw`mt-5 mb-3 mr-3`}>
+        <Pressable
+          onPress={() => setShowToolTip(!showToolTip)}
+          style={tw`rounded-full h-11 w-11 justify-center items-center bg-black self-end`}
         >
-          <View style={tw`rounded-[12px] bg-[#111111] py-[10px] px-[15px]`}>
-            <Text style={tw`text-[10px] text-[#FFFFFF] text-center leading-[15px]`}>
-              We need your home address to {`\n`} properly verify shipping designation
-            </Text>
+          <Text style={tw`text-white text-xl`}>?</Text>
+        </Pressable>
+        {showToolTip && (
+          <View style={[tw`absolute top-0 right-16`, { width: width / 2 }]}>
+            <View style={tw`rounded-[12px] bg-[#111111] py-2.5 px-4`}>
+              <Text style={tw`text-[10px] text-white text-center leading-[15px]`}>
+                We need your home address to {`\n`} properly verify shipping designation
+              </Text>
+            </View>
+            <View
+              style={tw`w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] rounded-[5px] border-l-[#111111] absolute right-[-17px] top-[15px]`}
+            />
           </View>
-          <View
-            style={tw`w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] rounded-[5px] border-l-[#111111] absolute right-[-17px] top-[15px]`}
-          />
-        </View>
-      )}
+        )}
+      </View>
       <AuthModal
         modalVisible={showModal}
         setModalVisible={setShowModal}
         icon={addressVerified ? checkMarkIcon : errorIcon}
         text={
           addressVerified
-            ? 'Your Address has been verified succesfully'
-            : 'Your Address could not be verified. Try again.'
+            ? "Your Address has been verified succesfully"
+            : "Your Address could not be verified. Try again."
         }
         btn1Text="Go Back"
-        btn2Text={addressVerified ? 'Proceed' : 'Try Again'}
+        btn2Text={addressVerified ? "Proceed" : "Try Again"}
         onPress1={() => {
           setShowModal(false);
           setPageIndex(pageIndex - 1);

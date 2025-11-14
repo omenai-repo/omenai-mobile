@@ -115,7 +115,6 @@ export default function ArtistDetails() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 100,
   },
   inputsContainer: {
     gap: 20,
