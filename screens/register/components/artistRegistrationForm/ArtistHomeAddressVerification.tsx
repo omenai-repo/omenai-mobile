@@ -1,9 +1,7 @@
 import { View } from "react-native";
 import React, { useMemo, useState } from "react";
 import tw from "twrnc";
-import Input from "components/inputs/Input";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
 import BackFormButton from "components/buttons/BackFormButton";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
 import AuthModal from "components/auth/AuthModal";
@@ -13,6 +11,7 @@ import { useAddressForm } from "hooks/useAddressForm";
 import { useLocationSelection } from "hooks/useLocationSelection";
 import { useAddressVerification } from "hooks/useAddressVerification";
 import { AddressTooltip } from "components/general/AddressTooltip";
+import { AddressFormFields } from "components/register/AddressFormFields";
 
 const ArtistHomeAddressVerification = () => {
   const [showToolTip, setShowToolTip] = useState(false);
@@ -82,84 +81,30 @@ const ArtistHomeAddressVerification = () => {
 
   return (
     <View>
-      <View style={tw`mb-5`}>
-        <CustomSelectPicker
-          data={transformedCountries}
-          placeholder="Select country of residence"
-          value={artistRegisterData.address.countryCode}
-          handleSetValue={handleCountrySelect}
-          label="Country of residence"
-          search={true}
-          searchPlaceholder="Search Country"
-          dropdownPosition="bottom"
-        />
-      </View>
-
-      <View style={tw`mb-5`}>
-        <CustomSelectPicker
-          data={stateData}
-          placeholder="Select state"
-          value={artistRegisterData.address.state}
-          handleSetValue={handleStateSelect}
-          disable={!artistRegisterData.address.countryCode}
-          label="State of residence"
-          search={true}
-          searchPlaceholder="Search state"
-          dropdownPosition="bottom"
-        />
-      </View>
-
-      <Input
-        label="Home Address"
-        keyboardType="default"
-        onInputChange={(text) => {
+      <AddressFormFields
+        countryData={transformedCountries}
+        stateData={stateData}
+        cityData={cityData}
+        addressData={artistRegisterData.address}
+        phone={artistRegisterData.phone}
+        formErrors={formErrors}
+        onCountrySelect={handleCountrySelect}
+        onStateSelect={handleStateSelect}
+        onCitySelect={(item) => setCity(item.value)}
+        onAddressChange={(text) => {
           setHomeAddress(text);
           handleValidationChecks("general", text);
         }}
-        placeHolder="Input your home address here"
-        value={artistRegisterData?.address?.address_line}
-        errorMessage={formErrors?.address_line}
-      />
-
-      <View style={tw`flex-row items-center gap-[30px] my-5`}>
-        <View style={tw`flex-grow`}>
-          <CustomSelectPicker
-            data={cityData}
-            placeholder="Select city"
-            value={artistRegisterData.address.city}
-            disable={!artistRegisterData.address.state}
-            handleSetValue={(item) => {
-              setCity(item.value);
-            }}
-            label="City"
-            search={true}
-            searchPlaceholder="Search City"
-            dropdownPosition="bottom"
-          />
-        </View>
-        <Input
-          label="Zip Code"
-          keyboardType="default"
-          onInputChange={(text) => {
-            setZipCode(text);
-            handleValidationChecks("general", text);
-          }}
-          placeHolder="Zip Code"
-          value={artistRegisterData?.address?.zip}
-          errorMessage={formErrors?.zip}
-        />
-      </View>
-
-      <Input
-        label="Phone number"
-        keyboardType="phone-pad"
-        onInputChange={(text) => {
+        onZipChange={(text) => {
+          setZipCode(text);
+          handleValidationChecks("general", text);
+        }}
+        onPhoneChange={(text) => {
           setPhone(text);
           handleValidationChecks("general", text);
         }}
-        placeHolder="+12345678990"
-        value={artistRegisterData?.phone}
-        errorMessage={formErrors?.phone}
+        addressLabel="Home Address"
+        addressPlaceholder="Input your home address here"
       />
 
       <View style={tw`flex-row mt-10 items-center justify-between`}>
