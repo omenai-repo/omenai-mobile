@@ -6,17 +6,11 @@ import FittedBlackButton from "components/buttons/FittedBlackButton";
 import BackFormButton from "components/buttons/BackFormButton";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
 import { useModalStore } from "store/modal/modalStore";
-import uploadLogo from "screens/galleryProfileScreens/uploadNewLogo/uploadLogo";
-import { registerAccount } from "services/register/registerAccount";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { screenName } from "constants/screenNames.constants";
-import { storage } from "appWrite_config";
-import { useAppStore } from "store/app/appStore";
 import LegalLinkButton from "components/general/LegalLinkButton";
+import { useRegistrationHandler } from "hooks/useRegistrationHandler";
+import { useTermsSelection } from "hooks/useTermsSelection";
 
 const TermsAndCondition = () => {
-  const navigation = useNavigation<StackNavigationProp<any>>();
   const {
     selectedTerms,
     setSelectedTerms,
@@ -27,8 +21,9 @@ const TermsAndCondition = () => {
     clearState,
     isLoading,
   } = useArtistAuthRegisterStore();
-  const { expoPushToken } = useAppStore();
   const { updateModal } = useModalStore();
+  const { handleRegister } = useRegistrationHandler("artist");
+  const { handleToggleTerm } = useTermsSelection();
 
   const checks = [
     {
@@ -46,70 +41,11 @@ const TermsAndCondition = () => {
   ];
 
   const handleCheckPress = (id: number) => {
-    if (selectedTerms.includes(id)) {
-      setSelectedTerms(selectedTerms.filter((checkId: number) => checkId !== id));
-    } else {
-      setSelectedTerms([...selectedTerms, id]);
-    }
+    handleToggleTerm(id, selectedTerms, setSelectedTerms);
   };
 
-  const handleSubmit = async () => {
-    try {
-      setIsLoading(true);
-
-      const { name, email, password, address, logo, art_style, phone, base_currency } =
-        artistRegisterData;
-
-      if (logo === null) return;
-
-      const files = {
-        uri: logo.assets[0].uri,
-        name: logo.assets[0].fileName,
-        type: logo.assets[0].mimeType,
-      };
-      const fileUploaded = await uploadLogo(files);
-
-      if (fileUploaded) {
-        const payload = {
-          name,
-          email,
-          password,
-          logo: fileUploaded.$id,
-          address,
-          art_style,
-          base_currency,
-          phone,
-          device_push_token: expoPushToken ?? "",
-        };
-
-        const results = await registerAccount(payload, "artist");
-
-        if (results?.isOk) {
-          clearState();
-          navigation.navigate(screenName.verifyEmail, {
-            account: { id: results.body.data, type: "artist" },
-          });
-        } else {
-          await storage.deleteFile({
-            bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
-            fileId: fileUploaded.$id,
-          });
-          updateModal({
-            message: results?.body.message,
-            modalType: "error",
-            showModal: true,
-          });
-        }
-      }
-    } catch (error: any) {
-      updateModal({
-        message: error.message,
-        modalType: "error",
-        showModal: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSubmit = () => {
+    handleRegister(artistRegisterData, clearState, setIsLoading);
   };
 
   const Conatiner = ({ onPress, text, id }: { onPress: () => void; text: string; id: number }) => (

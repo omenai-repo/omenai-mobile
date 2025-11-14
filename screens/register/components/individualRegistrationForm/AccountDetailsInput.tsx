@@ -1,12 +1,11 @@
 import { View } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 import PasswordInput from "../../../../components/inputs/PasswordInput";
 import Input from "../../../../components/inputs/Input";
 import NextButton from "../../../../components/buttons/NextButton";
 import { useIndividualAuthRegisterStore } from "../../../../store/auth/register/IndividualAuthRegisterStore";
-import { validate } from "../../../../lib/validations/validatorGroup";
-import { debounce } from "lodash";
 import tw from "twrnc";
+import { useFormValidation } from "hooks/useFormValidation";
 
 export default function AccountDetailsInput() {
   const {
@@ -19,39 +18,17 @@ export default function AccountDetailsInput() {
     setPageIndex,
   } = useIndividualAuthRegisterStore();
 
-  const [formErrors, setFormErrors] = useState<Omit<IndividualRegisterData, "address" | "phone">>({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const { formErrors, handleValidationChecks, checkIsFormValid } =
+    useFormValidation<Omit<IndividualRegisterData, "address" | "phone">>();
 
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every((error) => error === "");
-    const areAllFieldsFilled = Object.values({
+    return !checkIsFormValid({
       email: individualRegisterData.email,
       name: individualRegisterData.name,
       password: individualRegisterData.password,
       confirmPassword: individualRegisterData.confirmPassword,
-    }).every((value) => value !== "");
-
-    return !(isFormValid && areAllFieldsFilled);
+    });
   };
-
-  const handleValidationChecks = debounce((label: string, value: string, confirm?: string) => {
-    // Clear error if the input is empty
-    if (value.trim() === "") {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-      return;
-    }
-
-    const { errors } = validate(value, label, confirm);
-    setFormErrors((prev) => ({
-      ...prev,
-      [label]: errors.length > 0 ? errors[0] : "",
-    }));
-  }, 500); // ✅ Delay validation by 500ms
 
   return (
     <View style={tw`gap-10`}>

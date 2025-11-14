@@ -1,20 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
-import NextButton from "../../../../components/buttons/NextButton";
-import { validate } from "../../../../lib/validations/validatorGroup";
-import Input from "../../../../components/inputs/Input";
-import PasswordInput from "../../../../components/inputs/PasswordInput";
-import { debounce } from "lodash";
+import { View } from \"react-native\";
+import React from \"react\";
+import { useGalleryAuthRegisterStore } from \"../../../../store/auth/register/GalleryAuthRegisterStore\";
+import NextButton from \"../../../../components/buttons/NextButton\";
+import Input from \"../../../../components/inputs/Input\";
+import PasswordInput from \"../../../../components/inputs/PasswordInput\";
+import { useFormValidation } from \"hooks/useFormValidation\";
 
 export default function AccountDetailsInput() {
-  const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
   const {
     pageIndex,
     setPageIndex,
@@ -25,37 +17,18 @@ export default function AccountDetailsInput() {
     setConfirmPassword,
   } = useGalleryAuthRegisterStore();
 
+  const { formErrors, handleValidationChecks, checkIsFormValid } = useFormValidation<
+    Partial<GallerySignupData>
+  >();
+
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
-    );
-    const areAllFieldsFilled = Object.values({
+    return !checkIsFormValid({
       email: galleryRegisterData.email,
       name: galleryRegisterData.name,
       password: galleryRegisterData.password,
       confirmPassword: galleryRegisterData.confirmPassword,
-    }).every((value) => value !== "");
-
-    return !(isFormValid && areAllFieldsFilled);
+    });
   };
-
-  const handleValidationChecks = debounce(
-    (label: string, value: string, confirm?: string) => {
-      // Clear error if the input is empty
-      if (value.trim() === "") {
-        setFormErrors((prev) => ({ ...prev, [label]: "" }));
-        return;
-      }
-
-      const { success, errors } = validate(value, label, confirm);
-      setFormErrors((prev) => ({
-        ...prev,
-        [label]: errors.length > 0 ? errors[0] : "",
-      }));
-    },
-    500
-  ); // ✅ Delay validation by 500ms
 
   return (
     <View style={{ gap: 40 }}>

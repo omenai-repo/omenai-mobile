@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import React from "react";
 import { colors } from "../../../../config/colors.config";
 import NextButton from "../../../../components/buttons/NextButton";
@@ -6,39 +6,15 @@ import { mediumListing } from "data/uploadArtworkForm.data";
 import tw from "twrnc";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
 import BackFormButton from "components/buttons/BackFormButton";
-
-type TabItemProps = {
-  name: string;
-  isSelected: boolean;
-  onSelect: () => void;
-};
+import SelectableTag from "components/general/SelectableTag";
 
 const ArtistPreference = () => {
   const { pageIndex, setPageIndex, artistRegisterData, setArtStyles } =
     useArtistAuthRegisterStore();
 
   const handleSelect = (value: string) => {
-    // If the selected value is already selected, deselect it
-    // Otherwise, select the new value (replacing any previous selection)
     setArtStyles(artistRegisterData.art_style === value ? "" : value);
   };
-
-  const TabItem = ({ name, isSelected, onSelect }: TabItemProps) => (
-    <Pressable
-      onPress={onSelect}
-      style={[
-        tw`h-10 px-5 rounded-lg border items-center justify-center`,
-        { borderColor: colors.inputBorder },
-        isSelected ? { backgroundColor: colors.black } : { backgroundColor: "#FAFAFA" },
-      ]}
-      accessibilityRole="button"
-      accessibilityState={{ selected: isSelected }}
-    >
-      <Text style={[tw`text-xs`, { color: isSelected ? colors.white : colors.primary_black }]}>
-        {name}
-      </Text>
-    </Pressable>
-  );
 
   return (
     <View>
@@ -52,7 +28,7 @@ const ArtistPreference = () => {
         ]}
       >
         {mediumListing.map((i, idx) => (
-          <TabItem
+          <SelectableTag
             name={i.value}
             key={idx}
             onSelect={() => handleSelect(i.value)}

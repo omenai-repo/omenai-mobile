@@ -4,24 +4,18 @@ import TermsAndConditionItem from "../../../../components/general/TermsAndCondit
 import FittedBlackButton from "../../../../components/buttons/FittedBlackButton";
 import BackFormButton from "../../../../components/buttons/BackFormButton";
 import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
-import { registerAccount } from "services/register/registerAccount";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
 import { useModalStore } from "store/modal/modalStore";
-import { storage } from "appWrite_config";
-import uploadLogo from "screens/galleryProfileScreens/uploadNewLogo/uploadLogo";
-import { useAppStore } from "store/app/appStore";
 import LegalLinkButton from "../../../../components/general/LegalLinkButton";
 import { termsAndConditionsStyles } from "../../../../components/general/TermsAndConditionsStyles";
 import tw from "twrnc";
+import { useRegistrationHandler } from "hooks/useRegistrationHandler";
+import { useTermsSelection } from "hooks/useTermsSelection";
 
 export default function TermsAndConditions({
   hideBackButton = false,
 }: {
   hideBackButton?: boolean;
 }) {
-  const navigation = useNavigation<StackNavigationProp<any>>();
   const {
     selectedTerms,
     setSelectedTerms,
@@ -34,79 +28,15 @@ export default function TermsAndConditions({
   } = useGalleryAuthRegisterStore();
 
   const { updateModal } = useModalStore();
-  const { expoPushToken } = useAppStore();
+  const { handleRegister } = useRegistrationHandler("gallery");
+  const { handleToggleTerm } = useTermsSelection();
 
-  const handleSubmit = async () => {
-    try {
-      setIsLoading(true);
-
-      const { name, email, password, admin, address, description, logo, phone } =
-        galleryRegisterData;
-
-      if (logo === null) return;
-
-      const files = {
-        uri: logo.assets[0].uri,
-        name: logo.assets[0].fileName,
-        type: logo.assets[0].mimeType,
-      };
-
-      const fileUploaded = await uploadLogo(files);
-
-      if (fileUploaded) {
-        let file: { bucketId: string; fileId: string } = {
-          bucketId: fileUploaded.bucketId,
-          fileId: fileUploaded.$id,
-        };
-
-        const payload = {
-          name,
-          email,
-          password,
-          admin,
-          description,
-          logo: file.fileId,
-          address,
-          phone,
-          device_push_token: expoPushToken,
-        };
-
-        const results = await registerAccount(payload, "gallery");
-        if (results?.isOk) {
-          const resultsBody = results?.body;
-          clearState();
-          navigation.navigate(screenName.verifyEmail, {
-            account: { id: resultsBody.data, type: "gallery" },
-          });
-        } else {
-          await storage.deleteFile({
-            bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
-            fileId: file.fileId,
-          });
-          updateModal({
-            message: results?.body.message,
-            modalType: "error",
-            showModal: true,
-          });
-        }
-      }
-    } catch (error: any) {
-      updateModal({
-        message: error.message,
-        modalType: "error",
-        showModal: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSubmit = () => {
+    handleRegister(galleryRegisterData, clearState, setIsLoading);
   };
 
   const handleAcceptTerms = (index: number) => {
-    if (selectedTerms.includes(index)) {
-      setSelectedTerms(selectedTerms.filter((selectedTab) => selectedTab !== index));
-    } else {
-      setSelectedTerms([...selectedTerms, index]);
-    }
+    handleToggleTerm(index, selectedTerms, setSelectedTerms);
   };
 
   return (

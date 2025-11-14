@@ -3,19 +3,14 @@ import FittedBlackButton from "../../../../components/buttons/FittedBlackButton"
 import BackFormButton from "../../../../components/buttons/BackFormButton";
 import { acceptTermsList } from "../../../../constants/accetTerms.constants";
 import { useIndividualAuthRegisterStore } from "../../../../store/auth/register/IndividualAuthRegisterStore";
-import { registerAccount } from "../../../../services/register/registerAccount";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
 import TermsAndConditionItem from "../../../../components/general/TermsAndConditionItem";
-import { screenName } from "../../../../constants/screenNames.constants";
 import { useModalStore } from "store/modal/modalStore";
-import { useAppStore } from "store/app/appStore";
 import LegalLinkButton from "../../../../components/general/LegalLinkButton";
 import { termsAndConditionsStyles } from "../../../../components/general/TermsAndConditionsStyles";
-import tw from "twrnc";
+import { useRegistrationHandler } from "hooks/useRegistrationHandler";
+import { useTermsSelection } from "hooks/useTermsSelection";
 
 export default function TermsAndConditions() {
-  const navigation = useNavigation<StackNavigationProp<any>>();
   const {
     preferences,
     individualRegisterData,
@@ -28,44 +23,19 @@ export default function TermsAndConditions() {
     clearState,
   } = useIndividualAuthRegisterStore();
   const { updateModal } = useModalStore();
-  const { expoPushToken } = useAppStore();
+  const { handleRegister } = useRegistrationHandler("individual");
+  const { handleToggleTerm } = useTermsSelection();
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-
-    const data: Omit<IndividualRegisterData, "confirmPassword"> & {
-      preferences: string[];
-      device_push_token: string;
-    } = {
+  const handleSubmit = () => {
+    const data = {
       ...individualRegisterData,
       preferences,
-      device_push_token: expoPushToken ?? "",
     };
-
-    const results = await registerAccount(data, "individual");
-    if (results?.isOk) {
-      const resultsBody = results?.body;
-      clearState();
-      navigation.navigate(screenName.verifyEmail, {
-        account: { id: resultsBody.data, type: "individual" },
-      });
-    } else {
-      updateModal({
-        message: results?.body.message,
-        modalType: "error",
-        showModal: true,
-      });
-    }
-
-    setIsLoading(false);
+    handleRegister(data, clearState, setIsLoading);
   };
 
   const handleAcceptTerms = (index: number) => {
-    if (selectedTerms.includes(index)) {
-      setSelectedTerms(selectedTerms.filter((selectedTab) => selectedTab !== index));
-    } else {
-      setSelectedTerms([...selectedTerms, index]);
-    }
+    handleToggleTerm(index, selectedTerms, setSelectedTerms);
   };
 
   return (

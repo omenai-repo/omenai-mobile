@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import React from "react";
 import { colors } from "../../../../config/colors.config";
 import BackFormButton from "../../../../components/buttons/BackFormButton";
@@ -6,43 +6,18 @@ import NextButton from "../../../../components/buttons/NextButton";
 import { useIndividualAuthRegisterStore } from "../../../../store/auth/register/IndividualAuthRegisterStore";
 import { mediumListing } from "data/uploadArtworkForm.data";
 import tw from "twrnc";
-
-type TabItemProps = {
-  name: string;
-  isSelected: boolean;
-  onSelect: () => void;
-};
+import SelectableTag from "components/general/SelectableTag";
 
 export default function Preferences() {
   const { pageIndex, setPageIndex, preferences, setPreferences } = useIndividualAuthRegisterStore();
 
   const handleSelect = (value: string) => {
     if (preferences.includes(value)) {
-      let arr = [...preferences];
-      let index = arr.indexOf(value);
-      arr.splice(index, 1);
-      setPreferences(arr);
+      setPreferences(preferences.filter((p) => p !== value));
     } else if (preferences.length < 5) {
       setPreferences([...preferences, value]);
     }
   };
-
-  const TabItem = ({ name, isSelected, onSelect }: TabItemProps) => (
-    <Pressable
-      onPress={onSelect}
-      style={[
-        tw`h-10 px-5 rounded-lg border items-center justify-center`,
-        { borderColor: colors.inputBorder },
-        isSelected ? { backgroundColor: colors.black } : { backgroundColor: "#FAFAFA" },
-      ]}
-      accessibilityRole="button"
-      accessibilityState={{ selected: isSelected }}
-    >
-      <Text style={[tw`text-xs`, { color: isSelected ? colors.white : colors.primary_black }]}>
-        {name}
-      </Text>
-    </Pressable>
-  );
 
   return (
     <View>
@@ -56,7 +31,7 @@ export default function Preferences() {
         ]}
       >
         {mediumListing.map((i, idx) => (
-          <TabItem
+          <SelectableTag
             name={i.value}
             key={idx}
             onSelect={() => handleSelect(i.value)}
