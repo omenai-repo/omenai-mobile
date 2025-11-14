@@ -88,7 +88,6 @@ export default function ArtworksMedium() {
         </View>
         {isLoading && <MiniArtworkCardLoader />}
         {!isLoading && artworks && <ArtworksListing data={artworks} />}
-        <View style={{ height: 100 }} />
       </ScrollWrapper>
     </WithModal>
   );

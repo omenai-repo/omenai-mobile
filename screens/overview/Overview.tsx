@@ -10,12 +10,15 @@ import PopularArtworks from './components/PopularArtworks';
 import { useQueryClient } from '@tanstack/react-query';
 import { QK } from 'utils/queryKeys';
 import { useAppStore } from 'store/app/appStore';
+import BlurStatusBar from 'components/general/BlurStatusBar';
+import { useScrollY } from 'hooks/useScrollY';
 
 export default function Overview() {
   const [refreshing, setRefreshing] = useState(false);
   const inflight = useRef(0);
   const qc = useQueryClient();
   const { userSession } = useAppStore();
+  const { scrollY, onScroll } = useScrollY();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -40,9 +43,11 @@ export default function Overview() {
 
   return (
     <WithModal>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onScroll={onScroll}
       >
         <Header />
         <View style={styles.container}>

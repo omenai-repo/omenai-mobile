@@ -14,6 +14,8 @@ import BackHeaderTitle from 'components/header/BackHeaderTitle';
 import { utils_formatPrice } from 'utils/utils_priceFormatter';
 import { StackNavigationProp } from '@react-navigation/stack';
 import ScrollWrapper from 'components/general/ScrollWrapper';
+import BlurStatusBar from 'components/general/BlurStatusBar';
+import { useScrollY } from 'hooks/useScrollY';
 
 type SavedArtworkItemProps = {
   name: string;
@@ -38,6 +40,7 @@ export default function SavedArtworks() {
 
   const { isLoading, setIsLoading, data, setData } = UseSavedArtworksStore();
   const [refreshing, setRefreshing] = useState(false);
+  const { scrollY, onScroll } = useScrollY();
 
   const [sessionId, setSessionId] = useState('');
 
@@ -139,10 +142,12 @@ export default function SavedArtworks() {
 
   return (
     <View style={styles.container}>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <BackHeaderTitle title="Saved artworks" />
       <ScrollWrapper
         style={styles.mainContainer}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onScroll={onScroll}
       >
         {isLoading && <Loader />}
         {data.length > 0 && !isLoading && (
