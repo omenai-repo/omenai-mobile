@@ -5,76 +5,18 @@ import { useIndividualAuthLoginStore } from "../../../../store/auth/login/Indivi
 import PasswordInput from "../../../../components/inputs/PasswordInput";
 import Input from "../../../../components/inputs/Input";
 import LongBlackButton from "../../../../components/buttons/LongBlackButton";
-import { loginAccount } from "../../../../services/login/loginAccount";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "../../../../constants/screenNames.constants";
-import { utils_storeAsyncData } from "utils/utils_asyncStorage";
-import { useAppStore } from "store/app/appStore";
-import { useModalStore } from "store/modal/modalStore";
+import { useLoginHandler } from "hooks/useLoginHandler";
 
 export default function Individual() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-
   const { individualLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
     useIndividualAuthLoginStore();
-  const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
-  const { updateModal } = useModalStore();
+  const { handleLogin } = useLoginHandler("individual");
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-
-    const results = await loginAccount(
-      { ...individualLoginData, device_push_token: expoPushToken ?? "" },
-      "individual"
-    );
-
-    if (results?.isOk) {
-      const resultsBody = results?.body?.data;
-
-      if (resultsBody.verified === false) {
-        setIsLoading(false);
-        navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.user_id, type: "individual" },
-        });
-        return;
-      }
-      const data = {
-        id: resultsBody.user_id,
-        email: resultsBody.email,
-        name: resultsBody.name,
-        role: resultsBody.role,
-        preferences: resultsBody.preferences,
-        verified: resultsBody.verified,
-        address: resultsBody.address,
-        phone: resultsBody.phone,
-        logo: resultsBody.logo,
-      };
-
-      const isStored = await utils_storeAsyncData("userSession", JSON.stringify(data));
-
-      const loginTimeStamp = new Date();
-      const isLoginTimeStampStored = await utils_storeAsyncData(
-        "loginTimeStamp",
-        JSON.stringify(loginTimeStamp)
-      );
-
-      if (isStored && isLoginTimeStampStored) {
-        setUserSession(data);
-        setIsLoggedIn(true);
-        clearInputs();
-      }
-    } else {
-      // Alert.alert(results?.body.message)
-      updateModal({
-        message: results?.body.message,
-        showModal: true,
-        modalType: "error",
-      });
-    }
-
-    setIsLoading(false);
-  };
+  const handleSubmit = () => handleLogin(individualLoginData, setIsLoading, clearInputs);
 
   return (
     <View style={tw`mt-7 gap-10`}>
