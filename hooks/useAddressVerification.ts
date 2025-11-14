@@ -39,20 +39,11 @@ export const useAddressVerification = (
 
       const response = await verifyAddress(payload);
 
-      setIsLoading(false);
+      const isVerified =
+        response?.isOk && response?.body?.data?.address && response.body.data.address.length !== 0;
 
-      if (response?.isOk) {
-        if (response?.body?.data?.address && response.body.data.address.length !== 0) {
-          setShowModal(true);
-          setAddressVerified(true);
-        } else {
-          setShowModal(true);
-          setAddressVerified(false);
-        }
-      } else {
-        setShowModal(true);
-        setAddressVerified(false);
-      }
+      setAddressVerified(isVerified);
+      setShowModal(true);
     } catch (error) {
       console.error("Error verifying address:", error);
       updateModal({
