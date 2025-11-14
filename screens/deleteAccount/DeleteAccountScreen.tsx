@@ -18,7 +18,7 @@ import DeletionProcessSteps from "components/deleteAccount/DeletionProcessSteps"
 import DeletionReasonSection from "components/deleteAccount/DeletionReasonSection";
 import OtherMessageInput from "components/deleteAccount/OtherMessageInput";
 import DeleteAccountActions from "components/deleteAccount/DeleteAccountActions";
-import StatusBarBackground from "components/deleteAccount/StatusBarBackground";
+import BlurStatusBar from "components/general/BlurStatusBar";
 import CommitmentsModal from "components/deleteAccount/CommitmentsModal";
 import { PRIVACY_POLICY_URL } from "constants/deleteAccount.constants";
 import { deleteAccount, type DeleteAccountResponse } from "services/requests/deleteAccount";
@@ -44,24 +44,6 @@ export default function DeleteAccountScreen() {
   const [showCommitments, setShowCommitments] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
-
-  const statusBarOpacity = scrollY.interpolate({
-    inputRange: [0, 50],
-    outputRange: [0, 1],
-    extrapolate: "clamp",
-  });
-
-  const statusBarShadowOpacity = scrollY.interpolate({
-    inputRange: [0, 50],
-    outputRange: [0, 0.08],
-    extrapolate: "clamp",
-  });
-
-  const statusBarElevation = scrollY.interpolate({
-    inputRange: [0, 50],
-    outputRange: [0, 3],
-    extrapolate: "clamp",
-  });
 
   const handleReasonSelect = (id: string) => {
     setSelectedReason(id);
@@ -158,12 +140,7 @@ export default function DeleteAccountScreen() {
     >
       <StatusBar style="dark" />
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <StatusBarBackground
-          insets={insets}
-          opacity={statusBarOpacity}
-          shadowOpacity={statusBarShadowOpacity}
-          elevation={statusBarElevation}
-        />
+        <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
         <ScrollWrapper
           style={tw`flex-1`}
           contentContainerStyle={[tw`pb-4`]}

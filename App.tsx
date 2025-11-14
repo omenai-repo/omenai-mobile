@@ -1,32 +1,34 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useEffect, useState, useCallback } from 'react';
-import { useAppStore } from 'store/app/appStore';
-import { utils_appInit } from 'utils/utils_appInit';
-import { useFonts } from 'expo-font';
-import IndividualNavigation from 'navigation/IndividualNavigation';
-import AuthNavigation from 'navigation/AuthNavigation';
-import GalleryNavigation from 'navigation/GalleryNavigation';
-import * as Linking from 'expo-linking';
-import { screenName } from 'constants/screenNames.constants';
-import { StripeProvider } from '@stripe/stripe-react-native';
-import { CopilotProvider } from 'react-native-copilot';
-import * as SplashScreen from 'expo-splash-screen';
-import ArtistNavigation from 'navigation/ArtistNavigation';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { NavigationContainer } from "@react-navigation/native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useEffect, useState, useCallback } from "react";
+import { useAppStore } from "store/app/appStore";
+import { utils_appInit } from "utils/utils_appInit";
+import { useFonts } from "expo-font";
+import IndividualNavigation from "navigation/IndividualNavigation";
+import AuthNavigation from "navigation/AuthNavigation";
+import GalleryNavigation from "navigation/GalleryNavigation";
+import * as Linking from "expo-linking";
+import { screenName } from "constants/screenNames.constants";
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { CopilotProvider } from "react-native-copilot";
+import * as SplashScreen from "expo-splash-screen";
+import ArtistNavigation from "navigation/ArtistNavigation";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { focusManager, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { AppState, Platform } from 'react-native';
-import { configureNotificationHandling } from 'notifications/NotificationService';
-import { useNotifications } from 'hooks/useNotifications';
-import { registerForPushToken } from 'notifications/registerForPushToken';
-import { navigationRef } from 'navigation/RootNavigation';
-import { useNotificationHandler } from 'hooks/useNotificationHandler';
-import { StatusBar } from 'expo-status-bar';
-import * as Sentry from '@sentry/react-native';
+import { AppState, Platform } from "react-native";
+import { configureNotificationHandling } from "notifications/NotificationService";
+import { useNotifications } from "hooks/useNotifications";
+import { registerForPushToken } from "notifications/registerForPushToken";
+import { navigationRef } from "navigation/RootNavigation";
+import { useNotificationHandler } from "hooks/useNotificationHandler";
+import { StatusBar } from "expo-status-bar";
+import * as Sentry from "@sentry/react-native";
+import { Asset } from "expo-asset";
+import { primaryGridImages, secondaryGridImages } from "constants/images.constants";
 
 Sentry.init({
-  dsn: 'https://574c844d2d0b2e85a03f0af7904e0479@o4510158375419904.ingest.de.sentry.io/4510158405632080',
+  dsn: "https://574c844d2d0b2e85a03f0af7904e0479@o4510158375419904.ingest.de.sentry.io/4510158405632080",
 
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
@@ -79,12 +81,12 @@ export default Sentry.wrap(function App() {
     initPush();
   }, []);
 
-  const prefix = Linking.createURL('/');
+  const prefix = Linking.createURL("/");
 
   const config = {
     screens: {
-      CancleOrderPayment: 'CancleOrderPayment',
-      SuccessOrderPayment: 'SuccessOrderPayment',
+      CancleOrderPayment: "CancleOrderPayment",
+      SuccessOrderPayment: "SuccessOrderPayment",
     },
   };
 
@@ -94,7 +96,7 @@ export default Sentry.wrap(function App() {
   };
 
   const [fontsLoaded] = useFonts({
-    nunitoSans: require('./assets/fonts/nunito-sans.ttf'),
+    nunitoSans: require("./assets/fonts/nunito-sans.ttf"),
   });
 
   //add logic for conditional routing
@@ -105,6 +107,15 @@ export default Sentry.wrap(function App() {
   useEffect(() => {
     async function prepare() {
       try {
+        // Preload grid images for instant welcome screen rendering
+        const allImages = [...primaryGridImages, ...secondaryGridImages];
+        await Promise.all(
+          allImages.map((img) =>
+            Asset.fromModule(img as any)
+              .downloadAsync()
+              .catch(() => {})
+          )
+        );
         // Artificially delay for two seconds to simulate a slow loading
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {
@@ -139,12 +150,12 @@ export default Sentry.wrap(function App() {
             refetchOnWindowFocus: false, // RN: safe to disable
           },
         },
-      }),
+      })
   );
 
   useEffect(() => {
-    const unsubscribe = AppState.addEventListener('change', (state) => {
-      focusManager.setFocused(state === 'active');
+    const unsubscribe = AppState.addEventListener("change", (state) => {
+      focusManager.setFocused(state === "active");
     });
     return () => unsubscribe.remove();
   }, []);
@@ -167,9 +178,9 @@ export default Sentry.wrap(function App() {
                 {/* AUTH SCREENS */}
                 {!isLoggedIn && <AuthNavigation />}
                 {/* App screens */}
-                {isLoggedIn && userType === 'gallery' && <GalleryNavigation />}
-                {isLoggedIn && userType === 'user' && <IndividualNavigation />}
-                {isLoggedIn && userType === 'artist' && <ArtistNavigation />}
+                {isLoggedIn && userType === "gallery" && <GalleryNavigation />}
+                {isLoggedIn && userType === "user" && <IndividualNavigation />}
+                {isLoggedIn && userType === "artist" && <ArtistNavigation />}
               </NavigationContainer>
             </StripeProvider>
           </BottomSheetModalProvider>
