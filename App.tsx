@@ -105,17 +105,14 @@ export default Sentry.wrap(function App() {
   }, [isLoggedIn]);
 
   useEffect(() => {
+    const preloadImage = (img: any) => Asset.fromModule(img).downloadAsync();
+
     async function prepare() {
       try {
         // Preload grid images for instant welcome screen rendering
         const allImages = [...primaryGridImages, ...secondaryGridImages];
-        await Promise.all(
-          allImages.map((img) =>
-            Asset.fromModule(img as any)
-              .downloadAsync()
-              .catch(() => {})
-          )
-        );
+        await Promise.all(allImages.map(preloadImage));
+
         // Artificially delay for two seconds to simulate a slow loading
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {

@@ -13,14 +13,14 @@ export type ProfileMenuItem = {
 };
 
 type ProfileMenuItemsProps = {
-  items: ProfileMenuItem[];
-  containerStyle?: any;
+  readonly items: ProfileMenuItem[];
+  readonly containerStyle?: any;
 };
 
 export default function ProfileMenuItems({
   items,
   containerStyle,
-}: ProfileMenuItemsProps) {
+}: Readonly<ProfileMenuItemsProps>) {
   return (
     <View style={containerStyle}>
       {items.map((item, index) => (
@@ -32,9 +32,7 @@ export default function ProfileMenuItems({
             svgIcon={item.svgIcon}
             Icon={item.Icon}
           />
-          {index < items.length - 1 && (
-            <View style={tw`h-px mx-5 bg-[${colors.grey50}]`} />
-          )}
+          {index < items.length - 1 && <View style={tw`h-px mx-5 bg-[${colors.grey50}]`} />}
         </React.Fragment>
       ))}
     </View>

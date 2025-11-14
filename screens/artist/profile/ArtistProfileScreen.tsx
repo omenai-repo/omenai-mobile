@@ -1,9 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { colors } from "config/colors.config";
-import ProfileMenuItems, {
-  ProfileMenuItem,
-} from "components/profile/ProfileMenuItems";
+import ProfileMenuItems, { ProfileMenuItem } from "components/profile/ProfileMenuItems";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { screenName } from "constants/screenNames.constants";
@@ -41,7 +39,7 @@ export default function ArtistProfileScreen() {
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
 
-  const [userData, setuserdata] = useState<userDataType>({
+  const [userData, setUserData] = useState<userDataType>({
     name: "",
     email: "",
   });
@@ -58,7 +56,7 @@ export default function ArtistProfileScreen() {
     if (stored.isOk === false) return;
     if (stored.value) {
       const parsed = JSON.parse(stored.value);
-      setuserdata({ name: parsed.name, email: parsed.email });
+      setUserData({ name: parsed.name, email: parsed.email });
     }
   }, []);
 
@@ -87,9 +85,7 @@ export default function ArtistProfileScreen() {
       } else {
         setIsLoading(false);
         setIsEligible(true);
-        setEligibilityResponse(
-          response?.body?.message ?? "You are not eligible at this time."
-        );
+        setEligibilityResponse(response?.body?.message ?? "You are not eligible at this time.");
       }
     } catch (error: any) {
       updateModal({
@@ -109,9 +105,7 @@ export default function ArtistProfileScreen() {
         name: "View Credentials",
         subText: "View your credentials",
         handlePress: () => navigation.navigate("ViewCredentialsScreen"),
-        Icon: (
-          <Ionicons name="eye-outline" size={24} color={colors.primary_black} />
-        ),
+        Icon: <Ionicons name="eye-outline" size={24} color={colors.primary_black} />,
       },
       {
         name: "Change password",
@@ -142,24 +136,20 @@ export default function ArtistProfileScreen() {
       {!isLoading ? (
         !isEligible ? (
           <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-            <View
-              style={[styles.profileContainer, { marginTop: insets.top + 16 }]}
-            >
+            <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
               <Logo url={userSession?.logo} />
 
               <View>
-                <Text
-                  style={[
-                    tw`text-base font-medium`,
-                    { color: colors.primary_black },
-                  ]}
-                >
+                <Text style={[tw`text-base font-medium`, { color: colors.primary_black }]}>
                   {userData.name}
                 </Text>
                 <Text
-                  style={[tw`text-sm mt-1.5`, {
-                    color: "#00000099",
-                  }]}
+                  style={[
+                    tw`text-sm mt-1.5`,
+                    {
+                      color: "#00000099",
+                    },
+                  ]}
                 >
                   {userData.email}
                 </Text>
@@ -169,9 +159,7 @@ export default function ArtistProfileScreen() {
             <View style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}>
               <FittedBlackButton
                 value="Edit profile"
-                onClick={() =>
-                  navigation.navigate(screenName.gallery.editProfile)
-                }
+                onClick={() => navigation.navigate(screenName.gallery.editProfile)}
                 style={tw`flex-grow`}
                 textStyle={tw`text-base`}
               />

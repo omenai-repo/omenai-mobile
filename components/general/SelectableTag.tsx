@@ -3,12 +3,16 @@ import tw from "twrnc";
 import { colors } from "config/colors.config";
 
 type SelectableTagProps = {
-  name: string;
-  isSelected: boolean;
-  onSelect: () => void;
+  readonly name: string;
+  readonly isSelected: boolean;
+  readonly onSelect: () => void;
 };
 
-export default function SelectableTag({ name, isSelected, onSelect }: SelectableTagProps) {
+export default function SelectableTag({
+  name,
+  isSelected,
+  onSelect,
+}: Readonly<SelectableTagProps>) {
   return (
     <Pressable
       onPress={onSelect}
