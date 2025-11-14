@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import tw from 'twrnc';
 import { colors } from 'config/colors.config';
-import { PageButtonCard } from 'components/buttons/PageButtonCard';
+import ProfileMenuItems, { ProfileMenuItem } from 'components/profile/ProfileMenuItems';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { screenName } from 'constants/screenNames.constants';
@@ -16,6 +17,8 @@ import { changePasswsordIcon, getDeleteIcon } from 'utils/SvgImages';
 import LongBlackButton from 'components/buttons/LongBlackButton';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQueryClient } from '@tanstack/react-query';
+import BlurStatusBar from 'components/general/BlurStatusBar';
+import { useScrollY } from 'hooks/useScrollY';
 
 type UserData = { name: string; email: string };
 
@@ -24,6 +27,7 @@ export default function GalleryProfile() {
   const { userSession } = useAppStore();
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
+  const { scrollY, onScroll } = useScrollY();
 
   const [userData, setUserData] = useState<UserData>({
     name: userSession?.name ?? '',
@@ -61,9 +65,31 @@ export default function GalleryProfile() {
     }, []),
   );
 
+  const menuItems: ProfileMenuItem[] = useMemo(
+    () => [
+      {
+        name: 'Change password',
+        subText: 'Change the password to your account',
+        handlePress: () =>
+          navigation.navigate(screenName.gallery.changePassword, { routeName: 'gallery' }),
+        svgIcon: changePasswsordIcon,
+      },
+      {
+        name: 'Delete account',
+        subText: 'Delete your omenai gallery account',
+        handlePress: () => {
+          navigation.navigate(screenName.deleteAccount, { routeName: 'gallery' });
+        },
+        svgIcon: getDeleteIcon('#292D32'),
+      },
+    ],
+    [navigation],
+  );
+
   return (
     <WithGalleryModal>
-      <ScrollWrapper style={styles.mainContainer}>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+      <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
         <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
           <Logo url={userSession?.logo} />
 
@@ -77,30 +103,15 @@ export default function GalleryProfile() {
 
             <FittedBlackButton
               value="Edit profile"
-              isDisabled={false}
               onClick={() => navigation.navigate(screenName.gallery.editProfile)}
+              style={{ backgroundColor: colors.grey50 }}
+              textStyle={{ color: colors.black }}
             />
           </View>
         </View>
 
-        <View style={styles.buttonsContainer}>
-          <PageButtonCard
-            name="Change password"
-            subText="Change the password to your account"
-            handlePress={() =>
-              navigation.navigate(screenName.gallery.changePassword, { routeName: 'gallery' })
-            }
-            svgIcon={changePasswsordIcon}
-          />
-
-          <PageButtonCard
-            name="Delete account"
-            subText="Delete your omenai gallery account"
-            handlePress={() => {
-              navigation.navigate(screenName.deleteAccount, { routeName: 'gallery' });
-            }}
-            svgIcon={getDeleteIcon("#292D32")}
-          />
+        <View style={tw`pt-[40px] pb-8`}>
+          <ProfileMenuItems items={menuItems} />
         </View>
 
         <LongBlackButton

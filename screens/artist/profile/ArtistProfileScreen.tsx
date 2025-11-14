@@ -1,26 +1,31 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
-import React, { useCallback, useRef, useState } from 'react';
-import { colors } from 'config/colors.config';
-import { PageButtonCard } from 'components/buttons/PageButtonCard';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { logout } from 'utils/logout.utils';
-import WithGalleryModal from 'components/modal/WithGalleryModal';
-import { useAppStore } from 'store/app/appStore';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
-import { changePasswsordIcon, getDeleteIcon } from 'utils/SvgImages';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import tw from 'twrnc';
-import LoadingContainer from 'screens/artistOnboarding/LoadingContainer';
-import { getEditEligibility } from 'services/update/getEditEligibility';
-import { useModalStore } from 'store/modal/modalStore';
-import EligibityResponseScreen from './EligibityResponseScreen';
-import Logo from 'screens/galleryProfileScreens/galleryProfile/components/Logo';
-import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useQueryClient } from '@tanstack/react-query';
+import { StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { colors } from "config/colors.config";
+import ProfileMenuItems, {
+  ProfileMenuItem,
+} from "components/profile/ProfileMenuItems";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { screenName } from "constants/screenNames.constants";
+import { logout } from "utils/logout.utils";
+import WithGalleryModal from "components/modal/WithGalleryModal";
+import { useAppStore } from "store/app/appStore";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
+import { changePasswsordIcon, getDeleteIcon } from "utils/SvgImages";
+import LongBlackButton from "components/buttons/LongBlackButton";
+import tw from "twrnc";
+import LoadingContainer from "screens/artistOnboarding/LoadingContainer";
+import { getEditEligibility } from "services/update/getEditEligibility";
+import { useModalStore } from "store/modal/modalStore";
+import EligibityResponseScreen from "./EligibityResponseScreen";
+import Logo from "screens/galleryProfileScreens/galleryProfile/components/Logo";
+import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useQueryClient } from "@tanstack/react-query";
+import BlurStatusBar from "components/general/BlurStatusBar";
+import { useScrollY } from "hooks/useScrollY";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
 
 type userDataType = {
   name: string;
@@ -34,10 +39,14 @@ export default function ArtistProfileScreen() {
   const { userSession } = useAppStore();
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
+  const { scrollY, onScroll } = useScrollY();
 
-  const [userData, setuserdata] = useState<userDataType>({ name: '', email: '' });
+  const [userData, setuserdata] = useState<userDataType>({
+    name: "",
+    email: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [eligibilityResponse, setEligibilityResponse] = useState('');
+  const [eligibilityResponse, setEligibilityResponse] = useState("");
   const [isEligible, setIsEligible] = useState(false);
   const [eligibilityData, setEligibilityData] = useState<any>(null);
 
@@ -45,7 +54,7 @@ export default function ArtistProfileScreen() {
   const checkingRef = useRef(false);
 
   const handleFetchUserSession = useCallback(async () => {
-    const stored = await utils_getAsyncData('userSession');
+    const stored = await utils_getAsyncData("userSession");
     if (stored.isOk === false) return;
     if (stored.value) {
       const parsed = JSON.parse(stored.value);
@@ -57,7 +66,7 @@ export default function ArtistProfileScreen() {
   useFocusEffect(
     useCallback(() => {
       handleFetchUserSession();
-    }, [handleFetchUserSession]),
+    }, [handleFetchUserSession])
   );
 
   const checkEditEligibility = async () => {
@@ -69,7 +78,7 @@ export default function ArtistProfileScreen() {
       if (response?.isOk) {
         if (response.body.eligibility.isEligible) {
           setIsLoading(false);
-          navigation.navigate('EditCredentialsScreen');
+          navigation.navigate("EditCredentialsScreen");
         } else {
           setIsLoading(false);
           setEligibilityData(response);
@@ -78,13 +87,15 @@ export default function ArtistProfileScreen() {
       } else {
         setIsLoading(false);
         setIsEligible(true);
-        setEligibilityResponse(response?.body?.message ?? 'You are not eligible at this time.');
+        setEligibilityResponse(
+          response?.body?.message ?? "You are not eligible at this time."
+        );
       }
     } catch (error: any) {
       updateModal({
-        message: error?.message ?? 'Something went wrong',
+        message: error?.message ?? "Something went wrong",
         showModal: true,
-        modalType: 'error',
+        modalType: "error",
       });
       setIsLoading(false);
     } finally {
@@ -92,66 +103,91 @@ export default function ArtistProfileScreen() {
     }
   };
 
+  const menuItems: ProfileMenuItem[] = useMemo(
+    () => [
+      {
+        name: "View Credentials",
+        subText: "View your credentials",
+        handlePress: () => navigation.navigate("ViewCredentialsScreen"),
+        Icon: (
+          <Ionicons name="eye-outline" size={24} color={colors.primary_black} />
+        ),
+      },
+      {
+        name: "Change password",
+        subText: "Change the password to your account",
+        handlePress: () =>
+          navigation.navigate(screenName.gallery.changePassword, {
+            routeName: "gallery",
+          }),
+        svgIcon: changePasswsordIcon,
+      },
+      {
+        name: "Delete account",
+        subText: "Delete your omenai gallery account",
+        handlePress: () => {
+          navigation.navigate(screenName.deleteAccount, {
+            routeName: "artist",
+          });
+        },
+        svgIcon: getDeleteIcon("#292D32"),
+      },
+    ],
+    [navigation]
+  );
+
   return (
     <WithGalleryModal>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       {!isLoading ? (
         !isEligible ? (
-          <ScrollWrapper style={styles.mainContainer}>
-            <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
+          <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
+            <View
+              style={[styles.profileContainer, { marginTop: insets.top + 16 }]}
+            >
               <Logo url={userSession?.logo} />
 
               <View>
-                <Text style={{ fontSize: 16, fontWeight: '500', color: colors.primary_black }}>
+                <Text
+                  style={[
+                    tw`text-base font-medium`,
+                    { color: colors.primary_black },
+                  ]}
+                >
                   {userData.name}
                 </Text>
-                <Text style={{ fontSize: 14, marginTop: 5, marginBottom: 20, color: '#00000099' }}>
+                <Text
+                  style={[tw`text-sm mt-1.5`, {
+                    color: "#00000099",
+                  }]}
+                >
                   {userData.email}
                 </Text>
               </View>
             </View>
 
             <View style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}>
-              <Pressable
-                onPress={() => navigation.navigate(screenName.gallery.editProfile)}
-                style={tw`bg-[#000000] rounded-[23px] flex-1 h-[47px] justify-center items-center`}
-              >
-                <Text style={tw`text-[16px] text-white`}>Edit your profile</Text>
-              </Pressable>
-
-              <Pressable
-                onPress={checkEditEligibility}
-                style={tw`border border-black rounded-[23px] flex-1 h-[47px] justify-center items-center`}
-              >
-                <Text style={tw`text-[16px] text-[#1A1A1A]`}>Edit your credentials</Text>
-              </Pressable>
-            </View>
-
-            <View style={styles.buttonsContainer}>
-              <PageButtonCard
-                name="View Credentials"
-                subText="View your credentials"
-                handlePress={() => navigation.navigate('ViewCredentialsScreen')}
-                Icon={<Ionicons name="eye-outline" size={24} color={colors.primary_black} />}
-              />
-              <PageButtonCard
-                name="Change password"
-                subText="Change the password to your account"
-                handlePress={() =>
-                  navigation.navigate(screenName.gallery.changePassword, { routeName: 'gallery' })
+              <FittedBlackButton
+                value="Edit profile"
+                onClick={() =>
+                  navigation.navigate(screenName.gallery.editProfile)
                 }
-                svgIcon={changePasswsordIcon}
+                style={tw`flex-grow`}
+                textStyle={tw`text-base`}
               />
-              <PageButtonCard
-                name="Delete account"
-                subText="Delete your omenai gallery account"
-                handlePress={() => {
-                  navigation.navigate(screenName.deleteAccount, { routeName: 'artist' });
-                }}
-                svgIcon={getDeleteIcon("#292D32")}
+              <FittedBlackButton
+                value="Edit your credentials"
+                onClick={checkEditEligibility}
+                style={tw`flex-grow bg-transparent border border-black rounded-[23px]`}
+                textStyle={tw`text-black text-[16px]`}
               />
             </View>
 
-            <View style={tw`mb-[150px]`}>
+            <View style={tw`pt-[40px] pb-8`}>
+              <ProfileMenuItems items={menuItems} />
+            </View>
+
+            <View style={tw`mb-[40px]`}>
               <LongBlackButton
                 value="Log Out"
                 onClick={() => {
@@ -184,10 +220,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   profileContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 20,
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    alignItems: "center",
+    flexWrap: "wrap",
   },
   headerContainer: {
     paddingHorizontal: 20,

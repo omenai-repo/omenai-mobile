@@ -43,7 +43,6 @@ export default function Collections() {
           )}
           keyExtractor={(item) => item.name}
         />
-        <View style={{ height: 100 }} />
       </ScrollWrapper>
     </View>
   );
