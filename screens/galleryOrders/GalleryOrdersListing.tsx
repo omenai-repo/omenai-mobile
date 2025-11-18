@@ -1,4 +1,4 @@
-import { FlatList, Text, View, RefreshControl } from "react-native";
+import { Text, View } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
@@ -8,12 +8,10 @@ import OrderslistingLoader from "./components/OrderslistingLoader";
 import EmptyOrdersListing from "./components/EmptyOrdersListing";
 import YearDropdown from "screens/artist/orders/YearDropdown";
 import DeclineOrderModal from "screens/artist/orders/DeclineOrderModal";
-import OrderContainer from "components/orders/OrderContainer";
-import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOrdersManagement } from "hooks/useOrdersManagement";
+import { OrdersList } from "components/orders/OrdersList";
 
 const GALLERY_ORDERS_QK = ["orders", "gallery"] as const;
 
@@ -79,67 +77,33 @@ export default function GalleryOrdersListing() {
                 <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
               </View>
 
-              <FlatList
+              <OrdersList
                 data={currentOrders}
-                keyExtractor={(item, index) =>
-                  item?.order_id?.toString?.() ?? item?.artwork_data?._id ?? `order-index-${index}`
+                openSection={openSection}
+                toggleRecentOrder={toggleRecentOrder}
+                selectedTab={selectedTab}
+                isRefreshing={isRefreshing}
+                onRefresh={() => ordersQuery.refetch()}
+                onAccept={(item) =>
+                  navigation.navigate("DimensionsDetails", {
+                    orderId: item.order_id,
+                  })
                 }
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={tw`pb-[30px]`}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={isRefreshing}
-                    onRefresh={() => ordersQuery.refetch()}
-                    tintColor="#000"
-                    colors={["#000"]}
-                  />
+                onDecline={(item) => {
+                  setOrderModalMetadata({
+                    is_current_order_exclusive: false,
+                    art_id: item.artwork_data?.art_id,
+                    seller_designation: item.seller_designation || "gallery",
+                  });
+                  setOrderId(item.order_id);
+                  setDeclineModal(true);
+                }}
+                onTrack={(item) =>
+                  navigation.navigate("ShipmentTrackingScreen", {
+                    orderId: item.order_id,
+                    tracking_id: item.shipping_details.shipment_information.tracking.id,
+                  })
                 }
-                renderItem={({ item, index }) => (
-                  <OrderContainer
-                    id={index}
-                    url={item.artwork_data.url}
-                    open={!!openSection[item.order_id]}
-                    setOpen={() => toggleRecentOrder(item.order_id)}
-                    artId={item.order_id}
-                    artName={item.artwork_data.title}
-                    dateTime={formatIntlDateTime(item.createdAt)}
-                    price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                    order_decline_reason={item.order_accepted.reason}
-                    status={selectedTab}
-                    lastId={index === currentOrders.length - 1}
-                    acceptBtn={
-                      selectedTab === "pending"
-                        ? () =>
-                            navigation.navigate("DimensionsDetails", {
-                              orderId: item.order_id,
-                            })
-                        : undefined
-                    }
-                    declineBtn={
-                      selectedTab === "pending"
-                        ? () => {
-                            setOrderModalMetadata({
-                              is_current_order_exclusive: false,
-                              art_id: item.artwork_data?.art_id,
-                              seller_designation: item.seller_designation || "gallery",
-                            });
-                            setOrderId(item.order_id);
-                            setDeclineModal(true);
-                          }
-                        : undefined
-                    }
-                    delivered={item.shipping_details.delivery_confirmed}
-                    order_accepted={item.order_accepted.status}
-                    payment_status={item.payment_information.status}
-                    tracking_status={item.shipping_details.shipment_information.tracking.id}
-                    trackBtn={() =>
-                      navigation.navigate("ShipmentTrackingScreen", {
-                        orderId: item.order_id,
-                        tracking_id: item.shipping_details.shipment_information.tracking.id,
-                      })
-                    }
-                  />
-                )}
               />
             </>
           )}
