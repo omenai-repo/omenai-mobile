@@ -166,7 +166,7 @@ export default function ArtistProfileScreen() {
               <FittedBlackButton
                 value="Edit your credentials"
                 onClick={checkEditEligibility}
-                style={tw`flex-grow bg-transparent border border-black rounded-[23px]`}
+                style={tw`flex-grow bg-transparent border border-black`}
                 textStyle={tw`text-black text-[16px]`}
               />
             </View>
