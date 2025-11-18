@@ -1,5 +1,5 @@
 import { FlatList, Text, View, RefreshControl } from "react-native";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import WithModal from "components/modal/WithModal";
@@ -7,95 +7,52 @@ import TabSwitcher from "components/orders/TabSwitcher";
 import OrderslistingLoader from "./components/OrderslistingLoader";
 import EmptyOrdersListing from "./components/EmptyOrdersListing";
 import YearDropdown from "screens/artist/orders/YearDropdown";
-import { useModalStore } from "store/modal/modalStore";
-import { getOrdersBySellerId } from "services/orders/getOrdersBySellerId";
-import { organizeOrders } from "utils/utils_splitArray";
 import DeclineOrderModal from "screens/artist/orders/DeclineOrderModal";
 import OrderContainer from "components/orders/OrderContainer";
 import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
 import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useOrdersManagement } from "hooks/useOrdersManagement";
 
 const GALLERY_ORDERS_QK = ["orders", "gallery"] as const;
 
 export default function GalleryOrdersListing() {
   const navigation = useNavigation<any>();
-  const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
 
-  const [selectedTab, setSelectedTab] = useState<"pending" | "processing" | "completed">("pending");
-  const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
   const [declineModal, setDeclineModal] = useState(false);
   const [orderId, setOrderId] = useState("");
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [orderModalMetadata, setOrderModalMetadata] = useState({
     is_current_order_exclusive: false,
     art_id: "",
     seller_designation: "gallery",
   });
 
-  const ordersQuery = useQuery({
+  const {
+    selectedTab,
+    setSelectedTab,
+    openSection,
+    selectedYear,
+    setSelectedYear,
+    ordersQuery,
+    pending,
+    processing,
+    currentOrders,
+    toggleRecentOrder,
+    isInitialLoading,
+    isRefreshing,
+  } = useOrdersManagement({
     queryKey: GALLERY_ORDERS_QK,
-    queryFn: async () => {
-      try {
-        const res = await getOrdersBySellerId();
-        if (!res?.isOk) throw new Error("Failed to fetch orders");
-        return Array.isArray(res.data) ? res.data : [];
-      } catch (e: any) {
-        updateModal({
-          message: e?.message ?? "Failed to fetch orders",
-          showModal: true,
-          modalType: "error",
-        });
-        return [];
-      }
-    },
-    staleTime: 30_000,
-    gcTime: 10 * 60_000,
-    refetchOnMount: true, // only if stale
-    refetchOnReconnect: true, // only if stale
-    refetchOnWindowFocus: true, // only if stale
+    errorMessage: "Failed to fetch orders",
   });
-
-  const { pending, processing, completed } = useMemo(() => {
-    const parsed = organizeOrders(ordersQuery.data ?? []);
-    return parsed;
-  }, [ordersQuery.data]);
-
-  const filterByYear = useCallback(
-    (arr: any[]) => {
-      if (!Array.isArray(arr)) return [];
-      return arr.filter((o) => new Date(o.createdAt).getFullYear() === selectedYear);
-    },
-    [selectedYear]
-  );
-
-  const getCurrentOrders = useCallback(() => {
-    if (selectedTab === "pending") return filterByYear(pending);
-    if (selectedTab === "processing") return filterByYear(processing);
-    return filterByYear(completed);
-  }, [selectedTab, filterByYear, pending, processing, completed]);
-
-  const currentOrders = getCurrentOrders();
 
   const galleryTabs = [
     { title: "Pending", key: "pending", count: pending?.length ?? 0 },
     { title: "Processing", key: "processing", count: processing?.length ?? 0 },
     { title: "Completed", key: "completed" },
   ];
-
-  const toggleRecentOrder = useCallback((key: string | number) => {
-    const k = String(key);
-    setOpenSection((prev) => ({
-      ...prev,
-      [k]: !prev[k], // Flip the state for this item
-    }));
-  }, []);
-
-  const isInitialLoading = ordersQuery.isLoading && !ordersQuery.data;
-  const isRefreshing = ordersQuery.isFetching && !!ordersQuery.data;
 
   return (
     <WithModal>

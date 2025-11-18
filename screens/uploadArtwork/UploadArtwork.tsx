@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import WithModal from "components/modal/WithModal";
 import HeaderIndicator from "./components/HeaderIndicator";
