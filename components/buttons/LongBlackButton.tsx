@@ -100,7 +100,7 @@ export default function LongBlackButton({
   return (
     <TouchableOpacity activeOpacity={1} style={containerStyle} onPress={onClick}>
       <View style={tw`flex-row items-center justify-center gap-3`}>
-        {icon && icon}
+        {icon}
         <Text style={mergedTextStyle}>{value}</Text>
       </View>
     </TouchableOpacity>

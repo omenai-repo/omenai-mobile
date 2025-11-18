@@ -25,9 +25,7 @@ export default function GalleryOrdersListing() {
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
 
-  const [selectedTab, setSelectedTab] = useState<
-    "pending" | "processing" | "completed"
-  >("pending");
+  const [selectedTab, setSelectedTab] = useState<"pending" | "processing" | "completed">("pending");
   const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
   const [declineModal, setDeclineModal] = useState(false);
   const [orderId, setOrderId] = useState("");
@@ -69,19 +67,18 @@ export default function GalleryOrdersListing() {
   const filterByYear = useCallback(
     (arr: any[]) => {
       if (!Array.isArray(arr)) return [];
-      return arr.filter(
-        (o) => new Date(o.createdAt).getFullYear() === selectedYear
-      );
+      return arr.filter((o) => new Date(o.createdAt).getFullYear() === selectedYear);
     },
     [selectedYear]
   );
 
-  const currentOrders =
-    selectedTab === "pending"
-      ? filterByYear(pending)
-      : selectedTab === "processing"
-      ? filterByYear(processing)
-      : filterByYear(completed);
+  const getCurrentOrders = useCallback(() => {
+    if (selectedTab === "pending") return filterByYear(pending);
+    if (selectedTab === "processing") return filterByYear(processing);
+    return filterByYear(completed);
+  }, [selectedTab, filterByYear, pending, processing, completed]);
+
+  const currentOrders = getCurrentOrders();
 
   const galleryTabs = [
     { title: "Pending", key: "pending", count: pending?.length ?? 0 },
@@ -106,9 +103,7 @@ export default function GalleryOrdersListing() {
         <TabSwitcher
           tabs={galleryTabs}
           selectedKey={selectedTab}
-          setSelectedKey={(key) =>
-            setSelectedTab(key as "pending" | "processing" | "completed")
-          }
+          setSelectedKey={(key) => setSelectedTab(key as "pending" | "processing" | "completed")}
         />
 
         <View
@@ -121,23 +116,16 @@ export default function GalleryOrdersListing() {
           ) : (
             <>
               <View style={tw`flex-row items-center`}>
-                <Text
-                  style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}
-                >
+                <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
                   Your Orders
                 </Text>
-                <YearDropdown
-                  selectedYear={selectedYear}
-                  setSelectedYear={setSelectedYear}
-                />
+                <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
               </View>
 
               <FlatList
                 data={currentOrders}
                 keyExtractor={(item, index) =>
-                  item?.order_id?.toString?.() ??
-                  item?.artwork_data?._id ??
-                  `order-index-${index}`
+                  item?.order_id?.toString?.() ?? item?.artwork_data?._id ?? `order-index-${index}`
                 }
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
@@ -158,9 +146,7 @@ export default function GalleryOrdersListing() {
                     artId={item.order_id}
                     artName={item.artwork_data.title}
                     dateTime={formatIntlDateTime(item.createdAt)}
-                    price={utils_formatPrice(
-                      item.artwork_data.pricing.usd_price
-                    )}
+                    price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
                     order_decline_reason={item.order_accepted.reason}
                     status={selectedTab}
                     lastId={index === currentOrders.length - 1}
@@ -178,8 +164,7 @@ export default function GalleryOrdersListing() {
                             setOrderModalMetadata({
                               is_current_order_exclusive: false,
                               art_id: item.artwork_data?.art_id,
-                              seller_designation:
-                                item.seller_designation || "gallery",
+                              seller_designation: item.seller_designation || "gallery",
                             });
                             setOrderId(item.order_id);
                             setDeclineModal(true);
@@ -189,15 +174,11 @@ export default function GalleryOrdersListing() {
                     delivered={item.shipping_details.delivery_confirmed}
                     order_accepted={item.order_accepted.status}
                     payment_status={item.payment_information.status}
-                    tracking_status={
-                      item.shipping_details.shipment_information.tracking.id
-                    }
+                    tracking_status={item.shipping_details.shipment_information.tracking.id}
                     trackBtn={() =>
                       navigation.navigate("ShipmentTrackingScreen", {
                         orderId: item.order_id,
-                        tracking_id:
-                          item.shipping_details.shipment_information.tracking
-                            .id,
+                        tracking_id: item.shipping_details.shipment_information.tracking.id,
                       })
                     }
                   />
@@ -212,9 +193,7 @@ export default function GalleryOrdersListing() {
           setIsModalVisible={setDeclineModal}
           orderId={orderId}
           orderModalMetadata={orderModalMetadata}
-          refresh={() =>
-            queryClient.invalidateQueries({ queryKey: GALLERY_ORDERS_QK })
-          }
+          refresh={() => queryClient.invalidateQueries({ queryKey: GALLERY_ORDERS_QK })}
         />
       </View>
     </WithModal>
