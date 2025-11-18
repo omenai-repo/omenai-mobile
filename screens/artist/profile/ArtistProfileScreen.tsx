@@ -112,7 +112,7 @@ export default function ArtistProfileScreen() {
         subText: "Change the password to your account",
         handlePress: () =>
           navigation.navigate(screenName.gallery.changePassword, {
-            routeName: "gallery",
+            routeName: "artist",
           }),
         svgIcon: changePasswsordIcon,
       },
