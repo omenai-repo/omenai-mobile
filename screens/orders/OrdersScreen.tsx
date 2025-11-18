@@ -81,6 +81,52 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
     setDeclineModal(true);
   };
 
+  const renderContent = () => {
+    if (isInitialLoading) {
+      return <OrderslistingLoader />;
+    }
+
+    if (currentOrders.length === 0) {
+      return <EmptyOrdersListing status={selectedTab} />;
+    }
+
+    return (
+      <>
+        <View style={tw`flex-row items-center`}>
+          <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
+            Your Orders
+          </Text>
+          <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+        </View>
+
+        <OrdersList
+          data={currentOrders}
+          openSection={openSection}
+          toggleRecentOrder={toggleRecentOrder}
+          selectedTab={selectedTab}
+          isRefreshing={isRefreshing}
+          onRefresh={() => ordersQuery.refetch()}
+          onAccept={(item) =>
+            navigation.navigate("DimensionsDetails", {
+              orderId: item?.order_id,
+            })
+          }
+          onDecline={handleDecline}
+          onTrack={(item) =>
+            navigation.navigate("ShipmentTrackingScreen", {
+              orderId: item?.order_id,
+              tracking_id: item?.shipping_details?.shipment_information?.tracking?.id,
+            })
+          }
+          {...(userType === "artist" && {
+            renderExclusivityType: (item) =>
+              item?.artwork_data?.exclusivity_status?.exclusivity_type || "non-exclusive",
+          })}
+        />
+      </>
+    );
+  };
+
   return (
     <WithModal>
       <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
@@ -93,45 +139,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
         <View
           style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
         >
-          {isInitialLoading ? (
-            <OrderslistingLoader />
-          ) : currentOrders.length === 0 ? (
-            <EmptyOrdersListing status={selectedTab} />
-          ) : (
-            <>
-              <View style={tw`flex-row items-center`}>
-                <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
-                  Your Orders
-                </Text>
-                <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
-              </View>
-
-              <OrdersList
-                data={currentOrders}
-                openSection={openSection}
-                toggleRecentOrder={toggleRecentOrder}
-                selectedTab={selectedTab}
-                isRefreshing={isRefreshing}
-                onRefresh={() => ordersQuery.refetch()}
-                onAccept={(item) =>
-                  navigation.navigate("DimensionsDetails", {
-                    orderId: item?.order_id,
-                  })
-                }
-                onDecline={handleDecline}
-                onTrack={(item) =>
-                  navigation.navigate("ShipmentTrackingScreen", {
-                    orderId: item?.order_id,
-                    tracking_id: item?.shipping_details?.shipment_information?.tracking?.id,
-                  })
-                }
-                {...(userType === "artist" && {
-                  renderExclusivityType: (item) =>
-                    item?.artwork_data?.exclusivity_status?.exclusivity_type || "non-exclusive",
-                })}
-              />
-            </>
-          )}
+          {renderContent()}
         </View>
 
         <DeclineOrderModal

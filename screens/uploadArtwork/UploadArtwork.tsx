@@ -196,62 +196,39 @@ export default function UploadArtwork() {
   const shouldShowMixedVerification = !userSession?.gallery_verified && isConfirmed?.isSubActive;
   const canUpload = userSession?.gallery_verified && isConfirmed?.isSubActive;
 
+  const renderUploadContent = () => (
+    <>
+      <HeaderIndicator />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollWrapper
+          style={styles.container}
+          nestedScrollEnabled={true}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {!isLoading && !isUploaded && components[activeIndex - 1]}
+          {!isLoading && isUploaded && <SuccessScreen />}
+          {isLoading && <Loader />}
+        </ScrollWrapper>
+      </KeyboardAvoidingView>
+    </>
+  );
+
+  const shouldShowLock =
+    userType === "gallery"
+      ? shouldShowVerificationBlock || shouldShowMixedVerification
+      : showLockScreen;
+
+  const shouldRenderUpload = userType === "gallery" ? canUpload : !showLockScreen;
+
   return (
     <WithModal>
-      {userType === "gallery" && (
-        <>
-          {shouldShowVerificationBlock && <LockScreen name={userSession?.name} />}
-          {shouldShowSubscriptionBlock && <NoSubscriptionBlock />}
-          {shouldShowMixedVerification && <LockScreen name={userSession?.name} />}
-          {canUpload && (
-            <>
-              <HeaderIndicator />
-              <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={{ flex: 1 }}
-              >
-                <ScrollWrapper
-                  style={styles.container}
-                  nestedScrollEnabled={true}
-                  showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps="handled"
-                >
-                  {!isLoading && !isUploaded && components[activeIndex - 1]}
-                  {!isLoading && isUploaded && <SuccessScreen />}
-                  {isLoading && <Loader />}
-                </ScrollWrapper>
-              </KeyboardAvoidingView>
-            </>
-          )}
-        </>
-      )}
-
-      {userType === "artist" && (
-        <>
-          {showLockScreen ? (
-            <LockScreen name={userSession.name} />
-          ) : (
-            <>
-              <HeaderIndicator />
-              <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={{ flex: 1 }}
-              >
-                <ScrollWrapper
-                  style={styles.container}
-                  nestedScrollEnabled={true}
-                  showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps="handled"
-                >
-                  {!isLoading && !isUploaded && components[activeIndex - 1]}
-                  {!isLoading && isUploaded && <SuccessScreen />}
-                  {isLoading && <Loader />}
-                </ScrollWrapper>
-              </KeyboardAvoidingView>
-            </>
-          )}
-        </>
-      )}
+      {shouldShowLock && <LockScreen name={userSession?.name} />}
+      {userType === "gallery" && shouldShowSubscriptionBlock && <NoSubscriptionBlock />}
+      {shouldRenderUpload && renderUploadContent()}
     </WithModal>
   );
 }
