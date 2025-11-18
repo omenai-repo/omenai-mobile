@@ -15,6 +15,7 @@ type TrendingArtworkCardType = {
   rarity?: string;
   medium?: string;
   likes: number;
+  art_id: string;
 };
 
 export default function TrendingArtworkCard({
@@ -24,6 +25,7 @@ export default function TrendingArtworkCard({
   medium,
   title,
   likes,
+  art_id,
 }: TrendingArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
@@ -49,7 +51,7 @@ export default function TrendingArtworkCard({
   return (
     <TouchableOpacity
       activeOpacity={1}
-      onPress={() => navigation.push(screenName.artwork, { title, image })}
+      onPress={() => navigation.push(screenName.artwork, { art_id, image })}
     >
       <View style={styles.container}>
         <View style={styles.top}>

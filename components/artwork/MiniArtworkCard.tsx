@@ -1,15 +1,15 @@
-import { Dimensions, TouchableOpacity } from 'react-native';
-import React, { memo, useMemo } from 'react';
-import { getImageFileView } from 'lib/storage/getImageFileView';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import tw from 'twrnc';
-import { getNumberOfColumns } from 'utils/utils_screen';
-import ExclusivityCountdown from './ExclusivityCountdown';
-import ArtworkImage from './ArtworkImage';
-import ArtworkDetails from './ArtworkDetails';
-import ArtworkStatus from './ArtworkStatus';
+import { Dimensions, TouchableOpacity } from "react-native";
+import React, { memo, useMemo } from "react";
+import { getImageFileView } from "lib/storage/getImageFileView";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "constants/screenNames.constants";
+import tw from "twrnc";
+import { getNumberOfColumns } from "utils/utils_screen";
+import ExclusivityCountdown from "./ExclusivityCountdown";
+import ArtworkImage from "./ArtworkImage";
+import ArtworkDetails from "./ArtworkDetails";
+import ArtworkStatus from "./ArtworkStatus";
 
 type MiniArtworkCardType = {
   title: string;
@@ -41,7 +41,7 @@ const MiniArtworkCard = memo(
   }: MiniArtworkCardType) => {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-    const screenWidth = Dimensions.get('window').width - 10;
+    const screenWidth = Dimensions.get("window").width - 10;
     const dividerNum = getNumberOfColumns();
     let imageWidth = Math.round(screenWidth / dividerNum);
     const image_href = getImageFileView(url, imageWidth);
@@ -54,7 +54,7 @@ const MiniArtworkCard = memo(
       <TouchableOpacity
         activeOpacity={1}
         style={tw`flex flex-col pb-[20px]`}
-        onPress={() => navigation.push(screenName.artwork, { title, url })}
+        onPress={() => navigation.push(screenName.artwork, { art_id, url })}
       >
         <ArtworkImage
           imageWidth={imageWidth}
@@ -64,7 +64,7 @@ const MiniArtworkCard = memo(
           impressions={impressions}
           like_IDs={like_IDs}
         />
-        
+
         <ArtworkDetails
           title={title}
           artist={artist}
@@ -78,7 +78,9 @@ const MiniArtworkCard = memo(
         {showCountdown && <ExclusivityCountdown expiresAt={expiryDate} art_id={art_id} />}
       </TouchableOpacity>
     );
-  },
+  }
 );
+
+MiniArtworkCard.displayName = "MiniArtworkCard";
 
 export default MiniArtworkCard;
