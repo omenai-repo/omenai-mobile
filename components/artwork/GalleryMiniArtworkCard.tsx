@@ -1,13 +1,22 @@
-import { Dimensions, Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { colors } from 'config/colors.config';
-import { getImageFileView } from 'lib/storage/getImageFileView';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import EditArtworkButton from 'components/buttons/EditArtworkButton';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  PixelRatio,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { colors } from "config/colors.config";
+import { getImageFileView } from "lib/storage/getImageFileView";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "constants/screenNames.constants";
+import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
+import { utils_formatPrice } from "utils/utils_priceFormatter";
+import EditArtworkButton from "components/buttons/EditArtworkButton";
+import tw from "twrnc";
 
 type MiniArtworkCardType = {
   title: string;
@@ -26,38 +35,38 @@ export default function GalleryMiniArtworkCard({
 }: MiniArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const screenWidth = Dimensions.get('window').width;
+  const screenWidth = Dimensions.get("window").width;
   const [imageDimensions, setImageDimensions] = useState({
     width: 0,
     height: 0,
   });
   const [renderImage, setRenderImage] = useState(false);
 
-  let imageWidth = 0;
-  imageWidth = (screenWidth - 60) / 2; //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
-  const image_href = getImageFileView(url, imageWidth);
+  const dpr = PixelRatio.get();
+  const displayWidth = (screenWidth - 60) / 2; // screen width minus paddings applied to grid view then divided by two
+  const fetchWidth = Math.round(displayWidth * dpr); // high-res fetch width
+  const image_href = getImageFileView(url, fetchWidth);
 
   useEffect(() => {
-    const calculatedWidth = (screenWidth - 60) / 2; // 20px left + 20px right + 20px gap between
-    const image_href = getImageFileView(url, Math.round(calculatedWidth));
+    const image_href = getImageFileView(url, fetchWidth);
 
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
       const { width, height } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        calculatedWidth,
-        300, // optional max height
+        displayWidth,
+        300 // optional max height
       );
       setImageDimensions({ height, width });
       setRenderImage(true);
     });
-  }, [url, screenWidth]);
+  }, [url, screenWidth, fetchWidth, displayWidth]);
 
   return (
     <TouchableOpacity
       activeOpacity={1}
-      style={[styles.container, { width: imageDimensions.width }]}
+      style={[tw`ml-0`, { width: imageDimensions.width }]}
       onPress={() => {
-        navigation.push(screenName.artwork, { title, url });
+        navigation.push(screenName.artwork, { art_id, url });
       }}
     >
       {renderImage ? (
@@ -65,7 +74,7 @@ export default function GalleryMiniArtworkCard({
           style={{
             width: imageDimensions.width,
             height: imageDimensions.height,
-            position: 'relative',
+            position: "relative",
           }}
         >
           <Image
@@ -73,7 +82,7 @@ export default function GalleryMiniArtworkCard({
             style={{
               width: imageDimensions.width,
               height: imageDimensions.height,
-              objectFit: 'contain',
+              objectFit: "contain",
             }}
             resizeMode="contain"
           />
@@ -82,7 +91,7 @@ export default function GalleryMiniArtworkCard({
               navigation.navigate(screenName.gallery.editArtwork, {
                 art_id: art_id,
               });
-              console.log('here');
+              console.log("here");
             }}
           />
         </View>
@@ -91,23 +100,20 @@ export default function GalleryMiniArtworkCard({
           style={{
             width: imageDimensions.width || (screenWidth - 60) / 2,
             height: imageDimensions.height || 200,
-            backgroundColor: '#f5f5f5',
+            backgroundColor: "#f5f5f5",
           }}
         />
       )}
       <View style={styles.mainDetailsContainer}>
         <Text style={{ fontSize: 14, color: colors.primary_black }}>{title}</Text>
         <Text style={{ fontSize: 12, color: colors.primary_black, opacity: 0.7 }}>{artist}</Text>
-        <Text>{utils_formatPrice(usd_price, '$')}</Text>
+        <Text>{utils_formatPrice(usd_price, "$")}</Text>
       </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginLeft: 0,
-  },
   mainDetailsContainer: {
     marginTop: 10,
     gap: 5,

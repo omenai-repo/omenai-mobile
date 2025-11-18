@@ -1,32 +1,32 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import tw from 'twrnc';
-import { differenceInCalendarDays } from 'date-fns';
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
-import { useQueryClient } from '@tanstack/react-query';
-import { PaymentMethod } from '@stripe/stripe-js';
-import { BillingCard } from 'screens/subscriptions/components/BillingCard';
-import { createStripeTokenizedCharge } from 'services/stripe/createStripeTokenizedCharge';
-import { useAppStore } from 'store/app/appStore';
-import { updateSubscriptionPlan } from 'services/stripe/updateSubscriptionPlan';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { useModalStore } from 'store/modal/modalStore';
-import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol';
-import { utils_determinePlanChange } from 'utils/utils_determinePlanChange';
-import { calculateSubscriptionPricing } from 'utils/calculateSubscriptionPricing';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { useStripe } from '@stripe/stripe-react-native';
+import React, { useMemo, useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import tw from "twrnc";
+import { differenceInCalendarDays } from "date-fns";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query";
+import { PaymentMethod } from "@stripe/stripe-js";
+import { BillingCard } from "screens/subscriptions/components/BillingCard";
+import { createStripeTokenizedCharge } from "services/stripe/createStripeTokenizedCharge";
+import { useAppStore } from "store/app/appStore";
+import { updateSubscriptionPlan } from "services/stripe/updateSubscriptionPlan";
+import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { useModalStore } from "store/modal/modalStore";
+import { utils_getCurrencySymbol } from "utils/utils_getCurrencySymbol";
+import { utils_determinePlanChange } from "utils/utils_determinePlanChange";
+import { calculateSubscriptionPricing } from "utils/calculateSubscriptionPricing";
+import BackHeaderTitle from "components/header/BackHeaderTitle";
+import { useStripe } from "@stripe/stripe-react-native";
 
 type RootStackParamList = {
   MigrationUpgradeCheckout: {
     plan: SubscriptionPlanDataTypes & { createdAt?: string; updatedAt?: string; _id?: string };
-    interval: 'yearly' | 'monthly';
+    interval: "yearly" | "monthly";
     sub_data: SubscriptionModelSchemaTypes & { created?: string; updatedAt?: string };
     action: string;
   };
 };
 
-type ScreenRouteProp = RouteProp<RootStackParamList, 'MigrationUpgradeCheckout'>;
+type ScreenRouteProp = RouteProp<RootStackParamList, "MigrationUpgradeCheckout">;
 
 const PriceRow = ({
   label,
@@ -79,19 +79,19 @@ export default function Checkout() {
         sub_data.plan_details,
         plan,
         days_used,
-        totalDays,
+        totalDays
       ),
-    [startDate, interval, sub_data.plan_details, plan, days_used, totalDays],
+    [startDate, interval, sub_data.plan_details, plan, days_used, totalDays]
   );
 
   const plan_change_params = useMemo(() => {
-    if (!sub_data) return { action: '', shouldCharge: false };
+    if (!sub_data) return { action: "", shouldCharge: false };
     return utils_determinePlanChange(
       sub_data.plan_details.type.toLowerCase(),
-      sub_data.plan_details.interval.toLowerCase() as 'yearly' | 'monthly',
-      interval === 'yearly' ? +plan.pricing.annual_price : +plan.pricing.monthly_price,
+      sub_data.plan_details.interval.toLowerCase() as "yearly" | "monthly",
+      interval === "yearly" ? +plan.pricing.annual_price : +plan.pricing.monthly_price,
       interval,
-      sub_data.status,
+      sub_data.status
     );
   }, [sub_data, interval, plan.pricing]);
 
@@ -99,9 +99,9 @@ export default function Checkout() {
   const handlePayNow = async () => {
     if (!user?.id) {
       updateModal({
-        message: 'Missing gallery id',
+        message: "Missing gallery id",
         showModal: true,
-        modalType: 'error',
+        modalType: "error",
       });
       return;
     }
@@ -120,37 +120,37 @@ export default function Checkout() {
 
       if (!res?.isOk) {
         updateModal({
-          message: 'Unable to initiate card charge. Please contact support',
+          message: "Unable to initiate card charge. Please contact support",
           showModal: true,
-          modalType: 'error',
+          modalType: "error",
         });
         return;
       }
 
       const { client_secret, status, paymentIntentId } = res;
-      if (status === 'requires_action') {
+      if (status === "requires_action") {
         const { error: nextActionErr, paymentIntent } = await handleNextAction(client_secret);
         if (nextActionErr) {
-          updateModal({ message: nextActionErr.message, showModal: true, modalType: 'error' });
+          updateModal({ message: nextActionErr.message, showModal: true, modalType: "error" });
           return;
         }
       }
 
       updateModal({
-        message: 'Processing payment...',
+        message: "Processing payment...",
         showModal: true,
-        modalType: 'input',
+        modalType: "input",
       });
 
-      await queryClient.invalidateQueries({ queryKey: ['subscription_precheck'] });
-      navigation.navigate('BillingVerification', {
+      await queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
+      navigation.navigate("BillingVerificationScreen", {
         payment_intent: paymentIntentId,
       });
     } catch (e: any) {
       updateModal({
         message: e?.message,
         showModal: true,
-        modalType: 'error',
+        modalType: "error",
       });
     } finally {
       setPayLoading(false);
@@ -160,9 +160,9 @@ export default function Checkout() {
   const handleMigrateToPlan = async () => {
     if (!user?.id) {
       updateModal({
-        message: 'Missing gallery id',
+        message: "Missing gallery id",
         showModal: true,
-        modalType: 'error',
+        modalType: "error",
       });
       return;
     }
@@ -171,35 +171,35 @@ export default function Checkout() {
       setMigrateLoading(true);
 
       const data = {
-        value: interval === 'monthly' ? +plan.pricing.monthly_price : +plan.pricing.annual_price,
-        currency: 'USD',
+        value: interval === "monthly" ? +plan.pricing.monthly_price : +plan.pricing.annual_price,
+        currency: "USD",
         type: plan.name,
         interval,
         id: plan._id as string,
       };
 
       const migrate = await updateSubscriptionPlan(data, action);
-      console.log(data, action, 'hh');
+      console.log(data, action, "hh");
       if (!migrate?.isOk) {
         updateModal({
-          message: migrate?.message ?? '',
+          message: migrate?.message ?? "",
           showModal: true,
-          modalType: 'error',
+          modalType: "error",
         });
       } else {
         updateModal({
-          message: 'Migration successful',
+          message: "Migration successful",
           showModal: true,
-          modalType: 'success',
+          modalType: "success",
         });
-        await queryClient.invalidateQueries({ queryKey: ['subscription_precheck'] });
+        await queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
         navigation.pop(2);
       }
     } catch (e: any) {
       updateModal({
         message: e?.message,
         showModal: true,
-        modalType: 'success',
+        modalType: "success",
       });
     } finally {
       setMigrateLoading(false);
@@ -288,15 +288,15 @@ export default function Checkout() {
           disabled={payLoading || migrateLoading}
           onPress={showCharge ? handlePayNow : handleMigrateToPlan}
           style={tw.style(
-            'mt-5 w-full py-3 rounded-md items-center justify-center',
-            payLoading || migrateLoading ? 'bg-black/30' : 'bg-black',
+            "mt-5 w-full py-3 rounded-md items-center justify-center",
+            payLoading || migrateLoading ? "bg-black/30" : "bg-black"
           )}
         >
           {payLoading || migrateLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={tw`text-white text-[13px] font-medium`}>
-              {showCharge ? 'Confirm Payment' : 'Migrate to this plan'}
+              {showCharge ? "Confirm Payment" : "Migrate to this plan"}
             </Text>
           )}
         </TouchableOpacity>

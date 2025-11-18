@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
 
@@ -28,35 +29,31 @@ export default function DeleteAccountActions({
       ]}
     >
       <View style={tw`flex-row gap-3 items-center`}>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={onCancel}
-          style={tw`flex-1 h-[55px] rounded-[95px] items-center justify-center bg-white border border-[${colors.inputBorder}]`}
-        >
-          <Text
-            style={tw`text-[15px] font-semibold text-[${colors.primary_black}]`}
-          >
-            Cancel
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={onContinue}
-          disabled={isContinueDisabled}
-          style={tw`flex-1 h-[55px] rounded-[95px] items-center justify-center ${
-            isContinueDisabled ? `bg-[${colors.grey50}]` : "bg-[#DC2626]"
+        <FittedBlackButton
+          value="Cancel"
+          onClick={onCancel}
+          style={[
+            tw`bg-white border items-center justify-center h-[55px] border-[${colors.inputBorder}] mr-3`,
+            { flexGrow: 1, marginRight: 12 },
+          ]}
+          textStyle={tw`font-semibold text-[${colors.primary_black}]`}
+        />
+        <FittedBlackButton
+          value="Continue to delete"
+          onClick={onContinue}
+          isDisabled={isContinueDisabled}
+          style={[
+            tw`${
+              isContinueDisabled ? `bg-[${colors.grey50}]` : "bg-[#DC2626]"
+            } items-center justify-center h-[55px]`,
+            { flexGrow: 1 },
+          ]}
+          textStyle={tw`font-semibold ${
+            isContinueDisabled
+              ? `text-[${colors.inputLabel}]`
+              : `text-[${colors.white}]`
           }`}
-        >
-          <Text
-            style={tw`text-[15px] font-semibold ${
-              isContinueDisabled
-                ? `text-[${colors.inputLabel}]`
-                : `text-[${colors.white}]`
-            }`}
-          >
-            Continue to delete
-          </Text>
-        </TouchableOpacity>
+        />
       </View>
     </View>
   );
