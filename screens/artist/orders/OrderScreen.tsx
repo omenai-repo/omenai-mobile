@@ -1,20 +1,18 @@
-import { View, Text, FlatList, RefreshControl } from "react-native";
+import { View, Text } from "react-native";
 import React, { useState } from "react";
 import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
 import DeclineOrderModal from "./DeclineOrderModal";
 import EmptyOrdersListing from "screens/galleryOrders/components/EmptyOrdersListing";
 import OrderslistingLoader from "screens/galleryOrders/components/OrderslistingLoader";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
 import YearDropdown from "./YearDropdown";
 import WithModal from "components/modal/WithModal";
 import TabSwitcher from "components/orders/TabSwitcher";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import OrderContainer from "components/orders/OrderContainer";
 import { ORDERS_QK } from "utils/queryKeys";
 import { useOrdersManagement } from "hooks/useOrdersManagement";
+import { OrdersList } from "components/orders/OrdersList";
 
 const OrderScreen = () => {
   const navigation = useNavigation<any>();
@@ -38,7 +36,6 @@ const OrderScreen = () => {
     ordersQuery,
     pending,
     processing,
-    completed,
     currentOrders,
     toggleRecentOrder,
     isInitialLoading,
@@ -85,74 +82,40 @@ const OrderScreen = () => {
                 <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
               </View>
 
-              <FlatList
+              <OrdersList
                 data={currentOrders}
-                keyExtractor={(item, index) =>
-                  item?.order_id?.toString?.() ?? item?.artwork_data?._id ?? `order-${index}`
+                openSection={openSection}
+                toggleRecentOrder={toggleRecentOrder}
+                selectedTab={selectedTab}
+                isRefreshing={isRefreshing}
+                onRefresh={() => ordersQuery.refetch()}
+                onAccept={(item) =>
+                  navigation.navigate("DimensionsDetails", {
+                    orderId: item?.order_id,
+                  })
                 }
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={tw`pb-[30px]`}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={isRefreshing}
-                    onRefresh={() => ordersQuery.refetch()}
-                    tintColor="#000"
-                    colors={["#000"]}
-                  />
-                }
-                renderItem={({ item, index }) => (
-                  <OrderContainer
-                    id={index}
-                    url={item?.artwork_data?.url}
-                    open={!!openSection[item.order_id]}
-                    setOpen={() => toggleRecentOrder(item.order_id)}
-                    artId={item?.order_id}
-                    artName={item?.artwork_data?.title}
-                    dateTime={formatIntlDateTime(item?.createdAt)}
-                    price={utils_formatPrice(item?.artwork_data?.pricing?.usd_price)}
-                    status={selectedTab}
-                    lastId={index === currentOrders.length - 1}
-                    acceptBtn={
-                      selectedTab === "pending"
-                        ? () =>
-                            navigation.navigate("DimensionsDetails", {
-                              orderId: item?.order_id,
-                            })
-                        : undefined
-                    }
-                    declineBtn={
-                      selectedTab === "pending"
-                        ? () => {
-                            const isExclusive =
-                              item?.artwork_data?.exclusivity_status?.exclusivity_type ===
-                                "exclusive" && isArtworkExclusiveDate(item?.createdAt);
+                onDecline={(item) => {
+                  const isExclusive =
+                    item?.artwork_data?.exclusivity_status?.exclusivity_type === "exclusive" &&
+                    isArtworkExclusiveDate(item?.createdAt);
 
-                            setOrderId(item?.order_id);
-                            setOrderModalMetadata({
-                              is_current_order_exclusive: isExclusive,
-                              art_id: item?.artwork_data?.art_id,
-                              seller_designation: item?.seller_designation || "artist",
-                            });
-                            setDeclineModal(true);
-                          }
-                        : undefined
-                    }
-                    delivered={item?.shipping_details?.delivery_confirmed}
-                    order_accepted={item?.order_accepted?.status}
-                    order_decline_reason={item?.order_accepted?.reason}
-                    payment_status={item?.payment_information?.status}
-                    tracking_status={item?.shipping_details?.shipment_information?.tracking?.id}
-                    trackBtn={() =>
-                      navigation.navigate("ShipmentTrackingScreen", {
-                        orderId: item?.order_id,
-                        tracking_id: item?.shipping_details?.shipment_information?.tracking?.id,
-                      })
-                    }
-                    exclusivity_type={
-                      item?.artwork_data?.exclusivity_status?.exclusivity_type || "non-exclusive"
-                    }
-                  />
-                )}
+                  setOrderId(item?.order_id);
+                  setOrderModalMetadata({
+                    is_current_order_exclusive: isExclusive,
+                    art_id: item?.artwork_data?.art_id,
+                    seller_designation: item?.seller_designation || "artist",
+                  });
+                  setDeclineModal(true);
+                }}
+                onTrack={(item) =>
+                  navigation.navigate("ShipmentTrackingScreen", {
+                    orderId: item?.order_id,
+                    tracking_id: item?.shipping_details?.shipment_information?.tracking?.id,
+                  })
+                }
+                renderExclusivityType={(item) =>
+                  item?.artwork_data?.exclusivity_status?.exclusivity_type || "non-exclusive"
+                }
               />
             </>
           )}
