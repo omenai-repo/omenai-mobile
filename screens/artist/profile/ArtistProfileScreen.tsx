@@ -112,7 +112,7 @@ export default function ArtistProfileScreen() {
         subText: "Change the password to your account",
         handlePress: () =>
           navigation.navigate(screenName.gallery.changePassword, {
-            routeName: "gallery",
+            routeName: "artist",
           }),
         svgIcon: changePasswsordIcon,
       },
@@ -166,7 +166,7 @@ export default function ArtistProfileScreen() {
               <FittedBlackButton
                 value="Edit your credentials"
                 onClick={checkEditEligibility}
-                style={tw`flex-grow bg-transparent border border-black rounded-[23px]`}
+                style={tw`flex-grow bg-transparent border border-black`}
                 textStyle={tw`text-black text-[16px]`}
               />
             </View>

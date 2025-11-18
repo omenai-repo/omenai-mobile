@@ -1,21 +1,20 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, View, StatusBar } from 'react-native';
-import React, { startTransition, useCallback, useEffect, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from 'config/colors.config';
-import BackScreenButton from 'components/buttons/BackScreenButton';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import OrderSummary from './components/OrderSummary';
-import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore';
-import ShippingDetails from './components/ShippingDetails';
-import { fetchsingleArtworkOnPurchase } from 'services/artworks/fetchSingleArtworkOnPurchase';
-import Loader from 'components/general/Loader';
-import PriceQuoteSent from './components/PriceQuoteSent';
-import { screenName } from 'constants/screenNames.constants';
-import WithModal from 'components/modal/WithModal';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import { useQueryClient } from '@tanstack/react-query';
-import { useAppStore } from 'store/app/appStore';
+import { KeyboardAvoidingView, Platform, StyleSheet, View, StatusBar } from "react-native";
+import React, { startTransition, useCallback, useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { colors } from "config/colors.config";
+import BackScreenButton from "components/buttons/BackScreenButton";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import OrderSummary from "./components/OrderSummary";
+import { useOrderSummaryStore } from "store/orders/OrderSummaryStore";
+import ShippingDetails from "./components/ShippingDetails";
+import { fetchsingleArtworkOnPurchase } from "services/artworks/fetchSingleArtworkOnPurchase";
+import Loader from "components/general/Loader";
+import PriceQuoteSent from "./components/PriceQuoteSent";
+import WithModal from "components/modal/WithModal";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "store/app/appStore";
 
 export default function PurchaseArtwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -36,8 +35,8 @@ export default function PurchaseArtwork() {
   const handleFetchArtworkDetails = useCallback(async () => {
     setIsLoading(true);
     try {
-      const { title } = route.params as RouteParamsType;
-      const results = await fetchsingleArtworkOnPurchase(title);
+      const { art_id } = route.params as { art_id: string };
+      const results = await fetchsingleArtworkOnPurchase(art_id);
       if (results.isOk) setArtworkOrderData(results.data);
     } finally {
       setIsLoading(false);
@@ -71,7 +70,7 @@ export default function PurchaseArtwork() {
         // 1) clear local wizard state
         resetState();
 
-        queryClient.invalidateQueries({ queryKey: ['orders', userId] });
+        queryClient.invalidateQueries({ queryKey: ["orders", userId] });
         navigation.goBack();
         return;
       }
@@ -80,7 +79,7 @@ export default function PurchaseArtwork() {
       resetState();
       navigation.goBack();
     },
-    [queryClient, navigation, resetState, selectedSectionIndex],
+    [selectedSectionIndex, resetState, navigation, setSelectedSectionIndex, queryClient, userId]
   );
 
   return (
@@ -92,7 +91,7 @@ export default function PurchaseArtwork() {
           </View>
         </SafeAreaView>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.scrollContainer}
         >
           <ScrollWrapper nestedScrollEnabled={true}>
@@ -121,6 +120,6 @@ const styles = StyleSheet.create({
     // marginTop: 10,
   },
   safeArea: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
 });

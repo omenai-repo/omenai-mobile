@@ -1,33 +1,34 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Image, FlatList, Text, View } from 'react-native';
-import tw from 'twrnc';
-import WithModal from 'components/modal/WithModal';
-import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
-import TabSwitcher from 'components/orders/TabSwitcher';
-import EmptyOrdersListing from 'screens/galleryOrders/components/EmptyOrdersListing';
-import YearDropdown from 'screens/artist/orders/YearDropdown';
-import OrderContainer from './components/OrderContainer';
-import { useNavigation } from '@react-navigation/native';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { useCollectorOrders } from 'hooks/useCollectorOrders';
-import { colors } from 'config/colors.config';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, { useCallback, useMemo, useState } from "react";
+import { FlatList, Text, View } from "react-native";
+import tw from "twrnc";
+import WithModal from "components/modal/WithModal";
+import OrderslistingLoader from "screens/galleryOrders/components/OrderslistingLoader";
+import TabSwitcher from "components/orders/TabSwitcher";
+import EmptyOrdersListing from "screens/galleryOrders/components/EmptyOrdersListing";
+import YearDropdown from "screens/artist/orders/YearDropdown";
+import OrderContainer from "./components/OrderContainer"; // Make sure this path is correct
+import { useNavigation } from "@react-navigation/native";
+import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { useCollectorOrders } from "hooks/useCollectorOrders";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export type OrderTabsTypes = 'pending' | 'history';
+export type OrderTabsTypes = "pending" | "history";
 
 export default function Orders() {
   const navigation = useNavigation<any>();
   const { data, isLoading, isRefetching, refetch } = useCollectorOrders();
   const insets = useSafeAreaInsets();
 
-  const [selectedTab, setSelectedTab] = useState<OrderTabsTypes>('pending');
+  const [selectedTab, setSelectedTab] = useState<OrderTabsTypes>("pending");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
 
   // Choose list by tab
   const tabOrders = useMemo(() => {
     if (!data) return [];
-    return selectedTab === 'pending' ? data.pendingOrders ?? [] : data.completedOrders ?? [];
+    return selectedTab === "pending"
+      ? data.pendingOrders ?? []
+      : data.completedOrders ?? [];
   }, [data, selectedTab]);
 
   // Client-side year filter (optional but handy)
@@ -42,10 +43,14 @@ export default function Orders() {
   // Tabs (guard length)
   const collectorTabs = useMemo(
     () => [
-      { title: 'Pending', key: 'pending', count: data?.pendingOrders?.length ?? 0 },
-      { title: 'Order History', key: 'history' },
+      {
+        title: "Pending",
+        key: "pending",
+        count: data?.pendingOrders?.length ?? 0,
+      },
+      { title: "Order History", key: "history" },
     ],
-    [data?.pendingOrders?.length],
+    [data?.pendingOrders?.length]
   );
 
   const toggleRecentOrder = useCallback((key: string | number) => {
@@ -54,8 +59,8 @@ export default function Orders() {
   }, []);
 
   const keyExtractor = useCallback(
-    (item: any) => `${item.order_id}::${item.artwork_data?._id ?? 'na'}`,
-    [],
+    (item: any) => `${item.order_id}::${item.artwork_data?._id ?? "na"}`,
+    []
   );
 
   const renderItem = useCallback(
@@ -63,8 +68,8 @@ export default function Orders() {
       <OrderContainer
         id={index}
         url={item.artwork_data.url}
-        open={!!openSection[item.artwork_data._id]}
-        setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+        open={!!openSection[item.order_id]}
+        setOpen={() => toggleRecentOrder(item.order_id)}
         artId={item.order_id}
         artName={item.artwork_data.title}
         price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
@@ -73,21 +78,23 @@ export default function Orders() {
         order_accepted={item.order_accepted.status}
         availability={item.availability}
         delivery_confirmed={item.shipping_details.delivery_confirmed}
-        tracking_information={item.shipping_details.shipment_information.tracking}
+        tracking_information={
+          item.shipping_details.shipment_information.tracking
+        }
         payment_information={item.payment_information.status}
         orderId={item.order_id}
         holdStatus={item.hold_status}
         updatedAt={item.updatedAt}
         order_decline_reason={item.order_accepted.reason}
         trackBtn={() =>
-          navigation.navigate('ShipmentTrackingScreen', {
+          navigation.navigate("ShipmentTrackingScreen", {
             orderId: item.order_id,
             tracking_id: item.shipping_details.shipment_information.tracking.id,
           })
         }
       />
     ),
-    [currentOrders.length, navigation, openSection, toggleRecentOrder],
+    [currentOrders.length, navigation, openSection, toggleRecentOrder]
   );
 
   // Pull-to-refresh
@@ -97,13 +104,7 @@ export default function Orders() {
 
   return (
     <WithModal>
-      <View style={tw.style(`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 })}>
-        {/* <Image
-          style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
-          resizeMode="contain"
-          source={require('../../assets/omenai-logo.png')}
-        /> */}
-
+      <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
         <TabSwitcher
           tabs={collectorTabs}
           selectedKey={selectedTab}
@@ -120,10 +121,15 @@ export default function Orders() {
           ) : (
             <>
               <View style={tw`flex-row items-center`}>
-                <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
+                <Text
+                  style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}
+                >
                   Your Orders
                 </Text>
-                <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+                <YearDropdown
+                  selectedYear={selectedYear}
+                  setSelectedYear={setSelectedYear}
+                />
               </View>
 
               <FlatList
