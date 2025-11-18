@@ -14,6 +14,7 @@ type LongBlackButtonProps = {
   textStyle?: StyleProp<TextStyle>;
   outline?: boolean;
   borderColor?: string;
+  icon?: React.ReactNode;
 };
 
 export default function LongBlackButton({
@@ -25,6 +26,7 @@ export default function LongBlackButton({
   textStyle,
   outline = false,
   borderColor = colors.primary_black,
+  icon,
 }: LongBlackButtonProps) {
   const animation = useRef(null);
 
@@ -97,7 +99,10 @@ export default function LongBlackButton({
 
   return (
     <TouchableOpacity activeOpacity={1} style={containerStyle} onPress={onClick}>
-      <Text style={mergedTextStyle}>{value}</Text>
+      <View style={tw`flex-row items-center justify-center gap-3`}>
+        {icon && icon}
+        <Text style={mergedTextStyle}>{value}</Text>
+      </View>
     </TouchableOpacity>
   );
 }

@@ -1,8 +1,8 @@
-import React from 'react';
-import { View } from 'react-native';
-import tw from 'twrnc';
-import MiniImage from './MiniImage';
-import LikeComponent from './LikeComponent';
+import React from "react";
+import { View } from "react-native";
+import tw from "twrnc";
+import MiniImage from "./MiniImage";
+import LikeComponent from "./LikeComponent";
 
 interface ArtworkImageProps {
   readonly imageWidth: number;

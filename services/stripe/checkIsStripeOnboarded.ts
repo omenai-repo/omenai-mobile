@@ -5,9 +5,9 @@ export async function checkIsStripeOnboarded(accountId: string) {
     const res = await fetch(`${apiUrl}/api/stripe/checkStripeDetailsSubmitted`, {
       method: "POST",
       headers: {
-        'Origin': originHeader,
+        Origin: originHeader,
         "User-Agent": userAgent,
-        "Authorization": authorization
+        Authorization: authorization,
       },
       body: JSON.stringify({ accountId }),
     });

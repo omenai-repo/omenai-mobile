@@ -1,4 +1,12 @@
-import { Dimensions, Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  PixelRatio,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { colors } from "config/colors.config";
 import { getImageFileView } from "lib/storage/getImageFileView";
@@ -34,24 +42,24 @@ export default function GalleryMiniArtworkCard({
   });
   const [renderImage, setRenderImage] = useState(false);
 
-  let imageWidth = 0;
-  imageWidth = (screenWidth - 60) / 2; //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
-  const image_href = getImageFileView(url, imageWidth);
+  const dpr = PixelRatio.get();
+  const displayWidth = (screenWidth - 60) / 2; // screen width minus paddings applied to grid view then divided by two
+  const fetchWidth = Math.round(displayWidth * dpr); // high-res fetch width
+  const image_href = getImageFileView(url, fetchWidth);
 
   useEffect(() => {
-    const calculatedWidth = (screenWidth - 60) / 2; // 20px left + 20px right + 20px gap between
-    const image_href = getImageFileView(url, Math.round(calculatedWidth));
+    const image_href = getImageFileView(url, fetchWidth);
 
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
       const { width, height } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        calculatedWidth,
+        displayWidth,
         300 // optional max height
       );
       setImageDimensions({ height, width });
       setRenderImage(true);
     });
-  }, [url, screenWidth]);
+  }, [url, screenWidth, fetchWidth, displayWidth]);
 
   return (
     <TouchableOpacity
@@ -106,9 +114,6 @@ export default function GalleryMiniArtworkCard({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginLeft: 0,
-  },
   mainDetailsContainer: {
     marginTop: 10,
     gap: 5,

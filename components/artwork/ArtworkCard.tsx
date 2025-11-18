@@ -1,4 +1,4 @@
-import { Image, Text, View, TouchableOpacity, Dimensions } from "react-native";
+import { Image, Text, View, TouchableOpacity, Dimensions, PixelRatio } from "react-native";
 import React, { useEffect, useState } from "react";
 import { getImageFileView } from "lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -40,7 +40,12 @@ export default function ArtworkCard({
   availiablity,
 }: ArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const image_href = getImageFileView(url, 400);
+
+  const dpr = PixelRatio.get();
+  const screenWidth = Dimensions.get("window").width;
+  const displayWidth = width > 0 ? width : screenWidth * 0.7;
+  const fetchWidth = Math.round(displayWidth * dpr);
+  const image_href = getImageFileView(url, fetchWidth);
 
   const [imageDimensions, setImageDimensions] = useState({
     width: 250,
@@ -49,19 +54,17 @@ export default function ArtworkCard({
 
   useEffect(() => {
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-      const screenWidth = Dimensions.get("window").width;
-      const cardWidth = width > 0 ? width : screenWidth * 0.7; // fallback to 70% of screen
       const maxHeight = 300;
 
       const { width: resizedWidth, height: resizedHeight } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        cardWidth,
+        displayWidth,
         maxHeight
       );
 
       setImageDimensions({ height: resizedHeight, width: resizedWidth });
     });
-  }, [image_href, width]);
+  }, [image_href, displayWidth]);
 
   return (
     <View>

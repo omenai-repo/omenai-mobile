@@ -1,9 +1,4 @@
-import {
-  View,
-  Text,
-  FlatList,
-  RefreshControl,
-} from "react-native";
+import { View, Text, FlatList, RefreshControl } from "react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
@@ -29,9 +24,7 @@ const OrderScreen = () => {
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
 
-  const [selectedTab, setSelectedTab] = useState<
-    "pending" | "processing" | "completed"
-  >("pending");
+  const [selectedTab, setSelectedTab] = useState<"pending" | "processing" | "completed">("pending");
   const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
   const [declineModal, setDeclineModal] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -53,8 +46,7 @@ const OrderScreen = () => {
     queryFn: async () => {
       try {
         const res = await getOrdersBySellerId();
-        if (!res?.isOk)
-          throw new Error(res?.body?.message ?? "Failed to load orders");
+        if (!res?.isOk) throw new Error(res?.body?.message ?? "Failed to load orders");
         return res.data;
       } catch (err: any) {
         updateModal({
@@ -74,9 +66,7 @@ const OrderScreen = () => {
 
   const onRefresh = useCallback(() => ordersQuery.refetch(), [ordersQuery]);
   const { pending, processing, completed } = useMemo(() => {
-    const parsed = organizeOrders(
-      Array.isArray(ordersQuery.data) ? ordersQuery.data : []
-    );
+    const parsed = organizeOrders(Array.isArray(ordersQuery.data) ? ordersQuery.data : []);
     return parsed;
   }, [ordersQuery.data]);
 
@@ -112,8 +102,12 @@ const OrderScreen = () => {
     { title: "Completed", key: "completed" },
   ];
 
-  const toggleRecentOrder = useCallback((key: string) => {
-    setOpenSection((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggleRecentOrder = useCallback((key: string | number) => {
+    const k = String(key);
+    setOpenSection((prev) => ({
+      ...prev,
+      [k]: !prev[k],
+    }));
   }, []);
 
   const isInitialLoading = ordersQuery.isLoading && !ordersQuery.data;
@@ -121,16 +115,11 @@ const OrderScreen = () => {
 
   return (
     <WithModal>
-      <View
-        style={tw.style(`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 })}
-      >
-
+      <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
         <TabSwitcher
           tabs={artistTabs}
           selectedKey={selectedTab}
-          setSelectedKey={(key) =>
-            setSelectedTab(key as "pending" | "processing" | "completed")
-          }
+          setSelectedKey={(key) => setSelectedTab(key as "pending" | "processing" | "completed")}
         />
 
         <View
@@ -143,23 +132,16 @@ const OrderScreen = () => {
           ) : (
             <>
               <View style={tw`flex-row items-center`}>
-                <Text
-                  style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}
-                >
+                <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
                   Your Orders
                 </Text>
-                <YearDropdown
-                  selectedYear={selectedYear}
-                  setSelectedYear={setSelectedYear}
-                />
+                <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
               </View>
 
               <FlatList
                 data={currentOrders}
                 keyExtractor={(item, index) =>
-                  item?.order_id?.toString?.() ??
-                  item?.artwork_data?._id ??
-                  `order-${index}`
+                  item?.order_id?.toString?.() ?? item?.artwork_data?._id ?? `order-${index}`
                 }
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={tw`pb-[30px]`}
@@ -175,14 +157,12 @@ const OrderScreen = () => {
                   <OrderContainer
                     id={index}
                     url={item?.artwork_data?.url}
-                    open={openSection[item?.artwork_data?._id]}
-                    setOpen={() => toggleRecentOrder(item?.artwork_data?._id)}
+                    open={!!openSection[item.order_id]}
+                    setOpen={() => toggleRecentOrder(item.order_id)}
                     artId={item?.order_id}
                     artName={item?.artwork_data?.title}
                     dateTime={formatIntlDateTime(item?.createdAt)}
-                    price={utils_formatPrice(
-                      item?.artwork_data?.pricing?.usd_price
-                    )}
+                    price={utils_formatPrice(item?.artwork_data?.pricing?.usd_price)}
                     status={selectedTab}
                     lastId={index === currentOrders.length - 1}
                     acceptBtn={
@@ -197,16 +177,14 @@ const OrderScreen = () => {
                       selectedTab === "pending"
                         ? () => {
                             const isExclusive =
-                              item?.artwork_data?.exclusivity_status
-                                ?.exclusivity_type === "exclusive" &&
-                              isArtworkExclusiveDate(item?.createdAt);
+                              item?.artwork_data?.exclusivity_status?.exclusivity_type ===
+                                "exclusive" && isArtworkExclusiveDate(item?.createdAt);
 
                             setOrderId(item?.order_id);
                             setOrderModalMetadata({
                               is_current_order_exclusive: isExclusive,
                               art_id: item?.artwork_data?.art_id,
-                              seller_designation:
-                                item?.seller_designation || "artist",
+                              seller_designation: item?.seller_designation || "artist",
                             });
                             setDeclineModal(true);
                           }
@@ -216,20 +194,15 @@ const OrderScreen = () => {
                     order_accepted={item?.order_accepted?.status}
                     order_decline_reason={item?.order_accepted?.reason}
                     payment_status={item?.payment_information?.status}
-                    tracking_status={
-                      item?.shipping_details?.shipment_information?.tracking?.id
-                    }
+                    tracking_status={item?.shipping_details?.shipment_information?.tracking?.id}
                     trackBtn={() =>
                       navigation.navigate("ShipmentTrackingScreen", {
                         orderId: item?.order_id,
-                        tracking_id:
-                          item?.shipping_details?.shipment_information?.tracking
-                            ?.id,
+                        tracking_id: item?.shipping_details?.shipment_information?.tracking?.id,
                       })
                     }
                     exclusivity_type={
-                      item?.artwork_data?.exclusivity_status
-                        ?.exclusivity_type || "non-exclusive"
+                      item?.artwork_data?.exclusivity_status?.exclusivity_type || "non-exclusive"
                     }
                   />
                 )}

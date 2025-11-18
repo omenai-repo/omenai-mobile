@@ -1,4 +1,4 @@
-import { Dimensions, TouchableOpacity } from "react-native";
+import { Dimensions, TouchableOpacity, PixelRatio } from "react-native";
 import React, { memo, useMemo } from "react";
 import { getImageFileView } from "lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -43,8 +43,12 @@ const MiniArtworkCard = memo(
 
     const screenWidth = Dimensions.get("window").width - 10;
     const dividerNum = getNumberOfColumns();
-    let imageWidth = Math.round(screenWidth / dividerNum);
-    const image_href = getImageFileView(url, imageWidth);
+    const dpr = PixelRatio.get();
+
+    const displayWidth = Math.round(screenWidth / dividerNum);
+
+    const fetchWidth = Math.round(displayWidth * dpr);
+    const image_href = getImageFileView(url, fetchWidth);
 
     const expiryDate = useMemo(() => (countdown ? new Date(countdown) : null), [countdown]);
 
@@ -57,7 +61,7 @@ const MiniArtworkCard = memo(
         onPress={() => navigation.push(screenName.artwork, { art_id, url })}
       >
         <ArtworkImage
-          imageWidth={imageWidth}
+          imageWidth={displayWidth}
           image_href={image_href}
           galleryView={galleryView}
           art_id={art_id}
