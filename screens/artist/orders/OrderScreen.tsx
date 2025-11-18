@@ -1,38 +1,51 @@
 import { View, Text, FlatList, RefreshControl } from "react-native";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useState } from "react";
 import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
 import DeclineOrderModal from "./DeclineOrderModal";
-import { organizeOrders } from "utils/utils_splitArray";
 import EmptyOrdersListing from "screens/galleryOrders/components/EmptyOrdersListing";
 import OrderslistingLoader from "screens/galleryOrders/components/OrderslistingLoader";
 import { utils_formatPrice } from "utils/utils_priceFormatter";
 import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
 import YearDropdown from "./YearDropdown";
-import { getOrdersBySellerId } from "services/orders/getOrdersBySellerId";
-import { useModalStore } from "store/modal/modalStore";
 import WithModal from "components/modal/WithModal";
 import TabSwitcher from "components/orders/TabSwitcher";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import OrderContainer from "components/orders/OrderContainer";
 import { ORDERS_QK } from "utils/queryKeys";
+import { useOrdersManagement } from "hooks/useOrdersManagement";
 
 const OrderScreen = () => {
   const navigation = useNavigation<any>();
-  const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
 
-  const [selectedTab, setSelectedTab] = useState<"pending" | "processing" | "completed">("pending");
-  const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
   const [declineModal, setDeclineModal] = useState(false);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [orderId, setOrderId] = useState("");
   const [orderModalMetadata, setOrderModalMetadata] = useState({
     is_current_order_exclusive: false,
     art_id: "",
     seller_designation: "",
+  });
+
+  const {
+    selectedTab,
+    setSelectedTab,
+    openSection,
+    selectedYear,
+    setSelectedYear,
+    ordersQuery,
+    pending,
+    processing,
+    completed,
+    currentOrders,
+    toggleRecentOrder,
+    isInitialLoading,
+    isRefreshing,
+  } = useOrdersManagement({
+    queryKey: ORDERS_QK,
+    errorMessage: "Failed to load orders",
   });
 
   const isArtworkExclusiveDate = (createdAt: string | Date) => {
@@ -41,77 +54,11 @@ const OrderScreen = () => {
     return diffDays <= 90;
   };
 
-  const ordersQuery = useQuery({
-    queryKey: ORDERS_QK,
-    queryFn: async () => {
-      try {
-        const res = await getOrdersBySellerId();
-        if (!res?.isOk) throw new Error(res?.body?.message ?? "Failed to load orders");
-        return res.data;
-      } catch (err: any) {
-        updateModal({
-          message: err?.message ?? "Failed to load orders",
-          showModal: true,
-          modalType: "error",
-        });
-        throw err;
-      }
-    },
-    staleTime: 30_000,
-    gcTime: 10 * 60_000,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    refetchOnWindowFocus: true,
-  });
-
-  const onRefresh = useCallback(() => ordersQuery.refetch(), [ordersQuery]);
-  const { pending, processing, completed } = useMemo(() => {
-    const parsed = organizeOrders(Array.isArray(ordersQuery.data) ? ordersQuery.data : []);
-    return parsed;
-  }, [ordersQuery.data]);
-
-  const filterByYear = useCallback(
-    (arr: any[]) => {
-      if (!Array.isArray(arr)) return [];
-      return arr.filter((o) => {
-        const dt = new Date(o.createdAt);
-        return dt.getFullYear() === selectedYear;
-      });
-    },
-    [selectedYear]
-  );
-
-  const getCurrentOrders = () => {
-    switch (selectedTab) {
-      case "pending":
-        return filterByYear(pending);
-      case "processing":
-        return filterByYear(processing);
-      case "completed":
-        return filterByYear(completed);
-      default:
-        return [];
-    }
-  };
-
-  const currentOrders = getCurrentOrders();
-
   const artistTabs = [
     { title: "Pending", key: "pending", count: pending?.length ?? 0 },
     { title: "Processing", key: "processing", count: processing?.length ?? 0 },
     { title: "Completed", key: "completed" },
   ];
-
-  const toggleRecentOrder = useCallback((key: string | number) => {
-    const k = String(key);
-    setOpenSection((prev) => ({
-      ...prev,
-      [k]: !prev[k],
-    }));
-  }, []);
-
-  const isInitialLoading = ordersQuery.isLoading && !ordersQuery.data;
-  const isRefreshing = ordersQuery.isFetching && !!ordersQuery.data;
 
   return (
     <WithModal>
@@ -148,7 +95,7 @@ const OrderScreen = () => {
                 refreshControl={
                   <RefreshControl
                     refreshing={isRefreshing}
-                    onRefresh={onRefresh}
+                    onRefresh={() => ordersQuery.refetch()}
                     tintColor="#000"
                     colors={["#000"]}
                   />
