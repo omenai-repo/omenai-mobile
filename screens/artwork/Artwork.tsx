@@ -117,9 +117,10 @@ export default function Artwork() {
     });
   }, [artwork, userSession?.id]);
 
+  const imageWidth = Platform.OS === "ios" ? 380 : 300;
   const imageUri = useMemo(
-    () => (artwork ? getImageFileView(artwork.url, Platform.OS === "ios" ? 380 : 300) : ""),
-    [artwork?.url]
+    () => (artwork ? getImageFileView(artwork.url, imageWidth) : ""),
+    [artwork, imageWidth]
   );
 
   const [imageDimensions, setImageDimensions] = useState({ width: 350, height: 250 });
@@ -169,6 +170,37 @@ export default function Artwork() {
     }
     setLoadingPriceQuote(false);
   }, [artwork, updateModal]);
+
+  const renderPrimaryButton = () => {
+    if (!artwork) return null;
+
+    if (["gallery", "artist"].includes(userType)) {
+      return null;
+    }
+
+    if (!artwork.availability) {
+      return <LongBlackButton value="Sold" isDisabled onClick={() => {}} />;
+    }
+
+    if (artwork.pricing?.shouldShowPrice === "Yes") {
+      return (
+        <LongBlackButton
+          value="Purchase artwork"
+          isDisabled={false}
+          onClick={() => navigation.navigate(screenName.purchaseArtwork, { title: artwork.title })}
+        />
+      );
+    }
+
+    return (
+      <LongBlackButton
+        value={loadingPriceQuote ? "Requesting ..." : "Request price"}
+        isDisabled={false}
+        onClick={handleRequestPriceQuote}
+        isLoading={loadingPriceQuote}
+      />
+    );
+  };
 
   const renderImageSection = () =>
     artwork ? (
@@ -244,29 +276,7 @@ export default function Artwork() {
             isTabletSize && { flexDirection: "row", alignItems: "center", gap: 30 },
           ]}
         >
-          <View style={tw`flex-1`}>
-            {!["gallery", "artist"].includes(userType) &&
-              (artwork.availability ? (
-                artwork.pricing.shouldShowPrice === "Yes" ? (
-                  <LongBlackButton
-                    value="Purchase artwork"
-                    isDisabled={false}
-                    onClick={() =>
-                      navigation.navigate(screenName.purchaseArtwork, { title: artwork.title })
-                    }
-                  />
-                ) : (
-                  <LongBlackButton
-                    value={loadingPriceQuote ? "Requesting ..." : "Request price"}
-                    isDisabled={false}
-                    onClick={handleRequestPriceQuote}
-                    isLoading={loadingPriceQuote}
-                  />
-                )
-              ) : (
-                <LongBlackButton value="Sold" isDisabled onClick={() => {}} />
-              ))}
-          </View>
+          <View style={tw`flex-1`}>{renderPrimaryButton()}</View>
 
           <View style={tw`flex-1`}>
             {!["gallery", "artist"].includes(userType) && (

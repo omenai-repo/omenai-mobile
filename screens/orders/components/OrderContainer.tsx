@@ -94,17 +94,11 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
     const hours = Math.floor(time / 3600000);
     const minutes = Math.floor((time % 3600000) / 60000);
     const seconds = Math.floor((time % 60000) / 1000);
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const renderCountdownTimer = () => {
-    if (
-      payment_information === "pending" &&
-      order_accepted === "accepted" &&
-      remainingTime > 0
-    ) {
+    if (payment_information === "pending" && order_accepted === "accepted" && remainingTime > 0) {
       return (
         <View style={{ marginTop: 10 }}>
           <Text style={{ fontSize: 14, color: "red" }}>
@@ -120,15 +114,15 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   const animatedOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    const calculateBaseHeight = () => {
+      if (status === "completed") return 80;
+      if (!order_accepted) return 80;
+      if (delivery_confirmed) return 80;
+      return 140;
+    };
+
     if (open) {
-      const baseHeight =
-        status === "completed"
-          ? 80
-          : !order_accepted
-          ? 80
-          : delivery_confirmed
-          ? 80
-          : 140;
+      const baseHeight = calculateBaseHeight();
       Animated.parallel([
         Animated.timing(animatedHeight, {
           toValue: baseHeight,
@@ -155,14 +149,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         }),
       ]).start();
     }
-  }, [
-    open,
-    status,
-    order_accepted,
-    delivery_confirmed,
-    animatedHeight,
-    animatedOpacity,
-  ]);
+  }, [open, status, order_accepted, delivery_confirmed, animatedHeight, animatedOpacity]);
 
   return (
     <View
@@ -174,16 +161,9 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
     >
       <View style={tw`flex-row items-center`}>
         <View style={tw`flex-row items-center gap-[10px] flex-1`}>
-          <Image
-            source={{ uri: image_href }}
-            style={tw`h-[42px] w-[42px] rounded-[3px]`}
-          />
+          <Image source={{ uri: image_href }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
           <View style={tw`gap-[5px] pr-[20px] max-w-[80%]`}>
-            <Text
-              style={tw`text-[12px] text-[#454545]`}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
+            <Text style={tw`text-[12px] text-[#454545]`} numberOfLines={1} ellipsizeMode="tail">
               {artId}
             </Text>
             <Text
@@ -215,9 +195,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         <View style={tw`gap-[20px] mt-[15px]`}>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-              {price}
-            </Text>
+            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{price}</Text>
           </View>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
@@ -233,9 +211,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             </View>
           </View>
           {order_accepted === "declined" && (
-            <Text style={{ color: "#ff0000", fontSize: 14 }}>
-              Reason: {order_decline_reason}
-            </Text>
+            <Text style={{ color: "#ff0000", fontSize: 14 }}>Reason: {order_decline_reason}</Text>
           )}
           {availability &&
             payment_information === "pending" &&
