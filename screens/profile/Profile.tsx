@@ -18,10 +18,12 @@ import {
   orderHistoryIcon,
   savedArtworksIcon,
 } from "utils/SvgImages";
-import { PageButtonCard } from "components/buttons/PageButtonCard";
+import ProfileMenuItems from "components/profile/ProfileMenuItems";
 import omenaiAvatar from "../../assets/images/omenai-avatar.png";
 import { logout } from "utils/logout.utils";
 import { useQueryClient } from "@tanstack/react-query";
+import BlurStatusBar from "components/general/BlurStatusBar";
+import { useScrollY } from "hooks/useScrollY";
 
 type Nav = StackNavigationProp<any>;
 
@@ -30,6 +32,7 @@ export default function Profile() {
   const insets = useSafeAreaInsets();
   const { userSession } = useAppStore();
   const queryClient = useQueryClient();
+  const { scrollY, onScroll } = useScrollY();
 
   const name = userSession?.name ?? "";
   const email = userSession?.email ?? "";
@@ -90,8 +93,10 @@ export default function Profile() {
 
   return (
     <WithModal>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}
+        onScroll={onScroll}
       >
         <View style={tw`flex-row gap-5 items-center px-5`}>
           {/* Avatar / Logo fallback */}
@@ -114,29 +119,16 @@ export default function Profile() {
             </Text>
 
             <FittedBlackButton
-              bgColor={colors.grey50}
-              textColor={colors.black}
               value="Edit profile"
               onClick={goToEditProfile}
+              style={{ backgroundColor: colors.grey50 }}
+              textStyle={{ color: colors.black }}
             />
           </View>
         </View>
 
         <View style={tw`pt-[40px] px-[20px] pb-8`}>
-          {menuItems.map((item, index) => (
-            <React.Fragment key={item.name}>
-              <PageButtonCard
-                name={item.name}
-                subText={item.subText}
-                handlePress={item.handlePress}
-                svgIcon={item.svgIcon}
-              />
-              {/* a divider after each item except the last one */}
-              {index < menuItems.length - 1 && (
-                <View style={tw`h-px mx-5 bg-[${colors.grey50}]`} />
-              )}
-            </React.Fragment>
-          ))}
+          <ProfileMenuItems items={menuItems} />
 
           <View style={tw`mt-[40px]`} />
           <View style={tw`flex-col gap-3`}>
@@ -150,8 +142,9 @@ export default function Profile() {
             <LongBlackButton
               value="Delete Account"
               onClick={goToDeleteAccount}
-              bgColor="transparent"
-              textColor="#FF0000"
+              outline
+              borderColor="#FF0000"
+              textStyle={{ color: "#FF0000" }}
             />
           </View>
         </View>

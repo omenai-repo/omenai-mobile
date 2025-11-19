@@ -1,11 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { getImageFileView } from 'lib/storage/getImageFileView';
-import { colors } from 'config/colors.config';
-import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
+import { Image, StyleSheet, Text, TouchableOpacity, View, PixelRatio } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "constants/screenNames.constants";
+import { getImageFileView } from "lib/storage/getImageFileView";
+import { colors } from "config/colors.config";
+import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
 
 export default function ViewHistoryCard({
   url,
@@ -20,7 +20,10 @@ export default function ViewHistoryCard({
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const image_href = getImageFileView(url, 270);
+  const dpr = PixelRatio.get();
+  const displayWidth = 300;
+  const fetchWidth = Math.round(displayWidth * dpr);
+  const image_href = getImageFileView(url, fetchWidth);
 
   const [imageDimensions, setImageDimensions] = useState({
     width: 200,
@@ -36,14 +39,14 @@ export default function ViewHistoryCard({
         if (!isMounted) return;
         const { width, height } = resizeImageDimensions(
           { width: defaultWidth, height: defaultHeight },
-          300,
-          300, // Optional maxHeight
+          displayWidth,
+          300 // Optional maxHeight
         );
         setImageDimensions({ height, width });
       },
       (error) => {
-        console.warn('Failed to get image size for history card:', error?.message || error);
-      },
+        console.warn("Failed to get image size for history card:", error?.message || error);
+      }
     );
 
     return () => {
@@ -58,7 +61,7 @@ export default function ViewHistoryCard({
         activeOpacity={1}
         style={styles.container}
         onPress={() => {
-          navigation.navigate(screenName.artwork, { title: artwork, url });
+          navigation.navigate(screenName.artwork, { art_id, url });
         }}
       >
         <Image
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     padding: 10,
     borderRadius: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
   },
   mainDetailsContainer: {
     marginTop: 10,

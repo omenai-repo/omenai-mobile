@@ -39,7 +39,7 @@ export default function AuthHeader({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.authHeaderBg,
+    backgroundColor: colors.primary_black,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   backButton: {

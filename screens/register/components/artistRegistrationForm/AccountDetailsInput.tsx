@@ -1,20 +1,13 @@
-import { StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import { View } from "react-native";
+import React from "react";
 import NextButton from "../../../../components/buttons/NextButton";
-import { validate } from "../../../../lib/validations/validatorGroup";
 import Input from "../../../../components/inputs/Input";
 import PasswordInput from "../../../../components/inputs/PasswordInput";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
-import { debounce } from "lodash";
+import tw from "twrnc";
+import { useFormValidation } from "hooks/useFormValidation";
 
 const AccountDetailsInput = () => {
-  const [formErrors, setFormErrors] = useState<Partial<ArtistSignupData>>({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
   const {
     pageIndex,
     setPageIndex,
@@ -25,41 +18,21 @@ const AccountDetailsInput = () => {
     setConfirmPassword,
   } = useArtistAuthRegisterStore();
 
+  const { formErrors, handleValidationChecks, checkIsFormValid } =
+    useFormValidation<Partial<ArtistSignupData>>();
+
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
-    );
-    const areAllFieldsFilled = Object.values({
+    return !checkIsFormValid({
       email: artistRegisterData.email,
       name: artistRegisterData.name,
       password: artistRegisterData.password,
       confirmPassword: artistRegisterData.confirmPassword,
-    }).every((value) => value !== "");
-
-    return !(isFormValid && areAllFieldsFilled);
+    });
   };
 
-  const handleValidationChecks = debounce(
-    (label: string, value: string, confirm?: string) => {
-      // Clear error if the input is empty
-      if (value.trim() === "") {
-        setFormErrors((prev) => ({ ...prev, [label]: "" }));
-        return;
-      }
-
-      const { success, errors } = validate(value, label, confirm);
-      setFormErrors((prev) => ({
-        ...prev,
-        [label]: errors.length > 0 ? errors[0] : "",
-      }));
-    },
-    500
-  ); // ✅ Delay validation by 500ms
-
   return (
-    <View style={{ gap: 40 }}>
-      <View style={{ gap: 20 }}>
+    <View style={tw`gap-10`}>
+      <View style={tw`gap-5`}>
         <Input
           label="Artist Name"
           keyboardType="default"
@@ -96,19 +69,14 @@ const AccountDetailsInput = () => {
           label="Confirm password"
           onInputChange={(text) => {
             setConfirmPassword(text);
-            handleValidationChecks(
-              "confirmPassword",
-              artistRegisterData.password,
-              text
-            );
+            handleValidationChecks("confirmPassword", artistRegisterData.password, text);
           }}
           placeHolder="Enter password again"
           value={artistRegisterData.confirmPassword}
           errorMessage={formErrors.confirmPassword}
         />
       </View>
-      <View style={styles.buttonsContainer}>
-        <View style={{ flex: 1 }} />
+      <View style={tw`flex-row gap-2.5 justify-end`}>
         <NextButton
           isDisabled={checkIsDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
@@ -117,13 +85,5 @@ const AccountDetailsInput = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  buttonsContainer: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-  },
-});
 
 export default AccountDetailsInput;

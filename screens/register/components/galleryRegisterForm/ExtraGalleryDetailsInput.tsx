@@ -1,63 +1,25 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import React from "react";
 import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
 import NextButton from "../../../../components/buttons/NextButton";
-import { validate } from "../../../../lib/validations/validatorGroup";
 import Input from "../../../../components/inputs/Input";
 import BackFormButton from "../../../../components/buttons/BackFormButton";
 import LargeInput from "../../../../components/inputs/LargeInput";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import { country_codes } from "json/country_alpha_2_codes";
-import { debounce } from "lodash";
-
-const transformedCountries = country_codes.map((item) => ({
-  value: item.key,
-  label: item.name,
-}));
+import { useFormValidation } from "hooks/useFormValidation";
 
 export default function ExtraGalleryDetailsInput() {
-  const [formErrors, setFormErrors] = useState<Partial<GallerySignupData>>({
-    admin: "",
-    description: "",
-  });
+  const { pageIndex, setPageIndex, galleryRegisterData, setAdmin, setDescription } =
+    useGalleryAuthRegisterStore();
 
-  const {
-    pageIndex,
-    setPageIndex,
-    galleryRegisterData,
-    setAdmin,
-    setDescription,
-  } = useGalleryAuthRegisterStore();
+  const { formErrors, handleValidationChecks, checkIsFormValid } =
+    useFormValidation<Partial<GallerySignupData>>();
 
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
-    );
-    const areAllFieldsFilled = Object.values({
+    return !checkIsFormValid({
       admin: galleryRegisterData.admin,
       description: galleryRegisterData.description,
-    }).every((value) => value !== "");
-
-    return !(isFormValid && areAllFieldsFilled);
+    });
   };
-
-  const handleValidationChecks = debounce(
-    (label: string, value: string, confirm?: string) => {
-      // Clear error if the input is empty
-      if (value.trim() === "") {
-        setFormErrors((prev) => ({ ...prev, [label]: "" }));
-        return;
-      }
-
-      const { success, errors } = validate(value, label, confirm);
-      setFormErrors((prev) => ({
-        ...prev,
-        [label]: errors.length > 0 ? errors[0] : "",
-      }));
-    },
-    500
-  ); // ✅ Delay validation by 500ms
 
   return (
     <View style={{ gap: 40 }}>

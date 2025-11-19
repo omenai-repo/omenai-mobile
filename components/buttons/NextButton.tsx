@@ -1,45 +1,39 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, View, Pressable } from "react-native";
 import React from "react";
 import { colors } from "../../config/colors.config";
 import { AntDesign } from "@expo/vector-icons";
+import tw from "twrnc";
 
 type NextButtonProps = {
-  isDisabled: boolean;
-  handleButtonClick: () => void;
+  readonly isDisabled: boolean;
+  readonly handleButtonClick: () => void;
 };
 
-export default function NextButton({
-  isDisabled,
-  handleButtonClick,
-}: NextButtonProps) {
+export default function NextButton({ isDisabled, handleButtonClick }: Readonly<NextButtonProps>) {
   if (isDisabled)
     return (
-      <View style={[styles.container, { backgroundColor: "#E0E0E0" }]}>
-        <Text style={{ fontSize: 16, color: "#A1A1A1" }}>Next</Text>
+      <View
+        style={[
+          tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-lg`,
+          { backgroundColor: colors.inputBorder },
+        ]}
+      >
+        <Text style={[tw`text-base`, { color: "#A1A1A1" }]}>Next</Text>
         <AntDesign name="arrowright" color="#A1A1A1" size={20} />
       </View>
     );
 
   return (
-    <TouchableOpacity
-      activeOpacity={1}
-      style={styles.container}
+    <Pressable
       onPress={handleButtonClick}
+      style={({ pressed }) => [
+        tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-lg`,
+        { backgroundColor: colors.black },
+        pressed && { opacity: 0.85 },
+      ]}
     >
-      <Text style={{ fontSize: 16, color: colors.white }}>Next</Text>
+      <Text style={[tw`text-base`, { color: colors.white }]}>Next</Text>
       <AntDesign name="arrowright" color={colors.white} size={20} />
-    </TouchableOpacity>
+    </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 55,
-    backgroundColor: colors.black,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 30,
-    borderRadius: 95,
-  },
-});

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import {
   FlatList,
   View,
@@ -7,14 +7,14 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   RefreshControl,
-} from 'react-native';
-import MiniArtworkCard from 'components/artwork/MiniArtworkCard';
-import EmptyArtworks from './EmptyArtworks';
-import Loader from './Loader';
-import { debounce } from 'lodash';
-import tw from 'twrnc';
-import { getNumberOfColumns } from 'utils/utils_screen';
-import { useAppStore } from 'store/app/appStore';
+} from "react-native";
+import MiniArtworkCard from "components/artwork/MiniArtworkCard";
+import EmptyArtworks from "./EmptyArtworks";
+import Loader from "./Loader";
+import { debounce } from "lodash";
+import tw from "twrnc";
+import { getNumberOfColumns } from "utils/utils_screen";
+import { useAppStore } from "store/app/appStore";
 
 const NUM_COLUMNS = getNumberOfColumns();
 
@@ -79,13 +79,13 @@ export default function ArtworksListing({
             title={item.title}
             url={item.url}
             artist={item.artist}
-            showPrice={item.pricing.shouldShowPrice === 'Yes'}
+            showPrice={item.pricing.shouldShowPrice === "Yes"}
             price={item.pricing.usd_price}
             impressions={item.impressions}
             like_IDs={item.like_IDs}
             art_id={item.art_id}
             availability={item.availability}
-            galleryView={userType === 'user' ? true : false}
+            galleryView={userType === "user" ? true : false}
             countdown={
               item.exclusivity_status?.exclusivity_end_date
                 ? (item.exclusivity_status.exclusivity_end_date as Date)
@@ -113,7 +113,7 @@ export default function ArtworksListing({
           refreshing={refreshing}
           onRefresh={handleRefresh}
           tintColor="#000"
-          colors={['#000']}
+          colors={["#000"]}
         />
       }
     >
@@ -126,15 +126,15 @@ export default function ArtworksListing({
       </View>
       {/* Loader at the bottom */}
       {loadingMore && <Loader size={150} height={0} />}
-      <View style={tw`mb-[150px]`} />
+      <View style={tw`mb-5px]`} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 10,
     gap: 10,
   },

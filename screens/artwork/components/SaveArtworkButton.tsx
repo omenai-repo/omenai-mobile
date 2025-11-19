@@ -1,13 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { AntDesign } from '@expo/vector-icons';
-import { colors } from 'config/colors.config';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { utils_handleFetchUserID } from 'utils/utils_asyncStorage';
-import useLikedState from 'hooks/useLikedState';
-import { SvgXml } from 'react-native-svg';
-import { heartIcon } from 'utils/SvgImages';
-import tw from 'twrnc';
+import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { utils_handleFetchUserID } from "utils/utils_asyncStorage";
+import useLikedState from "hooks/useLikedState";
+import LongBlackButton from "components/buttons/LongBlackButton";
+import { AntDesign } from "@expo/vector-icons";
+import { SvgXml } from "react-native-svg";
+import { heartIcon } from "utils/SvgImages";
 
 type SaveArtworkButtonProps = {
   likeIds: string[];
@@ -20,7 +18,7 @@ export default function SaveArtworkButton({
   art_id,
   impressions,
 }: SaveArtworkButtonProps) {
-  const [sessionId, setSessionId] = useState('');
+  const [sessionId, setSessionId] = useState("");
 
   useEffect(() => {
     handleFetchUserSessionData();
@@ -33,46 +31,29 @@ export default function SaveArtworkButton({
 
   const { likedState, handleLike } = useLikedState(impressions, likeIds, sessionId, art_id);
 
+  const isSaved = sessionId !== undefined && likedState.ids.includes(sessionId);
+
   return (
-    <>
-      {(sessionId === undefined || (sessionId && !likedState.ids.includes(sessionId))) && (
-        <TouchableOpacity onPress={() => handleLike(true)}>
-          <View style={styles.likeContainer}>
-            <View style={styles.tagItem}>
-              <SvgXml xml={heartIcon} />
-              <Text style={tw`text-[17px] text-[#1A1A1A]`}>Save artwork to favorites</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-      )}
-      {sessionId !== undefined && likedState.ids.includes(sessionId) && (
-        <TouchableOpacity onPress={() => handleLike(false)}>
-          <View style={styles.likeContainer}>
-            <View style={styles.tagItem}>
-              <AntDesign color={'#ff0000'} name="heart" />
-              <Text style={tw`text-[17px] text-[#1A1A1A]`}>Remove from saved</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-      )}
-    </>
+    <LongBlackButton
+      value={isSaved ? "Remove from saved" : "Save artwork to favorites"}
+      onClick={() => handleLike(!isSaved)}
+      outline
+      icon={
+        <View style={styles.iconContainer}>
+          {isSaved ? (
+            <AntDesign name="heart" size={20} color="#ff0000" />
+          ) : (
+            <SvgXml xml={heartIcon} width={20} height={20} fill="#ffffff" />
+          )}
+        </View>
+      }
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  likeContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tagItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 15,
-    height: 55,
-    borderRadius: 95,
-    borderWidth: 1,
-    borderColor: '#1A1A1A',
-    width: '100%',
+  iconContainer: {
+    width: 20,
+    height: 20,
   },
 });

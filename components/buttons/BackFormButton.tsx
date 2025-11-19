@@ -1,7 +1,8 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { colors } from '../../config/colors.config';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { Pressable } from "react-native";
+import React from "react";
+import { colors } from "../../config/colors.config";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import tw from "twrnc";
 
 type handleBackCLickProp = {
   handleBackClick: () => void;
@@ -10,25 +11,18 @@ type handleBackCLickProp = {
 
 export default function BackFormButton({ handleBackClick, disabled }: handleBackCLickProp) {
   return (
-    <TouchableOpacity
-      activeOpacity={1}
-      style={styles.container}
-      disabled={disabled}
+    <Pressable
       onPress={handleBackClick}
+      disabled={disabled}
+      style={({ pressed }) => [
+        tw`h-11 w-[70px] rounded-lg border flex-row items-center justify-center`,
+        { borderColor: colors.primary_black },
+        pressed && !disabled ? { opacity: 0.8 } : null,
+      ]}
+      accessibilityRole="button"
+      accessibilityLabel="Go back"
     >
       <AntDesign name="arrowleft" color={colors.primary_black} size={24} />
-    </TouchableOpacity>
+    </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 50,
-    width: 70,
-    borderWidth: 1,
-    borderColor: colors.primary_black,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 95,
-  },
-});

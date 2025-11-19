@@ -52,7 +52,7 @@ export default function DeleteAccountModal() {
         <LongBlackButton
           onClick={handleDeleteGalleryAccount}
           value={loading ? 'Deleting account ...' : 'I understand, delete this account'}
-          bgColor="#ff0000"
+          style={{ backgroundColor: "#ff0000" }}
           isLoading={loading}
         />
       </View>

@@ -1,16 +1,9 @@
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import LongWhiteButton from 'components/buttons/LongWhiteButton';
-import { colors } from 'config/colors.config';
-import {
-  Image,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import LongBlackButton from "components/buttons/LongBlackButton";
+import { colors } from "config/colors.config";
+import { Animated, Image, Platform, ScrollView, useWindowDimensions, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import tw from "twrnc";
 
 type onBoardingSectionProps = {
   data: { title: string; image: any; subText: string };
@@ -26,30 +19,110 @@ export default function OnBoardingSection({
   onFinish,
 }: onBoardingSectionProps) {
   const { height, width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
+  // Animation values
+  const titleTranslateX = useRef(new Animated.Value(50)).current;
+  const titleOpacity = useRef(new Animated.Value(0)).current;
+  const subTextTranslateX = useRef(new Animated.Value(50)).current;
+  const subTextOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Reset animation values
+    titleTranslateX.setValue(50);
+    titleOpacity.setValue(0);
+    subTextTranslateX.setValue(50);
+    subTextOpacity.setValue(0);
+
+    // Animate title
+    Animated.parallel([
+      Animated.timing(titleTranslateX, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(titleOpacity, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Animate subText with slight delay (opacity to 0.7 to match original style)
+    Animated.parallel([
+      Animated.timing(subTextTranslateX, {
+        toValue: 0,
+        duration: 400,
+        delay: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(subTextOpacity, {
+        toValue: 0.7,
+        duration: 400,
+        delay: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [
+    currentIndex,
+    data.title,
+    data.subText,
+    titleTranslateX,
+    titleOpacity,
+    subTextTranslateX,
+    subTextOpacity,
+  ]);
+
   return (
-    <View style={styles.container}>
+    <View style={tw`flex-1 bg-white`}>
       <ScrollView>
         <Image
           source={data.image}
           alt=""
           style={{
             width,
-            height: Platform.OS === 'ios' ? height / 1.5 : height / 2,
-            resizeMode: 'cover',
+            height: Platform.OS === "ios" ? height / 1.5 : height / 1,
+            resizeMode: "cover",
           }}
         />
-        <View style={styles.safeArea}>
-          <View style={styles.indicators}>
+        <View style={[tw`absolute w-full`, { top: insets.top }]}>
+          <View style={tw`w-full flex-row items-center gap-2.5 px-5`}>
             {[0, 1, 2].map((i) => (
-              <View style={[styles.indicator, i <= currentIndex && { opacity: 1 }]} key={i} />
+              <View
+                style={tw`h-1 bg-white rounded-xl ${
+                  i <= currentIndex ? "opacity-100" : "opacity-30"
+                } flex-1`}
+                key={i}
+              />
             ))}
           </View>
         </View>
       </ScrollView>
-      <View style={[styles.mainContainer]}>
-        <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.subText}>{data.subText}</Text>
-        <View style={styles.buttonContainer}>
+      <View style={[tw`px-8 pt-6`]}>
+        <Animated.Text
+          style={[
+            tw`text-3xl font-medium mb-1.5`,
+            {
+              transform: [{ translateX: titleTranslateX }],
+              opacity: titleOpacity,
+            },
+          ]}
+        >
+          {data.title}
+        </Animated.Text>
+        <Animated.Text
+          style={[
+            tw`text-sm`,
+            {
+              color: colors.primary_black,
+              opacity: subTextOpacity,
+              transform: [{ translateX: subTextTranslateX }],
+            },
+          ]}
+        >
+          {data.subText}
+        </Animated.Text>
+        <View style={tw`gap-3 mt-6`}>
           <LongBlackButton
             value="Next"
             onClick={() => {
@@ -60,61 +133,17 @@ export default function OnBoardingSection({
               }
             }}
             isDisabled={false}
+            style={{ height: 48 }}
+            textStyle={{ fontSize: 16, fontWeight: "600" }}
           />
-          <LongWhiteButton value="Skip" onClick={onFinish} />
+          <LongBlackButton
+            value="Sign Up"
+            onClick={onFinish}
+            style={{ height: 48, backgroundColor: "#E0E0E0", marginBottom: insets.bottom + 10 }}
+            textStyle={{ fontSize: 16, fontWeight: "600", color: colors.black }}
+          />
         </View>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  imageContainer: {
-    flex: 1,
-  },
-  safeArea: {
-    position: 'absolute',
-    top: 50,
-    width: '100%',
-  },
-  indicators: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: 20,
-  },
-  indicator: {
-    height: 4,
-    backgroundColor: colors.white,
-    borderRadius: 10,
-    opacity: 0.3,
-    flex: 1,
-  },
-  mainContainer: {
-    paddingHorizontal: 20,
-    paddingTop: 30,
-    paddingBottom: 70,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  subText: {
-    fontSize: 18,
-    color: colors.primary_black,
-    opacity: 0.7,
-    textAlign: 'center',
-    marginTop: 10,
-    paddingHorizontal: 10,
-  },
-  buttonContainer: {
-    marginTop: 40,
-    gap: 15,
-  },
-});

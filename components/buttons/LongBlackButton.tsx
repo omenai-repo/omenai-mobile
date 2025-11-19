@@ -1,4 +1,4 @@
-import { Text, TextStyle, TouchableOpacity, View } from "react-native";
+import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
 import React, { useRef } from "react";
 import { colors } from "../../config/colors.config";
 import LottieView from "lottie-react-native";
@@ -10,12 +10,11 @@ type LongBlackButtonProps = {
   isDisabled?: boolean;
   onClick: () => void;
   isLoading?: boolean;
-  bgColor?: string;
-  textColor?: string;
-  fontSize?: number;
-  fontWeight?: string | TextStyle["fontWeight"];
-  disabledBgColor?: string;
-  disabledTextColor?: string;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
+  outline?: boolean;
+  borderColor?: string;
+  icon?: React.ReactNode;
 };
 
 export default function LongBlackButton({
@@ -23,33 +22,69 @@ export default function LongBlackButton({
   onClick,
   isDisabled = false,
   isLoading = false,
-  bgColor = colors.primary_black,
-  textColor = colors.white,
-  fontSize = 14,
-  fontWeight = "400",
-  disabledBgColor = "#E0E0E0",
-  disabledTextColor = "#A1A1A1",
+  style,
+  textStyle,
+  outline = false,
+  borderColor = colors.primary_black,
+  icon,
 }: LongBlackButtonProps) {
   const animation = useRef(null);
 
-  const backgroundColor = isDisabled || isLoading ? disabledBgColor : bgColor;
+  const isInactive = isDisabled || isLoading;
 
-  const containerStyle = [
-    tw`h-[55px] w-full flex items-center justify-center rounded-[95px]`,
-    { backgroundColor },
-  ];
+  let backgroundColor: string;
+  if (isInactive) {
+    backgroundColor = "#E0E0E0";
+  } else if (outline) {
+    backgroundColor = "transparent";
+  } else {
+    backgroundColor = colors.primary_black;
+  }
 
-  const textStyle = {
-    color: isDisabled ? disabledTextColor : textColor,
-    fontSize,
-    fontWeight: fontWeight as TextStyle["fontWeight"],
+  let textColor: string;
+  if (isInactive) {
+    textColor = "#A1A1A1";
+  } else if (outline) {
+    textColor = borderColor;
+  } else {
+    textColor = colors.white;
+  }
+
+  let outlineBorderColor: string;
+  if (isInactive) {
+    outlineBorderColor = "#A1A1A1";
+  } else {
+    outlineBorderColor = borderColor;
+  }
+
+  const defaultContainerStyle: ViewStyle = {
+    height: 46,
+    backgroundColor,
+    ...(outline && {
+      borderWidth: 1,
+      borderColor: outlineBorderColor,
+    }),
   };
 
-  if (isDisabled || isLoading) {
+  const defaultTextStyle: TextStyle = {
+    color: textColor,
+    fontSize: 16,
+    fontWeight: "400",
+  };
+
+  const containerStyle = [
+    tw`w-full flex items-center justify-center rounded-lg`,
+    defaultContainerStyle,
+    style,
+  ];
+
+  const mergedTextStyle = [defaultTextStyle, textStyle];
+
+  if (isInactive) {
     return (
       <View style={containerStyle}>
         {isDisabled ? (
-          <Text style={textStyle}>{value}</Text>
+          <Text style={mergedTextStyle}>{value}</Text>
         ) : (
           <LottieView
             autoPlay
@@ -64,7 +99,10 @@ export default function LongBlackButton({
 
   return (
     <TouchableOpacity activeOpacity={1} style={containerStyle} onPress={onClick}>
-      <Text style={textStyle}>{value}</Text>
+      <View style={tw`flex-row items-center justify-center gap-3`}>
+        {icon}
+        <Text style={mergedTextStyle}>{value}</Text>
+      </View>
     </TouchableOpacity>
   );
 }

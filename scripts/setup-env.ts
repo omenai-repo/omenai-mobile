@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-import { writeFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { writeFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
 
 const envTemplate = `# Environment Configuration
 EXPO_PUBLIC_ENV=development
@@ -28,20 +28,22 @@ EXPO_PUBLIC_UPSTASH_REDIS_REST_URL=your_redis_url_here
 EXPO_PUBLIC_UPSTASH_REDIS_REST_TOKEN=your_redis_token_here
 
 # Appwrite Configuration
+# Appwrite promotional images, logo and doc
 EXPO_PUBLIC_APPWRITE_CLIENT_ID=your_appwrite_client_id
 EXPO_PUBLIC_APPWRITE_BUCKET_ID=your_appwrite_bucket_id
+EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID=your_logo_bucket_id
+EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID=your_documentation_bucket_id
+EXPO_PUBLIC_APPWRITE_PROMOTIONAL_BUCKET_ID=your_promotional_bucket_id
 EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID=your_editorial_bucket_id
 EXPO_PUBLIC_APPWRITE_EDITORIAL_DATABASE_ID=your_editorial_database_id
 EXPO_PUBLIC_APPWRITE_EDITORIAL_COLLECTION_ID=your_editorial_collection_id
-EXPO_PUBLIC_APPWRITE_PROMOTIONAL_BUCKET_ID=your_promotional_bucket_id
-EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID=your_logo_bucket_id
-EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID=your_documentation_bucket_id
 EXPO_PUBLIC_APPWRITE_UPLOAD_KEY=your_upload_key_here
 
 # Email Configuration
 EXPO_PUBLIC_GMAIL_ADDRESS=your_gmail_address
 EXPO_PUBLIC_GMAIL_APP_PASS=your_gmail_app_password
 EXPO_PUBLIC_RESEND_API_KEY=your_resend_api_key
+EXPO_PUBLIC_SENDGRID_API_KEY=your_sendgrid_api_key
 
 # Payment Configuration (Flutterwave)
 EXPO_PUBLIC_FLW_TEST_PUBLIC_KEY=your_flutterwave_test_public_key
@@ -58,24 +60,27 @@ EXPO_PUBLIC_STRIPE_PK=your_stripe_public_key
 EXPO_PUBLIC_DEEPLINK_DEVELOPMENT=exp://172.20.10.2:8081
 `;
 
-const environments = ['local', 'staging', 'production'];
+const environments = ["local", "staging", "production"];
 
 for (const env of environments) {
   const filename = `.env.${env}`;
   const filepath = join(process.cwd(), filename);
-  
+
   if (existsSync(filepath)) {
     console.log(`⚠️  ${filename} already exists, skipping...`);
   } else {
-    const content = envTemplate.replace('EXPO_PUBLIC_ENV=development', `EXPO_PUBLIC_ENV=${env === 'local' ? 'development' : env}`);
+    const content = envTemplate.replace(
+      "EXPO_PUBLIC_ENV=development",
+      `EXPO_PUBLIC_ENV=${env === "local" ? "development" : env}`
+    );
     writeFileSync(filepath, content);
     console.log(`✅ Created ${filename}`);
   }
 }
 
-console.log('\n🎉 Environment setup complete!');
-console.log('\n📝 Next steps:');
-console.log('1. Edit .env.local with your development values');
-console.log('2. Edit .env.staging with your staging values');
-console.log('3. Edit .env.production with your production values');
-console.log('4. Pleaseeeeeeeee!!!!!! Never commit these files to version control!');
+console.log("\n🎉 Environment setup complete!");
+console.log("\n📝 Next steps:");
+console.log("1. Edit .env.local with your development values");
+console.log("2. Edit .env.staging with your staging values");
+console.log("3. Edit .env.production with your production values");
+console.log("4. Pleaseeeeeeeee!!!!!! Never commit these files to version control!");
