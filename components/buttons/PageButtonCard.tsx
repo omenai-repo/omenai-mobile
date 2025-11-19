@@ -48,11 +48,7 @@ export const PageButtonCard = ({
             </Text>
           )}
         </View>
-        {children ? (
-          children
-        ) : (
-          <SvgXml xml={isDanger ? getRightArrowIcon("#DC2626") : rightArrowIcon} />
-        )}
+        {children || <SvgXml xml={isDanger ? getRightArrowIcon("#DC2626") : rightArrowIcon} />}
       </View>
     </TouchableOpacity>
   );
