@@ -1,8 +1,8 @@
-import { colors } from 'config/colors.config';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import { rightArrowIcon } from 'utils/SvgImages';
-import tw from 'twrnc';
+import { colors } from "config/colors.config";
+import { Text, TouchableOpacity, View } from "react-native";
+import { SvgXml } from "react-native-svg";
+import { rightArrowIcon, getRightArrowIcon } from "utils/SvgImages";
+import tw from "twrnc";
 
 type PageButtonItemProps = {
   name: string;
@@ -12,6 +12,7 @@ type PageButtonItemProps = {
   children?: React.ReactNode;
   svgIcon?: string;
   Icon?: React.ReactNode;
+  variant?: "default" | "danger";
 };
 
 export const PageButtonCard = ({
@@ -22,7 +23,10 @@ export const PageButtonCard = ({
   children,
   svgIcon,
   Icon,
+  variant = "default",
 }: PageButtonItemProps) => {
+  const isDanger = variant === "danger";
+
   return (
     <TouchableOpacity activeOpacity={1} onPress={handlePress}>
       <View style={tw`p-5 flex-row items-center gap-[10px]`}>
@@ -31,18 +35,24 @@ export const PageButtonCard = ({
             {!svgIcon ? Icon : <SvgXml xml={svgIcon} />}
             <Text
               style={[
-                tw`text-base`,
-                { color: logout ? '#ff0000' : colors.primary_black },
+                tw`text-base font-medium`,
+                { color: logout || isDanger ? "#DC2626" : colors.primary_black },
               ]}
             >
               {name}
             </Text>
           </View>
           {subText && (
-            <Text style={tw`text-sm text-[#00000099] mt-[10px]`}>{subText}</Text>
+            <Text style={[tw`text-sm mt-[10px]`, { color: isDanger ? "#991B1B" : "#00000099" }]}>
+              {subText}
+            </Text>
           )}
         </View>
-        {children ? children : <SvgXml xml={rightArrowIcon} />}
+        {children ? (
+          children
+        ) : (
+          <SvgXml xml={isDanger ? getRightArrowIcon("#DC2626") : rightArrowIcon} />
+        )}
       </View>
     </TouchableOpacity>
   );

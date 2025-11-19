@@ -58,7 +58,7 @@ export default function Profile() {
   }, [navigation]);
 
   const goToDeleteAccount = useCallback(() => {
-    navigation.navigate(screenName.deleteAccount, { routeName: 'individual' });
+    navigation.navigate(screenName.deleteAccount, { routeName: "individual" });
   }, [navigation]);
 
   const menuItems = useMemo(
@@ -85,8 +85,9 @@ export default function Profile() {
         name: "Delete account",
         subText: "Delete your omenai account",
         handlePress: goToDeleteAccount,
-        svgIcon: getDeleteIcon("#292D32"),
-      }
+        svgIcon: getDeleteIcon("#DC2626"),
+        variant: "danger" as const,
+      },
     ],
     [goToSaved, goToOrdersTab, goToChangePassword, goToDeleteAccount]
   );
@@ -114,9 +115,7 @@ export default function Profile() {
 
           <View>
             <Text style={tw`text-base font-semibold text-black`}>{name}</Text>
-            <Text style={tw`text-sm mt-[5px] mb-5 text-[#00000099]`}>
-              {email}
-            </Text>
+            <Text style={tw`text-sm mt-[5px] mb-5 text-[#00000099]`}>{email}</Text>
 
             <FittedBlackButton
               value="Edit profile"
@@ -131,22 +130,13 @@ export default function Profile() {
           <ProfileMenuItems items={menuItems} />
 
           <View style={tw`mt-[40px]`} />
-          <View style={tw`flex-col gap-3`}>
-            <LongBlackButton
-              value="Log Out"
-              onClick={() => {
-                queryClient.clear();
-                logout();
-              }}
-            />
-            <LongBlackButton
-              value="Delete Account"
-              onClick={goToDeleteAccount}
-              outline
-              borderColor="#FF0000"
-              textStyle={{ color: "#FF0000" }}
-            />
-          </View>
+          <LongBlackButton
+            value="Log Out"
+            onClick={() => {
+              queryClient.clear();
+              logout();
+            }}
+          />
         </View>
       </ScrollWrapper>
     </WithModal>

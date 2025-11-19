@@ -124,7 +124,8 @@ export default function ArtistProfileScreen() {
             routeName: "artist",
           });
         },
-        svgIcon: getDeleteIcon("#292D32"),
+        svgIcon: getDeleteIcon("#DC2626"),
+        variant: "danger" as const,
       },
     ],
     [navigation]
