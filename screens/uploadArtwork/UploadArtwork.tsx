@@ -24,7 +24,6 @@ import { getAccountID } from "services/stripe/getAccountID";
 import { checkIsStripeOnboarded } from "services/stripe/checkIsStripeOnboarded";
 import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscriptionData";
 import NoSubscriptionBlock from "screens/galleryArtworksListing/components/NoSubscriptionBlock";
-import * as Sentry from "@sentry/react-native";
 
 export default function UploadArtwork() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -90,7 +89,6 @@ export default function UploadArtwork() {
           isSubActive: sub_check?.data?.status === "active",
         };
       } catch (error: any) {
-        Sentry.captureException(error);
         updateModal({
           message: error.message,
           modalType: "error",
@@ -152,7 +150,6 @@ export default function UploadArtwork() {
         });
       }
     } catch (error) {
-      Sentry.captureException(error);
       updateModal({
         message: "Error uploading artwork",
         modalType: "error",
@@ -171,7 +168,6 @@ export default function UploadArtwork() {
         setActiveIndex(activeIndex + 1);
       }
     } catch (error) {
-      Sentry.captureException(error);
       updateModal({
         message: "Error during upload. Please try again.",
         modalType: "error",

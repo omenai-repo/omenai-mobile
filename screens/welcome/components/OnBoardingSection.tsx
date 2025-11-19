@@ -1,13 +1,6 @@
 import LongBlackButton from "components/buttons/LongBlackButton";
 import { colors } from "config/colors.config";
-import {
-  Animated,
-  Image,
-  Platform,
-  ScrollView,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Animated, Image, Platform, ScrollView, useWindowDimensions, View } from "react-native";
 import { useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import tw from "twrnc";
@@ -27,7 +20,7 @@ export default function OnBoardingSection({
 }: onBoardingSectionProps) {
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  
+
   // Animation values
   const titleTranslateX = useRef(new Animated.Value(50)).current;
   const titleOpacity = useRef(new Animated.Value(0)).current;
@@ -70,7 +63,15 @@ export default function OnBoardingSection({
         useNativeDriver: true,
       }),
     ]).start();
-  }, [currentIndex, data.title, data.subText, titleTranslateX, titleOpacity, subTextTranslateX, subTextOpacity]);
+  }, [
+    currentIndex,
+    data.title,
+    data.subText,
+    titleTranslateX,
+    titleOpacity,
+    subTextTranslateX,
+    subTextOpacity,
+  ]);
 
   return (
     <View style={tw`flex-1 bg-white`}>
@@ -80,7 +81,7 @@ export default function OnBoardingSection({
           alt=""
           style={{
             width,
-            height: Platform.OS === "ios" ? height / 1.5 : height / 2,
+            height: Platform.OS === "ios" ? height / 1.5 : height / 1,
             resizeMode: "cover",
           }}
         />
@@ -97,7 +98,7 @@ export default function OnBoardingSection({
           </View>
         </View>
       </ScrollView>
-      <View style={[tw`px-8 pt-6`, { paddingBottom: insets.bottom + 10 }]}>
+      <View style={[tw`px-8 pt-6`]}>
         <Animated.Text
           style={[
             tw`text-3xl font-medium mb-1.5`,
@@ -138,7 +139,7 @@ export default function OnBoardingSection({
           <LongBlackButton
             value="Sign Up"
             onClick={onFinish}
-            style={{ height: 48, backgroundColor: "#E0E0E0" }}
+            style={{ height: 48, backgroundColor: "#E0E0E0", marginBottom: insets.bottom + 10 }}
             textStyle={{ fontSize: 16, fontWeight: "600", color: colors.black }}
           />
         </View>
