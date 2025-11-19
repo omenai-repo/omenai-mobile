@@ -149,7 +149,7 @@ export default function UploadArtwork() {
           showModal: true,
         });
       }
-    } catch (error) {
+    } catch {
       updateModal({
         message: "Error uploading artwork",
         modalType: "error",
@@ -167,7 +167,7 @@ export default function UploadArtwork() {
       } else {
         setActiveIndex(activeIndex + 1);
       }
-    } catch (error) {
+    } catch {
       updateModal({
         message: "Error during upload. Please try again.",
         modalType: "error",
