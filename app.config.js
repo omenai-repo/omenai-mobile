@@ -1,96 +1,99 @@
+const {
+  APP_VERSION,
+  ANDROID_VERSION_CODE,
+  IOS_BUILD_NUMBER,
+  RUNTIME_VERSION,
+} = require("./constants/version.constants");
+
 export default {
   expo: {
-    name: 'OMENAI',
-    scheme: 'omenaimobile',
-    slug: 'omenai-app',
-    owner: 'omenai',
-    version: '1.1.22',
-    orientation: 'portrait',
+    name: "OMENAI",
+    scheme: "omenaimobile",
+    slug: "omenai-app",
+    owner: "omenai",
+    version: APP_VERSION,
+    orientation: "portrait",
     newArchEnabled: true,
-    icon: './assets/icon.png',
-    userInterfaceStyle: 'light',
+    icon: "./assets/icon.png",
+    userInterfaceStyle: "light",
 
     splash: {
-      image: './assets/splash.png',
-      resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      image: "./assets/splash.png",
+      resizeMode: "contain",
+      backgroundColor: "#ffffff",
     },
-    assetBundlePatterns: ['**/*'],
+    assetBundlePatterns: ["**/*"],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.omenai.omenaimobile',
-      buildNumber: '1.1.22',
+      bundleIdentifier: "com.omenai.omenaimobile",
+      buildNumber: IOS_BUILD_NUMBER,
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
-      },
-      config: {
-        googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS,
       },
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: './assets/omenai-logo.png',
-        backgroundColor: '#ffffff',
+        foregroundImage: "./assets/omenai-logo.png",
+        backgroundColor: "#ffffff",
       },
-      googleServicesFile: './google-services.json',
+      googleServicesFile: "./google-services.json",
       useNextNotificationsApi: true,
-      package: 'com.omenai.omenaiapp',
-      permissions: ['android.permission.RECORD_AUDIO'],
-      versionCode: 22,
-      config: {
-        googleMaps: {
-          apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID,
-        },
-      },
-      softwareKeyboardLayoutMode: 'pan',
+      package: "com.omenai.omenaiapp",
+      permissions: ["android.permission.RECORD_AUDIO"],
+      versionCode: ANDROID_VERSION_CODE,
+      softwareKeyboardLayoutMode: "pan",
     },
     web: {
-      favicon: './assets/favicon.png',
+      favicon: "./assets/favicon.png",
     },
     extra: {
       eas: {
-        projectId: 'cfba8b4b-06f7-460a-8fa2-f8671ea18107',
+        projectId: "cfba8b4b-06f7-460a-8fa2-f8671ea18107",
       },
     },
-    runtimeVersion: '1.1.22',
+    runtimeVersion: RUNTIME_VERSION,
     updates: {
-      url: 'https://u.expo.dev/cfba8b4b-06f7-460a-8fa2-f8671ea18107',
+      url: "https://u.expo.dev/cfba8b4b-06f7-460a-8fa2-f8671ea18107",
     },
     plugins: [
       [
-        'expo-font',
+        "expo-font",
         {
-          fonts: ['./assets/fonts/nunito-sans.ttf', './assets/fonts/DMSans.ttf'],
+          fonts: [
+            "./assets/fonts/nunito-sans.ttf",
+            "./assets/fonts/DMSans.ttf",
+          ],
         },
       ],
       [
-        'expo-image-picker',
+        "expo-image-picker",
         {
-          photosPermission: 'Omenai app accesses your photos to let you upload artworks.',
+          photosPermission:
+            "Omenai app accesses your photos to let you upload artworks.",
         },
       ],
       [
-        'expo-splash-screen',
+        "expo-splash-screen",
         {
-          backgroundColor: '#ffffff',
-          image: './assets/omenai-logo.png',
+          backgroundColor: "#ffffff",
+          image: "./assets/omenai-logo.png",
           dark: {
-            image: './assets/omenai-logo.png',
-            backgroundColor: '#1a1a1a',
+            image: "./assets/omenai-logo.png",
+            backgroundColor: "#1a1a1a",
           },
           imageWidth: 200,
         },
       ],
       [
-        '@sentry/react-native/expo',
+        "@sentry/react-native/expo",
         {
-          url: 'https://sentry.io/',
-          project: 'react-native',
-          organization: 'omenai',
+          url: "https://sentry.io/",
+          project: "react-native",
+          organization: "omenai",
         },
       ],
       [
-        'expo-web-browser',
+        "expo-web-browser",
         {
           experimentalLauncherActivity: true,
         },
