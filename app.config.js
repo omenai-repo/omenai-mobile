@@ -85,14 +85,6 @@ export default {
         },
       ],
       [
-        "@sentry/react-native/expo",
-        {
-          url: "https://sentry.io/",
-          project: "react-native",
-          organization: "omenai",
-        },
-      ],
-      [
         "expo-web-browser",
         {
           experimentalLauncherActivity: true,

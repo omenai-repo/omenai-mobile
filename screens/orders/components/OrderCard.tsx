@@ -100,14 +100,13 @@ export default function OrderCard({
                     status !== 'completed' &&
                     order_accepted.status === 'accepted' && (
                       <FittedBlackButton
-                        height={40}
                         value="Pay now"
                         onClick={() =>
                           navigation.navigate(screenName.payment, {
                             id: orderId,
                           })
                         }
-                        isDisabled={false}
+                        style={{ height: 40 }}
                       />
                     )}
                 </View>
@@ -130,12 +129,10 @@ export default function OrderCard({
                     !delivery_confirmed &&
                     tracking_information?.link?.trim() && (
                       <FittedBlackButton
-                        height={35}
                         value="Confirm order delivery"
                         onClick={() => setConfirmOrderModal(true)}
-                        isDisabled={false}
-                        fontSize={12}
-                        bgColor="#16A34A"
+                        style={{ height: 35, backgroundColor: '#16A34A' }}
+                        textStyle={{ fontSize: 12 }}
                       />
                     )}
                 </View>

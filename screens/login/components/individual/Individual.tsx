@@ -1,84 +1,26 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
-import { useIndividualAuthLoginStore } from '../../../../store/auth/login/IndividualAuthLoginStore';
-import PasswordInput from '../../../../components/inputs/PasswordInput';
-import Input from '../../../../components/inputs/Input';
-import LongBlackButton from '../../../../components/buttons/LongBlackButton';
-import { loginAccount } from '../../../../services/login/loginAccount';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from '../../../../constants/screenNames.constants';
-import { utils_storeAsyncData } from 'utils/utils_asyncStorage';
-import { useAppStore } from 'store/app/appStore';
-import { useModalStore } from 'store/modal/modalStore';
-import { add } from 'lodash';
+import { Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import tw from "twrnc";
+import { useIndividualAuthLoginStore } from "../../../../store/auth/login/IndividualAuthLoginStore";
+import PasswordInput from "../../../../components/inputs/PasswordInput";
+import Input from "../../../../components/inputs/Input";
+import LongBlackButton from "../../../../components/buttons/LongBlackButton";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { screenName } from "../../../../constants/screenNames.constants";
+import { useLoginHandler } from "hooks/useLoginHandler";
 
 export default function Individual() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-
   const { individualLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =
     useIndividualAuthLoginStore();
-  const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
-  const { updateModal } = useModalStore();
+  const { handleLogin } = useLoginHandler("individual");
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-
-    const results = await loginAccount(
-      { ...individualLoginData, device_push_token: expoPushToken ?? '' },
-      'individual',
-    );
-
-    if (results?.isOk) {
-      const resultsBody = results?.body?.data;
-
-      if (resultsBody.verified === false) {
-        setIsLoading(false);
-        navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody.user_id, type: 'individual' },
-        });
-        return;
-      }
-      const data = {
-        id: resultsBody.user_id,
-        email: resultsBody.email,
-        name: resultsBody.name,
-        role: resultsBody.role,
-        preferences: resultsBody.preferences,
-        verified: resultsBody.verified,
-        address: resultsBody.address,
-        phone: resultsBody.phone,
-        logo: resultsBody.logo,
-      };
-
-      const isStored = await utils_storeAsyncData('userSession', JSON.stringify(data));
-
-      const loginTimeStamp = new Date();
-      const isLoginTimeStampStored = await utils_storeAsyncData(
-        'loginTimeStamp',
-        JSON.stringify(loginTimeStamp),
-      );
-
-      if (isStored && isLoginTimeStampStored) {
-        setUserSession(data);
-        setIsLoggedIn(true);
-        clearInputs();
-      }
-    } else {
-      // Alert.alert(results?.body.message)
-      updateModal({
-        message: results?.body.message,
-        showModal: true,
-        modalType: 'error',
-      });
-    }
-
-    setIsLoading(false);
-  };
+  const handleSubmit = () => handleLogin(individualLoginData, setIsLoading, clearInputs);
 
   return (
-    <View style={styles.container}>
-      <View style={{ gap: 20 }}>
+    <View style={tw`mt-7 gap-10`}>
+      <View style={tw`gap-5`}>
         <Input
           label="Email address"
           keyboardType="email-address"
@@ -93,9 +35,9 @@ export default function Individual() {
           value={individualLoginData.password}
         />
       </View>
-      <View style={{ gap: 40 }}>
+      <View style={tw`gap-5`}>
         <LongBlackButton
-          value={isLoading ? 'Loading...' : 'Log In'}
+          value={isLoading ? "Loading..." : "Log In"}
           isDisabled={individualLoginData.email && individualLoginData.password ? false : true}
           onClick={handleSubmit}
           isLoading={isLoading}
@@ -103,24 +45,13 @@ export default function Individual() {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate(screenName.forgotPassword, {
-              type: 'individual',
+              type: "individual",
             })
           }
         >
-          <Text style={styles.resetText}>Forgot password? Click here</Text>
+          <Text style={tw`text-sm text-center`}>Forgot password? Click here</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-    gap: 40,
-  },
-  resetText: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-});

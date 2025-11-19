@@ -1,33 +1,34 @@
-import { StyleSheet, Text, View, Platform } from 'react-native';
-import React, { use } from 'react';
-import InActiveSubscription from './features/InActiveSubscription';
-import { useAppStore } from 'store/app/appStore';
-import ActiveSubscriptions from './features/ActiveSubscriptions';
-import WithModal from 'components/modal/WithModal';
-import ActiveSubLoader from './components/ActiveSubLoader';
-import { useModalStore } from 'store/modal/modalStore';
-import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import { getAccountID } from 'services/stripe/getAccountID';
-import { checkIsStripeOnboarded } from 'services/stripe/checkIsStripeOnboarded';
-import { useQuery } from '@tanstack/react-query';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import InActiveSubscription from "./features/InActiveSubscription";
+import { useAppStore } from "store/app/appStore";
+import ActiveSubscriptions from "./features/ActiveSubscriptions";
+import WithModal from "components/modal/WithModal";
+import ActiveSubLoader from "./components/ActiveSubLoader";
+import { useModalStore } from "store/modal/modalStore";
+import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscriptionData";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import { getAccountID } from "services/stripe/getAccountID";
+import { checkIsStripeOnboarded } from "services/stripe/checkIsStripeOnboarded";
+import { useQuery } from "@tanstack/react-query";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Subscriptions() {
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
   const insets = useSafeAreaInsets();
 
+  // Debug: Log user session
   const { data: isConfirmed, isLoading } = useQuery({
-    queryKey: ['subscription_precheck'],
+    queryKey: ["subscription_precheck"],
     queryFn: async () => {
       try {
         // Fetch account ID first, as it's required for the next call
-        const acc: any = await getAccountID(userSession.email);
+        const acc: any = await getAccountID(userSession.id);
         if (!acc?.isOk) {
           updateModal({
-            message: 'Something went wrong, Please refresh again',
-            modalType: 'error',
+            message: "Something went wrong, Please refresh again",
+            modalType: "error",
             showModal: true,
           });
         }
@@ -40,8 +41,8 @@ export default function Subscriptions() {
 
         if (!response?.isOk || !sub_check?.isOk) {
           updateModal({
-            message: 'Something went wrong, Please refresh again',
-            modalType: 'error',
+            message: "Something went wrong, Please refresh again",
+            modalType: "error",
             showModal: true,
           });
         }
@@ -53,16 +54,16 @@ export default function Subscriptions() {
           subscription_data: sub_check.data,
           subscription_plan: sub_check.plan,
         };
-      } catch (error) {
+      } catch {
         updateModal({
-          message: 'Something went wrong, Please refresh again',
-          modalType: 'error',
+          message: "Something went wrong, Please refresh again",
+          modalType: "error",
           showModal: true,
         });
         // Return a default object to satisfy the return type
         return {
           isSubmitted: false,
-          id: '',
+          id: "",
           isSubActive: false,
           subscription_data: null,
           subscription_plan: null,
@@ -80,7 +81,7 @@ export default function Subscriptions() {
         }}
       >
         <View style={styles.headerContainer}>
-          <Text style={{ fontSize: 20, textAlign: 'center' }}>Subscription & Billing</Text>
+          <Text style={{ fontSize: 20, textAlign: "center" }}>Subscription & Billing</Text>
         </View>
       </View>
       {isLoading ? (

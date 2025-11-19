@@ -188,7 +188,6 @@ export default function EditGalleryProfile() {
               />
             </View>
           </View>
-          <View style={{ height: 100 }} />
         </ScrollWrapper>
       </KeyboardAvoidingView>
     </WithModal>
