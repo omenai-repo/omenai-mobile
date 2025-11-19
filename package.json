@@ -26,6 +26,7 @@
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
+    "@rollbar/react": "^1.0.0",
     "@shopify/flash-list": "1.7.6",
     "@stripe/stripe-js": "^7.9.0",
     "@stripe/stripe-react-native": "0.45.0",
@@ -77,6 +78,8 @@
     "react-native-uuid": "^2.0.2",
     "react-native-virtualized-view": "^1.0.0",
     "react-native-webview": "13.13.0",
+    "rollbar": "^2.26.5",
+    "rollbar-react-native": "^1.0.1",
     "twrnc": "^4.5.1",
     "zod": "^3.23.8",
     "zustand": "^4.5.2"
