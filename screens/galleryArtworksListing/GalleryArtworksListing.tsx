@@ -13,7 +13,6 @@ import ArtworksListing from "components/general/ArtworksListing";
 import { useQuery } from "@tanstack/react-query";
 import { useModalStore } from "store/modal/modalStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import LockScreen from "./components/LockScreen";
 import { useAppStore } from "store/app/appStore";
 
 export default function GalleryArtworksListing() {
