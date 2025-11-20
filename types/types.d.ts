@@ -31,6 +31,15 @@ type OrderBuyerAndSellerDetails = {
   address: AddressTypes;
 };
 
+interface TrackingEvent {
+  date: string;
+  time: string;
+  typeCode: string;
+  serviceArea: { code: string; description: string }[];
+  description: string;
+  signedBy?: string;
+}
+
 type OrderAcceptedStatusTypes = {
   status: 'accepted' | 'declined' | '';
   reason?: string;
@@ -597,3 +606,9 @@ type ArtistCategory =
   | 'Late Mid-Career'
   | 'Established'
   | 'Elite';
+
+type Commitment = {
+  type: string;
+  description: string;
+  metadata?: Record<string, any>;
+};

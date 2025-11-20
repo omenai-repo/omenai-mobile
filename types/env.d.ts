@@ -1,3 +1,35 @@
 declare module '@env' {
-    export const API_BASE: string;
+    export const EXPO_PUBLIC_API_BASE: string;
+    export const EXPO_PUBLIC_API_STAGING_BASE: string;
+    export const EXPO_PUBLIC_API_ORIGIN: string;
+    export const EXPO_PUBLIC_API_USER_AGENT: string;
+    export const EXPO_PUBLIC_API_AUTHORIZATION: string;
+    
+    export const EXPO_PUBLIC_URL_DEVELOPMENT: string;
+    export const EXPO_PUBLIC_URL_PRODUCTION: string;
+    export const EXPO_PUBLIC_AUTH_SECRET: string;
+    export const EXPO_PUBLIC_MONGODB_PASSWORD: string;
+    export const EXPO_PUBLIC_UPSTASH_REDIS_REST_URL: string;
+    export const EXPO_PUBLIC_UPSTASH_REDIS_REST_TOKEN: string;
+    export const EXPO_PUBLIC_APPWRITE_CLIENT_ID: string;
+    export const EXPO_PUBLIC_APPWRITE_BUCKET_ID: string;
+    export const EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID: string;
+    export const EXPO_PUBLIC_APPWRITE_EDITORIAL_DATABASE_ID: string;
+    export const EXPO_PUBLIC_APPWRITE_EDITORIAL_COLLECTION_ID: string;
+    export const EXPO_PUBLIC_APPWRITE_PROMOTIONAL_BUCKET_ID: string;
+    export const EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID: string;
+    export const EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID: string;
+    export const EXPO_PUBLIC_APPWRITE_UPLOAD_KEY: string;
+    export const EXPO_PUBLIC_GMAIL_ADDRESS: string;
+    export const EXPO_PUBLIC_GMAIL_APP_PASS: string;
+    export const EXPO_PUBLIC_RESEND_API_KEY: string;
+    export const EXPO_PUBLIC_FLW_TEST_PUBLIC_KEY: string;
+    export const EXPO_PUBLIC_FLW_TEST_SECRET_KEY: string;
+    export const EXPO_PUBLIC_FLW_TEST_ENCRYPTION_KEY: string;
+    export const EXPO_PUBLIC_FLW_PAYMENT_PLAN_ID: string;
+    export const EXPO_PUBLIC_FLW_SECRET_HASH: string;
+    export const EXPO_PUBLIC_STRIPE_SK: string;
+    export const EXPO_PUBLIC_STRIPE_PK: string;
+    export const EXPO_PUBLIC_DEEPLINK_DEVELOPMENT: string;
+    export const EXPO_PUBLIC_ENV: string;
 }

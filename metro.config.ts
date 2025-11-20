@@ -1,14 +1,14 @@
-const { getDefaultConfig } = require('metro-config');
+const { getDefaultConfig } = require("@expo/metro-config");
 
 module.exports = (async () => {
-  const {
-    resolver: { sourceExts, assetExts },
-  } = await getDefaultConfig();
+  const config = await getDefaultConfig(__dirname);
 
   return {
+    ...config,
     resolver: {
-      // assetExts: [...assetExts, 'tsc', 'tsx'],
-      // sourceExts: [...sourceExts, 'ts', 'tsx', 'jsx', 'js', 'json'],
+      ...config.resolver,
+      // assetExts: [...config.resolver.assetExts, 'tsc', 'tsx'],
+      // sourceExts: [...config.resolver.sourceExts, 'ts', 'tsx', 'jsx', 'js', 'json'],
       // alias: {
       //   '@': './',
       // },

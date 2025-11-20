@@ -1,18 +1,19 @@
-import { database } from '../../../lib/editorial/controller/appwrite';
-import { getEditorialData } from './getEditorialData';
-import { getPromiseResolvedEditorialData } from './getPromisedResolvedEditorialData';
+import { editorial_database } from "appWrite_config";
 
-export const listEditorials = async () => {
+export async function listEditorials() {
   try {
-    let promise = await database.listDocuments(
-      process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_DATABASE_ID!,
-      process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_COLLECTION_ID!,
-    );
-    // console.log(promise)
-    // const articles = await getEditorialData(promise);
-    // const resolvedArticles = await getPromiseResolvedEditorialData(articles);
-    return promise.documents;
-  } catch (error) {
-    console.log(error);
+    const response = editorial_database.listRows({
+      databaseId: process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_DATABASE_ID!,
+      tableId: process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_COLLECTION_ID!,
+    });
+
+    const result = (await response).rows;
+
+    return { isOk: true, data: result };
+  } catch {
+    return {
+      isOk: false,
+      message: "Something went wrong, please contact IT team",
+    };
   }
-};
+}

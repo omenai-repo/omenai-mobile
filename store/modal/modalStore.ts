@@ -3,7 +3,7 @@ import { create } from "zustand";
 
 export type modalType = "error" | "success" | "input"
 
-type updateModalProps = {
+export type updateModalProps = {
     message: string,
     showModal: boolean,
     modalType: modalType | ""

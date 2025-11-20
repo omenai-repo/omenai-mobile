@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import React, { useState } from "react";
 import WithModal from "components/modal/WithModal";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
@@ -34,8 +34,11 @@ export default function ChangeGalleryPassword({
 
   function handleInputChange(name: string, value: string) {
     setErrorList([]);
-    const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(value, name, info.password);
+    const { success, errors }: { success: boolean; errors: string[] | [] } = validate(
+      value,
+      name,
+      info.password
+    );
     if (!success) setErrorList(errors);
 
     setInfo((prev) => {
@@ -113,13 +116,9 @@ export default function ChangeGalleryPassword({
             label="Confirm password"
             value={info.confirmPassword}
             placeHolder="Confirm your new password"
-            onInputChange={(value) =>
-              handleInputChange("confirmPassword", value)
-            }
+            onInputChange={(value) => handleInputChange("confirmPassword", value)}
           />
-          <View
-            style={{ flexDirection: "row", gap: 10, alignItems: "flex-end" }}
-          >
+          <View style={{ flexDirection: "row", gap: 10, alignItems: "flex-end" }}>
             <View style={{ flex: 1 }}>
               <Input
                 label="Confirmation code"
@@ -155,9 +154,7 @@ export default function ChangeGalleryPassword({
                     }}
                   >
                     <MaterialIcons name="error" color={"#ff000080"} />
-                    <Text style={{ fontSize: 12, color: "#ff000080" }}>
-                      {error}
-                    </Text>
+                    <Text style={{ fontSize: 12, color: "#ff000080" }}>{error}</Text>
                   </View>
                 );
               })}
@@ -178,5 +175,3 @@ export default function ChangeGalleryPassword({
     </WithModal>
   );
 }
-
-const styles = StyleSheet.create({});

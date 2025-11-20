@@ -1,162 +1,32 @@
-// import { StyleSheet, View } from 'react-native';
-// import React, { useEffect, useState } from 'react';
-// import WithModal from 'components/modal/WithModal';
-// import BackHeaderTitle from 'components/header/BackHeaderTitle';
-// import CheckoutSummary from './components/CheckoutSummary';
-// import { useNavigation, useRoute } from '@react-navigation/native';
-// import { getSinglePlanData } from 'services/subscriptions/getSinglePlanData';
-// import Loader from 'components/general/Loader';
-// import EmptyArtworks from 'components/general/EmptyArtworks';
-// import { useModalStore } from 'store/modal/modalStore';
-// import { subscriptionStepperStore } from 'store/subscriptionStepper/subscriptionStepperStore';
-// import WebView from 'react-native-webview';
-// import MigrationUpgradeCheckoutItem from './components/MigrationCheckouts/MigrationUpgradeCheckoutItem';
-// import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData';
-// import { useAppStore } from 'store/app/appStore';
-// import { StackNavigationProp } from '@react-navigation/stack';
-// import { screenName } from 'constants/screenNames.constants';
-// import CheckoutStepper from 'components/checkoutStepper/CheckoutStepper';
-// import ScrollWrapper from 'components/general/ScrollWrapper';
-
-// export default function Checkout() {
-//   const route = useRoute();
-//   const navigation = useNavigation<StackNavigationProp<any>>();
-
-//   const [loading, setLoading] = useState<boolean>(false);
-//   const [reloadCount, setReloadCount] = useState(1);
-//   const [verificationScreen, setVerificationScreen] = useState<boolean>(false);
-
-//   const [plan, setPlan] = useState<SubscriptionPlanDataTypes | null>(null);
-//   const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(null);
-
-//   const { updateModal } = useModalStore();
-//   const { webViewUrl, setWebViewUrl } = subscriptionStepperStore();
-//   const { userSession } = useAppStore();
-
-//   const [activeIndex, setActiveIndex] = useState<number>(0);
-
-//   const { plan_id, tab, action } = route.params as {
-//     plan_id: string;
-//     tab: string;
-//     id?: string;
-//     action?: string;
-//   };
-
-//   useEffect(() => {
-//     async function fetchSinglePlanDetails() {
-//       setLoading(true);
-//       const plan = await getSinglePlanData(plan_id);
-//       const subResults = await retrieveSubscriptionData(userSession.id);
-//       if (!plan?.isOk && !subResults?.isOk) {
-//         //throw error
-//         updateModal({
-//           message: 'Something went wrong',
-//           modalType: 'error',
-//           showModal: true,
-//         });
-//       } else {
-//         setPlan(plan?.data);
-//         setSubData(subResults?.data);
-//       }
-
-//       setLoading(false);
-//     }
-
-//     fetchSinglePlanDetails();
-//   }, [reloadCount]);
-
-//   const handleFlutterwaveRedirect = (event: any) => {
-//     if (event.canGoBack && event.navigationType === 'formsubmit') {
-//       setWebViewUrl(null);
-//       // setVerificationScreen(true)
-//       navigation.navigate(screenName.verifyTransaction);
-//       setActiveIndex(4);
-//     }
-//   };
-
-//   return (
-//     <WithModal>
-//       {webViewUrl === null && (
-//         <View style={{ flex: 1 }}>
-//           <BackHeaderTitle title="Checkout" />
-//           {loading && <Loader />}
-//           <ScrollWrapper style={styles.mainContainer}>
-//             {/* <FormsHeaderNavigation index={activeIndex} setIndex={setActiveIndex} /> */}
-//             {!loading && plan !== null && (
-//               <View>
-//                 {action ? (
-//                   <MigrationUpgradeCheckoutItem plan={plan} interval={tab} sub_data={subData} />
-//                 ) : (
-//                   <View>
-//                     <CheckoutStepper
-//                       plan={plan}
-//                       activeIndex={activeIndex}
-//                       setActiveIndex={setActiveIndex}
-//                       setVerificationScreen={() =>
-//                         navigation.navigate(screenName.verifyTransaction)
-//                       }
-//                       updateCard={false}
-//                     />
-//                     <CheckoutSummary name={plan.name} pricing={plan.pricing} interval={tab} />
-//                   </View>
-//                 )}
-//               </View>
-//             )}
-//             {!loading && plan === null && (
-//               <EmptyArtworks size={70} writeUp="An unexpected error occured, reload page" />
-//             )}
-//           </ScrollWrapper>
-//         </View>
-//       )}
-//       {webViewUrl && (
-//         <WebView
-//           source={{ uri: webViewUrl }}
-//           style={{ flex: 1 }}
-//           onNavigationStateChange={handleFlutterwaveRedirect}
-//         />
-//       )}
-//     </WithModal>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   mainContainer: {
-//     paddingHorizontal: 20,
-//     flex: 1,
-//     paddingTop: 10,
-//     marginTop: 20,
-//   },
-// });
-
-import React, { useMemo, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import tw from 'twrnc';
-import { differenceInCalendarDays } from 'date-fns';
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
-import { useQueryClient } from '@tanstack/react-query';
-import { PaymentMethod } from '@stripe/stripe-js';
-import { BillingCard } from 'screens/subscriptions/components/BillingCard';
-import { createStripeTokenizedCharge } from 'services/stripe/createStripeTokenizedCharge';
-import { useAppStore } from 'store/app/appStore';
-import { updateSubscriptionPlan } from 'services/stripe/updateSubscriptionPlan';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { useModalStore } from 'store/modal/modalStore';
-import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol';
-import { utils_determinePlanChange } from 'utils/utils_determinePlanChange';
-import { calculateSubscriptionPricing } from 'utils/calculateSubscriptionPricing';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { useStripe } from '@stripe/stripe-react-native';
+import React, { useMemo, useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import tw from "twrnc";
+import { differenceInCalendarDays } from "date-fns";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query";
+import { PaymentMethod } from "@stripe/stripe-js";
+import { BillingCard } from "screens/subscriptions/components/BillingCard";
+import { createStripeTokenizedCharge } from "services/stripe/createStripeTokenizedCharge";
+import { useAppStore } from "store/app/appStore";
+import { updateSubscriptionPlan } from "services/stripe/updateSubscriptionPlan";
+import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { useModalStore } from "store/modal/modalStore";
+import { utils_getCurrencySymbol } from "utils/utils_getCurrencySymbol";
+import { utils_determinePlanChange } from "utils/utils_determinePlanChange";
+import { calculateSubscriptionPricing } from "utils/calculateSubscriptionPricing";
+import BackHeaderTitle from "components/header/BackHeaderTitle";
+import { useStripe } from "@stripe/stripe-react-native";
 
 type RootStackParamList = {
   MigrationUpgradeCheckout: {
     plan: SubscriptionPlanDataTypes & { createdAt?: string; updatedAt?: string; _id?: string };
-    interval: 'yearly' | 'monthly';
+    interval: "yearly" | "monthly";
     sub_data: SubscriptionModelSchemaTypes & { created?: string; updatedAt?: string };
     action: string;
   };
 };
 
-type ScreenRouteProp = RouteProp<RootStackParamList, 'MigrationUpgradeCheckout'>;
+type ScreenRouteProp = RouteProp<RootStackParamList, "MigrationUpgradeCheckout">;
 
 const PriceRow = ({
   label,
@@ -209,19 +79,19 @@ export default function Checkout() {
         sub_data.plan_details,
         plan,
         days_used,
-        totalDays,
+        totalDays
       ),
-    [startDate, interval, sub_data.plan_details, plan, days_used, totalDays],
+    [startDate, interval, sub_data.plan_details, plan, days_used, totalDays]
   );
 
   const plan_change_params = useMemo(() => {
-    if (!sub_data) return { action: '', shouldCharge: false };
+    if (!sub_data) return { action: "", shouldCharge: false };
     return utils_determinePlanChange(
       sub_data.plan_details.type.toLowerCase(),
-      sub_data.plan_details.interval.toLowerCase() as 'yearly' | 'monthly',
-      interval === 'yearly' ? +plan.pricing.annual_price : +plan.pricing.monthly_price,
+      sub_data.plan_details.interval.toLowerCase() as "yearly" | "monthly",
+      interval === "yearly" ? +plan.pricing.annual_price : +plan.pricing.monthly_price,
       interval,
-      sub_data.status,
+      sub_data.status
     );
   }, [sub_data, interval, plan.pricing]);
 
@@ -229,9 +99,9 @@ export default function Checkout() {
   const handlePayNow = async () => {
     if (!user?.id) {
       updateModal({
-        message: 'Missing gallery id',
+        message: "Missing gallery id",
         showModal: true,
-        modalType: 'error',
+        modalType: "error",
       });
       return;
     }
@@ -250,37 +120,37 @@ export default function Checkout() {
 
       if (!res?.isOk) {
         updateModal({
-          message: 'Unable to initiate card charge. Please contact support',
+          message: "Unable to initiate card charge. Please contact support",
           showModal: true,
-          modalType: 'error',
+          modalType: "error",
         });
         return;
       }
 
       const { client_secret, status, paymentIntentId } = res;
-      if (status === 'requires_action') {
+      if (status === "requires_action") {
         const { error: nextActionErr, paymentIntent } = await handleNextAction(client_secret);
         if (nextActionErr) {
-          updateModal({ message: nextActionErr.message, showModal: true, modalType: 'error' });
+          updateModal({ message: nextActionErr.message, showModal: true, modalType: "error" });
           return;
         }
       }
 
       updateModal({
-        message: 'Processing payment...',
+        message: "Processing payment...",
         showModal: true,
-        modalType: 'input',
+        modalType: "input",
       });
 
-      await queryClient.invalidateQueries({ queryKey: ['subscription_precheck'] });
-      navigation.navigate('BillingVerification', {
+      await queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
+      navigation.navigate("BillingVerificationScreen", {
         payment_intent: paymentIntentId,
       });
     } catch (e: any) {
       updateModal({
         message: e?.message,
         showModal: true,
-        modalType: 'error',
+        modalType: "error",
       });
     } finally {
       setPayLoading(false);
@@ -290,9 +160,9 @@ export default function Checkout() {
   const handleMigrateToPlan = async () => {
     if (!user?.id) {
       updateModal({
-        message: 'Missing gallery id',
+        message: "Missing gallery id",
         showModal: true,
-        modalType: 'error',
+        modalType: "error",
       });
       return;
     }
@@ -301,35 +171,35 @@ export default function Checkout() {
       setMigrateLoading(true);
 
       const data = {
-        value: interval === 'monthly' ? +plan.pricing.monthly_price : +plan.pricing.annual_price,
-        currency: 'USD',
+        value: interval === "monthly" ? +plan.pricing.monthly_price : +plan.pricing.annual_price,
+        currency: "USD",
         type: plan.name,
         interval,
         id: plan._id as string,
       };
 
       const migrate = await updateSubscriptionPlan(data, action);
-      console.log(data, action, 'hh');
+      console.log(data, action, "hh");
       if (!migrate?.isOk) {
         updateModal({
-          message: migrate?.message ?? '',
+          message: migrate?.message ?? "",
           showModal: true,
-          modalType: 'error',
+          modalType: "error",
         });
       } else {
         updateModal({
-          message: 'Migration successful',
+          message: "Migration successful",
           showModal: true,
-          modalType: 'success',
+          modalType: "success",
         });
-        await queryClient.invalidateQueries({ queryKey: ['subscription_precheck'] });
+        await queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
         navigation.pop(2);
       }
     } catch (e: any) {
       updateModal({
         message: e?.message,
         showModal: true,
-        modalType: 'success',
+        modalType: "success",
       });
     } finally {
       setMigrateLoading(false);
@@ -418,15 +288,15 @@ export default function Checkout() {
           disabled={payLoading || migrateLoading}
           onPress={showCharge ? handlePayNow : handleMigrateToPlan}
           style={tw.style(
-            'mt-5 w-full py-3 rounded-md items-center justify-center',
-            payLoading || migrateLoading ? 'bg-black/30' : 'bg-black',
+            "mt-5 w-full py-3 rounded-md items-center justify-center",
+            payLoading || migrateLoading ? "bg-black/30" : "bg-black"
           )}
         >
           {payLoading || migrateLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={tw`text-white text-[13px] font-medium`}>
-              {showCharge ? 'Confirm Payment' : 'Migrate to this plan'}
+              {showCharge ? "Confirm Payment" : "Migrate to this plan"}
             </Text>
           )}
         </TouchableOpacity>

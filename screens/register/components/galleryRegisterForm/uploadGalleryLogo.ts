@@ -1,13 +1,13 @@
-import { gallery_logo_storage } from 'appWrite_config';
+import { storage } from 'appWrite_config';
 import { ID } from 'appwrite';
 
 const uploadGalleryLogoContent = async (file: any) => {
   if (!file) return;
-  const fileUploaded = await gallery_logo_storage.createFile(
-    process.env.EXPO_PUBLIC_APPWRITE_GALLERY_LOGO_BUCKET_ID!,
-    ID.unique(),
-    file,
-  );
+  const fileUploaded = await storage.createFile({
+    bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
+    fileId: ID.unique(),
+    file: file,
+  });
   return fileUploaded;
 };
 

@@ -14,7 +14,7 @@ const uploadImage = async (file: { uri: string; name: string; type: string }) =>
       method: 'POST',
       headers: {
         'X-Appwrite-Project': process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
-        'X-Appwrite-Key': process.env.EXPO_PUBLIC_APPWRITE_ARTWORK_UPLOAD_KEY!,
+        'X-Appwrite-Key': process.env.EXPO_PUBLIC_APPWRITE_UPLOAD_KEY!,
       },
       body: formData,
     },

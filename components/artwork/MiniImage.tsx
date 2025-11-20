@@ -1,6 +1,6 @@
 import { useImage, Image } from "expo-image";
 import { useMemo } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 export default function MiniImage({
   maxWidth,
@@ -13,21 +13,22 @@ export default function MiniImage({
 }) {
   const imageOptions = useMemo(
     () => ({
-      maxWidth: maxWidth - 10,
       onError: (error: Error, retry: () => void) => {
         console.error("Loading failed:", error.message);
       },
     }),
-    [maxWidth]
+    []
   );
 
   const image = useImage(url, imageOptions);
+
+  const displayWidth = maxWidth - 10;
 
   if (!image) {
     return (
       <View
         style={{
-          width: maxWidth - 10,
+          width: displayWidth,
           height: 200,
           backgroundColor: "#f5f5f5",
         }}
@@ -35,10 +36,14 @@ export default function MiniImage({
     );
   }
 
+  const aspectRatio = image.width / image.height;
+  const displayHeight = displayWidth / aspectRatio;
+
   return (
     <Image
       source={image}
-      style={{ width: image.width, height: image.height }}
+      style={{ width: displayWidth, height: displayHeight }}
+      contentFit="cover"
     />
   );
 }

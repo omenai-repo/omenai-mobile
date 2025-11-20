@@ -1,21 +1,29 @@
-import React, { useCallback } from 'react';
-import { Image, StyleSheet, Text, View, Pressable } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import tw from 'twrnc';
+import React, { useCallback, useMemo } from "react";
+import { Image, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import tw from "twrnc";
 
-import { colors } from 'config/colors.config';
-import { useAppStore } from 'store/app/appStore';
-import { screenName } from 'constants/screenNames.constants';
-import WithModal from 'components/modal/WithModal';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { changePasswsordIcon, orderHistoryIcon, savedArtworksIcon } from 'utils/SvgImages';
-import { PageButtonCard } from 'components/buttons/PageButtonCard';
-import omenaiAvatar from '../../assets/images/omenai-avatar.png';
-import { logout } from 'utils/logout.utils';
+import { colors } from "config/colors.config";
+import { useAppStore } from "store/app/appStore";
+import { screenName } from "constants/screenNames.constants";
+import WithModal from "components/modal/WithModal";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
+import LongBlackButton from "components/buttons/LongBlackButton";
+import {
+  changePasswsordIcon,
+  getDeleteIcon,
+  orderHistoryIcon,
+  savedArtworksIcon,
+} from "utils/SvgImages";
+import ProfileMenuItems from "components/profile/ProfileMenuItems";
+import omenaiAvatar from "../../assets/images/omenai-avatar.png";
+import { logout } from "utils/logout.utils";
+import { useQueryClient } from "@tanstack/react-query";
+import BlurStatusBar from "components/general/BlurStatusBar";
+import { useScrollY } from "hooks/useScrollY";
 
 type Nav = StackNavigationProp<any>;
 
@@ -23,14 +31,16 @@ export default function Profile() {
   const navigation = useNavigation<Nav>();
   const insets = useSafeAreaInsets();
   const { userSession } = useAppStore();
+  const queryClient = useQueryClient();
+  const { scrollY, onScroll } = useScrollY();
 
-  const name = userSession?.name ?? '';
-  const email = userSession?.email ?? '';
-  const logoUrl = userSession?.logo ?? '';
+  const name = userSession?.name ?? "";
+  const email = userSession?.email ?? "";
+  const logoUrl = userSession?.logo ?? "";
 
   const goToOrdersTab = useCallback(() => {
     // Orders is a bottom-tab inside "Individual"
-    navigation.navigate('Individual', { screen: 'Orders' });
+    navigation.navigate("Individual", { screen: "Orders" });
   }, [navigation]);
 
   const goToSaved = useCallback(() => {
@@ -38,89 +48,97 @@ export default function Profile() {
   }, [navigation]);
 
   const goToChangePassword = useCallback(() => {
-    navigation.navigate(screenName.gallery.changePassword, { routeName: 'individual' });
+    navigation.navigate(screenName.gallery.changePassword, {
+      routeName: "individual",
+    });
   }, [navigation]);
 
   const goToEditProfile = useCallback(() => {
     navigation.navigate(screenName.editProfile);
   }, [navigation]);
 
+  const goToDeleteAccount = useCallback(() => {
+    navigation.navigate(screenName.deleteAccount, { routeName: "individual" });
+  }, [navigation]);
+
+  const menuItems = useMemo(
+    () => [
+      {
+        name: "Saved artworks",
+        subText: "See all your saved artworks",
+        handlePress: goToSaved,
+        svgIcon: savedArtworksIcon,
+      },
+      {
+        name: "Order history",
+        subText: "A summary of all your orders",
+        handlePress: goToOrdersTab,
+        svgIcon: orderHistoryIcon,
+      },
+      {
+        name: "Change password",
+        subText: "Change the password to your account",
+        handlePress: goToChangePassword,
+        svgIcon: changePasswsordIcon,
+      },
+      {
+        name: "Delete account",
+        subText: "Delete your omenai account",
+        handlePress: goToDeleteAccount,
+        svgIcon: getDeleteIcon("#DC2626"),
+        variant: "danger" as const,
+      },
+    ],
+    [goToSaved, goToOrdersTab, goToChangePassword, goToDeleteAccount]
+  );
+
   return (
     <WithModal>
-      <ScrollWrapper style={[styles.container, { paddingTop: insets.top + 16 }]}>
-        <View style={styles.profileContainer}>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+      <ScrollWrapper
+        style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}
+        onScroll={onScroll}
+      >
+        <View style={tw`flex-row gap-5 items-center px-5`}>
           {/* Avatar / Logo fallback */}
           {logoUrl ? (
-            <Image source={{ uri: logoUrl }} style={styles.avatar} />
+            <Image
+              source={{ uri: logoUrl }}
+              style={tw`w-[72px] h-[72px] rounded-[36px] bg-[#F2F2F2]`}
+            />
           ) : (
-            <Image source={omenaiAvatar} style={styles.avatar} />
+            <Image
+              source={omenaiAvatar}
+              style={tw`w-[72px] h-[72px] rounded-[36px] bg-[#F2F2F2]`}
+            />
           )}
 
           <View>
-            <Text style={styles.nameText}>{name}</Text>
-            <Text style={styles.emailText}>{email}</Text>
+            <Text style={tw`text-base font-semibold text-black`}>{name}</Text>
+            <Text style={tw`text-sm mt-[5px] mb-5 text-[#00000099]`}>{email}</Text>
 
-            <FittedBlackButton value="Edit profile" onClick={goToEditProfile} />
+            <FittedBlackButton
+              value="Edit profile"
+              onClick={goToEditProfile}
+              style={{ backgroundColor: colors.grey50 }}
+              textStyle={{ color: colors.black }}
+            />
           </View>
         </View>
 
-        <View style={tw`gap-[20px] pt-[40px] px-[20px]`}>
-          <PageButtonCard
-            name="Saved artworks"
-            subText="See all your saved artworks"
-            handlePress={goToSaved}
-            svgIcon={savedArtworksIcon}
-          />
-          <PageButtonCard
-            name="Order history"
-            subText="A summary of all your orders"
-            handlePress={goToOrdersTab} // ✅ go to tab correctly
-            svgIcon={orderHistoryIcon}
-          />
-          <PageButtonCard
-            name="Change password"
-            subText="Change the password to your account"
-            handlePress={goToChangePassword}
-            svgIcon={changePasswsordIcon}
-          />
+        <View style={tw`pt-[40px] px-[20px] pb-8`}>
+          <ProfileMenuItems items={menuItems} />
 
-          <View style={tw`mt-[20px]`} />
-          <LongBlackButton value="Log Out" onClick={logout} />
-          <View style={tw`h-[200px]`} />
+          <View style={tw`mt-[40px]`} />
+          <LongBlackButton
+            value="Log Out"
+            onClick={() => {
+              queryClient.clear();
+              logout();
+            }}
+          />
         </View>
       </ScrollWrapper>
     </WithModal>
   );
 }
-
-const AVATAR_SIZE = 72;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  profileContainer: {
-    flexDirection: 'row',
-    gap: 20,
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  avatar: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
-    backgroundColor: '#F2F2F2',
-  },
-  nameText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.primary_black,
-  },
-  emailText: {
-    fontSize: 14,
-    marginTop: 5,
-    marginBottom: 20,
-    color: '#00000099',
-  },
-});

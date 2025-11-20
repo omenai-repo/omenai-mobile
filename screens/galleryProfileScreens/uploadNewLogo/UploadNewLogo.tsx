@@ -7,8 +7,6 @@ import LongBlackButton from 'components/buttons/LongBlackButton';
 import { colors } from 'config/colors.config';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { gallery_logo_storage, storage } from 'appWrite_config';
-import { ID } from 'appwrite';
 import { updateLogo } from 'services/update/updateLogo';
 import { useAppStore } from 'store/app/appStore';
 import { useModalStore } from 'store/modal/modalStore';

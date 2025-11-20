@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
     container: {
         gap: 15,
         marginTop: 30,
-        paddingBottom: 100
     },
     button: {
         height: 50,

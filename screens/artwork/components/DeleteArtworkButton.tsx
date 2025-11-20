@@ -5,7 +5,6 @@ import { Feather } from '@expo/vector-icons'
 import { useModalStore } from 'store/modal/modalStore'
 import CloseButton from 'components/buttons/CloseButton'
 import LongBlackButton from 'components/buttons/LongBlackButton'
-import LongWhiteButton from 'components/buttons/LongWhiteButton'
 import { deleteArtwork } from 'services/artworks/deleteArtwork'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
@@ -51,7 +50,7 @@ export default function DeleteArtworkButton({art_id}: {art_id: string}) {
                     <Text style={{fontSize: 16, fontWeight: 500, color: colors.primary_black}}>Are you sure you want to delete artwork?</Text>
                     <View style={{gap: 10, marginTop: 20}}>
                         <LongBlackButton value='Yes, delete' onClick={handleDelete} />
-                        <LongWhiteButton value='Cancel' onClick={clear} />
+                        <LongBlackButton value='Cancel' onClick={clear} outline />
                     </View>
                 </View>
             </View>

@@ -8,30 +8,28 @@ import { HighlightCard } from './components/HighlightCard';
 import ScrollWrapper from 'components/general/ScrollWrapper';
 import PopularArtworks from './components/PopularArtworks';
 import { useQueryClient } from '@tanstack/react-query';
-
-export const QK = {
-  highlight: (slice: 'artworks' | 'sales' | 'net' | 'revenue') =>
-    ['overview', 'highlight', slice] as const,
-  salesOverview: ['overview', 'salesOverview'] as const,
-  overviewOrders: ['overview', 'orders', 'recent'] as const,
-  popularArtworks: ['overview', 'popularArtworks'] as const,
-};
+import { QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
+import BlurStatusBar from 'components/general/BlurStatusBar';
+import { useScrollY } from 'hooks/useScrollY';
 
 export default function Overview() {
   const [refreshing, setRefreshing] = useState(false);
   const inflight = useRef(0);
   const qc = useQueryClient();
+  const { userSession } = useAppStore();
+  const { scrollY, onScroll } = useScrollY();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([
-      qc.invalidateQueries({ queryKey: QK.highlight('artworks') }),
-      qc.invalidateQueries({ queryKey: QK.highlight('sales') }),
-      qc.invalidateQueries({ queryKey: QK.highlight('net') }),
-      qc.invalidateQueries({ queryKey: QK.highlight('revenue') }),
-      qc.invalidateQueries({ queryKey: QK.salesOverview }),
-      qc.invalidateQueries({ queryKey: QK.overviewOrders }),
-      qc.invalidateQueries({ queryKey: QK.popularArtworks }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('artworks', userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('sales', userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('net', userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.highlightGallery('revenue', userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.salesOverview(userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.overviewOrders(userSession?.id) }),
+      qc.invalidateQueries({ queryKey: QK.popularArtworks(userSession?.id) }),
     ]);
   }, [qc]);
 
@@ -45,9 +43,11 @@ export default function Overview() {
 
   return (
     <WithModal>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onScroll={onScroll}
       >
         <Header />
         <View style={styles.container}>

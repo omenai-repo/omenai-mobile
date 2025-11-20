@@ -1,28 +1,22 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { getImageFileView } from 'lib/storage/getImageFileView';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import LikeComponent from './LikeComponent';
-import tw from 'twrnc';
-import { resizeImageDimensions } from 'utils/utils_resizeImageDimensions.utils';
-import { fontNames } from 'constants/fontNames.constants';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
-import { requestArtworkPrice } from 'services/artworks/requestArtworkPrice';
-import { useModalStore } from 'store/modal/modalStore';
+import { Image, Text, View, TouchableOpacity, Dimensions, PixelRatio } from "react-native";
+import React, { useEffect, useState } from "react";
+import { getImageFileView } from "lib/storage/getImageFileView";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "constants/screenNames.constants";
+import { utils_formatPrice } from "utils/utils_priceFormatter";
+import LikeComponent from "./LikeComponent";
+import tw from "twrnc";
+import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
+import { fontNames } from "constants/fontNames.constants";
 
 type ArtworkCardType = {
   title: string;
   url: string;
   price: number;
   artist: string;
-  rarity?: string;
-  medium?: string;
   showPrice?: boolean;
   availiablity?: boolean;
-  showTags?: boolean;
   lightText?: boolean;
   width?: number;
   art_id?: string;
@@ -44,13 +38,14 @@ export default function ArtworkCard({
   like_IDs,
   galleryView = false,
   availiablity,
-  medium,
 }: ArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
-  const image_href = getImageFileView(url, 400);
 
-  const { updateModal } = useModalStore();
+  const dpr = PixelRatio.get();
+  const screenWidth = Dimensions.get("window").width;
+  const displayWidth = width > 0 ? width : screenWidth * 0.7;
+  const fetchWidth = Math.round(displayWidth * dpr);
+  const image_href = getImageFileView(url, fetchWidth);
 
   const [imageDimensions, setImageDimensions] = useState({
     width: 250,
@@ -59,58 +54,17 @@ export default function ArtworkCard({
 
   useEffect(() => {
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-      const screenWidth = Dimensions.get('window').width;
-      const cardWidth = width > 0 ? width : screenWidth * 0.7; // fallback to 70% of screen
       const maxHeight = 300;
 
       const { width: resizedWidth, height: resizedHeight } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
-        cardWidth,
-        maxHeight,
+        displayWidth,
+        maxHeight
       );
 
       setImageDimensions({ height: resizedHeight, width: resizedWidth });
     });
-  }, [image_href, width]);
-
-  const handleRequestPriceQuote = async () => {
-    setLoadingPriceQuote(true);
-
-    let userEmail = '';
-    let userName = '';
-
-    const userSession = await utils_getAsyncData('userSession');
-    if (userSession.value) {
-      userEmail = JSON.parse(userSession.value).email;
-      userName = JSON.parse(userSession.value).name;
-    } else return;
-
-    const artwork_data = {
-      title: title,
-      artist: artist,
-      art_id: art_id,
-      url: url,
-      medium: medium,
-      pricing: price,
-    };
-
-    const results = await requestArtworkPrice(artwork_data, userEmail, userName);
-    if (results.isOk) {
-      updateModal({
-        message: `Price quote for ${artwork_data.title} has been sent to ${userEmail}`,
-        showModal: true,
-        modalType: 'success',
-      });
-    } else {
-      updateModal({
-        message: 'Something went wrong, please try again or contact us for assistance.',
-        showModal: true,
-        modalType: 'error',
-      });
-    }
-
-    setLoadingPriceQuote(false);
-  };
+  }, [image_href, displayWidth]);
 
   return (
     <View>
@@ -119,7 +73,7 @@ export default function ArtworkCard({
         activeOpacity={1}
         style={[tw`ml-[20px] rounded-2xl`, { width: imageDimensions.width }]}
         onPress={() => {
-          navigation.push(screenName.artwork, { title, url });
+          navigation.push(screenName.artwork, { art_id, url });
         }}
       >
         <View style={tw`rounded-[5px] overflow-hidden relative`}>
@@ -128,9 +82,9 @@ export default function ArtworkCard({
             style={{
               width: imageDimensions.width,
               height: imageDimensions.height,
-              objectFit: 'contain',
+              objectFit: "contain",
               borderRadius: 5,
-              backgroundColor: '#f5f5f5',
+              backgroundColor: "#f5f5f5",
             }}
             resizeMode="contain"
           />
@@ -140,7 +94,7 @@ export default function ArtworkCard({
                 style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
               >
                 <LikeComponent
-                  art_id={art_id}
+                  art_id={art_id || ""}
                   impressions={impressions || 0}
                   likeIds={like_IDs || []}
                   lightText={true}
@@ -154,17 +108,17 @@ export default function ArtworkCard({
             <Text
               style={[
                 tw`text-base ${
-                  lightText ? 'text-white/90' : 'text-[#1A1A1A]00099]'
+                  lightText ? "text-white/90" : "text-[#1A1A1A]00099]"
                 } font-medium w-full`,
-                { fontFamily: fontNames.dmSans + 'Medium' },
+                { fontFamily: fontNames.dmSans + "Medium" },
               ]}
             >
               {title}
             </Text>
             <Text
               style={[
-                tw`text-sm ${lightText ? 'text-white/80' : 'text-[#1A1A1A]/70'} w-full`,
-                { fontFamily: fontNames.dmSans + 'Regular' },
+                tw`text-sm ${lightText ? "text-white/80" : "text-[#1A1A1A]/70"} w-full`,
+                { fontFamily: fontNames.dmSans + "Regular" },
               ]}
             >
               {artist}
@@ -175,12 +129,12 @@ export default function ArtworkCard({
               <Text
                 style={[
                   tw`text-base font-bold ${
-                    lightText ? 'text-white/90' : 'text-[#1A1A1A]/90'
+                    lightText ? "text-white/90" : "text-[#1A1A1A]/90"
                   } flex-1`,
-                  { fontFamily: fontNames.dmSans + 'Bold' },
+                  { fontFamily: fontNames.dmSans + "Bold" },
                 ]}
               >
-                {showPrice ? utils_formatPrice(price) : 'Price on request'}
+                {showPrice ? utils_formatPrice(price) : "Price on request"}
               </Text>
             )}
 
@@ -221,9 +175,9 @@ export default function ArtworkCard({
                 <Text
                   style={[
                     tw`text-base font-bold ${
-                      lightText ? 'text-white/90' : 'text-[#1A1A1A]/90'
+                      lightText ? "text-white/90" : "text-[#1A1A1A]/90"
                     } flex-1`,
-                    { fontFamily: fontNames.dmSans + 'Bold' },
+                    { fontFamily: fontNames.dmSans + "Bold" },
                   ]}
                 >
                   Sold

@@ -1,8 +1,8 @@
-import { StyleSheet, Text, TextStyle, TouchableOpacity, View } from 'react-native';
-import React, { useRef } from 'react';
-import { colors } from 'config/colors.config';
-import LottieView from 'lottie-react-native';
-import loaderAnimation from 'assets/other/loader-animation.json';
+import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import React, { useRef } from "react";
+import LottieView from "lottie-react-native";
+import tw from "twrnc";
+import loaderAnimation from "assets/other/loader-animation.json";
 
 type FittedBlackButtonProps = {
   value: string;
@@ -10,103 +10,64 @@ type FittedBlackButtonProps = {
   onClick: () => void;
   isLoading?: boolean;
   children?: React.ReactNode;
-  height?: number;
-  bgColor?: string;
-  fontSize?: number;
-  fontWeight?: string;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 };
 
 export default function FittedBlackButton({
   value,
-  isDisabled,
+  isDisabled = false,
   onClick,
-  isLoading,
+  isLoading = false,
   children,
-  height,
-  bgColor,
-  fontSize,
-  fontWeight,
+  style,
+  textStyle,
 }: FittedBlackButtonProps) {
   const animation = useRef(null);
-  if (isDisabled || isLoading)
-    return (
-      <View
-        style={[
-          styles.container,
 
-          { backgroundColor: '#E0E0E0' },
-          height ? { height: height } : null,
-        ]}
-      >
+  const defaultContainerStyle: ViewStyle = {
+    height: 44,
+    backgroundColor: isDisabled || isLoading ? "#E0E0E0" : "#000000",
+  };
+
+  const defaultTextStyle: TextStyle = {
+    color: isDisabled || isLoading ? "#A1A1A1" : "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "400",
+  };
+
+  const containerStyle = [
+    tw`flex flex-row items-center justify-center rounded-lg gap-[10px] px-5`,
+    defaultContainerStyle,
+    style,
+  ];
+
+  const mergedTextStyle = [defaultTextStyle, textStyle];
+
+  if (isDisabled || isLoading) {
+    return (
+      <View style={containerStyle}>
         {isDisabled ? (
           <>
-            <Text
-              style={[
-                styles.text,
-                {
-                  color: '#A1A1A1',
-                  fontWeight: fontWeight ? (fontWeight as TextStyle['fontWeight']) : '400',
-                },
-              ]}
-            >
-              {value}
-            </Text>
+            <Text style={mergedTextStyle}>{value}</Text>
             {children}
           </>
         ) : (
           <LottieView
             autoPlay
             ref={animation}
-            style={{
-              width: 100,
-              height: 100,
-            }}
+            style={tw`w-[100px] h-[100px]`}
             source={loaderAnimation}
           />
         )}
       </View>
     );
+  }
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.9}
-      style={[
-        styles.container,
-        bgColor ? { backgroundColor: `${bgColor}` } : { backgroundColor: '#000' },
-        height ? { height: height } : null,
-      ]}
-      onPress={onClick}
-    >
-      <Text
-        style={[
-          styles.text,
-          {
-            color: '#FFFFFF',
-            fontSize: fontSize ? fontSize : 16,
-            fontWeight: fontWeight ? (fontWeight as TextStyle['fontWeight']) : '400',
-          },
-        ]}
-      >
-        {value}
-      </Text>
+    <TouchableOpacity activeOpacity={0.9} style={containerStyle} onPress={onClick}>
+      <Text style={mergedTextStyle}>{value}</Text>
       {children}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 45,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    alignContent: 'center',
-    borderRadius: 91,
-    gap: 10,
-    paddingHorizontal: 20,
-  },
-  text: {
-    color: colors.white,
-  },
-});

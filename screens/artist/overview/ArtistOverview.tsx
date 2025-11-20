@@ -13,13 +13,10 @@ import { getImageFileView } from 'lib/storage/getImageFileView';
 import { HighlightCard } from './HighlightCard';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getOverviewOrders } from 'services/orders/getOverviewOrders';
-
-export const QK = {
-  highlight: (slice: 'sales' | 'net' | 'revenue' | 'balance') =>
-    ['overview', 'highlight', slice] as const,
-  salesOverview: ['overview', 'salesOverview'] as const,
-  overviewOrders: ['overview', 'orders', 'recent'] as const,
-};
+import { QK } from 'utils/queryKeys';
+import { useAppStore } from 'store/app/appStore';
+import BlurStatusBar from 'components/general/BlurStatusBar';
+import { useScrollY } from 'hooks/useScrollY';
 
 export const RecentOrderContainer = ({
   id,
@@ -124,10 +121,12 @@ export const RecentOrderContainer = ({
 const ArtistOverview = () => {
   const queryClient = useQueryClient();
   const [openSection, setOpenSection] = useState<Record<number, boolean>>({});
+  const { userSession } = useAppStore();
+  const { scrollY, onScroll } = useScrollY();
 
   // Recent orders via query
   const ordersQuery = useQuery({
-    queryKey: QK.overviewOrders,
+    queryKey: QK.overviewOrders(userSession?.id),
     queryFn: async () => {
       const res = await getOverviewOrders();
       return res?.isOk ? res.data : [];
@@ -146,12 +145,12 @@ const ArtistOverview = () => {
 
   const onRefresh = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: QK.highlight('sales') }),
-      queryClient.invalidateQueries({ queryKey: QK.highlight('net') }),
-      queryClient.invalidateQueries({ queryKey: QK.highlight('revenue') }),
-      queryClient.invalidateQueries({ queryKey: QK.highlight('balance') }),
-      queryClient.invalidateQueries({ queryKey: QK.salesOverview }),
-      queryClient.invalidateQueries({ queryKey: QK.overviewOrders }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('sales', userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('net', userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('revenue', userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('balance', userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.salesOverview(userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.overviewOrders(userSession?.id) }),
     ]);
   }, [queryClient]);
 
@@ -161,9 +160,11 @@ const ArtistOverview = () => {
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={isAnyFetching} onRefresh={onRefresh} />}
+        onScroll={onScroll}
       >
         <Header />
 

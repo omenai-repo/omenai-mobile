@@ -5,20 +5,18 @@ import {
   ScrollView,
   StyleSheet,
   TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import React, { useEffect, useRef } from 'react';
-import { colors } from '../../config/colors.config';
-import AuthHeader from '../../components/auth/AuthHeader';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from '../../constants/screenNames.constants';
-import WithModal from 'components/modal/WithModal';
-import { useIndividualAuthRegisterStore } from 'store/auth/register/IndividualAuthRegisterStore';
-import { useGalleryAuthRegisterStore } from 'store/auth/register/GalleryAuthRegisterStore';
-import { useArtistAuthRegisterStore } from 'store/auth/register/ArtistAuthRegisterStore';
-import { StatusBar } from 'expo-status-bar';
-import InputForm from './components/inputForm/InputForm';
+} from "react-native";
+import React, { useEffect, useRef } from "react";
+import { colors } from "../../config/colors.config";
+import AuthHeader from "../../components/auth/AuthHeader";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { screenName } from "../../constants/screenNames.constants";
+import WithModal from "components/modal/WithModal";
+import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
+import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
+import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
+import InputForm from "./components/inputForm/InputForm";
 
 type RootStackParamList = {
   [screenName.welcome]: undefined;
@@ -32,6 +30,12 @@ export default function Register() {
   const { clearState: clearGalleryState, pageIndex: galleryPage } = useGalleryAuthRegisterStore();
   const { clearState: clearArtistState, pageIndex: artistPage } = useArtistAuthRegisterStore();
 
+  const resetAll = () => {
+    clearIndividualState();
+    clearGalleryState();
+    clearArtistState();
+  };
+
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -44,15 +48,13 @@ export default function Register() {
         title="Create an account"
         subTitle="Fill in required details and create an account"
         handleBackClick={() => {
+          resetAll();
           navigation.navigate(screenName.welcome);
-          clearGalleryState();
-          clearArtistState();
-          clearIndividualState();
         }}
       />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
         style={styles.container}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

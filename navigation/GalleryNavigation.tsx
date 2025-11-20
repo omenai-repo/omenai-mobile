@@ -1,35 +1,29 @@
-import { Feather, Ionicons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack';
-import { colors } from 'config/colors.config';
-import { screenName } from 'constants/screenNames.constants';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, useWindowDimensions } from 'react-native';
-import Artwork from 'screens/artwork/Artwork';
-import Billing from 'screens/billing/Billing';
-import Checkout from 'screens/checkout/Checkout';
-import GalleryOrder from 'screens/galleryOrder/GalleryOrder';
-import ChangeGalleryPassword from 'screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword';
-import EditGalleryProfile from 'screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile';
-import GetStartedWithStripe from 'screens/stripeScreens/getStartedWithStripe/GetStartedWithStripe';
-import Subscriptions from 'screens/subscriptions/Subscriptions';
-import UploadArtwork from 'screens/uploadArtwork/UploadArtwork';
-import { getAccountID } from 'services/stripe/getAccountID';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
-import { useNavigation } from '@react-navigation/native';
-import StripePayouts from 'screens/stripeScreens/payouts/StripePayouts';
-import EditArtwork from 'screens/editArtwork/EditArtwork';
-import UploadNewLogo from 'screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo';
-import VerifyTransaction from 'screens/verifyTransaction/VerifyTransaction';
-import ChangeCard from 'screens/subscriptions/changeCard/ChangeCard';
-import ShipmentTrackingScreen from 'screens/artist/orders/ShipmentTrackingScreen';
-import DimentionsDetails from 'screens/artist/orders/DimentionsDetails';
-import EditAddressScreen from 'screens/editProfile/EditAddressScreen';
-import { BottomTabDataGallery } from 'utils/BottomTabData';
-import CustomTabBar from './components/TabButton';
-import NotificationScreen from 'screens/notifications/NotificationScreen';
-import PaymentMethodChangeScreen from 'screens/subscriptions/components/PaymentMethodChangeScreen';
-import BillingVerificationScreen from 'screens/subscriptions/components/BillingVerificationScreen';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import { screenName } from "constants/screenNames.constants";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Artwork from "screens/artwork/Artwork";
+import Billing from "screens/billing/Billing";
+import Checkout from "screens/checkout/Checkout";
+import GalleryOrder from "screens/galleryOrder/GalleryOrder";
+import ChangeGalleryPassword from "screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
+import EditGalleryProfile from "screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile";
+import GetStartedWithStripe from "screens/stripeScreens/getStartedWithStripe/GetStartedWithStripe";
+import Subscriptions from "screens/subscriptions/Subscriptions";
+import UploadArtwork from "screens/uploadArtwork/UploadArtwork";
+import { getAccountID } from "services/stripe/getAccountID";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
+import UploadNewLogo from "screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo";
+import ShipmentTrackingScreen from "screens/artist/orders/ShipmentTrackingScreen";
+import DimensionsDetails from "screens/artist/orders/DimensionsDetails";
+import EditAddressScreen from "screens/editProfile/EditAddressScreen";
+import { BottomTabDataGallery } from "utils/BottomTabData";
+import CustomTabBar from "./components/TabButton";
+import NotificationScreen from "screens/notifications/NotificationScreen";
+import PaymentMethodChangeScreen from "screens/subscriptions/components/PaymentMethodChangeScreen";
+import BillingVerificationScreen from "screens/subscriptions/components/BillingVerificationScreen";
+import EditArtwork from "screens/editArtwork/EditArtwork";
+import DeleteAccountScreen from "screens/deleteAccount/DeleteAccountScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -42,9 +36,6 @@ type accountStateType = {
 };
 
 export default function GalleryNavigation() {
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  const prevRouteRef = useRef<string | null>(null);
-
   const [account, setAccount] = useState<accountStateType>({
     connected_account_id: null,
     gallery_verified: false,
@@ -55,10 +46,10 @@ export default function GalleryNavigation() {
   }, []);
 
   async function handleGetAccountID() {
-    const userSession = await utils_getAsyncData('userSession');
+    const userSession = await utils_getAsyncData("userSession");
     if (!userSession.value) return;
 
-    const res = await getAccountID(JSON.parse(userSession.value).email);
+    const res = await getAccountID(JSON.parse(userSession.value).id);
     if (!res?.data) return;
 
     setAccount((prev) => {
@@ -79,7 +70,7 @@ export default function GalleryNavigation() {
 
   const tabs = useMemo(
     () => BottomTabDataGallery(account),
-    [account.connected_account_id, account.gallery_verified],
+    [account.connected_account_id, account.gallery_verified]
   );
 
   const GalleryTabNavigationScreens = useCallback(() => {
@@ -112,26 +103,25 @@ export default function GalleryNavigation() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Gallery" component={GalleryTabNavigationScreens} options={hideHeader} />
       <Stack.Screen name={screenName.artwork} component={Artwork} />
-      <Stack.Screen name={'NotificationScreen'} component={NotificationScreen} />
+      <Stack.Screen name={"NotificationScreen"} component={NotificationScreen} />
       <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
       <Stack.Screen name={screenName.gallery.order} component={GalleryOrder} />
       <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
-      <Stack.Screen name="DimentionsDetails" component={DimentionsDetails} />
+      <Stack.Screen name="DimensionsDetails" component={DimensionsDetails} />
       <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
-      <Stack.Screen name={'EditAddressScreen'} component={EditAddressScreen} />
+      <Stack.Screen name={"EditAddressScreen"} component={EditAddressScreen} />
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
       <Stack.Screen name={screenName.gallery.subscriptions} component={Subscriptions} />
       <Stack.Screen name={screenName.gallery.billing} component={Billing} />
-      <Stack.Screen name={'PaymentMethodChangeScreen'} component={PaymentMethodChangeScreen} />
+      <Stack.Screen name={"PaymentMethodChangeScreen"} component={PaymentMethodChangeScreen} />
       <Stack.Screen name={screenName.checkout} component={Checkout} />
-      <Stack.Screen name={'BillingVerificationScreen'} component={BillingVerificationScreen} />
+      <Stack.Screen name={"BillingVerificationScreen"} component={BillingVerificationScreen} />
       <Stack.Screen name={screenName.connectStripe} component={GetStartedWithStripe} />
       <Stack.Screen name={screenName.gallery.editArtwork} component={EditArtwork} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+      <Stack.Screen name={screenName.deleteAccount} component={DeleteAccountScreen} />
+      <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name={screenName.gallery.uploadNewLogo} component={UploadNewLogo} />
       </Stack.Group>
-      <Stack.Screen name={screenName.gallery.changeBillingCard} component={ChangeCard} />
-      <Stack.Screen name={screenName.verifyTransaction} component={VerifyTransaction} />
     </Stack.Navigator>
   );
 }

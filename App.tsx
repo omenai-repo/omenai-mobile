@@ -1,28 +1,32 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useEffect, useState, useCallback } from 'react';
-import { useAppStore } from 'store/app/appStore';
-import { utils_appInit } from 'utils/utils_appInit';
-import { useFonts } from 'expo-font';
-import IndividualNavigation from 'navigation/IndividualNavigation';
-import AuthNavigation from 'navigation/AuthNavigation';
-import GalleryNavigation from 'navigation/GalleryNavigation';
-import * as Linking from 'expo-linking';
-import { screenName } from 'constants/screenNames.constants';
-import { StripeProvider } from '@stripe/stripe-react-native';
-import { CopilotProvider } from 'react-native-copilot';
-import * as SplashScreen from 'expo-splash-screen';
-import ArtistNavigation from 'navigation/ArtistNavigation';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { NavigationContainer } from "@react-navigation/native";
+import { Provider as RollbarProvider } from "@rollbar/react";
+import { rollbar } from "config/rollbar.config";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useEffect, useState, useCallback } from "react";
+import { useAppStore } from "store/app/appStore";
+import { utils_appInit } from "utils/utils_appInit";
+import { useFonts } from "expo-font";
+import IndividualNavigation from "navigation/IndividualNavigation";
+import AuthNavigation from "navigation/AuthNavigation";
+import GalleryNavigation from "navigation/GalleryNavigation";
+import * as Linking from "expo-linking";
+import { screenName } from "constants/screenNames.constants";
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { CopilotProvider } from "react-native-copilot";
+import * as SplashScreen from "expo-splash-screen";
+import ArtistNavigation from "navigation/ArtistNavigation";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { focusManager, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { AppState, Platform } from 'react-native';
-import { configureNotificationHandling } from 'notifications/NotificationService';
-import { useNotifications } from 'hooks/useNotifications';
-import { registerForPushToken } from 'notifications/registerForPushToken';
-import { navigationRef } from 'navigation/RootNavigation';
-import { useNotificationHandler } from 'hooks/useNotificationHandler';
-import { StatusBar } from 'expo-status-bar';
+import { AppState, Platform } from "react-native";
+import { configureNotificationHandling } from "notifications/NotificationService";
+import { useNotifications } from "hooks/useNotifications";
+import { registerForPushToken } from "notifications/registerForPushToken";
+import { navigationRef } from "navigation/RootNavigation";
+import { useNotificationHandler } from "hooks/useNotificationHandler";
+import { StatusBar } from "expo-status-bar";
+import { Asset } from "expo-asset";
+import { primaryGridImages, secondaryGridImages } from "constants/images.constants";
 
 if (!Platform.constants) {
   Platform.constants = {
@@ -59,12 +63,12 @@ export default function App() {
     initPush();
   }, []);
 
-  const prefix = Linking.createURL('/');
+  const prefix = Linking.createURL("/");
 
   const config = {
     screens: {
-      CancleOrderPayment: 'CancleOrderPayment',
-      SuccessOrderPayment: 'SuccessOrderPayment',
+      CancleOrderPayment: "CancleOrderPayment",
+      SuccessOrderPayment: "SuccessOrderPayment",
     },
   };
 
@@ -74,7 +78,7 @@ export default function App() {
   };
 
   const [fontsLoaded] = useFonts({
-    nunitoSans: require('./assets/fonts/nunito-sans.ttf'),
+    nunitoSans: require("./assets/fonts/nunito-sans.ttf"),
   });
 
   //add logic for conditional routing
@@ -83,8 +87,14 @@ export default function App() {
   }, [isLoggedIn]);
 
   useEffect(() => {
+    const preloadImage = (img: any) => Asset.fromModule(img).downloadAsync();
+
     async function prepare() {
       try {
+        // Preload grid images for instant welcome screen rendering
+        const allImages = [...primaryGridImages, ...secondaryGridImages];
+        await Promise.all(allImages.map(preloadImage));
+
         // Artificially delay for two seconds to simulate a slow loading
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {
@@ -114,19 +124,17 @@ export default function App() {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 3 * 60 * 1000, // 3 min: no refetch on re-focus within this window
-            gcTime: 10 * 60 * 1000, // 10 min: keep cached in memory
             refetchOnMount: false,
             refetchOnReconnect: false,
             refetchOnWindowFocus: false, // RN: safe to disable
           },
         },
-      }),
+      })
   );
 
   useEffect(() => {
-    const unsubscribe = AppState.addEventListener('change', (state) => {
-      focusManager.setFocused(state === 'active');
+    const unsubscribe = AppState.addEventListener("change", (state) => {
+      focusManager.setFocused(state === "active");
     });
     return () => unsubscribe.remove();
   }, []);
@@ -136,27 +144,29 @@ export default function App() {
   }
 
   return (
-    <CopilotProvider>
-      <StatusBar style="auto" />
-      <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <QueryClientProvider client={queryClient}>
-          <BottomSheetModalProvider>
-            <StripeProvider
-              publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
-              urlScheme="omenaimobile"
-            >
-              <NavigationContainer ref={navigationRef} linking={linking}>
-                {/* AUTH SCREENS */}
-                {!isLoggedIn && <AuthNavigation />}
-                {/* App screens */}
-                {isLoggedIn && userType === 'gallery' && <GalleryNavigation />}
-                {isLoggedIn && userType === 'user' && <IndividualNavigation />}
-                {isLoggedIn && userType === 'artist' && <ArtistNavigation />}
-              </NavigationContainer>
-            </StripeProvider>
-          </BottomSheetModalProvider>
-        </QueryClientProvider>
-      </GestureHandlerRootView>
-    </CopilotProvider>
+    <RollbarProvider instance={rollbar}>
+      <CopilotProvider>
+        <StatusBar style="auto" />
+        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+          <QueryClientProvider client={queryClient}>
+            <BottomSheetModalProvider>
+              <StripeProvider
+                publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
+                urlScheme="omenaimobile"
+              >
+                <NavigationContainer ref={navigationRef} linking={linking}>
+                  {/* AUTH SCREENS */}
+                  {!isLoggedIn && <AuthNavigation />}
+                  {/* App screens */}
+                  {isLoggedIn && userType === "gallery" && <GalleryNavigation />}
+                  {isLoggedIn && userType === "user" && <IndividualNavigation />}
+                  {isLoggedIn && userType === "artist" && <ArtistNavigation />}
+                </NavigationContainer>
+              </StripeProvider>
+            </BottomSheetModalProvider>
+          </QueryClientProvider>
+        </GestureHandlerRootView>
+      </CopilotProvider>
+    </RollbarProvider>
   );
 }

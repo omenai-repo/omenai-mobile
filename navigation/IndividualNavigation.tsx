@@ -8,15 +8,10 @@ import PurchaseArtwork from 'screens/purchase/PurchaseArtwork';
 import { colors } from 'config/colors.config';
 import Artwork from 'screens/artwork/Artwork';
 import SearchResults from 'screens/searchResults/SearchResults';
-import Payment from 'screens/payment/Payment';
 import Filter from 'components/filter/Filter';
-import EditorialsListing from 'screens/editorialsListing/EditorialsListing';
-import CancleOrderPayment from 'screens/payment/components/cancel/CancleOrderPayment';
-import SuccessOrderPayment from 'screens/payment/components/success/SuccessOrderPayment';
 import EditProfile from 'screens/editProfile/EditProfile';
 import ArtworksMedium from 'screens/artworksMedium/ArtworksMedium';
 import ArtworkMediumFilterModal from 'screens/artworksMedium/components/filter/ArtworkMediumFilterModal';
-import Editorial from 'screens/editorial/Editorial';
 import ArtworkCategoriesFilterModal from 'screens/artworkCategories/components/filter/ArtworkCategoriesFilterModal';
 import Collections from 'screens/collections/Collections';
 import ChangeGalleryPassword from 'screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword';
@@ -29,6 +24,7 @@ import DetailsScreen from 'screens/home/components/DetailScreen';
 import ArticleScreen from 'screens/home/components/editorials/ArticleScreen';
 import AllEditorialsScreen from 'screens/home/components/editorials/AllEditorialsScreen';
 import NotificationScreen from 'screens/notifications/NotificationScreen';
+import DeleteAccountScreen from 'screens/deleteAccount/DeleteAccountScreen';
 
 type CustomTabBarIconProps = {
   name: any;
@@ -103,21 +99,17 @@ export default function IndividualNavigation() {
       <Stack.Screen name={screenName.searchResults} component={SearchResults} />
       <Stack.Screen name={screenName.purchaseArtwork} component={PurchaseArtwork} />
       <Stack.Screen name={screenName.savedArtworks} component={SavedArtworks} />
-      <Stack.Screen name={screenName.payment} component={Payment} />
       <Stack.Screen name={'NotificationScreen'} component={NotificationScreen} />
-      <Stack.Screen name={screenName.editorialsListing} component={EditorialsListing} />
       <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
-      <Stack.Screen name={screenName.cancleOrderPayment} component={CancleOrderPayment} />
-      <Stack.Screen name={screenName.successOrderPayment} component={SuccessOrderPayment} />
       <Stack.Screen name={screenName.editProfile} component={EditProfile} />
       <Stack.Screen name={'EditAddressScreen'} component={EditAddressScreen} />
       <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
       <Stack.Screen name={screenName.artworksMedium} component={ArtworksMedium} />
-      <Stack.Screen name={screenName.editorial} component={Editorial} />
       <Stack.Screen name={'ArticleScreen'} component={ArticleScreen} />
       <Stack.Screen name={'AllEditorialsScreen'} component={AllEditorialsScreen} />
       <Stack.Screen name={screenName.collections} component={Collections} />
       <Stack.Screen name={'DetailsScreen'} component={DetailsScreen} />
+      <Stack.Screen name={screenName.deleteAccount} component={DeleteAccountScreen} />
     </Stack.Navigator>
   );
 }
