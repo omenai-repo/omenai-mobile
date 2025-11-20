@@ -1,22 +1,46 @@
-import { StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import React, { useState } from 'react';
-import AuthHeader from '../../components/auth/AuthHeader';
-import AuthTabs from '../../components/auth/AuthTabs';
-import Individual from './components/individual/Individual';
-import Gallery from './components/gallery/Gallery';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { colors } from '../../config/colors.config';
-import { screenName } from '../../constants/screenNames.constants';
-import WithModal from 'components/modal/WithModal';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import { StatusBar } from 'expo-status-bar';
-import Artist from './components/artist/Artist';
+import { StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import React, { useState } from "react";
+import AuthHeader from "../../components/auth/AuthHeader";
+import AuthTabs from "../../components/auth/AuthTabs";
+import Individual from "./components/individual/Individual";
+import Gallery from "./components/gallery/Gallery";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { colors } from "../../config/colors.config";
+import { screenName } from "../../constants/screenNames.constants";
+import WithModal from "components/modal/WithModal";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import { StatusBar } from "expo-status-bar";
+import Artist from "./components/artist/Artist";
+import { useIndividualAuthLoginStore } from "store/auth/login/IndividualAuthLoginStore";
+import { useArtistAuthLoginStore } from "store/auth/login/ArtistAuthLoginStore";
+import { useGalleryAuthLoginStore } from "store/auth/login/GalleryAuthLoginStore";
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const clearIndividual = useIndividualAuthLoginStore((s) => s.clearInputs);
+  const clearArtist = useArtistAuthLoginStore((s) => s.clearInputs);
+  const clearGallery = useGalleryAuthLoginStore((s) => s.clearInputs);
+
+  // Reset all forms
+  const resetAll = () => {
+    clearIndividual();
+    clearArtist();
+    clearGallery();
+  };
+
+  // Reset on tab switch
+  const handleTabSwitch = (e: number) => {
+    resetAll();
+    setSelectedIndex(e);
+  };
+
+  // Reset on back
+  const handleBack = () => {
+    resetAll();
+    navigation.navigate(screenName.welcome);
+  };
 
   return (
     <WithModal>
@@ -24,17 +48,17 @@ export default function Login() {
       <AuthHeader
         title="Welcome Back"
         subTitle="Access your account so you can start purchasing artwork"
-        handleBackClick={() => navigation.navigate(screenName.welcome)}
+        handleBackClick={handleBack}
       />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
         <ScrollWrapper style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}>
           <AuthTabs
-            tabs={['Collector', 'Artist', 'Gallery']}
+            tabs={["Collector", "Artist", "Gallery"]}
             stateIndex={selectedIndex}
-            handleSelect={(e) => setSelectedIndex(e)}
+            handleSelect={handleTabSwitch}
           />
           {/* route depending on state */}
           {selectedIndex === 0 && <Individual />}

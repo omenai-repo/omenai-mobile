@@ -1,10 +1,11 @@
-import { View } from \"react-native\";
-import React from \"react\";
-import { useGalleryAuthRegisterStore } from \"../../../../store/auth/register/GalleryAuthRegisterStore\";
-import NextButton from \"../../../../components/buttons/NextButton\";
-import Input from \"../../../../components/inputs/Input\";
-import PasswordInput from \"../../../../components/inputs/PasswordInput\";
-import { useFormValidation } from \"hooks/useFormValidation\";
+import { View } from "react-native";
+import React from "react";
+import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
+import NextButton from "../../../../components/buttons/NextButton";
+import Input from "../../../../components/inputs/Input";
+import PasswordInput from "../../../../components/inputs/PasswordInput";
+import { useFormValidation } from "hooks/useFormValidation";
+import tw from "twrnc";
 
 export default function AccountDetailsInput() {
   const {
@@ -17,9 +18,8 @@ export default function AccountDetailsInput() {
     setConfirmPassword,
   } = useGalleryAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } = useFormValidation<
-    Partial<GallerySignupData>
-  >();
+  const { formErrors, handleValidationChecks, checkIsFormValid } =
+    useFormValidation<Partial<GallerySignupData>>();
 
   const checkIsDisabled = () => {
     return !checkIsFormValid({
@@ -69,18 +69,14 @@ export default function AccountDetailsInput() {
           label="Confirm password"
           onInputChange={(text) => {
             setConfirmPassword(text);
-            handleValidationChecks(
-              "confirmPassword",
-              galleryRegisterData.password,
-              text
-            );
+            handleValidationChecks("confirmPassword", galleryRegisterData.password, text);
           }}
           placeHolder="Enter password again"
           value={galleryRegisterData.confirmPassword}
           errorMessage={formErrors.confirmPassword}
         />
       </View>
-      <View style={styles.buttonsContainer}>
+      <View style={tw`flex-row items-center gap-2.5`}>
         {/* <BackFormButton handleBackClick={() => console.log('')} /> */}
         <View style={{ flex: 1 }} />
         <NextButton
@@ -91,11 +87,3 @@ export default function AccountDetailsInput() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  buttonsContainer: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-  },
-});
