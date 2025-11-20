@@ -10,6 +10,7 @@ export type ProfileMenuItem = {
   handlePress: () => void;
   svgIcon?: string;
   Icon?: React.ReactNode;
+  variant?: "default" | "danger";
 };
 
 type ProfileMenuItemsProps = {
@@ -31,6 +32,7 @@ export default function ProfileMenuItems({
             handlePress={item.handlePress}
             svgIcon={item.svgIcon}
             Icon={item.Icon}
+            variant={item.variant}
           />
           {index < items.length - 1 && <View style={tw`h-px mx-5 bg-[${colors.grey50}]`} />}
         </React.Fragment>
