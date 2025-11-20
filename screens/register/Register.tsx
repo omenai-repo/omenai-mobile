@@ -30,6 +30,12 @@ export default function Register() {
   const { clearState: clearGalleryState, pageIndex: galleryPage } = useGalleryAuthRegisterStore();
   const { clearState: clearArtistState, pageIndex: artistPage } = useArtistAuthRegisterStore();
 
+  const resetAll = () => {
+    clearIndividualState();
+    clearGalleryState();
+    clearArtistState();
+  };
+
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -42,10 +48,8 @@ export default function Register() {
         title="Create an account"
         subTitle="Fill in required details and create an account"
         handleBackClick={() => {
+          resetAll();
           navigation.navigate(screenName.welcome);
-          clearGalleryState();
-          clearArtistState();
-          clearIndividualState();
         }}
       />
       <KeyboardAvoidingView
