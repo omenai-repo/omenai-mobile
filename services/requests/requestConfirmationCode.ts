@@ -1,5 +1,6 @@
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { rollbar } from "../../config/rollbar.config";
 
 export async function requestPasswordConfirmationCode(route: string) {
   let id = "";
@@ -26,13 +27,24 @@ export async function requestPasswordConfirmationCode(route: string) {
       }
     ).then(async (res) => {
       const result = await res.json();
-      console.log("result", res);
-
+      // Report 500+ errors to Rollbar
+      if (res.status >= 500) {
+        rollbar.error("RequestPasswordConfirmationCode API 500+ error", {
+          status: res.status,
+          url: `${apiUrl}/api/requests/${route}/requestPasswordConfirmationCode`,
+          id,
+          response: result,
+        });
+      }
       return { isOk: res.ok, message: result.message };
     });
-
     return response;
   } catch (error) {
+    rollbar.error("RequestPasswordConfirmationCode API exception", {
+      error,
+      url: `${apiUrl}/api/requests/${route}/requestPasswordConfirmationCode`,
+      id,
+    });
     console.log("Error requesting confirmation code: ", error);
     return {
       isOk: false,
