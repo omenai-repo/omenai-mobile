@@ -24,6 +24,7 @@ import PaymentMethodChangeScreen from "screens/subscriptions/components/PaymentM
 import BillingVerificationScreen from "screens/subscriptions/components/BillingVerificationScreen";
 import EditArtwork from "screens/editArtwork/EditArtwork";
 import DeleteAccountScreen from "screens/deleteAccount/DeleteAccountScreen";
+import { wrapWithHighRisk, wrapWithLowRisk } from "utils/wrapWithProvider";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -101,26 +102,63 @@ export default function GalleryNavigation() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Gallery" component={GalleryTabNavigationScreens} options={hideHeader} />
-      <Stack.Screen name={screenName.artwork} component={Artwork} />
-      <Stack.Screen name={"NotificationScreen"} component={NotificationScreen} />
-      <Stack.Screen name={screenName.gallery.uploadArtwork} component={UploadArtwork} />
-      <Stack.Screen name={screenName.gallery.order} component={GalleryOrder} />
-      <Stack.Screen name="ShipmentTrackingScreen" component={ShipmentTrackingScreen} />
-      <Stack.Screen name="DimensionsDetails" component={DimensionsDetails} />
-      <Stack.Screen name={screenName.gallery.editProfile} component={EditGalleryProfile} />
-      <Stack.Screen name={"EditAddressScreen"} component={EditAddressScreen} />
-      <Stack.Screen name={screenName.gallery.changePassword} component={ChangeGalleryPassword} />
-      <Stack.Screen name={screenName.gallery.subscriptions} component={Subscriptions} />
-      <Stack.Screen name={screenName.gallery.billing} component={Billing} />
-      <Stack.Screen name={"PaymentMethodChangeScreen"} component={PaymentMethodChangeScreen} />
-      <Stack.Screen name={screenName.checkout} component={Checkout} />
-      <Stack.Screen name={"BillingVerificationScreen"} component={BillingVerificationScreen} />
-      <Stack.Screen name={screenName.connectStripe} component={GetStartedWithStripe} />
-      <Stack.Screen name={screenName.gallery.editArtwork} component={EditArtwork} />
-      <Stack.Screen name={screenName.deleteAccount} component={DeleteAccountScreen} />
+      <Stack.Screen
+        name="Gallery"
+        component={wrapWithHighRisk(GalleryTabNavigationScreens)}
+        options={hideHeader}
+      />
+      <Stack.Screen
+        name="ShipmentTrackingScreen"
+        component={wrapWithLowRisk(ShipmentTrackingScreen)}
+      />
+      <Stack.Screen name={screenName.artwork} component={wrapWithHighRisk(Artwork)} />
+      <Stack.Screen name={"NotificationScreen"} component={wrapWithHighRisk(NotificationScreen)} />
+      <Stack.Screen
+        name={screenName.gallery.uploadArtwork}
+        component={wrapWithHighRisk(UploadArtwork)}
+      />
+      <Stack.Screen name={screenName.gallery.order} component={wrapWithHighRisk(GalleryOrder)} />
+      <Stack.Screen name="DimensionsDetails" component={wrapWithHighRisk(DimensionsDetails)} />
+      <Stack.Screen
+        name={screenName.gallery.editProfile}
+        component={wrapWithHighRisk(EditGalleryProfile)}
+      />
+      <Stack.Screen name={"EditAddressScreen"} component={wrapWithHighRisk(EditAddressScreen)} />
+      <Stack.Screen
+        name={screenName.gallery.changePassword}
+        component={wrapWithHighRisk(ChangeGalleryPassword)}
+      />
+      <Stack.Screen
+        name={screenName.gallery.subscriptions}
+        component={wrapWithHighRisk(Subscriptions)}
+      />
+      <Stack.Screen name={screenName.gallery.billing} component={wrapWithHighRisk(Billing)} />
+      <Stack.Screen
+        name={"PaymentMethodChangeScreen"}
+        component={wrapWithHighRisk(PaymentMethodChangeScreen)}
+      />
+      <Stack.Screen name={screenName.checkout} component={wrapWithHighRisk(Checkout)} />
+      <Stack.Screen
+        name={"BillingVerificationScreen"}
+        component={wrapWithHighRisk(BillingVerificationScreen)}
+      />
+      <Stack.Screen
+        name={screenName.connectStripe}
+        component={wrapWithHighRisk(GetStartedWithStripe)}
+      />
+      <Stack.Screen
+        name={screenName.gallery.editArtwork}
+        component={wrapWithHighRisk(EditArtwork)}
+      />
+      <Stack.Screen
+        name={screenName.deleteAccount}
+        component={wrapWithHighRisk(DeleteAccountScreen)}
+      />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name={screenName.gallery.uploadNewLogo} component={UploadNewLogo} />
+        <Stack.Screen
+          name={screenName.gallery.uploadNewLogo}
+          component={wrapWithHighRisk(UploadNewLogo)}
+        />
       </Stack.Group>
     </Stack.Navigator>
   );

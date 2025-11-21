@@ -1,12 +1,5 @@
 import React, { useState, useRef } from "react";
-import {
-  View,
-  KeyboardAvoidingView,
-  Platform,
-  Animated,
-  Linking,
-  Text,
-} from "react-native";
+import { View, KeyboardAvoidingView, Platform, Animated, Linking, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import tw from "twrnc";
@@ -70,10 +63,7 @@ export default function DeleteAccountScreen() {
     try {
       const payload = {
         id: userSession.id,
-        reason:
-          selectedReason.toLowerCase() === "other"
-            ? otherMessage
-            : selectedReason,
+        reason: selectedReason.toLowerCase() === "other" ? otherMessage : selectedReason,
       };
 
       const response: DeleteAccountResponse = await deleteAccount(
@@ -112,8 +102,7 @@ export default function DeleteAccountScreen() {
       });
     } catch (err: any) {
       const errorMessage =
-        err?.message ||
-        "Network error encountered, please try again or contact support";
+        err?.message || "Network error encountered, please try again or contact support";
       setError(errorMessage);
       updateModal({
         message: errorMessage,
@@ -145,33 +134,23 @@ export default function DeleteAccountScreen() {
           style={tw`flex-1`}
           contentContainerStyle={[tw`pb-4`]}
           keyboardShouldPersistTaps="handled"
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            {
-              useNativeDriver: false,
-            }
-          )}
+          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+            useNativeDriver: false,
+          })}
         >
           <View style={[tw`px-5`, { paddingTop: insets.top + 24 }]}>
             <DeleteAccountHeader />
-            <DeletionProcessSteps
-              onPrivacyPolicyPress={handlePrivacyPolicyPress}
-            />
+            <DeletionProcessSteps onPrivacyPolicyPress={handlePrivacyPolicyPress} />
             <DeletionReasonSection
               selectedReason={selectedReason}
               onReasonSelect={handleReasonSelect}
             />
             {selectedReason === "other" && (
-              <OtherMessageInput
-                message={otherMessage}
-                onMessageChange={setOtherMessage}
-              />
+              <OtherMessageInput message={otherMessage} onMessageChange={setOtherMessage} />
             )}
             {error && (
               <View style={tw`px-5 mb-4`}>
-                <View
-                  style={tw`p-4 bg-red-50 rounded-lg border border-red-200`}
-                >
+                <View style={tw`p-4 bg-red-50 rounded-lg border border-red-200`}>
                   <Text style={tw`text-red-600 text-sm`}>{error}</Text>
                 </View>
               </View>

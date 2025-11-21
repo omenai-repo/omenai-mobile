@@ -24,6 +24,8 @@ import { getAccountID } from "services/stripe/getAccountID";
 import { checkIsStripeOnboarded } from "services/stripe/checkIsStripeOnboarded";
 import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscriptionData";
 import NoSubscriptionBlock from "screens/galleryArtworksListing/components/NoSubscriptionBlock";
+import { useHighRiskFeatureFlag } from "hooks/useFeatureFlag";
+import UploadBlocker from "components/blockers/upload/UploadBlocker";
 
 export default function UploadArtwork() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -220,11 +222,27 @@ export default function UploadArtwork() {
 
   const shouldRenderUpload = userType === "gallery" ? canUpload : !showLockScreen;
 
+  const { value: isArtworkPriceCalculationEnabled } = useHighRiskFeatureFlag(
+    "artwork_price_calculation_enabled"
+  );
+  const { value: isArtworkUploadEnabled } = useHighRiskFeatureFlag("artwork_upload_enabled");
+
+  const isUploadDisabled = !isArtworkPriceCalculationEnabled || !isArtworkUploadEnabled;
+
   return (
     <WithModal>
-      {shouldShowLock && <LockScreen name={userSession?.name} />}
-      {userType === "gallery" && shouldShowSubscriptionBlock && <NoSubscriptionBlock />}
-      {shouldRenderUpload && renderUploadContent()}
+      {isUploadDisabled && (
+        <UploadBlocker
+          entity={userType as "artist" | "gallery"}
+          message="We are currently working on some fixes and curating your upload experience."
+          expiryTimestamp="2025-11-25T18:00:00Z"
+        />
+      )}
+      {!isUploadDisabled && shouldShowLock && <LockScreen name={userSession?.name} />}
+      {!isUploadDisabled && userType === "gallery" && shouldShowSubscriptionBlock && (
+        <NoSubscriptionBlock />
+      )}
+      {!isUploadDisabled && shouldRenderUpload && renderUploadContent()}
     </WithModal>
   );
 }
