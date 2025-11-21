@@ -15,6 +15,7 @@ import Artist from "./components/artist/Artist";
 import { useIndividualAuthLoginStore } from "store/auth/login/IndividualAuthLoginStore";
 import { useArtistAuthLoginStore } from "store/auth/login/ArtistAuthLoginStore";
 import { useGalleryAuthLoginStore } from "store/auth/login/GalleryAuthLoginStore";
+import { rollbar } from "config/rollbar.config";
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -41,6 +42,8 @@ export default function Login() {
     resetAll();
     navigation.navigate(screenName.welcome);
   };
+
+  rollbar.error("Login Screen Rendered");
 
   return (
     <WithModal>

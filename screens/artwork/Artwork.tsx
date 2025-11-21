@@ -187,7 +187,9 @@ export default function Artwork() {
         <LongBlackButton
           value="Purchase artwork"
           isDisabled={false}
-          onClick={() => navigation.navigate(screenName.purchaseArtwork, { title: artwork.title })}
+          onClick={() =>
+            navigation.navigate(screenName.purchaseArtwork, { art_id: artwork.art_id })
+          }
         />
       );
     }

@@ -2739,6 +2739,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RollbarCrash
+  - RollbarNotifier (~> 3.3.3)
   - RollbarReactNative (from `../node_modules/rollbar-react-native`)
   - RollbarReport
   - "stripe-react-native (from `../node_modules/@stripe/stripe-react-native`)"
@@ -3138,6 +3139,6 @@ SPEC CHECKSUMS:
   StripeUICore: 186f245526e86ab02578abcc6bb6d27cc34084c6
   Yoga: bfcce202dba74007f8974ee9c5f903a9a286c445
 
-PODFILE CHECKSUM: 95b728df72751cb18e5a21688bee311392c49b61
+PODFILE CHECKSUM: 680a4a76ca9b244373c1cd919cafbfbe34276795
 
 COCOAPODS: 1.16.2

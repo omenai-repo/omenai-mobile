@@ -988,6 +988,11 @@
     human-id "^4.1.1"
     prettier "^2.7.1"
 
+"@configcat/sdk@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@configcat/sdk/-/sdk-1.0.2.tgz#6254bbd3f500e455017dc317135f9cea5b95fe02"
+  integrity sha512-mgPK9wT4XOLzNAynxu1TFqtaxRZxZdqj4kRGg9d2cptgVydsM3biQF2ceBJFoFJqJlqc8dwZ9k1XKsbGWif43g==
+
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
   resolved "https://registry.yarnpkg.com/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
@@ -3231,6 +3236,14 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
+configcat-react@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/configcat-react/-/configcat-react-5.0.3.tgz#63c73fb8f32ad7fa3e23a5603abf8cd9a83f9db1"
+  integrity sha512-KWMjflA+fq9P3vkued89MH+OvUm4ohP+ew2OCv1ZgpGzHe/iot949qQZmGD9hVjPe/OYPO5+PQzQXhIRKBTiIA==
+  dependencies:
+    "@configcat/sdk" "^1.0.2"
+    tslib "^2.4.1"
+
 connect@^3.6.5, connect@^3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/connect/-/connect-3.7.0.tgz#5d49348910caa5e07a01800b030d0c35f20484f8"
@@ -4378,6 +4391,14 @@ flow-enums-runtime@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/flow-enums-runtime/-/flow-enums-runtime-0.0.6.tgz#5bb0cd1b0a3e471330f4d109039b7eba5cb3e787"
   integrity sha512-3PYnM29RFXwvAN6Pc/scUfkI7RwhQ/xqyLUyPNlXUp9S40zI8nup9tUSrTLSVnWGBN38FNiGWbwZOB6uR4OGdw==
+
+flutterwave-react-native@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/flutterwave-react-native/-/flutterwave-react-native-1.0.4.tgz#2a95cd78aa4150698c9ac8207a4ace1d8af58bf3"
+  integrity sha512-UdTbzliCigqSreUiyFfcxaq8+3TK09rEpxM5PxcFrY2zJ1KYcUFsX01JxhEhYX0iLlqKJYiWMAtv2PNDvTGFMQ==
+  dependencies:
+    prop-types "^15.6.2"
+    react-native-webview ">=6.0.2"
 
 fontfaceobserver@^2.1.0:
   version "2.3.0"
@@ -6882,7 +6903,7 @@ react-native-virtualized-view@^1.0.0:
   resolved "https://registry.yarnpkg.com/react-native-virtualized-view/-/react-native-virtualized-view-1.0.0.tgz#fd2129f1309d1ff4b9e869d5050e803640ca64c5"
   integrity sha512-7YyFMMkNzJ787/giGkKcm0JEx0IcLEE/XHREGz2I4K1RISQGFjEDe6iWsapOnHSR/e1vhebZJ8VmqhSpg5YPzg==
 
-react-native-webview@13.13.0:
+react-native-webview@13.13.0, react-native-webview@>=6.0.2:
   version "13.13.0"
   resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-13.13.0.tgz#2774db6a784fed0fc3b67ea4d4b392aa8e16d601"
   integrity sha512-lSbFuEZ0uGN/yCIt4+nulbH7WuZlClGlqJ16E6KVl4hOZMGCPoikbNReNs5OsVb6LIGYeQnYxKwPkMwYmJpBqg==
@@ -7862,7 +7883,7 @@ tsconfig-paths@^3.15.0:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
-tslib@2.8.1, tslib@^2.1.0, tslib@^2.3.1, tslib@^2.4.0:
+tslib@2.8.1, tslib@^2.1.0, tslib@^2.3.1, tslib@^2.4.0, tslib@^2.4.1:
   version "2.8.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.1.tgz#612efe4ed235d567e8aba5f2a5fab70280ade83f"
   integrity sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
