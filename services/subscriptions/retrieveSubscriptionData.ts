@@ -1,5 +1,4 @@
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
-import { rollbar } from "../../config/rollbar.config";
 
 export async function retrieveSubscriptionData(gallery_id: string) {
   try {
@@ -15,18 +14,8 @@ export async function retrieveSubscriptionData(gallery_id: string) {
     });
 
     const result = await res.json();
-    // Report 500+ errors to Rollbar
-    if (res.status >= 500) {
-      rollbar.error("RetrieveSubscriptionData API 500+ error", {
-        status: res.status,
-        url,
-        gallery_id,
-        response: result,
-      });
-    }
     return { isOk: res.ok, message: result.message, data: result.data, plan: result.plan };
   } catch (error) {
-    rollbar.error("RetrieveSubscriptionData API exception", { error, gallery_id });
     console.log(error);
   }
 }

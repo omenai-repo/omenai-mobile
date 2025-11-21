@@ -1,6 +1,4 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { Provider as RollbarProvider } from "@rollbar/react";
-import { rollbar } from "config/rollbar.config";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect, useState, useCallback } from "react";
 import { useAppStore } from "store/app/appStore";
@@ -77,9 +75,9 @@ export default function App() {
     config,
   };
 
-  const [fontsLoaded] = useFonts({
-    nunitoSans: require("./assets/fonts/nunito-sans.ttf"),
-  });
+  // const [fontsLoaded] = useFonts({
+  //   nunitoSans: require("./assets/fonts/nunito-sans.ttf"),
+  // });
 
   //add logic for conditional routing
   useEffect(() => {
@@ -144,29 +142,27 @@ export default function App() {
   }
 
   return (
-    <RollbarProvider instance={rollbar}>
-      <CopilotProvider>
-        <StatusBar style="auto" />
-        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-          <QueryClientProvider client={queryClient}>
-            <BottomSheetModalProvider>
-              <StripeProvider
-                publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
-                urlScheme="omenaimobile"
-              >
-                <NavigationContainer ref={navigationRef} linking={linking}>
-                  {/* AUTH SCREENS */}
-                  {!isLoggedIn && <AuthNavigation />}
-                  {/* App screens */}
-                  {isLoggedIn && userType === "gallery" && <GalleryNavigation />}
-                  {isLoggedIn && userType === "user" && <IndividualNavigation />}
-                  {isLoggedIn && userType === "artist" && <ArtistNavigation />}
-                </NavigationContainer>
-              </StripeProvider>
-            </BottomSheetModalProvider>
-          </QueryClientProvider>
-        </GestureHandlerRootView>
-      </CopilotProvider>
-    </RollbarProvider>
+    <CopilotProvider>
+      <StatusBar style="auto" />
+      <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <QueryClientProvider client={queryClient}>
+          <BottomSheetModalProvider>
+            <StripeProvider
+              publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
+              urlScheme="omenaimobile"
+            >
+              <NavigationContainer ref={navigationRef} linking={linking}>
+                {/* AUTH SCREENS */}
+                {!isLoggedIn && <AuthNavigation />}
+                {/* App screens */}
+                {isLoggedIn && userType === "gallery" && <GalleryNavigation />}
+                {isLoggedIn && userType === "user" && <IndividualNavigation />}
+                {isLoggedIn && userType === "artist" && <ArtistNavigation />}
+              </NavigationContainer>
+            </StripeProvider>
+          </BottomSheetModalProvider>
+        </QueryClientProvider>
+      </GestureHandlerRootView>
+    </CopilotProvider>
   );
 }

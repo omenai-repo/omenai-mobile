@@ -1,5 +1,4 @@
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
-import { rollbar } from "../../config/rollbar.config";
 
 export type DeleteAccountResponse = {
   status: number;
@@ -26,16 +25,6 @@ export async function deleteAccount(
       },
     });
     const result = await res.json();
-    // Report 500+ errors to Rollbar
-    if (res.status >= 500) {
-      rollbar.error("DeleteAccount API 500+ error", {
-        status: res.status,
-        url,
-        session_id,
-        reason,
-        response: result,
-      });
-    }
     return {
       isOk: res.ok,
       message: result.message || "An error occurred",
@@ -43,7 +32,6 @@ export async function deleteAccount(
       status: res.status,
     };
   } catch (error: any) {
-    rollbar.error("DeleteAccount API exception", { error, route, session_id, reason });
     return {
       isOk: false,
       message:
