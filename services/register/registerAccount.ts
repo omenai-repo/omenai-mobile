@@ -1,5 +1,4 @@
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
-import { rollbar } from "../../config/rollbar.config";
 
 export async function registerAccount(
   payload:
@@ -26,19 +25,8 @@ export async function registerAccount(
       isOk: response.ok,
       body: await response.json(),
     };
-    // Report 500+ errors to Rollbar
-    if (response.status >= 500) {
-      rollbar.error("RegisterAccount API 500+ error", {
-        status: response.status,
-        url,
-        payload,
-        response: ParsedResponse.body,
-      });
-    }
     return ParsedResponse;
-  } catch (error) {
-    // Only report to Rollbar if error is a server error (not network)
-    rollbar.error("RegisterAccount API exception", { error, url, payload });
+  } catch {
     return {
       isOk: false,
       body: { message: "Error creating account" },

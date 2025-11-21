@@ -1,6 +1,5 @@
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
-import { rollbar } from "../../config/rollbar.config";
 
 export async function updatePassword(password: string, code: string, route: string) {
   let id = "";
@@ -27,28 +26,10 @@ export async function updatePassword(password: string, code: string, route: stri
       }),
     }).then(async (res) => {
       const result = await res.json();
-      // Report 500+ errors to Rollbar
-      if (res.status >= 500) {
-        rollbar.error("UpdatePassword API 500+ error", {
-          status: res.status,
-          url: `${apiUrl}/api/requests/${route}/updatePassword`,
-          id,
-          password,
-          code,
-          response: result,
-        });
-      }
       return { isOk: res.ok, message: result.message };
     });
     return response;
-  } catch (error) {
-    rollbar.error("UpdatePassword API exception", {
-      error,
-      url: `${apiUrl}/api/requests/${route}/updatePassword`,
-      id,
-      password,
-      code,
-    });
+  } catch {
     return {
       isOk: false,
       message: "Error reseting password",

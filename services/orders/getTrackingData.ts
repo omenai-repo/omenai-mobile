@@ -1,5 +1,4 @@
 import { apiUrl, authorization, originHeader, userAgent } from "constants/apiUrl.constants";
-import { rollbar } from "../../config/rollbar.config";
 
 export async function getTrackingData(orderId: string) {
   try {
@@ -15,15 +14,6 @@ export async function getTrackingData(orderId: string) {
     });
 
     const result = await response.json();
-    // Report 500+ errors to Rollbar
-    if (response.status >= 500) {
-      rollbar.error("GetTrackingData API 500+ error", {
-        status: response.status,
-        url,
-        orderId,
-        response: result,
-      });
-    }
     return {
       isOk: response.ok,
       message: result.message,
@@ -35,8 +25,7 @@ export async function getTrackingData(orderId: string) {
         shipping_details: result.shipping_details,
       },
     };
-  } catch (error) {
-    rollbar.error("GetTrackingData API exception", { error, orderId });
+  } catch {
     return {
       isOk: false,
       message: "An error was encountered, please try again later or contact support",

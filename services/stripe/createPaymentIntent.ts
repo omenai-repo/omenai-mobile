@@ -1,5 +1,4 @@
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
-import { rollbar } from "../../config/rollbar.config";
 
 export const createPaymentIntent = async (
   amount: number,
@@ -33,20 +32,8 @@ export const createPaymentIntent = async (
       }),
     });
     const result = await res.json();
-    // Report 500+ errors to Rollbar
-    if (res.status >= 500) {
-      rollbar.error("CreatePaymentIntent API 500+ error", {
-        status: res.status,
-        url,
-        amount,
-        seller_id,
-        meta,
-        response: result,
-      });
-    }
     return result;
   } catch (error: any) {
-    rollbar.error("CreatePaymentIntent API exception", { error, amount, seller_id, meta });
     console.log(error);
   }
 };
