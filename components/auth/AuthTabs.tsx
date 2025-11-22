@@ -1,12 +1,7 @@
 import { View, Pressable } from "react-native";
 import React, { useEffect } from "react";
 import tw from "twrnc";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  interpolateColor,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
 type AuthTabsProps = {
   tabs: string[];
@@ -21,6 +16,7 @@ type TabItemProps = {
 };
 
 const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
+  // Only animate scale to keep behavior stable across platforms.
   const progress = useSharedValue(isSelected ? 1 : 0);
 
   useEffect(() => {
@@ -37,29 +33,9 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
     };
   });
 
-  const animatedBackgroundStyle = useAnimatedStyle(() => {
-    const backgroundColor = interpolateColor(
-      progress.value,
-      [0, 1],
-      ["transparent", "#000000"]
-    );
-
-    return {
-      backgroundColor,
-    };
-  });
-
-  const animatedTextStyle = useAnimatedStyle(() => {
-    const color = interpolateColor(
-      progress.value,
-      [0, 1],
-      ["#858585", "#ffffff"]
-    );
-
-    return {
-      color,
-    };
-  });
+  // Use static colors ( to avoid platform-specific interpolation issues.
+  const backgroundColor = isSelected ? "#000000" : "transparent";
+  const textColor = isSelected ? "#ffffff" : "#858585";
 
   return (
     <Animated.View style={[tw`flex-1`, animatedContainerStyle]}>
@@ -70,13 +46,8 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
           pressed && { opacity: 0.8 },
         ]}
       >
-        <Animated.View
-          style={[
-            tw`absolute inset-0 rounded-lg`,
-            animatedBackgroundStyle,
-          ]}
-        />
-        <Animated.Text style={[tw`text-sm`, { zIndex: 10 }, animatedTextStyle]}>
+        <Animated.View style={[tw`absolute inset-0 rounded-lg`, { backgroundColor }]} />
+        <Animated.Text style={[tw`text-sm`, { zIndex: 10, color: textColor }]}>
           {name}
         </Animated.Text>
       </Pressable>
@@ -84,12 +55,7 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
   );
 };
 
-export default function AuthTabs({
-  tabs,
-  stateIndex,
-  handleSelect,
-}: AuthTabsProps) {
-
+export default function AuthTabs({ tabs, stateIndex, handleSelect }: AuthTabsProps) {
   return (
     <View
       style={tw`w-full bg-[#FAFAFA] border border-[#E0E0E0] rounded-lg p-1 flex-row gap-[15px]`}

@@ -1,27 +1,21 @@
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  View,
-  Text
-} from 'react-native';
-import React, { useState } from 'react';
-import tw from 'twrnc';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { updateShippingQuote } from 'services/orders/updateShippingQuote';
-import { useModalStore } from 'store/modal/modalStore';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import WithModal from 'components/modal/WithModal';
-import { validateOrderMeasurement } from 'lib/validations/upload_artwork_input_validator/validateOrderMeasurement';
-import { useAppStore } from 'store/app/appStore';
-import { convertDimensionsToStandard } from 'utils/convertUnits';
-import { format } from 'date-fns';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import ToggleButton from 'components/forms/ToggleButton';
-import DimensionInput from 'components/forms/DimensionInput';
-import UnitDropdownField from 'components/forms/UnitDropdownField';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text } from "react-native";
+import React, { useState } from "react";
+import tw from "twrnc";
+import BackHeaderTitle from "components/header/BackHeaderTitle";
+import LongBlackButton from "components/buttons/LongBlackButton";
+import { updateShippingQuote } from "services/orders/updateShippingQuote";
+import { useQueryClient } from "@tanstack/react-query";
+import { useModalStore } from "store/modal/modalStore";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import WithModal from "components/modal/WithModal";
+import { validateOrderMeasurement } from "lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
+import { useAppStore } from "store/app/appStore";
+import { convertDimensionsToStandard } from "utils/convertUnits";
+import { format } from "date-fns";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import ToggleButton from "components/forms/ToggleButton";
+import DimensionInput from "components/forms/DimensionInput";
+import UnitDropdownField from "components/forms/UnitDropdownField";
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -30,40 +24,40 @@ type ArtworkDimensionsErrorsType = {
   weight: string;
 };
 
-type DimensionUnit = 'cm' | 'm' | 'in' | 'ft';
-type WeightUnit = 'kg' | 'g' | 'lb';
+type DimensionUnit = "cm" | "m" | "in" | "ft";
+type WeightUnit = "kg" | "g" | "lb";
 
 const DimensionsDetails = () => {
   const { userType } = useAppStore();
   const { orderId } = useRoute<any>().params;
   const navigation = useNavigation();
-  const [dimensionUnit, setDimensionUnit] = useState<DimensionUnit>('cm');
-  const [weightUnit, setWeightUnit] = useState<WeightUnit>('kg');
+  const [dimensionUnit, setDimensionUnit] = useState<DimensionUnit>("cm");
+  const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
   const [dimentions, setDimentions] = useState({
-    length: '',
-    width: '',
-    height: '',
-    weight: '',
+    length: "",
+    width: "",
+    height: "",
+    weight: "",
   });
 
   const [formErrors, setFormErrors] = useState<ArtworkDimensionsErrorsType>({
-    height: '',
-    length: '',
-    width: '',
-    weight: '',
+    height: "",
+    length: "",
+    width: "",
+    weight: "",
   });
 
   const dimensionUnits = [
-    { label: 'centimeter (cm)', value: 'cm' },
-    { label: 'meter (m)', value: 'm' },
-    { label: 'inch (in)', value: 'in' },
-    { label: 'feet (ft)', value: 'ft' },
+    { label: "centimeter (cm)", value: "cm" },
+    { label: "meter (m)", value: "m" },
+    { label: "inch (in)", value: "in" },
+    { label: "feet (ft)", value: "ft" },
   ];
 
   const weightUnits = [
-    { label: 'kilogram (kg)', value: 'kg' },
-    { label: 'gram (g)', value: 'g' },
-    { label: 'pound (lb)', value: 'lb' },
+    { label: "kilogram (kg)", value: "kg" },
+    { label: "gram (g)", value: "g" },
+    { label: "pound (lb)", value: "lb" },
   ];
   const [isLoading, setIsLoading] = useState(false);
   const [isOnExhibition, setIsOnExhibition] = useState(false);
@@ -73,6 +67,8 @@ const DimensionsDetails = () => {
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
   const { updateModal } = useModalStore();
+  const queryClient = useQueryClient();
+  const userId = useAppStore((state) => state.userSession.id);
 
   const showDatePicker = () => {
     setIsDatePickerVisible(true);
@@ -92,23 +88,23 @@ const DimensionsDetails = () => {
       weight: formErrors.weight,
       height: formErrors.height,
       width: formErrors.width,
-    }).every((error) => error === '');
+    }).every((error) => error === "");
 
     const areAllFieldsFilled = Object.values({
       weight: dimentions.weight,
       height: dimentions.height,
       width: dimentions.width,
-    }).every((value) => value !== '');
+    }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled && isChecked);
   };
 
   const handleValidationChecks = (label: keyof ArtworkDimensionsErrorsType, value: string) => {
-    if (value.trim() === '') {
-      setFormErrors((prev) => ({ ...prev, [label]: '' }));
+    if (value.trim() === "") {
+      setFormErrors((prev) => ({ ...prev, [label]: "" }));
     } else {
       const errors = validateOrderMeasurement(value);
-      setFormErrors((prev) => ({ ...prev, [label]: errors.length === 0 ? '' : errors }));
+      setFormErrors((prev) => ({ ...prev, [label]: errors.length === 0 ? "" : errors }));
     }
   };
 
@@ -126,41 +122,47 @@ const DimensionsDetails = () => {
         order_id: orderId,
         dimensions: converted,
         exhibition_status:
-          userType === 'gallery'
+          userType === "gallery"
             ? {
                 is_on_exhibition: isOnExhibition,
-                exhibition_end_date: expoEndDate || '',
+                exhibition_end_date: expoEndDate || "",
               }
             : null,
         hold_status: null,
       };
       const response = await updateShippingQuote(payload);
       if (response.isOk) {
+        // Invalidate both artist/collector and gallery orders so both screens refresh
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["orders", userId] }),
+          queryClient.invalidateQueries({ queryKey: ["orders", "gallery"] }),
+        ]);
+
         updateModal({
-          message: 'Order accepted successfully',
-          modalType: 'success',
+          message: "Order accepted successfully",
+          modalType: "success",
           showModal: true,
         });
         setTimeout(() => {
           setDimentions({
-            length: '',
-            width: '',
-            height: '',
-            weight: '',
+            length: "",
+            width: "",
+            height: "",
+            weight: "",
           });
           navigation.goBack();
         }, 2000);
       } else {
         updateModal({
           message: response.message,
-          modalType: 'error',
+          modalType: "error",
           showModal: true,
         });
       }
     } catch (error: any) {
       updateModal({
         message: error.message,
-        modalType: 'error',
+        modalType: "error",
         showModal: true,
       });
     } finally {
@@ -174,7 +176,7 @@ const DimensionsDetails = () => {
         <BackHeaderTitle title="Dimensions (Including Packaging)" />
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={tw`flex-1`}
         >
           <ScrollView
@@ -199,7 +201,7 @@ const DimensionsDetails = () => {
                 />
               </View>
 
-              {(['height', 'length', 'width'] as Array<keyof typeof dimentions>).map((field) => (
+              {(["height", "length", "width"] as Array<keyof typeof dimentions>).map((field) => (
                 <DimensionInput
                   key={field}
                   field={field}
@@ -217,11 +219,11 @@ const DimensionsDetails = () => {
                 value={dimentions.weight}
                 errorMessage={formErrors.weight}
                 onInputChange={(text) => setDimentions((prev) => ({ ...prev, weight: text }))}
-                onValidation={(text) => handleValidationChecks('weight', text)}
+                onValidation={(text) => handleValidationChecks("weight", text)}
               />
             </View>
 
-            {userType === 'gallery' && (
+            {userType === "gallery" && (
               <View style={tw`mt-5 mx-[25px]`}>
                 <Text style={tw`text-[14px] text-[#858585] mb-[15px]`}>
                   Is artwork on exhibition?
@@ -254,8 +256,8 @@ const DimensionsDetails = () => {
                     >
                       <Text style={tw`text-[#1A1A1A]`}>
                         {expoEndDate
-                          ? format(expoEndDate, 'MMM dd, yyyy - hh:mm a')
-                          : 'Select date and time'}
+                          ? format(expoEndDate, "MMM dd, yyyy - hh:mm a")
+                          : "Select date and time"}
                       </Text>
                     </Pressable>
 
@@ -265,7 +267,7 @@ const DimensionsDetails = () => {
                       onConfirm={handleConfirm}
                       onCancel={hideDatePicker}
                       minimumDate={new Date()}
-                      display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                      display={Platform.OS === "ios" ? "inline" : "default"}
                       confirmTextIOS="Confirm"
                       cancelTextIOS="Cancel"
                     />

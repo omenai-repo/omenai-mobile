@@ -17,18 +17,12 @@ type AuthHeaderProps = {
   handleBackClick: () => void;
 };
 
-export default function AuthHeader({
-  title,
-  subTitle,
-  handleBackClick,
-}: AuthHeaderProps) {
+export default function AuthHeader({ title, subTitle, handleBackClick }: AuthHeaderProps) {
   return (
     <SafeAreaView style={styles.container}>
-      <View
-        style={{ paddingHorizontal: 20, paddingBottom: 20, paddingTop: 10 }}
-      >
+      <View style={{ paddingHorizontal: 20, paddingBottom: 20, paddingTop: 10 }}>
         <TouchableOpacity style={styles.backButton} onPress={handleBackClick}>
-          <AntDesign name="arrowleft" color={colors.white} size={20} />
+          <AntDesign name="arrow-left" color={colors.white} size={20} />
         </TouchableOpacity>
         <Text style={styles.headerText}>{title}</Text>
         <Text style={styles.subText}>{subTitle}</Text>

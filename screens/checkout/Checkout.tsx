@@ -118,6 +118,8 @@ export default function Checkout() {
         plan_interval: interval,
       });
 
+      console.log("stripe-response ---", res);
+
       if (!res?.isOk) {
         updateModal({
           message: "Unable to initiate card charge. Please contact support",

@@ -1,7 +1,7 @@
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { AntDesign, Feather } from '@expo/vector-icons';
-import { colors } from '../../config/colors.config';
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import React from "react";
+import { AntDesign, Feather } from "@expo/vector-icons";
+import { colors } from "../../config/colors.config";
 
 type BackScreenButtonTypes = {
   handleClick: () => void;
@@ -15,7 +15,7 @@ export default function BackScreenButton({ handleClick, cancle }: BackScreenButt
         {cancle ? (
           <Feather name="x" color={colors.primary_black} size={25} />
         ) : (
-          <AntDesign name="arrowleft" color={colors.primary_black} size={25} />
+          <AntDesign name="arrow-left" color={colors.primary_black} size={25} />
         )}
       </View>
     </TouchableOpacity>
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
 
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
