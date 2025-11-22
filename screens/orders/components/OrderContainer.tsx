@@ -9,6 +9,7 @@ import { getImageFileView } from "lib/storage/getImageFileView";
 import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
 import StatusPill from "./StatusPill";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
+import { useHighRiskFeatureFlag } from "hooks/useFeatureFlag";
 import { screenName } from "constants/screenNames.constants";
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
 
@@ -39,6 +40,7 @@ interface OrderContainerProps {
   updatedAt: string;
   trackBtn: () => void;
   order_decline_reason?: string;
+  seller_designation?: string;
 }
 
 const OrderContainer: React.FC<OrderContainerProps> = ({
@@ -61,11 +63,21 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   updatedAt,
   trackBtn,
   order_decline_reason = "",
+  seller_designation,
 }) => {
   const image_href = getImageFileView(url, 700);
   const [remainingTime, setRemainingTime] = useState<number>(0);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [confirmOrderModal, setConfirmOrderModal] = useState(false);
+
+  const { value: isFlutterwavePaymentEnabled } = useHighRiskFeatureFlag(
+    "flutterwave_payment_enabled"
+  );
+  const { value: isStripePaymentEnabled } = useHighRiskFeatureFlag("stripe_payment_enabled");
+
+  const showBlocker =
+    (seller_designation === "artist" && !isFlutterwavePaymentEnabled) ||
+    (seller_designation === "gallery" && !isStripePaymentEnabled);
 
   const expiresAt = React.useMemo(
     () =>
@@ -115,10 +127,20 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
 
   useEffect(() => {
     const calculateBaseHeight = () => {
-      if (status === "completed") return 80;
-      if (!order_accepted) return 80;
-      if (delivery_confirmed) return 80;
-      return 140;
+      let base = 80;
+      if (status === "completed") base = 80;
+      else if (!order_accepted) base = 80;
+      else if (delivery_confirmed) base = 80;
+      else base = 140;
+
+      // Add extra height only when blocker and pay-area are visible
+      const payAreaVisible =
+        availability &&
+        payment_information === "pending" &&
+        order_accepted === "accepted" &&
+        remainingTime > 0;
+      const extra = showBlocker && payAreaVisible ? 64 : 0;
+      return base + extra;
     };
 
     if (open) {
@@ -149,7 +171,18 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         }),
       ]).start();
     }
-  }, [open, status, order_accepted, delivery_confirmed, animatedHeight, animatedOpacity]);
+  }, [
+    open,
+    status,
+    order_accepted,
+    delivery_confirmed,
+    animatedHeight,
+    animatedOpacity,
+    showBlocker,
+    availability,
+    payment_information,
+    remainingTime,
+  ]);
 
   return (
     <View
@@ -217,15 +250,33 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             payment_information === "pending" &&
             order_accepted === "accepted" &&
             remainingTime > 0 && (
-              <FittedBlackButton
-                value="Pay now"
-                onClick={() =>
-                  navigation.navigate(screenName.payment, {
-                    id: orderId,
-                  })
-                }
-                style={{ height: 40 }}
-              />
+              <>
+                {showBlocker ? (
+                  <FittedBlackButton
+                    value="Pay now — under maintenance"
+                    isDisabled
+                    onClick={() => {}}
+                    style={{ height: 40 }}
+                  />
+                ) : (
+                  <FittedBlackButton
+                    value="Pay now"
+                    onClick={() =>
+                      navigation.navigate(screenName.payment, {
+                        id: orderId,
+                      })
+                    }
+                    style={{ height: 40 }}
+                  />
+                )}
+
+                {showBlocker && (
+                  <Text style={tw`text-[12px] text-[#666]`}>
+                    We’re fine-tuning our payment system to resolve a minor issue and ensure every
+                    transaction remains flawlessly seamless.
+                  </Text>
+                )}
+              </>
             )}
           {availability &&
             payment_information === "completed" &&

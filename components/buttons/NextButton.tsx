@@ -19,7 +19,7 @@ export default function NextButton({ isDisabled, handleButtonClick }: Readonly<N
         ]}
       >
         <Text style={[tw`text-base`, { color: "#A1A1A1" }]}>Next</Text>
-        <AntDesign name="arrowright" color="#A1A1A1" size={20} />
+        <AntDesign name="arrow-right" color="#A1A1A1" size={20} />
       </View>
     );
 
@@ -33,7 +33,7 @@ export default function NextButton({ isDisabled, handleButtonClick }: Readonly<N
       ]}
     >
       <Text style={[tw`text-base`, { color: colors.white }]}>Next</Text>
-      <AntDesign name="arrowright" color={colors.white} size={20} />
+      <AntDesign name="arrow-right" color={colors.white} size={20} />
     </Pressable>
   );
 }

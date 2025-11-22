@@ -29,7 +29,7 @@ export default function Input({
   containerStyle,
 }: InputProps) {
   return (
-    <View style={[tw`z-[100] flex-1`, containerStyle]}>
+    <View style={[containerStyle]}>
       <Text style={[tw`text-sm`, { color: colors.grey }]}>{label}</Text>
       <TextInput
         onChangeText={onInputChange}

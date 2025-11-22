@@ -12,11 +12,16 @@ import { getAccountID } from "services/stripe/getAccountID";
 import { checkIsStripeOnboarded } from "services/stripe/checkIsStripeOnboarded";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useHighRiskFeatureFlag } from "hooks/useFeatureFlag";
+import SubscriptionDowntimeBlocker from "components/blockers/payments/SubscriptionDowntimeBlocker";
 
 export default function Subscriptions() {
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
   const insets = useSafeAreaInsets();
+  const { value: isSubscriptionBillingEnabled } = useHighRiskFeatureFlag(
+    "subscription_creation_enabled"
+  );
 
   // Debug: Log user session
   const { data: isConfirmed, isLoading } = useQuery({
@@ -78,29 +83,37 @@ export default function Subscriptions() {
       <View
         style={{
           paddingTop: insets.top + 16,
+          flex: 1,
         }}
       >
-        <View style={styles.headerContainer}>
-          <Text style={{ fontSize: 20, textAlign: "center" }}>Subscription & Billing</Text>
-        </View>
+        {isSubscriptionBillingEnabled ? (
+          <>
+            <View style={styles.headerContainer}>
+              <Text style={{ fontSize: 20, textAlign: "center" }}>Subscription & Billing</Text>
+            </View>
+
+            {isLoading ? (
+              <View style={{ padding: 20 }}>
+                <ActiveSubLoader />
+              </View>
+            ) : (
+              <ScrollWrapper style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+                {isConfirmed?.isSubActive ? (
+                  <ActiveSubscriptions
+                    subscription_data={isConfirmed?.subscription_data}
+                    subscription_plan={isConfirmed?.subscription_plan}
+                  />
+                ) : (
+                  <InActiveSubscription />
+                )}
+                <View style={{ paddingVertical: 30 }} />
+              </ScrollWrapper>
+            )}
+          </>
+        ) : (
+          <SubscriptionDowntimeBlocker />
+        )}
       </View>
-      {isLoading ? (
-        <View style={{ padding: 20 }}>
-          <ActiveSubLoader />
-        </View>
-      ) : (
-        <ScrollWrapper style={styles.mainContainer} showsVerticalScrollIndicator={false}>
-          {isConfirmed?.isSubActive ? (
-            <ActiveSubscriptions
-              subscription_data={isConfirmed?.subscription_data}
-              subscription_plan={isConfirmed?.subscription_plan}
-            />
-          ) : (
-            <InActiveSubscription />
-          )}
-          <View style={{ paddingVertical: 30 }} />
-        </ScrollWrapper>
-      )}
     </WithModal>
   );
 }

@@ -1,10 +1,9 @@
-import { Dimensions, ImageBackground, Text, TouchableOpacity, View } from 'react-native';
-import React, { memo } from 'react';
-import { AntDesign } from '@expo/vector-icons';
-import tw from 'twrnc';
-import { getPromotionalFileView } from 'lib/storage/getPromotionalsFileView';
-import { fontNames } from 'constants/fontNames.constants';
-import { colors } from 'config/colors.config';
+import { Dimensions, ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import React, { memo } from "react";
+import { AntDesign } from "@expo/vector-icons";
+import tw from "twrnc";
+import { getPromotionalFileView } from "lib/storage/getPromotionalsFileView";
+import { fontNames } from "constants/fontNames.constants";
 
 type BannerItemProps = {
   image: string;
@@ -14,7 +13,7 @@ type BannerItemProps = {
   handleClick: (url: string) => void;
 };
 
-const { width: windowWidth } = Dimensions.get('window');
+const { width: windowWidth } = Dimensions.get("window");
 const SIDE_PADDING = 15;
 const CARD_WIDTH = windowWidth - SIDE_PADDING * 2;
 
@@ -23,9 +22,9 @@ const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: Ban
 
   return (
     <View
-      style={tw.style({
+      style={{
         width: CARD_WIDTH, // ensures one card per screen
-      })}
+      }}
     >
       <ImageBackground
         source={{ uri: image_href }}
@@ -37,7 +36,7 @@ const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: Ban
           <Text
             style={[
               tw`text-white text-[18px] font-bold`,
-              { fontFamily: fontNames.dmSans + 'Bold' },
+              { fontFamily: fontNames.dmSans + "Bold" },
             ]}
           >
             {headline}
@@ -45,7 +44,7 @@ const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: Ban
           <Text
             style={[
               tw`text-white text-[13px] mt-1 pr-[100px]`,
-              { fontFamily: fontNames.dmSans + 'Regular' },
+              { fontFamily: fontNames.dmSans + "Regular" },
             ]}
           >
             {subheadline}
@@ -56,12 +55,14 @@ const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: Ban
             style={tw`mt-4 flex-row bg-black bg-opacity-20 items-center gap-2 px-4 py-2 rounded-full w-[110px]`}
           >
             <Text style={tw`text-white text-[13px] font-semibold`}>Explore</Text>
-            <AntDesign name="arrowright" color="#fff" size={15} />
+            <AntDesign name="arrow-right" color="#fff" size={15} />
           </TouchableOpacity>
         </View>
       </ImageBackground>
     </View>
   );
 });
+
+BannerCard.displayName = "BannerCard";
 
 export default BannerCard;
