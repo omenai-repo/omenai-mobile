@@ -1,17 +1,19 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import BackScreenButton from 'components/buttons/BackScreenButton';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { colors } from 'config/colors.config';
-import { Feather } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
-import { updateLogo } from 'services/update/updateLogo';
-import { useAppStore } from 'store/app/appStore';
-import { useModalStore } from 'store/modal/modalStore';
-import { logout } from 'utils/logout.utils';
-import uploadLogo from './uploadLogo';
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import BackScreenButton from "components/buttons/BackScreenButton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import LongBlackButton from "components/buttons/LongBlackButton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { colors } from "config/colors.config";
+import tw from "twrnc";
+import { Feather } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { updateLogo } from "services/update/updateLogo";
+import { useAppStore } from "store/app/appStore";
+import { useModalStore } from "store/modal/modalStore";
+import { logout } from "utils/logout.utils";
+import uploadLogo from "./uploadLogo";
 
 export default function UploadNewLogo() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -21,10 +23,11 @@ export default function UploadNewLogo() {
 
   const [logo, setLogo] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
+      mediaTypes: ["images"],
       quality: 1,
     });
 
@@ -53,19 +56,19 @@ export default function UploadNewLogo() {
             id: userSession.id,
             url: file.fileId,
           },
-          userType === 'artist' ? 'artist' : userType === 'gallery' ? 'gallery' : 'individual',
+          userType === "artist" ? "artist" : userType === "gallery" ? "gallery" : "individual"
         );
 
         if (!isOk) {
           updateModal({
             message: body.message,
-            modalType: 'error',
+            modalType: "error",
             showModal: true,
           });
         } else {
           updateModal({
             message: `${body.message}... Please log back in`,
-            modalType: 'success',
+            modalType: "success",
             showModal: true,
           });
           handleLogout();
@@ -74,8 +77,8 @@ export default function UploadNewLogo() {
     } catch (error) {
       console.log(error);
       updateModal({
-        message: 'An error occured, please try again',
-        modalType: 'error',
+        message: "An error occured, please try again",
+        modalType: "error",
         showModal: true,
       });
     } finally {
@@ -90,51 +93,43 @@ export default function UploadNewLogo() {
   };
 
   return (
-    <View style={styles.container}>
-      <BackScreenButton cancle handleClick={() => navigation.goBack()} />
-      <View style={{ flex: 1, marginTop: 20 }}>
+    <View style={tw`flex-1 px-5 py-5 bg-white`}>
+      {/* Header: back button placed in its own header area so content flows below it */}
+      <View style={[{ paddingTop: insets.top ? insets.top : 24 }, tw`px-1`]}>
+        <BackScreenButton cancle handleClick={() => navigation.goBack()} />
+      </View>
+
+      <View style={tw`flex-1 mt-2`}>
         <TouchableOpacity onPress={pickImage} activeOpacity={0.8}>
           {logo === null ? (
-            <View style={styles.imageContainer}>
+            <View
+              style={tw`h-[200px] w-full border border-[#E5E7EB] rounded-[7px] items-center justify-center gap-2 border-dashed bg-[#fff]`}
+            >
               <Feather name="image" size={30} color={colors.grey} />
-              <Text style={{ color: colors.primary_black }}>Select from gallery</Text>
+              <Text style={[tw`text-[14px]`, { color: colors.primary_black }]}>
+                Select from gallery
+              </Text>
             </View>
           ) : (
-            <Image source={{ uri: logo.assets[0].uri }} style={styles.logo} />
+            <Image
+              source={{ uri: logo.assets[0].uri }}
+              style={tw`w-full h-[400px]`}
+              resizeMode="contain"
+            />
           )}
         </TouchableOpacity>
+
+        <View style={tw`mt-5`}>
+          <LongBlackButton
+            value="Upload logo"
+            onClick={handleUpload}
+            isDisabled={!logo}
+            isLoading={loading}
+          />
+        </View>
       </View>
-      <LongBlackButton
-        value="Upload logo"
-        onClick={handleUpload}
-        isDisabled={!logo}
-        isLoading={loading}
-      />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  imageContainer: {
-    height: 200,
-    width: '100%',
-    borderWidth: 1,
-    borderColor: colors.grey,
-    borderRadius: 7,
-
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    borderStyle: 'dashed',
-  },
-  logo: {
-    width: '100%',
-    objectFit: 'contain',
-    height: 400,
-  },
-});
+// Styling moved to `twrnc` (tw). Kept color tokens from `colors` where needed.

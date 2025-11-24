@@ -1,6 +1,7 @@
 import { View, Pressable } from "react-native";
 import React, { useEffect } from "react";
 import tw from "twrnc";
+import { colors } from "config/colors.config";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
 type AuthTabsProps = {
@@ -33,9 +34,9 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
     };
   });
 
-  // Use static colors ( to avoid platform-specific interpolation issues.
-  const backgroundColor = isSelected ? "#000000" : "transparent";
-  const textColor = isSelected ? "#ffffff" : "#858585";
+  // Use theme colors (avoid platform-specific interpolation issues)
+  const backgroundColor = isSelected ? colors.black : "transparent";
+  const textColor = isSelected ? colors.white : "#858585";
 
   return (
     <Animated.View style={[tw`flex-1`, animatedContainerStyle]}>

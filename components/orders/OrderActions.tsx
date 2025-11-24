@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { Pressable, Text, View } from "react-native";
 import tw from "twrnc";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
 import { OrderActionType, OrderActionsProps } from "types/orders";
 
 export const getOrderActionType = ({
@@ -60,22 +61,22 @@ const OrderActionsBase = ({
   if (type === "action") {
     return (
       <View style={tw`flex-row items-center gap-[30px]`}>
-        <Pressable
-          onPress={declineBtn}
-          style={tw`h-[40px] justify-center items-center bg-[#C71C16] rounded-[20px] px-[15px] flex-1`}
-          accessible
-          accessibilityLabel="Decline order"
-        >
-          <Text style={tw`text-[13px] text-white font-semibold`}>Decline order</Text>
-        </Pressable>
-        <Pressable
-          onPress={acceptBtn}
-          style={tw`h-[40px] justify-center items-center bg-[#00C885] rounded-[20px] px-[15px] flex-1`}
-          accessible
-          accessibilityLabel="Accept order"
-        >
-          <Text style={tw`text-[13px] text-white font-semibold`}>Accept order</Text>
-        </Pressable>
+        <View style={tw`flex-1`}>
+          <FittedBlackButton
+            value="Decline order"
+            onClick={() => declineBtn?.()}
+            style={tw`bg-[#C71C16]`}
+            textStyle={tw`text-[13px] font-semibold`}
+          />
+        </View>
+        <View style={tw`flex-1`}>
+          <FittedBlackButton
+            value="Accept order"
+            onClick={() => acceptBtn?.()}
+            style={tw`bg-[#00C885]`}
+            textStyle={tw`text-[13px] font-semibold`}
+          />
+        </View>
       </View>
     );
   }

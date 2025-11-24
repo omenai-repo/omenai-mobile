@@ -25,7 +25,7 @@ export default function LongBlackButton({
   style,
   textStyle,
   outline = false,
-  borderColor = colors.primary_black,
+  borderColor = colors.black,
   icon,
 }: LongBlackButtonProps) {
   const animation = useRef(null);
@@ -34,16 +34,16 @@ export default function LongBlackButton({
 
   let backgroundColor: string;
   if (isInactive) {
-    backgroundColor = "#E0E0E0";
+    backgroundColor = colors.grey50;
   } else if (outline) {
     backgroundColor = "transparent";
   } else {
-    backgroundColor = colors.primary_black;
+    backgroundColor = colors.black;
   }
 
   let textColor: string;
   if (isInactive) {
-    textColor = "#A1A1A1";
+    textColor = colors.inputLabel;
   } else if (outline) {
     textColor = borderColor;
   } else {
@@ -52,7 +52,7 @@ export default function LongBlackButton({
 
   let outlineBorderColor: string;
   if (isInactive) {
-    outlineBorderColor = "#A1A1A1";
+    outlineBorderColor = colors.inputLabel;
   } else {
     outlineBorderColor = borderColor;
   }

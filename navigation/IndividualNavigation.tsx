@@ -27,6 +27,8 @@ import NotificationScreen from "screens/notifications/NotificationScreen";
 import DeleteAccountScreen from "screens/deleteAccount/DeleteAccountScreen";
 import Payment from "screens/payment/Payment";
 import { wrapWithHighRisk, wrapWithLowRisk } from "utils/wrapWithProvider";
+import CancleOrderPayment from "screens/payment/components/cancel/CancleOrderPayment";
+import SuccessOrderPayment from "screens/payment/components/success/SuccessOrderPayment";
 
 type CustomTabBarIconProps = {
   name: any;
@@ -125,6 +127,14 @@ export default function IndividualNavigation() {
       />
       <Stack.Screen name={screenName.collections} component={wrapWithHighRisk(Collections)} />
       <Stack.Screen name={screenName.payment} component={wrapWithHighRisk(Payment)} />
+      <Stack.Screen
+        name={screenName.cancleOrderPayment}
+        component={wrapWithHighRisk(CancleOrderPayment)}
+      />
+      <Stack.Screen
+        name={screenName.successOrderPayment}
+        component={wrapWithHighRisk(SuccessOrderPayment)}
+      />
       <Stack.Screen name={"DetailsScreen"} component={wrapWithHighRisk(DetailsScreen)} />
       <Stack.Screen
         name={screenName.deleteAccount}

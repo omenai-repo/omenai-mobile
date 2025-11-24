@@ -1,4 +1,5 @@
-import { Dimensions, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import CloseButton from "components/buttons/CloseButton";
 import { useModalStore } from "store/modal/modalStore";
