@@ -229,19 +229,23 @@ const DimensionsDetails = () => {
                   Is artwork on exhibition?
                 </Text>
                 <View style={tw`flex-row gap-4`}>
-                  <ToggleButton
-                    label="Yes"
-                    isSelected={isOnExhibition}
-                    onPress={() => setIsOnExhibition(true)}
-                  />
-                  <ToggleButton
-                    label="No"
-                    isSelected={!isOnExhibition}
-                    onPress={() => {
-                      setIsOnExhibition(false);
-                      setExpoEndDate(null);
-                    }}
-                  />
+                  <View style={tw`flex-1`}>
+                    <ToggleButton
+                      label="Yes"
+                      isSelected={isOnExhibition}
+                      onPress={() => setIsOnExhibition(true)}
+                    />
+                  </View>
+                  <View style={tw`flex-1`}>
+                    <ToggleButton
+                      label="No"
+                      isSelected={!isOnExhibition}
+                      onPress={() => {
+                        setIsOnExhibition(false);
+                        setExpoEndDate(null);
+                      }}
+                    />
+                  </View>
                 </View>
 
                 {isOnExhibition && (
@@ -279,8 +283,8 @@ const DimensionsDetails = () => {
             <View style={tw`mt-[30px] mx-[25px]`}>
               <View style={tw`bg-[#FFF4E5] border border-[#FFA500] p-[14px] rounded-[8px]`}>
                 <Text style={tw`text-[#A65B00] text-[14px] font-medium`}>
-                  By accepting this order, you have agreed to have this piece ready for shipping &
-                  pickup.
+                  I confirm that I have read and understand the terms associated with accepting this
+                  order
                 </Text>
               </View>
 

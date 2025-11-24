@@ -31,7 +31,6 @@ export const createPaymentIntent = async (
         meta,
       }),
     });
-    console.log("createpayment inted api --- ", res);
     const result = await res.json();
     return result;
   } catch (error: any) {

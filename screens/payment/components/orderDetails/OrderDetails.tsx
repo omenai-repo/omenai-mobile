@@ -92,6 +92,7 @@ export default function OrderDetails({
 
     setMainPageLoader(true);
     const { paymentIntent } = await fetchPaymentSheetParams();
+    console.log("payment intent ---- ", paymentIntent);
 
     const { error } = await initPaymentSheet({
       merchantDisplayName: "Omenai, Inc.",
@@ -103,7 +104,7 @@ export default function OrderDetails({
 
     if (error) {
       initOnceRef.current = false; // allow retry if init failed
-      console.log(error.message);
+      console.log("Failed to init payment  --- ", error);
       throwError(error.message);
       setTimeout(() => navigation.goBack(), 3500);
     } else {
@@ -131,6 +132,7 @@ export default function OrderDetails({
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
     if (error) {
+      console.log("present payment sheet error ----", JSON.stringify(error, null, 2));
       goToCancelAndBack();
     } else {
       await goToSuccessAndRefreshOrders();

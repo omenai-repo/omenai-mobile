@@ -112,13 +112,19 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   const renderCountdownTimer = () => {
     if (payment_information === "pending" && order_accepted === "accepted" && remainingTime > 0) {
       return (
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ fontSize: 14, color: "red" }}>
-            Hold expires in: {formatTime(remainingTime)}
-          </Text>
+        <View style={tw`mt-3`}>
+          <View
+            style={tw`flex-row items-center bg-[#FFF1F0] border border-[#FCA5A5] px-3 py-2 rounded-lg`}
+          >
+            <Ionicons name="time-outline" size={16} color="#C71C16" />
+            <Text style={tw`ml-2 text-[13px] text-[#C71C16]`}>
+              Time left to pay: <Text style={tw`font-semibold`}>{formatTime(remainingTime)}</Text>
+            </Text>
+          </View>
         </View>
       );
     }
+
     return null;
   };
 

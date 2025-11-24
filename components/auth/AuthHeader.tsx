@@ -1,15 +1,8 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-  Platform,
-  StatusBar,
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar } from "react-native";
 import React from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { colors } from "../../config/colors.config";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type AuthHeaderProps = {
   title: string;
@@ -33,7 +26,7 @@ export default function AuthHeader({ title, subTitle, handleBackClick }: AuthHea
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.primary_black,
+    backgroundColor: colors.black,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   backButton: {
@@ -43,7 +36,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#515151",
+    backgroundColor: colors.black_light,
   },
   headerText: {
     fontSize: 20,
