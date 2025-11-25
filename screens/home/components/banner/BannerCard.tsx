@@ -2,6 +2,7 @@ import { Dimensions, ImageBackground, Text, TouchableOpacity, View } from "react
 import React, { memo } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import tw from "twrnc";
+import { colors } from "config/colors.config";
 import { getPromotionalFileView } from "lib/storage/getPromotionalsFileView";
 import { fontNames } from "constants/fontNames.constants";
 
@@ -32,7 +33,12 @@ const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: Ban
         imageStyle={tw`rounded-[12px]`}
         resizeMode="cover"
       >
-        <View style={tw`bg-black bg-opacity-50 flex-1 rounded-[12px] pt-[30px] pl-[20px]`}>
+        <View
+          style={[
+            tw`flex-1 rounded-[12px] pt-[30px] pl-[20px]`,
+            { backgroundColor: `${colors.black}80` },
+          ]}
+        >
           <Text
             style={[
               tw`text-white text-[18px] font-bold`,
@@ -52,7 +58,10 @@ const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: Ban
 
           <TouchableOpacity
             onPress={() => handleClick(image_href)}
-            style={tw`mt-4 flex-row bg-black bg-opacity-20 items-center gap-2 px-4 py-2 rounded-full w-[110px]`}
+            style={[
+              tw`mt-4 flex-row items-center gap-2 px-4 py-2 rounded-full w-[110px]`,
+              { backgroundColor: `${colors.black}33` },
+            ]}
           >
             <Text style={tw`text-white text-[13px] font-semibold`}>Explore</Text>
             <AntDesign name="arrow-right" color="#fff" size={15} />

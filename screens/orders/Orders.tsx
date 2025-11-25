@@ -42,7 +42,7 @@ export default function Orders() {
   const collectorTabs = useMemo(
     () => [
       {
-        title: "Pending",
+        title: "Orders",
         key: "pending",
         count: data?.pendingOrders?.length ?? 0,
       },

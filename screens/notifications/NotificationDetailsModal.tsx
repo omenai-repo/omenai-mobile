@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -8,10 +8,11 @@ import {
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import tw from 'twrnc';
-import { Ionicons } from '@expo/vector-icons';
-import { formatEventDate } from 'utils/utils_formatEventDate';
+} from "react-native";
+import tw from "twrnc";
+import { colors } from "config/colors.config";
+import { Ionicons } from "@expo/vector-icons";
+import { formatEventDate } from "utils/utils_formatEventDate";
 
 type NotificationDetailsModalProps = {
   visible: boolean;
@@ -33,9 +34,14 @@ const NotificationDetailsModal = ({
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
       <TouchableWithoutFeedback onPress={onClose}>
-        <View style={tw`flex-1 bg-black bg-opacity-40 justify-center items-center px-[20px]`}>
+        <View
+          style={[
+            tw`flex-1 justify-center items-center px-[20px]`,
+            { backgroundColor: `${colors.black}66` },
+          ]}
+        >
           <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
             style={tw`w-full max-w-[400px]`}
           >
             <TouchableWithoutFeedback onPress={() => {}}>

@@ -1,6 +1,7 @@
-import { StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from 'react-native';
-import React from 'react';
-import { colors } from '../../config/colors.config';
+import { StyleProp, Text, TextInput, View, ViewStyle, TextStyle } from "react-native";
+import React from "react";
+import tw from "twrnc";
+import { colors } from "../../config/colors.config";
 
 type InputProps = {
   label: string;
@@ -11,6 +12,8 @@ type InputProps = {
   handleBlur?: () => void;
   defaultValue?: string;
   containerStyle?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<TextStyle>;
+  height?: number;
 };
 
 export default function LargeInput({
@@ -22,14 +25,29 @@ export default function LargeInput({
   handleBlur,
   defaultValue,
   containerStyle,
+  inputStyle,
+  height,
 }: InputProps) {
   return (
-    <View style={[{ flex: 1 }, containerStyle]}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={[tw`flex-1`, containerStyle] as any}>
+      <Text style={[tw`text-sm`, { color: colors.inputLabel }]}>{label}</Text>
+
       <TextInput
         onChangeText={onInputChange}
         placeholder={placeHolder}
-        style={styles.inputContainer}
+        style={[
+          tw`w-full rounded-[5px] mt-2`,
+          inputStyle,
+          height ? { height } : { height: 140 },
+          {
+            borderWidth: 1,
+            borderColor: colors.inputBorder,
+            backgroundColor: "#FAFAFA",
+            paddingHorizontal: 20,
+            paddingTop: 15,
+            textAlignVertical: "top",
+          },
+        ]}
         keyboardType="default"
         autoCapitalize="none"
         value={defaultValue ? undefined : value}
@@ -38,32 +56,10 @@ export default function LargeInput({
         numberOfLines={4}
         defaultValue={defaultValue}
       />
+
       {errorMessage && errorMessage?.length > 0 && (
-        <Text style={styles.errorMessage}>{errorMessage}</Text>
+        <Text style={[tw`mt-2`, { color: "#ff0000" }]}>{errorMessage}</Text>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: 14,
-    color: colors.inputLabel,
-  },
-  inputContainer: {
-    height: 140,
-    width: '100%',
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    backgroundColor: '#FAFAFA',
-    paddingHorizontal: 20,
-    paddingTop: 15,
-    borderRadius: 5,
-    marginTop: 10,
-    textAlignVertical: 'top',
-  },
-  errorMessage: {
-    color: '#ff0000',
-    marginTop: 2,
-  },
-});

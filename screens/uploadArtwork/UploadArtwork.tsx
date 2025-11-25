@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import WithModal from "components/modal/WithModal";
 import HeaderIndicator from "./components/HeaderIndicator";
@@ -26,8 +26,10 @@ import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscri
 import NoSubscriptionBlock from "screens/galleryArtworksListing/components/NoSubscriptionBlock";
 import { useHighRiskFeatureFlag } from "hooks/useFeatureFlag";
 import UploadBlocker from "components/blockers/upload/UploadBlocker";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function UploadArtwork() {
+  const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showLockScreen, setShowLockScreen] = useState(false);
   const [shouldPreCheck, setShouldPreCheck] = useState(false);
@@ -195,7 +197,7 @@ export default function UploadArtwork() {
   const canUpload = userSession?.gallery_verified && isConfirmed?.isSubActive;
 
   const renderUploadContent = () => (
-    <>
+    <View style={{ paddingBottom: insets.bottom + 16, flex: 1 }}>
       <HeaderIndicator />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -212,7 +214,7 @@ export default function UploadArtwork() {
           {isLoading && <Loader />}
         </ScrollWrapper>
       </KeyboardAvoidingView>
-    </>
+    </View>
   );
 
   const shouldShowLock =

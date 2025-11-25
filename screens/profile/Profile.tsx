@@ -120,8 +120,8 @@ export default function Profile() {
             <FittedBlackButton
               value="Edit profile"
               onClick={goToEditProfile}
-              style={{ backgroundColor: colors.grey50 }}
-              textStyle={{ color: colors.black }}
+              // style={{ backgroundColor: colors.grey50 }}
+              // textStyle={{ color: colors.black }}
             />
           </View>
         </View>
