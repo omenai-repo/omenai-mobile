@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { Pressable, Text, View } from "react-native";
 import tw from "twrnc";
+import { colors } from "config/colors.config";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
 import { OrderActionType, OrderActionsProps } from "types/orders";
 
@@ -48,12 +49,14 @@ const OrderActionsBase = ({
   if (type === "track") {
     return (
       <Pressable
-        style={tw`bg-black py-3 px-4 rounded-full items-center`}
+        style={[tw`py-3 px-4 rounded-full items-center`, { backgroundColor: colors.black }]}
         onPress={trackBtn}
         accessible
         accessibilityLabel="Track this shipment"
       >
-        <Text style={tw`text-white text-[13px] font-semibold`}>Track this shipment</Text>
+        <Text style={[tw`text-[13px] font-semibold`, { color: colors.white }]}>
+          Track this shipment
+        </Text>
       </Pressable>
     );
   }

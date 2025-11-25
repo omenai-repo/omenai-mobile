@@ -309,11 +309,13 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             status !== "completed" &&
             !tracking_information.link && (
               <View
-                style={{
-                  padding: 10,
-                  backgroundColor: "#f3f3f3",
-                  borderRadius: 91,
-                }}
+                style={[
+                  tw`rounded-lg`,
+                  {
+                    padding: 10,
+                    backgroundColor: "#f3f3f3",
+                  },
+                ]}
               >
                 <Text style={{ color: "#666", textAlign: "center" }}>
                   Awaiting tracking information

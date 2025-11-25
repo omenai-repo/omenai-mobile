@@ -5,6 +5,7 @@ import Input from "components/inputs/Input";
 import CustomSelectPicker from "components/inputs/CustomSelectPicker";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
 import tw from "twrnc";
+import { colors } from "config/colors.config";
 import { fetchBanks } from "services/wallet/fetchBanks";
 import { debounce } from "lodash";
 import { useAppStore } from "store/app/appStore";
@@ -418,7 +419,12 @@ const AddPrimaryAcctScreen = () => {
           </View>
         </View>
         <Modal visible={isLoading} transparent animationType="fade">
-          <View style={tw.style("flex-1 justify-center items-center bg-black bg-opacity-50")}>
+          <View
+            style={[
+              tw`flex-1 justify-center items-center`,
+              { backgroundColor: `${colors.black}80` },
+            ]}
+          >
             <LottieView
               autoPlay
               ref={animation}

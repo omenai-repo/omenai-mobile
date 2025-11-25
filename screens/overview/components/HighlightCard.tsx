@@ -1,12 +1,13 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useMemo } from 'react';
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
-import { fetchHighlightData } from 'services/overview/fetchHighlightData';
-import tw from 'twrnc';
-import { useQueries } from '@tanstack/react-query';
-import { QK } from 'utils/queryKeys';
-import { useAppStore } from 'store/app/appStore';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useMemo } from "react";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
+import { fetchHighlightData } from "services/overview/fetchHighlightData";
+import tw from "twrnc";
+import { colors } from "config/colors.config";
+import { useQueries } from "@tanstack/react-query";
+import { QK } from "utils/queryKeys";
+import { useAppStore } from "store/app/appStore";
 
 type HighlightCardProps = {
   onLoadingChange?: (loading: boolean) => void;
@@ -18,7 +19,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
   const { userSession } = useAppStore();
 
   const results = useQueries({
-    queries: (['artworks', 'sales', 'net', 'revenue'] as const).map((slice) => ({
+    queries: (["artworks", "sales", "net", "revenue"] as const).map((slice) => ({
       queryKey: QK.highlightGallery(slice, userSession?.id),
       queryFn: () => fetchHighlightData(slice),
       staleTime: 30_000,
@@ -53,8 +54,8 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
     <Animated.View
       // entering={FadeInUp.delay(100)}
       style={[
-        tw`bg-black border border-[#ffffff10] rounded-[12px] px-[14px] py-[16px]`,
-        { width: cardWidth },
+        tw`rounded-[12px] px-[14px] py-[16px]`,
+        { width: cardWidth, backgroundColor: colors.black, borderColor: "#ffffff10" },
       ]}
     >
       <View style={tw`flex-row justify-between items-center`}>
@@ -86,7 +87,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
             >
               <View style={{ flex: 1 }}>
                 <View style={styles.skeletonLine} />
-                <View style={[styles.skeletonLine, { width: '50%', marginTop: 6 }]} />
+                <View style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]} />
               </View>
               <View style={styles.skeletonCircle} />
             </Animated.View>
@@ -101,7 +102,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
             >
               <View style={{ flex: 1 }}>
                 <View style={styles.skeletonLine} />
-                <View style={[styles.skeletonLine, { width: '50%', marginTop: 6 }]} />
+                <View style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]} />
               </View>
               <View style={styles.skeletonCircle} />
             </Animated.View>
@@ -132,20 +133,20 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
 
 const styles = StyleSheet.create({
   skeletonCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: "#1a1a1a",
     borderRadius: 12,
     padding: 16,
     marginBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   skeletonCircle: {
     height: 36,
     width: 36,
     borderRadius: 18,
-    backgroundColor: '#333',
+    backgroundColor: "#333",
     marginLeft: 10,
   },
-  skeletonLine: { height: 10, width: '70%', borderRadius: 4, backgroundColor: '#333' },
+  skeletonLine: { height: 10, width: "70%", borderRadius: 4, backgroundColor: "#333" },
 });

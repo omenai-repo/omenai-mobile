@@ -10,6 +10,7 @@ import {
   Platform,
 } from "react-native";
 import tw from "twrnc";
+import { colors } from "config/colors.config";
 import { Ionicons } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "store/app/appStore";
@@ -88,7 +89,10 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
       }}
     >
       <Animated.View
-        style={[tw`flex-1 bg-black/60 items-center justify-center px-4`, { opacity: fade }]}
+        style={[
+          tw`flex-1 items-center justify-center px-4`,
+          { backgroundColor: `${colors.black}99`, opacity: fade },
+        ]}
       >
         <Pressable onPress={() => !loading && onClose()} style={tw`absolute inset-0`} />
         <Animated.View
