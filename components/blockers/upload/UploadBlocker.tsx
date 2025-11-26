@@ -179,7 +179,7 @@ export default function UploadBlocker({
         </Text>
 
         {/* 4. The Timer Section */}
-        {expiryTimestamp && !timeLeft.isExpired && (
+        {Boolean(expiryTimestamp) && !timeLeft.isExpired && (
           <View style={tw`w-full max-w-[500px]`}>
             <View style={tw`flex-row items-center justify-center mb-4 gap-2`}>
               <SvgXml xml={clockIcon} width={16} height={16} />
@@ -238,7 +238,7 @@ export default function UploadBlocker({
         )}
 
         {/* 5. Expired State */}
-        {timeLeft.isExpired && expiryTimestamp && (
+        {timeLeft.isExpired && Boolean(expiryTimestamp) && (
           <View style={tw`mt-6 py-3 px-6 bg-[#2A9EDF]/10 border border-[#2A9EDF]/20 rounded-full`}>
             <Text style={tw`text-[#2A9EDF] font-medium`}>
               We are coming back online any moment now...
