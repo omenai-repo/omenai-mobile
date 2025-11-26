@@ -1,6 +1,8 @@
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text } from "react-native";
 import React, { useState } from "react";
 import tw from "twrnc";
+import { Feather } from "@expo/vector-icons";
+import { colors } from "config/colors.config";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
 import LongBlackButton from "components/buttons/LongBlackButton";
 import { updateShippingQuote } from "services/orders/updateShippingQuote";
@@ -280,12 +282,39 @@ const DimensionsDetails = () => {
               </View>
             )}
 
-            <View style={tw`mt-[30px] mx-[25px]`}>
-              <View style={tw`bg-[#FFF4E5] border border-[#FFA500] p-[14px] rounded-[8px]`}>
-                <Text style={tw`text-[#A65B00] text-[14px] font-medium`}>
-                  I confirm that I have read and understand the terms associated with accepting this
-                  order
-                </Text>
+            <View style={tw`mt-7 mx-6`}>
+              <View
+                style={[
+                  tw`rounded-xl relative overflow-hidden mb-3 p-4`,
+                  {
+                    borderWidth: 2,
+                    backgroundColor: "#FA52521A",
+                    borderColor: "#FA5252",
+                  },
+                ]}
+              >
+                <View style={tw`flex gap-2 flex-row items-center`}>
+                  <Feather name="alert-circle" size={30} color="#FA5252" />
+
+                  <Text
+                    style={[
+                      tw`text-sm`,
+                      {
+                        color: "#FA5252",
+                        fontWeight: "700",
+                      },
+                    ]}
+                  >
+                    Kindly review the following information carefully before continuing.
+                  </Text>
+                </View>
+                <View style={[tw`pt-2.5 pl-0`]}>
+                  <Text style={[tw`text-sm leading-6`, { color: colors.black }]}>
+                    By accepting this order, you agree to hold the artwork for 24 hours to allow for
+                    payment and shipment processing. If the piece is on exhibition and paid for by
+                    this buyer, shipment will be scheduled at the exhibition’s end date
+                  </Text>
+                </View>
               </View>
 
               <Pressable
@@ -295,7 +324,14 @@ const DimensionsDetails = () => {
                 <View
                   style={tw`w-[20px] h-[20px] rounded-full border-2 border-[#858585] items-center justify-center`}
                 >
-                  {isChecked && <View style={tw`w-[12px] h-[12px] rounded-full bg-[#1a1a1a]`} />}
+                  {isChecked && (
+                    <View
+                      style={[
+                        tw`w-[12px] h-[12px] rounded-full`,
+                        { backgroundColor: colors.primary_black },
+                      ]}
+                    />
+                  )}
                 </View>
                 <Text style={tw`text-[14px] text-[#858585] font-medium`}>I agree and continue</Text>
               </Pressable>
