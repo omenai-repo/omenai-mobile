@@ -3,12 +3,12 @@ import React from "react";
 
 const HIGH_RISK_SDK_KEY =
   process.env.NODE_ENV === "production"
-    ? (process.env.EXPO_PUBLIC_CONFIGCAT_STAGING_HIGH_RISK_SDK_KEY as string) // TODO: Change this to production key when going live
+    ? (process.env.EXPO_PUBLIC_CONFIGCAT_HIGH_RISK_SDK_KEY as string)
     : (process.env.EXPO_PUBLIC_CONFIGCAT_STAGING_HIGH_RISK_SDK_KEY as string);
 
 const LOW_RISK_SDK_KEY =
   process.env.NODE_ENV === "production"
-    ? (process.env.EXPO_PUBLIC_CONFIGCAT_STAGING_LOW_RISK_SDK_KEY as string) // TODO: Change this to production key when going live
+    ? (process.env.EXPO_PUBLIC_CONFIGCAT_LOW_RISK_SDK_KEY as string)
     : (process.env.EXPO_PUBLIC_CONFIGCAT_STAGING_LOW_RISK_SDK_KEY as string);
 
 export function HighRiskProvider({ children }: { children: React.ReactNode }) {
