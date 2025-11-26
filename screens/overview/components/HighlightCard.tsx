@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
-import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { fetchHighlightData } from "services/overview/fetchHighlightData";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
@@ -78,55 +78,79 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
   if (isLoadingAny) {
     return (
       <View style={tw`mx-[20px]`}>
-        <View style={tw`flex-row gap-[15px] mb-[15px]`}>
-          {[0, 1].map((idx) => (
-            <Animated.View
-              key={`loading-top-${idx}`}
-              // entering={FadeIn.delay(idx * 100)}
-              style={[styles.skeletonCard, { width: cardWidth }]}
-            >
-              <View style={{ flex: 1 }}>
-                <View style={styles.skeletonLine} />
-                <View style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]} />
-              </View>
-              <View style={styles.skeletonCircle} />
-            </Animated.View>
-          ))}
-        </View>
-        <View style={tw`flex-row gap-[15px]`}>
-          {[2, 3].map((idx) => (
-            <Animated.View
-              key={`loading-bottom-${idx}`}
-              // entering={FadeIn.delay(idx * 100)}
-              style={[styles.skeletonCard, { width: cardWidth }]}
-            >
-              <View style={{ flex: 1 }}>
-                <View style={styles.skeletonLine} />
-                <View style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]} />
-              </View>
-              <View style={styles.skeletonCircle} />
-            </Animated.View>
-          ))}
-        </View>
+        {/** render two skeleton rows */}
+        {([0, 1] as const).map((startIdx, row) => (
+          <View
+            key={`s-row-${row}`}
+            style={tw`flex-row gap-[15px] ${row === 0 ? "mb-[15px]" : ""}`}
+          >
+            {[0, 1].map((col) => {
+              const idx = startIdx + col;
+              return (
+                <Animated.View
+                  key={`loading-${idx}`}
+                  style={[styles.skeletonCard, { width: cardWidth }]}
+                >
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.skeletonLine} />
+                    <View style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]} />
+                  </View>
+                  <View style={styles.skeletonCircle} />
+                </Animated.View>
+              );
+            })}
+          </View>
+        ))}
       </View>
     );
   }
 
   return (
     <View style={tw`mx-[20px]`}>
-      <View style={tw`flex-row gap-[15px] mb-[15px]`}>
-        <CardComp title="Revenue" icon="cash-outline" amount={revenue} color="#00C851" />
-        <CardComp title="Net Earnings" icon="stats-chart-outline" amount={net} color="#FF4444" />
-      </View>
-      <View style={tw`flex-row gap-[15px]`}>
-        <CardComp
-          title="Total Artworks"
-          icon="color-palette-outline"
-          amount={artworks}
-          color="#FFA500"
-        />
-        <CardComp title="Sold Artworks" icon="pricetags-outline" amount={sales} color="#00BFFF" />
-      </View>
+      {/** render cards in two rows by mapping a config list */}
+      {(() => {
+        const cards = [
+          { title: "Revenue", icon: "cash-outline" as const, amount: revenue, color: "#00C851" },
+          {
+            title: "Net Earnings",
+            icon: "stats-chart-outline" as const,
+            amount: net,
+            color: "#FF4444",
+          },
+          {
+            title: "Total Artworks",
+            icon: "color-palette-outline" as const,
+            amount: artworks,
+            color: "#FFA500",
+          },
+          {
+            title: "Sold Artworks",
+            icon: "pricetags-outline" as const,
+            amount: sales,
+            color: "#00BFFF",
+          },
+        ];
+
+        const rows: (typeof cards)[] = [];
+        for (let i = 0; i < cards.length; i += 2) rows.push(cards.slice(i, i + 2));
+
+        return rows.map((rowItems, rIdx) => (
+          <View
+            key={`row-${rIdx}`}
+            style={tw`flex-row gap-[15px] ${rIdx === 0 ? "mb-[15px]" : ""}`}
+          >
+            {rowItems.map((c) => (
+              <CardComp
+                key={c.title}
+                title={c.title}
+                icon={c.icon}
+                amount={c.amount}
+                color={c.color}
+              />
+            ))}
+          </View>
+        ));
+      })()}
     </View>
   );
 };

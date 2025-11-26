@@ -64,6 +64,17 @@ export default function EditGalleryProfile() {
     }
   };
 
+  const AddressField = ({ label, value }: { label: string; value?: string | null }) => {
+    if (!value) return null;
+    return (
+      <Text style={tw`text-gray-800`}>
+        <Text style={tw`font-semibold`}>{label} </Text>
+        {value}
+        {"\n"}
+      </Text>
+    );
+  };
+
   return (
     <WithModal>
       <BackHeaderTitle
@@ -111,44 +122,11 @@ export default function EditGalleryProfile() {
               <View style={tw`mb-2`}>
                 <Text style={tw`text-sm font-semibold text-[#858585] mb-1`}>Full Address</Text>
                 <View style={tw`bg-gray-100 p-4 rounded-lg border border-gray-300`}>
-                  {userSession.address.address_line ? (
-                    <Text style={tw`text-gray-800`}>
-                      <Text style={tw`font-semibold`}>Address: </Text>
-                      {userSession.address.address_line}
-                      {"\n"}
-                    </Text>
-                  ) : null}
-
-                  {userSession.address.city ? (
-                    <Text style={tw`text-gray-800`}>
-                      <Text style={tw`font-semibold`}>City: </Text>
-                      {userSession.address.city}
-                      {"\n"}
-                    </Text>
-                  ) : null}
-
-                  {userSession.address.state ? (
-                    <Text style={tw`text-gray-800`}>
-                      <Text style={tw`font-semibold`}>State: </Text>
-                      {userSession.address.state}
-                      {"\n"}
-                    </Text>
-                  ) : null}
-
-                  {userSession.address.zip ? (
-                    <Text style={tw`text-gray-800`}>
-                      <Text style={tw`font-semibold`}>Zip Code: </Text>
-                      {userSession.address.zip}
-                      {"\n"}
-                    </Text>
-                  ) : null}
-
-                  {userSession.address.country ? (
-                    <Text style={tw`text-gray-800`}>
-                      <Text style={tw`font-semibold`}>Country: </Text>
-                      {userSession.address.country}
-                    </Text>
-                  ) : null}
+                  <AddressField label="Address:" value={userSession.address.address_line} />
+                  <AddressField label="City:" value={userSession.address.city} />
+                  <AddressField label="State:" value={userSession.address.state} />
+                  <AddressField label="Zip Code:" value={userSession.address.zip} />
+                  <AddressField label="Country:" value={userSession.address.country} />
                 </View>
               </View>
 
