@@ -4,12 +4,12 @@ const logger = configcat.createConsoleLogger(configcat.LogLevel.Info); // Set th
 
 const highRiskSdkKey =
   process.env.NODE_ENV === "production"
-    ? process.env.EXPO_PUBLIC_CONFIGCAT_STAGING_HIGH_RISK_SDK_KEY! // TODO: Change to CONFIGCAT_HIGH_RISK_SDK_KEY when going to production
+    ? process.env.EXPO_PUBLIC_CONFIGCAT_HIGH_RISK_SDK_KEY!
     : process.env.EXPO_PUBLIC_CONFIGCAT_STAGING_HIGH_RISK_SDK_KEY!;
 
 const lowRiskSdkKey =
   process.env.NODE_ENV === "production"
-    ? process.env.EXPO_PUBLIC_CONFIGCAT_STAGING_LOW_RISK_SDK_KEY! // TODO: Change to CONFIGCAT_LOW_RISK_SDK_KEY when going to production
+    ? process.env.EXPO_PUBLIC_CONFIGCAT_LOW_RISK_SDK_KEY!
     : process.env.EXPO_PUBLIC_CONFIGCAT_STAGING_LOW_RISK_SDK_KEY!;
 
 const highRiskconfigCatClient = configcat.getClient(
