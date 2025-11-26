@@ -46,6 +46,8 @@ export default function OrderDetails({
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
 
+  const [transactionRef] = useState(() => `flw_tx_ref_${Math.random().toString(36).slice(2, 10)}`);
+
   // --- prevent double init of Stripe sheet
   const initOnceRef = useRef(false);
 
@@ -66,7 +68,7 @@ export default function OrderDetails({
     String(taxesNum)
   );
 
-  const fetchPaymentSheetParams = async () => {
+  const fetchPaymentSheetParams = React.useCallback(async () => {
     const { paymentIntent, publishableKey } = await createPaymentIntent(
       Math.ceil(total_price_number * 100) / 100,
       data.seller_details.id,
@@ -84,9 +86,9 @@ export default function OrderDetails({
       }
     );
     return { paymentIntent, publishableKey };
-  };
+  }, [total_price_number, data, userSession, feesNum, taxesNum]);
 
-  const initializePaymentSheet = async () => {
+  const initializePaymentSheet = React.useCallback(async () => {
     if (initOnceRef.current) return; // guard
     initOnceRef.current = true;
 
@@ -105,12 +107,19 @@ export default function OrderDetails({
     if (error) {
       initOnceRef.current = false; // allow retry if init failed
       console.log("Failed to init payment  --- ", error);
-      throwError(error.message);
+      updateModal({ message: error.message, modalType: "error", showModal: true });
       setTimeout(() => navigation.goBack(), 3500);
     } else {
       setMainPageLoader(false);
     }
-  };
+  }, [
+    fetchPaymentSheetParams,
+    initPaymentSheet,
+    navigation,
+    setMainPageLoader,
+    userSession.name,
+    updateModal,
+  ]);
 
   const invalidateOrdersEverywhere = async () => {
     await queryClient.invalidateQueries({ queryKey: ["orders", userSession.id] });
@@ -145,7 +154,7 @@ export default function OrderDetails({
     if (data.seller_designation === "gallery") {
       initializePaymentSheet();
     }
-  }, [data.seller_designation]);
+  }, [data.seller_designation, initializePaymentSheet]);
 
   async function handleClickPayNow() {
     try {
@@ -243,7 +252,7 @@ export default function OrderDetails({
               <PayWithFlutterwave
                 onRedirect={handleOnRedirect}
                 options={{
-                  tx_ref: `flw_tx_ref_${Math.random().toString(36).slice(2, 10)}`,
+                  tx_ref: transactionRef,
                   amount: Math.ceil(total_price_number * 100) / 100,
                   currency: "USD",
                   authorization: process.env.EXPO_PUBLIC_FLW_TEST_PUBLIC_KEY,
