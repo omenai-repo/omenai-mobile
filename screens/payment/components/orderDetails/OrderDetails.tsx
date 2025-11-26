@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { colors } from "config/colors.config";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
 import LongBlackButton from "components/buttons/LongBlackButton";
@@ -20,6 +20,7 @@ import { PayWithFlutterwave } from "flutterwave-react-native";
 import tw from "twrnc";
 import { useQueryClient } from "@tanstack/react-query";
 import VerifyTransactionModal from "../success/VerifyTransactionModal";
+import * as Crypto from "expo-crypto";
 
 interface RedirectParams {
   status: "successful" | "cancelled";
@@ -46,7 +47,7 @@ export default function OrderDetails({
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
 
-  const [transactionRef] = useState(() => `flw_tx_ref_${Math.random().toString(36).slice(2, 10)}`);
+  const transactionRef = useMemo(() => `flw_tx_ref_${Crypto.randomUUID()}`, []);
 
   // --- prevent double init of Stripe sheet
   const initOnceRef = useRef(false);
