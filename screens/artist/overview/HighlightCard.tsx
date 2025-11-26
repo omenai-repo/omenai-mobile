@@ -1,7 +1,7 @@
 // screens/overview/HighlightCard.tsx
 import React, { useEffect } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
-import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
 import { Ionicons } from "@expo/vector-icons";

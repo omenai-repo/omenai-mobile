@@ -50,6 +50,14 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
     }
   }, [amount]);
 
+  // small helper to render labeled account rows
+  const AccountRow = ({ label, value }: { label: string; value?: string | null }) => (
+    <View style={tw`flex-row items-center`}>
+      <Text style={tw`text-[14px] text-[#1A1A1A] flex-1`}>{label}</Text>
+      <Text style={tw`text-[14px] text-[#1A1A1A] font-bold`}>{value ?? "--"}</Text>
+    </View>
+  );
+
   const fetchTransferRate = async () => {
     try {
       setLoadAmount(true);
@@ -157,24 +165,18 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
                 <View
                   style={tw`bg-[#FFFFFF] border border-[#00000033] p-4 rounded-[15px] gap-[8px]`}
                 >
-                  <View style={tw`flex-row items-center`}>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Number:</Text>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
-                      {walletData?.primary_withdrawal_account?.account_number}
-                    </Text>
-                  </View>
-                  <View style={tw`flex-row items-center`}>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Bank Name:</Text>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
-                      {walletData?.primary_withdrawal_account?.bank_name}
-                    </Text>
-                  </View>
-                  <View style={tw`flex-row items-center`}>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] flex-1`}>Account Name:</Text>
-                    <Text style={tw`text-[14px] text-[#1A1A1A]000] font-bold`}>
-                      {walletData?.primary_withdrawal_account?.account_name}
-                    </Text>
-                  </View>
+                  <AccountRow
+                    label="Account Number:"
+                    value={walletData?.primary_withdrawal_account?.account_number}
+                  />
+                  <AccountRow
+                    label="Bank Name:"
+                    value={walletData?.primary_withdrawal_account?.bank_name}
+                  />
+                  <AccountRow
+                    label="Account Name:"
+                    value={walletData?.primary_withdrawal_account?.account_name}
+                  />
                 </View>
               </View>
 

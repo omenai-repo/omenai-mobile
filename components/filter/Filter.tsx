@@ -31,35 +31,27 @@ export default function Filter({ children }: FilterProps) {
 
   const handleSubmitFilter = async () => {
     updatePaginationCount("reset");
-    setIsLoading(true);
-    const response = await fetchPaginatedArtworks(paginationCount, filterOptions);
-    if (response?.isOk) {
-      setPageCount(response.count);
-      setArtworks(response.data);
-    } else {
-    }
-    setIsLoading(false);
-    navigation.goBack();
+    await fetchAndApply(paginationCount, filterOptions, true);
   };
 
   const handleClearAndApply = async () => {
     updatePaginationCount("reset");
     clearAllFilters();
-    setIsLoading(true);
+    await fetchAndApply(1, { medium: [], price: [], rarity: [], year: [] }, true);
+  };
 
-    const response = await fetchPaginatedArtworks(1, {
-      medium: [],
-      price: [],
-      rarity: [],
-      year: [],
-    });
-
-    if (response?.isOk) {
-      setPageCount(response.count);
-      setArtworks(response.data);
+  const fetchAndApply = async (page: number, options: any, goBack: boolean = false) => {
+    try {
+      setIsLoading(true);
+      const response = await fetchPaginatedArtworks(page, options);
+      if (response?.isOk) {
+        setPageCount(response.count);
+        setArtworks(response.data);
+      }
+    } finally {
+      setIsLoading(false);
+      if (goBack) navigation.goBack();
     }
-    setIsLoading(false);
-    navigation.goBack();
   };
 
   return (
@@ -147,8 +139,6 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: "#FAFAFA",
     borderRadius: 30,
-    // borderWidth: 1,
-    // borderColor: colors.inputBorder,
   },
   filterButtonText: {
     fontSize: 14,
