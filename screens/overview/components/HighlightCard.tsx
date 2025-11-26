@@ -9,6 +9,21 @@ import { useQueries } from "@tanstack/react-query";
 import { QK } from "utils/queryKeys";
 import { useAppStore } from "store/app/appStore";
 
+type CardConfig = {
+  title: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  amount: number;
+  color: string;
+};
+
+const chunkArray = <T,>(arr: T[], size: number): T[][] => {
+  const chunkedArray: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunkedArray.push(arr.slice(i, i + size));
+  }
+  return chunkedArray;
+};
+
 type HighlightCardProps = {
   onLoadingChange?: (loading: boolean) => void;
 };
@@ -40,17 +55,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
 
   const [artworks, sales, net, revenue] = results.map((r) => r.data ?? 0);
 
-  const CardComp = ({
-    title,
-    icon,
-    amount,
-    color,
-  }: {
-    title: string;
-    icon: keyof typeof Ionicons.glyphMap;
-    amount: number;
-    color: string;
-  }) => (
+  const CardComp = ({ title, icon, amount, color }: CardConfig) => (
     <Animated.View
       // entering={FadeInUp.delay(100)}
       style={[
@@ -75,30 +80,53 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
     </Animated.View>
   );
 
+  const allCards = [
+    { title: "Revenue", icon: "cash-outline" as const, amount: revenue, color: "#00C851" },
+    {
+      title: "Net Earnings",
+      icon: "stats-chart-outline" as const,
+      amount: net,
+      color: "#FF4444",
+    },
+    {
+      title: "Total Artworks",
+      icon: "color-palette-outline" as const,
+      amount: artworks,
+      color: "#FFA500",
+    },
+    {
+      title: "Sold Artworks",
+      icon: "pricetags-outline" as const,
+      amount: sales,
+      color: "#00BFFF",
+    },
+  ];
+
+  const cardRows = chunkArray(allCards, 2);
+
   if (isLoadingAny) {
+    const skeletonItems = [0, 1, 2, 3];
+    const skeletonRows = chunkArray(skeletonItems, 2);
+
     return (
       <View style={tw`mx-[20px]`}>
-        {/** render two skeleton rows */}
-        {([0, 1] as const).map((startIdx, row) => (
+        {skeletonRows.map((rowItems, rIdx) => (
           <View
-            key={`s-row-${row}`}
-            style={tw`flex-row gap-[15px] ${row === 0 ? "mb-[15px]" : ""}`}
+            key={`s-row-${rIdx}`}
+            style={tw`flex-row gap-[15px] ${rIdx === 0 ? "mb-[15px]" : ""}`}
           >
-            {[0, 1].map((col) => {
-              const idx = startIdx + col;
-              return (
-                <Animated.View
-                  key={`loading-${idx}`}
-                  style={[styles.skeletonCard, { width: cardWidth }]}
-                >
-                  <View style={{ flex: 1 }}>
-                    <View style={styles.skeletonLine} />
-                    <View style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]} />
-                  </View>
-                  <View style={styles.skeletonCircle} />
-                </Animated.View>
-              );
-            })}
+            {rowItems.map((_idx, col) => (
+              <Animated.View
+                key={`loading-${rIdx * 2 + col}`}
+                style={[styles.skeletonCard, { width: cardWidth }]}
+              >
+                <View style={{ flex: 1 }}>
+                  <View style={styles.skeletonLine} />
+                  <View style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]} />
+                </View>
+                <View style={styles.skeletonCircle} />
+              </Animated.View>
+            ))}
           </View>
         ))}
       </View>
@@ -107,50 +135,19 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
 
   return (
     <View style={tw`mx-[20px]`}>
-      {/** render cards in two rows by mapping a config list */}
-      {(() => {
-        const cards = [
-          { title: "Revenue", icon: "cash-outline" as const, amount: revenue, color: "#00C851" },
-          {
-            title: "Net Earnings",
-            icon: "stats-chart-outline" as const,
-            amount: net,
-            color: "#FF4444",
-          },
-          {
-            title: "Total Artworks",
-            icon: "color-palette-outline" as const,
-            amount: artworks,
-            color: "#FFA500",
-          },
-          {
-            title: "Sold Artworks",
-            icon: "pricetags-outline" as const,
-            amount: sales,
-            color: "#00BFFF",
-          },
-        ];
-
-        const rows: (typeof cards)[] = [];
-        for (let i = 0; i < cards.length; i += 2) rows.push(cards.slice(i, i + 2));
-
-        return rows.map((rowItems, rIdx) => (
-          <View
-            key={`row-${rIdx}`}
-            style={tw`flex-row gap-[15px] ${rIdx === 0 ? "mb-[15px]" : ""}`}
-          >
-            {rowItems.map((c) => (
-              <CardComp
-                key={c.title}
-                title={c.title}
-                icon={c.icon}
-                amount={c.amount}
-                color={c.color}
-              />
-            ))}
-          </View>
-        ));
-      })()}
+      {cardRows.map((rowItems, rIdx) => (
+        <View key={`row-${rIdx}`} style={tw`flex-row gap-[15px] ${rIdx === 0 ? "mb-[15px]" : ""}`}>
+          {rowItems.map((c) => (
+            <CardComp
+              key={c.title}
+              title={c.title}
+              icon={c.icon}
+              amount={c.amount}
+              color={c.color}
+            />
+          ))}
+        </View>
+      ))}
     </View>
   );
 };
