@@ -1,5 +1,4 @@
 import { BlurView } from "expo-blur";
-import { update } from "lodash";
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, Modal, Pressable, TextInput } from "react-native";
 import { colors } from "config/colors.config";
@@ -21,8 +20,33 @@ export const PinCreationModal = ({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const pinRefs = useRef<Array<TextInput | null>>([]);
-  const confirmPinRefs = useRef<Array<TextInput | null>>([]);
+  const pinRefs = useRef<(TextInput | null)[]>([]);
+  const confirmPinRefs = useRef<(TextInput | null)[]>([]);
+
+  const inputStyle = tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`;
+
+  const PinDigit = ({
+    value,
+    onChange,
+    inputRef,
+    testID,
+  }: {
+    value: string;
+    onChange: (text: string) => void;
+    inputRef: (ref: TextInput | null) => void;
+    testID?: string;
+  }) => (
+    <TextInput
+      ref={inputRef}
+      style={inputStyle}
+      keyboardType="numeric"
+      maxLength={1}
+      secureTextEntry
+      value={value}
+      onChangeText={onChange}
+      testID={testID}
+    />
+  );
 
   const { updateModal } = useModalStore();
 
@@ -134,15 +158,14 @@ export const PinCreationModal = ({
           <Text style={tw`mb-2`}>Enter new wallet PIN:</Text>
           <View style={tw`flex-row justify-between mb-[40px]`}>
             {pin.map((digit, i) => (
-              <TextInput
+              <PinDigit
                 key={`pin-${i}`}
-                ref={(ref) => (pinRefs.current[i] = ref)}
-                style={tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`}
-                keyboardType="numeric"
-                maxLength={1}
-                secureTextEntry
+                inputRef={(ref) => {
+                  pinRefs.current[i] = ref;
+                }}
                 value={digit}
-                onChangeText={(text) => handlePinChange(text, i, false, pinRefs, setPin, pin)}
+                onChange={(text) => handlePinChange(text, i, false, pinRefs, setPin, pin)}
+                testID={`pin-${i}`}
               />
             ))}
           </View>
@@ -150,17 +173,16 @@ export const PinCreationModal = ({
           <Text style={tw`mb-2`}>Confirm wallet PIN:</Text>
           <View style={tw`flex-row justify-between mb-[30px]`}>
             {confirmPin.map((digit, i) => (
-              <TextInput
+              <PinDigit
                 key={`confirm-${i}`}
-                ref={(ref) => (confirmPinRefs.current[i] = ref)}
-                style={tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`}
-                keyboardType="numeric"
-                maxLength={1}
-                secureTextEntry
+                inputRef={(ref) => {
+                  confirmPinRefs.current[i] = ref;
+                }}
                 value={digit}
-                onChangeText={(text) =>
+                onChange={(text) =>
                   handlePinChange(text, i, true, confirmPinRefs, setConfirmPin, confirmPin)
                 }
+                testID={`confirm-${i}`}
               />
             ))}
           </View>
