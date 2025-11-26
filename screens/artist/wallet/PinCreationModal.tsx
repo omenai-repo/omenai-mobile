@@ -22,7 +22,6 @@ export const PinCreationModal = ({
 
   const pinRefs = useRef<(TextInput | null)[]>([]);
   const confirmPinRefs = useRef<(TextInput | null)[]>([]);
-
   const inputStyle = tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`;
 
   const PinDigit = ({
@@ -46,6 +45,32 @@ export const PinCreationModal = ({
       onChangeText={onChange}
       testID={testID}
     />
+  );
+
+  const PinInputRow = ({
+    values,
+    refs,
+    onChange,
+    testPrefix,
+  }: {
+    values: string[];
+    refs: React.MutableRefObject<(TextInput | null)[]>;
+    onChange: (text: string, index: number) => void;
+    testPrefix: string;
+  }) => (
+    <View style={tw`flex-row justify-between`}>
+      {values.map((digit, i) => (
+        <PinDigit
+          key={`${testPrefix}-${i}`}
+          inputRef={(ref) => {
+            refs.current[i] = ref;
+          }}
+          value={digit}
+          onChange={(text) => onChange(text, i)}
+          testID={`${testPrefix}-${i}`}
+        />
+      ))}
+    </View>
   );
 
   const { updateModal } = useModalStore();
@@ -157,34 +182,24 @@ export const PinCreationModal = ({
 
           <Text style={tw`mb-2`}>Enter new wallet PIN:</Text>
           <View style={tw`flex-row justify-between mb-[40px]`}>
-            {pin.map((digit, i) => (
-              <PinDigit
-                key={`pin-${i}`}
-                inputRef={(ref) => {
-                  pinRefs.current[i] = ref;
-                }}
-                value={digit}
-                onChange={(text) => handlePinChange(text, i, false, pinRefs, setPin, pin)}
-                testID={`pin-${i}`}
-              />
-            ))}
+            <PinInputRow
+              values={pin}
+              refs={pinRefs}
+              onChange={(text, i) => handlePinChange(text, i, false, pinRefs, setPin, pin)}
+              testPrefix="pin"
+            />
           </View>
 
           <Text style={tw`mb-2`}>Confirm wallet PIN:</Text>
           <View style={tw`flex-row justify-between mb-[30px]`}>
-            {confirmPin.map((digit, i) => (
-              <PinDigit
-                key={`confirm-${i}`}
-                inputRef={(ref) => {
-                  confirmPinRefs.current[i] = ref;
-                }}
-                value={digit}
-                onChange={(text) =>
-                  handlePinChange(text, i, true, confirmPinRefs, setConfirmPin, confirmPin)
-                }
-                testID={`confirm-${i}`}
-              />
-            ))}
+            <PinInputRow
+              values={confirmPin}
+              refs={confirmPinRefs}
+              onChange={(text, i) =>
+                handlePinChange(text, i, true, confirmPinRefs, setConfirmPin, confirmPin)
+              }
+              testPrefix="confirm"
+            />
           </View>
 
           {error ? <Text style={tw`text-red-500 mb-4`}>{error}</Text> : null}
