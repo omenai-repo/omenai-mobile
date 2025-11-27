@@ -29,11 +29,13 @@ export const PinCreationModal = ({
     onChange,
     inputRef,
     testID,
+    inputStyle,
   }: {
     value: string;
     onChange: (text: string) => void;
     inputRef: (ref: TextInput | null) => void;
     testID?: string;
+    inputStyle: any;
   }) => (
     <TextInput
       ref={inputRef}
@@ -68,6 +70,7 @@ export const PinCreationModal = ({
           value={digit}
           onChange={(text) => onChange(text, i)}
           testID={`${testPrefix}-${i}`}
+          inputStyle={inputStyle}
         />
       ))}
     </View>
