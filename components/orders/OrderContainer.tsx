@@ -4,8 +4,9 @@ import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
 import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
 import { getImageFileView } from "lib/storage/getImageFileView";
-import StatusBadge from "components/orders/StatusBadge";
-import OrderActions from "components/orders/OrderActions";
+import { StatusBadge } from "components/orders/StatusBadge";
+import { OrderActions } from "components/orders/OrderActions";
+import { DetailRow } from "./DetailRow";
 import type { OrderContainerProps } from "types/orders";
 
 export const OrderContainer = (props: OrderContainerProps) => {
@@ -117,20 +118,9 @@ export const OrderContainer = (props: OrderContainerProps) => {
         }}
       >
         <View style={tw`gap-[20px] mt-[15px]`}>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-              {price}
-            </Text>
-          </View>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Date</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-              {dateTime}
-            </Text>
-          </View>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
+          <DetailRow label="Price" value={price} />
+          <DetailRow label="Date" value={dateTime} />
+          <DetailRow label="Status">
             <StatusBadge
               status={status}
               payment_status={payment_status}
@@ -138,7 +128,7 @@ export const OrderContainer = (props: OrderContainerProps) => {
               order_accepted={order_accepted}
               delivered={delivered}
             />
-          </View>
+          </DetailRow>
           {order_accepted === "declined" && (
             <Text style={{ color: "#ff0000", fontSize: 14 }}>
               Reason: {order_decline_reason}
