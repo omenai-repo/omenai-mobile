@@ -17,6 +17,7 @@ import {
   originHeader,
   userAgent,
 } from "constants/apiUrl.constants";
+import { TransactionStatusIcon } from "./TransactionStatusIcon";
 
 interface VerifyTransactionModalProps {
   readonly visible: boolean;
@@ -136,18 +137,6 @@ export default function VerifyTransactionModal(
     run();
   }, [visible, transactionId, scale, opacity]);
 
-  const Icon = () => {
-    if (!verified?.isOk)
-      return <Feather name="x-circle" size={48} color={statusColors.text} />;
-    if (verified.status === "completed")
-      return (
-        <Feather name="check-circle" size={48} color={statusColors.text} />
-      );
-    if (verified.status === "pending")
-      return <Feather name="clock" size={48} color={statusColors.text} />;
-    return <Feather name="x-circle" size={48} color={statusColors.text} />;
-  };
-
   return (
     <Modal
       visible={visible}
@@ -204,7 +193,10 @@ export default function VerifyTransactionModal(
                   { backgroundColor: statusColors.bg },
                 ]}
               >
-                <Icon />
+                <TransactionStatusIcon
+                  verified={verified}
+                  color={statusColors.text}
+                />
               </View>
 
               <Text

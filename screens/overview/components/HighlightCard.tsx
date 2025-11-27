@@ -86,12 +86,12 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
       <View style={tw`mx-[20px]`}>
         {skeletonRows.map((rowItems, rIdx) => (
           <View
-            key={`s-row-${Date.now()}-${rIdx}`}
+            key={`s-row-${rowItems.join("-")}`}
             style={tw`flex-row gap-[15px] ${rIdx === 0 ? "mb-[15px]" : ""}`}
           >
-            {rowItems.map((_idx, col) => (
+            {rowItems.map((_idx) => (
               <Animated.View
-                key={`loading-${rIdx * 2 + col}`}
+                key={`loading-${_idx}`}
                 style={[styles.skeletonCard, { width: cardWidth }]}
               >
                 <View style={{ flex: 1 }}>
@@ -116,7 +116,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
     <View style={tw`mx-[20px]`}>
       {cardRows.map((rowItems, rIdx) => (
         <View
-          key={`row-${Date.now()}-${rIdx}`}
+          key={rowItems.map((c) => c.title).join("-")}
           style={tw`flex-row gap-[15px] ${rIdx === 0 ? "mb-[15px]" : ""}`}
         >
           {rowItems.map((c) => (

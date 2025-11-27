@@ -5,6 +5,7 @@ import { colors } from "config/colors.config";
 import { updateWalletPin } from "services/wallet/updateWalletPin";
 import { useModalStore } from "store/modal/modalStore";
 import tw from "twrnc";
+import { PinInputRow } from "./PinInputRow";
 
 export const PinCreationModal = ({
   visible,
@@ -24,59 +25,7 @@ export const PinCreationModal = ({
   const confirmPinRefs = useRef<(TextInput | null)[]>([]);
   const inputStyle = tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`;
 
-  const PinDigit = ({
-    value,
-    onChange,
-    inputRef,
-    testID,
-    inputStyle,
-  }: {
-    value: string;
-    onChange: (text: string) => void;
-    inputRef: (ref: TextInput | null) => void;
-    testID?: string;
-    inputStyle: any;
-  }) => (
-    <TextInput
-      ref={inputRef}
-      style={inputStyle}
-      keyboardType="numeric"
-      maxLength={1}
-      secureTextEntry
-      value={value}
-      onChangeText={onChange}
-      testID={testID}
-    />
-  );
-
-  const PinInputRow = ({
-    values,
-    refs,
-    onChange,
-    testPrefix,
-    inputStyle,
-  }: {
-    values: string[];
-    refs: React.MutableRefObject<(TextInput | null)[]>;
-    onChange: (text: string, index: number) => void;
-    testPrefix: string;
-    inputStyle: any;
-  }) => (
-    <View style={tw`flex-row justify-between`}>
-      {values.map((digit, i) => (
-        <PinDigit
-          key={`${testPrefix}-${i}`}
-          inputRef={(ref) => {
-            refs.current[i] = ref;
-          }}
-          value={digit}
-          onChange={(text) => onChange(text, i)}
-          testID={`${testPrefix}-${i}`}
-          inputStyle={inputStyle}
-        />
-      ))}
-    </View>
-  );
+  // ...existing code...
 
   const { updateModal } = useModalStore();
 
