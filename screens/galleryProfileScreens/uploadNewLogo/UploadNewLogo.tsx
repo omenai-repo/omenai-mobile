@@ -1,5 +1,5 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import BackScreenButton from "components/buttons/BackScreenButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -36,6 +36,17 @@ export default function UploadNewLogo() {
     }
   };
 
+  const getUserTypeKey = (type: string) => {
+    switch (type) {
+      case "artist":
+        return "artist";
+      case "gallery":
+        return "gallery";
+      default:
+        return "individual";
+    }
+  };
+
   const handleUpload = async () => {
     const logoParams = {
       name: logo.assets[0].fileName,
@@ -51,12 +62,13 @@ export default function UploadNewLogo() {
           bucketId: logoUpdated.bucketId,
           fileId: logoUpdated.$id,
         };
+
         const { isOk, body } = await updateLogo(
           {
             id: userSession.id,
             url: file.fileId,
           },
-          userType === "artist" ? "artist" : userType === "gallery" ? "gallery" : "individual"
+          getUserTypeKey(userType)
         );
 
         if (!isOk) {

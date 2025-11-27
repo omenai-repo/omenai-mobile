@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { colors } from "config/colors.config";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
@@ -18,7 +18,6 @@ import Loader from "components/general/Loader";
 import ScrollWrapper from "components/general/ScrollWrapper";
 import { PayWithFlutterwave } from "flutterwave-react-native";
 import FlutterwavePayButton from "components/payment/FlutterwavePayButton";
-import tw from "twrnc";
 import { useQueryClient } from "@tanstack/react-query";
 import VerifyTransactionModal from "../success/VerifyTransactionModal";
 import * as Crypto from "expo-crypto";
