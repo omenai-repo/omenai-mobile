@@ -11,14 +11,19 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { Feather } from "@expo/vector-icons";
-import { apiUrl, authorization, originHeader, userAgent } from "constants/apiUrl.constants";
+import {
+  apiUrl,
+  authorization,
+  originHeader,
+  userAgent,
+} from "constants/apiUrl.constants";
 
 interface VerifyTransactionModalProps {
-  visible: boolean;
-  transactionId?: string | null;
-  onGoToDashboard?: () => void;
-  onGoHome?: () => void;
-  onDismiss?: () => void;
+  readonly visible: boolean;
+  readonly transactionId?: string | null;
+  readonly onGoToDashboard?: () => void;
+  readonly onGoHome?: () => void;
+  readonly onDismiss?: () => void;
 }
 
 type VerifyResponse = {
@@ -35,8 +40,11 @@ const cardAnimConfig = {
   easing: Easing.out(Easing.cubic),
 } as const;
 
-export default function VerifyTransactionModal(props: VerifyTransactionModalProps) {
-  const { visible, transactionId, onGoHome, onGoToDashboard, onDismiss } = props;
+export default function VerifyTransactionModal(
+  props: VerifyTransactionModalProps
+) {
+  const { visible, transactionId, onGoHome, onGoToDashboard, onDismiss } =
+    props;
 
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState<VerifyResponse | null>(null);
@@ -46,7 +54,8 @@ export default function VerifyTransactionModal(props: VerifyTransactionModalProp
   const opacity = useRef(new Animated.Value(0)).current;
 
   const statusColors = useMemo(() => {
-    if (!verified?.isOk) return { ring: "#ef4444", bg: "#fee2e2", text: "#b91c1c" }; // red
+    if (!verified?.isOk)
+      return { ring: "#ef4444", bg: "#fee2e2", text: "#b91c1c" }; // red
     switch (verified?.status) {
       case "completed":
         return { ring: "#22c55e", bg: "#dcfce7", text: "#166534" }; // green
@@ -57,6 +66,19 @@ export default function VerifyTransactionModal(props: VerifyTransactionModalProp
         return { ring: "#ef4444", bg: "#fee2e2", text: "#b91c1c" }; // red
     }
   }, [verified]);
+
+  function getPaymentStatusText(verified: VerifyResponse | null): string {
+    if (verified?.success) return "Payment Verified!";
+    switch (verified?.status) {
+      case "pending":
+        return "Payment Pending";
+      case "completed":
+        return "Payment Verified!";
+      case "failed":
+      default:
+        return "Payment Verification Failed";
+    }
+  }
 
   useEffect(() => {
     if (!visible) return;
@@ -73,18 +95,24 @@ export default function VerifyTransactionModal(props: VerifyTransactionModalProp
     const run = async () => {
       try {
         if (!transactionId) throw new Error("Missing transaction id");
-        const res = await fetch(`${apiUrl}/api/transactions/verify_FLW_transaction`, {
-          method: "POST",
-          headers: {
-            Origin: originHeader,
-            "User-Agent": userAgent,
-            Authorization: authorization,
-          },
-          body: JSON.stringify({ transaction_id: transactionId }),
-        });
+        const res = await fetch(
+          `${apiUrl}/api/transactions/verify_FLW_transaction`,
+          {
+            method: "POST",
+            headers: {
+              Origin: originHeader,
+              "User-Agent": userAgent,
+              Authorization: authorization,
+            },
+            body: JSON.stringify({ transaction_id: transactionId }),
+          }
+        );
 
         if (!res.ok) {
-          setVerified({ isOk: false, message: "Could not verify your payment at the moment." });
+          setVerified({
+            isOk: false,
+            message: "Could not verify your payment at the moment.",
+          });
           return;
         }
 
@@ -95,27 +123,38 @@ export default function VerifyTransactionModal(props: VerifyTransactionModalProp
           status: result?.status,
           success: result?.success,
         });
-      } catch (e) {
-        setVerified({ isOk: false, message: "Network error while verifying payment." });
+      } catch {
+        setVerified({
+          isOk: false,
+          message: "Network error while verifying payment.",
+        });
       } finally {
         setLoading(false);
       }
     };
 
     run();
-  }, [visible, transactionId]);
+  }, [visible, transactionId, scale, opacity]);
 
   const Icon = () => {
-    if (!verified?.isOk) return <Feather name="x-circle" size={48} color={statusColors.text} />;
+    if (!verified?.isOk)
+      return <Feather name="x-circle" size={48} color={statusColors.text} />;
     if (verified.status === "completed")
-      return <Feather name="check-circle" size={48} color={statusColors.text} />;
+      return (
+        <Feather name="check-circle" size={48} color={statusColors.text} />
+      );
     if (verified.status === "pending")
       return <Feather name="clock" size={48} color={statusColors.text} />;
     return <Feather name="x-circle" size={48} color={statusColors.text} />;
   };
 
   return (
-    <Modal visible={visible} animationType="fade" transparent onRequestClose={onDismiss}>
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent
+      onRequestClose={onDismiss}
+    >
       {/* Dimmed backdrop */}
       <View style={tw`flex-1 bg-[#00000066] justify-center items-center px-5`}>
         <Animated.View
@@ -141,12 +180,16 @@ export default function VerifyTransactionModal(props: VerifyTransactionModalProp
             <View style={tw`items-center justify-center py-6`}>
               <View style={tw`mb-5`}>
                 {/* concentric loader vibe */}
-                <View style={tw`w-16 h-16 rounded-full border-4 border-blue-200`} />
+                <View
+                  style={tw`w-16 h-16 rounded-full border-4 border-blue-200`}
+                />
                 <View
                   style={tw`absolute w-16 h-16 rounded-full border-4 border-transparent border-t-blue-500`}
                 />
               </View>
-              <Text style={tw`text-base font-semibold text-blue-700`}>Verifying Transaction</Text>
+              <Text style={tw`text-base font-semibold text-blue-700`}>
+                Verifying Transaction
+              </Text>
               <Text style={tw`text-xs text-gray-600 mt-1`}>
                 Please wait while we confirm your payment…
               </Text>
@@ -164,16 +207,19 @@ export default function VerifyTransactionModal(props: VerifyTransactionModalProp
                 <Icon />
               </View>
 
-              <Text style={[tw`mt-5 text-lg font-semibold`, { color: statusColors.text }]}>
-                {verified?.success
-                  ? "Payment Verified!"
-                  : verified?.status === "pending"
-                  ? "Payment Pending"
-                  : "Payment Verification Failed"}
+              <Text
+                style={[
+                  tw`mt-5 text-lg font-semibold`,
+                  { color: statusColors.text },
+                ]}
+              >
+                {getPaymentStatusText(verified)}
               </Text>
 
               {!!verified?.message && (
-                <Text style={tw`mt-2 text-center text-gray-600 text-xs leading-5`}>
+                <Text
+                  style={tw`mt-2 text-center text-gray-600 text-xs leading-5`}
+                >
                   {verified.message}
                 </Text>
               )}
@@ -192,7 +238,12 @@ export default function VerifyTransactionModal(props: VerifyTransactionModalProp
                   onPress={onGoHome}
                   style={tw`h-12 rounded-2xl bg-white items-center justify-center flex-row mt-3 border border-gray-200`}
                 >
-                  <Feather name="arrow-left" size={18} color="#111" style={tw`mr-2`} />
+                  <Feather
+                    name="arrow-left"
+                    size={18}
+                    color="#111"
+                    style={tw`mr-2`}
+                  />
                   <Text style={tw`text-gray-900 font-medium`}>Go to home</Text>
                 </TouchableOpacity>
 

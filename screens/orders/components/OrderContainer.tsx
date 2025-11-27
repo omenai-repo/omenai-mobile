@@ -73,7 +73,9 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   const { value: isFlutterwavePaymentEnabled } = useHighRiskFeatureFlag(
     "flutterwave_payment_enabled"
   );
-  const { value: isStripePaymentEnabled } = useHighRiskFeatureFlag("stripe_payment_enabled");
+  const { value: isStripePaymentEnabled } = useHighRiskFeatureFlag(
+    "stripe_payment_enabled"
+  );
 
   const showBlocker =
     (seller_designation === "artist" && !isFlutterwavePaymentEnabled) ||
@@ -106,11 +108,17 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
     const hours = Math.floor(time / 3600000);
     const minutes = Math.floor((time % 3600000) / 60000);
     const seconds = Math.floor((time % 60000) / 1000);
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   const renderCountdownTimer = () => {
-    if (payment_information === "pending" && order_accepted === "accepted" && remainingTime > 0) {
+    if (
+      payment_information === "pending" &&
+      order_accepted === "accepted" &&
+      remainingTime > 0
+    ) {
       return (
         <View style={tw`mt-3`}>
           <View
@@ -118,7 +126,8 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
           >
             <Ionicons name="time-outline" size={16} color="#C71C16" />
             <Text style={tw`ml-2 text-[13px] text-[#C71C16]`}>
-              Time left to pay: <Text style={tw`font-semibold`}>{formatTime(remainingTime)}</Text>
+              Time left to pay:{" "}
+              <Text style={tw`font-semibold`}>{formatTime(remainingTime)}</Text>
             </Text>
           </View>
         </View>
@@ -134,10 +143,9 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   useEffect(() => {
     const calculateBaseHeight = () => {
       let base = 80;
-      if (status === "completed") base = 80;
-      else if (!order_accepted) base = 80;
-      else if (delivery_confirmed) base = 80;
-      else base = 140;
+      if (status !== "completed" && order_accepted && !delivery_confirmed) {
+        base = 140;
+      }
 
       // Add extra height only when blocker and pay-area are visible
       const payAreaVisible =
@@ -200,9 +208,16 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
     >
       <View style={tw`flex-row items-center`}>
         <View style={tw`flex-row items-center gap-[10px] flex-1`}>
-          <Image source={{ uri: image_href }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
+          <Image
+            source={{ uri: image_href }}
+            style={tw`h-[42px] w-[42px] rounded-[3px]`}
+          />
           <View style={tw`gap-[5px] pr-[20px] max-w-[80%]`}>
-            <Text style={tw`text-[12px] text-[#454545]`} numberOfLines={1} ellipsizeMode="tail">
+            <Text
+              style={tw`text-[12px] text-[#454545]`}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {artId}
             </Text>
             <Text
@@ -234,7 +249,9 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         <View style={tw`gap-[20px] mt-[15px]`}>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{price}</Text>
+            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
+              {price}
+            </Text>
           </View>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
@@ -250,7 +267,9 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             </View>
           </View>
           {order_accepted === "declined" && (
-            <Text style={{ color: "#ff0000", fontSize: 14 }}>Reason: {order_decline_reason}</Text>
+            <Text style={{ color: "#ff0000", fontSize: 14 }}>
+              Reason: {order_decline_reason}
+            </Text>
           )}
           {availability &&
             payment_information === "pending" &&
@@ -278,8 +297,9 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
 
                 {showBlocker && (
                   <Text style={tw`text-[12px] text-[#666]`}>
-                    We’re fine-tuning our payment system to resolve a minor issue and ensure every
-                    transaction remains flawlessly seamless.
+                    We’re fine-tuning our payment system to resolve a minor
+                    issue and ensure every transaction remains flawlessly
+                    seamless.
                   </Text>
                 )}
               </>
