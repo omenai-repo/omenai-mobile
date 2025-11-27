@@ -81,7 +81,9 @@ export const OrderContainer = (props: OrderContainerProps) => {
       } details`}
       accessibilityRole="button"
     >
-      <OrderHeader image_href={image_href} artId={artId} artName={artName} />
+      <View style={tw`flex-row items-center`}>
+        <OrderHeader image_href={image_href} artId={artId} artName={artName} />
+      </View>
       <View
         style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
       >
