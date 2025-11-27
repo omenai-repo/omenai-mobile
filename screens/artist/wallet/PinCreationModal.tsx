@@ -83,30 +83,32 @@ export const PinCreationModal = ({
     }
   }, [visible]);
 
-  const handlePinChange = (
-    value: string,
-    index: number,
-    isConfirm = false,
-    refs = pinRefs,
-    setter = setPin,
-    state = pin
-  ) => {
-    setError(""); // <-- Clear error on any keypress
+  const createPinChangeHandler =
+    (
+      setter: React.Dispatch<React.SetStateAction<string[]>>,
+      refs: React.MutableRefObject<(TextInput | null)[]>
+    ) =>
+    (value: string, index: number) => {
+      setError(""); // Clear error on any keypress
 
-    const newArray = [...state];
-    newArray[index] = value;
-    setter(newArray);
+      setter((prevPin) => {
+        const newPin = [...prevPin];
+        newPin[index] = value;
+        return newPin;
+      });
 
-    if (value) {
-      if (index < refs.current.length - 1) {
+      if (value && index < 3) {
         refs.current[index + 1]?.focus();
-      }
-    } else {
-      if (index > 0) {
+      } else if (!value && index > 0) {
         refs.current[index - 1]?.focus();
       }
-    }
-  };
+    };
+
+  const handlePinChange = createPinChangeHandler(setPin, pinRefs);
+  const handleConfirmPinChange = createPinChangeHandler(
+    setConfirmPin,
+    confirmPinRefs
+  );
 
   const validatePin = (pinArray: string[]) => {
     const pinStr = pinArray.join("");
@@ -119,11 +121,17 @@ export const PinCreationModal = ({
     // Check for ascending or descending sequence
     const isAscending = pinStr
       .split("")
-      .every((digit, i, arr) => i === 0 || parseInt(digit) === parseInt(arr[i - 1]) + 1);
+      .every(
+        (digit, i, arr) =>
+          i === 0 || parseInt(digit) === parseInt(arr[i - 1]) + 1
+      );
 
     const isDescending = pinStr
       .split("")
-      .every((digit, i, arr) => i === 0 || parseInt(digit) === parseInt(arr[i - 1]) - 1);
+      .every(
+        (digit, i, arr) =>
+          i === 0 || parseInt(digit) === parseInt(arr[i - 1]) - 1
+      );
 
     if (isAscending || isDescending) {
       return false;
@@ -174,9 +182,15 @@ export const PinCreationModal = ({
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View
-        style={[tw`flex-1 justify-center items-center`, { backgroundColor: `${colors.black}80` }]}
+        style={[
+          tw`flex-1 justify-center items-center`,
+          { backgroundColor: `${colors.black}80` },
+        ]}
       >
-        <BlurView intensity={30} style={tw`absolute top-0 left-0 right-0 bottom-0`} />
+        <BlurView
+          intensity={30}
+          style={tw`absolute top-0 left-0 right-0 bottom-0`}
+        />
         <View style={tw`bg-white rounded-2xl p-6 w-4/5`}>
           <Text style={tw`text-xl font-bold mb-4`}>Create Wallet PIN</Text>
 
@@ -185,7 +199,7 @@ export const PinCreationModal = ({
             <PinInputRow
               values={pin}
               refs={pinRefs}
-              onChange={(text, i) => handlePinChange(text, i, false, pinRefs, setPin, pin)}
+              onChange={handlePinChange}
               testPrefix="pin"
             />
           </View>
@@ -195,9 +209,7 @@ export const PinCreationModal = ({
             <PinInputRow
               values={confirmPin}
               refs={confirmPinRefs}
-              onChange={(text, i) =>
-                handlePinChange(text, i, true, confirmPinRefs, setConfirmPin, confirmPin)
-              }
+              onChange={handleConfirmPinChange}
               testPrefix="confirm"
             />
           </View>
@@ -213,7 +225,9 @@ export const PinCreationModal = ({
             onPress={handleSubmit}
             disabled={loading}
           >
-            <Text style={[tw`text-center text-[16px]`, { color: colors.white }]}>
+            <Text
+              style={[tw`text-center text-[16px]`, { color: colors.white }]}
+            >
               {loading ? "Processing..." : "Submit"}
             </Text>
           </Pressable>
