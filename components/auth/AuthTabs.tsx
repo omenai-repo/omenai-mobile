@@ -2,12 +2,16 @@ import { View, Pressable } from "react-native";
 import React, { useEffect } from "react";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
 
 type AuthTabsProps = {
-  tabs: string[];
-  stateIndex: number;
-  handleSelect: (e: number) => void;
+  readonly tabs: string[];
+  readonly stateIndex: number;
+  readonly handleSelect: (e: number) => void;
 };
 
 type TabItemProps = {
@@ -47,7 +51,9 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
           pressed && { opacity: 0.8 },
         ]}
       >
-        <Animated.View style={[tw`absolute inset-0 rounded-lg`, { backgroundColor }]} />
+        <Animated.View
+          style={[tw`absolute inset-0 rounded-lg`, { backgroundColor }]}
+        />
         <Animated.Text style={[tw`text-sm`, { zIndex: 10, color: textColor }]}>
           {name}
         </Animated.Text>
@@ -56,7 +62,11 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
   );
 };
 
-export default function AuthTabs({ tabs, stateIndex, handleSelect }: AuthTabsProps) {
+export default function AuthTabs({
+  tabs,
+  stateIndex,
+  handleSelect,
+}: AuthTabsProps) {
   return (
     <View
       style={tw`w-full bg-[#FAFAFA] border border-[#E0E0E0] rounded-lg p-1 flex-row gap-[15px]`}

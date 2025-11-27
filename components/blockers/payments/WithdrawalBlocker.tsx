@@ -5,8 +5,8 @@ import { SvgXml } from "react-native-svg";
 import { lockIcon, dollarSignIcon, closeIcon } from "utils/SvgImages";
 
 interface WithdrawalBlockerProps {
-  message?: string;
-  onClose: () => void;
+  readonly message?: string;
+  readonly onClose: () => void;
 }
 
 export default function WithdrawalBlocker({
@@ -34,7 +34,9 @@ export default function WithdrawalBlocker({
 
   return (
     // Modal Overlay
-    <View style={tw`absolute inset-0 z-50 bg-[#0f172a]/80 items-center justify-center p-4`}>
+    <View
+      style={tw`absolute inset-0 z-50 bg-[#0f172a]/80 items-center justify-center p-4`}
+    >
       {/* Modal Card */}
       <View
         style={tw`relative w-full max-w-[400px] bg-[#0f172a] border border-[#47748E]/30 rounded-xl shadow-2xl p-8 items-center`}
@@ -76,10 +78,13 @@ export default function WithdrawalBlocker({
         <Text
           style={tw`text-white text-[24px] font-bold tracking-tight mb-3 text-center leading-tight`}
         >
-          Wallet Withdrawal currently <Text style={tw`text-[#2A9EDF]`}>Inactive</Text>
+          Wallet Withdrawal currently{" "}
+          <Text style={tw`text-[#2A9EDF]`}>Inactive</Text>
         </Text>
 
-        <Text style={tw`text-[#818181] text-center max-w-[320px] text-base leading-relaxed mb-8`}>
+        <Text
+          style={tw`text-[#818181] text-center max-w-[320px] text-base leading-relaxed mb-8`}
+        >
           {message}
         </Text>
 

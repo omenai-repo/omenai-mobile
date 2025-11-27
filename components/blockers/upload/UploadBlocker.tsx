@@ -9,9 +9,9 @@ import { paletteIcon, clockIcon, arrowLeftIcon } from "utils/SvgImages";
  * Props for the Blocker Screen
  */
 interface ArtworkBlockerProps {
-  entity: "artist" | "gallery";
-  message?: string;
-  expiryTimestamp?: string; // ISO 8601 format (e.g., "2025-11-18T15:00:00Z")
+  readonly entity: "artist" | "gallery";
+  readonly message?: string;
+  readonly expiryTimestamp?: string; // ISO 8601 format (e.g., "2025-11-18T15:00:00Z")
 }
 
 export default function UploadBlocker({
@@ -86,14 +86,16 @@ export default function UploadBlocker({
 
     const calculateTime = () => {
       const expiry = new Date(expiryTimestamp).getTime();
-      const now = new Date().getTime();
+      const now = Date.now();
       const distance = expiry - now;
 
       if (distance < 0) {
         return { hours: "00", minutes: "00", seconds: "00", isExpired: true };
       }
 
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -122,7 +124,9 @@ export default function UploadBlocker({
   };
 
   return (
-    <View style={tw`flex-1 bg-[#0f172a] items-center justify-center px-6 relative overflow-hidden`}>
+    <View
+      style={tw`flex-1 bg-[#0f172a] items-center justify-center px-6 relative overflow-hidden`}
+    >
       {/* Artistic Background Effects */}
       {/* Rotating Aurora Blob 1 */}
       <Animated.View
@@ -150,7 +154,9 @@ export default function UploadBlocker({
       <View style={tw`w-full max-w-[600px] items-center`}>
         {/* 1. The Icon / Art Piece */}
         <View style={tw`mb-8 relative`}>
-          <View style={tw`absolute inset-0 bg-[#2A9EDF] rounded-full opacity-20`} />
+          <View
+            style={tw`absolute inset-0 bg-[#2A9EDF] rounded-full opacity-20`}
+          />
           <View
             style={tw`relative w-20 h-20 bg-[#0f172a] border border-[#47748E]/30 rounded-2xl items-center justify-center shadow-2xl`}
           >
@@ -174,7 +180,9 @@ export default function UploadBlocker({
         </View>
 
         {/* 3. The Message */}
-        <Text style={tw`text-[#47748E] text-base max-w-[400px] text-center leading-relaxed mb-10`}>
+        <Text
+          style={tw`text-[#47748E] text-base max-w-[400px] text-center leading-relaxed mb-10`}
+        >
           {message}
         </Text>
 
@@ -183,7 +191,9 @@ export default function UploadBlocker({
           <View style={tw`w-full max-w-[500px]`}>
             <View style={tw`flex-row items-center justify-center mb-4 gap-2`}>
               <SvgXml xml={clockIcon} width={16} height={16} />
-              <Text style={tw`text-[#818181] uppercase tracking-widest text-xs font-semibold`}>
+              <Text
+                style={tw`text-[#818181] uppercase tracking-widest text-xs font-semibold`}
+              >
                 Artwork Upload will be available In
               </Text>
             </View>
@@ -195,10 +205,18 @@ export default function UploadBlocker({
                 <View
                   style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-lg w-full h-20 items-center justify-center overflow-hidden`}
                 >
-                  <Text style={tw`text-[32px] font-light text-white`}>{timeLeft.hours}</Text>
-                  <View style={tw`absolute bottom-0 left-0 w-full h-1 bg-[#2A9EDF]/30`} />
+                  <Text style={tw`text-[32px] font-light text-white`}>
+                    {timeLeft.hours}
+                  </Text>
+                  <View
+                    style={tw`absolute bottom-0 left-0 w-full h-1 bg-[#2A9EDF]/30`}
+                  />
                 </View>
-                <Text style={tw`mt-2 text-xs text-[#818181] uppercase tracking-wider`}>Hours</Text>
+                <Text
+                  style={tw`mt-2 text-xs text-[#818181] uppercase tracking-wider`}
+                >
+                  Hours
+                </Text>
               </View>
 
               {/* Minutes */}
@@ -206,10 +224,16 @@ export default function UploadBlocker({
                 <View
                   style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-lg w-full h-20 items-center justify-center overflow-hidden`}
                 >
-                  <Text style={tw`text-[32px] font-light text-white`}>{timeLeft.minutes}</Text>
-                  <View style={tw`absolute bottom-0 left-0 w-full h-1 bg-[#2A9EDF]/60`} />
+                  <Text style={tw`text-[32px] font-light text-white`}>
+                    {timeLeft.minutes}
+                  </Text>
+                  <View
+                    style={tw`absolute bottom-0 left-0 w-full h-1 bg-[#2A9EDF]/60`}
+                  />
                 </View>
-                <Text style={tw`mt-2 text-xs text-[#818181] uppercase tracking-wider`}>
+                <Text
+                  style={tw`mt-2 text-xs text-[#818181] uppercase tracking-wider`}
+                >
                   Minutes
                 </Text>
               </View>
@@ -219,7 +243,9 @@ export default function UploadBlocker({
                 <View
                   style={tw`relative bg-[#0f172a]/50 border border-[#2A9EDF]/30 rounded-lg w-full h-20 items-center justify-center overflow-hidden shadow-lg`}
                 >
-                  <Text style={tw`text-[32px] font-medium text-[#2A9EDF]`}>{timeLeft.seconds}</Text>
+                  <Text style={tw`text-[32px] font-medium text-[#2A9EDF]`}>
+                    {timeLeft.seconds}
+                  </Text>
                   <Animated.View
                     style={[
                       tw`absolute bottom-0 left-0 w-full h-1 bg-[#2A9EDF]`,
@@ -229,7 +255,9 @@ export default function UploadBlocker({
                     ]}
                   />
                 </View>
-                <Text style={tw`mt-2 text-xs text-[#2A9EDF] uppercase tracking-wider`}>
+                <Text
+                  style={tw`mt-2 text-xs text-[#2A9EDF] uppercase tracking-wider`}
+                >
                   Seconds
                 </Text>
               </View>
@@ -239,7 +267,9 @@ export default function UploadBlocker({
 
         {/* 5. Expired State */}
         {timeLeft.isExpired && Boolean(expiryTimestamp) && (
-          <View style={tw`mt-6 py-3 px-6 bg-[#2A9EDF]/10 border border-[#2A9EDF]/20 rounded-full`}>
+          <View
+            style={tw`mt-6 py-3 px-6 bg-[#2A9EDF]/10 border border-[#2A9EDF]/20 rounded-full`}
+          >
             <Text style={tw`text-[#2A9EDF] font-medium`}>
               We are coming back online any moment now...
             </Text>
@@ -254,7 +284,9 @@ export default function UploadBlocker({
             activeOpacity={0.7}
           >
             <SvgXml xml={arrowLeftIcon} width={20} height={20} />
-            <Text style={tw`text-[#818181] text-sm font-medium tracking-wide`}>Go Back</Text>
+            <Text style={tw`text-[#818181] text-sm font-medium tracking-wide`}>
+              Go Back
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -1,19 +1,32 @@
-import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Platform,
+  StatusBar,
+} from "react-native";
 import React from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { colors } from "../../config/colors.config";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type AuthHeaderProps = {
-  title: string;
-  subTitle: string;
-  handleBackClick: () => void;
+  readonly title: string;
+  readonly subTitle: string;
+  readonly handleBackClick: () => void;
 };
 
-export default function AuthHeader({ title, subTitle, handleBackClick }: AuthHeaderProps) {
+export default function AuthHeader({
+  title,
+  subTitle,
+  handleBackClick,
+}: AuthHeaderProps) {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ paddingHorizontal: 20, paddingBottom: 20, paddingTop: 10 }}>
+      <View
+        style={{ paddingHorizontal: 20, paddingBottom: 20, paddingTop: 10 }}
+      >
         <TouchableOpacity style={styles.backButton} onPress={handleBackClick}>
           <AntDesign name="arrow-left" color={colors.white} size={20} />
         </TouchableOpacity>

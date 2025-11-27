@@ -26,7 +26,13 @@ const WALLET_QK = ["wallet", "artist"] as const;
 const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
 const BASE_TXNS_QK = ["wallet", "artist", "txns"] as const;
 
-export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: any }) => {
+export const WithdrawScreen = ({
+  route,
+  navigation,
+}: {
+  route: any;
+  navigation: any;
+}) => {
   const { walletData } = route.params;
   const { width } = useWindowDimensions();
   const [amount, setAmount] = useState("");
@@ -41,7 +47,9 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
   const [walletPin, setWalletPin] = useState("");
   const otpRef = useRef<OtpInputRef>(null);
 
-  const { value: isWalletWithdrawalEnabled } = useHighRiskFeatureFlag("wallet_withdrawal_enabled");
+  const { value: isWalletWithdrawalEnabled } = useHighRiskFeatureFlag(
+    "wallet_withdrawal_enabled"
+  );
 
   useEffect(() => {
     if (!amount) {
@@ -51,10 +59,18 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
   }, [amount]);
 
   // small helper to render labeled account rows
-  const AccountRow = ({ label, value }: { label: string; value?: string | null }) => (
+  const AccountRow = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value?: string | null;
+  }) => (
     <View style={tw`flex-row items-center`}>
       <Text style={tw`text-[14px] text-[#1A1A1A] flex-1`}>{label}</Text>
-      <Text style={tw`text-[14px] text-[#1A1A1A] font-bold`}>{value ?? "--"}</Text>
+      <Text style={tw`text-[14px] text-[#1A1A1A] font-bold`}>
+        {value ?? "--"}
+      </Text>
     </View>
   );
 
@@ -161,13 +177,17 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
           >
             <View style={tw`p-[25px]`}>
               <View style={tw`mb-6`}>
-                <Text style={tw`mb-2 font-medium`}>Primary Account Details</Text>
+                <Text style={tw`mb-2 font-medium`}>
+                  Primary Account Details
+                </Text>
                 <View
                   style={tw`bg-[#FFFFFF] border border-[#00000033] p-4 rounded-[15px] gap-[8px]`}
                 >
                   <AccountRow
                     label="Account Number:"
-                    value={walletData?.primary_withdrawal_account?.account_number}
+                    value={
+                      walletData?.primary_withdrawal_account?.account_number
+                    }
                   />
                   <AccountRow
                     label="Bank Name:"
@@ -184,7 +204,9 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
                 <Text style={tw`mb-2 font-medium`}>Enter Amount</Text>
 
                 {/* You Send */}
-                <View style={tw`bg-white border border-[#00000020] rounded-xl p-4`}>
+                <View
+                  style={tw`bg-white border border-[#00000020] rounded-xl p-4`}
+                >
                   <Text style={tw`text-sm mb-1 text-gray-600`}>You Send</Text>
                   <TextInput
                     style={tw`py-3 text-base font-bold text-[#1A1A1A]`}
@@ -207,7 +229,9 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
                 </View>
 
                 {/* You Get */}
-                <View style={tw`bg-white border border-[#00000020] rounded-xl p-4 mt-4`}>
+                <View
+                  style={tw`bg-white border border-[#00000020] rounded-xl p-4 mt-4`}
+                >
                   <Text style={tw`text-sm mb-1 text-gray-600`}>You Get</Text>
                   <Text style={tw`text-base font-bold text-[#1A1A1A]`}>
                     {convertedAmount
@@ -220,7 +244,9 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
 
                 {rate > 0 && (
                   <Text style={tw`text-xs mt-2 text-gray-500`}>
-                    {`Rate: 1 ${walletData.wallet_currency} = ${getArtistCurrencySymbol(
+                    {`Rate: 1 ${
+                      walletData.wallet_currency
+                    } = ${getArtistCurrencySymbol(
                       walletData.base_currency
                     )} ${rate.toFixed(2)}`}
                   </Text>
@@ -244,12 +270,19 @@ export const WithdrawScreen = ({ route, navigation }: { route: any; navigation: 
                     focusedPinCodeContainerStyle: tw`border-black border-2`,
                   }}
                 />
-                <Pressable onPress={() => navigation.navigate("ForgotPinScreen")} style={tw`mt-2`}>
-                  <Text style={tw`text-blue-500 text-center mt-[20px]`}>Forgot PIN?</Text>
+                <Pressable
+                  onPress={() => navigation.navigate("ForgotPinScreen")}
+                  style={tw`mt-2`}
+                >
+                  <Text style={tw`text-blue-500 text-center mt-[20px]`}>
+                    Forgot PIN?
+                  </Text>
                 </Pressable>
               </View>
               <Pressable
-                style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${loading ? "opacity-50" : ""}`}
+                style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${
+                  loading ? "opacity-50" : ""
+                }`}
                 onPress={handleWithdraw}
                 disabled={loading}
               >
