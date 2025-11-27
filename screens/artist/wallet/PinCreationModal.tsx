@@ -128,14 +128,14 @@ export const PinCreationModal = ({
       .split("")
       .every(
         (digit, i, arr) =>
-          i === 0 || parseInt(digit) === parseInt(arr[i - 1]) + 1
+          i === 0 || Number.parseInt(digit) === Number.parseInt(arr[i - 1]) + 1
       );
 
     const isDescending = pinStr
       .split("")
       .every(
         (digit, i, arr) =>
-          i === 0 || parseInt(digit) === parseInt(arr[i - 1]) - 1
+          i === 0 || Number.parseInt(digit) === Number.parseInt(arr[i - 1]) - 1
       );
 
     if (isAscending || isDescending) {
