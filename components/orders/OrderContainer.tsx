@@ -1,4 +1,5 @@
-import { View, Text, Pressable, Image, Animated } from "react-native";
+import { View, Text, Pressable, Animated } from "react-native";
+import OrderHeader from "./OrderHeader";
 import React from "react";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
@@ -80,34 +81,11 @@ export const OrderContainer = (props: OrderContainerProps) => {
       } details`}
       accessibilityRole="button"
     >
-      <View style={tw`flex-row items-center`}>
-        <View style={tw`flex-row items-center gap-[10px] flex-1`}>
-          <Image
-            source={{ uri: image_href }}
-            style={tw`h-[42px] w-[42px] rounded-[3px]`}
-          />
-          <View style={tw`gap-[5px] pr-[20px] max-w-[80%]`}>
-            <Text
-              style={tw`text-[12px] text-[#454545]`}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {artId}
-            </Text>
-            <Text
-              style={tw`text-[14px] text-[#454545] font-semibold`}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {artName}
-            </Text>
-          </View>
-        </View>
-        <View
-          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
-        >
-          {typeof currentIcon === "string" && <SvgXml xml={currentIcon} />}
-        </View>
+      <OrderHeader image_href={image_href} artId={artId} artName={artName} />
+      <View
+        style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
+      >
+        {typeof currentIcon === "string" && <SvgXml xml={currentIcon} />}
       </View>
 
       <Animated.View
