@@ -21,6 +21,7 @@ import type { OtpInputRef } from "types/otp";
 import { useHighRiskFeatureFlag } from "hooks/useFeatureFlag";
 import WithdrawalBlocker from "components/blockers/payments/WithdrawalBlocker";
 import { OtpInput } from "components/inputs/OtpInput";
+import { AccountRow } from "components/general/AccountRow";
 
 const WALLET_QK = ["wallet", "artist"] as const;
 const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
@@ -57,22 +58,6 @@ export const WithdrawScreen = ({
       setRate(0);
     }
   }, [amount]);
-
-  // small helper to render labeled account rows
-  const AccountRow = ({
-    label,
-    value,
-  }: {
-    label: string;
-    value?: string | null;
-  }) => (
-    <View style={tw`flex-row items-center`}>
-      <Text style={tw`text-[14px] text-[#1A1A1A] flex-1`}>{label}</Text>
-      <Text style={tw`text-[14px] text-[#1A1A1A] font-bold`}>
-        {value ?? "--"}
-      </Text>
-    </View>
-  );
 
   const fetchTransferRate = async () => {
     try {
@@ -160,12 +145,7 @@ export const WithdrawScreen = ({
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Withdraw Funds" />
-      {!isWalletWithdrawalEnabled ? (
-        <WithdrawalBlocker
-          message="We're working on a brief fix to our wallet system. Withdrawals are temporarily unavailable, but your funds are safe and access will be restored soon."
-          onClose={() => navigation.goBack()}
-        />
-      ) : (
+      {isWalletWithdrawalEnabled ? (
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={tw`flex-1`}
@@ -293,6 +273,11 @@ export const WithdrawScreen = ({
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
+      ) : (
+        <WithdrawalBlocker
+          message="We're working on a brief fix to our wallet system. Withdrawals are temporarily unavailable, but your funds are safe and access will be restored soon."
+          onClose={() => navigation.goBack()}
+        />
       )}
     </View>
   );
