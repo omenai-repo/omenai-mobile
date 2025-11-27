@@ -8,10 +8,12 @@ import { screenName } from "constants/screenNames.constants";
 import tw from "twrnc";
 
 type OnboardingBlockerScreenProps = {
-  message?: string;
+  readonly message?: string;
 };
 
-export default function OnboardingBlockerScreen({ message }: OnboardingBlockerScreenProps) {
+export default function OnboardingBlockerScreen({
+  message,
+}: OnboardingBlockerScreenProps) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
@@ -30,9 +32,21 @@ export default function OnboardingBlockerScreen({ message }: OnboardingBlockerSc
   useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(rotateAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
-        Animated.timing(rotateAnim, { toValue: -1, duration: 800, useNativeDriver: true }),
-        Animated.timing(rotateAnim, { toValue: 0, duration: 600, useNativeDriver: true }),
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotateAnim, {
+          toValue: -1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotateAnim, {
+          toValue: 0,
+          duration: 600,
+          useNativeDriver: true,
+        }),
       ])
     );
     loop.start();
@@ -73,11 +87,21 @@ export default function OnboardingBlockerScreen({ message }: OnboardingBlockerSc
         <Text style={tw`text-[22px] font-bold text-center mb-3`}>
           Registration is temporarily unavailable
         </Text>
-        <Text style={[tw`text-[14px] text-center mb-4 leading-5`, { color: "#4B5563" }]}>
+        <Text
+          style={[
+            tw`text-[14px] text-center mb-4 leading-5`,
+            { color: "#4B5563" },
+          ]}
+        >
           {message ||
             "We\u2019re fixing some issues right now. Please check back soon or explore other parts of the app and see what tickles your fancy."}
         </Text>
-        <Text style={[tw`text-[14px] text-center mb-4 leading-5`, { color: "#4B5563" }]}>
+        <Text
+          style={[
+            tw`text-[14px] text-center mb-4 leading-5`,
+            { color: "#4B5563" },
+          ]}
+        >
           Thank you for your patience ❤️
         </Text>
         <Pressable
@@ -88,7 +112,9 @@ export default function OnboardingBlockerScreen({ message }: OnboardingBlockerSc
             pressed && tw`opacity-85`,
           ]}
         >
-          <Text style={tw`text-white text-[15px] font-semibold`}>Explore Omenai</Text>
+          <Text style={tw`text-white text-[15px] font-semibold`}>
+            Explore Omenai
+          </Text>
         </Pressable>
       </View>
     </View>

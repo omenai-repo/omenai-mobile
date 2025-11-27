@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import tw from "twrnc";
 
 type Props = {
-  message?: string;
+  readonly message?: string;
 };
 
 export default function SubscriptionBillingBlocker({
@@ -46,8 +46,15 @@ export default function SubscriptionBillingBlocker({
   const { width } = Dimensions.get("window");
 
   return (
-    <View style={tw`flex-1 bg-[#0f172a] items-center justify-center p-6 flex-1`}>
-      <View style={[tw`absolute inset-0`, { opacity: 0.04, backgroundColor: "transparent" }]} />
+    <View
+      style={tw`flex-1 bg-[#0f172a] items-center justify-center p-6 flex-1`}
+    >
+      <View
+        style={[
+          tw`absolute inset-0`,
+          { opacity: 0.04, backgroundColor: "transparent" },
+        ]}
+      />
       <Animated.View
         style={[
           tw`absolute inset-0`,
@@ -107,12 +114,15 @@ export default function SubscriptionBillingBlocker({
           </View>
         </View>
 
-        <Text style={tw`mt-1 text-[10px] tracking-widest text-[#47748E] font-mono uppercase`}>
+        <Text
+          style={tw`mt-1 text-[10px] tracking-widest text-[#47748E] font-mono uppercase`}
+        >
           Subscriptions and Billing
         </Text>
 
         <Text style={tw`mt-2 text-[20px] text-white font-bold text-center`}>
-          Billing System <Text style={tw`text-[#2A9EDF]`}>Under Maintenance</Text>
+          Billing System{" "}
+          <Text style={tw`text-[#2A9EDF]`}>Under Maintenance</Text>
         </Text>
 
         <Text
@@ -138,7 +148,12 @@ export default function SubscriptionBillingBlocker({
           ]}
         >
           <View
-            style={{ height: "100%", backgroundColor: "#2A9EDF", borderRadius: 20, width: "35%" }}
+            style={{
+              height: "100%",
+              backgroundColor: "#2A9EDF",
+              borderRadius: 20,
+              width: "35%",
+            }}
           />
         </View>
 

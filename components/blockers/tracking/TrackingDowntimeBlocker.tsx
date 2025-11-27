@@ -1,18 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Linking, Animated, Clipboard } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Linking,
+  Animated,
+  Clipboard,
+} from "react-native";
 import { SvgXml } from "react-native-svg";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
-import { packageIcon, loaderIcon, clipboardIcon, checkIconWhite, globeIcon } from "utils/SvgImages";
+import {
+  packageIcon,
+  loaderIcon,
+  clipboardIcon,
+  checkIconWhite,
+  globeIcon,
+} from "utils/SvgImages";
 
 /**
  * Props for the Blocker Screen
  */
 interface TrackingBlockerProps {
-  message?: string;
-  trackingNumber?: string;
-  externalLink?: string;
-  externalLinkText?: string;
+  readonly message?: string;
+  readonly trackingNumber?: string;
+  readonly externalLink?: string;
+  readonly externalLinkText?: string;
 }
 
 /**
@@ -70,16 +83,24 @@ export default function TrackingDowntimeBlocker({
   });
 
   const handleExternalLink = () => {
-    Linking.openURL(externalLink).catch((err) => console.error("Failed to open URL:", err));
+    Linking.openURL(externalLink).catch((err) =>
+      console.error("Failed to open URL:", err)
+    );
   };
 
   return (
-    <View style={tw`flex-1 bg-[#0f172a] items-center justify-center px-6 relative`}>
+    <View
+      style={tw`flex-1 bg-[#0f172a] items-center justify-center px-6 relative`}
+    >
       {/* Background Grid Pattern */}
-      <View style={tw`absolute top-0 left-0 right-0 bottom-0 opacity-5 bg-transparent`} />
+      <View
+        style={tw`absolute top-0 left-0 right-0 bottom-0 opacity-5 bg-transparent`}
+      />
 
       {/* Central Art: Package Handoff */}
-      <View style={tw`relative w-24 h-24 items-center justify-center mb-8 z-30`}>
+      <View
+        style={tw`relative w-24 h-24 items-center justify-center mb-8 z-30`}
+      >
         <Animated.View
           style={[
             tw`absolute w-24 h-24 rounded-full border-4 border-[rgba(42,158,223,0.2)]`,
@@ -107,10 +128,13 @@ export default function TrackingDowntimeBlocker({
 
       {/* Content */}
       <Text style={tw`text-white text-center text-2xl font-bold mb-3 z-30`}>
-        Tracking Service <Text style={tw`text-[#2A9EDF]`}>Temporarily Offline</Text>
+        Tracking Service{" "}
+        <Text style={tw`text-[#2A9EDF]`}>Temporarily Offline</Text>
       </Text>
 
-      <Text style={tw`text-[#47748E] text-center max-w-[380px] text-sm leading-[22px] mb-8 z-30`}>
+      <Text
+        style={tw`text-[#47748E] text-center max-w-[380px] text-sm leading-[22px] mb-8 z-30`}
+      >
         {message}
       </Text>
 
@@ -118,14 +142,18 @@ export default function TrackingDowntimeBlocker({
       <View
         style={tw`bg-[#1f2937] p-4 rounded-lg w-full max-w-[380px] shadow-lg border border-[rgba(71,116,142,0.3)] mb-6 z-30`}
       >
-        <Text style={tw`text-[10px] text-[#818181] uppercase tracking-widest mb-2 font-medium`}>
+        <Text
+          style={tw`text-[10px] text-[#818181] uppercase tracking-widest mb-2 font-medium`}
+        >
           Your Shipment Tracking Number
         </Text>
         <View style={tw`flex-row justify-between items-center`}>
           <Text style={tw`text-white font-mono text-lg`}>{trackingNumber}</Text>
           <TouchableOpacity
             onPress={() => copyToClipboard(trackingNumber, setCopied)}
-            style={tw`p-2 rounded-[20px] ${copied ? "bg-[#10b981]" : "bg-[rgba(42,158,223,0.1)]"}`}
+            style={tw`p-2 rounded-[20px] ${
+              copied ? "bg-[#10b981]" : "bg-[rgba(42,158,223,0.1)]"
+            }`}
           >
             {copied ? (
               <SvgXml xml={checkIconWhite} width={16} height={16} />
@@ -147,7 +175,9 @@ export default function TrackingDowntimeBlocker({
           style={tw`flex-row items-center justify-center py-3 px-6 bg-[#2A9EDF] rounded-md shadow-lg`}
         >
           <SvgXml xml={globeIcon} width={16} height={16} style={tw`mr-1`} />
-          <Text style={tw`text-white font-medium text-sm ml-2`}>{externalLinkText}</Text>
+          <Text style={tw`text-white font-medium text-sm ml-2`}>
+            {externalLinkText}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -158,7 +188,9 @@ export default function TrackingDowntimeBlocker({
           <Text style={tw`text-white font-medium text-sm ml-2`}>Go Back</Text>
         </TouchableOpacity>
 
-        <Text style={tw`mt-4 text-[10px] text-[#47748E] uppercase tracking-widest`}>
+        <Text
+          style={tw`mt-4 text-[10px] text-[#47748E] uppercase tracking-widest`}
+        >
           OUR SERVICE WILL BE RESTORED SHORTLY.
         </Text>
       </View>
