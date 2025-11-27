@@ -17,6 +17,7 @@ import { createPaymentIntent } from "services/stripe/createPaymentIntent";
 import Loader from "components/general/Loader";
 import ScrollWrapper from "components/general/ScrollWrapper";
 import { PayWithFlutterwave } from "flutterwave-react-native";
+import FlutterwavePayButton from "components/payment/FlutterwavePayButton";
 import tw from "twrnc";
 import { useQueryClient } from "@tanstack/react-query";
 import VerifyTransactionModal from "../success/VerifyTransactionModal";
@@ -32,13 +33,19 @@ export default function OrderDetails({
   data,
   locked,
 }: {
-  data: CreateOrderModelTypes & { createdAt: string; updatedAt: string };
-  locked: boolean;
+  readonly data: CreateOrderModelTypes & {
+    readonly createdAt: string;
+    readonly updatedAt: string;
+  };
+  readonly locked: boolean;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const queryClient = useQueryClient();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
-  const [verifyState, setVerifyState] = useState<{ visible: boolean; txId?: string | null }>({
+  const [verifyState, setVerifyState] = useState<{
+    visible: boolean;
+    txId?: string | null;
+  }>({
     visible: false,
   });
 
@@ -108,7 +115,11 @@ export default function OrderDetails({
     if (error) {
       initOnceRef.current = false; // allow retry if init failed
       console.log("Failed to init payment  --- ", error);
-      updateModal({ message: error.message, modalType: "error", showModal: true });
+      updateModal({
+        message: error.message,
+        modalType: "error",
+        showModal: true,
+      });
       setTimeout(() => navigation.goBack(), 3500);
     } else {
       setMainPageLoader(false);
@@ -123,8 +134,12 @@ export default function OrderDetails({
   ]);
 
   const invalidateOrdersEverywhere = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["orders", userSession.id] });
-    await queryClient.invalidateQueries({ queryKey: ["artwork", data.artwork_data.title] });
+    await queryClient.invalidateQueries({
+      queryKey: ["orders", userSession.id],
+    });
+    await queryClient.invalidateQueries({
+      queryKey: ["artwork", data.artwork_data.title],
+    });
   };
 
   const goToSuccessAndRefreshOrders = async () => {
@@ -142,7 +157,10 @@ export default function OrderDetails({
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
     if (error) {
-      console.log("present payment sheet error ----", JSON.stringify(error, null, 2));
+      console.log(
+        "present payment sheet error ----",
+        JSON.stringify(error, null, 2)
+      );
       goToCancelAndBack();
     } else {
       await goToSuccessAndRefreshOrders();
@@ -163,7 +181,10 @@ export default function OrderDetails({
       // ensure sheet is ready (idempotent)
       await initializePaymentSheet();
 
-      const get_purchase_lock = await createOrderLock(data.artwork_data.art_id, userSession.id);
+      const get_purchase_lock = await createOrderLock(
+        data.artwork_data.art_id,
+        userSession.id
+      );
       if (get_purchase_lock?.isOk) {
         if (get_purchase_lock.data.lock_data.user_id === userSession.id) {
           await openPaymentSheet();
@@ -196,7 +217,12 @@ export default function OrderDetails({
       <View style={{ flex: 1 }}>
         <BackHeaderTitle title="Confirm order details" />
         <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 20 }}
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            paddingHorizontal: 20,
+          }}
         >
           <Loader />
           <Text style={{ fontSize: 16 }}>Initializing Payment ...</Text>
@@ -213,30 +239,55 @@ export default function OrderDetails({
 
           <View style={styles.priceListing}>
             <View style={styles.priceListingItem}>
-              <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>Price</Text>
-              <Text style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}>
+              <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>
+                Price
+              </Text>
+              <Text
+                style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
+              >
                 {utils_formatPrice(data.artwork_data.pricing.usd_price)}
               </Text>
             </View>
             <View style={styles.priceListingItem}>
-              <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>Shipping</Text>
-              <Text style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}>
+              <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>
+                Shipping
+              </Text>
+              <Text
+                style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
+              >
                 {utils_formatPrice(feesNum)}
               </Text>
             </View>
             <View style={styles.priceListingItem}>
-              <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>Taxes</Text>
-              <Text style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}>
+              <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>
+                Taxes
+              </Text>
+              <Text
+                style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}
+              >
                 {utils_formatPrice(taxesNum)}
               </Text>
             </View>
           </View>
 
           <View style={styles.priceListingItem}>
-            <Text style={{ fontSize: 16, fontWeight: "500", color: colors.primary_black, flex: 1 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "500",
+                color: colors.primary_black,
+                flex: 1,
+              }}
+            >
               Subtotal
             </Text>
-            <Text style={{ fontSize: 16, fontWeight: "500", color: colors.primary_black }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "500",
+                color: colors.primary_black,
+              }}
+            >
               {utils_formatPrice(total_price_number)}
             </Text>
           </View>
@@ -276,31 +327,36 @@ export default function OrderDetails({
                     tax_fees: taxesNum,
                   },
                 }}
-                customButton={(props) => (
-                  <TouchableOpacity
-                    style={tw`h-[55px] justify-center items-center bg-[#1a1a1a] rounded-[95px]`}
-                    onPress={props.onPress}
-                    disabled={props.disabled}
-                  >
-                    <Text style={tw`text-[#fff] font-medium`}>Pay with flutterwave</Text>
-                  </TouchableOpacity>
-                )}
+                customButton={FlutterwavePayButton}
               />
             )}
 
             {locked && (
               <View style={styles.LockContainer}>
-                <Feather name="lock" color={"#ff000090"} size={16} style={{ marginTop: 7 }} />
+                <Feather
+                  name="lock"
+                  color={"#ff000090"}
+                  size={16}
+                  style={{ marginTop: 7 }}
+                />
                 <Text style={{ fontSize: 14, color: "#ff000090", flex: 1 }}>
-                  Another user has initiated a payment transaction on this artwork. Please refresh
-                  your page in a few minutes to confirm the availability of this artwork.
+                  Another user has initiated a payment transaction on this
+                  artwork. Please refresh your page in a few minutes to confirm
+                  the availability of this artwork.
                 </Text>
               </View>
             )}
-            <Text style={{ marginTop: 30, fontSize: 14, color: colors.grey, textAlign: "center" }}>
-              In order to prevent multiple transaction attempts for this artwork, we have
-              implemented a queueing system and lock mechanism which prevents other users from
-              accessing the payment portal
+            <Text
+              style={{
+                marginTop: 30,
+                fontSize: 14,
+                color: colors.grey,
+                textAlign: "center",
+              }}
+            >
+              In order to prevent multiple transaction attempts for this
+              artwork, we have implemented a queueing system and lock mechanism
+              which prevents other users from accessing the payment portal
             </Text>
           </View>
         </View>

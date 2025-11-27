@@ -1,3 +1,4 @@
+import AddressField from "components/general/AddressField";
 import { Platform, Text, View, KeyboardAvoidingView } from "react-native";
 import React, { useState } from "react";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
@@ -23,7 +24,8 @@ export default function EditGalleryProfile() {
   const { updateModal } = useModalStore();
   const { userType, userSession } = useAppStore();
 
-  const { updateData, setProfileUpdateData, clearData } = galleryProfileUpdate();
+  const { updateData, setProfileUpdateData, clearData } =
+    galleryProfileUpdate();
 
   const handleSubmit = async () => {
     try {
@@ -64,17 +66,6 @@ export default function EditGalleryProfile() {
     }
   };
 
-  const AddressField = ({ label, value }: { label: string; value?: string | null }) => {
-    if (!value) return null;
-    return (
-      <Text style={tw`text-gray-800`}>
-        <Text style={tw`font-semibold`}>{label} </Text>
-        {value}
-        {"\n"}
-      </Text>
-    );
-  };
-
   return (
     <WithModal>
       <BackHeaderTitle
@@ -106,34 +97,67 @@ export default function EditGalleryProfile() {
               onInputChange={() => {}}
             />
             <Input
-              label={userType === "gallery" ? "Gallery email address" : "Artist email address"}
+              label={
+                userType === "gallery"
+                  ? "Gallery email address"
+                  : "Artist email address"
+              }
               disabled
               value={userSession?.email || ""}
               onInputChange={() => {}}
             />
             {userType === "gallery" && (
               <LargeInput
-                label={userType === "gallery" ? "Gallery description" : "Artist description"}
-                value={updateData?.description ?? userSession?.description ?? ""}
-                onInputChange={(value) => setProfileUpdateData("description", value)}
+                label={
+                  userType === "gallery"
+                    ? "Gallery description"
+                    : "Artist description"
+                }
+                value={
+                  updateData?.description ?? userSession?.description ?? ""
+                }
+                onInputChange={(value) =>
+                  setProfileUpdateData("description", value)
+                }
               />
             )}
             <View style={{ marginTop: 10, gap: 10 }}>
               <View style={tw`mb-2`}>
-                <Text style={tw`text-sm font-semibold text-[#858585] mb-1`}>Full Address</Text>
-                <View style={tw`bg-gray-100 p-4 rounded-lg border border-gray-300`}>
-                  <AddressField label="Address:" value={userSession.address.address_line} />
-                  <AddressField label="City:" value={userSession.address.city} />
-                  <AddressField label="State:" value={userSession.address.state} />
-                  <AddressField label="Zip Code:" value={userSession.address.zip} />
-                  <AddressField label="Country:" value={userSession.address.country} />
+                <Text style={tw`text-sm font-semibold text-[#858585] mb-1`}>
+                  Full Address
+                </Text>
+                <View
+                  style={tw`bg-gray-100 p-4 rounded-lg border border-gray-300`}
+                >
+                  <AddressField
+                    label="Address:"
+                    value={userSession.address.address_line}
+                  />
+                  <AddressField
+                    label="City:"
+                    value={userSession.address.city}
+                  />
+                  <AddressField
+                    label="State:"
+                    value={userSession.address.state}
+                  />
+                  <AddressField
+                    label="Zip Code:"
+                    value={userSession.address.zip}
+                  />
+                  <AddressField
+                    label="Country:"
+                    value={userSession.address.country}
+                  />
                 </View>
               </View>
 
               <LongBlackButton
                 value="Edit address"
                 onClick={() =>
-                  navigation.navigate("EditAddressScreen", { currentAddress: userSession.address })
+                  navigation.navigate("EditAddressScreen", {
+                    currentAddress: userSession.address,
+                  })
                 }
                 isDisabled={false}
               />
@@ -163,7 +187,9 @@ export default function EditGalleryProfile() {
                 isLoading={isLoading}
                 isDisabled={
                   userType === "gallery"
-                    ? !updateData.admin && !updateData.phone && !updateData.description
+                    ? !updateData.admin &&
+                      !updateData.phone &&
+                      !updateData.description
                     : !updateData.phone && !updateData.description
                 }
               />

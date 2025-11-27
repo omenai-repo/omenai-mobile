@@ -1,17 +1,26 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { galleryOrderModalStore, galleryOrderModalTypes } from "store/modal/galleryModalStore";
+import {
+  galleryOrderModalStore,
+  galleryOrderModalTypes,
+} from "store/modal/galleryModalStore";
 import OrderCard from "./OrderCard";
 import { utils_formatPrice } from "utils/utils_priceFormatter";
 import Divider from "components/general/Divider";
 import { utils_getColors } from "utils/utils_sortFunctions";
 
 export type OrdersListingProps = {
-  data: any[];
-  handleOpenModal: (modalType: galleryOrderModalTypes, order_id: string) => void;
+  readonly data: any[];
+  readonly handleOpenModal: (
+    modalType: galleryOrderModalTypes,
+    order_id: string
+  ) => void;
 };
 
-export default function PendingOrders({ data, handleOpenModal }: OrdersListingProps) {
+export default function PendingOrders({
+  data,
+  handleOpenModal,
+}: OrdersListingProps) {
   const { setArtworkDetails } = galleryOrderModalStore();
 
   return (
