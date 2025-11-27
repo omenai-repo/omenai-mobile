@@ -54,11 +54,13 @@ export const PinCreationModal = ({
     refs,
     onChange,
     testPrefix,
+    inputStyle,
   }: {
     values: string[];
     refs: React.MutableRefObject<(TextInput | null)[]>;
     onChange: (text: string, index: number) => void;
     testPrefix: string;
+    inputStyle: any;
   }) => (
     <View style={tw`flex-row justify-between`}>
       {values.map((digit, i) => (
@@ -204,6 +206,7 @@ export const PinCreationModal = ({
               refs={pinRefs}
               onChange={handlePinChange}
               testPrefix="pin"
+              inputStyle={inputStyle}
             />
           </View>
 
@@ -214,6 +217,7 @@ export const PinCreationModal = ({
               refs={confirmPinRefs}
               onChange={handleConfirmPinChange}
               testPrefix="confirm"
+              inputStyle={inputStyle}
             />
           </View>
 
