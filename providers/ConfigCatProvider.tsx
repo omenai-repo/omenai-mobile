@@ -11,17 +11,27 @@ const LOW_RISK_SDK_KEY =
     ? (process.env.EXPO_PUBLIC_CONFIGCAT_LOW_RISK_SDK_KEY as string)
     : (process.env.EXPO_PUBLIC_CONFIGCAT_STAGING_LOW_RISK_SDK_KEY as string);
 
-export function HighRiskProvider({ children }: { children: React.ReactNode }) {
+type ConfigCatProviderProps = {
+  readonly children: React.ReactNode;
+};
+
+export function HighRiskProvider({ children }: ConfigCatProviderProps) {
   return (
-    <ConfigCatProvider sdkKey={HIGH_RISK_SDK_KEY} options={{ pollIntervalSeconds: 60 }}>
+    <ConfigCatProvider
+      sdkKey={HIGH_RISK_SDK_KEY}
+      options={{ pollIntervalSeconds: 60 }}
+    >
       {children}
     </ConfigCatProvider>
   );
 }
 
-export function LowRiskProvider({ children }: { children: React.ReactNode }) {
+export function LowRiskProvider({ children }: ConfigCatProviderProps) {
   return (
-    <ConfigCatProvider sdkKey={LOW_RISK_SDK_KEY} options={{ pollIntervalSeconds: 60 }}>
+    <ConfigCatProvider
+      sdkKey={LOW_RISK_SDK_KEY}
+      options={{ pollIntervalSeconds: 60 }}
+    >
       {children}
     </ConfigCatProvider>
   );

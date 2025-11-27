@@ -6,7 +6,7 @@ import {
   ScrollView,
   RefreshControl,
 } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
 import { SvgXml } from "react-native-svg";
@@ -62,49 +62,49 @@ export const WalletContainer = ({
   dateTime: string;
   amount: number;
   onPress: () => void;
-}) => (
-  <Pressable
-    onPress={onPress}
-    style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
-  >
-    <View style={tw`flex-row items-center gap-[15px] flex-1`}>
-      <Image
-        source={require("../../../assets/images/african-artwork.jpg")}
-        style={tw`w-[50px] h-[50px] rounded-[10px]`}
-      />
-      <View>
-        <Text
-          style={tw.style(
-            `text-[16px] font-medium`,
-            status === "FAILED"
-              ? `text-[#FF0000]`
-              : status === "PENDING"
-              ? `text-[#007AFF]`
-              : `text-[#008000]`
-          )}
-        >{`Withdrawal ${
-          status === "PENDING" ? "processing" : status.toLowerCase()
-        }`}</Text>
-        <Text style={tw`text-[11px] font-medium text-[#1A1A1A]`}>
-          {formatISODate(dateTime)}
-        </Text>
-      </View>
-    </View>
-
-    <Text
-      style={tw.style(
-        `text-[15px] font-medium`,
-        status === "FAILED"
-          ? `text-[#FF0000]`
-          : status === "PENDING"
-          ? `text-[#007AFF]`
-          : `text-[#008000]`
-      )}
+}) => {
+  let statusColor: string;
+  switch (status) {
+    case "FAILED":
+      statusColor = "#FF0000";
+      break;
+    case "PENDING":
+      statusColor = "#007AFF";
+      break;
+    case "SUCCESSFUL":
+      statusColor = "#008000";
+      break;
+    default:
+      statusColor = "#008000";
+  }
+  return (
+    <Pressable
+      onPress={onPress}
+      style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
     >
-      {utils_formatPrice(amount)}
-    </Text>
-  </Pressable>
-);
+      <View style={tw`flex-row items-center gap-[15px] flex-1`}>
+        <Image
+          source={require("../../../assets/images/african-artwork.jpg")}
+          style={tw`w-[50px] h-[50px] rounded-[10px]`}
+        />
+        <View>
+          <Text
+            style={[tw`text-[16px] font-medium`, { color: statusColor }]}
+          >{`Withdrawal ${
+            status === "PENDING" ? "processing" : status.toLowerCase()
+          }`}</Text>
+          <Text style={tw`text-[11px] font-medium text-[#1A1A1A]`}>
+            {formatISODate(dateTime)}
+          </Text>
+        </View>
+      </View>
+
+      <Text style={[tw`text-[15px] font-medium`, { color: statusColor }]}>
+        {utils_formatPrice(amount)}
+      </Text>
+    </Pressable>
+  );
+};
 
 const BtnContainer = ({
   label,
