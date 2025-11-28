@@ -1,6 +1,6 @@
-export type OrderStatusKey = 'pending' | 'processing' | 'completed';
+export type OrderStatusKey = "pending" | "processing" | "completed";
 
-export type OrderActionType = 'track' | 'action' | null;
+export type OrderActionType = "track" | "action" | null;
 
 export type OrderContainerProps = {
   id: number;
@@ -19,9 +19,10 @@ export type OrderContainerProps = {
   order_accepted?: string;
   delivered?: boolean;
   order_decline_reason?: string;
-  exclusivity_type?: 'exclusive' | 'non-exclusive' | string;
+  exclusivity_type?: "exclusive" | "non-exclusive" | string;
   acceptBtn?: () => void;
   declineBtn?: () => void;
+  seller_designation?: string;
 };
 
 export type OrderActionsProps = {

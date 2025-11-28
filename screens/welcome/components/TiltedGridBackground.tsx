@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { courselImages } from "constants/images.constants";
 import tw from "twrnc";
+import { colors } from "config/colors.config";
 
 type Props = {
   readonly primaryImages?: ImageSourcePropType[];
@@ -182,7 +183,10 @@ export default function TiltedGridBackground({
           );
         })}
       </View>
-      <View pointerEvents="none" style={tw`absolute inset-0 bg-black opacity-50`} />
+      <View
+        pointerEvents="none"
+        style={[tw`absolute inset-0`, { backgroundColor: `${colors.black}80` }]}
+      />
     </View>
   );
 }

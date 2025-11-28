@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
 import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
 import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
@@ -27,10 +27,18 @@ export default function InputForm() {
     setSelectedIndex(e);
   };
   const insets = useSafeAreaInsets();
+  const [tabsKey, setTabsKey] = useState("init");
+
+  useEffect(() => {
+    // Force remount of AuthTabs after first paint to ensure animated values initialize
+    const t = setTimeout(() => setTabsKey("ready"), 0);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <View style={[tw`flex-1 px-5 mt-5`, { marginBottom: insets.bottom }]}>
       <AuthTabs
+        key={tabsKey}
         tabs={["Collector", "Artist", "Gallery"]}
         stateIndex={selectedIndex}
         handleSelect={handleTabSwitch}

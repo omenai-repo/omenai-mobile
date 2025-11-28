@@ -1,22 +1,24 @@
 // screens/overview/ArtistOverview.tsx
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, Text, RefreshControl, Image, Pressable, Animated } from 'react-native';
-import tw from 'twrnc';
-import { SvgXml } from 'react-native-svg';
-import { dropdownIcon, dropUpIcon, arrowUpRightWhite } from 'utils/SvgImages';
-import Header from 'components/header/Header';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import SalesOverview from 'screens/overview/components/SalesOverview';
-import OrderslistingLoader from 'screens/galleryOrders/components/OrderslistingLoader';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { getImageFileView } from 'lib/storage/getImageFileView';
-import { HighlightCard } from './HighlightCard';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getOverviewOrders } from 'services/orders/getOverviewOrders';
-import { QK } from 'utils/queryKeys';
-import { useAppStore } from 'store/app/appStore';
-import BlurStatusBar from 'components/general/BlurStatusBar';
-import { useScrollY } from 'hooks/useScrollY';
+import React, { useCallback, useRef, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { View, Text, RefreshControl, Image, Pressable, Animated } from "react-native";
+import tw from "twrnc";
+import { SvgXml } from "react-native-svg";
+import { dropdownIcon, dropUpIcon, arrowUpRightWhite } from "utils/SvgImages";
+import Header from "components/header/Header";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import SalesOverview from "screens/overview/components/SalesOverview";
+import OrderslistingLoader from "screens/galleryOrders/components/OrderslistingLoader";
+import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { getImageFileView } from "lib/storage/getImageFileView";
+import { HighlightCard } from "./HighlightCard";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getOverviewOrders } from "services/orders/getOverviewOrders";
+import { QK } from "utils/queryKeys";
+import { useAppStore } from "store/app/appStore";
+import BlurStatusBar from "components/general/BlurStatusBar";
+import { useScrollY } from "hooks/useScrollY";
+import { screenName } from "constants/screenNames.constants";
 
 export const RecentOrderContainer = ({
   id,
@@ -37,10 +39,11 @@ export const RecentOrderContainer = ({
   artName: string;
   price: string;
   buyerName: string;
-  status: 'pending' | 'processing' | 'completed' | 'history';
+  status: "pending" | "processing" | "completed" | "history";
   lastId: boolean;
   url: string;
 }) => {
+  const navigation = useNavigation<any>();
   const image_href = getImageFileView(url, 700);
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
@@ -56,28 +59,38 @@ export const RecentOrderContainer = ({
   }, [open, animatedHeight, animatedOpacity]);
 
   const statusStyles = {
-    pending: { bg: '#FFBF0040', text: '#1a1a1a' },
-    processing: { bg: '#007AFF20', text: '#007AFF' },
-    completed: { bg: '#00C85120', text: '#00C851' },
-    history: { bg: '#00C85120', text: '#00C851' },
+    pending: { bg: "#FFBF0040", text: "#1a1a1a" },
+    processing: { bg: "#007AFF20", text: "#007AFF" },
+    completed: { bg: "#00C85120", text: "#00C851" },
+    history: { bg: "#00C85120", text: "#00C851" },
   } as const;
+
+  // Show 'pending' to artists/galleries for orders that are 'processing' in recent orders view
+  const { userType } = useAppStore();
+  const displayStatus =
+    status === "processing" && (userType === "artist" || userType === "gallery")
+      ? "pending"
+      : status;
 
   return (
     <View
       style={tw.style(
         `border-t border-l border-r border-[#E7E7E7] p-[20px]`,
         id === 0 && `rounded-t-[15px]`,
-        lastId && `border-b rounded-b-[15px]`,
+        lastId && `border-b rounded-b-[15px]`
       )}
     >
       <View style={tw`flex-row items-center`}>
-        <View style={tw`flex-row items-center gap-[10px] flex-1`}>
+        <Pressable
+          onPress={() => navigation.navigate(screenName.gallery.orders)}
+          style={tw`flex-row items-center gap-[10px] flex-1`}
+        >
           <Image source={{ uri: image_href }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
           <View style={tw`gap-[5px]`}>
             <Text style={tw`text-[12px] text-[#454545]`}>{artId}</Text>
             <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{artName}</Text>
           </View>
-        </View>
+        </Pressable>
         <Pressable
           onPress={setOpen}
           style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
@@ -87,7 +100,7 @@ export const RecentOrderContainer = ({
       </View>
 
       <Animated.View
-        style={{ height: animatedHeight, opacity: animatedOpacity, overflow: 'hidden' }}
+        style={{ height: animatedHeight, opacity: animatedOpacity, overflow: "hidden" }}
       >
         <View style={tw`gap-[20px] mt-[15px]`}>
           <View style={tw`flex-row items-center gap-[20px]`}>
@@ -104,11 +117,11 @@ export const RecentOrderContainer = ({
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
             <View
               style={tw.style(`rounded-[12px] h-[30px] justify-center items-center px-[12px]`, {
-                backgroundColor: statusStyles[status].bg,
+                backgroundColor: statusStyles[displayStatus].bg,
               })}
             >
-              <Text style={tw.style(`text-[12px]`, { color: statusStyles[status].text })}>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+              <Text style={tw.style(`text-[12px]`, { color: statusStyles[displayStatus].text })}>
+                {displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1)}
               </Text>
             </View>
           </View>
@@ -145,10 +158,10 @@ const ArtistOverview = () => {
 
   const onRefresh = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('sales', userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('net', userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('revenue', userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist('balance', userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist("sales", userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist("net", userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist("revenue", userSession?.id) }),
+      queryClient.invalidateQueries({ queryKey: QK.highlightArtist("balance", userSession?.id) }),
       queryClient.invalidateQueries({ queryKey: QK.salesOverview(userSession?.id) }),
       queryClient.invalidateQueries({ queryKey: QK.overviewOrders(userSession?.id) }),
     ]);

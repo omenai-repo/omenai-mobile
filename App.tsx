@@ -1,6 +1,4 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { Provider as RollbarProvider } from "@rollbar/react";
-import { rollbar } from "config/rollbar.config";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect, useState, useCallback } from "react";
 import { useAppStore } from "store/app/appStore";
@@ -16,6 +14,7 @@ import { CopilotProvider } from "react-native-copilot";
 import * as SplashScreen from "expo-splash-screen";
 import ArtistNavigation from "navigation/ArtistNavigation";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { focusManager, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { AppState, Platform } from "react-native";
@@ -25,8 +24,6 @@ import { registerForPushToken } from "notifications/registerForPushToken";
 import { navigationRef } from "navigation/RootNavigation";
 import { useNotificationHandler } from "hooks/useNotificationHandler";
 import { StatusBar } from "expo-status-bar";
-import { Asset } from "expo-asset";
-import { primaryGridImages, secondaryGridImages } from "constants/images.constants";
 
 if (!Platform.constants) {
   Platform.constants = {
@@ -87,25 +84,15 @@ export default function App() {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    const preloadImage = (img: any) => Asset.fromModule(img).downloadAsync();
-
-    async function prepare() {
-      try {
-        // Preload grid images for instant welcome screen rendering
-        const allImages = [...primaryGridImages, ...secondaryGridImages];
-        await Promise.all(allImages.map(preloadImage));
-
-        // Artificially delay for two seconds to simulate a slow loading
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // Tell the application to render
-        setAppIsReady(true);
-      }
+    // Immediately mark the app ready and hide the splash to avoid long
+    // splash-screen delays on some devices. Heavy visuals should load
+    // lazily so they do not block initial paint.
+    setAppIsReady(true);
+    try {
+      SplashScreen.hideAsync();
+    } catch (err) {
+      console.error("[App] failed to hide splash on ready", err);
     }
-
-    prepare();
   }, []);
 
   const onLayoutRootView = useCallback(() => {
@@ -115,7 +102,9 @@ export default function App() {
       // loading its initial state and rendering its first pixels. So instead,
       // we hide the splash screen once we know the root view has already
       // performed layout.
-      SplashScreen.hide();
+      SplashScreen.hideAsync().catch((err) => {
+        console.error("Failed to hide splash screen:", err);
+      });
     }
   }, [appIsReady]);
 
@@ -144,11 +133,11 @@ export default function App() {
   }
 
   return (
-    <RollbarProvider instance={rollbar}>
-      <CopilotProvider>
-        <StatusBar style="auto" />
-        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
-          <QueryClientProvider client={queryClient}>
+    <CopilotProvider>
+      <StatusBar style="auto" />
+      <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaProvider>
             <BottomSheetModalProvider>
               <StripeProvider
                 publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
@@ -164,9 +153,9 @@ export default function App() {
                 </NavigationContainer>
               </StripeProvider>
             </BottomSheetModalProvider>
-          </QueryClientProvider>
-        </GestureHandlerRootView>
-      </CopilotProvider>
-    </RollbarProvider>
+          </SafeAreaProvider>
+        </QueryClientProvider>
+      </GestureHandlerRootView>
+    </CopilotProvider>
   );
 }

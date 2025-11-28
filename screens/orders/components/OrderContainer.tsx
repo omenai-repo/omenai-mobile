@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, Image, Pressable, Animated } from "react-native";
+import OrderHeader from "../../../components/orders/OrderHeader";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,6 +10,7 @@ import { getImageFileView } from "lib/storage/getImageFileView";
 import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
 import StatusPill from "./StatusPill";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
+import { useHighRiskFeatureFlag } from "hooks/useFeatureFlag";
 import { screenName } from "constants/screenNames.constants";
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
 
@@ -39,6 +41,7 @@ interface OrderContainerProps {
   updatedAt: string;
   trackBtn: () => void;
   order_decline_reason?: string;
+  seller_designation?: string;
 }
 
 const OrderContainer: React.FC<OrderContainerProps> = ({
@@ -61,11 +64,23 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   updatedAt,
   trackBtn,
   order_decline_reason = "",
+  seller_designation,
 }) => {
   const image_href = getImageFileView(url, 700);
   const [remainingTime, setRemainingTime] = useState<number>(0);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [confirmOrderModal, setConfirmOrderModal] = useState(false);
+
+  const { value: isFlutterwavePaymentEnabled } = useHighRiskFeatureFlag(
+    "flutterwave_payment_enabled"
+  );
+  const { value: isStripePaymentEnabled } = useHighRiskFeatureFlag(
+    "stripe_payment_enabled"
+  );
+
+  const showBlocker =
+    (seller_designation === "artist" && !isFlutterwavePaymentEnabled) ||
+    (seller_designation === "gallery" && !isStripePaymentEnabled);
 
   const expiresAt = React.useMemo(
     () =>
@@ -94,19 +109,32 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
     const hours = Math.floor(time / 3600000);
     const minutes = Math.floor((time % 3600000) / 60000);
     const seconds = Math.floor((time % 60000) / 1000);
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   const renderCountdownTimer = () => {
-    if (payment_information === "pending" && order_accepted === "accepted" && remainingTime > 0) {
+    if (
+      payment_information === "pending" &&
+      order_accepted === "accepted" &&
+      remainingTime > 0
+    ) {
       return (
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ fontSize: 14, color: "red" }}>
-            Hold expires in: {formatTime(remainingTime)}
-          </Text>
+        <View style={tw`mt-3`}>
+          <View
+            style={tw`flex-row items-center bg-[#FFF1F0] border border-[#FCA5A5] px-3 py-2 rounded-lg`}
+          >
+            <Ionicons name="time-outline" size={16} color="#C71C16" />
+            <Text style={tw`ml-2 text-[13px] text-[#C71C16]`}>
+              Time left to pay:{" "}
+              <Text style={tw`font-semibold`}>{formatTime(remainingTime)}</Text>
+            </Text>
+          </View>
         </View>
       );
     }
+
     return null;
   };
 
@@ -115,10 +143,19 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
 
   useEffect(() => {
     const calculateBaseHeight = () => {
-      if (status === "completed") return 80;
-      if (!order_accepted) return 80;
-      if (delivery_confirmed) return 80;
-      return 140;
+      let base = 80;
+      if (status !== "completed" && order_accepted && !delivery_confirmed) {
+        base = 140;
+      }
+
+      // Add extra height only when blocker and pay-area are visible
+      const payAreaVisible =
+        availability &&
+        payment_information === "pending" &&
+        order_accepted === "accepted" &&
+        remainingTime > 0;
+      const extra = showBlocker && payAreaVisible ? 64 : 0;
+      return base + extra;
     };
 
     if (open) {
@@ -149,7 +186,18 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         }),
       ]).start();
     }
-  }, [open, status, order_accepted, delivery_confirmed, animatedHeight, animatedOpacity]);
+  }, [
+    open,
+    status,
+    order_accepted,
+    delivery_confirmed,
+    animatedHeight,
+    animatedOpacity,
+    showBlocker,
+    availability,
+    payment_information,
+    remainingTime,
+  ]);
 
   return (
     <View
@@ -160,21 +208,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
       `}
     >
       <View style={tw`flex-row items-center`}>
-        <View style={tw`flex-row items-center gap-[10px] flex-1`}>
-          <Image source={{ uri: image_href }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
-          <View style={tw`gap-[5px] pr-[20px] max-w-[80%]`}>
-            <Text style={tw`text-[12px] text-[#454545]`} numberOfLines={1} ellipsizeMode="tail">
-              {artId}
-            </Text>
-            <Text
-              style={tw`text-[14px] text-[#454545] font-semibold`}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {artName}
-            </Text>
-          </View>
-        </View>
+        <OrderHeader image_href={image_href} artId={artId} artName={artName} />
         <Pressable
           onPress={() => setOpen()}
           style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
@@ -195,7 +229,9 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         <View style={tw`gap-[20px] mt-[15px]`}>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{price}</Text>
+            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
+              {price}
+            </Text>
           </View>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
@@ -211,21 +247,42 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             </View>
           </View>
           {order_accepted === "declined" && (
-            <Text style={{ color: "#ff0000", fontSize: 14 }}>Reason: {order_decline_reason}</Text>
+            <Text style={{ color: "#ff0000", fontSize: 14 }}>
+              Reason: {order_decline_reason}
+            </Text>
           )}
           {availability &&
             payment_information === "pending" &&
             order_accepted === "accepted" &&
             remainingTime > 0 && (
-              <FittedBlackButton
-                value="Pay now"
-                onClick={() =>
-                  navigation.navigate(screenName.payment, {
-                    id: orderId,
-                  })
-                }
-                style={{ height: 40 }}
-              />
+              <>
+                {showBlocker ? (
+                  <FittedBlackButton
+                    value="Pay now — under maintenance"
+                    isDisabled
+                    onClick={() => {}}
+                    style={{ height: 40 }}
+                  />
+                ) : (
+                  <FittedBlackButton
+                    value="Pay now"
+                    onClick={() =>
+                      navigation.navigate(screenName.payment, {
+                        id: orderId,
+                      })
+                    }
+                    style={{ height: 40 }}
+                  />
+                )}
+
+                {showBlocker && (
+                  <Text style={tw`text-[12px] text-[#666]`}>
+                    We’re fine-tuning our payment system to resolve a minor
+                    issue and ensure every transaction remains flawlessly
+                    seamless.
+                  </Text>
+                )}
+              </>
             )}
           {availability &&
             payment_information === "completed" &&
@@ -252,11 +309,13 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
             status !== "completed" &&
             !tracking_information.link && (
               <View
-                style={{
-                  padding: 10,
-                  backgroundColor: "#f3f3f3",
-                  borderRadius: 91,
-                }}
+                style={[
+                  tw`rounded-lg`,
+                  {
+                    padding: 10,
+                    backgroundColor: "#f3f3f3",
+                  },
+                ]}
               >
                 <Text style={{ color: "#666", textAlign: "center" }}>
                   Awaiting tracking information

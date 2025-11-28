@@ -1,7 +1,8 @@
 export const colors = {
   white: "#fff",
-  black: "#000",
-  primary_black: "#1A1A1A",
+  black: "#0F172A",
+  primary_black: "#0F172A",
+  black_light: "#1F2937",
   secondary_text_color: "#161616",
   inputLabel: "#858585",
   grey: "#858585",

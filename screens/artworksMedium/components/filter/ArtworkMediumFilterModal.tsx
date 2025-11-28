@@ -1,19 +1,10 @@
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
 import { colors } from "config/colors.config";
 import { Feather } from "@expo/vector-icons";
-import { filterStore } from "store/artworks/FilterStore";
 import PriceFilter from "./PriceFilter";
 import YearFilter from "./YearFilter";
 import FilterPill from "./FilterPill";
-import { artworkStore } from "store/artworks/ArtworkStore";
 import { artworkActionStore } from "store/artworks/ArtworkActionStore";
 import { fetchPaginatedArtworks } from "services/artworks/fetchPaginatedArtworks";
 import RarityFilter from "./RarityFilter";
@@ -24,15 +15,14 @@ import { useNavigation } from "@react-navigation/native";
 import { artworksMediumFilterStore } from "store/artworks/ArtworksMediumFilterStore";
 import { artworksMediumStore } from "store/artworks/ArtworksMediumsStore";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ArtworkMediumFilterModal() {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const { filterOptions, selectedFilters, clearAllFilters } =
-    artworksMediumFilterStore();
+  const { filterOptions, selectedFilters, clearAllFilters } = artworksMediumFilterStore();
   const { paginationCount, updatePaginationCount } = artworkActionStore();
-  const { setArtworks, setIsLoading, setPageCount, isLoading, medium } =
-    artworksMediumStore();
+  const { setArtworks, setIsLoading, setPageCount, isLoading, medium } = artworksMediumStore();
 
   const handleSubmitFilter = async () => {
     updatePaginationCount("reset");
