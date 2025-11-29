@@ -1,10 +1,9 @@
 import { hasFilterValue } from "utils/utils_checkIfFilterExists";
-import { ChangeEvent } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { colors } from "config/colors.config";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { artworkCategoriesStore } from "store/artworks/ArtworkCategoriesStore";
+import tw from "twrnc";
 
 type FilterOptionBoxTypes = {
   filters: FilterValueType[];
@@ -17,15 +16,14 @@ type FilterValueType = {
 };
 
 type FilterItemProps = {
-  name: string,
-  isChecked: boolean,
-  handleClick: (e: boolean) => void
-}
+  name: string;
+  isChecked: boolean;
+  handleClick: (e: boolean) => void;
+};
 export default function FilterOptionBox({
   filters,
   label,
 }: FilterOptionBoxTypes) {
-
   const {
     updateFilter,
     setSelectedFilters,
@@ -43,58 +41,52 @@ export default function FilterOptionBox({
     }
   };
 
-
-  const Item = ({name, isChecked, handleClick}: FilterItemProps) => {
-    return(
+  const Item = ({ name, isChecked, handleClick }: FilterItemProps) => {
+    return (
       <TouchableOpacity onPress={() => handleClick(!isChecked)}>
-        <View style={styles.itemContainer}>
-          <View style={[styles.checkBox, isChecked && {backgroundColor: colors.primary_black}]}>{isChecked && <Feather name="check" size={15} color={colors.white} />}</View>
-          <Text style={{fontSize: 16}}>{name}</Text>
+        <View style={tw`gap-2.5 flex-row items-center`}>
+          <View
+            style={[
+              tw`h-5 w-5 items-center justify-center rounded`,
+              {
+                borderWidth: 1,
+                borderColor: colors.inputBorder,
+                backgroundColor: "#f5f5f5",
+              },
+              isChecked && { backgroundColor: colors.primary_black },
+            ]}
+          >
+            {isChecked && (
+              <Feather name="check" size={15} color={colors.white} />
+            )}
+          </View>
+          <Text style={{ fontSize: 16 }}>{name}</Text>
         </View>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        tw`w-full rounded-lg gap-4 p-4 mt-2.5 bg-white`,
+        {
+          borderWidth: 1,
+          borderColor: colors.inputBorder,
+          zIndex: 500,
+        },
+      ]}
+    >
       {filters.map((filter, index) => (
         <Item
           name={filter.option}
           isChecked={hasFilterValue(selectedFilters, filter.option)}
-          handleClick={(e) => handleChange(e, filter.option, JSON.stringify(filter.value))}
+          handleClick={(e) =>
+            handleChange(e, filter.option, JSON.stringify(filter.value))
+          }
           key={index}
         />
       ))}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    // position: 'absolute',
-    // top: '100%',
-    zIndex: 500,
-    padding: 15,
-    gap: 15,
-    marginTop: 10
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10
-  },
-  checkBox: {
-    height: 20,
-    width: 20,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
-})

@@ -1,19 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useState } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { colors } from 'config/colors.config';
-import { Feather } from '@expo/vector-icons';
-import { filterStore } from 'store/artworks/FilterStore';
-import FilterOptionBox from './FilterOptionBox';
+import { Text, View } from "react-native";
+import React, { useState } from "react";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { colors } from "config/colors.config";
+import { Feather } from "@expo/vector-icons";
+import { filterStore } from "store/artworks/FilterStore";
+import FilterOptionBox from "./FilterOptionBox";
+import tw from "twrnc";
 
 export const optionsMedium = [
-  'Photography',
-  'Works on paper',
-  'Acrylic on canvas/linen/panel',
-  'Mixed media on paper/canvas',
-  'Sculpture (Resin/plaster/clay)',
-  'Oil on canvas/panel',
-  'Sculpture (Bronze/stone/metal)',
+  "Photography",
+  "Works on paper",
+  "Acrylic on canvas/linen/panel",
+  "Mixed media on paper/canvas",
+  "Sculpture (Resin/plaster/clay)",
+  "Oil on canvas/panel",
+  "Sculpture (Bronze/stone/metal)",
 ];
 
 const mediumFilterOptions = optionsMedium.map((option) => ({
@@ -26,26 +27,24 @@ export default function MediumFilter() {
   const { filterOptions } = filterStore();
 
   return (
-    <View style={{ position: 'relative', zIndex: 8 }}>
+    <View style={{ position: "relative", zIndex: 8 }}>
       <TouchableOpacity onPress={() => setOpenDropdown(!openDropdown)}>
-        <View style={styles.FilterSelectContainer}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 10,
-            }}
-          >
-            <Text style={{ color: '#616161', fontSize: 16 }}>Filter by medium</Text>
+        <View
+          style={[
+            tw`h-14 px-5 items-center gap-2.5 flex-row rounded-lg`,
+            { borderWidth: 1, borderColor: colors.inputBorder },
+          ]}
+        >
+          <View style={tw`flex-1 flex-row items-center gap-2.5`}>
+            <Text style={{ color: "#616161", fontSize: 16 }}>
+              Filter by medium
+            </Text>
             {filterOptions.medium.length > 0 && (
               <View
-                style={{
-                  paddingHorizontal: 10,
-                  paddingVertical: 4,
-                  backgroundColor: '#f5f5f5',
-                  borderRadius: 20,
-                }}
+                style={[
+                  tw`px-2.5 rounded-lg py-1`,
+                  { backgroundColor: "#f5f5f5" },
+                ]}
               >
                 <Text style={{ fontSize: 12, color: colors.primary_black }}>
                   {filterOptions.medium.length}
@@ -53,24 +52,13 @@ export default function MediumFilter() {
               </View>
             )}
           </View>
-          <Feather name="chevron-down" size={20} color={'#616161'} />
+          <Feather name="chevron-down" size={20} color={"#616161"} />
         </View>
       </TouchableOpacity>
       {/* Filter options */}
-      {openDropdown && <FilterOptionBox filters={mediumFilterOptions} label={'medium'} />}
+      {openDropdown && (
+        <FilterOptionBox filters={mediumFilterOptions} label={"medium"} />
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  FilterSelectContainer: {
-    height: 55,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    gap: 10,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    borderRadius: 30,
-    flexDirection: 'row',
-  },
-});

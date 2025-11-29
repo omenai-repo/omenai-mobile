@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { Feather } from '@expo/vector-icons';
-import { colors } from 'config/colors.config';
-import { filterStore } from 'store/artworks/FilterStore';
-import { artworkStore } from 'store/artworks/ArtworkStore';
-import { artworkActionStore } from 'store/artworks/ArtworkActionStore';
-import { fetchPaginatedArtworks } from 'services/artworks/fetchPaginatedArtworks';
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React from "react";
+import { Feather } from "@expo/vector-icons";
+import { colors } from "config/colors.config";
+import { filterStore } from "store/artworks/FilterStore";
+import { artworkStore } from "store/artworks/ArtworkStore";
+import { artworkActionStore } from "store/artworks/ArtworkActionStore";
+import { fetchPaginatedArtworks } from "services/artworks/fetchPaginatedArtworks";
+import tw from "twrnc";
 
 export default function FilterPill({ filter }: { filter: string }) {
   const { removeSingleFilterSelection, selectedFilters } = filterStore();
@@ -35,22 +36,15 @@ export default function FilterPill({ filter }: { filter: string }) {
 
   return (
     <TouchableOpacity onPress={handleRemoveSingleFilter}>
-      <View style={styles.container}>
+      <View
+        style={[
+          tw`flex-row items-center gap-2.5 py-2.5 px-4 rounded-lg`,
+          { backgroundColor: colors.primary_black },
+        ]}
+      >
         <Text style={{ fontSize: 14, color: colors.white }}>{filter}</Text>
         <Feather name="x" size={20} color={colors.white} />
       </View>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.primary_black,
-    borderRadius: 20,
-    gap: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-  },
-});
