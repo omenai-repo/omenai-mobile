@@ -1,10 +1,4 @@
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Platform, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { colors } from "config/colors.config";
 import { Feather } from "@expo/vector-icons";
@@ -57,11 +51,8 @@ export default function ArtworkMediumFilterModal() {
     <View style={[tw`flex-1`, { backgroundColor: colors.white }]}>
       <View
         style={[
-          tw`flex-row items-center pb-2.5 gap-2.5 px-5`,
-          {
-            backgroundColor: colors.white,
-            paddingTop: Platform.OS === "ios" ? 20 : top + 10,
-          },
+          tw`flex-row items-center pb-2.5 gap-2.5 px-5 bg-white`,
+          { paddingTop: Platform.OS === "ios" ? 20 : top + 10 },
         ]}
       >
         <View style={tw`flex-1`}>
