@@ -1,4 +1,4 @@
-import { apiUrl, authorization, originHeader, userAgent } from 'constants/apiUrl.constants';
+import { apiUrl, authorization, originHeader, userAgent } from "constants/apiUrl.constants";
 
 export async function createTransfer(payload: {
   amount: number;
@@ -7,23 +7,23 @@ export async function createTransfer(payload: {
   wallet_pin: string;
 }) {
   try {
-    const res = await fetch(`${apiUrl}/api/flw/createTransfer`, {
-      method: 'POST',
+    const url = `${apiUrl}/api/flw/createTransfer`;
+    const res = await fetch(url, {
+      method: "POST",
       headers: {
         Origin: originHeader,
-        'User-Agent': userAgent,
+        "User-Agent": userAgent,
         Authorization: authorization,
       },
       body: JSON.stringify(payload),
     });
 
     const result = await res.json();
-
     return { isOk: res.ok, data: result };
   } catch (error: any) {
     return {
       isOk: false,
-      message: error.response?.data?.message || 'Transfer failed',
+      message: error.response?.data?.message || "Transfer failed",
     };
   }
 }

@@ -1,15 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { colors } from 'config/colors.config';
-import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { createShippingOrder } from 'services/orders/createShippingOrder';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
-import { useModalStore } from 'store/modal/modalStore';
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import LongBlackButton from "components/buttons/LongBlackButton";
+import { colors } from "config/colors.config";
+import { useOrderSummaryStore } from "store/orders/OrderSummaryStore";
+import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { createShippingOrder } from "services/orders/createShippingOrder";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
+import { useModalStore } from "store/modal/modalStore";
 
 type SummaryContainerProps = {
-  buttonTypes: 'Proceed to shipping' | 'Request price quote' | 'Proceed to make payment';
+  buttonTypes: "Proceed to shipping" | "Request price quote" | "Proceed to make payment";
   price?: number;
   disableButton?: boolean;
 };
@@ -37,8 +37,8 @@ export default function SummaryContainer({
   const placeOrderHandler = async () => {
     setIsLoading(true);
 
-    let userId = '';
-    const userSession = await utils_getAsyncData('userSession');
+    let userId = "";
+    const userSession = await utils_getAsyncData("userSession");
     if (userSession.value) {
       userId = JSON.parse(userSession.value).id;
     }
@@ -60,13 +60,13 @@ export default function SummaryContainer({
         stateCode,
       },
       null, // or provide the actual origin address if available
-      artworkOrderData.role_access.role, // or "artist" based on your requirement
+      artworkOrderData.role_access.role // or "artist" based on your requirement
     );
     if (results?.isOk) {
       setSelectedSectionIndex(3);
     } else {
       updateModal({
-        modalType: 'error',
+        modalType: "error",
         message: results?.message,
         showModal: true,
       });
@@ -80,20 +80,20 @@ export default function SummaryContainer({
       <Text style={styles.summaryText}>Summary</Text>
       <View style={styles.priceListing}>
         <View style={styles.priceListingItem}>
-          <Text style={{ fontSize: 14, color: '#616161', flex: 1 }}>Price</Text>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: '#616161' }}>
-            {price ? utils_formatPrice(price) : 'Request price'}
+          <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>Price</Text>
+          <Text style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}>
+            {price ? utils_formatPrice(price) : "Request price"}
           </Text>
         </View>
         <View style={styles.priceListingItem}>
-          <Text style={{ fontSize: 14, color: '#616161', flex: 1 }}>Shipping</Text>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: '#616161' }}>
+          <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>Shipping</Text>
+          <Text style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}>
             To be calculated
           </Text>
         </View>
         <View style={styles.priceListingItem}>
-          <Text style={{ fontSize: 14, color: '#616161', flex: 1 }}>Taxes</Text>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: '#616161' }}>
+          <Text style={{ fontSize: 14, color: "#616161", flex: 1 }}>Taxes</Text>
+          <Text style={{ fontSize: 14, fontWeight: "500", color: "#616161" }}>
             To be calculated
           </Text>
         </View>
@@ -102,7 +102,7 @@ export default function SummaryContainer({
         <Text
           style={{
             fontSize: 16,
-            fontWeight: '500',
+            fontWeight: "500",
             color: colors.primary_black,
             flex: 1,
           }}
@@ -112,7 +112,7 @@ export default function SummaryContainer({
         <Text
           style={{
             fontSize: 16,
-            fontWeight: '500',
+            fontWeight: "500",
             color: colors.primary_black,
           }}
         >
@@ -123,7 +123,7 @@ export default function SummaryContainer({
         <LongBlackButton
           value={buttonTypes}
           onClick={() => {
-            if (buttonTypes === 'Proceed to shipping') {
+            if (buttonTypes === "Proceed to shipping") {
               setSelectedSectionIndex(2);
             } else {
               placeOrderHandler();
@@ -131,8 +131,8 @@ export default function SummaryContainer({
           }}
           isDisabled={disableButton}
         />
-        {buttonTypes === 'Proceed to shipping' && (
-          <Text style={{ marginTop: 30, fontSize: 14, color: '#616161' }}>
+        {buttonTypes === "Proceed to shipping" && (
+          <Text style={{ marginTop: 30, fontSize: 14, color: "#616161" }}>
             * Additional duties and taxes may apply at import
           </Text>
         )}
@@ -163,8 +163,8 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   priceListingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
 });

@@ -1,22 +1,22 @@
-import { StyleSheet, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import WithModal from 'components/modal/WithModal';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import Header from './components/Header';
-import Plan from './components/Plan';
-import { getAllPlanData } from 'services/subscriptions/getAllPlanData';
-import Loader from 'components/general/Loader';
-import EmptyArtworks from 'components/general/EmptyArtworks';
-import { useModalStore } from 'store/modal/modalStore';
-import { retrieveSubscriptionData } from 'services/subscriptions/retrieveSubscriptionData';
-import { useAppStore } from 'store/app/appStore';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import { useRoute } from '@react-navigation/native';
+import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import WithModal from "components/modal/WithModal";
+import BackHeaderTitle from "components/header/BackHeaderTitle";
+import Header from "./components/Header";
+import Plan from "./components/Plan";
+import { getAllPlanData } from "services/subscriptions/getAllPlanData";
+import Loader from "components/general/Loader";
+import EmptyArtworks from "components/general/EmptyArtworks";
+import { useModalStore } from "store/modal/modalStore";
+import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscriptionData";
+import { useAppStore } from "store/app/appStore";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import { useRoute } from "@react-navigation/native";
 
-export type billingTabs = 'monthly' | 'yearly';
+export type billingTabs = "monthly" | "yearly";
 
 export default function Billing() {
-  const [selectedTab, setSelectedTab] = useState<billingTabs>('monthly');
+  const [selectedTab, setSelectedTab] = useState<billingTabs>("monthly");
   const [plans, setPlans] = useState<PlanProps[]>([]);
   const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(null);
   const [loading, setLoading] = useState(false);
@@ -33,8 +33,8 @@ export default function Billing() {
       if (!results?.isOk && !subResults?.isOk) {
         //throw error
         updateModal({
-          message: 'Something went wrong',
-          modalType: 'error',
+          message: "Something went wrong",
+          modalType: "error",
           showModal: true,
         });
       } else {

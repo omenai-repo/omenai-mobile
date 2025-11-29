@@ -1,21 +1,22 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Platform } from 'react-native';
-import { SvgXml } from 'react-native-svg';
+import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  Platform,
+} from "react-native";
+import { SvgXml } from "react-native-svg";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   Easing,
-} from 'react-native-reanimated';
-import tw from 'twrnc';
-import { curvedTabBg } from 'utils/SvgImages';
-import {
-  BottomTabDataArtist,
-  BottomTabDataGallery,
-  BottomTabDataIndividual,
-} from 'utils/BottomTabData';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useAppStore } from 'store/app/appStore';
+} from "react-native-reanimated";
+import tw from "twrnc";
+import { colors } from "config/colors.config";
+import { curvedTabBg } from "utils/SvgImages";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type TabDataType = {
   id: number;
@@ -31,7 +32,7 @@ type TabDataType = {
   }) => React.ReactElement | undefined;
 };
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -49,14 +50,14 @@ const CustomTabBar = ({
   const tabWidth = width / state.routes.length;
   const translateX = useSharedValue(0);
   const { bottom } = useSafeAreaInsets();
-  const { userType } = useAppStore();
+  const bubbleTop = -58;
 
   useEffect(() => {
     translateX.value = withTiming(state.index * tabWidth, {
       duration: 900,
       easing: Easing.out(Easing.exp),
     });
-  }, [state.index]);
+  }, [state.index, tabWidth, translateX]);
 
   const sliderStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
@@ -64,32 +65,50 @@ const CustomTabBar = ({
 
   return (
     <View
-      style={tw.style(`flex-row bg-black px-5`, {
-        height: Platform.OS === 'android' ? 100 + bottom : 100,
-      })}
+      style={[
+        tw`flex-row px-5`,
+        Platform.OS === "android"
+          ? {
+              backgroundColor: colors.black,
+              paddingTop: 36,
+              paddingBottom: bottom + 23,
+            }
+          : { backgroundColor: colors.black, height: 100 },
+      ]}
     >
       {/* Sliding Bubble Indicator */}
       <AnimatedView
         style={[
           tw`absolute left-0 items-center`,
-          { width: tabWidth, alignItems: 'center' },
+          { width: tabWidth, alignItems: "center" },
           sliderStyle,
         ]}
       >
         <SvgXml xml={curvedTabBg} style={tw`top-[-1px]`} />
         <View
-          style={tw`bg-black rounded-full w-[48px] h-[48px] items-center justify-center top-[-58px]`}
+          style={[
+            tw`rounded-full w-[48px] h-[48px] items-center justify-center`,
+            { backgroundColor: colors.black, top: bubbleTop },
+          ]}
         >
-          <SvgXml xml={tabData[state.index].activeIcon} width={26} height={26} />
+          <SvgXml
+            xml={tabData[state.index].activeIcon}
+            width={26}
+            height={26}
+          />
         </View>
-        <Text style={tw`text-white font-bold text-[13px] top-[-30px]`}>
+        <Text
+          style={[
+            tw`font-bold text-[13px]`,
+            { color: colors.white, top: bubbleTop + 28 },
+          ]}
+        >
           {tabData[state.index].name}
         </Text>
       </AnimatedView>
 
       {/* Render touchable inactive icons */}
       {state.routes.map((route: any, index: number) => {
-        const { options } = descriptors[route.key];
         const isFocused = state.index === index;
 
         const onPress = () => {
@@ -98,7 +117,9 @@ const CustomTabBar = ({
           }
         };
 
-        const iconXml = isFocused ? tabData[index].activeIcon : tabData[index].inActiveIcon;
+        const iconXml = isFocused
+          ? tabData[index].activeIcon
+          : tabData[index].inActiveIcon;
 
         return (
           <TouchableOpacity
