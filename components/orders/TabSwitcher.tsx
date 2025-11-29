@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, Pressable, Animated } from 'react-native';
-import tw from 'twrnc';
+import React, { useEffect, useRef } from "react";
+import { View, Text, Pressable, Animated, Platform } from "react-native";
+import tw from "twrnc";
+import { colors } from "config/colors.config";
 
 type Tab = {
   title: string;
@@ -30,17 +31,26 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
   const tabWidth = 100 / tabs.length;
 
   return (
-    <View style={tw`relative flex-row items-center bg-white p-[10px] mx-[20px] rounded-[56px]`}>
+    <View
+      style={[
+        tw`relative flex-row items-center bg-white p-[10px] mx-[20px] rounded-lg`,
+        { overflow: "visible" },
+      ]}
+    >
       {/* Animated Pill Background */}
       <Animated.View
         style={[
-          tw`absolute h-[45px] bg-black rounded-[56px] shadow-md`,
+          tw`absolute h-[45px] rounded-lg`,
+          // Keep iOS shadow, avoid elevation on Android so it doesn't cover the badge
+          Platform.OS === "ios" ? tw`shadow-md` : {},
           {
+            backgroundColor: colors.black,
             width: `${tabWidth}%`,
             left: animatedValue.interpolate({
               inputRange: tabs.map((_, i) => i),
               outputRange: tabs.map((_, i) => `${i * (100 / tabs.length) + 3}%`),
             }),
+            elevation: Platform.OS === "android" ? 0 : undefined,
           },
         ]}
       />
@@ -52,28 +62,25 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
           style={tw`flex-1 justify-center items-center h-[45px]`}
         >
           <View style={tw`flex-row items-center justify-center relative`}>
-            <Animated.Text
+            <Text
               style={[
                 tw`text-[13px] font-medium`,
-                {
-                  color: animatedValue.interpolate({
-                    inputRange: [index - 1, index, index + 1],
-                    outputRange: ['#00000099', '#FFFFFF', '#00000099'],
-                    extrapolate: 'clamp',
-                  }),
-                },
+                { color: tab.key === selectedKey ? colors.white : `${colors.black}99` },
               ]}
             >
               {tab.title}
-            </Animated.Text>
+            </Text>
 
             {/* Badge */}
             {tab.count !== undefined && tab.count > 0 && (
               <View
-                style={tw`absolute -top-[10px] -right-[16px] bg-red-500 rounded-full px-[6px] py-[2px] z-10`}
+                style={[
+                  tw`absolute -top-[10px] -right-[16px] bg-red-500 rounded-full px-[6px] py-[2px] z-10`,
+                  { elevation: Platform.OS === "android" ? 10 : 0 },
+                ]}
               >
                 <Text style={tw`text-white text-[10px] font-bold`}>
-                  {tab.count > 99 ? '99+' : tab.count}
+                  {tab.count > 99 ? "99+" : tab.count}
                 </Text>
               </View>
             )}

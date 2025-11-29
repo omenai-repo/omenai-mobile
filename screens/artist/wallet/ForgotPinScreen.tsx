@@ -1,17 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, Modal } from 'react-native';
-import tw from 'twrnc';
-import { useModalStore } from 'store/modal/modalStore';
-import { sendOtpCode } from 'services/wallet/sendOtpCode';
-import { verifyOtpCode } from 'services/wallet/verifyOtpCode';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import LottieView from 'lottie-react-native';
-import loaderAnimation from '../../../assets/other/loader-animation.json';
-import { OTPInput } from './OTPInput';
-import WithModal from 'components/modal/WithModal';
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, Pressable, Modal } from "react-native";
+import tw from "twrnc";
+import { colors } from "config/colors.config";
+import { useModalStore } from "store/modal/modalStore";
+import { sendOtpCode } from "services/wallet/sendOtpCode";
+import { verifyOtpCode } from "services/wallet/verifyOtpCode";
+import BackHeaderTitle from "components/header/BackHeaderTitle";
+import LottieView from "lottie-react-native";
+import loaderAnimation from "../../../assets/other/loader-animation.json";
+import { OTPInput } from "./OTPInput";
+import WithModal from "components/modal/WithModal";
 
 export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadOtp, setLoadOtp] = useState(false);
   const { updateModal } = useModalStore();
@@ -26,9 +27,9 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
         const response = await sendOtpCode();
         if (!response?.isOk) {
           updateModal({
-            message: response?.message || 'Failed to send OTP',
+            message: response?.message || "Failed to send OTP",
             showModal: true,
-            modalType: 'error',
+            modalType: "error",
           });
         } else {
           // Focus the OTP input when OTP is sent
@@ -36,9 +37,9 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
         }
       } catch {
         updateModal({
-          message: 'An error occurred while sending OTP',
+          message: "An error occurred while sending OTP",
           showModal: true,
-          modalType: 'error',
+          modalType: "error",
         });
       } finally {
         setLoadOtp(false);
@@ -51,9 +52,9 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
   const handleVerifyOtp = async () => {
     if (otp.length !== 4) {
       updateModal({
-        message: 'Please enter the complete 4-digit OTP',
+        message: "Please enter the complete 4-digit OTP",
         showModal: true,
-        modalType: 'error',
+        modalType: "error",
       });
       return;
     }
@@ -62,21 +63,21 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
     try {
       const response = await verifyOtpCode(otp);
       if (response?.isOk) {
-        navigation.navigate('ResetPinScreen');
+        navigation.navigate("ResetPinScreen");
       } else {
         updateModal({
-          message: response?.message || 'Invalid OTP',
+          message: response?.message || "Invalid OTP",
           showModal: true,
-          modalType: 'error',
+          modalType: "error",
         });
         // Clear OTP on error
         otpInputRef.current?.clear();
       }
     } catch {
       updateModal({
-        message: 'An error occurred while verifying OTP',
+        message: "An error occurred while verifying OTP",
         showModal: true,
-        modalType: 'error',
+        modalType: "error",
       });
     } finally {
       setLoading(false);
@@ -96,12 +97,16 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
           <OTPInput ref={otpInputRef} length={4} onChange={setOtp} />
 
           <Pressable
-            style={tw`bg-black py-4 rounded-lg ${loading ? 'opacity-50' : ''}`}
+            style={[
+              tw`py-4 rounded-lg`,
+              { backgroundColor: colors.black },
+              loading ? { opacity: 0.5 } : {},
+            ]}
             onPress={handleVerifyOtp}
             disabled={loading || otp.length !== 4}
           >
-            <Text style={tw`text-white text-center font-bold`}>
-              {loading ? 'Verifying...' : 'Verify OTP'}
+            <Text style={[tw`text-center font-bold`, { color: colors.white }]}>
+              {loading ? "Verifying..." : "Verify OTP"}
             </Text>
           </Pressable>
 
@@ -112,23 +117,23 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
                 const response = await sendOtpCode();
                 if (!response?.isOk) {
                   updateModal({
-                    message: response?.message || 'Failed to resend OTP',
+                    message: response?.message || "Failed to resend OTP",
                     showModal: true,
-                    modalType: 'error',
+                    modalType: "error",
                   });
                 } else {
                   updateModal({
-                    message: 'New OTP sent successfully',
+                    message: "New OTP sent successfully",
                     showModal: true,
-                    modalType: 'success',
+                    modalType: "success",
                   });
                   otpInputRef.current?.clear();
                 }
               } catch {
                 updateModal({
-                  message: 'Error resending OTP',
+                  message: "Error resending OTP",
                   showModal: true,
-                  modalType: 'error',
+                  modalType: "error",
                 });
               } finally {
                 setLoadOtp(false);
@@ -138,13 +143,18 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
             disabled={loadOtp}
           >
             <Text style={tw`text-[#1A1A1A]] text-center`}>
-              {loadOtp ? 'Sending...' : "Didn't receive code? Resend"}
+              {loadOtp ? "Sending..." : "Didn't receive code? Resend"}
             </Text>
           </Pressable>
         </View>
 
         <Modal visible={loadOtp} transparent animationType="fade">
-          <View style={tw`flex-1 justify-center items-center bg-black/50`}>
+          <View
+            style={[
+              tw`flex-1 justify-center items-center`,
+              { backgroundColor: `${colors.black}80` },
+            ]}
+          >
             <LottieView
               autoPlay
               ref={animation}

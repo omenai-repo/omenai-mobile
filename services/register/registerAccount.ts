@@ -1,21 +1,21 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function registerAccount(
   payload:
-    | (Omit<IndividualRegisterData, 'confirmPassword'> & { preferences: string[] })
+    | (Omit<IndividualRegisterData, "confirmPassword"> & { preferences: string[] })
     | GalleryRegisterData
     | ArtistRegisterData,
-  route: 'gallery' | 'individual' | 'artist',
+  route: "gallery" | "individual" | "artist"
 ) {
-  const url = apiUrl + '/api/auth/' + route + '/register';
+  const url = apiUrl + "/api/auth/" + route + "/register";
 
   try {
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Origin: originHeader,
-        'User-Agent': userAgent,
+        "User-Agent": userAgent,
         Authorization: authorization,
       },
       body: JSON.stringify(payload),
@@ -25,12 +25,11 @@ export async function registerAccount(
       isOk: response.ok,
       body: await response.json(),
     };
-
     return ParsedResponse;
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
-      body: { message: 'Error creating account' },
+      body: { message: "Error creating account" },
     };
   }
 }

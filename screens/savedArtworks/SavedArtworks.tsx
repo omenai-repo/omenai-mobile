@@ -1,21 +1,29 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { colors } from 'config/colors.config';
-import { fetchUserSavedArtworks } from 'services/artworks/fetchUserSavedArtwork';
-import { UseSavedArtworksStore } from 'store/artworks/SavedArtworksStore';
-import { getImageFileView } from 'lib/storage/getImageFileView';
-import Loader from 'components/general/Loader';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons';
-import { screenName } from 'constants/screenNames.constants';
-import { utils_handleFetchUserID } from 'utils/utils_asyncStorage';
-import useLikedState from 'hooks/useLikedState';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { StackNavigationProp } from '@react-navigation/stack';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import BlurStatusBar from 'components/general/BlurStatusBar';
-import { useScrollY } from 'hooks/useScrollY';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { colors } from "config/colors.config";
+import { fetchUserSavedArtworks } from "services/artworks/fetchUserSavedArtwork";
+import { UseSavedArtworksStore } from "store/artworks/SavedArtworksStore";
+import { getImageFileView } from "lib/storage/getImageFileView";
+import Loader from "components/general/Loader";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons";
+import { screenName } from "constants/screenNames.constants";
+import { utils_handleFetchUserID } from "utils/utils_asyncStorage";
+import useLikedState from "hooks/useLikedState";
+import BackHeaderTitle from "components/header/BackHeaderTitle";
+import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { StackNavigationProp } from "@react-navigation/stack";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import BlurStatusBar from "components/general/BlurStatusBar";
+import { useScrollY } from "hooks/useScrollY";
+import tw from "twrnc";
 
 type SavedArtworkItemProps = {
   name: string;
@@ -28,7 +36,7 @@ type SavedArtworkItemProps = {
   pricing: {
     currency: string;
     price: number;
-    shouldShowPrice: 'Yes' | 'No';
+    shouldShowPrice: "Yes" | "No";
     usd_price: number;
   };
 };
@@ -42,7 +50,7 @@ export default function SavedArtworks() {
   const [refreshing, setRefreshing] = useState(false);
   const { scrollY, onScroll } = useScrollY();
 
-  const [sessionId, setSessionId] = useState('');
+  const [sessionId, setSessionId] = useState("");
 
   useEffect(() => {
     handleFetchUserSessionData();
@@ -81,7 +89,12 @@ export default function SavedArtworks() {
   }: SavedArtworkItemProps) => {
     let image_href = getImageFileView(url, 80);
 
-    const { handleLike } = useLikedState(impressions, likeIds, sessionId, art_id);
+    const { handleLike } = useLikedState(
+      impressions,
+      likeIds,
+      sessionId,
+      art_id
+    );
 
     const handleRemove = () => {
       handleLike(false);
@@ -94,16 +107,26 @@ export default function SavedArtworks() {
 
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate(screenName.artwork, { title: name, url })}
+        onPress={() =>
+          navigation.navigate(screenName.artwork, { title: name, url })
+        }
         activeOpacity={1}
       >
         <View style={styles.savedArtworkItem}>
-          <View style={{ flex: 1, flexDirection: 'row', gap: 15 }}>
-            <Image source={{ uri: image_href }} style={styles.image} resizeMode="contain" />
+          <View style={{ flex: 1, flexDirection: "row", gap: 15 }}>
+            <Image
+              source={{ uri: image_href }}
+              style={styles.image}
+              resizeMode="contain"
+            />
             <View style={{ paddingTop: 5 }}>
-              <Text style={{ fontSize: 16, color: colors.primary_black }}>{name}</Text>
-              <Text style={{ fontSize: 14, color: '#858585', marginTop: 2 }}>{artistName}</Text>
-              {pricing.shouldShowPrice === 'Yes' && (
+              <Text style={{ fontSize: 16, color: colors.primary_black }}>
+                {name}
+              </Text>
+              <Text style={{ fontSize: 14, color: "#858585", marginTop: 2 }}>
+                {artistName}
+              </Text>
+              {pricing.shouldShowPrice === "Yes" && (
                 <Text
                   style={{
                     fontSize: 14,
@@ -115,19 +138,17 @@ export default function SavedArtworks() {
                   {utils_formatPrice(pricing.usd_price)}
                 </Text>
               )}
-              <TouchableOpacity onPress={handleRemove} style={{ paddingTop: 5, flexWrap: 'wrap' }}>
+              <TouchableOpacity
+                onPress={handleRemove}
+                style={{ paddingTop: 5, flexWrap: "wrap" }}
+              >
                 <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 10,
-                    padding: 10,
-                    marginTop: 10,
-                    borderRadius: 20,
-                    backgroundColor: '#f1f1f1',
-                  }}
+                  style={[
+                    tw`rounded-lg flex-row items-center p-2.5 mt-2.5 gap-2`,
+                    { backgroundColor: "#f1f1f1" },
+                  ]}
                 >
-                  <AntDesign name="heart" color={'#ff0000'} size={14} />
+                  <AntDesign name="heart" color={"#ff0000"} size={14} />
                   <Text style={{ fontSize: 12, color: colors.primary_black }}>
                     Remove from saved
                   </Text>
@@ -146,7 +167,9 @@ export default function SavedArtworks() {
       <BackHeaderTitle title="Saved artworks" />
       <ScrollWrapper
         style={styles.mainContainer}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         onScroll={onScroll}
       >
         {isLoading && <Loader />}
@@ -171,8 +194,8 @@ export default function SavedArtworks() {
           <View
             style={{
               height: 400,
-              alignItems: 'center',
-              justifyContent: 'center',
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <Text style={{ fontSize: 20 }}>No Saved Artworks</Text>
@@ -199,12 +222,12 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   savedArtworkItem: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
   },
   image: {
     width: 80,
     height: 100,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
   },
 });

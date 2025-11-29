@@ -1,13 +1,14 @@
 // screens/overview/HighlightCard.tsx
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
-import tw from 'twrnc';
-import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
-import { fetchArtistHighlightData } from 'services/overview/fetchArtistHighlightData';
-import { QK } from 'utils/queryKeys';
-import { useAppStore } from 'store/app/appStore';
+import React, { useEffect } from "react";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import Animated from "react-native-reanimated";
+import tw from "twrnc";
+import { colors } from "config/colors.config";
+import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
+import { fetchArtistHighlightData } from "services/overview/fetchArtistHighlightData";
+import { QK } from "utils/queryKeys";
+import { useAppStore } from "store/app/appStore";
 
 export const HighlightCard = ({ onLoadingChange }: { onLoadingChange?: (l: boolean) => void }) => {
   const { width } = useWindowDimensions();
@@ -15,20 +16,20 @@ export const HighlightCard = ({ onLoadingChange }: { onLoadingChange?: (l: boole
   const { userSession } = useAppStore();
 
   const qSales = useQuery({
-    queryKey: QK.highlightArtist('sales', userSession?.id),
-    queryFn: () => fetchArtistHighlightData('sales'),
+    queryKey: QK.highlightArtist("sales", userSession?.id),
+    queryFn: () => fetchArtistHighlightData("sales"),
   });
   const qNet = useQuery({
-    queryKey: QK.highlightArtist('net', userSession?.id),
-    queryFn: () => fetchArtistHighlightData('net'),
+    queryKey: QK.highlightArtist("net", userSession?.id),
+    queryFn: () => fetchArtistHighlightData("net"),
   });
   const qRev = useQuery({
-    queryKey: QK.highlightArtist('revenue', userSession?.id),
-    queryFn: () => fetchArtistHighlightData('revenue'),
+    queryKey: QK.highlightArtist("revenue", userSession?.id),
+    queryFn: () => fetchArtistHighlightData("revenue"),
   });
   const qBal = useQuery({
-    queryKey: QK.highlightArtist('balance', userSession?.id),
-    queryFn: () => fetchArtistHighlightData('balance'),
+    queryKey: QK.highlightArtist("balance", userSession?.id),
+    queryFn: () => fetchArtistHighlightData("balance"),
   });
 
   const isLoading = qSales.isLoading || qNet.isLoading || qRev.isLoading || qBal.isLoading;
@@ -36,7 +37,7 @@ export const HighlightCard = ({ onLoadingChange }: { onLoadingChange?: (l: boole
 
   useEffect(() => {
     onLoadingChange?.(
-      isFetching || (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data)),
+      isFetching || (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data))
     );
   }, [isLoading, isFetching, qSales.data, qNet.data, qRev.data, qBal.data, onLoadingChange]);
 
@@ -59,8 +60,8 @@ export const HighlightCard = ({ onLoadingChange }: { onLoadingChange?: (l: boole
     <Animated.View
       // entering={FadeInUp.delay(100)}
       style={[
-        tw`bg-black border border-[#ffffff10] rounded-[12px] px-[14px] py-[16px]`,
-        { width: cardWidth },
+        tw`rounded-[12px] px-[14px] py-[16px]`,
+        { width: cardWidth, backgroundColor: colors.black, borderColor: "#ffffff10" },
       ]}
     >
       <View style={tw`flex-row justify-between items-center`}>
@@ -95,7 +96,7 @@ export const HighlightCard = ({ onLoadingChange }: { onLoadingChange?: (l: boole
                 >
                   <View style={{ flex: 1 }}>
                     <View style={styles.skeletonLine} />
-                    <View style={[styles.skeletonLine, { width: '50%', marginTop: 6 }]} />
+                    <View style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]} />
                   </View>
                   <View style={styles.skeletonCircle} />
                 </Animated.View>
@@ -128,20 +129,20 @@ export const HighlightCard = ({ onLoadingChange }: { onLoadingChange?: (l: boole
 
 const styles = StyleSheet.create({
   skeletonCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: "#1a1a1a",
     borderRadius: 12,
     padding: 16,
     marginBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   skeletonCircle: {
     height: 36,
     width: 36,
     borderRadius: 18,
-    backgroundColor: '#333',
+    backgroundColor: "#333",
     marginLeft: 10,
   },
-  skeletonLine: { height: 10, width: '70%', borderRadius: 4, backgroundColor: '#333' },
+  skeletonLine: { height: 10, width: "70%", borderRadius: 4, backgroundColor: "#333" },
 });
