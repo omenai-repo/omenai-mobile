@@ -20,14 +20,11 @@ export default function ArtworkCategoriesFilterModal() {
 
   const {
     setArtworks,
-    setIsLoading,
     setPageCount,
     isLoading,
     clearAllFilters,
     selectedFilters,
-    filterOptions,
     setArtworkCount,
-    category,
   } = artworkCategoriesStore();
 
   const handleSubmitFilter = async () => {
@@ -48,7 +45,7 @@ export default function ArtworkCategoriesFilterModal() {
             paddingHorizontal: 20,
             backgroundColor: colors.white,
             paddingBottom: 10,
-            paddingTop: 20,
+            // paddingTop: 20,
           }}
         >
           <View style={{ flex: 1 }}>
