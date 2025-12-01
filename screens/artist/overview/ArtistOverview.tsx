@@ -1,7 +1,14 @@
 // screens/overview/ArtistOverview.tsx
 import React, { useCallback, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, RefreshControl, Image, Pressable, Animated } from "react-native";
+import {
+  View,
+  Text,
+  RefreshControl,
+  Image,
+  Pressable,
+  Animated,
+} from "react-native";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
 import { dropdownIcon, dropUpIcon, arrowUpRightWhite } from "utils/SvgImages";
@@ -50,7 +57,11 @@ export const RecentOrderContainer = ({
 
   React.useEffect(() => {
     const to = open ? 120 : 0;
-    Animated.timing(animatedHeight, { toValue: to, duration: 300, useNativeDriver: false }).start();
+    Animated.timing(animatedHeight, {
+      toValue: to,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
     Animated.timing(animatedOpacity, {
       toValue: open ? 1 : 0,
       duration: open ? 200 : 150,
@@ -85,10 +96,25 @@ export const RecentOrderContainer = ({
           onPress={() => navigation.navigate(screenName.gallery.orders)}
           style={tw`flex-row items-center gap-[10px] flex-1`}
         >
-          <Image source={{ uri: image_href }} style={tw`h-[42px] w-[42px] rounded-[3px]`} />
-          <View style={tw`gap-[5px]`}>
-            <Text style={tw`text-[12px] text-[#454545]`}>{artId}</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{artName}</Text>
+          <Image
+            source={{ uri: image_href }}
+            style={tw`h-[42px] w-[42px] rounded-[3px]`}
+          />
+          <View style={tw`gap-[5px] flex-1`}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={tw`text-[12px] text-[#454545]`}
+            >
+              {artId}
+            </Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={tw`text-[14px] text-[#454545] font-semibold`}
+            >
+              {artName}
+            </Text>
           </View>
         </Pressable>
         <Pressable
@@ -100,27 +126,42 @@ export const RecentOrderContainer = ({
       </View>
 
       <Animated.View
-        style={{ height: animatedHeight, opacity: animatedOpacity, overflow: "hidden" }}
+        style={{
+          height: animatedHeight,
+          opacity: animatedOpacity,
+          overflow: "hidden",
+        }}
       >
         <View style={tw`gap-[20px] mt-[15px]`}>
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{price}</Text>
+            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
+              {price}
+            </Text>
           </View>
           {!!buyerName && (
             <View style={tw`flex-row items-center gap-[20px]`}>
               <Text style={tw`text-[14px] text-[#737373]`}>Buyer</Text>
-              <Text style={tw`text-[14px] text-[#454545] font-semibold`}>{buyerName}</Text>
+              <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
+                {buyerName}
+              </Text>
             </View>
           )}
           <View style={tw`flex-row items-center gap-[20px]`}>
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
             <View
-              style={tw.style(`rounded-[12px] h-[30px] justify-center items-center px-[12px]`, {
-                backgroundColor: statusStyles[displayStatus].bg,
-              })}
+              style={tw.style(
+                `rounded-[12px] h-[30px] justify-center items-center px-[12px]`,
+                {
+                  backgroundColor: statusStyles[displayStatus].bg,
+                }
+              )}
             >
-              <Text style={tw.style(`text-[12px]`, { color: statusStyles[displayStatus].text })}>
+              <Text
+                style={tw.style(`text-[12px]`, {
+                  color: statusStyles[displayStatus].text,
+                })}
+              >
                 {displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1)}
               </Text>
             </View>
@@ -158,12 +199,24 @@ const ArtistOverview = () => {
 
   const onRefresh = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist("sales", userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist("net", userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist("revenue", userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: QK.highlightArtist("balance", userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: QK.salesOverview(userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: QK.overviewOrders(userSession?.id) }),
+      queryClient.invalidateQueries({
+        queryKey: QK.highlightArtist("sales", userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: QK.highlightArtist("net", userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: QK.highlightArtist("revenue", userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: QK.highlightArtist("balance", userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: QK.salesOverview(userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: QK.overviewOrders(userSession?.id),
+      }),
     ]);
   }, [queryClient]);
 
@@ -176,7 +229,9 @@ const ArtistOverview = () => {
       <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={isAnyFetching} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={isAnyFetching} onRefresh={onRefresh} />
+        }
         onScroll={onScroll}
       >
         <Header />
@@ -191,10 +246,14 @@ const ArtistOverview = () => {
             style={tw`border border-[#E7E7E7] bg-[#FFFFFF] rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[150px]`}
           >
             <View style={tw`flex-row items-center mb-[25px]`}>
-              <Text style={tw`text-[16px] text-[#454545] font-semibold flex-1`}>Recent Orders</Text>
+              <Text style={tw`text-[16px] text-[#454545] font-semibold flex-1`}>
+                Recent Orders
+              </Text>
               {!isLoadingOrders && (
                 <View style={tw`flex-row items-center gap-[3px]`}>
-                  <Text style={tw`text-[12px] text-[#3D3D3D] font-semibold`}>Show All</Text>
+                  <Text style={tw`text-[12px] text-[#3D3D3D] font-semibold`}>
+                    Show All
+                  </Text>
                   <SvgXml xml={arrowUpRightWhite} />
                 </View>
               )}
@@ -224,7 +283,9 @@ const ArtistOverview = () => {
 
         {data.length === 0 && !isLoadingOrders && (
           <>
-            <Text style={tw`text-[16px] text-[#454545] font-semibold mt-[20px] mx-[15px]`}>
+            <Text
+              style={tw`text-[16px] text-[#454545] font-semibold mt-[20px] mx-[15px]`}
+            >
               Recent Orders
             </Text>
             <View
@@ -233,7 +294,9 @@ const ArtistOverview = () => {
               <View
                 style={tw`items-center justify-center py-[15px] px-[15px] bg-[#f5f5f5] rounded-[40px]`}
               >
-                <Text style={tw`text-[16px] text-center`}>No Recent Orders</Text>
+                <Text style={tw`text-[16px] text-center`}>
+                  No Recent Orders
+                </Text>
               </View>
             </View>
           </>

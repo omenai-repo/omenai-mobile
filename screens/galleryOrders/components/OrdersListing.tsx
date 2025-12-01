@@ -1,10 +1,13 @@
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, View } from "react-native";
 import React from "react";
 import OrderCard from "components/gallery/OrderCard";
 import Divider from "components/general/Divider";
 import { utils_formatPrice } from "utils/utils_priceFormatter";
 import { galleryOrdersStore } from "store/gallery/galleryOrdersStore";
-import { galleryOrderModalStore, galleryOrderModalTypes } from "store/modal/galleryModalStore";
+import {
+  galleryOrderModalStore,
+  galleryOrderModalTypes,
+} from "store/modal/galleryModalStore";
 import { utils_getColors } from "utils/utils_sortFunctions";
 
 export type orderCardStatusTypes =
@@ -16,7 +19,8 @@ export type orderCardStatusTypes =
 
 export default function OrdersListing({ data }: { data: any[] }) {
   const { selectedTab } = galleryOrdersStore();
-  const { setIsVisible, setModalType, setArtworkDetails, setCurrentId } = galleryOrderModalStore();
+  const { setIsVisible, setModalType, setArtworkDetails, setCurrentId } =
+    galleryOrderModalStore();
 
   const getStatus = (order: any): orderCardStatusTypes => {
     //for pending status
@@ -25,11 +29,17 @@ export default function OrdersListing({ data }: { data: any[] }) {
     }
 
     //processing orders that has the payment info status set to pending
-    if (selectedTab === "processing" && order.payment_information.status === "pending") {
+    if (
+      selectedTab === "processing" &&
+      order.payment_information.status === "pending"
+    ) {
       return "Pending customer payment";
     }
 
-    if (selectedTab === "processing" && order.tracking_information.tracking_id === "") {
+    if (
+      selectedTab === "processing" &&
+      order.tracking_information.tracking_id === ""
+    ) {
       return "Pending tracking info";
     }
 
@@ -90,5 +100,3 @@ export default function OrdersListing({ data }: { data: any[] }) {
     />
   );
 }
-
-const styles = StyleSheet.create({});

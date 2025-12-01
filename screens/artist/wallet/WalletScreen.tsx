@@ -26,6 +26,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BlurStatusBar from "components/general/BlurStatusBar";
 import { useScrollY } from "hooks/useScrollY";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import FittedBlackButton from "components/buttons/FittedBlackButton";
+import LongBlackButton from "components/buttons/LongBlackButton";
 
 export const WalletContainerSkeleton = () => {
   const SkeletonBlock = ({ style }: { style: any }) => (
@@ -38,7 +40,7 @@ export const WalletContainerSkeleton = () => {
   );
   return (
     <View
-      style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
+      style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-lg`}
     >
       <View style={tw`flex-row items-center gap-[15px] flex-1`}>
         <SkeletonBlock style={tw`w-[50px] h-[50px] rounded-[10px]`} />
@@ -80,7 +82,7 @@ export const WalletContainer = ({
   return (
     <Pressable
       onPress={onPress}
-      style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-[20px]`}
+      style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-lg`}
     >
       <View style={tw`flex-row items-center gap-[15px] flex-1`}>
         <Image
@@ -105,21 +107,6 @@ export const WalletContainer = ({
     </Pressable>
   );
 };
-
-const BtnContainer = ({
-  label,
-  onPress,
-}: {
-  label: string;
-  onPress: () => void;
-}) => (
-  <Pressable
-    onPress={onPress}
-    style={tw`border border-[#000] h-[40px] flex-1 rounded-[18px] justify-center items-center px-[15px]`}
-  >
-    <Text style={tw`text-[14px] text-[#1A1A1A]`}>{label}</Text>
-  </Pressable>
-);
 
 const AccountDetailsSkeleton = () => {
   const SkeletonBlock = ({ style }: { style: any }) => (
@@ -267,7 +254,7 @@ const WalletScreen = () => {
             {/* Balances card */}
             <View
               style={[
-                tw`rounded-[18px] border p-[25px] mx-[20px] mt-[30px]`,
+                tw`rounded-lg border p-[25px] mx-[20px] mt-[30px]`,
                 { backgroundColor: colors.black, borderColor: "#E7E7E7" },
               ]}
             >
@@ -335,13 +322,19 @@ const WalletScreen = () => {
                   )}
                 </View>
 
-                <Pressable
-                  style={tw`justify-center items-center h-[40px] border border-white rounded-[18px] px-[10px]`}
-                  onPress={handleWithdrawPress}
-                  disabled={isLoading}
-                >
-                  <Text style={tw`text-[12px] text-white`}>Withdraw Funds</Text>
-                </Pressable>
+                <FittedBlackButton
+                  value="Withdraw Funds"
+                  onClick={handleWithdrawPress}
+                  isDisabled={isLoading}
+                  style={{
+                    backgroundColor: "transparent",
+                    borderWidth: 1,
+                    borderColor: "white",
+                    height: 40,
+                    paddingHorizontal: 15,
+                  }}
+                  textStyle={{ color: "white", fontSize: 12 }}
+                />
               </View>
             </View>
 
@@ -352,13 +345,14 @@ const WalletScreen = () => {
               if (!walletData?.primary_withdrawal_account) {
                 return (
                   <View style={tw`mx-[20px] mt-[40px]`}>
-                    <BtnContainer
-                      onPress={() =>
+                    <LongBlackButton
+                      onClick={() =>
                         navigation.navigate("AddPrimaryAcctScreen", {
                           walletData,
                         })
                       }
-                      label="Add primary Account"
+                      value="Add primary Account"
+                      outline
                     />
                   </View>
                 );
@@ -366,7 +360,7 @@ const WalletScreen = () => {
               return (
                 <View style={tw`mx-[20px] mt-[20px]`}>
                   <View
-                    style={tw`bg-white border border-[#00000033] rounded-[20px] px-[20px] pt-[15px] mb-[20px]`}
+                    style={tw`bg-white border border-[#00000033] rounded-lg px-[20px] py-[15px] mb-[20px]`}
                   >
                     <View style={tw`flex-row items-center gap-[20px]`}>
                       <Text style={tw`text-[14px] flex-1`}>
@@ -393,13 +387,14 @@ const WalletScreen = () => {
                       </Text>
                     </View>
                   </View>
-                  <BtnContainer
-                    onPress={() =>
+                  <LongBlackButton
+                    onClick={() =>
                       navigation.navigate("AddPrimaryAcctScreen", {
                         walletData,
                       })
                     }
-                    label="Change Primary Account"
+                    value="Change Primary Account"
+                    outline
                   />
                 </View>
               );

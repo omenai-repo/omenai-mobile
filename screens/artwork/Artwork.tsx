@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import {
   FlatList,
   Image,
@@ -49,11 +55,18 @@ type RouteParams = { art_id: string; url: string };
 const useTabletLandscape = () => {
   const [win, setWin] = useState(Dimensions.get("window"));
   useEffect(() => {
-    const sub = Dimensions.addEventListener("change", ({ window }) => setWin(window));
+    const sub = Dimensions.addEventListener("change", ({ window }) =>
+      setWin(window)
+    );
     return () => sub?.remove();
   }, []);
-  const isTabletLandscape = win.width > win.height && Math.min(win.width, win.height) >= 768;
-  return { isTabletLandscape, screenWidth: win.width, screenHeight: win.height };
+  const isTabletLandscape =
+    win.width > win.height && Math.min(win.width, win.height) >= 768;
+  return {
+    isTabletLandscape,
+    screenWidth: win.width,
+    screenHeight: win.height,
+  };
 };
 
 export default function Artwork() {
@@ -119,20 +132,30 @@ export default function Artwork() {
 
   const dpr = PixelRatio.get();
   const displayWidth = Math.max(200, screenWidth - 40);
-  const fetchWidth = useMemo(() => Math.round(displayWidth * dpr), [displayWidth, dpr]);
+  const fetchWidth = useMemo(
+    () => Math.round(displayWidth * dpr),
+    [displayWidth, dpr]
+  );
 
   const imageUri = useMemo(
     () => (artwork ? getImageFileView(artwork.url, fetchWidth) : ""),
     [artwork, fetchWidth]
   );
 
-  const [imageDimensions, setImageDimensions] = useState({ width: 350, height: 250 });
+  const [imageDimensions, setImageDimensions] = useState({
+    width: 350,
+    height: 250,
+  });
   useEffect(() => {
     if (!imageUri) return;
     Image.getSize(imageUri, (w, h) => {
       const maxWidth = screenWidth - 40; // padding
       const maxHeight = isTabletLandscape ? 500 : 400;
-      const next = resizeImageDimensions({ width: w, height: h }, maxWidth, maxHeight);
+      const next = resizeImageDimensions(
+        { width: w, height: h },
+        maxWidth,
+        maxHeight
+      );
       setImageDimensions(next);
     });
   }, [imageUri, isTabletLandscape, screenWidth]);
@@ -166,7 +189,8 @@ export default function Artwork() {
       });
     } else {
       updateModal({
-        message: "Something went wrong, please try again or contact us for assistance.",
+        message:
+          "Something went wrong, please try again or contact us for assistance.",
         showModal: true,
         modalType: "error",
       });
@@ -191,7 +215,9 @@ export default function Artwork() {
           value="Purchase artwork"
           isDisabled={false}
           onClick={() =>
-            navigation.navigate(screenName.purchaseArtwork, { art_id: artwork.art_id })
+            navigation.navigate(screenName.purchaseArtwork, {
+              art_id: artwork.art_id,
+            })
           }
         />
       );
@@ -209,7 +235,13 @@ export default function Artwork() {
 
   const renderImageSection = () =>
     artwork ? (
-      <View style={isTabletLandscape ? styles.tabletImageContainer : styles.mobileImageContainer}>
+      <View
+        style={
+          isTabletLandscape
+            ? styles.tabletImageContainer
+            : styles.mobileImageContainer
+        }
+      >
         <Pressable onPress={() => setModalVisible(true)}>
           <Image
             source={{ uri: imageUri }}
@@ -232,7 +264,11 @@ export default function Artwork() {
   const renderContentSection = () =>
     artwork ? (
       <View
-        style={isTabletLandscape ? styles.tabletContentContainer : styles.mobileContentContainer}
+        style={
+          isTabletLandscape
+            ? styles.tabletContentContainer
+            : styles.mobileContentContainer
+        }
       >
         <View style={styles.artworkDetails}>
           <Text style={styles.artworkTitle}>{artwork.title}</Text>
@@ -252,7 +288,8 @@ export default function Artwork() {
                 },
             ]}
           >
-            {artwork.pricing.shouldShowPrice === "Yes" || ["gallery", "artist"].includes(userType)
+            {artwork.pricing.shouldShowPrice === "Yes" ||
+            ["gallery", "artist"].includes(userType)
               ? utils_formatPrice(Number(artwork.pricing.usd_price))
               : "Price on request"}
           </Text>
@@ -262,13 +299,17 @@ export default function Artwork() {
               {artwork.certificate_of_authenticity === "Yes" && (
                 <View style={styles.tagItem}>
                   <SvgXml xml={licenseIcon} />
-                  <Text style={styles.tagItemText}>Certificate of authencity availiable</Text>
+                  <Text style={styles.tagItemText}>
+                    Certificate of authencity availiable
+                  </Text>
                 </View>
               )}
               <View style={[styles.tagItem, { backgroundColor: "#e5f4ff" }]}>
                 <SimpleLineIcons name="frame" size={15} />
                 <Text style={[styles.tagItemText, { color: "#30589f" }]}>
-                  {artwork.framing === "Framed" ? "Frame Included" : "Artwork is not framed"}
+                  {artwork.framing === "Framed"
+                    ? "Frame Included"
+                    : "Artwork is not framed"}
                 </Text>
               </View>
             </View>
@@ -278,7 +319,11 @@ export default function Artwork() {
         <View
           style={[
             styles.buttonContainer,
-            isTabletSize && { flexDirection: "row", alignItems: "center", gap: 30 },
+            isTabletSize && {
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 30,
+            },
           ]}
         >
           <View style={tw`flex-1`}>{renderPrimaryButton()}</View>
@@ -295,7 +340,9 @@ export default function Artwork() {
         </View>
 
         <Pressable onPress={() => setShowMore(true)}>
-          <Text style={tw`text-[#004617] text-[14px] text-center mt-[20px] underline`}>
+          <Text
+            style={tw`text-[#004617] text-[14px] text-center mt-[20px] underline`}
+          >
             More details about this artwork
           </Text>
         </Pressable>
@@ -315,7 +362,10 @@ export default function Artwork() {
       {!showMore ? (
         <View style={{ flex: 1 }}>
           <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-          <Header art_id={artwork?.art_id} isGallery={["gallery", "artist"].includes(userType)} />
+          <Header
+            art_id={artwork?.art_id}
+            isGallery={["gallery", "artist"].includes(userType)}
+          />
 
           {loadingMain && <Loader />}
 
@@ -364,13 +414,18 @@ export default function Artwork() {
                 <View
                   style={[
                     styles.detailsContainer,
-                    ["gallery", "artist"].includes(userType) && { paddingBottom: 70 },
+                    ["gallery", "artist"].includes(userType) && {
+                      paddingBottom: 70,
+                    },
                   ]}
                 >
                   <DetailsCard
                     title="Additional details about this artwork"
                     details={[
-                      { name: "Description", text: artwork.artwork_description || "N/A" },
+                      {
+                        name: "Description",
+                        text: artwork.artwork_description || "N/A",
+                      },
                       { name: "Materials", text: artwork.materials },
                       {
                         name: "Certificate of authenticity",
@@ -380,7 +435,10 @@ export default function Artwork() {
                             : "Not included",
                       },
                       { name: "Artwork packaging", text: artwork.framing },
-                      { name: "Signature", text: `Signed ${artwork.signature}` },
+                      {
+                        name: "Signature",
+                        text: `Signed ${artwork.signature}`,
+                      },
                       { name: "Year", text: artwork.year },
                       { name: "Height", text: artwork.dimensions.height },
                       { name: "Width", text: artwork.dimensions.width },
@@ -404,7 +462,9 @@ export default function Artwork() {
                 {!["gallery", "artist"].includes(userType) &&
                   similarArtworksByArtist.length > 0 && (
                     <>
-                      <Text style={tw`text-[20px] font-medium text-[#1A1A1A] mb-[20px] pl-[20px]`}>
+                      <Text
+                        style={tw`text-[20px] font-medium text-[#1A1A1A] mb-[20px] pl-[20px]`}
+                      >
                         Other Works by {artwork.artist}
                       </Text>
 
@@ -415,7 +475,11 @@ export default function Artwork() {
                         keyExtractor={(_, i) => String(i)}
                         style={{ marginBottom: 25 }}
                         contentContainerStyle={{ paddingRight: 20 }}
-                        renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
+                        renderItem={({
+                          item,
+                        }: {
+                          item: ArtworkFlatlistItem;
+                        }) => (
                           <ArtworkCard
                             title={item.title}
                             url={item.url}
@@ -429,14 +493,21 @@ export default function Artwork() {
                   )}
 
                 {!["gallery", "artist"].includes(userType) && (
-                  <SimilarArtworks title={artwork.title} medium={artwork.medium} />
+                  <SimilarArtworks
+                    title={artwork.title}
+                    medium={artwork.medium}
+                  />
                 )}
               </View>
             </ScrollWrapper>
           )}
         </View>
       )}
-      <ZoomArtwork url={url} modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      <ZoomArtwork
+        url={url}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
     </WithModal>
   );
 }
@@ -445,7 +516,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
     backgroundColor: colors.white,
-    marginTop: 25,
   },
   // Tablet Landscape Styles
   tabletLandscapeContainer: {
