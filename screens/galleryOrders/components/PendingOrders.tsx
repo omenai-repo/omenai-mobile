@@ -10,8 +10,8 @@ import Divider from "components/general/Divider";
 import { utils_getColors } from "utils/utils_sortFunctions";
 
 export type OrdersListingProps = {
-  data: any[];
-  handleOpenModal: (
+  readonly data: any[];
+  readonly handleOpenModal: (
     modalType: galleryOrderModalTypes,
     order_id: string
   ) => void;

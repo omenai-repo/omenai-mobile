@@ -1,9 +1,9 @@
-import { TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { utils_handleFetchUserID } from 'utils/utils_asyncStorage';
-import useLikedState from 'hooks/useLikedState';
-import { AntDesign } from '@expo/vector-icons';
-import { colors } from 'config/colors.config';
+import { TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { utils_handleFetchUserID } from "utils/utils_asyncStorage";
+import useLikedState from "hooks/useLikedState";
+import { AntDesign } from "@expo/vector-icons";
+import { colors } from "config/colors.config";
 
 export type LikeComponentProps = {
   likeIds: string[];
@@ -18,7 +18,7 @@ export default function LikeComponent({
   impressions,
   lightText,
 }: LikeComponentProps) {
-  const [sessionId, setSessionId] = useState('');
+  const [sessionId, setSessionId] = useState("");
 
   useEffect(() => {
     handleFetchUserSessionData();
@@ -38,13 +38,13 @@ export default function LikeComponent({
           <AntDesign
             size={15}
             color={lightText ? colors.white : colors.primary_black}
-            name="hearto"
+            name="heart"
           />
         </TouchableOpacity>
       )}
       {sessionId !== undefined && likedState.ids.includes(sessionId) && (
         <TouchableOpacity onPress={() => handleLike(false)}>
-          <AntDesign size={15} color={'#ff0000'} name="heart" />
+          <AntDesign size={15} color={"#ff0000"} name="heart" />
         </TouchableOpacity>
       )}
     </>

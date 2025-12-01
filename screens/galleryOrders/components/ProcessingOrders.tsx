@@ -1,9 +1,6 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, View } from "react-native";
 import React from "react";
-import {
-  galleryOrderModalStore,
-  galleryOrderModalTypes,
-} from "store/modal/galleryModalStore";
+import { galleryOrderModalStore } from "store/modal/galleryModalStore";
 import OrderCard from "./OrderCard";
 import { utils_formatPrice } from "utils/utils_priceFormatter";
 import Divider from "components/general/Divider";
@@ -79,5 +76,3 @@ export default function ProcessingOrders({
     />
   );
 }
-
-const styles = StyleSheet.create({});

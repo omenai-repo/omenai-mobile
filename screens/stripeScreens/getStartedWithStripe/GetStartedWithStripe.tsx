@@ -1,16 +1,17 @@
-import { SafeAreaView, StyleSheet, Text, View, Linking, Platform, StatusBar } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { colors } from 'config/colors.config';
-import Input from 'components/inputs/Input';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
-import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
-import { country_codes } from 'json/country_alpha_2_codes';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { createConnectedAccount } from 'services/stripe/createConnectedAccount';
-import WithModal from 'components/modal/WithModal';
-import { useModalStore } from 'store/modal/modalStore';
-import { createAccountLink } from 'services/stripe/createAccountLink';
-import ScrollWrapper from 'components/general/ScrollWrapper';
+import { StyleSheet, Text, View, Linking, Platform, StatusBar } from "react-native";
+import React, { useEffect, useState } from "react";
+import { colors } from "config/colors.config";
+import Input from "components/inputs/Input";
+import { utils_getAsyncData } from "utils/utils_asyncStorage";
+import CustomSelectPicker from "components/inputs/CustomSelectPicker";
+import { country_codes } from "json/country_alpha_2_codes";
+import LongBlackButton from "components/buttons/LongBlackButton";
+import { createConnectedAccount } from "services/stripe/createConnectedAccount";
+import WithModal from "components/modal/WithModal";
+import { useModalStore } from "store/modal/modalStore";
+import { createAccountLink } from "services/stripe/createAccountLink";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const transformedCountryCodes = country_codes.map((item) => ({
   value: item.key,
@@ -19,7 +20,7 @@ const transformedCountryCodes = country_codes.map((item) => ({
 
 export default function GetStartedWithStripe() {
   const [gallerySession, setGallerySession] = useState();
-  const [countrySelect, setCountrySelect] = useState<string>('');
+  const [countrySelect, setCountrySelect] = useState<string>("");
 
   const { updateModal } = useModalStore();
 
@@ -30,7 +31,7 @@ export default function GetStartedWithStripe() {
   useEffect(() => {
     //fetch gallery session
     async function handleFetchSession() {
-      const session = await utils_getAsyncData('userSession');
+      const session = await utils_getAsyncData("userSession");
       if (session.value) {
         setGallerySession(JSON.parse(session.value));
         return;
@@ -55,14 +56,14 @@ export default function GetStartedWithStripe() {
     if (res?.isOk) {
       setConnectedAccountId(res.account_id);
       updateModal({
-        message: 'Connected account created successfully, Please continue with Onboarding',
-        modalType: 'success',
+        message: "Connected account created successfully, Please continue with Onboarding",
+        modalType: "success",
         showModal: true,
       });
     } else {
       updateModal({
-        message: 'Something went wrong, please try again or contact support',
-        modalType: 'error',
+        message: "Something went wrong, please try again or contact support",
+        modalType: "error",
         showModal: true,
       });
     }
@@ -84,7 +85,7 @@ export default function GetStartedWithStripe() {
     } else {
       updateModal({
         message: "Can't open browser to continue stripe onboarding flow",
-        modalType: 'error',
+        modalType: "error",
         showModal: true,
       });
     }
@@ -93,12 +94,12 @@ export default function GetStartedWithStripe() {
   return (
     <WithModal>
       <SafeAreaView style={styles.safeArea}>
-        <View style={{ paddingHorizontal: 20, flexDirection: 'row', gap: 5, alignSelf: 'center' }}>
+        <View style={{ paddingHorizontal: 20, flexDirection: "row", gap: 5, alignSelf: "center" }}>
           <Text
             style={{
               fontSize: 20,
               fontWeight: 600,
-              color: '#000',
+              color: "#000",
             }}
           >
             Connect
@@ -107,7 +108,7 @@ export default function GetStartedWithStripe() {
             style={{
               fontSize: 20,
               fontWeight: 600,
-              color: '#6772E5',
+              color: "#6772E5",
             }}
           >
             Stripe
@@ -121,14 +122,14 @@ export default function GetStartedWithStripe() {
             label="Full Name"
             placeHolder=""
             onInputChange={() => {}}
-            value={gallerySession?.name || ''}
+            value={gallerySession?.name || ""}
             disabled
           />
           <Input
             label="Email address"
             placeHolder=""
             onInputChange={() => {}}
-            value={gallerySession?.email || ''}
+            value={gallerySession?.email || ""}
             disabled
           />
           <CustomSelectPicker
@@ -144,7 +145,7 @@ export default function GetStartedWithStripe() {
             {connectedAccountId && (
               <>
                 <Text style={{ fontSize: 14 }}>
-                  Your connected account ID is: {connectedAccountId}{' '}
+                  Your connected account ID is: {connectedAccountId}{" "}
                 </Text>
                 <Text style={{ fontSize: 14, opacity: 0.7 }}>
                   Hey, don&apos;t worry, we'll remember it for you!
@@ -199,6 +200,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   safeArea: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
 });

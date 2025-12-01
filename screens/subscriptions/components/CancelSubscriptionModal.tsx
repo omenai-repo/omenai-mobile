@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import {
   Modal,
   View,
@@ -8,13 +8,14 @@ import {
   Easing,
   ActivityIndicator,
   Platform,
-} from 'react-native';
-import tw from 'twrnc';
-import { Ionicons } from '@expo/vector-icons';
-import { useQueryClient } from '@tanstack/react-query';
-import { useAppStore } from 'store/app/appStore';
-import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
-import { cancelSubscription } from 'services/subscriptions/cancelSubscription';
+} from "react-native";
+import tw from "twrnc";
+import { colors } from "config/colors.config";
+import { Ionicons } from "@expo/vector-icons";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "store/app/appStore";
+import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
+import { cancelSubscription } from "services/subscriptions/cancelSubscription";
 
 type Props = {
   visible: boolean;
@@ -64,14 +65,14 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
     try {
       const res = await cancelSubscription(userSession.id);
       if (!res?.isOk) {
-        setErr(res?.message || 'Failed to cancel subscription.');
+        setErr(res?.message || "Failed to cancel subscription.");
       } else {
         // Refresh any dependent queries
-        qc.invalidateQueries({ queryKey: ['subscription_precheck'] });
+        qc.invalidateQueries({ queryKey: ["subscription_precheck"] });
         onClose();
       }
     } catch (e: any) {
-      setErr(e?.message ?? 'Something went wrong.');
+      setErr(e?.message ?? "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -88,7 +89,10 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
       }}
     >
       <Animated.View
-        style={[tw`flex-1 bg-black/60 items-center justify-center px-4`, { opacity: fade }]}
+        style={[
+          tw`flex-1 items-center justify-center px-4`,
+          { backgroundColor: `${colors.black}99`, opacity: fade },
+        ]}
       >
         <Pressable onPress={() => !loading && onClose()} style={tw`absolute inset-0`} />
         <Animated.View
@@ -111,7 +115,7 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
               <Pressable
                 onPress={() => !loading && onClose()}
                 style={tw`p-1 rounded-lg`}
-                android_ripple={{ color: '#fecaca' }}
+                android_ripple={{ color: "#fecaca" }}
               >
                 <Ionicons name="close" size={18} color="#94a3b8" />
               </Pressable>
@@ -161,7 +165,7 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
                 style={({ pressed }) =>
                   tw.style(
                     `px-4 h-11 rounded-lg items-center justify-center bg-white border border-slate-300 mr-2`,
-                    pressed ? 'opacity-95' : '',
+                    pressed ? "opacity-95" : ""
                   )
                 }
                 disabled={loading}
@@ -176,7 +180,7 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
                 style={({ pressed }) =>
                   tw.style(
                     `px-4 h-11 rounded-lg items-center justify-center bg-red-600`,
-                    pressed ? 'opacity-90' : '',
+                    pressed ? "opacity-90" : ""
                   )
                 }
                 disabled={loading}
@@ -209,7 +213,7 @@ function Bullet({ children }: { children: React.ReactNode }) {
 function cardShadow() {
   return Platform.select({
     ios: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOpacity: 0.08,
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 6 },

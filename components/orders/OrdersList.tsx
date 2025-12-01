@@ -58,6 +58,7 @@ export const OrdersList: React.FC<OrdersListProps> = ({
           price={utils_formatPrice(item?.artwork_data?.pricing?.usd_price)}
           status={selectedTab}
           lastId={index === data.length - 1}
+          seller_designation={item?.seller_designation}
           acceptBtn={selectedTab === "pending" && onAccept ? () => onAccept(item) : undefined}
           declineBtn={selectedTab === "pending" && onDecline ? () => onDecline(item) : undefined}
           delivered={item?.shipping_details?.delivery_confirmed}

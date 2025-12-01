@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import tw from "twrnc";
+import { colors } from "config/colors.config";
 import MiniImage from "./MiniImage";
 import LikeComponent from "./LikeComponent";
 
@@ -27,9 +28,10 @@ export default function ArtworkImage({
         {MiniImage({ maxWidth: imageWidth, url: image_href })}
       </View>
       <View
-        style={tw`absolute top-0 left-0 h-full w-[${
-          imageWidth - 10
-        }px] bg-black/20 flex items-end justify-end p-3`}
+        style={[
+          tw`absolute top-0 left-0 h-full flex items-end justify-end p-3`,
+          { width: imageWidth - 10, backgroundColor: `${colors.black}33` },
+        ]}
       >
         {galleryView && (
           <View

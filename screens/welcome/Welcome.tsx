@@ -54,7 +54,7 @@ export default function Welcome() {
   }
 
   return (
-    <View style={tw`flex-1 bg-[#0a0a0a]`}>
+    <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
       <StatusBar style="light" />
 
       {/* Horizontal Animated Grid Background */}
@@ -67,8 +67,9 @@ export default function Welcome() {
       {/* Bottom content container */}
       <View
         style={[
-          tw`bg-[#1A1A1A] rounded-6 py-8 px-8`,
+          tw`rounded-6 py-8 px-8`,
           {
+            backgroundColor: colors.primary_black,
             position: "absolute",
             bottom: insets.bottom + 20,
             left: 12,
@@ -95,7 +96,7 @@ export default function Welcome() {
           <LongBlackButton
             value="Sign Up"
             onClick={() => handleNavigation(screenName.register)}
-            style={{ height: 48, backgroundColor: "#2A2A2A" }}
+            style={{ height: 48, backgroundColor: colors.black_light }}
             textStyle={{ color: colors.white, fontSize: 16, fontWeight: "600" }}
           />
         </View>

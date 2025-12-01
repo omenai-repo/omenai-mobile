@@ -1,17 +1,17 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
-import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks';
-import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
-import ViewAllCategoriesButton from 'components/buttons/ViewAllCategoriesButton';
-import EmptyArtworks from 'components/general/EmptyArtworks';
-import ArtworkCard from 'components/artwork/ArtworkCard';
-import { colors } from 'config/colors.config';
-import { screenName } from 'constants/screenNames.constants';
-import { fontNames } from 'constants/fontNames.constants';
-import { HOME_QK } from 'utils/queryKeys';
-import { useAppStore } from 'store/app/appStore';
+import React from "react";
+import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCuratedArtworks } from "services/artworks/fetchCuratedArtworks";
+import ArtworkCardLoader from "components/general/ArtworkCardLoader";
+import ViewAllCategoriesButton from "components/buttons/ViewAllCategoriesButton";
+import EmptyArtworks from "components/general/EmptyArtworks";
+import ArtworkCard from "components/artwork/ArtworkCard";
+import { colors } from "config/colors.config";
+import { screenName } from "constants/screenNames.constants";
+import { fontNames } from "constants/fontNames.constants";
+import { HOME_QK } from "utils/queryKeys";
+import { useAppStore } from "store/app/appStore";
 
 export default function CuratedArtworksListing({ limit }: { limit: number }) {
   const navigation = useNavigation<any>();
@@ -35,14 +35,14 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
       <TouchableOpacity
         activeOpacity={0.7}
         style={{ paddingHorizontal: 20 }}
-        onPress={() => navigation.navigate(screenName.artworkCategories, { title: 'curated' })}
+        onPress={() => navigation.navigate(screenName.artworkCategories, { title: "curated" })}
       >
         <Text
           style={{
             fontSize: 18,
-            fontWeight: '500',
+            fontWeight: "500",
             color: colors.white,
-            fontFamily: fontNames.dmSans + 'Medium',
+            fontFamily: fontNames.dmSans + "Medium",
           }}
         >
           Artworks based on your interests
@@ -53,7 +53,7 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             color: colors.white,
             marginTop: 10,
             opacity: 0.9,
-            fontFamily: fontNames.dmSans + 'Regular',
+            fontFamily: fontNames.dmSans + "Regular",
           }}
         >
           Explore artworks based off your interests and interactions within the past days
@@ -82,7 +82,7 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
                   title={item.title}
                   url={item.url}
                   artist={item.artist}
-                  showPrice={item.pricing.shouldShowPrice === 'Yes'}
+                  showPrice={item.pricing.shouldShowPrice === "Yes"}
                   price={item.pricing.usd_price}
                   availiablity={item.availability}
                   lightText

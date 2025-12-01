@@ -22,7 +22,7 @@ export default function BackFormButton({ handleBackClick, disabled }: handleBack
       accessibilityRole="button"
       accessibilityLabel="Go back"
     >
-      <AntDesign name="arrowleft" color={colors.primary_black} size={24} />
+      <AntDesign name="arrow-left" color={colors.primary_black} size={24} />
     </Pressable>
   );
 }

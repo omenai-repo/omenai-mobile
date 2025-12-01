@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useRef, useState, useCallback } from "react"
 import {
   FlatList,
   Image,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
   View,
   Dimensions,
+  PixelRatio,
 } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -88,7 +88,7 @@ export default function Artwork() {
   });
 
   // 2) Fetch other works by the same artist (depends on artwork)
-  const { data: similarArtworksByArtist = [], isLoading: isLoadingArtistWorks } = useQuery({
+  const { data: similarArtworksByArtist = [] } = useQuery({
     queryKey: ["artist-artworks", artwork?.artist],
     enabled: !!artwork?.artist,
     queryFn: async () => {
@@ -117,10 +117,13 @@ export default function Artwork() {
     });
   }, [artwork, userSession?.id]);
 
-  const imageWidth = Platform.OS === "ios" ? 380 : 300;
+  const dpr = PixelRatio.get();
+  const displayWidth = Math.max(200, screenWidth - 40);
+  const fetchWidth = useMemo(() => Math.round(displayWidth * dpr), [displayWidth, dpr]);
+
   const imageUri = useMemo(
-    () => (artwork ? getImageFileView(artwork.url, imageWidth) : ""),
-    [artwork, imageWidth]
+    () => (artwork ? getImageFileView(artwork.url, fetchWidth) : ""),
+    [artwork, fetchWidth]
   );
 
   const [imageDimensions, setImageDimensions] = useState({ width: 350, height: 250 });
@@ -187,7 +190,9 @@ export default function Artwork() {
         <LongBlackButton
           value="Purchase artwork"
           isDisabled={false}
-          onClick={() => navigation.navigate(screenName.purchaseArtwork, { title: artwork.title })}
+          onClick={() =>
+            navigation.navigate(screenName.purchaseArtwork, { art_id: artwork.art_id })
+          }
         />
       );
     }

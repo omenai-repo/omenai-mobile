@@ -47,11 +47,7 @@ export default function CustomSelectPicker({
 
   const renderDropdownItem = useCallback(
     (item: { label: string; value: string }) => (
-      <Pressable
-        key={item.value}
-        onPress={() => handleOptionSelect(item)}
-        style={tw`px-4 py-2.5`}
-      >
+      <Pressable key={item.value} onPress={() => handleOptionSelect(item)} style={tw`px-4 py-2.5`}>
         <Text style={[tw`text-sm`, { color: colors.inputLabel }]}>{item.label}</Text>
       </Pressable>
     ),
@@ -75,7 +71,7 @@ export default function CustomSelectPicker({
         showsVerticalScrollIndicator={false}
         placeholder={placeholder}
         placeholderStyle={{
-          color: "#858585",
+          color: colors.inputLabel,
           fontSize: 14,
         }}
         disable={disable}
@@ -84,11 +80,11 @@ export default function CustomSelectPicker({
           borderRadius: 5,
         }}
         style={[
-          tw`px-4 h-11 w-full bg-[#FAFAFA] rounded-lg border`,
-          { borderColor: colors.inputBorder },
+          tw`px-4 h-11 w-full rounded-lg border`,
+          { borderColor: colors.inputBorder, backgroundColor: "#FAFAFA" },
         ]}
         selectedTextStyle={{
-          color: disable ? "#c0c0c0" : colors.black,
+          color: disable ? colors.inputLabel : colors.black,
           fontSize: 14,
         }}
         renderInputSearch={renderInputSearch}
