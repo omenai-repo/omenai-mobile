@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Platform, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { colors } from "config/colors.config";
 import { Feather } from "@expo/vector-icons";
@@ -15,14 +15,21 @@ import { useNavigation } from "@react-navigation/native";
 import { artworksMediumFilterStore } from "store/artworks/ArtworksMediumFilterStore";
 import { artworksMediumStore } from "store/artworks/ArtworksMediumsStore";
 import ScrollWrapper from "components/general/ScrollWrapper";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import tw from "twrnc";
 
 export default function ArtworkMediumFilterModal() {
+  const { top } = useSafeAreaInsets();
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const { filterOptions, selectedFilters, clearAllFilters } = artworksMediumFilterStore();
+  const { filterOptions, selectedFilters, clearAllFilters } =
+    artworksMediumFilterStore();
   const { paginationCount, updatePaginationCount } = artworkActionStore();
-  const { setArtworks, setIsLoading, setPageCount, isLoading, medium } = artworksMediumStore();
+  const { setArtworks, setIsLoading, setPageCount, isLoading, medium } =
+    artworksMediumStore();
 
   const handleSubmitFilter = async () => {
     updatePaginationCount("reset");
@@ -41,57 +48,49 @@ export default function ArtworkMediumFilterModal() {
   };
 
   return (
-    <View style={{ backgroundColor: colors.white, flex: 1 }}>
-      <SafeAreaView>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            paddingHorizontal: 20,
-            backgroundColor: colors.white,
-            paddingBottom: 10,
-            paddingTop: 20,
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <BackScreenButton cancle handleClick={() => navigation.goBack()} />
-          </View>
-
-          {selectedFilters.length > 0 && (
-            <TouchableOpacity onPress={clearAllFilters}>
-              <View style={styles.clearButton}>
-                <Text style={styles.filterButtonText}>Clear filters</Text>
-                <Feather name="trash" size={18} color={colors.primary_black} />
-              </View>
-            </TouchableOpacity>
-          )}
+    <View style={[tw`flex-1`, { backgroundColor: colors.white }]}>
+      <View
+        style={[
+          tw`flex-row items-center pb-2.5 gap-2.5 px-5 bg-white`,
+          { paddingTop: Platform.OS === "ios" ? 20 : top + 10 },
+        ]}
+      >
+        <View style={tw`flex-1`}>
+          <BackScreenButton cancle handleClick={() => navigation.goBack()} />
         </View>
-      </SafeAreaView>
-      <ScrollWrapper style={{ flex: 1 }}>
+
         {selectedFilters.length > 0 && (
-          <View style={styles.selectedFilterContainer}>
+          <TouchableOpacity onPress={clearAllFilters}>
+            <View
+              style={[
+                tw`flex-row items-center justify-center rounded-lg px-5 h-10 gap-2.5`,
+                { backgroundColor: "#FAFAFA" },
+              ]}
+            >
+              <Text style={[tw`text-sm`, { color: colors.primary_black }]}>
+                Clear filters
+              </Text>
+              <Feather name="trash" size={18} color={colors.primary_black} />
+            </View>
+          </TouchableOpacity>
+        )}
+      </View>
+      <ScrollWrapper style={tw`flex-1`}>
+        {selectedFilters.length > 0 && (
+          <View style={tw`flex-row items-center gap-2.5 mt-5 px-5 flex-wrap`}>
             {selectedFilters.map((filter, index) => (
               <FilterPill filter={filter.name} key={index} />
             ))}
           </View>
         )}
-        <View style={styles.FiltersListing}>
+        <View style={tw`px-5 px-5 mt-4 gap-4`}>
           <PriceFilter />
           <YearFilter />
           <RarityFilter />
         </View>
         <View style={{ height: 200 }} />
       </ScrollWrapper>
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          paddingHorizontal: 20,
-          paddingVertical: 20,
-          width: "100%",
-        }}
-      >
+      <View style={tw`absolute bottom-0 w-full p-5`}>
         <SafeAreaView>
           <LongBlackButton
             value={"Apply filters"}
@@ -103,59 +102,3 @@ export default function ArtworkMediumFilterModal() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  leftContainer: {
-    flex: 1,
-    overflow: "hidden",
-  },
-  clearButton: {
-    height: 40,
-    paddingHorizontal: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    backgroundColor: "#FAFAFA",
-    borderRadius: 30,
-    // borderWidth: 1,
-    // borderColor: colors.inputBorder,
-  },
-  filterButtonText: {
-    fontSize: 14,
-    color: colors.primary_black,
-  },
-  sortIcon: {
-    height: 20,
-    width: 20,
-  },
-  FiltersListing: {
-    gap: 15,
-    marginTop: 30,
-    paddingHorizontal: 20,
-  },
-  FilterSelectContainer: {
-    height: 55,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    gap: 10,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    borderRadius: 5,
-    flexDirection: "row",
-  },
-  selectedFilterContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginTop: 20,
-    flexWrap: "wrap",
-    paddingHorizontal: 20,
-  },
-});
