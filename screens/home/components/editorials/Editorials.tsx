@@ -1,15 +1,21 @@
-import React from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
-import { listEditorials } from 'lib/editorial/lib/getAllBlogArticles';
-import EditorialCard from 'components/editorials/EditorialCard';
-import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
-import { colors } from 'config/colors.config';
-import { fontNames } from 'constants/fontNames.constants';
-import { Feather } from '@expo/vector-icons';
-import { HOME_QK } from 'utils/queryKeys';
-import { useAppStore } from 'store/app/appStore';
+import React from "react";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
+import { listEditorials } from "lib/editorial/lib/getAllBlogArticles";
+import EditorialCard from "components/editorials/EditorialCard";
+import ArtworkCardLoader from "components/general/ArtworkCardLoader";
+import { colors } from "config/colors.config";
+import { fontNames } from "constants/fontNames.constants";
+import { Feather } from "@expo/vector-icons";
+import { HOME_QK } from "utils/queryKeys";
+import { useAppStore } from "store/app/appStore";
 
 export default function Editorials() {
   const navigation = useNavigation<any>();
@@ -31,7 +37,9 @@ export default function Editorials() {
       <TouchableOpacity
         style={styles.headerRow}
         disabled={data.length === 0}
-        onPress={() => navigation.navigate('AllEditorialsScreen', { editorials: data })}
+        onPress={() =>
+          navigation.navigate("AllEditorialsScreen", { editorials: data })
+        }
         hitSlop={10}
       >
         <Text style={styles.headerText}>Editorials</Text>
@@ -53,7 +61,11 @@ export default function Editorials() {
                 cover={item.cover}
                 headline={item.headline}
                 width={280}
-                onPress={() => navigation.navigate('ArticleScreen', { article: item })}
+                date={item.date}
+                showDetails={true}
+                onPress={() =>
+                  navigation.navigate("ArticleScreen", { article: item })
+                }
               />
             </View>
           )}
@@ -62,7 +74,9 @@ export default function Editorials() {
 
       {!isLoading && data.length === 0 && (
         <View style={{ padding: 30 }}>
-          <Text style={{ color: colors.grey, textAlign: 'center' }}>No editorials available</Text>
+          <Text style={{ color: colors.grey, textAlign: "center" }}>
+            No editorials available
+          </Text>
         </View>
       )}
     </View>
@@ -72,12 +86,16 @@ export default function Editorials() {
 const styles = StyleSheet.create({
   container: { marginTop: 40, marginBottom: 10 },
   headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
-  headerText: { fontSize: 18, fontWeight: '500', fontFamily: fontNames.dmSans + 'Medium' },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "500",
+    fontFamily: fontNames.dmSans + "Medium",
+  },
   flatListContainer: { paddingRight: 20, marginTop: 20 },
   cardWrapper: { marginLeft: 20 },
 });

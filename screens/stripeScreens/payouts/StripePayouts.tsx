@@ -55,11 +55,16 @@ export default function StripePayouts({
   if (!loading && showScreen)
     return (
       <WithModal>
-        <BackHeaderTitle title={isSubmitted ? "Stripe Payout" : "Complete stripe onboarding"} />
+        <BackHeaderTitle
+          title={isSubmitted ? "Stripe Payout" : "Complete stripe onboarding"}
+        />
         <View style={styles.container}>
           {!isSubmitted && <CompleteOnBoarding />}
           {isSubmitted && account_id.length > 0 && (
-            <PayoutDashboard account_id={account_id} refreshCount={refreshCount} />
+            <PayoutDashboard
+              account_id={account_id}
+              refreshCount={refreshCount}
+            />
           )}
         </View>
       </WithModal>
@@ -70,7 +75,6 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     flex: 1,
-    paddingTop: 15,
-    marginTop: 15,
+    paddingTop: 10,
   },
 });

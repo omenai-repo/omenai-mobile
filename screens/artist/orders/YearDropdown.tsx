@@ -1,30 +1,37 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
-import { SvgXml } from 'react-native-svg';
-import { dropdownIcon, dropUpIcon } from 'utils/SvgImages';
-import tw from 'twrnc';
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { SvgXml } from "react-native-svg";
+import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
+import tw from "twrnc";
 
 const YearDropdown = ({
   selectedYear,
   setSelectedYear,
+  style,
 }: {
   selectedYear: number;
   setSelectedYear: (year: number) => void;
+  style?: any;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const currentYear = new Date().getFullYear();
   const launchYear = 2025;
 
   // Only generate years from launchYear up to currentYear (descending)
-  const years = Array.from({ length: currentYear - launchYear + 1 }, (_, i) => currentYear - i);
+  const years = Array.from(
+    { length: currentYear - launchYear + 1 },
+    (_, i) => currentYear - i
+  );
 
   return (
-    <View style={tw`mb-[20px] relative`}>
+    <View style={[tw`mb-[20px] relative`, style]}>
       <TouchableOpacity
         style={tw`flex-row items-center gap-[10px] bg-white border border-[#E7E7E7] rounded-[12px] px-[16px] py-[10px]`}
         onPress={() => setIsOpen(!isOpen)}
       >
-        <Text style={tw`text-[14px] text-[#1A1A1A] font-medium`}>{selectedYear}</Text>
+        <Text style={tw`text-[14px] text-[#1A1A1A] font-medium`}>
+          {selectedYear}
+        </Text>
         <SvgXml xml={isOpen ? dropUpIcon : dropdownIcon} />
       </TouchableOpacity>
 
