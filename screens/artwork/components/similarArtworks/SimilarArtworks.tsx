@@ -1,21 +1,25 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { colors } from 'config/colors.config';
-import ArtworkCard from 'components/artwork/ArtworkCard';
-import { fetchArtworksByCriteria } from 'services/artworks/fetchArtworksByCriteria';
-import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
-import { FlatList } from 'react-native-gesture-handler';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { Feather } from '@expo/vector-icons';
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { colors } from "config/colors.config";
+import ArtworkCard from "components/artwork/ArtworkCard";
+import { fetchArtworksByCriteria } from "services/artworks/fetchArtworksByCriteria";
+import ArtworkCardLoader from "components/general/ArtworkCardLoader";
+import { FlatList } from "react-native-gesture-handler";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "constants/screenNames.constants";
+import { Feather } from "@expo/vector-icons";
 
-export default function SimilarArtworks({ medium, title = '' }: { medium: string; title: string }) {
+export default function SimilarArtworks({
+  medium,
+  title = "",
+}: Readonly<{
+  medium: string;
+  title: string;
+}>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<ArtworkFlatlistItem[]>([]);
 
   useEffect(() => {
     handleFetchArtworksByCiteria();
@@ -53,8 +57,8 @@ export default function SimilarArtworks({ medium, title = '' }: { medium: string
       >
         <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
+            flexDirection: "row",
+            alignItems: "center",
             gap: 10,
             paddingHorizontal: 20,
           }}
@@ -69,19 +73,19 @@ export default function SimilarArtworks({ medium, title = '' }: { medium: string
         ) : (
           <FlatList
             data={data}
-            renderItem={({ item, index }: { item: ArtworkFlatlistItem; index: number }) => (
+            renderItem={({ item }) => (
               <ArtworkCard
                 title={item.title}
                 url={item.url}
                 artist={item.artist}
-                showPrice={item.pricing.shouldShowPrice === 'Yes'}
+                showPrice={item.pricing.shouldShowPrice === "Yes"}
                 price={item.pricing.usd_price}
               />
             )}
             contentContainerStyle={{
               paddingRight: 20,
             }}
-            keyExtractor={(_, index) => JSON.stringify(index)}
+            keyExtractor={(item) => item.title}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
           />
@@ -98,7 +102,7 @@ const styles = StyleSheet.create({
   },
   similarTitle: {
     fontSize: 20,
-    fontWeight: '500',
+    fontWeight: "500",
     color: colors.primary_black,
     flex: 1,
   },
@@ -111,7 +115,7 @@ const styles = StyleSheet.create({
   },
   viewMoreContainer: {
     paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

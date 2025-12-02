@@ -1,6 +1,5 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import React from "react";
-import BackScreenButton from "components/buttons/BackScreenButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "config/colors.config";
@@ -24,7 +23,6 @@ export default function Header({ isGallery, art_id }: ArtworkHeaderProps) {
       }}
     >
       <View style={{ paddingHorizontal: 20, flexDirection: "row" }}>
-        <BackScreenButton handleClick={() => navigation.goBack()} />
         <View style={{ flex: 1 }} />
         {isGallery && art_id && (
           <TouchableOpacity

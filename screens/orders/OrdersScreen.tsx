@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Text, View, ScrollView, RefreshControl } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
@@ -69,7 +69,8 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
   const handleDecline = (item: any) => {
     const isExclusive =
       userType === "artist" &&
-      item?.artwork_data?.exclusivity_status?.exclusivity_type === "exclusive" &&
+      item?.artwork_data?.exclusivity_status?.exclusivity_type ===
+        "exclusive" &&
       isArtworkExclusiveDate(item?.createdAt);
 
     setOrderId(item?.order_id);
@@ -87,16 +88,33 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
     }
 
     if (currentOrders.length === 0) {
-      return <EmptyOrdersListing status={selectedTab} />;
+      return (
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={ordersQuery.refetch}
+            />
+          }
+        >
+          <EmptyOrdersListing status={selectedTab} />
+        </ScrollView>
+      );
     }
 
     return (
       <>
         <View style={tw`flex-row items-center`}>
-          <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
+          <Text
+            style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}
+          >
             Your Orders
           </Text>
-          <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+          <YearDropdown
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+          />
         </View>
 
         <OrdersList
@@ -115,12 +133,14 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
           onTrack={(item) =>
             navigation.navigate("ShipmentTrackingScreen", {
               orderId: item?.order_id,
-              tracking_id: item?.shipping_details?.shipment_information?.tracking?.id,
+              tracking_id:
+                item?.shipping_details?.shipment_information?.tracking?.id,
             })
           }
           {...(userType === "artist" && {
             renderExclusivityType: (item) =>
-              item?.artwork_data?.exclusivity_status?.exclusivity_type || "non-exclusive",
+              item?.artwork_data?.exclusivity_status?.exclusivity_type ||
+              "non-exclusive",
           })}
         />
       </>
@@ -133,7 +153,9 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
         <TabSwitcher
           tabs={tabs}
           selectedKey={selectedTab}
-          setSelectedKey={(key) => setSelectedTab(key as "pending" | "processing" | "completed")}
+          setSelectedKey={(key) =>
+            setSelectedTab(key as "pending" | "processing" | "completed")
+          }
         />
 
         <View

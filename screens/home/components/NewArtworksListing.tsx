@@ -1,17 +1,23 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import ArtworkCard from 'components/artwork/ArtworkCard';
-import { fetchArtworks } from 'services/artworks/fetchArtworks';
-import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
-import EmptyArtworks from 'components/general/EmptyArtworks';
-import { Feather } from '@expo/vector-icons';
-import { colors } from 'config/colors.config';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { fontNames } from 'constants/fontNames.constants';
-import { HOME_QK } from 'utils/queryKeys';
-import { useAppStore } from 'store/app/appStore';
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import ArtworkCard from "components/artwork/ArtworkCard";
+import { fetchArtworks } from "services/artworks/fetchArtworks";
+import ArtworkCardLoader from "components/general/ArtworkCardLoader";
+import EmptyArtworks from "components/general/EmptyArtworks";
+import { Feather } from "@expo/vector-icons";
+import { colors } from "config/colors.config";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "constants/screenNames.constants";
+import { fontNames } from "constants/fontNames.constants";
+import { HOME_QK } from "utils/queryKeys";
+import { useAppStore } from "store/app/appStore";
 
 export default function NewArtworksListing() {
   const navigation = useNavigation<any>();
@@ -20,7 +26,7 @@ export default function NewArtworksListing() {
   const { data = [], isLoading } = useQuery({
     queryKey: HOME_QK.newArtworks(userSession?.id),
     queryFn: async () => {
-      const results = await fetchArtworks({ listingType: 'recent', page: 1 });
+      const results = await fetchArtworks({ listingType: "recent", page: 1 });
       return results?.isOk ? results.body.data ?? [] : [];
     },
     staleTime: 60_000,
@@ -31,19 +37,24 @@ export default function NewArtworksListing() {
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.navigate(screenName.catalog)}>
         <View
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20 }}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: 20,
+            marginBottom: 15,
+          }}
         >
           <Text
             style={{
-              fontSize: 18,
-              fontWeight: '500',
-              flex: 1,
-              fontFamily: fontNames.dmSans + 'Medium',
+              fontSize: 20,
+              color: "#1A1A1A",
+              fontFamily: fontNames.dmSans + "Bold",
             }}
           >
             New artworks for you
           </Text>
-          <Feather name="chevron-right" color={colors.grey} size={20} />
+          <Feather name="chevron-right" color={colors.grey} size={24} />
         </View>
       </TouchableOpacity>
 
@@ -55,7 +66,7 @@ export default function NewArtworksListing() {
           keyExtractor={(_, i) => `new-${i}`}
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 20 }}
+          style={{ marginTop: 0 }}
           contentContainerStyle={{ paddingRight: 20 }}
           initialNumToRender={5}
           maxToRenderPerBatch={5}
@@ -65,7 +76,7 @@ export default function NewArtworksListing() {
               title={item.title}
               url={item.url}
               artist={item.artist}
-              showPrice={item.pricing.shouldShowPrice === 'Yes'}
+              showPrice={item.pricing.shouldShowPrice === "Yes"}
               price={item.pricing.usd_price}
               availiablity={item.availability}
               impressions={item.impressions}

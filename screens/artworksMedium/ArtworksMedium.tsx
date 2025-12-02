@@ -1,37 +1,41 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import WithModal from 'components/modal/WithModal';
-import FilterButton from 'components/filter/FilterButton';
-import { colors } from 'config/colors.config';
-import MiniArtworkCardLoader from 'components/general/MiniArtworkCardLoader';
-import { fetchArtworksByCriteria } from 'services/artworks/fetchArtworksByCriteria';
-import { artworksMediumStore } from 'store/artworks/ArtworksMediumsStore';
-import { useModalStore } from 'store/modal/modalStore';
-import { screenName } from 'constants/screenNames.constants';
-import { artworksMediumFilterStore } from 'store/artworks/ArtworksMediumFilterStore';
-import { mediums } from 'constants/mediums';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import ArtworksListing from 'components/general/ArtworksListing';
-import BackScreenButton from 'components/buttons/BackScreenButton';
-import tw from 'twrnc';
+import { StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import WithModal from "components/modal/WithModal";
+import FilterButton from "components/filter/FilterButton";
+import { colors } from "config/colors.config";
+import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
+import { fetchArtworksByCriteria } from "services/artworks/fetchArtworksByCriteria";
+import { artworksMediumStore } from "store/artworks/ArtworksMediumsStore";
+import { useModalStore } from "store/modal/modalStore";
+import { screenName } from "constants/screenNames.constants";
+import { artworksMediumFilterStore } from "store/artworks/ArtworksMediumFilterStore";
+import ScrollWrapper from "components/general/ScrollWrapper";
+import ArtworksListing from "components/general/ArtworksListing";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ArtworksMedium() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
+  const insets = useSafeAreaInsets();
 
   const { updateModal } = useModalStore();
-  const { setArtworks, artworks, isLoading, setMedium, setIsLoading, pageCount } =
-    artworksMediumStore();
+  const {
+    setArtworks,
+    artworks,
+    isLoading,
+    setMedium,
+    setIsLoading,
+    pageCount,
+  } = artworksMediumStore();
   const { filterOptions, clearAllFilters } = artworksMediumFilterStore();
 
   const { catalog } = route.params as { catalog: string };
-
-  function getImageUrl() {
-    const selectedCollection = mediums.filter((collection) => collection.name === catalog);
-    return `${selectedCollection[0].image}`;
-  }
 
   useEffect(() => {
     setMedium(catalog);
@@ -42,7 +46,7 @@ export default function ArtworksMedium() {
       return () => {
         clearAllFilters();
       };
-    }, []),
+    }, [])
   );
 
   useEffect(() => {
@@ -64,7 +68,7 @@ export default function ArtworksMedium() {
     } else {
       updateModal({
         message: `Error fetching ${catalog} artworks, reload page again`,
-        modalType: 'error',
+        modalType: "error",
         showModal: true,
       });
     }
@@ -74,14 +78,15 @@ export default function ArtworksMedium() {
 
   return (
     <WithModal>
-      <ScrollWrapper style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={tw`pt-[60px] android:pt-[50px]`}>
-          <BackScreenButton handleClick={() => navigation.goBack()} />
-        </View>
-
+      <ScrollWrapper
+        style={[styles.container, { marginTop: insets.top + 16 }]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={{ zIndex: 100, paddingHorizontal: 10 }}>
           <FilterButton
-            handleClick={() => navigation.navigate(screenName.artworkMediumFilterModal)}
+            handleClick={() =>
+              navigation.navigate(screenName.artworkMediumFilterModal)
+            }
           >
             <Text style={styles.headerText}>{catalog}</Text>
           </FilterButton>
@@ -99,7 +104,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: "500",
     color: colors.primary_black,
     paddingVertical: 20,
   },

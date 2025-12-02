@@ -1,4 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, PixelRatio } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  PixelRatio,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -6,6 +13,8 @@ import { screenName } from "constants/screenNames.constants";
 import { getImageFileView } from "lib/storage/getImageFileView";
 import { colors } from "config/colors.config";
 import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
+
+import { fontNames } from "constants/fontNames.constants";
 
 export default function ViewHistoryCard({
   url,
@@ -45,7 +54,10 @@ export default function ViewHistoryCard({
         setImageDimensions({ height, width });
       },
       (error) => {
-        console.warn("Failed to get image size for history card:", error?.message || error);
+        console.warn(
+          "Failed to get image size for history card:",
+          error?.message || error
+        );
       }
     );
 
@@ -74,13 +86,26 @@ export default function ViewHistoryCard({
           resizeMode="cover"
         />
         <View style={styles.mainDetailsContainer}>
-          <Text style={{ fontSize: 14, color: colors.primary_black }}>{artwork}</Text>
           <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
             style={{
-              fontSize: 12,
-              color: colors.primary_black,
+              fontSize: 16,
+              color: "#1A1A1A",
+              fontFamily: fontNames.dmSans + "Medium",
+            }}
+          >
+            {artwork}
+          </Text>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{
+              fontSize: 14,
+              color: "#1A1A1A",
               opacity: 0.7,
-              marginTop: 5,
+              marginTop: 2,
+              fontFamily: fontNames.dmSans + "Regular",
             }}
           >
             {artist}
@@ -95,11 +120,12 @@ const styles = StyleSheet.create({
   container: {
     // width: 270,
     marginLeft: 20,
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: "#f0f0f0",
+    // padding: 10,
+    // borderRadius: 10,
+    // backgroundColor: "#f0f0f0",
   },
   mainDetailsContainer: {
     marginTop: 10,
+    width: 200,
   },
 });
