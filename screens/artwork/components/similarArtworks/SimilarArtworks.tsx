@@ -13,10 +13,10 @@ import { Feather } from "@expo/vector-icons";
 export default function SimilarArtworks({
   medium,
   title = "",
-}: {
+}: Readonly<{
   medium: string;
   title: string;
-}) {
+}>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<ArtworkFlatlistItem[]>([]);
