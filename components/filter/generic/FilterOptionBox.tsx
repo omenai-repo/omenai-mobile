@@ -1,13 +1,14 @@
-import { filterStore } from "store/artworks/FilterStore";
 import { hasFilterValue } from "utils/utils_checkIfFilterExists";
 import { Text, TouchableOpacity, View } from "react-native";
 import { colors } from "config/colors.config";
 import { Feather } from "@expo/vector-icons";
 import tw from "twrnc";
+import { SharedFilterStore } from "./types";
 
 type FilterOptionBoxTypes = {
   filters: readonly FilterValueType[];
   label: string;
+  store: SharedFilterStore;
 };
 
 type FilterValueType = {
@@ -21,43 +22,17 @@ type FilterItemProps = {
   handleClick: (e: boolean) => void;
 };
 
-const FilterItem = ({
-  name,
-  isChecked,
-  handleClick,
-}: Readonly<FilterItemProps>) => {
-  return (
-    <TouchableOpacity onPress={() => handleClick(!isChecked)}>
-      <View style={tw`gap-2.5 flex-row items-center`}>
-        <View
-          style={[
-            tw`h-5 w-5 items-center justify-center rounded`,
-            {
-              borderWidth: 1,
-              borderColor: colors.inputBorder,
-              backgroundColor: "#f5f5f5",
-            },
-            isChecked && { backgroundColor: colors.primary_black },
-          ]}
-        >
-          {isChecked && <Feather name="check" size={15} color={colors.white} />}
-        </View>
-        <Text style={{ fontSize: 16 }}>{name}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-export default function FilterOptionBox({
+export default function GenericFilterOptionBox({
   filters,
   label,
-}: Readonly<FilterOptionBoxTypes>) {
+  store,
+}: FilterOptionBoxTypes) {
   const {
     updateFilter,
     setSelectedFilters,
     removeSingleFilterSelection,
     selectedFilters,
-  } = filterStore();
+  } = store;
 
   const handleChange = (e: boolean, filter: string, value: string) => {
     if (e) {
@@ -66,6 +41,31 @@ export default function FilterOptionBox({
     } else {
       removeSingleFilterSelection(filter);
     }
+  };
+
+  const Item = ({ name, isChecked, handleClick }: FilterItemProps) => {
+    return (
+      <TouchableOpacity onPress={() => handleClick(!isChecked)}>
+        <View style={tw`gap-2.5 flex-row items-center`}>
+          <View
+            style={[
+              tw`h-5 w-5 items-center justify-center rounded`,
+              {
+                borderWidth: 1,
+                borderColor: colors.inputBorder,
+                backgroundColor: "#f5f5f5",
+              },
+              isChecked && { backgroundColor: colors.primary_black },
+            ]}
+          >
+            {isChecked && (
+              <Feather name="check" size={15} color={colors.white} />
+            )}
+          </View>
+          <Text style={{ fontSize: 16 }}>{name}</Text>
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -80,10 +80,10 @@ export default function FilterOptionBox({
       ]}
     >
       {filters.map((filter, index) => (
-        <FilterItem
+        <Item
           name={filter.option}
           isChecked={hasFilterValue(selectedFilters, filter.option)}
-          handleClick={(e: boolean) =>
+          handleClick={(e) =>
             handleChange(e, filter.option, JSON.stringify(filter.value))
           }
           key={index}
