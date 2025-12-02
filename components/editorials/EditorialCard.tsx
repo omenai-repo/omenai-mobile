@@ -7,12 +7,12 @@ import { Feather } from "@expo/vector-icons";
 import dayjs from "dayjs";
 
 type EditorialCardProps = {
-  cover: string;
-  headline: string;
-  width: number;
-  onPress: () => void;
-  date?: string;
-  showDetails?: boolean;
+  readonly cover: string;
+  readonly headline: string;
+  readonly width: number;
+  readonly onPress: () => void;
+  readonly date?: string;
+  readonly showDetails?: boolean;
 };
 
 export default function EditorialCard({
