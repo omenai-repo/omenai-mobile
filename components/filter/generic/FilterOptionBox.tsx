@@ -6,9 +6,9 @@ import tw from "twrnc";
 import { SharedFilterStore } from "./types";
 
 type FilterOptionBoxTypes = {
-  filters: readonly FilterValueType[];
-  label: string;
-  store: SharedFilterStore;
+  readonly filters: readonly FilterValueType[];
+  readonly label: string;
+  readonly store: SharedFilterStore;
 };
 
 type FilterValueType = {
@@ -20,6 +20,29 @@ type FilterItemProps = {
   name: string;
   isChecked: boolean;
   handleClick: (e: boolean) => void;
+};
+
+const Item = ({ name, isChecked, handleClick }: FilterItemProps) => {
+  return (
+    <TouchableOpacity onPress={() => handleClick(!isChecked)}>
+      <View style={tw`gap-2.5 flex-row items-center`}>
+        <View
+          style={[
+            tw`h-5 w-5 items-center justify-center rounded`,
+            {
+              borderWidth: 1,
+              borderColor: colors.inputBorder,
+              backgroundColor: "#f5f5f5",
+            },
+            isChecked && { backgroundColor: colors.primary_black },
+          ]}
+        >
+          {isChecked && <Feather name="check" size={15} color={colors.white} />}
+        </View>
+        <Text style={{ fontSize: 16 }}>{name}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 };
 
 export default function GenericFilterOptionBox({
@@ -34,38 +57,13 @@ export default function GenericFilterOptionBox({
     selectedFilters,
   } = store;
 
-  const handleChange = (e: boolean, filter: string, value: string) => {
-    if (e) {
-      updateFilter(label, value);
-      setSelectedFilters(value, filter, label);
-    } else {
-      removeSingleFilterSelection(filter);
-    }
+  const handleSelect = (filter: string, value: string) => {
+    updateFilter(label, value);
+    setSelectedFilters(value, filter, label);
   };
 
-  const Item = ({ name, isChecked, handleClick }: FilterItemProps) => {
-    return (
-      <TouchableOpacity onPress={() => handleClick(!isChecked)}>
-        <View style={tw`gap-2.5 flex-row items-center`}>
-          <View
-            style={[
-              tw`h-5 w-5 items-center justify-center rounded`,
-              {
-                borderWidth: 1,
-                borderColor: colors.inputBorder,
-                backgroundColor: "#f5f5f5",
-              },
-              isChecked && { backgroundColor: colors.primary_black },
-            ]}
-          >
-            {isChecked && (
-              <Feather name="check" size={15} color={colors.white} />
-            )}
-          </View>
-          <Text style={{ fontSize: 16 }}>{name}</Text>
-        </View>
-      </TouchableOpacity>
-    );
+  const handleDeselect = (filter: string) => {
+    removeSingleFilterSelection(filter);
   };
 
   return (
@@ -83,9 +81,13 @@ export default function GenericFilterOptionBox({
         <Item
           name={filter.option}
           isChecked={hasFilterValue(selectedFilters, filter.option)}
-          handleClick={(e) =>
-            handleChange(e, filter.option, JSON.stringify(filter.value))
-          }
+          handleClick={(e) => {
+            if (e) {
+              handleSelect(filter.option, JSON.stringify(filter.value));
+            } else {
+              handleDeselect(filter.option);
+            }
+          }}
           key={index}
         />
       ))}

@@ -19,12 +19,12 @@ type FilterItem = {
 };
 
 type GenericFilterLayoutProps = {
-  children: React.ReactNode;
-  onApply: () => void;
-  onClear: () => void;
-  selectedFilters: FilterItem[];
-  isLoading: boolean;
-  title?: string;
+  readonly children: React.ReactNode;
+  readonly onApply: () => void;
+  readonly onClear: () => void;
+  readonly selectedFilters: FilterItem[];
+  readonly isLoading: boolean;
+  readonly title?: string;
 };
 
 export default function GenericFilterLayout({
