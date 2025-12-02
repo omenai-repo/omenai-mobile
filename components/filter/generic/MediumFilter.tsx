@@ -20,8 +20,8 @@ export default function GenericMediumFilter({
   store,
   customOptions,
 }: {
-  store: SharedFilterStore;
-  customOptions?: string[];
+  readonly store: SharedFilterStore;
+  readonly customOptions?: readonly string[];
 }) {
   const [openDropdown, setOpenDropdown] = useState(false);
   const { filterOptions } = store;
