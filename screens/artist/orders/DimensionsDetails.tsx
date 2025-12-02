@@ -145,7 +145,9 @@ const DimensionsDetails = () => {
             : null,
         hold_status: null,
       };
+      console.log("Payload:", JSON.stringify(payload, null, 2));
       const response = await updateShippingQuote(payload);
+      console.log("Response:", JSON.stringify(response, null, 2));
       if (response.isOk) {
         // Invalidate both artist/collector and gallery orders so both screens refresh
         await Promise.all([
@@ -175,6 +177,7 @@ const DimensionsDetails = () => {
         });
       }
     } catch (error: any) {
+      console.log("Error:", error);
       updateModal({
         message: error.message,
         modalType: "error",

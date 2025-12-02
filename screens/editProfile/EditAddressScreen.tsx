@@ -26,7 +26,7 @@ import AlertCard from "components/general/AlertCard";
 import { colors } from "config/colors.config";
 
 const EditAddressScreen = () => {
-  const { userSession } = useAppStore();
+  const { userSession, userType } = useAppStore();
   const [formErrors, setFormErrors] = useState<
     Partial<AddressTypes & { phone: string }>
   >({
@@ -393,7 +393,11 @@ const EditAddressScreen = () => {
 
             <AlertCard
               title="Please note"
-              description="Changing your address will only apply to future orders. Any orders that are currently being processed or have already been shipped will be delivered to your previous address."
+              description={
+                userType === "user"
+                  ? "Changing your address will only apply to future orders. Any orders that are currently being processed or have already been shipped will be delivered to your previous address."
+                  : "Changing your address will only apply to future orders. Any orders that are currently being processed will be picked up from your current Address."
+              }
               style={tw`mb-0`}
               borderColor="#FFBF00"
               iconColor="#FFBF00"

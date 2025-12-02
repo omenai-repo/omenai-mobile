@@ -1,4 +1,11 @@
-import { Image, Text, View, TouchableOpacity, Dimensions, PixelRatio } from "react-native";
+import {
+  Image,
+  Text,
+  View,
+  TouchableOpacity,
+  Dimensions,
+  PixelRatio,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { getImageFileView } from "lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -56,11 +63,12 @@ export default function ArtworkCard({
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
       const maxHeight = 300;
 
-      const { width: resizedWidth, height: resizedHeight } = resizeImageDimensions(
-        { width: defaultWidth, height: defaultHeight },
-        displayWidth,
-        maxHeight
-      );
+      const { width: resizedWidth, height: resizedHeight } =
+        resizeImageDimensions(
+          { width: defaultWidth, height: defaultHeight },
+          displayWidth,
+          maxHeight
+        );
 
       setImageDimensions({ height: resizedHeight, width: resizedWidth });
     });
@@ -88,7 +96,9 @@ export default function ArtworkCard({
             }}
             resizeMode="contain"
           />
-          <View style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end p-3`}>
+          <View
+            style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end p-3`}
+          >
             {!galleryView && (
               <View
                 style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
@@ -103,12 +113,14 @@ export default function ArtworkCard({
             )}
           </View>
         </View>
-        <View style={[tw`mt-[15px]`, { width: imageDimensions.width }]}>
+        <View style={[tw`mt-3`, { width: imageDimensions.width }]}>
           <View style={tw`flex-wrap w-[${imageDimensions.width}px]`}>
             <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
               style={[
                 tw`text-base ${
-                  lightText ? "text-white/90" : "text-[#1A1A1A]00099]"
+                  lightText ? "text-white/90" : "text-[#1A1A1A]"
                 } font-medium w-full`,
                 { fontFamily: fontNames.dmSans + "Medium" },
               ]}
@@ -116,8 +128,12 @@ export default function ArtworkCard({
               {title}
             </Text>
             <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
               style={[
-                tw`text-sm ${lightText ? "text-white/80" : "text-[#1A1A1A]/70"} w-full`,
+                tw`text-sm ${
+                  lightText ? "text-white/80" : "text-[#1A1A1A]/70"
+                } w-full mt-0.5`,
                 { fontFamily: fontNames.dmSans + "Regular" },
               ]}
             >
