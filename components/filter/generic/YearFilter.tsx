@@ -27,7 +27,7 @@ const yearFilterOptions = [
 export default function GenericYearFilter({
   store,
 }: {
-  store: SharedFilterStore;
+  readonly store: SharedFilterStore;
 }) {
   const [openDropdown, setOpenDropdown] = useState(false);
   const { filterOptions } = store;

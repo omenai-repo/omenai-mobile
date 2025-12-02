@@ -38,13 +38,6 @@ export default function ArtworksMedium() {
 
   const { catalog } = route.params as { catalog: string };
 
-  function getImageUrl() {
-    const selectedCollection = mediums.filter(
-      (collection) => collection.name === catalog
-    );
-    return `${selectedCollection[0].image}`;
-  }
-
   useEffect(() => {
     setMedium(catalog);
   }, []);

@@ -7,10 +7,10 @@ import tw from "twrnc";
 export default function GenericFilterPill({
   filter,
   onRemove,
-}: {
+}: Readonly<{
   filter: string;
   onRemove: () => void;
-}) {
+}>) {
   return (
     <TouchableOpacity onPress={onRemove}>
       <View

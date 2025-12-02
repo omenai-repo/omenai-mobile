@@ -2,9 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
-import ProfileMenuItems, {
-  ProfileMenuItem,
-} from "components/profile/ProfileMenuItems";
+import ProfileMenuItems from "components/profile/ProfileMenuItems";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { screenName } from "constants/screenNames.constants";
@@ -68,7 +66,6 @@ export default function GalleryProfile() {
     }, [])
   );
 
-  // ... inside component
   const menuItems = useProfileMenuOptions(navigation, "gallery");
 
   return (

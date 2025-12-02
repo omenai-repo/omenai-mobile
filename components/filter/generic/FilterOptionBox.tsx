@@ -19,12 +19,13 @@ type FilterValueType = {
 type FilterItemProps = {
   name: string;
   isChecked: boolean;
-  handleClick: (e: boolean) => void;
+  onSelect: () => void;
+  onDeselect: () => void;
 };
 
-const Item = ({ name, isChecked, handleClick }: FilterItemProps) => {
+const Item = ({ name, isChecked, onSelect, onDeselect }: FilterItemProps) => {
   return (
-    <TouchableOpacity onPress={() => handleClick(!isChecked)}>
+    <TouchableOpacity onPress={() => (isChecked ? onDeselect() : onSelect())}>
       <View style={tw`gap-2.5 flex-row items-center`}>
         <View
           style={[
@@ -81,14 +82,11 @@ export default function GenericFilterOptionBox({
         <Item
           name={filter.option}
           isChecked={hasFilterValue(selectedFilters, filter.option)}
-          handleClick={(e) => {
-            if (e) {
-              handleSelect(filter.option, JSON.stringify(filter.value));
-            } else {
-              handleDeselect(filter.option);
-            }
-          }}
-          key={index}
+          onSelect={() =>
+            handleSelect(filter.option, JSON.stringify(filter.value))
+          }
+          onDeselect={() => handleDeselect(filter.option)}
+          key={`${filter.option}-${index}`}
         />
       ))}
     </View>
