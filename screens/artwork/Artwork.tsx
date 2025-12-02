@@ -475,11 +475,7 @@ export default function Artwork() {
                         keyExtractor={(_, i) => String(i)}
                         style={{ marginBottom: 25 }}
                         contentContainerStyle={{ paddingRight: 20 }}
-                        renderItem={({
-                          item,
-                        }: {
-                          item: ArtworkFlatlistItem;
-                        }) => (
+                        renderItem={({ item }) => (
                           <ArtworkCard
                             title={item.title}
                             url={item.url}

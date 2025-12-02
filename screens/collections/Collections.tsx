@@ -39,17 +39,11 @@ export default function Collections() {
         numColumns={getNumberOfColumns()}
         contentContainerStyle={tw`px-5 gap-5 pb-5`}
         columnWrapperStyle={tw`gap-4`}
-        renderItem={({
-          item,
-          index,
-        }: {
-          item: CatalogCardTypes;
-          index: number;
-        }) => (
+        renderItem={({ item }) => (
           <CatalogCard
             name={item.name}
             image={item.image}
-            key={index}
+            key={item.name}
             value={item.value}
           />
         )}

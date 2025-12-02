@@ -15,7 +15,6 @@ import { artworksMediumStore } from "store/artworks/ArtworksMediumsStore";
 import { useModalStore } from "store/modal/modalStore";
 import { screenName } from "constants/screenNames.constants";
 import { artworksMediumFilterStore } from "store/artworks/ArtworksMediumFilterStore";
-import { mediums } from "constants/mediums";
 import ScrollWrapper from "components/general/ScrollWrapper";
 import ArtworksListing from "components/general/ArtworksListing";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
