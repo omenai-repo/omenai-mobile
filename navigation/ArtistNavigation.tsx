@@ -36,6 +36,7 @@ import CustomTabBar from "./components/TabButton";
 import NotificationScreen from "screens/notifications/NotificationScreen";
 import DeleteAccountScreen from "screens/deleteAccount/DeleteAccountScreen";
 import { wrapWithHighRisk, wrapWithLowRisk } from "utils/wrapWithProvider";
+import BiometricSettings from "screens/profile/BiometricSettings";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -73,7 +74,9 @@ const BottomTabNav = () => {
   return (
     <>
       <Tab.Navigator
-        tabBar={(props) => <CustomTabBar {...props} tabData={BottomTabDataArtist} />}
+        tabBar={(props) => (
+          <CustomTabBar {...props} tabData={BottomTabDataArtist} />
+        )}
         screenOptions={{
           headerShown: false,
         }}
@@ -95,7 +98,10 @@ const BottomTabNav = () => {
           onPressOut={() => setModalVisible(false)}
           style={tw`flex-1 bg-[#0003] justify-center items-center`}
         >
-          <BlurView intensity={30} style={tw`absolute top-0 left-0 right-0 bottom-0`} />
+          <BlurView
+            intensity={30}
+            style={tw`absolute top-0 left-0 right-0 bottom-0`}
+          />
           <Pressable onPress={(e) => e.stopPropagation()}>
             <Animated.View
               style={[
@@ -108,7 +114,10 @@ const BottomTabNav = () => {
               ]}
             >
               <View style={tw`flex-row self-center gap-[20px]`}>
-                <SvgXml xml={starEffect} style={{ transform: [{ scaleX: -1 }] }} />
+                <SvgXml
+                  xml={starEffect}
+                  style={{ transform: [{ scaleX: -1 }] }}
+                />
                 <Text style={tw`text-[18px] text-[#1A1A1A] font-bold`}>
                   Verification in progress
                 </Text>
@@ -118,9 +127,9 @@ const BottomTabNav = () => {
               <Text
                 style={tw`text-[16px] leading-[25px] text-[#1A1A1A]00099] text-center mx-[40px]`}
               >
-                Your profile is currently under verification, which typically takes 24 to 48 hours.
-                You will receive an update via email within this timeframe. We appreciate your
-                patience.
+                Your profile is currently under verification, which typically
+                takes 24 to 48 hours. You will receive an update via email
+                within this timeframe. We appreciate your patience.
               </Text>
               <View style={tw`mt-[30px] mx-[30px]`}>
                 <FittedBlackButton onClick={logout} value="Logout" />
@@ -147,20 +156,50 @@ const ArtistNavigation = () => {
         name="ShipmentTrackingScreen"
         component={wrapWithLowRisk(ShipmentTrackingScreen)}
       />
-      <Stack.Screen name="ArtistOnboarding" component={wrapWithHighRisk(ArtistOnboarding)} />
-      <Stack.Screen name="ArtistOverview" component={wrapWithHighRisk(ArtistOverview)} />
-      <Stack.Screen name={"NotificationScreen"} component={wrapWithHighRisk(NotificationScreen)} />
-      <Stack.Screen name="OrderScreen" component={wrapWithHighRisk(OrderScreen)} />
-      <Stack.Screen name="DimensionsDetails" component={wrapWithHighRisk(DimensionsDetails)} />
-      <Stack.Screen name="WalletHistory" component={wrapWithHighRisk(WalletHistory)} />
+      <Stack.Screen
+        name="ArtistOnboarding"
+        component={wrapWithHighRisk(ArtistOnboarding)}
+      />
+      <Stack.Screen
+        name="ArtistOverview"
+        component={wrapWithHighRisk(ArtistOverview)}
+      />
+      <Stack.Screen
+        name={"NotificationScreen"}
+        component={wrapWithHighRisk(NotificationScreen)}
+      />
+      <Stack.Screen
+        name="OrderScreen"
+        component={wrapWithHighRisk(OrderScreen)}
+      />
+      <Stack.Screen
+        name="DimensionsDetails"
+        component={wrapWithHighRisk(DimensionsDetails)}
+      />
+      <Stack.Screen
+        name="WalletHistory"
+        component={wrapWithHighRisk(WalletHistory)}
+      />
       <Stack.Screen
         name="AddPrimaryAcctScreen"
         component={wrapWithHighRisk(AddPrimaryAcctScreen)}
       />
-      <Stack.Screen name={"WithdrawScreen"} component={wrapWithHighRisk(WithdrawScreen)} />
-      <Stack.Screen name={"ForgotPinScreen"} component={wrapWithHighRisk(ForgotPinScreen)} />
-      <Stack.Screen name={"ResetPinScreen"} component={wrapWithHighRisk(ResetPinScreen)} />
-      <Stack.Screen name={"WithdrawalSuccess"} component={wrapWithHighRisk(WithdrawalSuccess)} />
+      <Stack.Screen
+        name={"WithdrawScreen"}
+        component={wrapWithHighRisk(WithdrawScreen)}
+      />
+      <Stack.Screen
+        name={"ForgotPinScreen"}
+        component={wrapWithHighRisk(ForgotPinScreen)}
+      />
+      <Stack.Screen
+        name={"ResetPinScreen"}
+        component={wrapWithHighRisk(ResetPinScreen)}
+      />
+      <Stack.Screen
+        name={"WithdrawalSuccess"}
+        component={wrapWithHighRisk(WithdrawalSuccess)}
+      />
       <Stack.Screen
         name={"TransactionDetailsScreen"}
         component={wrapWithHighRisk(TransactionDetailsScreen)}
@@ -169,7 +208,10 @@ const ArtistNavigation = () => {
         name={screenName.gallery.editProfile}
         component={wrapWithHighRisk(EditGalleryProfile)}
       />
-      <Stack.Screen name={"EditAddressScreen"} component={wrapWithHighRisk(EditAddressScreen)} />
+      <Stack.Screen
+        name={"EditAddressScreen"}
+        component={wrapWithHighRisk(EditAddressScreen)}
+      />
       <Stack.Screen
         name={screenName.gallery.changePassword}
         component={wrapWithHighRisk(ChangeGalleryPassword)}
@@ -192,7 +234,10 @@ const ArtistNavigation = () => {
         name={screenName.gallery.uploadArtwork}
         component={wrapWithHighRisk(UploadArtwork)}
       />
-      <Stack.Screen name={screenName.artwork} component={wrapWithHighRisk(Artwork)} />
+      <Stack.Screen
+        name={screenName.artwork}
+        component={wrapWithHighRisk(Artwork)}
+      />
       <Stack.Screen
         name={screenName.gallery.editArtwork}
         component={wrapWithHighRisk(EditArtwork)}
@@ -200,6 +245,10 @@ const ArtistNavigation = () => {
       <Stack.Screen
         name={screenName.deleteAccount}
         component={wrapWithHighRisk(DeleteAccountScreen)}
+      />
+      <Stack.Screen
+        name={screenName.biometricSettings}
+        component={wrapWithHighRisk(BiometricSettings)}
       />
     </Stack.Navigator>
   );

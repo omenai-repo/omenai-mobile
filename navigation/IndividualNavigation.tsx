@@ -29,6 +29,7 @@ import Payment from "screens/payment/Payment";
 import { wrapWithHighRisk, wrapWithLowRisk } from "utils/wrapWithProvider";
 import CancleOrderPayment from "screens/payment/components/cancel/CancleOrderPayment";
 import SuccessOrderPayment from "screens/payment/components/success/SuccessOrderPayment";
+import BiometricSettings from "screens/profile/BiometricSettings";
 
 type CustomTabBarIconProps = {
   name: any;
@@ -42,7 +43,11 @@ const Stack = createStackNavigator();
 const hideHeader = { headerShown: false };
 
 export default function IndividualNavigation() {
-  const CustomTabBarIcon = ({ name, focused, title }: CustomTabBarIconProps) => {
+  const CustomTabBarIcon = ({
+    name,
+    focused,
+    title,
+  }: CustomTabBarIconProps) => {
     return (
       <View
         style={{
@@ -51,7 +56,12 @@ export default function IndividualNavigation() {
         }}
       >
         <SvgXml xml={name} />
-        <Text style={[{ fontSize: 13, color: colors.grey }, focused && { color: colors.white }]}>
+        <Text
+          style={[
+            { fontSize: 13, color: colors.grey },
+            focused && { color: colors.white },
+          ]}
+        >
           {title}
         </Text>
       </View>
@@ -61,7 +71,9 @@ export default function IndividualNavigation() {
   const IndividualTabNavigationScreens = () => {
     return (
       <Tab.Navigator
-        tabBar={(props) => <CustomTabBar {...props} tabData={BottomTabDataIndividual} />}
+        tabBar={(props) => (
+          <CustomTabBar {...props} tabData={BottomTabDataIndividual} />
+        )}
         screenOptions={{
           headerShown: false,
         }}
@@ -95,7 +107,10 @@ export default function IndividualNavigation() {
         component={wrapWithLowRisk(ShipmentTrackingScreen)}
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name={screenName.filter} component={wrapWithHighRisk(Filter)} />
+        <Stack.Screen
+          name={screenName.filter}
+          component={wrapWithHighRisk(Filter)}
+        />
         <Stack.Screen
           name={screenName.artworkMediumFilterModal}
           component={wrapWithHighRisk(ArtworkMediumFilterModal)}
@@ -105,28 +120,58 @@ export default function IndividualNavigation() {
           component={wrapWithHighRisk(ArtworkCategoriesFilterModal)}
         />
       </Stack.Group>
-      <Stack.Screen name={screenName.artwork} component={wrapWithHighRisk(Artwork)} />
-      <Stack.Screen name={screenName.searchResults} component={wrapWithHighRisk(SearchResults)} />
+      <Stack.Screen
+        name={screenName.artwork}
+        component={wrapWithHighRisk(Artwork)}
+      />
+      <Stack.Screen
+        name={screenName.searchResults}
+        component={wrapWithHighRisk(SearchResults)}
+      />
       <Stack.Screen
         name={screenName.purchaseArtwork}
         component={wrapWithHighRisk(PurchaseArtwork)}
       />
-      <Stack.Screen name={screenName.savedArtworks} component={wrapWithHighRisk(SavedArtworks)} />
-      <Stack.Screen name={"NotificationScreen"} component={wrapWithHighRisk(NotificationScreen)} />
-      <Stack.Screen name={screenName.editProfile} component={wrapWithHighRisk(EditProfile)} />
-      <Stack.Screen name={"EditAddressScreen"} component={wrapWithHighRisk(EditAddressScreen)} />
+      <Stack.Screen
+        name={screenName.savedArtworks}
+        component={wrapWithHighRisk(SavedArtworks)}
+      />
+      <Stack.Screen
+        name={"NotificationScreen"}
+        component={wrapWithHighRisk(NotificationScreen)}
+      />
+      <Stack.Screen
+        name={screenName.editProfile}
+        component={wrapWithHighRisk(EditProfile)}
+      />
+      <Stack.Screen
+        name={"EditAddressScreen"}
+        component={wrapWithHighRisk(EditAddressScreen)}
+      />
       <Stack.Screen
         name={screenName.gallery.changePassword}
         component={wrapWithHighRisk(ChangeGalleryPassword)}
       />
-      <Stack.Screen name={screenName.artworksMedium} component={wrapWithHighRisk(ArtworksMedium)} />
-      <Stack.Screen name={"ArticleScreen"} component={wrapWithHighRisk(ArticleScreen)} />
+      <Stack.Screen
+        name={screenName.artworksMedium}
+        component={wrapWithHighRisk(ArtworksMedium)}
+      />
+      <Stack.Screen
+        name={"ArticleScreen"}
+        component={wrapWithHighRisk(ArticleScreen)}
+      />
       <Stack.Screen
         name={"AllEditorialsScreen"}
         component={wrapWithHighRisk(AllEditorialsScreen)}
       />
-      <Stack.Screen name={screenName.collections} component={wrapWithHighRisk(Collections)} />
-      <Stack.Screen name={screenName.payment} component={wrapWithHighRisk(Payment)} />
+      <Stack.Screen
+        name={screenName.collections}
+        component={wrapWithHighRisk(Collections)}
+      />
+      <Stack.Screen
+        name={screenName.payment}
+        component={wrapWithHighRisk(Payment)}
+      />
       <Stack.Screen
         name={screenName.cancleOrderPayment}
         component={wrapWithHighRisk(CancleOrderPayment)}
@@ -135,10 +180,17 @@ export default function IndividualNavigation() {
         name={screenName.successOrderPayment}
         component={wrapWithHighRisk(SuccessOrderPayment)}
       />
-      <Stack.Screen name={"DetailsScreen"} component={wrapWithHighRisk(DetailsScreen)} />
+      <Stack.Screen
+        name={"DetailsScreen"}
+        component={wrapWithHighRisk(DetailsScreen)}
+      />
       <Stack.Screen
         name={screenName.deleteAccount}
         component={wrapWithHighRisk(DeleteAccountScreen)}
+      />
+      <Stack.Screen
+        name={screenName.biometricSettings}
+        component={wrapWithHighRisk(BiometricSettings)}
       />
     </Stack.Navigator>
   );
