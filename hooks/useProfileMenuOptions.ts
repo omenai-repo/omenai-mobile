@@ -1,7 +1,12 @@
 import { useMemo } from "react";
 import { screenName } from "constants/screenNames.constants";
-import { changePasswsordIcon, getDeleteIcon } from "utils/SvgImages";
+import {
+  changePasswsordIcon,
+  getDeleteIcon,
+  getLockIcon,
+} from "utils/SvgImages";
 import { ProfileMenuItem } from "components/profile/ProfileMenuItems";
+import { colors } from "config/colors.config";
 
 type UserType = "gallery" | "artist" | "individual";
 
@@ -19,6 +24,12 @@ export const useProfileMenuOptions = (
             routeName: userType,
           }),
         svgIcon: changePasswsordIcon,
+      },
+      {
+        name: "Biometric Login",
+        subText: "Enable/Disable biometric authentication",
+        handlePress: () => navigation.navigate(screenName.biometricSettings),
+        svgIcon: getLockIcon(colors.black, "25"),
       },
       {
         name: "Delete account",
