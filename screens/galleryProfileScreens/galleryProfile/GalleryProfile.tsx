@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQueryClient } from "@tanstack/react-query";
 import BlurStatusBar from "components/general/BlurStatusBar";
 import { useScrollY } from "hooks/useScrollY";
+import { useProfileMenuOptions } from "hooks/useProfileMenuOptions";
 
 type UserData = { name: string; email: string };
 
@@ -67,31 +68,8 @@ export default function GalleryProfile() {
     }, [])
   );
 
-  const menuItems: ProfileMenuItem[] = useMemo(
-    () => [
-      {
-        name: "Change password",
-        subText: "Change the password to your account",
-        handlePress: () =>
-          navigation.navigate(screenName.gallery.changePassword, {
-            routeName: "gallery",
-          }),
-        svgIcon: changePasswsordIcon,
-      },
-      {
-        name: "Delete account",
-        subText: "Delete your omenai gallery account",
-        handlePress: () => {
-          navigation.navigate(screenName.deleteAccount, {
-            routeName: "gallery",
-          });
-        },
-        svgIcon: getDeleteIcon("#DC2626"),
-        variant: "danger" as const,
-      },
-    ],
-    [navigation]
-  );
+  // ... inside component
+  const menuItems = useProfileMenuOptions(navigation, "gallery");
 
   return (
     <WithGalleryModal>

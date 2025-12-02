@@ -1,7 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { colors } from "config/colors.config";
-import ProfileMenuItems, { ProfileMenuItem } from "components/profile/ProfileMenuItems";
+import ProfileMenuItems, {
+  ProfileMenuItem,
+} from "components/profile/ProfileMenuItems";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { screenName } from "constants/screenNames.constants";
@@ -24,6 +26,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import BlurStatusBar from "components/general/BlurStatusBar";
 import { useScrollY } from "hooks/useScrollY";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
+import { useProfileMenuOptions } from "hooks/useProfileMenuOptions";
 
 type userDataType = {
   name: string;
@@ -85,7 +88,9 @@ export default function ArtistProfileScreen() {
       } else {
         setIsLoading(false);
         setIsEligible(true);
-        setEligibilityResponse(response?.body?.message ?? "You are not eligible at this time.");
+        setEligibilityResponse(
+          response?.body?.message ?? "You are not eligible at this time."
+        );
       }
     } catch (error: any) {
       updateModal({
@@ -99,36 +104,22 @@ export default function ArtistProfileScreen() {
     }
   };
 
+  // ... inside component
+  const commonMenuItems = useProfileMenuOptions(navigation, "artist");
+
   const menuItems: ProfileMenuItem[] = useMemo(
     () => [
       {
         name: "View Credentials",
         subText: "View your credentials",
         handlePress: () => navigation.navigate("ViewCredentialsScreen"),
-        Icon: <Ionicons name="eye-outline" size={24} color={colors.primary_black} />,
+        Icon: (
+          <Ionicons name="eye-outline" size={24} color={colors.primary_black} />
+        ),
       },
-      {
-        name: "Change password",
-        subText: "Change the password to your account",
-        handlePress: () =>
-          navigation.navigate(screenName.gallery.changePassword, {
-            routeName: "artist",
-          }),
-        svgIcon: changePasswsordIcon,
-      },
-      {
-        name: "Delete account",
-        subText: "Delete your omenai gallery account",
-        handlePress: () => {
-          navigation.navigate(screenName.deleteAccount, {
-            routeName: "artist",
-          });
-        },
-        svgIcon: getDeleteIcon("#DC2626"),
-        variant: "danger" as const,
-      },
+      ...commonMenuItems,
     ],
-    [navigation]
+    [navigation, commonMenuItems]
   );
 
   return (
@@ -137,11 +128,18 @@ export default function ArtistProfileScreen() {
       {!isLoading ? (
         !isEligible ? (
           <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-            <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
+            <View
+              style={[styles.profileContainer, { marginTop: insets.top + 16 }]}
+            >
               <Logo url={userSession?.logo} />
 
               <View>
-                <Text style={[tw`text-base font-medium`, { color: colors.primary_black }]}>
+                <Text
+                  style={[
+                    tw`text-base font-medium`,
+                    { color: colors.primary_black },
+                  ]}
+                >
                   {userData.name}
                 </Text>
                 <Text
@@ -157,10 +155,14 @@ export default function ArtistProfileScreen() {
               </View>
             </View>
 
-            <View style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}>
+            <View
+              style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}
+            >
               <FittedBlackButton
                 value="Edit profile"
-                onClick={() => navigation.navigate(screenName.gallery.editProfile)}
+                onClick={() =>
+                  navigation.navigate(screenName.gallery.editProfile)
+                }
                 style={tw`flex-grow`}
                 textStyle={tw`text-base`}
               />
