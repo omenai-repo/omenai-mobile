@@ -31,6 +31,8 @@ export default {
         ITSAppUsesNonExemptEncryption: false,
         NSUserNotificationUsageDescription:
           "This app uses notifications to keep you updated.",
+        NSFaceIDUsageDescription:
+          "Allow Omenai to use Face ID for secure and convenient login.",
       },
     },
     android: {
