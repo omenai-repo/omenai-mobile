@@ -44,10 +44,15 @@
       }
     },
     "production": {
+      "distribution": "store",
       "env": {
         "EXPO_PUBLIC_ENV": "production"
       },
+      "ios": {
+        "credentialsSource": "remote"
+      },
       "android": {
+        "buildType": "app-bundle",
         "credentialsSource": "remote"
       },
       "channel": "production"
@@ -55,6 +60,9 @@
   },
   "submit": {
     "production": {
+      "ios": {
+        "ascAppId": "6748387089"
+      },
       "android": {
         "track": "production"
       }
