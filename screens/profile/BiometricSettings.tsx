@@ -9,7 +9,6 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
@@ -19,11 +18,9 @@ import { useBiometrics, UserType } from "hooks/useBiometrics";
 import PasswordInput from "components/inputs/PasswordInput";
 import LongBlackButton from "components/buttons/LongBlackButton";
 import { loginAccount } from "services/login/loginAccount";
-import { useModalStore } from "store/modal/modalStore";
 import { Feather } from "@expo/vector-icons";
 
 export default function BiometricSettings() {
-  const insets = useSafeAreaInsets();
   const { userSession, userType, expoPushToken } = useAppStore();
   const {
     isBiometricSupported,
@@ -33,7 +30,6 @@ export default function BiometricSettings() {
     deleteCredentials,
     authenticate,
   } = useBiometrics();
-  const { updateModal } = useModalStore();
 
   const [isEnabled, setIsEnabled] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -49,13 +45,21 @@ export default function BiometricSettings() {
     setIsEnabled(enabled);
   };
 
+  const handleEnableRequest = () => {
+    setShowPasswordModal(true);
+  };
+
+  const handleDisable = async () => {
+    await deleteCredentials(userType as UserType);
+    setIsEnabled(false);
+    Alert.alert("Success", "Biometric authentication disabled");
+  };
+
   const handleToggle = async (value: boolean) => {
     if (value) {
-      setShowPasswordModal(true);
+      handleEnableRequest();
     } else {
-      await deleteCredentials(userType as UserType);
-      setIsEnabled(false);
-      Alert.alert("Success", "Biometric authentication disabled");
+      await handleDisable();
     }
   };
 
