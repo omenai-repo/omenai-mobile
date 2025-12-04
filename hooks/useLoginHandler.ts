@@ -1,10 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
+import { Alert } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { loginAccount } from "services/login/loginAccount";
 import { utils_storeAsyncData } from "utils/utils_asyncStorage";
 import { useAppStore } from "store/app/appStore";
 import { useModalStore } from "store/modal/modalStore";
 import { screenName } from "constants/screenNames.constants";
+import { useBiometrics } from "hooks/useBiometrics";
 
 type UserType = "individual" | "gallery" | "artist";
 
@@ -23,6 +25,12 @@ export function useLoginHandler(userType: UserType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
   const { updateModal } = useModalStore();
+  const {
+    isBiometricSupported,
+    isBiometricEnabled,
+    saveCredentials,
+    authenticate,
+  } = useBiometrics();
 
   const handleLogin = async (
     loginData: LoginData,
@@ -57,7 +65,10 @@ export function useLoginHandler(userType: UserType) {
 
       const data = mapUserData(resultsBody, userType);
 
-      const isStored = await utils_storeAsyncData("userSession", JSON.stringify(data));
+      const isStored = await utils_storeAsyncData(
+        "userSession",
+        JSON.stringify(data)
+      );
 
       const loginTimeStamp = new Date();
       const isLoginTimeStampStored = await utils_storeAsyncData(
@@ -66,9 +77,54 @@ export function useLoginHandler(userType: UserType) {
       );
 
       if (isStored && isLoginTimeStampStored) {
-        setUserSession(data);
-        setIsLoggedIn(true);
-        clearInputs();
+        const biometricEnabled = await isBiometricEnabled(userType);
+
+        if (isBiometricSupported && !biometricEnabled) {
+          Alert.alert(
+            "Enable Biometric Login",
+            "Would you like to enable biometric login for faster access next time?",
+            [
+              {
+                text: "No",
+                style: "cancel",
+                onPress: () => {
+                  setUserSession(data);
+                  setIsLoggedIn(true);
+                  clearInputs();
+                },
+              },
+              {
+                text: "Yes",
+                onPress: async () => {
+                  const bioResult = await authenticate();
+                  if (bioResult.success) {
+                    await saveCredentials(
+                      userType,
+                      loginData.email,
+                      loginData.password
+                    );
+                    Alert.alert("Success", "Biometric login enabled");
+                    setUserSession(data);
+                    setIsLoggedIn(true);
+                    clearInputs();
+                  } else {
+                    Alert.alert(
+                      "Authentication Failed",
+                      "Could not verify biometric identity. You can enable biometrics later in settings."
+                    );
+                    setUserSession(data);
+                    setIsLoggedIn(true);
+                    clearInputs();
+                  }
+                },
+              },
+            ]
+          );
+        } else {
+          setUserSession(data);
+          setIsLoggedIn(true);
+          clearInputs();
+        }
       }
     } else {
       updateModal({

@@ -29,7 +29,7 @@ export const useProfileMenuOptions = (
         name: "Biometric Login",
         subText: "Enable/Disable biometric authentication",
         handlePress: () => navigation.navigate(screenName.biometricSettings),
-        svgIcon: getLockIcon(colors.black, "25"),
+        svgIcon: getLockIcon(colors.black, 25, 25),
       },
       {
         name: "Delete account",
