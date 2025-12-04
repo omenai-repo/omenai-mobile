@@ -115,29 +115,32 @@ export default function Login() {
           {selectedIndex === 1 && <Artist />}
           {selectedIndex === 2 && <Gallery />}
 
-          {canUseBiometrics && (
-            <View style={tw`mt-5 items-center pb-10`}>
-              <TouchableOpacity
-                onPress={handleBiometricLogin}
-                disabled={isBiometricLoading}
-                style={tw`flex-row items-center justify-center bg-gray-100 py-3 px-6 rounded-full w-full`}
-              >
-                <SvgXml
-                  xml={lockIcon}
-                  width={20}
-                  height={20}
-                  style={tw`mr-2`}
-                />
-                <Text style={tw`text-black font-medium`}>
-                  {isBiometricLoading
-                    ? "Logging in..."
-                    : `Log in with ${
-                        biometricType === 1 ? "Face ID" : "Touch ID"
-                      }`}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {canUseBiometrics &&
+            (() => {
+              const biometricName =
+                biometricType === 1 ? "Face ID" : "Touch ID";
+              const buttonText = isBiometricLoading
+                ? "Logging in..."
+                : `Log in with ${biometricName}`;
+
+              return (
+                <View style={tw`mt-5 items-center pb-10`}>
+                  <TouchableOpacity
+                    onPress={handleBiometricLogin}
+                    disabled={isBiometricLoading}
+                    style={tw`flex-row items-center justify-center bg-gray-100 py-3 px-6 rounded-full w-full`}
+                  >
+                    <SvgXml
+                      xml={lockIcon}
+                      width={20}
+                      height={20}
+                      style={tw`mr-2`}
+                    />
+                    <Text style={tw`text-black font-medium`}>{buttonText}</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })()}
         </ScrollWrapper>
       </KeyboardAvoidingView>
     </WithModal>
