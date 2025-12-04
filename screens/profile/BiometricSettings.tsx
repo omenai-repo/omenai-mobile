@@ -55,14 +55,6 @@ export default function BiometricSettings() {
     Alert.alert("Success", "Biometric authentication disabled");
   };
 
-  const handleToggle = async (value: boolean) => {
-    if (value) {
-      handleEnableRequest();
-    } else {
-      await handleDisable();
-    }
-  };
-
   const handleEnableBiometrics = async () => {
     if (!password) {
       Alert.alert("Error", "Please enter your password");
@@ -151,7 +143,9 @@ export default function BiometricSettings() {
               trackColor={{ false: "#767577", true: colors.primary_black }}
               thumbColor={isEnabled ? "#fff" : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
-              onValueChange={handleToggle}
+              onValueChange={(value) =>
+                value ? handleEnableRequest() : handleDisable()
+              }
               value={isEnabled}
             />
           </View>

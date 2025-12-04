@@ -42,33 +42,33 @@ const Stack = createStackNavigator();
 
 const hideHeader = { headerShown: false };
 
-export default function IndividualNavigation() {
-  const IndividualTabBar = (props: any) => (
-    <CustomTabBar {...props} tabData={BottomTabDataIndividual} />
+const IndividualTabBar = (props: any) => (
+  <CustomTabBar {...props} tabData={BottomTabDataIndividual} />
+);
+
+const IndividualTabNavigationScreens = () => {
+  return (
+    <Tab.Navigator
+      tabBar={IndividualTabBar}
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      {BottomTabDataIndividual.map(({ name, component, id }) => (
+        <Tab.Screen
+          key={id}
+          name={name}
+          component={component}
+          options={{
+            tabBarShowLabel: false,
+          }}
+        />
+      ))}
+    </Tab.Navigator>
   );
+};
 
-  const IndividualTabNavigationScreens = () => {
-    return (
-      <Tab.Navigator
-        tabBar={IndividualTabBar}
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        {BottomTabDataIndividual.map(({ name, component, id }) => (
-          <Tab.Screen
-            key={id}
-            name={name}
-            component={component}
-            options={{
-              tabBarShowLabel: false,
-            }}
-          />
-        ))}
-      </Tab.Navigator>
-    );
-  };
-
+export default function IndividualNavigation() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {/* High-risk screens */}
