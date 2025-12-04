@@ -1,6 +1,7 @@
 import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
 import { useState, useEffect, useCallback } from "react";
+import { Alert, Linking, Platform } from "react-native";
 
 const BIOMETRIC_KEY_PREFIX = "biometric_auth_";
 
@@ -40,6 +41,43 @@ export const useBiometrics = () => {
   const authenticate = useCallback(
     async (promptMessage: string = "Authenticate") => {
       try {
+        const hasHardware = await LocalAuthentication.hasHardwareAsync();
+        const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+        if (!hasHardware) {
+          return {
+            success: false,
+            error: "Biometrics not supported on this device",
+          };
+        }
+
+        if (!isEnrolled) {
+          Alert.alert(
+            "Biometrics Not Set Up",
+            "Your device supports biometrics but you haven't set them up. Would you like to go to settings?",
+            [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "Go to Settings",
+                onPress: () => {
+                  if (Platform.OS === "ios") {
+                    Linking.openSettings();
+                  } else {
+                    Linking.sendIntent("android.settings.SECURITY_SETTINGS");
+                  }
+                },
+              },
+            ]
+          );
+          return {
+            success: false,
+            error: "Biometrics not enrolled",
+          };
+        }
+
         const result = await LocalAuthentication.authenticateAsync({
           promptMessage,
           fallbackLabel: "Use Passcode",

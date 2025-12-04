@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import tw from "twrnc";
@@ -30,6 +31,7 @@ export default function BiometricSettings() {
     isBiometricEnabled,
     saveCredentials,
     deleteCredentials,
+    authenticate,
   } = useBiometrics();
   const { updateModal } = useModalStore();
 
@@ -53,21 +55,13 @@ export default function BiometricSettings() {
     } else {
       await deleteCredentials(userType as UserType);
       setIsEnabled(false);
-      updateModal({
-        message: "Biometric authentication disabled",
-        modalType: "success",
-        showModal: true,
-      });
+      Alert.alert("Success", "Biometric authentication disabled");
     }
   };
 
   const handleEnableBiometrics = async () => {
     if (!password) {
-      updateModal({
-        message: "Please enter your password",
-        modalType: "error",
-        showModal: true,
-      });
+      Alert.alert("Error", "Please enter your password");
       return;
     }
 
@@ -79,39 +73,40 @@ export default function BiometricSettings() {
         password,
         device_push_token: expoPushToken || "",
       },
-      userType as "individual" | "gallery" | "artist"
+      userType === "user" ? "individual" : (userType as "gallery" | "artist")
     );
 
     setIsLoading(false);
 
     if (response.isOk) {
-      const saved = await saveCredentials(
-        userType as UserType,
-        userSession.email,
-        password
-      );
-      if (saved) {
-        setIsEnabled(true);
-        setShowPasswordModal(false);
-        setPassword("");
-        updateModal({
-          message: "Biometric authentication enabled successfully",
-          modalType: "success",
-          showModal: true,
-        });
+      // Prompt for biometrics to ensure permission and ownership
+      const bioResult = await authenticate();
+
+      if (bioResult.success) {
+        const saved = await saveCredentials(
+          userType as UserType,
+          userSession.email,
+          password
+        );
+        if (saved) {
+          setIsEnabled(true);
+          setShowPasswordModal(false);
+          setPassword("");
+          Alert.alert(
+            "Success",
+            "Biometric authentication enabled successfully"
+          );
+        } else {
+          Alert.alert("Error", "Failed to save biometric credentials");
+        }
       } else {
-        updateModal({
-          message: "Failed to save biometric credentials",
-          modalType: "error",
-          showModal: true,
-        });
+        Alert.alert(
+          "Authentication Failed",
+          "Could not verify biometric identity"
+        );
       }
     } else {
-      updateModal({
-        message: "Incorrect password",
-        modalType: "error",
-        showModal: true,
-      });
+      Alert.alert("Error", "Incorrect password");
     }
   };
 
