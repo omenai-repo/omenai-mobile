@@ -43,37 +43,14 @@ const Stack = createStackNavigator();
 const hideHeader = { headerShown: false };
 
 export default function IndividualNavigation() {
-  const CustomTabBarIcon = ({
-    name,
-    focused,
-    title,
-  }: CustomTabBarIconProps) => {
-    return (
-      <View
-        style={{
-          alignItems: "center",
-          gap: 5,
-        }}
-      >
-        <SvgXml xml={name} />
-        <Text
-          style={[
-            { fontSize: 13, color: colors.grey },
-            focused && { color: colors.white },
-          ]}
-        >
-          {title}
-        </Text>
-      </View>
-    );
-  };
+  const IndividualTabBar = (props: any) => (
+    <CustomTabBar {...props} tabData={BottomTabDataIndividual} />
+  );
 
   const IndividualTabNavigationScreens = () => {
     return (
       <Tab.Navigator
-        tabBar={(props) => (
-          <CustomTabBar {...props} tabData={BottomTabDataIndividual} />
-        )}
+        tabBar={IndividualTabBar}
         screenOptions={{
           headerShown: false,
         }}

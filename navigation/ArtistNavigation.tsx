@@ -41,6 +41,10 @@ import BiometricSettings from "screens/profile/BiometricSettings";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+const ArtistTabBar = (props: any) => (
+  <CustomTabBar {...props} tabData={BottomTabDataArtist} />
+);
+
 const BottomTabNav = () => {
   const { userSession } = useAppStore();
   const [isModalVisible, setModalVisible] = useState(false);
@@ -74,9 +78,7 @@ const BottomTabNav = () => {
   return (
     <>
       <Tab.Navigator
-        tabBar={(props) => (
-          <CustomTabBar {...props} tabData={BottomTabDataArtist} />
-        )}
+        tabBar={ArtistTabBar}
         screenOptions={{
           headerShown: false,
         }}
