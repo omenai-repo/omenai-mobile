@@ -36,7 +36,8 @@ export default function Login() {
   const clearArtist = useArtistAuthLoginStore((s) => s.clearInputs);
   const clearGallery = useGalleryAuthLoginStore((s) => s.clearInputs);
 
-  const { authenticate, getCredentials, isBiometricEnabled } = useBiometrics();
+  const { authenticate, getCredentials, isBiometricEnabled, biometricType } =
+    useBiometrics();
   const [canUseBiometrics, setCanUseBiometrics] = useState(false);
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
 
@@ -59,10 +60,7 @@ export default function Login() {
     if (result.success) {
       const credentials = await getCredentials(currentUserType);
       if (credentials) {
-        const { email, token: password } = credentials; // We stored password as 'token' in the hook's saveCredentials call in BiometricSettings, wait, I changed it to store password.
-        // In BiometricSettings I called saveCredentials(..., email, password).
-        // In useBiometrics, saveCredentials takes (userType, email, token). So the 3rd arg is stored as 'token' key in JSON.
-        // So credentials.token is actually the password.
+        const { email, token: password } = credentials;
 
         await handleLogin(
           { email, password },
@@ -133,7 +131,9 @@ export default function Login() {
                 <Text style={tw`text-black font-medium`}>
                   {isBiometricLoading
                     ? "Logging in..."
-                    : "Log in with Biometrics"}
+                    : `Log in with ${
+                        biometricType === 1 ? "Face ID" : "Touch ID"
+                      }`}
                 </Text>
               </TouchableOpacity>
             </View>
