@@ -1,7 +1,7 @@
 import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
 import { useState, useEffect, useCallback } from "react";
-import { Alert, Linking, Platform } from "react-native";
+import { Alert, Linking } from "react-native";
 
 const BIOMETRIC_KEY_PREFIX = "biometric_auth_";
 
@@ -63,11 +63,7 @@ export const useBiometrics = () => {
               {
                 text: "Go to Settings",
                 onPress: () => {
-                  if (Platform.OS === "ios") {
-                    Linking.openSettings();
-                  } else {
-                    Linking.sendIntent("android.settings.SECURITY_SETTINGS");
-                  }
+                  Linking.openSettings();
                 },
               },
             ]

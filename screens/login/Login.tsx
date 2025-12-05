@@ -117,8 +117,12 @@ export default function Login() {
 
           {canUseBiometrics &&
             (() => {
-              const biometricName =
-                biometricType === 1 ? "Face ID" : "Touch ID";
+              const getBiometricName = () => {
+                if (biometricType === 2) return "Face ID"; // FACIAL_RECOGNITION
+                if (biometricType === 1) return "Fingerprint"; // FINGERPRINT
+                return "Biometrics";
+              };
+              const biometricName = getBiometricName();
               const buttonText = isBiometricLoading
                 ? "Logging in..."
                 : `Log in with ${biometricName}`;
