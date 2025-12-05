@@ -87,7 +87,7 @@ jobs:
         run: |
           # Build and capture output
           set +e  # Don't exit on error immediately
-          BUILD_OUTPUT=$(eas build --platform ios --profile production --non-interactive --wait 2>&1)
+          BUILD_OUTPUT=$(eas build --platform ios --profile staging-ios --non-interactive --wait 2>&1)
           BUILD_EXIT_CODE=$?
           set -e  # Re-enable exit on error
 
@@ -120,7 +120,7 @@ jobs:
           echo "✅ Built iOS with ID: $BUILD_ID"
           echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
 
-      - name: 📱 Submit to TestFlight
+      - name: 📱 Submit to App Store
         run: |
           # IMPORTANT: We use --id instead of --latest because --latest doesn't filter by profile
           # It would pick up the most recent build regardless of profile (could be production)
@@ -129,5 +129,5 @@ jobs:
             echo "❌ Build ID is empty, cannot submit"
             exit 1
           fi
-          echo "📱 Submitting build $BUILD_ID with profile production"
-          eas submit --platform ios --id "$BUILD_ID" --profile production --non-interactive
+          echo "📱 Submitting build $BUILD_ID with profile staging-ios"
+          eas submit --platform ios --id "$BUILD_ID" --profile staging-ios --non-interactive
