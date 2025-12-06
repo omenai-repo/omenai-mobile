@@ -31,6 +31,9 @@ export default function BiometricSettings() {
     authenticate,
   } = useBiometrics();
 
+  const biometricUserType: UserType =
+    userType === "user" ? "individual" : (userType as UserType);
+
   const [isEnabled, setIsEnabled] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [password, setPassword] = useState("");
@@ -41,7 +44,7 @@ export default function BiometricSettings() {
   }, []);
 
   const checkStatus = async () => {
-    const enabled = await isBiometricEnabled(userType as UserType);
+    const enabled = await isBiometricEnabled(biometricUserType);
     setIsEnabled(enabled);
   };
 
@@ -50,7 +53,7 @@ export default function BiometricSettings() {
   };
 
   const handleDisable = async () => {
-    await deleteCredentials(userType as UserType);
+    await deleteCredentials(biometricUserType);
     setIsEnabled(false);
     Alert.alert("Success", "Biometric authentication disabled");
   };
@@ -80,7 +83,7 @@ export default function BiometricSettings() {
 
       if (bioResult.success) {
         const saved = await saveCredentials(
-          userType as UserType,
+          biometricUserType,
           userSession.email,
           password
         );
