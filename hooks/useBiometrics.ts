@@ -2,10 +2,41 @@ import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
 import { useState, useEffect, useCallback } from "react";
 import { Alert, Linking } from "react-native";
+import {
+  utils_getAsyncData,
+  utils_storeAsyncData,
+} from "utils/utils_asyncStorage";
 
 const BIOMETRIC_KEY_PREFIX = "biometric_auth_";
+const INSTALL_CHECK_KEY = "app_installed_flag";
 
 export type UserType = "individual" | "artist" | "gallery";
+
+// Clear stale biometric credentials on fresh install
+// iOS Keychain persists after uninstall, but AsyncStorage does not
+export const clearStaleCredentials = async (): Promise<void> => {
+  try {
+    const result = await utils_getAsyncData(INSTALL_CHECK_KEY);
+
+    if (!result.isOk) {
+      // Fresh install - clear any stale Keychain data
+      const userTypes: UserType[] = ["individual", "artist", "gallery"];
+      for (const userType of userTypes) {
+        try {
+          await SecureStore.deleteItemAsync(
+            `${BIOMETRIC_KEY_PREFIX}${userType}`
+          );
+        } catch {
+          // Ignore errors
+        }
+      }
+      // Set the flag so we don't clear on next launch
+      await utils_storeAsyncData(INSTALL_CHECK_KEY, "true");
+    }
+  } catch {
+    // Silently fail
+  }
+};
 
 export const useBiometrics = () => {
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);

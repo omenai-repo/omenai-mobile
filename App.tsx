@@ -28,6 +28,7 @@ import { registerForPushToken } from "notifications/registerForPushToken";
 import { navigationRef } from "navigation/RootNavigation";
 import { useNotificationHandler } from "hooks/useNotificationHandler";
 import { StatusBar } from "expo-status-bar";
+import { clearStaleCredentials } from "hooks/useBiometrics";
 
 // Safely patch Platform.constants for web/dev environments only
 try {
@@ -58,14 +59,17 @@ export default function App() {
   useNotifications(); // Register listeners
 
   useEffect(() => {
-    const initPush = async () => {
+    const initApp = async () => {
+      // Clear stale biometric credentials on fresh install (iOS Keychain persists after uninstall)
+      await clearStaleCredentials();
+
       const token = await registerForPushToken();
       if (token) {
         setExpoPushToken(token);
       }
     };
 
-    initPush();
+    initApp();
   }, []);
 
   const prefix = Linking.createURL("/");
