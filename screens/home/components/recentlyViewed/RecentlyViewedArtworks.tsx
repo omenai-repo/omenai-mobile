@@ -1,14 +1,21 @@
-import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { fetchViewHistory } from 'services/artworks/viewHistory/fetchRecentlyViewedArtworks';
-import { useAppStore } from 'store/app/appStore';
-import ViewHistoryCard from './ViewHistoryCard';
-import EmptyArtworks from 'components/general/EmptyArtworks';
-import ArtworkCardLoader from 'components/general/ArtworkCardLoader';
-import { HOME_QK } from 'utils/queryKeys';
+import React from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import { fetchViewHistory } from "services/artworks/viewHistory/fetchRecentlyViewedArtworks";
+import { useAppStore } from "store/app/appStore";
+import ViewHistoryCard from "./ViewHistoryCard";
+import EmptyArtworks from "components/general/EmptyArtworks";
+import ArtworkCardLoader from "components/general/ArtworkCardLoader";
+import { HOME_QK } from "utils/queryKeys";
 
-type ViewHistoryItem = { art_id: string; url: string; artist: string; artwork: string };
+import { fontNames } from "constants/fontNames.constants";
+
+type ViewHistoryItem = {
+  art_id: string;
+  url: string;
+  artist: string;
+  artwork: string;
+};
 
 export default function RecentlyViewedArtworks() {
   const { userSession } = useAppStore();
@@ -28,8 +35,24 @@ export default function RecentlyViewedArtworks() {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: '500', flex: 1 }}>Recently viewed artworks</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+          paddingHorizontal: 20,
+          marginBottom: 15,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 20,
+            fontFamily: fontNames.dmSans + "Bold",
+            color: "#1A1A1A",
+          }}
+        >
+          Recently viewed artworks
+        </Text>
       </View>
 
       {isLoading && <ArtworkCardLoader />}
@@ -40,7 +63,7 @@ export default function RecentlyViewedArtworks() {
           keyExtractor={(_, i) => `rv-${i}`}
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 20 }}
+          style={{ marginTop: 0 }}
           renderItem={({ item }) => (
             <ViewHistoryCard
               art_id={item.art_id}
@@ -59,4 +82,6 @@ export default function RecentlyViewedArtworks() {
   );
 }
 
-const styles = StyleSheet.create({ container: { marginTop: 40, marginBottom: 40 } });
+const styles = StyleSheet.create({
+  container: { marginTop: 40, marginBottom: 40 },
+});

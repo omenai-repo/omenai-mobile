@@ -25,6 +25,7 @@ import BillingVerificationScreen from "screens/subscriptions/components/BillingV
 import EditArtwork from "screens/editArtwork/EditArtwork";
 import DeleteAccountScreen from "screens/deleteAccount/DeleteAccountScreen";
 import { wrapWithHighRisk, wrapWithLowRisk } from "utils/wrapWithProvider";
+import BiometricSettings from "screens/profile/BiometricSettings";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -96,7 +97,11 @@ export default function GalleryNavigation() {
   if (account.connected_account_id === null && account.gallery_verified)
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="connect-stripe" component={GetStartedWithStripe} options={hideHeader} />
+        <Stack.Screen
+          name="connect-stripe"
+          component={GetStartedWithStripe}
+          options={hideHeader}
+        />
       </Stack.Navigator>
     );
 
@@ -111,19 +116,34 @@ export default function GalleryNavigation() {
         name="ShipmentTrackingScreen"
         component={wrapWithLowRisk(ShipmentTrackingScreen)}
       />
-      <Stack.Screen name={screenName.artwork} component={wrapWithHighRisk(Artwork)} />
-      <Stack.Screen name={"NotificationScreen"} component={wrapWithHighRisk(NotificationScreen)} />
+      <Stack.Screen
+        name={screenName.artwork}
+        component={wrapWithHighRisk(Artwork)}
+      />
+      <Stack.Screen
+        name={"NotificationScreen"}
+        component={wrapWithHighRisk(NotificationScreen)}
+      />
       <Stack.Screen
         name={screenName.gallery.uploadArtwork}
         component={wrapWithHighRisk(UploadArtwork)}
       />
-      <Stack.Screen name={screenName.gallery.order} component={wrapWithHighRisk(GalleryOrder)} />
-      <Stack.Screen name="DimensionsDetails" component={wrapWithHighRisk(DimensionsDetails)} />
+      <Stack.Screen
+        name={screenName.gallery.order}
+        component={wrapWithHighRisk(GalleryOrder)}
+      />
+      <Stack.Screen
+        name="DimensionsDetails"
+        component={wrapWithHighRisk(DimensionsDetails)}
+      />
       <Stack.Screen
         name={screenName.gallery.editProfile}
         component={wrapWithHighRisk(EditGalleryProfile)}
       />
-      <Stack.Screen name={"EditAddressScreen"} component={wrapWithHighRisk(EditAddressScreen)} />
+      <Stack.Screen
+        name={"EditAddressScreen"}
+        component={wrapWithHighRisk(EditAddressScreen)}
+      />
       <Stack.Screen
         name={screenName.gallery.changePassword}
         component={wrapWithHighRisk(ChangeGalleryPassword)}
@@ -132,12 +152,18 @@ export default function GalleryNavigation() {
         name={screenName.gallery.subscriptions}
         component={wrapWithHighRisk(Subscriptions)}
       />
-      <Stack.Screen name={screenName.gallery.billing} component={wrapWithHighRisk(Billing)} />
+      <Stack.Screen
+        name={screenName.gallery.billing}
+        component={wrapWithHighRisk(Billing)}
+      />
       <Stack.Screen
         name={"PaymentMethodChangeScreen"}
         component={wrapWithHighRisk(PaymentMethodChangeScreen)}
       />
-      <Stack.Screen name={screenName.checkout} component={wrapWithHighRisk(Checkout)} />
+      <Stack.Screen
+        name={screenName.checkout}
+        component={wrapWithHighRisk(Checkout)}
+      />
       <Stack.Screen
         name={"BillingVerificationScreen"}
         component={wrapWithHighRisk(BillingVerificationScreen)}
@@ -153,6 +179,10 @@ export default function GalleryNavigation() {
       <Stack.Screen
         name={screenName.deleteAccount}
         component={wrapWithHighRisk(DeleteAccountScreen)}
+      />
+      <Stack.Screen
+        name={screenName.biometricSettings}
+        component={wrapWithHighRisk(BiometricSettings)}
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen

@@ -1,10 +1,16 @@
-import { StyleSheet, TouchableOpacity, View, TextInput, Text } from 'react-native';
-import React from 'react';
-import { colors } from '../../config/colors.config';
-import { useSearchStore } from 'store/search/searchStore';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { StackNavigationProp } from '@react-navigation/stack';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  TextInput,
+  Text,
+} from "react-native";
+import React from "react";
+import { colors } from "../../config/colors.config";
+import { useSearchStore } from "store/search/searchStore";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "constants/screenNames.constants";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 export default function SearchInput() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -21,13 +27,17 @@ export default function SearchInput() {
       <TextInput
         style={styles.input}
         placeholder="Ask Omenai"
-        placeholderTextColor={'#858585'}
+        placeholderTextColor={"#858585"}
         value={searchQuery}
         onChangeText={setSearchQuery}
         onSubmitEditing={handleSearch}
         returnKeyType="search"
       />
-      <TouchableOpacity style={styles.searchButton} activeOpacity={0.5} onPress={handleSearch}>
+      <TouchableOpacity
+        style={styles.searchButton}
+        activeOpacity={0.5}
+        onPress={handleSearch}
+      >
         <Text style={{ fontSize: 14, color: colors.white }}>Search</Text>
       </TouchableOpacity>
     </View>
@@ -37,15 +47,15 @@ export default function SearchInput() {
 const styles = StyleSheet.create({
   container: {
     height: 55,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: "#FAFAFA",
     borderWidth: 1,
     borderColor: colors.inputBorder,
     paddingHorizontal: 10,
     paddingVertical: 7,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 15,
-    borderRadius: 30,
+    borderRadius: 8,
   },
   input: {
     flex: 1,
@@ -54,11 +64,11 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
   },
   searchButton: {
-    height: '100%',
+    height: "100%",
     backgroundColor: colors.primary_black,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 20,
   },
 });

@@ -1,7 +1,13 @@
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  View,
+  Text,
+} from "react-native";
 import React, { useState } from "react";
 import tw from "twrnc";
-import { Feather } from "@expo/vector-icons";
 import { colors } from "config/colors.config";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
 import LongBlackButton from "components/buttons/LongBlackButton";
@@ -18,6 +24,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ToggleButton from "components/forms/ToggleButton";
 import DimensionInput from "components/forms/DimensionInput";
 import UnitDropdownField from "components/forms/UnitDropdownField";
+import AlertCard from "components/general/AlertCard";
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -101,12 +108,18 @@ const DimensionsDetails = () => {
     return !(isFormValid && areAllFieldsFilled && isChecked);
   };
 
-  const handleValidationChecks = (label: keyof ArtworkDimensionsErrorsType, value: string) => {
+  const handleValidationChecks = (
+    label: keyof ArtworkDimensionsErrorsType,
+    value: string
+  ) => {
     if (value.trim() === "") {
       setFormErrors((prev) => ({ ...prev, [label]: "" }));
     } else {
       const errors = validateOrderMeasurement(value);
-      setFormErrors((prev) => ({ ...prev, [label]: errors.length === 0 ? "" : errors }));
+      setFormErrors((prev) => ({
+        ...prev,
+        [label]: errors.length === 0 ? "" : errors,
+      }));
     }
   };
 
@@ -132,7 +145,9 @@ const DimensionsDetails = () => {
             : null,
         hold_status: null,
       };
+      console.log("Payload:", JSON.stringify(payload, null, 2));
       const response = await updateShippingQuote(payload);
+      console.log("Response:", JSON.stringify(response, null, 2));
       if (response.isOk) {
         // Invalidate both artist/collector and gallery orders so both screens refresh
         await Promise.all([
@@ -162,6 +177,7 @@ const DimensionsDetails = () => {
         });
       }
     } catch (error: any) {
+      console.log("Error:", error);
       updateModal({
         message: error.message,
         modalType: "error",
@@ -203,14 +219,18 @@ const DimensionsDetails = () => {
                 />
               </View>
 
-              {(["height", "length", "width"] as Array<keyof typeof dimentions>).map((field) => (
+              {(
+                ["height", "length", "width"] as Array<keyof typeof dimentions>
+              ).map((field) => (
                 <DimensionInput
                   key={field}
                   field={field}
                   unit={dimensionUnit}
                   value={dimentions[field]}
                   errorMessage={formErrors[field]}
-                  onInputChange={(text) => setDimentions((prev) => ({ ...prev, [field]: text }))}
+                  onInputChange={(text) =>
+                    setDimentions((prev) => ({ ...prev, [field]: text }))
+                  }
                   onValidation={(text) => handleValidationChecks(field, text)}
                 />
               ))}
@@ -220,7 +240,9 @@ const DimensionsDetails = () => {
                 unit={weightUnit}
                 value={dimentions.weight}
                 errorMessage={formErrors.weight}
-                onInputChange={(text) => setDimentions((prev) => ({ ...prev, weight: text }))}
+                onInputChange={(text) =>
+                  setDimentions((prev) => ({ ...prev, weight: text }))
+                }
                 onValidation={(text) => handleValidationChecks("weight", text)}
               />
             </View>
@@ -283,39 +305,10 @@ const DimensionsDetails = () => {
             )}
 
             <View style={tw`mt-7 mx-6`}>
-              <View
-                style={[
-                  tw`rounded-xl relative overflow-hidden mb-3 p-4`,
-                  {
-                    borderWidth: 2,
-                    backgroundColor: "#FA52521A",
-                    borderColor: "#FA5252",
-                  },
-                ]}
-              >
-                <View style={tw`flex gap-2 flex-row items-center`}>
-                  <Feather name="alert-circle" size={30} color="#FA5252" />
-
-                  <Text
-                    style={[
-                      tw`text-sm`,
-                      {
-                        color: "#FA5252",
-                        fontWeight: "700",
-                      },
-                    ]}
-                  >
-                    Kindly review the following information carefully before continuing.
-                  </Text>
-                </View>
-                <View style={[tw`pt-2.5 pl-0`]}>
-                  <Text style={[tw`text-sm leading-6`, { color: colors.black }]}>
-                    By accepting this order, you agree to hold the artwork for 24 hours to allow for
-                    payment and shipment processing. If the piece is on exhibition and paid for by
-                    this buyer, shipment will be scheduled at the exhibition’s end date
-                  </Text>
-                </View>
-              </View>
+              <AlertCard
+                title="Kindly review the following information carefully before continuing."
+                description="By accepting this order, you agree to hold the artwork for 24 hours to allow for payment and shipment processing. If the piece is on exhibition and paid for by this buyer, shipment will be scheduled at the exhibition’s end date"
+              />
 
               <Pressable
                 onPress={() => setIsChecked(!isChecked)}
@@ -333,7 +326,9 @@ const DimensionsDetails = () => {
                     />
                   )}
                 </View>
-                <Text style={tw`text-[14px] text-[#858585] font-medium`}>I agree and continue</Text>
+                <Text style={tw`text-[14px] text-[#858585] font-medium`}>
+                  I agree and continue
+                </Text>
               </Pressable>
             </View>
 

@@ -1,37 +1,35 @@
-import {
-  View,
-  Text,
-  Pressable,
-  useWindowDimensions,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { View, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
 import tw from "twrnc";
 import Input from "components/inputs/Input";
 import { validate } from "lib/validations/validatorGroup";
 import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import BackFormButton from "components/buttons/BackFormButton";
 import { verifyAddress } from "services/register/verifyAddress";
 import FittedBlackButton from "components/buttons/FittedBlackButton";
 import { useModalStore } from "store/modal/modalStore";
 import { debounce } from "lodash";
 import AuthModal from "components/auth/AuthModal";
 import { checkMarkIcon, errorIcon } from "utils/SvgImages";
-import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
-import { Country, State, City, ICountry, IState, ICity } from "country-state-city";
+import {
+  Country,
+  State,
+  City,
+  ICountry,
+  IState,
+  ICity,
+} from "country-state-city";
 import { useAppStore } from "store/app/appStore";
-import { useNavigation } from "@react-navigation/native";
 import BackHeaderTitle from "components/header/BackHeaderTitle";
 import { updateProfile } from "services/update/updateProfile";
 import { logout } from "utils/logout.utils";
+import AlertCard from "components/general/AlertCard";
+import { colors } from "config/colors.config";
 
 const EditAddressScreen = () => {
-  const navigation = useNavigation<any>();
-  const { height, width } = useWindowDimensions();
-  const { userSession } = useAppStore();
-  const [formErrors, setFormErrors] = useState<Partial<AddressTypes & { phone: string }>>({
+  const { userSession, userType } = useAppStore();
+  const [formErrors, setFormErrors] = useState<
+    Partial<AddressTypes & { phone: string }>
+  >({
     address_line: "",
     city: "",
     country: "",
@@ -42,17 +40,25 @@ const EditAddressScreen = () => {
   });
   const [showModal, setShowModal] = useState(false);
   const [addressVerified, setAddressVerified] = useState(false);
-  const [countryCode, setCountryCode] = useState(userSession.address.countryCode || "");
+  const [countryCode, setCountryCode] = useState(
+    userSession.address.countryCode || ""
+  );
   const [country, setCountry] = useState(userSession.address.country || "");
   const [stateName, setStateName] = useState(userSession.address.state || "");
-  const [stateCode, setStateCode] = useState(userSession.address.stateCode || "");
+  const [stateCode, setStateCode] = useState(
+    userSession.address.stateCode || ""
+  );
   const [city, setCity] = useState(userSession.address.city || "");
-  const [addressLine, setAddressLine] = useState(userSession.address.address_line || "");
+  const [addressLine, setAddressLine] = useState(
+    userSession.address.address_line || ""
+  );
   const [zipCode, setZipCode] = useState(userSession.address.zip || "");
-  const [stateData, setStateData] = useState<{ label: string; value: string; isoCode?: string }[]>(
+  const [stateData, setStateData] = useState<
+    { label: string; value: string; isoCode?: string }[]
+  >([]);
+  const [cityData, setCityData] = useState<{ label: string; value: string }[]>(
     []
   );
-  const [cityData, setCityData] = useState<{ label: string; value: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const { updateModal } = useModalStore();
@@ -80,7 +86,16 @@ const EditAddressScreen = () => {
       stateName !== originalAddress.state ||
       stateCode !== originalAddress.stateCode
     );
-  }, [addressLine, city, zipCode, country, countryCode, stateName, stateCode, originalAddress]);
+  }, [
+    addressLine,
+    city,
+    zipCode,
+    country,
+    countryCode,
+    stateName,
+    stateCode,
+    originalAddress,
+  ]);
 
   useEffect(() => {
     if (countryCode) {
@@ -134,21 +149,33 @@ const EditAddressScreen = () => {
   };
 
   // 🚀 **Debounced Fetch Cities Function**
-  const fetchCities = useCallback(
-    debounce((countryCode, stateValue) => {
-      const getCities = City.getCitiesOfState(countryCode, stateValue);
-      setCityData(
-        getCities?.map((city: ICity) => ({
-          label: city.name,
-          value: city.name,
-        })) || []
-      );
-    }, 300),
+  const fetchCities = useMemo(
+    () =>
+      debounce((countryCode: string, stateValue: string) => {
+        const getCities = City.getCitiesOfState(countryCode, stateValue);
+        setCityData(
+          getCities?.map((city: ICity) => ({
+            label: city.name,
+            value: city.name,
+          })) || []
+        );
+      }, 300),
     []
   );
 
+  useEffect(() => {
+    return () => {
+      // cancel any pending debounced calls on unmount
+      (fetchCities as unknown as { cancel?: () => void }).cancel?.();
+    };
+  }, [fetchCities]);
+
   // 🚀 **Handle State Selection**
-  const handleStateSelect = (item: { label: string; value: string; isoCode?: string }) => {
+  const handleStateSelect = (item: {
+    label: string;
+    value: string;
+    isoCode?: string;
+  }) => {
     if (item.value !== stateName) {
       setStateName(item.value);
       if (item.isoCode) {
@@ -166,7 +193,8 @@ const EditAddressScreen = () => {
   };
 
   const checkIsDisabled = () => {
-    const isFormValid = formErrors && Object.values(formErrors).every((error) => error === "");
+    const isFormValid =
+      formErrors && Object.values(formErrors).every((error) => error === "");
     const areAllFieldsFilled = Object.values({
       address_line: addressLine,
       city: city,
@@ -178,19 +206,22 @@ const EditAddressScreen = () => {
     return !(isFormValid && areAllFieldsFilled && hasAddressChanged);
   };
 
-  const handleValidationChecks = debounce((label: string, value: string, confirm?: string) => {
-    // Clear error if the input is empty
-    if (value.trim() === "") {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-      return;
-    }
+  const handleValidationChecks = debounce(
+    (label: string, value: string, confirm?: string) => {
+      // Clear error if the input is empty
+      if (value.trim() === "") {
+        setFormErrors((prev) => ({ ...prev, [label]: "" }));
+        return;
+      }
 
-    const { success, errors } = validate(value, label, confirm);
-    setFormErrors((prev) => ({
-      ...prev,
-      [label]: errors.length > 0 ? errors[0] : "",
-    }));
-  }, 500); // ✅ Delay validation by 500ms
+      const { success, errors } = validate(value, label, confirm);
+      setFormErrors((prev) => ({
+        ...prev,
+        [label]: errors.length > 0 ? errors[0] : "",
+      }));
+    },
+    500
+  ); // ✅ Delay validation by 500ms
 
   const handleSubmit = async () => {
     if (!hasAddressChanged) return;
@@ -209,7 +240,10 @@ const EditAddressScreen = () => {
       setIsLoading(false);
 
       if (response?.isOk) {
-        if (response?.body?.data?.address && response.body.data.address.length !== 0) {
+        if (
+          response?.body?.data?.address &&
+          response.body.data.address.length !== 0
+        ) {
           setShowModal(true);
           setAddressVerified(true);
         } else {
@@ -356,6 +390,20 @@ const EditAddressScreen = () => {
                 />
               </View>
             </View>
+
+            <AlertCard
+              title="Please note"
+              description={
+                userType === "user"
+                  ? "Changing your address will only apply to future orders. Any orders that are currently being processed or have already been shipped will be delivered to your previous address."
+                  : "Changing your address will only apply to future orders. Any orders that are currently being processed will be picked up from your current Address."
+              }
+              style={tw`mb-0`}
+              borderColor="#FFBF00"
+              iconColor="#FFBF00"
+              backgroundColor="#FFBF001A"
+              titleColor={colors.black}
+            />
 
             <View style={tw`flex-1 mt-[20px]`}>
               <FittedBlackButton

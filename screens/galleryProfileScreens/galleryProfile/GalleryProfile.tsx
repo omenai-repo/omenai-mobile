@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import tw from "twrnc";
 import { colors } from "config/colors.config";
-import ProfileMenuItems, { ProfileMenuItem } from "components/profile/ProfileMenuItems";
+import ProfileMenuItems from "components/profile/ProfileMenuItems";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { screenName } from "constants/screenNames.constants";
@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQueryClient } from "@tanstack/react-query";
 import BlurStatusBar from "components/general/BlurStatusBar";
 import { useScrollY } from "hooks/useScrollY";
+import { useProfileMenuOptions } from "hooks/useProfileMenuOptions";
 
 type UserData = { name: string; email: string };
 
@@ -65,27 +66,7 @@ export default function GalleryProfile() {
     }, [])
   );
 
-  const menuItems: ProfileMenuItem[] = useMemo(
-    () => [
-      {
-        name: "Change password",
-        subText: "Change the password to your account",
-        handlePress: () =>
-          navigation.navigate(screenName.gallery.changePassword, { routeName: "gallery" }),
-        svgIcon: changePasswsordIcon,
-      },
-      {
-        name: "Delete account",
-        subText: "Delete your omenai gallery account",
-        handlePress: () => {
-          navigation.navigate(screenName.deleteAccount, { routeName: "gallery" });
-        },
-        svgIcon: getDeleteIcon("#DC2626"),
-        variant: "danger" as const,
-      },
-    ],
-    [navigation]
-  );
+  const menuItems = useProfileMenuOptions(navigation, "gallery");
 
   return (
     <WithGalleryModal>
@@ -95,18 +76,31 @@ export default function GalleryProfile() {
           <Logo url={userSession?.logo} />
 
           <View>
-            <Text style={{ fontSize: 16, fontWeight: "500", color: colors.primary_black }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "500",
+                color: colors.primary_black,
+              }}
+            >
               {userData.name}
             </Text>
-            <Text style={{ fontSize: 14, marginTop: 5, marginBottom: 20, color: "#00000099" }}>
+            <Text
+              style={{
+                fontSize: 14,
+                marginTop: 5,
+                marginBottom: 20,
+                color: "#00000099",
+              }}
+            >
               {userData.email}
             </Text>
 
             <FittedBlackButton
               value="Edit profile"
-              onClick={() => navigation.navigate(screenName.gallery.editProfile)}
-              style={{ backgroundColor: colors.grey50 }}
-              textStyle={{ color: colors.black }}
+              onClick={() =>
+                navigation.navigate(screenName.gallery.editProfile)
+              }
             />
           </View>
         </View>
