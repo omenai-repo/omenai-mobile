@@ -14,26 +14,55 @@ export const useBiometrics = () => {
 
   useEffect(() => {
     (async () => {
-      const compatible = await LocalAuthentication.hasHardwareAsync();
-      const enrolled = await LocalAuthentication.isEnrolledAsync();
-      setIsBiometricSupported(compatible && enrolled);
+      try {
+        // Wrap each call individually for maximum fault tolerance
+        let compatible = false;
+        let enrolled = false;
 
-      if (compatible) {
-        const types =
-          await LocalAuthentication.supportedAuthenticationTypesAsync();
-        if (
-          types.includes(
-            LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
-          )
-        ) {
-          setBiometricType(
-            LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
-          );
-        } else if (
-          types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)
-        ) {
-          setBiometricType(LocalAuthentication.AuthenticationType.FINGERPRINT);
+        try {
+          compatible = await LocalAuthentication.hasHardwareAsync();
+        } catch (e) {
+          console.warn("Failed to check biometric hardware:", e);
+          compatible = false;
         }
+
+        try {
+          enrolled = await LocalAuthentication.isEnrolledAsync();
+        } catch (e) {
+          console.warn("Failed to check biometric enrollment:", e);
+          enrolled = false;
+        }
+
+        setIsBiometricSupported(compatible && enrolled);
+
+        if (compatible) {
+          try {
+            const types =
+              await LocalAuthentication.supportedAuthenticationTypesAsync();
+            if (
+              types.includes(
+                LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+              )
+            ) {
+              setBiometricType(
+                LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+              );
+            } else if (
+              types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)
+            ) {
+              setBiometricType(
+                LocalAuthentication.AuthenticationType.FINGERPRINT
+              );
+            }
+          } catch (e) {
+            console.warn("Failed to get supported biometric types:", e);
+            // Leave biometricType as null
+          }
+        }
+      } catch (error) {
+        console.error("Biometric initialization error:", error);
+        setIsBiometricSupported(false);
+        setBiometricType(null);
       }
     })();
   }, []);

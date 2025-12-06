@@ -5,12 +5,11 @@ import { Platform } from "react-native";
 export async function registerForPushToken(): Promise<string | null> {
   try {
     if (!Device.isDevice) {
-      alert("Push notifications require a physical device");
       return null;
     }
 
-    console.log("[registerForPushToken] Requesting notification permissions...");
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
     if (existingStatus !== "granted") {
@@ -19,20 +18,13 @@ export async function registerForPushToken(): Promise<string | null> {
     }
 
     if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
       return null;
     }
 
-    console.log("[registerForPushToken] Permissions granted, getting Expo push token...");
     const tokenData = await Notifications.getExpoPushTokenAsync();
     const token = tokenData.data;
-    console.log("Expo Push Token:", token);
-    alert("Expo Push Token: " + token);
 
-    // Create Android notification channel if available. Wrap in a try/catch
-    // because this calls into native code which may be unavailable or
-    // incompatible on some builds — a native crash cannot be caught by JS,
-    // but this prevents JS-level exceptions and gives more logs.
+    // Create Android notification channel if available
     if (Platform.OS === "android") {
       try {
         if (typeof Notifications.setNotificationChannelAsync === "function") {
@@ -40,18 +32,14 @@ export async function registerForPushToken(): Promise<string | null> {
             name: "default",
             importance: Notifications.AndroidImportance?.MAX ?? 5,
           });
-          alert("[registerForPushToken] Android notification channel set up");
-        } else {
-          alert("[registerForPushToken] Notifications.setNotificationChannelAsync not available");
         }
-      } catch (err) {
-        alert("[registerForPushToken] setNotificationChannelAsync error: " + err);
+      } catch {
+        // Silently fail - not critical
       }
     }
 
     return token;
-  } catch (error) {
-    console.error("[registerForPushToken] Error:", error);
+  } catch {
     return null;
   }
 }
