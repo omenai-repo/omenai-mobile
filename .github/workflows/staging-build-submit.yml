@@ -87,7 +87,7 @@ jobs:
         run: |
           # Build and capture output
           set +e  # Don't exit on error immediately
-          BUILD_OUTPUT=$(eas build --clear-cache --platform ios --profile staging-ios --non-interactive --wait 2>&1)
+          BUILD_OUTPUT=$(eas build --platform ios --profile staging-ios --non-interactive --wait 2>&1)
           BUILD_EXIT_CODE=$?
           set -e  # Re-enable exit on error
 
