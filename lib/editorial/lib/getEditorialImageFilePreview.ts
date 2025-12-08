@@ -1,5 +1,5 @@
-import { ImageFormat, ImageGravity } from 'appwrite';
-import { storage } from 'appWrite_config';
+import { ImageFormat, ImageGravity } from "appwrite";
+import { storage } from "../../../appWrite_config";
 
 export const getEditorialImageFilePreview = (fileId: string, width: number) => {
   const fileData = storage.getFilePreview({
@@ -10,11 +10,11 @@ export const getEditorialImageFilePreview = (fileId: string, width: number) => {
     gravity: ImageGravity.Center, // crop center
     quality: 90, // slight compression
     borderWidth: 0, // border width
-    borderColor: 'FFFFFF', // border color
+    borderColor: "FFFFFF", // border color
     borderRadius: 0, // border radius
     opacity: 1, // full opacity
     rotation: 0, // no rotation
-    background: 'FFFFFF', // background color
+    background: "FFFFFF", // background color
     output: ImageFormat.Jpeg,
   });
 

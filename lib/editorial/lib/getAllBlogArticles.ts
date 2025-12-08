@@ -1,4 +1,4 @@
-import { editorial_database } from "appWrite_config";
+import { editorial_database } from "../../../appWrite_config";
 
 export async function listEditorials() {
   try {

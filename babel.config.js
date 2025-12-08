@@ -10,6 +10,33 @@ module.exports = function (api) {
       ],
     ],
 
-    plugins: ["react-native-reanimated/plugin"],
+    plugins: [
+      [
+        "module-resolver",
+        {
+          root: ["./"],
+          alias: {
+            assets: "./assets",
+            components: "./components",
+            config: "./config",
+            constants: "./constants",
+            data: "./data",
+            hooks: "./hooks",
+            json: "./json",
+            lib: "./lib",
+            navigation: "./navigation",
+            notifications: "./notifications",
+            providers: "./providers",
+            screens: "./screens",
+            scripts: "./scripts",
+            services: "./services",
+            store: "./store",
+            types: "./types",
+            utils: "./utils",
+          },
+        },
+      ],
+      "react-native-reanimated/plugin",
+    ],
   };
 };
