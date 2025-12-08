@@ -14,6 +14,9 @@ export default {
     version: APP_VERSION,
     orientation: "portrait",
     newArchEnabled: true,
+    experiments: {
+      tsconfigPaths: true,
+    },
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
 
