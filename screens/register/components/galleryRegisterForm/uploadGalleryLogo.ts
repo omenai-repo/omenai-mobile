@@ -1,5 +1,5 @@
-import { storage } from 'appWrite_config';
-import { ID } from 'appwrite';
+import { storage } from "../../../../appWrite_config";
+import { ID } from "appwrite";
 
 const uploadGalleryLogoContent = async (file: any) => {
   if (!file) return;

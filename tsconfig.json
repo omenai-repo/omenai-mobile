@@ -4,7 +4,23 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "*": ["./*"]
+      "assets/*": ["./assets/*"],
+      "components/*": ["./components/*"],
+      "config/*": ["./config/*"],
+      "constants/*": ["./constants/*"],
+      "data/*": ["./data/*"],
+      "hooks/*": ["./hooks/*"],
+      "json/*": ["./json/*"],
+      "lib/*": ["./lib/*"],
+      "navigation/*": ["./navigation/*"],
+      "notifications/*": ["./notifications/*"],
+      "providers/*": ["./providers/*"],
+      "screens/*": ["./screens/*"],
+      "scripts/*": ["./scripts/*"],
+      "services/*": ["./services/*"],
+      "store/*": ["./store/*"],
+      "types/*": ["./types/*"],
+      "utils/*": ["./utils/*"]
     }
   }
 }
