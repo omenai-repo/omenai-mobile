@@ -1,18 +1,18 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect, useState, useCallback } from "react";
-import { useAppStore } from "store/app/appStore";
-import { utils_appInit } from "utils/utils_appInit";
+import { useAppStore } from "./store/app/appStore";
+import { utils_appInit } from "./utils/utils_appInit";
 import { useFonts } from "expo-font";
-import IndividualNavigation from "navigation/IndividualNavigation";
-import AuthNavigation from "navigation/AuthNavigation";
-import GalleryNavigation from "navigation/GalleryNavigation";
+import IndividualNavigation from "./navigation/IndividualNavigation";
+import AuthNavigation from "./navigation/AuthNavigation";
+import GalleryNavigation from "./navigation/GalleryNavigation";
 import * as Linking from "expo-linking";
-import { screenName } from "constants/screenNames.constants";
+import { screenName } from "./constants/screenNames.constants";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { CopilotProvider } from "react-native-copilot";
 import * as SplashScreen from "expo-splash-screen";
-import ArtistNavigation from "navigation/ArtistNavigation";
+import ArtistNavigation from "./navigation/ArtistNavigation";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
@@ -22,13 +22,13 @@ import {
 } from "@tanstack/react-query";
 
 import { AppState, Platform } from "react-native";
-import { configureNotificationHandling } from "notifications/NotificationService";
-import { useNotifications } from "hooks/useNotifications";
-import { registerForPushToken } from "notifications/registerForPushToken";
-import { navigationRef } from "navigation/RootNavigation";
-import { useNotificationHandler } from "hooks/useNotificationHandler";
+import { configureNotificationHandling } from "./notifications/NotificationService";
+import { useNotifications } from "./hooks/useNotifications";
+import { registerForPushToken } from "./notifications/registerForPushToken";
+import { navigationRef } from "./navigation/RootNavigation";
+import { useNotificationHandler } from "./hooks/useNotificationHandler";
 import { StatusBar } from "expo-status-bar";
-import { clearStaleCredentials } from "hooks/useBiometrics";
+import { clearStaleCredentials } from "./hooks/useBiometrics";
 
 // Safely patch Platform.constants for web/dev environments only
 try {
