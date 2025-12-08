@@ -60,12 +60,14 @@ export default function App() {
 
   useEffect(() => {
     const initApp = async () => {
-      // Clear stale biometric credentials on fresh install (iOS Keychain persists after uninstall)
-      await clearStaleCredentials();
-
-      const token = await registerForPushToken();
-      if (token) {
-        setExpoPushToken(token);
+      try {
+        await clearStaleCredentials();
+        const token = await registerForPushToken();
+        if (token) {
+          setExpoPushToken(token);
+        }
+      } catch {
+        // Silently fail
       }
     };
 
