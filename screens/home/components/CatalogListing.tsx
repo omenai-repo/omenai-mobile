@@ -1,12 +1,12 @@
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { mediums } from '@/constants/mediums';
+import { mediums } from '#constants/mediums';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { screenName } from '@/constants/screenNames.constants';
-import { colors } from '@/config/colors.config';
+import { screenName } from '#constants/screenNames.constants';
+import { colors } from '#config/colors.config';
 import { Feather } from '@expo/vector-icons';
-import { fontNames } from '@/constants/fontNames.constants';
+import { fontNames } from '#constants/fontNames.constants';
 
 export default function CatalogListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();

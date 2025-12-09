@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import CloseButton from "@/components/buttons/CloseButton";
-import { galleryOrderModalStore } from "@/store/modal/galleryModalStore";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
-import Input from "@/components/inputs/Input";
-import LargeInput from "@/components/inputs/LargeInput";
-import { validate } from "@/lib/validations/provideShippingQuoteValidations/validator";
-import { updateShippingQuote } from "@/services/orders/updateShippingQuote";
+import CloseButton from "#components/buttons/CloseButton";
+import { galleryOrderModalStore } from "#store/modal/galleryModalStore";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import Input from "#components/inputs/Input";
+import LargeInput from "#components/inputs/LargeInput";
+import { validate } from "#lib/validations/provideShippingQuoteValidations/validator";
+import { updateShippingQuote } from "#services/orders/updateShippingQuote";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAppStore } from "@/store/app/appStore";
+import { useAppStore } from "#store/app/appStore";
 import CompletedModal from "./CompletedModal";
 
 // Type definitions for required form fields

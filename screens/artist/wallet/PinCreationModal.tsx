@@ -1,9 +1,9 @@
 import { BlurView } from "expo-blur";
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, Modal, Pressable, TextInput } from "react-native";
-import { colors } from "@/config/colors.config";
-import { updateWalletPin } from "@/services/wallet/updateWalletPin";
-import { useModalStore } from "@/store/modal/modalStore";
+import { colors } from "#config/colors.config";
+import { updateWalletPin } from "#services/wallet/updateWalletPin";
+import { useModalStore } from "#store/modal/modalStore";
 import tw from "twrnc";
 import { PinInputRow } from "./PinInputRow";
 

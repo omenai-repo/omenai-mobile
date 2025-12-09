@@ -1,6 +1,6 @@
 import React from "react";
-import GenericMediumFilter from "@/components/filter/generic/MediumFilter";
-import { artworkCategoriesStore } from "@/store/artworks/ArtworkCategoriesStore";
+import GenericMediumFilter from "#components/filter/generic/MediumFilter";
+import { artworkCategoriesStore } from "#store/artworks/ArtworkCategoriesStore";
 
 const options = [
   "Acrylic",

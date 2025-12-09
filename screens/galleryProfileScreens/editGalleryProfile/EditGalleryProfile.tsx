@@ -1,20 +1,20 @@
-import AddressField from "@/components/general/AddressField";
+import AddressField from "#components/general/AddressField";
 import { Platform, Text, View, KeyboardAvoidingView } from "react-native";
 import React, { useState } from "react";
-import BackHeaderTitle from "@/components/header/BackHeaderTitle";
-import Input from "@/components/inputs/Input";
-import LargeInput from "@/components/inputs/LargeInput";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
-import { galleryProfileUpdate } from "@/store/gallery/galleryProfileUpdateStore";
-import { updateProfile } from "@/services/update/updateProfile";
-import WithModal from "@/components/modal/WithModal";
-import { useModalStore } from "@/store/modal/modalStore";
-import { logout } from "@/utils/logout.utils";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import Input from "#components/inputs/Input";
+import LargeInput from "#components/inputs/LargeInput";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { galleryProfileUpdate } from "#store/gallery/galleryProfileUpdateStore";
+import { updateProfile } from "#services/update/updateProfile";
+import WithModal from "#components/modal/WithModal";
+import { useModalStore } from "#store/modal/modalStore";
+import { logout } from "#utils/logout.utils";
 import UploadNewLogo from "./components/GalleryLogo";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
+import ScrollWrapper from "#components/general/ScrollWrapper";
 import tw from "twrnc";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAppStore } from "@/store/app/appStore";
+import { useAppStore } from "#store/app/appStore";
 import { useNavigation } from "@react-navigation/native";
 
 export default function EditGalleryProfile() {

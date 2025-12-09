@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { RefreshControl, View } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
-import WithModal from '@/components/modal/WithModal';
-import ScrollWrapper from '@/components/general/ScrollWrapper';
-import Header from '@/components/header/Header';
+import WithModal from '#components/modal/WithModal';
+import ScrollWrapper from '#components/general/ScrollWrapper';
+import Header from '#components/header/Header';
 import Banner from './components/banner/Banner';
 import NewArtworksListing from './components/NewArtworksListing';
 import TrendingArtworks from './components/TrendingArtworks';
@@ -12,10 +12,10 @@ import CatalogListing from './components/CatalogListing';
 import RecentlyViewedArtworks from './components/recentlyViewed/RecentlyViewedArtworks';
 import FeaturedArtists from './components/featuredArtists/FeaturedArtists';
 import Editorials from './components/editorials/Editorials';
-import { HOME_QK } from '@/utils/queryKeys';
-import { useAppStore } from '@/store/app/appStore';
-import BlurStatusBar from '@/components/general/BlurStatusBar';
-import { useScrollY } from '@/hooks/useScrollY';
+import { HOME_QK } from '#utils/queryKeys';
+import { useAppStore } from '#store/app/appStore';
+import BlurStatusBar from '#components/general/BlurStatusBar';
+import { useScrollY } from '#hooks/useScrollY';
 
 export default function Home() {
   const [refreshing, setRefreshing] = useState(false);

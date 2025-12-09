@@ -1,6 +1,6 @@
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { colors } from '@/config/colors.config';
+import { colors } from '#config/colors.config';
 import { Feather } from '@expo/vector-icons';
 
 export default function CloseButton({ handlePress }: { handlePress: () => void }) {

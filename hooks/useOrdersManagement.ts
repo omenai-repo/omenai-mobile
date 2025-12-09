@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getOrdersBySellerId } from "@/services/orders/getOrdersBySellerId";
-import { organizeOrders } from "@/utils/utils_splitArray";
-import { useModalStore } from "@/store/modal/modalStore";
+import { getOrdersBySellerId } from "#services/orders/getOrdersBySellerId";
+import { organizeOrders } from "#utils/utils_splitArray";
+import { useModalStore } from "#store/modal/modalStore";
 
 interface UseOrdersManagementOptions {
   queryKey: readonly string[];

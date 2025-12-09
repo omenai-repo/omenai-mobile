@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import FilterButton from '@/components/filter/FilterButton'
+import FilterButton from '#components/filter/FilterButton'
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { screenName } from '@/constants/screenNames.constants';
+import { screenName } from '#constants/screenNames.constants';
 
 export default function ArtworksCountsContainer({
     count,

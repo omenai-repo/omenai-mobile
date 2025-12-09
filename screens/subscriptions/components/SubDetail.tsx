@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import { View, Text, Pressable, Image, Platform } from 'react-native';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
-import { utils_getCurrencySymbol } from '@/utils/utils_getCurrencySymbol';
-import { utils_formatPrice } from '@/utils/utils_priceFormatter';
-import { daysLeft } from '@/utils/utils_daysLeft';
-import { screenName } from '@/constants/screenNames.constants';
+import { utils_getCurrencySymbol } from '#utils/utils_getCurrencySymbol';
+import { utils_formatPrice } from '#utils/utils_priceFormatter';
+import { daysLeft } from '#utils/utils_daysLeft';
+import { screenName } from '#constants/screenNames.constants';
 
 export type SubData = {
   status: SubscriptionModelSchemaTypes['status'];

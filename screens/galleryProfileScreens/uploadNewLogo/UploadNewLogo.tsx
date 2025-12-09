@@ -1,18 +1,18 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
-import BackScreenButton from "@/components/buttons/BackScreenButton";
+import BackScreenButton from "#components/buttons/BackScreenButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors } from "@/config/colors.config";
+import { colors } from "#config/colors.config";
 import tw from "twrnc";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { updateLogo } from "@/services/update/updateLogo";
-import { useAppStore } from "@/store/app/appStore";
-import { useModalStore } from "@/store/modal/modalStore";
-import { logout } from "@/utils/logout.utils";
+import { updateLogo } from "#services/update/updateLogo";
+import { useAppStore } from "#store/app/appStore";
+import { useModalStore } from "#store/modal/modalStore";
+import { logout } from "#utils/logout.utils";
 import uploadLogo from "./uploadLogo";
 
 export default function UploadNewLogo() {

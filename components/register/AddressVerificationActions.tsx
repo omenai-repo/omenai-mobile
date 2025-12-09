@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import tw from "twrnc";
-import BackFormButton from "@/components/buttons/BackFormButton";
-import FittedBlackButton from "@/components/buttons/FittedBlackButton";
+import BackFormButton from "#components/buttons/BackFormButton";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 
 type AddressVerificationActionsProps = {
   readonly isLoading: boolean;

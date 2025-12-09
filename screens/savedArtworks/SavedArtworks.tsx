@@ -7,22 +7,22 @@ import {
   RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { colors } from "@/config/colors.config";
-import { fetchUserSavedArtworks } from "@/services/artworks/fetchUserSavedArtwork";
-import { UseSavedArtworksStore } from "@/store/artworks/SavedArtworksStore";
-import { getImageFileView } from "@/lib/storage/getImageFileView";
-import Loader from "@/components/general/Loader";
+import { colors } from "#config/colors.config";
+import { fetchUserSavedArtworks } from "#services/artworks/fetchUserSavedArtwork";
+import { UseSavedArtworksStore } from "#store/artworks/SavedArtworksStore";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import Loader from "#components/general/Loader";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
-import { screenName } from "@/constants/screenNames.constants";
-import { utils_handleFetchUserID } from "@/utils/utils_asyncStorage";
-import useLikedState from "@/hooks/useLikedState";
-import BackHeaderTitle from "@/components/header/BackHeaderTitle";
-import { utils_formatPrice } from "@/utils/utils_priceFormatter";
+import { screenName } from "#constants/screenNames.constants";
+import { utils_handleFetchUserID } from "#utils/utils_asyncStorage";
+import useLikedState from "#hooks/useLikedState";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { StackNavigationProp } from "@react-navigation/stack";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
-import BlurStatusBar from "@/components/general/BlurStatusBar";
-import { useScrollY } from "@/hooks/useScrollY";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import BlurStatusBar from "#components/general/BlurStatusBar";
+import { useScrollY } from "#hooks/useScrollY";
 import tw from "twrnc";
 
 type SavedArtworkItemProps = {

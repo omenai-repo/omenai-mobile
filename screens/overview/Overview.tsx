@@ -1,17 +1,17 @@
 import { StyleSheet, RefreshControl, View } from 'react-native';
 import React, { useCallback, useRef, useState } from 'react';
-import WithModal from '@/components/modal/WithModal';
-import Header from '@/components/header/Header';
+import WithModal from '#components/modal/WithModal';
+import Header from '#components/header/Header';
 import SalesOverview from './components/SalesOverview';
 import RecentOrders from './components/RecentOrders';
 import { HighlightCard } from './components/HighlightCard';
-import ScrollWrapper from '@/components/general/ScrollWrapper';
+import ScrollWrapper from '#components/general/ScrollWrapper';
 import PopularArtworks from './components/PopularArtworks';
 import { useQueryClient } from '@tanstack/react-query';
-import { QK } from '@/utils/queryKeys';
-import { useAppStore } from '@/store/app/appStore';
-import BlurStatusBar from '@/components/general/BlurStatusBar';
-import { useScrollY } from '@/hooks/useScrollY';
+import { QK } from '#utils/queryKeys';
+import { useAppStore } from '#store/app/appStore';
+import BlurStatusBar from '#components/general/BlurStatusBar';
+import { useScrollY } from '#hooks/useScrollY';
 
 export default function Overview() {
   const [refreshing, setRefreshing] = useState(false);

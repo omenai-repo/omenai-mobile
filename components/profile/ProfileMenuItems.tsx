@@ -1,8 +1,8 @@
 import React from "react";
 import { View } from "react-native";
 import tw from "twrnc";
-import { colors } from "@/config/colors.config";
-import { PageButtonCard } from "@/components/buttons/PageButtonCard";
+import { colors } from "#config/colors.config";
+import { PageButtonCard } from "#components/buttons/PageButtonCard";
 
 export type ProfileMenuItem = {
   name: string;

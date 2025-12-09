@@ -11,21 +11,21 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon, arrowUpRightWhite } from "@/utils/SvgImages";
-import Header from "@/components/header/Header";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
-import SalesOverview from "@/screens/overview/components/SalesOverview";
-import OrderslistingLoader from "@/screens/galleryOrders/components/OrderslistingLoader";
-import { utils_formatPrice } from "@/utils/utils_priceFormatter";
-import { getImageFileView } from "@/lib/storage/getImageFileView";
+import { dropdownIcon, dropUpIcon, arrowUpRightWhite } from "#utils/SvgImages";
+import Header from "#components/header/Header";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import SalesOverview from "#screens/overview/components/SalesOverview";
+import OrderslistingLoader from "#screens/galleryOrders/components/OrderslistingLoader";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { getImageFileView } from "#lib/storage/getImageFileView";
 import { HighlightCard } from "./HighlightCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getOverviewOrders } from "@/services/orders/getOverviewOrders";
-import { QK } from "@/utils/queryKeys";
-import { useAppStore } from "@/store/app/appStore";
-import BlurStatusBar from "@/components/general/BlurStatusBar";
-import { useScrollY } from "@/hooks/useScrollY";
-import { screenName } from "@/constants/screenNames.constants";
+import { getOverviewOrders } from "#services/orders/getOverviewOrders";
+import { QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
+import BlurStatusBar from "#components/general/BlurStatusBar";
+import { useScrollY } from "#hooks/useScrollY";
+import { screenName } from "#constants/screenNames.constants";
 
 export const RecentOrderContainer = ({
   id,

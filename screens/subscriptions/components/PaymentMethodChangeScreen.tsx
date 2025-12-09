@@ -4,9 +4,9 @@ import tw from "twrnc";
 import { useStripe } from "@stripe/stripe-react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAppStore } from "@/store/app/appStore";
-import { createPaymentMethodSetupIntent } from "@/services/stripe/createPaymentMethodSetupIntent";
-import { updatePaymentMethod } from "@/services/stripe/updatePaymentMethod";
+import { useAppStore } from "#store/app/appStore";
+import { createPaymentMethodSetupIntent } from "#services/stripe/createPaymentMethodSetupIntent";
+import { updatePaymentMethod } from "#services/stripe/updatePaymentMethod";
 import SuccessPaymentModal from "./SuccessPaymentModal";
 
 export default function PaymentMethodChangeScreen() {

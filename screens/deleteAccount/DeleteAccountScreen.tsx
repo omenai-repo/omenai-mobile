@@ -5,19 +5,19 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import tw from "twrnc";
 import { StatusBar } from "expo-status-bar";
 
-import ScrollWrapper from "@/components/general/ScrollWrapper";
-import DeleteAccountHeader from "@/components/deleteAccount/DeleteAccountHeader";
-import DeletionProcessSteps from "@/components/deleteAccount/DeletionProcessSteps";
-import DeletionReasonSection from "@/components/deleteAccount/DeletionReasonSection";
-import OtherMessageInput from "@/components/deleteAccount/OtherMessageInput";
-import DeleteAccountActions from "@/components/deleteAccount/DeleteAccountActions";
-import BlurStatusBar from "@/components/general/BlurStatusBar";
-import CommitmentsModal from "@/components/deleteAccount/CommitmentsModal";
-import { PRIVACY_POLICY_URL } from "@/constants/deleteAccount.constants";
-import { deleteAccount, type DeleteAccountResponse } from "@/services/requests/deleteAccount";
-import { useAppStore } from "@/store/app/appStore";
-import { useModalStore } from "@/store/modal/modalStore";
-import type { RootNavigationProp } from "@/types/navigation";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import DeleteAccountHeader from "#components/deleteAccount/DeleteAccountHeader";
+import DeletionProcessSteps from "#components/deleteAccount/DeletionProcessSteps";
+import DeletionReasonSection from "#components/deleteAccount/DeletionReasonSection";
+import OtherMessageInput from "#components/deleteAccount/OtherMessageInput";
+import DeleteAccountActions from "#components/deleteAccount/DeleteAccountActions";
+import BlurStatusBar from "#components/general/BlurStatusBar";
+import CommitmentsModal from "#components/deleteAccount/CommitmentsModal";
+import { PRIVACY_POLICY_URL } from "#constants/deleteAccount.constants";
+import { deleteAccount, type DeleteAccountResponse } from "#services/requests/deleteAccount";
+import { useAppStore } from "#store/app/appStore";
+import { useModalStore } from "#store/modal/modalStore";
+import type { RootNavigationProp } from "#types/navigation";
 
 export default function DeleteAccountScreen() {
   const navigation = useNavigation<RootNavigationProp>();

@@ -9,12 +9,12 @@ import {
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "@/constants/screenNames.constants";
-import { getImageFileView } from "@/lib/storage/getImageFileView";
-import { colors } from "@/config/colors.config";
-import { resizeImageDimensions } from "@/utils/utils_resizeImageDimensions.utils";
+import { screenName } from "#constants/screenNames.constants";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import { colors } from "#config/colors.config";
+import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 
-import { fontNames } from "@/constants/fontNames.constants";
+import { fontNames } from "#constants/fontNames.constants";
 
 export default function ViewHistoryCard({
   url,

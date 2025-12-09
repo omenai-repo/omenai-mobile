@@ -1,10 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { registerAccount } from "@/services/register/registerAccount";
-import { useModalStore } from "@/store/modal/modalStore";
-import { useAppStore } from "@/store/app/appStore";
+import { registerAccount } from "#services/register/registerAccount";
+import { useModalStore } from "#store/modal/modalStore";
+import { useAppStore } from "#store/app/appStore";
 import { screenName } from "../constants/screenNames.constants";
-import { storage } from "@/appWrite_config";
+import { storage } from "#appWrite_config";
 import uploadLogo from "../screens/galleryProfileScreens/uploadNewLogo/uploadLogo";
 
 type AccountType = "individual" | "gallery" | "artist";

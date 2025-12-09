@@ -3,13 +3,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { releaseOrderLock } from "@/services/orders/releaseOrderLock";
-import { useAppStore } from "@/store/app/appStore";
-import { useModalStore } from "@/store/modal/modalStore";
-import { colors } from "@/config/colors.config";
+import { releaseOrderLock } from "#services/orders/releaseOrderLock";
+import { useAppStore } from "#store/app/appStore";
+import { useModalStore } from "#store/modal/modalStore";
+import { colors } from "#config/colors.config";
 import { RefreshControl } from "react-native-gesture-handler";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import ScrollWrapper from "#components/general/ScrollWrapper";
 
 export default function CancleOrderPayment() {
   const navigation = useNavigation<StackNavigationProp<any>>();

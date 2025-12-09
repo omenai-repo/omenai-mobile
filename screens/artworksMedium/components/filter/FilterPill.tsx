@@ -1,9 +1,9 @@
 import React from "react";
-import { artworkActionStore } from "@/store/artworks/ArtworkActionStore";
-import { fetchPaginatedArtworks } from "@/services/artworks/fetchPaginatedArtworks";
-import { artworksMediumStore } from "@/store/artworks/ArtworksMediumsStore";
-import { artworksMediumFilterStore } from "@/store/artworks/ArtworksMediumFilterStore";
-import GenericFilterPill from "@/components/filter/generic/FilterPill";
+import { artworkActionStore } from "#store/artworks/ArtworkActionStore";
+import { fetchPaginatedArtworks } from "#services/artworks/fetchPaginatedArtworks";
+import { artworksMediumStore } from "#store/artworks/ArtworksMediumsStore";
+import { artworksMediumFilterStore } from "#store/artworks/ArtworksMediumFilterStore";
+import GenericFilterPill from "#components/filter/generic/FilterPill";
 
 export default function FilterPill({ filter }: { filter: string }) {
   const { removeSingleFilterSelection, selectedFilters } =

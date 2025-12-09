@@ -1,15 +1,15 @@
 import { View, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import tw from "twrnc";
-import Input from "@/components/inputs/Input";
-import { validate } from "@/lib/validations/validatorGroup";
-import CustomSelectPicker from "@/components/inputs/CustomSelectPicker";
-import { verifyAddress } from "@/services/register/verifyAddress";
-import FittedBlackButton from "@/components/buttons/FittedBlackButton";
-import { useModalStore } from "@/store/modal/modalStore";
+import Input from "#components/inputs/Input";
+import { validate } from "#lib/validations/validatorGroup";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import { verifyAddress } from "#services/register/verifyAddress";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import { useModalStore } from "#store/modal/modalStore";
 import { debounce } from "lodash";
-import AuthModal from "@/components/auth/AuthModal";
-import { checkMarkIcon, errorIcon } from "@/utils/SvgImages";
+import AuthModal from "#components/auth/AuthModal";
+import { checkMarkIcon, errorIcon } from "#utils/SvgImages";
 import {
   Country,
   State,
@@ -18,12 +18,12 @@ import {
   IState,
   ICity,
 } from "country-state-city";
-import { useAppStore } from "@/store/app/appStore";
-import BackHeaderTitle from "@/components/header/BackHeaderTitle";
-import { updateProfile } from "@/services/update/updateProfile";
-import { logout } from "@/utils/logout.utils";
-import AlertCard from "@/components/general/AlertCard";
-import { colors } from "@/config/colors.config";
+import { useAppStore } from "#store/app/appStore";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { updateProfile } from "#services/update/updateProfile";
+import { logout } from "#utils/logout.utils";
+import AlertCard from "#components/general/AlertCard";
+import { colors } from "#config/colors.config";
 
 const EditAddressScreen = () => {
   const { userSession, userType } = useAppStore();

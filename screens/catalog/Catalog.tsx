@@ -1,14 +1,14 @@
 import React, { useMemo, useCallback } from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { colors } from '@/config/colors.config';
-import FilterButton from '@/components/filter/FilterButton';
-import WithModal from '@/components/modal/WithModal';
-import MiniArtworkCardLoader from '@/components/general/MiniArtworkCardLoader';
-import ArtworksListing from '@/components/general/ArtworksListing';
+import { colors } from '#config/colors.config';
+import FilterButton from '#components/filter/FilterButton';
+import WithModal from '#components/modal/WithModal';
+import MiniArtworkCardLoader from '#components/general/MiniArtworkCardLoader';
+import ArtworksListing from '#components/general/ArtworksListing';
 import tailwind from 'twrnc';
-import { filterStore } from '@/store/artworks/FilterStore';
-import { fetchPaginatedArtworks } from '@/services/artworks/fetchPaginatedArtworks';
+import { filterStore } from '#store/artworks/FilterStore';
+import { fetchPaginatedArtworks } from '#services/artworks/fetchPaginatedArtworks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type FetchResult = {

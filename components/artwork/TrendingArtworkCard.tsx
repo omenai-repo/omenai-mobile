@@ -2,11 +2,11 @@ import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
-import { colors } from "@/config/colors.config";
-import { getImageFileView } from "@/lib/storage/getImageFileView";
+import { colors } from "#config/colors.config";
+import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "@/constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 
 type TrendingArtworkCardType = {
   title: string;

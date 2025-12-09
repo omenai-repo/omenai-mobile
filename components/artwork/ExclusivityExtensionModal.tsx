@@ -7,10 +7,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import tw from "twrnc";
-import { colors } from "@/config/colors.config";
-import { fontNames } from "@/constants/fontNames.constants";
-import { useModalStore } from "@/store/modal/modalStore";
-import { extendArtworkExclusivity } from "@/services/artworks/extendArtworkExclusivity";
+import { colors } from "#config/colors.config";
+import { fontNames } from "#constants/fontNames.constants";
+import { useModalStore } from "#store/modal/modalStore";
+import { extendArtworkExclusivity } from "#services/artworks/extendArtworkExclusivity";
 
 interface ExclusivityExtensionModalProps {
   readonly visible: boolean;

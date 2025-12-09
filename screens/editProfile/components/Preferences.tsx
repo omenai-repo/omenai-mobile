@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { colors } from '@/config/colors.config'
-import { mediumListing } from '@/data/uploadArtworkForm.data'
+import { colors } from '#config/colors.config'
+import { mediumListing } from '#data/uploadArtworkForm.data'
 
 type PreferencesProps = {
     label: string,

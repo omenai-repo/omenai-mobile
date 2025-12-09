@@ -4,10 +4,10 @@ import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from '@/constants/screenNames.constants';
-import { utils_formatPrice } from '@/utils/utils_priceFormatter';
-import { utils_getCurrencySymbol } from '@/utils/utils_getCurrencySymbol';
-import { utils_determinePlanChange } from '@/utils/utils_determinePlanChange';
+import { screenName } from '#constants/screenNames.constants';
+import { utils_formatPrice } from '#utils/utils_priceFormatter';
+import { utils_getCurrencySymbol } from '#utils/utils_getCurrencySymbol';
+import { utils_determinePlanChange } from '#utils/utils_determinePlanChange';
 
 type Props = {
   plan: SubscriptionPlanDataTypes;

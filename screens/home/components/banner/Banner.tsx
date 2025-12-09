@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, FlatList, View, Linking, Dimensions, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import { getPromotionalData } from '@/services/promotional/getPromotionalContent';
+import { getPromotionalData } from '#services/promotional/getPromotionalContent';
 import BannerLoader from './BannerLoader';
 import BannerCard from './BannerCard';
-import { colors } from '@/config/colors.config';
-import { HOME_QK } from '@/utils/queryKeys';
-import { useAppStore } from '@/store/app/appStore';
+import { colors } from '#config/colors.config';
+import { HOME_QK } from '#utils/queryKeys';
+import { useAppStore } from '#store/app/appStore';
 
 const { width: windowWidth } = Dimensions.get('window');
 const SIDE_PADDING = 15;

@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { colors } from "@/config/colors.config";
+import { colors } from "#config/colors.config";
 import { Feather } from "@expo/vector-icons";
 import tw from "twrnc";
 import GenericFilterOptionBox from "./FilterOptionBox";

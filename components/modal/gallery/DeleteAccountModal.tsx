@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import CloseButton from "@/components/buttons/CloseButton";
-import { galleryOrderModalStore } from "@/store/modal/galleryModalStore";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
+import CloseButton from "#components/buttons/CloseButton";
+import { galleryOrderModalStore } from "#store/modal/galleryModalStore";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import { Entypo } from "@expo/vector-icons";
-import { deleteGalleryAccount } from "@/services/requests/deleteGalleryAccount";
+import { deleteGalleryAccount } from "#services/requests/deleteGalleryAccount";
 
 export default function DeleteAccountModal() {
   const { clear } = galleryOrderModalStore();

@@ -8,7 +8,7 @@ import LongBlackButton from "../../../../components/buttons/LongBlackButton";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "../../../../constants/screenNames.constants";
-import { useLoginHandler } from "@/hooks/useLoginHandler";
+import { useLoginHandler } from "#hooks/useLoginHandler";
 
 export default function Individual() {
   const navigation = useNavigation<StackNavigationProp<any>>();

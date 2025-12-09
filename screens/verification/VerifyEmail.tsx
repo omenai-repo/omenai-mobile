@@ -1,18 +1,18 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
-import WithModal from '@/components/modal/WithModal';
-import AuthHeader from '@/components/auth/AuthHeader';
+import WithModal from '#components/modal/WithModal';
+import AuthHeader from '#components/auth/AuthHeader';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import Input from '@/components/inputs/Input';
-import LongBlackButton from '@/components/buttons/LongBlackButton';
-import { useModalStore } from '@/store/modal/modalStore';
-import Divider from '@/components/general/Divider';
-import { colors } from '@/config/colors.config';
-import { resendVerifyCode } from '@/services/verify/resendVerifyCode';
-import { verifyEmail } from '@/services/verify/verifyEmail';
-import { screenName } from '@/constants/screenNames.constants';
-import ScrollWrapper from '@/components/general/ScrollWrapper';
+import Input from '#components/inputs/Input';
+import LongBlackButton from '#components/buttons/LongBlackButton';
+import { useModalStore } from '#store/modal/modalStore';
+import Divider from '#components/general/Divider';
+import { colors } from '#config/colors.config';
+import { resendVerifyCode } from '#services/verify/resendVerifyCode';
+import { verifyEmail } from '#services/verify/verifyEmail';
+import { screenName } from '#constants/screenNames.constants';
+import ScrollWrapper from '#components/general/ScrollWrapper';
 
 export default function VerifyEmail() {
   const route = useRoute();

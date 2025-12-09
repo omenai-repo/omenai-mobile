@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import Input from "@/components/inputs/Input";
-import CustomSelectPicker from "@/components/inputs/CustomSelectPicker";
+import Input from "#components/inputs/Input";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 
 interface AddressFormFieldsProps {
   countryData: { label: string; value: string; currency?: string }[];

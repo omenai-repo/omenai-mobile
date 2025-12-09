@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import React, { useEffect } from "react";
 import CustomModal from "./CustomModal";
-import { useModalStore } from "@/store/modal/modalStore";
-import { colors } from "@/config/colors.config";
+import { useModalStore } from "#store/modal/modalStore";
+import { colors } from "#config/colors.config";
 import ConfirmationModal from "./ConfirmationModal";
 
 export type WithModalProps = {

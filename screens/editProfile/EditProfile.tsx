@@ -1,16 +1,16 @@
 import { StyleSheet, View, Text } from 'react-native';
 import React, { useState } from 'react';
-import WithModal from '@/components/modal/WithModal';
-import BackHeaderTitle from '@/components/header/BackHeaderTitle';
-import Input from '@/components/inputs/Input';
-import { useAppStore } from '@/store/app/appStore';
+import WithModal from '#components/modal/WithModal';
+import BackHeaderTitle from '#components/header/BackHeaderTitle';
+import Input from '#components/inputs/Input';
+import { useAppStore } from '#store/app/appStore';
 import Preferences from './components/Preferences';
-import LongBlackButton from '@/components/buttons/LongBlackButton';
-import { validate } from '@/lib/validations/validatorGroup';
-import { updateProfile } from '@/services/update/updateProfile';
-import { useModalStore } from '@/store/modal/modalStore';
-import { logout } from '@/utils/logout.utils';
-import ScrollWrapper from '@/components/general/ScrollWrapper';
+import LongBlackButton from '#components/buttons/LongBlackButton';
+import { validate } from '#lib/validations/validatorGroup';
+import { updateProfile } from '#services/update/updateProfile';
+import { useModalStore } from '#store/modal/modalStore';
+import { logout } from '#utils/logout.utils';
+import ScrollWrapper from '#components/general/ScrollWrapper';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
 

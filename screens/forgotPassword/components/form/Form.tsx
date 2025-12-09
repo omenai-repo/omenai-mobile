@@ -10,7 +10,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { screenName } from "../../../../constants/screenNames.constants";
 import { validate } from "../../../../lib/validations/validatorGroup";
-import { sendPasswordResetLink } from "@/services/password/sendPasswordResetLink";
+import { sendPasswordResetLink } from "#services/password/sendPasswordResetLink";
 
 export default function Form({
   setIsSuccess,

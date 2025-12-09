@@ -1,5 +1,5 @@
 import { ImageFormat, ImageGravity } from "appwrite";
-import { storage } from "@/appWrite_config";
+import { storage } from "#appWrite_config";
 
 export const getEditorialImageFilePreview = (fileId: string, width: number) => {
   const fileData = storage.getFilePreview({

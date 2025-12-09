@@ -10,18 +10,18 @@ import {
   useWindowDimensions,
 } from "react-native";
 import tw from "twrnc";
-import { useModalStore } from "@/store/modal/modalStore";
-import { createTransfer } from "@/services/wallet/createTransfer";
-import { getTransferRate } from "@/services/wallet/getTransferRate";
-import BackHeaderTitle from "@/components/header/BackHeaderTitle";
-import { getArtistCurrencySymbol } from "@/utils/utils_getArtistCurrencySymbol";
-import FittedBlackButton from "@/components/buttons/FittedBlackButton";
+import { useModalStore } from "#store/modal/modalStore";
+import { createTransfer } from "#services/wallet/createTransfer";
+import { getTransferRate } from "#services/wallet/getTransferRate";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { getArtistCurrencySymbol } from "#utils/utils_getArtistCurrencySymbol";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useQueryClient } from "@tanstack/react-query";
-import type { OtpInputRef } from "@/types/otp";
-import { useHighRiskFeatureFlag } from "@/hooks/useFeatureFlag";
-import WithdrawalBlocker from "@/components/blockers/payments/WithdrawalBlocker";
-import { OtpInput } from "@/components/inputs/OtpInput";
-import { AccountRow } from "@/components/general/AccountRow";
+import type { OtpInputRef } from "#types/otp";
+import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
+import WithdrawalBlocker from "#components/blockers/payments/WithdrawalBlocker";
+import { OtpInput } from "#components/inputs/OtpInput";
+import { AccountRow } from "#components/general/AccountRow";
 
 const WALLET_QK = ["wallet", "artist"] as const;
 const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;

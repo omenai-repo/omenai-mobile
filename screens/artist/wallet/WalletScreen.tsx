@@ -8,26 +8,26 @@ import {
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import tw from "twrnc";
-import { colors } from "@/config/colors.config";
+import { colors } from "#config/colors.config";
 import { SvgXml } from "react-native-svg";
 import { Ionicons } from "@expo/vector-icons";
-import { arrowUpRightWhite } from "@/utils/SvgImages";
+import { arrowUpRightWhite } from "#utils/SvgImages";
 import { useNavigation } from "@react-navigation/native";
-import { fetchArtistWalletData } from "@/services/wallet/fetchArtistWalletData";
-import { fetchArtistTransactions } from "@/services/wallet/fetchArtistTransactions";
-import { useModalStore } from "@/store/modal/modalStore";
-import { utils_formatPrice } from "@/utils/utils_priceFormatter";
-import { formatISODate } from "@/utils/utils_formatISODate";
+import { fetchArtistWalletData } from "#services/wallet/fetchArtistWalletData";
+import { fetchArtistTransactions } from "#services/wallet/fetchArtistTransactions";
+import { useModalStore } from "#store/modal/modalStore";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { formatISODate } from "#utils/utils_formatISODate";
 import { MotiView } from "moti";
-import WithModal from "@/components/modal/WithModal";
+import WithModal from "#components/modal/WithModal";
 import { PinCreationModal } from "./PinCreationModal";
 import { useIsFetching, useQuery } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import BlurStatusBar from "@/components/general/BlurStatusBar";
-import { useScrollY } from "@/hooks/useScrollY";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
-import FittedBlackButton from "@/components/buttons/FittedBlackButton";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
+import BlurStatusBar from "#components/general/BlurStatusBar";
+import { useScrollY } from "#hooks/useScrollY";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 export const WalletContainerSkeleton = () => {
   const SkeletonBlock = ({ style }: { style: any }) => (

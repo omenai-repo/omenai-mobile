@@ -1,4 +1,4 @@
-import { artist_countries_codes_currency } from '@/data/artist_countries_codes_currency';
+import { artist_countries_codes_currency } from '#data/artist_countries_codes_currency';
 
 export const getArtistCurrencySymbol = (currencyCode: string): string | null => {
   const match = artist_countries_codes_currency.find(

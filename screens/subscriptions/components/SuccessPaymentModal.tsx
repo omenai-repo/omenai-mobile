@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Modal, View, Text, Pressable, Animated, Easing, Platform } from "react-native";
 import tw from "twrnc";
-import { colors } from "@/config/colors.config";
+import { colors } from "#config/colors.config";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 

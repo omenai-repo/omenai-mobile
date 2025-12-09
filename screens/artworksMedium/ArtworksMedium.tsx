@@ -6,17 +6,17 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import WithModal from "@/components/modal/WithModal";
-import FilterButton from "@/components/filter/FilterButton";
-import { colors } from "@/config/colors.config";
-import MiniArtworkCardLoader from "@/components/general/MiniArtworkCardLoader";
-import { fetchArtworksByCriteria } from "@/services/artworks/fetchArtworksByCriteria";
-import { artworksMediumStore } from "@/store/artworks/ArtworksMediumsStore";
-import { useModalStore } from "@/store/modal/modalStore";
-import { screenName } from "@/constants/screenNames.constants";
-import { artworksMediumFilterStore } from "@/store/artworks/ArtworksMediumFilterStore";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
-import ArtworksListing from "@/components/general/ArtworksListing";
+import WithModal from "#components/modal/WithModal";
+import FilterButton from "#components/filter/FilterButton";
+import { colors } from "#config/colors.config";
+import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
+import { fetchArtworksByCriteria } from "#services/artworks/fetchArtworksByCriteria";
+import { artworksMediumStore } from "#store/artworks/ArtworksMediumsStore";
+import { useModalStore } from "#store/modal/modalStore";
+import { screenName } from "#constants/screenNames.constants";
+import { artworksMediumFilterStore } from "#store/artworks/ArtworksMediumFilterStore";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import ArtworksListing from "#components/general/ArtworksListing";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ArtworksMedium() {

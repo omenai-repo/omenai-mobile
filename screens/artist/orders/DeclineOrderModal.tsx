@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
 import tw from 'twrnc';
-import { useModalStore } from '@/store/modal/modalStore';
-import { declineOrderRequest } from '@/services/orders/declineOrderRequest';
+import { useModalStore } from '#store/modal/modalStore';
+import { declineOrderRequest } from '#services/orders/declineOrderRequest';
 
 const declineReasonMapping: Record<string, string> = {
   // 1. Artist’s personal attachment

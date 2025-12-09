@@ -5,7 +5,7 @@ import Input from "../../../../components/inputs/Input";
 import NextButton from "../../../../components/buttons/NextButton";
 import { useIndividualAuthRegisterStore } from "../../../../store/auth/register/IndividualAuthRegisterStore";
 import tw from "twrnc";
-import { useFormValidation } from "@/hooks/useFormValidation";
+import { useFormValidation } from "#hooks/useFormValidation";
 
 export default function AccountDetailsInput() {
   const {

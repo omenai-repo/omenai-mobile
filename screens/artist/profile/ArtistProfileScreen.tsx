@@ -1,32 +1,32 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { colors } from "@/config/colors.config";
+import { colors } from "#config/colors.config";
 import ProfileMenuItems, {
   ProfileMenuItem,
-} from "@/components/profile/ProfileMenuItems";
+} from "#components/profile/ProfileMenuItems";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { screenName } from "@/constants/screenNames.constants";
-import { logout } from "@/utils/logout.utils";
-import WithGalleryModal from "@/components/modal/WithGalleryModal";
-import { useAppStore } from "@/store/app/appStore";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
-import { utils_getAsyncData } from "@/utils/utils_asyncStorage";
-import { changePasswsordIcon, getDeleteIcon } from "@/utils/SvgImages";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
+import { screenName } from "#constants/screenNames.constants";
+import { logout } from "#utils/logout.utils";
+import WithGalleryModal from "#components/modal/WithGalleryModal";
+import { useAppStore } from "#store/app/appStore";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import { changePasswsordIcon, getDeleteIcon } from "#utils/SvgImages";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
-import LoadingContainer from "@/screens/artistOnboarding/LoadingContainer";
-import { getEditEligibility } from "@/services/update/getEditEligibility";
-import { useModalStore } from "@/store/modal/modalStore";
+import LoadingContainer from "#screens/artistOnboarding/LoadingContainer";
+import { getEditEligibility } from "#services/update/getEditEligibility";
+import { useModalStore } from "#store/modal/modalStore";
 import EligibityResponseScreen from "./EligibityResponseScreen";
-import Logo from "@/screens/galleryProfileScreens/galleryProfile/components/Logo";
+import Logo from "#screens/galleryProfileScreens/galleryProfile/components/Logo";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQueryClient } from "@tanstack/react-query";
-import BlurStatusBar from "@/components/general/BlurStatusBar";
-import { useScrollY } from "@/hooks/useScrollY";
-import FittedBlackButton from "@/components/buttons/FittedBlackButton";
-import { useProfileMenuOptions } from "@/hooks/useProfileMenuOptions";
+import BlurStatusBar from "#components/general/BlurStatusBar";
+import { useScrollY } from "#hooks/useScrollY";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
 
 type userDataType = {
   name: string;

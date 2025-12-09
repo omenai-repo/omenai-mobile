@@ -8,14 +8,14 @@ import {
   View,
 } from "react-native";
 import React, { useState } from "react";
-import { colors } from "@/config/colors.config";
-import { utils_formatPrice } from "@/utils/utils_priceFormatter";
-import { getImageFileView } from "@/lib/storage/getImageFileView";
-import FittedBlackButton from "@/components/buttons/FittedBlackButton";
+import { colors } from "#config/colors.config";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "@/constants/screenNames.constants";
-import { useModalStore } from "@/store/modal/modalStore";
+import { screenName } from "#constants/screenNames.constants";
+import { useModalStore } from "#store/modal/modalStore";
 import StatusPill from "./StatusPill";
 // removed feature-flag usage here — payment gating moved to OrderContainer
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";

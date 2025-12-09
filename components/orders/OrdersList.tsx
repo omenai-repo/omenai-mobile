@@ -2,8 +2,8 @@ import React from "react";
 import { FlatList, RefreshControl } from "react-native";
 import tw from "twrnc";
 import OrderContainer from "./OrderContainer";
-import { formatIntlDateTime } from "@/utils/utils_formatIntlDateTime";
-import { utils_formatPrice } from "@/utils/utils_priceFormatter";
+import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
 
 interface OrdersListProps {
   data: any[];

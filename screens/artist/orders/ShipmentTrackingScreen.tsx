@@ -12,14 +12,14 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { locationIcon } from "@/utils/SvgImages";
-import { getImageFileView } from "@/lib/storage/getImageFileView";
-import { formatEventDate } from "@/utils/utils_formatEventDate";
-import { getTrackingData } from "@/services/orders/getTrackingData";
-import BackHeaderTitle from "@/components/header/BackHeaderTitle";
+import { locationIcon } from "#utils/SvgImages";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import { formatEventDate } from "#utils/utils_formatEventDate";
+import { getTrackingData } from "#services/orders/getTrackingData";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { useRoute } from "@react-navigation/native";
-import { useLowRiskFeatureFlag } from "@/hooks/useFeatureFlag";
-import TrackingDowntimeBlocker from "@/components/blockers/tracking/TrackingDowntimeBlocker";
+import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
+import TrackingDowntimeBlocker from "#components/blockers/tracking/TrackingDowntimeBlocker";
 
 interface TrackingData {
   artwork_data: {

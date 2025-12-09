@@ -1,12 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { Alert } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { loginAccount } from "@/services/login/loginAccount";
-import { utils_storeAsyncData } from "@/utils/utils_asyncStorage";
-import { useAppStore } from "@/store/app/appStore";
-import { useModalStore } from "@/store/modal/modalStore";
-import { screenName } from "@/constants/screenNames.constants";
-import { useBiometrics } from "@/hooks/useBiometrics";
+import { loginAccount } from "#services/login/loginAccount";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
+import { useAppStore } from "#store/app/appStore";
+import { useModalStore } from "#store/modal/modalStore";
+import { screenName } from "#constants/screenNames.constants";
+import { useBiometrics } from "#hooks/useBiometrics";
 
 type UserType = "individual" | "gallery" | "artist";
 

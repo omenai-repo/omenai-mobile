@@ -1,5 +1,5 @@
 import tw from "twrnc";
-import { colors } from "@/config/colors.config";
+import { colors } from "#config/colors.config";
 
 export const termsAndConditionsStyles = {
   title: [tw`font-medium text-base`, { color: colors.primary_black }],

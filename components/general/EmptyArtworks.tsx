@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
 
 import emptyImage from '../../assets/icons/empty-artworks.png';
-import { colors } from '@/config/colors.config';
+import { colors } from '#config/colors.config';
 
 export default function EmptyArtworks({size, writeUp, darkTheme}: {size: number, writeUp?: string, darkTheme?: boolean}) {
     return (

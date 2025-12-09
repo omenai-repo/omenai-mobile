@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import tw from 'twrnc';
-import { updateWalletPin } from '@/services/wallet/updateWalletPin';
-import { useModalStore } from '@/store/modal/modalStore';
-import BackHeaderTitle from '@/components/header/BackHeaderTitle';
+import { updateWalletPin } from '#services/wallet/updateWalletPin';
+import { useModalStore } from '#store/modal/modalStore';
+import BackHeaderTitle from '#components/header/BackHeaderTitle';
 
 export const ResetPinScreen = ({ navigation }: { navigation: any }) => {
   const [newPin, setNewPin] = useState<string[]>(['', '', '', '']);

@@ -1,16 +1,16 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react';
-import { colors } from '@/config/colors.config';
-import omenai_logo from '@/assets/icons/omenai_logo_cut.png';
-import { daysLeft } from '@/utils/utils_daysLeft';
-import { utils_formatPrice } from '@/utils/utils_priceFormatter';
-import { utils_getCurrencySymbol } from '@/utils/utils_getCurrencySymbol';
-import { formatIntlDateTime } from '@/utils/utils_formatIntlDateTime';
-import { getFutureDate } from '@/utils/utils_getFutureDate';
+import { colors } from '#config/colors.config';
+import omenai_logo from '#assets/icons/omenai_logo_cut.png';
+import { daysLeft } from '#utils/utils_daysLeft';
+import { utils_formatPrice } from '#utils/utils_priceFormatter';
+import { utils_getCurrencySymbol } from '#utils/utils_getCurrencySymbol';
+import { formatIntlDateTime } from '#utils/utils_formatIntlDateTime';
+import { getFutureDate } from '#utils/utils_getFutureDate';
 import Button from './Button';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { screenName } from '@/constants/screenNames.constants';
+import { screenName } from '#constants/screenNames.constants';
 
 type UpcomingBillingProps = {
     end_date: Date;

@@ -2,16 +2,16 @@ import { Text, View, ScrollView, RefreshControl } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
-import WithModal from "@/components/modal/WithModal";
-import TabSwitcher from "@/components/orders/TabSwitcher";
-import OrderslistingLoader from "@/screens/galleryOrders/components/OrderslistingLoader";
-import EmptyOrdersListing from "@/screens/galleryOrders/components/EmptyOrdersListing";
-import YearDropdown from "@/screens/artist/orders/YearDropdown";
-import DeclineOrderModal from "@/screens/artist/orders/DeclineOrderModal";
+import WithModal from "#components/modal/WithModal";
+import TabSwitcher from "#components/orders/TabSwitcher";
+import OrderslistingLoader from "#screens/galleryOrders/components/OrderslistingLoader";
+import EmptyOrdersListing from "#screens/galleryOrders/components/EmptyOrdersListing";
+import YearDropdown from "#screens/artist/orders/YearDropdown";
+import DeclineOrderModal from "#screens/artist/orders/DeclineOrderModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useOrdersManagement } from "@/hooks/useOrdersManagement";
-import { OrdersList } from "@/components/orders/OrdersList";
+import { useOrdersManagement } from "#hooks/useOrdersManagement";
+import { OrdersList } from "#components/orders/OrdersList";
 
 interface OrdersScreenProps {
   queryKey: readonly [string, ...string[]];
