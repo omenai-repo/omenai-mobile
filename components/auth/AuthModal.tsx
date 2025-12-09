@@ -1,7 +1,7 @@
 import { View, Text, Modal, Pressable, useWindowDimensions } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 import { SvgXml } from "react-native-svg";
 import { LinearGradient } from "expo-linear-gradient";
 

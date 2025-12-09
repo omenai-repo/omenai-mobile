@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 import tailwind from "twrnc";
 
 export default function BannerLoader() {

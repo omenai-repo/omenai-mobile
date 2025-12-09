@@ -1,10 +1,10 @@
 import { Alert, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useHomeStore } from 'store/home/homeStore'
+import { useHomeStore } from '@/store/home/homeStore'
 import { fetchArtworks } from '../../../../services/artworks/fetchArtworks'
 import TrendingArtworksListing from './TrendingArtworksListing'
 import RecentArtworkListing from './RecentArtworkListing'
-import { fetchCuratedArtworks } from 'services/artworks/fetchCuratedArtworks'
+import { fetchCuratedArtworks } from '@/services/artworks/fetchCuratedArtworks'
 
 export default function Explore() {
     const { isLoading, setIsLoading, listingType } = useHomeStore();

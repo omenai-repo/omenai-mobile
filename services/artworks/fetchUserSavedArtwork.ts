@@ -1,6 +1,6 @@
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { logout } from "utils/logout.utils";
+import { utils_getAsyncData } from "@/utils/utils_asyncStorage";
+import { logout } from "@/utils/logout.utils";
 
 export async function fetchUserSavedArtworks(){
 

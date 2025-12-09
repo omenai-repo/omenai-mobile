@@ -3,12 +3,12 @@ import OrderHeader from "./OrderHeader";
 import React from "react";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { StatusBadge } from "components/orders/StatusBadge";
-import { OrderActions } from "components/orders/OrderActions";
+import { dropdownIcon, dropUpIcon } from "@/utils/SvgImages";
+import { getImageFileView } from "@/lib/storage/getImageFileView";
+import { StatusBadge } from "@/components/orders/StatusBadge";
+import { OrderActions } from "@/components/orders/OrderActions";
 import { DetailRow } from "./DetailRow";
-import type { OrderContainerProps } from "types/orders";
+import type { OrderContainerProps } from "@/types/orders";
 
 export const OrderContainer = (props: OrderContainerProps) => {
   const {

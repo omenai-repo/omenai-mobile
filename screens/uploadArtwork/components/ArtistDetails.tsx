@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
-import Input from 'components/inputs/Input';
-import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
-import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { countriesListing } from 'data/uploadArtworkForm.data';
-import { validate } from 'lib/validations/upload_artwork_input_validator/validator';
-import { useAppStore } from 'store/app/appStore';
+import Input from '@/components/inputs/Input';
+import CustomSelectPicker from '@/components/inputs/CustomSelectPicker';
+import { uploadArtworkStore } from '@/store/gallery/uploadArtworkStore';
+import LongBlackButton from '@/components/buttons/LongBlackButton';
+import { countriesListing } from '@/data/uploadArtworkForm.data';
+import { validate } from '@/lib/validations/upload_artwork_input_validator/validator';
+import { useAppStore } from '@/store/app/appStore';
 import { Country, ICountry } from 'country-state-city';
 import { debounce } from 'lodash';
 

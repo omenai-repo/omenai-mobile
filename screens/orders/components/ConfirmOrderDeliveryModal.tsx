@@ -3,10 +3,10 @@ import { useRef, useState } from 'react';
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
-import loaderAnimation from 'assets/other/loader-animation.json';
-import { confirmOrderDelivery } from 'services/orders/confirmOrderDelivery';
-import { useModalStore } from 'store/modal/modalStore';
-import { useCollectorOrders } from 'hooks/useCollectorOrders';
+import loaderAnimation from '@/assets/other/loader-animation.json';
+import { confirmOrderDelivery } from '@/services/orders/confirmOrderDelivery';
+import { useModalStore } from '@/store/modal/modalStore';
+import { useCollectorOrders } from '@/hooks/useCollectorOrders';
 
 type ConfirmDeliveryProps = {
   orderId: string;

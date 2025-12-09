@@ -2,9 +2,9 @@ import { Dimensions, ImageBackground, Text, TouchableOpacity, View } from "react
 import React, { memo } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
-import { getPromotionalFileView } from "lib/storage/getPromotionalsFileView";
-import { fontNames } from "constants/fontNames.constants";
+import { colors } from "@/config/colors.config";
+import { getPromotionalFileView } from "@/lib/storage/getPromotionalsFileView";
+import { fontNames } from "@/constants/fontNames.constants";
 
 type BannerItemProps = {
   image: string;

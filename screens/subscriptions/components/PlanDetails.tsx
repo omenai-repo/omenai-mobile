@@ -1,16 +1,16 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
-import { colors } from 'config/colors.config';
-import omenai_logo from 'assets/icons/omenai_logo_cut.png';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol';
+import { colors } from '@/config/colors.config';
+import omenai_logo from '@/assets/icons/omenai_logo_cut.png';
+import { utils_formatPrice } from '@/utils/utils_priceFormatter';
+import { utils_getCurrencySymbol } from '@/utils/utils_getCurrencySymbol';
 import Button from './Button';
-import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
+import { formatIntlDateTime } from '@/utils/utils_formatIntlDateTime';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { daysLeft } from 'utils/utils_daysLeft';
-import { useModalStore } from 'store/modal/modalStore';
+import { screenName } from '@/constants/screenNames.constants';
+import { daysLeft } from '@/utils/utils_daysLeft';
+import { useModalStore } from '@/store/modal/modalStore';
 
 type PlanDetailsProps = {
   sub_status: string;

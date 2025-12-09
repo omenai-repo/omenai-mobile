@@ -5,7 +5,7 @@ import { Alert, Linking } from "react-native";
 import {
   utils_getAsyncData,
   utils_storeAsyncData,
-} from "utils/utils_asyncStorage";
+} from "@/utils/utils_asyncStorage";
 
 const BIOMETRIC_KEY_PREFIX = "biometric_auth_";
 const INSTALL_CHECK_KEY = "app_installed_flag";

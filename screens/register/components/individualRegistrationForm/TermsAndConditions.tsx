@@ -1,8 +1,8 @@
 import { acceptTermsList } from "../../../../constants/accetTerms.constants";
 import { useIndividualAuthRegisterStore } from "../../../../store/auth/register/IndividualAuthRegisterStore";
-import { useRegistrationHandler } from "hooks/useRegistrationHandler";
-import { useTermsSelection } from "hooks/useTermsSelection";
-import { TermsAndConditionsForm } from "components/register/TermsAndConditionsForm";
+import { useRegistrationHandler } from "@/hooks/useRegistrationHandler";
+import { useTermsSelection } from "@/hooks/useTermsSelection";
+import { TermsAndConditionsForm } from "@/components/register/TermsAndConditionsForm";
 
 export default function TermsAndConditions() {
   const {

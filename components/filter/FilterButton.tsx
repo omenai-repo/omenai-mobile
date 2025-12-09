@@ -1,11 +1,11 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { colors } from 'config/colors.config';
+import { colors } from '@/config/colors.config';
 import sortIcon from '../../assets/icons/sort-icon.png';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from 'constants/screenNames.constants';
+import { screenName } from '@/constants/screenNames.constants';
 import tw from 'twrnc';
 
 type FilterButtonProps = {

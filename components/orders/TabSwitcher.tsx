@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, Pressable, Animated, Platform } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 
 type Tab = {
   title: string;

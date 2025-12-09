@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import MiniArtworkCard from "components/artwork/MiniArtworkCard";
+import MiniArtworkCard from "@/components/artwork/MiniArtworkCard";
 import { FlashList } from "@shopify/flash-list";
 
 export default function ArtworksListing({ data }: { data: any[] }) {

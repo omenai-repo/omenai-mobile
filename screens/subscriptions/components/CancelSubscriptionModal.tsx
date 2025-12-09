@@ -10,12 +10,12 @@ import {
   Platform,
 } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 import { Ionicons } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAppStore } from "store/app/appStore";
-import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
-import { cancelSubscription } from "services/subscriptions/cancelSubscription";
+import { useAppStore } from "@/store/app/appStore";
+import { formatIntlDateTime } from "@/utils/utils_formatIntlDateTime";
+import { cancelSubscription } from "@/services/subscriptions/cancelSubscription";
 
 type Props = {
   visible: boolean;

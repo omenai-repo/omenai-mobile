@@ -1,7 +1,7 @@
 import { View, Text, useWindowDimensions } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import Input from "components/inputs/Input";
+import Input from "@/components/inputs/Input";
 
 type SocialsProps = {
   socials: {

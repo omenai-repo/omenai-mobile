@@ -2,13 +2,13 @@ import { View, Text, useWindowDimensions, TouchableOpacity } from 'react-native'
 import React from 'react';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
-import { plusIcon, userProfileIcon } from 'utils/SvgImages';
-import NextButton from 'components/buttons/NextButton';
-import { useArtistAuthRegisterStore } from 'store/auth/register/ArtistAuthRegisterStore';
-import BackFormButton from 'components/buttons/BackFormButton';
+import { plusIcon, userProfileIcon } from '@/utils/SvgImages';
+import NextButton from '@/components/buttons/NextButton';
+import { useArtistAuthRegisterStore } from '@/store/auth/register/ArtistAuthRegisterStore';
+import BackFormButton from '@/components/buttons/BackFormButton';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'react-native';
-import { useModalStore } from 'store/modal/modalStore';
+import { useModalStore } from '@/store/modal/modalStore';
 
 const UploadPhoto = () => {
   const { width, height } = useWindowDimensions();

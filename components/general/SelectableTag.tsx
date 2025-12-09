@@ -1,6 +1,6 @@
 import { Pressable, Text } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 
 type SelectableTagProps = {
   readonly name: string;

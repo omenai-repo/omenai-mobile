@@ -1,11 +1,11 @@
 import { Platform, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 import { Feather } from "@expo/vector-icons";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import BackScreenButton from "@/components/buttons/BackScreenButton";
+import LongBlackButton from "@/components/buttons/LongBlackButton";
+import ScrollWrapper from "@/components/general/ScrollWrapper";
 import {
   SafeAreaView,
   useSafeAreaInsets,

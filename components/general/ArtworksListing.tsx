@@ -8,13 +8,13 @@ import {
   NativeScrollEvent,
   RefreshControl,
 } from "react-native";
-import MiniArtworkCard from "components/artwork/MiniArtworkCard";
+import MiniArtworkCard from "@/components/artwork/MiniArtworkCard";
 import EmptyArtworks from "./EmptyArtworks";
 import Loader from "./Loader";
 import { debounce } from "lodash";
 import tw from "twrnc";
-import { getNumberOfColumns } from "utils/utils_screen";
-import { useAppStore } from "store/app/appStore";
+import { getNumberOfColumns } from "@/utils/utils_screen";
+import { useAppStore } from "@/store/app/appStore";
 
 const NUM_COLUMNS = getNumberOfColumns();
 

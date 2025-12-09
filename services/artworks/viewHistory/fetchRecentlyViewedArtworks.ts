@@ -1,4 +1,4 @@
-import { apiUrl, authorization, originHeader, userAgent } from 'constants/apiUrl.constants';
+import { apiUrl, authorization, originHeader, userAgent } from '@/constants/apiUrl.constants';
 
 export async function fetchViewHistory(user_id: string) {
   try {

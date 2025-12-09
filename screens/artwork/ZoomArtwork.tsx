@@ -3,8 +3,8 @@ import { Modal, Dimensions, View, Image } from "react-native";
 import { GestureHandlerRootView, Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import tw from "twrnc";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import { getImageFileView } from "lib/storage/getImageFileView";
+import BackScreenButton from "@/components/buttons/BackScreenButton";
+import { getImageFileView } from "@/lib/storage/getImageFileView";
 
 const ZoomArtwork = ({
   modalVisible,

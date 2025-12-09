@@ -10,10 +10,10 @@ import RenderHtml from "react-native-render-html";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import tw from "twrnc";
-import { getEditorialImageFilePreview } from "lib/editorial/lib/getEditorialImageFilePreview";
+import { getEditorialImageFilePreview } from "@/lib/editorial/lib/getEditorialImageFilePreview";
 import { useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import BlurStatusBar from "components/general/BlurStatusBar";
+import BlurStatusBar from "@/components/general/BlurStatusBar";
 
 dayjs.extend(relativeTime);
 

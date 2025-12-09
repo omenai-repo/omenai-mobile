@@ -7,9 +7,9 @@ import {
 } from "react-native";
 import React from "react";
 import { colors } from "../../config/colors.config";
-import { useSearchStore } from "store/search/searchStore";
+import { useSearchStore } from "@/store/search/searchStore";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
+import { screenName } from "@/constants/screenNames.constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 export default function SearchInput() {

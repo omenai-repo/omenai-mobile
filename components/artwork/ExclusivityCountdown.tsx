@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import tw from 'twrnc';
-import { fontNames } from 'constants/fontNames.constants';
+import { fontNames } from '@/constants/fontNames.constants';
 import ExclusivityExtensionModal from './ExclusivityExtensionModal';
 
 interface ExclusivityCountdownProps {

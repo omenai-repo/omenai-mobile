@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, Animated, Easing } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { useQuery } from '@tanstack/react-query';
-import { getSalesActivityData } from 'services/overview/getSalesActivityData';
-import { salesDataAlgorithm } from 'utils/utils_salesDataAlgorithm';
-import { QK } from 'utils/queryKeys';
-import { useAppStore } from 'store/app/appStore';
+import { getSalesActivityData } from '@/services/overview/getSalesActivityData';
+import { salesDataAlgorithm } from '@/utils/utils_salesDataAlgorithm';
+import { QK } from '@/utils/queryKeys';
+import { useAppStore } from '@/store/app/appStore';
 
 const { width } = Dimensions.get('window');
 

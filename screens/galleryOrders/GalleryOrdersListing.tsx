@@ -1,5 +1,5 @@
 import React from "react";
-import { OrdersScreen } from "screens/orders/OrdersScreen";
+import { OrdersScreen } from "@/screens/orders/OrdersScreen";
 
 const GALLERY_ORDERS_QK = ["orders", "gallery"] as const;
 

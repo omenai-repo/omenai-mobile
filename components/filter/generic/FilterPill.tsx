@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 import tw from "twrnc";
 
 export default function GenericFilterPill({

@@ -3,14 +3,14 @@ import React from "react";
 import tw from "twrnc";
 import LongBlackButton from "../../../../components/buttons/LongBlackButton";
 import Input from "../../../../components/inputs/Input";
-import PasswordInput from "components/inputs/PasswordInput";
-import WithModal from "components/modal/WithModal";
+import PasswordInput from "@/components/inputs/PasswordInput";
+import WithModal from "@/components/modal/WithModal";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { screenName } from "constants/screenNames.constants";
+import { screenName } from "@/constants/screenNames.constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { useArtistAuthLoginStore } from "store/auth/login/ArtistAuthLoginStore";
-import { useLoginHandler } from "hooks/useLoginHandler";
+import { useArtistAuthLoginStore } from "@/store/auth/login/ArtistAuthLoginStore";
+import { useLoginHandler } from "@/hooks/useLoginHandler";
 
 export default function Artist() {
   const { artistLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =

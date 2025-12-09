@@ -1,6 +1,6 @@
-import filterArtObjectsByMedium from "utils/utils_filterArtObjectsByMedium";
+import filterArtObjectsByMedium from "@/utils/utils_filterArtObjectsByMedium";
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
+import { utils_getAsyncData } from "@/utils/utils_asyncStorage";
 
 export async function fetchCuratedArtworks({page, filters}:{page: number, filters?: any}){
 

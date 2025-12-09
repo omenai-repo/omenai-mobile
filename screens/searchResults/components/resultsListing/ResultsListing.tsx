@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import React from "react";
-import MiniArtworkCard from "components/artwork/MiniArtworkCard";
+import MiniArtworkCard from "@/components/artwork/MiniArtworkCard";
 import { FlashList } from "@shopify/flash-list";
 
 const ArtworkItem = ({

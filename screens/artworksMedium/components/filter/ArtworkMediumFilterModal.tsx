@@ -1,14 +1,14 @@
 import React from "react";
 import PriceFilter from "./PriceFilter";
 import YearFilter from "./YearFilter";
-import { artworkActionStore } from "store/artworks/ArtworkActionStore";
-import { fetchPaginatedArtworks } from "services/artworks/fetchPaginatedArtworks";
+import { artworkActionStore } from "@/store/artworks/ArtworkActionStore";
+import { fetchPaginatedArtworks } from "@/services/artworks/fetchPaginatedArtworks";
 import RarityFilter from "./RarityFilter";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { artworksMediumFilterStore } from "store/artworks/ArtworksMediumFilterStore";
-import { artworksMediumStore } from "store/artworks/ArtworksMediumsStore";
-import GenericFilterLayout from "components/filter/GenericFilterLayout";
+import { artworksMediumFilterStore } from "@/store/artworks/ArtworksMediumFilterStore";
+import { artworksMediumStore } from "@/store/artworks/ArtworksMediumsStore";
+import GenericFilterLayout from "@/components/filter/GenericFilterLayout";
 
 export default function ArtworkMediumFilterModal() {
   const navigation = useNavigation<StackNavigationProp<any>>();

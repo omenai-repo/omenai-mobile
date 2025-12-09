@@ -6,9 +6,9 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
-import LongBlackButton from "components/buttons/LongBlackButton";
+import LongBlackButton from "@/components/buttons/LongBlackButton";
 
 type CommitmentsModalProps = Readonly<{
   isVisible: boolean;

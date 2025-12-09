@@ -1,13 +1,13 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { colors } from "config/colors.config";
-import { orderCardStatusTypes } from "screens/galleryOrders/components/OrdersListing";
+import { getImageFileView } from "@/lib/storage/getImageFileView";
+import { colors } from "@/config/colors.config";
+import { orderCardStatusTypes } from "@/screens/galleryOrders/components/OrdersListing";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
+import FittedBlackButton from "@/components/buttons/FittedBlackButton";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import tw from "twrnc";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { utils_formatPrice } from "@/utils/utils_priceFormatter";
 
 export type ordersColorsTypes = { bgColor: string; textColor: string };
 

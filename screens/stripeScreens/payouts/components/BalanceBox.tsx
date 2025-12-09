@@ -1,12 +1,12 @@
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { colors } from 'config/colors.config';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { retrieveBalance } from 'services/stripe/retrieveBalance';
-import { useModalStore } from 'store/modal/modalStore';
-import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol';
-import { generateStripeLoginLink } from 'services/stripe/generateStripeLoginLink';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { colors } from '@/config/colors.config';
+import LongBlackButton from '@/components/buttons/LongBlackButton';
+import { retrieveBalance } from '@/services/stripe/retrieveBalance';
+import { useModalStore } from '@/store/modal/modalStore';
+import { utils_getCurrencySymbol } from '@/utils/utils_getCurrencySymbol';
+import { generateStripeLoginLink } from '@/services/stripe/generateStripeLoginLink';
+import { utils_formatPrice } from '@/utils/utils_priceFormatter';
 import { AntDesign, Feather } from '@expo/vector-icons';
 
 export default function BalanceBox({ account_id, balance }: { account_id: string; balance: any }) {

@@ -1,4 +1,4 @@
-import { OrderTabsTypes } from 'screens/orders/Orders';
+import { OrderTabsTypes } from '@/screens/orders/Orders';
 import { create } from 'zustand';
 
 type OrdersStoreTypes = {

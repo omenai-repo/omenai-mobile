@@ -1,8 +1,8 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { colors } from "config/colors.config";
-import { orderCardStatusTypes } from "screens/galleryOrders/components/OrdersListing";
+import { getImageFileView } from "@/lib/storage/getImageFileView";
+import { colors } from "@/config/colors.config";
+import { orderCardStatusTypes } from "@/screens/galleryOrders/components/OrdersListing";
 
 export type ordersColorsTypes = { bgColor: string; textColor: string };
 

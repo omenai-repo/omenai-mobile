@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 
 export default function DeleteAccountHeader() {
   return (

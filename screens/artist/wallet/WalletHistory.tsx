@@ -9,11 +9,11 @@ import React, { useMemo, useState } from "react";
 import tw from "twrnc";
 import YearDropdown from "../orders/YearDropdown";
 import { WalletContainer } from "./WalletScreen";
-import { fetchArtistTransactions } from "services/wallet/fetchArtistTransactions";
-import Loader from "components/general/Loader";
+import { fetchArtistTransactions } from "@/services/wallet/fetchArtistTransactions";
+import Loader from "@/components/general/Loader";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import BackScreenButton from "components/buttons/BackScreenButton";
+import BackScreenButton from "@/components/buttons/BackScreenButton";
 
 const BASE_TXNS_QK = ["wallet", "artist", "txns"] as const;
 const txnsKey = (year: number) =>
