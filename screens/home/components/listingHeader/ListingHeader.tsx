@@ -2,10 +2,10 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Feather } from '@expo/vector-icons'
 import { colors } from '../../../../config/colors.config'
-import { useHomeStore } from '@/store/home/homeStore'
+import { useHomeStore } from '#store/home/homeStore'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { screenName } from '@/constants/screenNames.constants'
+import { screenName } from '#constants/screenNames.constants'
 
 export default function ListingHeader() {
     const navigation = useNavigation<StackNavigationProp<any>>();

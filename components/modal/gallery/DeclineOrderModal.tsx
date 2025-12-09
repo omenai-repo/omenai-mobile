@@ -1,10 +1,10 @@
 import { Text, View } from 'react-native';
 import React, { useState } from 'react';
-import { galleryOrderModalStore } from '@/store/modal/galleryModalStore';
-import LongBlackButton from '@/components/buttons/LongBlackButton';
-import Input from '@/components/inputs/Input';
-import CloseButton from '@/components/buttons/CloseButton';
-import { declineOrderRequest } from '@/services/orders/declineOrderRequest';
+import { galleryOrderModalStore } from '#store/modal/galleryModalStore';
+import LongBlackButton from '#components/buttons/LongBlackButton';
+import Input from '#components/inputs/Input';
+import CloseButton from '#components/buttons/CloseButton';
+import { declineOrderRequest } from '#services/orders/declineOrderRequest';
 import CompletedModal from './CompletedModal';
 
 export default function DeclineOrderModal() {

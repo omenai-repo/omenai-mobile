@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { View, FlatList, StyleSheet, Dimensions } from "react-native";
 import { EditorialSchemaTypes } from "./Editorials";
-import { listEditorials } from "@/lib/editorial/lib/getAllBlogArticles";
-import EditorialCard from "@/components/editorials/EditorialCard";
-import { colors } from "@/config/colors.config";
-import ArtworkCardLoader from "@/components/general/ArtworkCardLoader";
+import { listEditorials } from "#lib/editorial/lib/getAllBlogArticles";
+import EditorialCard from "#components/editorials/EditorialCard";
+import { colors } from "#config/colors.config";
+import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import BackHeaderTitle from "@/components/header/BackHeaderTitle";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 
 const screenWidth = Dimensions.get("window").width;
 const HORIZONTAL_PADDING = 20;

@@ -1,8 +1,8 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
-import { getEditorialImageFilePreview } from "@/lib/editorial/lib/getEditorialImageFilePreview";
-import { colors } from "@/config/colors.config";
-import { fontNames } from "@/constants/fontNames.constants";
+import { getEditorialImageFilePreview } from "#lib/editorial/lib/getEditorialImageFilePreview";
+import { colors } from "#config/colors.config";
+import { fontNames } from "#constants/fontNames.constants";
 import { Feather } from "@expo/vector-icons";
 import dayjs from "dayjs";
 

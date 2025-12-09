@@ -10,16 +10,16 @@ import {
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
-import BackHeaderTitle from '@/components/header/BackHeaderTitle';
+import BackHeaderTitle from '#components/header/BackHeaderTitle';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { getFeaturedArtistData } from '@/services/overview/fetchFeaturedArtistData';
-import { getFeaturedGalleryData } from '@/services/overview/fetchFeaturedGalleryData';
-import { getImageFileView } from '@/lib/storage/getImageFileView';
-import { getGalleryLogoFileView } from '@/lib/storage/getGalleryLogoFileView';
-import MiniArtworkCardLoader from '@/components/general/MiniArtworkCardLoader';
-import EmptyArtworks from '@/components/general/EmptyArtworks';
-import { resizeImageDimensions } from '@/utils/utils_resizeImageDimensions.utils';
-import MiniArtworkCard from '@/components/artwork/MiniArtworkCard';
+import { getFeaturedArtistData } from '#services/overview/fetchFeaturedArtistData';
+import { getFeaturedGalleryData } from '#services/overview/fetchFeaturedGalleryData';
+import { getImageFileView } from '#lib/storage/getImageFileView';
+import { getGalleryLogoFileView } from '#lib/storage/getGalleryLogoFileView';
+import MiniArtworkCardLoader from '#components/general/MiniArtworkCardLoader';
+import EmptyArtworks from '#components/general/EmptyArtworks';
+import { resizeImageDimensions } from '#utils/utils_resizeImageDimensions.utils';
+import MiniArtworkCard from '#components/artwork/MiniArtworkCard';
 
 type DetailsRouteProp = RouteProp<
   { params: { type: 'artist' | 'gallery'; id: string; name: string; logo?: string } },

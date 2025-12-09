@@ -1,6 +1,6 @@
-import { fetchAllArtworksById } from '@/services/artworks/fetchAllArtworksById';
-import { fetchIncomeData } from '@/services/overview/fetchIncomeData';
-import { utils_formatPrice } from '@/utils/utils_priceFormatter';
+import { fetchAllArtworksById } from '#services/artworks/fetchAllArtworksById';
+import { fetchIncomeData } from '#services/overview/fetchIncomeData';
+import { utils_formatPrice } from '#utils/utils_priceFormatter';
 import { getSalesHighlightData } from './getSalesHighlightData';
 
 export async function fetchHighlightData(tag: string) {

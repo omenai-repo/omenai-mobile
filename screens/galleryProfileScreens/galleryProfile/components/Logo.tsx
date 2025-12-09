@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { colors } from '@/config/colors.config';
-import { getGalleryLogoFileView } from '@/lib/storage/getGalleryLogoFileView';
+import { colors } from '#config/colors.config';
+import { getGalleryLogoFileView } from '#lib/storage/getGalleryLogoFileView';
 import omenaiAvatar from '../../../../assets/images/omenai-avatar.png';
 
 export default function Logo({ url }: { url: string }) {

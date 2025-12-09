@@ -1,4 +1,4 @@
-import { storage } from "@/appWrite_config";
+import { storage } from "#appWrite_config";
 import { ImageFormat, ImageGravity } from "appwrite";
 
 export const getGalleryLogoFileView = (

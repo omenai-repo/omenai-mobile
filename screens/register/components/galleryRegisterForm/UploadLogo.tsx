@@ -1,12 +1,12 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
-import { colors } from '@/config/colors.config';
+import { colors } from '#config/colors.config';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useGalleryAuthRegisterStore } from '@/store/auth/register/GalleryAuthRegisterStore';
-import BackFormButton from '@/components/buttons/BackFormButton';
-import NextButton from '@/components/buttons/NextButton';
-import { useModalStore } from '@/store/modal/modalStore';
+import { useGalleryAuthRegisterStore } from '#store/auth/register/GalleryAuthRegisterStore';
+import BackFormButton from '#components/buttons/BackFormButton';
+import NextButton from '#components/buttons/NextButton';
+import { useModalStore } from '#store/modal/modalStore';
 
 export default function UploadLogo() {
   const { galleryRegisterData, setGalleryLogo, setPageIndex, pageIndex } =

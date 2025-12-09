@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, Modal } from "react-native";
 import tw from "twrnc";
-import { colors } from "@/config/colors.config";
-import { useModalStore } from "@/store/modal/modalStore";
-import { sendOtpCode } from "@/services/wallet/sendOtpCode";
-import { verifyOtpCode } from "@/services/wallet/verifyOtpCode";
-import BackHeaderTitle from "@/components/header/BackHeaderTitle";
+import { colors } from "#config/colors.config";
+import { useModalStore } from "#store/modal/modalStore";
+import { sendOtpCode } from "#services/wallet/sendOtpCode";
+import { verifyOtpCode } from "#services/wallet/verifyOtpCode";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import LottieView from "lottie-react-native";
 import loaderAnimation from "../../../assets/other/loader-animation.json";
 import { OTPInput } from "./OTPInput";
-import WithModal from "@/components/modal/WithModal";
+import WithModal from "#components/modal/WithModal";
 
 export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
   const [otp, setOtp] = useState("");

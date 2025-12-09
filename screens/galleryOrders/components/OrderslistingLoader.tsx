@@ -1,9 +1,9 @@
 import { FlatList, StyleSheet, View } from 'react-native';
 import React from 'react';
-import { colors } from '@/config/colors.config';
+import { colors } from '#config/colors.config';
 import { Skeleton } from 'moti/skeleton';
 import tw from 'twrnc';
-import Divider from '@/components/general/Divider';
+import Divider from '#components/general/Divider';
 
 export default function OrderslistingLoader() {
   const Item = () => (

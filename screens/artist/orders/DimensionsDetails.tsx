@@ -8,23 +8,23 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import tw from "twrnc";
-import { colors } from "@/config/colors.config";
-import BackHeaderTitle from "@/components/header/BackHeaderTitle";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
-import { updateShippingQuote } from "@/services/orders/updateShippingQuote";
+import { colors } from "#config/colors.config";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { updateShippingQuote } from "#services/orders/updateShippingQuote";
 import { useQueryClient } from "@tanstack/react-query";
-import { useModalStore } from "@/store/modal/modalStore";
+import { useModalStore } from "#store/modal/modalStore";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import WithModal from "@/components/modal/WithModal";
-import { validateOrderMeasurement } from "@/lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
-import { useAppStore } from "@/store/app/appStore";
-import { convertDimensionsToStandard } from "@/utils/convertUnits";
+import WithModal from "#components/modal/WithModal";
+import { validateOrderMeasurement } from "#lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
+import { useAppStore } from "#store/app/appStore";
+import { convertDimensionsToStandard } from "#utils/convertUnits";
 import { format } from "date-fns";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import ToggleButton from "@/components/forms/ToggleButton";
-import DimensionInput from "@/components/forms/DimensionInput";
-import UnitDropdownField from "@/components/forms/UnitDropdownField";
-import AlertCard from "@/components/general/AlertCard";
+import ToggleButton from "#components/forms/ToggleButton";
+import DimensionInput from "#components/forms/DimensionInput";
+import UnitDropdownField from "#components/forms/UnitDropdownField";
+import AlertCard from "#components/general/AlertCard";
 
 type ArtworkDimensionsErrorsType = {
   height: string;

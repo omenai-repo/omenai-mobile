@@ -1,16 +1,16 @@
 import { Text, View } from "react-native";
 import React, { useState } from "react";
-import WithModal from "@/components/modal/WithModal";
-import BackHeaderTitle from "@/components/header/BackHeaderTitle";
-import Input from "@/components/inputs/Input";
+import WithModal from "#components/modal/WithModal";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import Input from "#components/inputs/Input";
 import GetCodeButton from "./GetCodeButton";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
-import { validate } from "@/lib/validations/validatorGroup";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { validate } from "#lib/validations/validatorGroup";
 import { MaterialIcons } from "@expo/vector-icons";
-import { requestPasswordConfirmationCode } from "@/services/requests/requestConfirmationCode";
-import { updatePassword } from "@/services/requests/updatePassword";
-import { useModalStore } from "@/store/modal/modalStore";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
+import { requestPasswordConfirmationCode } from "#services/requests/requestConfirmationCode";
+import { updatePassword } from "#services/requests/updatePassword";
+import { useModalStore } from "#store/modal/modalStore";
+import ScrollWrapper from "#components/general/ScrollWrapper";
 
 export default function ChangeGalleryPassword({
   route,

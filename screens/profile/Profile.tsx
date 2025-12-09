@@ -5,26 +5,26 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 
-import { colors } from "@/config/colors.config";
-import { useAppStore } from "@/store/app/appStore";
-import { screenName } from "@/constants/screenNames.constants";
-import WithModal from "@/components/modal/WithModal";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
-import FittedBlackButton from "@/components/buttons/FittedBlackButton";
-import LongBlackButton from "@/components/buttons/LongBlackButton";
+import { colors } from "#config/colors.config";
+import { useAppStore } from "#store/app/appStore";
+import { screenName } from "#constants/screenNames.constants";
+import WithModal from "#components/modal/WithModal";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import {
   changePasswsordIcon,
   getDeleteIcon,
   orderHistoryIcon,
   savedArtworksIcon,
-} from "@/utils/SvgImages";
-import ProfileMenuItems from "@/components/profile/ProfileMenuItems";
+} from "#utils/SvgImages";
+import ProfileMenuItems from "#components/profile/ProfileMenuItems";
 import omenaiAvatar from "../../assets/images/omenai-avatar.png";
-import { logout } from "@/utils/logout.utils";
+import { logout } from "#utils/logout.utils";
 import { useQueryClient } from "@tanstack/react-query";
-import BlurStatusBar from "@/components/general/BlurStatusBar";
-import { useScrollY } from "@/hooks/useScrollY";
-import { useProfileMenuOptions } from "@/hooks/useProfileMenuOptions";
+import BlurStatusBar from "#components/general/BlurStatusBar";
+import { useScrollY } from "#hooks/useScrollY";
+import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
 
 type Nav = StackNavigationProp<any>;
 

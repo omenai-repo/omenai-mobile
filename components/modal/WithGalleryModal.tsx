@@ -1,8 +1,8 @@
 import { StyleSheet, View, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import React from 'react';
-import { colors } from '@/config/colors.config';
+import { colors } from '#config/colors.config';
 import { WithModalProps } from './WithModal';
-import { galleryOrderModalStore } from '@/store/modal/galleryModalStore';
+import { galleryOrderModalStore } from '#store/modal/galleryModalStore';
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DeclineOrderModal from './gallery/DeclineOrderModal';
@@ -10,7 +10,7 @@ import ProvideShippingQuoteModal from './gallery/ProvideShippingQuoteModal';
 import ProvideTrackingInfo from './gallery/ProvideTrackingInfo';
 import OrderDetailsModal from './gallery/OrderDetailsModal';
 import DeleteAccountModal from './gallery/DeleteAccountModal';
-import ScrollWrapper from '@/components/general/ScrollWrapper';
+import ScrollWrapper from '#components/general/ScrollWrapper';
 
 export default function WithGalleryModal({ children }: WithModalProps) {
   const { isVisible, modalType } = galleryOrderModalStore();

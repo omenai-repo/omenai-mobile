@@ -1,8 +1,8 @@
 import React from "react";
 import { Text, TextInput, View } from "react-native";
 import tw from "twrnc";
-import { colors } from "@/config/colors.config";
-import { MAX_MESSAGE_LENGTH } from "@/constants/deleteAccount.constants";
+import { colors } from "#config/colors.config";
+import { MAX_MESSAGE_LENGTH } from "#constants/deleteAccount.constants";
 import DeleteAccountCard from "./DeleteAccountCard";
 
 type OtherMessageInputProps = Readonly<{

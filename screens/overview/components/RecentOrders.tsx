@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { colors } from "@/config/colors.config";
-import { utils_formatPrice } from "@/utils/utils_priceFormatter";
+import { colors } from "#config/colors.config";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "@/constants/screenNames.constants";
-import NavBtnComponent from "@/components/artwork/NavBtnComponent";
-import { RecentOrderContainer } from "@/screens/artist/overview/ArtistOverview";
+import { screenName } from "#constants/screenNames.constants";
+import NavBtnComponent from "#components/artwork/NavBtnComponent";
+import { RecentOrderContainer } from "#screens/artist/overview/ArtistOverview";
 import { useQuery } from "@tanstack/react-query";
-import { getOverviewOrders } from "@/services/orders/getOverviewOrders";
-import { QK } from "@/utils/queryKeys";
-import { useAppStore } from "@/store/app/appStore";
+import { getOverviewOrders } from "#services/orders/getOverviewOrders";
+import { QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
 
 export default function RecentOrders({
   onLoadingChange,

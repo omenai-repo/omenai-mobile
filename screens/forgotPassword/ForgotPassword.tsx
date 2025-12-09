@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { screenName } from "../../constants/screenNames.constants";
 import Form from "./components/form/Form";
 import Success from "./components/success/Success";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
+import ScrollWrapper from "#components/general/ScrollWrapper";
 
 export default function ForgotPassword() {
   const navigation = useNavigation<StackNavigationProp<any>>();

@@ -1,14 +1,14 @@
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import { fetchViewHistory } from "@/services/artworks/viewHistory/fetchRecentlyViewedArtworks";
-import { useAppStore } from "@/store/app/appStore";
+import { fetchViewHistory } from "#services/artworks/viewHistory/fetchRecentlyViewedArtworks";
+import { useAppStore } from "#store/app/appStore";
 import ViewHistoryCard from "./ViewHistoryCard";
-import EmptyArtworks from "@/components/general/EmptyArtworks";
-import ArtworkCardLoader from "@/components/general/ArtworkCardLoader";
-import { HOME_QK } from "@/utils/queryKeys";
+import EmptyArtworks from "#components/general/EmptyArtworks";
+import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
+import { HOME_QK } from "#utils/queryKeys";
 
-import { fontNames } from "@/constants/fontNames.constants";
+import { fontNames } from "#constants/fontNames.constants";
 
 type ViewHistoryItem = {
   art_id: string;

@@ -2,7 +2,7 @@ import { View, Text, Animated, Easing, Image } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import tw from 'twrnc';
 import omenaiLogo from '../../../assets/omenai-logo.png';
-import LongBlackButton from '@/components/buttons/LongBlackButton';
+import LongBlackButton from '#components/buttons/LongBlackButton';
 
 const EligibityResponseScreen = ({
   label,

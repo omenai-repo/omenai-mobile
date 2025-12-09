@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react';
-import FittedBlackButton from '@/components/buttons/FittedBlackButton';
-import Loader from '@/components/general/Loader';
+import FittedBlackButton from '#components/buttons/FittedBlackButton';
+import Loader from '#components/general/Loader';
 
 type PaginationTypes = "inc" | "dec"
 

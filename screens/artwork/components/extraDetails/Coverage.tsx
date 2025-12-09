@@ -1,9 +1,9 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import { colors } from "@/config/colors.config";
+import { colors } from "#config/colors.config";
 import { Feather, Octicons } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
-import { downArrIcon, upArrwIcon } from "@/utils/SvgImages";
+import { downArrIcon, upArrwIcon } from "#utils/SvgImages";
 import { LinearGradient } from "expo-linear-gradient";
 import tw from "twrnc";
 import Animated, { FadeInDown, FadeOut } from "react-native-reanimated";

@@ -1,4 +1,4 @@
-import { apiUrl, authorization, originHeader, userAgent } from "@/constants/apiUrl.constants";
+import { apiUrl, authorization, originHeader, userAgent } from "#constants/apiUrl.constants";
 
 type addPrimaryAcctProp = {
   owner_id: string;

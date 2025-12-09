@@ -1,13 +1,13 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { colors } from "@/config/colors.config";
-import ArtworkCard from "@/components/artwork/ArtworkCard";
-import { fetchArtworksByCriteria } from "@/services/artworks/fetchArtworksByCriteria";
-import ArtworkCardLoader from "@/components/general/ArtworkCardLoader";
+import { colors } from "#config/colors.config";
+import ArtworkCard from "#components/artwork/ArtworkCard";
+import { fetchArtworksByCriteria } from "#services/artworks/fetchArtworksByCriteria";
+import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import { FlatList } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "@/constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 import { Feather } from "@expo/vector-icons";
 
 export default function SimilarArtworks({

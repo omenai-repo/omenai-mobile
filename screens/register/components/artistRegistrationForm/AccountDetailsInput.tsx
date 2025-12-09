@@ -3,9 +3,9 @@ import React from "react";
 import NextButton from "../../../../components/buttons/NextButton";
 import Input from "../../../../components/inputs/Input";
 import PasswordInput from "../../../../components/inputs/PasswordInput";
-import { useArtistAuthRegisterStore } from "@/store/auth/register/ArtistAuthRegisterStore";
+import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
 import tw from "twrnc";
-import { useFormValidation } from "@/hooks/useFormValidation";
+import { useFormValidation } from "#hooks/useFormValidation";
 
 const AccountDetailsInput = () => {
   const {

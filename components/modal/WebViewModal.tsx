@@ -2,8 +2,8 @@ import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
 import WebView from "react-native-webview";
-import BackScreenButton from "@/components/buttons/BackScreenButton";
-import { useModalStore } from "@/store/modal/modalStore";
+import BackScreenButton from "#components/buttons/BackScreenButton";
+import { useModalStore } from "#store/modal/modalStore";
 
 export default function WebViewModal({ url }: { url: string | null }) {
   const { setWebViewUrl } = useModalStore();

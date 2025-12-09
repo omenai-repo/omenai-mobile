@@ -8,14 +8,14 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { listEditorials } from "@/lib/editorial/lib/getAllBlogArticles";
-import EditorialCard from "@/components/editorials/EditorialCard";
-import ArtworkCardLoader from "@/components/general/ArtworkCardLoader";
-import { colors } from "@/config/colors.config";
-import { fontNames } from "@/constants/fontNames.constants";
+import { listEditorials } from "#lib/editorial/lib/getAllBlogArticles";
+import EditorialCard from "#components/editorials/EditorialCard";
+import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
+import { colors } from "#config/colors.config";
+import { fontNames } from "#constants/fontNames.constants";
 import { Feather } from "@expo/vector-icons";
-import { HOME_QK } from "@/utils/queryKeys";
-import { useAppStore } from "@/store/app/appStore";
+import { HOME_QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
 
 export default function Editorials() {
   const navigation = useNavigation<any>();

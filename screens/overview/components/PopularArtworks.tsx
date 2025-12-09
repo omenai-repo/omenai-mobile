@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ArtworkCardLoader from '@/components/general/ArtworkCardLoader';
-import { fetchPopularArtworks } from '@/services/artworks/fetchPopularArtworks';
-import ArtworkCard from '@/components/artwork/ArtworkCard';
-import EmptyArtworks from '@/components/general/EmptyArtworks';
+import ArtworkCardLoader from '#components/general/ArtworkCardLoader';
+import { fetchPopularArtworks } from '#services/artworks/fetchPopularArtworks';
+import ArtworkCard from '#components/artwork/ArtworkCard';
+import EmptyArtworks from '#components/general/EmptyArtworks';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { screenName } from '@/constants/screenNames.constants';
-import NavBtnComponent from '@/components/artwork/NavBtnComponent';
+import { screenName } from '#constants/screenNames.constants';
+import NavBtnComponent from '#components/artwork/NavBtnComponent';
 import { useQuery } from '@tanstack/react-query';
-import { QK } from '@/utils/queryKeys';
-import { useAppStore } from '@/store/app/appStore';
+import { QK } from '#utils/queryKeys';
+import { useAppStore } from '#store/app/appStore';
 
 export default function PopularArtworks({
   onLoadingChange,

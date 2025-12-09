@@ -1,4 +1,4 @@
-import { storage } from "@/appWrite_config";
+import { storage } from "#appWrite_config";
 import { ID } from "appwrite";
 
 const uploadGalleryLogoContent = async (file: any) => {

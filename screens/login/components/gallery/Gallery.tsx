@@ -3,14 +3,14 @@ import React from "react";
 import tw from "twrnc";
 import LongBlackButton from "../../../../components/buttons/LongBlackButton";
 import Input from "../../../../components/inputs/Input";
-import { useGalleryAuthLoginStore } from "@/store/auth/login/GalleryAuthLoginStore";
-import PasswordInput from "@/components/inputs/PasswordInput";
-import WithModal from "@/components/modal/WithModal";
+import { useGalleryAuthLoginStore } from "#store/auth/login/GalleryAuthLoginStore";
+import PasswordInput from "#components/inputs/PasswordInput";
+import WithModal from "#components/modal/WithModal";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { screenName } from "@/constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { useLoginHandler } from "@/hooks/useLoginHandler";
+import { useLoginHandler } from "#hooks/useLoginHandler";
 
 export default function Gallery() {
   const { galleryLoginData, setEmail, setPassword, clearInputs, isLoading, setIsLoading } =

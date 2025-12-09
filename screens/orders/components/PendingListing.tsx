@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { colors } from "@/config/colors.config";
+import { colors } from "#config/colors.config";
 import { Feather } from "@expo/vector-icons";
-import { formatIntlDateTime } from "@/utils/utils_formatIntlDateTime";
+import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
 import OrderCard from "./OrderCard";
-import Divider from "@/components/general/Divider";
+import Divider from "#components/general/Divider";
 
 type PendingListingProps = {
   listing: any[];

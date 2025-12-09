@@ -3,10 +3,10 @@ import React, { useEffect, useRef } from 'react';
 import tw from 'twrnc';
 import { Image } from 'react-native';
 import omenaiLogo from '../../assets/omenai-logo.png';
-import FittedBlackButton from '@/components/buttons/FittedBlackButton';
+import FittedBlackButton from '#components/buttons/FittedBlackButton';
 import { SvgXml } from 'react-native-svg';
-import { starEffect } from '@/utils/SvgImages';
-import { useAppStore } from '@/store/app/appStore';
+import { starEffect } from '#utils/SvgImages';
+import { useAppStore } from '#store/app/appStore';
 
 const SuccessComp = () => {
   const { height } = useWindowDimensions();

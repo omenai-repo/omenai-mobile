@@ -7,9 +7,9 @@ import {
   useWindowDimensions,
   Easing,
 } from "react-native";
-import { courselImages } from "@/constants/images.constants";
+import { courselImages } from "#constants/images.constants";
 import tw from "twrnc";
-import { colors } from "@/config/colors.config";
+import { colors } from "#config/colors.config";
 
 type Props = {
   readonly primaryImages?: ImageSourcePropType[];

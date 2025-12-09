@@ -15,19 +15,19 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../../config/colors.config";
 import { screenName } from "../../constants/screenNames.constants";
-import WithModal from "@/components/modal/WithModal";
-import ScrollWrapper from "@/components/general/ScrollWrapper";
+import WithModal from "#components/modal/WithModal";
+import ScrollWrapper from "#components/general/ScrollWrapper";
 import { StatusBar } from "expo-status-bar";
 import Artist from "./components/artist/Artist";
-import { useIndividualAuthLoginStore } from "@/store/auth/login/IndividualAuthLoginStore";
-import { useArtistAuthLoginStore } from "@/store/auth/login/ArtistAuthLoginStore";
-import { useGalleryAuthLoginStore } from "@/store/auth/login/GalleryAuthLoginStore";
+import { useIndividualAuthLoginStore } from "#store/auth/login/IndividualAuthLoginStore";
+import { useArtistAuthLoginStore } from "#store/auth/login/ArtistAuthLoginStore";
+import { useGalleryAuthLoginStore } from "#store/auth/login/GalleryAuthLoginStore";
 
-import { useBiometrics, UserType } from "@/hooks/useBiometrics";
+import { useBiometrics, UserType } from "#hooks/useBiometrics";
 import { SvgXml } from "react-native-svg";
-import { lockIcon } from "@/utils/SvgImages";
+import { lockIcon } from "#utils/SvgImages";
 import tw from "twrnc";
-import { useLoginHandler } from "@/hooks/useLoginHandler";
+import { useLoginHandler } from "#hooks/useLoginHandler";
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<any>>();
