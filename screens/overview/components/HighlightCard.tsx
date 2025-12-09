@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
-import CardComp from "components/general/CardComp";
+import CardComp from "@/components/general/CardComp";
 import Animated from "react-native-reanimated";
-import { fetchHighlightData } from "services/overview/fetchHighlightData";
+import { fetchHighlightData } from "@/services/overview/fetchHighlightData";
 import tw from "twrnc";
 import { useQueries } from "@tanstack/react-query";
-import { QK } from "utils/queryKeys";
-import { useAppStore } from "store/app/appStore";
+import { QK } from "@/utils/queryKeys";
+import { useAppStore } from "@/store/app/appStore";
 
 const chunkArray = <T,>(arr: T[], size: number): T[][] => {
   const chunkedArray: T[][] = [];

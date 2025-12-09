@@ -1,11 +1,11 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import CloseButton from 'components/buttons/CloseButton';
-import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
-import LongWhiteButton from 'components/buttons/LongWhiteButton';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { colors } from 'config/colors.config';
-import { getImageFileView } from 'lib/storage/getImageFileView';
+import CloseButton from '@/components/buttons/CloseButton';
+import { galleryOrderModalStore } from '@/store/modal/galleryModalStore';
+import LongWhiteButton from '@/components/buttons/LongWhiteButton';
+import LongBlackButton from '@/components/buttons/LongBlackButton';
+import { colors } from '@/config/colors.config';
+import { getImageFileView } from '@/lib/storage/getImageFileView';
 
 export default function PendingOrderModal() {
   const { setModalType, artworkDetails, clear } = galleryOrderModalStore();

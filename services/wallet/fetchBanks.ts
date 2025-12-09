@@ -1,5 +1,5 @@
-import { apiUrl, authorization, originHeader, userAgent } from 'constants/apiUrl.constants';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { apiUrl, authorization, originHeader, userAgent } from '@/constants/apiUrl.constants';
+import { utils_getAsyncData } from '@/utils/utils_asyncStorage';
 
 export async function fetchBanks() {
   let countryCode = '';

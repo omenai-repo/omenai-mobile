@@ -1,14 +1,14 @@
 import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import WithModal from "components/modal/WithModal";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import { checkIsStripeOnboarded } from "services/stripe/checkIsStripeOnboarded";
-import Loader from "components/general/Loader";
+import WithModal from "@/components/modal/WithModal";
+import BackHeaderTitle from "@/components/header/BackHeaderTitle";
+import { checkIsStripeOnboarded } from "@/services/stripe/checkIsStripeOnboarded";
+import Loader from "@/components/general/Loader";
 import CompleteOnBoarding from "./components/CompleteOnBoarding";
-import { useModalStore } from "store/modal/modalStore";
+import { useModalStore } from "@/store/modal/modalStore";
 import BlockingScreen from "./components/BlockingScreen";
 import PayoutDashboard from "./components/PayoutDashboard";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 
 export default function StripePayouts({
   account_id,

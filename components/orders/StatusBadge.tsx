@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { View, Text } from 'react-native';
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
-import type { StatusBadgeProps } from 'types/orders';
+import type { StatusBadgeProps } from '@/types/orders';
 
 const StatusBadgeBase = ({
   status,

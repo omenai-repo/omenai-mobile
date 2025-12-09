@@ -1,4 +1,4 @@
-import { ordersColorsTypes } from 'components/gallery/OrderCard';
+import { ordersColorsTypes } from '@/components/gallery/OrderCard';
 
 export const utils_getColors = (selectedTab: string, order?: any): ordersColorsTypes => {
   if (selectedTab === 'processing' && order?.payment_information.status === 'completed') {

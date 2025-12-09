@@ -5,7 +5,7 @@ import NextButton from "../../../../components/buttons/NextButton";
 import Input from "../../../../components/inputs/Input";
 import BackFormButton from "../../../../components/buttons/BackFormButton";
 import LargeInput from "../../../../components/inputs/LargeInput";
-import { useFormValidation } from "hooks/useFormValidation";
+import { useFormValidation } from "@/hooks/useFormValidation";
 
 export default function ExtraGalleryDetailsInput() {
   const { pageIndex, setPageIndex, galleryRegisterData, setAdmin, setDescription } =

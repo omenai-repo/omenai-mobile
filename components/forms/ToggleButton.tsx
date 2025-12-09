@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 
 interface ToggleButtonProps {
   label: string;

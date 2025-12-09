@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { colors } from "config/colors.config";
-import { useOrderSummaryStore } from "store/orders/OrderSummaryStore";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { createShippingOrder } from "services/orders/createShippingOrder";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { useModalStore } from "store/modal/modalStore";
+import LongBlackButton from "@/components/buttons/LongBlackButton";
+import { colors } from "@/config/colors.config";
+import { useOrderSummaryStore } from "@/store/orders/OrderSummaryStore";
+import { utils_formatPrice } from "@/utils/utils_priceFormatter";
+import { createShippingOrder } from "@/services/orders/createShippingOrder";
+import { utils_getAsyncData } from "@/utils/utils_asyncStorage";
+import { useModalStore } from "@/store/modal/modalStore";
 
 type SummaryContainerProps = {
   buttonTypes: "Proceed to shipping" | "Request price quote" | "Proceed to make payment";

@@ -1,9 +1,9 @@
 import { View, Text, Animated, Easing, Image, useWindowDimensions, Pressable } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import tw from 'twrnc';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import FittedBlackButton from '@/components/buttons/FittedBlackButton';
 import omenaiLogo from '../../assets/omenai-logo.png';
-import { logout } from 'utils/logout.utils';
+import { logout } from '@/utils/logout.utils';
 
 const FirstScreen = ({ onPress }: { onPress: () => void }) => {
   const { height } = useWindowDimensions();

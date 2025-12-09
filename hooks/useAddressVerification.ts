@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { verifyAddress } from "services/register/verifyAddress";
-import { useModalStore } from "store/modal/modalStore";
+import { verifyAddress } from "@/services/register/verifyAddress";
+import { useModalStore } from "@/store/modal/modalStore";
 
 type VerifyType = "delivery" | "pickup";
 

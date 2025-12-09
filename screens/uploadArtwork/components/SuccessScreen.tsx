@@ -2,11 +2,11 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
 import successCheck from '../../../assets/icons/success_check.png';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
+import LongBlackButton from '@/components/buttons/LongBlackButton';
+import { uploadArtworkStore } from '@/store/gallery/uploadArtworkStore';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
+import { screenName } from '@/constants/screenNames.constants';
 
 export default function SuccessScreen() {
   const navigation = useNavigation<StackNavigationProp<any>>();

@@ -1,5 +1,5 @@
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { colors } from "config/colors.config";
+import LongBlackButton from "@/components/buttons/LongBlackButton";
+import { colors } from "@/config/colors.config";
 import { Animated, Image, Platform, ScrollView, useWindowDimensions, View } from "react-native";
 import { useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

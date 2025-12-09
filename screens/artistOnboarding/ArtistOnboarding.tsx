@@ -17,27 +17,27 @@ import React, { useState, useRef } from "react";
 import tw from "twrnc";
 import omenaiLogo from "../../assets/omenai-logo.png";
 import { SvgXml } from "react-native-svg";
-import { uploadIcon } from "utils/SvgImages";
+import { uploadIcon } from "@/utils/SvgImages";
 import * as DocumentPicker from "expo-document-picker";
 import QuestionContainer from "./QuestionContainer";
 import OverviewContainer from "./OverviewContainer";
 import CVUpload from "./CVUpload";
 import Socials from "./Socials";
 import ConfirmationModal from "./ConfirmationModal";
-import uploadArtistDoc from "screens/register/components/artistRegistrationForm/uploadArtistDoc";
+import uploadArtistDoc from "@/screens/register/components/artistRegistrationForm/uploadArtistDoc";
 import {
   NavigationProp,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { artistOnboarding } from "services/artistOnboarding/artistOnbaording";
-import { storage } from "../../appWrite_config";
-import { useModalStore } from "store/modal/modalStore";
+import { artistOnboarding } from "@/services/artistOnboarding/artistOnbaording";
+import { storage } from "@/appWrite_config";
+import { useModalStore } from "@/store/modal/modalStore";
 import LoadingContainer from "./LoadingContainer";
 import FirstScreen from "./FirstScreen";
 import SuccessComp from "./SuccessComp";
-import { useAppStore } from "store/app/appStore";
-import { logout } from "utils/logout.utils";
+import { useAppStore } from "@/store/app/appStore";
+import { logout } from "@/utils/logout.utils";
 
 const { width, height } = Dimensions.get("window");
 

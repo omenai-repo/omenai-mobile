@@ -5,16 +5,16 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "../../constants/screenNames.constants";
 import { colors } from "../../config/colors.config";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { onboardingdata } from "constants/onBoardingData.constants";
+import LongBlackButton from "@/components/buttons/LongBlackButton";
+import { onboardingdata } from "@/constants/onBoardingData.constants";
 import OnBoardingSection from "./components/OnBoardingSection";
-import { utils_storeAsyncData } from "utils/utils_asyncStorage";
-import { utils_determineOnboardingPages } from "utils/utils_determineOnboardingPages";
+import { utils_storeAsyncData } from "@/utils/utils_asyncStorage";
+import { utils_determineOnboardingPages } from "@/utils/utils_determineOnboardingPages";
 
 import tw from "twrnc";
 import { StatusBar } from "expo-status-bar";
 import TiltedGridBackground from "./components/TiltedGridBackground";
-import { primaryGridImages, secondaryGridImages } from "constants/images.constants";
+import { primaryGridImages, secondaryGridImages } from "@/constants/images.constants";
 
 export default function Welcome() {
   const navigation = useNavigation<StackNavigationProp<any>>();

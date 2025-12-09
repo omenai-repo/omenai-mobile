@@ -1,13 +1,13 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, useWindowDimensions } from 'react-native';
 import React, { useState } from 'react';
 import tw from 'twrnc';
-import BackScreenButton from 'components/buttons/BackScreenButton';
+import BackScreenButton from '@/components/buttons/BackScreenButton';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { verifyGalleryRequest } from 'services/verify/verifyGalleryRequest';
-import WithModal from 'components/modal/WithModal';
-import { useModalStore } from 'store/modal/modalStore';
-import { useAppStore } from 'store/app/appStore';
+import { verifyGalleryRequest } from '@/services/verify/verifyGalleryRequest';
+import WithModal from '@/components/modal/WithModal';
+import { useModalStore } from '@/store/modal/modalStore';
+import { useAppStore } from '@/store/app/appStore';
 
 export default function LockScreen({ name }: { name: string }) {
   const { height } = useWindowDimensions();

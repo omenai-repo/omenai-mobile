@@ -1,11 +1,11 @@
 import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { utils_handleFetchUserID } from "utils/utils_asyncStorage";
-import useLikedState from "hooks/useLikedState";
-import LongBlackButton from "components/buttons/LongBlackButton";
+import { utils_handleFetchUserID } from "@/utils/utils_asyncStorage";
+import useLikedState from "@/hooks/useLikedState";
+import LongBlackButton from "@/components/buttons/LongBlackButton";
 import { AntDesign } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
-import { heartIcon } from "utils/SvgImages";
+import { heartIcon } from "@/utils/SvgImages";
 
 type SaveArtworkButtonProps = {
   likeIds: string[];

@@ -1,14 +1,14 @@
 import { FlatList, View } from "react-native";
 import React from "react";
-import OrderCard from "components/gallery/OrderCard";
-import Divider from "components/general/Divider";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { galleryOrdersStore } from "store/gallery/galleryOrdersStore";
+import OrderCard from "@/components/gallery/OrderCard";
+import Divider from "@/components/general/Divider";
+import { utils_formatPrice } from "@/utils/utils_priceFormatter";
+import { galleryOrdersStore } from "@/store/gallery/galleryOrdersStore";
 import {
   galleryOrderModalStore,
   galleryOrderModalTypes,
-} from "store/modal/galleryModalStore";
-import { utils_getColors } from "utils/utils_sortFunctions";
+} from "@/store/modal/galleryModalStore";
+import { utils_getColors } from "@/utils/utils_sortFunctions";
 
 export type orderCardStatusTypes =
   | "Pending"

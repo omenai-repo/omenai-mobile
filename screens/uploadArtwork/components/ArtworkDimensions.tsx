@@ -1,16 +1,16 @@
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { colors } from 'config/colors.config';
-import Input from 'components/inputs/Input';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { uploadArtworkStore } from 'store/gallery/uploadArtworkStore';
-import NoLabelInput from 'components/inputs/NoLabelInput';
-import { validate } from 'lib/validations/upload_artwork_input_validator/validator';
+import { colors } from '@/config/colors.config';
+import Input from '@/components/inputs/Input';
+import LongBlackButton from '@/components/buttons/LongBlackButton';
+import { uploadArtworkStore } from '@/store/gallery/uploadArtworkStore';
+import NoLabelInput from '@/components/inputs/NoLabelInput';
+import { validate } from '@/lib/validations/upload_artwork_input_validator/validator';
 import tw from 'twrnc';
-import { useAppStore } from 'store/app/appStore';
-import UnitDropdown from 'screens/artist/orders/UnitDropdown';
-import { validateOrderMeasurement } from 'lib/validations/upload_artwork_input_validator/validateOrderMeasurement';
-import { convertToCm, convertToKg } from 'utils/convertUnits';
+import { useAppStore } from '@/store/app/appStore';
+import UnitDropdown from '@/screens/artist/orders/UnitDropdown';
+import { validateOrderMeasurement } from '@/lib/validations/upload_artwork_input_validator/validateOrderMeasurement';
+import { convertToCm, convertToKg } from '@/utils/convertUnits';
 
 type artworkDimensionsErrorsType = {
   height: string;

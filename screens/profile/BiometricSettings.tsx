@@ -10,14 +10,14 @@ import {
   Alert,
 } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import WithModal from "components/modal/WithModal";
-import { useAppStore } from "store/app/appStore";
-import { useBiometrics, UserType } from "hooks/useBiometrics";
-import PasswordInput from "components/inputs/PasswordInput";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { loginAccount } from "services/login/loginAccount";
+import { colors } from "@/config/colors.config";
+import BackHeaderTitle from "@/components/header/BackHeaderTitle";
+import WithModal from "@/components/modal/WithModal";
+import { useAppStore } from "@/store/app/appStore";
+import { useBiometrics, UserType } from "@/hooks/useBiometrics";
+import PasswordInput from "@/components/inputs/PasswordInput";
+import LongBlackButton from "@/components/buttons/LongBlackButton";
+import { loginAccount } from "@/services/login/loginAccount";
 import { Feather } from "@expo/vector-icons";
 
 export default function BiometricSettings() {

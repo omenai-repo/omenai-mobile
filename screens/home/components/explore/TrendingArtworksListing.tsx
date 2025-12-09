@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import TrendingArtworkCard from 'components/artwork/TrendingArtworkCard'
+import TrendingArtworkCard from '@/components/artwork/TrendingArtworkCard'
 
 export default function TrendingArtworksListing({data}: {data: any[]}) {
     return (

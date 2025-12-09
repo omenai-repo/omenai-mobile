@@ -1,15 +1,15 @@
 import { View } from "react-native";
 import React, { useMemo, useState } from "react";
-import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
+import { useArtistAuthRegisterStore } from "@/store/auth/register/ArtistAuthRegisterStore";
 
-import { artist_countries_codes_currency } from "data/artist_countries_codes_currency";
-import { useAddressForm } from "hooks/useAddressForm";
-import { useLocationSelection } from "hooks/useLocationSelection";
-import { useAddressVerification } from "hooks/useAddressVerification";
-import { AddressTooltip } from "components/general/AddressTooltip";
-import { AddressFormFields } from "components/register/AddressFormFields";
-import { AddressVerificationModal } from "components/register/AddressVerificationModal";
-import { AddressVerificationActions } from "components/register/AddressVerificationActions";
+import { artist_countries_codes_currency } from "@/data/artist_countries_codes_currency";
+import { useAddressForm } from "@/hooks/useAddressForm";
+import { useLocationSelection } from "@/hooks/useLocationSelection";
+import { useAddressVerification } from "@/hooks/useAddressVerification";
+import { AddressTooltip } from "@/components/general/AddressTooltip";
+import { AddressFormFields } from "@/components/register/AddressFormFields";
+import { AddressVerificationModal } from "@/components/register/AddressVerificationModal";
+import { AddressVerificationActions } from "@/components/register/AddressVerificationActions";
 
 const ArtistHomeAddressVerification = () => {
   const [showToolTip, setShowToolTip] = useState(false);

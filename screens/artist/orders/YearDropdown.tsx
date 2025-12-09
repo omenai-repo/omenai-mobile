@@ -1,7 +1,7 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
+import { dropdownIcon, dropUpIcon } from "@/utils/SvgImages";
 import tw from "twrnc";
 
 const YearDropdown = ({

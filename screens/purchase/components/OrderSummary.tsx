@@ -1,12 +1,12 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { useOrderSummaryStore } from "store/orders/OrderSummaryStore";
+import { colors } from "@/config/colors.config";
+import LongBlackButton from "@/components/buttons/LongBlackButton";
+import { useOrderSummaryStore } from "@/store/orders/OrderSummaryStore";
 import SummaryContainer from "./SummaryContainer";
-import OrderCard from "screens/orders/components/OrderCard";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
+import OrderCard from "@/screens/orders/components/OrderCard";
+import { getImageFileView } from "@/lib/storage/getImageFileView";
+import { utils_formatPrice } from "@/utils/utils_priceFormatter";
 
 export default function OrderSummary({
   data: { title, url, artist, art_id, author_id, pricing },

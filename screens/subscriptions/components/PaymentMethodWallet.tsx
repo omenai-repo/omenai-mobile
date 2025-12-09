@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { View, Text, Image } from 'react-native';
 import { SvgFromUri } from 'react-native-svg';
-import { useAppStore } from 'store/app/appStore';
+import { useAppStore } from '@/store/app/appStore';
 import tw from 'twrnc';
 
 const paymentIcons: Record<string, string> = {

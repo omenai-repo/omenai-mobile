@@ -1,8 +1,8 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import React, { useRef } from "react";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 import LottieView from "lottie-react-native";
-import loaderAnimation from "assets/other/loader-animation.json";
+import loaderAnimation from "@/assets/other/loader-animation.json";
 import tw from "twrnc";
 
 type FittedBlackButtonProps = {

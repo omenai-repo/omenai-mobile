@@ -1,11 +1,11 @@
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import { mediums } from "constants/mediums";
+import BackHeaderTitle from "@/components/header/BackHeaderTitle";
+import { mediums } from "@/constants/mediums";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { getNumberOfColumns } from "utils/utils_screen";
+import { screenName } from "@/constants/screenNames.constants";
+import { getNumberOfColumns } from "@/utils/utils_screen";
 import tw from "twrnc";
 
 export default function Collections() {

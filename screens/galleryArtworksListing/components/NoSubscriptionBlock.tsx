@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import BackScreenButton from 'components/buttons/BackScreenButton';
-import { screenName } from 'constants/screenNames.constants';
+import BackScreenButton from '@/components/buttons/BackScreenButton';
+import { screenName } from '@/constants/screenNames.constants';
 import React from 'react';
 import { View, Text, TouchableOpacity, Linking, useWindowDimensions } from 'react-native';
 import tw from 'twrnc';

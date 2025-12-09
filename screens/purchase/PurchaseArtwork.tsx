@@ -1,20 +1,20 @@
 import { KeyboardAvoidingView, Platform, StyleSheet, View, StatusBar } from "react-native";
 import React, { startTransition, useCallback, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "config/colors.config";
-import BackScreenButton from "components/buttons/BackScreenButton";
+import { colors } from "@/config/colors.config";
+import BackScreenButton from "@/components/buttons/BackScreenButton";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import OrderSummary from "./components/OrderSummary";
-import { useOrderSummaryStore } from "store/orders/OrderSummaryStore";
+import { useOrderSummaryStore } from "@/store/orders/OrderSummaryStore";
 import ShippingDetails from "./components/ShippingDetails";
-import { fetchsingleArtworkOnPurchase } from "services/artworks/fetchSingleArtworkOnPurchase";
-import Loader from "components/general/Loader";
+import { fetchsingleArtworkOnPurchase } from "@/services/artworks/fetchSingleArtworkOnPurchase";
+import Loader from "@/components/general/Loader";
 import PriceQuoteSent from "./components/PriceQuoteSent";
-import WithModal from "components/modal/WithModal";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import WithModal from "@/components/modal/WithModal";
+import ScrollWrapper from "@/components/general/ScrollWrapper";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAppStore } from "store/app/appStore";
+import { useAppStore } from "@/store/app/appStore";
 
 export default function PurchaseArtwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();

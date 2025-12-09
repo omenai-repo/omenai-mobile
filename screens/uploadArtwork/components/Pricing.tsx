@@ -1,20 +1,20 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import Input from "components/inputs/Input";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
+import { colors } from "@/config/colors.config";
+import Input from "@/components/inputs/Input";
+import CustomSelectPicker from "@/components/inputs/CustomSelectPicker";
 import {
   displayPrice,
   preferredShippingCarrier,
-} from "data/uploadArtworkForm.data";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { uploadArtworkStore } from "store/gallery/uploadArtworkStore";
-import { validate } from "lib/validations/upload_artwork_input_validator/validator";
+} from "@/data/uploadArtworkForm.data";
+import LongBlackButton from "@/components/buttons/LongBlackButton";
+import { uploadArtworkStore } from "@/store/gallery/uploadArtworkStore";
+import { validate } from "@/lib/validations/upload_artwork_input_validator/validator";
 import { currencies } from "./mocks";
-import { getCurrencyConversion } from "services/exchange_rate/getCurrencyConversion";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { utils_getCurrencySymbol } from "utils/utils_getCurrencySymbol";
-import { useModalStore } from "store/modal/modalStore";
+import { getCurrencyConversion } from "@/services/exchange_rate/getCurrencyConversion";
+import { utils_formatPrice } from "@/utils/utils_priceFormatter";
+import { utils_getCurrencySymbol } from "@/utils/utils_getCurrencySymbol";
+import { useModalStore } from "@/store/modal/modalStore";
 
 const transformedCurrencies = currencies.map((item) => ({
   value: item.code,

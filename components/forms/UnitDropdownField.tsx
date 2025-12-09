@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import tw from 'twrnc';
-import UnitDropdown from 'screens/artist/orders/UnitDropdown';
+import UnitDropdown from '@/screens/artist/orders/UnitDropdown';
 
 interface UnitDropdownFieldProps {
   label: string;
-  units: Array<{ label: string; value: string }>;
+  units: { label: string; value: string }[];
   selectedUnit: string;
   onSelect: (unit: string) => void;
 }

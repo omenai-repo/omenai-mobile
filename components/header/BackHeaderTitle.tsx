@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import BackScreenButton from 'components/buttons/BackScreenButton';
+import BackScreenButton from '@/components/buttons/BackScreenButton';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { colors } from 'config/colors.config';
+import { colors } from '@/config/colors.config';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type BackHeaderTitleProps = {

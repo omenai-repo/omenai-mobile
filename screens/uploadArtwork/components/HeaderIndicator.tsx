@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, Platform, StatusBar } from "react-native";
 import React from "react";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import { colors } from "config/colors.config";
-import { uploadArtworkStore } from "store/gallery/uploadArtworkStore";
+import BackScreenButton from "@/components/buttons/BackScreenButton";
+import { colors } from "@/config/colors.config";
+import { uploadArtworkStore } from "@/store/gallery/uploadArtworkStore";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { useAppStore } from "store/app/appStore";
+import { useAppStore } from "@/store/app/appStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function HeaderIndicator() {

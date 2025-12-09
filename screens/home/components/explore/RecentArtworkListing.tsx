@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import ArtworkCard from 'components/artwork/ArtworkCard'
+import ArtworkCard from '@/components/artwork/ArtworkCard'
 
 export default function RecentArtworkListing({data}: {data: any[]}) {
     return (

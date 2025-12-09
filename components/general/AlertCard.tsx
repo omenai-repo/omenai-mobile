@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, ViewStyle } from "react-native";
 import tw from "twrnc";
 import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 
 interface AlertCardProps {
   title: string;

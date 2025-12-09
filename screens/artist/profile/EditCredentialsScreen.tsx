@@ -1,4 +1,4 @@
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
+import BackHeaderTitle from '@/components/header/BackHeaderTitle';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -11,14 +11,14 @@ import {
   TextInput,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { QuestionKey, questions } from 'screens/artistOnboarding/ArtistOnboarding';
-import OverviewContainer from 'screens/artistOnboarding/OverviewContainer';
-import QuestionContainer from 'screens/artistOnboarding/QuestionContainer';
+import { QuestionKey, questions } from '@/screens/artistOnboarding/ArtistOnboarding';
+import OverviewContainer from '@/screens/artistOnboarding/OverviewContainer';
+import QuestionContainer from '@/screens/artistOnboarding/QuestionContainer';
 import tw from 'twrnc';
-import { uploadIcon } from 'utils/SvgImages';
+import { uploadIcon } from '@/utils/SvgImages';
 import * as DocumentPicker from 'expo-document-picker';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { getArtistCredentials } from 'services/artistOnboarding/getArtistCredentials';
+import LongBlackButton from '@/components/buttons/LongBlackButton';
+import { getArtistCredentials } from '@/services/artistOnboarding/getArtistCredentials';
 import LottieView from 'lottie-react-native';
 import loaderAnimation from '../../../assets/other/loader-animation.json';
 

@@ -3,11 +3,11 @@ import { View, Text, Pressable, Image, Platform } from 'react-native';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { utils_getCurrencySymbol } from 'utils/utils_getCurrencySymbol';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
-import { getFutureDate } from 'utils/utils_getFutureDate';
-import { screenName } from 'constants/screenNames.constants';
+import { utils_getCurrencySymbol } from '@/utils/utils_getCurrencySymbol';
+import { utils_formatPrice } from '@/utils/utils_priceFormatter';
+import { formatIntlDateTime } from '@/utils/utils_formatIntlDateTime';
+import { getFutureDate } from '@/utils/utils_getFutureDate';
+import { screenName } from '@/constants/screenNames.constants';
 
 export type UpcomingSubData = {
   status: SubscriptionModelSchemaTypes['status'];

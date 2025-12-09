@@ -7,17 +7,17 @@ import {
   FlatList,
 } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import ArtworkCard from "components/artwork/ArtworkCard";
-import { fetchArtworks } from "services/artworks/fetchArtworks";
-import ArtworkCardLoader from "components/general/ArtworkCardLoader";
-import EmptyArtworks from "components/general/EmptyArtworks";
+import ArtworkCard from "@/components/artwork/ArtworkCard";
+import { fetchArtworks } from "@/services/artworks/fetchArtworks";
+import ArtworkCardLoader from "@/components/general/ArtworkCardLoader";
+import EmptyArtworks from "@/components/general/EmptyArtworks";
 import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { fontNames } from "constants/fontNames.constants";
-import { HOME_QK } from "utils/queryKeys";
-import { useAppStore } from "store/app/appStore";
+import { screenName } from "@/constants/screenNames.constants";
+import { fontNames } from "@/constants/fontNames.constants";
+import { HOME_QK } from "@/utils/queryKeys";
+import { useAppStore } from "@/store/app/appStore";
 
 export default function NewArtworksListing() {
   const navigation = useNavigation<any>();

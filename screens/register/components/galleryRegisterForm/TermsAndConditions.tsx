@@ -1,8 +1,8 @@
 import { acceptTermsList } from "../../../../constants/accetTerms.constants";
 import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
-import { useRegistrationHandler } from "hooks/useRegistrationHandler";
-import { useTermsSelection } from "hooks/useTermsSelection";
-import { TermsAndConditionsForm } from "components/register/TermsAndConditionsForm";
+import { useRegistrationHandler } from "@/hooks/useRegistrationHandler";
+import { useTermsSelection } from "@/hooks/useTermsSelection";
+import { TermsAndConditionsForm } from "@/components/register/TermsAndConditionsForm";
 
 export default function TermsAndConditions({
   hideBackButton = false,

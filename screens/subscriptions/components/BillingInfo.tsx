@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Platform } from 'react-native';
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppStore } from 'store/app/appStore';
+import { useAppStore } from '@/store/app/appStore';
 
 export default function BillingInfo() {
   const { userSession } = useAppStore();

@@ -7,15 +7,15 @@ import {
   PixelRatio,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getImageFileView } from "lib/storage/getImageFileView";
+import { getImageFileView } from "@/lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { screenName } from "@/constants/screenNames.constants";
+import { utils_formatPrice } from "@/utils/utils_priceFormatter";
 import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
-import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
-import { fontNames } from "constants/fontNames.constants";
+import { resizeImageDimensions } from "@/utils/utils_resizeImageDimensions.utils";
+import { fontNames } from "@/constants/fontNames.constants";
 
 type ArtworkCardType = {
   title: string;

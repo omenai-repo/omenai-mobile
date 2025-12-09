@@ -1,8 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View, Platform, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
-import { colors } from "config/colors.config";
-import { galleryOrdersStore, galleryOrdersTab } from "store/gallery/galleryOrdersStore";
+import { colors } from "@/config/colors.config";
+import { galleryOrdersStore, galleryOrdersTab } from "@/store/gallery/galleryOrdersStore";
 
 export default function HeaderTabs() {
   const tabs: galleryOrdersTab[] = ["pending", "processing", "completed"];

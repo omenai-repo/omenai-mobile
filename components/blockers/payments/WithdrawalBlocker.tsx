@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { lockIcon, dollarSignIcon, closeIcon } from "utils/SvgImages";
+import { lockIcon, dollarSignIcon, closeIcon } from "@/utils/SvgImages";
 
 interface WithdrawalBlockerProps {
   readonly message?: string;

@@ -1,4 +1,4 @@
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
+import { utils_getAsyncData } from "@/utils/utils_asyncStorage";
 import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function fetchPopularArtworks(){

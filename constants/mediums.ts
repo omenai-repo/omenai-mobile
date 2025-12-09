@@ -1,9 +1,9 @@
-import acrylic_art from 'assets/images/acrylic_art.webp';
-import oil_art from 'assets/images/oil_art.webp';
-import photography_art from 'assets/images/photography_art.webp';
-import mixedMedia from 'assets/images/mixed_media_art.webp';
-import sculpture from 'assets/images/bronze_art.webp';
-import resin from 'assets/images/resin_art.webp';
+import acrylic_art from '@/assets/images/acrylic_art.webp';
+import oil_art from '@/assets/images/oil_art.webp';
+import photography_art from '@/assets/images/photography_art.webp';
+import mixedMedia from '@/assets/images/mixed_media_art.webp';
+import sculpture from '@/assets/images/bronze_art.webp';
+import resin from '@/assets/images/resin_art.webp';
 
 export const mediums = <CatalogCardTypes[]>[
   { name: 'Mixed media on paper/canvas', value: 'Mixed media on paper/canvas', image: mixedMedia },

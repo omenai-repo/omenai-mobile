@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { colors } from 'config/colors.config'
+import { colors } from '@/config/colors.config'
 import { Feather } from '@expo/vector-icons'
 
 type CustomCheckerProps = {

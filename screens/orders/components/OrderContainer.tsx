@@ -6,12 +6,12 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
 import tw from "twrnc";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
+import { getImageFileView } from "@/lib/storage/getImageFileView";
+import { dropdownIcon, dropUpIcon } from "@/utils/SvgImages";
 import StatusPill from "./StatusPill";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import { useHighRiskFeatureFlag } from "hooks/useFeatureFlag";
-import { screenName } from "constants/screenNames.constants";
+import FittedBlackButton from "@/components/buttons/FittedBlackButton";
+import { useHighRiskFeatureFlag } from "@/hooks/useFeatureFlag";
+import { screenName } from "@/constants/screenNames.constants";
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
 
 interface HoldStatus {

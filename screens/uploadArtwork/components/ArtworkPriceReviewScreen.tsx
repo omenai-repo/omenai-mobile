@@ -2,18 +2,18 @@ import { useRef, useState } from "react";
 import { View, Text, Pressable, useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
-import { useModalStore } from "store/modal/modalStore";
-import { getArtistCurrencySymbol } from "utils/utils_getArtistCurrencySymbol";
-import { getArtworkPriceForArtist } from "services/artworks/getArtworkPriceForArtist";
-import { uploadArtworkStore } from "store/gallery/uploadArtworkStore";
-import { useAppStore } from "store/app/appStore";
+import { useModalStore } from "@/store/modal/modalStore";
+import { getArtistCurrencySymbol } from "@/utils/utils_getArtistCurrencySymbol";
+import { getArtworkPriceForArtist } from "@/services/artworks/getArtworkPriceForArtist";
+import { uploadArtworkStore } from "@/store/gallery/uploadArtworkStore";
+import { useAppStore } from "@/store/app/appStore";
 import LottieView from "lottie-react-native";
 import loaderAnimation from "../../../assets/other/loader-animation.json";
-import { extractNumberString } from "utils/utils_editStringToNumber";
+import { extractNumberString } from "@/utils/utils_editStringToNumber";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
-import { colors } from "config/colors.config";
+import { colors } from "@/config/colors.config";
 
 export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () => void }) {
   const { height } = useWindowDimensions();

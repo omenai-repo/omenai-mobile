@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Dimensions, ScrollView } from 'react-native';
 import tw from 'twrnc';
 import LottieView from 'lottie-react-native';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { getArtistCredentials } from 'services/artistOnboarding/getArtistCredentials';
+import BackHeaderTitle from '@/components/header/BackHeaderTitle';
+import { getArtistCredentials } from '@/services/artistOnboarding/getArtistCredentials';
 import loaderAnimation from '../../../assets/other/loader-animation.json';
-import { QuestionKey, questions } from 'screens/artistOnboarding/ArtistOnboarding';
+import { QuestionKey, questions } from '@/screens/artistOnboarding/ArtistOnboarding';
 import ViewItem from './ViewItem';
-import { getDocFileView } from 'lib/storage/getDocFileView';
+import { getDocFileView } from '@/lib/storage/getDocFileView';
 
 const { width } = Dimensions.get('window');
 
