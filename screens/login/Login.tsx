@@ -136,11 +136,11 @@ export default function Login() {
                   >
                     <SvgXml
                       xml={lockIcon}
-                      width={20}
-                      height={20}
+                      width={18}
+                      height={18}
                       style={tw`mr-2`}
                     />
-                    <Text style={tw`text-black font-medium`}>{buttonText}</Text>
+                    <Text style={tw`text-black font-normal`}>{buttonText}</Text>
                   </TouchableOpacity>
                 </View>
               );
