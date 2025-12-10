@@ -15,7 +15,6 @@ import tw from "twrnc";
 import omenaiLogo from "../../assets/omenai-logo.png";
 import * as DocumentPicker from "expo-document-picker";
 import QuestionContainer from "./QuestionContainer";
-import OverviewContainer from "./OverviewContainer";
 import CVUpload from "./CVUpload";
 import Socials from "./Socials";
 import ConfirmationModal from "./ConfirmationModal";
