@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import ProfileMenuItems from "#components/profile/ProfileMenuItems";
@@ -19,6 +19,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
+import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
 
 type UserData = { name: string; email: string };
 
@@ -28,6 +29,7 @@ export default function GalleryProfile() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
+  const { contentBottomPadding, buttonBottomMargin } = useSafeBottomSpacing();
 
   const [userData, setUserData] = useState<UserData>({
     name: userSession?.name ?? "",
@@ -104,17 +106,19 @@ export default function GalleryProfile() {
           </View>
         </View>
 
-        <View style={tw`pt-[40px] pb-8`}>
+        <View style={[tw`pt-10`, { paddingBottom: contentBottomPadding }]}>
           <ProfileMenuItems items={menuItems} />
         </View>
 
-        <LongBlackButton
-          value="Log Out"
-          onClick={() => {
-            queryClient.clear();
-            logout();
-          }}
-        />
+        <View style={{ marginBottom: buttonBottomMargin }}>
+          <LongBlackButton
+            value="Log Out"
+            onClick={() => {
+              queryClient.clear();
+              logout();
+            }}
+          />
+        </View>
       </ScrollWrapper>
     </WithGalleryModal>
   );

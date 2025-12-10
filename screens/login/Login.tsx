@@ -118,8 +118,8 @@ export default function Login() {
           {canUseBiometrics &&
             (() => {
               const getBiometricName = () => {
+                if (biometricType === 1) return "Fingerprint"; // FINGERPRINT (prioritized)
                 if (biometricType === 2) return "Face ID"; // FACIAL_RECOGNITION
-                if (biometricType === 1) return "Fingerprint"; // FINGERPRINT
                 return "Biometrics";
               };
               const biometricName = getBiometricName();

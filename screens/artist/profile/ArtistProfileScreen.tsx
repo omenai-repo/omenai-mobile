@@ -26,6 +26,7 @@ import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
+import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
 
 type userDataType = {
   name: string;
@@ -40,6 +41,7 @@ export default function ArtistProfileScreen() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
+  const { contentBottomPadding, buttonBottomMargin } = useSafeBottomSpacing();
 
   const [userData, setUserData] = useState<userDataType>({
     name: "",
@@ -173,11 +175,11 @@ export default function ArtistProfileScreen() {
               />
             </View>
 
-            <View style={tw`pt-[40px] pb-8`}>
+            <View style={[tw`pt-10`, { paddingBottom: contentBottomPadding }]}>
               <ProfileMenuItems items={menuItems} />
             </View>
 
-            <View style={tw`mb-[40px]`}>
+            <View style={{ marginBottom: buttonBottomMargin }}>
               <LongBlackButton
                 value="Log Out"
                 onClick={() => {
