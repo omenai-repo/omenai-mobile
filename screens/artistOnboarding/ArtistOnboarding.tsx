@@ -11,19 +11,18 @@ import {
   ScrollView,
   Platform,
   TouchableOpacity,
-  Modal,
 } from "react-native";
 import React, { useState, useRef } from "react";
 import tw from "twrnc";
 import omenaiLogo from "../../assets/omenai-logo.png";
-import { SvgXml } from "react-native-svg";
-import { uploadIcon } from "#utils/SvgImages";
 import * as DocumentPicker from "expo-document-picker";
 import QuestionContainer from "./QuestionContainer";
 import OverviewContainer from "./OverviewContainer";
 import CVUpload from "./CVUpload";
 import Socials from "./Socials";
 import ConfirmationModal from "./ConfirmationModal";
+import OnboardingProgressBar from "./OnboardingProgressBar";
+import EditOnboardingModal from "./EditOnboardingModal";
 import uploadArtistDoc from "#screens/register/components/artistRegistrationForm/uploadArtistDoc";
 import {
   NavigationProp,
@@ -545,163 +544,34 @@ const ArtistOnboarding = () => {
                   )
                 )}
 
-                {(stage === "questions" ||
-                  stage === "cv_upload" ||
-                  stage === "socials") && (
-                  <View
-                    style={tw.style(
-                      `flex-row justify-center items-center self-center absolute`,
-                      {
-                        top: -30,
-                        width: width - 50, // Fill screen width with 20px margin on each side
-                        marginHorizontal: 20, // Add 20px margin on left and right
-                      }
-                    )}
-                  >
-                    {/* Progress indicators for questions */}
-                    {questions.map((_, index) => (
-                      <View
-                        key={index}
-                        style={tw.style(
-                          `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
-                          index <= currentQuestionIndex
-                            ? "bg-[#000]"
-                            : "bg-[#E0E0E0]"
-                        )}
-                      />
-                    ))}
-
-                    {/* Progress indicator for CV step */}
-                    <View
-                      style={tw.style(
-                        `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
-                        stage === "cv_upload" || stage === "socials"
-                          ? "bg-[#000]"
-                          : "bg-[#E0E0E0]"
-                      )}
-                    />
-                    {/* Progress indicator for Social step */}
-                    <View
-                      style={tw.style(
-                        `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
-                        stage === "socials" ? "bg-[#000]" : "bg-[#E0E0E0]"
-                      )}
-                    />
-                  </View>
-                )}
+                <OnboardingProgressBar
+                  stage={stage}
+                  currentQuestionIndex={currentQuestionIndex}
+                />
               </View>
 
-              <Modal
-                visible={isEditModalVisible}
-                transparent={true}
-                animationType="fade"
-                onRequestClose={() => setIsEditModalVisible(false)}
-              >
-                <Pressable
-                  onPressOut={() => setIsEditModalVisible(false)}
-                  style={tw`flex-1 bg-[#0003] justify-center items-center`}
-                >
-                  <Pressable
-                    onPress={(e) => e.stopPropagation()}
-                    style={tw.style(
-                      (editingQuestionKey === "social" ||
-                        editingQuestionKey === "cv") &&
-                        `bg-white p-5 rounded-lg w-[90%]`
-                    )}
-                  >
-                    {editingQuestionKey === "cv" ? (
-                      <>
-                        {/* CV Upload Section */}
-                        <TouchableOpacity
-                          onPress={pickDocument}
-                          style={tw.style(
-                            `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`
-                          )}
-                        >
-                          {!cv?.assets && <SvgXml xml={uploadIcon} />}
-                          <Text
-                            style={tw`text-[12px] text-[#1A1A1A]000] font-medium mt-[15px] text-center mx-[30px]`}
-                          >
-                            {cv?.assets
-                              ? cv.assets[0].name
-                              : "Upload your CV here"}
-                          </Text>
-                        </TouchableOpacity>
-
-                        {/* <Pressable
-                    onPress={() => setIsEditModalVisible(false)}
-                    style={tw`mt-4 bg-[#1A1A1A] py-2 rounded-lg`}
-                  >
-                    <Text style={tw`text-white text-center`}>Close</Text>
-                  </Pressable> */}
-                      </>
-                    ) : editingQuestionKey === "social" && editingSocialKey ? (
-                      <>
-                        {/* Edit Specific Social Media */}
-                        <Text
-                          style={tw`text-[16px] text-[#1A1A1A] font-medium text-center mb-4`}
-                        >
-                          Edit {editingSocialKey.toUpperCase()}
-                        </Text>
-                        <TextInput
-                          style={tw`bg-[#F7F7F7] rounded-[20px] h-[50px] p-4 mx-[10px]`}
-                          placeholder={`Enter your ${editingSocialKey} link`}
-                          value={documentation.socials[editingSocialKey]}
-                          onChangeText={(text) => {
-                            setDocumentation((prev) => ({
-                              ...prev,
-                              socials: {
-                                ...prev.socials,
-                                [editingSocialKey]: text,
-                              },
-                            }));
-                          }}
-                        />
-
-                        {/* <Pressable
-                    onPress={() => setIsEditModalVisible(false)}
-                    style={tw`mt-4 bg-[#1A1A1A] py-2 rounded-lg`}
-                  >
-                    <Text style={tw`text-white text-center`}>Close</Text>
-                  </Pressable> */}
-                      </>
-                    ) : (
-                      /* Default Container for Questions */
-                      editingQuestionKey &&
-                      (() => {
-                        const questionDetails = questions.find(
-                          (q) => q.key === editingQuestionKey
-                        );
-
-                        return (
-                          <QuestionContainer
-                            question={questionDetails?.text || ""}
-                            value={
-                              editingQuestionKey === "social"
-                                ? ""
-                                : String(
-                                    onboardingQuestions[
-                                      editingQuestionKey as QuestionKey
-                                    ]
-                                  )
-                            }
-                            onSelect={(answer) => {
-                              setOnboardingQuestions((prev) => ({
-                                ...prev,
-                                [editingQuestionKey]: answer,
-                              }));
-                            }}
-                            animatedStyle={{}} // No need for animation inside the modal
-                            isModalVisible={isEditModalVisible}
-                            options={questionDetails?.options} // ✅ Pass options dynamically
-                            isNumber={questionDetails?.isNumber} // ✅ Pass isNumber dynamically
-                          />
-                        );
-                      })()
-                    )}
-                  </Pressable>
-                </Pressable>
-              </Modal>
+              <EditOnboardingModal
+                isVisible={isEditModalVisible}
+                onClose={() => setIsEditModalVisible(false)}
+                editingKey={editingQuestionKey}
+                editingSocialKey={editingSocialKey}
+                cv={cv}
+                onPickDocument={pickDocument}
+                socials={documentation.socials}
+                onUpdateSocials={(key, value) => {
+                  setDocumentation((prev) => ({
+                    ...prev,
+                    socials: { ...prev.socials, [key]: value },
+                  }));
+                }}
+                onboardingQuestions={onboardingQuestions}
+                onUpdateQuestion={(key, value) => {
+                  setOnboardingQuestions((prev) => ({
+                    ...prev,
+                    [key]: value,
+                  }));
+                }}
+              />
               <ConfirmationModal
                 isModalVisible={confirmModal}
                 setIsModalVisible={setConfirmModal}
