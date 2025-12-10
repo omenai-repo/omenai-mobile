@@ -5,7 +5,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 
-import { colors } from "#config/colors.config";
 import { useAppStore } from "#store/app/appStore";
 import { screenName } from "#constants/screenNames.constants";
 import WithModal from "#components/modal/WithModal";

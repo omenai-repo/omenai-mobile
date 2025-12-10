@@ -27,9 +27,9 @@ const OnboardingProgressBar: React.FC<OnboardingProgressBarProps> = ({
         }
       )}
     >
-      {questions.map((_, index) => (
+      {questions.map((question, index) => (
         <View
-          key={index}
+          key={question.key}
           style={tw.style(
             `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
             index <= currentQuestionIndex ? "bg-[#000]" : "bg-[#E0E0E0]"

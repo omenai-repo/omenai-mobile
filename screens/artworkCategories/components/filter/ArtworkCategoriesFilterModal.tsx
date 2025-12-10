@@ -1,5 +1,4 @@
 import React from "react";
-import { colors } from "#config/colors.config";
 import PriceFilter from "./PriceFilter";
 import YearFilter from "./YearFilter";
 import RarityFilter from "./RarityFilter";

@@ -1,5 +1,4 @@
 import {
-  View,
   Text,
   Modal,
   Pressable,
@@ -39,6 +38,67 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
   onboardingQuestions,
   onUpdateQuestion,
 }) => {
+  const renderEditContent = () => {
+    if (editingKey === "cv") {
+      return (
+        <TouchableOpacity
+          onPress={onPickDocument}
+          style={tw.style(
+            `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`
+          )}
+        >
+          {!cv?.assets && <SvgXml xml={uploadIcon} />}
+          <Text
+            style={tw`text-[12px] text-[#1A1A1A]000] font-medium mt-[15px] text-center mx-[30px]`}
+          >
+            {cv?.assets ? cv.assets[0].name : "Upload your CV here"}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+
+    if (editingKey === "social" && editingSocialKey) {
+      return (
+        <>
+          <Text
+            style={tw`text-[16px] text-[#1A1A1A] font-medium text-center mb-4`}
+          >
+            Edit {editingSocialKey.toUpperCase()}
+          </Text>
+          <TextInput
+            style={tw`bg-[#F7F7F7] rounded-[20px] h-[50px] p-4 mx-[10px]`}
+            placeholder={`Enter your ${editingSocialKey} link`}
+            value={socials[editingSocialKey]}
+            onChangeText={(text) => onUpdateSocials(editingSocialKey, text)}
+          />
+        </>
+      );
+    }
+
+    if (editingKey) {
+      const questionDetails = questions.find((q) => q.key === editingKey);
+      return (
+        <QuestionContainer
+          question={questionDetails?.text || ""}
+          value={
+            editingKey === "social"
+              ? ""
+              : String(onboardingQuestions[editingKey as QuestionKey])
+          }
+          onSelect={(answer) => {
+            onUpdateQuestion(editingKey as string, answer);
+          }}
+          animatedStyle={{}}
+          isModalVisible={isVisible}
+          options={questionDetails?.options}
+          isNumber={questionDetails?.isNumber}
+        />
+      );
+    }
+
+    return null;
+  };
+
   return (
     <Modal
       visible={isVisible}
@@ -57,62 +117,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
               `bg-white p-5 rounded-lg w-[90%]`
           )}
         >
-          {editingKey === "cv" ? (
-            <>
-              <TouchableOpacity
-                onPress={onPickDocument}
-                style={tw.style(
-                  `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`
-                )}
-              >
-                {!cv?.assets && <SvgXml xml={uploadIcon} />}
-                <Text
-                  style={tw`text-[12px] text-[#1A1A1A]000] font-medium mt-[15px] text-center mx-[30px]`}
-                >
-                  {cv?.assets ? cv.assets[0].name : "Upload your CV here"}
-                </Text>
-              </TouchableOpacity>
-            </>
-          ) : editingKey === "social" && editingSocialKey ? (
-            <>
-              <Text
-                style={tw`text-[16px] text-[#1A1A1A] font-medium text-center mb-4`}
-              >
-                Edit {editingSocialKey.toUpperCase()}
-              </Text>
-              <TextInput
-                style={tw`bg-[#F7F7F7] rounded-[20px] h-[50px] p-4 mx-[10px]`}
-                placeholder={`Enter your ${editingSocialKey} link`}
-                value={socials[editingSocialKey]}
-                onChangeText={(text) => onUpdateSocials(editingSocialKey, text)}
-              />
-            </>
-          ) : (
-            editingKey &&
-            (() => {
-              const questionDetails = questions.find(
-                (q) => q.key === editingKey
-              );
-
-              return (
-                <QuestionContainer
-                  question={questionDetails?.text || ""}
-                  value={
-                    editingKey === "social"
-                      ? ""
-                      : String(onboardingQuestions[editingKey as QuestionKey])
-                  }
-                  onSelect={(answer) => {
-                    onUpdateQuestion(editingKey as string, answer);
-                  }}
-                  animatedStyle={{}}
-                  isModalVisible={isVisible}
-                  options={questionDetails?.options}
-                  isNumber={questionDetails?.isNumber}
-                />
-              );
-            })()
-          )}
+          {renderEditContent()}
         </Pressable>
       </Pressable>
     </Modal>

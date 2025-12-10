@@ -12,7 +12,6 @@ import WithGalleryModal from "#components/modal/WithGalleryModal";
 import { useAppStore } from "#store/app/appStore";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
-import { changePasswsordIcon, getDeleteIcon } from "#utils/SvgImages";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
 import LoadingContainer from "#screens/artistOnboarding/LoadingContainer";

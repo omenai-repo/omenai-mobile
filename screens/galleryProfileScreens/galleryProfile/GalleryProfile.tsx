@@ -13,7 +13,6 @@ import Logo from "./components/Logo";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
-import { changePasswsordIcon, getDeleteIcon } from "#utils/SvgImages";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQueryClient } from "@tanstack/react-query";

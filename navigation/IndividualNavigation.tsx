@@ -1,11 +1,9 @@
-import { Text, View } from "react-native";
 import React from "react";
 import { screenName } from "#constants/screenNames.constants";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import SavedArtworks from "#screens/savedArtworks/SavedArtworks";
 import PurchaseArtwork from "#screens/purchase/PurchaseArtwork";
-import { colors } from "#config/colors.config";
 import Artwork from "#screens/artwork/Artwork";
 import SearchResults from "#screens/searchResults/SearchResults";
 import Filter from "#components/filter/Filter";
@@ -15,7 +13,6 @@ import ArtworkMediumFilterModal from "#screens/artworksMedium/components/filter/
 import ArtworkCategoriesFilterModal from "#screens/artworkCategories/components/filter/ArtworkCategoriesFilterModal";
 import Collections from "#screens/collections/Collections";
 import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
-import { SvgXml } from "react-native-svg";
 import { BottomTabDataIndividual } from "#utils/BottomTabData";
 import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
 import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
