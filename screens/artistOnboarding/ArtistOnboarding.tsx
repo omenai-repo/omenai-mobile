@@ -30,6 +30,7 @@ import FirstScreen from "./FirstScreen";
 import SuccessComp from "./SuccessComp";
 import { useAppStore } from "#store/app/appStore";
 import { logout } from "#utils/logout.utils";
+import CredentialsOverview from "./CredentialsOverview";
 
 const { width, height } = Dimensions.get("window");
 
@@ -424,64 +425,16 @@ const ArtistOnboarding = () => {
         );
       case "overview":
         return (
-          <View
-            style={tw.style(
-              `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
-              {
-                marginHorizontal: width / 18,
-              }
-            )}
-          >
-            {/* Map through onboarding questions */}
-            {Object.entries(onboardingQuestions)
-              .filter(
-                ([_, value]) => typeof value === "string" && value.trim() !== ""
-              )
-              .map(([key, value]) => {
-                // Find the corresponding question text
-                const questionText =
-                  questions.find((q) => q.key === key)?.text || key;
-
-                return (
-                  <OverviewContainer
-                    key={key}
-                    index={key}
-                    title={questionText}
-                    data={String(value)}
-                    open={openSections[key]}
-                    setOpen={() => toggleSection(key)}
-                    openModal={() => openEditModal(key as QuestionKey)}
-                  />
-                );
-              })}
-
-            {/* Map through documentation */}
-            {Object.entries(documentation.socials)
-              .filter(([_, value]) => value.trim() !== "")
-              .map(([key, value]) => (
-                <OverviewContainer
-                  key={key}
-                  index={key}
-                  title={key.toUpperCase()}
-                  data={value}
-                  open={openSections[key]}
-                  setOpen={() => toggleSection(key)}
-                  openModal={() => openEditModal("social", key)}
-                />
-              ))}
-
-            {/* CV Section */}
-            {documentation.cv && (
-              <OverviewContainer
-                index={"CV Document"}
-                title="CV Document"
-                data={cv?.assets ? cv.assets[0].name : ""}
-                open={openSections["cv"]}
-                setOpen={() => toggleSection("cv")}
-                openModal={() => openEditModal("cv")}
-              />
-            )}
-          </View>
+          <CredentialsOverview
+            onboardingQuestions={onboardingQuestions}
+            documentationSocials={documentation.socials}
+            documentationCv={documentation.cv}
+            cvAssets={cv?.assets ?? undefined}
+            openSections={openSections}
+            toggleSection={toggleSection}
+            openEditModal={openEditModal}
+            width={width}
+          />
         );
       default:
         return null;
