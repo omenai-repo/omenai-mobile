@@ -6,11 +6,9 @@ import {
   Dimensions,
   Animated,
   Easing,
-  TextInput,
   KeyboardAvoidingView,
   ScrollView,
   Platform,
-  TouchableOpacity,
 } from "react-native";
 import React, { useState, useRef } from "react";
 import tw from "twrnc";
@@ -24,11 +22,6 @@ import ConfirmationModal from "./ConfirmationModal";
 import OnboardingProgressBar from "./OnboardingProgressBar";
 import EditOnboardingModal from "./EditOnboardingModal";
 import uploadArtistDoc from "#screens/register/components/artistRegistrationForm/uploadArtistDoc";
-import {
-  NavigationProp,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
 import { artistOnboarding } from "#services/artistOnboarding/artistOnbaording";
 import { storage } from "#appWrite_config";
 import { useModalStore } from "#store/modal/modalStore";
@@ -120,7 +113,6 @@ export const questions: {
 const ArtistOnboarding = () => {
   const { userSession } = useAppStore();
   const id = userSession.id;
-  const navigation = useNavigation<any>();
   const { updateModal } = useModalStore();
   const [stage, setStage] = useState<
     "questions" | "cv_upload" | "socials" | "overview"
@@ -324,10 +316,9 @@ const ArtistOnboarding = () => {
     setIsLoading(true);
 
     if (
-      !cv?.assets ||
-      !cv.assets[0].uri ||
-      !cv.assets[0].name ||
-      !cv.assets[0].mimeType
+      !cv?.assets?.[0]?.uri ||
+      !cv.assets?.[0]?.name ||
+      !cv.assets?.[0]?.mimeType
     ) {
       return;
     }
@@ -395,6 +386,108 @@ const ArtistOnboarding = () => {
     }, 2000);
   };
 
+  const getStageTitle = () => {
+    switch (stage) {
+      case "questions":
+        return "Artist Onboarding";
+      case "cv_upload":
+        return "Upload your CV";
+      case "socials":
+        return "Upload your Social Handles";
+      case "overview":
+        return "An overview of your Information";
+      default:
+        return "";
+    }
+  };
+
+  const renderStageContent = () => {
+    switch (stage) {
+      case "questions":
+        return (
+          <QuestionContainer
+            value={String(onboardingQuestions[currentQuestion.key])}
+            question={currentQuestion.text}
+            onSelect={handleAnswer}
+            animatedStyle={{
+              transform: [{ translateX: animatedValue }],
+            }}
+            options={currentQuestion.options}
+            isNumber={currentQuestion.isNumber}
+          />
+        );
+      case "cv_upload":
+        return <CVUpload cv={cv} pickDocument={pickDocument} />;
+      case "socials":
+        return (
+          <Socials socials={documentation.socials} setSocials={updateSocial} />
+        );
+      case "overview":
+        return (
+          <View
+            style={tw.style(
+              `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
+              {
+                marginHorizontal: width / 18,
+              }
+            )}
+          >
+            {/* Map through onboarding questions */}
+            {Object.entries(onboardingQuestions)
+              .filter(
+                ([_, value]) => typeof value === "string" && value.trim() !== ""
+              )
+              .map(([key, value]) => {
+                // Find the corresponding question text
+                const questionText =
+                  questions.find((q) => q.key === key)?.text || key;
+
+                return (
+                  <OverviewContainer
+                    key={key}
+                    index={key}
+                    title={questionText}
+                    data={String(value)}
+                    open={openSections[key]}
+                    setOpen={() => toggleSection(key)}
+                    openModal={() => openEditModal(key as QuestionKey)}
+                  />
+                );
+              })}
+
+            {/* Map through documentation */}
+            {Object.entries(documentation.socials)
+              .filter(([_, value]) => value.trim() !== "")
+              .map(([key, value]) => (
+                <OverviewContainer
+                  key={key}
+                  index={key}
+                  title={key.toUpperCase()}
+                  data={value}
+                  open={openSections[key]}
+                  setOpen={() => toggleSection(key)}
+                  openModal={() => openEditModal("social", key)}
+                />
+              ))}
+
+            {/* CV Section */}
+            {documentation.cv && (
+              <OverviewContainer
+                index={"CV Document"}
+                title="CV Document"
+                data={cv?.assets ? cv.assets[0].name : ""}
+                open={openSections["cv"]}
+                setOpen={() => toggleSection("cv")}
+                openModal={() => openEditModal("cv")}
+              />
+            )}
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       {screen === 1 ? (
@@ -426,13 +519,7 @@ const ArtistOnboarding = () => {
                 <Text
                   style={tw`text-[20px] font-medium text-[#1A1A1A]000] mt-[30px]`}
                 >
-                  {stage === "questions"
-                    ? "Artist Onboarding"
-                    : stage === "cv_upload"
-                    ? "Upload your CV"
-                    : stage === "socials"
-                    ? "Upload your Social Handles"
-                    : stage === "overview" && "An overview of your Information"}
+                  {getStageTitle()}
                 </Text>
                 <Text
                   style={tw`text-[14px] text-[#1A1A1A]00099] mt-[10px] flex-wrap mr-[40px]`}
@@ -442,98 +529,12 @@ const ArtistOnboarding = () => {
                     : "Fill in the required information to complete your onboarding."}
                 </Text>
               </View>
-              <View>
-                {stage === "questions" ? (
-                  <QuestionContainer
-                    value={String(
-                      onboardingQuestions[currentQuestion.key as QuestionKey]
-                    )}
-                    question={currentQuestion.text}
-                    onSelect={handleAnswer}
-                    animatedStyle={{
-                      transform: [{ translateX: animatedValue }],
-                    }}
-                    options={currentQuestion.options}
-                    isNumber={currentQuestion.isNumber}
-                  />
-                ) : stage === "cv_upload" ? (
-                  <CVUpload cv={cv} pickDocument={pickDocument} />
-                ) : stage === "socials" ? (
-                  <Socials
-                    socials={documentation.socials}
-                    setSocials={updateSocial}
-                  />
-                ) : (
-                  stage === "overview" && (
-                    <View
-                      style={tw.style(
-                        `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
-                        {
-                          marginHorizontal: width / 18,
-                        }
-                      )}
-                    >
-                      {/* Map through onboarding questions */}
-                      {Object.entries(onboardingQuestions)
-                        .filter(
-                          ([_, value]) =>
-                            typeof value === "string" && value.trim() !== ""
-                        )
-                        .map(([key, value]) => {
-                          // Find the corresponding question text
-                          const questionText =
-                            questions.find((q) => q.key === key)?.text || key;
+              <View>{renderStageContent()}</View>
 
-                          return (
-                            <OverviewContainer
-                              key={key}
-                              index={key}
-                              title={questionText} // Use the actual question text
-                              data={String(value)}
-                              open={openSections[key]}
-                              setOpen={() => toggleSection(key)}
-                              openModal={() =>
-                                openEditModal(key as QuestionKey)
-                              }
-                            />
-                          );
-                        })}
-
-                      {/* Map through documentation */}
-                      {Object.entries(documentation.socials)
-                        .filter(([_, value]) => value.trim() !== "")
-                        .map(([key, value]) => (
-                          <OverviewContainer
-                            key={key}
-                            index={key}
-                            title={key.toUpperCase()}
-                            data={value}
-                            open={openSections[key]}
-                            setOpen={() => toggleSection(key)}
-                            openModal={() => openEditModal("social", key)}
-                          />
-                        ))}
-
-                      {/* CV Section */}
-                      {documentation.cv && (
-                        <OverviewContainer
-                          index={"CV Document"}
-                          title="CV Document"
-                          data={cv?.assets ? cv.assets[0].name : ""}
-                          open={openSections["cv"]}
-                          setOpen={() => toggleSection("cv")}
-                          openModal={() => openEditModal("cv")}
-                        />
-                      )}
-                    </View>
-                  )
-                )}
-
-                <OnboardingProgressBar
-                  stage={stage}
-                  currentQuestionIndex={currentQuestionIndex}
-                />
-              </View>
+              <OnboardingProgressBar
+                stage={stage}
+                currentQuestionIndex={currentQuestionIndex}
+              />
 
               <EditOnboardingModal
                 isVisible={isEditModalVisible}
