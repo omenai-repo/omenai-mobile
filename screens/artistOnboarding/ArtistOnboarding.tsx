@@ -51,6 +51,27 @@ export type QuestionKey =
   | "museum_exhibition"
   | "art_fair";
 
+const SOCIAL_KEYS = ["instagram", "twitter", "linkedin", "facebook"] as const;
+
+const INITIAL_ONBOARDING_STATE = {
+  bio: "",
+  graduate: "",
+  mfa: "",
+  solo: "",
+  group: "",
+  museum_collection: "",
+  biennale: "",
+  museum_exhibition: "",
+  art_fair: "",
+};
+
+const INITIAL_SOCIALS_STATE = {
+  instagram: "",
+  twitter: "",
+  linkedin: "",
+  facebook: "",
+};
+
 export const questions: {
   key: QuestionKey;
   text: string;
@@ -111,31 +132,21 @@ const ArtistOnboarding = () => {
       solo: string;
       group: string;
     }
-  >({
-    bio: "",
-    graduate: "",
-    mfa: "",
-    solo: "",
-    group: "",
-    museum_collection: "",
-    biennale: "",
-    museum_exhibition: "",
-    art_fair: "",
-  });
+  >(INITIAL_ONBOARDING_STATE);
   const [cv, setCv] = useState<DocumentPicker.DocumentPickerResult | null>(
     null
   );
   const [documentation, setDocumentation] = useState<{
     cv: string;
-    socials: { [key: string]: string };
+    socials: {
+      instagram: string;
+      twitter: string;
+      linkedin: string;
+      facebook: string;
+    };
   }>({
     cv: "",
-    socials: {
-      instagram: "",
-      twitter: "",
-      linkedin: "",
-      facebook: "",
-    },
+    socials: INITIAL_SOCIALS_STATE,
   });
 
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>(
@@ -264,12 +275,7 @@ const ArtistOnboarding = () => {
   };
 
   const handleSocials = () => {
-    if (
-      documentation.socials.instagram.trim() ||
-      documentation.socials.facebook.trim() ||
-      documentation.socials.linkedin.trim() ||
-      documentation.socials.twitter.trim()
-    ) {
+    if (hasSocialsFilled()) {
       setStage("overview");
       resetScroll();
     }
@@ -288,14 +294,7 @@ const ArtistOnboarding = () => {
     }
 
     if (stage === "socials") {
-      const { instagram, facebook, linkedin, twitter } = documentation.socials;
-      return (
-        !instagram.trim() &&
-        !facebook.trim() &&
-        !linkedin.trim() &&
-        !twitter.trim()
-      );
-      // Button will be disabled ONLY if all fields are empty
+      return !hasSocialsFilled();
     }
 
     return false;
@@ -306,6 +305,17 @@ const ArtistOnboarding = () => {
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const updateSocial = (key: string, value: string) => {
+    setDocumentation((prev) => ({
+      ...prev,
+      socials: { ...prev.socials, [key]: value },
+    }));
+  };
+
+  const hasSocialsFilled = () => {
+    return SOCIAL_KEYS.some((key) => documentation.socials[key]?.trim());
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -362,25 +372,10 @@ const ArtistOnboarding = () => {
       setConfirmModal(false);
       if (results?.isOk) {
         const resultsBody = results?.body;
-        setOnboardingQuestions({
-          bio: "",
-          graduate: "",
-          mfa: "",
-          solo: "",
-          group: "",
-          museum_collection: "",
-          biennale: "",
-          museum_exhibition: "",
-          art_fair: "",
-        });
+        setOnboardingQuestions(INITIAL_ONBOARDING_STATE);
         setDocumentation({
           cv: "",
-          socials: {
-            instagram: "",
-            twitter: "",
-            linkedin: "",
-            facebook: "",
-          },
+          socials: INITIAL_SOCIALS_STATE,
         });
         setScreen(3);
       } else {
@@ -465,18 +460,8 @@ const ArtistOnboarding = () => {
                   <CVUpload cv={cv} pickDocument={pickDocument} />
                 ) : stage === "socials" ? (
                   <Socials
-                    socials={{
-                      instagram: documentation.socials.instagram,
-                      twitter: documentation.socials.twitter,
-                      linkedin: documentation.socials.linkedin,
-                      facebook: documentation.socials.facebook,
-                    }}
-                    setSocials={(key, value) => {
-                      setDocumentation((prev) => ({
-                        ...prev,
-                        socials: { ...prev.socials, [key]: value },
-                      }));
-                    }}
+                    socials={documentation.socials}
+                    setSocials={updateSocial}
                   />
                 ) : (
                   stage === "overview" && (
@@ -558,12 +543,7 @@ const ArtistOnboarding = () => {
                 cv={cv}
                 onPickDocument={pickDocument}
                 socials={documentation.socials}
-                onUpdateSocials={(key, value) => {
-                  setDocumentation((prev) => ({
-                    ...prev,
-                    socials: { ...prev.socials, [key]: value },
-                  }));
-                }}
+                onUpdateSocials={updateSocial}
                 onboardingQuestions={onboardingQuestions}
                 onUpdateQuestion={(key, value) => {
                   setOnboardingQuestions((prev) => ({
