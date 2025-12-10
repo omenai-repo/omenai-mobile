@@ -15,7 +15,6 @@ import {
   QuestionKey,
   questions,
 } from "#screens/artistOnboarding/ArtistOnboarding";
-import OverviewContainer from "#screens/artistOnboarding/OverviewContainer";
 import QuestionContainer from "#screens/artistOnboarding/QuestionContainer";
 import tw from "twrnc";
 import { uploadIcon } from "#utils/SvgImages";
@@ -156,6 +155,82 @@ export default function EditCredentialsScreen() {
     );
   }
 
+  const renderModalContent = () => {
+    if (editingQuestionKey === "cv") {
+      return (
+        <>
+          <TouchableOpacity
+            onPress={pickDocument}
+            style={tw.style(
+              `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`
+            )}
+          >
+            {!cv?.assets && <SvgXml xml={uploadIcon} />}
+            <Text
+              style={tw`text-[12px] text-[#1A1A1A]000] font-medium mt-[15px] text-center mx-[30px]`}
+            >
+              {cv?.assets ? cv.assets[0].name : documentation.cv}
+            </Text>
+          </TouchableOpacity>
+        </>
+      );
+    }
+
+    if (editingQuestionKey === "social" && editingSocialKey) {
+      return (
+        <>
+          <Text
+            style={tw`text-[16px] text-[#1A1A1A] font-medium text-center mb-4`}
+          >
+            Edit {editingSocialKey.toUpperCase()}
+          </Text>
+          <TextInput
+            style={tw`bg-[#F7F7F7] rounded-[20px] h-[50px] p-4 mx-[10px]`}
+            placeholder={`Enter your ${editingSocialKey} link`}
+            value={
+              documentation.socials[
+                editingSocialKey as keyof typeof documentation.socials
+              ]
+            }
+            onChangeText={(text) => {
+              setDocumentation((prev) => ({
+                ...prev,
+                socials: {
+                  ...prev.socials,
+                  [editingSocialKey]: text,
+                },
+              }));
+            }}
+          />
+        </>
+      );
+    }
+
+    if (editingQuestionKey) {
+      const questionDetails = questions.find(
+        (q) => q.key === editingQuestionKey
+      );
+      return (
+        <QuestionContainer
+          question={questionDetails?.text || ""}
+          value={onboardingQuestions[editingQuestionKey as QuestionKey] || ""}
+          onSelect={(answer) => {
+            setOnboardingQuestions((prev) => ({
+              ...prev,
+              [editingQuestionKey]: answer,
+            }));
+          }}
+          animatedStyle={{}}
+          isModalVisible={isEditModalVisible}
+          options={questionDetails?.options}
+          isNumber={questionDetails?.isNumber}
+        />
+      );
+    }
+
+    return null;
+  };
+
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Edit Credentials" />
@@ -202,74 +277,7 @@ export default function EditCredentialsScreen() {
                 `bg-white p-5 rounded-lg w-[90%]`
             )}
           >
-            {editingQuestionKey === "cv" ? (
-              <>
-                <TouchableOpacity
-                  onPress={pickDocument}
-                  style={tw.style(
-                    `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`
-                  )}
-                >
-                  {!cv?.assets && <SvgXml xml={uploadIcon} />}
-                  <Text
-                    style={tw`text-[12px] text-[#1A1A1A]000] font-medium mt-[15px] text-center mx-[30px]`}
-                  >
-                    {cv?.assets ? cv.assets[0].name : documentation.cv}
-                  </Text>
-                </TouchableOpacity>
-              </>
-            ) : editingQuestionKey === "social" && editingSocialKey ? (
-              <>
-                <Text
-                  style={tw`text-[16px] text-[#1A1A1A] font-medium text-center mb-4`}
-                >
-                  Edit {editingSocialKey.toUpperCase()}
-                </Text>
-                <TextInput
-                  style={tw`bg-[#F7F7F7] rounded-[20px] h-[50px] p-4 mx-[10px]`}
-                  placeholder={`Enter your ${editingSocialKey} link`}
-                  value={
-                    documentation.socials[
-                      editingSocialKey as keyof typeof documentation.socials
-                    ]
-                  }
-                  onChangeText={(text) => {
-                    setDocumentation((prev) => ({
-                      ...prev,
-                      socials: {
-                        ...prev.socials,
-                        [editingSocialKey]: text,
-                      },
-                    }));
-                  }}
-                />
-              </>
-            ) : editingQuestionKey ? (
-              (() => {
-                const questionDetails = questions.find(
-                  (q) => q.key === editingQuestionKey
-                );
-                return (
-                  <QuestionContainer
-                    question={questionDetails?.text || ""}
-                    value={
-                      onboardingQuestions[editingQuestionKey as QuestionKey] ||
-                      ""
-                    }
-                    onSelect={(answer) => {
-                      setOnboardingQuestions((prev) => ({
-                        ...prev,
-                        [editingQuestionKey]: answer,
-                      }));
-                    }}
-                    animatedStyle={{}}
-                    isModalVisible={isEditModalVisible}
-                    options={questionDetails?.options}
-                    isNumber={questionDetails?.isNumber}
-                  />
-                );
-              })()
-            ) : null}
+            {renderModalContent()}
           </Pressable>
         </Pressable>
       </Modal>
