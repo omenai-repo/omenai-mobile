@@ -28,6 +28,7 @@ import { navigationRef } from "#navigation/RootNavigation";
 import { useNotificationHandler } from "#hooks/useNotificationHandler";
 import { StatusBar } from "expo-status-bar";
 import { clearStaleCredentials } from "#hooks/useBiometrics";
+import ForceUpdateModal from "#components/modal/ForceUpdateModal";
 
 // Safely patch Platform.constants for web/dev environments only
 try {
@@ -53,6 +54,9 @@ export default function App() {
   useNotificationHandler(); // Set up notification handler
   const [appIsReady, setAppIsReady] = useState(false);
   const { isLoggedIn, userType, setExpoPushToken } = useAppStore();
+
+  // TODO: Replace this with your actual force update check logic
+  const [needsForceUpdate] = useState(false);
 
   configureNotificationHandling(); // Set up global handler
   useNotifications(); // Register listeners
@@ -173,6 +177,9 @@ export default function App() {
           </SafeAreaProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>
+
+      {/* Force Update Modal - Cannot be dismissed */}
+      <ForceUpdateModal isVisible={needsForceUpdate} />
     </CopilotProvider>
   );
 }

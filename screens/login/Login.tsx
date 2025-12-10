@@ -132,12 +132,13 @@ export default function Login() {
                   <TouchableOpacity
                     onPress={handleBiometricLogin}
                     disabled={isBiometricLoading}
-                    style={tw`flex-row items-center justify-center bg-gray-100 py-3 px-6 rounded-full w-full`}
+                    style={tw`flex-row items-center justify-center bg-gray-100 py-3 px-6 rounded-lg w-full`}
                   >
                     <SvgXml
                       xml={lockIcon}
                       width={18}
                       height={18}
+                      color={colors.black}
                       style={tw`mr-2`}
                     />
                     <Text style={tw`text-black font-normal`}>{buttonText}</Text>
