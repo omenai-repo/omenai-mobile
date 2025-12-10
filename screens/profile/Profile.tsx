@@ -11,12 +11,7 @@ import WithModal from "#components/modal/WithModal";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import LongBlackButton from "#components/buttons/LongBlackButton";
-import {
-  changePasswsordIcon,
-  getDeleteIcon,
-  orderHistoryIcon,
-  savedArtworksIcon,
-} from "#utils/SvgImages";
+import { orderHistoryIcon, savedArtworksIcon } from "#utils/SvgImages";
 import ProfileMenuItems from "#components/profile/ProfileMenuItems";
 import omenaiAvatar from "../../assets/images/omenai-avatar.png";
 import { logout } from "#utils/logout.utils";
@@ -24,6 +19,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
+import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
 
 type Nav = StackNavigationProp<any>;
 
@@ -33,6 +29,7 @@ export default function Profile() {
   const { userSession } = useAppStore();
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
+  const { contentBottomPadding } = useSafeBottomSpacing();
 
   const name = userSession?.name ?? "";
   const email = userSession?.email ?? "";
@@ -118,10 +115,10 @@ export default function Profile() {
           </View>
         </View>
 
-        <View style={tw`pt-[40px] px-[20px] pb-8`}>
+        <View style={[tw`pt-10 px-5`, { paddingBottom: contentBottomPadding }]}>
           <ProfileMenuItems items={menuItems} />
 
-          <View style={tw`mt-[40px]`} />
+          <View style={tw`mt-10`} />
           <LongBlackButton
             value="Log Out"
             onClick={() => {

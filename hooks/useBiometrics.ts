@@ -70,19 +70,20 @@ export const useBiometrics = () => {
           try {
             const types =
               await LocalAuthentication.supportedAuthenticationTypesAsync();
+            // Prioritize FINGERPRINT over FACIAL_RECOGNITION when both are available
             if (
+              types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)
+            ) {
+              setBiometricType(
+                LocalAuthentication.AuthenticationType.FINGERPRINT
+              );
+            } else if (
               types.includes(
                 LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
               )
             ) {
               setBiometricType(
                 LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
-              );
-            } else if (
-              types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)
-            ) {
-              setBiometricType(
-                LocalAuthentication.AuthenticationType.FINGERPRINT
               );
             }
           } catch (e) {
