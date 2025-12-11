@@ -55,7 +55,6 @@ export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const { isLoggedIn, userType, setExpoPushToken } = useAppStore();
 
-  // TODO: Replace this with your actual force update check logic
   const [needsForceUpdate] = useState(false);
 
   configureNotificationHandling(); // Set up global handler
