@@ -12,10 +12,7 @@ type ForceUpdateModalProps = {
 export default function ForceUpdateModal({ isVisible }: ForceUpdateModalProps) {
   const handleUpdate = () => {
     const storeUrl =
-      Platform.OS === "ios"
-        ? "https://play.google.com/store/apps/details?id=com.omenai.omenaiapp" // Replace with your App Store URL
-        : "https://play.google.com/store/apps/details?id=com.omenai.omenaiapp";
-
+      "https://play.google.com/store/apps/details?id=com.omenai.omenaiapp";
     Linking.openURL(storeUrl);
   };
 
