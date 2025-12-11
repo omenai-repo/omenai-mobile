@@ -1,13 +1,13 @@
-import { Text, View, TouchableOpacity, Linking, Platform } from "react-native";
+import { Text, View, TouchableOpacity, Linking } from "react-native";
 import Modal from "react-native-modal";
 import React from "react";
 import { colors } from "#config/colors.config";
 import { MaterialIcons } from "@expo/vector-icons";
 import tw from "twrnc";
 
-type ForceUpdateModalProps = {
+type ForceUpdateModalProps = Readonly<{
   isVisible: boolean;
-};
+}>;
 
 export default function ForceUpdateModal({ isVisible }: ForceUpdateModalProps) {
   const handleUpdate = () => {
