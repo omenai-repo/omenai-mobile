@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from "react-native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { colors } from "../../config/colors.config";
 import AuthHeader from "../../components/auth/AuthHeader";
 import { useNavigation } from "@react-navigation/native";
@@ -17,6 +17,7 @@ import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualA
 import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
 import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
 import InputForm from "./components/inputForm/InputForm";
+import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 
 type RootStackParamList = {
   [screenName.welcome]: undefined;
@@ -27,8 +28,24 @@ export default function Register() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { clearState: clearIndividualState, pageIndex: collectorPage } =
     useIndividualAuthRegisterStore();
-  const { clearState: clearGalleryState, pageIndex: galleryPage } = useGalleryAuthRegisterStore();
-  const { clearState: clearArtistState, pageIndex: artistPage } = useArtistAuthRegisterStore();
+  const { clearState: clearGalleryState, pageIndex: galleryPage } =
+    useGalleryAuthRegisterStore();
+  const { clearState: clearArtistState, pageIndex: artistPage } =
+    useArtistAuthRegisterStore();
+
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [galleryInviteValidated, setGalleryInviteValidated] = useState(false);
+  const { value: waitlistActivated } =
+    useLowRiskFeatureFlag("waitlistActivated");
+
+  // Show waitlist header only if: gallery tab + waitlist active + NOT validated
+  const isGalleryWaitlist =
+    selectedTabIndex === 2 && waitlistActivated && !galleryInviteValidated;
+
+  const headerTitle = isGalleryWaitlist ? "Join Waitlist" : "Create an account";
+  const headerSubtitle = isGalleryWaitlist
+    ? "We're building something special, and we want you to be part of it from day one."
+    : "Fill in required details and create an account";
 
   const resetAll = () => {
     clearIndividualState();
@@ -45,8 +62,8 @@ export default function Register() {
   return (
     <WithModal>
       <AuthHeader
-        title="Create an account"
-        subTitle="Fill in required details and create an account"
+        title={headerTitle}
+        subTitle={headerSubtitle}
         handleBackClick={() => {
           resetAll();
           navigation.navigate(screenName.welcome);
@@ -65,7 +82,10 @@ export default function Register() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            <InputForm />
+            <InputForm
+              onTabChange={setSelectedTabIndex}
+              onInviteValidated={setGalleryInviteValidated}
+            />
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

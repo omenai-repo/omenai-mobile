@@ -4,27 +4,30 @@ import { View } from "react-native";
 import GalleryRegisterForm from "../../galleryRegisterForm/GalleryRegisterForm";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import OnboardingBlockerScreen from "#components/blockers/onboarding/OnboardingBlockerScreen";
-// import GalleryWaitList from "../../galleryWaitlist/GalleryWaitList";
-// import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
-// import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import GalleryWaitlistForm from "../../galleryWaitlistForm/GalleryWaitlistForm";
 
-export default function GalleryForm() {
-  // const { pageIndex, setPageIndex } = useGalleryAuthRegisterStore();
-  // const [showWaitlistForm, setShowWaitlistForm] = useState<boolean>(false);
+type GalleryFormProps = Readonly<{
+  onInviteValidated?: (validated: boolean) => void;
+}>;
 
-  // Always start from page 0 when this component mounts
-  // React.useEffect(() => {
-  //   setPageIndex(0);
-  // }, [setPageIndex]);
+export default function GalleryForm({ onInviteValidated }: GalleryFormProps) {
+  const { value: isGallery } = useLowRiskFeatureFlag(
+    "galleryonboardingenabled"
+  );
+  const { value: waitlistActivated } =
+    useLowRiskFeatureFlag("waitlistActivated");
 
-  const { value: isGallery } = useLowRiskFeatureFlag("galleryonboardingenabled");
+  if (!isGallery) {
+    return <OnboardingBlockerScreen />;
+  }
+
+  if (waitlistActivated) {
+    return <GalleryWaitlistForm onInviteValidated={onInviteValidated} />;
+  }
 
   return (
     <View style={tw`mt-7`}>
-      {/* {showWaitlistForm ? <GalleryWaitList /> : <GalleryRegisterForm />} */}
-      {/* Waitlist button commented out */}
-
-      {isGallery ? <GalleryRegisterForm /> : <OnboardingBlockerScreen />}
+      <GalleryRegisterForm />
     </View>
   );
 }

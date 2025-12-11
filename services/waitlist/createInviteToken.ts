@@ -1,0 +1,61 @@
+import {
+  apiUrl,
+  authorization,
+  originHeader,
+  userAgent,
+} from "#constants/apiUrl.constants";
+
+type CreateInviteTokenPayload = Readonly<{
+  inviteCode: string;
+  email: string;
+  entity: string;
+}>;
+
+type CreateInviteTokenResponse = {
+  isOk: boolean;
+  message: string;
+  status?: string;
+  referrerKey?: string;
+};
+
+export async function createInviteToken(
+  payload: CreateInviteTokenPayload
+): Promise<CreateInviteTokenResponse> {
+  try {
+    const result = await fetch(
+      `${apiUrl}/api/auth/waitlist/createInviteToken`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: originHeader,
+          "User-Agent": userAgent,
+          Authorization: authorization,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const responseText = await result.text();
+
+    let response: { message: string; status?: string; referrerKey?: string } = {
+      message: "",
+    };
+    if (responseText) {
+      try {
+        response = JSON.parse(responseText);
+      } catch {
+        return { isOk: false, message: "Invalid server response" };
+      }
+    }
+
+    return {
+      isOk: result.ok,
+      message: response.message || (result.ok ? "Success" : "Request failed"),
+      status: response.status,
+      referrerKey: response.referrerKey,
+    };
+  } catch {
+    return { isOk: false, message: "Something went wrong" };
+  }
+}
