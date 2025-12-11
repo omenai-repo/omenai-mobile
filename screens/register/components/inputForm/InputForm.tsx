@@ -10,7 +10,15 @@ import ArtistForm from "./artist/ArtistForm";
 import tw from "twrnc";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function InputForm() {
+type InputFormProps = Readonly<{
+  onTabChange?: (index: number) => void;
+  onInviteValidated?: (validated: boolean) => void;
+}>;
+
+export default function InputForm({
+  onTabChange,
+  onInviteValidated,
+}: InputFormProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const clearIndividual = useIndividualAuthRegisterStore((s) => s.clearState);
   const clearGallery = useGalleryAuthRegisterStore((s) => s.clearState);
@@ -25,7 +33,9 @@ export default function InputForm() {
   const handleTabSwitch = (e: number) => {
     resetAll();
     setSelectedIndex(e);
+    onTabChange?.(e);
   };
+
   const insets = useSafeAreaInsets();
   const [tabsKey, setTabsKey] = useState("init");
 
@@ -45,7 +55,9 @@ export default function InputForm() {
       />
       {selectedIndex === 0 && <IndividualForm />}
       {selectedIndex === 1 && <ArtistForm />}
-      {selectedIndex === 2 && <GalleryForm />}
+      {selectedIndex === 2 && (
+        <GalleryForm onInviteValidated={onInviteValidated} />
+      )}
     </View>
   );
 }
