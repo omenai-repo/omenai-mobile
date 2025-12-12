@@ -36,6 +36,17 @@ export default function Login() {
 
   const { handleLogin } = useLoginHandler(currentUserType);
 
+  const biometricName = (() => {
+    switch (biometricType) {
+      case 1:
+        return "Fingerprint";
+      case 2:
+        return "Face ID";
+      default:
+        return "Biometrics";
+    }
+  })();
+
   React.useEffect(() => {
     checkBiometricStatus();
   }, [selectedIndex]);
@@ -107,12 +118,7 @@ export default function Login() {
                 canUseBiometrics,
                 handleBiometricLogin,
                 isBiometricLoading,
-                biometricName:
-                  biometricType === 1
-                    ? "Fingerprint"
-                    : biometricType === 2
-                    ? "Face ID"
-                    : "Biometrics",
+                biometricName,
               }}
             />
           )}
@@ -122,12 +128,7 @@ export default function Login() {
                 canUseBiometrics,
                 handleBiometricLogin,
                 isBiometricLoading,
-                biometricName:
-                  biometricType === 1
-                    ? "Fingerprint"
-                    : biometricType === 2
-                    ? "Face ID"
-                    : "Biometrics",
+                biometricName,
               }}
             />
           )}
@@ -137,12 +138,7 @@ export default function Login() {
                 canUseBiometrics,
                 handleBiometricLogin,
                 isBiometricLoading,
-                biometricName:
-                  biometricType === 1
-                    ? "Fingerprint"
-                    : biometricType === 2
-                    ? "Face ID"
-                    : "Biometrics",
+                biometricName,
               }}
             />
           )}
