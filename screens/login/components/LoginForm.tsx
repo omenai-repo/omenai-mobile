@@ -12,7 +12,7 @@ import { colors } from "#config/colors.config";
 import { SvgXml } from "react-native-svg";
 import { faceIdIcon } from "#utils/SvgImages";
 
-type LoginFormProps = {
+type LoginFormProps = Readonly<{
   loginData: { email: string; password?: string };
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
@@ -28,7 +28,7 @@ type LoginFormProps = {
   emailPlaceholder: string;
   loginButtonLabel: string;
   forgotPasswordType: string;
-};
+}>;
 
 export default function LoginForm({
   loginData,
