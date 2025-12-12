@@ -1,11 +1,4 @@
-import {
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  View,
-  TouchableOpacity,
-  Text,
-} from "react-native";
+import { StyleSheet, KeyboardAvoidingView, Platform, View } from "react-native";
 import React, { useState } from "react";
 import AuthHeader from "../../components/auth/AuthHeader";
 import AuthTabs from "../../components/auth/AuthTabs";
@@ -24,9 +17,6 @@ import { useArtistAuthLoginStore } from "#store/auth/login/ArtistAuthLoginStore"
 import { useGalleryAuthLoginStore } from "#store/auth/login/GalleryAuthLoginStore";
 
 import { useBiometrics, UserType } from "#hooks/useBiometrics";
-import { SvgXml } from "react-native-svg";
-import { lockIcon } from "#utils/SvgImages";
-import tw from "twrnc";
 import { useLoginHandler } from "#hooks/useLoginHandler";
 
 export default function Login() {
@@ -111,41 +101,51 @@ export default function Login() {
             handleSelect={handleTabSwitch}
           />
           {/* route depending on state */}
-          {selectedIndex === 0 && <Individual />}
-          {selectedIndex === 1 && <Artist />}
-          {selectedIndex === 2 && <Gallery />}
-
-          {canUseBiometrics &&
-            (() => {
-              const getBiometricName = () => {
-                if (biometricType === 1) return "Fingerprint"; // FINGERPRINT (prioritized)
-                if (biometricType === 2) return "Face ID"; // FACIAL_RECOGNITION
-                return "Biometrics";
-              };
-              const biometricName = getBiometricName();
-              const buttonText = isBiometricLoading
-                ? "Logging in..."
-                : `Log in with ${biometricName}`;
-
-              return (
-                <View style={tw`mt-5 items-center pb-10`}>
-                  <TouchableOpacity
-                    onPress={handleBiometricLogin}
-                    disabled={isBiometricLoading}
-                    style={tw`flex-row items-center justify-center bg-gray-100 py-3 px-6 rounded-lg w-full`}
-                  >
-                    <SvgXml
-                      xml={lockIcon}
-                      width={18}
-                      height={18}
-                      color={colors.black}
-                      style={tw`mr-2`}
-                    />
-                    <Text style={tw`text-black font-normal`}>{buttonText}</Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            })()}
+          {selectedIndex === 0 && (
+            <Individual
+              biometricProps={{
+                canUseBiometrics,
+                handleBiometricLogin,
+                isBiometricLoading,
+                biometricName:
+                  biometricType === 1
+                    ? "Fingerprint"
+                    : biometricType === 2
+                    ? "Face ID"
+                    : "Biometrics",
+              }}
+            />
+          )}
+          {selectedIndex === 1 && (
+            <Artist
+              biometricProps={{
+                canUseBiometrics,
+                handleBiometricLogin,
+                isBiometricLoading,
+                biometricName:
+                  biometricType === 1
+                    ? "Fingerprint"
+                    : biometricType === 2
+                    ? "Face ID"
+                    : "Biometrics",
+              }}
+            />
+          )}
+          {selectedIndex === 2 && (
+            <Gallery
+              biometricProps={{
+                canUseBiometrics,
+                handleBiometricLogin,
+                isBiometricLoading,
+                biometricName:
+                  biometricType === 1
+                    ? "Fingerprint"
+                    : biometricType === 2
+                    ? "Face ID"
+                    : "Biometrics",
+              }}
+            />
+          )}
         </ScrollWrapper>
       </KeyboardAvoidingView>
     </WithModal>
