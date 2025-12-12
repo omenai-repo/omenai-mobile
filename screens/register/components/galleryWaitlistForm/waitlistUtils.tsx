@@ -2,12 +2,14 @@ import { Text, TouchableOpacity } from "react-native";
 import React from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
+import { z } from "zod";
 
 // Shared validation functions
 export const validateEmail = (value: string): string | undefined => {
   if (!value.trim()) return "Email is required";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
-    return "Please enter a valid email address";
+  const emailSchema = z.string().email();
+  const result = emailSchema.safeParse(value);
+  if (!result.success) return "Please enter a valid email address";
   return undefined;
 };
 
