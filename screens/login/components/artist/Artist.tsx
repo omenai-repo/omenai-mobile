@@ -15,14 +15,14 @@ import { colors } from "../../../../config/colors.config";
 import { SvgXml } from "react-native-svg";
 import { faceIdIcon } from "#utils/SvgImages";
 
-type ArtistProps = {
+type ArtistProps = Readonly<{
   biometricProps: {
     canUseBiometrics: boolean;
     handleBiometricLogin: () => void;
     isBiometricLoading: boolean;
     biometricName: string;
   };
-};
+}>;
 
 export default function Artist({ biometricProps }: ArtistProps) {
   const {
@@ -61,9 +61,7 @@ export default function Artist({ biometricProps }: ArtistProps) {
           <View style={tw`flex-row gap-3`}>
             <LongBlackButton
               value={isLoading ? "Loading ..." : "Sign In Artist"}
-              isDisabled={
-                artistLoginData.email && artistLoginData.password ? false : true
-              }
+              isDisabled={!(artistLoginData.email && artistLoginData.password)}
               isLoading={isLoading}
               onClick={handleSubmit}
               style={[
