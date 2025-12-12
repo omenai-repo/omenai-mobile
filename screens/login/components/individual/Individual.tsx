@@ -1,6 +1,4 @@
-import { View } from "react-native";
 import React from "react";
-import tw from "twrnc";
 import { useIndividualAuthLoginStore } from "#store/auth/login/IndividualAuthLoginStore";
 import { useLoginHandler } from "#hooks/useLoginHandler";
 import LoginForm from "../LoginForm";
