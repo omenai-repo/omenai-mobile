@@ -1,6 +1,4 @@
-import { View } from "react-native";
 import React from "react";
-import tw from "twrnc";
 import { useArtistAuthLoginStore } from "#store/auth/login/ArtistAuthLoginStore";
 import { useLoginHandler } from "#hooks/useLoginHandler";
 import LoginForm from "../LoginForm";

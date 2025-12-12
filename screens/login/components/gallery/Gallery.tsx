@@ -1,6 +1,4 @@
-import { View } from "react-native";
 import React from "react";
-import tw from "twrnc";
 import { useGalleryAuthLoginStore } from "#store/auth/login/GalleryAuthLoginStore";
 import WithModal from "#components/modal/WithModal";
 import { useLoginHandler } from "#hooks/useLoginHandler";
