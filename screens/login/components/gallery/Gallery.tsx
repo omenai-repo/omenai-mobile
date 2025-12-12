@@ -18,7 +18,7 @@ import { faceIdIcon } from "#utils/SvgImages";
 type GalleryProps = {
   biometricProps: {
     canUseBiometrics: boolean;
-    handleBiometricLogin: () => void;
+    handleBiometricLogin: () => void | Promise<void>;
     isBiometricLoading: boolean;
     biometricName: string;
   };

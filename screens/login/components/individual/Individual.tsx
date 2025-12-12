@@ -14,14 +14,14 @@ import { colors } from "../../../../config/colors.config";
 import { SvgXml } from "react-native-svg";
 import { faceIdIcon } from "#utils/SvgImages";
 
-type IndividualProps = {
+type IndividualProps = Readonly<{
   biometricProps: {
     canUseBiometrics: boolean;
-    handleBiometricLogin: () => void;
+    handleBiometricLogin: () => void | Promise<void>;
     isBiometricLoading: boolean;
     biometricName: string;
   };
-};
+}>;
 
 export default function Individual({ biometricProps }: IndividualProps) {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -60,9 +60,7 @@ export default function Individual({ biometricProps }: IndividualProps) {
           <LongBlackButton
             value={isLoading ? "Loading..." : "Log In"}
             isDisabled={
-              individualLoginData.email && individualLoginData.password
-                ? false
-                : true
+              !(individualLoginData.email && individualLoginData.password)
             }
             onClick={handleSubmit}
             isLoading={isLoading}

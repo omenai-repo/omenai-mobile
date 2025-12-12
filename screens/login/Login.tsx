@@ -1,4 +1,4 @@
-import { StyleSheet, KeyboardAvoidingView, Platform, View } from "react-native";
+import { StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import React, { useState } from "react";
 import AuthHeader from "../../components/auth/AuthHeader";
 import AuthTabs from "../../components/auth/AuthTabs";
