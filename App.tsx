@@ -14,11 +14,7 @@ import * as SplashScreen from "expo-splash-screen";
 import ArtistNavigation from "#navigation/ArtistNavigation";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import {
-  focusManager,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { focusManager, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { AppState, Platform } from "react-native";
 import { configureNotificationHandling } from "#notifications/NotificationService";
@@ -29,6 +25,7 @@ import { useNotificationHandler } from "#hooks/useNotificationHandler";
 import { StatusBar } from "expo-status-bar";
 import { clearStaleCredentials } from "#hooks/useBiometrics";
 import ForceUpdateModal from "#components/modal/ForceUpdateModal";
+import { useVersionCheck } from "#hooks/useVersionCheck";
 
 // Safely patch Platform.constants for web/dev environments only
 try {
@@ -55,7 +52,16 @@ export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const { isLoggedIn, userType, setExpoPushToken } = useAppStore();
 
-  const [needsForceUpdate] = useState(false);
+  const [needsForceUpdate, setNeedsForceUpdate] = useState(false);
+
+  const handleUpdateNeeded = useCallback((versionCheckResult: any) => {
+    if (versionCheckResult.needsUpdate) {
+      setNeedsForceUpdate(true);
+    }
+  }, []);
+
+  // Check version on app initialization
+  useVersionCheck(handleUpdateNeeded);
 
   configureNotificationHandling(); // Set up global handler
   useNotifications(); // Register listeners
@@ -155,20 +161,13 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
             <BottomSheetModalProvider>
-              <StripeProvider
-                publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
-                urlScheme="omenaimobile"
-              >
+              <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string} urlScheme="omenaimobile">
                 <NavigationContainer ref={navigationRef} linking={linking}>
                   {/* AUTH SCREENS */}
                   {!isLoggedIn && <AuthNavigation />}
                   {/* App screens */}
-                  {isLoggedIn && userType === "gallery" && (
-                    <GalleryNavigation />
-                  )}
-                  {isLoggedIn && userType === "user" && (
-                    <IndividualNavigation />
-                  )}
+                  {isLoggedIn && userType === "gallery" && <GalleryNavigation />}
+                  {isLoggedIn && userType === "user" && <IndividualNavigation />}
                   {isLoggedIn && userType === "artist" && <ArtistNavigation />}
                 </NavigationContainer>
               </StripeProvider>

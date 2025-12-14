@@ -45,8 +45,8 @@ export default function ForceUpdateModal({ isVisible }: ForceUpdateModalProps) {
 
         {/* Description */}
         <Text style={tw`text-sm text-[#666] text-center leading-5 mb-6`}>
-          We've made some important improvements! Please update to the latest
-          version to continue using the app.
+          We&apos;ve made some important improvements! Please update to the
+          latest version to continue using the app.
         </Text>
 
         {/* Update Button */}
