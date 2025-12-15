@@ -105,7 +105,15 @@ const DimensionsDetails = () => {
       width: dimentions.width,
     }).every((value) => value !== "");
 
-    return !(isFormValid && areAllFieldsFilled && isChecked);
+    // Check if exhibition logic is valid
+    const isExhibitionValid = isOnExhibition ? !!expoEndDate : true;
+
+    return !(
+      isFormValid &&
+      areAllFieldsFilled &&
+      isChecked &&
+      isExhibitionValid
+    );
   };
 
   const handleValidationChecks = (

@@ -41,16 +41,6 @@ export default function Coverage() {
                 Authenticity Guarantee
               </Text>
             </View>
-            <Text
-              style={{
-                textAlign: "center",
-                marginTop: 5,
-                textDecorationLine: "underline",
-                color: "#000",
-              }}
-            >
-              Learn more
-            </Text>
           </View>
         </Animated.View>
       )}

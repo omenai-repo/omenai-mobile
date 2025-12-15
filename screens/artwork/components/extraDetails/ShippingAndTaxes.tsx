@@ -49,17 +49,6 @@ export default function ShippingAndTaxes() {
               Calculated at checkout
             </Text>
           </View>
-          <Text
-            style={{
-              textAlign: "center",
-              marginTop: 5,
-              textDecorationLine: "underline",
-              color: "#fff",
-              paddingTop: 10,
-            }}
-          >
-            Learn more
-          </Text>
         </Animated.View>
       )}
     </View>
