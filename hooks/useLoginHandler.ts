@@ -30,6 +30,8 @@ export function useLoginHandler(userType: UserType) {
     isBiometricEnabled,
     saveCredentials,
     authenticate,
+    getStoredEmail,
+    deleteCredentials,
   } = useBiometrics();
 
   const handleLogin = async (
@@ -80,6 +82,7 @@ export function useLoginHandler(userType: UserType) {
         const biometricEnabled = await isBiometricEnabled(userType);
 
         if (isBiometricSupported && !biometricEnabled) {
+          // No credentials exist - prompt to enable
           Alert.alert(
             "Enable Biometric Login",
             "Would you like to enable biometric login for faster access next time?",
@@ -120,7 +123,65 @@ export function useLoginHandler(userType: UserType) {
               },
             ]
           );
+        } else if (isBiometricSupported && biometricEnabled) {
+          // Credentials exist - check if they match current user
+          const storedEmail = await getStoredEmail(userType);
+          const isDifferentAccount =
+            storedEmail &&
+            storedEmail.toLowerCase() !== loginData.email.toLowerCase();
+
+          if (isDifferentAccount) {
+            // Different user - prompt to enable with auto-delete on "No"
+            Alert.alert(
+              "Enable Biometric Login",
+              "Would you like to enable biometric login for your account?",
+              [
+                {
+                  text: "No",
+                  style: "cancel",
+                  onPress: async () => {
+                    // Delete existing credentials when user declines
+                    await deleteCredentials(userType);
+                    setUserSession(data);
+                    setIsLoggedIn(true);
+                    clearInputs();
+                  },
+                },
+                {
+                  text: "Yes",
+                  onPress: async () => {
+                    const bioResult = await authenticate();
+                    if (bioResult.success) {
+                      await saveCredentials(
+                        userType,
+                        loginData.email,
+                        loginData.password
+                      );
+                      Alert.alert("Success", "Biometric login enabled");
+                      setUserSession(data);
+                      setIsLoggedIn(true);
+                      clearInputs();
+                    } else {
+                      Alert.alert(
+                        "Authentication Failed",
+                        "Could not verify biometric identity. You can enable biometrics later in settings."
+                      );
+                      setUserSession(data);
+                      setIsLoggedIn(true);
+                      clearInputs();
+                    }
+                  },
+                },
+              ]
+            );
+          } else {
+            // Same user - proceed normally
+            setUserSession(data);
+            setIsLoggedIn(true);
+            clearInputs();
+          }
         } else {
+          // Biometrics not supported or same account - proceed normally
           setUserSession(data);
           setIsLoggedIn(true);
           clearInputs();
