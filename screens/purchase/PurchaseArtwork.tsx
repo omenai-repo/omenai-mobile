@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   StatusBar,
+  Text,
 } from "react-native";
 import React, { startTransition, useCallback, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -100,12 +101,26 @@ export default function PurchaseArtwork() {
   return (
     <WithModal>
       <View style={{ flex: 1, backgroundColor: colors.white }}>
-        <SafeAreaView style={styles.safeArea}>
-          <View style={{ paddingHorizontal: 20 }}>
-            {selectedSectionIndex !== 3 && (
+        <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+          {selectedSectionIndex !== 3 && (
+            <View
+              style={{
+                paddingHorizontal: 20,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingBottom: 20,
+              }}
+            >
               <BackScreenButton handleClick={handleBackNavigation} />
-            )}
-          </View>
+              <Text style={styles.headerTitle}>
+                {selectedSectionIndex === 1
+                  ? "Order Summary"
+                  : "Shipping Details"}
+              </Text>
+              <View style={{ width: 50 }} />
+            </View>
+          )}
         </SafeAreaView>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -144,9 +159,14 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
     backgroundColor: colors.white,
-    // marginTop: 10,
   },
   safeArea: {
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: "Int-Medium",
+    color: colors.primary_black,
+    textAlign: "center",
   },
 });
