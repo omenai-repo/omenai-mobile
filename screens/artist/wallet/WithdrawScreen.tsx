@@ -22,6 +22,7 @@ import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import WithdrawalBlocker from "#components/blockers/payments/WithdrawalBlocker";
 import { OtpInput } from "#components/inputs/OtpInput";
 import { AccountRow } from "#components/general/AccountRow";
+import { useFocusEffect } from "@react-navigation/native";
 
 const WALLET_QK = ["wallet", "artist"] as const;
 const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
@@ -47,6 +48,7 @@ export const WithdrawScreen = ({
 
   const [walletPin, setWalletPin] = useState("");
   const otpRef = useRef<OtpInputRef>(null);
+  const amountInputRef = useRef<TextInput>(null);
 
   const { value: isWalletWithdrawalEnabled } = useHighRiskFeatureFlag(
     "wallet_withdrawal_enabled"
@@ -58,6 +60,16 @@ export const WithdrawScreen = ({
       setRate(0);
     }
   }, [amount]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Small delay to ensure screen is fully rendered
+      const timer = setTimeout(() => {
+        amountInputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }, [])
+  );
 
   const fetchTransferRate = async () => {
     try {
@@ -189,6 +201,7 @@ export const WithdrawScreen = ({
                 >
                   <Text style={tw`text-sm mb-1 text-gray-600`}>You Send</Text>
                   <TextInput
+                    ref={amountInputRef}
                     style={tw`py-3 text-base font-bold text-[#1A1A1A]`}
                     keyboardType="decimal-pad"
                     value={amount}

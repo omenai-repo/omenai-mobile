@@ -196,6 +196,28 @@ export const useBiometrics = () => {
     [getCredentials]
   );
 
+  const getStoredEmail = useCallback(
+    async (userType: UserType): Promise<string | null> => {
+      try {
+        const credentials = await getCredentials(userType);
+        return credentials?.email || null;
+      } catch (error) {
+        console.error("Error getting stored email:", error);
+        return null;
+      }
+    },
+    [getCredentials]
+  );
+
+  const isCredentialOwner = useCallback(
+    async (userType: UserType, currentEmail: string): Promise<boolean> => {
+      const storedEmail = await getStoredEmail(userType);
+      if (!storedEmail) return false;
+      return storedEmail.toLowerCase() === currentEmail.toLowerCase();
+    },
+    [getStoredEmail]
+  );
+
   return {
     isBiometricSupported,
     biometricType,
@@ -204,5 +226,7 @@ export const useBiometrics = () => {
     getCredentials,
     deleteCredentials,
     isBiometricEnabled,
+    getStoredEmail,
+    isCredentialOwner,
   };
 };

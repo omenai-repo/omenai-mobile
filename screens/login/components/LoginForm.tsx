@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import React from "react";
 import tw from "twrnc";
 import LongBlackButton from "#components/buttons/LongBlackButton";
@@ -65,7 +65,10 @@ export default function LoginForm({
         <View style={tw`flex-row gap-3`}>
           <LongBlackButton
             value={isLoading ? "Loading ..." : loginButtonLabel}
-            isDisabled={!(loginData.email && loginData.password)}
+            isDisabled={
+              !(loginData.email && loginData.password) ||
+              biometricProps.isBiometricLoading
+            }
             isLoading={isLoading}
             onClick={handleSubmit}
             style={[
@@ -76,13 +79,19 @@ export default function LoginForm({
           {biometricProps.canUseBiometrics && (
             <TouchableOpacity
               onPress={biometricProps.handleBiometricLogin}
-              disabled={biometricProps.isBiometricLoading}
+              disabled={biometricProps.isBiometricLoading || isLoading}
               style={[
                 tw`items-center justify-center rounded-lg h-[52px] w-[52px]`,
-                { backgroundColor: colors.black },
+                {
+                  backgroundColor: colors.black,
+                  opacity:
+                    biometricProps.isBiometricLoading || isLoading ? 0.5 : 1,
+                },
               ]}
             >
-              {biometricProps.biometricName === "Face ID" ? (
+              {biometricProps.isBiometricLoading ? (
+                <ActivityIndicator size="large" color={colors.white} />
+              ) : biometricProps.biometricName === "Face ID" ? (
                 <SvgXml xml={faceIdIcon} width={42} height={42} />
               ) : (
                 <MaterialCommunityIcons
