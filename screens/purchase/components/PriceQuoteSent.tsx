@@ -87,7 +87,7 @@ export default function PriceQuoteSent({
   handleClick: () => void;
 }) {
   return (
-    <View style={tw`flex-1 bg-white px-5 pt-0 pb-10`}>
+    <View style={tw`flex-1 bg-white px-5 py-10`}>
       <View style={tw`items-center mb-8`}>
         <View style={tw`mb-4`}>
           <Feather name="check-circle" size={60} color={colors.black} />

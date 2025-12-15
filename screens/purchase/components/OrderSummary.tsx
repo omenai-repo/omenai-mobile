@@ -1,10 +1,7 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { colors } from "#config/colors.config";
-import LongBlackButton from "#components/buttons/LongBlackButton";
-import { useOrderSummaryStore } from "#store/orders/OrderSummaryStore";
 import SummaryContainer from "./SummaryContainer";
-import OrderCard from "#screens/orders/components/OrderCard";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 
@@ -23,7 +20,6 @@ export default function OrderSummary({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleHeader}>Order Summary</Text>
       <View style={styles.ordersContainer}>
         <View style={styles.listItem}>
           <Image
@@ -63,7 +59,7 @@ export default function OrderSummary({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingVertical: 30,
+    paddingBottom: 30,
     paddingTop: 0,
   },
   titleHeader: {
@@ -74,7 +70,7 @@ const styles = StyleSheet.create({
   ordersContainer: {
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    marginTop: 30,
+    marginTop: 0,
     paddingHorizontal: 20,
   },
   listItem: {

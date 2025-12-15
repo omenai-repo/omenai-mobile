@@ -6,16 +6,29 @@ import { colors } from "../../config/colors.config";
 type BackScreenButtonTypes = {
   handleClick: () => void;
   cancle?: boolean;
+  color?: string;
 };
 
-export default function BackScreenButton({ handleClick, cancle }: BackScreenButtonTypes) {
+export default function BackScreenButton({
+  handleClick,
+  cancle,
+  color,
+}: BackScreenButtonTypes) {
   return (
     <TouchableOpacity activeOpacity={1} onPress={handleClick}>
       <View style={styles.container}>
         {cancle ? (
-          <Feather name="x" color={colors.primary_black} size={25} />
+          <Feather
+            name="x"
+            color={color ? color : colors.primary_black}
+            size={25}
+          />
         ) : (
-          <AntDesign name="arrow-left" color={colors.primary_black} size={25} />
+          <AntDesign
+            name="arrow-left"
+            color={color ? color : colors.primary_black}
+            size={25}
+          />
         )}
       </View>
     </TouchableOpacity>
