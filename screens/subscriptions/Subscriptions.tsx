@@ -89,7 +89,9 @@ export default function Subscriptions() {
         {isSubscriptionBillingEnabled ? (
           <>
             <View style={styles.headerContainer}>
-              <Text style={{ fontSize: 20, textAlign: "center" }}>Subscription & Billing</Text>
+              <Text style={{ fontSize: 20, textAlign: "center" }}>
+                Subscription & Billing
+              </Text>
             </View>
 
             {isLoading ? (
@@ -97,7 +99,15 @@ export default function Subscriptions() {
                 <ActiveSubLoader />
               </View>
             ) : (
-              <ScrollWrapper style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+              <ScrollWrapper
+                style={styles.mainContainer}
+                contentContainerStyle={
+                  !isConfirmed?.isSubActive
+                    ? { flexGrow: 1, justifyContent: "center" }
+                    : undefined
+                }
+                showsVerticalScrollIndicator={false}
+              >
                 {isConfirmed?.isSubActive ? (
                   <ActiveSubscriptions
                     subscription_data={isConfirmed?.subscription_data}

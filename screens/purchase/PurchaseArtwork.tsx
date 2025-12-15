@@ -1,4 +1,10 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, View, StatusBar } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  View,
+  StatusBar,
+} from "react-native";
 import React, { startTransition, useCallback, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "#config/colors.config";
@@ -52,7 +58,9 @@ export default function PurchaseArtwork() {
       if (selectedSectionIndex === 2) {
         // Smooth, non-blocking UI update (React 18)
         startTransition(() => {
-          setSelectedSectionIndex(selectedSectionIndex > 1 ? selectedSectionIndex - 1 : 1);
+          setSelectedSectionIndex(
+            selectedSectionIndex > 1 ? selectedSectionIndex - 1 : 1
+          );
         });
         return;
       } else if (selectedSectionIndex === 1) {
@@ -79,7 +87,14 @@ export default function PurchaseArtwork() {
       resetState();
       navigation.goBack();
     },
-    [selectedSectionIndex, resetState, navigation, setSelectedSectionIndex, queryClient, userId]
+    [
+      selectedSectionIndex,
+      resetState,
+      navigation,
+      setSelectedSectionIndex,
+      queryClient,
+      userId,
+    ]
   );
 
   return (
@@ -87,7 +102,9 @@ export default function PurchaseArtwork() {
       <View style={{ flex: 1, backgroundColor: colors.white }}>
         <SafeAreaView style={styles.safeArea}>
           <View style={{ paddingHorizontal: 20 }}>
-            <BackScreenButton handleClick={handleBackNavigation} />
+            {selectedSectionIndex !== 3 && (
+              <BackScreenButton handleClick={handleBackNavigation} />
+            )}
           </View>
         </SafeAreaView>
         <KeyboardAvoidingView
@@ -98,11 +115,21 @@ export default function PurchaseArtwork() {
             {/* <TabsIndicator selectedIndex={selectedSectionIndex} /> */}
             {isLoading && <Loader />}
             {!isLoading && artworkOrderData ? (
-              <View key={selectedSectionIndex /* remount on step change for snappy UI */}>
-                {selectedSectionIndex === 1 && <OrderSummary data={artworkOrderData} />}
-                {selectedSectionIndex === 2 && <ShippingDetails data={artworkOrderData} />}
+              <View
+                key={
+                  selectedSectionIndex /* remount on step change for snappy UI */
+                }
+              >
+                {selectedSectionIndex === 1 && (
+                  <OrderSummary data={artworkOrderData} />
+                )}
+                {selectedSectionIndex === 2 && (
+                  <ShippingDetails data={artworkOrderData} />
+                )}
                 {selectedSectionIndex === 3 && (
-                  <PriceQuoteSent handleClick={() => handleBackNavigation(true)} />
+                  <PriceQuoteSent
+                    handleClick={() => handleBackNavigation(true)}
+                  />
                 )}
               </View>
             ) : null}
