@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getOverviewOrders } from "#services/orders/getOverviewOrders";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import tw from "twrnc";
 
 export default function RecentOrders({
   onLoadingChange,
@@ -19,7 +20,9 @@ export default function RecentOrders({
   onLoadingChange?: (l: boolean) => void;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const [openSection, setOpenSection] = useState<{ [key: string]: boolean }>({});
+  const [openSection, setOpenSection] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const { userSession } = useAppStore();
 
   const query = useQuery({
@@ -50,7 +53,14 @@ export default function RecentOrders({
     return (
       <View style={styles.container}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={{ fontSize: 18, fontWeight: "500", flex: 1, color: colors.black }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "500",
+              flex: 1,
+              color: colors.black,
+            }}
+          >
             Recent orders
           </Text>
           <Feather name="chevron-right" size={20} style={{ opacity: 0.5 }} />
@@ -58,13 +68,29 @@ export default function RecentOrders({
         <View style={{ gap: 20, marginTop: 20 }}>
           {[0, 1].map((i) => (
             <View key={i} style={{ flexDirection: "row", gap: 20 }}>
-              <View style={{ height: 100, width: 100, backgroundColor: colors.grey50 }} />
+              <View
+                style={{
+                  height: 100,
+                  width: 100,
+                  backgroundColor: colors.grey50,
+                }}
+              />
               <View>
                 <View
-                  style={{ height: 20, backgroundColor: colors.grey50, width: 170, marginTop: 20 }}
+                  style={{
+                    height: 20,
+                    backgroundColor: colors.grey50,
+                    width: 170,
+                    marginTop: 20,
+                  }}
                 />
                 <View
-                  style={{ height: 20, backgroundColor: colors.grey50, width: 100, marginTop: 10 }}
+                  style={{
+                    height: 20,
+                    backgroundColor: colors.grey50,
+                    width: 100,
+                    marginTop: 10,
+                  }}
                 />
               </View>
             </View>
@@ -75,9 +101,18 @@ export default function RecentOrders({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.orders)}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(screenName.gallery.orders)}
+      >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={{ fontSize: 18, fontWeight: "500", flex: 1, color: colors.black }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "500",
+              flex: 1,
+              color: colors.black,
+            }}
+          >
             Recent orders
           </Text>
           <NavBtnComponent onPress={() => {}} />
@@ -103,7 +138,13 @@ export default function RecentOrders({
           ))}
 
         {data.length < 1 && (
-          <View style={{ flexWrap: "wrap", marginRight: "auto", marginLeft: "auto" }}>
+          <View
+            style={{
+              flexWrap: "wrap",
+              marginRight: "auto",
+              marginLeft: "auto",
+            }}
+          >
             <View style={styles.pendingButton}>
               <Text>No pending orders</Text>
             </View>
@@ -128,7 +169,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 30,
     backgroundColor: "#f5f5f5",
-    borderRadius: 40,
+    borderRadius: 8,
     marginVertical: 80,
   },
 });

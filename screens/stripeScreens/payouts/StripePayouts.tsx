@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, RefreshControl } from "react-native";
 import React, { useEffect, useState } from "react";
 import WithModal from "#components/modal/WithModal";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
@@ -8,7 +8,10 @@ import CompleteOnBoarding from "./components/CompleteOnBoarding";
 import { useModalStore } from "#store/modal/modalStore";
 import BlockingScreen from "./components/BlockingScreen";
 import PayoutDashboard from "./components/PayoutDashboard";
+import ScrollWrapper from "#components/general/ScrollWrapper";
 import { colors } from "#config/colors.config";
+import { useQueryClient } from "@tanstack/react-query";
+import tw from "twrnc";
 
 export default function StripePayouts({
   account_id,
@@ -22,25 +25,42 @@ export default function StripePayouts({
 
   const [refreshCount, setRefreshCount] = useState<number>(1);
 
+  const [refreshing, setRefreshing] = useState(false);
   const { updateModal } = useModalStore();
+  const queryClient = useQueryClient();
+
+  async function handleOnBoardingCheck() {
+    const res = await checkIsStripeOnboarded(account_id);
+    if (res?.isOk) {
+      setIsSubmitted(res.details_submitted);
+    } else {
+      updateModal({
+        message: "Something went wrong, please try again or contact support",
+        modalType: "error",
+        showModal: true,
+      });
+    }
+  }
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await handleOnBoardingCheck();
+    setRefreshCount((prev) => prev + 1);
+    setRefreshing(false);
+  };
 
   useEffect(() => {
-    async function handleOnBoardingCheck() {
+    async function init() {
       setLoading(true);
-      const res = await checkIsStripeOnboarded(account_id);
-      if (res?.isOk) {
-        setIsSubmitted(res.details_submitted);
-      } else {
-        updateModal({
-          message: "Something went wrong, please try again or contact support",
-          modalType: "error",
-          showModal: true,
-        });
-      }
+      await handleOnBoardingCheck();
       setLoading(false);
     }
 
-    handleOnBoardingCheck();
+    init();
+
+    return () => {
+      queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
+    };
   }, []);
 
   if (!showScreen) return <BlockingScreen />;
@@ -58,7 +78,17 @@ export default function StripePayouts({
         <BackHeaderTitle
           title={isSubmitted ? "Stripe Payout" : "Complete stripe onboarding"}
         />
-        <View style={styles.container}>
+        <ScrollWrapper
+          contentContainerStyle={styles.container}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[colors.black]}
+              tintColor={colors.black}
+            />
+          }
+        >
           {!isSubmitted && <CompleteOnBoarding />}
           {isSubmitted && account_id.length > 0 && (
             <PayoutDashboard
@@ -66,7 +96,7 @@ export default function StripePayouts({
               refreshCount={refreshCount}
             />
           )}
-        </View>
+        </ScrollWrapper>
       </WithModal>
     );
 }
@@ -74,7 +104,7 @@ export default function StripePayouts({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    flex: 1,
+    flexGrow: 1,
     paddingTop: 10,
   },
 });

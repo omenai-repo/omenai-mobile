@@ -1,5 +1,13 @@
 import React, { useEffect, useRef } from "react";
-import { Modal, View, Text, Pressable, Animated, Easing, Platform } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  Pressable,
+  Animated,
+  Easing,
+  Platform,
+} from "react-native";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import { LinearGradient } from "expo-linear-gradient";
@@ -77,7 +85,9 @@ export default function SuccessPaymentModal({
   }, [visible, scale, ring1, ring2, contentY, contentOpacity]);
 
   const ringStyle = (v: Animated.Value) => ({
-    transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [1, 2.1] }) }],
+    transform: [
+      { scale: v.interpolate({ inputRange: [0, 1], outputRange: [1, 2.1] }) },
+    ],
     opacity: v.interpolate({ inputRange: [0, 1], outputRange: [0.25, 0] }),
   });
 
@@ -97,11 +107,14 @@ export default function SuccessPaymentModal({
       >
         {/* Card */}
         <View
-          style={[tw`w-11/12 bg-white rounded-2xl overflow-hidden`, { maxWidth: 420, ...shadow() }]}
+          style={[
+            tw`w-11/12 bg-white rounded-2xl overflow-hidden`,
+            { maxWidth: 420, ...shadow() },
+          ]}
         >
           {/* Gradient header */}
           <LinearGradient
-            colors={["#10B981", "#059669"]} // emerald shades
+            colors={[colors.black, "#1f2937"]} // black to gray-800
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={tw`px-6 pt-8 pb-6 items-center`}
@@ -126,7 +139,9 @@ export default function SuccessPaymentModal({
                   transform: [{ scale }],
                 }}
               >
-                <View style={tw`w-20 h-20 rounded-full bg-white/20 items-center justify-center`}>
+                <View
+                  style={tw`w-20 h-20 rounded-full bg-white/20 items-center justify-center`}
+                >
                   <Ionicons name="checkmark-circle" size={48} color="#fff" />
                 </View>
               </Animated.View>
@@ -138,8 +153,14 @@ export default function SuccessPaymentModal({
                 opacity: contentOpacity,
               }}
             >
-              <Text style={tw`text-white text-base font-semibold mt-4 text-center`}>{title}</Text>
-              <Text style={tw`text-white/90 text-xs mt-1 text-center`}>{subtitle}</Text>
+              <Text
+                style={tw`text-white text-base font-semibold mt-4 text-center`}
+              >
+                {title}
+              </Text>
+              <Text style={tw`text-white/90 text-xs mt-1 text-center`}>
+                {subtitle}
+              </Text>
             </Animated.View>
           </LinearGradient>
 
@@ -147,17 +168,25 @@ export default function SuccessPaymentModal({
           <Animated.View
             style={[
               tw`px-6 py-6`,
-              { transform: [{ translateY: contentY }], opacity: contentOpacity },
+              {
+                transform: [{ translateY: contentY }],
+                opacity: contentOpacity,
+              },
             ]}
           >
             {/* small confirmation pill */}
-            <View style={tw`self-center mb-4 px-3 py-1 rounded-full bg-emerald-50`}>
-              <Text style={tw`text-emerald-700 text-xs font-medium`}>Active</Text>
+            <View
+              style={tw`self-center mb-4 px-3 py-1 rounded-full bg-slate-100`}
+            >
+              <Text style={tw`text-slate-800 text-xs font-medium`}>Active</Text>
             </View>
 
             {/* bullets */}
             <View style={tw`gap-3 mb-5`}>
-              <Row icon="shield-checkmark" text="Secured with bank-level encryption" />
+              <Row
+                icon="shield-checkmark"
+                text="Secured with bank-level encryption"
+              />
               <Row icon="flash" text="Ready for instant payments" />
               <Row icon="card" text="Available across all subscriptions" />
             </View>
@@ -167,14 +196,16 @@ export default function SuccessPaymentModal({
               onPress={onPrimaryPress}
               style={({ pressed }) =>
                 tw.style(
-                  `h-12 rounded-md items-center justify-center bg-emerald-600`,
+                  `h-12 rounded-md items-center justify-center bg-slate-900`,
                   pressed ? "opacity-90" : ""
                 )
               }
               accessibilityRole="button"
               accessibilityLabel={ctaLabel}
             >
-              <Text style={[tw`font-medium`, { color: colors.white }]}>{ctaLabel}</Text>
+              <Text style={[tw`font-medium`, { color: colors.white }]}>
+                {ctaLabel}
+              </Text>
             </Pressable>
           </Animated.View>
         </View>
@@ -183,11 +214,19 @@ export default function SuccessPaymentModal({
   );
 }
 
-function Row({ icon, text }: { icon: keyof typeof Ionicons.glyphMap; text: string }) {
+function Row({
+  icon,
+  text,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  text: string;
+}) {
   return (
     <View style={tw`flex-row items-center`}>
-      <View style={tw`w-8 h-8 rounded-full bg-emerald-50 items-center justify-center mr-3`}>
-        <Ionicons name={icon} size={16} color="#059669" />
+      <View
+        style={tw`w-8 h-8 rounded-full bg-slate-100 items-center justify-center mr-3`}
+      >
+        <Ionicons name={icon} size={16} color={colors.black} />
       </View>
       <Text style={tw`text-slate-700`}>{text}</Text>
     </View>

@@ -14,7 +14,10 @@ export default function WebViewModal({ url }: { url: string | null }) {
         <View style={styles.topContainer}>
           <BackScreenButton cancle handleClick={() => setWebViewUrl(null)} />
         </View>
-        <WebView source={{ uri: "https://omenai-web.vercel.app/" + url }} style={{ flex: 1 }} />
+        <WebView
+          source={{ uri: "https://omenai-web.vercel.app/" + url }}
+          style={{ flex: 1 }}
+        />
       </SafeAreaView>
     );
 }

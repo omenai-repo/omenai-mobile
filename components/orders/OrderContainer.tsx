@@ -116,7 +116,8 @@ export const OrderContainer = (props: OrderContainerProps) => {
           )}
 
           {exclusivity_type === "exclusive" &&
-            order_accepted !== "declined" && (
+            order_accepted !== "declined" &&
+            status !== "completed" && (
               <Text style={tw`text-[13px] text-amber-500 mt-2`}>
                 This artpiece is still within its exclusivity period
               </Text>

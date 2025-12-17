@@ -1,4 +1,11 @@
-import { Alert, StyleSheet, Text, View, Platform, StatusBar } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  StatusBar,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { colors } from "../../config/colors.config";
 import { useSearchStore } from "#store/search/searchStore";
@@ -52,7 +59,9 @@ export default function SearchResults() {
         {searchQuery.length > 0 ? (
           <>
             <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
-            <Text style={{ fontSize: 16, color: colors.grey }}>{dataLength} results found</Text>
+            <Text style={{ fontSize: 16, color: colors.grey }}>
+              {dataLength} results found
+            </Text>
           </>
         ) : (
           <View>

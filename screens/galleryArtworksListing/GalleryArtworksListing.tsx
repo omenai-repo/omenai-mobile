@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import WithModal from "#components/modal/WithModal";
 import { Feather } from "@expo/vector-icons";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
@@ -14,6 +14,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useModalStore } from "#store/modal/modalStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppStore } from "#store/app/appStore";
+import tw from "twrnc";
+import { colors } from "#config/colors.config";
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -62,15 +64,18 @@ export default function GalleryArtworksListing() {
   return (
     <WithModal>
       <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
-          paddingHorizontal: 20,
-          paddingTop: insets.top + 16,
-        }}
+        style={[
+          tw`flex-row items-center gap-2.5 px-5`,
+          {
+            paddingTop: insets.top + 16,
+          },
+        ]}
       >
-        <Text style={{ fontSize: 18, flex: 1, fontWeight: "500", color: "#000" }}>Artworks</Text>
+        <Text
+          style={[tw`text-lg flex-1 font-medium `, { color: colors.black }]}
+        >
+          Artworks
+        </Text>
         <FittedBlackButton
           value="Upload artwork"
           onClick={() => navigation.navigate(screenName.gallery.uploadArtwork)}
@@ -79,23 +84,18 @@ export default function GalleryArtworksListing() {
         </FittedBlackButton>
       </View>
 
-      <ScrollWrapper style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        {isInitialLoading ? (
+      {isInitialLoading ? (
+        <ScrollWrapper
+          style={tw`flex-1 mt-5`}
+          showsVerticalScrollIndicator={false}
+        >
           <MiniArtworkCardLoader />
-        ) : (
-          <View style={{ paddingHorizontal: 10 }}>
-            <ArtworksListing data={data} onRefresh={onRefresh} />
-          </View>
-        )}
-      </ScrollWrapper>
+        </ScrollWrapper>
+      ) : (
+        <View style={tw`flex-1 px-2.5 mt-5`}>
+          <ArtworksListing data={data} onRefresh={onRefresh} />
+        </View>
+      )}
     </WithModal>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContainer: {
-    flex: 1,
-    paddingTop: 20,
-    marginTop: 20,
-  },
-});

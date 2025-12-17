@@ -2,7 +2,6 @@ import React, { useMemo, useState, useCallback, useEffect } from "react";
 import {
   FlatList,
   View,
-  StyleSheet,
   ScrollView,
   NativeSyntheticEvent,
   NativeScrollEvent,
@@ -43,7 +42,10 @@ export default function ArtworksListing({
   }, [onRefresh]);
 
   const columnsData = useMemo(() => {
-    const columns = Array.from({ length: NUM_COLUMNS }, () => [] as ArtworkSchemaTypes[]);
+    const columns = Array.from(
+      { length: NUM_COLUMNS },
+      () => [] as ArtworkSchemaTypes[]
+    );
     data.forEach((item, index) => {
       columns[index % NUM_COLUMNS].push(item);
     });
@@ -65,7 +67,8 @@ export default function ArtworksListing({
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!debouncedOnEndReached) return;
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 200;
+    const isCloseToBottom =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 200;
     if (isCloseToBottom) debouncedOnEndReached();
   };
 
@@ -74,7 +77,7 @@ export default function ArtworksListing({
       data={columnData}
       keyExtractor={(item) => String(item.art_id)}
       renderItem={({ item }) => (
-        <View style={styles.itemContainer}>
+        <View style={tw`mb-2`}>
           <MiniArtworkCard
             title={item.title}
             url={item.url}
@@ -100,7 +103,11 @@ export default function ArtworksListing({
   );
 
   if (!Array.isArray(data) || data.length === 0) {
-    return <EmptyArtworks size={20} writeUp="No artworks to display" />;
+    return (
+      <View style={tw`flex-1`}>
+        <EmptyArtworks />
+      </View>
+    );
   }
 
   return (
@@ -117,9 +124,9 @@ export default function ArtworksListing({
         />
       }
     >
-      <View style={styles.container}>
+      <View style={tw`flex-row justify-between px-2.5 gap-2.5`}>
         {columnsData.map((column, index) => (
-          <View key={index} style={styles.column}>
+          <View key={index} style={[tw`px-1`, { flex: 1 / NUM_COLUMNS }]}>
             {renderColumn(column)}
           </View>
         ))}
@@ -130,19 +137,3 @@ export default function ArtworksListing({
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
-    gap: 10,
-  },
-  column: {
-    flex: 1 / NUM_COLUMNS,
-    paddingHorizontal: 4,
-  },
-  itemContainer: {
-    marginBottom: 8,
-  },
-});

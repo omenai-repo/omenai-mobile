@@ -1,17 +1,22 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import BackScreenButton from '#components/buttons/BackScreenButton';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { colors } from '#config/colors.config';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import BackScreenButton from "#components/buttons/BackScreenButton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { colors } from "#config/colors.config";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type BackHeaderTitleProps = {
   title: string;
   callBack?: () => void;
+  customGoBack?: () => void;
 };
 
-export default function BackHeaderTitle({ title, callBack }: BackHeaderTitleProps) {
+export default function BackHeaderTitle({
+  title,
+  callBack,
+  customGoBack,
+}: BackHeaderTitleProps) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const insets = useSafeAreaInsets();
 
@@ -24,8 +29,12 @@ export default function BackHeaderTitle({ title, callBack }: BackHeaderTitleProp
       <View style={styles.topContainer}>
         <BackScreenButton
           handleClick={() => {
-            navigation.goBack();
-            callBack && callBack();
+            if (customGoBack) {
+              customGoBack();
+            } else {
+              navigation.goBack();
+              callBack && callBack();
+            }
           }}
         />
         <Text style={styles.topTitle}>{title}</Text>
@@ -38,15 +47,15 @@ export default function BackHeaderTitle({ title, callBack }: BackHeaderTitleProp
 const styles = StyleSheet.create({
   topContainer: {
     paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   topTitle: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
     color: colors.primary_black,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
 });

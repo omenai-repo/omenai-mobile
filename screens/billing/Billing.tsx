@@ -18,7 +18,9 @@ export type billingTabs = "monthly" | "yearly";
 export default function Billing() {
   const [selectedTab, setSelectedTab] = useState<billingTabs>("monthly");
   const [plans, setPlans] = useState<PlanProps[]>([]);
-  const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(null);
+  const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const { plan_action } = useRoute<any>().params;
   const { updateModal } = useModalStore();
@@ -38,7 +40,14 @@ export default function Billing() {
           showModal: true,
         });
       } else {
-        setPlans(results?.data);
+        const sortedPlans = (results?.data || []).sort(
+          (a: PlanProps, b: PlanProps) => {
+            const priceA = +(a?.pricing?.monthly_price || 0);
+            const priceB = +(b?.pricing?.monthly_price || 0);
+            return priceA - priceB;
+          }
+        );
+        setPlans(sortedPlans);
         setSubData(subResults?.data);
       }
 
@@ -57,12 +66,20 @@ export default function Billing() {
         {!loading && plans.length > 0 && (
           <View style={styles.mainContainer}>
             {plans.map((plan, index) => (
-              <Plan key={index} tab={selectedTab} plan={plan} sub_data={subData} />
+              <Plan
+                key={index}
+                tab={selectedTab}
+                plan={plan}
+                sub_data={subData}
+              />
             ))}
           </View>
         )}
         {!loading && plans.length === 0 && (
-          <EmptyArtworks size={70} writeUp="No plans at the moment, reload or check again later" />
+          <EmptyArtworks
+            size={70}
+            writeUp="No plans at the moment, reload or check again later"
+          />
         )}
       </ScrollWrapper>
     </WithModal>

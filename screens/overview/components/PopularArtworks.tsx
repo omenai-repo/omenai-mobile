@@ -1,16 +1,23 @@
-import React, { useEffect } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ArtworkCardLoader from '#components/general/ArtworkCardLoader';
-import { fetchPopularArtworks } from '#services/artworks/fetchPopularArtworks';
-import ArtworkCard from '#components/artwork/ArtworkCard';
-import EmptyArtworks from '#components/general/EmptyArtworks';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from '#constants/screenNames.constants';
-import NavBtnComponent from '#components/artwork/NavBtnComponent';
-import { useQuery } from '@tanstack/react-query';
-import { QK } from '#utils/queryKeys';
-import { useAppStore } from '#store/app/appStore';
+import React, { useEffect } from "react";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
+import { fetchPopularArtworks } from "#services/artworks/fetchPopularArtworks";
+import ArtworkCard from "#components/artwork/ArtworkCard";
+import EmptyArtworks from "#components/general/EmptyArtworks";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "#constants/screenNames.constants";
+import NavBtnComponent from "#components/artwork/NavBtnComponent";
+import { useQuery } from "@tanstack/react-query";
+import { QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
+import tw from "twrnc";
 
 export default function PopularArtworks({
   onLoadingChange,
@@ -42,11 +49,11 @@ export default function PopularArtworks({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.artworks)}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20 }}>
-          <Text style={{ fontSize: 18, fontWeight: '500', flex: 1, color: '#000' }}>
-            Popular artworks
-          </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(screenName.gallery.artworks)}
+      >
+        <View style={tw`flex-row items-center px-5`}>
+          <Text style={tw`text-lg font-medium flex-1`}>Popular artworks</Text>
           <NavBtnComponent onPress={() => {}} />
         </View>
       </TouchableOpacity>
@@ -61,7 +68,7 @@ export default function PopularArtworks({
               title={item.title}
               url={item.url}
               artist={item.artist}
-              showPrice={item.pricing.shouldShowPrice === 'Yes'}
+              showPrice={item.pricing.shouldShowPrice === "Yes"}
               price={item.pricing.usd_price}
               impressions={item.impressions}
               like_IDs={item.like_IDs}
@@ -77,11 +84,15 @@ export default function PopularArtworks({
         />
       )}
 
-      {!isLoading && data.length === 0 && <EmptyArtworks size={70} />}
+      {!isLoading && data.length === 0 && (
+        <View style={tw`flex-1 pt-10 min-h-[300px]`}>
+          <EmptyArtworks />
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { paddingTop: 25, paddingBottom: 150 },
+  container: { paddingTop: 25, paddingBottom: 100 },
 });

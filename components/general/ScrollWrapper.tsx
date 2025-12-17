@@ -1,5 +1,5 @@
-import React from 'react';
-import { FlatList, View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
+import React from "react";
+import { FlatList, View, StyleSheet, ViewStyle, StyleProp } from "react-native";
 
 interface ScrollWrapperProps {
   children: React.ReactNode;
@@ -10,10 +10,10 @@ interface ScrollWrapperProps {
   onScroll?: (event: any) => void;
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
-  refreshControl?: React.ReactElement;
+  refreshControl?: React.ReactElement<any>;
   horizontal?: boolean;
   nestedScrollEnabled?: boolean;
-  keyboardShouldPersistTaps?: 'always' | 'handled' | 'never';
+  keyboardShouldPersistTaps?: "always" | "handled" | "never";
 }
 
 const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
@@ -31,11 +31,11 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
   keyboardShouldPersistTaps,
 }) => {
   // Wrap children in a container for FlatList
-  const renderItem = () => <View>{children}</View>;
+  const renderItem = () => <View style={{ flex: 1 }}>{children}</View>;
 
   return (
     <FlatList
-      data={[{ key: 'content' }]}
+      data={[{ key: "content" }]}
       renderItem={renderItem}
       keyExtractor={(item) => item.key}
       style={[styles.container, style]}

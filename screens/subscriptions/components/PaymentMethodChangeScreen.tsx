@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import tw from "twrnc";
 import { useStripe } from "@stripe/stripe-react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
 import { createPaymentMethodSetupIntent } from "#services/stripe/createPaymentMethodSetupIntent";
@@ -11,8 +11,6 @@ import SuccessPaymentModal from "./SuccessPaymentModal";
 
 export default function PaymentMethodChangeScreen() {
   const navigation = useNavigation<any>();
-  const route = useRoute<any>();
-  const { planId, planInterval } = route.params;
 
   const queryClient = useQueryClient();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -116,28 +114,45 @@ export default function PaymentMethodChangeScreen() {
     }
 
     // success -> refresh any data that depends on the PM
-    const setupIntentId = clientSecret?.split("_secret_")[0] ?? null;
-    await updatePaymentMethod(setupIntentId!);
+    const setupIntentId = clientSecret?.split("_secret_")[0];
+    if (!setupIntentId) {
+      setError("Invalid setup. Please contact support.");
+      return;
+    }
+    await updatePaymentMethod(setupIntentId);
     setSuccessVisible(true);
-  }, [sheetReady, clientSecret, initializeSheet, presentPaymentSheet, navigation, queryClient]);
+  }, [
+    sheetReady,
+    clientSecret,
+    initializeSheet,
+    presentPaymentSheet,
+    navigation,
+    queryClient,
+  ]);
 
   return (
     <>
       <View style={tw`flex-1 bg-slate-50`}>
         <View style={tw`px-4 py-5 mt-[80px]`}>
-          <Text style={tw`text-xl font-semibold text-slate-900`}>Change Card</Text>
+          <Text style={tw`text-xl font-semibold text-slate-900`}>
+            Change Card
+          </Text>
         </View>
 
         <View style={tw`px-4`}>
           {initializing && (
             <View style={tw`my-6 items-center`}>
               <ActivityIndicator />
-              <Text style={tw`mt-2 text-slate-600`}>Preparing secure form…</Text>
+              <Text style={tw`mt-2 text-slate-600`}>
+                Preparing secure form…
+              </Text>
             </View>
           )}
 
           {error && !initializing && (
-            <View style={tw`p-3 mb-3 rounded-lg border border-red-200 bg-red-50`}>
+            <View
+              style={tw`p-3 mb-3 rounded-lg border border-red-200 bg-red-50`}
+            >
               <Text style={tw`text-red-700`}>{error}</Text>
             </View>
           )}
@@ -148,7 +163,9 @@ export default function PaymentMethodChangeScreen() {
             style={({ pressed }) =>
               tw.style(
                 `mt-2 h-12 rounded-md items-center justify-center`,
-                initializing || presenting || !sheetReady ? "bg-slate-300" : "bg-slate-900",
+                initializing || presenting || !sheetReady
+                  ? "bg-slate-300"
+                  : "bg-slate-900",
                 pressed ? "opacity-85" : ""
               )
             }
@@ -161,10 +178,12 @@ export default function PaymentMethodChangeScreen() {
       </View>
       <SuccessPaymentModal
         visible={successVisible}
-        onPrimaryPress={() => {
+        onPrimaryPress={async () => {
           setSuccessVisible(false);
           // refresh + go back to billing
-          queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
+          queryClient.invalidateQueries({
+            queryKey: ["subscription_precheck"],
+          });
           navigation.goBack();
         }}
       />

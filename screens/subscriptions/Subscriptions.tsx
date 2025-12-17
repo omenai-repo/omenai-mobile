@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, RefreshControl } from "react-native";
 import React from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import InActiveSubscription from "./features/InActiveSubscription";
 import { useAppStore } from "#store/app/appStore";
 import ActiveSubscriptions from "./features/ActiveSubscriptions";
@@ -14,8 +15,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import SubscriptionDowntimeBlocker from "#components/blockers/payments/SubscriptionDowntimeBlocker";
+import VerificationRequiredBlock from "./components/VerificationRequiredBlock";
+import { colors } from "#config/colors.config";
+import BackScreenButton from "#components/buttons/BackScreenButton";
+import { screenName } from "#constants/screenNames.constants";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 
 export default function Subscriptions() {
+  const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
   const insets = useSafeAreaInsets();
@@ -23,8 +30,12 @@ export default function Subscriptions() {
     "subscription_creation_enabled"
   );
 
-  // Debug: Log user session
-  const { data: isConfirmed, isLoading } = useQuery({
+  const {
+    data: isConfirmed,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery({
     queryKey: ["subscription_precheck"],
     queryFn: async () => {
       try {
@@ -76,28 +87,46 @@ export default function Subscriptions() {
       }
     },
     refetchOnWindowFocus: true,
+    staleTime: 300000,
   });
 
   return (
     <WithModal>
       <View
         style={{
-          paddingTop: insets.top + 16,
+          paddingTop: isSubscriptionBillingEnabled ? 0 : insets.top + 16,
           flex: 1,
         }}
       >
         {isSubscriptionBillingEnabled ? (
           <>
-            <View style={styles.headerContainer}>
-              <Text style={{ fontSize: 20, textAlign: "center" }}>
-                Subscription & Billing
-              </Text>
-            </View>
-
-            {isLoading ? (
+            <BackHeaderTitle
+              title="Subscription & Billing"
+              customGoBack={() =>
+                navigation.navigate(screenName.gallery.overview)
+              }
+            />
+            {isLoading || isRefetching ? (
               <View style={{ padding: 20 }}>
                 <ActiveSubLoader />
               </View>
+            ) : isConfirmed && (!isConfirmed.isSubmitted || !isConfirmed.id) ? (
+              <ScrollWrapper
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: "center",
+                }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={isRefetching}
+                    onRefresh={refetch}
+                    colors={[colors.black]}
+                    tintColor={colors.black}
+                  />
+                }
+              >
+                <VerificationRequiredBlock />
+              </ScrollWrapper>
             ) : (
               <ScrollWrapper
                 style={styles.mainContainer}
@@ -107,6 +136,14 @@ export default function Subscriptions() {
                     : undefined
                 }
                 showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={isRefetching}
+                    onRefresh={refetch}
+                    colors={[colors.black]}
+                    tintColor={colors.black}
+                  />
+                }
               >
                 {isConfirmed?.isSubActive ? (
                   <ActiveSubscriptions
@@ -130,10 +167,11 @@ export default function Subscriptions() {
 
 const styles = StyleSheet.create({
   headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   mainContainer: {
-    marginTop: 20,
     flex: 1,
   },
 });
