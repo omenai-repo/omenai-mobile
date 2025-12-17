@@ -292,7 +292,7 @@ const ArtistOverview = () => {
               style={tw`border border-[#00000033] bg-[#fff] rounded-[25px] px-[100px] py-[120px] mt-[20px] mx-[15px] mb-[150px]`}
             >
               <View
-                style={tw`items-center justify-center py-[15px] px-[15px] bg-[#f5f5f5] rounded-[40px]`}
+                style={tw`items-center justify-center py-[15px] px-[15px] bg-[#f5f5f5] rounded-lg`}
               >
                 <Text style={tw`text-[16px] text-center`}>
                   No Recent Orders

@@ -1,4 +1,10 @@
-import { View, Text, Modal, Pressable, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  Modal,
+  Pressable,
+  useWindowDimensions,
+} from "react-native";
 import React from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
@@ -17,7 +23,7 @@ const AuthModal = ({
 }: {
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
-  icon: string;
+  icon: string | React.ReactNode;
   text: string;
   btn1Text: string;
   btn2Text: string;
@@ -35,7 +41,10 @@ const AuthModal = ({
     >
       <Pressable
         onPressOut={() => setModalVisible(false)}
-        style={[tw`flex-1 justify-center items-center`, { backgroundColor: `${colors.black}60` }]}
+        style={[
+          tw`flex-1 justify-center items-center`,
+          { backgroundColor: `${colors.black}60` },
+        ]}
       >
         <Pressable onPress={(e) => e.stopPropagation()}>
           <LinearGradient
@@ -50,7 +59,13 @@ const AuthModal = ({
               },
             ]}
           >
-            <SvgXml xml={icon} style={tw`self-center`} />
+            {typeof icon === "string" ? (
+              <SvgXml xml={icon} style={tw`self-center`} />
+            ) : (
+              <View style={tw`self-center justify-center items-center`}>
+                {icon}
+              </View>
+            )}
             <Text
               style={[
                 tw`text-[16px] font-medium text-center mt-[20px]`,
@@ -61,13 +76,24 @@ const AuthModal = ({
             </Text>
             <View style={tw`flex-row items-center self-center mt-[25px]`}>
               <Pressable onPress={onPress1}>
-                <Text style={[tw`text-[15px]`, { color: colors.primary_black }]}>{btn1Text}</Text>
+                <Text
+                  style={[tw`text-[15px]`, { color: colors.primary_black }]}
+                >
+                  {btn1Text}
+                </Text>
               </Pressable>
               <View
-                style={[tw`h-[15px] w-[2px] mx-[10px]`, { backgroundColor: `${colors.black}80` }]}
+                style={[
+                  tw`h-[15px] w-[2px] mx-[10px]`,
+                  { backgroundColor: `${colors.black}80` },
+                ]}
               />
               <Pressable onPress={onPress2}>
-                <Text style={[tw`text-[15px]`, { color: colors.primary_black }]}>{btn2Text}</Text>
+                <Text
+                  style={[tw`text-[15px]`, { color: colors.primary_black }]}
+                >
+                  {btn2Text}
+                </Text>
               </Pressable>
             </View>
           </LinearGradient>

@@ -9,7 +9,6 @@ import GalleryOrder from "#screens/galleryOrder/GalleryOrder";
 import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
 import EditGalleryProfile from "#screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile";
 import GetStartedWithStripe from "#screens/stripeScreens/getStartedWithStripe/GetStartedWithStripe";
-import Subscriptions from "#screens/subscriptions/Subscriptions";
 import UploadArtwork from "#screens/uploadArtwork/UploadArtwork";
 import { getAccountID } from "#services/stripe/getAccountID";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
@@ -147,10 +146,6 @@ export default function GalleryNavigation() {
       <Stack.Screen
         name={screenName.gallery.changePassword}
         component={wrapWithHighRisk(ChangeGalleryPassword)}
-      />
-      <Stack.Screen
-        name={screenName.gallery.subscriptions}
-        component={wrapWithHighRisk(Subscriptions)}
       />
       <Stack.Screen
         name={screenName.gallery.billing}

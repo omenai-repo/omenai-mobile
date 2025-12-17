@@ -141,16 +141,21 @@ export const errorIcon = `<svg width="51" height="51" viewBox="0 0 51 51" fill="
 </defs>
 </svg>
 `;
-export const checkMarkIcon = `<svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+export const getCheckMarkIcon = (
+  backgroundColor: string = "transparent"
+) => `<svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="51" height="51" rx="25.5" fill="${backgroundColor}"/>
 <rect x="0.175781" y="0.0234375" width="50" height="50" fill="url(#pattern0_5382_49597)"/>
 <defs>
 <pattern id="pattern0_5382_49597" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0_5382_49597" transform="scale(0.02)"/>
-</pattern>
+</pattern>  
 <image id="image0_5382_49597" width="50" height="50" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAExElEQVR4nO1ZTWwbRRReTiCBEFRCyDtpK9FQ4EBakNpcAhLlGK6lSIgjPxLixAE4IAFq1UIbROsmsbwzTkWPbUFQRENiBBIVaRB/sdNgp669M+s0jRSTNnEb1Y770BvbsddOm931eh0hf9JI9sreed+8782890ZR2mijjZahQxO7VcqHceBnZaOjQxOdhIkRwsQUofzjR47PPeBjvIdQniVMgBzys9G9dSj1EKFiP2E8TpgI43+VDQGAe1TGx1cNZgJUJq4QKq5XPys+5xkcNc/GW2b75hN8G9GMrs6j0/cSqvfWGmx3qFR/8dEvZ+8nzNjhmYcI5Z9WrXxOZeJao0QI40uE8ULV98+aSqJDE5sI4/nGDV+XWB7nahoRX4g/13wSojSMbtcJbBngD+P2SSg/4hURlYrPceFc8wzqlVC+4p0nhHnIuRuMGTWY3t4yAqzGQ8H0dsdEfCH92VYTIKtSSz3jmEhxb6/eFj2TE5hIMJHbOpS6zzERQo0Xinu8N8arwSSo/f8A8UfMZDBLoHovZhG2CODpqjI+5g0BHdTBOGwbmIB3R1Jw8BcDngpEgGjJenkxPo5ZhXVPMBH2xAOBS/DEYASO/DoDC8t5OHg+DcQfBaKl7vI/MWqDiMxMm0cCV9sfgffDOlxbzkNu5Ta8+V2iKKua+KgfPGaZiMrEgaZ5YTAOPScuwl+zWUDcyBVg3+kYqAMxCyTkOz6xTARrhtp0e1WnGJDBZHFVqW4vFvqn4J1zScjmViQJ9MS+03FJzuJCzG06Of2gvcpuLSJaCnZqUXj9bAL2norDLjYJvqN/S0lIcndaUaqD71gU+sZmoIzCbYA3ziaKnrDsVb6IaYs1EiGx645bLhp0/CK8ciYOc9mcNAiD9MzUPLz29bTUvSRUIyeffxK0P65CNQ6dT0sPWZITM70va6lsJkz8sN7LcLd5OhiBcHLBZFxs/ibsPRUzGYje+uhnYfrdcOJfUI9F7ZNgpfkpH3aFSFlmaMwXFypyKSPw+yx0+CclYSSGMirjyuIteHIwcvctlrlCxOgmjN+wE8Af/KhDla0S38Yz0On/ExKZ5dVn+JuX0WOBS45JEMaXUP7W4oSK5zGwLGpWkvnwJ17nmZnFW6bvJyfmnMUFK3mC8YytthK2c2QnxHoASgPXklkZ8zfzpdSjEUmJBVuFFh46tifCM8UfhdHL5g2gjPfCeoOSEiWviAPNT1G0lMydMKCrkVxYhi3+CceSIk5TlEaSRjWQgFe/ipuIvIV5VCDhAgmBY8ReGk/5b04nw0Pzm1hGkpi4mq2vLxzLio/ZSuMrrVD9pbVan1Yk9lh/BN7+/jJ0BaP1p719OS2RkL5HcQosL7HMdDQ5njEyuXS+S5EKkQLupI6JqEPpnS7purXNB3UDtYNIyHhcaQSE8cMtbdAxnsfGueIG8DQt9X37PCTRh3kftmtdIVFDaLdXRHyM9yjNAq7O/+JaYbWpXZmw4EYDDy+Lqrd5lYlDimdXb8zYIVuqIX1Pwx6geq+8xtOMLvsnt4tQKb+w3qVn0WBxvbY8kJehdluhTfUQFaPF62mxX15BFyvNiuwoz2IA4wldKhOmMAFsqQesAktSlfFzOCyXp2200YbSDPwHlRnZE5vqZaMAAAAASUVORK5CYII="/>
 </defs>
 </svg>
 `;
+
+export const checkMarkIcon = getCheckMarkIcon();
 
 // Tracking blocker icons
 export const packageIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2A9EDF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`;

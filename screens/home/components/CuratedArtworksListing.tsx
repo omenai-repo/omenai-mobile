@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCuratedArtworks } from "#services/artworks/fetchCuratedArtworks";
@@ -35,7 +41,11 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
       <TouchableOpacity
         activeOpacity={0.7}
         style={{ paddingHorizontal: 20 }}
-        onPress={() => navigation.navigate(screenName.artworkCategories, { title: "curated" })}
+        onPress={() =>
+          navigation.navigate(screenName.artworkCategories, {
+            title: "curated",
+          })
+        }
       >
         <Text
           style={{
@@ -56,7 +66,8 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             fontFamily: fontNames.dmSans + "Regular",
           }}
         >
-          Explore artworks based off your interests and interactions within the past days
+          Explore artworks based off your interests and interactions within the
+          past days
         </Text>
       </TouchableOpacity>
 
@@ -95,7 +106,10 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
           />
         )}
         {!isLoading && data.length < 1 && (
-          <EmptyArtworks size={70} writeUp="No artworks to match your interests" darkTheme />
+          <EmptyArtworks
+            writeUp="No artworks to match your interests"
+            darkTheme
+          />
         )}
       </View>
     </View>

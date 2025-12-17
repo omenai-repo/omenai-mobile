@@ -1,8 +1,8 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import tw from 'twrnc';
-import { fontNames } from '#constants/fontNames.constants';
-import ExclusivityExtensionModal from './ExclusivityExtensionModal';
+import React, { memo, useState, useEffect } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import tw from "twrnc";
+import { fontNames } from "#constants/fontNames.constants";
+import ExclusivityExtensionModal from "./ExclusivityExtensionModal";
 
 interface ExclusivityCountdownProps {
   expiresAt: Date;
@@ -14,15 +14,15 @@ const TimeDisplay = ({ value, label }: { value: number; label: string }) => (
     <Text
       style={[
         tw`text-[#1A1A1A] font-semibold text-xs`,
-        { fontFamily: fontNames.dmSans + 'Bold' },
+        { fontFamily: fontNames.dmSans + "Bold" },
       ]}
     >
-      {String(value).padStart(2, '0')}
+      {String(value).padStart(2, "0")}
     </Text>
     <Text
       style={[
         tw`text-[#1A1A1A]/50 text-[8px]`,
-        { fontFamily: fontNames.dmSans + 'Regular' },
+        { fontFamily: fontNames.dmSans + "Regular" },
       ]}
     >
       {label}
@@ -30,17 +30,21 @@ const TimeDisplay = ({ value, label }: { value: number; label: string }) => (
   </View>
 );
 
-const ExpiredState = ({ onExtendContract }: { onExtendContract: () => void }) => (
+const ExpiredState = ({
+  onExtendContract,
+}: {
+  onExtendContract: () => void;
+}) => (
   <View style={tw`bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2`}>
     <View style={tw`flex-row items-start gap-2 mb-2`}>
       <View style={tw`w-3 h-3 bg-amber-500 rounded-full mt-0.5`} />
       <Text
         style={[
           tw`text-amber-800 text-xs flex-1`,
-          { fontFamily: fontNames.dmSans + 'Regular' },
+          { fontFamily: fontNames.dmSans + "Regular" },
         ]}
       >
-        Exclusivity ended. You may sell outside platform.
+        Artwork Exclusivity period has ended.
       </Text>
     </View>
     <TouchableOpacity
@@ -51,7 +55,7 @@ const ExpiredState = ({ onExtendContract }: { onExtendContract: () => void }) =>
       <Text
         style={[
           tw`text-white text-xs text-center`,
-          { fontFamily: fontNames.dmSans + 'Medium' },
+          { fontFamily: fontNames.dmSans + "Medium" },
         ]}
       >
         Extend Contract
@@ -60,12 +64,21 @@ const ExpiredState = ({ onExtendContract }: { onExtendContract: () => void }) =>
   </View>
 );
 
-const ActiveCountdown = ({ timeLeft }: { timeLeft: { days: number; hours: number; minutes: number; seconds: number } }) => (
-  <View style={tw`bg-[#1A1A1A]/5 rounded-lg p-2 mt-2 border border-[#1A1A1A]/10`}>
+const ActiveCountdown = ({
+  timeLeft,
+}: {
+  timeLeft: { days: number; hours: number; minutes: number; seconds: number };
+}) => (
+  <View
+    style={tw`bg-[#1A1A1A]/5 rounded-lg p-2 mt-2 border border-[#1A1A1A]/10`}
+  >
     <View style={tw`flex-row items-center gap-1 mb-1.5`}>
       <View style={tw`w-1.5 h-1.5 bg-green-500 rounded-full`} />
       <Text
-        style={[tw`text-[#1A1A1A]/70 text-[10px]`, { fontFamily: fontNames.dmSans + 'Medium' }]}
+        style={[
+          tw`text-[#1A1A1A]/70 text-[10px]`,
+          { fontFamily: fontNames.dmSans + "Medium" },
+        ]}
       >
         Exclusivity period ends in:
       </Text>
@@ -79,8 +92,16 @@ const ActiveCountdown = ({ timeLeft }: { timeLeft: { days: number; hours: number
   </View>
 );
 
-export default memo(function ExclusivityCountdown({ expiresAt, art_id }: ExclusivityCountdownProps) {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+export default memo(function ExclusivityCountdown({
+  expiresAt,
+  art_id,
+}: ExclusivityCountdownProps) {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
   const [isExpired, setIsExpired] = useState(false);
   const [showModal, setShowModal] = useState(false);
 

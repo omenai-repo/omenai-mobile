@@ -15,10 +15,21 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadOtp, setLoadOtp] = useState(false);
+  const [countdown, setCountdown] = useState(0);
   const { updateModal } = useModalStore();
   const otpInputRef = useRef<any>(null);
 
   const animation = useRef(null);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
 
   useEffect(() => {
     const autoSendOtp = async () => {
@@ -32,6 +43,7 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
             modalType: "error",
           });
         } else {
+          setCountdown(60);
           // Focus the OTP input when OTP is sent
           setTimeout(() => otpInputRef.current?.focus(), 500);
         }
@@ -91,7 +103,8 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
 
         <View style={tw`px-[25px] pt-[40px]`}>
           <Text style={tw`mb-6 text-base text-gray-600`}>
-            An OTP has been sent to your registered email. Please enter the 4-digit code below:
+            An OTP has been sent to your registered email. Please enter the
+            4-digit code below:
           </Text>
 
           <OTPInput ref={otpInputRef} length={4} onChange={setOtp} />
@@ -112,6 +125,7 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
 
           <Pressable
             onPress={async () => {
+              if (countdown > 0) return;
               setLoadOtp(true);
               try {
                 const response = await sendOtpCode();
@@ -122,6 +136,7 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
                     modalType: "error",
                   });
                 } else {
+                  setCountdown(60);
                   updateModal({
                     message: "New OTP sent successfully",
                     showModal: true,
@@ -140,10 +155,19 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
               }
             }}
             style={tw`mt-4`}
-            disabled={loadOtp}
+            disabled={loadOtp || countdown > 0}
           >
-            <Text style={tw`text-[#1A1A1A]] text-center`}>
-              {loadOtp ? "Sending..." : "Didn't receive code? Resend"}
+            <Text
+              style={[
+                tw`text-[#1A1A1A] text-center`,
+                countdown > 0 ? tw`text-gray-400` : {},
+              ]}
+            >
+              {loadOtp
+                ? "Sending..."
+                : countdown > 0
+                ? `Resend code in ${countdown}s`
+                : "Didn't receive code? Resend"}
             </Text>
           </Pressable>
         </View>
