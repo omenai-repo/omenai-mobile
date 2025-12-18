@@ -13,20 +13,16 @@ export default function BackScreenButton({
   handleClick,
   cancle,
   color,
-}: BackScreenButtonTypes) {
+}: Readonly<BackScreenButtonTypes>) {
   return (
     <TouchableOpacity activeOpacity={1} onPress={handleClick}>
       <View style={styles.container}>
         {cancle ? (
-          <Feather
-            name="x"
-            color={color ? color : colors.primary_black}
-            size={25}
-          />
+          <Feather name="x" color={color ?? colors.primary_black} size={25} />
         ) : (
           <AntDesign
             name="arrow-left"
-            color={color ? color : colors.primary_black}
+            color={color ?? colors.primary_black}
             size={25}
           />
         )}

@@ -126,7 +126,10 @@ export default function ArtworksListing({
     >
       <View style={tw`flex-row justify-between px-2.5 gap-2.5`}>
         {columnsData.map((column, index) => (
-          <View key={index} style={[tw`px-1`, { flex: 1 / NUM_COLUMNS }]}>
+          <View
+            key={`artwork-column-${index}`}
+            style={[tw`px-1`, { flex: 1 / NUM_COLUMNS }]}
+          >
             {renderColumn(column)}
           </View>
         ))}

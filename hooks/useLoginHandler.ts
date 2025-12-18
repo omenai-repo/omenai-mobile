@@ -34,6 +34,31 @@ export function useLoginHandler(userType: UserType) {
     deleteCredentials,
   } = useBiometrics();
 
+  const finalizeLogin = (data: any, clearInputs: () => void) => {
+    setUserSession(data);
+    setIsLoggedIn(true);
+    clearInputs();
+  };
+
+  const handleBiometricAuth = async (
+    data: any,
+    loginData: LoginData,
+    clearInputs: () => void
+  ) => {
+    const bioResult = await authenticate();
+    if (bioResult.success) {
+      await saveCredentials(userType, loginData.email, loginData.password);
+      Alert.alert("Success", "Biometric login enabled");
+      finalizeLogin(data, clearInputs);
+    } else {
+      Alert.alert(
+        "Authentication Failed",
+        "Could not verify biometric identity. You can enable biometrics later in settings."
+      );
+      finalizeLogin(data, clearInputs);
+    }
+  };
+
   const handleLogin = async (
     loginData: LoginData,
     setIsLoading: (loading: boolean) => void,
@@ -46,153 +71,96 @@ export function useLoginHandler(userType: UserType) {
       userType
     );
 
-    if (results?.isOk) {
-      const resultsBody = results?.body?.data;
-
-      if (!resultsBody) {
-        setIsLoading(false);
-        return;
-      }
-
-      const isVerified = Boolean(resultsBody.verified);
-
-      if (!isVerified) {
-        setIsLoading(false);
-        const idKey = USER_ID_MAP[userType];
-        navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody[idKey], type: userType },
-        });
-        return;
-      }
-
-      const data = mapUserData(resultsBody, userType);
-
-      const isStored = await utils_storeAsyncData(
-        "userSession",
-        JSON.stringify(data)
-      );
-
-      const loginTimeStamp = new Date();
-      const isLoginTimeStampStored = await utils_storeAsyncData(
-        "loginTimeStamp",
-        JSON.stringify(loginTimeStamp)
-      );
-
-      if (isStored && isLoginTimeStampStored) {
-        const biometricEnabled = await isBiometricEnabled(userType);
-
-        if (isBiometricSupported && !biometricEnabled) {
-          // No credentials exist - prompt to enable
-          Alert.alert(
-            "Enable Biometric Login",
-            "Would you like to enable biometric login for faster access next time?",
-            [
-              {
-                text: "No",
-                style: "cancel",
-                onPress: () => {
-                  setUserSession(data);
-                  setIsLoggedIn(true);
-                  clearInputs();
-                },
-              },
-              {
-                text: "Yes",
-                onPress: async () => {
-                  const bioResult = await authenticate();
-                  if (bioResult.success) {
-                    await saveCredentials(
-                      userType,
-                      loginData.email,
-                      loginData.password
-                    );
-                    Alert.alert("Success", "Biometric login enabled");
-                    setUserSession(data);
-                    setIsLoggedIn(true);
-                    clearInputs();
-                  } else {
-                    Alert.alert(
-                      "Authentication Failed",
-                      "Could not verify biometric identity. You can enable biometrics later in settings."
-                    );
-                    setUserSession(data);
-                    setIsLoggedIn(true);
-                    clearInputs();
-                  }
-                },
-              },
-            ]
-          );
-        } else if (isBiometricSupported && biometricEnabled) {
-          // Credentials exist - check if they match current user
-          const storedEmail = await getStoredEmail(userType);
-          const isDifferentAccount =
-            storedEmail &&
-            storedEmail.toLowerCase() !== loginData.email.toLowerCase();
-
-          if (isDifferentAccount) {
-            // Different user - prompt to enable with auto-delete on "No"
-            Alert.alert(
-              "Enable Biometric Login",
-              "Would you like to enable biometric login for your account?",
-              [
-                {
-                  text: "No",
-                  style: "cancel",
-                  onPress: async () => {
-                    // Delete existing credentials when user declines
-                    await deleteCredentials(userType);
-                    setUserSession(data);
-                    setIsLoggedIn(true);
-                    clearInputs();
-                  },
-                },
-                {
-                  text: "Yes",
-                  onPress: async () => {
-                    const bioResult = await authenticate();
-                    if (bioResult.success) {
-                      await saveCredentials(
-                        userType,
-                        loginData.email,
-                        loginData.password
-                      );
-                      Alert.alert("Success", "Biometric login enabled");
-                      setUserSession(data);
-                      setIsLoggedIn(true);
-                      clearInputs();
-                    } else {
-                      Alert.alert(
-                        "Authentication Failed",
-                        "Could not verify biometric identity. You can enable biometrics later in settings."
-                      );
-                      setUserSession(data);
-                      setIsLoggedIn(true);
-                      clearInputs();
-                    }
-                  },
-                },
-              ]
-            );
-          } else {
-            // Same user - proceed normally
-            setUserSession(data);
-            setIsLoggedIn(true);
-            clearInputs();
-          }
-        } else {
-          // Biometrics not supported or same account - proceed normally
-          setUserSession(data);
-          setIsLoggedIn(true);
-          clearInputs();
-        }
-      }
-    } else {
+    if (!results?.isOk) {
       updateModal({
         message: results?.body.message,
         showModal: true,
         modalType: "error",
       });
+      setIsLoading(false);
+      return;
+    }
+
+    const resultsBody = results?.body?.data;
+    if (!resultsBody) {
+      setIsLoading(false);
+      return;
+    }
+
+    if (!Boolean(resultsBody.verified)) {
+      setIsLoading(false);
+      const idKey = USER_ID_MAP[userType];
+      navigation.navigate(screenName.verifyEmail, {
+        account: { id: resultsBody[idKey], type: userType },
+      });
+      return;
+    }
+
+    const data = mapUserData(resultsBody, userType);
+    const isStored = await utils_storeAsyncData(
+      "userSession",
+      JSON.stringify(data)
+    );
+
+    const loginTimeStamp = new Date();
+    await utils_storeAsyncData(
+      "loginTimeStamp",
+      JSON.stringify(loginTimeStamp)
+    );
+
+    if (!isStored) {
+      setIsLoading(false);
+      return;
+    }
+
+    const biometricEnabled = await isBiometricEnabled(userType);
+
+    if (isBiometricSupported && !biometricEnabled) {
+      Alert.alert(
+        "Enable Biometric Login",
+        "Would you like to enable biometric login for faster access next time?",
+        [
+          {
+            text: "No",
+            style: "cancel",
+            onPress: () => finalizeLogin(data, clearInputs),
+          },
+          {
+            text: "Yes",
+            onPress: () => handleBiometricAuth(data, loginData, clearInputs),
+          },
+        ]
+      );
+    } else if (isBiometricSupported && biometricEnabled) {
+      const storedEmail = await getStoredEmail(userType);
+      const isDifferentAccount =
+        storedEmail &&
+        storedEmail.toLowerCase() !== loginData.email.toLowerCase();
+
+      if (isDifferentAccount) {
+        Alert.alert(
+          "Enable Biometric Login",
+          "Would you like to enable biometric login for your account?",
+          [
+            {
+              text: "No",
+              style: "cancel",
+              onPress: async () => {
+                await deleteCredentials(userType);
+                finalizeLogin(data, clearInputs);
+              },
+            },
+            {
+              text: "Yes",
+              onPress: () => handleBiometricAuth(data, loginData, clearInputs),
+            },
+          ]
+        );
+      } else {
+        finalizeLogin(data, clearInputs);
+      }
+    } else {
+      finalizeLogin(data, clearInputs);
     }
 
     setIsLoading(false);
