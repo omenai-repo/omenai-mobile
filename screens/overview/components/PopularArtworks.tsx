@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import tw from "twrnc";
+import { useDevice } from "#hooks/useDevice";
 
 export default function PopularArtworks({
   onLoadingChange,
@@ -26,6 +27,7 @@ export default function PopularArtworks({
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { userSession } = useAppStore();
+  const { isTablet, horizontalPadding } = useDevice();
 
   const query = useQuery({
     queryKey: QK.popularArtworks(userSession?.id),
@@ -52,8 +54,17 @@ export default function PopularArtworks({
       <TouchableOpacity
         onPress={() => navigation.navigate(screenName.gallery.artworks)}
       >
-        <View style={tw`flex-row items-center px-5`}>
-          <Text style={tw`text-lg font-medium flex-1`}>Popular artworks</Text>
+        <View
+          style={[
+            tw`flex-row items-center`,
+            { paddingHorizontal: isTablet ? horizontalPadding : 20 },
+          ]}
+        >
+          <Text
+            style={[tw`font-medium flex-1`, { fontSize: isTablet ? 22 : 18 }]}
+          >
+            Popular artworks
+          </Text>
           <NavBtnComponent onPress={() => {}} />
         </View>
       </TouchableOpacity>
@@ -79,8 +90,11 @@ export default function PopularArtworks({
           keyExtractor={(item, index) => String(item.art_id ?? index)}
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 30 }}
-          contentContainerStyle={{ paddingRight: 20 }}
+          style={{ marginTop: isTablet ? 40 : 30 }}
+          contentContainerStyle={{
+            paddingLeft: isTablet ? horizontalPadding : 20,
+            paddingRight: isTablet ? horizontalPadding : 20,
+          }}
         />
       )}
 

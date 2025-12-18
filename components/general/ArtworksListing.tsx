@@ -15,7 +15,7 @@ import tw from "twrnc";
 import { getNumberOfColumns } from "#utils/utils_screen";
 import { useAppStore } from "#store/app/appStore";
 
-const NUM_COLUMNS = getNumberOfColumns();
+import { useDevice } from "#hooks/useDevice";
 
 export default function ArtworksListing({
   data,
@@ -29,6 +29,7 @@ export default function ArtworksListing({
   loadingMore?: boolean;
 }) {
   const { userType } = useAppStore();
+  const { isTablet, numColumns, horizontalPadding } = useDevice();
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -43,14 +44,14 @@ export default function ArtworksListing({
 
   const columnsData = useMemo(() => {
     const columns = Array.from(
-      { length: NUM_COLUMNS },
+      { length: numColumns },
       () => [] as ArtworkSchemaTypes[]
     );
     data.forEach((item, index) => {
-      columns[index % NUM_COLUMNS].push(item);
+      columns[index % numColumns].push(item);
     });
     return columns;
-  }, [data]);
+  }, [data, numColumns]);
 
   const debouncedOnEndReached = useMemo(() => {
     if (!onEndReached) return null;
@@ -124,11 +125,16 @@ export default function ArtworksListing({
         />
       }
     >
-      <View style={tw`flex-row justify-between px-2.5 gap-2.5`}>
+      <View
+        style={[
+          tw`flex-row justify-between gap-2.5`,
+          { paddingHorizontal: horizontalPadding },
+        ]}
+      >
         {columnsData.map((column, index) => (
           <View
             key={`artwork-column-${index}`}
-            style={[tw`px-1`, { flex: 1 / NUM_COLUMNS }]}
+            style={[tw`px-1`, { flex: 1 / numColumns }]}
           >
             {renderColumn(column)}
           </View>

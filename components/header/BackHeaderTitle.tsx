@@ -5,6 +5,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "#config/colors.config";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useDevice } from "#hooks/useDevice";
 
 type BackHeaderTitleProps = {
   title: string;
@@ -19,14 +20,17 @@ export default function BackHeaderTitle({
 }: Readonly<BackHeaderTitleProps>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const insets = useSafeAreaInsets();
+  const { isTablet } = useDevice();
 
   return (
     <View
       style={{
-        paddingTop: insets.top + 16,
+        paddingTop: insets.top + (isTablet ? 24 : 16),
       }}
     >
-      <View style={styles.topContainer}>
+      <View
+        style={[styles.topContainer, isTablet && { paddingHorizontal: 40 }]}
+      >
         <BackScreenButton
           handleClick={() => {
             if (customGoBack) {
@@ -37,8 +41,10 @@ export default function BackHeaderTitle({
             }
           }}
         />
-        <Text style={styles.topTitle}>{title}</Text>
-        <View style={{ width: 50 }} />
+        <Text style={[styles.topTitle, isTablet && { fontSize: 20 }]}>
+          {title}
+        </Text>
+        <View style={{ width: isTablet ? 60 : 50 }} />
       </View>
     </View>
   );

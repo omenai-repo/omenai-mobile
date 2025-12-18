@@ -174,7 +174,7 @@ export const RecentOrderContainer = ({
 
 const ArtistOverview = () => {
   const queryClient = useQueryClient();
-  const [openSection, setOpenSection] = useState<Record<number, boolean>>({});
+  const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
   const { userSession } = useAppStore();
   const { scrollY, onScroll } = useScrollY();
 
@@ -218,9 +218,9 @@ const ArtistOverview = () => {
         queryKey: QK.overviewOrders(userSession?.id),
       }),
     ]);
-  }, [queryClient]);
+  }, [queryClient, userSession?.id]);
 
-  const toggleRecentOrder = useCallback((key: number) => {
+  const toggleRecentOrder = useCallback((key: string) => {
     setOpenSection((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
@@ -267,8 +267,8 @@ const ArtistOverview = () => {
                   key={index}
                   id={index}
                   url={item.artwork_data.url}
-                  open={!!openSection[item.artwork_data._id]}
-                  setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+                  open={!!openSection[item.order_id]}
+                  setOpen={() => toggleRecentOrder(item.order_id)}
                   artId={item.order_id}
                   artName={item.artwork_data.title}
                   buyerName={item.buyer_details.name}

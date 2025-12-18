@@ -126,8 +126,8 @@ export default function RecentOrders({
               key={index}
               id={index}
               url={item.artwork_data.url}
-              open={openSection[item.artwork_data._id]}
-              setOpen={() => toggleRecentOrder(item.artwork_data._id)}
+              open={!!openSection[item.order_id]}
+              setOpen={() => toggleRecentOrder(item.order_id)}
               artId={item.order_id}
               artName={item.artwork_data.title}
               buyerName={item.buyer_details.name}
