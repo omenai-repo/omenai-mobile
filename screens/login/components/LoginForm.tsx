@@ -1,6 +1,7 @@
 import { Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import React from "react";
 import tw from "twrnc";
+import { useDevice } from "#hooks/useDevice";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import Input from "#components/inputs/Input";
 import PasswordInput from "#components/inputs/PasswordInput";
@@ -43,9 +44,19 @@ export default function LoginForm({
   forgotPasswordType,
 }: LoginFormProps) {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { isTablet } = useDevice();
 
   return (
-    <View style={tw`mt-7 gap-10`}>
+    <View
+      style={[
+        tw`mt-7 gap-10`,
+        isTablet && {
+          alignSelf: "center",
+          width: "100%",
+          maxWidth: 500,
+        },
+      ]}
+    >
       <View style={tw`gap-5`}>
         <Input
           label={emailLabel}

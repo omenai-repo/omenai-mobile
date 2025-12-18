@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { colors } from "../../config/colors.config";
@@ -16,6 +17,8 @@ import WithModal from "#components/modal/WithModal";
 import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
 import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
+import { useDevice } from "#hooks/useDevice";
+import tw from "twrnc";
 import InputForm from "./components/inputForm/InputForm";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 
@@ -25,6 +28,7 @@ type RootStackParamList = {
 };
 
 export default function Register() {
+  const { isTablet } = useDevice();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { clearState: clearIndividualState, pageIndex: collectorPage } =
     useIndividualAuthRegisterStore();
@@ -69,26 +73,31 @@ export default function Register() {
           navigation.navigate(screenName.welcome);
         }}
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
-        style={styles.container}
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            ref={scrollViewRef}
-            nestedScrollEnabled
-            style={{ flexGrow: 1 }}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-          >
-            <InputForm
-              onTabChange={setSelectedTabIndex}
-              onInviteValidated={setGalleryInviteValidated}
-            />
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+      <View style={[tw`flex-1 bg-white`, isTablet && tw`items-center`]}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+          style={[
+            styles.container,
+            isTablet && { width: "100%", maxWidth: 650 },
+          ]}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <ScrollView
+              ref={scrollViewRef}
+              nestedScrollEnabled
+              style={{ flexGrow: 1 }}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              <InputForm
+                onTabChange={setSelectedTabIndex}
+                onInviteValidated={setGalleryInviteValidated}
+              />
+            </ScrollView>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </View>
     </WithModal>
   );
 }

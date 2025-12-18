@@ -3,7 +3,7 @@ name: Production Build and Submit
 on:
   push:
     branches:
-      - stagingg
+      - update/tab-screen-design
   workflow_dispatch:
 
 jobs:

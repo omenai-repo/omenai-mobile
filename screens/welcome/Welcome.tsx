@@ -14,12 +14,17 @@ import { utils_determineOnboardingPages } from "#utils/utils_determineOnboarding
 import tw from "twrnc";
 import { StatusBar } from "expo-status-bar";
 import TiltedGridBackground from "./components/TiltedGridBackground";
-import { primaryGridImages, secondaryGridImages } from "#constants/images.constants";
+import {
+  primaryGridImages,
+  secondaryGridImages,
+} from "#constants/images.constants";
+import { useDevice } from "#hooks/useDevice";
 
 export default function Welcome() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const insets = useSafeAreaInsets();
   const isFocused = useIsFocused();
+  const { isTablet } = useDevice();
 
   const [selected, setSelected] = useState(0);
   const [showWelcome, setShowWelcome] = useState(false);
@@ -72,17 +77,28 @@ export default function Welcome() {
             backgroundColor: colors.primary_black,
             position: "absolute",
             bottom: insets.bottom + 20,
-            left: 12,
-            right: 12,
+            left: isTablet ? undefined : 12,
+            right: isTablet ? undefined : 12,
+          },
+          isTablet && {
+            alignSelf: "center",
+            width: "100%",
+            maxWidth: 500,
           },
         ]}
       >
-        <Text style={[tw`text-3xl text-white font-medium mb-1.5`, { maxWidth: "80%" }]}>
+        <Text
+          style={[
+            tw`text-3xl text-white font-medium mb-1.5`,
+            { maxWidth: "80%" },
+          ]}
+        >
           Find every artwork you desire here
         </Text>
 
         <Text style={tw`text-sm text-[#FFFFFFB2]`}>
-          Buy, Trade, Discover and experience art like the louvre with a single tap.
+          Buy, Trade, Discover and experience art like the louvre with a single
+          tap.
         </Text>
 
         <View style={tw`gap-3 mt-6`}>

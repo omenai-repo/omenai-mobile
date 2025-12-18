@@ -11,6 +11,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { colors } from "../../config/colors.config";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useDevice } from "#hooks/useDevice";
+
 type AuthHeaderProps = {
   readonly title: string;
   readonly subTitle: string;
@@ -22,16 +24,26 @@ export default function AuthHeader({
   subTitle,
   handleBackClick,
 }: AuthHeaderProps) {
+  const { isTablet } = useDevice();
+
   return (
     <SafeAreaView style={styles.container}>
       <View
-        style={{ paddingHorizontal: 20, paddingBottom: 20, paddingTop: 10 }}
+        style={{
+          paddingHorizontal: isTablet ? 40 : 20,
+          paddingBottom: isTablet ? 30 : 20,
+          paddingTop: 10,
+        }}
       >
         <TouchableOpacity style={styles.backButton} onPress={handleBackClick}>
           <AntDesign name="arrow-left" color={colors.white} size={20} />
         </TouchableOpacity>
-        <Text style={styles.headerText}>{title}</Text>
-        <Text style={styles.subText}>{subTitle}</Text>
+        <Text style={[styles.headerText, isTablet && { fontSize: 28 }]}>
+          {title}
+        </Text>
+        <Text style={[styles.subText, isTablet && { fontSize: 18 }]}>
+          {subTitle}
+        </Text>
       </View>
     </SafeAreaView>
   );

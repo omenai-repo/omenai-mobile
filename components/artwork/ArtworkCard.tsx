@@ -16,6 +16,7 @@ import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import { fontNames } from "#constants/fontNames.constants";
+import { useDevice } from "#hooks/useDevice";
 
 type ArtworkCardType = {
   title: string;
@@ -47,10 +48,11 @@ export default function ArtworkCard({
   availiablity,
 }: ArtworkCardType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-
+  const { isTablet } = useDevice();
   const dpr = PixelRatio.get();
   const screenWidth = Dimensions.get("window").width;
-  const displayWidth = width > 0 ? width : screenWidth * 0.7;
+  const displayWidth =
+    width > 0 ? width : isTablet ? screenWidth * 0.4 : screenWidth * 0.7;
   const fetchWidth = Math.round(displayWidth * dpr);
   const image_href = getImageFileView(url, fetchWidth);
 

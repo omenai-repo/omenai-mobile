@@ -2,6 +2,7 @@ import { StyleSheet, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { colors } from "../../config/colors.config";
+import { useDevice } from "#hooks/useDevice";
 
 type BackScreenButtonTypes = {
   handleClick: () => void;
@@ -14,16 +15,28 @@ export default function BackScreenButton({
   cancle,
   color,
 }: Readonly<BackScreenButtonTypes>) {
+  const { isTablet } = useDevice();
+  const iconSize = isTablet ? 30 : 25;
+
   return (
     <TouchableOpacity activeOpacity={1} onPress={handleClick}>
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          isTablet && { height: 60, width: 60, borderRadius: 30 },
+        ]}
+      >
         {cancle ? (
-          <Feather name="x" color={color ?? colors.primary_black} size={25} />
+          <Feather
+            name="x"
+            color={color ?? colors.primary_black}
+            size={iconSize}
+          />
         ) : (
           <AntDesign
             name="arrow-left"
             color={color ?? colors.primary_black}
-            size={25}
+            size={iconSize}
           />
         )}
       </View>

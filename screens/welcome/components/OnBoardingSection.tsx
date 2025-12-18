@@ -1,9 +1,17 @@
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { colors } from "#config/colors.config";
-import { Animated, Image, Platform, ScrollView, useWindowDimensions, View } from "react-native";
+import {
+  Animated,
+  Image,
+  Platform,
+  ScrollView,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import tw from "twrnc";
+import { useDevice } from "#hooks/useDevice";
 
 type onBoardingSectionProps = {
   data: { title: string; image: any; subText: string };
@@ -20,6 +28,7 @@ export default function OnBoardingSection({
 }: onBoardingSectionProps) {
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const { isTablet } = useDevice();
 
   // Animation values
   const titleTranslateX = useRef(new Animated.Value(50)).current;
@@ -98,7 +107,16 @@ export default function OnBoardingSection({
           </View>
         </View>
       </ScrollView>
-      <View style={[tw`px-8 pt-6`]}>
+      <View
+        style={[
+          tw`px-8 pt-6`,
+          isTablet && {
+            alignSelf: "center",
+            width: "100%",
+            maxWidth: 500,
+          },
+        ]}
+      >
         <Animated.Text
           style={[
             tw`text-3xl font-medium mb-1.5`,
@@ -139,7 +157,11 @@ export default function OnBoardingSection({
           <LongBlackButton
             value="Sign Up"
             onClick={onFinish}
-            style={{ height: 48, backgroundColor: "#E0E0E0", marginBottom: insets.bottom + 10 }}
+            style={{
+              height: 48,
+              backgroundColor: "#E0E0E0",
+              marginBottom: insets.bottom + 10,
+            }}
             textStyle={{ fontSize: 16, fontWeight: "600", color: colors.black }}
           />
         </View>
