@@ -16,7 +16,7 @@ export default function BackHeaderTitle({
   title,
   callBack,
   customGoBack,
-}: BackHeaderTitleProps) {
+}: Readonly<BackHeaderTitleProps>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const insets = useSafeAreaInsets();
 

@@ -56,10 +56,72 @@ export const useVersionCheck = (
     onUpdateNeededRef.current = onUpdateNeeded;
   }, [onUpdateNeeded]);
 
+  const handleAndroidUpdate = async (needsUpdate: boolean) => {
+    if (needsUpdate && Platform.OS === "android") {
+      try {
+        const result = await inAppUpdates.checkNeedsUpdate();
+        if (result.shouldUpdate) {
+          await inAppUpdates.startUpdate({
+            updateType: IAUUpdateKind.IMMEDIATE,
+          });
+          return false; // Managed by Android system now
+        }
+      } catch (e) {
+        console.error("[VersionCheck] Android in-app update check failed:", e);
+      }
+    }
+    return needsUpdate;
+  };
+
+  const handleVersionSnapshot = async (
+    docSnapshot: any,
+    currentVersion: string
+  ) => {
+    if (!docSnapshot.exists()) {
+      console.warn("[VersionCheck] No version document found");
+      setVersionCheckResult((prev) => ({
+        ...prev,
+        currentVersion,
+        error: "Version document not found",
+      }));
+      return;
+    }
+
+    const remoteVersion = docSnapshot.data()?.version;
+    if (!remoteVersion) {
+      console.warn("[VersionCheck] No version field found in document");
+      setVersionCheckResult((prev) => ({
+        ...prev,
+        currentVersion,
+        error: "Version field missing",
+      }));
+      return;
+    }
+
+    const needsUpdate = compareVersions(currentVersion, remoteVersion);
+    const finalNeedsUpdate = await handleAndroidUpdate(needsUpdate);
+
+    const result: VersionCheckResult = {
+      needsUpdate: finalNeedsUpdate,
+      remoteVersion,
+      currentVersion,
+      error: null,
+    };
+
+    console.log(
+      `[VersionCheck] Current: ${currentVersion}, Required: ${remoteVersion}, Needs Update: ${needsUpdate}`
+    );
+    setVersionCheckResult(result);
+
+    if (finalNeedsUpdate && onUpdateNeededRef.current) {
+      onUpdateNeededRef.current(result);
+    }
+  };
+
   useEffect(() => {
     let unsubscribe: () => void;
 
-    const setupVersionListener = async () => {
+    const initializeListener = async () => {
       try {
         const currentVersion = await DeviceInfo.getVersion();
         if (!currentVersion)
@@ -71,66 +133,7 @@ export const useVersionCheck = (
 
         unsubscribe = onSnapshot(
           docRef,
-          async (docSnapshot) => {
-            if (!docSnapshot.exists()) {
-              console.warn(
-                `[VersionCheck] No version document found for ${docId}`
-              );
-              setVersionCheckResult((prev) => ({
-                ...prev,
-                currentVersion,
-                error: "Version document not found",
-              }));
-              return;
-            }
-
-            const remoteVersion = docSnapshot.data()?.version;
-            if (!remoteVersion) {
-              console.warn("[VersionCheck] No version field found in document");
-              setVersionCheckResult((prev) => ({
-                ...prev,
-                currentVersion,
-                error: "Version field missing",
-              }));
-              return;
-            }
-
-            const needsUpdate = compareVersions(currentVersion, remoteVersion);
-            let finalNeedsUpdate = needsUpdate;
-
-            if (needsUpdate && Platform.OS === "android") {
-              try {
-                const result = await inAppUpdates.checkNeedsUpdate();
-                if (result.shouldUpdate) {
-                  await inAppUpdates.startUpdate({
-                    updateType: IAUUpdateKind.IMMEDIATE,
-                  });
-                  finalNeedsUpdate = false;
-                }
-              } catch (e) {
-                console.error(
-                  "[VersionCheck] Android in-app update check failed:",
-                  e
-                );
-              }
-            }
-
-            const result: VersionCheckResult = {
-              needsUpdate: finalNeedsUpdate,
-              remoteVersion,
-              currentVersion,
-              error: null,
-            };
-
-            console.log(
-              `[VersionCheck] Current: ${currentVersion}, Required: ${remoteVersion}, Needs Update: ${needsUpdate} (Unified: ${finalNeedsUpdate})`
-            );
-            setVersionCheckResult(result);
-
-            if (finalNeedsUpdate && onUpdateNeededRef.current) {
-              onUpdateNeededRef.current(result);
-            }
-          },
+          (snapshot) => handleVersionSnapshot(snapshot, currentVersion),
           (error) => {
             console.error("[VersionCheck] Snapshot listener error:", error);
             setVersionCheckResult((prev) => ({
@@ -142,19 +145,14 @@ export const useVersionCheck = (
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Unknown error";
-        console.error(
-          "[VersionCheck] Error setting up listener:",
-          errorMessage
-        );
+        console.error("[VersionCheck] Listener setup error:", errorMessage);
         setVersionCheckResult((prev) => ({ ...prev, error: errorMessage }));
       }
     };
 
-    setupVersionListener();
+    initializeListener();
 
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
+    return () => unsubscribe?.();
   }, []);
 
   return versionCheckResult;
