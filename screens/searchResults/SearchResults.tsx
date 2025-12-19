@@ -83,7 +83,6 @@ export default function SearchResults() {
       {searchQuery.length > 0 && dataLength === 0 && !isLoading && (
         <View style={{ marginTop: 40 }}>
           <EmptyArtworks
-            size={100}
             writeUp={
               searchQuery.length < 3 && dataLength === 0
                 ? "Please enter at least 3 characters to search..."

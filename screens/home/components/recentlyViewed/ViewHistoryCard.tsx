@@ -118,7 +118,6 @@ export default function ViewHistoryCard({
 const styles = StyleSheet.create({
   container: {
     // width: 270,
-    marginLeft: 20,
     // padding: 10,
     // borderRadius: 10,
     // backgroundColor: "#f0f0f0",

@@ -83,7 +83,9 @@ export default function SimilarArtworks({
               />
             )}
             contentContainerStyle={{
+              paddingLeft: 20,
               paddingRight: 20,
+              gap: 20,
             }}
             keyExtractor={(item) => item.title}
             horizontal={true}

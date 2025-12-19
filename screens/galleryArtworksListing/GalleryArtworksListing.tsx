@@ -35,7 +35,7 @@ export default function GalleryArtworksListing() {
         const res = await fetchAllArtworksById();
         if (!res?.isOk) throw new Error("Failed to fetch artworks");
         return Array.isArray(res.data) ? res.data : [];
-      } catch (e) {
+      } catch (e: any) {
         updateModal({
           message: e?.message ?? "Failed to fetch artworks",
           showModal: true,
@@ -92,7 +92,7 @@ export default function GalleryArtworksListing() {
           <MiniArtworkCardLoader />
         </ScrollWrapper>
       ) : (
-        <View style={tw`flex-1 px-2.5 mt-5`}>
+        <View style={tw`flex-1 mt-5`}>
           <ArtworksListing data={data} onRefresh={onRefresh} />
         </View>
       )}

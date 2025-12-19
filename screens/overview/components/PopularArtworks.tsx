@@ -94,6 +94,7 @@ export default function PopularArtworks({
           contentContainerStyle={{
             paddingLeft: isTablet ? horizontalPadding : 20,
             paddingRight: isTablet ? horizontalPadding : 20,
+            gap: 20,
           }}
         />
       )}

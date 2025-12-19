@@ -96,6 +96,11 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontFamily: fontNames.dmSans + "Medium",
   },
-  flatListContainer: { paddingRight: 20, marginTop: 20 },
-  cardWrapper: { marginLeft: 20 },
+  flatListContainer: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginTop: 20,
+    gap: 20,
+  },
+  cardWrapper: {},
 });

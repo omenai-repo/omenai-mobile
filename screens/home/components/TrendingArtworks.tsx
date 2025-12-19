@@ -77,7 +77,7 @@ export default function TrendingArtworks({ limit }: { limit: number }) {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={{ marginTop: 20 }}
-          contentContainerStyle={{ paddingRight: 20 }}
+          contentContainerStyle={{ paddingLeft: 20, gap: 20, paddingRight: 20 }}
           renderItem={({ item, index }) =>
             index + 1 === data.length && showMoreButton ? (
               <ViewAllCategoriesButton

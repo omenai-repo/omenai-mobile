@@ -64,6 +64,7 @@ export default function RecentlyViewedArtworks() {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={{ marginTop: 0 }}
+          contentContainerStyle={{ paddingLeft: 20, paddingRight: 20, gap: 20 }}
           renderItem={({ item }) => (
             <ViewHistoryCard
               art_id={item.art_id}

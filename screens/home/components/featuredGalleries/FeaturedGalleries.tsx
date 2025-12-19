@@ -1,10 +1,17 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { colors } from '../../../../config/colors.config';
-import { fontNames } from '#constants/fontNames.constants';
-import { useNavigation } from '@react-navigation/native';
-import { getFeaturedGalleries } from '#services/overview/fetchFeaturedGallery';
-import { getGalleryLogoFileView } from '#lib/storage/getGalleryLogoFileView';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { colors } from "../../../../config/colors.config";
+import { fontNames } from "#constants/fontNames.constants";
+import { useNavigation } from "@react-navigation/native";
+import { getFeaturedGalleries } from "#services/overview/fetchFeaturedGallery";
+import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
 
 type Gallery = {
   gallery_id: string;
@@ -32,8 +39,8 @@ export default function FeaturedGalleries() {
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('DetailsScreen', {
-            type: 'gallery',
+          navigation.navigate("DetailsScreen", {
+            type: "gallery",
             id: item.gallery_id,
             name: item.name,
             logo: item.logo,
@@ -43,7 +50,9 @@ export default function FeaturedGalleries() {
         <View style={styles.gallery}>
           <Image source={{ uri: image_href }} style={styles.image} />
           <View style={styles.contentContainer}>
-            <Text style={{ fontSize: 14, color: colors.primary_black }}>{item.name}</Text>
+            <Text style={{ fontSize: 14, color: colors.primary_black }}>
+              {item.name}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -61,7 +70,7 @@ export default function FeaturedGalleries() {
         keyExtractor={(item) => item.gallery_id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingRight: 20 }}
+        contentContainerStyle={{ paddingLeft: 20, paddingRight: 20, gap: 20 }}
         style={{ marginTop: 20 }}
       />
     </View>
@@ -70,28 +79,27 @@ export default function FeaturedGalleries() {
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
     paddingHorizontal: 20,
   },
   headerText: {
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: "500",
     flex: 1,
   },
   gallery: {
     flex: 1,
     width: 300,
-    marginLeft: 20,
   },
   contentContainer: {
     paddingTop: 10,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderRadius: 5,
-    backgroundColor: '#eee',
+    backgroundColor: "#eee",
   },
 });
