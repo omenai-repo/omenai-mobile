@@ -134,7 +134,7 @@ export default function ArtworksListing({
         {columnsData.map((column, index) => (
           <View
             key={`artwork-column-${index}`}
-            style={[tw`px-1`, { flex: 1 / numColumns }]}
+            style={[{ flex: 1 / numColumns }]}
           >
             {renderColumn(column)}
           </View>

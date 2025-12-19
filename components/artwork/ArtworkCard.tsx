@@ -81,7 +81,7 @@ export default function ArtworkCard({
       <View style={tw`flex-1`} />
       <TouchableOpacity
         activeOpacity={1}
-        style={[tw`ml-[20px] rounded-2xl`, { width: imageDimensions.width }]}
+        style={[tw`rounded-2xl`, { width: imageDimensions.width }]}
         onPress={() => {
           navigation.push(screenName.artwork, { art_id, url });
         }}

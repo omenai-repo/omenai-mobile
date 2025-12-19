@@ -67,7 +67,7 @@ export default function NewArtworksListing() {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={{ marginTop: 0 }}
-          contentContainerStyle={{ paddingRight: 20 }}
+          contentContainerStyle={{ paddingLeft: 20, gap: 20, paddingRight: 20 }}
           initialNumToRender={5}
           maxToRenderPerBatch={5}
           windowSize={5}

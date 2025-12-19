@@ -19,7 +19,12 @@ import { useAppStore } from "#store/app/appStore";
 
 type Artist = {
   author_id: string;
-  mostLikedArtwork: { url: string; artworkId: string; birthyear: string; country: string };
+  mostLikedArtwork: {
+    url: string;
+    artworkId: string;
+    birthyear: string;
+    country: string;
+  };
   artist: string;
   totalLikes: number;
 };
@@ -57,15 +62,25 @@ const FeaturedArtists = () => {
       <View style={styles.artistCard}>
         <Image source={{ uri: image_href }} style={styles.artistImage} />
         <View
-          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
         >
           <View style={styles.artistInfo}>
             <Text style={styles.artistName}>{name}</Text>
-            <Text style={styles.artistDetails}>{details.country + " b." + details.birthyear}</Text>
+            <Text style={styles.artistDetails}>
+              {details.country + " b." + details.birthyear}
+            </Text>
           </View>
           <View style={{ marginTop: 5 }}>
             <Text
-              style={{ fontSize: 12, color: "#858585", fontFamily: fontNames.dmSans + "Regular" }}
+              style={{
+                fontSize: 12,
+                color: "#858585",
+                fontFamily: fontNames.dmSans + "Regular",
+              }}
             >
               {totalLikes || 0} Likes
             </Text>
@@ -77,7 +92,14 @@ const FeaturedArtists = () => {
 
   return (
     <View style={{ marginTop: 40 }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 20 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+          paddingHorizontal: 20,
+        }}
+      >
         <Text style={{ fontSize: 18, fontWeight: "500", flex: 1 }}>
           Artists making the rave on Omenai
         </Text>
@@ -89,7 +111,12 @@ const FeaturedArtists = () => {
           keyExtractor={(item) => item.author_id}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingRight: 20, paddingTop: 20 }}
+          contentContainerStyle={{
+            paddingLeft: 20,
+            paddingRight: 20,
+            paddingTop: 20,
+            gap: 20,
+          }}
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() =>
@@ -122,8 +149,13 @@ const FeaturedArtists = () => {
 };
 
 const styles = StyleSheet.create({
-  artistCard: { width: 300, marginLeft: 20 },
-  artistImage: { width: "100%", height: 200, borderRadius: 5, backgroundColor: "#eee" },
+  artistCard: { width: 300 },
+  artistImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 5,
+    backgroundColor: "#eee",
+  },
   artistInfo: { marginTop: 10 },
   artistName: { fontSize: 14, fontWeight: "600", color: colors.primary_black },
   artistDetails: {
