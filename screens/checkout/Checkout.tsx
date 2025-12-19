@@ -241,7 +241,7 @@ const PaymentSection = ({
     ) : (
       sub_data && (
         <BillingCard
-          paymentMethod={sub_data.paymentMethod as any as PaymentMethod}
+          paymentMethod={sub_data.paymentMethod}
           plan_id={plan.plan_id}
           plan_interval={interval}
         />
