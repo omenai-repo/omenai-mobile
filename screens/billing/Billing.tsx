@@ -67,9 +67,9 @@ export default function Billing() {
         {loading && <Loader />}
         {!loading && plans.length > 0 && (
           <View style={styles.mainContainer}>
-            {plans.map((plan, index) => (
+            {plans.map((plan) => (
               <Plan
-                key={index}
+                key={plan.name}
                 tab={selectedTab}
                 plan={plan}
                 sub_data={subData}

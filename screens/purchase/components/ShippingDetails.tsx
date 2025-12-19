@@ -44,9 +44,9 @@ type deliveryModeTypes = "Shipping" | "Pickup";
 
 export default function ShippingDetails({
   data: { pricing },
-}: {
+}: Readonly<{
   data: artworkOrderDataTypes;
-}) {
+}>) {
   const [formErrors, setFormErrors] = useState({
     name: "",
     email: "",

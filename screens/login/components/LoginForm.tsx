@@ -46,6 +46,22 @@ export default function LoginForm({
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { isTablet } = useDevice();
 
+  const biometricIcon = (() => {
+    if (biometricProps.isBiometricLoading)
+      return <ActivityIndicator size="large" color={colors.white} />;
+
+    if (biometricProps.biometricName === "Face ID")
+      return <SvgXml xml={faceIdIcon} width={42} height={42} />;
+
+    return (
+      <MaterialCommunityIcons
+        name="fingerprint"
+        size={42}
+        color={colors.white}
+      />
+    );
+  })();
+
   return (
     <View
       style={[
@@ -100,17 +116,7 @@ export default function LoginForm({
                 },
               ]}
             >
-              {biometricProps.isBiometricLoading ? (
-                <ActivityIndicator size="large" color={colors.white} />
-              ) : biometricProps.biometricName === "Face ID" ? (
-                <SvgXml xml={faceIdIcon} width={42} height={42} />
-              ) : (
-                <MaterialCommunityIcons
-                  name="fingerprint"
-                  size={42}
-                  color={colors.white}
-                />
-              )}
+              {biometricIcon}
             </TouchableOpacity>
           )}
         </View>

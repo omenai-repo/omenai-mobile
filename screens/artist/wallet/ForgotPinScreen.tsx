@@ -96,6 +96,12 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
     }
   };
 
+  const resendText = (() => {
+    if (loadOtp) return "Sending...";
+    if (countdown > 0) return `Resend code in ${countdown}s`;
+    return "Didn't receive code? Resend";
+  })();
+
   return (
     <WithModal>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
@@ -163,11 +169,7 @@ export const ForgotPinScreen = ({ navigation }: { navigation: any }) => {
                 countdown > 0 ? tw`text-gray-400` : {},
               ]}
             >
-              {loadOtp
-                ? "Sending..."
-                : countdown > 0
-                ? `Resend code in ${countdown}s`
-                : "Didn't receive code? Resend"}
+              {resendText}
             </Text>
           </Pressable>
         </View>

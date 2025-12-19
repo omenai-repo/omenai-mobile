@@ -11,7 +11,6 @@ import PayoutDashboard from "./components/PayoutDashboard";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { colors } from "#config/colors.config";
 import { useQueryClient } from "@tanstack/react-query";
-import tw from "twrnc";
 
 export default function StripePayouts({
   account_id,

@@ -12,7 +12,6 @@ import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAppStore } from "#store/app/appStore";
 import { verifySubscriptionCharge } from "#services/stripe/verifySubscriptionCharge";
 import { screenName } from "#constants/screenNames.constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

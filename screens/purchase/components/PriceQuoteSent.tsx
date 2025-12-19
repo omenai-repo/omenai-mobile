@@ -11,12 +11,12 @@ import {
 } from "../../../utils/SvgImages";
 import { colors } from "#config/colors.config";
 
-interface TimelineItemProps {
+type TimelineItemProps = Readonly<{
   icon: string;
   title: string;
   description: string;
   isLast?: boolean;
-}
+}>;
 
 const TimelineItem = ({
   icon,
@@ -26,8 +26,8 @@ const TimelineItem = ({
 }: TimelineItemProps) => {
   // Convert icon color to black if it's not already
   const blackIcon = icon
-    .replace(/#2A9EDF/g, "black")
-    .replace(/stroke="#2A9EDF"/g, 'stroke="black"');
+    .replaceAll("#2A9EDF", "black")
+    .replaceAll('stroke="#2A9EDF"', 'stroke="black"');
 
   return (
     <View style={tw`flex-row`}>
@@ -83,9 +83,9 @@ const TIMELINE_STEPS = [
 
 export default function PriceQuoteSent({
   handleClick,
-}: {
+}: Readonly<{
   handleClick: () => void;
-}) {
+}>) {
   return (
     <View style={tw`flex-1 bg-white px-5 py-10`}>
       <View style={tw`items-center mb-8`}>
@@ -112,13 +112,13 @@ export default function PriceQuoteSent({
 
       {/* Timeline */}
       <View style={tw`mb-6`}>
-        {TIMELINE_STEPS.map((item, index) => (
+        {TIMELINE_STEPS.map((item) => (
           <TimelineItem
-            key={index}
+            key={item.title}
             icon={item.icon}
             title={item.title}
             description={item.description}
-            isLast={index === TIMELINE_STEPS.length - 1}
+            isLast={item === TIMELINE_STEPS[TIMELINE_STEPS.length - 1]}
           />
         ))}
       </View>

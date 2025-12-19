@@ -13,14 +13,14 @@ import { colors } from "#config/colors.config";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
-type Props = {
+type Props = Readonly<{
   visible: boolean;
   title?: string;
   subtitle?: string;
   ctaLabel?: string;
   onPrimaryPress: () => void;
   onRequestClose?: () => void; // Android back button
-};
+}>;
 
 export default function SuccessPaymentModal({
   visible,
@@ -217,10 +217,10 @@ export default function SuccessPaymentModal({
 function Row({
   icon,
   text,
-}: {
+}: Readonly<{
   icon: keyof typeof Ionicons.glyphMap;
   text: string;
-}) {
+}>) {
   return (
     <View style={tw`flex-row items-center`}>
       <View

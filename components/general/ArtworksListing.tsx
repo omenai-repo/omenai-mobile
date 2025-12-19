@@ -12,7 +12,6 @@ import EmptyArtworks from "./EmptyArtworks";
 import Loader from "./Loader";
 import { debounce } from "lodash";
 import tw from "twrnc";
-import { getNumberOfColumns } from "#utils/utils_screen";
 import { useAppStore } from "#store/app/appStore";
 
 import { useDevice } from "#hooks/useDevice";
@@ -29,7 +28,7 @@ export default function ArtworksListing({
   loadingMore?: boolean;
 }) {
   const { userType } = useAppStore();
-  const { isTablet, numColumns, horizontalPadding } = useDevice();
+  const { numColumns, horizontalPadding } = useDevice();
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -43,12 +42,13 @@ export default function ArtworksListing({
   }, [onRefresh]);
 
   const columnsData = useMemo(() => {
-    const columns = Array.from(
-      { length: numColumns },
-      () => [] as ArtworkSchemaTypes[]
-    );
+    const timestamp = Date.now();
+    const columns = Array.from({ length: numColumns }, (_, i) => ({
+      id: `column-${timestamp}-${i}`,
+      data: [] as ArtworkSchemaTypes[],
+    }));
     data.forEach((item, index) => {
-      columns[index % numColumns].push(item);
+      columns[index % numColumns].data.push(item);
     });
     return columns;
   }, [data, numColumns]);
@@ -131,12 +131,9 @@ export default function ArtworksListing({
           { paddingHorizontal: horizontalPadding },
         ]}
       >
-        {columnsData.map((column, index) => (
-          <View
-            key={`artwork-column-${index}`}
-            style={[{ flex: 1 / numColumns }]}
-          >
-            {renderColumn(column)}
+        {columnsData.map((column) => (
+          <View key={column.id} style={[{ flex: 1 / numColumns }]}>
+            {renderColumn(column.data)}
           </View>
         ))}
       </View>
