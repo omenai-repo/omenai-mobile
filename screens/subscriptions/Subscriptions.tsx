@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, RefreshControl } from "react-native";
+import { StyleSheet, View, RefreshControl } from "react-native";
 import React from "react";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import InActiveSubscription from "./features/InActiveSubscription";
 import { useAppStore } from "#store/app/appStore";
 import ActiveSubscriptions from "./features/ActiveSubscriptions";
@@ -17,7 +17,6 @@ import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import SubscriptionDowntimeBlocker from "#components/blockers/payments/SubscriptionDowntimeBlocker";
 import VerificationRequiredBlock from "./components/VerificationRequiredBlock";
 import { colors } from "#config/colors.config";
-import BackScreenButton from "#components/buttons/BackScreenButton";
 import { screenName } from "#constants/screenNames.constants";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 
@@ -40,19 +39,21 @@ export default function Subscriptions() {
     queryFn: async () => {
       try {
         // Fetch account ID first, as it's required for the next call
-        const acc: any = await getAccountID(userSession.id);
-        if (!acc?.isOk) {
-          updateModal({
-            message: "Something went wrong, Please refresh again",
-            modalType: "error",
-            showModal: true,
-          });
+        const acc: any = await getAccountID(userSession?.id);
+        if (!acc?.isOk || !acc?.data?.connected_account_id) {
+          return {
+            isSubmitted: false,
+            id: "",
+            isSubActive: false,
+            subscription_data: null,
+            subscription_plan: null,
+          };
         }
 
         // Start retrieving subscription data while fetching Stripe onboarding status
         const [response, sub_check]: any = await Promise.all([
           checkIsStripeOnboarded(acc.data.connected_account_id), // Dependent on account ID
-          retrieveSubscriptionData(userSession.id), // Independent
+          retrieveSubscriptionData(userSession?.id), // Independent
         ]);
 
         if (!response?.isOk || !sub_check?.isOk) {
@@ -86,6 +87,7 @@ export default function Subscriptions() {
         };
       }
     },
+    enabled: !!userSession?.id,
     refetchOnWindowFocus: true,
     staleTime: 300000,
   });

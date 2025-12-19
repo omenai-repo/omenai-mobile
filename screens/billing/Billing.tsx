@@ -30,7 +30,9 @@ export default function Billing() {
     async function handleFetchPlans() {
       setLoading(true);
       const results = await getAllPlanData();
-      const subResults = await retrieveSubscriptionData(userSession.id);
+      const subResults = userSession?.id
+        ? await retrieveSubscriptionData(userSession.id)
+        : { isOk: false, data: null };
 
       if (!results?.isOk && !subResults?.isOk) {
         //throw error

@@ -24,6 +24,7 @@ export default function VerifyEmail() {
   const [token, setToken] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(0);
+  const [resending, setResending] = useState<boolean>(false);
 
   React.useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -50,6 +51,7 @@ export default function VerifyEmail() {
       });
       setIsLoading(false);
       setTimeout(() => {
+        updateModal({ message: "", showModal: false, modalType: "" });
         navigation.navigate(screenName.login);
       }, 4000);
     } else {
@@ -63,26 +65,24 @@ export default function VerifyEmail() {
   };
 
   const handleResentToken = async () => {
-    updateModal({
-      message: "A new token will soon be on it's way to you",
-      modalType: "success",
-      showModal: true,
-    });
-
-    const results = await resendVerifyCode(account.type, account.id);
-    if (!results.isOk) {
-      updateModal({
-        message: results.body.message,
-        modalType: "error",
-        showModal: true,
-      });
-    } else {
+    try {
+      setResending(true);
+      const results = await resendVerifyCode(account.type, account.id);
+      if (!results.isOk) throw new Error(results.body.message);
       setCountdown(60);
       updateModal({
-        message: "Reset code sent to your email",
+        message: "A new verification code has been sent to your email.",
         modalType: "success",
         showModal: true,
       });
+    } catch (error: any) {
+      updateModal({
+        message: error?.message || "An unexpected error occurred.",
+        modalType: "error",
+        showModal: true,
+      });
+    } finally {
+      setResending(false);
     }
   };
 
@@ -115,7 +115,7 @@ export default function VerifyEmail() {
         <TouchableOpacity
           activeOpacity={1}
           onPress={handleResentToken}
-          disabled={countdown > 0}
+          disabled={countdown > 0 || resending}
         >
           <View style={styles.resendCode}>
             <Text style={styles.extraText}>Did not recieve a code?</Text>

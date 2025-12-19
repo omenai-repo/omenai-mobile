@@ -26,7 +26,7 @@ import { useAppStore } from "#store/app/appStore";
 export default function PurchaseArtwork() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
-  const userId = useAppStore((state) => state.userSession.id);
+  const userId = useAppStore((state) => state.userSession?.id);
 
   const queryClient = useQueryClient();
   const {

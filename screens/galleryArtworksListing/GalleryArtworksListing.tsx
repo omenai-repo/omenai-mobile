@@ -24,7 +24,7 @@ export default function GalleryArtworksListing() {
   const { userSession, userType } = useAppStore();
 
   const ARTWORKS_QK = useMemo(
-    () => ["artworks", userSession.id, userType],
+    () => ["artworks", userSession?.id, userType],
     [userSession?.id, userType]
   );
 
@@ -44,12 +44,13 @@ export default function GalleryArtworksListing() {
         return [];
       }
     },
-    // show cached immediately; keep it fresh but not spammy
-    staleTime: 30_000,
-    gcTime: 10 * 60_000,
+    // disable caching for gallery artworks
+    staleTime: 0,
+    gcTime: 0,
     refetchOnMount: true, // only if stale
     refetchOnReconnect: true, // only if stale
     refetchOnWindowFocus: true, // only if stale
+    enabled: !!userSession?.id,
     select: (list: any[]) => [...list].reverse(), // keep your reverse order
   });
 

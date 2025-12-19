@@ -37,8 +37,14 @@ export default function UploadArtwork() {
 
   const { userSession, userType } = useAppStore();
 
-  const { activeIndex, setActiveIndex, artworkUploadData, image, isUploaded, setIsUploaded } =
-    uploadArtworkStore();
+  const {
+    activeIndex,
+    setActiveIndex,
+    artworkUploadData,
+    image,
+    isUploaded,
+    setIsUploaded,
+  } = uploadArtworkStore();
   const { updateModal } = useModalStore();
 
   useEffect(() => {
@@ -128,14 +134,21 @@ export default function UploadArtwork() {
           fileId: fileUploaded.$id,
         };
 
-        const data = createUploadedArtworkData(artworkUploadData, file.fileId, userId, {
-          role: userType === "artist" ? "artist" : "gallery",
-          designation: null,
-        });
+        const data = createUploadedArtworkData(
+          artworkUploadData,
+          file.fileId,
+          userId,
+          {
+            role: userType === "artist" ? "artist" : "gallery",
+            designation: null,
+          }
+        );
         const upload_response = await uploadArtworkData(data);
         if (upload_response.isOk) {
           //display success screen
-          await queryClient.invalidateQueries({ queryKey: ["artworks", "galleryOrArtist", "all"] });
+          await queryClient.invalidateQueries({
+            queryKey: ["artworks", "galleryOrArtist", "all"],
+          });
           setIsUploaded(true);
         } else {
           //toast error
@@ -187,13 +200,21 @@ export default function UploadArtwork() {
     <ArtistDetails key="artist-details" />,
     <UploadImage key="upload-image" handleUpload={handleUpload} />,
     ...(userType === "artist"
-      ? [<ArtworkPriceReviewScreen key="price-review" onConfirm={handleArtworkUpload} />]
+      ? [
+          <ArtworkPriceReviewScreen
+            key="price-review"
+            onConfirm={handleArtworkUpload}
+          />,
+        ]
       : []),
   ];
 
-  const shouldShowVerificationBlock = !userSession?.gallery_verified && !isConfirmed?.isSubActive;
-  const shouldShowSubscriptionBlock = userSession?.gallery_verified && !isConfirmed?.isSubActive;
-  const shouldShowMixedVerification = !userSession?.gallery_verified && isConfirmed?.isSubActive;
+  const shouldShowVerificationBlock =
+    !userSession?.gallery_verified && !isConfirmed?.isSubActive;
+  const shouldShowSubscriptionBlock =
+    userSession?.gallery_verified && !isConfirmed?.isSubActive;
+  const shouldShowMixedVerification =
+    !userSession?.gallery_verified && isConfirmed?.isSubActive;
   const canUpload = userSession?.gallery_verified && isConfirmed?.isSubActive;
 
   const renderUploadContent = () => (
@@ -205,6 +226,7 @@ export default function UploadArtwork() {
       >
         <ScrollWrapper
           style={styles.container}
+          contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -222,14 +244,18 @@ export default function UploadArtwork() {
       ? shouldShowVerificationBlock || shouldShowMixedVerification
       : showLockScreen;
 
-  const shouldRenderUpload = userType === "gallery" ? canUpload : !showLockScreen;
+  const shouldRenderUpload =
+    userType === "gallery" ? canUpload : !showLockScreen;
 
   const { value: isArtworkPriceCalculationEnabled } = useHighRiskFeatureFlag(
     "artwork_price_calculation_enabled"
   );
-  const { value: isArtworkUploadEnabled } = useHighRiskFeatureFlag("artwork_upload_enabled");
+  const { value: isArtworkUploadEnabled } = useHighRiskFeatureFlag(
+    "artwork_upload_enabled"
+  );
 
-  const isUploadDisabled = !isArtworkPriceCalculationEnabled || !isArtworkUploadEnabled;
+  const isUploadDisabled =
+    !isArtworkPriceCalculationEnabled || !isArtworkUploadEnabled;
 
   return (
     <WithModal>
@@ -240,10 +266,12 @@ export default function UploadArtwork() {
           expiryTimestamp="2025-11-25T18:00:00Z"
         />
       )}
-      {!isUploadDisabled && shouldShowLock && <LockScreen name={userSession?.name} />}
-      {!isUploadDisabled && userType === "gallery" && shouldShowSubscriptionBlock && (
-        <NoSubscriptionBlock />
+      {!isUploadDisabled && shouldShowLock && (
+        <LockScreen name={userSession?.name} />
       )}
+      {!isUploadDisabled &&
+        userType === "gallery" &&
+        shouldShowSubscriptionBlock && <NoSubscriptionBlock />}
       {!isUploadDisabled && shouldRenderUpload && renderUploadContent()}
     </WithModal>
   );

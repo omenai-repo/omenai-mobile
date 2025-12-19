@@ -112,7 +112,7 @@ export const questions: {
 
 const ArtistOnboarding = () => {
   const { userSession } = useAppStore();
-  const id = userSession.id;
+  const id = userSession?.id;
   const { updateModal } = useModalStore();
   const [stage, setStage] = useState<
     "questions" | "cv_upload" | "socials" | "overview"
