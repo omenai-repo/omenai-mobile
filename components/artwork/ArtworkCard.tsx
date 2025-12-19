@@ -51,8 +51,8 @@ export default function ArtworkCard({
   const { isTablet } = useDevice();
   const dpr = PixelRatio.get();
   const screenWidth = Dimensions.get("window").width;
-  const displayWidth =
-    width > 0 ? width : isTablet ? screenWidth * 0.4 : screenWidth * 0.7;
+  const defaultWidth = isTablet ? screenWidth * 0.4 : screenWidth * 0.7;
+  const displayWidth = width > 0 ? width : defaultWidth;
   const fetchWidth = Math.round(displayWidth * dpr);
   const image_href = getImageFileView(url, fetchWidth);
 

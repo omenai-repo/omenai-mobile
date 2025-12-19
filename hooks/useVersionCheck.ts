@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import DeviceInfo from "react-native-device-info";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "#firebaseConfig";
@@ -56,7 +56,7 @@ export const useVersionCheck = (
     onUpdateNeededRef.current = onUpdateNeeded;
   }, [onUpdateNeeded]);
 
-  const handleAndroidUpdate = async (needsUpdate: boolean) => {
+  const handleAndroidUpdate = useCallback(async (needsUpdate: boolean) => {
     if (needsUpdate && Platform.OS === "android") {
       try {
         const result = await inAppUpdates.checkNeedsUpdate();
@@ -71,76 +71,80 @@ export const useVersionCheck = (
       }
     }
     return needsUpdate;
-  };
+  }, []);
 
-  const handleVersionSnapshot = async (
-    docSnapshot: any,
-    currentVersion: string
-  ) => {
-    if (!docSnapshot.exists()) {
-      console.warn("[VersionCheck] No version document found");
-      setVersionCheckResult((prev) => ({
-        ...prev,
+  const handleVersionSnapshot = useCallback(
+    async (docSnapshot: any, currentVersion: string) => {
+      if (!docSnapshot.exists()) {
+        console.warn("[VersionCheck] No version document found");
+        setVersionCheckResult((prev) => ({
+          ...prev,
+          currentVersion,
+          error: "Version document not found",
+        }));
+        return;
+      }
+
+      const remoteVersion = docSnapshot.data()?.version;
+      if (!remoteVersion) {
+        console.warn("[VersionCheck] No version field found in document");
+        setVersionCheckResult((prev) => ({
+          ...prev,
+          currentVersion,
+          error: "Version field missing",
+        }));
+        return;
+      }
+
+      const needsUpdate = compareVersions(currentVersion, remoteVersion);
+      const finalNeedsUpdate = await handleAndroidUpdate(needsUpdate);
+
+      const result: VersionCheckResult = {
+        needsUpdate: finalNeedsUpdate,
+        remoteVersion,
         currentVersion,
-        error: "Version document not found",
-      }));
-      return;
-    }
+        error: null,
+      };
 
-    const remoteVersion = docSnapshot.data()?.version;
-    if (!remoteVersion) {
-      console.warn("[VersionCheck] No version field found in document");
-      setVersionCheckResult((prev) => ({
-        ...prev,
-        currentVersion,
-        error: "Version field missing",
-      }));
-      return;
-    }
+      console.log(
+        `[VersionCheck] Current: ${currentVersion}, Required: ${remoteVersion}, Needs Update: ${needsUpdate}`
+      );
+      setVersionCheckResult(result);
 
-    const needsUpdate = compareVersions(currentVersion, remoteVersion);
-    const finalNeedsUpdate = await handleAndroidUpdate(needsUpdate);
+      if (finalNeedsUpdate && onUpdateNeededRef.current) {
+        onUpdateNeededRef.current(result);
+      }
+    },
+    [handleAndroidUpdate]
+  );
 
-    const result: VersionCheckResult = {
-      needsUpdate: finalNeedsUpdate,
-      remoteVersion,
-      currentVersion,
-      error: null,
-    };
-
-    console.log(
-      `[VersionCheck] Current: ${currentVersion}, Required: ${remoteVersion}, Needs Update: ${needsUpdate}`
-    );
-    setVersionCheckResult(result);
-
-    if (finalNeedsUpdate && onUpdateNeededRef.current) {
-      onUpdateNeededRef.current(result);
-    }
-  };
+  const handleSnapshotError = useCallback((error: any) => {
+    console.error("[VersionCheck] Snapshot listener error:", error);
+    setVersionCheckResult((prev) => ({
+      ...prev,
+      error: error.message,
+    }));
+  }, []);
 
   useEffect(() => {
     let unsubscribe: () => void;
 
-    const initializeListener = async () => {
+    (async () => {
       try {
         const currentVersion = await DeviceInfo.getVersion();
         if (!currentVersion)
           throw new Error("Unable to determine current app version");
 
-        const isProduction = process.env.NODE_ENV === "production";
-        const docId = isProduction ? "production" : "development";
-        const docRef = doc(db, "versions", docId);
+        const docRef = doc(
+          db,
+          "versions",
+          process.env.NODE_ENV === "production" ? "production" : "development"
+        );
 
         unsubscribe = onSnapshot(
           docRef,
-          (snapshot) => handleVersionSnapshot(snapshot, currentVersion),
-          (error) => {
-            console.error("[VersionCheck] Snapshot listener error:", error);
-            setVersionCheckResult((prev) => ({
-              ...prev,
-              error: error.message,
-            }));
-          }
+          (snapshot: any) => handleVersionSnapshot(snapshot, currentVersion),
+          handleSnapshotError
         );
       } catch (error) {
         const errorMessage =
@@ -148,12 +152,10 @@ export const useVersionCheck = (
         console.error("[VersionCheck] Listener setup error:", errorMessage);
         setVersionCheckResult((prev) => ({ ...prev, error: errorMessage }));
       }
-    };
-
-    initializeListener();
+    })();
 
     return () => unsubscribe?.();
-  }, []);
+  }, [handleVersionSnapshot, handleSnapshotError]);
 
   return versionCheckResult;
 };

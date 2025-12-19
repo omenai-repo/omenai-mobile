@@ -87,7 +87,7 @@ export function useLoginHandler(userType: UserType) {
       return;
     }
 
-    if (!Boolean(resultsBody.verified)) {
+    if (!resultsBody.verified) {
       setIsLoading(false);
       const idKey = USER_ID_MAP[userType];
       navigation.navigate(screenName.verifyEmail, {

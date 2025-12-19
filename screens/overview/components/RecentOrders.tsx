@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "#config/colors.config";
@@ -12,7 +12,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getOverviewOrders } from "#services/orders/getOverviewOrders";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
-import tw from "twrnc";
 
 export default function RecentOrders({
   onLoadingChange,

@@ -8,7 +8,7 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import { useRoute, RouteProp } from "@react-navigation/native";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -34,9 +34,7 @@ type DetailsRouteProp = RouteProp<
 >;
 
 const DetailsScreen = () => {
-  const navigation = useNavigation<any>();
   const route = useRoute<DetailsRouteProp>();
-  const { height } = useWindowDimensions();
   const { type, id, name, logo } = route.params;
 
   const [bio, setBio] = useState("");
@@ -65,20 +63,22 @@ const DetailsScreen = () => {
       const arts =
         type === "artist"
           ? res.data?.artist_artworks
-          : type === "gallery"
-          ? res.data?.gallery_artworks
-          : [];
+          : res.data?.gallery_artworks;
 
-      setArtworks(arts);
+      setArtworks(arts ?? []);
     }
     setIsLoading(false);
   };
 
   const columnsData = useMemo(() => {
     const numCols = 2;
-    const columns: any[][] = Array.from({ length: numCols }, () => []);
+    const timestamp = Date.now();
+    const columns = Array.from({ length: numCols }, (_, i) => ({
+      id: `detail-column-${timestamp}-${i}`,
+      data: [] as any[],
+    }));
     artworks.forEach((item, idx) => {
-      columns[idx % numCols].push(item);
+      columns[idx % numCols].data.push(item);
     });
     return columns;
   }, [artworks]);
@@ -213,9 +213,9 @@ const DetailsScreen = () => {
             <EmptyArtworks size={20} writeUp="No artworks available" />
           ) : (
             <View style={tw`flex-row gap-[15px]`}>
-              {columnsData.map((col, idx) => (
-                <View key={idx} style={tw`flex-1`}>
-                  {renderColumn(col)}
+              {columnsData.map((col) => (
+                <View key={col.id} style={tw`flex-1`}>
+                  {renderColumn(col.data)}
                 </View>
               ))}
             </View>

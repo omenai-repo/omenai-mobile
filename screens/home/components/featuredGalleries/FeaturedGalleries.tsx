@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { colors } from "../../../../config/colors.config";
-import { fontNames } from "#constants/fontNames.constants";
 import { useNavigation } from "@react-navigation/native";
 import { getFeaturedGalleries } from "#services/overview/fetchFeaturedGallery";
 import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";

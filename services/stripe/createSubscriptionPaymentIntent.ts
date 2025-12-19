@@ -43,7 +43,7 @@ export const createSubscriptionPaymentIntent = async (
       message: result.message,
       client_secret: result.paymentIntent,
     };
-  } catch (error: any) {
+  } catch {
     return {
       isOk: false,
       message:

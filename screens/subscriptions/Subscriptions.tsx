@@ -92,6 +92,70 @@ export default function Subscriptions() {
     staleTime: 300000,
   });
 
+  const showLoading = isLoading || isRefetching;
+  const needsVerification =
+    isConfirmed && (!isConfirmed.isSubmitted || !isConfirmed.id);
+  const isSubActive = !!isConfirmed?.isSubActive;
+
+  const renderContent = () => {
+    if (showLoading) {
+      return (
+        <View style={{ padding: 20 }}>
+          <ActiveSubLoader />
+        </View>
+      );
+    }
+
+    if (needsVerification) {
+      return (
+        <ScrollWrapper
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "center",
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch}
+              colors={[colors.black]}
+              tintColor={colors.black}
+            />
+          }
+        >
+          <VerificationRequiredBlock />
+        </ScrollWrapper>
+      );
+    }
+
+    return (
+      <ScrollWrapper
+        style={styles.mainContainer}
+        contentContainerStyle={
+          isSubActive ? undefined : { flexGrow: 1, justifyContent: "center" }
+        }
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            colors={[colors.black]}
+            tintColor={colors.black}
+          />
+        }
+      >
+        {isSubActive ? (
+          <ActiveSubscriptions
+            subscription_data={isConfirmed?.subscription_data}
+            subscription_plan={isConfirmed?.subscription_plan}
+          />
+        ) : (
+          <InActiveSubscription />
+        )}
+        <View style={{ paddingVertical: 30 }} />
+      </ScrollWrapper>
+    );
+  };
+
   return (
     <WithModal>
       <View
@@ -108,56 +172,7 @@ export default function Subscriptions() {
                 navigation.navigate(screenName.gallery.overview)
               }
             />
-            {isLoading || isRefetching ? (
-              <View style={{ padding: 20 }}>
-                <ActiveSubLoader />
-              </View>
-            ) : isConfirmed && (!isConfirmed.isSubmitted || !isConfirmed.id) ? (
-              <ScrollWrapper
-                contentContainerStyle={{
-                  flexGrow: 1,
-                  justifyContent: "center",
-                }}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={isRefetching}
-                    onRefresh={refetch}
-                    colors={[colors.black]}
-                    tintColor={colors.black}
-                  />
-                }
-              >
-                <VerificationRequiredBlock />
-              </ScrollWrapper>
-            ) : (
-              <ScrollWrapper
-                style={styles.mainContainer}
-                contentContainerStyle={
-                  !isConfirmed?.isSubActive
-                    ? { flexGrow: 1, justifyContent: "center" }
-                    : undefined
-                }
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={isRefetching}
-                    onRefresh={refetch}
-                    colors={[colors.black]}
-                    tintColor={colors.black}
-                  />
-                }
-              >
-                {isConfirmed?.isSubActive ? (
-                  <ActiveSubscriptions
-                    subscription_data={isConfirmed?.subscription_data}
-                    subscription_plan={isConfirmed?.subscription_plan}
-                  />
-                ) : (
-                  <InActiveSubscription />
-                )}
-                <View style={{ paddingVertical: 30 }} />
-              </ScrollWrapper>
-            )}
+            {renderContent()}
           </>
         ) : (
           <SubscriptionDowntimeBlocker />

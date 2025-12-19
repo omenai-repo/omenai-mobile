@@ -59,24 +59,22 @@ export default function Login() {
   const handleBiometricLogin = async () => {
     setIsBiometricLoading(true);
     try {
-      const result = await authenticate();
-      if (result.success) {
-        const credentials = await getCredentials(currentUserType);
-        if (credentials) {
-          const { email, token: password } = credentials;
+      const { success } = await authenticate();
+      if (!success) return;
 
-          await handleLogin(
-            { email, password },
-            setIsBiometricLoading,
-            () => {} // No need to clear inputs for biometric login
-          );
-        } else {
-          setIsBiometricLoading(false);
-        }
-      } else {
-        setIsBiometricLoading(false);
-      }
-    } catch (error) {
+      const credentials = await getCredentials(currentUserType);
+      if (!credentials) return;
+
+      const { email, token: password } = credentials;
+
+      await handleLogin(
+        { email, password },
+        setIsBiometricLoading,
+        () => {} // No need to clear inputs for biometric login
+      );
+    } catch {
+      // Error handled by finally
+    } finally {
       setIsBiometricLoading(false);
     }
   };
