@@ -3,6 +3,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 import tw from "twrnc";
 import { fontNames } from "#constants/fontNames.constants";
 import ExclusivityExtensionModal from "./ExclusivityExtensionModal";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "#store/app/appStore";
 
 interface ExclusivityCountdownProps {
   expiresAt: Date;
@@ -141,8 +143,14 @@ export default memo(function ExclusivityCountdown({
     setShowModal(false);
   };
 
+  const queryClient = useQueryClient();
+  const { userSession, userType } = useAppStore();
+
   const handleExtensionSuccess = () => {
     setIsExpired(false);
+    queryClient.invalidateQueries({
+      queryKey: ["artworks", userSession?.id, userType],
+    });
   };
 
   return (

@@ -96,8 +96,12 @@ export default function Artwork() {
       if (!res?.isOk) throw new Error("Failed to load artwork");
       return res.body.data as ArtworkDataType;
     },
-    // You already set staleTime globally in App.tsx; override here only if needed.
-    // staleTime: 5 * 60 * 1000,
+    enabled: !!art_id,
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 
   // 2) Fetch other works by the same artist (depends on artwork)

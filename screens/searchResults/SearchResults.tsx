@@ -81,9 +81,9 @@ export default function SearchResults() {
         </View>
       )}
       {searchQuery.length > 0 && dataLength === 0 && !isLoading && (
-        <View style={{ marginTop: 40 }}>
+        <View style={{ flex: 1 }}>
           <EmptyArtworks
-            writeUp={
+            description={
               searchQuery.length < 3 && dataLength === 0
                 ? "Please enter at least 3 characters to search..."
                 : `Can't find artwork you're looking for, try checking for mispellings`
