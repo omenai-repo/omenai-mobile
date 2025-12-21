@@ -44,7 +44,6 @@ export default function GalleryArtworksListing() {
         return [];
       }
     },
-    // disable caching for gallery artworks
     staleTime: 0,
     gcTime: 0,
     refetchOnMount: true, // only if stale
