@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import CardComp from "#components/general/CardComp";
 import Animated from "react-native-reanimated";
 import { fetchHighlightData } from "#services/overview/fetchHighlightData";
@@ -8,21 +8,14 @@ import { useQueries } from "@tanstack/react-query";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 
-const chunkArray = <T,>(arr: T[], size: number): T[][] => {
-  const chunkedArray: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    chunkedArray.push(arr.slice(i, i + size));
-  }
-  return chunkedArray;
-};
+import { useDevice } from "#hooks/useDevice";
 
 type HighlightCardProps = {
   onLoadingChange?: (loading: boolean) => void;
 };
 
 export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
-  const { width } = useWindowDimensions();
-  const cardWidth = (width - 55) / 2;
+  const { isTablet, width } = useDevice();
   const { userSession } = useAppStore();
 
   const results = useQueries({
@@ -48,6 +41,16 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
   }, [isFetchingAny, isLoadingAny, onLoadingChange]);
 
   const [artworks, sales, net, revenue] = results.map((r) => r.data ?? 0);
+
+  const gap = 15;
+  const paddingHorizontal = 20;
+  const cols = isTablet ? 4 : 2;
+  // Calculate total space taken by gaps between columns
+  const totalGap = gap * (cols - 1);
+  // Calculate total horizontal padding (left + right)
+  const totalPadding = paddingHorizontal * 2;
+  // Calculate width for each card
+  const cardWidth = (width - totalPadding - totalGap) / cols;
 
   const allCards = [
     {
@@ -76,60 +79,46 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
     },
   ];
 
-  const cardRows = chunkArray(allCards, 2);
-
   if (isLoadingAny) {
-    const skeletonItems = [0, 1, 2, 3];
-    const skeletonRows = chunkArray(skeletonItems, 2);
-
     return (
-      <View style={tw`mx-[20px]`}>
-        {skeletonRows.map((rowItems, rIdx) => (
-          <View
-            key={`s-row-${rowItems.join("-")}`}
-            style={tw`flex-row gap-[15px] ${rIdx === 0 ? "mb-[15px]" : ""}`}
+      <View
+        style={tw.style(`mx-[20px] mb-[15px] flex-row flex-wrap`, {
+          gap,
+        })}
+      >
+        {Array.from({ length: 4 }).map((_, _idx) => (
+          <Animated.View
+            key={`loading-${_idx}`}
+            style={[styles.skeletonCard, { width: cardWidth }]}
           >
-            {rowItems.map((_idx) => (
-              <Animated.View
-                key={`loading-${_idx}`}
-                style={[styles.skeletonCard, { width: cardWidth }]}
-              >
-                <View style={{ flex: 1 }}>
-                  <View style={styles.skeletonLine} />
-                  <View
-                    style={[
-                      styles.skeletonLine,
-                      { width: "50%", marginTop: 6 },
-                    ]}
-                  />
-                </View>
-                <View style={styles.skeletonCircle} />
-              </Animated.View>
-            ))}
-          </View>
+            <View style={{ flex: 1 }}>
+              <View style={styles.skeletonLine} />
+              <View
+                style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]}
+              />
+            </View>
+            <View style={styles.skeletonCircle} />
+          </Animated.View>
         ))}
       </View>
     );
   }
 
   return (
-    <View style={tw`mx-[20px]`}>
-      {cardRows.map((rowItems, rIdx) => (
-        <View
-          key={rowItems.map((c) => c.title).join("-")}
-          style={tw`flex-row gap-[15px] ${rIdx === 0 ? "mb-[15px]" : ""}`}
-        >
-          {rowItems.map((c) => (
-            <CardComp
-              key={c.title}
-              title={c.title}
-              icon={c.icon}
-              amount={c.amount}
-              color={c.color}
-              cardWidth={cardWidth}
-            />
-          ))}
-        </View>
+    <View
+      style={tw.style(`mx-[20px] mb-[15px] flex-row flex-wrap`, {
+        gap,
+      })}
+    >
+      {allCards.map((c) => (
+        <CardComp
+          key={c.title}
+          title={c.title}
+          icon={c.icon}
+          amount={c.amount}
+          color={c.color}
+          cardWidth={cardWidth}
+        />
       ))}
     </View>
   );

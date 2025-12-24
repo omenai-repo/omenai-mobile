@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View, Animated, Easing } from 'react-native';
-import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
-import { useQuery } from '@tanstack/react-query';
-import { getSalesActivityData } from '#services/overview/getSalesActivityData';
-import { salesDataAlgorithm } from '#utils/utils_salesDataAlgorithm';
-import { QK } from '#utils/queryKeys';
-import { useAppStore } from '#store/app/appStore';
-
-const { width } = Dimensions.get('window');
+import { useDevice } from "#hooks/useDevice";
+import React, { useEffect, useMemo, useState } from "react";
+import { Animated, Easing, StyleSheet, Text, View } from "react-native";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import { useQuery } from "@tanstack/react-query";
+import { getSalesActivityData } from "#services/overview/getSalesActivityData";
+import { salesDataAlgorithm } from "#utils/utils_salesDataAlgorithm";
+import { QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
 
 export default function SalesOverview({
   onLoadingChange,
@@ -15,6 +14,7 @@ export default function SalesOverview({
   onLoadingChange?: (l: boolean) => void;
 }) {
   const { userSession } = useAppStore();
+  const { width, isTablet } = useDevice();
 
   const query = useQuery({
     queryKey: QK.salesOverview(userSession?.id),
@@ -35,21 +35,39 @@ export default function SalesOverview({
 
   const data = query.data ?? [];
   const labels = useMemo(
-    () => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    [],
+    () => [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
+    []
   );
   const maxValue = Math.max(0, ...data);
   const safeMax = maxValue || 1;
 
   const chartWidth = width - 40;
-  const chartHeight = 100;
+  const chartHeight = isTablet ? 200 : 100;
   const yAxisWidth = 40;
   const barWidth = data.length ? (chartWidth - yAxisWidth) / data.length : 1;
 
-  const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: 0 });
+  const [tooltip, setTooltip] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    value: 0,
+  });
   const [fade] = useState(new Animated.Value(0));
   const fmt = (n: number) =>
-    n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0$/, '')}K` : `${n}`;
+    n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0$/, "")}K` : `${n}`;
 
   const toggleTip = (x: number, y: number, value: number) => {
     if (tooltip.visible && tooltip.value === value && tooltip.x === x) {
@@ -76,14 +94,19 @@ export default function SalesOverview({
         <View style={styles.header}>
           <View style={[styles.skeletonBlock, { width: 100, height: 20 }]} />
         </View>
-        <View style={[styles.chart, { justifyContent: 'space-around' }]}>
+        <View
+          style={[
+            styles.chart,
+            { justifyContent: "space-around", height: chartHeight },
+          ]}
+        >
           {Array.from({ length: 12 }).map((_, i) => (
             <View
               key={i}
               style={{
                 width: 10,
                 height: Math.random() * 60 + 20,
-                backgroundColor: '#E0E0E0',
+                backgroundColor: "#E0E0E0",
                 borderRadius: 4,
                 marginBottom: 5,
               }}
@@ -98,7 +121,7 @@ export default function SalesOverview({
                 width: 20,
                 height: 10,
                 borderRadius: 2,
-                backgroundColor: '#E0E0E0',
+                backgroundColor: "#E0E0E0",
                 marginHorizontal: 3,
               }}
             />
@@ -111,7 +134,12 @@ export default function SalesOverview({
   if (data.every((v) => v === 0)) {
     return (
       <View style={styles.container}>
-        <Text style={[styles.title, { textAlign: 'center', marginTop: 40, marginBottom: 20 }]}>
+        <Text
+          style={[
+            styles.title,
+            { textAlign: "center", marginTop: 40, marginBottom: 20 },
+          ]}
+        >
           No sales data available for this year.
         </Text>
       </View>
@@ -123,16 +151,26 @@ export default function SalesOverview({
       <View style={styles.header}>
         <Text style={styles.title}>Sales</Text>
       </View>
-      <View style={styles.chart}>
+      <View style={[styles.chart, { height: chartHeight }]}>
         <View style={styles.yAxis}>
           {[0, maxValue / 2, maxValue].map((v, idx) => (
-            <Text key={idx} style={[styles.yAxisLabel, { bottom: (chartHeight / 2) * idx - 8 }]}>
+            <Text
+              key={idx}
+              style={[
+                styles.yAxisLabel,
+                { bottom: (chartHeight / 2) * idx - 8 },
+              ]}
+            >
               {fmt(v)}
             </Text>
           ))}
         </View>
 
-        <Svg width={chartWidth} height={chartHeight} style={{ backgroundColor: '#242731' }}>
+        <Svg
+          width={chartWidth}
+          height={chartHeight}
+          style={{ backgroundColor: "#242731" }}
+        >
           <Defs>
             <LinearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
               <Stop offset="0" stopColor="#8668E1" stopOpacity="1" />
@@ -142,7 +180,7 @@ export default function SalesOverview({
 
           {data.map((value, i) => {
             const barH = (value / safeMax) * chartHeight;
-            const x = yAxisWidth + i * barWidth - barWidth + i + 10;
+            const x = yAxisWidth + i * barWidth + 5;
             const y = chartHeight - barH;
             return (
               <Rect
@@ -161,7 +199,12 @@ export default function SalesOverview({
       </View>
 
       {tooltip.visible && (
-        <Animated.View style={[styles.tooltip, { opacity: fade, left: tooltip.x, top: tooltip.y }]}>
+        <Animated.View
+          style={[
+            styles.tooltip,
+            { opacity: fade, left: tooltip.x, top: tooltip.y },
+          ]}
+        >
           <Text style={styles.tooltipText}>{fmt(tooltip.value)} Sales</Text>
         </Animated.View>
       )}
@@ -174,8 +217,8 @@ export default function SalesOverview({
               styles.xAxisLabel,
               {
                 width: barWidth,
-                textAlign: 'center',
-                left: yAxisWidth + i * barWidth - barWidth + i + 5,
+                textAlign: "center",
+                left: yAxisWidth + i * barWidth,
               },
             ]}
           >
@@ -189,7 +232,7 @@ export default function SalesOverview({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#242731',
+    backgroundColor: "#242731",
     borderRadius: 16,
     paddingTop: 20,
     paddingBottom: 40,
@@ -197,32 +240,57 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
   },
   skeletonContainer: {
-    backgroundColor: '#FAFAFA',
+    backgroundColor: "#FAFAFA",
     borderRadius: 16,
     paddingTop: 20,
     paddingBottom: 40,
     paddingHorizontal: 10,
     marginHorizontal: 15,
   },
-  header: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  title: { fontSize: 18, color: '#FFFFFF', fontWeight: '600' },
-  chart: { flexDirection: 'row', alignItems: 'flex-end', height: 100, position: 'relative' },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  title: { fontSize: 18, color: "#FFFFFF", fontWeight: "600" },
+  chart: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    height: 100,
+    position: "relative",
+  },
   yAxis: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
-    justifyContent: 'space-between',
-    height: '100%',
+    justifyContent: "space-between",
+    height: "100%",
     zIndex: 10,
   },
-  yAxisLabel: { color: '#7C7C8D', fontSize: 12, textAlign: 'right', position: 'absolute', left: 0 },
-  xAxis: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-    position: 'relative',
+  yAxisLabel: {
+    color: "#7C7C8D",
+    fontSize: 12,
+    textAlign: "right",
+    position: "absolute",
+    left: 0,
   },
-  xAxisLabel: { color: '#7C7C8D', fontSize: 10, position: 'absolute', bottom: -20 },
-  tooltip: { position: 'absolute', backgroundColor: '#fff', padding: 8, borderRadius: 4 },
-  tooltipText: { color: '#000', fontSize: 12 },
-  skeletonBlock: { backgroundColor: '#E0E0E0', borderRadius: 4 },
+  xAxis: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+    position: "relative",
+  },
+  xAxisLabel: {
+    color: "#7C7C8D",
+    fontSize: 10,
+    position: "absolute",
+    bottom: -20,
+  },
+  tooltip: {
+    position: "absolute",
+    backgroundColor: "#fff",
+    padding: 8,
+    borderRadius: 4,
+  },
+  tooltipText: { color: "#000", fontSize: 12 },
+  skeletonBlock: { backgroundColor: "#E0E0E0", borderRadius: 4 },
 });
