@@ -422,47 +422,40 @@ const WalletScreen = () => {
               </Pressable>
             </View>
 
-            <View style={tw`max-h-[400px]`}>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                nestedScrollEnabled
-              >
-                {!isLoading ? (
-                  <View style={tw`gap-[8px] mb-[150px]`}>
-                    {(transactions?.length ?? 0) === 0 ? (
-                      <View
-                        style={tw`flex-1 justify-center items-center mt-[50px]`}
-                      >
-                        <Text style={tw`text-[16px]`}>
-                          No transactions found
-                        </Text>
-                      </View>
-                    ) : (
-                      transactions?.map((item: any, index: number) => (
-                        <WalletContainer
-                          key={index}
-                          status={item.trans_status}
-                          amount={item.trans_amount}
-                          dateTime={item.createdAt}
-                          onPress={() =>
-                            navigation.navigate("TransactionDetailsScreen", {
-                              transaction: item,
-                            })
-                          }
-                        />
-                      ))
-                    )}
-                  </View>
-                ) : (
-                  <View style={tw`mb-[150px]`}>
-                    {Array.from({ length: 10 }).map((_, i) => (
-                      <View key={i} style={{ marginBottom: 8 }}>
-                        <WalletContainerSkeleton />
-                      </View>
-                    ))}
-                  </View>
-                )}
-              </ScrollView>
+            <View style={tw`flex-1`}>
+              {!isLoading ? (
+                <View style={tw`gap-[8px] mb-[150px]`}>
+                  {(transactions?.length ?? 0) === 0 ? (
+                    <View
+                      style={tw`flex-1 justify-center items-center mt-[50px]`}
+                    >
+                      <Text style={tw`text-[16px]`}>No transactions found</Text>
+                    </View>
+                  ) : (
+                    transactions?.map((item: any, index: number) => (
+                      <WalletContainer
+                        key={index}
+                        status={item.trans_status}
+                        amount={item.trans_amount}
+                        dateTime={item.createdAt}
+                        onPress={() =>
+                          navigation.navigate("TransactionDetailsScreen", {
+                            transaction: item,
+                          })
+                        }
+                      />
+                    ))
+                  )}
+                </View>
+              ) : (
+                <View style={tw`mb-[150px]`}>
+                  {Array.from({ length: 10 }).map((_, i) => (
+                    <View key={i} style={{ marginBottom: 8 }}>
+                      <WalletContainerSkeleton />
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
           </View>
 
