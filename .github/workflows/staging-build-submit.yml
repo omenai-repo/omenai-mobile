@@ -3,7 +3,7 @@ name: Production Build and Submit
 on:
   push:
     branches:
-      - fix/minor-ui-glitchess
+      - fix/minor-ui-glitches
   workflow_dispatch:
 
 jobs:
