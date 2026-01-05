@@ -30,8 +30,8 @@ export default function RecentOrders({
       const res = await getOverviewOrders();
       return res?.isOk ? res.data : [];
     },
-    staleTime: 30_000,
-    gcTime: 10 * 60_000,
+    staleTime: 0,
+    gcTime: 0,
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
