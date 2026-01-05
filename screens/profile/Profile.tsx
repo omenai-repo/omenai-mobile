@@ -20,6 +20,8 @@ import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
 import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
+import { useNotificationPermission } from "#hooks/useNotificationPermission";
+import NotificationPermissionPrompt from "#components/profile/NotificationPermissionPrompt";
 
 type Nav = StackNavigationProp<any>;
 
@@ -30,6 +32,11 @@ export default function Profile() {
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
   const { contentBottomPadding } = useSafeBottomSpacing();
+  const { permissionStatus, requestPermission, openSettings } =
+    useNotificationPermission();
+
+  const isNotificationDisabled =
+    permissionStatus !== null && permissionStatus !== "granted";
 
   const name = userSession?.name ?? "";
   const email = userSession?.email ?? "";
@@ -115,7 +122,23 @@ export default function Profile() {
           </View>
         </View>
 
-        <View style={[tw`pt-10 px-5`, { paddingBottom: contentBottomPadding }]}>
+        {/* Notification Permission Prompt */}
+        {isNotificationDisabled && (
+          <NotificationPermissionPrompt
+            permissionStatus={permissionStatus}
+            requestPermission={requestPermission}
+            openSettings={openSettings}
+            style={tw`mx-5`}
+          />
+        )}
+
+        <View
+          style={[
+            tw`px-5`,
+            !isNotificationDisabled && tw`pt-10`,
+            { paddingBottom: contentBottomPadding },
+          ]}
+        >
           <ProfileMenuItems items={menuItems} />
 
           <View style={tw`mt-10`} />

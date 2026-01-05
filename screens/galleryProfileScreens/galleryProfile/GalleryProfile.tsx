@@ -20,6 +20,8 @@ import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
 import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
+import { useNotificationPermission } from "#hooks/useNotificationPermission";
+import NotificationPermissionPrompt from "#components/profile/NotificationPermissionPrompt";
 
 type UserData = { name: string; email: string };
 
@@ -30,6 +32,11 @@ export default function GalleryProfile() {
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
   const { contentBottomPadding, buttonBottomMargin } = useSafeBottomSpacing();
+  const { permissionStatus, requestPermission, openSettings } =
+    useNotificationPermission();
+
+  const isNotificationDisabled =
+    permissionStatus !== null && permissionStatus !== "granted";
 
   const [userData, setUserData] = useState<UserData>({
     name: userSession?.name ?? "",
@@ -106,7 +113,21 @@ export default function GalleryProfile() {
           </View>
         </View>
 
-        <View style={[tw`pt-10`, { paddingBottom: contentBottomPadding }]}>
+        {/* Notification Permission Prompt */}
+        {isNotificationDisabled && (
+          <NotificationPermissionPrompt
+            permissionStatus={permissionStatus}
+            requestPermission={requestPermission}
+            openSettings={openSettings}
+          />
+        )}
+
+        <View
+          style={[
+            !isNotificationDisabled && tw`pt-10`,
+            { paddingBottom: contentBottomPadding },
+          ]}
+        >
           <ProfileMenuItems items={menuItems} />
         </View>
 

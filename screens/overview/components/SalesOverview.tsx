@@ -22,8 +22,8 @@ export default function SalesOverview({
       const res = await getSalesActivityData();
       return salesDataAlgorithm(res.data).map((m) => m.Revenue) as number[];
     },
-    staleTime: 60_000,
-    gcTime: 10 * 60_000,
+    staleTime: 0,
+    gcTime: 0,
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,

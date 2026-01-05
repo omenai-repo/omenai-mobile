@@ -27,6 +27,8 @@ import { useScrollY } from "#hooks/useScrollY";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
 import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
+import { useNotificationPermission } from "#hooks/useNotificationPermission";
+import NotificationPermissionPrompt from "#components/profile/NotificationPermissionPrompt";
 
 type userDataType = {
   name: string;
@@ -42,6 +44,11 @@ export default function ArtistProfileScreen() {
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
   const { contentBottomPadding, buttonBottomMargin } = useSafeBottomSpacing();
+  const { permissionStatus, requestPermission, openSettings } =
+    useNotificationPermission();
+
+  const isNotificationDisabled =
+    permissionStatus !== null && permissionStatus !== "granted";
 
   const [userData, setUserData] = useState<userDataType>({
     name: "",
@@ -175,7 +182,21 @@ export default function ArtistProfileScreen() {
               />
             </View>
 
-            <View style={[tw`pt-10`, { paddingBottom: contentBottomPadding }]}>
+            {/* Notification Permission Prompt */}
+            {isNotificationDisabled && (
+              <NotificationPermissionPrompt
+                permissionStatus={permissionStatus}
+                requestPermission={requestPermission}
+                openSettings={openSettings}
+              />
+            )}
+
+            <View
+              style={[
+                !isNotificationDisabled && tw`pt-10`,
+                { paddingBottom: contentBottomPadding },
+              ]}
+            >
               <ProfileMenuItems items={menuItems} />
             </View>
 

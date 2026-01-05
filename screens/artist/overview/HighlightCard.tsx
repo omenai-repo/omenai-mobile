@@ -22,18 +22,38 @@ export const HighlightCard = ({
   const qSales = useQuery({
     queryKey: QK.highlightArtist("sales", userSession?.id),
     queryFn: () => fetchArtistHighlightData("sales"),
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
   const qNet = useQuery({
     queryKey: QK.highlightArtist("net", userSession?.id),
     queryFn: () => fetchArtistHighlightData("net"),
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
   const qRev = useQuery({
     queryKey: QK.highlightArtist("revenue", userSession?.id),
     queryFn: () => fetchArtistHighlightData("revenue"),
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
   const qBal = useQuery({
     queryKey: QK.highlightArtist("balance", userSession?.id),
     queryFn: () => fetchArtistHighlightData("balance"),
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 
   const isLoading =
