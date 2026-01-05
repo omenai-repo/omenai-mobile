@@ -10,7 +10,7 @@ import { screenName } from "#constants/screenNames.constants";
 import WithModal from "#components/modal/WithModal";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
-import LongBlackButton from "#components/buttons/LongBlackButton";
+
 import { orderHistoryIcon, savedArtworksIcon } from "#utils/SvgImages";
 import ProfileLayout from "#components/profile/ProfileLayout";
 import omenaiAvatar from "../../assets/images/omenai-avatar.png";

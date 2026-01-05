@@ -157,24 +157,27 @@ export default function SalesOverview({
             { id: "min", value: 0 },
             { id: "mid", value: maxValue / 2 },
             { id: "max", value: maxValue },
-          ].map((item) => (
-            <Text
-              key={item.id}
-              style={[
-                styles.yAxisLabel,
-                {
-                  bottom:
-                    item.id === "min"
-                      ? 0
-                      : item.id === "mid"
-                      ? chartHeight / 2 - 8
-                      : chartHeight - 16,
-                },
-              ]}
-            >
-              {fmt(item.value)}
-            </Text>
-          ))}
+          ].map((item) => {
+            const getPosition = () => {
+              if (item.id === "min") return 0;
+              if (item.id === "mid") return chartHeight / 2 - 8;
+              return chartHeight - 16;
+            };
+
+            return (
+              <Text
+                key={item.id}
+                style={[
+                  styles.yAxisLabel,
+                  {
+                    bottom: getPosition(),
+                  },
+                ]}
+              >
+                {fmt(item.value)}
+              </Text>
+            );
+          })}
         </View>
 
         <Svg

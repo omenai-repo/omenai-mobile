@@ -88,11 +88,8 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
           gap,
         })}
       >
-        {Array.from({ length: 4 }).map((_, _idx) => (
-          <SkeletonHighlightCard
-            key={`loading-${_idx}`}
-            cardWidth={cardWidth}
-          />
+        {["shim1", "shim2", "shim3", "shim4"].map((key) => (
+          <SkeletonHighlightCard key={key} cardWidth={cardWidth} />
         ))}
       </View>
     );
@@ -117,5 +114,3 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({});

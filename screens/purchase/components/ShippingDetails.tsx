@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { colors } from "#config/colors.config";
 import CustomPicker from "#components/general/CustomPicker";
 import Input from "#components/inputs/Input";
@@ -46,7 +46,7 @@ export default function ShippingDetails({
 }: Readonly<{
   data: artworkOrderDataTypes;
 }>) {
-  const { formErrors, handleValidationChecks, checkIsDisabled, setFormErrors } =
+  const { formErrors, handleValidationChecks, checkIsDisabled } =
     useFormValidation({
       name: "",
       email: "",
