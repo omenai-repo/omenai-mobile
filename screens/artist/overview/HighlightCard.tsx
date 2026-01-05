@@ -139,8 +139,8 @@ export const HighlightCard = ({
           gap,
         })}
       >
-        {Array.from({ length: 4 }).map((_, idx) => (
-          <SkeletonHighlightCard key={`loading-${idx}`} cardWidth={cardWidth} />
+        {["shim-1", "shim-2", "shim-3", "shim-4"].map((key) => (
+          <SkeletonHighlightCard key={key} cardWidth={cardWidth} />
         ))}
       </View>
     );
