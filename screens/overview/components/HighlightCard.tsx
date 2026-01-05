@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import CardComp from "#components/general/CardComp";
-import Animated from "react-native-reanimated";
 import { fetchHighlightData } from "#services/overview/fetchHighlightData";
 import tw from "twrnc";
 import { useQueries } from "@tanstack/react-query";
