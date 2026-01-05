@@ -153,15 +153,26 @@ export default function SalesOverview({
       </View>
       <View style={[styles.chart, { height: chartHeight }]}>
         <View style={styles.yAxis}>
-          {[0, maxValue / 2, maxValue].map((v, idx) => (
+          {[
+            { id: "min", value: 0 },
+            { id: "mid", value: maxValue / 2 },
+            { id: "max", value: maxValue },
+          ].map((item) => (
             <Text
-              key={idx}
+              key={item.id}
               style={[
                 styles.yAxisLabel,
-                { bottom: (chartHeight / 2) * idx - 8 },
+                {
+                  bottom:
+                    item.id === "min"
+                      ? 0
+                      : item.id === "mid"
+                      ? chartHeight / 2 - 8
+                      : chartHeight - 16,
+                },
               ]}
             >
-              {fmt(v)}
+              {fmt(item.value)}
             </Text>
           ))}
         </View>
@@ -184,7 +195,7 @@ export default function SalesOverview({
             const y = chartHeight - barH;
             return (
               <Rect
-                key={i}
+                key={labels[i]}
                 x={x}
                 y={y}
                 width={barWidth - 10}
@@ -212,7 +223,7 @@ export default function SalesOverview({
       <View style={styles.xAxis}>
         {labels.map((l, i) => (
           <Text
-            key={i}
+            key={l}
             style={[
               styles.xAxisLabel,
               {

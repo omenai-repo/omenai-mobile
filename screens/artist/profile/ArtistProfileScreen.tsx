@@ -1,9 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { colors } from "#config/colors.config";
-import ProfileMenuItems, {
-  ProfileMenuItem,
-} from "#components/profile/ProfileMenuItems";
+import ProfileLayout from "#components/profile/ProfileLayout";
+import { ProfileMenuItem } from "#components/profile/ProfileMenuItems";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
@@ -26,9 +25,6 @@ import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
-import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
-import { useNotificationPermission } from "#hooks/useNotificationPermission";
-import NotificationPermissionPrompt from "#components/profile/NotificationPermissionPrompt";
 
 type userDataType = {
   name: string;
@@ -43,12 +39,6 @@ export default function ArtistProfileScreen() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
-  const { contentBottomPadding, buttonBottomMargin } = useSafeBottomSpacing();
-  const { permissionStatus, requestPermission, openSettings } =
-    useNotificationPermission();
-
-  const isNotificationDisabled =
-    permissionStatus !== null && permissionStatus !== "granted";
 
   const [userData, setUserData] = useState<userDataType>({
     name: "",
@@ -130,85 +120,54 @@ export default function ArtistProfileScreen() {
     [navigation, commonMenuItems]
   );
 
+  const Header = (
+    <>
+      <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
+        <Logo url={userSession?.logo} />
+
+        <View>
+          <Text
+            style={[tw`text-base font-medium`, { color: colors.primary_black }]}
+          >
+            {userData.name}
+          </Text>
+          <Text
+            style={[
+              tw`text-sm mt-1.5`,
+              {
+                color: "#00000099",
+              },
+            ]}
+          >
+            {userData.email}
+          </Text>
+        </View>
+      </View>
+
+      <View style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}>
+        <FittedBlackButton
+          value="Edit profile"
+          onClick={() => navigation.navigate(screenName.gallery.editProfile)}
+          style={tw`flex-grow`}
+          textStyle={tw`text-base`}
+        />
+        <FittedBlackButton
+          value="Edit your credentials"
+          onClick={checkEditEligibility}
+          style={tw`flex-grow bg-transparent border border-black`}
+          textStyle={tw`text-black text-[16px]`}
+        />
+      </View>
+    </>
+  );
+
   return (
     <WithGalleryModal>
       <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       {!isLoading ? (
         !isEligible ? (
           <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-            <View
-              style={[styles.profileContainer, { marginTop: insets.top + 16 }]}
-            >
-              <Logo url={userSession?.logo} />
-
-              <View>
-                <Text
-                  style={[
-                    tw`text-base font-medium`,
-                    { color: colors.primary_black },
-                  ]}
-                >
-                  {userData.name}
-                </Text>
-                <Text
-                  style={[
-                    tw`text-sm mt-1.5`,
-                    {
-                      color: "#00000099",
-                    },
-                  ]}
-                >
-                  {userData.email}
-                </Text>
-              </View>
-            </View>
-
-            <View
-              style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}
-            >
-              <FittedBlackButton
-                value="Edit profile"
-                onClick={() =>
-                  navigation.navigate(screenName.gallery.editProfile)
-                }
-                style={tw`flex-grow`}
-                textStyle={tw`text-base`}
-              />
-              <FittedBlackButton
-                value="Edit your credentials"
-                onClick={checkEditEligibility}
-                style={tw`flex-grow bg-transparent border border-black`}
-                textStyle={tw`text-black text-[16px]`}
-              />
-            </View>
-
-            {/* Notification Permission Prompt */}
-            {isNotificationDisabled && (
-              <NotificationPermissionPrompt
-                permissionStatus={permissionStatus}
-                requestPermission={requestPermission}
-                openSettings={openSettings}
-              />
-            )}
-
-            <View
-              style={[
-                !isNotificationDisabled && tw`pt-10`,
-                { paddingBottom: contentBottomPadding },
-              ]}
-            >
-              <ProfileMenuItems items={menuItems} />
-            </View>
-
-            <View style={{ marginBottom: buttonBottomMargin }}>
-              <LongBlackButton
-                value="Log Out"
-                onClick={() => {
-                  queryClient.clear();
-                  logout();
-                }}
-              />
-            </View>
+            <ProfileLayout menuItems={menuItems} headerComponent={Header} />
           </ScrollWrapper>
         ) : (
           <EligibityResponseScreen

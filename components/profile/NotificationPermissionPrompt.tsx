@@ -18,7 +18,7 @@ export default function NotificationPermissionPrompt({
   requestPermission,
   openSettings,
   style,
-}: Props) {
+}: Readonly<Props>) {
   if (permissionStatus === null || permissionStatus === "granted") return null;
 
   return (

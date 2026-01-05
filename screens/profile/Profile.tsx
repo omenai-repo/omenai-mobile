@@ -12,16 +12,11 @@ import ScrollWrapper from "#components/general/ScrollWrapper";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { orderHistoryIcon, savedArtworksIcon } from "#utils/SvgImages";
-import ProfileMenuItems from "#components/profile/ProfileMenuItems";
+import ProfileLayout from "#components/profile/ProfileLayout";
 import omenaiAvatar from "../../assets/images/omenai-avatar.png";
-import { logout } from "#utils/logout.utils";
-import { useQueryClient } from "@tanstack/react-query";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
-import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
-import { useNotificationPermission } from "#hooks/useNotificationPermission";
-import NotificationPermissionPrompt from "#components/profile/NotificationPermissionPrompt";
 
 type Nav = StackNavigationProp<any>;
 
@@ -29,14 +24,7 @@ export default function Profile() {
   const navigation = useNavigation<Nav>();
   const insets = useSafeAreaInsets();
   const { userSession } = useAppStore();
-  const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
-  const { contentBottomPadding } = useSafeBottomSpacing();
-  const { permissionStatus, requestPermission, openSettings } =
-    useNotificationPermission();
-
-  const isNotificationDisabled =
-    permissionStatus !== null && permissionStatus !== "granted";
 
   const name = userSession?.name ?? "";
   const email = userSession?.email ?? "";
@@ -86,6 +74,30 @@ export default function Profile() {
     [goToSaved, goToOrdersTab, commonMenuItems]
   );
 
+  const Header = (
+    <View style={tw`flex-row gap-5 items-center px-5`}>
+      {/* Avatar / Logo fallback */}
+      {logoUrl ? (
+        <Image
+          source={{ uri: logoUrl }}
+          style={tw`w-[72px] h-[72px] rounded-[36px] bg-[#F2F2F2]`}
+        />
+      ) : (
+        <Image
+          source={omenaiAvatar}
+          style={tw`w-[72px] h-[72px] rounded-[36px] bg-[#F2F2F2]`}
+        />
+      )}
+
+      <View>
+        <Text style={tw`text-base font-semibold text-black`}>{name}</Text>
+        <Text style={tw`text-sm mt-[5px] mb-5 text-[#00000099]`}>{email}</Text>
+
+        <FittedBlackButton value="Edit profile" onClick={goToEditProfile} />
+      </View>
+    </View>
+  );
+
   return (
     <WithModal>
       <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
@@ -93,63 +105,7 @@ export default function Profile() {
         style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}
         onScroll={onScroll}
       >
-        <View style={tw`flex-row gap-5 items-center px-5`}>
-          {/* Avatar / Logo fallback */}
-          {logoUrl ? (
-            <Image
-              source={{ uri: logoUrl }}
-              style={tw`w-[72px] h-[72px] rounded-[36px] bg-[#F2F2F2]`}
-            />
-          ) : (
-            <Image
-              source={omenaiAvatar}
-              style={tw`w-[72px] h-[72px] rounded-[36px] bg-[#F2F2F2]`}
-            />
-          )}
-
-          <View>
-            <Text style={tw`text-base font-semibold text-black`}>{name}</Text>
-            <Text style={tw`text-sm mt-[5px] mb-5 text-[#00000099]`}>
-              {email}
-            </Text>
-
-            <FittedBlackButton
-              value="Edit profile"
-              onClick={goToEditProfile}
-              // style={{ backgroundColor: colors.grey50 }}
-              // textStyle={{ color: colors.black }}
-            />
-          </View>
-        </View>
-
-        {/* Notification Permission Prompt */}
-        {isNotificationDisabled && (
-          <NotificationPermissionPrompt
-            permissionStatus={permissionStatus}
-            requestPermission={requestPermission}
-            openSettings={openSettings}
-            style={tw`mx-5`}
-          />
-        )}
-
-        <View
-          style={[
-            tw`px-5`,
-            !isNotificationDisabled && tw`pt-10`,
-            { paddingBottom: contentBottomPadding },
-          ]}
-        >
-          <ProfileMenuItems items={menuItems} />
-
-          <View style={tw`mt-10`} />
-          <LongBlackButton
-            value="Log Out"
-            onClick={() => {
-              queryClient.clear();
-              logout();
-            }}
-          />
-        </View>
+        <ProfileLayout menuItems={menuItems} headerComponent={Header} />
       </ScrollWrapper>
     </WithModal>
   );

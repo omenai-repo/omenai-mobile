@@ -38,12 +38,37 @@ export default function CustomModal() {
   let animationIn: "slideInUp" | "slideInDown" = "slideInUp";
   let animationOut: "slideOutUp" | "slideOutDown" = "slideOutDown";
 
-  if (retainModal) {
-    animationIn = "slideInUp";
-    animationOut = "slideOutDown";
-  } else if (isToast) {
+  if (!retainModal && isToast) {
     animationIn = "slideInDown";
     animationOut = "slideOutUp";
+  }
+
+  let modalContent;
+
+  if (retainModal) {
+    modalContent = <>{modals[retainModal]}</>;
+  } else if (isToast) {
+    modalContent = (
+      <ToastView
+        title={title}
+        message={modalMessage}
+        iconName={iconName}
+        iconColor={iconColor}
+        iconBg={iconBg}
+        onDismiss={handleDismiss}
+      />
+    );
+  } else {
+    modalContent = (
+      <BottomSheetView
+        title={title}
+        message={modalMessage}
+        iconName={iconName}
+        iconColor={iconColor}
+        iconBg={iconBg}
+        onDismiss={handleDismiss}
+      />
+    );
   }
 
   return (
@@ -58,27 +83,7 @@ export default function CustomModal() {
       coverScreen={!isToast}
       hasBackdrop={!isToast}
     >
-      {retainModal ? (
-        <>{modals[retainModal]}</>
-      ) : isToast ? (
-        <ToastView
-          title={title}
-          message={modalMessage}
-          iconName={iconName}
-          iconColor={iconColor}
-          iconBg={iconBg}
-          onDismiss={handleDismiss}
-        />
-      ) : (
-        <BottomSheetView
-          title={title}
-          message={modalMessage}
-          iconName={iconName}
-          iconColor={iconColor}
-          iconBg={iconBg}
-          onDismiss={handleDismiss}
-        />
-      )}
+      {modalContent}
     </Modal>
   );
 }
