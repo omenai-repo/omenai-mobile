@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useState } from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
-import ProfileMenuItems from "#components/profile/ProfileMenuItems";
+import ProfileLayout from "#components/profile/ProfileLayout";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
@@ -19,9 +19,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
-import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
-import { useNotificationPermission } from "#hooks/useNotificationPermission";
-import NotificationPermissionPrompt from "#components/profile/NotificationPermissionPrompt";
 
 type UserData = { name: string; email: string };
 
@@ -29,14 +26,7 @@ export default function GalleryProfile() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { userSession } = useAppStore();
   const insets = useSafeAreaInsets();
-  const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
-  const { contentBottomPadding, buttonBottomMargin } = useSafeBottomSpacing();
-  const { permissionStatus, requestPermission, openSettings } =
-    useNotificationPermission();
-
-  const isNotificationDisabled =
-    permissionStatus !== null && permissionStatus !== "granted";
 
   const [userData, setUserData] = useState<UserData>({
     name: userSession?.name ?? "",
@@ -76,70 +66,44 @@ export default function GalleryProfile() {
 
   const menuItems = useProfileMenuOptions(navigation, "gallery");
 
+  const Header = (
+    <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
+      <Logo url={userSession?.logo} />
+
+      <View>
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: "500",
+            color: colors.primary_black,
+          }}
+        >
+          {userData.name}
+        </Text>
+        <Text
+          style={{
+            fontSize: 14,
+            marginTop: 5,
+            marginBottom: 20,
+            color: "#00000099",
+          }}
+        >
+          {userData.email}
+        </Text>
+
+        <FittedBlackButton
+          value="Edit profile"
+          onClick={() => navigation.navigate(screenName.gallery.editProfile)}
+        />
+      </View>
+    </View>
+  );
+
   return (
     <WithGalleryModal>
       <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-        <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
-          <Logo url={userSession?.logo} />
-
-          <View>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "500",
-                color: colors.primary_black,
-              }}
-            >
-              {userData.name}
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                marginTop: 5,
-                marginBottom: 20,
-                color: "#00000099",
-              }}
-            >
-              {userData.email}
-            </Text>
-
-            <FittedBlackButton
-              value="Edit profile"
-              onClick={() =>
-                navigation.navigate(screenName.gallery.editProfile)
-              }
-            />
-          </View>
-        </View>
-
-        {/* Notification Permission Prompt */}
-        {isNotificationDisabled && (
-          <NotificationPermissionPrompt
-            permissionStatus={permissionStatus}
-            requestPermission={requestPermission}
-            openSettings={openSettings}
-          />
-        )}
-
-        <View
-          style={[
-            !isNotificationDisabled && tw`pt-10`,
-            { paddingBottom: contentBottomPadding },
-          ]}
-        >
-          <ProfileMenuItems items={menuItems} />
-        </View>
-
-        <View style={{ marginBottom: buttonBottomMargin }}>
-          <LongBlackButton
-            value="Log Out"
-            onClick={() => {
-              queryClient.clear();
-              logout();
-            }}
-          />
-        </View>
+        <ProfileLayout menuItems={menuItems} headerComponent={Header} />
       </ScrollWrapper>
     </WithGalleryModal>
   );

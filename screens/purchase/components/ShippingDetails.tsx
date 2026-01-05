@@ -7,8 +7,6 @@ import CustomChecker from "#components/inputs/CustomChecker";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import SummaryContainer from "./SummaryContainer";
 import { useOrderSummaryStore } from "#store/orders/OrderSummaryStore";
-import { validate } from "#lib/validations/validatorGroup";
-import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import {
   Country,
   State,
@@ -19,6 +17,7 @@ import {
 } from "country-state-city";
 import { debounce } from "lodash";
 import { useAppStore } from "#store/app/appStore";
+import { useFormValidation } from "#hooks/useFormValidation";
 
 interface SessionAddress {
   address_line: string;
@@ -47,14 +46,15 @@ export default function ShippingDetails({
 }: Readonly<{
   data: artworkOrderDataTypes;
 }>) {
-  const [formErrors, setFormErrors] = useState({
-    name: "",
-    email: "",
-    address: "",
-    zipCode: "",
-    city: "",
-    state: "",
-  });
+  const { formErrors, handleValidationChecks, checkIsDisabled, setFormErrors } =
+    useFormValidation({
+      name: "",
+      email: "",
+      address: "",
+      zipCode: "",
+      city: "",
+      state: "",
+    });
 
   const transformedCountries = useMemo(
     () =>
@@ -213,38 +213,6 @@ export default function ShippingDetails({
     }
   };
 
-  const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
-    );
-    const areAllFieldsFilled = Object.values({
-      name: name,
-      email: email,
-      address: address,
-      // country: country,
-      city: city,
-      state: state,
-      zipCode: zipCode,
-    }).every((value) => value !== "");
-
-    return !(isFormValid && areAllFieldsFilled);
-  };
-
-  const handleValidationChecks = (
-    label: string,
-    value: string,
-    confirm?: string
-  ) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(value, label, confirm);
-    if (!success) {
-      setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
-    } else {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.shippingDetailsContainer}>
@@ -342,7 +310,14 @@ export default function ShippingDetails({
       <SummaryContainer
         buttonTypes="Request price quote"
         price={pricing.shouldShowPrice === "Yes" ? pricing.usd_price : 0}
-        disableButton={checkIsDisabled()}
+        disableButton={checkIsDisabled({
+          name,
+          email,
+          address,
+          zipCode,
+          city,
+          state,
+        })}
       />
     </View>
   );
