@@ -1,6 +1,6 @@
 // screens/overview/HighlightCard.tsx
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useDevice } from "#hooks/useDevice";
 import Animated from "react-native-reanimated";
 import tw from "twrnc";
@@ -179,5 +179,3 @@ export const HighlightCard = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({});
