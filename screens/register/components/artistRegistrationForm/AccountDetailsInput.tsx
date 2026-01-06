@@ -1,5 +1,5 @@
-import { View } from "react-native";
-import React from "react";
+import { Keyboard, Platform, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import NextButton from "../../../../components/buttons/NextButton";
 import Input from "../../../../components/inputs/Input";
 import PasswordInput from "../../../../components/inputs/PasswordInput";
@@ -25,6 +25,22 @@ const AccountDetailsInput = () => {
       password: "",
       confirmPassword: "",
     });
+
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    if (Platform.OS === "android") return;
+    const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener("keyboardWillHide", () => {
+      setKeyboardHeight(0);
+    });
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const isButtonDisabled = () => {
     return checkIsDisabled({
@@ -91,6 +107,8 @@ const AccountDetailsInput = () => {
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>
+
+      <View style={{ height: keyboardHeight }} />
     </View>
   );
 };

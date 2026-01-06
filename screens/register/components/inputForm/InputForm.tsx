@@ -12,12 +12,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type InputFormProps = Readonly<{
   onTabChange?: (index: number) => void;
-  onInviteValidated?: (validated: boolean) => void;
+  onGalleryInviteValidated?: (validated: boolean) => void;
+  onArtistInviteValidated?: (validated: boolean) => void;
 }>;
 
 export default function InputForm({
   onTabChange,
-  onInviteValidated,
+  onGalleryInviteValidated,
+  onArtistInviteValidated,
 }: InputFormProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const clearIndividual = useIndividualAuthRegisterStore((s) => s.clearState);
@@ -54,9 +56,11 @@ export default function InputForm({
         handleSelect={handleTabSwitch}
       />
       {selectedIndex === 0 && <IndividualForm />}
-      {selectedIndex === 1 && <ArtistForm />}
+      {selectedIndex === 1 && (
+        <ArtistForm onInviteValidated={onArtistInviteValidated} />
+      )}
       {selectedIndex === 2 && (
-        <GalleryForm onInviteValidated={onInviteValidated} />
+        <GalleryForm onInviteValidated={onGalleryInviteValidated} />
       )}
     </View>
   );

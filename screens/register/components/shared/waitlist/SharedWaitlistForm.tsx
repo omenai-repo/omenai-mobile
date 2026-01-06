@@ -1,34 +1,47 @@
-import { View } from "react-native";
-import React, { useState } from "react";
+import { Keyboard, Platform, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import Input from "#components/inputs/Input";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
-import {
-  validateEmail,
-  validateGalleryName,
-  UnderlinedLink,
-} from "./waitlistUtils";
+import { validateEmail, validateName, UnderlinedLink } from "./waitlistUtils";
 import { joinWaitlist } from "#services/waitlist/joinWaitlist";
 import { useModalStore } from "#store/modal/modalStore";
 
-type WaitlistFormProps = Readonly<{
+type SharedWaitlistFormProps = Readonly<{
+  entity: "artist" | "gallery";
   onSwitchToInviteCode: () => void;
 }>;
 
-export default function WaitlistForm({
+export default function SharedWaitlistForm({
+  entity,
   onSwitchToInviteCode,
-}: WaitlistFormProps) {
+}: SharedWaitlistFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    if (Platform.OS === "android") return;
+    const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener("keyboardWillHide", () => {
+      setKeyboardHeight(0);
+    });
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const { updateModal } = useModalStore();
 
-  const isFormValid = !validateGalleryName(name) && !validateEmail(email);
+  const isFormValid = !validateName(name, entity) && !validateEmail(email);
 
   const handleSubmit = async () => {
-    const nameError = validateGalleryName(name);
+    const nameError = validateName(name, entity);
     const emailError = validateEmail(email);
     setErrors({ name: nameError, email: emailError });
 
@@ -39,7 +52,7 @@ export default function WaitlistForm({
     const response = await joinWaitlist({
       name: name.trim(),
       email: email.trim(),
-      entity: "gallery",
+      entity,
     });
 
     setIsLoading(false);
@@ -61,28 +74,45 @@ export default function WaitlistForm({
     }
   };
 
+  const capitalizedEntity = entity.charAt(0).toUpperCase() + entity.slice(1);
+
   return (
     <View style={tw`mt-7`}>
       <View style={tw`gap-5`}>
         <Input
-          label="Gallery Name"
+          label={
+            entity === "artist" ? "Your Name" : `${capitalizedEntity} Name`
+          }
           keyboardType="default"
           onInputChange={(text) => {
             setName(text);
-            setErrors((prev) => ({ ...prev, name: validateGalleryName(text) }));
+            setErrors((prev) => ({
+              ...prev,
+              name: validateName(text, entity),
+            }));
           }}
-          placeHolder="Enter the gallery name"
+          placeHolder={
+            entity === "artist" ? "Enter your name" : `Enter the ${entity} name`
+          }
           value={name}
           errorMessage={errors.name}
         />
         <Input
-          label="Gallery's email address"
+          label={
+            entity === "artist"
+              ? "Email address"
+              : `${capitalizedEntity}'s email address`
+          }
           keyboardType="email-address"
           onInputChange={(text) => {
             setEmail(text);
             setErrors((prev) => ({ ...prev, email: validateEmail(text) }));
           }}
-          placeHolder="Enter the gallery email address"
+          placeHolder={
+            entity === "artist"
+              ? "Enter your email address"
+              : `Enter the ${entity} email address`
+          }
           value={email}
           errorMessage={errors.email}
         />
@@ -101,6 +131,7 @@ export default function WaitlistForm({
           isLoading={isLoading}
         />
       </View>
+      <View style={{ height: keyboardHeight }} />
     </View>
   );
 }

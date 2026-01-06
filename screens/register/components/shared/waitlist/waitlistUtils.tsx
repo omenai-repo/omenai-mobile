@@ -13,10 +13,13 @@ export const validateEmail = (value: string): string | undefined => {
   return undefined;
 };
 
-export const validateGalleryName = (value: string): string | undefined => {
-  if (!value.trim()) return "Gallery name is required";
+export const validateName = (
+  value: string,
+  section: "artist" | "gallery" = "artist"
+): string | undefined => {
+  if (!value.trim()) return `${section} name is required`;
   if (value.trim().length < 2)
-    return "Gallery name must be at least 2 characters";
+    return `${section} name must be at least 2 characters`;
   return undefined;
 };
 

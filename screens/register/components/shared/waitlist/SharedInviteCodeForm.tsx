@@ -1,5 +1,5 @@
-import { View } from "react-native";
-import React, { useState } from "react";
+import { Keyboard, Platform, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import Input from "#components/inputs/Input";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
@@ -11,7 +11,8 @@ import {
 import { createInviteToken } from "#services/waitlist/createInviteToken";
 import { useModalStore } from "#store/modal/modalStore";
 
-type InviteCodeFormProps = Readonly<{
+type SharedInviteCodeFormProps = Readonly<{
+  entity: "artist" | "gallery";
   onSwitchToWaitlist: () => void;
   onSuccess: (data: {
     referrerKey: string;
@@ -20,16 +21,32 @@ type InviteCodeFormProps = Readonly<{
   }) => void;
 }>;
 
-export default function InviteCodeForm({
+export default function SharedInviteCodeForm({
+  entity,
   onSwitchToWaitlist,
   onSuccess,
-}: InviteCodeFormProps) {
+}: SharedInviteCodeFormProps) {
   const [email, setEmail] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [errors, setErrors] = useState<{ email?: string; inviteCode?: string }>(
     {}
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    if (Platform.OS === "android") return;
+    const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener("keyboardWillHide", () => {
+      setKeyboardHeight(0);
+    });
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const { updateModal } = useModalStore();
 
@@ -47,7 +64,7 @@ export default function InviteCodeForm({
     const response = await createInviteToken({
       email: email.trim(),
       inviteCode: inviteCode.trim(),
-      entity: "gallery",
+      entity,
     });
 
     setIsLoading(false);
@@ -72,17 +89,27 @@ export default function InviteCodeForm({
     }
   };
 
+  const capitalizedEntity = entity.charAt(0).toUpperCase() + entity.slice(1);
+
   return (
     <View style={tw`mt-7`}>
       <View style={tw`gap-5`}>
         <Input
-          label="Gallery's email address"
+          label={
+            entity === "artist"
+              ? "Your email address"
+              : `${capitalizedEntity}'s email address`
+          }
           keyboardType="email-address"
           onInputChange={(text) => {
             setEmail(text);
             setErrors((prev) => ({ ...prev, email: validateEmail(text) }));
           }}
-          placeHolder="Enter the gallery email address"
+          placeHolder={
+            entity === "artist"
+              ? "Enter your email address"
+              : `Enter the ${entity} email address`
+          }
           value={email}
           errorMessage={errors.email}
         />
@@ -115,6 +142,7 @@ export default function InviteCodeForm({
           isLoading={isLoading}
         />
       </View>
+      <View style={{ height: keyboardHeight }} />
     </View>
   );
 }

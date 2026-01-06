@@ -39,15 +39,22 @@ export default function Register() {
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [galleryInviteValidated, setGalleryInviteValidated] = useState(false);
+  const [artistInviteValidated, setArtistInviteValidated] = useState(false);
   const { value: waitlistActivated } =
     useLowRiskFeatureFlag("waitlistActivated");
 
   // Show waitlist header only if: gallery tab + waitlist active + NOT validated
+  // Show waitlist header only if: gallery tab + waitlist active + NOT validated
   const isGalleryWaitlist =
     selectedTabIndex === 2 && waitlistActivated && !galleryInviteValidated;
 
-  const headerTitle = isGalleryWaitlist ? "Join Waitlist" : "Create an account";
-  const headerSubtitle = isGalleryWaitlist
+  const isArtistWaitlist =
+    selectedTabIndex === 1 && waitlistActivated && !artistInviteValidated;
+
+  const isWaitlist = isGalleryWaitlist || isArtistWaitlist;
+
+  const headerTitle = isWaitlist ? "Join Waitlist" : "Create an account";
+  const headerSubtitle = isWaitlist
     ? "We're building something special, and we want you to be part of it from day one."
     : "Fill in required details and create an account";
 
@@ -91,8 +98,13 @@ export default function Register() {
               keyboardShouldPersistTaps="handled"
             >
               <InputForm
-                onTabChange={setSelectedTabIndex}
-                onInviteValidated={setGalleryInviteValidated}
+                onTabChange={(index) => {
+                  setSelectedTabIndex(index);
+                  setGalleryInviteValidated(false);
+                  setArtistInviteValidated(false);
+                }}
+                onGalleryInviteValidated={setGalleryInviteValidated}
+                onArtistInviteValidated={setArtistInviteValidated}
               />
             </ScrollView>
           </TouchableWithoutFeedback>
