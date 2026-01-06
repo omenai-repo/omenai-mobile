@@ -1,12 +1,23 @@
 import { useDevice } from "#hooks/useDevice";
-import React, { useEffect, useMemo, useState } from "react";
-import { Animated, Easing, StyleSheet, Text, View } from "react-native";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import React, { useEffect, useState } from "react";
+import { Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { getSalesActivityData } from "#services/overview/getSalesActivityData";
 import { salesDataAlgorithm } from "#utils/utils_salesDataAlgorithm";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import { LineChart } from "react-native-gifted-charts";
+import { Dropdown } from "react-native-element-dropdown";
+import { colors } from "#config/colors.config";
+import tw from "twrnc";
+import { ChartTooltip } from "./ChartTooltip";
+
+const currentYear = new Date().getFullYear();
+const years = [
+  { label: (currentYear - 2).toString(), value: (currentYear - 2).toString() },
+  { label: (currentYear - 1).toString(), value: (currentYear - 1).toString() },
+  { label: currentYear.toString(), value: currentYear.toString() },
+];
 
 export default function SalesOverview({
   onLoadingChange,
@@ -14,13 +25,14 @@ export default function SalesOverview({
   onLoadingChange?: (l: boolean) => void;
 }) {
   const { userSession } = useAppStore();
-  const { width, isTablet } = useDevice();
+  const { width } = useDevice();
+  const [selectedYear, setSelectedYear] = useState(currentYear.toString());
 
   const query = useQuery({
-    queryKey: QK.salesOverview(userSession?.id),
+    queryKey: QK.salesOverview(userSession?.id, selectedYear),
     queryFn: async () => {
-      const res = await getSalesActivityData();
-      return salesDataAlgorithm(res.data).map((m) => m.Revenue) as number[];
+      const res = await getSalesActivityData(selectedYear);
+      return salesDataAlgorithm(res.data);
     },
     staleTime: 0,
     gcTime: 0,
@@ -34,70 +46,46 @@ export default function SalesOverview({
   }, [query.isFetching, query.isLoading, query.data, onLoadingChange]);
 
   const data = query.data ?? [];
-  const labels = useMemo(
-    () => [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    []
-  );
-  const maxValue = Math.max(0, ...data);
-  const safeMax = maxValue || 1;
+  const isEmpty = data.every((item: any) => item.value === 0);
 
-  const chartWidth = width - 40;
-  const chartHeight = isTablet ? 200 : 100;
-  const yAxisWidth = 40;
-  const barWidth = data.length ? (chartWidth - yAxisWidth) / data.length : 1;
+  const customLabel = (val: string) => {
+    return (
+      <View style={tw`w-[50px] items-center`}>
+        <Text
+          style={tw`text-gray-400 font-medium text-[11px] mb-1.5 text-center`}
+        >
+          {val}
+        </Text>
+      </View>
+    );
+  };
 
-  const [tooltip, setTooltip] = useState({
-    visible: false,
-    x: 0,
-    y: 0,
-    value: 0,
-  });
-  const [fade] = useState(new Animated.Value(0));
-  const fmt = (n: number) =>
-    n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0$/, "")}K` : `${n}`;
+  const formattedData = data.map((item: any, index: number) => ({
+    value: item.value,
+    label: item.label,
+    labelComponent: () => customLabel(item.label),
+    index,
+  }));
 
-  const toggleTip = (x: number, y: number, value: number) => {
-    if (tooltip.visible && tooltip.value === value && tooltip.x === x) {
-      Animated.timing(fade, {
-        toValue: 0,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }).start(() => setTooltip((t) => ({ ...t, visible: false })));
-    } else {
-      setTooltip({ visible: true, x, y, value });
-      Animated.timing(fade, {
-        toValue: 1,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }).start();
+  const formatYAxisLabel = (label: string) => {
+    const value = parseFloat(label);
+    if (value < 0) return "";
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(0)}k`;
     }
+    return `$${value}`;
   };
 
   if (query.isLoading && !query.data) {
     return (
-      <View style={styles.skeletonContainer}>
-        <View style={styles.header}>
-          <View style={[styles.skeletonBlock, { width: 100, height: 20 }]} />
+      <View style={tw`bg-[#FAFAFA] rounded-2xl pt-5 pb-10 px-2.5 mx-4`}>
+        <View style={tw`flex-row justify-between items-center mb-5`}>
+          <View style={tw`bg-gray-200 rounded w-[100px] h-5`} />
         </View>
         <View
           style={[
-            styles.chart,
-            { justifyContent: "space-around", height: chartHeight },
+            tw`flex-row items-end h-[100px] relative`,
+            { justifyContent: "space-around", height: 260 },
           ]}
         >
           {Array.from({ length: 12 }).map((_, i) => (
@@ -113,198 +101,100 @@ export default function SalesOverview({
             />
           ))}
         </View>
-        <View style={styles.xAxis}>
-          {Array.from({ length: 12 }).map((_, i) => (
-            <View
-              key={i}
-              style={{
-                width: 20,
-                height: 10,
-                borderRadius: 2,
-                backgroundColor: "#E0E0E0",
-                marginHorizontal: 3,
-              }}
-            />
-          ))}
-        </View>
-      </View>
-    );
-  }
-
-  if (data.every((v) => v === 0)) {
-    return (
-      <View style={styles.container}>
-        <Text
-          style={[
-            styles.title,
-            { textAlign: "center", marginTop: 40, marginBottom: 20 },
-          ]}
-        >
-          No sales data available for this year.
-        </Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Sales</Text>
-      </View>
-      <View style={[styles.chart, { height: chartHeight }]}>
-        <View style={styles.yAxis}>
-          {[
-            { id: "min", value: 0 },
-            { id: "mid", value: maxValue / 2 },
-            { id: "max", value: maxValue },
-          ].map((item) => {
-            const getPosition = () => {
-              if (item.id === "min") return 0;
-              if (item.id === "mid") return chartHeight / 2 - 8;
-              return chartHeight - 16;
-            };
-
-            return (
-              <Text
-                key={item.id}
-                style={[
-                  styles.yAxisLabel,
-                  {
-                    bottom: getPosition(),
-                  },
-                ]}
-              >
-                {fmt(item.value)}
-              </Text>
-            );
-          })}
-        </View>
-
-        <Svg
-          width={chartWidth}
-          height={chartHeight}
-          style={{ backgroundColor: "#242731" }}
-        >
-          <Defs>
-            <LinearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#8668E1" stopOpacity="1" />
-              <Stop offset="1" stopColor="#232630" stopOpacity="0.5" />
-            </LinearGradient>
-          </Defs>
-
-          {data.map((value, i) => {
-            const barH = (value / safeMax) * chartHeight;
-            const x = yAxisWidth + i * barWidth + 5;
-            const y = chartHeight - barH;
-            return (
-              <Rect
-                key={labels[i]}
-                x={x}
-                y={y}
-                width={barWidth - 10}
-                height={barH}
-                fill="url(#barGradient)"
-                rx={4}
-                onPress={() => toggleTip(x + barWidth / 2, y, value)}
-              />
-            );
-          })}
-        </Svg>
+    <View style={tw`bg-white rounded-2xl py-5 px-4 mx-4 overflow-hidden`}>
+      <View style={tw`flex-row justify-between items-center mb-5 z-20`}>
+        <Text style={tw`text-lg text-black font-semibold`}>Sales Revenue</Text>
+        <Dropdown
+          style={tw`h-[35px] w-[90px] border border-[#E0E0E0] rounded-lg px-2`}
+          containerStyle={tw`rounded-lg mt-1`}
+          data={years}
+          labelField="label"
+          valueField="value"
+          value={selectedYear}
+          onChange={(item) => setSelectedYear(item.value)}
+          placeholder="Year"
+          placeholderStyle={tw`text-sm text-[#333]`}
+          selectedTextStyle={tw`text-sm text-[#333]`}
+          itemTextStyle={tw`text-sm text-[#333]`}
+          iconStyle={tw`w-5 h-5`}
+        />
       </View>
 
-      {tooltip.visible && (
-        <Animated.View
-          style={[
-            styles.tooltip,
-            { opacity: fade, left: tooltip.x, top: tooltip.y },
-          ]}
-        >
-          <Text style={styles.tooltipText}>{fmt(tooltip.value)} Sales</Text>
-        </Animated.View>
-      )}
-
-      <View style={styles.xAxis}>
-        {labels.map((l, i) => (
-          <Text
-            key={l}
-            style={[
-              styles.xAxisLabel,
-              {
-                width: barWidth,
-                textAlign: "center",
-                left: yAxisWidth + i * barWidth,
-              },
-            ]}
-          >
-            {l}
+      {isEmpty ? (
+        <View style={tw`h-[200px] justify-center items-center`}>
+          <Text style={tw`text-gray-400 text-sm`}>
+            No sales data available for {selectedYear}.
           </Text>
-        ))}
-      </View>
+        </View>
+      ) : (
+        <View style={tw`ml-[-10px] overflow-hidden`}>
+          <LineChart
+            data={formattedData}
+            areaChart
+            isAnimated
+            animationDuration={1200}
+            color={colors.black}
+            startFillColor="#F3F4F6"
+            endFillColor="#F3F4F6"
+            startOpacity={0.9}
+            endOpacity={0.1}
+            dataPointsColor={colors.black}
+            dataPointsRadius={4}
+            initialSpacing={20}
+            endSpacing={20}
+            noOfSections={4}
+            yAxisColor="transparent"
+            yAxisThickness={0}
+            rulesType="dashed"
+            rulesColor="#F3F4F6"
+            yAxisTextStyle={{
+              color: "#9CA3AF",
+              fontSize: 11,
+              fontWeight: "500",
+            }}
+            formatYLabel={formatYAxisLabel}
+            xAxisColor="transparent"
+            yAxisOffset={0}
+            pointerConfig={{
+              pointerStripHeight: 160,
+              pointerStripColor: "#E5E7EB",
+              pointerStripWidth: 2,
+              pointerColor: colors.black,
+              radius: 6,
+              pointerLabelWidth: 120,
+              pointerLabelHeight: 120,
+              activatePointersOnLongPress: true,
+              autoAdjustPointerLabelPosition: false,
+              pointerLabelComponent: (items: any) => {
+                const item = items[0];
+                return (
+                  <ChartTooltip
+                    value={item.value}
+                    label={item.label}
+                    index={item.index}
+                  />
+                );
+              },
+            }}
+            width={width - 64}
+            height={220}
+            spacing={50}
+            thickness={2.5}
+            hideRules={false}
+            xAxisLabelTextStyle={{
+              color: "#9CA3AF",
+              fontSize: 11,
+              fontWeight: "500",
+              textAlign: "center",
+            }}
+          />
+        </View>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#242731",
-    borderRadius: 16,
-    paddingTop: 20,
-    paddingBottom: 40,
-    paddingHorizontal: 10,
-    marginHorizontal: 15,
-  },
-  skeletonContainer: {
-    backgroundColor: "#FAFAFA",
-    borderRadius: 16,
-    paddingTop: 20,
-    paddingBottom: 40,
-    paddingHorizontal: 10,
-    marginHorizontal: 15,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  title: { fontSize: 18, color: "#FFFFFF", fontWeight: "600" },
-  chart: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    height: 100,
-    position: "relative",
-  },
-  yAxis: {
-    position: "absolute",
-    left: 0,
-    justifyContent: "space-between",
-    height: "100%",
-    zIndex: 10,
-  },
-  yAxisLabel: {
-    color: "#7C7C8D",
-    fontSize: 12,
-    textAlign: "right",
-    position: "absolute",
-    left: 0,
-  },
-  xAxis: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-    position: "relative",
-  },
-  xAxisLabel: {
-    color: "#7C7C8D",
-    fontSize: 10,
-    position: "absolute",
-    bottom: -20,
-  },
-  tooltip: {
-    position: "absolute",
-    backgroundColor: "#fff",
-    padding: 8,
-    borderRadius: 4,
-  },
-  tooltipText: { color: "#000", fontSize: 12 },
-  skeletonBlock: { backgroundColor: "#E0E0E0", borderRadius: 4 },
-});

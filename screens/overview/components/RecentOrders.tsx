@@ -163,6 +163,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 15,
     gap: 20,
+    backgroundColor: colors.white,
   },
   pendingButton: {
     paddingVertical: 15,

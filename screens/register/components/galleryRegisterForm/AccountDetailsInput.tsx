@@ -18,13 +18,18 @@ export default function AccountDetailsInput() {
     setConfirmPassword,
   } = useGalleryAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } =
-    useFormValidation<Partial<GallerySignupData>>();
+  const { formErrors, handleValidationChecks, checkIsDisabled } =
+    useFormValidation({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
 
-  const checkIsDisabled = () => {
-    return !checkIsFormValid({
-      email: galleryRegisterData.email,
+  const isButtonDisabled = () => {
+    return checkIsDisabled({
       name: galleryRegisterData.name,
+      email: galleryRegisterData.email,
       password: galleryRegisterData.password,
       confirmPassword: galleryRegisterData.confirmPassword,
     });
@@ -69,7 +74,11 @@ export default function AccountDetailsInput() {
           label="Confirm password"
           onInputChange={(text) => {
             setConfirmPassword(text);
-            handleValidationChecks("confirmPassword", galleryRegisterData.password, text);
+            handleValidationChecks(
+              "confirmPassword",
+              galleryRegisterData.password,
+              text
+            );
           }}
           placeHolder="Enter password again"
           value={galleryRegisterData.confirmPassword}
@@ -80,7 +89,7 @@ export default function AccountDetailsInput() {
         {/* <BackFormButton handleBackClick={() => console.log('')} /> */}
         <View style={{ flex: 1 }} />
         <NextButton
-          isDisabled={checkIsDisabled()}
+          isDisabled={isButtonDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

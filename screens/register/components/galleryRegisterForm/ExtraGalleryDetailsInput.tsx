@@ -8,14 +8,22 @@ import LargeInput from "../../../../components/inputs/LargeInput";
 import { useFormValidation } from "#hooks/useFormValidation";
 
 export default function ExtraGalleryDetailsInput() {
-  const { pageIndex, setPageIndex, galleryRegisterData, setAdmin, setDescription } =
-    useGalleryAuthRegisterStore();
+  const {
+    pageIndex,
+    setPageIndex,
+    galleryRegisterData,
+    setAdmin,
+    setDescription,
+  } = useGalleryAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } =
-    useFormValidation<Partial<GallerySignupData>>();
+  const { formErrors, handleValidationChecks, checkIsDisabled } =
+    useFormValidation({
+      admin: "",
+      description: "",
+    });
 
-  const checkIsDisabled = () => {
-    return !checkIsFormValid({
+  const isButtonDisabled = () => {
+    return checkIsDisabled({
       admin: galleryRegisterData.admin,
       description: galleryRegisterData.description,
     });
@@ -51,7 +59,7 @@ export default function ExtraGalleryDetailsInput() {
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <NextButton
-          isDisabled={checkIsDisabled()}
+          isDisabled={isButtonDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>
