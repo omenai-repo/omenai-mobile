@@ -18,13 +18,18 @@ export default function AccountDetailsInput() {
     setPageIndex,
   } = useIndividualAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } =
-    useFormValidation<Omit<IndividualRegisterData, "address" | "phone">>();
+  const { formErrors, handleValidationChecks, checkIsDisabled } =
+    useFormValidation({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
 
-  const checkIsDisabled = () => {
-    return !checkIsFormValid({
-      email: individualRegisterData.email,
+  const isButtonDisabled = () => {
+    return checkIsDisabled({
       name: individualRegisterData.name,
+      email: individualRegisterData.email,
       password: individualRegisterData.password,
       confirmPassword: individualRegisterData.confirmPassword,
     });
@@ -69,7 +74,11 @@ export default function AccountDetailsInput() {
           label="Confirm password"
           onInputChange={(text) => {
             setConfirmPassword(text);
-            handleValidationChecks("confirmPassword", individualRegisterData.password, text);
+            handleValidationChecks(
+              "confirmPassword",
+              individualRegisterData.password,
+              text
+            );
           }}
           placeHolder="Enter password again"
           value={individualRegisterData.confirmPassword}
@@ -78,7 +87,7 @@ export default function AccountDetailsInput() {
       </View>
       <View style={tw`flex-row gap-2.5 justify-end`}>
         <NextButton
-          isDisabled={checkIsDisabled()}
+          isDisabled={isButtonDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

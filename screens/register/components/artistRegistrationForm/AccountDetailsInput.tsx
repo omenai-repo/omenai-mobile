@@ -18,13 +18,18 @@ const AccountDetailsInput = () => {
     setConfirmPassword,
   } = useArtistAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } =
-    useFormValidation<Partial<ArtistSignupData>>();
+  const { formErrors, handleValidationChecks, checkIsDisabled } =
+    useFormValidation({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
 
-  const checkIsDisabled = () => {
-    return !checkIsFormValid({
-      email: artistRegisterData.email,
+  const isButtonDisabled = () => {
+    return checkIsDisabled({
       name: artistRegisterData.name,
+      email: artistRegisterData.email,
       password: artistRegisterData.password,
       confirmPassword: artistRegisterData.confirmPassword,
     });
@@ -69,7 +74,11 @@ const AccountDetailsInput = () => {
           label="Confirm password"
           onInputChange={(text) => {
             setConfirmPassword(text);
-            handleValidationChecks("confirmPassword", artistRegisterData.password, text);
+            handleValidationChecks(
+              "confirmPassword",
+              artistRegisterData.password,
+              text
+            );
           }}
           placeHolder="Enter password again"
           value={artistRegisterData.confirmPassword}
@@ -78,7 +87,7 @@ const AccountDetailsInput = () => {
       </View>
       <View style={tw`flex-row gap-2.5 justify-end`}>
         <NextButton
-          isDisabled={checkIsDisabled()}
+          isDisabled={isButtonDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

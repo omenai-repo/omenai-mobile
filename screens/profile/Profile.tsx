@@ -102,7 +102,7 @@ export default function Profile() {
     <WithModal>
       <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
-        style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}
+        style={[tw`flex-1 bg-white px-5`, { paddingTop: insets.top + 16 }]}
         onScroll={onScroll}
       >
         <ProfileLayout menuItems={menuItems} headerComponent={Header} />
