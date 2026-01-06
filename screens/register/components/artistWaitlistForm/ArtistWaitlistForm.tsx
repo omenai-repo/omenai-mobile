@@ -3,7 +3,7 @@ import { View } from "react-native";
 import tw from "twrnc";
 import SharedWaitlistForm from "../shared/waitlist/SharedWaitlistForm";
 import SharedInviteCodeForm from "../shared/waitlist/SharedInviteCodeForm";
-import GalleryRegisterForm from "../galleryRegisterForm/GalleryRegisterForm";
+import ArtistRegisterationForms from "../artistRegistrationForm/ArtistRegisterationForms";
 
 type ReferrerData = {
   referrerKey: string;
@@ -11,13 +11,13 @@ type ReferrerData = {
   inviteCode: string;
 };
 
-type GalleryWaitlistFormProps = Readonly<{
+type ArtistWaitlistFormProps = Readonly<{
   onInviteValidated?: (validated: boolean) => void;
 }>;
 
-export default function GalleryWaitlistForm({
+export default function ArtistWaitlistForm({
   onInviteValidated,
-}: GalleryWaitlistFormProps) {
+}: ArtistWaitlistFormProps) {
   const [showInviteCodeForm, setShowInviteCodeForm] = useState(false);
   const [inviteValidated, setInviteValidated] = useState(false);
   const [referrerData, setReferrerData] = useState<ReferrerData | null>(null);
@@ -32,7 +32,7 @@ export default function GalleryWaitlistForm({
   if (inviteValidated && referrerData) {
     return (
       <View style={tw`mt-7`}>
-        <GalleryRegisterForm />
+        <ArtistRegisterationForms />
       </View>
     );
   }
@@ -41,7 +41,7 @@ export default function GalleryWaitlistForm({
   if (showInviteCodeForm) {
     return (
       <SharedInviteCodeForm
-        entity="gallery"
+        entity="artist"
         onSwitchToWaitlist={() => setShowInviteCodeForm(false)}
         onSuccess={handleInviteSuccess}
       />
@@ -51,7 +51,7 @@ export default function GalleryWaitlistForm({
   // Default: show waitlist form
   return (
     <SharedWaitlistForm
-      entity="gallery"
+      entity="artist"
       onSwitchToInviteCode={() => setShowInviteCodeForm(true)}
     />
   );

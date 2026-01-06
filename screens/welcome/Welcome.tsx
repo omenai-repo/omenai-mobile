@@ -97,7 +97,7 @@ export default function Welcome() {
         </Text>
 
         <Text style={tw`text-sm text-[#FFFFFFB2]`}>
-          Buy, Trade, Discover and experience art like the louvre with a single
+          Buy, Trade, Discover and experience art like the Louvre with a single
           tap.
         </Text>
 
