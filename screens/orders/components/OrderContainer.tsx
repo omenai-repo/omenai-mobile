@@ -13,6 +13,9 @@ import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import { screenName } from "#constants/screenNames.constants";
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
+import { useAppStore } from "#store/app/appStore";
+import { InvoiceTypes } from "#types/types";
+import { colors } from "#config/colors.config";
 
 interface HoldStatus {
   hold_end_date: string;
@@ -39,8 +42,10 @@ interface OrderContainerProps {
   orderId: string;
   holdStatus: HoldStatus | null;
   updatedAt: string;
-  trackBtn: () => void;
   order_decline_reason?: string;
+  trackBtn: () => void;
+  invoice?: InvoiceTypes;
+  invoiceNumber?: string;
   seller_designation?: string;
 }
 
@@ -65,9 +70,15 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   trackBtn,
   order_decline_reason = "",
   seller_designation,
+  invoice,
+  invoiceNumber,
 }) => {
+  const { userType } = useAppStore();
+
+  const activeInvoice = invoice;
   const image_href = getImageFileView(url, 700);
   const [remainingTime, setRemainingTime] = useState<number>(0);
+  const [contentHeight, setContentHeight] = useState<number>(0);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [confirmOrderModal, setConfirmOrderModal] = useState(false);
 
@@ -142,27 +153,10 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   const animatedOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const calculateBaseHeight = () => {
-      let base = 80;
-      if (status !== "completed" && order_accepted && !delivery_confirmed) {
-        base = 140;
-      }
-
-      // Add extra height only when blocker and pay-area are visible
-      const payAreaVisible =
-        availability &&
-        payment_information === "pending" &&
-        order_accepted === "accepted" &&
-        remainingTime > 0;
-      const extra = showBlocker && payAreaVisible ? 64 : 0;
-      return base + extra;
-    };
-
     if (open) {
-      const baseHeight = calculateBaseHeight();
       Animated.parallel([
         Animated.timing(animatedHeight, {
-          toValue: baseHeight,
+          toValue: contentHeight,
           duration: 300,
           useNativeDriver: false,
         }),
@@ -186,18 +180,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         }),
       ]).start();
     }
-  }, [
-    open,
-    status,
-    order_accepted,
-    delivery_confirmed,
-    animatedHeight,
-    animatedOpacity,
-    showBlocker,
-    availability,
-    payment_information,
-    remainingTime,
-  ]);
+  }, [open, contentHeight, animatedHeight, animatedOpacity]);
 
   return (
     <View
@@ -226,109 +209,146 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
           overflow: "hidden",
         }}
       >
-        <View style={tw`gap-[20px] mt-[15px]`}>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-              {price}
-            </Text>
-          </View>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
-            <View style={{ flexWrap: "wrap" }}>
-              <StatusPill
-                status={status}
-                payment_status={payment_information}
-                tracking_status={tracking_information.link}
-                order_accepted={order_accepted}
-                delivery_confirmed={delivery_confirmed}
-                availability={availability}
-              />
+        <View
+          style={{ position: "absolute", width: "100%" }}
+          onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
+        >
+          <View style={tw`gap-[20px] mt-[15px]`}>
+            <View style={tw`flex-row items-center gap-[20px]`}>
+              <Text style={tw`text-xs uppercase font-bold text-gray-400`}>
+                Price
+              </Text>
+              <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
+                {price}
+              </Text>
             </View>
-          </View>
-          {order_accepted === "declined" && (
-            <Text style={{ color: "#ff0000", fontSize: 14 }}>
-              Reason: {order_decline_reason}
-            </Text>
-          )}
-          {availability &&
-            payment_information === "pending" &&
-            order_accepted === "accepted" &&
-            remainingTime > 0 && (
-              <>
-                {showBlocker ? (
-                  <FittedBlackButton
-                    value="Pay now — under maintenance"
-                    isDisabled
-                    onClick={() => {}}
-                    style={{ height: 40 }}
-                  />
-                ) : (
-                  <FittedBlackButton
-                    value="Pay now"
-                    onClick={() =>
-                      navigation.navigate(screenName.payment, {
-                        id: orderId,
-                      })
-                    }
-                    style={{ height: 40 }}
-                  />
-                )}
-
-                {showBlocker && (
-                  <Text style={tw`text-[12px] text-[#666]`}>
-                    We’re fine-tuning our payment system to resolve a minor
-                    issue and ensure every transaction remains flawlessly
-                    seamless.
-                  </Text>
-                )}
-              </>
-            )}
-          {availability &&
-            payment_information === "completed" &&
-            !delivery_confirmed &&
-            tracking_information.link?.trim() && (
-              <View style={{ flexDirection: "row", gap: 10 }}>
-                <Pressable
-                  onPress={trackBtn}
-                  style={tw`h-[35px] w-[35px] bg-[#000] rounded-full justify-center items-center`}
-                >
-                  <Ionicons name="location-outline" size={18} color="#fff" />
-                </Pressable>
-                <FittedBlackButton
-                  value="Confirm order delivery"
-                  onClick={() => setConfirmOrderModal(true)}
-                  style={{ height: 35, backgroundColor: "#16A34A" }}
-                  textStyle={{ fontSize: 12 }}
+            <View style={tw`flex-row items-center gap-[20px]`}>
+              <Text style={tw`text-xs uppercase font-bold text-gray-400`}>
+                Status
+              </Text>
+              <View style={{ flexWrap: "wrap" }}>
+                <StatusPill
+                  status={status}
+                  payment_status={payment_information}
+                  tracking_status={tracking_information.link}
+                  order_accepted={order_accepted}
+                  delivery_confirmed={delivery_confirmed}
+                  availability={availability}
                 />
               </View>
+            </View>
+            {order_accepted === "declined" && (
+              <Text style={{ color: "#ff0000", fontSize: 14 }}>
+                Reason: {order_decline_reason}
+              </Text>
             )}
-          {availability &&
-            payment_information === "completed" &&
-            order_accepted === "accepted" &&
-            status !== "completed" &&
-            !tracking_information.link && (
-              <View
-                style={[
-                  tw`rounded-lg`,
-                  {
-                    padding: 10,
-                    backgroundColor: "#f3f3f3",
-                  },
-                ]}
-              >
-                <Text style={{ color: "#666", textAlign: "center" }}>
-                  Awaiting tracking information
-                </Text>
-              </View>
-            )}
-        </View>
+            {availability &&
+              payment_information === "pending" &&
+              order_accepted === "accepted" &&
+              remainingTime > 0 && (
+                <>
+                  {showBlocker ? (
+                    <FittedBlackButton
+                      value="Pay now — under maintenance"
+                      isDisabled
+                      onClick={() => {}}
+                      style={{ height: 40 }}
+                    />
+                  ) : (
+                    <FittedBlackButton
+                      value="Pay now"
+                      onClick={() =>
+                        navigation.navigate(screenName.payment, {
+                          id: orderId,
+                        })
+                      }
+                      style={{ height: 40 }}
+                    />
+                  )}
 
-        <ConfirmOrderDeliveryModal
-          orderId={orderId}
-          modalVisible={confirmOrderModal}
-          setModalVisible={setConfirmOrderModal}
-        />
+                  {showBlocker && (
+                    <Text style={tw`text-[12px] text-[#666]`}>
+                      We’re fine-tuning our payment system to resolve a minor
+                      issue and ensure every transaction remains flawlessly
+                      seamless.
+                    </Text>
+                  )}
+                </>
+              )}
+            {/* Bottom Section Wrapper for smaller gap */}
+            <View style={tw`gap-3`}>
+              {availability &&
+                payment_information === "completed" &&
+                tracking_information.link?.trim() && (
+                  <View style={tw`flex-row gap-2`}>
+                    <FittedBlackButton
+                      value="Track Shipment"
+                      onClick={trackBtn}
+                      style={{
+                        flex: 1,
+                        backgroundColor: colors.black,
+                        height: 40,
+                      }}
+                      textStyle={{ fontSize: 12, fontWeight: "600" }}
+                    />
+                    {!delivery_confirmed && (
+                      <FittedBlackButton
+                        value="Confirm Delivery"
+                        onClick={() => setConfirmOrderModal(true)}
+                        style={{
+                          flex: 1,
+                          backgroundColor: "#16A34A",
+                          height: 40,
+                        }}
+                        textStyle={{ fontSize: 12, fontWeight: "600" }}
+                      />
+                    )}
+                  </View>
+                )}
+
+              {availability &&
+                payment_information === "completed" &&
+                order_accepted === "accepted" &&
+                status !== "completed" &&
+                !tracking_information.link && (
+                  <View
+                    style={[
+                      tw`rounded-lg`,
+                      {
+                        padding: 10,
+                        backgroundColor: "#f3f3f3",
+                      },
+                    ]}
+                  >
+                    <Text style={{ color: "#666", textAlign: "center" }}>
+                      Awaiting tracking information
+                    </Text>
+                  </View>
+                )}
+
+              {payment_information === "completed" && userType === "user" && (
+                <Pressable
+                  onPress={() => {
+                    navigation.navigate("ViewReceiptScreen", {
+                      invoice: activeInvoice,
+                      invoiceNumber: invoiceNumber,
+                    });
+                  }}
+                  disabled={!activeInvoice && !invoiceNumber}
+                  style={({ pressed }) => [
+                    tw`flex-row items-center justify-center rounded-lg h-[40px] bg-gray-100`,
+                    pressed && { opacity: 0.8 },
+                    !activeInvoice && !invoiceNumber && { opacity: 0.5 },
+                  ]}
+                >
+                  <Text style={tw`text-xs font-semibold text-gray-900`}>
+                    View Receipt
+                  </Text>
+                </Pressable>
+              )}
+            </View>
+          </View>
+        </View>
       </Animated.View>
     </View>
   );

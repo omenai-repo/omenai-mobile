@@ -172,7 +172,7 @@ export default function OrderCard({ order }: { readonly order: any }) {
       {showTrackingInfo && (
         <View style={{ gap: 10 }}>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <Text style={{ fontSize: 14, color: colors.primary_black }}>
+            <Text style={tw`text-xs uppercase font-bold text-gray-400`}>
               Tracking ID:
             </Text>
             <Text
@@ -182,7 +182,7 @@ export default function OrderCard({ order }: { readonly order: any }) {
             </Text>
           </View>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <Text style={{ fontSize: 14, color: colors.primary_black }}>
+            <Text style={tw`text-xs uppercase font-bold text-gray-400`}>
               Tracking link:
             </Text>
             <TouchableOpacity
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     color: "#004617",
     fontSize: 12,
-    borderRadius: 20,
+    borderRadius: 8,
     flexWrap: "wrap",
   },
   listItemDetails: {
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: "#E0E0E0",
-    borderRadius: 20,
+    borderRadius: 8,
     height: 30,
     paddingHorizontal: 15,
     alignItems: "center",

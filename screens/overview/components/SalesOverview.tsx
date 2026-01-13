@@ -1,6 +1,6 @@
 import { useDevice } from "#hooks/useDevice";
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { StyleProp, Text, View, ViewStyle } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { getSalesActivityData } from "#services/overview/getSalesActivityData";
 import { salesDataAlgorithm } from "#utils/utils_salesDataAlgorithm";
@@ -21,12 +21,19 @@ const years = [
 
 export default function SalesOverview({
   onLoadingChange,
+  customWidth,
+  style,
 }: {
   onLoadingChange?: (l: boolean) => void;
+  customWidth?: number;
+  style?: StyleProp<ViewStyle>;
 }) {
   const { userSession } = useAppStore();
-  const { width } = useDevice();
+  const { width, isTablet } = useDevice();
   const [selectedYear, setSelectedYear] = useState(currentYear.toString());
+
+  const activeWidth = customWidth ?? width - 32; // If customWidth provided, use it. Else use screen width - 32 (margin)
+  const chartWidth = activeWidth - 32; // Subtract internal padding (px-4 = 32)
 
   const query = useQuery({
     queryKey: QK.salesOverview(userSession?.id, selectedYear),
@@ -50,7 +57,7 @@ export default function SalesOverview({
 
   const customLabel = (val: string) => {
     return (
-      <View style={tw`w-[50px] items-center`}>
+      <View style={[tw`w-[50px] items-center`, isTablet && { marginLeft: 10 }]}>
         <Text
           style={tw`text-gray-400 font-medium text-[11px] mb-1.5 text-center`}
         >
@@ -105,8 +112,12 @@ export default function SalesOverview({
     );
   }
 
+  const spacing = (chartWidth - 70) / 11;
+
   return (
-    <View style={tw`bg-white rounded-2xl py-5 px-4 mx-4 overflow-hidden`}>
+    <View
+      style={[tw`bg-white rounded-2xl py-5 px-4 mx-4 overflow-hidden`, style]}
+    >
       <View style={tw`flex-row justify-between items-center mb-5 z-20`}>
         <Text style={tw`text-lg text-black font-semibold`}>Sales Revenue</Text>
         <Dropdown
@@ -136,6 +147,7 @@ export default function SalesOverview({
           <LineChart
             data={formattedData}
             areaChart
+            curved
             isAnimated
             animationDuration={1200}
             color={colors.black}
@@ -145,8 +157,8 @@ export default function SalesOverview({
             endOpacity={0.1}
             dataPointsColor={colors.black}
             dataPointsRadius={4}
-            initialSpacing={20}
-            endSpacing={20}
+            initialSpacing={isTablet ? 35 : 20}
+            endSpacing={isTablet ? 35 : 20}
             noOfSections={4}
             yAxisColor="transparent"
             yAxisThickness={0}
@@ -181,9 +193,9 @@ export default function SalesOverview({
                 );
               },
             }}
-            width={width - 64}
-            height={220}
-            spacing={50}
+            width={chartWidth}
+            height={230}
+            spacing={isTablet ? spacing : 50}
             thickness={2.5}
             hideRules={false}
             xAxisLabelTextStyle={{

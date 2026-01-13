@@ -27,6 +27,7 @@ import { wrapWithHighRisk, wrapWithLowRisk } from "#utils/wrapWithProvider";
 import CancleOrderPayment from "#screens/payment/components/cancel/CancleOrderPayment";
 import SuccessOrderPayment from "#screens/payment/components/success/SuccessOrderPayment";
 import BiometricSettings from "#screens/profile/BiometricSettings";
+import ViewReceiptScreen from "#screens/orders/ViewReceiptScreen";
 
 type CustomTabBarIconProps = {
   name: any;
@@ -165,6 +166,10 @@ export default function IndividualNavigation() {
       <Stack.Screen
         name={screenName.biometricSettings}
         component={wrapWithHighRisk(BiometricSettings)}
+      />
+      <Stack.Screen
+        name="ViewReceiptScreen"
+        component={wrapWithHighRisk(ViewReceiptScreen)}
       />
     </Stack.Navigator>
   );

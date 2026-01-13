@@ -4,7 +4,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import LongBlackButton from "#components/buttons/LongBlackButton";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import * as Notifications from "expo-notifications";
+import { useDevice } from "#hooks/useDevice";
 
 type Props = {
   permissionStatus: Notifications.PermissionStatus | null;
@@ -19,7 +21,17 @@ export default function NotificationPermissionPrompt({
   openSettings,
   style,
 }: Readonly<Props>) {
+  const { isTablet } = useDevice();
+
   if (permissionStatus === null || permissionStatus === "granted") return null;
+
+  const handlePress = () => {
+    if (permissionStatus === "undetermined") {
+      requestPermission();
+    } else {
+      openSettings();
+    }
+  };
 
   return (
     <View
@@ -42,16 +54,16 @@ export default function NotificationPermissionPrompt({
         Enable notifications to stay updated on critical alerts and order
         updates.
       </Text>
-      <LongBlackButton
-        value="Enable Notifications"
-        onClick={() => {
-          if (permissionStatus === "undetermined") {
-            requestPermission();
-          } else {
-            openSettings();
-          }
-        }}
-      />
+      {isTablet ? (
+        <View style={tw`items-start`}>
+          <FittedBlackButton
+            value="Enable Notifications"
+            onClick={handlePress}
+          />
+        </View>
+      ) : (
+        <LongBlackButton value="Enable Notifications" onClick={handlePress} />
+      )}
     </View>
   );
 }

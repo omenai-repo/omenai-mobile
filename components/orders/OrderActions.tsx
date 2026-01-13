@@ -4,6 +4,7 @@ import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { OrderActionType, OrderActionsProps } from "#types/orders";
+import { useDevice } from "#hooks/useDevice";
 
 export const getOrderActionType = ({
   status,
@@ -44,20 +45,33 @@ const OrderActionsBase = ({
   acceptBtn,
   declineBtn,
 }: OrderActionsProps) => {
-  const type = getOrderActionType({ status, payment_status, tracking_status, order_accepted });
+  const { isTablet } = useDevice();
+  const type = getOrderActionType({
+    status,
+    payment_status,
+    tracking_status,
+    order_accepted,
+  });
 
   if (type === "track") {
     return (
-      <Pressable
-        style={[tw`py-3 px-4 rounded-full items-center`, { backgroundColor: colors.black }]}
-        onPress={trackBtn}
-        accessible
-        accessibilityLabel="Track this shipment"
-      >
-        <Text style={[tw`text-[13px] font-semibold`, { color: colors.white }]}>
-          Track this shipment
-        </Text>
-      </Pressable>
+      <View style={isTablet && tw`flex-wrap`}>
+        <Pressable
+          style={[
+            tw`py-3 px-4 rounded-lg items-center`,
+            { backgroundColor: colors.black },
+          ]}
+          onPress={trackBtn}
+          accessible
+          accessibilityLabel="Track this shipment"
+        >
+          <Text
+            style={[tw`text-[13px] font-semibold`, { color: colors.white }]}
+          >
+            Track this shipment
+          </Text>
+        </Pressable>
+      </View>
     );
   }
 

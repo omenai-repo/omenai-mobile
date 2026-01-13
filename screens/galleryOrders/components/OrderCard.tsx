@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   statusPill: {
     paddingHorizontal: 15,
     paddingVertical: 7,
-    borderRadius: 20,
+    borderRadius: 8,
     backgroundColor: "#FEF7EC",
     height: "auto",
     flexDirection: "row",
