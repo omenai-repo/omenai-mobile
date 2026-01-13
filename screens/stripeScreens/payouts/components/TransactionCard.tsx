@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { Feather } from '@expo/vector-icons';
-import { colors } from '#config/colors.config';
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { Feather } from "@expo/vector-icons";
+import { colors } from "#config/colors.config";
 
 type TransactionCardProps = {
   id: string;
@@ -9,16 +9,20 @@ type TransactionCardProps = {
   gross: string;
 };
 
-export default function TransactionCard({ id, gross, net }: TransactionCardProps) {
+export default function TransactionCard({
+  id,
+  gross,
+  net,
+}: TransactionCardProps) {
   const PillContainer = ({ label }: { label: string }) => {
     return (
-      <View style={{ flexWrap: 'wrap' }}>
+      <View style={{ flexWrap: "wrap" }}>
         <View
           style={{
             paddingVertical: 5,
             paddingHorizontal: 10,
-            backgroundColor: '#17963925',
-            borderRadius: 20,
+            backgroundColor: "#17963925",
+            borderRadius: 8,
           }}
         >
           <Text style={{ fontSize: 12 }}>{label}</Text>
@@ -33,15 +37,17 @@ export default function TransactionCard({ id, gross, net }: TransactionCardProps
       </View>
       <View style={styles.mainContainer}>
         <View style={{ gap: 10 }}>
-          <Text style={{ fontSize: 14, color: colors.primary_black }}>{id}</Text>
+          <Text style={{ fontSize: 14, color: colors.primary_black }}>
+            {id}
+          </Text>
           <PillContainer label="Completed" />
         </View>
         <View
           style={{
             flex: 1,
-            alignItems: 'flex-end',
+            alignItems: "flex-end",
             gap: 10,
-            justifyContent: 'center',
+            justifyContent: "center",
           }}
         >
           <Text style={{ fontSize: 14, color: colors.grey }}>
@@ -58,20 +64,20 @@ export default function TransactionCard({ id, gross, net }: TransactionCardProps
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
   },
   transactionType: {
     height: 40,
     width: 40,
     borderRadius: 20,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#f5f5f5",
+    alignItems: "center",
+    justifyContent: "center",
   },
   mainContainer: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     borderBottomColor: colors.grey50,
     borderBottomWidth: 1,
     paddingBottom: 20,

@@ -13,10 +13,14 @@ import { getOverviewOrders } from "#services/orders/getOverviewOrders";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 
+import { StyleProp, ViewStyle } from "react-native";
+
 export default function RecentOrders({
   onLoadingChange,
+  style,
 }: {
   onLoadingChange?: (l: boolean) => void;
+  style?: StyleProp<ViewStyle>;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [openSection, setOpenSection] = useState<{ [key: string]: boolean }>(
@@ -99,7 +103,7 @@ export default function RecentOrders({
     );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <TouchableOpacity
         onPress={() => navigation.navigate(screenName.gallery.orders)}
       >
@@ -139,9 +143,9 @@ export default function RecentOrders({
         {data.length < 1 && (
           <View
             style={{
-              flexWrap: "wrap",
-              marginRight: "auto",
-              marginLeft: "auto",
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
             <View style={styles.pendingButton}>
@@ -164,12 +168,12 @@ const styles = StyleSheet.create({
     padding: 15,
     gap: 20,
     backgroundColor: colors.white,
+    minHeight: 290, // Match SalesOverview chart height
   },
   pendingButton: {
     paddingVertical: 15,
     paddingHorizontal: 30,
     backgroundColor: "#f5f5f5",
     borderRadius: 8,
-    marginVertical: 80,
   },
 });

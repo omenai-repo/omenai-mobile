@@ -76,7 +76,6 @@ export default function App() {
         await clearStaleCredentials();
         const token = await registerForPushToken();
         if (token) {
-          Alert.alert("Token", token);
           setExpoPushToken(token);
         }
       } catch {

@@ -26,7 +26,9 @@ export default function Orders() {
   // Choose list by tab
   const tabOrders = useMemo(() => {
     if (!data) return [];
-    return selectedTab === "pending" ? data.pendingOrders ?? [] : data.completedOrders ?? [];
+    return selectedTab === "pending"
+      ? data.pendingOrders ?? []
+      : data.completedOrders ?? [];
   }, [data, selectedTab]);
 
   // Client-side year filter (optional but handy)
@@ -76,7 +78,9 @@ export default function Orders() {
         order_accepted={item.order_accepted.status}
         availability={item.availability}
         delivery_confirmed={item.shipping_details.delivery_confirmed}
-        tracking_information={item.shipping_details.shipment_information.tracking}
+        tracking_information={
+          item.shipping_details.shipment_information.tracking
+        }
         payment_information={item.payment_information.status}
         seller_designation={item.seller_designation}
         orderId={item.order_id}
@@ -89,6 +93,8 @@ export default function Orders() {
             tracking_id: item.shipping_details.shipment_information.tracking.id,
           })
         }
+        invoice={item.invoice}
+        invoiceNumber={item.payment_information.invoice_reference}
       />
     ),
     [currentOrders.length, navigation, openSection, toggleRecentOrder]
@@ -118,10 +124,15 @@ export default function Orders() {
           ) : (
             <>
               <View style={tw`flex-row items-center`}>
-                <Text style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}>
+                <Text
+                  style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}
+                >
                   Your Orders
                 </Text>
-                <YearDropdown selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+                <YearDropdown
+                  selectedYear={selectedYear}
+                  setSelectedYear={setSelectedYear}
+                />
               </View>
 
               <FlatList

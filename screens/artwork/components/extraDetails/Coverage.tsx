@@ -26,7 +26,7 @@ export default function Coverage() {
         <Animated.View
           entering={FadeInDown.duration(600).damping(300)} // Duration in milliseconds
           exiting={FadeOut.duration(500).damping(300)}
-          style={tw`mb-[10px]`}
+          style={tw`mb-[20px]`}
         >
           <View style={tw`h-[1px] w-full bg-[#00000033]`} />
 
@@ -68,9 +68,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mainContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    gap: 15,
+    paddingTop: 25,
+    paddingBottom: 5,
+    gap: 25,
   },
   detailItem: {
     flexDirection: "row",

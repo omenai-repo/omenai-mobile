@@ -351,9 +351,13 @@ export default function Artwork() {
           </Text>
         </Pressable>
 
-        <View style={tw`mt-[50px] gap-[25px]`}>
-          <ShippingAndTaxes />
-          <Coverage />
+        <View style={[tw`mt-[50px] gap-[25px]`, isTabletSize && tw`flex-row`]}>
+          <View style={isTabletSize ? { flex: 1 } : undefined}>
+            <ShippingAndTaxes />
+          </View>
+          <View style={isTabletSize ? { flex: 1 } : undefined}>
+            <Coverage />
+          </View>
         </View>
       </View>
     ) : null;

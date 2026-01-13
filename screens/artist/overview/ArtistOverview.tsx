@@ -1,6 +1,6 @@
-// screens/overview/ArtistOverview.tsx
 import React, { useCallback, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { useDevice } from "#hooks/useDevice";
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import { dropdownIcon, dropUpIcon, arrowUpRightWhite } from "#utils/SvgImages";
 import Header from "#components/header/Header";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import SalesOverview from "#screens/overview/components/SalesOverview";
+import PopularArtworks from "#screens/overview/components/PopularArtworks";
 import OrderslistingLoader from "#screens/galleryOrders/components/OrderslistingLoader";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { getImageFileView } from "#lib/storage/getImageFileView";
@@ -151,7 +152,7 @@ export const RecentOrderContainer = ({
             <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
             <View
               style={tw.style(
-                `rounded-[12px] h-[30px] justify-center items-center px-[12px]`,
+                `rounded-lg h-[30px] justify-center items-center px-[12px]`,
                 {
                   backgroundColor: statusStyles[displayStatus].bg,
                 }
@@ -177,6 +178,9 @@ const ArtistOverview = () => {
   const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
   const { userSession } = useAppStore();
   const { scrollY, onScroll } = useScrollY();
+  const { isTablet, width } = useDevice();
+  const tabletAvailableWidth = width - 40;
+  const halfWidth = (tabletAvailableWidth - 20) / 2;
 
   // Recent orders via query
   const ordersQuery = useQuery({
@@ -217,6 +221,9 @@ const ArtistOverview = () => {
       queryClient.invalidateQueries({
         queryKey: QK.overviewOrders(userSession?.id),
       }),
+      queryClient.invalidateQueries({
+        queryKey: QK.popularArtworks(userSession?.id),
+      }),
     ]);
   }, [queryClient, userSession?.id]);
 
@@ -238,69 +245,78 @@ const ArtistOverview = () => {
 
         {/* Highlight Cards & Sales chart use their own queries and report loading via onLoadingChange if needed */}
         <HighlightCard />
-        <SalesOverview />
 
-        {/* Recent Orders */}
-        {data.length !== 0 && (
-          <View
-            style={tw`border border-[#E7E7E7] bg-[#FFFFFF] rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[150px]`}
-          >
-            <View style={tw`flex-row items-center mb-[25px]`}>
-              <Text style={tw`text-[16px] text-[#454545] font-semibold flex-1`}>
-                Recent Orders
-              </Text>
-              {!isLoadingOrders && (
-                <View style={tw`flex-row items-center gap-[3px]`}>
-                  <Text style={tw`text-[12px] text-[#3D3D3D] font-semibold`}>
-                    Show All
-                  </Text>
-                  <SvgXml xml={arrowUpRightWhite} />
-                </View>
+        <>
+          <SalesOverview />
+          {data.length !== 0 ? (
+            <View
+              style={tw`border border-[#E7E7E7] bg-[#FFFFFF] rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[20px]`}
+            >
+              <View style={tw`flex-row items-center mb-[25px]`}>
+                <Text
+                  style={tw`text-[16px] text-[#454545] font-semibold flex-1`}
+                >
+                  Recent Orders
+                </Text>
+                {!isLoadingOrders && (
+                  <View style={tw`flex-row items-center gap-[3px]`}>
+                    <Text style={tw`text-[12px] text-[#3D3D3D] font-semibold`}>
+                      Show All
+                    </Text>
+                    <SvgXml xml={arrowUpRightWhite} />
+                  </View>
+                )}
+              </View>
+
+              {isLoadingOrders ? (
+                <OrderslistingLoader />
+              ) : (
+                data.map((item: any, index: number) => (
+                  <RecentOrderContainer
+                    key={index}
+                    id={index}
+                    url={item.artwork_data.url}
+                    open={!!openSection[item.order_id]}
+                    setOpen={() => toggleRecentOrder(item.order_id)}
+                    artId={item.order_id}
+                    artName={item.artwork_data.title}
+                    buyerName={item.buyer_details.name}
+                    price={utils_formatPrice(
+                      item.artwork_data.pricing.usd_price
+                    )}
+                    status={item.status}
+                    lastId={index === data.length - 1}
+                  />
+                ))
               )}
             </View>
-
-            {isLoadingOrders ? (
-              <OrderslistingLoader />
-            ) : (
-              data.map((item: any, index: number) => (
-                <RecentOrderContainer
-                  key={index}
-                  id={index}
-                  url={item.artwork_data.url}
-                  open={!!openSection[item.order_id]}
-                  setOpen={() => toggleRecentOrder(item.order_id)}
-                  artId={item.order_id}
-                  artName={item.artwork_data.title}
-                  buyerName={item.buyer_details.name}
-                  price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-                  status={item.status}
-                  lastId={index === data.length - 1}
-                />
-              ))
-            )}
-          </View>
-        )}
-
-        {data.length === 0 && !isLoadingOrders && (
-          <>
-            <Text
-              style={tw`text-[16px] text-[#454545] font-semibold mt-[20px] mx-[15px]`}
-            >
-              Recent Orders
-            </Text>
-            <View
-              style={tw`border border-[#00000033] bg-[#fff] rounded-[25px] px-[100px] py-[120px] mt-[20px] mx-[15px] mb-[150px]`}
-            >
-              <View
-                style={tw`items-center justify-center py-[15px] px-[15px] bg-[#f5f5f5] rounded-lg`}
-              >
-                <Text style={tw`text-[16px] text-center`}>
-                  No Recent Orders
+          ) : (
+            !isLoadingOrders && (
+              <>
+                <Text
+                  style={tw`text-[16px] text-[#454545] font-semibold mt-[20px] mx-[15px]`}
+                >
+                  Recent Orders
                 </Text>
-              </View>
-            </View>
-          </>
-        )}
+                <View
+                  style={[
+                    tw`border border-[#00000033] bg-[#fff] rounded-[25px] px-[20px] py-[20px] mt-[20px] mx-[15px] mb-[20px] justify-center items-center`,
+                    { minHeight: 270 },
+                  ]}
+                >
+                  <View
+                    style={tw`items-center justify-center py-[15px] px-[15px] bg-[#f5f5f5] rounded-lg`}
+                  >
+                    <Text style={tw`text-[16px] text-center`}>
+                      No Recent Orders
+                    </Text>
+                  </View>
+                </View>
+              </>
+            )
+          )}
+        </>
+        <PopularArtworks />
       </ScrollWrapper>
     </View>
   );

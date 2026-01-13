@@ -70,7 +70,11 @@ export default function StatusPill({
   }
 
   // Tracking added but not delivered
-  if (payment_status === "completed" && tracking_status && !delivery_confirmed) {
+  if (
+    payment_status === "completed" &&
+    tracking_status &&
+    !delivery_confirmed
+  ) {
     return (
       <View style={[styles.pill, { backgroundColor: "#00800015" }]}>
         <AntDesign name="check-circle" size={14} />
@@ -109,7 +113,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    borderRadius: 20,
+    borderRadius: 8,
   },
   text: {
     fontSize: 12,

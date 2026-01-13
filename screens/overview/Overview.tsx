@@ -1,4 +1,10 @@
-import { StyleSheet, RefreshControl, View } from "react-native";
+import {
+  StyleSheet,
+  RefreshControl,
+  View,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import tw from "twrnc";
 import React, { useCallback, useRef, useState } from "react";
 import WithModal from "#components/modal/WithModal";
@@ -13,13 +19,25 @@ import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
+import { useDevice } from "#hooks/useDevice";
+import NavBtnComponent from "#components/artwork/NavBtnComponent";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { screenName } from "#constants/screenNames.constants";
 
 export default function Overview() {
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const [refreshing, setRefreshing] = useState(false);
   const inflight = useRef(0);
   const qc = useQueryClient();
   const { userSession } = useAppStore();
   const { scrollY, onScroll } = useScrollY();
+
+  const { isTablet, width, horizontalPadding } = useDevice();
+  // On Tablet, we have 40 padding (20 left + 20 right)
+  const tabletAvailableWidth = width - 40;
+  // Half width, minus some gap (e.g. 20 gap)
+  const halfWidth = (tabletAvailableWidth - 20) / 2;
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -62,9 +80,27 @@ export default function Overview() {
           onScroll={onScroll}
         >
           <Header />
+
+          {/* Recent orders quick navigation at top */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate(screenName.gallery.orders)}
+            style={[
+              tw`flex-row items-center py-2`,
+              { paddingHorizontal: isTablet ? horizontalPadding : 20 },
+            ]}
+          >
+            <Text
+              style={[tw`font-medium flex-1`, { fontSize: isTablet ? 22 : 18 }]}
+            >
+              Recent orders
+            </Text>
+            <NavBtnComponent onPress={() => {}} />
+          </TouchableOpacity>
+
           <View style={styles.container}>
             <HighlightCard onLoadingChange={handleLoadingChange} />
           </View>
+
           <SalesOverview onLoadingChange={handleLoadingChange} />
           <RecentOrders onLoadingChange={handleLoadingChange} />
           <PopularArtworks onLoadingChange={handleLoadingChange} />

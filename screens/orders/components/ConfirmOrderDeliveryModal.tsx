@@ -1,12 +1,19 @@
-import { View, Text, Modal, Pressable, useWindowDimensions, TouchableOpacity } from 'react-native';
-import { useRef, useState } from 'react';
-import tw from 'twrnc';
-import { Ionicons } from '@expo/vector-icons';
-import LottieView from 'lottie-react-native';
-import loaderAnimation from '#assets/other/loader-animation.json';
-import { confirmOrderDelivery } from '#services/orders/confirmOrderDelivery';
-import { useModalStore } from '#store/modal/modalStore';
-import { useCollectorOrders } from '#hooks/useCollectorOrders';
+import {
+  View,
+  Text,
+  Modal,
+  Pressable,
+  useWindowDimensions,
+  TouchableOpacity,
+} from "react-native";
+import { useRef, useState } from "react";
+import tw from "twrnc";
+import { Ionicons } from "@expo/vector-icons";
+import LottieView from "lottie-react-native";
+import loaderAnimation from "#assets/other/loader-animation.json";
+import { confirmOrderDelivery } from "#services/orders/confirmOrderDelivery";
+import { useModalStore } from "#store/modal/modalStore";
+import { useCollectorOrders } from "#hooks/useCollectorOrders";
 
 type ConfirmDeliveryProps = {
   orderId: string;
@@ -32,21 +39,21 @@ const ConfirmOrderDeliveryModal = ({
       if (!response?.isOk) {
         updateModal({
           message: response.message,
-          modalType: 'error',
+          modalType: "error",
           showModal: true,
         });
       } else {
         await invalidate();
         updateModal({
           message: response.message,
-          modalType: 'success',
+          modalType: "success",
           showModal: true,
         });
       }
     } catch (error) {
       updateModal({
-        message: 'Something went wrong, try again or contact support',
-        modalType: 'success',
+        message: "Something went wrong, try again or contact support",
+        modalType: "success",
         showModal: true,
       });
     } finally {
@@ -68,9 +75,12 @@ const ConfirmOrderDeliveryModal = ({
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
-          style={tw.style(`bg-white py-[20px] px-[10px] w-full self-center rounded-[16px]`, {
-            width: width - 60,
-          })}
+          style={tw.style(
+            `bg-white py-[20px] px-[10px] w-full self-center rounded-[16px]`,
+            {
+              width: width - 60,
+            }
+          )}
         >
           <View style={tw`p-4`}>
             {/* Title */}
@@ -86,10 +96,11 @@ const ConfirmOrderDeliveryModal = ({
                   <Ionicons name="warning-outline" size={25} color="#FFA500" />
                 </View>
                 {/* Info Text */}
-                <Text style={tw`text-[13px]`}>
-                  By confirming you are acknowledging that the artwork has been delivered to you in
-                  good condition. If you mistakenly confirm or encounter any issues with your order,
-                  please contact customer service immediately, as this action cannot be undone.
+                <Text style={tw`text-sm`}>
+                  By confirming you are acknowledging that the artwork has been
+                  delivered to you in good condition. If you mistakenly confirm
+                  or encounter any issues with your order, please contact
+                  customer service immediately, as this action cannot be undone.
                 </Text>
               </View>
             </View>

@@ -20,7 +20,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
     />
     <View style={tw`gap-[5px] pr-[20px] max-w-[80%]`}>
       <Text
-        style={tw`text-[12px] text-[#454545]`}
+        style={tw`text-xs text-gray-400`}
         numberOfLines={1}
         ellipsizeMode="tail"
       >

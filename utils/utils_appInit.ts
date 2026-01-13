@@ -1,10 +1,10 @@
-import { useAppStore } from '../store/app/appStore';
-import { logout } from './logout.utils';
-import { utils_getAsyncData } from './utils_asyncStorage';
+import { useAppStore } from "../store/app/appStore";
+import { logout } from "./logout.utils";
+import { utils_getAsyncData } from "./utils_asyncStorage";
 
 export const utils_appInit = async () => {
-  const userData = await utils_getAsyncData('userSession');
-  const loginDate = await utils_getAsyncData('loginTimeStamp');
+  const userData = await utils_getAsyncData("userSession");
+  const loginDate = await utils_getAsyncData("loginTimeStamp");
 
   if (!loginDate?.value) {
     logout();
@@ -23,7 +23,7 @@ export const utils_appInit = async () => {
           userType: value.role,
         });
       } catch (error) {
-        console.error('Failed to parse user data:', error);
+        console.error("Failed to parse user data:", error);
         logout();
       }
     } else {
@@ -46,12 +46,14 @@ const sessionValidator = (loginDate: string) => {
       return false;
     }
 
-    const timeDifference = Math.abs(currentDate.getTime() - parsedLoginData.getTime());
+    const timeDifference = Math.abs(
+      currentDate.getTime() - parsedLoginData.getTime()
+    );
     const oneHour = 60 * 60 * 1000;
 
     return timeDifference <= oneHour;
   } catch (error) {
-    console.error('Session validation error:', error);
+    console.error("Session validation error:", error);
     return false;
   }
 };
