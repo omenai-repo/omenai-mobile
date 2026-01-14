@@ -350,6 +350,12 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
           </View>
         </View>
       </Animated.View>
+
+      <ConfirmOrderDeliveryModal
+        orderId={orderId}
+        modalVisible={confirmOrderModal}
+        setModalVisible={setConfirmOrderModal}
+      />
     </View>
   );
 };

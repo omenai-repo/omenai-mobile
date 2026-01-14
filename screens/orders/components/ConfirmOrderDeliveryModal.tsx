@@ -4,16 +4,14 @@ import {
   Modal,
   Pressable,
   useWindowDimensions,
-  TouchableOpacity,
 } from "react-native";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
-import LottieView from "lottie-react-native";
-import loaderAnimation from "#assets/other/loader-animation.json";
 import { confirmOrderDelivery } from "#services/orders/confirmOrderDelivery";
 import { useModalStore } from "#store/modal/modalStore";
 import { useCollectorOrders } from "#hooks/useCollectorOrders";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 type ConfirmDeliveryProps = {
   orderId: string;
@@ -27,7 +25,6 @@ const ConfirmOrderDeliveryModal = ({
   setModalVisible,
 }: ConfirmDeliveryProps) => {
   const { width } = useWindowDimensions();
-  const animation = useRef(null);
   const [loading, setLoading] = useState(false);
   const { updateModal } = useModalStore();
   const { invalidate } = useCollectorOrders();
@@ -107,30 +104,15 @@ const ConfirmOrderDeliveryModal = ({
 
             {/* Action Button */}
             <View style={tw`w-full mt-5 flex flex-row items-center gap-2`}>
-              <TouchableOpacity
-                disabled={loading}
-                onPress={confirmDelivery}
-                style={[
-                  tw`h-[45px] rounded-[20px] px-4 w-full items-center justify-center`,
-                  loading ? tw`bg-[#E0E0E0]` : tw`bg-green-600`,
-                ]}
-              >
-                {loading ? (
-                  <LottieView
-                    autoPlay
-                    ref={animation}
-                    style={{
-                      width: 100,
-                      height: 100,
-                    }}
-                    source={loaderAnimation}
-                  />
-                ) : (
-                  <Text style={tw`text-[14px] font-medium text-white`}>
-                    I understand, confirm delivery
-                  </Text>
-                )}
-              </TouchableOpacity>
+              <LongBlackButton
+                value="I understand, confirm delivery"
+                isLoading={loading}
+                onClick={confirmDelivery}
+                style={{
+                  backgroundColor: loading ? "#E0E0E0" : "#16A34A",
+                }}
+                textStyle={{ fontSize: 14, fontWeight: "500" }}
+              />
             </View>
           </View>
         </Pressable>
