@@ -636,6 +636,9 @@ export type InvoiceTypes = {
   paidAt: Date;
   document_created: boolean;
   receipt_sent: boolean;
+  storage?: {
+    fileId: string;
+  };
 };
 
 export type InvoicePriceData = {

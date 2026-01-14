@@ -1,5 +1,5 @@
-import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Platform, ScrollView, Text, View } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
@@ -8,6 +8,10 @@ import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useInvoiceQuery } from "#hooks/useInvoice";
 import { ActivityIndicator } from "react-native";
+import { useModalStore } from "#store/modal/modalStore";
+import { getInvoiceDownloadUrl } from "#lib/storage/getInvoiceFile";
+import { File, Paths } from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 type RouteParams = {
   params: {
@@ -19,12 +23,10 @@ type RouteParams = {
 export default function ViewReceiptScreen() {
   const { params } = useRoute<RouteProp<RouteParams, "params">>();
   const { invoice, invoiceNumber } = params;
+  const { updateModal } = useModalStore();
 
-  const { data: fetchedInvoice, isLoading } = useInvoiceQuery(
-    !invoice ? invoiceNumber : undefined
-  );
-
-  const activeInvoice = invoice || fetchedInvoice;
+  const { data: activeInvoice, isLoading } = useInvoiceQuery(invoiceNumber);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString("en-US", {
@@ -32,6 +34,59 @@ export default function ViewReceiptScreen() {
       month: "short",
       year: "numeric",
     });
+  };
+
+  const handleDownloadReceipt = async (fileId: string) => {
+    if (!invoiceNumber || !fileId)
+      return updateModal({
+        message: "Invoice not found",
+        showModal: true,
+        modalType: "error",
+      });
+
+    const downloadUrl = getInvoiceDownloadUrl(fileId);
+    if (!downloadUrl)
+      return updateModal({
+        message: "Invoice not found",
+        showModal: true,
+        modalType: "error",
+      });
+
+    setIsDownloading(true);
+
+    try {
+      const filename = `Invoice-${invoiceNumber}.pdf`;
+      const file = new File(Paths.cache, filename);
+
+      // Delete existing file if it exists to allow re-download
+      if (file.exists) {
+        await file.delete();
+      }
+
+      // Download the file
+      await File.downloadFileAsync(downloadUrl, file);
+
+      if (Platform.OS === "ios" || (await Sharing.isAvailableAsync())) {
+        await Sharing.shareAsync(file.uri, {
+          mimeType: "application/pdf",
+          dialogTitle: `Invoice-${invoiceNumber}`,
+        });
+      } else {
+        updateModal({
+          message: `File saved successfully`,
+          showModal: true,
+          modalType: "success",
+        });
+      }
+    } catch (error) {
+      updateModal({
+        message: "Download failed",
+        showModal: true,
+        modalType: "error",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   if (isLoading && !activeInvoice) {
@@ -171,9 +226,10 @@ export default function ViewReceiptScreen() {
         <View style={tw`mt-8 mb-4`}>
           <FittedBlackButton
             value="Download Receipt"
-            onClick={() => {
-              alert("Download functionality coming soon");
-            }}
+            isLoading={isDownloading}
+            onClick={() =>
+              handleDownloadReceipt(activeInvoice?.storage?.fileId || "")
+            }
           />
         </View>
       </ScrollView>
