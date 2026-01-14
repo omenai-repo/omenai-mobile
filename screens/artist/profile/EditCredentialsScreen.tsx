@@ -1,5 +1,5 @@
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Dimensions,
@@ -21,9 +21,8 @@ import { uploadIcon } from "#utils/SvgImages";
 import * as DocumentPicker from "expo-document-picker";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { getArtistCredentials } from "#services/artistOnboarding/getArtistCredentials";
-import LottieView from "lottie-react-native";
-import loaderAnimation from "../../../assets/other/loader-animation.json";
 import CredentialsOverview from "#screens/artistOnboarding/CredentialsOverview";
+import CredentialsSkeleton from "#components/skeleton/CredentialsSkeleton";
 
 const { width } = Dimensions.get("window");
 
@@ -67,7 +66,6 @@ export default function EditCredentialsScreen() {
     },
     cv: "",
   });
-  const animation = useRef(null);
 
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -132,19 +130,7 @@ export default function EditCredentialsScreen() {
   }, []);
 
   if (isLoading) {
-    return (
-      <View style={tw`flex-1 bg-[#F7F7F7] justify-center items-center`}>
-        <LottieView
-          autoPlay
-          ref={animation}
-          style={{
-            width: 300,
-            height: 300,
-          }}
-          source={loaderAnimation}
-        />
-      </View>
-    );
+    return <CredentialsSkeleton />;
   }
 
   if (!credentials) {

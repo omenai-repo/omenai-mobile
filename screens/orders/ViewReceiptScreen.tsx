@@ -7,11 +7,11 @@ import { InvoiceTypes } from "#types/types";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useInvoiceQuery } from "#hooks/useInvoice";
-import { ActivityIndicator } from "react-native";
 import { useModalStore } from "#store/modal/modalStore";
 import { getInvoiceDownloadUrl } from "#lib/storage/getInvoiceFile";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import ReceiptSkeleton from "#components/skeleton/ReceiptSkeleton";
 
 type RouteParams = {
   params: {
@@ -90,11 +90,7 @@ export default function ViewReceiptScreen() {
   };
 
   if (isLoading && !activeInvoice) {
-    return (
-      <View style={tw`flex-1 bg-gray-50 justify-center items-center`}>
-        <ActivityIndicator size="large" color="#000" />
-      </View>
-    );
+    return <ReceiptSkeleton />;
   }
 
   if (!activeInvoice) {
