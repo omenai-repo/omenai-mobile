@@ -33,7 +33,7 @@ import { requestArtworkPrice } from "#services/artworks/requestArtworkPrice";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import { useModalStore } from "#store/modal/modalStore";
 import SaveArtworkButton from "./components/SaveArtworkButton";
-import Loader from "#components/general/Loader";
+import ArtworkSkeleton from "#components/skeleton/ArtworkSkeleton";
 import { useAppStore } from "#store/app/appStore";
 import Header from "./components/Header";
 import ShippingAndTaxes from "./components/extraDetails/ShippingAndTaxes";
@@ -49,6 +49,7 @@ import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils"
 import ZoomArtwork from "./ZoomArtwork";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
+import { ArtworkDataType } from "#types/types";
 
 type RouteParams = { art_id: string; url: string };
 
@@ -375,7 +376,7 @@ export default function Artwork() {
             isGallery={["gallery", "artist"].includes(userType)}
           />
 
-          {loadingMain && <Loader />}
+          {loadingMain && <ArtworkSkeleton />}
 
           {artwork && (
             <ScrollWrapper

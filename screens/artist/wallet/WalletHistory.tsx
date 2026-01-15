@@ -11,6 +11,7 @@ import YearDropdown from "../orders/YearDropdown";
 import { WalletContainer } from "./WalletScreen";
 import { fetchArtistTransactions } from "#services/wallet/fetchArtistTransactions";
 import Loader from "#components/general/Loader";
+import ListSkeleton from "#components/skeleton/ListSkeleton";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackScreenButton from "#components/buttons/BackScreenButton";
@@ -144,13 +145,7 @@ const WalletHistory = ({ navigation }: any) => {
 
       {/* Initial loader */}
       {isLoading && transactions.length === 0 && (
-        <View
-          style={tw.style(`justify-center items-center`, {
-            marginTop: height / 4,
-          })}
-        >
-          <Loader size={200} height={100} />
-        </View>
+        <ListSkeleton count={6} itemHeight={60} showImage={false} />
       )}
     </View>
   );
