@@ -11,7 +11,7 @@ import { colors } from "#config/colors.config";
 import { fetchUserSavedArtworks } from "#services/artworks/fetchUserSavedArtwork";
 import { UseSavedArtworksStore } from "#store/artworks/SavedArtworksStore";
 import { getImageFileView } from "#lib/storage/getImageFileView";
-import Loader from "#components/general/Loader";
+import ListSkeleton from "#components/skeleton/ListSkeleton";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { screenName } from "#constants/screenNames.constants";
@@ -172,7 +172,7 @@ export default function SavedArtworks() {
         }
         onScroll={onScroll}
       >
-        {isLoading && <Loader />}
+        {isLoading && <ListSkeleton count={5} itemHeight={100} />}
         {data.length > 0 && !isLoading && (
           <View style={styles.sectionContainer}>
             {data.map((artwork, index) => (

@@ -16,7 +16,7 @@ import OrderSummary from "./components/OrderSummary";
 import { useOrderSummaryStore } from "#store/orders/OrderSummaryStore";
 import ShippingDetails from "./components/ShippingDetails";
 import { fetchsingleArtworkOnPurchase } from "#services/artworks/fetchSingleArtworkOnPurchase";
-import Loader from "#components/general/Loader";
+import OrderSkeleton from "#components/skeleton/OrderSkeleton";
 import PriceQuoteSent from "./components/PriceQuoteSent";
 import WithModal from "#components/modal/WithModal";
 import ScrollWrapper from "#components/general/ScrollWrapper";
@@ -128,7 +128,7 @@ export default function PurchaseArtwork() {
         >
           <ScrollWrapper nestedScrollEnabled={true}>
             {/* <TabsIndicator selectedIndex={selectedSectionIndex} /> */}
-            {isLoading && <Loader />}
+            {isLoading && <OrderSkeleton />}
             {!isLoading && artworkOrderData ? (
               <View
                 key={

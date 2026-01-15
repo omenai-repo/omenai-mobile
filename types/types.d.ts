@@ -201,7 +201,7 @@ type userSessionType = {
   id: string;
   email: string;
 };
-type ArtworkDataType = {
+export type ArtworkDataType = {
   title: string;
   artist: string;
   artist_country_origin: string;
@@ -454,7 +454,7 @@ type CatalogCardTypes = {
   image: any;
 };
 
-type CreateOrderModelTypes = {
+export type CreateOrderModelTypes = {
   artwork_data: Pick<
     ArtworkSchemaTypes,
     "artist" | "pricing" | "title" | "url" | "art_id" | "role_access"
@@ -475,7 +475,7 @@ type CreateOrderModelTypes = {
   invoice?: InvoiceTypes;
 };
 
-type PlanProps = {
+export type PlanProps = {
   name: string;
   pricing: { annual_price: string; monthly_price: string };
   benefits: SubscriptionPlanDataTypes["benefits"];
@@ -516,7 +516,7 @@ type PinAuthorizationData = {
   pin: string;
 };
 
-type SubscriptionModelSchemaTypes = {
+export type SubscriptionModelSchemaTypes = {
   customer: {
     name: string;
     phone_number?: string;

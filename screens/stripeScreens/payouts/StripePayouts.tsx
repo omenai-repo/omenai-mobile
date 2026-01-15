@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import WithModal from "#components/modal/WithModal";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { checkIsStripeOnboarded } from "#services/stripe/checkIsStripeOnboarded";
-import Loader from "#components/general/Loader";
+import FormSkeleton from "#components/skeleton/FormSkeleton";
 import CompleteOnBoarding from "./components/CompleteOnBoarding";
 import { useModalStore } from "#store/modal/modalStore";
 import BlockingScreen from "./components/BlockingScreen";
@@ -67,7 +67,7 @@ export default function StripePayouts({
   if (loading)
     return (
       <View style={{ flex: 1, backgroundColor: colors.white }}>
-        <Loader />
+        <FormSkeleton rows={3} />
       </View>
     );
 

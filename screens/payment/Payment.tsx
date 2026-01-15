@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import WithModal from "#components/modal/WithModal";
-import Loader from "#components/general/Loader";
+import OrderSkeleton from "#components/skeleton/OrderSkeleton";
 import { getSingleOrder } from "#services/orders/getSingleOrder";
 import { checkLockStatus } from "#services/orders/checkLockStatus";
 import { useAppStore } from "#store/app/appStore";
 import OrderDetails from "./components/orderDetails/OrderDetails";
+import type { CreateOrderModelTypes } from "#types/types";
 
 type artworkDetailsProps = {
   data:
@@ -49,7 +50,7 @@ export default function Payment() {
     handleFetchOrderDetails();
   }, [route.params, userSession.id]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <OrderSkeleton />;
 
   if (!isLoading && artworkDetails.data !== null)
     return (
