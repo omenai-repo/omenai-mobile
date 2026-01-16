@@ -140,6 +140,8 @@ type IndividualRegisterData = {
 
 type GallerySignupData = {
   name: string;
+  referrerKey: string;
+  inviteCode: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -163,6 +165,8 @@ type ImageAsset = {
 
 type ArtistSignupData = {
   name: string;
+  referrerKey: string;
+  inviteCode: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -182,9 +186,18 @@ type ArtistRegisterData = Omit<ArtistSignupData, "logo" | "confirmPassword"> & {
 
 type GalleryRegisterData = Pick<
   GallerySignupData,
-  "name" | "admin" | "email" | "password" | "description"
+  | "name"
+  | "admin"
+  | "email"
+  | "password"
+  | "description"
+  | "address"
+  | "phone"
+  | "referrerKey"
+  | "inviteCode"
 > & {
   logo: string;
+  device_push_token: string;
 };
 
 type GalleryWaitlistData = {

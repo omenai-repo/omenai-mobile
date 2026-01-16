@@ -22,7 +22,12 @@ export function useRegistrationHandler(accountType: AccountType) {
     try {
       setIsLoading(true);
 
-      let payload = { ...data, device_push_token: expoPushToken ?? "" };
+      const { confirmPassword, ...rest } = data;
+      let payload = { ...rest, device_push_token: expoPushToken ?? "" };
+
+      // Ensure specific fields are present if needed, though ...rest covers it.
+      // Just confirming no filtering happens here.
+      console.log("Registration Payload:", JSON.stringify(payload, null, 2));
       let uploadedFileId: string | null = null;
 
       // Handle logo upload for gallery and artist

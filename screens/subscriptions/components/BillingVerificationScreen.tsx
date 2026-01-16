@@ -13,11 +13,17 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { verifySubscriptionCharge } from "#services/stripe/verifySubscriptionCharge";
+import { verifyDiscountedSubscriptionCharge } from "#services/stripe/verifyDiscountedSubscriptionCharge";
 import { screenName } from "#constants/screenNames.constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type RootStackParamList = {
-  BillingVerification: { payment_intent: string };
+  BillingVerification: {
+    payment_intent?: string;
+    setup_intent?: string;
+    isDiscounted?: boolean;
+    planId?: string;
+  };
 };
 
 type ScreenRouteProp = RouteProp<RootStackParamList, "BillingVerification">;
@@ -28,16 +34,44 @@ export default function BillingVerificationScreen() {
   const navigation = useNavigation<any>();
   const qc = useQueryClient();
 
-  const paymentIntentId = route?.params?.payment_intent;
+  const {
+    payment_intent: paymentIntentId,
+    setup_intent: setupIntentId,
+    isDiscounted,
+    planId,
+  } = route?.params ?? {};
 
   // animations (for the result card)
   const cardScale = useRef(new Animated.Value(0.96)).current;
   const cardOpacity = useRef(new Animated.Value(0)).current;
 
   const { data: verified, isLoading } = useQuery({
-    queryKey: ["verify_subscription_payment_on_redirect", paymentIntentId],
-    enabled: !!paymentIntentId,
+    queryKey: [
+      "verify_subscription_payment_on_redirect",
+      paymentIntentId,
+      setupIntentId,
+    ],
+    enabled: !!paymentIntentId || !!setupIntentId,
     queryFn: async () => {
+      // Discounted verification flow
+      if (isDiscounted && setupIntentId && planId) {
+        const response = await verifyDiscountedSubscriptionCharge(
+          setupIntentId,
+          planId
+        );
+        if (!response?.isOk) {
+          return {
+            isOk: false,
+            message: response?.message ?? "Verification failed.",
+          };
+        }
+        return { isOk: true, message: response.message };
+      }
+
+      // Regular verification flow
+      if (!paymentIntentId) {
+        return { isOk: false, message: "No payment intent found." };
+      }
       const response = await verifySubscriptionCharge(paymentIntentId);
       if (!response?.isOk) {
         return {
@@ -98,7 +132,7 @@ export default function BillingVerificationScreen() {
     </View>
   );
 
-  if (!paymentIntentId) {
+  if (!paymentIntentId && !setupIntentId) {
     return (
       <View style={tw`flex-1 bg-slate-50 items-center justify-center px-4`}>
         <Result

@@ -34,6 +34,7 @@ const GalleryAddressVerification = () => {
     setCountry,
     setCountryCode,
     setState,
+    setStateCode,
     setIsLoading,
     stateData,
     setStateData,
@@ -42,7 +43,8 @@ const GalleryAddressVerification = () => {
     setCityData,
   } = useGalleryAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } = useAddressForm();
+  const { formErrors, handleValidationChecks, checkIsFormValid } =
+    useAddressForm();
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -51,6 +53,7 @@ const GalleryAddressVerification = () => {
     },
     {
       setState,
+      setStateCode,
       setCity,
       setCountry,
       setCountryCode,
@@ -69,7 +72,11 @@ const GalleryAddressVerification = () => {
   } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
 
   const handleSubmit = () => {
-    handleVerifyAddress(galleryRegisterData.address, galleryRegisterData.phone, "pickup");
+    handleVerifyAddress(
+      galleryRegisterData.address,
+      galleryRegisterData.phone,
+      "pickup"
+    );
   };
 
   return (
@@ -104,7 +111,12 @@ const GalleryAddressVerification = () => {
 
       <AddressVerificationActions
         isLoading={isLoading}
-        isDisabled={!checkIsFormValid(galleryRegisterData.address, galleryRegisterData.phone)}
+        isDisabled={
+          !checkIsFormValid(
+            galleryRegisterData.address,
+            galleryRegisterData.phone
+          )
+        }
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
       />

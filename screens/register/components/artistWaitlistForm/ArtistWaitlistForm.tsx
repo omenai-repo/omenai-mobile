@@ -4,6 +4,7 @@ import tw from "twrnc";
 import SharedWaitlistForm from "../shared/waitlist/SharedWaitlistForm";
 import SharedInviteCodeForm from "../shared/waitlist/SharedInviteCodeForm";
 import ArtistRegisterationForms from "../artistRegistrationForm/ArtistRegisterationForms";
+import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
 
 type ReferrerData = {
   referrerKey: string;
@@ -21,9 +22,14 @@ export default function ArtistWaitlistForm({
   const [showInviteCodeForm, setShowInviteCodeForm] = useState(false);
   const [inviteValidated, setInviteValidated] = useState(false);
   const [referrerData, setReferrerData] = useState<ReferrerData | null>(null);
+  const { setEmail, setReferrerKey, setInviteCode } =
+    useArtistAuthRegisterStore();
 
   const handleInviteSuccess = (data: ReferrerData) => {
     setReferrerData(data);
+    setEmail(data.email);
+    setReferrerKey(data.referrerKey);
+    setInviteCode(data.inviteCode);
     setInviteValidated(true);
     onInviteValidated?.(true);
   };
