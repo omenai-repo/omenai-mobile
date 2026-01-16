@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { useStripe } from "@stripe/stripe-react-native";
+import { useStripe, useConfirmSetupIntent } from "@stripe/stripe-react-native";
 import { useQuery } from "@tanstack/react-query";
 import tw from "twrnc";
 import { createSubscriptionPaymentIntent } from "#services/stripe/createSubscriptionPaymentIntent";
+import { createPaymentMethodSetupIntent } from "#services/stripe/createPaymentMethodSetupIntent";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "#config/colors.config";
 import { useAppStore } from "#store/app/appStore";
@@ -13,9 +14,15 @@ interface Props {
   planId: string;
   amount: number;
   interval: string;
+  discountEligible?: boolean;
 }
 
-export const InitialPaymentForm = ({ planId, amount, interval }: Props) => {
+export const InitialPaymentForm = ({
+  planId,
+  amount,
+  interval,
+  discountEligible = false,
+}: Props) => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<any>();
@@ -27,9 +34,26 @@ export const InitialPaymentForm = ({ planId, amount, interval }: Props) => {
     isLoading: isIntentLoading,
     error,
   } = useQuery({
-    queryKey: ["create_payment_intent", planId, interval, amount],
+    queryKey: [
+      "create_payment_intent",
+      planId,
+      interval,
+      amount,
+      discountEligible,
+    ],
     queryFn: async () => {
       if (!user) throw new Error("User not found");
+
+      // Use SetupIntent for discounted flow (saves card without charging)
+      if (discountEligible) {
+        const response = await createPaymentMethodSetupIntent();
+        if (!response?.isOk) {
+          throw new Error(response?.message || "Failed to create setup intent");
+        }
+        return response.client_secret;
+      }
+
+      // Regular PaymentIntent flow
       const response = await createSubscriptionPaymentIntent(
         amount,
         user.id,
@@ -55,13 +79,10 @@ export const InitialPaymentForm = ({ planId, amount, interval }: Props) => {
     if (!clientSecret) return;
 
     const { error } = await initPaymentSheet({
-      paymentIntentClientSecret: clientSecret,
+      paymentIntentClientSecret: discountEligible ? undefined : clientSecret,
+      setupIntentClientSecret: discountEligible ? clientSecret : undefined,
       merchantDisplayName: "Omenai",
       returnURL: "omenaimobile://stripe-redirect",
-      // defaultBillingDetails: {
-      //   email: user?.email,
-      //   name: user?.name,
-      // }
     });
     if (error) {
       console.log("Error initializing sheet", error);
@@ -72,7 +93,7 @@ export const InitialPaymentForm = ({ planId, amount, interval }: Props) => {
     if (clientSecret) {
       initializePaymentSheet();
     }
-  }, [clientSecret]);
+  }, [clientSecret, discountEligible]);
 
   const handleSubscribe = async () => {
     if (!clientSecret) return;
@@ -82,7 +103,7 @@ export const InitialPaymentForm = ({ planId, amount, interval }: Props) => {
 
     if (error) {
       if (error.code === "Canceled") {
-        // User canceled, do nothing or show toast
+        // User canceled, do nothing
       } else {
         updateModal({
           message: error.message,
@@ -98,10 +119,22 @@ export const InitialPaymentForm = ({ planId, amount, interval }: Props) => {
         modalType: "success",
       });
       setLoading(false);
-      const paymentIntentId = clientSecret.split("_secret_")[0];
-      navigation.navigate("BillingVerificationScreen", {
-        payment_intent: paymentIntentId,
-      });
+
+      if (discountEligible) {
+        // For setup intent, we can extract ID from secret or just pass params
+        // The secret is like "seti_..._secret_..."
+        const setupIntentId = clientSecret.split("_secret_")[0];
+        navigation.navigate("BillingVerificationScreen", {
+          setup_intent: setupIntentId,
+          isDiscounted: true,
+          planId,
+        });
+      } else {
+        const paymentIntentId = clientSecret.split("_secret_")[0];
+        navigation.navigate("BillingVerificationScreen", {
+          payment_intent: paymentIntentId,
+        });
+      }
     }
   };
 
@@ -135,7 +168,9 @@ export const InitialPaymentForm = ({ planId, amount, interval }: Props) => {
           <ActivityIndicator color="#fff" />
         ) : (
           <Text style={tw`text-white text-[13px] font-medium`}>
-            Subscribe for ${amount}
+            {discountEligible
+              ? "Subscribe to this plan"
+              : `Subscribe for $${amount}`}
           </Text>
         )}
       </TouchableOpacity>

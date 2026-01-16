@@ -30,6 +30,10 @@ import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { useStripe } from "@stripe/stripe-react-native";
 import { InitialPaymentForm } from "./components/InitialPaymentForm";
 import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
+import {
+  SubscriptionModelSchemaTypes,
+  SubscriptionPlanDataTypes,
+} from "#types/types";
 
 type RootStackParamList = {
   MigrationUpgradeCheckout: {
@@ -44,6 +48,7 @@ type RootStackParamList = {
       updatedAt?: string;
     };
     action: string;
+    discountEligible?: boolean;
   };
 };
 
@@ -161,6 +166,8 @@ const PricingBreakdown = ({
   grandTotal,
   currency,
   showCharge,
+  discountEligible,
+  discountAmount,
 }: any) => (
   <View style={tw`bg-white rounded-2xl border border-slate-100 p-5 mb-5`}>
     {!isInitialSubscription && (
@@ -177,8 +184,31 @@ const PricingBreakdown = ({
     )}
     <View style={tw`mt-3`}>
       <View style={tw`gap-2`}>
-        <PriceRow label="Plan cost" value={upgradeCost} currency={currency} />
-        {!isInitialSubscription && (
+        <PriceRow
+          label="Plan cost"
+          value={discountEligible ? discountAmount : upgradeCost}
+          currency={currency}
+        />
+        {discountEligible && (
+          <View style={tw`flex-row items-center justify-between`}>
+            <View style={tw`flex-row items-center gap-2`}>
+              <Text style={tw`text-[12px] font-semibold text-emerald-600`}>
+                Welcome Discount
+              </Text>
+              <View style={tw`px-1.5 py-0.5 bg-emerald-100 rounded`}>
+                <Text
+                  style={tw`text-[9px] font-bold text-emerald-700 uppercase`}
+                >
+                  100% OFF
+                </Text>
+              </View>
+            </View>
+            <Text style={tw`text-[12px] font-semibold text-emerald-600`}>
+              -{utils_formatPrice(discountAmount, currency)}
+            </Text>
+          </View>
+        )}
+        {!isInitialSubscription && !discountEligible && (
           <PriceRow
             label="Prorated cost"
             value={showCharge ? proratedPrice : 0}
@@ -197,7 +227,17 @@ const PricingBreakdown = ({
           </Text>
         </View>
       </View>
-      {!showCharge && !isInitialSubscription && (
+      {discountEligible && (
+        <View
+          style={tw`mt-4 p-3 rounded-md bg-emerald-50 border border-emerald-200`}
+        >
+          <Text style={tw`text-[12px] text-emerald-800`}>
+            <Text style={tw`font-semibold`}>Note:</Text> You won't be charged
+            today. We'll save your card for future billing.
+          </Text>
+        </View>
+      )}
+      {!showCharge && !isInitialSubscription && !discountEligible && (
         <View
           style={tw`mt-4 p-3 rounded-md bg-amber-50 border border-amber-200`}
         >
@@ -216,6 +256,7 @@ const PaymentSection = ({
   plan,
   interval,
   sub_data,
+  discountEligible,
 }: any) => (
   <View style={tw`rounded-2xl border border-slate-200 bg-slate-50 p-5`}>
     <View style={tw`flex-row items-center justify-between mb-4`}>
@@ -232,11 +273,14 @@ const PaymentSection = ({
       <InitialPaymentForm
         planId={plan.plan_id}
         amount={
-          interval === "monthly"
+          discountEligible
+            ? 0
+            : interval === "monthly"
             ? +plan.pricing.monthly_price
             : +plan.pricing.annual_price
         }
         interval={interval}
+        discountEligible={discountEligible}
       />
     ) : (
       sub_data && (
@@ -280,7 +324,13 @@ const CheckoutCTA = ({
 export default function Checkout() {
   const route = useRoute<ScreenRouteProp>();
   const navigation = useNavigation<any>();
-  const { plan, interval, sub_data: initialSubData, action } = route.params;
+  const {
+    plan,
+    interval,
+    sub_data: initialSubData,
+    action,
+    discountEligible = false,
+  } = route.params;
 
   const { handleNextAction } = useStripe();
   const queryClient = useQueryClient();
@@ -466,7 +516,11 @@ export default function Checkout() {
         showsVerticalScrollIndicator={false}
       >
         <CheckoutBanner
-          actionLabel={plan_change_params.action || "Checkout"}
+          actionLabel={
+            discountEligible
+              ? "Discount Activation"
+              : plan_change_params.action || "Checkout"
+          }
           planName={plan.name}
           interval={interval}
         />
@@ -475,15 +529,22 @@ export default function Checkout() {
           days_left={days_left}
           upgradeCost={upgradeCost}
           proratedPrice={proratedPrice}
-          grandTotal={showCharge ? grandTotal : 0}
+          grandTotal={discountEligible ? 0 : showCharge ? grandTotal : 0}
           currency={currency}
           showCharge={showCharge}
+          discountEligible={discountEligible}
+          discountAmount={
+            interval === "monthly"
+              ? +plan.pricing.monthly_price
+              : +plan.pricing.annual_price
+          }
         />
         <PaymentSection
           isInitialSubscription={isInitialSubscription}
           plan={plan}
           interval={interval}
           sub_data={sub_data}
+          discountEligible={discountEligible}
         />
         {!isInitialSubscription && (
           <CheckoutCTA

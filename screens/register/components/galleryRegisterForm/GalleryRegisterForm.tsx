@@ -13,7 +13,7 @@ export default function GalleryRegisterForm() {
     <ExtraGalleryDetailsInput key="extra" />,
     <GalleryAddressVerification key="address" />,
     <UploadLogo key="logo" />,
-    <TermsAndConditions key="terms" hideBackButton={true} />,
+    <TermsAndConditions key="terms" hideBackButton={false} />,
   ];
 
   return forms[pageIndex];

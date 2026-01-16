@@ -10,6 +10,10 @@ import PlansSkeleton from "#components/skeleton/PlansSkeleton";
 import EmptyArtworks from "#components/general/EmptyArtworks";
 import { useModalStore } from "#store/modal/modalStore";
 import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
+import {
+  retrieveSubscriptionDiscount,
+  DiscountData,
+} from "#services/subscriptions/retrieveSubscriptionDiscount";
 import { useAppStore } from "#store/app/appStore";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { useRoute } from "@react-navigation/native";
@@ -22,6 +26,7 @@ export default function Billing() {
   const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(
     null
   );
+  const [discount, setDiscount] = useState<DiscountData>(null);
   const [loading, setLoading] = useState(false);
   const { plan_action } = useRoute<any>().params;
   const { updateModal } = useModalStore();
@@ -30,10 +35,13 @@ export default function Billing() {
   useEffect(() => {
     async function handleFetchPlans() {
       setLoading(true);
-      const results = await getAllPlanData();
-      const subResults = userSession?.id
-        ? await retrieveSubscriptionData(userSession.id)
-        : { isOk: false, data: null };
+      const [results, subResults, discountResults] = await Promise.all([
+        getAllPlanData(),
+        userSession?.id
+          ? retrieveSubscriptionData(userSession.id)
+          : Promise.resolve({ isOk: false, data: null }),
+        retrieveSubscriptionDiscount(),
+      ]);
 
       if (!results?.isOk && !subResults?.isOk) {
         //throw error
@@ -52,6 +60,7 @@ export default function Billing() {
         );
         setPlans(sortedPlans);
         setSubData(subResults?.data);
+        setDiscount(discountResults?.discount ?? null);
       }
 
       setLoading(false);
@@ -74,6 +83,7 @@ export default function Billing() {
                 tab={selectedTab}
                 plan={plan}
                 sub_data={subData}
+                discount={discount}
               />
             ))}
           </View>
