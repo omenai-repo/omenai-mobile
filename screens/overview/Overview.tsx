@@ -10,7 +10,6 @@ import React, { useCallback, useRef, useState } from "react";
 import WithModal from "#components/modal/WithModal";
 import Header from "#components/header/Header";
 import SalesOverview from "./components/SalesOverview";
-import RecentOrders from "./components/RecentOrders";
 import { HighlightCard } from "./components/HighlightCard";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import PopularArtworks from "./components/PopularArtworks";
@@ -55,7 +54,7 @@ export default function Overview() {
         queryKey: QK.highlightGallery("revenue", userSession?.id),
       }),
       qc.invalidateQueries({ queryKey: QK.salesOverview(userSession?.id) }),
-      qc.invalidateQueries({ queryKey: QK.overviewOrders(userSession?.id) }),
+
       qc.invalidateQueries({ queryKey: QK.popularArtworks(userSession?.id) }),
     ]);
   }, [qc]);
@@ -80,29 +79,11 @@ export default function Overview() {
           onScroll={onScroll}
         >
           <Header />
-
-          {/* Recent orders quick navigation at top */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate(screenName.gallery.orders)}
-            style={[
-              tw`flex-row items-center py-2`,
-              { paddingHorizontal: isTablet ? horizontalPadding : 20 },
-            ]}
-          >
-            <Text
-              style={[tw`font-medium flex-1`, { fontSize: isTablet ? 22 : 18 }]}
-            >
-              Recent orders
-            </Text>
-            <NavBtnComponent onPress={() => {}} />
-          </TouchableOpacity>
-
           <View style={styles.container}>
             <HighlightCard onLoadingChange={handleLoadingChange} />
           </View>
 
           <SalesOverview onLoadingChange={handleLoadingChange} />
-          <RecentOrders onLoadingChange={handleLoadingChange} />
           <PopularArtworks onLoadingChange={handleLoadingChange} />
         </ScrollWrapper>
       </View>
