@@ -3,7 +3,7 @@ name: Production Build and Submit
 on:
   push:
     branches:
-      - update/chart-redesig-broken-designss
+      - feat/subscription-discount
   workflow_dispatch:
 
 jobs:
