@@ -64,7 +64,7 @@ export const useVersionCheck = (
           await inAppUpdates.startUpdate({
             updateType: IAUUpdateKind.IMMEDIATE,
           });
-          return false; // Managed by Android system now
+          // Fall through to return needsUpdate so custom modal shows if native one is dismissed/failed
         }
       } catch (e) {
         console.error("[VersionCheck] Android in-app update check failed:", e);
