@@ -17,10 +17,8 @@ import ScrollWrapper from "#components/general/ScrollWrapper";
 import SalesOverview from "#screens/overview/components/SalesOverview";
 import PopularArtworks from "#screens/overview/components/PopularArtworks";
 
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
-import { getImageFileView } from "#lib/storage/getImageFileView";
 import { HighlightCard } from "./HighlightCard";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import BlurStatusBar from "#components/general/BlurStatusBar";

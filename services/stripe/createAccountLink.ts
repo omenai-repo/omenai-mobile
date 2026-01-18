@@ -1,15 +1,23 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import {
+  apiUrl,
+  authorization,
+  originHeader,
+  userAgent,
+} from "../../constants/apiUrl.constants";
 
 export async function createAccountLink(account: string) {
   try {
     const res = await fetch(`${apiUrl}/api/stripe/createAccountLink`, {
       method: "POST",
       headers: {
-        'Origin': originHeader,
+        Origin: originHeader,
         "User-Agent": userAgent,
-        "Authorization": authorization
+        Authorization: authorization,
       },
-      body: JSON.stringify({ account }),
+      body: JSON.stringify({
+        account,
+        return_url: "omenaimobile://stripe-return",
+      }),
     });
 
     const result = await res.json();
