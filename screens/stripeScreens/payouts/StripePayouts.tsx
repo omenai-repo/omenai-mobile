@@ -50,6 +50,7 @@ export default function StripePayouts({
 
   useEffect(() => {
     async function init() {
+      if (!showScreen) return;
       setLoading(true);
       await handleOnBoardingCheck();
       setLoading(false);
@@ -60,7 +61,7 @@ export default function StripePayouts({
     return () => {
       queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
     };
-  }, []);
+  }, [showScreen]);
 
   if (!showScreen) return <BlockingScreen />;
 

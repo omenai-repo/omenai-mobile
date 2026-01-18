@@ -1,17 +1,24 @@
-import React, { useMemo } from 'react';
-import { View, Text, ActivityIndicator, FlatList, Platform } from 'react-native';
-import tw from 'twrnc';
-import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
-import { useAppStore } from '#store/app/appStore';
-import { formatISODate } from '#utils/utils_formatISODate';
-import { utils_formatPrice } from '#utils/utils_priceFormatter';
-import { fetchSubscriptionTransactions } from '#services/transactions/fetchSubscriptionTransactions';
+import React, { useMemo } from "react";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  FlatList,
+  Platform,
+} from "react-native";
+import tw from "twrnc";
+import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
+import { useAppStore } from "#store/app/appStore";
+import { formatISODate } from "#utils/utils_formatISODate";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { fetchSubscriptionTransactions } from "#services/transactions/fetchSubscriptionTransactions";
+import { currency_symbol } from "#json/currencySymbol";
 
 // ---- types (adjust if your service returns differently)
 type Txn = {
   trans_id: string;
-  status: 'successful' | 'failed' | 'pending' | string;
+  status: "successful" | "failed" | "pending" | string;
   date: string; // ISO
   amount: number;
   currency?: string; // optional
@@ -26,11 +33,11 @@ export default function TransactionsListing() {
     isError,
     error,
   } = useQuery({
-    queryKey: ['fetch_sub_trans', user?.id],
+    queryKey: ["fetch_sub_trans", user?.id],
     queryFn: async () => {
       const res = await fetchSubscriptionTransactions(user.id);
       if (res?.isOk) return res.data as Txn[];
-      throw new Error(res?.message || 'Something went wrong');
+      throw new Error(res?.message || "Something went wrong");
     },
     refetchOnWindowFocus: false,
     staleTime: 0,
@@ -65,7 +72,7 @@ export default function TransactionsListing() {
         >
           <Ionicons name="alert-circle" size={28} color="#b91c1c" />
           <Text style={tw`mt-2 text-red-700`}>
-            {(error as Error)?.message ?? 'Failed to load transactions'}
+            {(error as Error)?.message ?? "Failed to load transactions"}
           </Text>
         </View>
       </View>
@@ -73,7 +80,9 @@ export default function TransactionsListing() {
   }
 
   return (
-    <View style={[tw`bg-white rounded-2xl border border-slate-200 p-6`, shadow()]}>
+    <View
+      style={[tw`bg-white rounded-2xl border border-slate-200 p-6`, shadow()]}
+    >
       <Text style={tw`text-base font-semibold text-slate-900 mb-4`}>
         Recent Transaction Activity
       </Text>
@@ -103,21 +112,27 @@ export default function TransactionsListing() {
 
 function Row({ item, index }: { item: Txn; index: number }) {
   const statusText =
-    item.status === 'successful'
-      ? 'Payment processed successfully'
-      : item.status === 'failed'
-      ? 'Payment failed'
-      : 'Payment pending';
+    item.status === "successful"
+      ? "Payment processed successfully"
+      : item.status === "failed"
+      ? "Payment failed"
+      : "Payment pending";
 
   const statusColor =
-    item.status === 'successful'
+    item.status === "successful"
       ? tw`text-green-600`
-      : item.status === 'failed'
+      : item.status === "failed"
       ? tw`text-red-600`
       : tw`text-amber-600`;
 
   // match web default "USD" formatting when currency not provided
-  const amountLabel = utils_formatPrice(item.amount, item.currency ?? 'USD');
+  const currencyCode = item.currency ?? "USD";
+  const symbolItem = currency_symbol.find(
+    (c) => c.abbreviation.toLowerCase() === currencyCode.toLowerCase()
+  );
+  const symbol = symbolItem ? symbolItem.symbol : "$";
+
+  const amountLabel = utils_formatPrice(item.amount, symbol);
 
   return (
     <View style={tw`relative flex-row items-start pb-3`}>
@@ -126,7 +141,9 @@ function Row({ item, index }: { item: Txn; index: number }) {
         <View
           style={tw`w-10 h-10 bg-white border-2 border-slate-300 rounded-full items-center justify-center`}
         >
-          <Text style={tw`text-xs font-semibold text-slate-600`}>{index + 1}</Text>
+          <Text style={tw`text-xs font-semibold text-slate-600`}>
+            {index + 1}
+          </Text>
         </View>
       </View>
 
@@ -134,9 +151,15 @@ function Row({ item, index }: { item: Txn; index: number }) {
       <View style={tw`flex-1 bg-slate-50 rounded-lg p-4`}>
         <View style={tw`flex-row items-start justify-between`}>
           <View style={tw`flex-shrink`}>
-            <Text style={tw`text-[11px] font-semibold text-slate-500`}>#{item.trans_id}</Text>
-            <Text style={[tw`text-[11px] font-medium mt-0.5`, statusColor]}>{statusText}</Text>
-            <Text style={tw`text-[11px] text-slate-600 mt-1`}>{formatISODate(item.date)}</Text>
+            <Text style={tw`text-[11px] font-semibold text-slate-500`}>
+              #{item.trans_id}
+            </Text>
+            <Text style={[tw`text-[11px] font-medium mt-0.5`, statusColor]}>
+              {statusText}
+            </Text>
+            <Text style={tw`text-[11px] text-slate-600 mt-1`}>
+              {formatISODate(item.date)}
+            </Text>
           </View>
 
           <Text style={tw`text-slate-900 font-semibold`}>{amountLabel}</Text>
@@ -149,7 +172,7 @@ function Row({ item, index }: { item: Txn; index: number }) {
 function shadow() {
   return Platform.select({
     ios: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOpacity: 0.06,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 6 },
