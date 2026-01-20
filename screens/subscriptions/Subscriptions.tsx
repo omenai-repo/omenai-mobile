@@ -26,7 +26,7 @@ export default function Subscriptions() {
   const { updateModal } = useModalStore();
   const insets = useSafeAreaInsets();
   const { value: isSubscriptionBillingEnabled } = useHighRiskFeatureFlag(
-    "subscription_creation_enabled"
+    "subscription_creation_enabled",
   );
 
   const {
@@ -122,7 +122,7 @@ export default function Subscriptions() {
             />
           }
         >
-          <VerificationRequiredBlock />
+          <VerificationRequiredBlock disableBack />
         </ScrollWrapper>
       );
     }

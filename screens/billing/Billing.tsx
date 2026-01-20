@@ -16,7 +16,10 @@ import {
 } from "#services/subscriptions/retrieveSubscriptionDiscount";
 import { useAppStore } from "#store/app/appStore";
 import ScrollWrapper from "#components/general/ScrollWrapper";
-import { useRoute } from "@react-navigation/native";
+import { checkIsStripeOnboarded } from "#services/stripe/checkIsStripeOnboarded";
+import { getAccountID } from "#services/stripe/getAccountID";
+import LockScreen from "../galleryArtworksListing/components/LockScreen";
+import OnboardingRequiredBlock from "../subscriptions/components/OnboardingRequiredBlock";
 
 export type billingTabs = "monthly" | "yearly";
 
@@ -24,16 +27,66 @@ export default function Billing() {
   const [selectedTab, setSelectedTab] = useState<billingTabs>("monthly");
   const [plans, setPlans] = useState<PlanProps[]>([]);
   const [subData, setSubData] = useState<SubscriptionModelSchemaTypes | null>(
-    null
+    null,
   );
   const [discount, setDiscount] = useState<DiscountData>(null);
   const [loading, setLoading] = useState(false);
-  const { plan_action } = useRoute<any>().params;
   const { updateModal } = useModalStore();
-  const { userSession } = useAppStore();
+  const { userSession, userType } = useAppStore();
+
+  const [isOnboarded, setIsOnboarded] = useState(false);
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
+
+  // Check verification status
+  const isVerified =
+    userType === "gallery"
+      ? userSession?.gallery_verified
+      : userSession?.artist_verified || userSession?.verified;
+
+  // Check onboarding status
+  useEffect(() => {
+    async function checkOnboarding() {
+      if (!userSession?.id) {
+        setCheckingOnboarding(false);
+        return;
+      }
+      try {
+        const connectedId = await getAccountID(userSession.id);
+        if (connectedId?.data?.connected_account_id) {
+          const res = await checkIsStripeOnboarded(
+            connectedId.data.connected_account_id,
+          );
+          // Strict check: Only set to true if response is OK AND details are submitted
+          if (res?.isOk && res.details_submitted) {
+            setIsOnboarded(true);
+          } else {
+            setIsOnboarded(false);
+          }
+        } else {
+          // No connected ID -> Not onboarded
+          setIsOnboarded(false);
+        }
+      } catch (error) {
+        console.error("Error checking onboarding:", error);
+        setIsOnboarded(false); // Fail safe
+      } finally {
+        setCheckingOnboarding(false);
+      }
+    }
+    checkOnboarding();
+  }, [userSession?.id]);
 
   useEffect(() => {
     async function handleFetchPlans() {
+      // Gate 1: If not verified, don't fetch (LockScreen will show)
+      if (!isVerified) return;
+
+      // Gate 2: If finding onboarding status, don't fetch (Skeleton will show)
+      if (checkingOnboarding) return;
+
+      // Gate 3: If not onboarded, don't fetch (OnboardingRequiredBlock will show)
+      if (!isOnboarded) return;
+
       setLoading(true);
       const [results, subResults, discountResults] = await Promise.all([
         getAllPlanData(),
@@ -56,7 +109,7 @@ export default function Billing() {
             const priceA = +(a?.pricing?.monthly_price || 0);
             const priceB = +(b?.pricing?.monthly_price || 0);
             return priceA - priceB;
-          }
+          },
         );
         setPlans(sortedPlans);
         setSubData(subResults?.data);
@@ -67,7 +120,35 @@ export default function Billing() {
     }
 
     handleFetchPlans();
-  }, []);
+  }, [isVerified, checkingOnboarding, isOnboarded, userSession?.id]);
+
+  if (checkingOnboarding) {
+    return (
+      <WithModal>
+        <BackHeaderTitle title="Billing" />
+        <ScrollWrapper style={styles.container}>
+          <PlansSkeleton />
+        </ScrollWrapper>
+      </WithModal>
+    );
+  }
+
+  // Priority 1: Verification Blocker
+  if (!isVerified) {
+    return (
+      <WithModal>
+        <LockScreen name={userSession?.name} />
+      </WithModal>
+    );
+  }
+
+  if (!isOnboarded) {
+    return (
+      <WithModal>
+        <OnboardingRequiredBlock />
+      </WithModal>
+    );
+  }
 
   return (
     <WithModal>

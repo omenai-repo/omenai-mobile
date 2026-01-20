@@ -1,47 +1,50 @@
-import { View, Text } from "react-native";
 import React from "react";
 import { colors } from "#config/colors.config";
-import LongBlackButton from "#components/buttons/LongBlackButton";
+import LongWhiteButton from "#components/buttons/LongWhiteButton";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
+import PremiumStateCard from "#components/general/PremiumStateCard";
 
-export default function VerificationRequiredBlock() {
+export default function VerificationRequiredBlock({
+  onBack,
+  disableBack,
+}: {
+  onBack?: () => void;
+  disableBack?: boolean;
+}) {
   const navigation = useNavigation<any>();
 
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      navigation.goBack();
+    }
+  };
+
   return (
-    <View style={{ flex: 1, padding: 20, justifyContent: "center" }}>
-      <View
-        style={{
-          backgroundColor: colors.black,
-          padding: 20,
-          borderRadius: 10,
-          alignItems: "center",
-          gap: 15,
-        }}
-      >
-        <Text style={{ color: colors.white, fontSize: 18, fontWeight: "600" }}>
-          Account Verification Required
-        </Text>
-        <Text
+    <PremiumStateCard
+      icon="shield-checkmark"
+      title="Account Verification Required"
+      description="Please complete your Stripe onboarding to access subscription features."
+      onBack={handleBack}
+      disableBack={disableBack}
+      actionButton={
+        <LongWhiteButton
+          value="Complete Setup"
+          onClick={() => navigation.navigate(screenName.gallery.stripePayouts)}
+          outline={false}
           style={{
-            textAlign: "center",
-            color: colors.white,
+            height: 48,
+            backgroundColor: colors.white,
           }}
-        >
-          Please complete your Stripe onboarding to access subscription
-          features.
-        </Text>
-        <View style={{ width: "100%" }}>
-          <LongBlackButton
-            style={{ backgroundColor: colors.white }}
-            textStyle={{ color: colors.black }}
-            value="Complete Setup"
-            onClick={() =>
-              navigation.navigate(screenName.gallery.stripePayouts)
-            }
-          />
-        </View>
-      </View>
-    </View>
+          textStyle={{
+            color: colors.primary_black,
+            fontSize: 14,
+            fontWeight: "bold",
+          }}
+        />
+      }
+    />
   );
 }

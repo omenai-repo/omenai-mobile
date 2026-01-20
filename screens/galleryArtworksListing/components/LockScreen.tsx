@@ -1,9 +1,9 @@
 import {
   View,
   Text,
-  TouchableOpacity,
   ActivityIndicator,
   useWindowDimensions,
+  StyleSheet,
 } from "react-native";
 import React, { useState } from "react";
 import tw from "twrnc";
@@ -15,6 +15,8 @@ import WithModal from "#components/modal/WithModal";
 import { useModalStore } from "#store/modal/modalStore";
 import { useAppStore } from "#store/app/appStore";
 import { colors } from "#config/colors.config";
+import LongWhiteButton from "#components/buttons/LongWhiteButton";
+import PremiumStateCard from "#components/general/PremiumStateCard";
 
 export default function LockScreen({ name }: { name: string }) {
   const { height } = useWindowDimensions();
@@ -55,47 +57,53 @@ export default function LockScreen({ name }: { name: string }) {
 
   return (
     <WithModal>
-      <View style={tw`flex-1 bg-[#fff] pt-[60px] android:pt-[80px] px-[25px]`}>
-        <BackScreenButton handleClick={() => navigation.goBack()} />
-        <View
-          style={tw.style(
-            `items-center justify-center mt-10 rounded-2xl px-[30px] py-[40px]`,
-            {
-              marginTop: height / 5,
-              backgroundColor: colors.black,
-            }
-          )}
-        >
-          <Ionicons name="shield" size={35} color="white" />
-          <Text style={tw`text-white text-center my-4`}>
+      <PremiumStateCard
+        icon="shield"
+        title="Account Verification Required"
+        description={
+          <>
             Your account is being verified. An agent will reach out within 24
             hours.
-          </Text>
-          {userType === "gallery" && (
-            <>
-              <Text style={tw`text-white text-center mb-4`}>
-                To expedite, click{" "}
-                <Text style={tw`font-bold`}>'Send Verification Reminder'</Text>{" "}
+            {userType === "gallery" && (
+              <>
+                {"\n\n"}To expedite, click{" "}
+                <Text style={tw`font-bold text-white`}>
+                  'Send Verification Reminder'
+                </Text>{" "}
                 below.
-              </Text>
-
-              <TouchableOpacity
-                style={tw`bg-white px-6 py-3 rounded-lg ${
-                  loading ? "opacity-50" : ""
-                }`}
-                disabled={loading}
-                onPress={handleRequestGalleryVerification}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#000" />
-                ) : (
-                  <Text style={tw`text-black`}>Send Verification Reminder</Text>
-                )}
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
-      </View>
+              </>
+            )}
+          </>
+        }
+        onBack={() => navigation.goBack()}
+        actionButton={
+          userType === "gallery" ? (
+            <LongWhiteButton
+              value="Send Verification Reminder"
+              onClick={handleRequestGalleryVerification}
+              outline={false}
+              style={{
+                height: 48,
+                backgroundColor: colors.white,
+                opacity: loading ? 0.7 : 1,
+              }}
+              textStyle={{
+                color: colors.primary_black,
+                fontSize: 14,
+                fontWeight: "bold",
+              }}
+              icon={
+                loading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={colors.primary_black}
+                  />
+                ) : null
+              }
+            />
+          ) : undefined
+        }
+      />
     </WithModal>
   );
 }
