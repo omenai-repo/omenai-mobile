@@ -1,9 +1,18 @@
+import {
+  ArtworkSchemaTypes,
+  ArtworkUploadStateTypes,
+  RoleAccess,
+} from "#types/types";
+
 export function createUploadedArtworkData(
   data: ArtworkUploadStateTypes,
   url: string,
   id: string,
-  role_access: RoleAccess
-): Omit<ArtworkSchemaTypes, "art_id" | "should_show_on_sub_active" | "availability"> {
+  role_access: RoleAccess,
+): Omit<
+  ArtworkSchemaTypes,
+  "art_id" | "should_show_on_sub_active" | "availability"
+> {
   const updatedArwordData = {
     artist: data.artist,
     dimensions: {

@@ -99,7 +99,7 @@ type ArtistCategorization =
   | "established"
   | "elite";
 
-type RoleAccess = {
+export type RoleAccess = {
   role: "artist" | "gallery";
   designation: ArtistCategorization | null;
 };
@@ -351,7 +351,7 @@ type AddressTypes = {
   [key: string]: string;
 };
 
-type ArtworkSchemaTypes = {
+export type ArtworkSchemaTypes = {
   artist: string;
   year: number;
   title: string;
@@ -392,7 +392,7 @@ type EditorialSchemaTypes = {
   slug: string;
 };
 
-type ArtworkUploadStateTypes = {
+export type ArtworkUploadStateTypes = {
   artist: string;
   year: number;
   title: string;

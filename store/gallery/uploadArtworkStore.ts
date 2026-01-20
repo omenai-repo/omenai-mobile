@@ -1,4 +1,5 @@
-import { create } from 'zustand';
+import { create } from "zustand";
+import { ArtworkUploadStateTypes, RoleAccess } from "#types/types";
 
 type UploadArtworkStoreType = {
   image: any;
@@ -12,81 +13,83 @@ type UploadArtworkStoreType = {
   setIsUploaded: (value: boolean) => void;
 };
 
-export const uploadArtworkStore = create<UploadArtworkStoreType>((set, get) => ({
-  image: null,
-  setImage: (image: any) => {
-    set({ image });
-  },
-  activeIndex: 1,
-  setActiveIndex: (e: number) => {
-    set({ activeIndex: e });
-  },
-  artworkUploadData: {
-    artist: '',
-    year: 0,
-    title: '',
-    medium: '',
-    rarity: '',
-    materials: '',
-    width: '',
-    height: '',
-    weight: '',
-    price: 0,
-    shouldShowPrice: '',
-    depth: '',
-    artist_birthyear: '',
-    artist_country_origin: '',
-    certificate_of_authenticity: '',
-    artwork_description: '',
-    framing: '',
-    signature: '',
-    currency: '',
-    usd_price: 0,
-    role_access: {} as RoleAccess,
-  },
-  updateArtworkUploadData: (label: string, value: string) => {
-    const data: Record<string, any> = get().artworkUploadData;
+export const uploadArtworkStore = create<UploadArtworkStoreType>(
+  (set, get) => ({
+    image: null,
+    setImage: (image: any) => {
+      set({ image });
+    },
+    activeIndex: 1,
+    setActiveIndex: (e: number) => {
+      set({ activeIndex: e });
+    },
+    artworkUploadData: {
+      artist: "",
+      year: 0,
+      title: "",
+      medium: "",
+      rarity: "",
+      materials: "",
+      width: "",
+      height: "",
+      weight: "",
+      price: 0,
+      shouldShowPrice: "",
+      depth: "",
+      artist_birthyear: "",
+      artist_country_origin: "",
+      certificate_of_authenticity: "",
+      artwork_description: "",
+      framing: "",
+      signature: "",
+      currency: "",
+      usd_price: 0,
+      role_access: {} as RoleAccess,
+    },
+    updateArtworkUploadData: (label: string, value: string) => {
+      const data: Record<string, any> = get().artworkUploadData;
 
-    if (label in data) {
-      const updatedData = { ...data, [label]: value };
+      if (label in data) {
+        const updatedData = { ...data, [label]: value };
 
+        set({
+          artworkUploadData: updatedData as ArtworkUploadStateTypes,
+        });
+      }
+    },
+    clearData: () => {
       set({
-        artworkUploadData: updatedData as ArtworkUploadStateTypes,
+        artworkUploadData: {
+          artist: "",
+          year: 0,
+          title: "",
+          medium: "",
+          rarity: "",
+          materials: "",
+          width: "",
+          height: "",
+          price: 0,
+          weight: "",
+          shouldShowPrice: "",
+          depth: "",
+          artist_birthyear: "",
+          artist_country_origin: "",
+          certificate_of_authenticity: "",
+          artwork_description: "",
+          framing: "",
+          signature: "",
+          currency: "",
+          usd_price: 0,
+          role_access: {} as RoleAccess,
+        },
+        isUploaded: false,
+        activeIndex: 1,
       });
-    }
-  },
-  clearData: () => {
-    set({
-      artworkUploadData: {
-        artist: '',
-        year: 0,
-        title: '',
-        medium: '',
-        rarity: '',
-        materials: '',
-        width: '',
-        height: '',
-        price: 0,
-        weight: '',
-        shouldShowPrice: '',
-        depth: '',
-        artist_birthyear: '',
-        artist_country_origin: '',
-        certificate_of_authenticity: '',
-        artwork_description: '',
-        framing: '',
-        signature: '',
-        currency: '',
-        usd_price: 0,
-        role_access: {} as RoleAccess,
-      },
-      isUploaded: false,
-      activeIndex: 1,
-    });
-    set({ image: null });
-  },
-  isUploaded: false,
-  setIsUploaded: (value: boolean) => {
-    set({ isUploaded: value });
-  },
-}));
+      set({ image: null });
+    },
+    isUploaded: false,
+    setIsUploaded: (value: boolean) => {
+      set({ isUploaded: value });
+    },
+  }),
+);

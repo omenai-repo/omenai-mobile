@@ -1,8 +1,14 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { IndividualLoginData } from "#types/types";
+import {
+  apiUrl,
+  authorization,
+  originHeader,
+  userAgent,
+} from "../../constants/apiUrl.constants";
 
 export async function loginAccount(
   payload: IndividualLoginData,
-  route: "individual" | "gallery" | "artist"
+  route: "individual" | "gallery" | "artist",
 ) {
   const url = apiUrl + "/api/auth/" + route + "/login";
 
@@ -21,11 +27,14 @@ export async function loginAccount(
     console.log(result, "result");
     return {
       isOk: response.ok,
+      status: response.status,
       body: result,
     };
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
+      status: error?.status || 500,
+      error,
       body: { message: "Error logging into account" },
     };
   }

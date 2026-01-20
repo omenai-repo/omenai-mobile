@@ -20,7 +20,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 
-import { AppState, Platform, Alert } from "react-native";
+import { AppState, Platform } from "react-native";
 import { configureNotificationHandling } from "#notifications/NotificationService";
 import { useNotifications } from "#hooks/useNotifications";
 import { registerForPushToken } from "#notifications/registerForPushToken";
@@ -30,6 +30,11 @@ import { StatusBar } from "expo-status-bar";
 import { clearStaleCredentials } from "#hooks/useBiometrics";
 import ForceUpdateModal from "#components/modal/ForceUpdateModal";
 import { useVersionCheck } from "#hooks/useVersionCheck";
+import { Analytics } from "#utils/analytics";
+import * as Updates from "expo-updates";
+
+// Vexo analytic initialization
+Analytics.init(process.env.EXPO_PUBLIC_VEXO_ID as string);
 
 // Safely patch Platform.constants for web/dev environments only
 try {
@@ -50,6 +55,18 @@ SplashScreen.setOptions({
   duration: 1000,
   fade: true,
 });
+
+async function checkForOTAUpdate() {
+  try {
+    const update = await Updates.checkForUpdateAsync();
+    if (update.isAvailable) {
+      await Updates.fetchUpdateAsync();
+      await Updates.reloadAsync();
+    }
+  } catch {
+    // Update check failed, continue with current version
+  }
+}
 
 export default function App() {
   useNotificationHandler(); // Set up notification handler
@@ -78,6 +95,7 @@ export default function App() {
         if (token) {
           setExpoPushToken(token);
         }
+        await checkForOTAUpdate();
       } catch {
         // Silently fail
       }
@@ -144,7 +162,7 @@ export default function App() {
             refetchOnWindowFocus: false, // RN: safe to disable
           },
         },
-      })
+      }),
   );
 
   useEffect(() => {

@@ -16,7 +16,6 @@ import {
 } from "@react-navigation/native";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { colors } from "#config/colors.config";
-import { PaymentMethod } from "@stripe/stripe-js";
 import { BillingCard } from "#screens/subscriptions/components/BillingCard";
 import { createStripeTokenizedCharge } from "#services/stripe/createStripeTokenizedCharge";
 import { useAppStore } from "#store/app/appStore";
@@ -30,6 +29,7 @@ import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { useStripe } from "@stripe/stripe-react-native";
 import { InitialPaymentForm } from "./components/InitialPaymentForm";
 import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
+import { Analytics } from "#utils/analytics";
 import {
   SubscriptionModelSchemaTypes,
   SubscriptionPlanDataTypes,
@@ -85,7 +85,7 @@ const useCheckoutPricing = (
   sub_data: any,
   startDate: Date,
   days_used: number,
-  totalDays: number
+  totalDays: number,
 ) => {
   const { proratedPrice, upgradeCost, grandTotal } = useMemo(() => {
     if (isInitialSubscription) {
@@ -105,7 +105,7 @@ const useCheckoutPricing = (
       sub_data.plan_details,
       plan,
       days_used,
-      totalDays
+      totalDays,
     );
   }, [
     startDate,
@@ -131,7 +131,7 @@ const useCheckoutPricing = (
         ? +(plan?.pricing?.annual_price || 0)
         : +(plan?.pricing?.monthly_price || 0),
       interval,
-      sub_data.status
+      sub_data.status,
     );
   }, [sub_data, interval, plan?.pricing, isInitialSubscription]);
 
@@ -354,7 +354,7 @@ export default function Checkout() {
   useFocusEffect(
     React.useCallback(() => {
       if (!isInitialSubscription) refetch();
-    }, [isInitialSubscription, refetch])
+    }, [isInitialSubscription, refetch]),
   );
 
   const sub_data = (fetchedData || initialSubData) as any;
@@ -370,7 +370,7 @@ export default function Checkout() {
   const totalDays = differenceInCalendarDays(expiryDate, startDate);
   const days_used = Math.min(
     differenceInCalendarDays(now, startDate),
-    totalDays
+    totalDays,
   );
   const days_left = Math.max(totalDays - days_used, 0);
 
@@ -382,7 +382,7 @@ export default function Checkout() {
       sub_data,
       startDate,
       days_used,
-      totalDays
+      totalDays,
     );
 
   const showCharge = plan_change_params.shouldCharge;
@@ -411,6 +411,11 @@ export default function Checkout() {
       console.log("stripe-response ---", res);
 
       if (!res?.isOk) {
+        Analytics.track("payment_failed", {
+          message: "Unable to start charge",
+          error: (res as any).error,
+          user_id: user.id,
+        });
         updateModal({
           message: "Unable to initiate card charge. Please contact support",
           showModal: true,
@@ -423,6 +428,11 @@ export default function Checkout() {
       if (status === "requires_action") {
         const { error: nextActionErr } = await handleNextAction(client_secret);
         if (nextActionErr) {
+          Analytics.track("payment_failed", {
+            message: nextActionErr.message,
+            error: nextActionErr,
+            user_id: user.id,
+          });
           updateModal({
             message: nextActionErr.message,
             showModal: true,
@@ -431,6 +441,11 @@ export default function Checkout() {
           return;
         }
       }
+
+      Analytics.track("payment_success", {
+        amount: grandTotal,
+        plan: plan.name,
+      });
 
       updateModal({
         message: "Processing payment...",
@@ -445,6 +460,11 @@ export default function Checkout() {
         payment_intent: paymentIntentId,
       });
     } catch (e: any) {
+      Analytics.track("payment_failed", {
+        message: e?.message,
+        error: e,
+        user_id: user.id,
+      });
       updateModal({
         message: e?.message,
         showModal: true,
@@ -482,12 +502,21 @@ export default function Checkout() {
       const migrate = await updateSubscriptionPlan(data, action);
       console.log(data, action, "hh");
       if (!migrate?.isOk) {
+        Analytics.track("migration_failed", {
+          message: migrate?.message ?? "",
+          error: (migrate as any).error,
+          user_id: user.id,
+        });
         updateModal({
           message: migrate?.message ?? "",
           showModal: true,
           modalType: "error",
         });
       } else {
+        Analytics.track("migration_success", {
+          message: "Migration successful",
+          user_id: user.id,
+        });
         updateModal({
           message: "Migration successful",
           showModal: true,
@@ -499,6 +528,11 @@ export default function Checkout() {
         navigation.pop(2);
       }
     } catch (e: any) {
+      Analytics.track("migration_failed", {
+        message: e?.message,
+        error: e,
+        user_id: user.id,
+      });
       updateModal({
         message: e?.message,
         showModal: true,

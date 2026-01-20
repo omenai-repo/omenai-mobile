@@ -50,6 +50,7 @@ import ZoomArtwork from "./ZoomArtwork";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import { ArtworkDataType } from "#types/types";
+import { Analytics } from "#utils/analytics";
 
 type RouteParams = { art_id: string; url: string };
 
@@ -57,7 +58,7 @@ const useTabletLandscape = () => {
   const [win, setWin] = useState(Dimensions.get("window"));
   useEffect(() => {
     const sub = Dimensions.addEventListener("change", ({ window }) =>
-      setWin(window)
+      setWin(window),
     );
     return () => sub?.remove();
   }, []);
@@ -123,13 +124,23 @@ export default function Artwork() {
     if (!artwork || viewedRef.current) return;
     if (!userSession?.id) return;
     viewedRef.current = true;
+
+    // Track in Vexo
+    Analytics.track("view_artwork", {
+      art_id: artwork.art_id,
+      title: artwork.title,
+      artist: artwork.artist,
+      price: artwork.pricing.usd_price,
+      viewer_type: userType,
+    });
+
     // Fire-and-forget; don’t block UI
     createViewHistory(
       artwork.title,
       artwork.artist,
       artwork.art_id,
       userSession.id,
-      artwork.url
+      artwork.url,
     ).catch(() => {
       // silent fail
     });
@@ -139,12 +150,12 @@ export default function Artwork() {
   const displayWidth = Math.max(200, screenWidth - 40);
   const fetchWidth = useMemo(
     () => Math.round(displayWidth * dpr),
-    [displayWidth, dpr]
+    [displayWidth, dpr],
   );
 
   const imageUri = useMemo(
     () => (artwork ? getImageFileView(artwork.url, fetchWidth) : ""),
-    [artwork, fetchWidth]
+    [artwork, fetchWidth],
   );
 
   const [imageDimensions, setImageDimensions] = useState({
@@ -159,7 +170,7 @@ export default function Artwork() {
       const next = resizeImageDimensions(
         { width: w, height: h },
         maxWidth,
-        maxHeight
+        maxHeight,
       );
       setImageDimensions(next);
     });

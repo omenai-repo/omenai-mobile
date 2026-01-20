@@ -27,6 +27,7 @@ import NoSubscriptionBlock from "#screens/galleryArtworksListing/components/NoSu
 import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import UploadBlocker from "#components/blockers/upload/UploadBlocker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Analytics } from "#utils/analytics";
 
 export default function UploadArtwork() {
   const insets = useSafeAreaInsets();
@@ -111,10 +112,10 @@ export default function UploadArtwork() {
   });
 
   const handleArtworkUpload = async () => {
+    let userId = "";
     try {
       setIsLoading(true);
 
-      let userId = "";
       let session = await utils_getAsyncData("userSession");
       if (session.value) {
         userId = JSON.parse(session.value).id;
@@ -149,9 +150,23 @@ export default function UploadArtwork() {
           await queryClient.invalidateQueries({
             queryKey: ["artworks", "galleryOrArtist", "all"],
           });
+          Analytics.track("artwork_uploaded", {
+            role: userType,
+            file_id: file.fileId,
+            user_id: userId,
+          });
           setIsUploaded(true);
         } else {
           //toast error
+          if (upload_response?.status && upload_response.status >= 500) {
+            Analytics.track("artwork_upload_failed", {
+              role: userType,
+              user_id: userId,
+              message: upload_response.body,
+              error: (upload_response as any).error,
+              status: upload_response.status,
+            });
+          }
           updateModal({
             message: upload_response.body,
             modalType: "error",
@@ -166,7 +181,13 @@ export default function UploadArtwork() {
           showModal: true,
         });
       }
-    } catch {
+    } catch (e: any) {
+      Analytics.track("artwork_upload_failed", {
+        message: "Error uploading artwork",
+        error: e,
+        role: userType,
+        user_id: userId,
+      });
       updateModal({
         message: "Error uploading artwork",
         modalType: "error",
