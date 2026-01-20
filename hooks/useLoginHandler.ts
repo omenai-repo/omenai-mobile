@@ -7,6 +7,7 @@ import { useAppStore } from "#store/app/appStore";
 import { useModalStore } from "#store/modal/modalStore";
 import { screenName } from "#constants/screenNames.constants";
 import { useBiometrics } from "#hooks/useBiometrics";
+import { Analytics } from "#utils/analytics";
 
 type UserType = "individual" | "gallery" | "artist";
 
@@ -43,7 +44,7 @@ export function useLoginHandler(userType: UserType) {
   const handleBiometricAuth = async (
     data: any,
     loginData: LoginData,
-    clearInputs: () => void
+    clearInputs: () => void,
   ) => {
     const bioResult = await authenticate();
     if (bioResult.success) {
@@ -53,7 +54,7 @@ export function useLoginHandler(userType: UserType) {
     } else {
       Alert.alert(
         "Authentication Failed",
-        "Could not verify biometric identity. You can enable biometrics later in settings."
+        "Could not verify biometric identity. You can enable biometrics later in settings.",
       );
       finalizeLogin(data, clearInputs);
     }
@@ -62,16 +63,24 @@ export function useLoginHandler(userType: UserType) {
   const handleLogin = async (
     loginData: LoginData,
     setIsLoading: (loading: boolean) => void,
-    clearInputs: () => void
+    clearInputs: () => void,
   ) => {
     setIsLoading(true);
 
     const results = await loginAccount(
       { ...loginData, device_push_token: expoPushToken ?? "" },
-      userType
+      userType,
     );
 
     if (!results?.isOk) {
+      if (results?.status && results.status >= 500) {
+        Analytics.track("login_failed", {
+          error: (results as any).error,
+          message: results?.body.message,
+          user_type: userType,
+          status: results.status,
+        });
+      }
       updateModal({
         message: results?.body.message,
         showModal: true,
@@ -96,16 +105,24 @@ export function useLoginHandler(userType: UserType) {
       return;
     }
 
+    Analytics.track("login_success", { user_type: userType });
+
     const data = mapUserData(resultsBody, userType);
+
+    // Identify user in Analytics on success
+    if ((data as any).id) {
+      Analytics.identify((data as any).id);
+    }
+
     const isStored = await utils_storeAsyncData(
       "userSession",
-      JSON.stringify(data)
+      JSON.stringify(data),
     );
 
     const loginTimeStamp = new Date();
     await utils_storeAsyncData(
       "loginTimeStamp",
-      JSON.stringify(loginTimeStamp)
+      JSON.stringify(loginTimeStamp),
     );
 
     if (!isStored) {
@@ -129,7 +146,7 @@ export function useLoginHandler(userType: UserType) {
             text: "Yes",
             onPress: () => handleBiometricAuth(data, loginData, clearInputs),
           },
-        ]
+        ],
       );
     } else if (isBiometricSupported && biometricEnabled) {
       const storedEmail = await getStoredEmail(userType);
@@ -154,7 +171,7 @@ export function useLoginHandler(userType: UserType) {
               text: "Yes",
               onPress: () => handleBiometricAuth(data, loginData, clearInputs),
             },
-          ]
+          ],
         );
       } else {
         finalizeLogin(data, clearInputs);

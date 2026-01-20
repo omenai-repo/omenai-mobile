@@ -20,6 +20,7 @@ import { checkIsStripeOnboarded } from "#services/stripe/checkIsStripeOnboarded"
 import { getAccountID } from "#services/stripe/getAccountID";
 import LockScreen from "../galleryArtworksListing/components/LockScreen";
 import OnboardingRequiredBlock from "../subscriptions/components/OnboardingRequiredBlock";
+import { Analytics } from "#utils/analytics";
 
 export type billingTabs = "monthly" | "yearly";
 

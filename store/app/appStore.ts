@@ -1,6 +1,7 @@
-import { create } from 'zustand';
+import { create } from "zustand";
+import { Analytics } from "#utils/analytics";
 
-type userType = 'user' | 'artist' | 'gallery' | '';
+type userType = "user" | "artist" | "gallery" | "";
 
 type AppStoreTypes = {
   isLoggedIn: boolean;
@@ -22,7 +23,7 @@ export const useAppStore = create<AppStoreTypes>((set, get) => ({
   setUserSession: (e: any) => {
     set({ userSession: e });
   },
-  userType: '',
+  userType: "",
   setUserType: (e: userType) => {
     set({ userType: e });
   },
