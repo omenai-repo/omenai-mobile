@@ -1,4 +1,12 @@
-import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import {
+  ActivityIndicator,
+  StyleProp,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 import React from "react";
 import { colors } from "../../config/colors.config";
 import tw from "twrnc";
@@ -11,6 +19,7 @@ type LongWhiteButtonProps = {
   outline?: boolean;
   borderColor?: string;
   icon?: React.ReactNode;
+  isLoading?: boolean;
 };
 
 export default function LongWhiteButton({
@@ -21,12 +30,14 @@ export default function LongWhiteButton({
   outline = true,
   borderColor = colors.black,
   icon,
+  isLoading,
 }: LongWhiteButtonProps) {
   const defaultContainerStyle: ViewStyle = {
     height: 55,
     backgroundColor: outline ? "transparent" : colors.white,
     borderWidth: 1,
     borderColor: borderColor,
+    opacity: isLoading ? 0.7 : 1,
   };
 
   const defaultTextStyle: TextStyle = {
@@ -43,10 +54,27 @@ export default function LongWhiteButton({
   const mergedTextStyle = [defaultTextStyle, textStyle];
 
   return (
-    <TouchableOpacity activeOpacity={1} style={containerStyle} onPress={onClick}>
+    <TouchableOpacity
+      activeOpacity={1}
+      style={containerStyle}
+      onPress={!isLoading ? onClick : undefined}
+    >
       <View style={tw`flex-row items-center justify-center gap-3`}>
-        {icon}
-        <Text style={mergedTextStyle}>{value}</Text>
+        {isLoading ? (
+          <ActivityIndicator
+            size="small"
+            color={
+              textStyle && (textStyle as any).color
+                ? (textStyle as any).color
+                : colors.black
+            }
+          />
+        ) : (
+          <>
+            {icon}
+            <Text style={mergedTextStyle}>{value}</Text>
+          </>
+        )}
       </View>
     </TouchableOpacity>
   );

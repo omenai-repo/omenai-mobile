@@ -141,7 +141,7 @@ export default function UploadArtwork() {
           {
             role: userType === "artist" ? "artist" : "gallery",
             designation: null,
-          }
+          },
         );
         const upload_response = await uploadArtworkData(data);
         if (upload_response.isOk) {
@@ -248,10 +248,10 @@ export default function UploadArtwork() {
     userType === "gallery" ? canUpload : !showLockScreen;
 
   const { value: isArtworkPriceCalculationEnabled } = useHighRiskFeatureFlag(
-    "artwork_price_calculation_enabled"
+    "artwork_price_calculation_enabled",
   );
   const { value: isArtworkUploadEnabled } = useHighRiskFeatureFlag(
-    "artwork_upload_enabled"
+    "artwork_upload_enabled",
   );
 
   const isUploadDisabled =
