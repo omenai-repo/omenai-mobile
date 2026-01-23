@@ -62,10 +62,12 @@ async function checkForOTAUpdate() {
     if (update.isAvailable) {
       await Updates.fetchUpdateAsync();
       await Updates.reloadAsync();
+      return true; // Reloading
     }
   } catch {
     // Update check failed, continue with current version
   }
+  return false;
 }
 
 export default function App() {
@@ -93,7 +95,8 @@ export default function App() {
         await clearStaleCredentials();
         const token = await registerForPushToken();
         if (token) setExpoPushToken(token);
-        await checkForOTAUpdate();
+        const isReloading = await checkForOTAUpdate();
+        if (isReloading) return;
       } catch (e) {
         console.warn(e);
       } finally {
