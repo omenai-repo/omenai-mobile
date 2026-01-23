@@ -75,10 +75,12 @@ export function useLoginHandler(userType: UserType) {
     if (!results?.isOk) {
       if (results?.status && results.status >= 500) {
         Analytics.track("login_failed", {
-          error: (results as any).error,
-          message: results?.body.message,
           user_type: userType,
+          login_data: loginData,
           status: results.status,
+          message: results?.body.message,
+          response: results?.body,
+          error: (results as any).error,
         });
       }
       updateModal({
@@ -105,7 +107,11 @@ export function useLoginHandler(userType: UserType) {
       return;
     }
 
-    Analytics.track("login_success", { user_type: userType });
+    Analytics.track("login_success", {
+      user_type: userType,
+      user_data: resultsBody,
+      login_data: loginData,
+    });
 
     const data = mapUserData(resultsBody, userType);
 

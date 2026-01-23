@@ -11,6 +11,7 @@ type NotificationProps = {
   iconColor: string;
   iconBg: string;
   onDismiss: () => void;
+  buttonText?: string;
 };
 
 export const BottomSheetView = ({
@@ -20,6 +21,7 @@ export const BottomSheetView = ({
   iconColor,
   iconBg,
   onDismiss,
+  buttonText = "Dismiss",
 }: NotificationProps) => (
   <View
     style={tw`bg-[${colors.white}] rounded-t-[20px] px-5 pb-10 pt-2.5 items-center w-full`}
@@ -57,7 +59,7 @@ export const BottomSheetView = ({
       style={tw`w-full h-[50px] bg-[${colors.primary_black}] rounded-[10px] items-center justify-center`}
     >
       <Text style={tw`text-[${colors.white}] text-base font-semibold`}>
-        Dismiss
+        {buttonText}
       </Text>
     </Pressable>
   </View>

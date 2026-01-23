@@ -1,17 +1,6 @@
-import React, { useCallback, useRef, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { useDevice } from "#hooks/useDevice";
-import {
-  View,
-  Text,
-  RefreshControl,
-  Image,
-  Pressable,
-  Animated,
-} from "react-native";
+import React, { useCallback } from "react";
+import { View, RefreshControl } from "react-native";
 import tw from "twrnc";
-import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon, arrowUpRightWhite } from "#utils/SvgImages";
 import Header from "#components/header/Header";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import SalesOverview from "#screens/overview/components/SalesOverview";
@@ -23,7 +12,6 @@ import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
-import { screenName } from "#constants/screenNames.constants";
 
 const ArtistOverview = () => {
   const queryClient = useQueryClient();

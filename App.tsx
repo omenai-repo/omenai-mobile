@@ -88,20 +88,21 @@ export default function App() {
   useNotifications(); // Register listeners
 
   useEffect(() => {
-    const initApp = async () => {
+    async function prepare() {
       try {
         await clearStaleCredentials();
         const token = await registerForPushToken();
-        if (token) {
-          setExpoPushToken(token);
-        }
+        if (token) setExpoPushToken(token);
         await checkForOTAUpdate();
-      } catch {
-        // Silently fail
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+        await SplashScreen.hideAsync();
       }
-    };
+    }
 
-    initApp();
+    prepare();
   }, []);
 
   const prefix = Linking.createURL("/");
@@ -126,18 +127,6 @@ export default function App() {
   useEffect(() => {
     utils_appInit();
   }, [isLoggedIn]);
-
-  useEffect(() => {
-    // Immediately mark the app ready and hide the splash to avoid long
-    // splash-screen delays on some devices. Heavy visuals should load
-    // lazily so they do not block initial paint.
-    setAppIsReady(true);
-    try {
-      SplashScreen.hideAsync();
-    } catch (err) {
-      console.error("[App] failed to hide splash on ready", err);
-    }
-  }, []);
 
   const onLayoutRootView = useCallback(() => {
     if (appIsReady) {

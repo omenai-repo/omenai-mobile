@@ -6,6 +6,7 @@ import { useAppStore } from "#store/app/appStore";
 import { screenName } from "../constants/screenNames.constants";
 import { storage } from "#appWrite_config";
 import uploadLogo from "../screens/galleryProfileScreens/uploadNewLogo/uploadLogo";
+import { Analytics } from "#utils/analytics";
 
 type AccountType = "individual" | "gallery" | "artist";
 
@@ -17,7 +18,7 @@ export function useRegistrationHandler(accountType: AccountType) {
   const handleRegister = async (
     data: any,
     clearState: () => void,
-    setIsLoading: (loading: boolean) => void
+    setIsLoading: (loading: boolean) => void,
   ) => {
     try {
       setIsLoading(true);
@@ -25,8 +26,6 @@ export function useRegistrationHandler(accountType: AccountType) {
       const { confirmPassword, ...rest } = data;
       let payload = { ...rest, device_push_token: expoPushToken ?? "" };
 
-      // Ensure specific fields are present if needed, though ...rest covers it.
-      // Just confirming no filtering happens here.
       console.log("Registration Payload:", JSON.stringify(payload, null, 2));
       let uploadedFileId: string | null = null;
 
@@ -53,11 +52,31 @@ export function useRegistrationHandler(accountType: AccountType) {
       const results = await registerAccount(payload, accountType);
 
       if (results?.isOk) {
+        // Track successful registration with all context
+        Analytics.track("registration_success", {
+          account_type: accountType,
+          registration_data: data,
+          user_id: results.body.data,
+          response: results,
+        });
+
         clearState();
         navigation.navigate(screenName.verifyEmail, {
           account: { id: results.body.data, type: accountType },
         });
       } else {
+        // Track registration failure only for server errors (500+)
+        const statusCode = (results as any)?.status;
+        if (statusCode && statusCode >= 500) {
+          Analytics.track("registration_failed", {
+            account_type: accountType,
+            registration_data: data,
+            status_code: statusCode,
+            message: results?.body.message,
+            response: results?.body,
+          });
+        }
+
         // Clean up uploaded file if registration failed
         if (uploadedFileId) {
           await storage.deleteFile({
@@ -73,6 +92,15 @@ export function useRegistrationHandler(accountType: AccountType) {
         });
       }
     } catch (error: any) {
+      // Track unexpected registration error
+      Analytics.track("registration_failed", {
+        account_type: accountType,
+        registration_data: data,
+        message: error.message || "Registration failed",
+        error: error,
+        error_type: "exception",
+      });
+
       updateModal({
         message: error.message || "Registration failed",
         modalType: "error",

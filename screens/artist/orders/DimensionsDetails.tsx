@@ -25,6 +25,7 @@ import ToggleButton from "#components/forms/ToggleButton";
 import DimensionInput from "#components/forms/DimensionInput";
 import UnitDropdownField from "#components/forms/UnitDropdownField";
 import AlertCard from "#components/general/AlertCard";
+import { Analytics } from "#utils/analytics";
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -118,7 +119,7 @@ const DimensionsDetails = () => {
 
   const handleValidationChecks = (
     label: keyof ArtworkDimensionsErrorsType,
-    value: string
+    value: string,
   ) => {
     if (value.trim() === "") {
       setFormErrors((prev) => ({ ...prev, [label]: "" }));
@@ -143,24 +144,37 @@ const DimensionsDetails = () => {
       setIsLoading(true);
       const payload = {
         order_id: orderId,
-        dimensions: converted,
-        exhibition_status:
-          userType === "gallery"
-            ? {
-                is_on_exhibition: isOnExhibition,
-                exhibition_end_date: expoEndDate || "",
-              }
-            : null,
-        hold_status: null,
+        data: {
+          dimensions: converted,
+          exhibition_status:
+            userType === "gallery"
+              ? {
+                  is_on_exhibition: isOnExhibition,
+                  exhibition_end_date: expoEndDate || "",
+                }
+              : null,
+          hold_status: null,
+        },
       };
       console.log("Payload:", JSON.stringify(payload, null, 2));
       const response = await updateShippingQuote(payload);
       console.log("Response:", JSON.stringify(response, null, 2));
       if (response.isOk) {
+        Analytics.track("order_accepted", {
+          ids: {
+            order_id: orderId,
+            seller_id: userId,
+          },
+          seller_type: userType,
+          payload,
+          response,
+        });
+
         // Invalidate both artist/collector and gallery orders so both screens refresh
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["orders", userId] }),
           queryClient.invalidateQueries({ queryKey: ["orders", "gallery"] }),
+          queryClient.invalidateQueries({ queryKey: ["orders", "artist"] }),
         ]);
 
         updateModal({
@@ -178,6 +192,16 @@ const DimensionsDetails = () => {
           navigation.goBack();
         }, 2000);
       } else {
+        Analytics.track("order_accept_failed", {
+          ids: {
+            order_id: orderId,
+            seller_id: userId,
+          },
+          seller_type: userType,
+          error_message: response.message,
+          payload,
+          response,
+        });
         updateModal({
           message: response.message,
           modalType: "error",

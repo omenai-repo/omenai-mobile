@@ -71,7 +71,7 @@ export default function Profile() {
       },
       ...commonMenuItems,
     ],
-    [goToSaved, goToOrdersTab, commonMenuItems]
+    [goToSaved, goToOrdersTab, commonMenuItems],
   );
 
   const Header = (

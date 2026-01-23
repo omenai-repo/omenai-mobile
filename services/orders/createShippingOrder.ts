@@ -1,5 +1,11 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
-import { utils_getAsyncData } from '#utils/utils_asyncStorage';
+import {
+  apiUrl,
+  authorization,
+  originHeader,
+  userAgent,
+} from "../../constants/apiUrl.constants";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import { AddressTypes } from "#types/types";
 
 export async function createShippingOrder(
   buyer_id: string,
@@ -8,15 +14,15 @@ export async function createShippingOrder(
   save_shipping_address: boolean,
   shipping_address: AddressTypes,
   origin_address: AddressTypes | null,
-  designation: 'gallery' | 'artist',
+  designation: "gallery" | "artist",
 ) {
   try {
     const response = await fetch(`${apiUrl}/api/orders/createOrder`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Origin: originHeader,
-        'User-Agent': userAgent,
+        "User-Agent": userAgent,
         Authorization: authorization,
       },
       body: JSON.stringify({
@@ -32,10 +38,11 @@ export async function createShippingOrder(
     const result = await response.json();
     return { isOk: response.ok, message: result.message };
   } catch (error) {
-    console.log('error' + error);
+    console.log("error" + error);
     return {
       isOk: false,
-      body: { message: 'Error fetching orders' },
+      error,
+      body: { message: "Error fetching orders" },
     };
   }
 }
