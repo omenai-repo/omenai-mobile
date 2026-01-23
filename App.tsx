@@ -167,7 +167,7 @@ export default function App() {
 
   return (
     <CopilotProvider>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
       <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
