@@ -20,7 +20,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 
-import { AppState, Platform } from "react-native";
+import { AppState, Platform, Alert } from "react-native";
 import { configureNotificationHandling } from "#notifications/NotificationService";
 import { useNotifications } from "#hooks/useNotifications";
 import { registerForPushToken } from "#notifications/registerForPushToken";
@@ -62,12 +62,10 @@ async function checkForOTAUpdate() {
     if (update.isAvailable) {
       await Updates.fetchUpdateAsync();
       await Updates.reloadAsync();
-      return true; // Reloading
     }
   } catch {
-    // Update check failed, continue with current version
+    // Continue to app start if update check fails
   }
-  return false;
 }
 
 export default function App() {
@@ -95,8 +93,7 @@ export default function App() {
         await clearStaleCredentials();
         const token = await registerForPushToken();
         if (token) setExpoPushToken(token);
-        const isReloading = await checkForOTAUpdate();
-        if (isReloading) return;
+        await checkForOTAUpdate();
       } catch (e) {
         console.warn(e);
       } finally {
