@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { Analytics } from "#utils/analytics";
 
 type userType = "user" | "artist" | "gallery" | "";
 

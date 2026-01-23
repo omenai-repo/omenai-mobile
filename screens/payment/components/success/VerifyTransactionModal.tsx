@@ -30,7 +30,7 @@ interface VerifyTransactionModalProps {
 type VerifyResponse = {
   isOk: boolean;
   message?: string;
-  status?: "completed" | "pending" | "failed";
+  status?: "completed" | "pending" | "failed" | "successful";
   success?: boolean;
 };
 
@@ -42,7 +42,7 @@ const cardAnimConfig = {
 } as const;
 
 export default function VerifyTransactionModal(
-  props: VerifyTransactionModalProps
+  props: VerifyTransactionModalProps,
 ) {
   const { visible, transactionId, onGoHome, onGoToDashboard, onDismiss } =
     props;
@@ -55,17 +55,17 @@ export default function VerifyTransactionModal(
   const opacity = useRef(new Animated.Value(0)).current;
 
   const statusColors = useMemo(() => {
-    if (!verified?.isOk)
-      return { ring: "#ef4444", bg: "#fee2e2", text: "#b91c1c" }; // red
-    switch (verified?.status) {
-      case "completed":
-        return { ring: "#22c55e", bg: "#dcfce7", text: "#166534" }; // green
-      case "pending":
-        return { ring: "#f59e0b", bg: "#fef3c7", text: "#92400e" }; // amber
-      case "failed":
-      default:
-        return { ring: "#ef4444", bg: "#fee2e2", text: "#b91c1c" }; // red
+    if (
+      verified?.success ||
+      verified?.status === "completed" ||
+      verified?.status === "successful"
+    ) {
+      return { ring: "#22c55e", bg: "#dcfce7", text: "#166534" }; // green
     }
+    if (verified?.status === "pending") {
+      return { ring: "#f59e0b", bg: "#fef3c7", text: "#92400e" }; // amber
+    }
+    return { ring: "#ef4444", bg: "#fee2e2", text: "#b91c1c" }; // red
   }, [verified]);
 
   function getPaymentStatusText(verified: VerifyResponse | null): string {
@@ -74,6 +74,7 @@ export default function VerifyTransactionModal(
       case "pending":
         return "Payment Pending";
       case "completed":
+      case "successful":
         return "Payment Verified!";
       case "failed":
       default:
@@ -106,7 +107,7 @@ export default function VerifyTransactionModal(
               Authorization: authorization,
             },
             body: JSON.stringify({ transaction_id: transactionId }),
-          }
+          },
         );
 
         if (!res.ok) {

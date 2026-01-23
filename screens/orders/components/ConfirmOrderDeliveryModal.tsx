@@ -12,6 +12,8 @@ import { confirmOrderDelivery } from "#services/orders/confirmOrderDelivery";
 import { useModalStore } from "#store/modal/modalStore";
 import { useCollectorOrders } from "#hooks/useCollectorOrders";
 import LongBlackButton from "#components/buttons/LongBlackButton";
+import { Analytics } from "#utils/analytics";
+import { useAppStore } from "#store/app/appStore";
 
 type ConfirmDeliveryProps = {
   orderId: string;
@@ -28,26 +30,49 @@ const ConfirmOrderDeliveryModal = ({
   const [loading, setLoading] = useState(false);
   const { updateModal } = useModalStore();
   const { invalidate } = useCollectorOrders();
+  const userId = useAppStore((state) => state.userSession.id);
 
   async function confirmDelivery() {
     setLoading(true);
     const response = await confirmOrderDelivery(true, orderId);
     try {
-      if (!response?.isOk) {
-        updateModal({
-          message: response.message,
-          modalType: "error",
-          showModal: true,
+      if (response?.isOk) {
+        Analytics.track("order_delivered", {
+          order_id: orderId,
+          user_id: userId,
+          response: response,
         });
-      } else {
+
         await invalidate();
         updateModal({
           message: response.message,
           modalType: "success",
           showModal: true,
         });
+      } else {
+        Analytics.track("order_delivery_confirm_failed", {
+          order_id: orderId,
+          user_id: userId,
+          error: (response as any).error,
+          message: response.message,
+          response: response,
+        });
+
+        updateModal({
+          message: response.message,
+          modalType: "error",
+          showModal: true,
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
+      Analytics.track("order_delivery_confirm_failed", {
+        order_id: orderId,
+        user_id: userId,
+        error: error,
+        message: error.message,
+        failure_stage: "exception",
+      });
+
       updateModal({
         message: "Something went wrong, try again or contact support",
         modalType: "success",
@@ -76,7 +101,7 @@ const ConfirmOrderDeliveryModal = ({
             `bg-white py-[20px] px-[10px] w-full self-center rounded-[16px]`,
             {
               width: width - 60,
-            }
+            },
           )}
         >
           <View style={tw`p-4`}>

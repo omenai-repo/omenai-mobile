@@ -7,7 +7,23 @@ import tw from "twrnc";
 import { ToastView } from "./ToastView";
 import { BottomSheetView } from "./BottomSheetView";
 
-export default function CustomModal() {
+interface CustomModalProps {
+  modalStyleOption?: "toast" | "bottomSheet";
+  visible?: boolean;
+  message?: string;
+  type?: "error" | "success";
+  onDismiss?: () => void;
+  buttonText?: string;
+}
+
+export default function CustomModal({
+  modalStyleOption,
+  visible,
+  message,
+  type,
+  onDismiss,
+  buttonText,
+}: CustomModalProps) {
   const {
     showModal,
     modalMessage,
@@ -23,16 +39,25 @@ export default function CustomModal() {
   };
 
   const handleDismiss = () => {
-    updateModal({ message: "", showModal: false, modalType: "" });
+    if (onDismiss) {
+      onDismiss();
+    } else {
+      updateModal({ message: "", showModal: false, modalType: "" });
+    }
   };
 
-  const isError = modalType === "error";
+  const activeShowModal = visible !== undefined ? visible : showModal;
+  const activeModalMessage = message || modalMessage;
+  const activeModalType = type || modalType;
+  const activeModalStyle = modalStyleOption || modalStyle;
+
+  const isError = activeModalType === "error";
   const title = isError ? "Error" : "Success";
   const iconName = isError ? "error-outline" : "check-circle-outline";
   const iconColor = isError ? "#ff0000" : "#008000";
   const iconBg = isError ? "#ffe6e6" : "#e6ffe6";
 
-  const isToast = modalStyle === "toast";
+  const isToast = activeModalStyle === "toast";
 
   // Logic to determine animation
   let animationIn: "slideInUp" | "slideInDown" = "slideInUp";
@@ -51,7 +76,7 @@ export default function CustomModal() {
     modalContent = (
       <ToastView
         title={title}
-        message={modalMessage}
+        message={activeModalMessage}
         iconName={iconName}
         iconColor={iconColor}
         iconBg={iconBg}
@@ -62,18 +87,19 @@ export default function CustomModal() {
     modalContent = (
       <BottomSheetView
         title={title}
-        message={modalMessage}
+        message={activeModalMessage}
         iconName={iconName}
         iconColor={iconColor}
         iconBg={iconBg}
         onDismiss={handleDismiss}
+        buttonText={buttonText}
       />
     );
   }
 
   return (
     <Modal
-      isVisible={showModal}
+      isVisible={activeShowModal}
       backdropOpacity={isToast ? 0 : 0.4}
       onBackdropPress={handleDismiss}
       onBackButtonPress={handleDismiss}
@@ -82,6 +108,8 @@ export default function CustomModal() {
       style={isToast ? tw`m-0 justify-start` : tw`m-0 justify-end`}
       coverScreen={!isToast}
       hasBackdrop={!isToast}
+      useNativeDriver={true}
+      hideModalContentWhileAnimating={true}
     >
       {modalContent}
     </Modal>

@@ -413,8 +413,13 @@ export default function Checkout() {
       if (!res?.isOk) {
         Analytics.track("payment_failed", {
           message: "Unable to start charge",
+          user,
+          plan,
+          interval,
+          amount: grandTotal,
+          discount_eligible: discountEligible,
           error: (res as any).error,
-          user_id: user.id,
+          response: res,
         });
         updateModal({
           message: "Unable to initiate card charge. Please contact support",
@@ -430,8 +435,14 @@ export default function Checkout() {
         if (nextActionErr) {
           Analytics.track("payment_failed", {
             message: nextActionErr.message,
+            user,
+            plan,
+            interval,
+            amount: grandTotal,
+            discount_eligible: discountEligible,
+            payment_intent_id: paymentIntentId,
+            failure_stage: "3d_secure_authentication",
             error: nextActionErr,
-            user_id: user.id,
           });
           updateModal({
             message: nextActionErr.message,
@@ -443,8 +454,17 @@ export default function Checkout() {
       }
 
       Analytics.track("payment_success", {
+        user,
+        plan,
+        interval,
         amount: grandTotal,
-        plan: plan.name,
+        discount_eligible: discountEligible,
+        payment_intent_id: paymentIntentId,
+        pricing_breakdown: {
+          prorated_price: proratedPrice,
+          upgrade_cost: upgradeCost,
+          grand_total: grandTotal,
+        },
       });
 
       updateModal({
@@ -462,8 +482,13 @@ export default function Checkout() {
     } catch (e: any) {
       Analytics.track("payment_failed", {
         message: e?.message,
+        user,
+        plan,
+        interval,
+        amount: grandTotal,
+        discount_eligible: discountEligible,
+        failure_stage: "exception",
         error: e,
-        user_id: user.id,
       });
       updateModal({
         message: e?.message,
@@ -504,8 +529,13 @@ export default function Checkout() {
       if (!migrate?.isOk) {
         Analytics.track("migration_failed", {
           message: migrate?.message ?? "",
+          user,
+          plan,
+          interval,
+          action,
+          migration_data: data,
           error: (migrate as any).error,
-          user_id: user.id,
+          response: migrate,
         });
         updateModal({
           message: migrate?.message ?? "",
@@ -515,7 +545,12 @@ export default function Checkout() {
       } else {
         Analytics.track("migration_success", {
           message: "Migration successful",
-          user_id: user.id,
+          user,
+          plan,
+          interval,
+          action,
+          migration_data: data,
+          response: migrate,
         });
         updateModal({
           message: "Migration successful",
@@ -530,8 +565,12 @@ export default function Checkout() {
     } catch (e: any) {
       Analytics.track("migration_failed", {
         message: e?.message,
+        user,
+        plan,
+        interval,
+        action,
+        failure_stage: "exception",
         error: e,
-        user_id: user.id,
       });
       updateModal({
         message: e?.message,

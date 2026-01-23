@@ -129,9 +129,9 @@ export default function Artwork() {
     Analytics.track("view_artwork", {
       art_id: artwork.art_id,
       title: artwork.title,
-      artist: artwork.artist,
-      price: artwork.pricing.usd_price,
       viewer_type: userType,
+      user_id: userSession.id,
+      artwork: artwork,
     });
 
     // Fire-and-forget; don’t block UI
@@ -185,7 +185,7 @@ export default function Artwork() {
       setLoadingPriceQuote(false);
       return;
     }
-    const { email, name } = JSON.parse(us.value);
+    const { email, name, id } = JSON.parse(us.value);
 
     const artwork_data = {
       title: artwork.title,
@@ -198,12 +198,36 @@ export default function Artwork() {
 
     const results = await requestArtworkPrice(artwork_data, email, name);
     if (results.isOk) {
+      Analytics.track("artwork_price_requested", {
+        ids: {
+          art_id: artwork.art_id,
+          user_id: id,
+        },
+        title: artwork.title,
+        artist: artwork.artist,
+        user_type: userType,
+        payload: artwork_data,
+        response: results,
+      });
+
       updateModal({
         message: `Price quote for ${artwork_data.title} has been sent to ${email}`,
         showModal: true,
         modalType: "success",
       });
     } else {
+      Analytics.track("artwork_price_request_failed", {
+        ids: {
+          art_id: artwork.art_id,
+          user_id: id,
+        },
+        title: artwork.title,
+        artist: artwork.artist,
+        error_message: results.message,
+        payload: artwork_data,
+        response: results,
+      });
+
       updateModal({
         message:
           "Something went wrong, please try again or contact us for assistance.",

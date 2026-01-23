@@ -21,6 +21,8 @@ import FlutterwavePayButton from "#components/payment/FlutterwavePayButton";
 import { useQueryClient } from "@tanstack/react-query";
 import VerifyTransactionModal from "../success/VerifyTransactionModal";
 import * as Crypto from "expo-crypto";
+import { Analytics } from "#utils/analytics";
+import { CreateOrderModelTypes } from "#types/types";
 
 interface RedirectParams {
   status: "successful" | "cancelled";
@@ -61,18 +63,18 @@ export default function OrderDetails({
   const feesNum = Number(
     typeof data.shipping_details.shipment_information.quote.fees === "string"
       ? JSON.parse(data.shipping_details.shipment_information.quote.fees)
-      : data.shipping_details.shipment_information.quote.fees
+      : data.shipping_details.shipment_information.quote.fees,
   );
   const taxesNum = Number(
     typeof data.shipping_details.shipment_information.quote.taxes === "string"
       ? JSON.parse(data.shipping_details.shipment_information.quote.taxes)
-      : data.shipping_details.shipment_information.quote.taxes
+      : data.shipping_details.shipment_information.quote.taxes,
   );
 
   const total_price_number = utils_calculatePurchaseGrandTotalNumber(
     data.artwork_data.pricing.usd_price,
     String(feesNum),
-    String(taxesNum)
+    String(taxesNum),
   );
 
   const fetchPaymentSheetParams = React.useCallback(async () => {
@@ -90,7 +92,7 @@ export default function OrderDetails({
         unit_price: data.artwork_data.pricing.usd_price,
         artwork_name: data.artwork_data.title,
         tax_fees: taxesNum,
-      }
+      },
     );
     return { paymentIntent, publishableKey };
   }, [total_price_number, data, userSession, feesNum, taxesNum]);
@@ -156,12 +158,32 @@ export default function OrderDetails({
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
     if (error) {
-      console.log(
-        "present payment sheet error ----",
-        JSON.stringify(error, null, 2)
-      );
+      // Track purchase failure
+      Analytics.track("artwork_purchase_failed", {
+        order_id: data.order_id,
+        user_id: userSession.id,
+        payment_method: "stripe",
+        total_amount: total_price_number,
+        error: error,
+        failure_stage: "payment_sheet",
+      });
+
       goToCancelAndBack();
     } else {
+      // Track purchase success
+      Analytics.track("artwork_purchase_success", {
+        order_id: data.order_id,
+        user_id: userSession.id,
+        payment_method: "stripe",
+        total_amount: total_price_number,
+        pricing_breakdown: {
+          artwork_price: data.artwork_data.pricing.usd_price,
+          shipping: feesNum,
+          taxes: taxesNum,
+          total: total_price_number,
+        },
+      });
+
       await goToSuccessAndRefreshOrders();
     }
     setLoading(false);
@@ -182,14 +204,14 @@ export default function OrderDetails({
 
       const get_purchase_lock = await createOrderLock(
         data.artwork_data.art_id,
-        userSession.id
+        userSession.id,
       );
       if (get_purchase_lock?.isOk) {
         if (get_purchase_lock.data.lock_data.user_id === userSession.id) {
           await openPaymentSheet();
         } else {
           throwError(
-            "A user is currently processing a purchase transaction on this artwork. Please check back in a few minutes for a status update"
+            "A user is currently processing a purchase transaction on this artwork. Please check back in a few minutes for a status update",
           );
         }
       }
@@ -205,8 +227,34 @@ export default function OrderDetails({
   // Flutterwave handler — also refresh Orders on success
   const handleOnRedirect = async (p: RedirectParams) => {
     if (p.status === "successful") {
+      // Track purchase success
+      Analytics.track("artwork_purchase_success", {
+        order_id: data.order_id,
+        user_id: userSession.id,
+        payment_method: "flutterwave",
+        transaction_id: p.transaction_id,
+        tx_ref: p.tx_ref,
+        total_amount: total_price_number,
+        pricing_breakdown: {
+          artwork_price: data.artwork_data.pricing.usd_price,
+          shipping: feesNum,
+          taxes: taxesNum,
+          total: total_price_number,
+        },
+      });
+
       setVerifyState({ visible: true, txId: p.transaction_id ?? null });
     } else {
+      // Track purchase failure
+      Analytics.track("artwork_purchase_failed", {
+        order_id: data.order_id,
+        user_id: userSession.id,
+        payment_method: "flutterwave",
+        tx_ref: p.tx_ref,
+        total_amount: total_price_number,
+        failure_stage: "cancelled",
+      });
+
       goToCancelAndBack();
     }
   };

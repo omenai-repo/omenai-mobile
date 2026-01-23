@@ -18,6 +18,7 @@ import {
 import { debounce } from "lodash";
 import { useAppStore } from "#store/app/appStore";
 import { useFormValidation } from "#hooks/useFormValidation";
+import { artworkOrderDataTypes } from "#types/types";
 
 interface SessionAddress {
   address_line: string;
@@ -62,7 +63,7 @@ export default function ShippingDetails({
         value: item.isoCode,
         label: item.name,
       })),
-    []
+    [],
   );
 
   const {
@@ -116,7 +117,7 @@ export default function ShippingDetails({
             value: state.name,
             isoCode: state.isoCode,
           }))
-        : []
+        : [],
     );
   };
 
@@ -128,10 +129,10 @@ export default function ShippingDetails({
         getCities?.map((city: ICity) => ({
           label: city.name,
           value: city.name,
-        })) || []
+        })) || [],
       );
     }, 300),
-    []
+    [],
   );
 
   // 🚀 **Handle State Selection**
@@ -143,7 +144,7 @@ export default function ShippingDetails({
       }
       fetchCities(countryCode, item.isoCode);
     },
-    [countryCode, fetchCities]
+    [countryCode, fetchCities],
   );
 
   const { userSession } = useAppStore();
@@ -168,7 +169,7 @@ export default function ShippingDetails({
 
     // ✅ Set Country
     const countryItem = Country.getAllCountries().find(
-      (c) => c.isoCode === session.address.countryCode
+      (c) => c.isoCode === session.address.countryCode,
     );
     if (!countryItem) return;
 
@@ -189,7 +190,7 @@ export default function ShippingDetails({
     setStateData(mappedStates);
 
     const selectedState = mappedStates.find(
-      (state) => state.isoCode === session.address.stateCode
+      (state) => state.isoCode === session.address.stateCode,
     );
     if (selectedState) {
       setState(selectedState.value);
@@ -207,7 +208,7 @@ export default function ShippingDetails({
 
       // 🏠 Set city if valid
       const foundCity = mappedCities.find(
-        (c) => c.value === session.address.city
+        (c) => c.value === session.address.city,
       );
       if (foundCity) setCity(foundCity.value);
     }

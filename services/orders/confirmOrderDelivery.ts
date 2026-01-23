@@ -1,13 +1,21 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import {
+  apiUrl,
+  authorization,
+  originHeader,
+  userAgent,
+} from "../../constants/apiUrl.constants";
 
-export async function confirmOrderDelivery(confirm_delivery: boolean, order_id: string) {
+export async function confirmOrderDelivery(
+  confirm_delivery: boolean,
+  order_id: string,
+) {
   try {
-    const response = await fetch(apiUrl + '/api/orders/confirmOrderDelivery', {
-      method: 'POST',
+    const response = await fetch(apiUrl + "/api/orders/confirmOrderDelivery", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Origin: originHeader,
-        'User-Agent': userAgent,
+        "User-Agent": userAgent,
         Authorization: authorization,
       },
       body: JSON.stringify({
@@ -18,10 +26,12 @@ export async function confirmOrderDelivery(confirm_delivery: boolean, order_id: 
 
     const result = await response.json();
     return { isOk: response.ok, message: result.message, data: result.data };
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: 'Error updating order status' },
+      body: { message: "Error updating order status" },
+      status: error?.status,
+      error: error,
     };
   }
 }

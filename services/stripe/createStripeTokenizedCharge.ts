@@ -51,6 +51,7 @@ export const createStripeTokenizedCharge = async (
   } catch (error: any) {
     return {
       isOk: false,
+      status: error?.status,
       message:
         "An error was encountered, please try again later or contact support",
       error: error,

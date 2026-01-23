@@ -33,7 +33,7 @@ export async function loginAccount(
   } catch (error: any) {
     return {
       isOk: false,
-      status: error?.status || 500,
+      status: error?.status,
       error,
       body: { message: "Error logging into account" },
     };

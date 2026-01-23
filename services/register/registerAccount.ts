@@ -1,11 +1,23 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import {
+  ArtistRegisterData,
+  GalleryRegisterData,
+  IndividualRegisterData,
+} from "#types/types";
+import {
+  apiUrl,
+  authorization,
+  originHeader,
+  userAgent,
+} from "../../constants/apiUrl.constants";
 
 export async function registerAccount(
   payload:
-    | (Omit<IndividualRegisterData, "confirmPassword"> & { preferences: string[] })
+    | (Omit<IndividualRegisterData, "confirmPassword"> & {
+        preferences: string[];
+      })
     | GalleryRegisterData
     | ArtistRegisterData,
-  route: "gallery" | "individual" | "artist"
+  route: "gallery" | "individual" | "artist",
 ) {
   const url = apiUrl + "/api/auth/" + route + "/register";
 
@@ -24,11 +36,14 @@ export async function registerAccount(
     const ParsedResponse = {
       isOk: response.ok,
       body: await response.json(),
+      status: response.status,
     };
     return ParsedResponse;
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
+      status: error?.status,
+      error: error,
       body: { message: "Error creating account" },
     };
   }

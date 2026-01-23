@@ -31,7 +31,7 @@ export async function uploadArtworkData(
   } catch (error: any) {
     return {
       isOk: false,
-      status: error?.status || 500,
+      status: error?.status,
       error: error,
       body: { message: "Error uploading artwork" },
     };
