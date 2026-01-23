@@ -84,10 +84,6 @@ export default {
         {
           backgroundColor: "#ffffff",
           image: "./assets/omenai-logo.png",
-          dark: {
-            image: "./assets/omenai-logo.png",
-            backgroundColor: "#1a1a1a",
-          },
           imageWidth: 200,
         },
       ],
