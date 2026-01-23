@@ -7,6 +7,7 @@ import { checkLockStatus } from "#services/orders/checkLockStatus";
 import { useAppStore } from "#store/app/appStore";
 import OrderDetails from "./components/orderDetails/OrderDetails";
 import type { CreateOrderModelTypes } from "#types/types";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 
 type artworkDetailsProps = {
   data:
@@ -50,7 +51,13 @@ export default function Payment() {
     handleFetchOrderDetails();
   }, [route.params, userSession.id]);
 
-  if (isLoading) return <OrderSkeleton />;
+  if (isLoading)
+    return (
+      <WithModal>
+        <BackHeaderTitle title="Confirm order details" />
+        <OrderSkeleton />
+      </WithModal>
+    );
 
   if (!isLoading && artworkDetails.data !== null)
     return (

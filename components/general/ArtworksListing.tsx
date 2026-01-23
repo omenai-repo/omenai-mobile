@@ -15,6 +15,8 @@ import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
 
 import { useDevice } from "#hooks/useDevice";
+import { colors } from "#config/colors.config";
+import { ArtworkSchemaTypes } from "#types/types";
 
 export default function ArtworksListing({
   data,
@@ -105,9 +107,19 @@ export default function ArtworksListing({
 
   if (!Array.isArray(data) || data.length === 0) {
     return (
-      <View style={tw`flex-1`}>
+      <ScrollView
+        contentContainerStyle={tw`flex-1`}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.black}
+            colors={[colors.black]}
+          />
+        }
+      >
         <EmptyArtworks />
-      </View>
+      </ScrollView>
     );
   }
 
@@ -120,8 +132,8 @@ export default function ArtworksListing({
         <RefreshControl
           refreshing={refreshing}
           onRefresh={handleRefresh}
-          tintColor="#000"
-          colors={["#000"]}
+          tintColor={colors.black}
+          colors={[colors.black]}
         />
       }
     >
