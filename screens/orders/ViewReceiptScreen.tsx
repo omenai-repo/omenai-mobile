@@ -149,9 +149,9 @@ export default function ViewReceiptScreen() {
             <Text style={tw`text-gray-400 text-xs uppercase font-bold mb-3`}>
               Items
             </Text>
-            {activeInvoice.lineItems.map((item, index) => (
+            {activeInvoice.lineItems.map((item) => (
               <View
-                key={index}
+                key={`${item.description}-${item.unitPrice}`}
                 style={tw`flex-row justify-between items-start py-3 border-b border-gray-50 last:border-0`}
               >
                 <View style={tw`flex-1 pr-4`}>
