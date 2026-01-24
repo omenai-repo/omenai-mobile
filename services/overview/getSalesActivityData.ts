@@ -1,4 +1,3 @@
-import { getCurrentMonthAndYear } from "#utils/utils_getCurrentMonthAndYear";
 import {
   apiUrl,
   authorization,

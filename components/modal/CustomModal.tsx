@@ -23,7 +23,7 @@ export default function CustomModal({
   type,
   onDismiss,
   buttonText,
-}: CustomModalProps) {
+}: Readonly<CustomModalProps>) {
   const {
     showModal,
     modalMessage,
@@ -46,7 +46,7 @@ export default function CustomModal({
     }
   };
 
-  const activeShowModal = visible !== undefined ? visible : showModal;
+  const activeShowModal = visible ?? showModal;
   const activeModalMessage = message || modalMessage;
   const activeModalType = type || modalType;
   const activeModalStyle = modalStyleOption || modalStyle;

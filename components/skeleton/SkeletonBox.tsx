@@ -17,7 +17,7 @@ export default function SkeletonBox({
   height,
   radius = 4,
   colorMode = "light",
-}: SkeletonBoxProps) {
+}: Readonly<SkeletonBoxProps>) {
   return (
     <Skeleton
       colorMode={colorMode}

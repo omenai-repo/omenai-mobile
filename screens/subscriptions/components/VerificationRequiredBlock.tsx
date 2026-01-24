@@ -8,10 +8,7 @@ import PremiumStateCard from "#components/general/PremiumStateCard";
 export default function VerificationRequiredBlock({
   onBack,
   disableBack,
-}: {
-  onBack?: () => void;
-  disableBack?: boolean;
-}) {
+}: Readonly<{ onBack?: () => void; disableBack?: boolean }>) {
   const navigation = useNavigation<any>();
 
   const handleBack = () => {

@@ -14,7 +14,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { verifySubscriptionCharge } from "#services/stripe/verifySubscriptionCharge";
 import { verifyDiscountedSubscriptionCharge } from "#services/stripe/verifyDiscountedSubscriptionCharge";
 import { screenName } from "#constants/screenNames.constants";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "#config/colors.config";
 import LongWhiteButton from "#components/buttons/LongWhiteButton";
@@ -33,7 +32,6 @@ type RootStackParamList = {
 type ScreenRouteProp = RouteProp<RootStackParamList, "BillingVerification">;
 
 export default function BillingVerificationScreen() {
-  const insetTop = useSafeAreaInsets().top;
   const route = useRoute<ScreenRouteProp>();
   const navigation = useNavigation<any>();
   const qc = useQueryClient();

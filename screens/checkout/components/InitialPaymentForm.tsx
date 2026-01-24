@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { useStripe, useConfirmSetupIntent } from "@stripe/stripe-react-native";
+import { useStripe } from "@stripe/stripe-react-native";
 import { useQuery } from "@tanstack/react-query";
 import tw from "twrnc";
 import { createSubscriptionPaymentIntent } from "#services/stripe/createSubscriptionPaymentIntent";
@@ -64,7 +64,7 @@ export const InitialPaymentForm = ({
           plan_id: planId,
           plan_interval: interval,
         },
-        "omenaimobile://stripe-redirect"
+        "omenaimobile://stripe-redirect",
       );
 
       if (!response.isOk) {

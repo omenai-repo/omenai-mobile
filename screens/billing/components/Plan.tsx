@@ -37,7 +37,12 @@ const ForfeitWarning = ({ targetPlan }: { targetPlan: string }) => (
   </View>
 );
 
-export default function Plan({ plan, tab, sub_data, discount }: Props) {
+export default function Plan({
+  plan,
+  tab,
+  sub_data,
+  discount,
+}: Readonly<Props>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute<any>();
   const { name, benefits, pricing, currency } = plan;
@@ -58,7 +63,7 @@ export default function Plan({ plan, tab, sub_data, discount }: Props) {
       sub_data.plan_details.interval.toLowerCase() as "monthly" | "yearly",
       tab === "yearly" ? +pricing.annual_price : +pricing.monthly_price,
       tab,
-      sub_data.status
+      sub_data.status,
     );
   }, [sub_data, pricing, tab]);
 
@@ -101,11 +106,14 @@ export default function Plan({ plan, tab, sub_data, discount }: Props) {
     discount !== null && discount.redeemed === false && !isEligibleForDiscount;
 
   // Calculate amount with discount consideration
-  const amount = isEligibleForDiscount
-    ? 0
-    : tab === "monthly"
-    ? Number(monthly_price)
-    : Number(annual_price);
+  let amount: number;
+  if (isEligibleForDiscount) {
+    amount = 0;
+  } else if (tab === "monthly") {
+    amount = Number(monthly_price);
+  } else {
+    amount = Number(annual_price);
+  }
 
   const prettyAmount = utils_formatPrice(amount, currencySymbol, 0);
 
@@ -116,7 +124,7 @@ export default function Plan({ plan, tab, sub_data, discount }: Props) {
   const yearlySave =
     tab === "yearly"
       ? Math.max(0, Number(monthly_price) * 12 - Number(annual_price)).toFixed(
-          0
+          0,
         )
       : null;
 
@@ -235,13 +243,20 @@ export default function Plan({ plan, tab, sub_data, discount }: Props) {
             <Pressable
               disabled={isDisabled}
               onPress={handleNavigate}
-              style={({ pressed }) =>
-                tw.style(
+              style={({ pressed }) => {
+                let opacityStyle = "";
+                if (isDisabled) {
+                  opacityStyle = "opacity-50";
+                } else if (pressed) {
+                  opacityStyle = "opacity-90";
+                }
+
+                return tw.style(
                   `mt-5 h-12 rounded-md items-center justify-center`,
                   name === "Pro" ? "bg-blue-600" : "bg-slate-900",
-                  isDisabled ? "opacity-50" : pressed ? "opacity-90" : ""
-                )
-              }
+                  opacityStyle,
+                );
+              }}
               accessibilityRole="button"
               accessibilityLabel={finalButtonText}
             >

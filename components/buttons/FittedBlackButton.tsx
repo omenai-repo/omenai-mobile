@@ -52,10 +52,11 @@ export default function FittedBlackButton({
   const containerStyle = [
     tw`flex flex-row items-center justify-center rounded-lg gap-[10px] px-5`,
     defaultContainerStyle,
-    responsive && {
-      alignSelf: (isTablet ? "flex-start" : "auto") as "flex-start" | "auto",
-      width: (isTablet ? undefined : "100%") as ViewStyle["width"],
-    },
+    responsive &&
+      ({
+        alignSelf: isTablet ? "flex-start" : "auto",
+        width: isTablet ? undefined : "100%",
+      } as ViewStyle),
     style,
   ];
 

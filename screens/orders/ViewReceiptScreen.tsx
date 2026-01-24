@@ -22,7 +22,7 @@ type RouteParams = {
 
 export default function ViewReceiptScreen() {
   const { params } = useRoute<RouteProp<RouteParams, "params">>();
-  const { invoice, invoiceNumber } = params;
+  const { invoiceNumber } = params;
   const { updateModal } = useModalStore();
 
   const { data: activeInvoice, isLoading } = useInvoiceQuery(invoiceNumber);
@@ -78,7 +78,7 @@ export default function ViewReceiptScreen() {
           modalType: "success",
         });
       }
-    } catch (error) {
+    } catch {
       updateModal({
         message: "Download failed",
         showModal: true,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View } from "react-native";
 import { Skeleton } from "moti/skeleton";
 import tw from "twrnc";
@@ -8,6 +8,15 @@ type FormSkeletonProps = {
   rows?: number;
 };
 
+const FormFieldSkeleton = ({ colorMode }: { colorMode: "light" | "dark" }) => (
+  <View style={tw`mb-5`}>
+    <Skeleton colorMode={colorMode} height={14} width={100} radius={4} />
+    <View style={tw`mt-2`}>
+      <Skeleton colorMode={colorMode} height={48} width="100%" radius={8} />
+    </View>
+  </View>
+);
+
 /**
  * Generic form skeleton for loading states in form screens.
  * Used for ForgotPin, AddPrimaryAcct, ArtworkPriceReview, etc.
@@ -15,14 +24,10 @@ type FormSkeletonProps = {
 export default function FormSkeleton({
   colorMode = "light",
   rows = 4,
-}: FormSkeletonProps) {
-  const FormFieldSkeleton = () => (
-    <View style={tw`mb-5`}>
-      <Skeleton colorMode={colorMode} height={14} width={100} radius={4} />
-      <View style={tw`mt-2`}>
-        <Skeleton colorMode={colorMode} height={48} width="100%" radius={8} />
-      </View>
-    </View>
+}: Readonly<FormSkeletonProps>) {
+  const skeletonRows = useMemo(
+    () => Array.from({ length: rows }).map((_, i) => `skeleton-row-${i}`),
+    [rows],
   );
 
   return (
@@ -34,8 +39,8 @@ export default function FormSkeleton({
         </View>
 
         {/* Form fields skeleton */}
-        {Array.from({ length: rows }).map((_, index) => (
-          <FormFieldSkeleton key={index} />
+        {skeletonRows.map((key) => (
+          <FormFieldSkeleton key={key} colorMode={colorMode} />
         ))}
 
         {/* Button skeleton */}
