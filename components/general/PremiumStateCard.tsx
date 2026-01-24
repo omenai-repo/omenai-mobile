@@ -1,4 +1,4 @@
-import { View, Text, useWindowDimensions, StyleSheet } from "react-native";
+import { View, Text, useWindowDimensions } from "react-native";
 import React from "react";
 import { colors } from "#config/colors.config";
 import tw from "twrnc";
@@ -26,7 +26,7 @@ export default function PremiumStateCard({
   onBack,
   disableBack = false,
   extraContent,
-}: PremiumStateCardProps) {
+}: Readonly<PremiumStateCardProps>) {
   const { height } = useWindowDimensions();
 
   return (

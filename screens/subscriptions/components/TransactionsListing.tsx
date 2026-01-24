@@ -18,7 +18,7 @@ import { currency_symbol } from "#json/currencySymbol";
 // ---- types (adjust if your service returns differently)
 type Txn = {
   trans_id: string;
-  status: "successful" | "failed" | "pending" | string;
+  status: string;
   date: string; // ISO
   amount: number;
   currency?: string; // optional
@@ -110,25 +110,34 @@ export default function TransactionsListing() {
   );
 }
 
-function Row({ item, index }: { item: Txn; index: number }) {
-  const statusText =
-    item.status === "successful"
-      ? "Payment processed successfully"
-      : item.status === "failed"
-      ? "Payment failed"
-      : "Payment pending";
+function getStatusConfig(status: string) {
+  switch (status) {
+    case "successful":
+      return {
+        text: "Payment processed successfully",
+        color: tw`text-green-600`,
+      };
+    case "failed":
+      return {
+        text: "Payment failed",
+        color: tw`text-red-600`,
+      };
+    case "pending":
+    default:
+      return {
+        text: "Payment pending",
+        color: tw`text-amber-600`,
+      };
+  }
+}
 
-  const statusColor =
-    item.status === "successful"
-      ? tw`text-green-600`
-      : item.status === "failed"
-      ? tw`text-red-600`
-      : tw`text-amber-600`;
+function Row({ item, index }: { item: Txn; index: number }) {
+  const { text: statusText, color: statusColor } = getStatusConfig(item.status);
 
   // match web default "USD" formatting when currency not provided
   const currencyCode = item.currency ?? "USD";
   const symbolItem = currency_symbol.find(
-    (c) => c.abbreviation.toLowerCase() === currencyCode.toLowerCase()
+    (c) => c.abbreviation.toLowerCase() === currencyCode.toLowerCase(),
   );
   const symbol = symbolItem ? symbolItem.symbol : "$";
 

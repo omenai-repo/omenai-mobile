@@ -8,7 +8,7 @@ import {
 
 export const verifyDiscountedSubscriptionCharge = async (
   setupIntentId: string,
-  planId: string
+  planId: string,
 ): Promise<{ isOk: boolean; message: string }> => {
   let gallery_id = "";
   const userSession = await utils_getAsyncData("userSession");
@@ -33,12 +33,12 @@ export const verifyDiscountedSubscriptionCharge = async (
           planId,
           galleryId: gallery_id,
         }),
-      }
+      },
     );
 
     const result = await res.json();
     return { isOk: res.ok, message: result.message };
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
       message:

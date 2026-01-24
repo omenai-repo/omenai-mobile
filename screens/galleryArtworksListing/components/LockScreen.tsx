@@ -1,15 +1,7 @@
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  useWindowDimensions,
-  StyleSheet,
-} from "react-native";
+import { Text, ActivityIndicator } from "react-native";
 import React, { useState } from "react";
 import tw from "twrnc";
-import BackScreenButton from "#components/buttons/BackScreenButton";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 import { verifyGalleryRequest } from "#services/verify/verifyGalleryRequest";
 import WithModal from "#components/modal/WithModal";
 import { useModalStore } from "#store/modal/modalStore";
@@ -19,7 +11,6 @@ import LongWhiteButton from "#components/buttons/LongWhiteButton";
 import PremiumStateCard from "#components/general/PremiumStateCard";
 
 export default function LockScreen({ name }: { name: string }) {
-  const { height } = useWindowDimensions();
   const navigation = useNavigation<any>();
   const [loading, setLoading] = useState(false);
   const { updateModal } = useModalStore();

@@ -4,7 +4,6 @@ import {
   originHeader,
   userAgent,
 } from "../../constants/apiUrl.constants";
-import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import { AddressTypes } from "#types/types";
 
 export async function createShippingOrder(

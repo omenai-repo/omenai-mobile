@@ -19,7 +19,7 @@ interface ShippingTypeProps {
   data: ShippingQuoteData;
   order_id: string;
   art_id?: string; // made optional
-  seller_designation?: "gallery" | "artist" | string; // made optional
+  seller_designation?: string; // made optional
 }
 
 export async function updateShippingQuote({

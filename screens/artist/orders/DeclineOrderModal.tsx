@@ -43,6 +43,109 @@ type OrderModalMetadata = {
   seller_designation?: string;
 };
 
+const GalleryDeclineView = ({
+  reason,
+  setReason,
+}: {
+  reason: string;
+  setReason: (val: string) => void;
+}) => (
+  <View style={tw`mb-4`}>
+    <LargeInput
+      label="Provide a reason for declining order request"
+      placeHolder="e.g Artwork has been sold"
+      value={reason}
+      onInputChange={setReason}
+      height={100}
+      containerStyle={tw`flex-none`}
+    />
+  </View>
+);
+
+const ExclusiveDeclineView = ({
+  checked,
+  setChecked,
+}: {
+  checked: boolean;
+  setChecked: (val: boolean) => void;
+}) => (
+  <>
+    <Pressable
+      onPress={() => setChecked(!checked)}
+      style={tw`flex-row items-center gap-[10px] mb-3`}
+    >
+      <View
+        style={tw`h-[20px] w-[20px] rounded-[4px] border border-[#E5E7EB] justify-center items-center ${
+          checked ? "bg-[#C71C16]" : ""
+        }`}
+      >
+        <Text style={tw`text-white font-bold`}>✓</Text>
+      </View>
+      <Text style={tw`text-[14px]`}>Artwork has been sold off platform</Text>
+    </Pressable>
+
+    {checked ? (
+      <View
+        style={tw`bg-red-50 border border-red-200 rounded-[10px] p-[12px] flex-row items-start gap-[8px] mb-2`}
+      >
+        <View style={tw`mt-[2px]`}>{/* icon placeholder */}</View>
+        <View style={tw`flex-1`}>
+          <Text style={tw`text-[13px] text-[#B91C1C]`}>
+            This artwork is still subject to Omenai's 90-day exclusivity policy.
+            In accordance with our Terms of Use, a 10% penalty fee will be
+            deducted from your next successful sale on the platform.
+          </Text>
+        </View>
+      </View>
+    ) : null}
+  </>
+);
+
+const StandardDeclineView = ({
+  selectedReason,
+  toggleReason,
+  reasons,
+}: {
+  selectedReason: string | null;
+  toggleReason: (r: string) => void;
+  reasons: string[];
+}) => (
+  <>
+    <Text style={tw`text-[13px] text-[#6B7280] mb-3`}>
+      Please choose a reason that best explains why you're declining this order.
+    </Text>
+    <ScrollView style={tw`max-h-[220px] mb-4`}>
+      {reasons.map((r) => (
+        <Pressable
+          key={r}
+          onPress={() => toggleReason(r)}
+          style={tw`flex-row items-start gap-[10px] mb-4`}
+        >
+          <View
+            style={tw`h-[20px] w-[20px] rounded-[4px] border border-[#E5E7EB] justify-center items-center ${
+              selectedReason === r ? "bg-[#C71C16]" : ""
+            }`}
+          >
+            <Text style={tw`text-white font-bold`}>✓</Text>
+          </View>
+          <View style={tw`flex-1`}>
+            <Text style={tw`text-[14px]`}>{r}</Text>
+          </View>
+        </Pressable>
+      ))}
+    </ScrollView>
+
+    {selectedReason ? (
+      <View style={tw`p-[10px] bg-red-50 border border-red-100 rounded-[8px]`}>
+        <Text style={tw`text-[13px] text-[#B91C1C]`}>
+          <Text style={tw`font-semibold`}>Client interpretation:</Text>{" "}
+          {declineReasonMapping[selectedReason]}
+        </Text>
+      </View>
+    ) : null}
+  </>
+);
+
 const DeclineOrderModal = ({
   isModalVisible,
   setIsModalVisible,
@@ -235,6 +338,13 @@ const DeclineOrderModal = ({
     return selectedReason ? "bg-[#C71C16]" : "bg-[#E5E7E7]";
   };
 
+  const title =
+    orderModalMetadata.seller_designation === "gallery"
+      ? "Sure to decline this order request?"
+      : orderModalMetadata.is_current_order_exclusive
+      ? "Select reason for declining this order"
+      : "Decline order request";
+
   return (
     <Modal
       visible={isModalVisible}
@@ -250,100 +360,21 @@ const DeclineOrderModal = ({
           onPress={(e) => e.stopPropagation()}
           style={tw`bg-white p-[20px] rounded-[14px] w-[90%] max-h-[80%]`}
         >
-          <Text style={tw`text-[16px] font-semibold mb-4`}>
-            {orderModalMetadata.seller_designation === "gallery"
-              ? "Sure to decline this order request?"
-              : orderModalMetadata.is_current_order_exclusive
-              ? "Select reason for declining this order"
-              : "Decline order request"}
-          </Text>
+          <Text style={tw`text-[16px] font-semibold mb-4`}>{title}</Text>
 
           {orderModalMetadata.seller_designation === "gallery" ? (
-            <View style={tw`mb-4`}>
-              <LargeInput
-                label="Provide a reason for declining order request"
-                placeHolder="e.g Artwork has been sold"
-                value={galleryReason}
-                onInputChange={setGalleryReason}
-                height={100}
-                containerStyle={tw`flex-none`}
-              />
-            </View>
+            <GalleryDeclineView
+              reason={galleryReason}
+              setReason={setGalleryReason}
+            />
           ) : orderModalMetadata.is_current_order_exclusive ? (
-            <>
-              <Pressable
-                onPress={() => setChecked(!checked)}
-                style={tw`flex-row items-center gap-[10px] mb-3`}
-              >
-                <View
-                  style={tw`h-[20px] w-[20px] rounded-[4px] border border-[#E5E7EB] justify-center items-center ${
-                    checked ? "bg-[#C71C16]" : ""
-                  }`}
-                >
-                  <Text style={tw`text-white font-bold`}>✓</Text>
-                </View>
-                <Text style={tw`text-[14px]`}>
-                  Artwork has been sold off platform
-                </Text>
-              </Pressable>
-
-              {/* Collapsible warning */}
-              {checked ? (
-                <View
-                  style={tw`bg-red-50 border border-red-200 rounded-[10px] p-[12px] flex-row items-start gap-[8px] mb-2`}
-                >
-                  <View style={tw`mt-[2px]`}>{/* icon placeholder */}</View>
-                  <View style={tw`flex-1`}>
-                    <Text style={tw`text-[13px] text-[#B91C1C]`}>
-                      This artwork is still subject to Omenai's 90-day
-                      exclusivity policy. In accordance with our Terms of Use, a
-                      10% penalty fee will be deducted from your next successful
-                      sale on the platform.
-                    </Text>
-                  </View>
-                </View>
-              ) : null}
-            </>
+            <ExclusiveDeclineView checked={checked} setChecked={setChecked} />
           ) : (
-            <>
-              <Text style={tw`text-[13px] text-[#6B7280] mb-3`}>
-                Please choose a reason that best explains why you're declining
-                this order.
-              </Text>
-              <ScrollView style={tw`max-h-[220px] mb-4`}>
-                {reasons.map((r) => (
-                  <Pressable
-                    key={r}
-                    onPress={() => toggleReason(r)}
-                    style={tw`flex-row items-start gap-[10px] mb-4`}
-                  >
-                    <View
-                      style={tw`h-[20px] w-[20px] rounded-[4px] border border-[#E5E7EB] justify-center items-center ${
-                        selectedReason === r ? "bg-[#C71C16]" : ""
-                      }`}
-                    >
-                      <Text style={tw`text-white font-bold`}>✓</Text>
-                    </View>
-                    <View style={tw`flex-1`}>
-                      <Text style={tw`text-[14px]`}>{r}</Text>
-                    </View>
-                  </Pressable>
-                ))}
-              </ScrollView>
-
-              {selectedReason ? (
-                <View
-                  style={tw`p-[10px] bg-red-50 border border-red-100 rounded-[8px]`}
-                >
-                  <Text style={tw`text-[13px] text-[#B91C1C]`}>
-                    <Text style={tw`font-semibold`}>
-                      Client interpretation:
-                    </Text>{" "}
-                    {declineReasonMapping[selectedReason]}
-                  </Text>
-                </View>
-              ) : null}
-            </>
+            <StandardDeclineView
+              selectedReason={selectedReason}
+              toggleReason={toggleReason}
+              reasons={reasons}
+            />
           )}
 
           {/* Submit */}

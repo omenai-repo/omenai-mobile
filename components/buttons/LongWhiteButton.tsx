@@ -57,7 +57,7 @@ export default function LongWhiteButton({
     <TouchableOpacity
       activeOpacity={1}
       style={containerStyle}
-      onPress={!isLoading ? onClick : undefined}
+      onPress={isLoading ? undefined : onClick}
     >
       <View style={tw`flex-row items-center justify-center gap-3`}>
         {isLoading ? (

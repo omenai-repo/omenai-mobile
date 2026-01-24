@@ -36,7 +36,7 @@ export const retrieveSubscriptionDiscount = async (): Promise<{
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
-      }
+      },
     );
 
     const result = await res.json();
@@ -45,7 +45,7 @@ export const retrieveSubscriptionDiscount = async (): Promise<{
       message: result.message,
       discount: result.discount,
     };
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
       message:

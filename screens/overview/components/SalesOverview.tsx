@@ -75,12 +75,19 @@ export default function SalesOverview({
   }));
 
   const formatYAxisLabel = (label: string) => {
-    const value = parseFloat(label);
+    const value = Number.parseFloat(label);
     if (value < 0) return "";
     if (value >= 1000) {
       return `$${(value / 1000).toFixed(0)}k`;
     }
     return `$${value}`;
+  };
+
+  const renderTooltip = (items: any) => {
+    const item = items[0];
+    return (
+      <ChartTooltip value={item.value} label={item.label} index={item.index} />
+    );
   };
 
   if (query.isLoading && !query.data) {
@@ -182,16 +189,7 @@ export default function SalesOverview({
               pointerLabelHeight: 120,
               activatePointersOnLongPress: true,
               autoAdjustPointerLabelPosition: false,
-              pointerLabelComponent: (items: any) => {
-                const item = items[0];
-                return (
-                  <ChartTooltip
-                    value={item.value}
-                    label={item.label}
-                    index={item.index}
-                  />
-                );
-              },
+              pointerLabelComponent: renderTooltip,
             }}
             width={chartWidth}
             height={230}
