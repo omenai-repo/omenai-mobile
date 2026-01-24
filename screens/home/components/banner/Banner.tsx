@@ -119,7 +119,7 @@ export default function Banner() {
       {/* Pagination - show dots based on scroll positions */}
       {!isTablet && (
         <View style={styles.indicatorsContainer}>
-          {data.map((_, i) => {
+          {data.map((item, i) => {
             const inputRange = [
               SNAP_INTERVAL * (i - 1),
               SNAP_INTERVAL * i,
@@ -137,7 +137,7 @@ export default function Banner() {
             });
             return (
               <Animated.View
-                key={`indicator-${i}`}
+                key={`indicator-${item.headline}`}
                 style={[
                   styles.indicator,
                   { width: dotWidth, backgroundColor: dotColor },
@@ -150,32 +150,40 @@ export default function Banner() {
       {/* Tablet: show dots for scroll positions (total items - visible + 1) */}
       {isTablet && data.length > cardsToShow && (
         <View style={styles.indicatorsContainer}>
-          {Array.from({ length: data.length - cardsToShow + 1 }).map((_, i) => {
-            const inputRange = [
-              SNAP_INTERVAL * (i - 1),
-              SNAP_INTERVAL * i,
-              SNAP_INTERVAL * (i + 1),
-            ];
-            const dotWidth = scrollX.interpolate({
-              inputRange,
-              outputRange: [8, 16, 8],
-              extrapolate: "clamp",
-            });
-            const dotColor = scrollX.interpolate({
-              inputRange,
-              outputRange: ["#D1D5DB", colors.primary_black, "#D1D5DB"],
-              extrapolate: "clamp",
-            });
-            return (
-              <Animated.View
-                key={`tablet-indicator-${i}`}
-                style={[
-                  styles.indicator,
-                  { width: dotWidth, backgroundColor: dotColor },
-                ]}
-              />
+          {(() => {
+            const indicatorsCount = data.length - cardsToShow + 1;
+            const indicators = Array.from(
+              { length: indicatorsCount },
+              (_, k) => `tablet-ind-${k}`,
             );
-          })}
+
+            return indicators.map((id, i) => {
+              const inputRange = [
+                SNAP_INTERVAL * (i - 1),
+                SNAP_INTERVAL * i,
+                SNAP_INTERVAL * (i + 1),
+              ];
+              const dotWidth = scrollX.interpolate({
+                inputRange,
+                outputRange: [8, 16, 8],
+                extrapolate: "clamp",
+              });
+              const dotColor = scrollX.interpolate({
+                inputRange,
+                outputRange: ["#D1D5DB", colors.primary_black, "#D1D5DB"],
+                extrapolate: "clamp",
+              });
+              return (
+                <Animated.View
+                  key={id}
+                  style={[
+                    styles.indicator,
+                    { width: dotWidth, backgroundColor: dotColor },
+                  ]}
+                />
+              );
+            });
+          })()}
         </View>
       )}
     </View>
