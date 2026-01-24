@@ -345,6 +345,27 @@ const DeclineOrderModal = ({
       ? "Select reason for declining this order"
       : "Decline order request";
 
+  const renderDeclineView = () => {
+    if (orderModalMetadata.seller_designation === "gallery")
+      return (
+        <GalleryDeclineView
+          reason={galleryReason}
+          setReason={setGalleryReason}
+        />
+      );
+
+    if (orderModalMetadata.is_current_order_exclusive)
+      return <ExclusiveDeclineView checked={checked} setChecked={setChecked} />;
+
+    return (
+      <StandardDeclineView
+        selectedReason={selectedReason}
+        toggleReason={toggleReason}
+        reasons={reasons}
+      />
+    );
+  };
+
   return (
     <Modal
       visible={isModalVisible}
@@ -362,20 +383,7 @@ const DeclineOrderModal = ({
         >
           <Text style={tw`text-[16px] font-semibold mb-4`}>{title}</Text>
 
-          {orderModalMetadata.seller_designation === "gallery" ? (
-            <GalleryDeclineView
-              reason={galleryReason}
-              setReason={setGalleryReason}
-            />
-          ) : orderModalMetadata.is_current_order_exclusive ? (
-            <ExclusiveDeclineView checked={checked} setChecked={setChecked} />
-          ) : (
-            <StandardDeclineView
-              selectedReason={selectedReason}
-              toggleReason={toggleReason}
-              reasons={reasons}
-            />
-          )}
+          {renderDeclineView()}
 
           {/* Submit */}
           <Pressable

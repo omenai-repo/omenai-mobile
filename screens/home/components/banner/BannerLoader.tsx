@@ -35,8 +35,13 @@ const SkeletonCard = ({ width }: { width?: number }) => (
 export default function BannerLoader({
   isTablet,
   cardWidth,
-}: BannerLoaderProps) {
+}: Readonly<BannerLoaderProps>) {
   const skeletonCount = isTablet ? 3 : 1;
+
+  const skeletonItems = React.useMemo(
+    () => Array.from({ length: skeletonCount }).map((_, i) => `skeleton-${i}`),
+    [skeletonCount],
+  );
 
   return (
     <View style={styles.container}>
@@ -46,8 +51,8 @@ export default function BannerLoader({
           !isTablet && { flex: 1 },
         ]}
       >
-        {Array.from({ length: skeletonCount }).map((_, index) => (
-          <SkeletonCard key={index} width={isTablet ? cardWidth : undefined} />
+        {skeletonItems.map((key) => (
+          <SkeletonCard key={key} width={isTablet ? cardWidth : undefined} />
         ))}
       </View>
     </View>

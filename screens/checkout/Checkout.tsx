@@ -272,13 +272,12 @@ const PaymentSection = ({
     {isInitialSubscription ? (
       <InitialPaymentForm
         planId={plan.plan_id}
-        amount={
-          discountEligible
-            ? 0
-            : interval === "monthly"
+        amount={(() => {
+          if (discountEligible) return 0;
+          return interval === "monthly"
             ? +plan.pricing.monthly_price
-            : +plan.pricing.annual_price
-        }
+            : +plan.pricing.annual_price;
+        })()}
         interval={interval}
         discountEligible={discountEligible}
       />
@@ -386,6 +385,11 @@ export default function Checkout() {
     );
 
   const showCharge = plan_change_params.shouldCharge;
+
+  const finalGrandTotal = useMemo(() => {
+    if (discountEligible) return 0;
+    return showCharge ? grandTotal : 0;
+  }, [discountEligible, showCharge, grandTotal]);
 
   const handlePayNow = async () => {
     if (!user?.id) {
@@ -602,7 +606,7 @@ export default function Checkout() {
           days_left={days_left}
           upgradeCost={upgradeCost}
           proratedPrice={proratedPrice}
-          grandTotal={discountEligible ? 0 : showCharge ? grandTotal : 0}
+          grandTotal={finalGrandTotal}
           currency={currency}
           showCharge={showCharge}
           discountEligible={discountEligible}

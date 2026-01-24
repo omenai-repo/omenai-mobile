@@ -47,7 +47,7 @@ export default function Banner() {
 
   useEffect(() => {
     const sub = scrollX.addListener(
-      ({ value }) => (scrollXValueRef.current = value)
+      ({ value }) => (scrollXValueRef.current = value),
     );
     return () => {
       scrollX.removeListener(sub);
@@ -97,7 +97,7 @@ export default function Banner() {
                 cardWidth={CARD_WIDTH}
               />
             )}
-            keyExtractor={(_, index) => `banner-${index}`}
+            keyExtractor={(item) => item.headline}
             horizontal
             showsHorizontalScrollIndicator={false}
             snapToInterval={SNAP_INTERVAL}
@@ -107,7 +107,7 @@ export default function Banner() {
               [{ nativeEvent: { contentOffset: { x: scrollX } } }],
               {
                 useNativeDriver: false,
-              }
+              },
             )}
             scrollEventThrottle={16}
             contentContainerStyle={{ paddingHorizontal: SIDE_PADDING }}
@@ -137,7 +137,7 @@ export default function Banner() {
             });
             return (
               <Animated.View
-                key={i}
+                key={`indicator-${i}`}
                 style={[
                   styles.indicator,
                   { width: dotWidth, backgroundColor: dotColor },
@@ -168,7 +168,7 @@ export default function Banner() {
             });
             return (
               <Animated.View
-                key={i}
+                key={`tablet-indicator-${i}`}
                 style={[
                   styles.indicator,
                   { width: dotWidth, backgroundColor: dotColor },
