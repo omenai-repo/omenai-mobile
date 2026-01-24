@@ -338,12 +338,17 @@ const DeclineOrderModal = ({
     return selectedReason ? "bg-[#C71C16]" : "bg-[#E5E7E7]";
   };
 
-  const title =
-    orderModalMetadata.seller_designation === "gallery"
-      ? "Sure to decline this order request?"
-      : orderModalMetadata.is_current_order_exclusive
-      ? "Select reason for declining this order"
-      : "Decline order request";
+  const getModalTitle = () => {
+    if (orderModalMetadata.seller_designation === "gallery")
+      return "Sure to decline this order request?";
+
+    if (orderModalMetadata.is_current_order_exclusive)
+      return "Select reason for declining this order";
+
+    return "Decline order request";
+  };
+
+  const title = getModalTitle();
 
   const renderDeclineView = () => {
     if (orderModalMetadata.seller_designation === "gallery")
