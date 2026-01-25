@@ -1,4 +1,11 @@
-import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import {
+  StyleProp,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 import React, { useRef } from "react";
 import { colors } from "../../config/colors.config";
 import LottieView from "lottie-react-native";
@@ -98,7 +105,11 @@ export default function LongBlackButton({
   }
 
   return (
-    <TouchableOpacity activeOpacity={1} style={containerStyle} onPress={onClick}>
+    <TouchableOpacity
+      activeOpacity={1}
+      style={containerStyle}
+      onPress={onClick}
+    >
       <View style={tw`flex-row items-center justify-center gap-3`}>
         {icon}
         <Text style={mergedTextStyle}>{value}</Text>

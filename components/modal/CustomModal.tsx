@@ -31,6 +31,7 @@ export default function CustomModal({
     retainModal,
     updateModal,
     modalStyle,
+    onDismiss: storeOnDismiss,
   } = useModalStore();
 
   const modals: { [key: string]: React.ReactElement } = {
@@ -42,7 +43,13 @@ export default function CustomModal({
     if (onDismiss) {
       onDismiss();
     } else {
-      updateModal({ message: "", showModal: false, modalType: "" });
+      if (storeOnDismiss) storeOnDismiss();
+      updateModal({
+        message: modalMessage,
+        showModal: false,
+        modalType: modalType,
+        modalStyle: modalStyle,
+      });
     }
   };
 

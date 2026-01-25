@@ -13,6 +13,7 @@ import { resendVerifyCode } from "#services/verify/resendVerifyCode";
 import { verifyEmail } from "#services/verify/verifyEmail";
 import { screenName } from "#constants/screenNames.constants";
 import ScrollWrapper from "#components/general/ScrollWrapper";
+import { verifyEmailRouteParamsType } from "#types/types";
 
 export default function VerifyEmail() {
   const route = useRoute();
@@ -40,7 +41,7 @@ export default function VerifyEmail() {
     setIsLoading(true);
     const results = await verifyEmail(
       { params: account.id, token: token },
-      account.type
+      account.type,
     );
 
     if (results.isOk) {
@@ -48,12 +49,11 @@ export default function VerifyEmail() {
         message: results.body.message,
         modalType: "success",
         showModal: true,
+        onDismiss: () => {
+          navigation.navigate(screenName.login);
+        },
       });
       setIsLoading(false);
-      setTimeout(() => {
-        updateModal({ message: "", showModal: false, modalType: "" });
-        navigation.navigate(screenName.login);
-      }, 4000);
     } else {
       updateModal({
         message: results.body.message,
