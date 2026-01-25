@@ -11,6 +11,8 @@ import { requestPasswordConfirmationCode } from "#services/requests/requestConfi
 import { updatePassword } from "#services/requests/updatePassword";
 import { useModalStore } from "#store/modal/modalStore";
 import ScrollWrapper from "#components/general/ScrollWrapper";
+import { useBiometrics, UserType } from "#hooks/useBiometrics";
+import { useAppStore } from "#store/app/appStore";
 
 export default function ChangeGalleryPassword({
   route,
@@ -31,6 +33,8 @@ export default function ChangeGalleryPassword({
   const [errorList, setErrorList] = useState<string[]>([]);
 
   const { updateModal } = useModalStore();
+  const { deleteCredentials } = useBiometrics();
+  const { userType } = useAppStore();
 
   function handleInputChange(name: string, value: string) {
     setErrorList([]);
@@ -69,6 +73,7 @@ export default function ChangeGalleryPassword({
     const response = await updatePassword(info.password, info.code, routeName);
 
     if (response?.isOk) {
+      if (userType) await deleteCredentials(userType as UserType);
       setInfo({
         password: "",
         confirmPassword: "",
