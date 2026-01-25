@@ -1,4 +1,11 @@
-import { KeyboardTypeOptions, StyleProp, Text, TextInput, View, ViewStyle } from "react-native";
+import {
+  KeyboardTypeOptions,
+  StyleProp,
+  Text,
+  TextInput,
+  View,
+  ViewStyle,
+} from "react-native";
 import React from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";

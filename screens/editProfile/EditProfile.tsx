@@ -1,18 +1,18 @@
-import { StyleSheet, View, Text } from 'react-native';
-import React, { useState } from 'react';
-import WithModal from '#components/modal/WithModal';
-import BackHeaderTitle from '#components/header/BackHeaderTitle';
-import Input from '#components/inputs/Input';
-import { useAppStore } from '#store/app/appStore';
-import Preferences from './components/Preferences';
-import LongBlackButton from '#components/buttons/LongBlackButton';
-import { validate } from '#lib/validations/validatorGroup';
-import { updateProfile } from '#services/update/updateProfile';
-import { useModalStore } from '#store/modal/modalStore';
-import { logout } from '#utils/logout.utils';
-import ScrollWrapper from '#components/general/ScrollWrapper';
-import { useNavigation } from '@react-navigation/native';
-import tw from 'twrnc';
+import { StyleSheet, View, Text } from "react-native";
+import React, { useState } from "react";
+import WithModal from "#components/modal/WithModal";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import Input from "#components/inputs/Input";
+import { useAppStore } from "#store/app/appStore";
+import Preferences from "./components/Preferences";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { validate } from "#lib/validations/validatorGroup";
+import { updateProfile } from "#services/update/updateProfile";
+import { useModalStore } from "#store/modal/modalStore";
+import { logout } from "#utils/logout.utils";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import { useNavigation } from "@react-navigation/native";
+import tw from "twrnc";
 
 type EditProfileErrorsTypes = {
   name: string;
@@ -31,34 +31,37 @@ export default function EditProfile() {
   const [phoneNumber, setPhoneNumber] = useState<string>(userSession.phone);
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
   const [formErrors, setFormErrors] = useState<EditProfileErrorsTypes>({
-    name: '',
+    name: "",
   });
 
   const [isChanged, setIsChanged] = useState<boolean>(false);
 
   const handleValidationChecks = (label: string, value: string) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } = validate(value, label);
+    const { success, errors }: { success: boolean; errors: string[] | [] } =
+      validate(value, label);
     if (!success) {
       setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
     } else {
-      setFormErrors((prev) => ({ ...prev, [label]: '' }));
+      setFormErrors((prev) => ({ ...prev, [label]: "" }));
     }
   };
 
   const handleChange = (value: string) => {
     setFullName(value);
     setIsChanged(true);
-    handleValidationChecks('name', value);
+    handleValidationChecks("name", value);
   };
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every((error) => error === '');
+    const isFormValid = Object.values(formErrors).every(
+      (error) => error === "",
+    );
     const areAllFieldsFilled = Object.values({
       name: fullname,
       phoneNumber,
     }).every((value) => {
-      if (value === '') return false;
+      if (value === "") return false;
 
       return true;
     });
@@ -74,8 +77,8 @@ export default function EditProfile() {
     if (selectedPreferences.length < 5) {
       setIsLoading(false);
       updateModal({
-        message: 'Please select up to 5 preferences',
-        modalType: 'error',
+        message: "Please select up to 5 preferences",
+        modalType: "error",
         showModal: true,
       });
       return;
@@ -85,30 +88,24 @@ export default function EditProfile() {
       name: fullname,
       preferences: selectedPreferences,
     };
-    const result = await updateProfile('individual', data, userSession.id);
+    const result = await updateProfile("individual", data, userSession.id);
 
     if (result.isOk) {
       setIsLoading(false);
       updateModal({
-        message: 'Profile updated successfully, sign in to view update',
-        modalType: 'success',
+        message: "Profile updated successfully, sign in to view update",
+        modalType: "success",
         showModal: true,
+        onDismiss: () => logout(),
       });
-      signOut();
     } else {
       setIsLoading(false);
       updateModal({
         message: result.body.message,
-        modalType: 'error',
+        modalType: "error",
         showModal: true,
       });
     }
-  };
-
-  const signOut = () => {
-    setTimeout(() => {
-      logout();
-    }, 3500);
   };
 
   return (
@@ -128,7 +125,7 @@ export default function EditProfile() {
             disabled
             onInputChange={(text) => {
               setEmail(text);
-              handleValidationChecks('email', text);
+              handleValidationChecks("email", text);
             }}
           />
           <Input
@@ -142,13 +139,17 @@ export default function EditProfile() {
           />
           <View style={{ marginTop: 10, gap: 10 }}>
             <View style={tw`mb-2`}>
-              <Text style={tw`text-sm font-semibold text-[#858585] mb-1`}>Full Address</Text>
-              <View style={tw`bg-gray-100 p-4 rounded-lg border border-gray-300`}>
+              <Text style={tw`text-sm font-semibold text-[#858585] mb-1`}>
+                Full Address
+              </Text>
+              <View
+                style={tw`bg-gray-100 p-4 rounded-lg border border-gray-300`}
+              >
                 {userSession.address.address_line ? (
                   <Text style={tw`text-gray-800`}>
                     <Text style={tw`font-semibold`}>Address: </Text>
                     {userSession.address.address_line}
-                    {'\n'}
+                    {"\n"}
                   </Text>
                 ) : null}
 
@@ -156,7 +157,7 @@ export default function EditProfile() {
                   <Text style={tw`text-gray-800`}>
                     <Text style={tw`font-semibold`}>City: </Text>
                     {userSession.address.city}
-                    {'\n'}
+                    {"\n"}
                   </Text>
                 ) : null}
 
@@ -164,7 +165,7 @@ export default function EditProfile() {
                   <Text style={tw`text-gray-800`}>
                     <Text style={tw`font-semibold`}>State: </Text>
                     {userSession.address.state}
-                    {'\n'}
+                    {"\n"}
                   </Text>
                 ) : null}
 
@@ -172,7 +173,7 @@ export default function EditProfile() {
                   <Text style={tw`text-gray-800`}>
                     <Text style={tw`font-semibold`}>Zip Code: </Text>
                     {userSession.address.zip}
-                    {'\n'}
+                    {"\n"}
                   </Text>
                 ) : null}
 
@@ -188,7 +189,9 @@ export default function EditProfile() {
             <LongBlackButton
               value="Edit address"
               onClick={() =>
-                navigation.navigate('EditAddressScreen', { currentAddress: userSession.address })
+                navigation.navigate("EditAddressScreen", {
+                  currentAddress: userSession.address,
+                })
               }
               isDisabled={false}
             />

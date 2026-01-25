@@ -181,16 +181,16 @@ const DimensionsDetails = () => {
           message: "Order accepted successfully",
           modalType: "success",
           showModal: true,
+          onDismiss: () => {
+            setDimentions({
+              length: "",
+              width: "",
+              height: "",
+              weight: "",
+            });
+            navigation.goBack();
+          },
         });
-        setTimeout(() => {
-          setDimentions({
-            length: "",
-            width: "",
-            height: "",
-            weight: "",
-          });
-          navigation.goBack();
-        }, 2000);
       } else {
         Analytics.track("order_accept_failed", {
           ids: {

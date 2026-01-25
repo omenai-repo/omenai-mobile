@@ -9,6 +9,7 @@ export type updateModalProps = {
   showModal: boolean;
   modalType: modalType | "";
   modalStyle?: modalStyle;
+  onDismiss?: () => void;
 };
 
 type updateConfirmationModalProps = {
@@ -22,6 +23,7 @@ type ModalStoreTypes = {
   setModalMessage: (e: string) => void;
   modalType: modalType | "";
   modalStyle: modalStyle;
+  onDismiss?: () => void;
   updateModal: (e: updateModalProps) => void;
   webViewUrl: string | null;
   setWebViewUrl: (e: string | null) => void;
@@ -45,12 +47,14 @@ export const useModalStore = create<ModalStoreTypes>((set, get) => ({
   },
   modalType: "",
   modalStyle: "bottomSheet",
+  onDismiss: undefined,
   updateModal: (e: updateModalProps) => {
     set({
       showModal: e.showModal,
       modalMessage: e.message,
       modalType: e.modalType,
       modalStyle: e.modalStyle || "bottomSheet",
+      onDismiss: e.onDismiss,
     });
   },
   webViewUrl: null,

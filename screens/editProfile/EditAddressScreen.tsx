@@ -24,6 +24,7 @@ import { updateProfile } from "#services/update/updateProfile";
 import { logout } from "#utils/logout.utils";
 import AlertCard from "#components/general/AlertCard";
 import { colors } from "#config/colors.config";
+import { AddressTypes } from "#types/types";
 
 const EditAddressScreen = () => {
   const { userSession, userType } = useAppStore();
@@ -41,23 +42,23 @@ const EditAddressScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [addressVerified, setAddressVerified] = useState(false);
   const [countryCode, setCountryCode] = useState(
-    userSession.address.countryCode || ""
+    userSession.address.countryCode || "",
   );
   const [country, setCountry] = useState(userSession.address.country || "");
   const [stateName, setStateName] = useState(userSession.address.state || "");
   const [stateCode, setStateCode] = useState(
-    userSession.address.stateCode || ""
+    userSession.address.stateCode || "",
   );
   const [city, setCity] = useState(userSession.address.city || "");
   const [addressLine, setAddressLine] = useState(
-    userSession.address.address_line || ""
+    userSession.address.address_line || "",
   );
   const [zipCode, setZipCode] = useState(userSession.address.zip || "");
   const [stateData, setStateData] = useState<
     { label: string; value: string; isoCode?: string }[]
   >([]);
   const [cityData, setCityData] = useState<{ label: string; value: string }[]>(
-    []
+    [],
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -73,7 +74,7 @@ const EditAddressScreen = () => {
       state: userSession.address.state || "",
       stateCode: userSession.address.stateCode || "",
     }),
-    [userSession]
+    [userSession],
   );
 
   const hasAddressChanged = useMemo(() => {
@@ -108,7 +109,7 @@ const EditAddressScreen = () => {
       setStateData(mappedStates);
 
       const selectedState = mappedStates.find(
-        (s) => s.value === stateName || s.isoCode === stateCode
+        (s) => s.value === stateName || s.isoCode === stateCode,
       );
       if (selectedState?.isoCode) {
         fetchCities(countryCode, selectedState.isoCode);
@@ -122,7 +123,7 @@ const EditAddressScreen = () => {
         value: item.isoCode,
         label: item.name,
       })),
-    []
+    [],
   );
 
   const handleCountrySelect = (item: { label: string; value: string }) => {
@@ -143,7 +144,7 @@ const EditAddressScreen = () => {
           label: s.name,
           value: s.name,
           isoCode: s.isoCode,
-        }))
+        })),
       );
     }
   };
@@ -157,10 +158,10 @@ const EditAddressScreen = () => {
           getCities?.map((city: ICity) => ({
             label: city.name,
             value: city.name,
-          })) || []
+          })) || [],
         );
       }, 300),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -220,7 +221,7 @@ const EditAddressScreen = () => {
         [label]: errors.length > 0 ? errors[0] : "",
       }));
     },
-    500
+    500,
   ); // ✅ Delay validation by 500ms
 
   const handleSubmit = async () => {
@@ -266,12 +267,6 @@ const EditAddressScreen = () => {
     }
   };
 
-  const signOut = () => {
-    setTimeout(() => {
-      logout();
-    }, 3500);
-  };
-
   const handleUpdate = async () => {
     setIsLoading(true);
 
@@ -294,8 +289,8 @@ const EditAddressScreen = () => {
         message: "Address updated successfully, sign in to view update",
         modalType: "success",
         showModal: true,
+        onDismiss: () => logout(),
       });
-      signOut();
     } else {
       setIsLoading(false);
       updateModal({

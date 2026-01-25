@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { colors } from "#config/colors.config";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
@@ -15,6 +15,7 @@ import { getCurrencyConversion } from "#services/exchange_rate/getCurrencyConver
 import { updateArtworkPrice } from "#services/artworks/updateArtworkPrice";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "#constants/screenNames.constants";
+import { ArtworkPriceFilterData } from "#types/types";
 
 type artworkPricingErrorsType = {
   price: string;
@@ -47,7 +48,7 @@ export default function EditPricing({ art_id }: { art_id: string }) {
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
     const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
+      (error) => error === "",
     );
     const areAllFieldsFilled = Object.values({
       pricing: price,
@@ -85,7 +86,7 @@ export default function EditPricing({ art_id }: { art_id: string }) {
     setLoadingConversion(true);
     const conversion_value = await getCurrencyConversion(
       currency.toUpperCase(),
-      +value
+      +value,
     );
 
     if (!conversion_value?.isOk)
@@ -116,8 +117,10 @@ export default function EditPricing({ art_id }: { art_id: string }) {
         message: "Artwork pricing detials successfully updated",
         showModal: true,
         modalType: "success",
+        onDismiss: () => {
+          navigation.navigate(screenName.gallery.artworks);
+        },
       });
-      goBack();
     } else {
       updateModal({
         message: "Error updating pricing detials",
@@ -127,12 +130,6 @@ export default function EditPricing({ art_id }: { art_id: string }) {
     }
 
     setLoading(false);
-  };
-
-  const goBack = () => {
-    setTimeout(() => {
-      navigation.navigate(screenName.gallery.artworks);
-    }, 3500);
   };
 
   return (
@@ -159,7 +156,7 @@ export default function EditPricing({ art_id }: { art_id: string }) {
                 handleCurrencyConvert(parseInt(value, 10))
               }
               placeHolder="Enter your price"
-              value={price === 0 ? "" : price}
+              value={price === 0 ? "" : String(price)}
               handleBlur={() =>
                 handleValidationChecks("price", JSON.stringify(price))
               }

@@ -1,12 +1,11 @@
-import { Dimensions, View } from "react-native";
+import { View } from "react-native";
 import React from "react";
 import EmptyArtworks from "#components/general/EmptyArtworks";
-
-const { height } = Dimensions.get("window");
+import tw from "twrnc";
 
 export default function EmptyOrdersListing({ status }: { status: string }) {
   return (
-    <View style={{ paddingTop: height / 5 }}>
+    <View style={tw`flex-1`}>
       <EmptyArtworks icon="receipt-outline" />
     </View>
   );

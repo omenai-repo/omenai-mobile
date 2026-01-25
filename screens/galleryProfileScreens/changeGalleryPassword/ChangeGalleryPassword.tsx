@@ -34,11 +34,8 @@ export default function ChangeGalleryPassword({
 
   function handleInputChange(name: string, value: string) {
     setErrorList([]);
-    const { success, errors }: { success: boolean; errors: string[] | [] } = validate(
-      value,
-      name,
-      info.password
-    );
+    const { success, errors }: { success: boolean; errors: string[] | [] } =
+      validate(value, name, info.password);
     if (!success) setErrorList(errors);
 
     setInfo((prev) => {
@@ -72,17 +69,19 @@ export default function ChangeGalleryPassword({
     const response = await updatePassword(info.password, info.code, routeName);
 
     if (response?.isOk) {
-      updateModal({
-        modalType: "success",
-        message: response.message,
-        showModal: true,
-      });
       setInfo({
         password: "",
         confirmPassword: "",
         code: "",
       });
-      navigation.goBack();
+      updateModal({
+        modalType: "success",
+        message: response.message,
+        showModal: true,
+        onDismiss: () => {
+          navigation.goBack();
+        },
+      });
     } else {
       updateModal({
         modalType: "error",
@@ -116,9 +115,13 @@ export default function ChangeGalleryPassword({
             label="Confirm password"
             value={info.confirmPassword}
             placeHolder="Confirm your new password"
-            onInputChange={(value) => handleInputChange("confirmPassword", value)}
+            onInputChange={(value) =>
+              handleInputChange("confirmPassword", value)
+            }
           />
-          <View style={{ flexDirection: "row", gap: 10, alignItems: "flex-end" }}>
+          <View
+            style={{ flexDirection: "row", gap: 10, alignItems: "flex-end" }}
+          >
             <View style={{ flex: 1 }}>
               <Input
                 label="Confirmation code"
@@ -154,7 +157,9 @@ export default function ChangeGalleryPassword({
                     }}
                   >
                     <MaterialIcons name="error" color={"#ff000080"} />
-                    <Text style={{ fontSize: 12, color: "#ff000080" }}>{error}</Text>
+                    <Text style={{ fontSize: 12, color: "#ff000080" }}>
+                      {error}
+                    </Text>
                   </View>
                 );
               })}

@@ -33,7 +33,7 @@ export default function EditGalleryProfile() {
       const { isOk, body } = await updateProfile(
         userType === "gallery" ? "gallery" : "artist",
         updateData,
-        userSession.id
+        userSession.id,
       );
 
       if (!isOk) {
@@ -49,10 +49,8 @@ export default function EditGalleryProfile() {
           modalType: "success",
           message: `${body.message}, please log back in`,
           showModal: true,
+          onDismiss: () => logout(),
         });
-        setTimeout(() => {
-          logout();
-        }, 3500);
       }
     } catch (error) {
       console.error("EditGalleryProfile.handleSubmit error:", error);

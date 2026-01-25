@@ -68,7 +68,7 @@ export default function UploadNewLogo() {
             id: userSession.id,
             url: file.fileId,
           },
-          getUserTypeKey(userType)
+          getUserTypeKey(userType),
         );
 
         if (!isOk) {
@@ -82,8 +82,8 @@ export default function UploadNewLogo() {
             message: `${body.message}... Please log back in`,
             modalType: "success",
             showModal: true,
+            onDismiss: () => logout(),
           });
-          handleLogout();
         }
       }
     } catch (error) {
@@ -96,12 +96,6 @@ export default function UploadNewLogo() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    setTimeout(() => {
-      logout();
-    }, 3500);
   };
 
   return (
