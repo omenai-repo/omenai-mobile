@@ -83,10 +83,10 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   const [confirmOrderModal, setConfirmOrderModal] = useState(false);
 
   const { value: isFlutterwavePaymentEnabled } = useHighRiskFeatureFlag(
-    "flutterwave_payment_enabled"
+    "flutterwave_payment_enabled",
   );
   const { value: isStripePaymentEnabled } = useHighRiskFeatureFlag(
-    "stripe_payment_enabled"
+    "stripe_payment_enabled",
   );
 
   const showBlocker =
@@ -98,7 +98,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
       holdStatus
         ? new Date(holdStatus.hold_end_date)
         : new Date(new Date(updatedAt).getTime() + 24 * 60 * 60 * 1000),
-    [holdStatus, updatedAt]
+    [holdStatus, updatedAt],
   );
 
   useEffect(() => {
@@ -341,7 +341,11 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
                     !activeInvoice && !invoiceNumber && { opacity: 0.5 },
                   ]}
                 >
-                  <Text style={tw`text-xs font-semibold text-gray-900`}>
+                  <Text
+                    style={tw`text-xs font-semibold text-gray-900`}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                  >
                     View Receipt
                   </Text>
                 </Pressable>

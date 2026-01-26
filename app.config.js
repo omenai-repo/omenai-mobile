@@ -40,7 +40,7 @@ export default {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/omenai-logo.png",
+        foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
       googleServicesFile: "./google-services.json",
@@ -79,14 +79,7 @@ export default {
             "Omenai app accesses your photos to let you upload artworks.",
         },
       ],
-      [
-        "expo-splash-screen",
-        {
-          backgroundColor: "#ffffff",
-          image: "./assets/omenai-logo.png",
-          imageWidth: 200,
-        },
-      ],
+
       [
         "expo-web-browser",
         {
