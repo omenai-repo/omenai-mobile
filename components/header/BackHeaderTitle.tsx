@@ -25,7 +25,7 @@ export default function BackHeaderTitle({
   return (
     <View
       style={{
-        paddingTop: insets.top + (isTablet ? 24 : 16),
+        paddingTop: insets.top + (isTablet ? 15 : 10),
       }}
     >
       <View

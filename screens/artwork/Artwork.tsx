@@ -35,7 +35,7 @@ import { useModalStore } from "#store/modal/modalStore";
 import SaveArtworkButton from "./components/SaveArtworkButton";
 import ArtworkSkeleton from "#components/skeleton/ArtworkSkeleton";
 import { useAppStore } from "#store/app/appStore";
-import Header from "./components/Header";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import ShippingAndTaxes from "./components/extraDetails/ShippingAndTaxes";
 import Coverage from "./components/extraDetails/Coverage";
 import { createViewHistory } from "#services/artworks/viewHistory/createViewHistory";
@@ -47,7 +47,6 @@ import { licenseIcon } from "#utils/SvgImages";
 import BackScreenButton from "#components/buttons/BackScreenButton";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import ZoomArtwork from "./ZoomArtwork";
-import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import { ArtworkDataType } from "#types/types";
 import { Analytics } from "#utils/analytics";
@@ -80,6 +79,10 @@ export default function Artwork() {
   const { userType, userSession } = useAppStore();
   const { isTabletLandscape, screenWidth } = useTabletLandscape();
   const isTabletSize = Math.min(screenWidth) >= 768;
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({ headerShown: false });
+  }, [navigation]);
 
   const [showMore, setShowMore] = useState(false);
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
@@ -405,11 +408,7 @@ export default function Artwork() {
     <WithModal>
       {!showMore ? (
         <View style={{ flex: 1 }}>
-          <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-          <Header
-            art_id={artwork?.art_id}
-            isGallery={["gallery", "artist"].includes(userType)}
-          />
+          <BackHeaderTitle title="" />
 
           {loadingMain && <ArtworkSkeleton />}
 
@@ -443,7 +442,6 @@ export default function Artwork() {
         </View>
       ) : (
         <View style={tw`flex-1`}>
-          <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
           <View style={tw`pt-[60px] android:pt-[40px] pl-[25px]`}>
             <BackScreenButton handleClick={() => setShowMore(false)} />
           </View>
