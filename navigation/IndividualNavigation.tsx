@@ -1,8 +1,8 @@
-import React from "react";
 import { screenName } from "#constants/screenNames.constants";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import SavedArtworks from "#screens/savedArtworks/SavedArtworks";
+import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
 import PurchaseArtwork from "#screens/purchase/PurchaseArtwork";
 import Artwork from "#screens/artwork/Artwork";
 import SearchResults from "#screens/searchResults/SearchResults";
@@ -11,6 +11,7 @@ import EditProfile from "#screens/editProfile/EditProfile";
 import ArtworksMedium from "#screens/artworksMedium/ArtworksMedium";
 import ArtworkMediumFilterModal from "#screens/artworksMedium/components/filter/ArtworkMediumFilterModal";
 import ArtworkCategoriesFilterModal from "#screens/artworkCategories/components/filter/ArtworkCategoriesFilterModal";
+import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
 import Collections from "#screens/collections/Collections";
 import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
 import { BottomTabDataIndividual } from "#utils/BottomTabData";
@@ -94,6 +95,10 @@ export default function IndividualNavigation() {
           name={screenName.artworkCategoriesFilterModal}
           component={wrapWithHighRisk(ArtworkCategoriesFilterModal)}
         />
+        <Stack.Screen
+          name={screenName.supportTicketsFilterModal}
+          component={wrapWithHighRisk(SupportTicketsFilterModal)}
+        />
       </Stack.Group>
       <Stack.Screen
         name={screenName.artwork}
@@ -170,6 +175,10 @@ export default function IndividualNavigation() {
       <Stack.Screen
         name="ViewReceiptScreen"
         component={wrapWithHighRisk(ViewReceiptScreen)}
+      />
+      <Stack.Screen
+        name={screenName.supportTickets}
+        component={wrapWithHighRisk(SupportTicketsScreen)}
       />
     </Stack.Navigator>
   );

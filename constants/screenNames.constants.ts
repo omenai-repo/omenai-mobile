@@ -32,6 +32,8 @@ export const screenName = {
   verifyTransaction: "verify-transaction",
   deleteAccount: "delete-account",
   biometricSettings: "biometric-settings",
+  supportTickets: "support-tickets",
+  supportTicketsFilterModal: "support-tickets-filter-modal",
   gallery: {
     overview: "Overview",
     artworks: "Artworks",

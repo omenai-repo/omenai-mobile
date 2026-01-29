@@ -20,7 +20,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 
-import { AppState, Platform } from "react-native";
+import { AppState, Platform, View } from "react-native";
 import { configureNotificationHandling } from "#notifications/NotificationService";
 import { useNotifications } from "#hooks/useNotifications";
 import { registerForPushToken } from "#notifications/registerForPushToken";
@@ -32,6 +32,8 @@ import ForceUpdateModal from "#components/modal/ForceUpdateModal";
 import { useVersionCheck } from "#hooks/useVersionCheck";
 import { Analytics } from "#utils/analytics";
 import * as Updates from "expo-updates";
+import { SupportProvider } from "#providers/SupportProvider";
+import SupportWidget from "#components/support/SupportWidget";
 
 // Vexo analytic initialization
 Analytics.init(process.env.EXPO_PUBLIC_VEXO_ID as string);
@@ -171,25 +173,33 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
-            <BottomSheetModalProvider>
-              <StripeProvider
-                publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
-                urlScheme="omenaimobile"
-              >
-                <NavigationContainer ref={navigationRef} linking={linking}>
-                  {/* AUTH SCREENS */}
-                  {!isLoggedIn && <AuthNavigation />}
-                  {/* App screens */}
-                  {isLoggedIn && userType === "gallery" && (
-                    <GalleryNavigation />
-                  )}
-                  {isLoggedIn && userType === "user" && (
-                    <IndividualNavigation />
-                  )}
-                  {isLoggedIn && userType === "artist" && <ArtistNavigation />}
-                </NavigationContainer>
-              </StripeProvider>
-            </BottomSheetModalProvider>
+            <SupportProvider>
+              <BottomSheetModalProvider>
+                <StripeProvider
+                  publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
+                  urlScheme="omenaimobile"
+                >
+                  <NavigationContainer ref={navigationRef} linking={linking}>
+                    <View style={{ flex: 1 }}>
+                      {/* AUTH SCREENS */}
+                      {!isLoggedIn && <AuthNavigation />}
+                      {/* App screens */}
+                      {isLoggedIn && userType === "gallery" && (
+                        <GalleryNavigation />
+                      )}
+                      {isLoggedIn && userType === "user" && (
+                        <IndividualNavigation />
+                      )}
+                      {isLoggedIn && userType === "artist" && (
+                        <ArtistNavigation />
+                      )}
+
+                      <SupportWidget />
+                    </View>
+                  </NavigationContainer>
+                </StripeProvider>
+              </BottomSheetModalProvider>
+            </SupportProvider>
           </SafeAreaProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>

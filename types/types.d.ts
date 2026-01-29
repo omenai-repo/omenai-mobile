@@ -667,3 +667,16 @@ export type InvoiceLineItemsData = {
   quantity: number;
   unitPrice: number;
 };
+
+export type SupportCategory =
+  | "GENERAL"
+  | "ORDER"
+  | "SUBSCRIPTION"
+  | "PAYOUT"
+  | "UPLOAD"
+  | "AUTH"
+  | "WALLET"
+  | "PAYMENT"
+  | "CHECKOUT";
+
+export type EntityType = "user" | "artist" | "gallery" | "admin";

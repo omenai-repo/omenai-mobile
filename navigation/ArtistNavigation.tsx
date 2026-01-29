@@ -37,6 +37,8 @@ import NotificationScreen from "#screens/notifications/NotificationScreen";
 import DeleteAccountScreen from "#screens/deleteAccount/DeleteAccountScreen";
 import { wrapWithHighRisk, wrapWithLowRisk } from "#utils/wrapWithProvider";
 import BiometricSettings from "#screens/profile/BiometricSettings";
+import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
+import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -231,6 +233,10 @@ const ArtistNavigation = () => {
           name={screenName.gallery.uploadNewLogo}
           component={wrapWithHighRisk(UploadNewLogo)}
         />
+        <Stack.Screen
+          name={screenName.supportTicketsFilterModal}
+          component={wrapWithHighRisk(SupportTicketsFilterModal)}
+        />
       </Stack.Group>
       <Stack.Screen
         name={screenName.gallery.uploadArtwork}
@@ -251,6 +257,10 @@ const ArtistNavigation = () => {
       <Stack.Screen
         name={screenName.biometricSettings}
         component={wrapWithHighRisk(BiometricSettings)}
+      />
+      <Stack.Screen
+        name={screenName.supportTickets}
+        component={wrapWithHighRisk(SupportTicketsScreen)}
       />
     </Stack.Navigator>
   );

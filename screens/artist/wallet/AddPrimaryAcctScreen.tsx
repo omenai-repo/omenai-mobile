@@ -64,7 +64,9 @@ const AddPrimaryAcctScreen = () => {
   const [searchText, setSearchText] = useState("");
   const [branchSearchText, setBranchSearchText] = useState("");
   const [branchList, setBranchList] = useState<BankOption[]>([]);
-  const [filteredBranchList, setFilteredBranchList] = useState<BankOption[]>([]);
+  const [filteredBranchList, setFilteredBranchList] = useState<BankOption[]>(
+    [],
+  );
   const [selectedBranch, setSelectedBranch] = useState<BankOption | null>(null);
   const [acctNumber, setAcctNumber] = useState("");
   const [acctName, setAcctName] = useState("");
@@ -115,7 +117,9 @@ const AddPrimaryAcctScreen = () => {
             value: bank.code,
             id: bank.id,
           }))
-          .sort((a: BankOption, b: BankOption) => a.label.localeCompare(b.label));
+          .sort((a: BankOption, b: BankOption) =>
+            a.label.localeCompare(b.label),
+          );
 
         setBankList(formattedData);
         setFilteredBankList(formattedData); // Initialize filtered list
@@ -140,7 +144,7 @@ const AddPrimaryAcctScreen = () => {
     }
 
     const filtered = bankList.filter((bank) =>
-      bank.label.toLowerCase().includes(text.toLowerCase())
+      bank.label.toLowerCase().includes(text.toLowerCase()),
     );
     setFilteredBankList(filtered);
   };
@@ -148,7 +152,10 @@ const AddPrimaryAcctScreen = () => {
   // 🔁 NEW: fetch full list once when bank changes
   useEffect(() => {
     const fetchBranches = async () => {
-      if (selectedBank?.value && supportedCountryCodes.includes(userSession.address.countryCode)) {
+      if (
+        selectedBank?.value &&
+        supportedCountryCodes.includes(userSession.address.countryCode)
+      ) {
         try {
           setIsLoading(true);
           const response = await fetchBankBranches(selectedBank.id ?? "");
@@ -159,7 +166,9 @@ const AddPrimaryAcctScreen = () => {
                 value: branch.branch_code,
                 id: branch.id,
               }))
-              .sort((a: BankOption, b: BankOption) => a.label.localeCompare(b.label));
+              .sort((a: BankOption, b: BankOption) =>
+                a.label.localeCompare(b.label),
+              );
 
             setBranchList(formatted);
             setFilteredBranchList(formatted);
@@ -182,16 +191,16 @@ const AddPrimaryAcctScreen = () => {
     if (text.trim().length < 2) return;
 
     const filtered = branchList.filter((branch) =>
-      branch.label.toLowerCase().includes(text.toLowerCase())
+      branch.label.toLowerCase().includes(text.toLowerCase()),
     );
     setBranchList(filtered);
     setFilteredBranchList(filtered);
   };
 
-  const handleBranchSearchDebounced = useCallback(debounce(handleBranchSearch, 300), [
-    selectedBank,
-    userSession?.address?.countryCode,
-  ]);
+  const handleBranchSearchDebounced = useCallback(
+    debounce(handleBranchSearch, 300),
+    [selectedBank, userSession?.address?.countryCode],
+  );
 
   const debouncedSearch = useCallback(debounce(handleSearch, 300), [bankList]);
 
@@ -308,7 +317,11 @@ const AddPrimaryAcctScreen = () => {
                   : []
               }
               placeholder="Select country"
-              value={userSession?.address ? userSession.address.country : "Select country"}
+              value={
+                userSession?.address
+                  ? userSession.address.country
+                  : "Select country"
+              }
               handleSetValue={() => {}}
               label="Country"
               disable={true}
@@ -348,7 +361,9 @@ const AddPrimaryAcctScreen = () => {
               dropdownPosition="bottom"
             />
 
-            {supportedCountryCodes.includes(userSession.address.countryCode) && (
+            {supportedCountryCodes.includes(
+              userSession.address.countryCode,
+            ) && (
               <CustomSelectPicker
                 data={filteredBranchList}
                 placeholder="Select bank branch"

@@ -174,7 +174,7 @@ export default function Plan({
 
             {name === "Premium" && (
               <View style={tw`p-2 rounded-lg bg-purple-100`}>
-                <Ionicons name="sparkles" size={16} color="#7c3aed" />
+                <Ionicons name="sparkles-sharp" size={16} color="#7c3aed" />
               </View>
             )}
           </View>

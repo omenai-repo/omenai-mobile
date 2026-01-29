@@ -63,7 +63,7 @@ const WalletHistory = ({ navigation }: any) => {
 
   const transactions = useMemo(
     () => (data?.pages ?? []).flatMap((p) => p.items),
-    [data]
+    [data],
   );
 
   const showEmpty = !isLoading && transactions.length === 0;

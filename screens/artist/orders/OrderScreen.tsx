@@ -4,7 +4,11 @@ import { OrdersScreen } from "#screens/orders/OrdersScreen";
 
 const OrderScreen = () => {
   return (
-    <OrdersScreen queryKey={ORDERS_QK} errorMessage="Failed to load orders" userType="artist" />
+    <OrdersScreen
+      queryKey={ORDERS_QK}
+      errorMessage="Failed to load orders"
+      userType="artist"
+    />
   );
 };
 

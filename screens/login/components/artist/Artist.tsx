@@ -3,7 +3,6 @@ import { useArtistAuthLoginStore } from "#store/auth/login/ArtistAuthLoginStore"
 import { useLoginHandler } from "#hooks/useLoginHandler";
 import LoginForm from "../LoginForm";
 import WithModal from "#components/modal/WithModal";
-
 type ArtistProps = Readonly<{
   biometricProps: {
     canUseBiometrics: boolean;

@@ -4,6 +4,7 @@ import tw from "twrnc";
 import Header from "#components/header/Header";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import SalesOverview from "#screens/overview/components/SalesOverview";
+import WithModal from "#components/modal/WithModal";
 import PopularArtworks from "#screens/overview/components/PopularArtworks";
 
 import { HighlightCard } from "./HighlightCard";
@@ -43,24 +44,26 @@ const ArtistOverview = () => {
   }, [queryClient, userSession?.id]);
 
   return (
-    <View style={tw`flex-1 bg-[#F7F7F7]`}>
-      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-      <ScrollWrapper
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isAnyFetching} onRefresh={onRefresh} />
-        }
-        onScroll={onScroll}
-      >
-        <Header />
+    <WithModal>
+      <View style={tw`flex-1 bg-[#F7F7F7]`}>
+        <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+        <ScrollWrapper
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={isAnyFetching} onRefresh={onRefresh} />
+          }
+          onScroll={onScroll}
+        >
+          <Header />
 
-        {/* Highlight Cards & Sales chart use their own queries and report loading via onLoadingChange if needed */}
-        <HighlightCard />
+          {/* Highlight Cards & Sales chart use their own queries and report loading via onLoadingChange if needed */}
+          <HighlightCard />
 
-        <SalesOverview />
-        <PopularArtworks />
-      </ScrollWrapper>
-    </View>
+          <SalesOverview />
+          <PopularArtworks />
+        </ScrollWrapper>
+      </View>
+    </WithModal>
   );
 };
 
