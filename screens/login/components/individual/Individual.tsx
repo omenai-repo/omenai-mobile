@@ -3,7 +3,6 @@ import { useIndividualAuthLoginStore } from "#store/auth/login/IndividualAuthLog
 import { useLoginHandler } from "#hooks/useLoginHandler";
 import LoginForm from "../LoginForm";
 import WithModal from "#components/modal/WithModal";
-
 type IndividualProps = Readonly<{
   biometricProps: {
     canUseBiometrics: boolean;

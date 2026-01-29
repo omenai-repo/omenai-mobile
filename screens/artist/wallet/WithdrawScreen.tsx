@@ -51,7 +51,7 @@ export const WithdrawScreen = ({
   const amountInputRef = useRef<TextInput>(null);
 
   const { value: isWalletWithdrawalEnabled } = useHighRiskFeatureFlag(
-    "wallet_withdrawal_enabled"
+    "wallet_withdrawal_enabled",
   );
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export const WithdrawScreen = ({
         amountInputRef.current?.focus();
       }, 100);
       return () => clearTimeout(timer);
-    }, [])
+    }, []),
   );
 
   const fetchTransferRate = async () => {
@@ -229,7 +229,7 @@ export const WithdrawScreen = ({
                   <Text style={tw`text-base font-bold text-[#1A1A1A]`}>
                     {convertedAmount
                       ? `${getArtistCurrencySymbol(
-                          walletData.base_currency
+                          walletData.base_currency,
                         )} ${convertedAmount.toLocaleString()}`
                       : "--"}
                   </Text>
@@ -240,7 +240,7 @@ export const WithdrawScreen = ({
                     {`Rate: 1 ${
                       walletData.wallet_currency
                     } = ${getArtistCurrencySymbol(
-                      walletData.base_currency
+                      walletData.base_currency,
                     )} ${rate.toFixed(2)}`}
                   </Text>
                 )}

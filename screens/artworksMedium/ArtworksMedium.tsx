@@ -46,7 +46,7 @@ export default function ArtworksMedium() {
       return () => {
         clearAllFilters();
       };
-    }, [])
+    }, []),
   );
 
   useEffect(() => {

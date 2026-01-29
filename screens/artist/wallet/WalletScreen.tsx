@@ -208,7 +208,7 @@ const WalletScreen = () => {
   // Pull-to-refresh
   const onRefresh = useCallback(
     () => Promise.all([refetchWallet(), refetchTxns()]),
-    [refetchWallet, refetchTxns]
+    [refetchWallet, refetchTxns],
   );
 
   // show PIN modal when wallet data loads and pin is missing
@@ -308,7 +308,7 @@ const WalletScreen = () => {
                     <View
                       style={tw.style(
                         `h-[25px] w-[100px] mt-[5px]`,
-                        skeletonStyle
+                        skeletonStyle,
                       )}
                     />
                   ) : (

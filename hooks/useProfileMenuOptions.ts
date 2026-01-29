@@ -4,6 +4,7 @@ import {
   changePasswsordIcon,
   getDeleteIcon,
   getLockIcon,
+  notesIcon,
 } from "#utils/SvgImages";
 import { ProfileMenuItem } from "#components/profile/ProfileMenuItems";
 import { colors } from "#config/colors.config";
@@ -12,7 +13,7 @@ type UserType = "gallery" | "artist" | "individual";
 
 export const useProfileMenuOptions = (
   navigation: any,
-  userType: UserType
+  userType: UserType,
 ): ProfileMenuItem[] => {
   return useMemo(
     () => [
@@ -32,6 +33,12 @@ export const useProfileMenuOptions = (
         svgIcon: getLockIcon(colors.black, 25, 25),
       },
       {
+        name: "Support Tickets",
+        subText: "View your support history",
+        handlePress: () => navigation.navigate(screenName.supportTickets),
+        svgIcon: notesIcon,
+      },
+      {
         name: "Delete account",
         subText: `Delete your omenai ${
           userType === "gallery" ? "gallery " : ""
@@ -45,6 +52,6 @@ export const useProfileMenuOptions = (
         variant: "danger" as const,
       },
     ],
-    [navigation, userType]
+    [navigation, userType],
   );
 };

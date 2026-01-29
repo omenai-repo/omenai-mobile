@@ -1,18 +1,19 @@
-import React, { useMemo } from 'react';
-import { View, Text, Pressable, Image, Platform } from 'react-native';
-import tw from 'twrnc';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-import { utils_getCurrencySymbol } from '#utils/utils_getCurrencySymbol';
-import { utils_formatPrice } from '#utils/utils_priceFormatter';
-import { formatIntlDateTime } from '#utils/utils_formatIntlDateTime';
-import { getFutureDate } from '#utils/utils_getFutureDate';
-import { screenName } from '#constants/screenNames.constants';
+import React, { useMemo } from "react";
+import { View, Text, Pressable, Image, Platform } from "react-native";
+import tw from "twrnc";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
+import { getFutureDate } from "#utils/utils_getFutureDate";
+import { screenName } from "#constants/screenNames.constants";
+import { SubscriptionModelSchemaTypes } from "#types/types";
 
 export type UpcomingSubData = {
-  status: SubscriptionModelSchemaTypes['status'];
-  expiry_date: SubscriptionModelSchemaTypes['expiry_date'];
-  next_charge_params: SubscriptionModelSchemaTypes['next_charge_params'];
+  status: SubscriptionModelSchemaTypes["status"];
+  expiry_date: SubscriptionModelSchemaTypes["expiry_date"];
+  next_charge_params: SubscriptionModelSchemaTypes["next_charge_params"];
   createdAt: string;
   updatedAt: string;
 };
@@ -26,14 +27,18 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
   const navigation = useNavigation<any>();
   const { status, next_charge_params, expiry_date } = sub_data;
 
-  const currencySymbol = utils_getCurrencySymbol?.(next_charge_params.currency) ?? '';
+  const currencySymbol =
+    utils_getCurrencySymbol?.(next_charge_params.currency) ?? "";
   const price = useMemo(() => {
     const n = Number(next_charge_params.value);
-    return utils_formatPrice?.(n, currencySymbol) ?? `${currencySymbol}${n.toFixed(2)}`;
+    return (
+      utils_formatPrice?.(n, currencySymbol) ??
+      `${currencySymbol}${n.toFixed(2)}`
+    );
   }, [next_charge_params.value, currencySymbol]);
 
-  const isEnded = status === 'canceled' || status === 'expired';
-  const isActive = status === 'active';
+  const isEnded = status === "canceled" || status === "expired";
+  const isActive = status === "active";
 
   return (
     <View style={[tw`w-full`, {}]}>
@@ -48,12 +53,21 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
         <View style={tw`px-5 py-4 border-b border-slate-200 bg-slate-50`}>
           <View style={tw`flex-row items-center justify-between`}>
             <View style={tw`flex-row items-center`}>
-              <Ionicons name="calendar" size={18} color="#475569" style={tw`mr-2`} />
-              <Text style={tw`text-slate-900 font-semibold`}>Upcoming Billing</Text>
+              <Ionicons
+                name="calendar"
+                size={18}
+                color="#475569"
+                style={tw`mr-2`}
+              />
+              <Text style={tw`text-slate-900 font-semibold`}>
+                Upcoming Billing
+              </Text>
             </View>
             {isActive && (
               <View style={tw`px-2.5 py-0.5 rounded-full bg-green-100`}>
-                <Text style={tw`text-green-700 text-xs font-medium`}>Active</Text>
+                <Text style={tw`text-green-700 text-xs font-medium`}>
+                  Active
+                </Text>
               </View>
             )}
           </View>
@@ -73,18 +87,22 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
 
               <Pressable
                 onPress={() =>
-                  navigation.navigate(screenName.gallery.billing, { plan_action: 'reactivation' })
+                  navigation.navigate(screenName.gallery.billing, {
+                    plan_action: "reactivation",
+                  })
                 }
                 style={({ pressed }) =>
                   tw.style(
                     `mt-5 px-5 h-11 rounded-lg items-center justify-center bg-slate-900`,
-                    pressed ? 'opacity-90' : '',
+                    pressed ? "opacity-90" : "",
                   )
                 }
                 accessibilityRole="button"
                 accessibilityLabel="Reactivate Subscription"
               >
-                <Text style={tw`text-white text-sm font-medium`}>Reactivate Subscription</Text>
+                <Text style={tw`text-white text-sm font-medium`}>
+                  Reactivate Subscription
+                </Text>
               </Pressable>
             </View>
           ) : (
@@ -95,9 +113,17 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
                 <View style={tw`flex-row items-center`}>
                   <View style={tw`p-2 bg-slate-100 rounded-lg mr-3`}>
                     {logoSource ? (
-                      <Image source={logoSource} style={tw`w-6 h-6`} resizeMode="contain" />
+                      <Image
+                        source={logoSource}
+                        style={tw`w-6 h-6`}
+                        resizeMode="contain"
+                      />
                     ) : (
-                      <Ionicons name="sparkles" size={20} color="#334155" />
+                      <Ionicons
+                        name="sparkles-sharp"
+                        size={20}
+                        color="#334155"
+                      />
                     )}
                   </View>
                   <View>
@@ -111,24 +137,34 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
                 </View>
 
                 <View style={tw`items-end`}>
-                  <Text style={tw`text-slate-900 text-lg font-bold`}>{price}</Text>
+                  <Text style={tw`text-slate-900 text-lg font-bold`}>
+                    {price}
+                  </Text>
                 </View>
               </View>
 
               {/* Billing period card */}
-              <View style={tw`p-4 rounded-lg bg-blue-50 border border-blue-200`}>
+              <View
+                style={tw`p-4 rounded-lg bg-blue-50 border border-blue-200`}
+              >
                 <View style={tw`flex-row`}>
-                  <Ionicons name="time-outline" size={18} color="#2563eb" style={tw`mr-3 mt-0.5`} />
+                  <Ionicons
+                    name="time-outline"
+                    size={18}
+                    color="#2563eb"
+                    style={tw`mr-3 mt-0.5`}
+                  />
                   <View style={tw`flex-1`}>
                     <Text style={tw`text-blue-900 text-sm`}>
                       <Text style={tw`font-medium`}>Next billing: </Text>
-                      {formatIntlDateTime?.(expiry_date) ?? new Date(expiry_date).toLocaleString()}
+                      {formatIntlDateTime?.(expiry_date) ??
+                        new Date(expiry_date).toLocaleString()}
                     </Text>
                     <Text style={tw`text-blue-700 text-sm mt-1`}>
                       <Text style={tw`font-medium`}>Period ends: </Text>
                       {getFutureDate?.(
                         expiry_date,
-                        next_charge_params.interval as 'monthly' | 'yearly',
+                        next_charge_params.interval as "monthly" | "yearly",
                       )}
                     </Text>
                   </View>
@@ -147,7 +183,7 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
 function shadow() {
   return Platform.select({
     ios: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOpacity: 0.08,
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 6 },

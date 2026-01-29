@@ -25,6 +25,8 @@ import EditArtwork from "#screens/editArtwork/EditArtwork";
 import DeleteAccountScreen from "#screens/deleteAccount/DeleteAccountScreen";
 import { wrapWithHighRisk, wrapWithLowRisk } from "#utils/wrapWithProvider";
 import BiometricSettings from "#screens/profile/BiometricSettings";
+import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
+import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -71,7 +73,7 @@ export default function GalleryNavigation() {
 
   const tabs = useMemo(
     () => BottomTabDataGallery(account),
-    [account.connected_account_id, account.gallery_verified]
+    [account.connected_account_id, account.gallery_verified],
   );
 
   const GalleryTabNavigationScreens = useCallback(() => {
@@ -179,10 +181,18 @@ export default function GalleryNavigation() {
         name={screenName.biometricSettings}
         component={wrapWithHighRisk(BiometricSettings)}
       />
+      <Stack.Screen
+        name={screenName.supportTickets}
+        component={wrapWithHighRisk(SupportTicketsScreen)}
+      />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen
           name={screenName.gallery.uploadNewLogo}
           component={wrapWithHighRisk(UploadNewLogo)}
+        />
+        <Stack.Screen
+          name={screenName.supportTicketsFilterModal}
+          component={wrapWithHighRisk(SupportTicketsFilterModal)}
         />
       </Stack.Group>
     </Stack.Navigator>
