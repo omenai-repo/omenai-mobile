@@ -28,7 +28,6 @@ export async function sendAiChatMessage(messages: Message[]) {
 
     return await response.text();
   } catch (error) {
-    console.error("AI Chat Service Error:", error);
     throw error;
   }
 }
@@ -63,7 +62,7 @@ export async function createSupportTicket(payload: Payload) {
       message: result.message,
       ticketId: result.ticketId,
     };
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
       message:
@@ -94,7 +93,7 @@ export async function fetchUserSupportTickets(params: URLSearchParams) {
       pagination: result.pagination,
       success: result.success,
     };
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
       message:
