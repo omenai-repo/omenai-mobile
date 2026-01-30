@@ -1,5 +1,6 @@
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function deleteGalleryAccount() {
   let id = "";
@@ -11,16 +12,13 @@ export async function deleteGalleryAccount() {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/api/requests/gallery/deleteAccount`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      `${apiUrl}/api/requests/gallery/deleteAccount`,
+      {
+        method: "POST",
+        body: JSON.stringify({ gallery_id: id }),
       },
-      body: JSON.stringify({ gallery_id: id }),
-    }).then(async (res) => {
+    ).then(async (res) => {
       const result = await res.json();
       return { isOk: res.ok, message: result.message };
     });

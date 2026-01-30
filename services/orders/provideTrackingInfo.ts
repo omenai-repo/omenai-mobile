@@ -1,9 +1,5 @@
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function provideTrackingInfo({
   data,
@@ -13,16 +9,10 @@ export async function provideTrackingInfo({
   order_id: string;
 }) {
   try {
-    const response = await fetch(
+    const response = await apiRequest(
       apiUrl + "/api/orders/updateOrderTrackingData",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Origin: originHeader,
-          "User-Agent": userAgent,
-          Authorization: authorization,
-        },
         body: JSON.stringify({ data, order_id }),
       },
     ).then(async (res) => {
@@ -36,6 +26,7 @@ export async function provideTrackingInfo({
     return {
       isOk: false,
       body: { message: "Error updating order status" },
+      message: (error as any).message || "Error updating order status",
       error: error,
     };
   }

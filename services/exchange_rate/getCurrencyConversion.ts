@@ -1,14 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function getCurrencyConversion(currency: string, amount: number) {
   try {
-    const res = await fetch(`${apiUrl}/api/exchange_rate`, {
+    const res = await apiRequest(`${apiUrl}/api/exchange_rate`, {
       method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      },
       body: JSON.stringify({ currency, amount }),
     });
 

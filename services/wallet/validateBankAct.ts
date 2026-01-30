@@ -1,16 +1,18 @@
-import { apiUrl, authorization, originHeader, userAgent } from '#constants/apiUrl.constants';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
-export async function validateBankAcct(bankCode: string, accountNumber: string) {
+export async function validateBankAcct(
+  bankCode: string,
+  accountNumber: string,
+) {
   try {
-    const res = await fetch(`${apiUrl}/api/wallet/accounts/validate_account`, {
-      method: 'POST',
-      headers: {
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const res = await apiRequest(
+      `${apiUrl}/api/wallet/accounts/validate_account`,
+      {
+        method: "POST",
+        body: JSON.stringify({ bankCode, accountNumber }),
       },
-      body: JSON.stringify({ bankCode, accountNumber }),
-    });
+    );
 
     const result = await res.json();
 

@@ -1,15 +1,14 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function getPromotionalData() {
   try {
-    const res = await fetch(`${apiUrl}/api/promotionals/getPromotionalData`, {
-      method: "GET",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      }
-    });
+    const res = await apiRequest(
+      `${apiUrl}/api/promotionals/getPromotionalData`,
+      {
+        method: "GET",
+      },
+    );
 
     const result = await res.json();
 

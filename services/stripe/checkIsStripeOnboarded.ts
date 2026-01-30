@@ -1,16 +1,15 @@
-import { apiUrl, authorization, originHeader, userAgent } from "#constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "#utils/apiRequest";
 
 export async function checkIsStripeOnboarded(accountId: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/stripe/checkStripeDetailsSubmitted`, {
-      method: "POST",
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
+    const res = await apiRequest(
+      `${apiUrl}/api/stripe/checkStripeDetailsSubmitted`,
+      {
+        method: "POST",
+        body: JSON.stringify({ accountId }),
       },
-      body: JSON.stringify({ accountId }),
-    });
+    );
 
     const result = await res.json();
 

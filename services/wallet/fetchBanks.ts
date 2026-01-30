@@ -1,23 +1,22 @@
-import { apiUrl, authorization, originHeader, userAgent } from '#constants/apiUrl.constants';
-import { utils_getAsyncData } from '#utils/utils_asyncStorage';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function fetchBanks() {
-  let countryCode = '';
-  const userSession = await utils_getAsyncData('userSession');
+  let countryCode = "";
+  const userSession = await utils_getAsyncData("userSession");
   if (userSession.value) {
     countryCode = JSON.parse(userSession.value).address.countryCode;
   }
   if (countryCode.length < 1) return;
 
   try {
-    const res = await fetch(`${apiUrl}/api/wallet/accounts/get_banks?countryCode=${countryCode}`, {
-      method: 'GET',
-      headers: {
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const res = await apiRequest(
+      `${apiUrl}/api/wallet/accounts/get_banks?countryCode=${countryCode}`,
+      {
+        method: "GET",
       },
-    });
+    );
 
     const result = await res.json();
 

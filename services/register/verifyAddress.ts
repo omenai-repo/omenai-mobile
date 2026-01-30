@@ -1,4 +1,5 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function verifyAddress(payload: {
   type: string;
@@ -8,16 +9,13 @@ export async function verifyAddress(payload: {
   countryCode: string;
 }) {
   try {
-    const response = await fetch(`${apiUrl}/api/shipment/address_validation`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      `${apiUrl}/api/shipment/address_validation`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
       },
-      body: JSON.stringify(payload),
-    });
+    );
     const ParsedResponse = {
       isOk: response.ok,
       body: await response.json(),

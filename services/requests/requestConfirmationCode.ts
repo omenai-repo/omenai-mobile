@@ -1,5 +1,6 @@
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function requestPasswordConfirmationCode(route: string) {
   let id = "";
@@ -12,18 +13,12 @@ export async function requestPasswordConfirmationCode(route: string) {
   }
 
   try {
-    const response = await fetch(
+    const response = await apiRequest(
       `${apiUrl}/api/requests/${route}/requestPasswordConfirmationCode`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Origin: originHeader,
-          "User-Agent": userAgent,
-          Authorization: authorization,
-        },
         body: JSON.stringify({ id: id }),
-      }
+      },
     ).then(async (res) => {
       const result = await res.json();
       return { isOk: res.ok, message: result.message };

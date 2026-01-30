@@ -8,6 +8,7 @@ import { useModalStore } from "#store/modal/modalStore";
 import { screenName } from "#constants/screenNames.constants";
 import { useBiometrics } from "#hooks/useBiometrics";
 import { Analytics } from "#utils/analytics";
+import { saveSecureItem } from "#utils/secureStore";
 
 type UserType = "individual" | "gallery" | "artist";
 
@@ -184,6 +185,10 @@ export function useLoginHandler(userType: UserType) {
       "userSession",
       JSON.stringify(data),
     );
+
+    if (results?.body?.access_token) {
+      await saveSecureItem("session_token", results.body.access_token);
+    }
 
     const loginTimeStamp = new Date();
     await utils_storeAsyncData(

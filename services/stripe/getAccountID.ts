@@ -1,14 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function getAccountID(galleryId: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/stripe/getAccountId`, {
+    const res = await apiRequest(`${apiUrl}/api/stripe/getAccountId`, {
       method: "POST",
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify({ gallery_id: galleryId }),
     });
 

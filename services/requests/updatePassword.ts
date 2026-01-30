@@ -1,7 +1,12 @@
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
-export async function updatePassword(password: string, code: string, route: string) {
+export async function updatePassword(
+  password: string,
+  code: string,
+  route: string,
+) {
   let id = "";
   const userSession = await utils_getAsyncData("userSession");
   if (userSession.value) {
@@ -11,20 +16,17 @@ export async function updatePassword(password: string, code: string, route: stri
   }
 
   try {
-    const response = await fetch(`${apiUrl}/api/requests/${route}/updatePassword`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      `${apiUrl}/api/requests/${route}/updatePassword`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          ...(route === "gallery" ? { gallery_id: id } : { id: id }),
+          password,
+          code,
+        }),
       },
-      body: JSON.stringify({
-        ...(route === "gallery" ? { gallery_id: id } : { id: id }),
-        password,
-        code,
-      }),
-    }).then(async (res) => {
+    ).then(async (res) => {
       const result = await res.json();
       return { isOk: res.ok, message: result.message };
     });

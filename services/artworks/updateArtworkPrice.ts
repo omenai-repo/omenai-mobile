@@ -1,17 +1,14 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
+import { ArtworkPriceFilterData } from "#types/types";
 
 export async function updateArtworkPrice(
   filter: ArtworkPriceFilterData,
-  art_id: string
+  art_id: string,
 ) {
   try {
-    const res = await fetch(`${apiUrl}/api/artworks/updateArtworkPrice`, {
+    const res = await apiRequest(`${apiUrl}/api/artworks/updateArtworkPrice`, {
       method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      },
       body: JSON.stringify({ filter, art_id }),
     });
 

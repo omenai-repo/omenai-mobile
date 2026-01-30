@@ -1,14 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from '#constants/apiUrl.constants';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../../utils/apiRequest";
 
 export async function fetchViewHistory(user_id: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/viewHistory/getViewHistory`, {
-      method: 'POST',
-      headers: {
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
-      },
+    const res = await apiRequest(`${apiUrl}/api/viewHistory/getViewHistory`, {
+      method: "POST",
       body: JSON.stringify({ user_id }),
     });
 

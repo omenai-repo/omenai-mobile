@@ -1,16 +1,16 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { RouteIdentifier } from "#types/types";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
-export async function updateProfile(route: RouteIdentifier, payload: any, id: string) {
+export async function updateProfile(
+  route: RouteIdentifier,
+  payload: any,
+  id: string,
+) {
   try {
-    const response = await fetch(`${apiUrl}/api/update/${route}/profile`, {
-      method: 'POST',
+    const response = await apiRequest(`${apiUrl}/api/update/${route}/profile`, {
+      method: "POST",
       body: JSON.stringify({ ...payload, id }),
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
-      },
     }).then(async (res) => {
       const data: { message: string } = await res.json();
       const response = {
@@ -25,7 +25,7 @@ export async function updateProfile(route: RouteIdentifier, payload: any, id: st
   } catch (error) {
     return {
       isOk: false,
-      body: { message: 'Error updating profile' },
+      body: { message: "Error updating profile" },
     };
   }
 }

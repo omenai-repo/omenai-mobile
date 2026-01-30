@@ -1,15 +1,11 @@
-import { apiUrl, authorization, originHeader, userAgent } from "#constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function cancelSubscription(gallery_id: string) {
   try {
     const url = `${apiUrl}/api/subscriptions/cancelSubscription`;
-    const res = await fetch(url, {
+    const res = await apiRequest(url, {
       method: "POST",
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify({ gallery_id }),
     });
 

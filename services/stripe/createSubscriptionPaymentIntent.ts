@@ -1,9 +1,5 @@
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "#constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "#utils/apiRequest";
 
 export const createSubscriptionPaymentIntent = async (
   amount: number,
@@ -15,25 +11,20 @@ export const createSubscriptionPaymentIntent = async (
     plan_id: string;
     plan_interval: string;
   },
-  return_url?: string
+  return_url?: string,
 ) => {
   try {
-    const res = await fetch(
+    const res = await apiRequest(
       `${apiUrl}/api/subscriptions/stripe/createSubscriptionPaymentIntent`,
       {
         method: "POST",
-        headers: {
-          Origin: originHeader,
-          "User-Agent": userAgent,
-          Authorization: authorization,
-        },
         body: JSON.stringify({
           amount,
           gallery_id,
           meta,
           return_url,
         }),
-      }
+      },
     );
 
     const result = await res.json();

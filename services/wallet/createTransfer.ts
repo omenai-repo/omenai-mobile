@@ -1,4 +1,5 @@
-import { apiUrl, authorization, originHeader, userAgent } from "#constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function createTransfer(payload: {
   amount: number;
@@ -8,13 +9,8 @@ export async function createTransfer(payload: {
 }) {
   try {
     const url = `${apiUrl}/api/flw/createTransfer`;
-    const res = await fetch(url, {
+    const res = await apiRequest(url, {
       method: "POST",
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify(payload),
     });
 

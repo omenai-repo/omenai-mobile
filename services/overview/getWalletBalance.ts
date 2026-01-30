@@ -1,16 +1,14 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function getWalletBalance({ id }: { id: string }) {
   try {
-    const response = await fetch(`${apiUrl}/api/wallet/fetch_wallet_balance?id=${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      `${apiUrl}/api/wallet/fetch_wallet_balance?id=${id}`,
+      {
+        method: "GET",
       },
-    });
+    );
 
     const result = await response.json();
 
@@ -18,7 +16,7 @@ export async function getWalletBalance({ id }: { id: string }) {
   } catch (error) {
     return {
       isOk: false,
-      body: { message: 'Error fetching wallet balance' },
+      body: { message: "Error fetching wallet balance" },
     };
   }
 }

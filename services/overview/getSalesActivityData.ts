@@ -1,10 +1,6 @@
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function getSalesActivityData(year?: string) {
   let sessionId = "";
@@ -16,14 +12,8 @@ export async function getSalesActivityData(year?: string) {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/api/sales/getActivityById`, {
+    const response = await apiRequest(`${apiUrl}/api/sales/getActivityById`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify({ id: sessionId, year }),
     }).then(async (res) => {
       if (!res.ok) return undefined;

@@ -1,10 +1,6 @@
 import { IndividualLoginData } from "#types/types";
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function loginAccount(
   payload: IndividualLoginData,
@@ -13,18 +9,12 @@ export async function loginAccount(
   const url = apiUrl + "/api/auth/" + route + "/login";
 
   try {
-    const response = await fetch(url, {
+    const response = await apiRequest(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
+      auth: false,
       body: JSON.stringify(payload),
     });
     const result = await response.json();
-    console.log(result, "result");
     return {
       isOk: response.ok,
       status: response.status,

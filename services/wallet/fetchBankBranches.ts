@@ -1,16 +1,12 @@
-import { apiUrl, authorization, originHeader, userAgent } from '#constants/apiUrl.constants';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function fetchBankBranches(bankCode: string) {
   try {
-    const res = await fetch(
+    const res = await apiRequest(
       `${apiUrl}/api/wallet/accounts/get_bank_branches?bankCode=${bankCode}`,
       {
-        method: 'GET',
-        headers: {
-          Origin: originHeader,
-          'User-Agent': userAgent,
-          Authorization: authorization,
-        },
+        method: "GET",
       },
     );
 

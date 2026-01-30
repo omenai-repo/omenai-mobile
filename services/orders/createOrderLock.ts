@@ -1,14 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export const createOrderLock = async (art_id: string, user_id: string) => {
   try {
-    const res = await fetch(`${apiUrl}/api/locks/createLock`, {
+    const res = await apiRequest(`${apiUrl}/api/locks/createLock`, {
       method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      },
       body: JSON.stringify({
         art_id,
         user_id,
