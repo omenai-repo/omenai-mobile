@@ -1,10 +1,6 @@
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export const verifyDiscountedSubscriptionCharge = async (
   setupIntentId: string,
@@ -18,16 +14,10 @@ export const verifyDiscountedSubscriptionCharge = async (
   if (!gallery_id) return { isOk: false, message: "No gallery ID found" };
 
   try {
-    const res = await fetch(
+    const res = await apiRequest(
       `${apiUrl}/api/subscriptions/stripe/verifyDiscountedSubscriptionCharge`,
       {
         method: "POST",
-        headers: {
-          Origin: originHeader,
-          "User-Agent": userAgent,
-          Authorization: authorization,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           setupIntentId,
           planId,

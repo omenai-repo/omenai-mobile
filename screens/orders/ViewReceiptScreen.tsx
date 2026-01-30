@@ -95,8 +95,15 @@ export default function ViewReceiptScreen() {
 
   if (!activeInvoice) {
     return (
-      <View style={tw`flex-1 bg-gray-50 justify-center items-center`}>
-        <Text style={tw`text-gray-500`}>Invoice not found</Text>
+      <View style={tw`flex-1 bg-gray-50`}>
+        <BackHeaderTitle title="View Receipt" />
+        <ScrollView contentContainerStyle={tw`p-4 flex-1`}>
+          <View
+            style={tw`bg-white rounded-2xl flex-1 justify-center items-center p-5 shadow-sm border border-gray-100`}
+          >
+            <Text style={tw`text-gray-500`}>Invoice not found</Text>
+          </View>
+        </ScrollView>
       </View>
     );
   }

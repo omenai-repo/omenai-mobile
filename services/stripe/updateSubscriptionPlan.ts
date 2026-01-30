@@ -1,11 +1,7 @@
 import { NextChargeParams } from "#types/types";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export const updateSubscriptionPlan = async (
   data: NextChargeParams,
@@ -18,15 +14,10 @@ export const updateSubscriptionPlan = async (
   }
   if (gallery_id.length < 1) return;
   try {
-    const res = await fetch(
+    const res = await apiRequest(
       `${apiUrl}/api/subscriptions/updateSubscriptionPlan`,
       {
         method: "POST",
-        headers: {
-          Origin: originHeader,
-          "User-Agent": userAgent,
-          Authorization: authorization,
-        },
         body: JSON.stringify({ data, gallery_id, action }),
       },
     );

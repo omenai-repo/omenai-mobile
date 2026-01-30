@@ -1,17 +1,15 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function extendArtworkExclusivity(art_id: string) {
   try {
-    const response = await fetch(apiUrl + '/api/artworks/extendArtworkExclusivity', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      apiUrl + "/api/artworks/extendArtworkExclusivity",
+      {
+        method: "PUT",
+        body: JSON.stringify({ art_id }),
       },
-      body: JSON.stringify({ art_id }),
-    });
+    );
 
     const result = await response.json();
 
@@ -23,7 +21,8 @@ export async function extendArtworkExclusivity(art_id: string) {
   } catch {
     return {
       isOk: false,
-      message: 'An error was encountered, please try again later or contact support',
+      message:
+        "An error was encountered, please try again later or contact support",
     };
   }
 }

@@ -1,21 +1,12 @@
 import { EntityType, SupportCategory } from "../../types/types";
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
 import { Message } from "../../store/support/supportChatStore";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function sendAiChatMessage(messages: Message[]) {
   try {
-    const response = await fetch(`${apiUrl}/api/ai/chat`, {
+    const response = await apiRequest(`${apiUrl}/api/ai/chat`, {
       method: "POST",
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify({
         messages,
         pageContext: "mobile_app",
@@ -46,14 +37,9 @@ type Payload = {
 
 export async function createSupportTicket(payload: Payload) {
   try {
-    const response = await fetch(`${apiUrl}/api/support`, {
+    const response = await apiRequest(`${apiUrl}/api/support`, {
       method: "POST",
       body: JSON.stringify(payload),
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
     });
     const result = await response.json();
 
@@ -73,15 +59,8 @@ export async function createSupportTicket(payload: Payload) {
 
 export async function fetchUserSupportTickets(params: URLSearchParams) {
   try {
-    const response = await fetch(
+    const response = await apiRequest(
       `${apiUrl}/api/support/fetchUserTickets?${params.toString()}`,
-      {
-        headers: {
-          Origin: originHeader,
-          "User-Agent": userAgent,
-          Authorization: authorization,
-        },
-      },
     );
 
     const result = await response.json();

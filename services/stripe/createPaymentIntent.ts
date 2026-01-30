@@ -1,4 +1,5 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export const createPaymentIntent = async (
   amount: number,
@@ -14,17 +15,12 @@ export const createPaymentIntent = async (
     shipping_cost: number;
     unit_price: number;
     tax_fees: number;
-  }
+  },
 ) => {
   try {
     const url = `${apiUrl}/api/stripe/createPaymentIntent`;
-    const res = await fetch(url, {
+    const res = await apiRequest(url, {
       method: "POST",
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify({
         amount,
         seller_id,

@@ -52,10 +52,10 @@ export const useOrdersManagement = ({
     (arr: any[]) => {
       if (!Array.isArray(arr)) return [];
       return arr.filter(
-        (o) => new Date(o.createdAt).getFullYear() === selectedYear
+        (o) => new Date(o.createdAt).getFullYear() === selectedYear,
       );
     },
-    [selectedYear]
+    [selectedYear],
   );
 
   const getCurrentOrders = useCallback(() => {

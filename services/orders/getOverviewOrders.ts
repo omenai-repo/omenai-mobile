@@ -1,9 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
-import { utils_getAsyncData } from '#utils/utils_asyncStorage';
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function getOverviewOrders() {
-  let userId = '';
-  const userSession = await utils_getAsyncData('userSession');
+  let userId = "";
+  const userSession = await utils_getAsyncData("userSession");
   if (userSession.value) {
     userId = JSON.parse(userSession.value).id;
   } else {
@@ -11,15 +12,12 @@ export async function getOverviewOrders() {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/api/orders/getOrderByFilter?id=${userId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      `${apiUrl}/api/orders/getOrderByFilter?id=${userId}`,
+      {
+        method: "GET",
       },
-    });
+    );
 
     const result = await response.json();
     return {
@@ -30,7 +28,7 @@ export async function getOverviewOrders() {
   } catch (error) {
     return {
       isOk: false,
-      body: { message: 'Error fetching orders' },
+      body: { message: "Error fetching orders" },
     };
   }
 }

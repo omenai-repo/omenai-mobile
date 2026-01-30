@@ -1,15 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from '#constants/apiUrl.constants';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function verifyGalleryRequest(name: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/verification/verifyGallery`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
-      },
+    const res = await apiRequest(`${apiUrl}/api/verification/verifyGallery`, {
+      method: "POST",
       body: JSON.stringify({ name }),
     });
 

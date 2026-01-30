@@ -1,9 +1,5 @@
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "#constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 type JoinWaitlistPayload = Readonly<{
   name: string;
@@ -18,21 +14,15 @@ type JoinWaitlistResponse = {
 };
 
 export async function joinWaitlist(
-  payload: JoinWaitlistPayload
+  payload: JoinWaitlistPayload,
 ): Promise<JoinWaitlistResponse> {
   try {
-    const result = await fetch(
+    const result = await apiRequest(
       `${apiUrl}/api/auth/waitlist/createWaitlistUser`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Origin: originHeader,
-          "User-Agent": userAgent,
-          Authorization: authorization,
-        },
         body: JSON.stringify(payload),
-      }
+      },
     );
 
     const responseText = await result.text();

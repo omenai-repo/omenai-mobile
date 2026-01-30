@@ -3,12 +3,8 @@ import {
   GalleryRegisterData,
   IndividualRegisterData,
 } from "#types/types";
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function registerAccount(
   payload:
@@ -22,14 +18,8 @@ export async function registerAccount(
   const url = apiUrl + "/api/auth/" + route + "/register";
 
   try {
-    const response = await fetch(url, {
+    const response = await apiRequest(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify(payload),
     });
     console.log(payload);

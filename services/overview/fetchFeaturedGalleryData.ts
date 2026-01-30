@@ -1,4 +1,5 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function getFeaturedGalleryData({
   gallery_id,
@@ -8,15 +9,10 @@ export async function getFeaturedGalleryData({
   page?: number;
 }) {
   try {
-    const res = await fetch(
+    const res = await apiRequest(
       `${apiUrl}/api/requests/gallery/fetchFeaturedGalleryData?id=${gallery_id}&page=${page}`,
       {
-        method: 'GET',
-        headers: {
-          Origin: originHeader,
-          'User-Agent': userAgent,
-          Authorization: authorization,
-        },
+        method: "GET",
       },
     );
 

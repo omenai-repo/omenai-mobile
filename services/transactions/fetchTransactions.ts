@@ -1,24 +1,23 @@
-import { apiUrl, authorization, originHeader, userAgent } from '#constants/apiUrl.constants';
-import { utils_getAsyncData } from '#utils/utils_asyncStorage';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function fetchTransactions() {
-  let gallery_id = '';
-  const userSession = await utils_getAsyncData('userSession');
+  let gallery_id = "";
+  const userSession = await utils_getAsyncData("userSession");
   if (userSession.value) {
     gallery_id = JSON.parse(userSession.value).id;
   }
   if (gallery_id.length < 1) return;
 
   try {
-    const res = await fetch(`${apiUrl}/api/transactions/fetchTransaction`, {
-      method: 'POST',
-      headers: {
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const res = await apiRequest(
+      `${apiUrl}/api/transactions/fetchTransaction`,
+      {
+        method: "POST",
+        body: JSON.stringify({ trans_recipient_id: gallery_id }),
       },
-      body: JSON.stringify({ trans_recipient_id: gallery_id }),
-    });
+    );
 
     const result = await res.json();
 

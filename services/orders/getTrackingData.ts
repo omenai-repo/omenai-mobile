@@ -1,16 +1,11 @@
-import { apiUrl, authorization, originHeader, userAgent } from "#constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "#utils/apiRequest";
 
 export async function getTrackingData(orderId: string) {
   try {
     const url = `${apiUrl}/api/shipment/shipment_tracking?order_id=${orderId}`;
-    const response = await fetch(url, {
+    const response = await apiRequest(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
     });
 
     const result = await response.json();
@@ -28,7 +23,8 @@ export async function getTrackingData(orderId: string) {
   } catch {
     return {
       isOk: false,
-      message: "An error was encountered, please try again later or contact support",
+      message:
+        "An error was encountered, please try again later or contact support",
     };
   }
 }

@@ -1,23 +1,13 @@
 import { ArtworkSchemaTypes } from "#types/types";
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function uploadArtworkData(
   data: Omit<ArtworkSchemaTypes, "art_id">,
 ) {
   try {
-    const response = await fetch(`${apiUrl}/api/artworks/upload`, {
+    const response = await apiRequest(`${apiUrl}/api/artworks/upload`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify(data),
     }).then(async (res) => {
       const ParsedResponse = {

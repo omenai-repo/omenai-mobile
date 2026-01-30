@@ -1,22 +1,15 @@
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function fetchsingleArtwork(art_id: string) {
   try {
-    const response = await fetch(`${apiUrl}/api/artworks/getSingleArtwork`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      `${apiUrl}/api/artworks/getSingleArtwork`,
+      {
+        method: "POST",
+        body: JSON.stringify({ art_id }),
       },
-      body: JSON.stringify({ art_id }),
-    }).then(async (res) => {
+    ).then(async (res) => {
       const ParsedResponse = {
         isOk: res.ok,
         body: await res.json(),
@@ -27,7 +20,7 @@ export async function fetchsingleArtwork(art_id: string) {
     });
 
     return response;
-  } catch {
+  } catch (error) {
     return {
       isOk: false,
       body: { message: "Error fetching artwork details" },

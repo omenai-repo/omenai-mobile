@@ -1,9 +1,5 @@
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 import { AddressTypes } from "#types/types";
 
 export async function createShippingOrder(
@@ -16,14 +12,8 @@ export async function createShippingOrder(
   designation: "gallery" | "artist",
 ) {
   try {
-    const response = await fetch(`${apiUrl}/api/orders/createOrder`, {
+    const response = await apiRequest(`${apiUrl}/api/orders/createOrder`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify({
         buyer_id,
         art_id,
@@ -37,11 +27,11 @@ export async function createShippingOrder(
     const result = await response.json();
     return { isOk: response.ok, message: result.message };
   } catch (error) {
-    console.log("error" + error);
+    console.log("error", error?.message);
     return {
       isOk: false,
       error,
-      body: { message: "Error fetching orders" },
+      message: (error as any).message || "Error creating shipping order",
     };
   }
 }

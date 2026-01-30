@@ -3,7 +3,7 @@ name: Production Build and Submit
 on:
   push:
     branches:
-      - feat/omenai-ai-supportt
+      - feat/omenai-ai-support
   workflow_dispatch:
 
 jobs:

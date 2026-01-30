@@ -1,4 +1,5 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function createCheckoutSession(
   item: string,
@@ -11,7 +12,7 @@ export async function createCheckoutSession(
     art_id: string;
   },
   success_url: string,
-  cancel_url: string
+  cancel_url: string,
 ) {
   console.log({
     item,
@@ -20,15 +21,10 @@ export async function createCheckoutSession(
     meta,
     cancel_url,
     success_url,
-  })
+  });
   try {
-    const res = await fetch(`${apiUrl}/api/stripe/createCheckoutSession`, {
+    const res = await apiRequest(`${apiUrl}/api/stripe/createCheckoutSession`, {
       method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      },
       body: JSON.stringify({
         item,
         amount,

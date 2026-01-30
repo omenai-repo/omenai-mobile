@@ -1,4 +1,5 @@
-import { apiUrl, authorization, originHeader, userAgent } from '#constants/apiUrl.constants';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 interface ArtworkPriceParams {
   medium: string;
@@ -16,15 +17,10 @@ export async function getArtworkPriceForArtist({
   currency,
 }: ArtworkPriceParams) {
   try {
-    const res = await fetch(
+    const res = await apiRequest(
       `${apiUrl}/api/artworks/getArtworkPriceForArtist?medium=${medium}&category=${category}&height=${height}&width=${width}&currency=${currency}`,
       {
-        method: 'GET',
-        headers: {
-          Origin: originHeader,
-          'User-Agent': userAgent,
-          Authorization: authorization,
-        },
+        method: "GET",
       },
     );
 
@@ -33,7 +29,7 @@ export async function getArtworkPriceForArtist({
   } catch (error: any) {
     return {
       isOk: false,
-      message: error.response?.data?.message || 'Failed to get artwork price',
+      message: error.response?.data?.message || "Failed to get artwork price",
     };
   }
 }

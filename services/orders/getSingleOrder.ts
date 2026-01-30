@@ -1,14 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export const getSingleOrder = async (order_id: string) => {
   try {
-    const res = await fetch(`${apiUrl}/api/orders/getSingleOrder`, {
+    const res = await apiRequest(`${apiUrl}/api/orders/getSingleOrder`, {
       method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      },
       body: JSON.stringify({
         order_id,
       }),

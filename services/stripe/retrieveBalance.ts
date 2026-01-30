@@ -1,14 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function retrieveBalance(account: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/stripe/retrieveBalance`, {
+    const res = await apiRequest(`${apiUrl}/api/stripe/retrieveBalance`, {
       method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      },
       body: JSON.stringify({ account }),
     });
 
