@@ -73,6 +73,14 @@ export default {
         },
       ],
       [
+        "expo-splash-screen",
+        {
+          image: "./assets/splash.png",
+          resizeMode: "contain",
+          backgroundColor: "#FFFFFF",
+        },
+      ],
+      [
         "expo-image-picker",
         {
           photosPermission:
