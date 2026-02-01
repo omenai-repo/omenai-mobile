@@ -186,8 +186,8 @@ export function useLoginHandler(userType: UserType) {
       JSON.stringify(data),
     );
 
-    if (results?.body?.access_token) {
-      await saveSecureItem("session_token", results.body.access_token);
+    if (resultsBody?.access_token) {
+      await saveSecureItem("session_token", resultsBody.access_token);
     }
 
     const loginTimeStamp = new Date();

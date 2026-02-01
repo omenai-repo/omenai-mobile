@@ -21,8 +21,6 @@ export const fetchArtworkByArtist = async (artist: string) => {
     return {
       isOk: false,
       body: { message: error.message },
-      message: error.message,
-      error,
     };
   }
 };

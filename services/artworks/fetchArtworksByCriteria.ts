@@ -26,8 +26,6 @@ export async function fetchArtworksByCriteria({
     return {
       isOk: false,
       body: { message: "Error fetching similar posts" },
-      message: (error as any).message || "Error fetching similar posts",
-      error,
     };
   }
 }

@@ -27,7 +27,6 @@ export async function createShippingOrder(
     const result = await response.json();
     return { isOk: response.ok, message: result.message };
   } catch (error) {
-    console.log("error", error?.message);
     return {
       isOk: false,
       error,

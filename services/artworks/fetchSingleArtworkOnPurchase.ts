@@ -14,12 +14,10 @@ export async function fetchsingleArtworkOnPurchase(art_id: string) {
     const result = await response.json();
 
     return { isOk: response.ok, message: result.message, data: result.data };
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
       body: { message: "Error fetching artwork details" },
-      message: (error as any).message || "Error fetching artwork details",
-      error,
     };
   }
 }

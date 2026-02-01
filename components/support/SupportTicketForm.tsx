@@ -247,8 +247,6 @@ export default function SupportTicketForm({
       meta: metaPayload,
     };
 
-    console.log("Support Payload:", JSON.stringify(payload, null, 2));
-
     submitTicket(payload);
   };
 
