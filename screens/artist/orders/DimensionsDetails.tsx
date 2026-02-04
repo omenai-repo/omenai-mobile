@@ -6,7 +6,7 @@ import {
   View,
   Text,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
@@ -18,14 +18,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import WithModal from "#components/modal/WithModal";
 import { validateOrderMeasurement } from "#lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
 import { useAppStore } from "#store/app/appStore";
-import { convertDimensionsToStandard } from "#utils/convertUnits";
 import { format } from "date-fns";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ToggleButton from "#components/forms/ToggleButton";
 import DimensionInput from "#components/forms/DimensionInput";
-import UnitDropdownField from "#components/forms/UnitDropdownField";
 import AlertCard from "#components/general/AlertCard";
 import { Analytics } from "#utils/analytics";
+import PackagingSelector from "#components/packaging/PackagingSelector";
+import { PackagingType } from "#constants/packaging_data";
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -34,16 +34,16 @@ type ArtworkDimensionsErrorsType = {
   weight: string;
 };
 
-type DimensionUnit = "cm" | "m" | "in" | "ft";
-type WeightUnit = "kg" | "g" | "lb";
-
 const DimensionsDetails = () => {
   const { userType } = useAppStore();
-  const { orderId } = useRoute<any>().params;
+  const { orderId, artworkDimensions } = useRoute<any>().params;
   const navigation = useNavigation();
-  const [dimensionUnit, setDimensionUnit] = useState<DimensionUnit>("cm");
-  const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
-  const [dimentions, setDimentions] = useState({
+
+  // Packaging type state - default to rolled for better shipping rates
+  const [packagingType, setPackagingType] = useState<PackagingType>("rolled");
+  const [usePreset, setUsePreset] = useState(true);
+
+  const [dimensions, setDimensions] = useState({
     length: "",
     width: "",
     height: "",
@@ -57,56 +57,68 @@ const DimensionsDetails = () => {
     weight: "",
   });
 
-  const dimensionUnits = [
-    { label: "centimeter (cm)", value: "cm" },
-    { label: "meter (m)", value: "m" },
-    { label: "inch (in)", value: "in" },
-    { label: "feet (ft)", value: "ft" },
-  ];
-
-  const weightUnits = [
-    { label: "kilogram (kg)", value: "kg" },
-    { label: "gram (g)", value: "g" },
-    { label: "pound (lb)", value: "lb" },
-  ];
   const [isLoading, setIsLoading] = useState(false);
   const [isOnExhibition, setIsOnExhibition] = useState(false);
   const [expoEndDate, setExpoEndDate] = useState<Date | null>(null);
   const [isChecked, setIsChecked] = useState(false);
-
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const userId = useAppStore((state) => state.userSession.id);
 
-  const showDatePicker = () => {
-    setIsDatePickerVisible(true);
+  // Helper to safely parse dimension strings (e.g. "32in" -> 32)
+  const parseDim = (val: string | number | undefined) => {
+    if (!val) return 0;
+    const str = String(val);
+    // Remove everything that is NOT a digit or a decimal point
+    const cleanStr = str.replace(/[^\d.]/g, "");
+    return Number(cleanStr) || 0;
   };
 
-  const hideDatePicker = () => {
-    setIsDatePickerVisible(false);
+  // Parse artwork dimensions from order (default to 24x24 if not provided)
+  const artDims = {
+    length: parseDim(artworkDimensions?.length) || 24,
+    height: parseDim(artworkDimensions?.height) || 24,
   };
+
+  const showDatePicker = () => setIsDatePickerVisible(true);
+  const hideDatePicker = () => setIsDatePickerVisible(false);
 
   const handleConfirm = (date: Date) => {
     setExpoEndDate(date);
     hideDatePicker();
   };
 
-  const checkIsDisabled = () => {
-    const isFormValid = Object.values({
-      weight: formErrors.weight,
-      height: formErrors.height,
-      width: formErrors.width,
-    }).every((error) => error === "");
+  const handlePresetSelect = (details: {
+    length: string;
+    width: string;
+    height: string;
+    weight: string;
+  }) => {
+    if (details.length) {
+      setUsePreset(true);
+      setDimensions(details);
+      // Clear errors since preset values are valid
+      setFormErrors({ height: "", length: "", width: "", weight: "" });
+    } else {
+      // Custom mode - clear dimensions
+      setUsePreset(false);
+      setDimensions({ length: "", width: "", height: "", weight: "" });
+    }
+  };
 
+  const checkIsDisabled = () => {
+    const isFormValid = Object.values(formErrors).every(
+      (error) => error === "",
+    );
     const areAllFieldsFilled = Object.values({
-      weight: dimentions.weight,
-      height: dimentions.height,
-      width: dimentions.width,
+      weight: dimensions.weight,
+      height: dimensions.height,
+      width: dimensions.width,
+      length: dimensions.length,
     }).every((value) => value !== "");
 
-    // Check if exhibition logic is valid
     const isExhibitionValid = isOnExhibition ? !!expoEndDate : true;
 
     return !(
@@ -133,19 +145,31 @@ const DimensionsDetails = () => {
   };
 
   const handleSubmit = async () => {
-    const units = {
-      height: dimensionUnit,
-      width: dimensionUnit,
-      length: dimensionUnit,
-      weight: weightUnit,
-    };
-    const converted = convertDimensionsToStandard(dimentions, units);
     try {
       setIsLoading(true);
+
+      // Convert inches to cm for API (preset values are already in cm)
+      const IN_TO_CM = 2.54;
+      const dimLength = usePreset
+        ? parseFloat(dimensions.length)
+        : parseFloat(dimensions.length) * IN_TO_CM;
+      const dimWidth = usePreset
+        ? parseFloat(dimensions.width)
+        : parseFloat(dimensions.width) * IN_TO_CM;
+      const dimHeight = usePreset
+        ? parseFloat(dimensions.height)
+        : parseFloat(dimensions.height) * IN_TO_CM;
+
       const payload = {
         order_id: orderId,
         data: {
-          dimensions: converted,
+          dimensions: {
+            length: dimLength || 0,
+            width: dimWidth || 0,
+            height: dimHeight || 0,
+            weight: parseFloat(dimensions.weight) || 0,
+          },
+          packaging_type: packagingType,
           exhibition_status:
             userType === "gallery"
               ? {
@@ -156,21 +180,20 @@ const DimensionsDetails = () => {
           hold_status: null,
         },
       };
+
       console.log("Payload:", JSON.stringify(payload, null, 2));
       const response = await updateShippingQuote(payload);
       console.log("Response:", JSON.stringify(response, null, 2));
+
       if (response.isOk) {
         Analytics.track("order_accepted", {
-          ids: {
-            order_id: orderId,
-            seller_id: userId,
-          },
+          ids: { order_id: orderId, seller_id: userId },
           seller_type: userType,
+          packaging_type: packagingType,
           payload,
           response,
         });
 
-        // Invalidate both artist/collector and gallery orders so both screens refresh
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["orders", userId] }),
           queryClient.invalidateQueries({ queryKey: ["orders", "gallery"] }),
@@ -182,21 +205,13 @@ const DimensionsDetails = () => {
           modalType: "success",
           showModal: true,
           onDismiss: () => {
-            setDimentions({
-              length: "",
-              width: "",
-              height: "",
-              weight: "",
-            });
+            setDimensions({ length: "", width: "", height: "", weight: "" });
             navigation.goBack();
           },
         });
       } else {
         Analytics.track("order_accept_failed", {
-          ids: {
-            order_id: orderId,
-            seller_id: userId,
-          },
+          ids: { order_id: orderId, seller_id: userId },
           seller_type: userType,
           error_message: response.message,
           payload,
@@ -223,7 +238,7 @@ const DimensionsDetails = () => {
   return (
     <WithModal>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <BackHeaderTitle title="Dimensions (Including Packaging)" />
+        <BackHeaderTitle title="Packaging Dimensions" />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -235,53 +250,71 @@ const DimensionsDetails = () => {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            <View style={tw`mt-[30px] mx-[25px] gap-[10px] z-50`}>
-              <View style={tw`flex-row gap-4 mb-4`}>
-                <UnitDropdownField
-                  label="Dimension Unit"
-                  units={dimensionUnits}
-                  selectedUnit={dimensionUnit}
-                  onSelect={(unit) => setDimensionUnit(unit as DimensionUnit)}
-                />
-                <UnitDropdownField
-                  label="Weight Unit"
-                  units={weightUnits}
-                  selectedUnit={weightUnit}
-                  onSelect={(unit) => setWeightUnit(unit as WeightUnit)}
-                />
-              </View>
-
-              {(
-                ["height", "length", "width"] as Array<keyof typeof dimentions>
-              ).map((field) => (
-                <DimensionInput
-                  key={field}
-                  field={field}
-                  unit={dimensionUnit}
-                  value={dimentions[field]}
-                  errorMessage={formErrors[field]}
-                  onInputChange={(text) =>
-                    setDimentions((prev) => ({ ...prev, [field]: text }))
-                  }
-                  onValidation={(text) => handleValidationChecks(field, text)}
-                />
-              ))}
-
-              <DimensionInput
-                field="weight"
-                unit={weightUnit}
-                value={dimentions.weight}
-                errorMessage={formErrors.weight}
-                onInputChange={(text) =>
-                  setDimentions((prev) => ({ ...prev, weight: text }))
-                }
-                onValidation={(text) => handleValidationChecks("weight", text)}
+            <View style={tw`mt-[20px] mx-[20px]`}>
+              {/* Packaging Selector with Presets */}
+              <PackagingSelector
+                artDimensions={artDims}
+                packagingType={packagingType}
+                onTypeChange={setPackagingType}
+                onSelect={handlePresetSelect}
               />
+
+              {/* Custom Dimension Inputs (shown when custom selected) */}
+              {!usePreset && (
+                <View style={tw`gap-3 mt-4`}>
+                  <Text style={tw`text-sm font-medium text-gray-700 mb-2`}>
+                    Enter Custom Dimensions (inches / kg)
+                  </Text>
+                  {(["length", "width", "height"] as const).map((field) => (
+                    <DimensionInput
+                      key={field}
+                      field={field}
+                      unit="in"
+                      value={dimensions[field]}
+                      errorMessage={formErrors[field]}
+                      onInputChange={(text) =>
+                        setDimensions((prev) => ({ ...prev, [field]: text }))
+                      }
+                      onValidation={(text) =>
+                        handleValidationChecks(field, text)
+                      }
+                    />
+                  ))}
+                  <DimensionInput
+                    field="weight"
+                    unit="kg"
+                    value={dimensions.weight}
+                    errorMessage={formErrors.weight}
+                    onInputChange={(text) =>
+                      setDimensions((prev) => ({ ...prev, weight: text }))
+                    }
+                    onValidation={(text) =>
+                      handleValidationChecks("weight", text)
+                    }
+                  />
+                </View>
+              )}
+
+              {/* Selected Dimensions Summary */}
+              {usePreset && dimensions.length && (
+                <View
+                  style={tw`bg-white border border-gray-200 rounded-xl p-4 mt-2`}
+                >
+                  <Text style={tw`text-sm font-medium text-gray-700 mb-2`}>
+                    Selected Package Dimensions
+                  </Text>
+                  <Text style={tw`text-xs text-gray-500`}>
+                    {dimensions.length}cm × {dimensions.width}cm ×{" "}
+                    {dimensions.height}cm • {dimensions.weight}kg
+                  </Text>
+                </View>
+              )}
             </View>
 
+            {/* Exhibition Options (Gallery Only) */}
             {userType === "gallery" && (
-              <View style={tw`mt-5 mx-[25px]`}>
-                <Text style={tw`text-[14px] text-[#858585] mb-[15px]`}>
+              <View style={tw`mt-5 mx-[20px]`}>
+                <Text style={tw`text-sm text-gray-600 mb-3`}>
                   Is artwork on exhibition?
                 </Text>
                 <View style={tw`flex-row gap-4`}>
@@ -306,21 +339,19 @@ const DimensionsDetails = () => {
 
                 {isOnExhibition && (
                   <View style={tw`mt-4`}>
-                    <Text style={tw`text-[14px] text-[#858585] mb-[15px]`}>
+                    <Text style={tw`text-sm text-gray-600 mb-3`}>
                       Select Exhibition End Date:
                     </Text>
-
                     <Pressable
                       onPress={showDatePicker}
-                      style={tw`bg-white border border-[#D1D5DB] rounded-lg px-4 py-3`}
+                      style={tw`bg-white border border-gray-200 rounded-lg px-4 py-3`}
                     >
-                      <Text style={tw`text-[#1A1A1A]`}>
+                      <Text style={tw`text-gray-900`}>
                         {expoEndDate
                           ? format(expoEndDate, "MMM dd, yyyy - hh:mm a")
                           : "Select date and time"}
                       </Text>
                     </Pressable>
-
                     <DateTimePickerModal
                       isVisible={isDatePickerVisible}
                       mode="datetime"
@@ -328,45 +359,45 @@ const DimensionsDetails = () => {
                       onCancel={hideDatePicker}
                       minimumDate={new Date()}
                       display={Platform.OS === "ios" ? "inline" : "default"}
-                      confirmTextIOS="Confirm"
-                      cancelTextIOS="Cancel"
                     />
                   </View>
                 )}
               </View>
             )}
 
-            <View style={tw`mt-7 mx-6`}>
+            {/* Agreement Section */}
+            <View style={tw`mt-6 mx-5`}>
               <AlertCard
-                title="Kindly review the following information carefully before continuing."
-                description="By accepting this order, you agree to hold the artwork for 24 hours to allow for payment and shipment processing. If the piece is on exhibition and paid for by this buyer, shipment will be scheduled at the exhibition’s end date"
+                title="Please review carefully"
+                description="By accepting, you agree to hold the artwork for 24 hours for payment processing. If on exhibition, shipment will be scheduled at the exhibition's end."
               />
 
               <Pressable
                 onPress={() => setIsChecked(!isChecked)}
-                style={tw`mt-[18px] flex-row items-center gap-[12px]`}
+                style={tw`mt-4 flex-row items-center gap-3`}
               >
                 <View
-                  style={tw`w-[20px] h-[20px] rounded-full border-2 border-[#858585] items-center justify-center`}
+                  style={tw`w-5 h-5 rounded-full border-2 border-gray-400 items-center justify-center`}
                 >
                   {isChecked && (
                     <View
                       style={[
-                        tw`w-[12px] h-[12px] rounded-full`,
+                        tw`w-3 h-3 rounded-full`,
                         { backgroundColor: colors.primary_black },
                       ]}
                     />
                   )}
                 </View>
-                <Text style={tw`text-[14px] text-[#858585] font-medium`}>
+                <Text style={tw`text-sm text-gray-600 font-medium`}>
                   I agree and continue
                 </Text>
               </Pressable>
             </View>
 
-            <View style={tw`mt-[60px] mx-[25px] mb-[150px]`}>
+            {/* Submit Button */}
+            <View style={tw`mt-12 mx-5 mb-36`}>
               <LongBlackButton
-                value="Submit"
+                value="Accept Order"
                 onClick={handleSubmit}
                 isLoading={isLoading}
                 isDisabled={checkIsDisabled()}

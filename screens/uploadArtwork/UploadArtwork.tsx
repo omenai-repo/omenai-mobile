@@ -15,6 +15,7 @@ import { uploadArtworkData } from "#services/artworks/uploadArtworkData";
 import SuccessScreen from "./components/SuccessScreen";
 import { useModalStore } from "#store/modal/modalStore";
 import Loader from "#components/general/Loader";
+import FormSkeleton from "#components/skeleton/FormSkeleton";
 import { useAppStore } from "#store/app/appStore";
 import LockScreen from "#screens/galleryArtworksListing/components/LockScreen";
 import ScrollWrapper from "#components/general/ScrollWrapper";
@@ -31,12 +32,11 @@ import { Analytics } from "#utils/analytics";
 
 export default function UploadArtwork() {
   const insets = useSafeAreaInsets();
+  const { userSession, userType } = useAppStore();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showLockScreen, setShowLockScreen] = useState(false);
-  const [shouldPreCheck, setShouldPreCheck] = useState(false);
+  const [shouldPreCheck, setShouldPreCheck] = useState(userType === "gallery");
   const queryClient = useQueryClient();
-
-  const { userSession, userType } = useAppStore();
 
   const {
     activeIndex,
@@ -168,7 +168,7 @@ export default function UploadArtwork() {
             });
           }
           updateModal({
-            message: upload_response.body,
+            message: upload_response.body?.message,
             modalType: "error",
             showModal: true,
           });
@@ -246,6 +246,7 @@ export default function UploadArtwork() {
         style={{ flex: 1 }}
       >
         <ScrollWrapper
+          key={`scroll-${activeIndex}`}
           style={styles.container}
           contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
           nestedScrollEnabled={true}
@@ -268,32 +269,42 @@ export default function UploadArtwork() {
   const shouldRenderUpload =
     userType === "gallery" ? canUpload : !showLockScreen;
 
-  const { value: isArtworkPriceCalculationEnabled } = useHighRiskFeatureFlag(
-    "artwork_price_calculation_enabled",
-  );
-  const { value: isArtworkUploadEnabled } = useHighRiskFeatureFlag(
-    "artwork_upload_enabled",
-  );
+  const {
+    value: isArtworkPriceCalculationEnabled,
+    loading: isPriceFlagLoading,
+  } = useHighRiskFeatureFlag("artwork_price_calculation_enabled");
+  const { value: isArtworkUploadEnabled, loading: isUploadFlagLoading } =
+    useHighRiskFeatureFlag("artwork_upload_enabled");
+
+  const isPageLoading =
+    (userType === "gallery" && loadGalleryCheck) ||
+    isPriceFlagLoading ||
+    isUploadFlagLoading;
 
   const isUploadDisabled =
     !isArtworkPriceCalculationEnabled || !isArtworkUploadEnabled;
 
   return (
     <WithModal>
-      {isUploadDisabled && (
+      {isPageLoading && <FormSkeleton rows={6} />}
+      {!isPageLoading && isUploadDisabled && (
         <UploadBlocker
           entity={userType as "artist" | "gallery"}
           message="We are currently working on some fixes and curating your upload experience."
           expiryTimestamp="2025-11-25T18:00:00Z"
         />
       )}
-      {!isUploadDisabled && shouldShowLock && (
+      {!isPageLoading && !isUploadDisabled && shouldShowLock && (
         <LockScreen name={userSession?.name} />
       )}
-      {!isUploadDisabled &&
+      {!isPageLoading &&
+        !isUploadDisabled &&
         userType === "gallery" &&
         shouldShowSubscriptionBlock && <NoSubscriptionBlock />}
-      {!isUploadDisabled && shouldRenderUpload && renderUploadContent()}
+      {!isPageLoading &&
+        !isUploadDisabled &&
+        shouldRenderUpload &&
+        renderUploadContent()}
     </WithModal>
   );
 }

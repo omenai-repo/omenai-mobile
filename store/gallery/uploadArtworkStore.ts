@@ -7,7 +7,7 @@ type UploadArtworkStoreType = {
   activeIndex: number;
   setActiveIndex: (e: number) => void;
   artworkUploadData: ArtworkUploadStateTypes;
-  updateArtworkUploadData: (label: string, value: string) => void;
+  updateArtworkUploadData: (label: string, value: string | number) => void;
   clearData: () => void;
   isUploaded: boolean;
   setIsUploaded: (value: boolean) => void;
@@ -32,6 +32,7 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>(
       materials: "",
       width: "",
       height: "",
+      length: "",
       weight: "",
       price: 0,
       shouldShowPrice: "",
@@ -45,8 +46,9 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>(
       currency: "",
       usd_price: 0,
       role_access: {} as RoleAccess,
+      packaging_type: "rolled",
     },
-    updateArtworkUploadData: (label: string, value: string) => {
+    updateArtworkUploadData: (label: string, value: string | number) => {
       const data: Record<string, any> = get().artworkUploadData;
 
       if (label in data) {
@@ -68,6 +70,7 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>(
           materials: "",
           width: "",
           height: "",
+          length: "",
           price: 0,
           weight: "",
           shouldShowPrice: "",
@@ -81,6 +84,7 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>(
           currency: "",
           usd_price: 0,
           role_access: {} as RoleAccess,
+          packaging_type: "rolled",
         },
         isUploaded: false,
         activeIndex: 1,

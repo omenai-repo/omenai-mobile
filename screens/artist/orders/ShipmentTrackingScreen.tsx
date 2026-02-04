@@ -145,82 +145,96 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
 
   const primaryEventsToShow = showAllEvents ? events : lastNEvents;
 
-  const { value: isTrackingEnabled } = useLowRiskFeatureFlag(
-    "shipment_tracking_enabled",
-  );
-
-  // If tracking is disabled, show the downtime blocker
-  if (!isTrackingEnabled) {
-    return (
-      <WithModal>
-        <View style={tw`flex-1`}>
-          <BackHeaderTitle title="Track Shipment" />
-          <TrackingDowntimeBlocker
-            trackingNumber={tracking_id || trackingInput}
-            externalLink="https://www.dhl.com/global-en/home/tracking.html"
-            externalLinkText="Track on DHL Global Website"
-          />
-        </View>
-      </WithModal>
-    );
-  }
+  const { value: isTrackingEnabled, loading: isFlagLoading } =
+    useLowRiskFeatureFlag("shipment_tracking_enabled");
 
   return (
     <WithModal>
       <View style={tw`flex-1 bg-gray-50`}>
         <BackHeaderTitle title="Track Shipment" />
 
-        {/* Top Search bar fixed under header */}
-        <View style={tw`px-4 py-4 bg-gray-50`}>
-          <Text style={tw`text-base font-semibold text-gray-900 mb-2`}>
-            Track Your Order
-          </Text>
-
-          <View style={tw`px-4 py-6`}>
-            <Text style={tw`text-base font-semibold text-gray-900 mb-2`}>
-              Enter Tracking Number
-            </Text>
-            <View
-              style={tw`flex-row items-center bg-white rounded-xl border border-gray-200 overflow-hidden`}
-            >
-              <Ionicons name="search" size={20} color="#999" style={tw`pl-4`} />
-              <TextInput
-                style={tw`flex-1 px-4 py-3 text-base text-black`}
-                placeholder="Order ID or tracking number"
-                placeholderTextColor="#999"
-                value={trackingInput}
-                onChangeText={setTrackingInput}
-                editable={!isLoading}
-              />
-            </View>
-            <Pressable
-              onPress={handleSearch}
-              disabled={isLoading || !trackingInput.trim()}
-              style={tw`bg-slate-900 rounded-xl py-3 mt-4 items-center justify-center ${
-                isLoading || !trackingInput.trim() ? "opacity-50" : ""
-              }`}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={tw`text-white font-semibold text-base`}>
-                  Track
-                </Text>
-              )}
-            </Pressable>
+        {isFlagLoading ? (
+          <View style={tw`px-4 py-8`}>
+            {/* Mimic search bar */}
+            <SkeletonRow widthPct="100%" height={120} borderRadius={12} />
+            <View style={tw`h-6`} />
+            {/* Mimic content */}
+            <SkeletonRow widthPct="100%" height={200} borderRadius={12} />
           </View>
+        ) : !isTrackingEnabled ? (
+          <TrackingDowntimeBlocker
+            trackingNumber={tracking_id || trackingInput}
+            externalLink="https://www.dhl.com/global-en/home/tracking.html"
+            externalLinkText="Track on DHL Global Website"
+          />
+        ) : (
+          <View style={tw`flex-1`}>
+            {/* Top Search bar fixed under header */}
+            <View style={tw`px-4 py-4 bg-gray-50`}>
+              <Text style={tw`text-base font-semibold text-gray-900 mb-2`}>
+                Track Your Order
+              </Text>
 
-          {/* Loading skeletons (below input, not replacing it) */}
-          {isLoading && (
-            <View style={tw`mt-4`}>
-              <SkeletonRow widthPct={"60%"} height={16} />
-              <View style={tw`h-3`} />
-              <SkeletonRow widthPct={"100%"} height={90} borderRadius={12} />
-              <View style={tw`h-3`} />
-              <SkeletonRow widthPct={"100%"} height={120} borderRadius={12} />
+              <View style={tw`px-4 py-6`}>
+                <Text style={tw`text-base font-semibold text-gray-900 mb-2`}>
+                  Enter Tracking Number
+                </Text>
+                <View
+                  style={tw`flex-row items-center bg-white rounded-xl border border-gray-200 overflow-hidden`}
+                >
+                  <Ionicons
+                    name="search"
+                    size={20}
+                    color="#999"
+                    style={tw`pl-4`}
+                  />
+                  <TextInput
+                    style={tw`flex-1 px-4 py-3 text-base text-black`}
+                    placeholder="Order ID or tracking number"
+                    placeholderTextColor="#999"
+                    value={trackingInput}
+                    onChangeText={setTrackingInput}
+                    editable={!isLoading}
+                  />
+                </View>
+                <Pressable
+                  onPress={handleSearch}
+                  disabled={isLoading || !trackingInput.trim()}
+                  style={tw`bg-slate-900 rounded-xl py-3 mt-4 items-center justify-center ${
+                    isLoading || !trackingInput.trim() ? "opacity-50" : ""
+                  }`}
+                >
+                  {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={tw`text-white font-semibold text-base`}>
+                      Track
+                    </Text>
+                  )}
+                </Pressable>
+              </View>
+
+              {/* Loading skeletons (below input, not replacing it) */}
+              {isLoading && (
+                <View style={tw`mt-4`}>
+                  <SkeletonRow widthPct={"60%"} height={16} />
+                  <View style={tw`h-3`} />
+                  <SkeletonRow
+                    widthPct={"100%"}
+                    height={90}
+                    borderRadius={12}
+                  />
+                  <View style={tw`h-3`} />
+                  <SkeletonRow
+                    widthPct={"100%"}
+                    height={120}
+                    borderRadius={12}
+                  />
+                </View>
+              )}
             </View>
-          )}
-        </View>
+          </View>
+        )}
 
         <ScrollView
           style={tw`flex-1`}

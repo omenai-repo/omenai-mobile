@@ -85,9 +85,8 @@ type PaymentStatusTypes = {
 };
 
 type ArtworkDimensions = {
-  width: string;
+  length: string;
   height: string;
-  depth?: string;
   weight: string;
 };
 
@@ -224,7 +223,6 @@ export type ArtworkDataType = {
   pricing: { price: number; shouldShowPrice: "Yes" | "No"; usd_price: number };
   year: string;
   dimensions: { depth: string; height: string; width: string; weight: string };
-  framing: string;
   carrier: string;
   rarity: string;
   materials: string;
@@ -369,7 +367,6 @@ export type ArtworkSchemaTypes = {
   artist_country_origin: string;
   certificate_of_authenticity: string;
   artwork_description?: string;
-  framing: string;
   signature: string;
   should_show_on_sub_active?: boolean;
   role_access: RoleAccess;
@@ -401,6 +398,7 @@ export type ArtworkUploadStateTypes = {
   materials: string;
   height: string;
   width: string;
+  length?: string;
   depth?: string;
   weight: string;
   price: number;
@@ -414,6 +412,7 @@ export type ArtworkUploadStateTypes = {
   signature: string;
   currency: string;
   role_access: RoleAccess;
+  packaging_type?: "rolled" | "stretched";
 };
 
 type OrderAcceptedStatusTypes = {

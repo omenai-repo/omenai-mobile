@@ -23,6 +23,7 @@ import WithdrawalBlocker from "#components/blockers/payments/WithdrawalBlocker";
 import { OtpInput } from "#components/inputs/OtpInput";
 import { AccountRow } from "#components/general/AccountRow";
 import { useFocusEffect } from "@react-navigation/native";
+import FormSkeleton from "#components/skeleton/FormSkeleton";
 
 const WALLET_QK = ["wallet", "artist"] as const;
 const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
@@ -50,9 +51,8 @@ export const WithdrawScreen = ({
   const otpRef = useRef<OtpInputRef>(null);
   const amountInputRef = useRef<TextInput>(null);
 
-  const { value: isWalletWithdrawalEnabled } = useHighRiskFeatureFlag(
-    "wallet_withdrawal_enabled",
-  );
+  const { value: isWalletWithdrawalEnabled, loading: isFlagLoading } =
+    useHighRiskFeatureFlag("wallet_withdrawal_enabled");
 
   useEffect(() => {
     if (!amount) {
@@ -157,7 +157,9 @@ export const WithdrawScreen = ({
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Withdraw Funds" />
-      {isWalletWithdrawalEnabled ? (
+      {isFlagLoading ? (
+        <FormSkeleton />
+      ) : isWalletWithdrawalEnabled ? (
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={tw`flex-1`}

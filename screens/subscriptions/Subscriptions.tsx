@@ -19,15 +19,15 @@ import VerificationRequiredBlock from "./components/VerificationRequiredBlock";
 import { colors } from "#config/colors.config";
 import { screenName } from "#constants/screenNames.constants";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import PlansSkeleton from "#components/skeleton/PlansSkeleton";
 
 export default function Subscriptions() {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
   const insets = useSafeAreaInsets();
-  const { value: isSubscriptionBillingEnabled } = useHighRiskFeatureFlag(
-    "subscription_creation_enabled",
-  );
+  const { value: isSubscriptionBillingEnabled, loading: isFlagLoading } =
+    useHighRiskFeatureFlag("subscription_creation_enabled");
 
   const {
     data: isConfirmed,
@@ -101,7 +101,7 @@ export default function Subscriptions() {
     if (showLoading) {
       return (
         <View style={{ padding: 20 }}>
-          <ActiveSubLoader />
+          <PlansSkeleton />
         </View>
       );
     }
@@ -164,16 +164,21 @@ export default function Subscriptions() {
           flex: 1,
         }}
       >
-        {isSubscriptionBillingEnabled ? (
-          <>
-            <BackHeaderTitle
-              title="Subscription & Billing"
-              customGoBack={() =>
-                navigation.navigate(screenName.gallery.overview)
-              }
-            />
-            {renderContent()}
-          </>
+        {isSubscriptionBillingEnabled || isFlagLoading ? (
+          <BackHeaderTitle
+            title="Subscription & Billing"
+            customGoBack={() =>
+              navigation.navigate(screenName.gallery.overview)
+            }
+          />
+        ) : null}
+
+        {isFlagLoading ? (
+          <View style={{ padding: 20 }}>
+            <PlansSkeleton />
+          </View>
+        ) : isSubscriptionBillingEnabled ? (
+          renderContent()
         ) : (
           <SubscriptionDowntimeBlocker />
         )}
