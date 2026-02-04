@@ -17,8 +17,7 @@ export function createUploadedArtworkData(
     artist: data.artist,
     dimensions: {
       height: data.height,
-      width: data.width,
-      depth: data.depth,
+      length: data.length || data.width || "",
       weight: data.weight,
     },
     pricing: {
@@ -38,7 +37,7 @@ export function createUploadedArtworkData(
     artist_country_origin: data.artist_country_origin,
     certificate_of_authenticity: data.certificate_of_authenticity,
     artwork_description: data.artwork_description,
-    framing: data.framing,
+    packaging_type: data.packaging_type,
     signature: data.signature,
     role_access: role_access,
   };

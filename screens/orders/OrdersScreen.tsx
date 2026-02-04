@@ -127,6 +127,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
           onAccept={(item) =>
             navigation.navigate("DimensionsDetails", {
               orderId: item?.order_id,
+              artworkDimensions: item?.artwork_data?.dimensions,
             })
           }
           onDecline={handleDecline}

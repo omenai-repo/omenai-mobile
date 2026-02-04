@@ -18,6 +18,7 @@ type CustomSelectPickerProps = {
   dropdownPosition?: "auto" | "top" | "bottom";
   disable?: false | true;
   renderInputSearch?: any;
+  renderItem?: (item: any) => React.ReactElement;
 };
 
 export default function CustomSelectPicker({
@@ -34,6 +35,7 @@ export default function CustomSelectPicker({
   dropdownPosition,
   disable,
   renderInputSearch,
+  renderItem,
 }: CustomSelectPickerProps) {
   const dropdownRef = useRef<any>(null);
 
@@ -42,21 +44,29 @@ export default function CustomSelectPicker({
       handleSetValue(item);
       dropdownRef.current?.close?.();
     },
-    [handleSetValue]
+    [handleSetValue],
   );
 
   const renderDropdownItem = useCallback(
     (item: { label: string; value: string }) => (
-      <Pressable key={item.value} onPress={() => handleOptionSelect(item)} style={tw`px-4 py-2.5`}>
-        <Text style={[tw`text-sm`, { color: colors.inputLabel }]}>{item.label}</Text>
+      <Pressable
+        key={item.value}
+        onPress={() => handleOptionSelect(item)}
+        style={tw`px-4 py-2.5`}
+      >
+        <Text style={[tw`text-sm`, { color: colors.inputLabel }]}>
+          {item.label}
+        </Text>
       </Pressable>
     ),
-    [handleOptionSelect]
+    [handleOptionSelect],
   );
 
   return (
     <View style={{ zIndex: zIndex }}>
-      <Text style={[tw`text-sm mb-2.5`, { color: colors.inputLabel }]}>{label}</Text>
+      <Text style={[tw`text-sm mb-2.5`, { color: colors.inputLabel }]}>
+        {label}
+      </Text>
       <Dropdown
         ref={dropdownRef}
         value={value}
@@ -90,7 +100,7 @@ export default function CustomSelectPicker({
         renderInputSearch={renderInputSearch}
         dropdownPosition={dropdownPosition}
         keyboardAvoiding={true}
-        renderItem={renderDropdownItem}
+        renderItem={renderItem || renderDropdownItem}
         flatListProps={{
           initialNumToRender: 15,
           maxToRenderPerBatch: 20,

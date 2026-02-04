@@ -8,7 +8,6 @@ import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import {
   certificateOfAuthenticitySelectOptions,
-  framingList,
   mediumListing,
   rarityList,
   signatureArtistSelectOptions,
@@ -26,8 +25,12 @@ type artworkDetailsErrorsType = {
 
 export default function ArtworkDetails() {
   const { userType } = useAppStore();
-  const { setActiveIndex, activeIndex, updateArtworkUploadData, artworkUploadData } =
-    uploadArtworkStore();
+  const {
+    setActiveIndex,
+    activeIndex,
+    updateArtworkUploadData,
+    artworkUploadData,
+  } = uploadArtworkStore();
 
   const [year, setYear] = useState<string>("");
 
@@ -40,7 +43,9 @@ export default function ArtworkDetails() {
 
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every((error) => error === "");
+    const isFormValid = Object.values(formErrors).every(
+      (error) => error === "",
+    );
     const areAllFieldsFilled = Object.values({
       title: artworkUploadData.title,
       materials: artworkUploadData.materials,
@@ -49,14 +54,14 @@ export default function ArtworkDetails() {
       rarity: artworkUploadData.rarity,
       certificate_of_auth: artworkUploadData.certificate_of_authenticity,
       signature: artworkUploadData.signature,
-      framing: artworkUploadData.framing,
     }).every((value) => value !== "");
 
     return !(isFormValid && areAllFieldsFilled);
   };
 
   const handleValidationChecks = (label: string, value: string) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } = validate(label, value);
+    const { success, errors }: { success: boolean; errors: string[] | [] } =
+      validate(label, value);
     if (!success) {
       setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
     } else {
@@ -72,7 +77,10 @@ export default function ArtworkDetails() {
 
   useEffect(() => {
     if (artworkUploadData.artwork_description) {
-      handleValidationChecks("description", artworkUploadData.artwork_description || "");
+      handleValidationChecks(
+        "description",
+        artworkUploadData.artwork_description || "",
+      );
     }
   }, [artworkUploadData.artwork_description]);
 
@@ -100,7 +108,9 @@ export default function ArtworkDetails() {
         />
         <LargeInput
           label="Artwork description"
-          onInputChange={(value) => updateArtworkUploadData("artwork_description", value)}
+          onInputChange={(value) =>
+            updateArtworkUploadData("artwork_description", value)
+          }
           placeHolder="Write a description of your artwork (not more than 100 words)"
           value={artworkUploadData.artwork_description || ""}
           errorMessage={formErrors.description}
@@ -111,7 +121,9 @@ export default function ArtworkDetails() {
             data={mediumListing}
             placeholder="Select medium"
             value={artworkUploadData.medium}
-            handleSetValue={(item) => updateArtworkUploadData("medium", item.value)}
+            handleSetValue={(item) =>
+              updateArtworkUploadData("medium", item.value)
+            }
           />
         </View>
         <LargeInput
@@ -141,7 +153,9 @@ export default function ArtworkDetails() {
               data={rarityList}
               placeholder="Select rarity"
               value={artworkUploadData.rarity}
-              handleSetValue={(item) => updateArtworkUploadData("rarity", item.value)}
+              handleSetValue={(item) =>
+                updateArtworkUploadData("rarity", item.value)
+              }
             />
           </View>
           <View style={{ flex: 1 }}>
@@ -151,33 +165,30 @@ export default function ArtworkDetails() {
               placeholder="Select"
               value={artworkUploadData.certificate_of_authenticity}
               handleSetValue={(item) =>
-                updateArtworkUploadData("certificate_of_authenticity", item.value)
+                updateArtworkUploadData(
+                  "certificate_of_authenticity",
+                  item.value,
+                )
               }
             />
           </View>
         </View>
 
-        <View style={[styles.flexInputsContainer, { zIndex: 4 }]}>
-          <View style={{ flex: 1 }}>
-            <CustomSelectPicker
-              label="Signature"
-              data={userType === "gallery" ? signatureSelectOptions : signatureArtistSelectOptions}
-              placeholder="Select"
-              value={artworkUploadData.signature}
-              dropdownPosition="top"
-              handleSetValue={(item) => updateArtworkUploadData("signature", item.value)}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <CustomSelectPicker
-              label="Framing"
-              data={framingList}
-              placeholder="Choose frame"
-              value={artworkUploadData.framing}
-              dropdownPosition="top"
-              handleSetValue={(item) => updateArtworkUploadData("framing", item.value)}
-            />
-          </View>
+        <View style={{ flex: 1, zIndex: 4 }}>
+          <CustomSelectPicker
+            label="Signature"
+            data={
+              userType === "gallery"
+                ? signatureSelectOptions
+                : signatureArtistSelectOptions
+            }
+            placeholder="Select"
+            value={artworkUploadData.signature}
+            dropdownPosition="top"
+            handleSetValue={(item) =>
+              updateArtworkUploadData("signature", item.value)
+            }
+          />
         </View>
       </View>
       <LongBlackButton

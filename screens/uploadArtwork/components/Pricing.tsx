@@ -3,10 +3,7 @@ import React, { useEffect, useState } from "react";
 import { colors } from "#config/colors.config";
 import Input from "#components/inputs/Input";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
-import {
-  displayPrice,
-  preferredShippingCarrier,
-} from "#data/uploadArtworkForm.data";
+import { displayPrice } from "#data/uploadArtworkForm.data";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import { validate } from "#lib/validations/upload_artwork_input_validator/validator";
@@ -15,10 +12,11 @@ import { getCurrencyConversion } from "#services/exchange_rate/getCurrencyConver
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
 import { useModalStore } from "#store/modal/modalStore";
+import { getFlag } from "#utils/getFlag";
 
 const transformedCurrencies = currencies.map((item) => ({
   value: item.code,
-  label: item.name,
+  label: `${getFlag(item.code)}  ${item.name}`,
 }));
 
 type artworkPricingErrorsType = {
@@ -45,7 +43,7 @@ export default function Pricing() {
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
     const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
+      (error) => error === "",
     );
     const areAllFieldsFilled = Object.values({
       pricing: artworkUploadData.price,
@@ -89,7 +87,7 @@ export default function Pricing() {
     setLoadingConversion(true);
     const conversion_value = await getCurrencyConversion(
       artworkUploadData.currency.toUpperCase(),
-      +value
+      +value,
     );
 
     if (!conversion_value?.isOk)
@@ -108,8 +106,8 @@ export default function Pricing() {
   return (
     <View style={styles.container}>
       <View style={styles.inputsContainer}>
-        <View style={{ flexDirection: "row", gap: 10, zIndex: 11 }}>
-          <View style={{ flex: 1 }}>
+        <View style={{ gap: 20, zIndex: 11 }}>
+          <View>
             <CustomSelectPicker
               label="Currency"
               data={transformedCurrencies}
@@ -121,16 +119,17 @@ export default function Pricing() {
               }}
             />
           </View>
-          <View style={{ flex: 1 }}>
+          <View>
             <Input
               label="Price"
-              // onInputChange={value => updateArtworkUploadData('price', parseInt(value, 10))}
               onInputChange={(value) =>
                 handleCurrencyConvert(parseInt(value, 10))
               }
               placeHolder="Enter your price"
               value={
-                artworkUploadData.price === 0 ? "" : artworkUploadData.price
+                artworkUploadData.price === 0
+                  ? ""
+                  : artworkUploadData.price.toString()
               }
               errorMessage={formErrors.price}
               keyboardType="decimal-pad"
@@ -146,7 +145,7 @@ export default function Pricing() {
                 Exchange rate:{" "}
                 {`${utils_formatPrice(
                   artworkUploadData.price,
-                  currency_symbol
+                  currency_symbol,
                 )} = ${
                   loadingConversion
                     ? "converting..."

@@ -22,6 +22,8 @@ import tw from "twrnc";
 import InputForm from "./components/inputForm/InputForm";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 
+import FormSkeleton from "#components/skeleton/FormSkeleton";
+
 type RootStackParamList = {
   [screenName.welcome]: undefined;
   [screenName.register]: undefined;
@@ -40,7 +42,7 @@ export default function Register() {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [galleryInviteValidated, setGalleryInviteValidated] = useState(false);
   const [artistInviteValidated, setArtistInviteValidated] = useState(false);
-  const { value: waitlistActivated } =
+  const { value: waitlistActivated, loading: isLoading } =
     useLowRiskFeatureFlag("waitlistActivated");
 
   // Show waitlist header only if: gallery tab + waitlist active + NOT validated
@@ -73,43 +75,47 @@ export default function Register() {
   return (
     <WithModal>
       <AuthHeader
-        title={headerTitle}
-        subTitle={headerSubtitle}
+        title={isLoading ? " " : headerTitle}
+        subTitle={isLoading ? " " : headerSubtitle}
         handleBackClick={() => {
           resetAll();
           navigation.navigate(screenName.welcome);
         }}
       />
-      <View style={[tw`flex-1 bg-white`, isTablet && tw`items-center`]}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
-          style={[
-            styles.container,
-            isTablet && { width: "100%", maxWidth: 650 },
-          ]}
-        >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView
-              ref={scrollViewRef}
-              nestedScrollEnabled
-              style={{ flexGrow: 1 }}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-            >
-              <InputForm
-                onTabChange={(index) => {
-                  setSelectedTabIndex(index);
-                  setGalleryInviteValidated(false);
-                  setArtistInviteValidated(false);
-                }}
-                onGalleryInviteValidated={setGalleryInviteValidated}
-                onArtistInviteValidated={setArtistInviteValidated}
-              />
-            </ScrollView>
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-      </View>
+      {isLoading ? (
+        <FormSkeleton rows={5} />
+      ) : (
+        <View style={[tw`flex-1 bg-white`, isTablet && tw`items-center`]}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+            style={[
+              styles.container,
+              isTablet && { width: "100%", maxWidth: 650 },
+            ]}
+          >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <ScrollView
+                ref={scrollViewRef}
+                nestedScrollEnabled
+                style={{ flexGrow: 1 }}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+              >
+                <InputForm
+                  onTabChange={(index) => {
+                    setSelectedTabIndex(index);
+                    setGalleryInviteValidated(false);
+                    setArtistInviteValidated(false);
+                  }}
+                  onGalleryInviteValidated={setGalleryInviteValidated}
+                  onArtistInviteValidated={setArtistInviteValidated}
+                />
+              </ScrollView>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </View>
+      )}
     </WithModal>
   );
 }

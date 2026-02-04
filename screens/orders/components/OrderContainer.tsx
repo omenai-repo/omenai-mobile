@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, Image, Pressable, Animated } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Animated,
+  ActivityIndicator,
+} from "react-native";
 import OrderHeader from "../../../components/orders/OrderHeader";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -82,12 +88,12 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [confirmOrderModal, setConfirmOrderModal] = useState(false);
 
-  const { value: isFlutterwavePaymentEnabled } = useHighRiskFeatureFlag(
-    "flutterwave_payment_enabled",
-  );
-  const { value: isStripePaymentEnabled } = useHighRiskFeatureFlag(
-    "stripe_payment_enabled",
-  );
+  const { value: isFlutterwavePaymentEnabled, loading: isFlutterwaveLoading } =
+    useHighRiskFeatureFlag("flutterwave_payment_enabled");
+  const { value: isStripePaymentEnabled, loading: isStripeLoading } =
+    useHighRiskFeatureFlag("stripe_payment_enabled");
+
+  const areFlagsLoading = isFlutterwaveLoading || isStripeLoading;
 
   const showBlocker =
     (seller_designation === "artist" && !isFlutterwavePaymentEnabled) ||
@@ -254,6 +260,19 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
                       onClick={() => {}}
                       style={{ height: 40 }}
                     />
+                  ) : areFlagsLoading ? (
+                    <View
+                      style={{
+                        height: 40,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: colors.black,
+                        borderRadius: 8,
+                      }}
+                    >
+                      {/* Simple spinner or text if no skeleton is small enough */}
+                      <ActivityIndicator size="small" color="#fff" />
+                    </View>
                   ) : (
                     <FittedBlackButton
                       value="Pay now"
