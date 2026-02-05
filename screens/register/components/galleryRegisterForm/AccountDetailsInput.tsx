@@ -85,6 +85,7 @@ export default function AccountDetailsInput() {
           placeHolder="Enter password"
           value={galleryRegisterData.password}
           errorMessage={formErrors.password}
+          textContentType="newPassword"
         />
         <PasswordInput
           label="Confirm password"
@@ -93,12 +94,13 @@ export default function AccountDetailsInput() {
             handleValidationChecks(
               "confirmPassword",
               galleryRegisterData.password,
-              text
+              text,
             );
           }}
           placeHolder="Enter password again"
           value={galleryRegisterData.confirmPassword}
           errorMessage={formErrors.confirmPassword}
+          textContentType="newPassword"
         />
       </View>
       <View style={tw`flex-row items-center gap-2.5`}>

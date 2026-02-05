@@ -169,7 +169,7 @@ export const InitialPaymentForm = ({
         ) : (
           <Text style={tw`text-white text-[13px] font-medium`}>
             {discountEligible
-              ? "Subscribe to this plan"
+              ? "Claim 2 months free"
               : `Subscribe for $${amount}`}
           </Text>
         )}

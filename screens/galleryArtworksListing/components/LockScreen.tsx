@@ -52,19 +52,19 @@ export default function LockScreen({ name }: { name: string }) {
         icon="shield"
         title="Account Verification Required"
         description={
-          <>
+          <Text style={tw`text-center text-sm mb-8 text-neutral-300`}>
             Your account is being verified. An agent will reach out within 24
             hours.
-            {userType === "gallery" && (
-              <>
+            {userType === "gallery" ? (
+              <Text>
                 {"\n\n"}To expedite, click{" "}
                 <Text style={tw`font-bold text-white`}>
                   'Send Verification Reminder'
                 </Text>{" "}
                 below.
-              </>
-            )}
-          </>
+              </Text>
+            ) : null}
+          </Text>
         }
         onBack={() => navigation.goBack()}
         actionButton={

@@ -29,9 +29,13 @@ const ForfeitWarning = ({ targetPlan }: { targetPlan: string }) => (
       <Text
         style={tw`text-[11px] leading-relaxed font-medium text-amber-800 flex-1`}
       >
-        Selecting this plan will <Text style={tw`font-bold`}>forfeit</Text> your
-        one-time 100% discount on the monthly{" "}
-        <Text style={tw`capitalize font-bold`}>{targetPlan}</Text> plan.
+        <Text>Selecting this plan will </Text>
+        <Text style={tw`font-bold`}>forfeit</Text>
+        <Text> your one-time </Text>
+        <Text style={tw`font-bold`}>2-month free trial</Text>
+        <Text> on the monthly </Text>
+        <Text style={tw`capitalize font-bold`}>{targetPlan}</Text>
+        <Text> plan.</Text>
       </Text>
     </View>
   </View>
@@ -103,7 +107,7 @@ export default function Plan({
     tab === "monthly";
 
   const showForfeitWarning =
-    discount !== null && discount.redeemed === false && !isEligibleForDiscount;
+    !!discount && discount.redeemed === false && !isEligibleForDiscount;
 
   // Calculate amount with discount consideration
   let amount: number;
@@ -119,7 +123,7 @@ export default function Plan({
 
   // Update button text for discount
   const finalButtonText =
-    isEligibleForDiscount && !isDisabled ? "Activate free plan" : buttonText;
+    isEligibleForDiscount && !isDisabled ? "Claim 2 months free" : buttonText;
 
   const yearlySave =
     tab === "yearly"
@@ -144,7 +148,7 @@ export default function Plan({
       {/* Most Popular badge for Pro */}
       {name === "Pro" && (
         <View style={tw`absolute -top-3 self-center z-10`}>
-          <View style={tw`px-3 py-1 rounded-full bg-blue-600`}>
+          <View style={tw`px-3 py-1 rounded-full bg-slate-900`}>
             <Text style={tw`text-white font-semibold`}>Most Popular</Text>
           </View>
         </View>
@@ -155,7 +159,7 @@ export default function Plan({
         style={[
           tw`rounded-2xl overflow-hidden bg-white`,
           name === "Pro"
-            ? tw`border-2 border-blue-600`
+            ? tw`border-2 border-slate-900`
             : tw`border border-slate-200`,
           cardShadow(),
         ]}
@@ -166,9 +170,9 @@ export default function Plan({
             <View>
               <Text style={tw`text-slate-900 text-lg font-bold`}>{name}</Text>
               <Text style={tw`mt-1 text-slate-600 text-xs`}>
-                {name === "Basic" && "Essential features to get started"}
-                {name === "Pro" && "Perfect for growing businesses"}
-                {name === "Premium" && "Advanced features for scale"}
+                {name === "Basic" ? "Essential features to get started" : null}
+                {name === "Pro" ? "Perfect for growing businesses" : null}
+                {name === "Premium" ? "Advanced features for scale" : null}
               </Text>
             </View>
 
@@ -182,22 +186,23 @@ export default function Plan({
           {/* Pricing */}
           <View style={tw`mt-4 flex-row items-baseline`}>
             <Text style={tw`text-3xl font-bold text-slate-900`}>
-              {prettyAmount}
+              {isEligibleForDiscount ? "$0" : prettyAmount}
             </Text>
-            {!isEligibleForDiscount && (
-              <Text style={tw`ml-2 text-base text-slate-500`}>
-                /{tab === "monthly" ? "month" : "year"}
-              </Text>
-            )}
+
+            <Text style={tw`ml-2 text-base text-slate-500`}>
+              {isEligibleForDiscount
+                ? "/mo for 2 months"
+                : `/${tab === "monthly" ? "month" : "year"}`}
+            </Text>
           </View>
 
           {/* Discount badge or yearly savings */}
           {isEligibleForDiscount ? (
             <Text style={tw`mt-1 text-xs font-medium text-emerald-600`}>
-              100% off · Applied once to this plan
+              Then ${monthly_price}/mo · One-time offer
             </Text>
           ) : (
-            yearlySave && (
+            Boolean(yearlySave) && (
               <Text style={tw`mt-1 text-xs text-green-600 font-medium`}>
                 Save {currencySymbol}
                 {yearlySave} per year
@@ -253,14 +258,20 @@ export default function Plan({
 
                 return tw.style(
                   `mt-5 h-12 rounded-md items-center justify-center`,
-                  name === "Pro" ? "bg-blue-600" : "bg-slate-900",
+                  name === "Pro"
+                    ? "bg-slate-900"
+                    : "bg-slate-100 border border-slate-200",
                   opacityStyle,
                 );
               }}
               accessibilityRole="button"
               accessibilityLabel={finalButtonText}
             >
-              <Text style={tw`text-white text-sm font-medium`}>
+              <Text
+                style={tw`${
+                  name === "Pro" ? "text-white" : "text-slate-900"
+                } text-sm font-medium`}
+              >
                 {finalButtonText}
               </Text>
             </Pressable>

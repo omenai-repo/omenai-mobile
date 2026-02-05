@@ -11,6 +11,7 @@ type PasswordInputProps = {
   value: string;
   errorMessage?: string;
   handleBlur?: () => void;
+  textContentType?: "newPassword" | "password" | "none";
 };
 
 export default function PasswordInput({
@@ -20,6 +21,7 @@ export default function PasswordInput({
   value,
   errorMessage,
   handleBlur,
+  textContentType,
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -44,6 +46,7 @@ export default function PasswordInput({
           autoCapitalize="none"
           value={value}
           onBlur={handleBlur}
+          textContentType={textContentType}
         />
         <TouchableOpacity
           style={tw`w-[50px] h-full items-center justify-center`}

@@ -85,6 +85,7 @@ const AccountDetailsInput = () => {
           placeHolder="Enter password"
           value={artistRegisterData.password}
           errorMessage={formErrors.password}
+          textContentType="newPassword"
         />
         <PasswordInput
           label="Confirm password"
@@ -93,12 +94,13 @@ const AccountDetailsInput = () => {
             handleValidationChecks(
               "confirmPassword",
               artistRegisterData.password,
-              text
+              text,
             );
           }}
           placeHolder="Enter password again"
           value={artistRegisterData.confirmPassword}
           errorMessage={formErrors.confirmPassword}
+          textContentType="newPassword"
         />
       </View>
       <View style={tw`flex-row gap-2.5 justify-end`}>
