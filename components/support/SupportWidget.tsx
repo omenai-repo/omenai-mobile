@@ -11,7 +11,6 @@ import { useSupport } from "../../providers/SupportProvider";
 import { useMobileSupportDefaulter } from "../../hooks/useMobileSupportDefaulter";
 import SupportForm from "./SupportForm";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigationState } from "@react-navigation/native";
 
 export default function SupportWidget() {
   const { isOpen, openSupport, closeSupport } = useSupport();
@@ -24,15 +23,6 @@ export default function SupportWidget() {
   }));
 
   const defaults = useMobileSupportDefaulter();
-
-  const currentRouteName = useNavigationState((state) => {
-    if (!state || typeof state.index !== "number") return "";
-    const route = state.routes[state.index];
-    if (route.state && typeof route.state.index === "number") {
-      return route.state.routes[route.state.index]?.name || "";
-    }
-    return route.name;
-  });
 
   useEffect(() => {
     if (!isOpen) {

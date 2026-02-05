@@ -25,7 +25,7 @@ export default function PackagingPreview({
   width,
   height,
   depth,
-}: PackagingPreviewProps) {
+}: Readonly<PackagingPreviewProps>) {
   if (type === "rolled") {
     return <TubePreview width={width} height={height} />;
   }
@@ -33,7 +33,10 @@ export default function PackagingPreview({
 }
 
 // Tube Preview for Rolled Packaging
-function TubePreview({ width, height }: { width: number; height: number }) {
+function TubePreview({
+  width,
+  height,
+}: Readonly<{ width: number; height: number }>) {
   const scale = 3;
   const diameter = width * scale * 1.5;
   const pixelLength = Math.min(Math.max(height * 2, 100), 160);
@@ -143,11 +146,11 @@ function BoxPreview({
   width,
   height,
   depth,
-}: {
+}: Readonly<{
   width: number;
   height: number;
   depth: number;
-}) {
+}>) {
   const scale = 1.3;
   const cos30 = 0.866;
   const sin30 = 0.5;

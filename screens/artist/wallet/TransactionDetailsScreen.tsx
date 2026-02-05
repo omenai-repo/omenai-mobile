@@ -16,6 +16,19 @@ export const TransactionDetailsScreen = ({ route }: { route: any }) => {
   const status = transaction?.trans_status as keyof typeof statusColors;
   const statusColor = statusColors[status] || "text-gray-700";
 
+  const StatusMessage = () => {
+    switch (status) {
+      case "SUCCESSFUL":
+        return "Your funds have been successfully deposited into your bank account.";
+      case "FAILED":
+        return "The funds transfer was unsuccessful. Please check your bank details or contact support for assistance.";
+      case "PENDING":
+        return "Your funds are on their way to your bank account. This may take a little time—thank you for your patience.";
+      default:
+        return "";
+    }
+  };
+
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Transaction Details" />
@@ -52,8 +65,6 @@ export const TransactionDetailsScreen = ({ route }: { route: any }) => {
           <View style={tw`mb-4`}>
             <Text style={tw`text-gray-500 text-sm`}>Date</Text>
             <Text style={tw`text-base font-medium text-black`}>
-              {/* {transaction?.trans_date?.day}/{transaction?.trans_date?.month}/
-              {transaction?.trans_date?.year} */}
               {formatISODate(transaction?.createdAt)}
             </Text>
           </View>
@@ -66,12 +77,7 @@ export const TransactionDetailsScreen = ({ route }: { route: any }) => {
           <View>
             <Text style={tw`text-gray-500 text-sm`}>Message</Text>
             <Text style={tw`text-base font-medium text-black`}>
-              {status === "SUCCESSFUL"
-                ? "Your funds have been successfully deposited into your bank account."
-                : status === "FAILED"
-                ? "The funds transfer was unsuccessful. Please check your bank details or contact support for assistance."
-                : status === "PENDING" &&
-                  "Your funds are on their way to your bank account. This may take a little time—thank you for your patience."}
+              {StatusMessage()}
             </Text>
           </View>
         </View>

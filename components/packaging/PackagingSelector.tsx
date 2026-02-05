@@ -29,7 +29,7 @@ export default function PackagingSelector({
   packagingType,
   onTypeChange,
   onSelect,
-}: PackagingSelectorProps) {
+}: Readonly<PackagingSelectorProps>) {
   const [selectedPresetId, setSelectedPresetId] = useState<string>("");
   const [isCustom, setIsCustom] = useState(false);
 

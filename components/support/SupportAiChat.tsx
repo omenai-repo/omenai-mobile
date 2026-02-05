@@ -20,6 +20,7 @@ import {
 } from "../../store/support/supportChatStore";
 import { sendAiChatMessage } from "../../services/support/support.service";
 import LongBlackButton from "../buttons/LongBlackButton";
+import SupportChatHistory from "./SupportChatHistory";
 
 interface SupportAiChatProps {
   onSwitchToTicket: () => void;
@@ -38,7 +39,7 @@ export default function SupportAiChat({
   onSwitchToTicket,
   onActiveChatChange,
   isInActiveChat,
-}: SupportAiChatProps) {
+}: Readonly<SupportAiChatProps>) {
   const { userSession } = useAppStore();
   const userId = userSession?.id;
 
@@ -46,20 +47,18 @@ export default function SupportAiChat({
   const addSession = useSupportChatStore((state) => state.addSession);
   const updateSession = useSupportChatStore((state) => state.updateSession);
 
-  const [activeSessionId, setActiveSessionIdLocal] = useState<string | null>(
-    null,
-  );
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const scrollViewRef = useRef<FlatList>(null);
 
-  const setActiveSessionId = (id: string | null) => {
-    setActiveSessionIdLocal(id);
+  const updateActiveSessionId = (id: string | null) => {
+    setActiveSessionId(id);
     onActiveChatChange(id !== null);
   };
 
   useEffect(() => {
     if (!isInActiveChat && activeSessionId !== null) {
-      setActiveSessionIdLocal(null);
+      setActiveSessionId(null);
     }
   }, [isInActiveChat]);
 
@@ -108,7 +107,7 @@ export default function SupportAiChat({
       messages: [],
     };
     addSession(newSession, userId);
-    setActiveSessionId(newSession.id);
+    updateActiveSessionId(newSession.id);
     return newSession.id;
   };
 
@@ -144,78 +143,21 @@ export default function SupportAiChat({
   const messages = activeSession?.messages || [];
   const isChatView = !!activeSessionId || !userSession;
 
+  const hour = new Date().getHours();
+  let greeting = "evening";
+  if (hour < 12) greeting = "morning";
+  else if (hour < 18) greeting = "afternoon";
+
   if (!isChatView && userSession) {
     return (
-      <View style={tw`flex-1 p-6`}>
-        <Text style={tw`font-serif text-2xl text-slate-800 mb-2`}>
-          Good{" "}
-          {new Date().getHours() < 12
-            ? "morning"
-            : new Date().getHours() < 18
-            ? "afternoon"
-            : "evening"}{" "}
-          {userSession.name?.split(" ")[0]},
-        </Text>
-        <Text style={tw`text-gray-400 text-sm mb-8`}>
-          Access your chat history or start a new inquiry.
-        </Text>
-
-        <LongBlackButton
-          value="Start New Conversation"
-          onClick={() => createNewSession()}
-          icon={<Ionicons name="chatbubble-outline" size={20} color="white" />}
-          style={tw`mb-8`}
-        />
-
-        {sessions.length > 0 ? (
-          <View>
-            <Text
-              style={tw`text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1`}
-            >
-              Conversation History
-            </Text>
-            {sessions.map((sess) => (
-              <TouchableOpacity
-                key={sess.id}
-                onPress={() => setActiveSessionId(sess.id)}
-                style={tw`bg-white border border-gray-200 p-4 rounded-xl mb-2`}
-              >
-                <View style={tw`flex-row justify-between mb-1`}>
-                  <Text
-                    numberOfLines={1}
-                    style={tw`font-medium text-gray-800 text-sm w-3/4`}
-                  >
-                    {sess.title}
-                  </Text>
-                  <Text style={tw`text-xs text-gray-400`}>
-                    {new Date(sess.date).toLocaleDateString()}
-                  </Text>
-                </View>
-                <Text numberOfLines={1} style={tw`text-xs text-gray-400`}>
-                  {sess.preview}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          <View style={tw`items-center py-8`}>
-            <Text
-              style={tw`text-xs font-bold text-gray-300 uppercase tracking-widest`}
-            >
-              No Previous History
-            </Text>
-          </View>
-        )}
-
-        <View style={tw`flex-1 justify-end`}>
-          <TouchableOpacity onPress={onSwitchToTicket} style={tw`items-center`}>
-            <Text style={tw`text-xs text-gray-400 font-medium`}>
-              Need human assistance?{" "}
-              <Text style={tw`text-gray-600 underline`}>Create a Ticket</Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <SupportChatHistory
+        greeting={greeting}
+        userName={userSession.name?.split(" ")[0]}
+        sessions={sessions}
+        onCreateNewSession={() => createNewSession()}
+        onSelectSession={updateActiveSessionId}
+        onSwitchToTicket={onSwitchToTicket}
+      />
     );
   }
 

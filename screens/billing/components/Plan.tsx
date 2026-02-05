@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
-import { View, Text, Pressable, Platform } from "react-native";
+import { View, Text, Platform } from "react-native";
 import tw from "twrnc";
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "#constants/screenNames.constants";
@@ -13,6 +12,11 @@ import {
   SubscriptionModelSchemaTypes,
   SubscriptionPlanDataTypes,
 } from "#types/types";
+import { PlanHeader } from "./plan/PlanHeader";
+import { PlanPricing } from "./plan/PlanPricing";
+import { PlanFeatures } from "./plan/PlanFeatures";
+import { ForfeitWarning } from "./plan/ForfeitWarning";
+import { PlanCTA } from "./plan/PlanCTA";
 
 type Props = {
   plan: SubscriptionPlanDataTypes;
@@ -20,26 +24,6 @@ type Props = {
   sub_data: SubscriptionModelSchemaTypes | null;
   discount: DiscountData;
 };
-
-// Forfeit Warning Component
-const ForfeitWarning = ({ targetPlan }: { targetPlan: string }) => (
-  <View style={tw`mb-4 rounded-xl bg-amber-50 border border-amber-200 p-3`}>
-    <View style={tw`flex-row gap-2`}>
-      <Text style={tw`text-amber-600`}>⚠️</Text>
-      <Text
-        style={tw`text-[11px] leading-relaxed font-medium text-amber-800 flex-1`}
-      >
-        <Text>Selecting this plan will </Text>
-        <Text style={tw`font-bold`}>forfeit</Text>
-        <Text> your one-time </Text>
-        <Text style={tw`font-bold`}>2-month free trial</Text>
-        <Text> on the monthly </Text>
-        <Text style={tw`capitalize font-bold`}>{targetPlan}</Text>
-        <Text> plan.</Text>
-      </Text>
-    </View>
-  </View>
-);
 
 export default function Plan({
   plan,
@@ -166,49 +150,16 @@ export default function Plan({
       >
         {/* Header */}
         <View style={tw`p-5 pb-4`}>
-          <View style={tw`flex-row items-start justify-between`}>
-            <View>
-              <Text style={tw`text-slate-900 text-lg font-bold`}>{name}</Text>
-              <Text style={tw`mt-1 text-slate-600 text-xs`}>
-                {name === "Basic" ? "Essential features to get started" : null}
-                {name === "Pro" ? "Perfect for growing businesses" : null}
-                {name === "Premium" ? "Advanced features for scale" : null}
-              </Text>
-            </View>
+          <PlanHeader name={name} />
 
-            {name === "Premium" && (
-              <View style={tw`p-2 rounded-lg bg-purple-100`}>
-                <Ionicons name="sparkles-sharp" size={16} color="#7c3aed" />
-              </View>
-            )}
-          </View>
-
-          {/* Pricing */}
-          <View style={tw`mt-4 flex-row items-baseline`}>
-            <Text style={tw`text-3xl font-bold text-slate-900`}>
-              {isEligibleForDiscount ? "$0" : prettyAmount}
-            </Text>
-
-            <Text style={tw`ml-2 text-base text-slate-500`}>
-              {isEligibleForDiscount
-                ? "/mo for 2 months"
-                : `/${tab === "monthly" ? "month" : "year"}`}
-            </Text>
-          </View>
-
-          {/* Discount badge or yearly savings */}
-          {isEligibleForDiscount ? (
-            <Text style={tw`mt-1 text-xs font-medium text-emerald-600`}>
-              Then ${monthly_price}/mo · One-time offer
-            </Text>
-          ) : (
-            Boolean(yearlySave) && (
-              <Text style={tw`mt-1 text-xs text-green-600 font-medium`}>
-                Save {currencySymbol}
-                {yearlySave} per year
-              </Text>
-            )
-          )}
+          <PlanPricing
+            isEligibleForDiscount={isEligibleForDiscount}
+            prettyAmount={prettyAmount}
+            tab={tab}
+            monthly_price={monthly_price ?? "0"}
+            yearlySave={yearlySave}
+            currencySymbol={currencySymbol ?? "$"}
+          />
         </View>
 
         {/* Features */}
@@ -218,26 +169,7 @@ export default function Plan({
               What’s included
             </Text>
 
-            <View style={tw`rounded-lg bg-slate-50 p-3`}>
-              {featureList.map((benefit, i) => (
-                <View
-                  key={`${benefit}-${i}`}
-                  style={tw`flex-row items-start mb-2`}
-                >
-                  <Ionicons
-                    name="checkmark"
-                    size={14}
-                    color="#0f172a"
-                    style={tw`mt-0.5`}
-                  />
-                  <Text
-                    style={tw`ml-2 text-[12px] leading-5 text-slate-600 flex-1`}
-                  >
-                    {benefit}
-                  </Text>
-                </View>
-              ))}
-            </View>
+            <PlanFeatures featureList={featureList} />
 
             {/* Forfeit Warning */}
             {showForfeitWarning && (
@@ -245,36 +177,12 @@ export default function Plan({
             )}
 
             {/* CTA */}
-            <Pressable
-              disabled={isDisabled}
-              onPress={handleNavigate}
-              style={({ pressed }) => {
-                let opacityStyle = "";
-                if (isDisabled) {
-                  opacityStyle = "opacity-50";
-                } else if (pressed) {
-                  opacityStyle = "opacity-90";
-                }
-
-                return tw.style(
-                  `mt-5 h-12 rounded-md items-center justify-center`,
-                  name === "Pro"
-                    ? "bg-slate-900"
-                    : "bg-slate-100 border border-slate-200",
-                  opacityStyle,
-                );
-              }}
-              accessibilityRole="button"
-              accessibilityLabel={finalButtonText}
-            >
-              <Text
-                style={tw`${
-                  name === "Pro" ? "text-white" : "text-slate-900"
-                } text-sm font-medium`}
-              >
-                {finalButtonText}
-              </Text>
-            </Pressable>
+            <PlanCTA
+              isDisabled={isDisabled}
+              handleNavigate={handleNavigate}
+              name={name}
+              finalButtonText={finalButtonText}
+            />
           </View>
         </View>
       </View>
