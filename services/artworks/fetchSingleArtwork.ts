@@ -20,7 +20,7 @@ export async function fetchsingleArtwork(art_id: string) {
     });
 
     return response;
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
       body: { message: "Error fetching artwork details" },

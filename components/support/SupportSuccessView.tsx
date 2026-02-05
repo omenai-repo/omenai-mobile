@@ -14,7 +14,7 @@ interface SupportSuccessViewProps {
 export default function SupportSuccessView({
   ticketId,
   onClose,
-}: SupportSuccessViewProps) {
+}: Readonly<SupportSuccessViewProps>) {
   const [isCopied, setIsCopied] = useState(false);
 
   const copyTicketId = async () => {

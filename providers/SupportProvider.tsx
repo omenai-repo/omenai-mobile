@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useMemo } from "react";
 
 interface SupportContextType {
   isOpen: boolean;
@@ -8,14 +8,21 @@ interface SupportContextType {
 
 const SupportContext = createContext<SupportContextType | undefined>(undefined);
 
-export function SupportProvider({ children }: { children: React.ReactNode }) {
+export function SupportProvider({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openSupport = () => setIsOpen(true);
   const closeSupport = () => setIsOpen(false);
 
+  const contextValue = useMemo(
+    () => ({ isOpen, openSupport, closeSupport }),
+    [isOpen],
+  );
+
   return (
-    <SupportContext.Provider value={{ isOpen, openSupport, closeSupport }}>
+    <SupportContext.Provider value={contextValue}>
       {children}
     </SupportContext.Provider>
   );

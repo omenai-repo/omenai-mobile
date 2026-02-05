@@ -54,7 +54,7 @@ export default function SupportTicketForm({
   defaultCategory,
   defaultReferenceId,
   onBackToChat,
-}: SupportTicketFormProps) {
+}: Readonly<SupportTicketFormProps>) {
   const { userType, userSession } = useAppStore();
   const { closeSupport } = useSupport();
   const { updateModal } = useModalStore();

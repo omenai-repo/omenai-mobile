@@ -6,7 +6,7 @@ import {
   View,
   Text,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
@@ -72,7 +72,7 @@ const DimensionsDetails = () => {
     if (!val) return 0;
     const str = String(val);
     // Remove everything that is NOT a digit or a decimal point
-    const cleanStr = str.replace(/[^\d.]/g, "");
+    const cleanStr = str.replaceAll(/[^\d.]/g, "");
     return Number(cleanStr) || 0;
   };
 
@@ -151,14 +151,14 @@ const DimensionsDetails = () => {
       // Convert inches to cm for API (preset values are already in cm)
       const IN_TO_CM = 2.54;
       const dimLength = usePreset
-        ? parseFloat(dimensions.length)
-        : parseFloat(dimensions.length) * IN_TO_CM;
+        ? Number.parseFloat(dimensions.length)
+        : Number.parseFloat(dimensions.length) * IN_TO_CM;
       const dimWidth = usePreset
-        ? parseFloat(dimensions.width)
-        : parseFloat(dimensions.width) * IN_TO_CM;
+        ? Number.parseFloat(dimensions.width)
+        : Number.parseFloat(dimensions.width) * IN_TO_CM;
       const dimHeight = usePreset
-        ? parseFloat(dimensions.height)
-        : parseFloat(dimensions.height) * IN_TO_CM;
+        ? Number.parseFloat(dimensions.height)
+        : Number.parseFloat(dimensions.height) * IN_TO_CM;
 
       const payload = {
         order_id: orderId,
@@ -167,7 +167,7 @@ const DimensionsDetails = () => {
             length: dimLength || 0,
             width: dimWidth || 0,
             height: dimHeight || 0,
-            weight: parseFloat(dimensions.weight) || 0,
+            weight: Number.parseFloat(dimensions.weight) || 0,
           },
           packaging_type: packagingType,
           exhibition_status:

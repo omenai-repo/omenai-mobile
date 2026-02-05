@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { colors } from "#config/colors.config";
 
 type PackagingType = "rolled" | "stretched";
 
@@ -15,7 +14,7 @@ interface PackagingTypeSelectorProps {
 export default function PackagingTypeSelector({
   value,
   onChange,
-}: PackagingTypeSelectorProps) {
+}: Readonly<PackagingTypeSelectorProps>) {
   const [showStretchedWarning, setShowStretchedWarning] = useState(false);
 
   const handleStretchedClick = () => {
@@ -27,6 +26,13 @@ export default function PackagingTypeSelector({
     setShowStretchedWarning(false);
     onChange("rolled");
   };
+
+  const requirements = [
+    "Heavy-duty double-walled cardboard box",
+    "Minimum 2 inches of bubble wrap on all sides",
+    "Reinforced corner protectors (plastic or foam)",
+    "Face of artwork protected by acid-free paper",
+  ];
 
   return (
     <View style={tw`mb-6`}>
@@ -131,13 +137,8 @@ export default function PackagingTypeSelector({
               Mandatory Packing Requirements:
             </Text>
 
-            {[
-              "Heavy-duty double-walled cardboard box",
-              "Minimum 2 inches of bubble wrap on all sides",
-              "Reinforced corner protectors (plastic or foam)",
-              "Face of artwork protected by acid-free paper",
-            ].map((item, index) => (
-              <View key={index} style={tw`flex-row items-start mb-1.5`}>
+            {requirements.map((item) => (
+              <View key={item} style={tw`flex-row items-start mb-1.5`}>
                 <Ionicons
                   name="checkmark-circle"
                   size={14}

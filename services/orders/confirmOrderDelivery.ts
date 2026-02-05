@@ -23,7 +23,7 @@ export async function confirmOrderDelivery(
     return {
       isOk: false,
       body: { message: "Error updating order status" },
-      message: (error as any).message || "Error updating order status",
+      message: error.message || "Error updating order status",
       status: error?.status,
       error: error,
     };

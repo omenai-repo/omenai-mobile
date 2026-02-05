@@ -29,7 +29,7 @@ function FilterSection({
   options,
   selectedValue,
   onSelect,
-}: FilterSectionProps) {
+}: Readonly<FilterSectionProps>) {
   return (
     <View style={tw`mb-6`}>
       <Text style={tw`text-sm font-semibold text-gray-700 mb-3`}>{title}</Text>

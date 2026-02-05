@@ -4,23 +4,19 @@ import { Message } from "../../store/support/supportChatStore";
 import { apiRequest } from "../../utils/apiRequest";
 
 export async function sendAiChatMessage(messages: Message[]) {
-  try {
-    const response = await apiRequest(`${apiUrl}/api/ai/chat`, {
-      method: "POST",
-      body: JSON.stringify({
-        messages,
-        pageContext: "mobile_app",
-      }),
-    });
+  const response = await apiRequest(`${apiUrl}/api/ai/chat`, {
+    method: "POST",
+    body: JSON.stringify({
+      messages,
+      pageContext: "mobile_app",
+    }),
+  });
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch response");
-    }
-
-    return await response.text();
-  } catch (error) {
-    throw error;
+  if (!response.ok) {
+    throw new Error("Failed to fetch response");
   }
+
+  return await response.text();
 }
 
 type Payload = {

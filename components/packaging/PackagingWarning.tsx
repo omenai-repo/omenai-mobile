@@ -7,7 +7,16 @@ interface PackagingWarningProps {
   type: "rolled" | "stretched";
 }
 
-export default function PackagingWarning({ type }: PackagingWarningProps) {
+export default function PackagingWarning({
+  type,
+}: Readonly<PackagingWarningProps>) {
+  const requirements = [
+    "Heavy-duty double-walled cardboard box",
+    "Minimum 2 inches of bubble wrap on all sides",
+    "Reinforced corner protectors",
+    "Face of artwork protected by acid-free paper",
+  ];
+
   if (type === "stretched") {
     return (
       <View
@@ -31,13 +40,8 @@ export default function PackagingWarning({ type }: PackagingWarningProps) {
             Mandatory Packing Requirements:
           </Text>
 
-          {[
-            "Heavy-duty double-walled cardboard box",
-            "Minimum 2 inches of bubble wrap on all sides",
-            "Reinforced corner protectors",
-            "Face of artwork protected by acid-free paper",
-          ].map((item, index) => (
-            <View key={index} style={tw`flex-row items-start mb-1.5`}>
+          {requirements.map((item) => (
+            <View key={item} style={tw`flex-row items-start mb-1.5`}>
               <Ionicons
                 name="checkmark-circle"
                 size={14}
