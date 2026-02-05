@@ -30,10 +30,21 @@ export const retrieveSubscriptionDiscount = async (): Promise<{
     );
 
     const result = await res.json();
+
+    let discountData: DiscountData = result.discount;
+
+    if (result.discount === true) {
+      discountData = {
+        plan: "pro",
+        active: true,
+        redeemed: false,
+      };
+    }
+
     return {
       isOk: res.ok,
       message: result.message,
-      discount: result.discount,
+      discount: discountData,
     };
   } catch {
     return {

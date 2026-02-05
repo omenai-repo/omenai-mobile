@@ -1,11 +1,5 @@
 import React, { useMemo, useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, ScrollView } from "react-native";
 import tw from "twrnc";
 import { differenceInCalendarDays } from "date-fns";
 import {
@@ -15,25 +9,25 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { colors } from "#config/colors.config";
-import { BillingCard } from "#screens/subscriptions/components/BillingCard";
 import { createStripeTokenizedCharge } from "#services/stripe/createStripeTokenizedCharge";
 import { useAppStore } from "#store/app/appStore";
 import { updateSubscriptionPlan } from "#services/stripe/updateSubscriptionPlan";
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { useModalStore } from "#store/modal/modalStore";
 import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
 import { utils_determinePlanChange } from "#utils/utils_determinePlanChange";
 import { calculateSubscriptionPricing } from "#utils/calculateSubscriptionPricing";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { useStripe } from "@stripe/stripe-react-native";
-import { InitialPaymentForm } from "./components/InitialPaymentForm";
 import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
 import { Analytics } from "#utils/analytics";
 import {
   SubscriptionModelSchemaTypes,
   SubscriptionPlanDataTypes,
 } from "#types/types";
+import { CheckoutBanner } from "./components/CheckoutBanner";
+import { PricingBreakdown } from "./components/PricingBreakdown";
+import { PaymentSection } from "./components/PaymentSection";
+import { CheckoutCTA } from "./components/CheckoutCTA";
 
 type RootStackParamList = {
   MigrationUpgradeCheckout: {
@@ -56,27 +50,6 @@ type ScreenRouteProp = RouteProp<
   RootStackParamList,
   "MigrationUpgradeCheckout"
 >;
-
-const PriceRow = ({
-  label,
-  value,
-  currency,
-  minus = false,
-}: {
-  label: string;
-  value: number;
-  currency: string | undefined;
-  minus?: boolean;
-}) => (
-  <View style={tw`flex-row items-center justify-between`}>
-    <Text style={tw`text-[12px] font-semibold text-slate-600`}>{label}</Text>
-    <Text style={tw`text-[12px] font-semibold text-slate-900`}>
-      {minus
-        ? `-${utils_formatPrice(value, currency)}`
-        : utils_formatPrice(value, currency)}
-    </Text>
-  </View>
-);
 
 const useCheckoutPricing = (
   isInitialSubscription: boolean,
@@ -137,188 +110,6 @@ const useCheckoutPricing = (
 
   return { proratedPrice, upgradeCost, grandTotal, plan_change_params };
 };
-
-const CheckoutBanner = ({
-  actionLabel,
-  planName,
-  interval,
-}: {
-  actionLabel: string;
-  planName: string;
-  interval: string;
-}) => (
-  <View style={tw`rounded-2xl bg-slate-900 p-5 mb-4`}>
-    <Text style={tw`text-[10px] uppercase tracking-widest text-slate-300 mb-2`}>
-      Subscription {actionLabel}
-    </Text>
-    <Text style={tw`text-xl font-bold text-white mb-1`}>
-      Omenai {planName} subscription
-    </Text>
-    <Text style={tw`text-[12px] text-slate-300`}>Billed {interval}</Text>
-  </View>
-);
-
-const PricingBreakdown = ({
-  isInitialSubscription,
-  days_left,
-  upgradeCost,
-  proratedPrice,
-  grandTotal,
-  currency,
-  showCharge,
-  discountEligible,
-  discountAmount,
-}: any) => (
-  <View style={tw`bg-white rounded-2xl border border-slate-100 p-5 mb-5`}>
-    {!isInitialSubscription && (
-      <View
-        style={tw`flex-row items-center justify-between pb-3 border-b border-slate-100`}
-      >
-        <Text style={tw`text-[13px] font-medium text-slate-600`}>
-          Current plan usage
-        </Text>
-        <Text style={tw`text-[13px] font-semibold text-slate-900`}>
-          {days_left} day(s) left
-        </Text>
-      </View>
-    )}
-    <View style={tw`mt-3`}>
-      <View style={tw`gap-2`}>
-        <PriceRow
-          label="Plan cost"
-          value={discountEligible ? discountAmount : upgradeCost}
-          currency={currency}
-        />
-        {discountEligible && (
-          <View style={tw`flex-row items-center justify-between`}>
-            <View style={tw`flex-row items-center gap-2`}>
-              <Text style={tw`text-[12px] font-semibold text-emerald-600`}>
-                Welcome Discount
-              </Text>
-              <View style={tw`px-1.5 py-0.5 bg-emerald-100 rounded`}>
-                <Text
-                  style={tw`text-[9px] font-bold text-emerald-700 uppercase`}
-                >
-                  100% OFF
-                </Text>
-              </View>
-            </View>
-            <Text style={tw`text-[12px] font-semibold text-emerald-600`}>
-              -{utils_formatPrice(discountAmount, currency)}
-            </Text>
-          </View>
-        )}
-        {!isInitialSubscription && !discountEligible && (
-          <PriceRow
-            label="Prorated cost"
-            value={showCharge ? proratedPrice : 0}
-            currency={currency}
-            minus={showCharge}
-          />
-        )}
-      </View>
-      <View style={tw`mt-3 pt-3 border-t border-slate-100`}>
-        <View style={tw`flex-row items-center justify-between`}>
-          <Text style={tw`text-[14px] font-semibold text-slate-900`}>
-            Due today
-          </Text>
-          <Text style={tw`text-[16px] font-bold text-slate-900`}>
-            {utils_formatPrice(grandTotal, currency)}
-          </Text>
-        </View>
-      </View>
-      {discountEligible && (
-        <View
-          style={tw`mt-4 p-3 rounded-md bg-emerald-50 border border-emerald-200`}
-        >
-          <Text style={tw`text-[12px] text-emerald-800`}>
-            <Text style={tw`font-semibold`}>Note:</Text> You won't be charged
-            today. We'll save your card for future billing.
-          </Text>
-        </View>
-      )}
-      {!showCharge && !isInitialSubscription && !discountEligible && (
-        <View
-          style={tw`mt-4 p-3 rounded-md bg-amber-50 border border-amber-200`}
-        >
-          <Text style={tw`text-[12px] text-amber-800`}>
-            <Text style={tw`font-semibold`}>Note:</Text> Your plan change will
-            take effect at the end of your current billing cycle.
-          </Text>
-        </View>
-      )}
-    </View>
-  </View>
-);
-
-const PaymentSection = ({
-  isInitialSubscription,
-  plan,
-  interval,
-  sub_data,
-  discountEligible,
-}: any) => (
-  <View style={tw`rounded-2xl border border-slate-200 bg-slate-50 p-5`}>
-    <View style={tw`flex-row items-center justify-between mb-4`}>
-      <Text style={tw`text-[14px] font-semibold text-slate-900`}>
-        Payment Details
-      </Text>
-      <View style={tw`px-2 py-1 rounded-full bg-green-100`}>
-        <Text style={tw`text-[10px] font-medium text-green-700`}>
-          Encrypted
-        </Text>
-      </View>
-    </View>
-    {isInitialSubscription ? (
-      <InitialPaymentForm
-        planId={plan.plan_id}
-        amount={(() => {
-          if (discountEligible) return 0;
-          return interval === "monthly"
-            ? +plan.pricing.monthly_price
-            : +plan.pricing.annual_price;
-        })()}
-        interval={interval}
-        discountEligible={discountEligible}
-      />
-    ) : (
-      sub_data && (
-        <BillingCard
-          paymentMethod={sub_data.paymentMethod}
-          plan_id={plan.plan_id}
-          plan_interval={interval}
-        />
-      )
-    )}
-  </View>
-);
-
-const CheckoutCTA = ({
-  payLoading,
-  migrateLoading,
-  showCharge,
-  handlePayNow,
-  handleMigrateToPlan,
-}: any) => (
-  <TouchableOpacity
-    disabled={payLoading || migrateLoading}
-    onPress={showCharge ? handlePayNow : handleMigrateToPlan}
-    style={[
-      tw`mt-5 w-full py-3 rounded-md items-center justify-center`,
-      payLoading || migrateLoading
-        ? { backgroundColor: `${colors.black}4D` }
-        : { backgroundColor: colors.black },
-    ]}
-  >
-    {payLoading || migrateLoading ? (
-      <ActivityIndicator color="#fff" />
-    ) : (
-      <Text style={tw`text-white text-[13px] font-medium`}>
-        {showCharge ? "Confirm Payment" : "Migrate to this plan"}
-      </Text>
-    )}
-  </TouchableOpacity>
-);
 
 export default function Checkout() {
   const route = useRoute<ScreenRouteProp>();

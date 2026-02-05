@@ -69,6 +69,7 @@ export default function AccountDetailsInput() {
           placeHolder="Enter password"
           value={individualRegisterData.password}
           errorMessage={formErrors.password}
+          textContentType="newPassword"
         />
         <PasswordInput
           label="Confirm password"
@@ -77,12 +78,13 @@ export default function AccountDetailsInput() {
             handleValidationChecks(
               "confirmPassword",
               individualRegisterData.password,
-              text
+              text,
             );
           }}
           placeHolder="Enter password again"
           value={individualRegisterData.confirmPassword}
           errorMessage={formErrors.confirmPassword}
+          textContentType="newPassword"
         />
       </View>
       <View style={tw`flex-row gap-2.5 justify-end`}>
