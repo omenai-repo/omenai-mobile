@@ -40,7 +40,7 @@ export const useSupportTicketsFilterStore = create<FilterState>((set, get) => ({
     const { status, priority, year } = get();
     const filters: { name: string }[] = [];
     if (status !== "ALL")
-      filters.push({ name: `Status: ${status.replace(/_/g, " ")}` });
+      filters.push({ name: `Status: ${status.replaceAll("_", " ")}` });
     if (priority !== "ALL") filters.push({ name: `Priority: ${priority}` });
     if (year !== "ALL") filters.push({ name: `Year: ${year}` });
     return filters;

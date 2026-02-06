@@ -12,7 +12,6 @@ import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
-import { format } from "date-fns";
 import debounce from "lodash/debounce";
 import { useAppStore } from "#store/app/appStore";
 
@@ -25,6 +24,7 @@ import { screenName } from "#constants/screenNames.constants";
 import { useSupportTicketsFilterStore } from "#store/support/supportTicketsFilterStore";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SupportTicketItem } from "./components/SupportTicketItem";
+import { EmptySupportTicket } from "./components/EmptySupportTicket";
 
 export default function SupportTicketsScreen() {
   const insets = useSafeAreaInsets();
@@ -164,25 +164,7 @@ export default function SupportTicketsScreen() {
               refreshControl={
                 <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
               }
-              ListEmptyComponent={() => (
-                <View style={tw`items-center justify-center mt-20`}>
-                  <View
-                    style={tw`w-16 h-16 bg-gray-100 rounded-full items-center justify-center mb-4`}
-                  >
-                    <Ionicons
-                      name="file-tray-outline"
-                      size={32}
-                      color="#9CA3AF"
-                    />
-                  </View>
-                  <Text style={tw`text-gray-900 font-semibold mb-1`}>
-                    No tickets found
-                  </Text>
-                  <Text style={tw`text-gray-500 text-sm`}>
-                    Try adjusting your filters
-                  </Text>
-                </View>
-              )}
+              ListEmptyComponent={() => <EmptySupportTicket />}
               contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
               ListFooterComponent={
                 isFetchingNextPage ? (

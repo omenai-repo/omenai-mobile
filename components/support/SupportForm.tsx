@@ -16,7 +16,7 @@ interface SupportFormProps {
 export default function SupportForm({
   defaultCategory,
   defaultReferenceId,
-}: SupportFormProps) {
+}: Readonly<SupportFormProps>) {
   const { closeSupport } = useSupport();
   const [mode, setMode] = useState<"CHAT" | "TICKET">("CHAT");
   const [isInActiveChat, setIsInActiveChat] = useState(false);

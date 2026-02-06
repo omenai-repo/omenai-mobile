@@ -143,7 +143,7 @@ export const WithdrawScreen = ({
           modalType: "error",
         });
       }
-    } catch (error) {
+    } catch {
       updateModal({
         message: "An error occurred",
         showModal: true,
@@ -205,9 +205,8 @@ export const WithdrawScreen = ({
               />
 
               <Pressable
-                style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${
-                  loading ? "opacity-50" : ""
-                }`}
+                style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${loading ? "opacity-50" : ""
+                  }`}
                 onPress={handleWithdraw}
                 disabled={loading}
               >
