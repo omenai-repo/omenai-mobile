@@ -19,7 +19,6 @@ import {
   ChatSession,
 } from "../../store/support/supportChatStore";
 import { sendAiChatMessage } from "../../services/support/support.service";
-import LongBlackButton from "../buttons/LongBlackButton";
 import SupportChatHistory from "./SupportChatHistory";
 
 interface SupportAiChatProps {
@@ -60,7 +59,7 @@ export default function SupportAiChat({
     if (!isInActiveChat && activeSessionId !== null) {
       setActiveSessionId(null);
     }
-  }, [isInActiveChat]);
+  }, [isInActiveChat, activeSessionId]);
 
   const { mutate: sendMessage, isPending: isLoading } = useMutation({
     mutationFn: async ({ messages }: { messages: Message[] }) => {
@@ -178,9 +177,9 @@ export default function SupportAiChat({
             >
               Suggested
             </Text>
-            {SUGGESTIONS.map((s, i) => (
+            {SUGGESTIONS.map((s) => (
               <TouchableOpacity
-                key={i}
+                key={s}
                 onPress={() => handleSend(s)}
                 style={tw`bg-white border border-gray-200 p-4 rounded-xl mb-2 flex-row justify-between items-center`}
               >

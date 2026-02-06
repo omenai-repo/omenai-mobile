@@ -49,7 +49,7 @@ export const SupportTicketItem = ({ item }: SupportTicketItemProps) => {
             </Text>
           </View>
           <Text style={tw`font-semibold text-gray-900 capitalize`}>
-            {item.category.replaceAll(/_/g, " ").toLowerCase()}
+            {item.category.replaceAll("_", " ").toLowerCase()}
           </Text>
         </View>
         <View
@@ -64,7 +64,7 @@ export const SupportTicketItem = ({ item }: SupportTicketItemProps) => {
               { color: statusStyle.text },
             ]}
           >
-            {item.status.replaceAll(/_/g, " ")}
+            {item.status.replaceAll("_", " ")}
           </Text>
         </View>
       </View>
