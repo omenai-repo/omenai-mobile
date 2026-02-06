@@ -164,7 +164,7 @@ export default function SupportTicketsScreen() {
               refreshControl={
                 <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
               }
-              ListEmptyComponent={() => <EmptySupportTicket />}
+              ListEmptyComponent={<EmptySupportTicket />}
               contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
               ListFooterComponent={
                 isFetchingNextPage ? (
