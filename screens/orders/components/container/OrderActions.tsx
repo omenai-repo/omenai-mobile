@@ -40,7 +40,7 @@ export const OrderActions = ({
     <View style={tw`gap-3`}>
       {availability &&
         payment_information === "completed" &&
-        tracking_link && (
+        !!tracking_link && (
           <View style={tw`flex-row gap-2`}>
             <FittedBlackButton
               value="Track Shipment"
