@@ -1,9 +1,9 @@
-name: Production Build and Submit
+name: Staging Build and Submit
 
 on:
   push:
     branches:
-      - feat/omenai-ai-support
+      - refactor/artwork-flow
   workflow_dispatch:
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
         run: |
           # Build and capture output
           set +e  # Don't exit on error immediately
-          BUILD_OUTPUT=$(eas build --platform android --profile production --non-interactive --wait 2>&1)
+          BUILD_OUTPUT=$(eas build --platform android --profile staging --non-interactive --wait 2>&1)
           BUILD_EXIT_CODE=$?
           set -e  # Re-enable exit on error
       
@@ -79,15 +79,15 @@ jobs:
             echo "❌ Build ID is empty, cannot submit"
             exit 1
           fi
-          echo "📱 Submitting build $BUILD_ID with profile production"
-          eas submit --platform android --id "$BUILD_ID" --profile production --non-interactive
+          echo "📱 Submitting build $BUILD_ID with profile staging"
+          eas submit --platform android --id "$BUILD_ID" --profile staging --non-interactive
 
       - name: 🔨 Build iOS
         id: build-ios
         run: |
           # Build and capture output
           set +e  # Don't exit on error immediately
-          BUILD_OUTPUT=$(eas build --clear-cache --platform ios --profile staging-ios --non-interactive --wait 2>&1)
+          BUILD_OUTPUT=$(eas build --clear-cache --platform ios --profile staging --non-interactive --wait 2>&1)
           BUILD_EXIT_CODE=$?
           set -e  # Re-enable exit on error
 
@@ -129,5 +129,5 @@ jobs:
             echo "❌ Build ID is empty, cannot submit"
             exit 1
           fi
-          echo "📱 Submitting build $BUILD_ID with profile staging-ios"
-          eas submit --platform ios --id "$BUILD_ID" --profile staging-ios --non-interactive
+          echo "📱 Submitting build $BUILD_ID with profile staging"
+          eas submit --platform ios --id "$BUILD_ID" --profile staging --non-interactive
