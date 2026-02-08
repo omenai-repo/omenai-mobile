@@ -35,6 +35,9 @@ import GalleryOrdersListing from "#screens/galleryOrders/GalleryOrdersListing";
 import Subscriptions from "#screens/subscriptions/Subscriptions";
 import GalleryProfile from "#screens/galleryProfileScreens/galleryProfile/GalleryProfile";
 import StripePayoutsTab from "#screens/stripeScreens/payouts/StripePayoutsTab";
+import GuestOverview from "#screens/overview/GuestOverview";
+import AllEditorialsScreen from "#screens/home/components/editorials/AllEditorialsScreen";
+import AuthPlaceholder from "#screens/guest/AuthPlaceholder";
 
 export const BottomTabDataArtist = [
   {
@@ -155,5 +158,36 @@ export const BottomTabDataGallery = (account: any) => [
     activeIcon: profileActive,
     inActiveIcon: profileInActive,
     component: GalleryProfile,
+  },
+];
+
+export const BottomTabDataGuest = [
+  {
+    id: 1,
+    activeIcon: homeIcon,
+    inActiveIcon: homeIconFocused,
+    name: "Overview",
+    component: GuestOverview,
+  },
+  {
+    id: 2,
+    activeIcon: catalogueIcon,
+    inActiveIcon: catalogueIconFocused,
+    name: "Catalog",
+    component: Catalog,
+  },
+  {
+    id: 3,
+    activeIcon: ordersActive,
+    inActiveIcon: ordersInActive,
+    name: "Editorials",
+    component: AllEditorialsScreen,
+  },
+  {
+    id: 4,
+    activeIcon: profileIcon,
+    inActiveIcon: profileIconFocused,
+    name: "Sign In",
+    component: AuthPlaceholder,
   },
 ];

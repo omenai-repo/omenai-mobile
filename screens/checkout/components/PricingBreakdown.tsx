@@ -32,7 +32,7 @@ export const PricingBreakdown = ({
       <View style={tw`gap-2`}>
         <PriceRow
           label="Plan cost"
-          value={discountEligible ? discountAmount : upgradeCost}
+          value={discountEligible ? discountAmount * 2 : upgradeCost}
           currency={currency}
         />
         {discountEligible && (
@@ -50,7 +50,7 @@ export const PricingBreakdown = ({
               </View>
             </View>
             <Text style={tw`text-[12px] font-semibold text-emerald-600`}>
-              -{utils_formatPrice(discountAmount, currency)}
+              -{utils_formatPrice(discountAmount * 2, currency)}
             </Text>
           </View>
         )}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -125,6 +125,15 @@ export default function Welcome() {
                 fontWeight: "600",
               }}
             />
+
+            <Pressable
+              onPress={() => navigation.navigate("GuestNavigation")}
+              style={tw`items-center mt-2`}
+            >
+              <Text style={tw`text-white text-sm font-medium underline`}>
+                Browse as Guest
+              </Text>
+            </Pressable>
           </View>
         </View>
       </View>

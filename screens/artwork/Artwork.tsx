@@ -35,6 +35,7 @@ import { useModalStore } from "#store/modal/modalStore";
 import SaveArtworkButton from "./components/SaveArtworkButton";
 import ArtworkSkeleton from "#components/skeleton/ArtworkSkeleton";
 import { useAppStore } from "#store/app/appStore";
+import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import ShippingAndTaxes from "./components/extraDetails/ShippingAndTaxes";
 import Coverage from "./components/extraDetails/Coverage";
@@ -77,6 +78,7 @@ export default function Artwork() {
 
   const { updateModal } = useModalStore();
   const { userType, userSession } = useAppStore();
+  const { openGuestLoginModal } = useGuestLoginModalStore();
   const { isTabletLandscape, screenWidth } = useTabletLandscape();
   const isTabletSize = Math.min(screenWidth) >= 768;
 
@@ -257,11 +259,18 @@ export default function Artwork() {
         <LongBlackButton
           value="Purchase artwork"
           isDisabled={false}
-          onClick={() =>
-            navigation.navigate(screenName.purchaseArtwork, {
-              art_id: artwork.art_id,
-            })
-          }
+          onClick={() => {
+            if (!userSession) {
+              openGuestLoginModal({
+                screen: screenName.artwork,
+                params: { art_id: artwork.art_id, url: artwork.url },
+              });
+            } else {
+              navigation.navigate(screenName.purchaseArtwork, {
+                art_id: artwork.art_id,
+              });
+            }
+          }}
         />
       );
     }
@@ -270,7 +279,13 @@ export default function Artwork() {
       <LongBlackButton
         value={loadingPriceQuote ? "Requesting ..." : "Request price"}
         isDisabled={false}
-        onClick={handleRequestPriceQuote}
+        onClick={() => {
+          if (!userSession) {
+            openGuestLoginModal();
+          } else {
+            handleRequestPriceQuote();
+          }
+        }}
         isLoading={loadingPriceQuote}
       />
     );
@@ -347,14 +362,6 @@ export default function Artwork() {
                   </Text>
                 </View>
               )}
-              <View style={[styles.tagItem, { backgroundColor: "#e5f4ff" }]}>
-                <SimpleLineIcons name="frame" size={15} />
-                <Text style={[styles.tagItemText, { color: "#30589f" }]}>
-                  {artwork.framing === "Framed"
-                    ? "Frame Included"
-                    : "Artwork is not framed"}
-                </Text>
-              </View>
             </View>
           </ScrollWrapper>
         </View>
@@ -476,7 +483,6 @@ export default function Artwork() {
                             ? "Included"
                             : "Not included",
                       },
-                      { name: "Artwork packaging", text: artwork.framing },
                       {
                         name: "Signature",
                         text: `Signed ${artwork.signature}`,

@@ -2,34 +2,34 @@ import { StyleSheet, View } from "react-native";
 import React from "react";
 import { FlatList } from "react-native-gesture-handler";
 
-export default function ArtworkCardLoader() {
-  const ArtworkLoaderCard = () => {
-    return (
-      <View style={styles.container}>
-        <View style={styles.imageContainer} />
-        <View style={styles.mainDetailsContainer}>
-          <View style={{ flex: 1 }}>
-            <View
-              style={{ height: 10, width: "100%", backgroundColor: "#eee" }}
-            />
-            <View
-              style={{
-                height: 10,
-                marginTop: 10,
-                width: "50%",
-                backgroundColor: "#eee",
-              }}
-            />
-          </View>
+export const SingleArtworkCardLoader = ({ style }: { style?: any }) => {
+  return (
+    <View style={[styles.container, style]}>
+      <View style={styles.imageContainer} />
+      <View style={styles.mainDetailsContainer}>
+        <View style={{ flex: 1 }}>
+          <View
+            style={{ height: 10, width: "100%", backgroundColor: "#eee" }}
+          />
+          <View
+            style={{
+              height: 10,
+              marginTop: 10,
+              width: "50%",
+              backgroundColor: "#eee",
+            }}
+          />
         </View>
       </View>
-    );
-  };
+    </View>
+  );
+};
 
+export default function ArtworkCardLoader() {
   return (
     <FlatList
       data={[0, 1]}
-      renderItem={() => <ArtworkLoaderCard />}
+      renderItem={() => <SingleArtworkCardLoader />}
       keyExtractor={(_, index) => JSON.stringify(index)}
       horizontal={true}
       showsHorizontalScrollIndicator={false}

@@ -34,6 +34,7 @@ export function useLoginHandler(userType: UserType) {
     authenticate,
     getStoredEmail,
     deleteCredentials,
+    getCredentials,
   } = useBiometrics();
 
   const finalizeLogin = (data: any, clearInputs: () => void) => {
@@ -205,7 +206,41 @@ export function useLoginHandler(userType: UserType) {
     setIsLoading(false);
   };
 
-  return { handleLogin };
+  const handleBiometricOnlyLogin = async (
+    setIsLoading: (loading: boolean) => void,
+  ): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      const bioResult = await authenticate();
+      if (!bioResult.success) {
+        setIsLoading(false);
+        return false;
+      }
+
+      const credentials = await getCredentials(userType);
+      if (!credentials) {
+        updateModal({
+          message:
+            "No stored credentials found. Please login with email and password.",
+          showModal: true,
+          modalType: "error",
+        });
+        setIsLoading(false);
+        return false;
+      }
+
+      const { email, token: password } = credentials;
+
+      // Use handleLogin with a no-op clearInputs since we don't have form inputs
+      await handleLogin({ email, password }, setIsLoading, () => {});
+      return true;
+    } catch {
+      setIsLoading(false);
+      return false;
+    }
+  };
+
+  return { handleLogin, handleBiometricOnlyLogin };
 }
 
 function mapUserData(resultsBody: any, userType: UserType) {

@@ -1,0 +1,38 @@
+appId: com.omenai.omenaimobile
+name: "Individual User Login"
+tags:
+  - login
+  - individual
+  - auth
+
+---
+
+- launchApp:
+    clearState: true
+
+# Dismiss Expo developer menu if it appears
+- tapOn:
+    text: "Continue"
+    optional: true
+
+- assertVisible: "Welcome"
+- tapOn: "Login"
+
+- assertVisible: "Welcome Back"
+- assertVisible: "Collector"
+
+- tapOn: "Email address"
+- inputText: "dantereus1@gmail.com"
+- hideKeyboard
+
+- tapOn: "Password"
+- inputText: "Test12345@"
+- hideKeyboard
+
+- tapOn: "Log In"
+
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 20000
+
+- assertVisible: "Trending"

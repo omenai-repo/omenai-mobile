@@ -1,0 +1,93 @@
+appId: com.omenai.omenaimobile
+name: "Login Error Scenarios"
+tags:
+  - login
+  - error
+  - auth
+  - negative
+
+---
+
+# Invalid credentials test
+- launchApp:
+    clearState: true
+
+- tapOn:
+    text: "Continue"
+    optional: true
+
+- assertVisible: "Welcome"
+- tapOn: "Login"
+- assertVisible: "Welcome Back"
+
+- tapOn: "Email address"
+- inputText: "invalid@notexist.com"
+- hideKeyboard
+
+- tapOn: "Password"
+- inputText: "WrongPassword123!"
+- hideKeyboard
+
+- tapOn: "Log In"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Invalid"
+        - "Error"
+        - "not found"
+        - "incorrect"
+    timeout: 10000
+
+---
+
+# Empty fields test
+- launchApp:
+    clearState: true
+
+- tapOn:
+    text: "Continue"
+    optional: true
+
+- assertVisible: "Welcome"
+- tapOn: "Login"
+
+- assertVisible: "Log In"
+
+- tapOn: "Email address"
+- inputText: "test@example.com"
+- hideKeyboard
+
+- tapOn: "Log In"
+- assertVisible: "Welcome Back"
+
+---
+
+# Wrong password test
+- launchApp:
+    clearState: true
+
+- tapOn:
+    text: "Continue"
+    optional: true
+
+- tapOn: "Login"
+
+- tapOn: "Email address"
+- inputText: "dantereus1@gmail.com"
+- hideKeyboard
+
+- tapOn: "Password"
+- inputText: "CompletelyWrongPassword!"
+- hideKeyboard
+
+- tapOn: "Log In"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Invalid"
+        - "Error"
+        - "incorrect"
+        - "wrong"
+    timeout: 10000

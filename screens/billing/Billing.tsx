@@ -43,15 +43,6 @@ export default function Billing() {
       ? userSession?.gallery_verified
       : userSession?.artist_verified || userSession?.verified;
 
-  console.log("Debug Verification:", {
-    userType,
-    isVerified,
-    gallery_verified: userSession?.gallery_verified,
-    verified: userSession?.verified,
-    artist_verified: userSession?.artist_verified,
-    fullSession: JSON.stringify(userSession || {}, null, 2),
-  });
-
   // Check onboarding status
   useEffect(() => {
     async function checkOnboarding() {
@@ -123,9 +114,6 @@ export default function Billing() {
         setPlans(sortedPlans);
         setSubData(subResults?.data);
         setDiscount(discountResults?.discount ?? null);
-        console.log("Plans Data:", JSON.stringify(sortedPlans, null, 2));
-        console.log("Subscription Data:", JSON.stringify(subResults, null, 2));
-        console.log("Discount Data:", JSON.stringify(discountResults, null, 2));
       }
 
       setLoading(false);

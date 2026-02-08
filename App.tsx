@@ -5,13 +5,14 @@ import { useAppStore } from "#store/app/appStore";
 import { utils_appInit } from "#utils/utils_appInit";
 import { useFonts } from "expo-font";
 import IndividualNavigation from "#navigation/IndividualNavigation";
-import AuthNavigation from "#navigation/AuthNavigation";
 import GalleryNavigation from "#navigation/GalleryNavigation";
 import * as Linking from "expo-linking";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { CopilotProvider } from "react-native-copilot";
 import * as SplashScreen from "expo-splash-screen";
 import ArtistNavigation from "#navigation/ArtistNavigation";
+import AuthNavigation from "#navigation/AuthNavigation";
+import GuestLoginModal from "#components/guest/GuestLoginModal";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
@@ -181,9 +182,9 @@ export default function App() {
                 >
                   <NavigationContainer ref={navigationRef} linking={linking}>
                     <View style={{ flex: 1 }}>
-                      {/* AUTH SCREENS */}
-                      {!isLoggedIn && <AuthNavigation />}
                       {/* App screens */}
+                      {!isLoggedIn && <AuthNavigation />}
+
                       {isLoggedIn && userType === "gallery" && (
                         <GalleryNavigation />
                       )}
@@ -194,6 +195,7 @@ export default function App() {
                         <ArtistNavigation />
                       )}
 
+                      <GuestLoginModal />
                       <SupportWidget />
                     </View>
                   </NavigationContainer>

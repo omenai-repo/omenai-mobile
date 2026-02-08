@@ -4,6 +4,7 @@ import { utils_handleFetchUserID } from "#utils/utils_asyncStorage";
 import useLikedState from "#hooks/useLikedState";
 import { AntDesign } from "@expo/vector-icons";
 import { colors } from "#config/colors.config";
+import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 
 export type LikeComponentProps = {
   likeIds: string[];
@@ -29,12 +30,28 @@ export default function LikeComponent({
     setSessionId(userId);
   };
 
-  const { likedState, handleLike } = useLikedState(impressions, likeIds, sessionId, art_id);
+  const { likedState, handleLike } = useLikedState(
+    impressions,
+    likeIds,
+    sessionId,
+    art_id,
+  );
+
+  const { openGuestLoginModal } = useGuestLoginModalStore();
+
+  const onLikePress = () => {
+    if (!sessionId) {
+      openGuestLoginModal();
+    } else {
+      handleLike(true);
+    }
+  };
 
   return (
     <>
-      {(sessionId === undefined || (sessionId && !likedState.ids.includes(sessionId))) && (
-        <TouchableOpacity onPress={() => handleLike(true)}>
+      {(sessionId === undefined ||
+        (sessionId && !likedState.ids.includes(sessionId))) && (
+        <TouchableOpacity onPress={onLikePress}>
           <AntDesign
             size={15}
             color={lightText ? colors.white : colors.primary_black}

@@ -6,6 +6,7 @@ import LongBlackButton from "#components/buttons/LongBlackButton";
 import { AntDesign } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
 import { heartIcon } from "#utils/SvgImages";
+import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 
 type SaveArtworkButtonProps = {
   likeIds: string[];
@@ -19,6 +20,7 @@ export default function SaveArtworkButton({
   impressions,
 }: SaveArtworkButtonProps) {
   const [sessionId, setSessionId] = useState("");
+  const { openGuestLoginModal } = useGuestLoginModalStore();
 
   useEffect(() => {
     handleFetchUserSessionData();
@@ -29,14 +31,25 @@ export default function SaveArtworkButton({
     setSessionId(userId);
   };
 
-  const { likedState, handleLike } = useLikedState(impressions, likeIds, sessionId, art_id);
+  const { likedState, handleLike } = useLikedState(
+    impressions,
+    likeIds,
+    sessionId,
+    art_id,
+  );
 
   const isSaved = sessionId !== undefined && likedState.ids.includes(sessionId);
 
   return (
     <LongBlackButton
       value={isSaved ? "Remove from saved" : "Save artwork to favorites"}
-      onClick={() => handleLike(!isSaved)}
+      onClick={() => {
+        if (!sessionId) {
+          openGuestLoginModal();
+        } else {
+          handleLike(!isSaved);
+        }
+      }}
       outline
       icon={
         <View style={styles.iconContainer}>
