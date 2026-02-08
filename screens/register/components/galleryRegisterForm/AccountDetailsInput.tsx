@@ -1,11 +1,6 @@
-import { Keyboard, Platform, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
-import NextButton from "../../../../components/buttons/NextButton";
-import Input from "../../../../components/inputs/Input";
-import PasswordInput from "../../../../components/inputs/PasswordInput";
-import { useFormValidation } from "#hooks/useFormValidation";
-import tw from "twrnc";
+import SharedAccountDetailsInput from "../shared/SharedAccountDetailsInput";
 
 export default function AccountDetailsInput() {
   const {
@@ -18,100 +13,23 @@ export default function AccountDetailsInput() {
     setConfirmPassword,
   } = useGalleryAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsDisabled } =
-    useFormValidation({
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
-
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-
-  useEffect(() => {
-    if (Platform.OS === "android") return;
-    const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
-      setKeyboardHeight(e.endCoordinates.height);
-    });
-    const hideSub = Keyboard.addListener("keyboardWillHide", () => {
-      setKeyboardHeight(0);
-    });
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
-
-  const isButtonDisabled = () => {
-    return checkIsDisabled({
-      name: galleryRegisterData.name,
-      email: galleryRegisterData.email,
-      password: galleryRegisterData.password,
-      confirmPassword: galleryRegisterData.confirmPassword,
-    });
-  };
-
   return (
-    <View style={{ gap: 40 }}>
-      <View style={{ gap: 20 }}>
-        <Input
-          label="Gallery Name"
-          keyboardType="default"
-          onInputChange={(text) => {
-            setName(text);
-            handleValidationChecks("name", text);
-          }}
-          placeHolder="Enter the name of your gallery"
-          value={galleryRegisterData.name}
-          errorMessage={formErrors.name}
-        />
-        <Input
-          label={`Gallery's email address`}
-          keyboardType="email-address"
-          onInputChange={(text) => {
-            setEmail(text);
-            handleValidationChecks("email", text);
-          }}
-          placeHolder={`Enter your gallery's email address`}
-          value={galleryRegisterData.email}
-          errorMessage={formErrors.email}
-        />
-        <PasswordInput
-          label="Password"
-          onInputChange={(text) => {
-            setPassword(text);
-            handleValidationChecks("password", text);
-          }}
-          placeHolder="Enter password"
-          value={galleryRegisterData.password}
-          errorMessage={formErrors.password}
-          textContentType="newPassword"
-        />
-        <PasswordInput
-          label="Confirm password"
-          onInputChange={(text) => {
-            setConfirmPassword(text);
-            handleValidationChecks(
-              "confirmPassword",
-              galleryRegisterData.password,
-              text,
-            );
-          }}
-          placeHolder="Enter password again"
-          value={galleryRegisterData.confirmPassword}
-          errorMessage={formErrors.confirmPassword}
-          textContentType="newPassword"
-        />
-      </View>
-      <View style={tw`flex-row items-center gap-2.5`}>
-        {/* <BackFormButton handleBackClick={() => console.log('')} /> */}
-        <View style={{ flex: 1 }} />
-        <NextButton
-          isDisabled={isButtonDisabled()}
-          handleButtonClick={() => setPageIndex(pageIndex + 1)}
-        />
-      </View>
-      <View style={{ height: keyboardHeight / 2 }} />
-    </View>
+    <SharedAccountDetailsInput
+      data={galleryRegisterData}
+      actions={{
+        setName,
+        setEmail,
+        setPassword,
+        setConfirmPassword,
+        handleNext: () => setPageIndex(pageIndex + 1),
+      }}
+      labels={{
+        nameLabel: "Gallery Name",
+        namePlaceholder: "Enter the name of your gallery",
+        emailLabel: "Gallery's email address",
+        emailPlaceholder: "Enter your gallery's email address",
+      }}
+      pageIndex={pageIndex}
+    />
   );
 }

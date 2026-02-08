@@ -33,6 +33,32 @@ interface SupportChatState {
   clearGuestSessions: () => void;
 }
 
+const updateSessionList = (
+  sessions: ChatSession[],
+  sessionId: string,
+  messages: Message[],
+) => {
+  const capMessages = (msgs: Message[]) =>
+    msgs.length > 50 ? msgs.slice(-50) : msgs;
+
+  return sessions.map((s: ChatSession) => {
+    if (s.id === sessionId) {
+      const capped = capMessages(messages);
+      const lastMsg = capped[capped.length - 1];
+      return {
+        ...s,
+        messages: capped,
+        preview: lastMsg ? lastMsg.content.slice(0, 40) + "..." : s.preview,
+        title:
+          s.messages.length === 0 && capped.length > 0
+            ? capped[0].content.slice(0, 30) + "..."
+            : s.title,
+      };
+    }
+    return s;
+  });
+};
+
 export const useSupportChatStore = create<SupportChatState>()(
   persist(
     (set, get) => ({
@@ -65,57 +91,24 @@ export const useSupportChatStore = create<SupportChatState>()(
       },
 
       updateSession: (sessionId, messages, userId) => {
-        const capMessages = (msgs: Message[]) =>
-          msgs.length > 50 ? msgs.slice(-50) : msgs;
-
         if (userId) {
-          set((state) => {
-            const userSessions = state.userSessions[userId] || [];
-            const updatedSessions = userSessions.map((s) => {
-              if (s.id === sessionId) {
-                const capped = capMessages(messages);
-                const lastMsg = capped[capped.length - 1];
-                return {
-                  ...s,
-                  messages: capped,
-                  preview: lastMsg
-                    ? lastMsg.content.slice(0, 40) + "..."
-                    : s.preview,
-                  title:
-                    s.messages.length === 0 && capped.length > 0
-                      ? capped[0].content.slice(0, 30) + "..."
-                      : s.title,
-                };
-              }
-              return s;
-            });
-            return {
-              userSessions: {
-                ...state.userSessions,
-                [userId]: updatedSessions,
-              },
-            };
-          });
+          set((state) => ({
+            userSessions: {
+              ...state.userSessions,
+              [userId]: updateSessionList(
+                state.userSessions[userId] || [],
+                sessionId,
+                messages,
+              ),
+            },
+          }));
         } else {
           set((state) => ({
-            guestSessions: state.guestSessions.map((s) => {
-              if (s.id === sessionId) {
-                const capped = capMessages(messages);
-                const lastMsg = capped[capped.length - 1];
-                return {
-                  ...s,
-                  messages: capped,
-                  preview: lastMsg
-                    ? lastMsg.content.slice(0, 40) + "..."
-                    : s.preview,
-                  title:
-                    s.messages.length === 0 && capped.length > 0
-                      ? capped[0].content.slice(0, 30) + "..."
-                      : s.title,
-                };
-              }
-              return s;
-            }),
+            guestSessions: updateSessionList(
+              state.guestSessions,
+              sessionId,
+              messages,
+            ),
           }));
         }
       },
