@@ -22,7 +22,7 @@
         "buildType": "apk"
       }
     },
-    "staging-ios": {
+    "staging": {
       "distribution": "store",
       "channel": "staging",
       "env": {
@@ -30,13 +30,6 @@
       },
       "ios": {
         "credentialsSource": "remote"
-      }
-    },
-    "staging-android": {
-      "distribution": "store",
-      "channel": "staging",
-      "env": {
-        "EXPO_PUBLIC_ENV": "staging"
       },
       "android": {
         "buildType": "app-bundle",
@@ -68,12 +61,10 @@
       }
     },
     "preview": {},
-    "staging-ios": {
+    "staging": {
       "ios": {
         "ascAppId": "6748387089"
-      }
-    },
-    "staging-android": {
+      },
       "android": {
         "track": "internal"
       }

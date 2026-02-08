@@ -128,7 +128,7 @@ type ArtistLoginData = {
   device_push_token: string;
 };
 
-type IndividualRegisterData = {
+export type IndividualRegisterData = {
   name: string;
   email: string;
   password: string;

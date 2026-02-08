@@ -59,6 +59,7 @@ SplashScreen.setOptions({
 });
 
 async function checkForOTAUpdate() {
+  if (Updates.channel !== "staging") return;
   try {
     const update = await Updates.checkForUpdateAsync();
     if (update.isAvailable) {
