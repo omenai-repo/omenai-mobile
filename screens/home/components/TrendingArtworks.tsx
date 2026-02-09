@@ -41,8 +41,8 @@ export default function TrendingArtworks({ limit }: { limit: number }) {
     <View style={styles.container}>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate(screenName.artworkCategories, {
-            title: "trending",
+          navigation.navigate(screenName.artworksMedium, {
+            catalog: "trending",
           })
         }
       >
@@ -62,7 +62,7 @@ export default function TrendingArtworks({ limit }: { limit: number }) {
               fontFamily: fontNames.dmSans + "Medium",
             }}
           >
-            Trending Artworks
+            Trending Now
           </Text>
           <Feather name="chevron-right" color={colors.grey} size={20} />
         </View>

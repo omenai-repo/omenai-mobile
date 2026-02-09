@@ -101,7 +101,7 @@ const FeaturedArtists = () => {
         }}
       >
         <Text style={{ fontSize: 18, fontWeight: "500", flex: 1 }}>
-          Artists making the rave on Omenai
+          Artists to watch
         </Text>
       </View>
 

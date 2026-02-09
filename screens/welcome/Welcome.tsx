@@ -89,18 +89,12 @@ export default function Welcome() {
             },
           ]}
         >
-          <Text
-            style={[
-              tw`text-3xl text-white font-medium mb-1.5`,
-              { maxWidth: "80%" },
-            ]}
-          >
-            Find every artwork you desire here
+          <Text style={[tw`text-3xl text-white font-medium mb-1.5`]}>
+            Build Your Art World
           </Text>
 
           <Text style={tw`text-sm text-[#FFFFFFB2]`}>
-            Buy, Trade, Discover and experience art like the Louvre with a
-            single tap.
+            Collect, discover, and follow artists shaping contemporary art.
           </Text>
 
           <View style={tw`gap-3 mt-6`}>

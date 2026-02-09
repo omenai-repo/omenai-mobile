@@ -57,7 +57,7 @@ export default function OnBoardingSection({
       }),
     ]).start();
 
-    // Animate subText with slight delay (opacity to 0.7 to match original style)
+    // Animate subText with slight delay
     Animated.parallel([
       Animated.timing(subTextTranslateX, {
         toValue: 0,
@@ -96,7 +96,7 @@ export default function OnBoardingSection({
         />
         <View style={[tw`absolute w-full`, { top: insets.top }]}>
           <View style={tw`w-full flex-row items-center gap-2.5 px-5`}>
-            {[0, 1, 2].map((i) => (
+            {[0, 1].map((i) => (
               <View
                 style={tw`h-1 bg-white rounded-xl ${
                   i <= currentIndex ? "opacity-100" : "opacity-30"
@@ -142,9 +142,9 @@ export default function OnBoardingSection({
         </Animated.Text>
         <View style={tw`gap-3 mt-6`}>
           <LongBlackButton
-            value="Next"
+            value="Continue"
             onClick={() => {
-              if (currentIndex === 2) {
+              if (currentIndex === 1) {
                 onFinish();
               } else {
                 handleNext();
@@ -155,7 +155,7 @@ export default function OnBoardingSection({
             textStyle={{ fontSize: 16, fontWeight: "600" }}
           />
           <LongBlackButton
-            value="Sign Up"
+            value="Skip"
             onClick={onFinish}
             style={{
               height: 48,

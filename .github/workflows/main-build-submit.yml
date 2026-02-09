@@ -70,7 +70,7 @@ jobs:
           echo "✅ Built iOS with ID: $BUILD_ID"
           echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
 
-      - name: 📱 Submit to TestFlight
+      - name: 📱 Submit to Distribution
         run: |
           # IMPORTANT: We use --id instead of --latest to ensure we submit the exact build we just created
           BUILD_ID="${{ steps.build-ios.outputs.build_id }}"
