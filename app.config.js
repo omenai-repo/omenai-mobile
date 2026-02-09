@@ -7,7 +7,7 @@ const {
 
 export default {
   expo: {
-    name: "OMENAI",
+    name: "Omenai",
     scheme: "omenaimobile",
     slug: "omenai-app",
     owner: "omenai",
@@ -21,7 +21,7 @@ export default {
     userInterfaceStyle: "light",
 
     splash: {
-      image: "./assets/splash.png",
+      image: "./assets/splash-icon.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
@@ -75,7 +75,7 @@ export default {
       [
         "expo-splash-screen",
         {
-          image: "./assets/splash.png",
+          image: "./assets/splash-icon.png",
           resizeMode: "contain",
           backgroundColor: "#FFFFFF",
         },

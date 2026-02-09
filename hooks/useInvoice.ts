@@ -1,23 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { InvoiceTypes } from "#types/types";
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "#constants/apiUrl.constants";
+import { apiUrl, authorization, userAgent } from "#constants/apiUrl.constants";
+import { apiRequest } from "#utils/apiRequest";
 
 const fetchInvoice = async (id: string) => {
   const url = `${apiUrl}/api/invoices/fetchInvoice?id=${id}`;
 
-  const response = await fetch(url, {
+  const response = await apiRequest(url, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: authorization,
-      Origin: originHeader,
-      "User-Agent": userAgent,
-    },
   });
 
   if (!response.ok) {

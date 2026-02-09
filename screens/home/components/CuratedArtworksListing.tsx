@@ -55,7 +55,7 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             fontFamily: fontNames.dmSans + "Medium",
           }}
         >
-          Artworks based on your interests
+          Because you liked
         </Text>
         <Text
           style={{
@@ -66,8 +66,7 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             fontFamily: fontNames.dmSans + "Regular",
           }}
         >
-          Explore artworks based off your interests and interactions within the
-          past days
+          Inspired by your taste and recent activity.
         </Text>
       </TouchableOpacity>
 

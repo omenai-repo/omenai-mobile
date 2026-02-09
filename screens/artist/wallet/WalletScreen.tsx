@@ -28,6 +28,7 @@ import { useScrollY } from "#hooks/useScrollY";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import LongBlackButton from "#components/buttons/LongBlackButton";
+import { africanArtwork } from "#constants/images.constants";
 
 export const WalletContainerSkeleton = () => {
   const SkeletonBlock = ({ style }: { style: any }) => (
@@ -86,7 +87,7 @@ export const WalletContainer = ({
     >
       <View style={tw`flex-row items-center gap-[15px] flex-1`}>
         <Image
-          source={require("../../../assets/images/african-artwork.jpg")}
+          source={africanArtwork}
           style={tw`w-[50px] h-[50px] rounded-[10px]`}
         />
         <View>

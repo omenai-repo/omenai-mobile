@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Linking } from "react-native";
+import { Text, View, TouchableOpacity, Linking, Platform } from "react-native";
 import Modal from "react-native-modal";
 import React from "react";
 import { colors } from "#config/colors.config";
@@ -12,7 +12,9 @@ type ForceUpdateModalProps = Readonly<{
 export default function ForceUpdateModal({ isVisible }: ForceUpdateModalProps) {
   const handleUpdate = () => {
     const storeUrl =
-      "https://play.google.com/store/apps/details?id=com.omenai.omenaiapp";
+      Platform.OS === "ios"
+        ? "https://apps.apple.com/ng/app/omenai/id6748387089"
+        : "https://play.google.com/store/apps/details?id=com.omenai.omenaiapp";
     Linking.openURL(storeUrl);
   };
 

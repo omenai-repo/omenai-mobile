@@ -1,16 +1,19 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import tw from "twrnc";
 import React, { useCallback, useEffect } from "react";
 import {
   useFocusEffect,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { StackNavigationProp } from "@react-navigation/stack";
 import WithModal from "#components/modal/WithModal";
 import FilterButton from "#components/filter/FilterButton";
 import { colors } from "#config/colors.config";
 import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
 import { fetchArtworksByCriteria } from "#services/artworks/fetchArtworksByCriteria";
+import { fetchArtworks } from "#services/artworks/fetchArtworks";
 import { artworksMediumStore } from "#store/artworks/ArtworksMediumsStore";
 import { useModalStore } from "#store/modal/modalStore";
 import { screenName } from "#constants/screenNames.constants";
@@ -23,23 +26,15 @@ export default function ArtworksMedium() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const insets = useSafeAreaInsets();
+  const { catalog } = route.params as { catalog: string };
 
   const { updateModal } = useModalStore();
-  const {
-    setArtworks,
-    artworks,
-    isLoading,
-    setMedium,
-    setIsLoading,
-    pageCount,
-  } = artworksMediumStore();
   const { filterOptions, clearAllFilters } = artworksMediumFilterStore();
-
-  const { catalog } = route.params as { catalog: string };
+  const { setMedium } = artworksMediumStore();
 
   useEffect(() => {
     setMedium(catalog);
-  }, []);
+  }, [catalog]);
 
   useFocusEffect(
     useCallback(() => {
@@ -49,63 +44,82 @@ export default function ArtworksMedium() {
     }, []),
   );
 
-  useEffect(() => {
-    clearAllFilters();
-    handleFetchArtworks();
-  }, []);
-
-  const handleFetchArtworks = async () => {
-    setIsLoading(true);
-
-    const res = await fetchArtworksByCriteria({
-      filters: filterOptions,
-      medium: catalog,
-      page: pageCount,
-    });
-
-    if (res.isOk) {
-      setArtworks(res.data);
+  const fetchArtworksData = async ({ pageParam = 1 }) => {
+    let res;
+    if (catalog === "trending") {
+      res = await fetchArtworks({ listingType: "trending", page: pageParam });
+      return res.isOk
+        ? { data: res.body.data, nextCursor: pageParam + 1 }
+        : null;
     } else {
-      updateModal({
-        message: `Error fetching ${catalog} artworks, reload page again`,
-        modalType: "error",
-        showModal: true,
+      res = await fetchArtworksByCriteria({
+        filters: filterOptions,
+        medium: catalog,
+        page: pageParam,
       });
+      return res.isOk ? { data: res.data, nextCursor: pageParam + 1 } : null;
     }
+  };
 
-    setIsLoading(false);
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ["artworksMedium", catalog, filterOptions],
+    queryFn: fetchArtworksData,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, allPages: any) => {
+      if (!lastPage || !lastPage.data || lastPage.data.length === 0)
+        return undefined;
+      return lastPage.nextCursor;
+    },
+  });
+
+  const artworks = data?.pages.flatMap((page: any) => page?.data || []) || [];
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const handleRefresh = async () => {
+    await refetch();
   };
 
   return (
     <WithModal>
       <ScrollWrapper
-        style={[styles.container, { marginTop: insets.top + 16 }]}
+        style={tw.style(`flex-1`, { marginTop: insets.top + 16 })}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ zIndex: 100, paddingHorizontal: 10 }}>
+        <View style={tw`z-100 px-2.5`}>
           <FilterButton
             handleClick={() =>
               navigation.navigate(screenName.artworkMediumFilterModal)
             }
           >
-            <Text style={styles.headerText}>{catalog}</Text>
+            <Text
+              style={tw`text-lg font-medium text-[${colors.primary_black}] py-5`}
+            >
+              {catalog === "trending" ? "Trending" : catalog}
+            </Text>
           </FilterButton>
         </View>
         {isLoading && <MiniArtworkCardLoader />}
-        {!isLoading && artworks && <ArtworksListing data={artworks} />}
+        {!isLoading && artworks && (
+          <ArtworksListing
+            data={artworks}
+            loadingMore={isFetchingNextPage}
+            onEndReached={handleLoadMore}
+            onRefresh={handleRefresh}
+          />
+        )}
       </ScrollWrapper>
     </WithModal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: colors.primary_black,
-    paddingVertical: 20,
-  },
-});
