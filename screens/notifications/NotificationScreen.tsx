@@ -3,7 +3,6 @@ import {
   Text,
   Pressable,
   FlatList,
-  ActivityIndicator,
   RefreshControl,
   Image,
 } from "react-native";
@@ -11,7 +10,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { formatEventDate } from "#utils/utils_formatEventDate";
-import NotificationDetailsModal from "./NotificationDetailsModal";
 import { useAppStore } from "#store/app/appStore";
 import { getNotificationHistory } from "#services/notification/getNotificationHistory";
 import { updateNotification } from "#services/notification/updateNotification";
@@ -144,15 +142,12 @@ function routeFromNotification(data?: NotificationDataType) {
     } else {
       navigate("Individual", { screen: "NotificationScreen" });
     }
+  } else if (access_type === "artist") {
+    navigate("Artist");
+  } else if (access_type === "gallery") {
+    navigate("Gallery");
   } else {
-    // Fallback hubs
-    if (access_type === "artist") {
-      navigate("Artist");
-    } else if (access_type === "gallery") {
-      navigate("Gallery");
-    } else {
-      navigate("Individual");
-    }
+    navigate("Individual");
   }
 }
 
