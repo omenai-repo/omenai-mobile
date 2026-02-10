@@ -141,7 +141,7 @@ function routeFromNotification(data?: NotificationDataType) {
       navigate("Artist", { screen: "NotificationScreen" });
     } else if (access_type === "gallery") {
       navigate("Gallery", { screen: "NotificationScreen" });
-    } else if (access_type === "collector") {
+    } else {
       navigate("Individual", { screen: "NotificationScreen" });
     }
   } else {
@@ -150,7 +150,7 @@ function routeFromNotification(data?: NotificationDataType) {
       navigate("Artist");
     } else if (access_type === "gallery") {
       navigate("Gallery");
-    } else if (access_type === "collector") {
+    } else {
       navigate("Individual");
     }
   }
@@ -158,8 +158,6 @@ function routeFromNotification(data?: NotificationDataType) {
 
 const NotificationScreen = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  // const [modalVisible, setModalVisible] = useState(false);
-  // const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { userType } = useAppStore();
@@ -275,12 +273,6 @@ const NotificationScreen = () => {
           }
         />
       )}
-
-      {/* <NotificationDetailsModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        notification={selectedNotification}
-      /> */}
     </View>
   );
 };

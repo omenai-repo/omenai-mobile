@@ -15,7 +15,6 @@ import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
 import { fetchArtworksByCriteria } from "#services/artworks/fetchArtworksByCriteria";
 import { fetchArtworks } from "#services/artworks/fetchArtworks";
 import { artworksMediumStore } from "#store/artworks/ArtworksMediumsStore";
-import { useModalStore } from "#store/modal/modalStore";
 import { screenName } from "#constants/screenNames.constants";
 import { artworksMediumFilterStore } from "#store/artworks/ArtworksMediumFilterStore";
 import ScrollWrapper from "#components/general/ScrollWrapper";
@@ -28,7 +27,6 @@ export default function ArtworksMedium() {
   const insets = useSafeAreaInsets();
   const { catalog } = route.params as { catalog: string };
 
-  const { updateModal } = useModalStore();
   const { filterOptions, clearAllFilters } = artworksMediumFilterStore();
   const { setMedium } = artworksMediumStore();
 
@@ -73,8 +71,7 @@ export default function ArtworksMedium() {
     queryFn: fetchArtworksData,
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, allPages: any) => {
-      if (!lastPage || !lastPage.data || lastPage.data.length === 0)
-        return undefined;
+      if (!lastPage?.data || lastPage.data.length === 0) return undefined;
       return lastPage.nextCursor;
     },
   });

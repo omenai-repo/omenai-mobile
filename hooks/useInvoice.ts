@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { InvoiceTypes } from "#types/types";
-import { apiUrl, authorization, userAgent } from "#constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
 import { apiRequest } from "#utils/apiRequest";
 
 const fetchInvoice = async (id: string) => {

@@ -1,56 +1,38 @@
-import { StyleSheet, View } from "react-native";
+import { View, type ViewStyle } from "react-native";
 import React from "react";
 import { FlatList } from "react-native-gesture-handler";
+import tw from "twrnc";
 
-export default function ArtworkCardLoader() {
-  const ArtworkLoaderCard = () => {
-    return (
-      <View style={styles.container}>
-        <View style={styles.imageContainer} />
-        <View style={styles.mainDetailsContainer}>
-          <View style={{ flex: 1 }}>
-            <View
-              style={{ height: 10, width: "100%", backgroundColor: "#eee" }}
-            />
-            <View
-              style={{
-                height: 10,
-                marginTop: 10,
-                width: "50%",
-                backgroundColor: "#eee",
-              }}
-            />
-          </View>
+type SingleArtworkCardLoaderProps = {
+  style?: ViewStyle;
+};
+
+export function SingleArtworkCardLoader({
+  style,
+}: Readonly<SingleArtworkCardLoaderProps>) {
+  return (
+    <View style={[tw`w-[270px]`, style]}>
+      <View style={tw`w-full h-[250px] bg-[#eee]`} />
+      <View style={tw`mt-2.5 flex-row gap-2.5`}>
+        <View style={tw`flex-1`}>
+          <View style={tw`h-2.5 w-full bg-[#eee]`} />
+          <View style={tw`h-2.5 mt-2.5 w-1/2 bg-[#eee]`} />
         </View>
       </View>
-    );
-  };
-
-  return (
-    <FlatList
-      data={[0, 1]}
-      renderItem={() => <ArtworkLoaderCard />}
-      keyExtractor={(_, index) => JSON.stringify(index)}
-      horizontal={true}
-      showsHorizontalScrollIndicator={false}
-      style={{ marginTop: 20 }}
-      contentContainerStyle={{ paddingLeft: 20, gap: 20, paddingRight: 20 }}
-    />
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: 270,
-  },
-  imageContainer: {
-    width: "100%",
-    height: 250,
-    backgroundColor: "#eee",
-  },
-  mainDetailsContainer: {
-    marginTop: 10,
-    flexDirection: "row",
-    gap: 10,
-  },
-});
+export default function ArtworkCardLoader() {
+  return (
+    <FlatList
+      data={[0, 1]}
+      renderItem={() => <SingleArtworkCardLoader />}
+      keyExtractor={(_, index) => JSON.stringify(index)}
+      horizontal={true}
+      showsHorizontalScrollIndicator={false}
+      style={tw`mt-5`}
+      contentContainerStyle={tw`pl-5 gap-5 pr-5`}
+    />
+  );
+}
