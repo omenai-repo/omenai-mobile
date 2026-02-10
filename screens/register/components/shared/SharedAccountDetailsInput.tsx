@@ -1,10 +1,11 @@
-import { Keyboard, Platform, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View } from "react-native";
+import React from "react";
 import tw from "twrnc";
 import Input from "#components/inputs/Input";
 import PasswordInput from "#components/inputs/PasswordInput";
 import NextButton from "#components/buttons/NextButton";
 import { useFormValidation } from "#hooks/useFormValidation";
+import { useKeyboardHeight } from "#hooks/useKeyboardHeight";
 
 export interface AccountDetailsData {
   name: string;
@@ -38,7 +39,7 @@ export default function SharedAccountDetailsInput({
   actions,
   labels,
   pageIndex,
-}: SharedAccountDetailsInputProps) {
+}: Readonly<SharedAccountDetailsInputProps>) {
   const { formErrors, handleValidationChecks, checkIsDisabled } =
     useFormValidation({
       name: "",
@@ -47,21 +48,7 @@ export default function SharedAccountDetailsInput({
       confirmPassword: "",
     });
 
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-
-  useEffect(() => {
-    if (Platform.OS === "android") return;
-    const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
-      setKeyboardHeight(e.endCoordinates.height);
-    });
-    const hideSub = Keyboard.addListener("keyboardWillHide", () => {
-      setKeyboardHeight(0);
-    });
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
+  const keyboardHeight = useKeyboardHeight();
 
   const isButtonDisabled = () => {
     return checkIsDisabled({

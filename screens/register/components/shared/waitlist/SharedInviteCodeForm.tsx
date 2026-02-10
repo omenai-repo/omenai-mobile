@@ -1,5 +1,5 @@
-import { Keyboard, Platform, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View } from "react-native";
+import React, { useState } from "react";
 import Input from "#components/inputs/Input";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
@@ -10,6 +10,7 @@ import {
 } from "./waitlistUtils";
 import { createInviteToken } from "#services/waitlist/createInviteToken";
 import { useModalStore } from "#store/modal/modalStore";
+import { useKeyboardHeight } from "#hooks/useKeyboardHeight";
 
 type SharedInviteCodeFormProps = Readonly<{
   entity: "artist" | "gallery";
@@ -29,24 +30,10 @@ export default function SharedInviteCodeForm({
   const [email, setEmail] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [errors, setErrors] = useState<{ email?: string; inviteCode?: string }>(
-    {}
+    {},
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-
-  useEffect(() => {
-    if (Platform.OS === "android") return;
-    const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
-      setKeyboardHeight(e.endCoordinates.height);
-    });
-    const hideSub = Keyboard.addListener("keyboardWillHide", () => {
-      setKeyboardHeight(0);
-    });
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
+  const keyboardHeight = useKeyboardHeight();
 
   const { updateModal } = useModalStore();
 

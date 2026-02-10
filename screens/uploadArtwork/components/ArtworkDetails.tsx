@@ -1,8 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import React, { useEffect, useState } from "react";
 import Input from "#components/inputs/Input";
 import LargeInput from "#components/inputs/LargeInput";
-import UploadImageInput from "#components/inputs/UploadImageInput";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
@@ -15,6 +14,7 @@ import {
 } from "#data/uploadArtworkForm.data";
 import { validate } from "#lib/validations/upload_artwork_input_validator/validator";
 import { useAppStore } from "#store/app/appStore";
+import tw from "twrnc";
 
 type artworkDetailsErrorsType = {
   title: string;
@@ -97,8 +97,8 @@ export default function ArtworkDetails() {
   }, [artworkUploadData.materials]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputsContainer}>
+    <View style={tw`flex-1`}>
+      <View style={tw`gap-5 mb-12`}>
         <Input
           label="Artwork title"
           onInputChange={(value) => updateArtworkUploadData("title", value)}
@@ -115,7 +115,7 @@ export default function ArtworkDetails() {
           value={artworkUploadData.artwork_description || ""}
           errorMessage={formErrors.description}
         />
-        <View style={{ flex: 1 }}>
+        <View style={tw`flex-1`}>
           <CustomSelectPicker
             label="Medium"
             data={mediumListing}
@@ -134,7 +134,7 @@ export default function ArtworkDetails() {
           errorMessage={formErrors.materials}
           height={105}
         />
-        <View style={{ flex: 1 }}>
+        <View style={tw`flex-1`}>
           <Input
             label="Year"
             placeHolder="Enter year of creation"
@@ -146,8 +146,8 @@ export default function ArtworkDetails() {
             errorMessage={formErrors.year}
           />
         </View>
-        <View style={[styles.flexInputsContainer, { zIndex: 5 }]}>
-          <View style={{ flex: 1 }}>
+        <View style={tw`flex-row gap-5 z-[5]`}>
+          <View style={tw`flex-1`}>
             <CustomSelectPicker
               label="Rarity"
               data={rarityList}
@@ -158,7 +158,7 @@ export default function ArtworkDetails() {
               }
             />
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={tw`flex-1`}>
             <CustomSelectPicker
               label="Certificate of authenticity"
               data={certificateOfAuthenticitySelectOptions}
@@ -174,7 +174,7 @@ export default function ArtworkDetails() {
           </View>
         </View>
 
-        <View style={{ flex: 1, zIndex: 4 }}>
+        <View style={tw`flex-1 z-[4]`}>
           <CustomSelectPicker
             label="Signature"
             data={
@@ -200,17 +200,3 @@ export default function ArtworkDetails() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inputsContainer: {
-    gap: 20,
-    marginBottom: 50,
-  },
-  flexInputsContainer: {
-    flexDirection: "row",
-    gap: 20,
-  },
-});

@@ -18,7 +18,7 @@ export default function ViewAllCategoriesButton({
   label,
   darkMode,
   listingType,
-}: ViewAllCategoriesButtonProps) {
+}: Readonly<ViewAllCategoriesButtonProps>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   return (
