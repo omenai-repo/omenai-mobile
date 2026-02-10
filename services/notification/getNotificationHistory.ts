@@ -19,6 +19,7 @@ export async function getNotificationHistory({
       `${apiUrl}/api/notifications/fetchNotifications?id=${id}&access_type=${access_type}`,
       {
         method: "GET",
+        shouldLogout: false,
       },
     );
 

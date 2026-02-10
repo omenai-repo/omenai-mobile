@@ -6,32 +6,32 @@ import {
   ActivityIndicator,
   RefreshControl,
   Image,
-} from 'react-native';
-import React, { useEffect, useState, useCallback } from 'react';
-import tw from 'twrnc';
-import BackHeaderTitle from '#components/header/BackHeaderTitle';
-import { formatEventDate } from '#utils/utils_formatEventDate';
-import NotificationDetailsModal from './NotificationDetailsModal';
-import { useAppStore } from '#store/app/appStore';
-import { getNotificationHistory } from '#services/notification/getNotificationHistory';
-import { updateNotification } from '#services/notification/updateNotification';
-import SkeletonLoaderContainer from './SkeletonLoaderContainer';
+} from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import tw from "twrnc";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { formatEventDate } from "#utils/utils_formatEventDate";
+import NotificationDetailsModal from "./NotificationDetailsModal";
+import { useAppStore } from "#store/app/appStore";
+import { getNotificationHistory } from "#services/notification/getNotificationHistory";
+import { updateNotification } from "#services/notification/updateNotification";
+import SkeletonLoaderContainer from "./SkeletonLoaderContainer";
 import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withTiming,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
 // ⬇️ Root-level navigation helper (same one you use in useNotificationHandler)
-import { navigate } from '#navigation/RootNavigation';
+import { navigate } from "#navigation/RootNavigation";
 
 /** Match your push payload contract */
-type AccessType = 'artist' | 'gallery' | 'collector';
+type AccessType = "artist" | "gallery" | "collector";
 
 type NotificationDataType = {
-  type: 'wallet' | 'orders' | 'subscriptions' | 'updates';
+  type: "wallet" | "orders" | "subscriptions" | "updates";
   access_type: AccessType;
   metadata: any; // e.g. { orderId, date, ... }
   userId: string;
@@ -89,18 +89,24 @@ const AnimatedNotificationItem = ({ item, index, onPress }: Props) => {
           <Text
             style={tw.style(
               `text-[15px]`,
-              isUnread ? `font-extrabold text-[#1A1A1A]` : `font-semibold text-[#3D3D3D]`,
+              isUnread
+                ? `font-extrabold text-[#1A1A1A]`
+                : `font-semibold text-[#3D3D3D]`,
             )}
           >
             {item.title}
           </Text>
-          {isUnread && <View style={tw`w-[8px] h-[8px] bg-[#007AFF] rounded-full`} />}
+          {isUnread && (
+            <View style={tw`w-[8px] h-[8px] bg-[#007AFF] rounded-full`} />
+          )}
         </View>
 
         <Text numberOfLines={2} style={tw`text-[13px] text-[#3D3D3D] mt-[5px]`}>
           {item.body}
         </Text>
-        <Text style={tw`text-[11px] text-[#999999] mt-[8px]`}>{formatEventDate(item.sentAt)}</Text>
+        <Text style={tw`text-[11px] text-[#999999] mt-[8px]`}>
+          {formatEventDate(item.sentAt)}
+        </Text>
       </Pressable>
     </Animated.View>
   );
@@ -112,40 +118,40 @@ function routeFromNotification(data?: NotificationDataType) {
 
   const { type, access_type } = data;
 
-  if (type === 'wallet') {
-    if (access_type === 'artist') {
-      navigate('Artist', { screen: 'WalletScreen' });
-    } else if (access_type === 'gallery') {
-      navigate('Gallery', { screen: 'Payouts' });
+  if (type === "wallet") {
+    if (access_type === "artist") {
+      navigate("Artist", { screen: "WalletScreen" });
+    } else if (access_type === "gallery") {
+      navigate("Gallery", { screen: "Payouts" });
     }
-  } else if (type === 'orders') {
-    if (access_type === 'gallery') {
-      navigate('Gallery', { screen: 'Orders' });
-    } else if (access_type === 'artist') {
-      navigate('Artist', { screen: 'Orders' });
+  } else if (type === "orders") {
+    if (access_type === "gallery") {
+      navigate("Gallery", { screen: "Orders" });
+    } else if (access_type === "artist") {
+      navigate("Artist", { screen: "Orders" });
     } else {
-      navigate('Individual', { screen: 'Orders' });
+      navigate("Individual", { screen: "Orders" });
     }
-  } else if (type === 'subscriptions') {
-    if (access_type === 'gallery') {
-      navigate('Gallery', { screen: 'SubscriptionScreen' });
+  } else if (type === "subscriptions") {
+    if (access_type === "gallery") {
+      navigate("Gallery", { screen: "SubscriptionScreen" });
     }
-  } else if (type === 'updates') {
-    if (access_type === 'artist') {
-      navigate('Artist', { screen: 'NotificationScreen' });
-    } else if (access_type === 'gallery') {
-      navigate('Gallery', { screen: 'NotificationScreen' });
-    } else if (access_type === 'collector') {
-      navigate('Individual', { screen: 'NotificationScreen' });
+  } else if (type === "updates") {
+    if (access_type === "artist") {
+      navigate("Artist", { screen: "NotificationScreen" });
+    } else if (access_type === "gallery") {
+      navigate("Gallery", { screen: "NotificationScreen" });
+    } else if (access_type === "collector") {
+      navigate("Individual", { screen: "NotificationScreen" });
     }
   } else {
     // Fallback hubs
-    if (access_type === 'artist') {
-      navigate('Artist');
-    } else if (access_type === 'gallery') {
-      navigate('Gallery');
-    } else if (access_type === 'collector') {
-      navigate('Individual');
+    if (access_type === "artist") {
+      navigate("Artist");
+    } else if (access_type === "gallery") {
+      navigate("Gallery");
+    } else if (access_type === "collector") {
+      navigate("Individual");
     }
   }
 }
@@ -161,11 +167,11 @@ const NotificationScreen = () => {
   const fetchNotifications = async () => {
     try {
       const response = await getNotificationHistory({
-        access_type: userType === 'user' ? 'collector' : userType,
+        access_type: userType === "user" ? "collector" : userType,
       });
       setNotifications(response?.data ?? []);
     } catch (err) {
-      console.error('Failed to fetch notifications', err);
+      console.error("Failed to fetch notifications", err);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -185,7 +191,9 @@ const NotificationScreen = () => {
     // Optimistic mark-as-read
     setNotifications((prev) =>
       prev.map((n) =>
-        n.id === item.id ? { ...n, read: true, readAt: new Date().toISOString() } : n,
+        n.id === item.id
+          ? { ...n, read: true, readAt: new Date().toISOString() }
+          : n,
       ),
     );
 
@@ -196,29 +204,43 @@ const NotificationScreen = () => {
       await updateNotification({
         read: true,
         readAt: new Date(),
-        access_type: userType === 'user' ? 'collector' : userType,
+        access_type: userType === "user" ? "collector" : userType,
         notification_id: item.id,
       });
     } catch (err) {
-      console.error('Failed to mark notification as read', err);
+      console.error("Failed to mark notification as read", err);
     }
   };
 
-  const renderNotificationItem = ({ item, index }: { item: Notification; index: number }) => (
-    <AnimatedNotificationItem item={item} index={index} onPress={() => handlePress(item)} />
+  const renderNotificationItem = ({
+    item,
+    index,
+  }: {
+    item: Notification;
+    index: number;
+  }) => (
+    <AnimatedNotificationItem
+      item={item}
+      index={index}
+      onPress={() => handlePress(item)}
+    />
   );
 
   const renderEmptyComponent = () => {
     if (loading) return null;
 
     return (
-      <View style={tw`flex-1 justify-center items-center mt-[100px] px-[100px]`}>
+      <View
+        style={tw`flex-1 justify-center items-center mt-[100px] px-[100px]`}
+      >
         <Image
-          source={require('../../assets/icons/empty-artworks.png')}
+          source={require("../../assets/icons/empty-artworks.png")}
           style={tw`w-[120px] h-[120px] mb-4`}
           resizeMode="contain"
         />
-        <Text style={tw`text-center text-[#3D3D3D] font-semibold text-[16px] mb-2`}>
+        <Text
+          style={tw`text-center text-[#3D3D3D] font-semibold text-[16px] mb-2`}
+        >
           No Notifications
         </Text>
         <Text style={tw`text-center text-[#999] text-[13px]`}>
@@ -229,7 +251,7 @@ const NotificationScreen = () => {
   };
 
   return (
-    <View style={tw`flex-1 bg-[#F7F7F7] pt-[60px] android:pt-[15px]`}>
+    <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Notifications" />
 
       {loading ? (
@@ -238,12 +260,18 @@ const NotificationScreen = () => {
         <FlatList
           data={notifications}
           keyExtractor={(item) => String(item.id)}
-          renderItem={({ item, index }) => renderNotificationItem({ item, index })}
+          renderItem={({ item, index }) =>
+            renderNotificationItem({ item, index })
+          }
           ListEmptyComponent={renderEmptyComponent}
           contentContainerStyle={tw`pt-[20px] pb-[40px]`}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#007AFF" />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#007AFF"
+            />
           }
         />
       )}
