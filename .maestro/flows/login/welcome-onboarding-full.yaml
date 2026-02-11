@@ -1,0 +1,53 @@
+appId: com.omenai.omenaimobile
+name: "Welcome Screen - Full Onboarding (First Time)"
+tags:
+  - welcome
+  - onboarding
+  - auth
+
+---
+- launchApp:
+    clearState: true
+
+# Select the development server after state is cleared
+- extendedWaitUntil:
+    visible: "http://localhost:8081"
+    timeout: 10000
+- tapOn: "http://localhost:8081"
+
+# Wait a moment for app to load or Developer Menu to appear (using swipe hack)
+- swipe:
+    start: 50%,10%
+    end: 50%,10%
+    duration: 5000
+
+- swipe:
+    start: 50%,10%
+    end: 50%,10%
+    duration: 500
+
+# Onboarding Page 1
+- extendedWaitUntil:
+    visible: "Contemporary African Art, Curated"
+    timeout: 10000
+
+- assertVisible: "Discover works from emerging and established artists across Africa and its diaspora."
+
+- tapOn: "Continue"
+
+# Onboarding Page 2
+- extendedWaitUntil:
+    visible: "Meet the Artists Shaping the Future"
+    timeout: 5000
+
+- assertVisible: "Discover rising and established artists across Africa and its diaspora."
+
+- tapOn: "Continue"
+
+# Welcome Screen
+- extendedWaitUntil:
+    visible: "Build Your Art World"
+    timeout: 5000
+
+- assertVisible: "Create Account"
+- assertVisible: "Log In"

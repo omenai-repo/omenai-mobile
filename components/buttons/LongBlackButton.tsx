@@ -22,6 +22,7 @@ type LongBlackButtonProps = {
   outline?: boolean;
   borderColor?: string;
   icon?: React.ReactNode;
+  testID?: string;
 };
 
 export default function LongBlackButton({
@@ -34,6 +35,7 @@ export default function LongBlackButton({
   outline = false,
   borderColor = colors.black,
   icon,
+  testID,
 }: LongBlackButtonProps) {
   const animation = useRef(null);
 
@@ -89,7 +91,7 @@ export default function LongBlackButton({
 
   if (isInactive) {
     return (
-      <View style={containerStyle}>
+      <View style={containerStyle} testID={testID}>
         {isDisabled ? (
           <Text style={mergedTextStyle}>{value}</Text>
         ) : (
@@ -109,6 +111,7 @@ export default function LongBlackButton({
       activeOpacity={1}
       style={containerStyle}
       onPress={onClick}
+      testID={testID}
     >
       <View style={tw`flex-row items-center justify-center gap-3`}>
         {icon}
