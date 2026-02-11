@@ -1,0 +1,76 @@
+appId: com.omenai.omenaimobile
+name: "Login Error Scenarios"
+tags:
+  - login
+  - error
+  - auth
+  - negative
+
+---
+# Invalid credentials test
+- runFlow: welcome-onboarding-skip.yaml
+
+- tapOn: "Log In"
+- assertVisible: "Welcome Back"
+
+- tapOn: "Email address"
+- inputText: "invalid@notexist.com"
+- hideKeyboard
+
+- tapOn: "Password"
+- inputText: "WrongPassword123!"
+- hideKeyboard
+
+- tapOn:
+    id: "login-submit-button"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Invalid"
+        - "Error"
+        - "not found"
+        - "incorrect"
+    timeout: 10000
+
+---
+# Empty fields test
+- runFlow: welcome-onboarding-skip.yaml
+
+- tapOn: "Log In"
+
+- assertVisible: "Log In"
+
+- tapOn: "Email address"
+- inputText: "test@example.com"
+- hideKeyboard
+
+- tapOn:
+    id: "login-submit-button"
+- assertVisible: "Welcome Back"
+
+---
+# Wrong password test
+- runFlow: welcome-onboarding-skip.yaml
+
+- tapOn: "Log In"
+
+- tapOn: "Email address"
+- inputText: "dantereus1@gmail.com"
+- hideKeyboard
+
+- tapOn: "Password"
+- inputText: "CompletelyWrongPassword!"
+- hideKeyboard
+
+- tapOn:
+    id: "login-submit-button"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Invalid"
+        - "Error"
+        - "incorrect"
+        - "wrong"
+    timeout: 10000

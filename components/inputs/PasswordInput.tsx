@@ -22,7 +22,8 @@ export default function PasswordInput({
   errorMessage,
   handleBlur,
   textContentType,
-}: PasswordInputProps) {
+  testID,
+}: PasswordInputProps & { testID?: string }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -35,6 +36,7 @@ export default function PasswordInput({
         ]}
       >
         <TextInput
+          testID={testID}
           style={[
             tw`flex-1 h-full px-3 bg-transparent`,
             { color: colors.black },

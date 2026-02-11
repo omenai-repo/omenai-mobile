@@ -34,11 +34,13 @@ export default function Input({
   disabled,
   defaultValue,
   containerStyle,
-}: InputProps) {
+  testID,
+}: InputProps & { testID?: string }) {
   return (
     <View style={[containerStyle]}>
       <Text style={[tw`text-sm`, { color: colors.grey }]}>{label}</Text>
       <TextInput
+        testID={testID}
         onChangeText={onInputChange}
         placeholder={placeHolder}
         placeholderTextColor={colors.grey}

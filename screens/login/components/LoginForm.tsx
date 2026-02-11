@@ -75,6 +75,7 @@ export default function LoginForm({
     >
       <View style={tw`gap-5`}>
         <Input
+          testID="login-email-input"
           label={emailLabel}
           keyboardType="email-address"
           onInputChange={setEmail}
@@ -82,6 +83,7 @@ export default function LoginForm({
           value={loginData.email}
         />
         <PasswordInput
+          testID="login-password-input"
           label="Password"
           onInputChange={setPassword}
           placeHolder="Enter password"
@@ -102,6 +104,7 @@ export default function LoginForm({
               biometricProps.canUseBiometrics ? tw`flex-1` : tw`w-full`,
               { height: 52 },
             ]}
+            testID="login-submit-button"
           />
           {biometricProps.canUseBiometrics && (
             <TouchableOpacity

@@ -99,8 +99,8 @@ export default function Welcome() {
 
           <View style={tw`gap-3 mt-6`}>
             <LongBlackButton
-              value="Log In"
-              onClick={() => handleNavigation(screenName.login)}
+              value="Create Account"
+              onClick={() => handleNavigation(screenName.register)}
               style={{ backgroundColor: colors.white, height: 48 }}
               textStyle={{
                 color: colors.black,
@@ -110,8 +110,8 @@ export default function Welcome() {
             />
 
             <LongBlackButton
-              value="Sign Up"
-              onClick={() => handleNavigation(screenName.register)}
+              value="Log In"
+              onClick={() => handleNavigation(screenName.login)}
               style={{ height: 48, backgroundColor: colors.black_light }}
               textStyle={{
                 color: colors.white,
