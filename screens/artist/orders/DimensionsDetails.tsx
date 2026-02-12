@@ -37,7 +37,8 @@ type ArtworkDimensionsErrorsType = {
 
 const DimensionsDetails = () => {
   const { userType } = useAppStore();
-  const { orderId, artworkDimensions } = useRoute<any>().params;
+  const { orderId, artworkDimensions, exclusivityType } =
+    useRoute<any>().params;
   const navigation = useNavigation();
 
   // Packaging type state - default to rolled for better shipping rates
@@ -254,8 +255,7 @@ const DimensionsDetails = () => {
             <View style={tw`mt-[20px] mx-[20px]`}>
               {/* Packaging Selector with Presets */}
               {userType === "artist" &&
-                (useRoute<any>().params?.exclusivityType === "non-exclusive" ||
-                  !useRoute<any>().params?.exclusivityType) && (
+                (exclusivityType === "non-exclusive" || !exclusivityType) && (
                   <View
                     style={tw`mb-5 flex-row bg-amber-50 border border-amber-100 rounded-lg p-3`}
                   >
