@@ -11,12 +11,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function HeaderIndicator() {
   const { userType } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { activeIndex, setActiveIndex, isUploaded, clearData } = uploadArtworkStore();
+  const { activeIndex, setActiveIndex, isUploaded, clearData } =
+    uploadArtworkStore();
   const insets = useSafeAreaInsets();
 
   const titles = [
     "Upload artwork",
     "Dimensions",
+    "Shipping",
     ...(userType !== "artist" ? ["Pricing"] : []),
     "Artist details",
     "Upload image",
@@ -48,7 +50,10 @@ export default function HeaderIndicator() {
         {titles.map((_, index) => (
           <View
             key={index}
-            style={[styles.indicator, activeIndex >= index + 1 && { backgroundColor: "#000" }]}
+            style={[
+              styles.indicator,
+              activeIndex >= index + 1 && { backgroundColor: "#000" },
+            ]}
           />
         ))}
       </View>

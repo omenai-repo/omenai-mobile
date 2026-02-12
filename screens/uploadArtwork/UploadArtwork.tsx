@@ -4,6 +4,7 @@ import WithModal from "#components/modal/WithModal";
 import HeaderIndicator from "./components/HeaderIndicator";
 import ArtworkDetails from "./components/ArtworkDetails";
 import ArtworkDimensions from "./components/ArtworkDimensions";
+import ArtworkShipping from "./components/ArtworkShipping";
 import ArtistDetails from "./components/ArtistDetails";
 import Pricing from "./components/Pricing";
 import UploadImage from "./components/UploadImage";
@@ -45,8 +46,15 @@ export default function UploadArtwork() {
     image,
     isUploaded,
     setIsUploaded,
+    clearData,
   } = uploadArtworkStore();
   const { updateModal } = useModalStore();
+
+  useEffect(() => {
+    return () => {
+      clearData();
+    };
+  }, []);
 
   useEffect(() => {
     if (userType === "gallery") {
@@ -217,6 +225,7 @@ export default function UploadArtwork() {
   const components = [
     <ArtworkDetails key="artwork-details" />,
     <ArtworkDimensions key="artwork-dimensions" />,
+    <ArtworkShipping key="artwork-shipping" />,
     ...(userType === "artist" ? [] : [<Pricing key="pricing" />]),
     <ArtistDetails key="artist-details" />,
     <UploadImage key="upload-image" handleUpload={handleUpload} />,

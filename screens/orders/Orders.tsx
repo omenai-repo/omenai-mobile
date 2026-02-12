@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { useCollectorOrders } from "#hooks/useCollectorOrders";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import FilterDropdown from "./components/FilterDropdown";
 
 export type OrderTabsTypes = "pending" | "history";
 
@@ -32,13 +33,18 @@ export default function Orders() {
   }, [data, selectedTab]);
 
   // Client-side year filter (optional but handy)
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
   const currentOrders = useMemo(() => {
     if (!Array.isArray(tabOrders)) return [];
     return tabOrders.filter((o) => {
       const dt = new Date(o?.updatedAt ?? o?.createdAt ?? Date.now());
-      return dt.getFullYear() === selectedYear;
+      const matchesYear = dt.getFullYear() === selectedYear;
+      const matchesStatus =
+        statusFilter === "all" || o?.status === statusFilter;
+      return matchesYear && matchesStatus;
     });
-  }, [tabOrders, selectedYear]);
+  }, [tabOrders, selectedYear, statusFilter]);
 
   // Tabs (guard length)
   const collectorTabs = useMemo(
@@ -50,7 +56,7 @@ export default function Orders() {
       },
       { title: "Order History", key: "history" },
     ],
-    [data?.pendingOrders?.length]
+    [data?.pendingOrders?.length],
   );
 
   const toggleRecentOrder = useCallback((key: string | number) => {
@@ -60,7 +66,7 @@ export default function Orders() {
 
   const keyExtractor = useCallback(
     (item: any) => `${item.order_id}::${item.artwork_data?._id ?? "na"}`,
-    []
+    [],
   );
 
   const renderItem = useCallback(
@@ -97,7 +103,7 @@ export default function Orders() {
         invoiceNumber={item.payment_information.invoice_reference}
       />
     ),
-    [currentOrders.length, navigation, openSection, toggleRecentOrder]
+    [currentOrders.length, navigation, openSection, toggleRecentOrder],
   );
 
   // Pull-to-refresh
@@ -117,34 +123,40 @@ export default function Orders() {
         <View
           style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
         >
+          <View style={tw`flex-row items-center gap-2 mb-[25px] z-50 w-full`}>
+            <FilterDropdown
+              data={[
+                { label: "All Status", value: "all" },
+                { label: "Pending", value: "pending" },
+                { label: "Processing", value: "processing" },
+                { label: "Completed", value: "completed" },
+              ]}
+              selectedValue={statusFilter}
+              onSelect={(val) => setStatusFilter(val)}
+              // Ensure dropdown content is above other elements
+              style={tw`flex-1`}
+            />
+            <YearDropdown
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              style={tw`mb-0 flex-1`}
+            />
+          </View>
+
           {isLoading ? (
             <OrderslistingLoader />
           ) : currentOrders.length === 0 ? (
             <EmptyOrdersListing status={selectedTab} />
           ) : (
-            <>
-              <View style={tw`flex-row items-center`}>
-                <Text
-                  style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}
-                >
-                  Your Orders
-                </Text>
-                <YearDropdown
-                  selectedYear={selectedYear}
-                  setSelectedYear={setSelectedYear}
-                />
-              </View>
-
-              <FlatList
-                data={currentOrders}
-                keyExtractor={keyExtractor}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={tw`pb-[30px]`}
-                renderItem={renderItem}
-                refreshing={isRefetching}
-                onRefresh={onRefresh}
-              />
-            </>
+            <FlatList
+              data={currentOrders}
+              keyExtractor={keyExtractor}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={tw`pb-[30px]`}
+              renderItem={renderItem}
+              refreshing={isRefetching}
+              onRefresh={onRefresh}
+            />
           )}
         </View>
       </View>

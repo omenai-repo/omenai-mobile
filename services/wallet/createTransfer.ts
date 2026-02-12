@@ -12,6 +12,7 @@ export async function createTransfer(payload: {
     const res = await apiRequest(url, {
       method: "POST",
       body: JSON.stringify(payload),
+      shouldLogout: false,
     });
 
     const result = await res.json();
@@ -19,7 +20,8 @@ export async function createTransfer(payload: {
   } catch (error: any) {
     return {
       isOk: false,
-      message: error.response?.data?.message || "Transfer failed",
+      message:
+        error.message || error.response?.data?.message || "Transfer failed",
     };
   }
 }

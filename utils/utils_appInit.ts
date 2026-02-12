@@ -20,7 +20,7 @@ export const utils_appInit = async () => {
         useAppStore.setState({
           isLoggedIn: true,
           userSession: value,
-          userType: value.role,
+          userType: value.role === "individual" ? "user" : value.role,
         });
       } catch (error) {
         console.error("Failed to parse user data:", error);
@@ -47,7 +47,7 @@ const sessionValidator = (loginDate: string) => {
     }
 
     const timeDifference = Math.abs(
-      currentDate.getTime() - parsedLoginData.getTime()
+      currentDate.getTime() - parsedLoginData.getTime(),
     );
     const oneHour = 60 * 60 * 1000;
 

@@ -6,12 +6,14 @@ interface OrderHeaderProps {
   image_href: string;
   artId: string;
   artName: string;
+  children?: React.ReactNode;
 }
 
 const OrderHeader: React.FC<OrderHeaderProps> = ({
   image_href,
   artId,
   artName,
+  children,
 }) => (
   <View style={tw`flex-row items-center gap-[10px] flex-1`}>
     <Image
@@ -33,6 +35,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
       >
         {artName}
       </Text>
+      {children}
     </View>
   </View>
 );

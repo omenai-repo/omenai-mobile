@@ -30,20 +30,16 @@ export default function ArtworkDimensions() {
     artworkUploadData,
   } = uploadArtworkStore();
 
-  const [packagingType, setPackagingType] = useState<PackagingType>(
-    (artworkUploadData.packaging_type as PackagingType) || "rolled",
-  );
-
   const [dimensions, setDimensions] = useState({
     length: "",
     height: "",
-    weight: "",
   });
 
-  const [formErrors, setFormErrors] = useState<ArtworkDimensionsErrorsType>({
+  const [formErrors, setFormErrors] = useState<
+    Omit<ArtworkDimensionsErrorsType, "weight">
+  >({
     length: "",
     height: "",
-    weight: "",
   });
 
   const checkIsDisabled = () => {
@@ -57,7 +53,7 @@ export default function ArtworkDimensions() {
   };
 
   const handleValidationChecks = (
-    label: keyof ArtworkDimensionsErrorsType,
+    label: keyof Omit<ArtworkDimensionsErrorsType, "weight">,
     value: string,
   ) => {
     if (value.trim() === "") {
@@ -83,18 +79,10 @@ export default function ArtworkDimensions() {
     }
   }, [dimensions.height]);
 
-  useEffect(() => {
-    if (dimensions.weight) {
-      handleValidationChecks("weight", dimensions.weight);
-    }
-  }, [dimensions.weight]);
-
   const handleProceed = () => {
     // Store values with units
     updateArtworkUploadData("length", `${dimensions.length}in`);
     updateArtworkUploadData("height", `${dimensions.height}in`);
-    updateArtworkUploadData("weight", `${dimensions.weight}kg`);
-    updateArtworkUploadData("packaging_type", packagingType);
 
     setActiveIndex(activeIndex + 1);
   };
@@ -111,17 +99,12 @@ export default function ArtworkDimensions() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <PackagingTypeSelector
-            value={packagingType}
-            onChange={setPackagingType}
-          />
-
           <View style={tw`mb-4`}>
             <Text style={tw`text-sm font-medium text-gray-700`}>
               Artwork Dimensions
             </Text>
             <Text style={tw`text-xs text-gray-500 mt-1`}>
-              Enter measurements in inches. Weight in kilograms.
+              Enter measurements in inches.
             </Text>
           </View>
 
@@ -151,20 +134,6 @@ export default function ArtworkDimensions() {
                 placeHolder="e.g 24"
                 value={dimensions.height}
                 errorMessage={formErrors.height}
-              />
-            </View>
-
-            <View>
-              <Input
-                label="Weight (kg)"
-                keyboardType="numeric"
-                onInputChange={(text) => {
-                  setDimensions((prev) => ({ ...prev, weight: text }));
-                  handleValidationChecks("weight", text);
-                }}
-                placeHolder="e.g 10"
-                value={dimensions.weight}
-                errorMessage={formErrors.weight}
               />
             </View>
           </View>

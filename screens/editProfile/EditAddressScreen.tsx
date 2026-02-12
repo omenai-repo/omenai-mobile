@@ -338,19 +338,17 @@ const EditAddressScreen = () => {
               dropdownPosition="bottom"
             />
 
-            <View style={tw`flex-row`}>
-              <Input
-                label="Address"
-                keyboardType="default"
-                onInputChange={(text) => {
-                  setAddressLine(text);
-                  handleValidationChecks("general", text);
-                }}
-                placeHolder="Input your gallery address here"
-                value={addressLine}
-                errorMessage={formErrors?.address_line}
-              />
-            </View>
+            <Input
+              label="Address"
+              keyboardType="default"
+              onInputChange={(text) => {
+                setAddressLine(text);
+                handleValidationChecks("general", text);
+              }}
+              placeHolder="Input your gallery address here"
+              value={addressLine}
+              errorMessage={formErrors?.address_line}
+            />
 
             <View style={tw`flex-row items-center gap-[30px]`}>
               <View style={tw`flex-1`}>

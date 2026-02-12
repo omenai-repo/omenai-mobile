@@ -22,10 +22,14 @@ export async function apiRequest(url: string, options: RequestOptions = {}) {
     `[API] ${fetchOptions.method || "GET"} ${url} - Status: ${response.status}`,
   );
 
-  if (response.status === 403 && shouldLogout) {
-    console.warn(`[API] 403 Forbidden detected at ${url}. Logging out...`);
-    console.warn(`API response: ${JSON.stringify(response.json())}`);
-    await logout();
+  if (response.status === 403) {
+    if (shouldLogout) {
+      console.warn(`[API] 403 Forbidden detected at ${url}. Logging out...`);
+      await logout();
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Forbidden");
+    }
   }
 
   return response;

@@ -25,7 +25,8 @@ const USER_ID_MAP = {
 
 export function useLoginHandler(userType: UserType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
+  const { setUserSession, setUserType, setIsLoggedIn, expoPushToken } =
+    useAppStore();
   const { updateModal } = useModalStore();
   const {
     isBiometricSupported,
@@ -38,6 +39,7 @@ export function useLoginHandler(userType: UserType) {
 
   const finalizeLogin = (data: any, clearInputs: () => void) => {
     setUserSession(data);
+    setUserType(data.role === "individual" ? "user" : data.role);
     setIsLoggedIn(true);
     clearInputs();
   };

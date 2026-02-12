@@ -39,9 +39,7 @@ export default function GenericMediumFilter({
           ]}
         >
           <View style={tw`flex-1 flex-row items-center gap-2.5`}>
-            <Text style={{ color: "#616161", fontSize: 16 }}>
-              Filter by medium
-            </Text>
+            <Text style={{ color: "#616161", fontSize: 16 }}>Medium</Text>
             {filterOptions.medium && filterOptions.medium.length > 0 && (
               <View
                 style={[

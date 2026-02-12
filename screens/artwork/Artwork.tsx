@@ -347,14 +347,6 @@ export default function Artwork() {
                   </Text>
                 </View>
               )}
-              <View style={[styles.tagItem, { backgroundColor: "#e5f4ff" }]}>
-                <SimpleLineIcons name="frame" size={15} />
-                <Text style={[styles.tagItemText, { color: "#30589f" }]}>
-                  {artwork.framing === "Framed"
-                    ? "Frame Included"
-                    : "Artwork is not framed"}
-                </Text>
-              </View>
             </View>
           </ScrollWrapper>
         </View>
@@ -476,7 +468,6 @@ export default function Artwork() {
                             ? "Included"
                             : "Not included",
                       },
-                      { name: "Artwork packaging", text: artwork.framing },
                       {
                         name: "Signature",
                         text: `Signed ${artwork.signature}`,
@@ -516,7 +507,11 @@ export default function Artwork() {
                         showsHorizontalScrollIndicator={false}
                         keyExtractor={(_, i) => String(i)}
                         style={{ marginBottom: 25 }}
-                        contentContainerStyle={{ paddingRight: 20 }}
+                        contentContainerStyle={{
+                          paddingLeft: 20,
+                          paddingRight: 20,
+                          gap: 20,
+                        }}
                         renderItem={({ item }) => (
                           <ArtworkCard
                             title={item.title}
