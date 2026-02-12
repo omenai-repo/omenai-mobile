@@ -1,12 +1,12 @@
 export const QK = {
   highlightGallery: (
     slice: "artworks" | "sales" | "net" | "revenue",
-    userId?: string
+    userId?: string,
   ) => ["overview", "highlight", "gallery", slice, userId],
 
   highlightArtist: (
     slice: "sales" | "net" | "revenue" | "balance",
-    userId?: string
+    userId?: string,
   ) => ["overview", "highlight", "artist", slice, userId],
 
   salesOverview: (userId?: string, year?: string) => [
@@ -48,3 +48,17 @@ export const HOME_QK = {
 };
 
 export const ORDERS_QK = ["orders", "artist"] as const;
+
+export const SEARCH_QK = {
+  query: (query: string) => ["search", "results", query],
+};
+
+export const WALLET_QK = {
+  artist: ["wallet", "artist"] as const,
+  validate: (bankCode: string, acctNumber: string) => [
+    "wallet",
+    "validate",
+    bankCode,
+    acctNumber,
+  ],
+};

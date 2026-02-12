@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Modal, ScrollView } from "react-native";
+import { View, TextInput, Modal, ScrollView } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import Input from "#components/inputs/Input";
@@ -11,13 +11,14 @@ import { debounce } from "lodash";
 import { useAppStore } from "#store/app/appStore";
 import { validateBankAcct } from "#services/wallet/validateBankAct";
 import { useModalStore } from "#store/modal/modalStore";
-import { addPrimaryAcct } from "#services/wallet/addPrimaryAcct";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { fetchBankBranches } from "#services/wallet/fetchBankBranches";
 import WithModal from "#components/modal/WithModal";
 import LottieView from "lottie-react-native";
 import loaderAnimation from "../../../assets/other/loader-animation.json";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { WALLET_QK } from "#utils/queryKeys";
+import { AccountValidationConfirmation } from "./components/AccountValidationConfirmation";
 
 type BankOption = {
   label: string;
@@ -48,16 +49,11 @@ const supportedCountryCodes = [
   // 'NG',
 ];
 
-const WALLET_QK = ["wallet", "artist"] as const;
-const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
-const BASE_TXNS_QK = ["wallet", "artist", "txns"] as const;
-
 const AddPrimaryAcctScreen = () => {
-  const navigation = useNavigation();
   const { walletData } = useRoute().params as { walletData: any };
   const { userSession } = useAppStore();
-  const { updateModal } = useModalStore();
-  const [isLoading, setIsLoading] = useState(false);
+  const { updateModal, updateConfirmationModal, clear } = useModalStore();
+  const [fetchingBanks, setFetchingBanks] = useState(false);
   const [bankList, setBankList] = useState<BankOption[]>([]);
   const [selectedBank, setSelectedBank] = useState<BankOption | null>(null);
   const [filteredBankList, setFilteredBankList] = useState<BankOption[]>([]);
@@ -70,9 +66,6 @@ const AddPrimaryAcctScreen = () => {
   const [selectedBranch, setSelectedBranch] = useState<BankOption | null>(null);
   const [acctNumber, setAcctNumber] = useState("");
   const [acctName, setAcctName] = useState("");
-  const [loadAcctName, setLoadAcctName] = useState(false);
-  const [addPrimaryAcctLoading, setAddPrimaryAcctLoading] = useState(false);
-  const queryClient = useQueryClient();
 
   const isEditing = !!walletData?.primary_withdrawal_account;
 
@@ -92,7 +85,7 @@ const AddPrimaryAcctScreen = () => {
         value: account.bank_branch,
       });
     }
-  }, [walletData]);
+  }, [walletData, isEditing]);
 
   const animation = useRef(null);
   const prevAcctNumberRef = useRef("");
@@ -104,10 +97,10 @@ const AddPrimaryAcctScreen = () => {
       // Update the previous value
       prevAcctNumberRef.current = acctNumber;
     }
-  }, [acctNumber]);
+  }, [acctNumber, acctName]);
 
   const fetchBankList = async () => {
-    setIsLoading(true);
+    setFetchingBanks(true);
     try {
       const response = await fetchBanks();
       if (response?.isOk && Array.isArray(response?.data.banks)) {
@@ -127,7 +120,7 @@ const AddPrimaryAcctScreen = () => {
     } catch (error) {
       console.error("Fetch bank error:", error);
     } finally {
-      setIsLoading(false);
+      setFetchingBanks(false);
     }
   };
 
@@ -157,7 +150,7 @@ const AddPrimaryAcctScreen = () => {
         supportedCountryCodes.includes(userSession.address.countryCode)
       ) {
         try {
-          setIsLoading(true);
+          setFetchingBanks(true);
           const response = await fetchBankBranches(selectedBank.id ?? "");
           if (response?.isOk && Array.isArray(response?.data)) {
             const formatted = response.data
@@ -173,10 +166,10 @@ const AddPrimaryAcctScreen = () => {
             setBranchList(formatted);
             setFilteredBranchList(formatted);
           }
-          setIsLoading(false);
+          setFetchingBanks(false);
         } catch (error) {
           console.error("Error fetching branches:", error);
-          setIsLoading(false);
+          setFetchingBanks(false);
         }
       } else {
         setBranchList([]); // Reset if not supported
@@ -193,18 +186,24 @@ const AddPrimaryAcctScreen = () => {
     const filtered = branchList.filter((branch) =>
       branch.label.toLowerCase().includes(text.toLowerCase()),
     );
-    setBranchList(filtered);
     setFilteredBranchList(filtered);
   };
 
   const handleBranchSearchDebounced = useCallback(
     debounce(handleBranchSearch, 300),
-    [selectedBank, userSession?.address?.countryCode],
+    [branchList],
   );
 
   const debouncedSearch = useCallback(debounce(handleSearch, 300), [bankList]);
 
-  const handleAcctValidation = async () => {
+  const { isFetching: isValidating, refetch: validateAcct } = useQuery({
+    queryKey: WALLET_QK.validate(selectedBank?.value || "", acctNumber),
+    queryFn: () => validateBankAcct(selectedBank!.value, acctNumber),
+    enabled: false,
+    retry: false,
+  });
+
+  const handleStartFlow = async () => {
     if (!selectedBank) {
       updateModal({
         message: "Please select a bank",
@@ -213,7 +212,6 @@ const AddPrimaryAcctScreen = () => {
       });
       return;
     }
-
     if (!acctNumber) {
       updateModal({
         message: "Please enter account number",
@@ -223,75 +221,38 @@ const AddPrimaryAcctScreen = () => {
       return;
     }
 
-    setLoadAcctName(true);
-    const response = await validateBankAcct(selectedBank.value, acctNumber);
-    // const response = await validateBankAcct('044', '0690000032');
+    const { data: response } = await validateAcct();
 
     if (response?.isOk) {
+      console.log(response);
       setAcctName(response.data.account_name);
+      updateConfirmationModal({
+        child: (
+          <AccountValidationConfirmation
+            accountData={{
+              accountName: response.data.account_name,
+              bankName: selectedBank.label,
+              bankCode: selectedBank.value,
+              bankId: selectedBank.id ?? "",
+              accountNumber: acctNumber,
+              branch: selectedBranch?.value || "",
+              ownerId: userSession.id,
+              countryCode: userSession.address.countryCode,
+              currency: userSession.base_currency,
+              isEditing: isEditing,
+            }}
+            onCancel={clear}
+          />
+        ),
+      });
     } else {
       updateModal({
-        message: "Invalid account number or bank code",
+        message:
+          response?.data?.message || "Invalid account number or bank code",
         showModal: true,
         modalType: "error",
       });
     }
-    setLoadAcctName(false);
-  };
-
-  const handleAddPrimaryAcct = async () => {
-    if (!acctName) {
-      updateModal({
-        message: "Please validate account number first",
-        showModal: true,
-        modalType: "error",
-      });
-      return;
-    }
-
-    setAddPrimaryAcctLoading(true);
-
-    const payload = {
-      owner_id: userSession.id,
-      account_details: {
-        bank_code: selectedBank?.value || "",
-        account_number: acctNumber,
-        account_name: acctName,
-        bank_branch: selectedBranch?.value || "",
-        bank_country: userSession.address.countryCode,
-        bank_name: selectedBank?.label || "",
-        bank_id: selectedBank?.id || "",
-      },
-      base_currency: userSession.base_currency,
-    };
-
-    const response = await addPrimaryAcct(payload);
-
-    const successMessage = isEditing
-      ? "Primary account updated successfully"
-      : "Primary account added successfully";
-
-    if (response?.isOk) {
-      updateModal({
-        message: successMessage,
-        showModal: true,
-        modalType: "success",
-      });
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: WALLET_QK }),
-        queryClient.invalidateQueries({ queryKey: TXNS_QK }),
-        queryClient.invalidateQueries({ queryKey: BASE_TXNS_QK }),
-      ]);
-      navigation.goBack();
-    } else {
-      updateModal({
-        message: "Error saving primary account",
-        showModal: true,
-        modalType: "error",
-      });
-    }
-
-    setAddPrimaryAcctLoading(false);
   };
 
   return (
@@ -317,11 +278,7 @@ const AddPrimaryAcctScreen = () => {
                   : []
               }
               placeholder="Select country"
-              value={
-                userSession?.address
-                  ? userSession.address.country
-                  : "Select country"
-              }
+              value={userSession?.address?.country || "Select country"}
               handleSetValue={() => {}}
               label="Country"
               disable={true}
@@ -385,9 +342,7 @@ const AddPrimaryAcctScreen = () => {
                     }}
                   />
                 )}
-                handleSetValue={(item: BankOption) => {
-                  setSelectedBranch(item);
-                }}
+                handleSetValue={(item: BankOption) => setSelectedBranch(item)}
                 label="Bank Branch"
                 search={true}
                 searchPlaceholder="Search branch"
@@ -406,34 +361,27 @@ const AddPrimaryAcctScreen = () => {
               containerStyle={{ flex: 0 }}
             />
 
-            {acctName && (
-              <Input
-                label={"Account name"}
-                onInputChange={(text: string) => {}}
-                value={acctName}
-                disabled
-                containerStyle={{ flex: 0 }}
-              />
-            )}
+            <Input
+              label="Account Name"
+              disabled={true}
+              onInputChange={() => {}}
+              placeHolder="Account Name"
+              value={acctName}
+              containerStyle={{ flex: 0, opacity: 0.7 }}
+            />
           </View>
 
           <View style={tw`mt-[50px] mx-[20px]`}>
             <FittedBlackButton
-              onClick={!acctName ? handleAcctValidation : handleAddPrimaryAcct}
-              value={
-                !acctName
-                  ? "Validate Account"
-                  : isEditing
-                  ? "Update Primary Account"
-                  : "Add Primary Account"
-              }
-              isDisabled={!acctNumber}
-              isLoading={!acctName ? loadAcctName : addPrimaryAcctLoading}
+              onClick={handleStartFlow}
+              value={"Validate Account"}
+              isDisabled={!acctNumber || isValidating}
+              isLoading={isValidating}
               style={{ height: 50 }}
             />
           </View>
         </View>
-        <Modal visible={isLoading} transparent animationType="fade">
+        <Modal visible={fetchingBanks} transparent animationType="fade">
           <View
             style={[
               tw`flex-1 justify-center items-center`,

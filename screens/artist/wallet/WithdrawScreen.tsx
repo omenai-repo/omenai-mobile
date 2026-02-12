@@ -22,6 +22,7 @@ import FormSkeleton from "#components/skeleton/FormSkeleton";
 import { PrimaryAccountDetails } from "./components/withdraw/PrimaryAccountDetails";
 import { WithdrawalAmountInput } from "./components/withdraw/WithdrawalAmountInput";
 import { WithdrawalPinInput } from "./components/withdraw/WithdrawalPinInput";
+import WithModal from "#components/modal/WithModal";
 
 const WALLET_QK = ["wallet", "artist"] as const;
 const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
@@ -138,7 +139,8 @@ export const WithdrawScreen = ({
         navigation.navigate("WithdrawalSuccess");
       } else {
         updateModal({
-          message: response.data?.message || "Withdrawal failed",
+          message:
+            response.message || response.data?.message || "Withdrawal failed",
           showModal: true,
           modalType: "error",
         });
@@ -171,53 +173,56 @@ export const WithdrawScreen = ({
 
   if (isWalletWithdrawalEnabled) {
     return (
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <BackHeaderTitle title="Withdraw Funds" />
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={tw`flex-1`}
-        >
-          <ScrollView
-            showsVerticalScrollIndicator={false}
+      <WithModal>
+        <View style={tw`flex-1 bg-[#F7F7F7]`}>
+          <BackHeaderTitle title="Withdraw Funds" />
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={tw`flex-1`}
-            keyboardShouldPersistTaps="handled"
           >
-            <View style={tw`p-[25px]`}>
-              <PrimaryAccountDetails walletData={walletData} />
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={tw`flex-1`}
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={tw`p-[25px]`}>
+                <PrimaryAccountDetails walletData={walletData} />
 
-              <WithdrawalAmountInput
-                amount={amount}
-                setAmount={setAmount}
-                convertedAmount={convertedAmount}
-                rate={rate}
-                loading={loading}
-                loadAmount={loadAmount}
-                fetchTransferRate={fetchTransferRate}
-                amountInputRef={amountInputRef}
-                walletData={walletData}
-              />
+                <WithdrawalAmountInput
+                  amount={amount}
+                  setAmount={setAmount}
+                  convertedAmount={convertedAmount}
+                  rate={rate}
+                  loading={loading}
+                  loadAmount={loadAmount}
+                  fetchTransferRate={fetchTransferRate}
+                  amountInputRef={amountInputRef}
+                  walletData={walletData}
+                />
 
-              <WithdrawalPinInput
-                otpRef={otpRef}
-                setWalletPin={setWalletPin}
-                onForgotPin={() => navigation.navigate("ForgotPinScreen")}
-                loading={loading}
-              />
+                <WithdrawalPinInput
+                  otpRef={otpRef}
+                  setWalletPin={setWalletPin}
+                  onForgotPin={() => navigation.navigate("ForgotPinScreen")}
+                  loading={loading}
+                />
 
-              <Pressable
-                style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${loading ? "opacity-50" : ""
+                <Pressable
+                  style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${
+                    loading ? "opacity-50" : ""
                   }`}
-                onPress={handleWithdraw}
-                disabled={loading}
-              >
-                <Text style={tw`text-white text-center font-bold`}>
-                  {loading ? "Processing..." : "Withdraw"}
-                </Text>
-              </Pressable>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
+                  onPress={handleWithdraw}
+                  disabled={loading}
+                >
+                  <Text style={tw`text-white text-center font-bold`}>
+                    {loading ? "Processing..." : "Withdraw"}
+                  </Text>
+                </Pressable>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      </WithModal>
     );
   }
 

@@ -1,125 +1,113 @@
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  StatusBar,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { Text, View } from "react-native";
+import React, { useEffect } from "react";
 import { colors } from "../../config/colors.config";
 import { useSearchStore } from "#store/search/searchStore";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
 import { fetchSearchKeyWordResults } from "#services/search/fetchSearchKeywordResults";
-import ResultsListing from "./components/resultsListing/ResultsListing";
+import ArtworksListing from "#components/general/ArtworksListing";
 import SearchInput from "#components/inputs/SearchInput";
 import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
 import EmptyArtworks from "#components/general/EmptyArtworks";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import tw from "twrnc";
+import { useQuery } from "@tanstack/react-query";
+import { SEARCH_QK } from "#utils/queryKeys";
+import { useDebounce } from "#hooks/useDebounce";
+import { useModalStore } from "#store/modal/modalStore";
+import WithModal from "#components/modal/WithModal";
 
 export default function SearchResults() {
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  const { searchQuery, setIsLoading, isLoading } = useSearchStore();
+  const { searchQuery } = useSearchStore();
   const insets = useSafeAreaInsets();
+  const { updateModal } = useModalStore();
 
-  const [data, setData] = useState<any[]>([]);
-  const [dataLength, setDataLength] = useState(0);
+  const debouncedSearch = useDebounce(searchQuery, 400);
+
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: SEARCH_QK.query(debouncedSearch),
+    queryFn: async () => {
+      const results = await fetchSearchKeyWordResults(debouncedSearch);
+      if (results.isOk) {
+        return results.body.data;
+      } else {
+        throw new Error(results.body || "Search failed");
+      }
+    },
+    enabled: debouncedSearch.length > 2,
+    staleTime: 1000 * 60 * 5,
+    placeholderData: (prev) => prev,
+    retry: 1,
+  });
 
   useEffect(() => {
-    if (searchQuery.length > 2) {
-      handleFetchSearch();
-    } else if (searchQuery.length === 0) {
-      setData([]);
-      setDataLength(0);
+    if (error) {
+      updateModal({
+        message: error.message,
+        showModal: true,
+        modalType: "error",
+      });
     }
-  }, [searchQuery]);
+  }, [error, updateModal]);
 
-  const handleFetchSearch = async () => {
-    setIsLoading(true);
-    const results = await fetchSearchKeyWordResults(searchQuery);
-
-    let arr = [];
-
-    if (results.isOk) {
-      arr = results.body.data;
-      setData(arr);
-      setDataLength(arr.length);
-    } else {
-      Alert.alert(results.body);
-    }
-
-    setIsLoading(false);
-  };
+  const dataLength = searchQuery.length === 0 ? 0 : data.length;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
-      <View style={{ paddingHorizontal: 15 }}>
-        <SearchInput />
-        {searchQuery.length > 0 ? (
-          <>
-            <Text style={styles.headerText}>Search for “{searchQuery}”:</Text>
-            <Text style={{ fontSize: 16, color: colors.grey }}>
-              {dataLength} results found
-            </Text>
-          </>
-        ) : (
-          <View>
-            <Text style={styles.headerText}>Search for artworks on Omenai</Text>
+    <WithModal>
+      <View style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}>
+        <View style={tw`px-[20px]`}>
+          <SearchInput />
+          {searchQuery.length > 0 ? (
+            <>
+              <Text
+                style={[
+                  tw`text-[18px] font-medium py-[20px]`,
+                  { color: colors.primary_black },
+                ]}
+              >
+                Search for “{searchQuery}”:
+              </Text>
+              <Text style={tw`text-[16px] text-[#808080]`}>
+                {dataLength} results found
+              </Text>
+            </>
+          ) : (
+            <View>
+              <Text
+                style={[
+                  tw`text-[18px] font-medium py-[20px]`,
+                  { color: colors.primary_black },
+                ]}
+              >
+                Search for artworks on Omenai
+              </Text>
+            </View>
+          )}
+        </View>
+        {isLoading && debouncedSearch.length > 2 && (
+          <View style={tw`mt-[10px]`}>
+            <MiniArtworkCardLoader />
+          </View>
+        )}
+        {!isLoading && dataLength > 0 && (
+          <View style={tw`flex-1 mt-[10px]`}>
+            <ArtworksListing data={data} onRefresh={async () => {}} />
+          </View>
+        )}
+        {searchQuery.length > 0 && dataLength === 0 && !isLoading && (
+          <View style={tw`flex-1`}>
+            <EmptyArtworks
+              description={
+                searchQuery.length < 3 && dataLength === 0
+                  ? "Please enter at least 3 characters to search..."
+                  : `Can't find artwork you're looking for, try checking for mispellings`
+              }
+            />
           </View>
         )}
       </View>
-      {isLoading && (
-        <View style={{ marginTop: 30 }}>
-          <MiniArtworkCardLoader />
-        </View>
-      )}
-      {!isLoading && dataLength > 0 && (
-        <View style={{ flex: 1 }}>
-          {/* <Filters dataLength={dataLength}  /> */}
-          <ResultsListing data={data} />
-        </View>
-      )}
-      {searchQuery.length > 0 && dataLength === 0 && !isLoading && (
-        <View style={{ flex: 1 }}>
-          <EmptyArtworks
-            description={
-              searchQuery.length < 3 && dataLength === 0
-                ? "Please enter at least 3 characters to search..."
-                : `Can't find artwork you're looking for, try checking for mispellings`
-            }
-          />
-        </View>
-      )}
-    </View>
+    </WithModal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: colors.primary_black,
-    paddingVertical: 20,
-  },
-  artworksContainer: {
-    flexDirection: "row",
-    gap: 20,
-  },
-  singleColumn: {
-    flex: 1,
-    gap: 20,
-  },
-  loadingContainer: {
-    height: 200,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  safeArea: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-});

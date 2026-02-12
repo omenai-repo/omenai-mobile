@@ -1,12 +1,12 @@
 import {
   Image,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
   RefreshControl,
+  PixelRatio,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { colors } from "#config/colors.config";
 import { fetchUserSavedArtworks } from "#services/artworks/fetchUserSavedArtwork";
 import { UseSavedArtworksStore } from "#store/artworks/SavedArtworksStore";
@@ -87,20 +87,27 @@ export default function SavedArtworks() {
     impressions,
     pricing,
   }: SavedArtworkItemProps) => {
-    let image_href = getImageFileView(url, 80);
+    const dpr = PixelRatio.get();
+    const size = 120;
+    const fetchWidth = Math.round(size * dpr);
+
+    const image_href = useMemo(
+      () => getImageFileView(url, fetchWidth),
+      [url, fetchWidth],
+    );
 
     const { handleLike } = useLikedState(
       impressions,
       likeIds,
       sessionId,
-      art_id
+      art_id,
     );
 
     const handleRemove = () => {
       handleLike(false);
 
       //remove artwork from state
-      let prevData = data;
+      const prevData = [...data];
       prevData.splice(index, 1);
       setData(prevData);
     };
@@ -108,65 +115,68 @@ export default function SavedArtworks() {
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate(screenName.artwork, { title: name, url })
+          navigation.navigate(screenName.artwork, { title: name, url, art_id })
         }
-        activeOpacity={1}
+        activeOpacity={0.9}
+        style={tw`flex-row bg-white rounded-xl overflow-hidden mb-4 border border-gray-100 shadow-sm`}
       >
-        <View style={styles.savedArtworkItem}>
-          <View style={{ flex: 1, flexDirection: "row", gap: 15 }}>
-            <Image
-              source={{ uri: image_href }}
-              style={styles.image}
-              resizeMode="contain"
-            />
-            <View style={{ paddingTop: 5 }}>
-              <Text style={{ fontSize: 16, color: colors.primary_black }}>
-                {name}
-              </Text>
-              <Text style={{ fontSize: 14, color: "#858585", marginTop: 2 }}>
-                {artistName}
-              </Text>
-              {pricing.shouldShowPrice === "Yes" && (
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.primary_black,
-                    marginTop: 5,
-                    fontWeight: 500,
-                  }}
-                >
-                  {utils_formatPrice(pricing.usd_price)}
-                </Text>
-              )}
-              <TouchableOpacity
-                onPress={handleRemove}
-                style={{ paddingTop: 5, flexWrap: "wrap" }}
+        {/* Image Section */}
+        <View style={tw`w-[120px] h-[150px] bg-gray-50`}>
+          <Image
+            source={{ uri: image_href }}
+            style={tw`w-full h-full`}
+            resizeMode="cover"
+          />
+        </View>
+
+        {/* Details Section */}
+        <View style={tw`flex-1 p-3 justifying-between flex-col`}>
+          <View>
+            <Text
+              style={tw`text-[16px] font-bold text-black mb-1`}
+              numberOfLines={1}
+            >
+              {name}
+            </Text>
+            <Text style={tw`text-[14px] text-gray-500 mb-2`} numberOfLines={1}>
+              {artistName}
+            </Text>
+            {pricing.shouldShowPrice === "Yes" && (
+              <Text
+                style={[
+                  tw`text-[15px] font-medium`,
+                  { color: colors.primary_black },
+                ]}
               >
-                <View
-                  style={[
-                    tw`rounded-lg flex-row items-center p-2.5 mt-2.5 gap-2`,
-                    { backgroundColor: "#f1f1f1" },
-                  ]}
-                >
-                  <AntDesign name="heart" color={"#ff0000"} size={14} />
-                  <Text style={{ fontSize: 12, color: colors.primary_black }}>
-                    Remove from saved
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+                {utils_formatPrice(pricing.usd_price)}
+              </Text>
+            )}
           </View>
+
+          <TouchableOpacity
+            onPress={handleRemove}
+            style={tw`flex-row items-center self-start bg-red-50 px-3 py-2 rounded-lg gap-2 mt-auto`}
+          >
+            <AntDesign name="heart" size={14} color={"#ff0000"} />
+            <Text
+              style={[
+                tw`text-[12px] font-medium`,
+                { color: colors.primary_black },
+              ]}
+            >
+              Remove
+            </Text>
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+    <View style={tw`flex-1 bg-white`}>
       <BackHeaderTitle title="Saved artworks" />
       <ScrollWrapper
-        style={styles.mainContainer}
+        style={tw`flex-1 px-5 pt-4`}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -174,7 +184,7 @@ export default function SavedArtworks() {
       >
         {isLoading && <ListSkeleton count={5} itemHeight={100} />}
         {data.length > 0 && !isLoading && (
-          <View style={styles.sectionContainer}>
+          <View style={tw`pb-12 gap-1`}>
             {data.map((artwork, index) => (
               <SavedArtworkItem
                 name={artwork.title}
@@ -191,43 +201,11 @@ export default function SavedArtworks() {
           </View>
         )}
         {data.length === 0 && !isLoading && (
-          <View
-            style={{
-              height: 400,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text style={{ fontSize: 20 }}>No Saved Artworks</Text>
+          <View style={tw`h-[400px] items-center justify-center`}>
+            <Text style={tw`text-xl text-gray-400`}>No Saved Artworks</Text>
           </View>
         )}
       </ScrollWrapper>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  mainContainer: {
-    paddingHorizontal: 20,
-    marginTop: 15,
-    paddingTop: 15,
-    flex: 1,
-  },
-  sectionContainer: {
-    gap: 25,
-    marginBottom: 50,
-  },
-  savedArtworkItem: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  image: {
-    width: 80,
-    height: 100,
-    backgroundColor: "#f9f9f9",
-  },
-});

@@ -87,22 +87,6 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
       return <OrderslistingLoader />;
     }
 
-    if (currentOrders.length === 0) {
-      return (
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={ordersQuery.refetch}
-            />
-          }
-        >
-          <EmptyOrdersListing status={selectedTab} />
-        </ScrollView>
-      );
-    }
-
     return (
       <>
         <View style={tw`flex-row items-center`}>
@@ -117,33 +101,49 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
           />
         </View>
 
-        <OrdersList
-          data={currentOrders}
-          openSection={openSection}
-          toggleRecentOrder={toggleRecentOrder}
-          selectedTab={selectedTab}
-          isRefreshing={isRefreshing}
-          onRefresh={() => ordersQuery.refetch()}
-          onAccept={(item) =>
-            navigation.navigate("DimensionsDetails", {
-              orderId: item?.order_id,
-              artworkDimensions: item?.artwork_data?.dimensions,
-            })
-          }
-          onDecline={handleDecline}
-          onTrack={(item) =>
-            navigation.navigate("ShipmentTrackingScreen", {
-              orderId: item?.order_id,
-              tracking_id:
-                item?.shipping_details?.shipment_information?.tracking?.id,
-            })
-          }
-          {...(userType === "artist" && {
-            renderExclusivityType: (item) =>
-              item?.artwork_data?.exclusivity_status?.exclusivity_type ||
-              "non-exclusive",
-          })}
-        />
+        {currentOrders.length === 0 ? (
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={ordersQuery.refetch}
+              />
+            }
+          >
+            <EmptyOrdersListing status={selectedTab} />
+          </ScrollView>
+        ) : (
+          <OrdersList
+            data={currentOrders}
+            openSection={openSection}
+            toggleRecentOrder={toggleRecentOrder}
+            selectedTab={selectedTab}
+            isRefreshing={isRefreshing}
+            onRefresh={() => ordersQuery.refetch()}
+            onAccept={(item) =>
+              navigation.navigate("DimensionsDetails", {
+                orderId: item?.order_id,
+                artworkDimensions: item?.artwork_data?.dimensions,
+                exclusivityType:
+                  item?.artwork_data?.exclusivity_status?.exclusivity_type,
+              })
+            }
+            onDecline={handleDecline}
+            onTrack={(item) =>
+              navigation.navigate("ShipmentTrackingScreen", {
+                orderId: item?.order_id,
+                tracking_id:
+                  item?.shipping_details?.shipment_information?.tracking?.id,
+              })
+            }
+            {...(userType === "artist" && {
+              renderExclusivityType: (item) =>
+                item?.artwork_data?.exclusivity_status?.exclusivity_type ||
+                "non-exclusive",
+            })}
+          />
+        )}
       </>
     );
   };

@@ -7,12 +7,10 @@ import GenericFilterOptionBox from "./FilterOptionBox";
 import { SharedFilterStore } from "./types";
 
 const priceFilterOptions = [
-  { option: "$0 to $1000", value: { min: 0, max: 1000 } },
-  { option: "$1001 to $10000", value: { min: 1001, max: 10000 } },
-  { option: "$10001 to $50000", value: { min: 10001, max: 50000 } },
-  { option: "$50001 to $100000", value: { min: 50001, max: 100000 } },
-  { option: "$100001 to $500000", value: { min: 100001, max: 500000 } },
-  { option: "$500000+", value: { min: 500001, max: 10000000000 } },
+  { option: "$0 to $1,000", value: { min: 0, max: 1000 } },
+  { option: "$1,001 to $10,000", value: { min: 1001, max: 10000 } },
+  { option: "$10,001 to $50,000", value: { min: 1001, max: 50000 } },
+  { option: "Premium Range", value: { min: 50001, max: 10000000 } },
 ];
 
 export default function GenericPriceFilter({
@@ -33,9 +31,7 @@ export default function GenericPriceFilter({
           ]}
         >
           <View style={tw`flex-1 flex-row items-center gap-2.5`}>
-            <Text style={{ color: "#616161", fontSize: 16 }}>
-              Filter by price
-            </Text>
+            <Text style={{ color: "#616161", fontSize: 16 }}>Price Range</Text>
             {filterOptions.price.length > 0 && (
               <View
                 style={[

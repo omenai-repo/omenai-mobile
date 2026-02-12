@@ -15,12 +15,21 @@ import { useQuery } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
 import { colors } from "#config/colors.config";
 
-export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () => void }) {
+export default function ArtworkPriceReviewScreen({
+  onConfirm,
+}: {
+  onConfirm: () => void;
+}) {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
   const { updateModal } = useModalStore();
-  const { setActiveIndex, activeIndex, updateArtworkUploadData, artworkUploadData, clearData } =
-    uploadArtworkStore();
+  const {
+    setActiveIndex,
+    activeIndex,
+    updateArtworkUploadData,
+    artworkUploadData,
+    clearData,
+  } = uploadArtworkStore();
   const { userSession } = useAppStore();
   const animation = useRef<LottieView | null>(null);
 
@@ -32,8 +41,14 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
   const canProceed = acknowledgment && penaltyConsent && priceConsent;
 
   // prepare query inputs
-  const heightNum = Number.parseFloat(extractNumberString(artworkUploadData.height));
-  const widthNum = Number.parseFloat(extractNumberString(artworkUploadData.width));
+  const heightNum = Number.parseFloat(
+    extractNumberString(artworkUploadData.height || ""),
+  );
+  const widthNum = Number.parseFloat(
+    extractNumberString(
+      artworkUploadData.width || artworkUploadData.length || "",
+    ),
+  );
 
   // Use tanstack/react-query for fetching price
   const {
@@ -51,13 +66,15 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
       widthNum,
     ],
     queryFn: async () => {
-      const response = await getArtworkPriceForArtist({
+      const payload = {
         medium: artworkUploadData.medium,
         category: userSession.categorization,
         currency: userSession.base_currency,
         height: heightNum,
         width: widthNum,
-      });
+      };
+
+      const response = await getArtworkPriceForArtist(payload);
 
       if (!response?.isOk) {
         throw new Error(response?.data?.message || "Failed to fetch price");
@@ -119,7 +136,9 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
           }}
           source={loaderAnimation}
         />
-        <Text style={tw`text-lg font-semibold`}>Determining price of art piece...</Text>
+        <Text style={tw`text-lg font-semibold`}>
+          Determining price of art piece...
+        </Text>
       </View>
     );
   }
@@ -133,7 +152,10 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
         <View style={tw`flex-row gap-4`}>
           <Pressable
             onPress={() => refetch()}
-            style={[tw`px-4 py-2 rounded-xl`, { backgroundColor: colors.black }]}
+            style={[
+              tw`px-4 py-2 rounded-xl`,
+              { backgroundColor: colors.black },
+            ]}
           >
             <Text style={[tw`text-white`]}>Retry</Text>
           </Pressable>
@@ -155,27 +177,44 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
       <Text style={tw`text-xl font-bold mb-4`}>Proposed Artwork Price</Text>
 
       <View style={tw`bg-white rounded-xl p-5 border border-[#00000020] mb-6`}>
-        <Text style={tw`text-sm text-gray-600 mb-1`}>Omenai will list your art piece for:</Text>
+        <Text style={tw`text-sm text-gray-600 mb-1`}>
+          Omenai will list your art piece for:
+        </Text>
         <Text style={tw`text-2xl font-bold text-black`}>
-          {priceData?.usd_price ? `$${Number(priceData.usd_price).toLocaleString()}` : "-"}
+          {priceData?.usd_price
+            ? `$${Number(priceData.usd_price).toLocaleString()}`
+            : "-"}
         </Text>
 
         <Text style={tw`text-sm mt-3 text-gray-500`}>
-          ({userSession.base_currency} equivalent: {getArtistCurrencySymbol(priceData.currency)}{" "}
-          {Number(priceData.price).toLocaleString(undefined, { maximumFractionDigits: 2 })})
+          ({userSession.base_currency} equivalent:{" "}
+          {getArtistCurrencySymbol(priceData.currency)}{" "}
+          {Number(priceData.price).toLocaleString(undefined, {
+            maximumFractionDigits: 2,
+          })}
+          )
         </Text>
       </View>
 
       <Text style={tw`text-gray-600 text-sm mb-6`}>
-        If you agree with the price, you can proceed to upload your piece. If not, tap cancel to
-        review your details.
+        If you agree with the price, you can proceed to upload your piece. If
+        not, tap cancel to review your details.
       </Text>
 
       {/* Exclusivity / terms alert (mimics web Alert) */}
-      <View style={tw`bg-[#FFF3CD] border border-[#FFEEBA] rounded-[16px] px-4 py-5 mb-6`}>
+      <View
+        style={tw`bg-[#FFF3CD] border border-[#FFEEBA] rounded-[16px] px-4 py-5 mb-6`}
+      >
         <View style={tw`flex-row items-center mb-5`}>
-          <Ionicons name="warning-outline" size={20} color="#856404" style={tw`mr-3`} />
-          <Text style={tw`text-[#856404] font-semibold`}>Exclusivity Agreement</Text>
+          <Ionicons
+            name="warning-outline"
+            size={20}
+            color="#856404"
+            style={tw`mr-3`}
+          />
+          <Text style={tw`text-[#856404] font-semibold`}>
+            Exclusivity Agreement
+          </Text>
         </View>
         <View style={tw`flex-1`}>
           {/* Price consent */}
@@ -191,11 +230,14 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
                   : { backgroundColor: colors.white },
               ]}
             >
-              {priceConsent ? <Text style={[{ color: colors.white }]}>✓</Text> : null}
+              {priceConsent ? (
+                <Text style={[{ color: colors.white }]}>✓</Text>
+              ) : null}
             </View>
             <Text style={tw`text-[#856404] text-sm flex-1`}>
-              I accept the price stipulated for this artwork and agree to have it listed on the
-              platform at this price. I understand that I may cancel this upload if I do not agree.
+              I accept the price stipulated for this artwork and agree to have
+              it listed on the platform at this price. I understand that I may
+              cancel this upload if I do not agree.
             </Text>
           </Pressable>
 
@@ -212,12 +254,14 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
                   : { backgroundColor: colors.white },
               ]}
             >
-              {acknowledgment ? <Text style={[{ color: colors.white }]}>✓</Text> : null}
+              {acknowledgment ? (
+                <Text style={[{ color: colors.white }]}>✓</Text>
+              ) : null}
             </View>
 
             <Text style={tw`text-[#856404] text-sm flex-1`}>
-              I acknowledge that this artwork is subject to a 90-day exclusivity period with Omenai
-              as stipulated in the{" "}
+              I acknowledge that this artwork is subject to a 90-day exclusivity
+              period with Omenai as stipulated in the{" "}
               <Text onPress={openTerms} style={tw`underline font-semibold`}>
                 Terms of Agreement
               </Text>{" "}
@@ -238,12 +282,15 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
                   : { backgroundColor: colors.white },
               ]}
             >
-              {penaltyConsent ? <Text style={[{ color: colors.white }]}>✓</Text> : null}
+              {penaltyConsent ? (
+                <Text style={[{ color: colors.white }]}>✓</Text>
+              ) : null}
             </View>
 
             <Text style={tw`text-[#856404] text-sm flex-1`}>
-              I agree that any breach of this exclusivity obligation will result in a 10% penalty
-              fee deducted from my next successful sale on the platform as stipulated in the{" "}
+              I agree that any breach of this exclusivity obligation will result
+              in a 10% penalty fee deducted from my next successful sale on the
+              platform as stipulated in the{" "}
               <Text onPress={openTerms} style={tw`underline font-semibold`}>
                 Terms of Agreement
               </Text>
@@ -255,8 +302,8 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
 
       <View style={tw`flex-row items-center justify-between mb-2`}>
         <Text style={tw`text-gray-500 text-sm`}>
-          Acknowledgment: {acknowledgment ? "✔️" : "❌"} | Penalty: {penaltyConsent ? "✔️" : "❌"} |
-          Price:
+          Acknowledgment: {acknowledgment ? "✔️" : "❌"} | Penalty:{" "}
+          {penaltyConsent ? "✔️" : "❌"} | Price:
           {priceConsent ? "✔️" : "❌"}
         </Text>
       </View>
@@ -277,11 +324,15 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
           onPress={handleConfirmPress}
           style={[
             tw`flex-1 py-3 rounded-xl justify-center items-center`,
-            canProceed ? { backgroundColor: colors.black } : { backgroundColor: "#22222260" },
+            canProceed
+              ? { backgroundColor: colors.black }
+              : { backgroundColor: "#22222260" },
           ]}
           disabled={!canProceed}
         >
-          <Text style={[tw`font-semibold`, { color: colors.white }]}>Upload</Text>
+          <Text style={[tw`font-semibold`, { color: colors.white }]}>
+            Upload
+          </Text>
         </Pressable>
       </View>
     </View>

@@ -97,6 +97,7 @@ export default function App() {
         const token = await registerForPushToken();
         if (token) setExpoPushToken(token);
         await checkForOTAUpdate();
+        await utils_appInit();
       } catch (e) {
         console.warn(e);
       } finally {
@@ -125,11 +126,6 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     nunitoSans: require("./assets/fonts/nunito-sans.ttf"),
   });
-
-  //add logic for conditional routing
-  useEffect(() => {
-    utils_appInit();
-  }, [isLoggedIn]);
 
   const onLayoutRootView = useCallback(() => {
     if (appIsReady) {

@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useAppStore } from "#store/app/appStore";
 import { InvoiceTypes } from "#types/types";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 interface OrderActionsProps {
   availability: boolean;
@@ -88,28 +89,18 @@ export const OrderActions = ({
         )}
 
       {payment_information === "completed" && userType === "user" && (
-        <Pressable
-          onPress={() => {
+        <LongBlackButton
+          value="View receipt"
+          style={tw`bg-gray-100 rounded-lg h-[40px]`}
+          textStyle={tw`text-xs font-semibold text-gray-900`}
+          onClick={() => {
             navigation.navigate("ViewReceiptScreen", {
               invoice: invoice,
               invoiceNumber: invoiceNumber,
             });
           }}
-          disabled={!invoice && !invoiceNumber}
-          style={({ pressed }) => [
-            tw`flex-row items-center justify-center rounded-lg h-[40px] bg-gray-100`,
-            pressed && { opacity: 0.8 },
-            !invoice && !invoiceNumber && { opacity: 0.5 },
-          ]}
-        >
-          <Text
-            style={tw`text-xs font-semibold text-gray-900`}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-          >
-            View Receipt
-          </Text>
-        </Pressable>
+          isDisabled={!invoice && !invoiceNumber}
+        />
       )}
     </View>
   );

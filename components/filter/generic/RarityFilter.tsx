@@ -7,9 +7,9 @@ import GenericFilterOptionBox from "./FilterOptionBox";
 import { SharedFilterStore } from "./types";
 
 const rarityFilterOptions = [
-  { option: "Unique", value: "Unique" },
-  { option: "Limited edition", value: "Limited edition" },
-  { option: "Open edition", value: "Open edition" },
+  { option: "Unique Work", value: "Unique" },
+  { option: "Limited Edition", value: "Limited edition" },
+  { option: "Open Edition", value: "Open edition" },
   { option: "Unknown edition", value: "Unknown edition" },
 ];
 
@@ -32,7 +32,7 @@ export default function GenericRarityFilter({
         >
           <View style={tw`flex-1 flex-row items-center gap-2.5`}>
             <Text style={{ color: "#616161", fontSize: 16 }}>
-              Filter by rarity
+              Classification
             </Text>
             {filterOptions.rarity.length > 0 && (
               <View

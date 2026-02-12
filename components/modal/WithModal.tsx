@@ -38,11 +38,11 @@ export default function WithModal({ children }: WithModalProps) {
   return (
     <View style={{ flex: 1, backgroundColor: colors.white }}>
       {children}
-      <CustomModal />
       <ConfirmationModal
         isVisible={showConfirmationModal}
         child={confirmationModal}
       />
+      <CustomModal />
     </View>
   );
 }

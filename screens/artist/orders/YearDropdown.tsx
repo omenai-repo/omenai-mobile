@@ -20,13 +20,13 @@ const YearDropdown = ({
   // Only generate years from launchYear up to currentYear (descending)
   const years = Array.from(
     { length: currentYear - launchYear + 1 },
-    (_, i) => currentYear - i
+    (_, i) => currentYear - i,
   );
 
   return (
     <View style={[tw`mb-[20px] relative`, style]}>
       <TouchableOpacity
-        style={tw`flex-row items-center gap-[10px] bg-white border border-[#E7E7E7] rounded-[12px] px-[16px] py-[10px]`}
+        style={tw`flex-row items-center justify-between gap-[10px] bg-white border border-[#E7E7E7] rounded-[12px] px-[16px] py-[10px]`}
         onPress={() => setIsOpen(!isOpen)}
       >
         <Text style={tw`text-[14px] text-[#1A1A1A] font-medium`}>

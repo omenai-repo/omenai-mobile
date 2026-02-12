@@ -12,6 +12,7 @@ import { OrderExpiryTimer } from "./container/OrderExpiryTimer";
 import { OrderStatusDetails } from "./container/OrderStatusDetails";
 import { OrderPaymentAction } from "./container/OrderPaymentAction";
 import { OrderActions } from "./container/OrderActions";
+import StatusPill from "./StatusPill";
 
 interface HoldStatus {
   hold_end_date: string;
@@ -150,7 +151,25 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
       `}
     >
       <View style={tw`flex-row items-center`}>
-        <OrderHeader image_href={image_href} artId={artId} artName={artName} />
+        <OrderHeader image_href={image_href} artId={artId} artName={artName}>
+          <View
+            style={{
+              transform: [{ scale: 0.8 }],
+              alignSelf: "flex-start",
+              marginLeft: -10,
+              marginTop: 4,
+            }}
+          >
+            <StatusPill
+              status={status}
+              payment_status={payment_information}
+              tracking_status={tracking_information.link}
+              order_accepted={order_accepted}
+              delivery_confirmed={delivery_confirmed}
+              availability={availability}
+            />
+          </View>
+        </OrderHeader>
         <Pressable
           onPress={() => setOpen()}
           style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
