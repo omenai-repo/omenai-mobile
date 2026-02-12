@@ -11,14 +11,14 @@ import { debounce } from "lodash";
 import { useAppStore } from "#store/app/appStore";
 import { validateBankAcct } from "#services/wallet/validateBankAct";
 import { useModalStore } from "#store/modal/modalStore";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { fetchBankBranches } from "#services/wallet/fetchBankBranches";
 import WithModal from "#components/modal/WithModal";
 import LottieView from "lottie-react-native";
 import loaderAnimation from "../../../assets/other/loader-animation.json";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { WALLET_QK } from "#utils/queryKeys";
-import { AccountValidationConfirmation } from "./components/AccountValidationConfirmation";
+import { addPrimaryAcct } from "#services/wallet/addPrimaryAcct";
 
 type BankOption = {
   label: string;
@@ -49,10 +49,16 @@ const supportedCountryCodes = [
   // 'NG',
 ];
 
+const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
+const BASE_TXNS_QK = ["wallet", "artist", "txns"] as const;
+
 const AddPrimaryAcctScreen = () => {
   const { walletData } = useRoute().params as { walletData: any };
   const { userSession } = useAppStore();
-  const { updateModal, updateConfirmationModal, clear } = useModalStore();
+  const { updateModal, clear } = useModalStore();
+  const queryClient = useQueryClient();
+  const navigation = useNavigation<any>();
+
   const [fetchingBanks, setFetchingBanks] = useState(false);
   const [bankList, setBankList] = useState<BankOption[]>([]);
   const [selectedBank, setSelectedBank] = useState<BankOption | null>(null);
@@ -66,6 +72,7 @@ const AddPrimaryAcctScreen = () => {
   const [selectedBranch, setSelectedBranch] = useState<BankOption | null>(null);
   const [acctNumber, setAcctNumber] = useState("");
   const [acctName, setAcctName] = useState("");
+  const [isValidated, setIsValidated] = useState(false);
 
   const isEditing = !!walletData?.primary_withdrawal_account;
 
@@ -84,6 +91,7 @@ const AddPrimaryAcctScreen = () => {
         label: account.bank_branch,
         value: account.bank_branch,
       });
+      setIsValidated(true); // Assuming existing data is valid
     }
   }, [walletData, isEditing]);
 
@@ -94,6 +102,7 @@ const AddPrimaryAcctScreen = () => {
     if (acctNumber !== prevAcctNumberRef.current) {
       // Clear acct name only if there was a previously validated name
       if (acctName) setAcctName("");
+      setIsValidated(false);
       // Update the previous value
       prevAcctNumberRef.current = acctNumber;
     }
@@ -203,6 +212,42 @@ const AddPrimaryAcctScreen = () => {
     retry: false,
   });
 
+  const { mutate: submitPrimaryAcct, isPending: isSubmitting } = useMutation({
+    mutationFn: addPrimaryAcct,
+    onSuccess: (response: any) => {
+      const successMessage = isEditing
+        ? "Primary account updated successfully"
+        : "Primary account added successfully";
+
+      if (response?.isOk) {
+        clear();
+        updateModal({
+          message: successMessage,
+          showModal: true,
+          modalType: "success",
+        });
+        queryClient.invalidateQueries({ queryKey: WALLET_QK.artist });
+        queryClient.invalidateQueries({ queryKey: TXNS_QK });
+        queryClient.invalidateQueries({ queryKey: BASE_TXNS_QK });
+        navigation.goBack();
+      } else {
+        updateModal({
+          message: response?.data?.message || "Error saving primary account",
+          showModal: true,
+          modalType: "error",
+        });
+      }
+    },
+    onError: (error: any) => {
+      console.log(error);
+      updateModal({
+        message: error.message || "An unexpected error occurred",
+        showModal: true,
+        modalType: "error",
+      });
+    },
+  });
+
   const handleStartFlow = async () => {
     if (!selectedBank) {
       updateModal({
@@ -224,28 +269,10 @@ const AddPrimaryAcctScreen = () => {
     const { data: response } = await validateAcct();
 
     if (response?.isOk) {
-      console.log(response);
       setAcctName(response.data.account_name);
-      updateConfirmationModal({
-        child: (
-          <AccountValidationConfirmation
-            accountData={{
-              accountName: response.data.account_name,
-              bankName: selectedBank.label,
-              bankCode: selectedBank.value,
-              bankId: selectedBank.id ?? "",
-              accountNumber: acctNumber,
-              branch: selectedBranch?.value || "",
-              ownerId: userSession.id,
-              countryCode: userSession.address.countryCode,
-              currency: userSession.base_currency,
-              isEditing: isEditing,
-            }}
-            onCancel={clear}
-          />
-        ),
-      });
+      setIsValidated(true);
     } else {
+      setIsValidated(false);
       updateModal({
         message:
           response?.data?.message || "Invalid account number or bank code",
@@ -253,6 +280,25 @@ const AddPrimaryAcctScreen = () => {
         modalType: "error",
       });
     }
+  };
+
+  const handleAddPrimaryAccount = () => {
+    // Match Web Payload Structure exactly
+    const payload = {
+      owner_id: userSession.id,
+      account_details: {
+        account_number: acctNumber,
+        bank_name: selectedBank?.label || "",
+        account_name: acctName,
+        bank_id: selectedBank?.id || "",
+        bank_code: selectedBank?.value || "",
+        branch: selectedBranch, // Passing whatever we have (string or object structure if changed upstream)
+        bank_country: userSession.address.countryCode,
+      },
+      base_currency: userSession.base_currency,
+    };
+
+    submitPrimaryAcct(payload);
   };
 
   return (
@@ -311,11 +357,13 @@ const AddPrimaryAcctScreen = () => {
                 setBranchList([]);
                 setFilteredBranchList([]);
                 setBranchSearchText("");
+                setIsValidated(false); // Reset validation on bank change
               }}
               label="Bank Name"
               search={true}
               searchPlaceholder="Search bank"
               dropdownPosition="bottom"
+              disable={isValidated}
             />
 
             {supportedCountryCodes.includes(
@@ -342,12 +390,15 @@ const AddPrimaryAcctScreen = () => {
                     }}
                   />
                 )}
-                handleSetValue={(item: BankOption) => setSelectedBranch(item)}
+                handleSetValue={(item: BankOption) => {
+                  setSelectedBranch(item);
+                  setIsValidated(false); // Reset validation on branch change
+                }}
                 label="Bank Branch"
                 search={true}
                 searchPlaceholder="Search branch"
                 dropdownPosition="bottom"
-                disable={!selectedBank}
+                disable={!selectedBank || isValidated}
               />
             )}
 
@@ -359,6 +410,7 @@ const AddPrimaryAcctScreen = () => {
               value={acctNumber}
               errorMessage={""}
               containerStyle={{ flex: 0 }}
+              disabled={isValidated} // Disable when validated to match web
             />
 
             <Input
@@ -372,13 +424,42 @@ const AddPrimaryAcctScreen = () => {
           </View>
 
           <View style={tw`mt-[50px] mx-[20px]`}>
-            <FittedBlackButton
-              onClick={handleStartFlow}
-              value={"Validate Account"}
-              isDisabled={!acctNumber || isValidating}
-              isLoading={isValidating}
-              style={{ height: 50 }}
-            />
+            {!isValidated ? (
+              <FittedBlackButton
+                onClick={handleStartFlow}
+                value={"Validate Account"}
+                isDisabled={!acctNumber || isValidating || !selectedBank}
+                isLoading={isValidating}
+                style={{ height: 50 }}
+              />
+            ) : (
+              <View style={tw`gap-2`}>
+                <FittedBlackButton
+                  onClick={handleAddPrimaryAccount}
+                  value={
+                    isEditing ? "Update Primary Account" : "Add Primary Account"
+                  }
+                  isDisabled={isSubmitting}
+                  isLoading={isSubmitting}
+                  style={{ height: 50 }}
+                />
+
+                {/* Optional: Add a button to reset validation if they need to change details */}
+                <FittedBlackButton
+                  onClick={() => setIsValidated(false)}
+                  value={"Change Details"}
+                  isDisabled={isSubmitting}
+                  isLoading={false}
+                  style={{
+                    height: 50,
+                    backgroundColor: "transparent",
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                  }}
+                  textStyle={{ color: "#666" }}
+                />
+              </View>
+            )}
           </View>
         </View>
         <Modal visible={fetchingBanks} transparent animationType="fade">
