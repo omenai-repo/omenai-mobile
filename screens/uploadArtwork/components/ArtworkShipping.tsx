@@ -6,12 +6,10 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import Input from "#components/inputs/Input";
+import React, { useState } from "react";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import tw from "twrnc";
-import { validateOrderMeasurement } from "#lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
 import PackagingTypeSelector from "./PackagingTypeSelector";
 
 type PackagingType = "rolled" | "stretched";
@@ -28,32 +26,8 @@ export default function ArtworkShipping() {
     (artworkUploadData.packaging_type as PackagingType) || "rolled",
   );
 
-  const [weight, setWeight] = useState(artworkUploadData.weight || "");
-  const [weightError, setWeightError] = useState("");
-
-  const handleValidationChecks = (value: string) => {
-    if (value.trim() === "") {
-      setWeightError("");
-    } else {
-      const errors = validateOrderMeasurement(value);
-      setWeightError(typeof errors === "string" ? errors : errors[0] || "");
-    }
-  };
-
-  useEffect(() => {
-    if (weight) {
-      handleValidationChecks(weight);
-    }
-  }, [weight]);
-
-  const checkIsDisabled = () => {
-    return weightError !== "" || weight === "";
-  };
-
   const handleProceed = () => {
-    updateArtworkUploadData("weight", `${weight}kg`);
     updateArtworkUploadData("packaging_type", packagingType);
-
     setActiveIndex(activeIndex + 1);
   };
 
@@ -74,7 +48,7 @@ export default function ArtworkShipping() {
               Shipping Configuration
             </Text>
             <Text style={tw`text-xs text-gray-500 mt-1`}>
-              Specify how this artwork will be packaged and its weight.
+              Specify how this artwork will be packaged.
             </Text>
           </View>
 
@@ -83,26 +57,12 @@ export default function ArtworkShipping() {
             onChange={setPackagingType}
           />
 
-          <View style={tw`mt-4`}>
-            <Input
-              label="Weight (kg)"
-              keyboardType="numeric"
-              onInputChange={(text) => {
-                setWeight(text);
-                handleValidationChecks(text);
-              }}
-              placeHolder="e.g 10"
-              value={weight}
-              errorMessage={weightError}
-            />
-          </View>
-
           <View style={tw`mt-[60px] mb-[150px]`}>
             <LongBlackButton
               value="Proceed"
               onClick={handleProceed}
               isLoading={false}
-              isDisabled={checkIsDisabled()}
+              isDisabled={false}
             />
           </View>
         </ScrollView>

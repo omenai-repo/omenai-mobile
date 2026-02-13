@@ -61,20 +61,16 @@ export default function SupportWidget() {
       const absoluteY = initialY + translateY.value;
 
       // Smart boundary handling
-      let finalTranslateX = translateX.value;
       let finalTranslateY = translateY.value;
 
       // Horizontal boundaries (snap to nearest side)
       const distToLeft = absoluteX;
       const distToRight = SCREEN_WIDTH - (absoluteX + BUTTON_SIZE);
 
-      if (distToLeft < distToRight) {
-        // Snap to left
-        finalTranslateX = MARGIN - initialX;
-      } else {
-        // Snap to right
-        finalTranslateX = SCREEN_WIDTH - MARGIN - BUTTON_SIZE - initialX;
-      }
+      const finalTranslateX =
+        distToLeft < distToRight
+          ? MARGIN - initialX
+          : SCREEN_WIDTH - MARGIN - BUTTON_SIZE - initialX;
 
       // Vertical boundaries
       const minY = insets.top + MARGIN;

@@ -24,7 +24,7 @@ const YearDropdown = ({
   );
 
   return (
-    <View style={[tw`mb-[20px] relative`, style]}>
+    <View style={[tw`mb-[20px] relative z-20`, { elevation: 20 }, style]}>
       <TouchableOpacity
         style={tw`flex-row items-center justify-between gap-[10px] bg-white border border-[#E7E7E7] rounded-[12px] px-[16px] py-[10px]`}
         onPress={() => setIsOpen(!isOpen)}
@@ -37,7 +37,10 @@ const YearDropdown = ({
 
       {isOpen && (
         <View
-          style={tw`absolute top-[50px] left-0 right-0 bg-white rounded-[12px] border border-[#E7E7E7] z-10`}
+          style={[
+            tw`absolute top-[50px] left-0 right-0 bg-white rounded-[12px] border border-[#E7E7E7] z-30`,
+            { elevation: 30 },
+          ]}
         >
           <FlatList
             data={years}
