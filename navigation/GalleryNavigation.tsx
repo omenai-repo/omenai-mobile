@@ -27,6 +27,7 @@ import { wrapWithHighRisk, wrapWithLowRisk } from "#utils/wrapWithProvider";
 import BiometricSettings from "#screens/profile/BiometricSettings";
 import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
 import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
+import SubscriptionHistory from "#screens/subscriptions/SubscriptionHistory";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -184,6 +185,10 @@ export default function GalleryNavigation() {
       <Stack.Screen
         name={screenName.supportTickets}
         component={wrapWithHighRisk(SupportTicketsScreen)}
+      />
+      <Stack.Screen
+        name="SubscriptionHistory"
+        component={wrapWithHighRisk(SubscriptionHistory)}
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen

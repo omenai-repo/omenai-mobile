@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import { SvgXml } from "react-native-svg";
+import { View, Text, StyleSheet } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import tw from "twrnc";
-import { dropdownIcon, dropUpIcon } from "#utils/SvgImages";
 
 interface FilterOption {
   label: string;
@@ -24,57 +23,49 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   style,
   placeholder = "Select",
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const selectedLabel =
-    data.find((item) => item.value === selectedValue)?.label || placeholder;
-
   return (
-    <View style={[tw`relative z-20`, { elevation: 20 }, style]}>
-      <TouchableOpacity
-        style={tw`flex-row items-center justify-between gap-[10px] bg-white border border-[#E7E7E7] rounded-[12px] px-[16px] py-[10px]`}
-        onPress={() => setIsOpen(!isOpen)}
-      >
-        <Text style={tw`text-[14px] text-[#1A1A1A] font-medium`}>
-          {selectedLabel}
-        </Text>
-        <SvgXml xml={isOpen ? dropUpIcon : dropdownIcon} />
-      </TouchableOpacity>
-
-      {isOpen && (
-        <View
-          style={[
-            tw`absolute top-[50px] left-0 right-0 bg-white rounded-[12px] border border-[#E7E7E7] z-30 shadow-sm`,
-            { elevation: 30 },
-          ]}
-        >
-          <FlatList
-            data={data}
-            keyExtractor={(item) => String(item.value)}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={tw`px-[16px] py-[10px] border-b border-gray-50 last:border-0`}
-                onPress={() => {
-                  onSelect(item.value);
-                  setIsOpen(false);
-                }}
+    <View style={[tw`w-full h-[50px]`, style]}>
+      <Dropdown
+        style={[
+          tw`h-[50px] bg-white rounded-xl border border-gray-200 px-4`,
+          style,
+        ]}
+        placeholderStyle={tw`text-base text-gray-800 font-medium`}
+        selectedTextStyle={tw`text-base text-gray-800 font-medium`}
+        inputSearchStyle={tw`h-10 text-base`}
+        iconStyle={tw`w-5 h-5`}
+        data={data}
+        search={false}
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder={placeholder}
+        value={selectedValue}
+        onChange={(item) => {
+          onSelect(item.value);
+        }}
+        renderItem={(item) => {
+          const isSelected = item.value === selectedValue;
+          return (
+            <View
+              style={[
+                tw`p-4 flex-row justify-between items-center`,
+                isSelected ? tw`bg-blue-50` : null,
+              ]}
+            >
+              <Text
+                style={[
+                  tw`text-base`,
+                  isSelected ? tw`text-blue-600 font-bold` : tw`text-gray-800`,
+                ]}
               >
-                <Text
-                  style={tw`text-[14px] ${
-                    selectedValue === item.value
-                      ? "text-black font-semibold"
-                      : "text-[#666]"
-                  }`}
-                >
-                  {item.label}
-                </Text>
-              </TouchableOpacity>
-            )}
-            style={{ maxHeight: 200 }}
-            nestedScrollEnabled={true}
-          />
-        </View>
-      )}
+                {item.label}
+              </Text>
+              {isSelected && <Text style={tw`text-blue-500 font-bold`}>✓</Text>}
+            </View>
+          );
+        }}
+      />
     </View>
   );
 };
