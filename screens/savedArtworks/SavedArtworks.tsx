@@ -21,7 +21,6 @@ import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { StackNavigationProp } from "@react-navigation/stack";
 import ScrollWrapper from "#components/general/ScrollWrapper";
-import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import tw from "twrnc";
 

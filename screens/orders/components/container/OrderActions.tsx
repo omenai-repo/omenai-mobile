@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text } from "react-native";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
