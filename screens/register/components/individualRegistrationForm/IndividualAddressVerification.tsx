@@ -20,7 +20,7 @@ const IndividualAddressVerification = () => {
         value: item.isoCode,
         label: item.name,
       })),
-    []
+    [],
   );
 
   const {
@@ -43,7 +43,8 @@ const IndividualAddressVerification = () => {
     setStateCode,
   } = useIndividualAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } = useAddressForm();
+  const { formErrors, handleValidationChecks, checkIsFormValid } =
+    useAddressForm();
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -58,7 +59,7 @@ const IndividualAddressVerification = () => {
       setCountryCode,
       setStateData,
       setCityData,
-    }
+    },
   );
 
   const {
@@ -71,7 +72,11 @@ const IndividualAddressVerification = () => {
   } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
 
   const handleSubmit = () => {
-    handleVerifyAddress(individualRegisterData.address, individualRegisterData.phone, "delivery");
+    handleVerifyAddress(
+      individualRegisterData.address,
+      individualRegisterData.phone,
+      "delivery",
+    );
   };
 
   return (
@@ -99,12 +104,17 @@ const IndividualAddressVerification = () => {
           handleValidationChecks("general", text);
         }}
         addressLabel="Collector's Address"
-        addressPlaceholder="Input your gallery address here"
+        addressPlaceholder="Input your residential address here"
       />
 
       <AddressVerificationActions
         isLoading={isLoading}
-        isDisabled={!checkIsFormValid(individualRegisterData.address, individualRegisterData.phone)}
+        isDisabled={
+          !checkIsFormValid(
+            individualRegisterData.address,
+            individualRegisterData.phone,
+          )
+        }
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
       />

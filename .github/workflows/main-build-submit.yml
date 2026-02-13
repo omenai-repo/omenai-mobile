@@ -3,7 +3,7 @@ name: Production Build and Submit
 on:
   push:
     branches:
-      - mainn
+      - refactor/artwork-flow
   workflow_dispatch:
 
 jobs:

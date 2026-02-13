@@ -345,7 +345,13 @@ const EditAddressScreen = () => {
                 setAddressLine(text);
                 handleValidationChecks("general", text);
               }}
-              placeHolder="Input your gallery address here"
+              placeHolder={
+                userType === "gallery"
+                  ? "Input your gallery address here"
+                  : userType === "artist"
+                  ? "Input your studio address here"
+                  : "Input your residential address here"
+              }
               value={addressLine}
               errorMessage={formErrors?.address_line}
             />

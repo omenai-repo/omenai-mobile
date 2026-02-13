@@ -6,7 +6,7 @@ import { getSalesActivityData } from "#services/overview/getSalesActivityData";
 import { salesDataAlgorithm } from "#utils/utils_salesDataAlgorithm";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
-import { LineChart } from "react-native-gifted-charts";
+import { BarChart } from "react-native-gifted-charts";
 import { Dropdown } from "react-native-element-dropdown";
 import { colors } from "#config/colors.config";
 import tw from "twrnc";
@@ -83,13 +83,6 @@ export default function SalesOverview({
     return `$${value}`;
   };
 
-  const renderTooltip = (items: any) => {
-    const item = items[0];
-    return (
-      <ChartTooltip value={item.value} label={item.label} index={item.index} />
-    );
-  };
-
   if (query.isLoading && !query.data) {
     return (
       <View style={tw`bg-[#FAFAFA] rounded-2xl pt-5 pb-10 px-2.5 mx-4`}>
@@ -119,7 +112,8 @@ export default function SalesOverview({
     );
   }
 
-  const spacing = (chartWidth - 70) / 11;
+  const maxDataValue = Math.max(...formattedData.map((d) => d.value));
+  const chartMaxValue = maxDataValue > 0 ? maxDataValue * 2 : 1000;
 
   return (
     <View
@@ -150,52 +144,48 @@ export default function SalesOverview({
           </Text>
         </View>
       ) : (
-        <View style={tw`ml-[-10px] overflow-hidden`}>
-          <LineChart
+        <View style={tw`overflow-hidden`}>
+          <BarChart
             data={formattedData}
-            areaChart
-            curved
-            isAnimated
-            animationDuration={1200}
-            color={colors.black}
-            startFillColor="#F3F4F6"
-            endFillColor="#F3F4F6"
-            startOpacity={0.9}
-            endOpacity={0.1}
-            dataPointsColor={colors.black}
-            dataPointsRadius={4}
-            initialSpacing={isTablet ? 35 : 20}
-            endSpacing={isTablet ? 35 : 20}
-            noOfSections={4}
-            yAxisColor="transparent"
+            barWidth={22}
+            spacing={isTablet ? 40 : 20}
+            hideRules
+            xAxisThickness={0}
             yAxisThickness={0}
-            rulesType="dashed"
-            rulesColor="#F3F4F6"
             yAxisTextStyle={{
               color: "#9CA3AF",
               fontSize: 11,
               fontWeight: "500",
             }}
+            maxValue={chartMaxValue}
+            noOfSections={4}
             formatYLabel={formatYAxisLabel}
-            xAxisColor="transparent"
-            yAxisOffset={0}
-            pointerConfig={{
-              pointerStripHeight: 160,
-              pointerStripColor: "#E5E7EB",
-              pointerStripWidth: 2,
-              pointerColor: colors.black,
-              radius: 6,
-              pointerLabelWidth: 120,
-              pointerLabelHeight: 120,
-              activatePointersOnLongPress: true,
-              autoAdjustPointerLabelPosition: false,
-              pointerLabelComponent: renderTooltip,
+            isAnimated
+            animationDuration={1200}
+            frontColor={colors.black}
+            showValuesAsTopLabel={false}
+            renderTooltip={(item: any, index: number) => {
+              const maxValue = Math.max(...formattedData.map((d) => d.value));
+              return (
+                <View
+                  style={{
+                    marginLeft: -15, // Center tooltip roughly over bar
+                    backgroundColor: "transparent",
+                  }}
+                >
+                  <ChartTooltip
+                    value={item.value}
+                    label={item.label}
+                    index={index}
+                    maxValue={maxValue}
+                    totalBars={formattedData.length}
+                  />
+                </View>
+              );
             }}
             width={chartWidth}
-            height={230}
-            spacing={isTablet ? spacing : 50}
-            thickness={2.5}
-            hideRules={false}
+            height={200}
+            labelWidth={40}
             xAxisLabelTextStyle={{
               color: "#9CA3AF",
               fontSize: 11,

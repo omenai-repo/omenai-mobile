@@ -30,7 +30,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     data.find((item) => item.value === selectedValue)?.label || placeholder;
 
   return (
-    <View style={[tw`relative z-20`, style]}>
+    <View style={[tw`relative z-20`, { elevation: 20 }, style]}>
       <TouchableOpacity
         style={tw`flex-row items-center justify-between gap-[10px] bg-white border border-[#E7E7E7] rounded-[12px] px-[16px] py-[10px]`}
         onPress={() => setIsOpen(!isOpen)}
@@ -43,7 +43,10 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
       {isOpen && (
         <View
-          style={tw`absolute top-[50px] left-0 right-0 bg-white rounded-[12px] border border-[#E7E7E7] z-30 shadow-sm`}
+          style={[
+            tw`absolute top-[50px] left-0 right-0 bg-white rounded-[12px] border border-[#E7E7E7] z-30 shadow-sm`,
+            { elevation: 30 },
+          ]}
         >
           <FlatList
             data={data}

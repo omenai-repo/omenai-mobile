@@ -123,7 +123,12 @@ export default function Orders() {
         <View
           style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
         >
-          <View style={tw`flex-row items-center gap-2 mb-[25px] z-50 w-full`}>
+          <View
+            style={[
+              tw`flex-row items-center gap-2 mb-[25px] z-50 w-full`,
+              { elevation: 50 },
+            ]}
+          >
             <FilterDropdown
               data={[
                 { label: "All Status", value: "all" },

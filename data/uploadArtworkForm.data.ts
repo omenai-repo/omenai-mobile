@@ -48,16 +48,15 @@ export const countriesListing: selectItemProp[] = countries.map((country) => ({
 }));
 
 export const mediumListing: selectItemProp[] = [
-  {
-    label: "Mixed media on paper/canvas",
-    value: "Mixed media on paper/canvas",
-  },
-  { label: "Works on paper", value: "Works on paper" },
-  { label: "Oil on canvas/panel", value: "Oil on canvas/panel" },
-  { label: "Canvas", value: "Canvas" },
   { label: "Photography", value: "Photography" },
+  { label: "Works on paper", value: "Works on paper" },
   {
     label: "Acrylic on canvas/linen/panel",
     value: "Acrylic on canvas/linen/panel",
   },
+  {
+    label: "Mixed media on paper/canvas",
+    value: "Mixed media on paper/canvas",
+  },
+  { label: "Oil on canvas/panel", value: "Oil on canvas/panel" },
 ];

@@ -157,16 +157,19 @@ export default function PackagingSelector({
               </View>
 
               {/* Info */}
-              <View style={tw`p-2.5 border-t border-gray-100 bg-white`}>
+              <View style={tw`p-2.5 border-t border-gray-100 bg-white flex-1`}>
                 <View style={tw`flex-row justify-between items-start`}>
                   <Text style={tw`font-semibold text-xs text-gray-800 flex-1`}>
                     {preset.label}
                   </Text>
-                  <Text
-                    style={tw`text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded`}
+                  <View
+                    style={tw`bg-gray-100 px-1.5 py-0.5 rounded flex-row items-baseline`}
                   >
-                    {preset.weight_lbs}lb
-                  </Text>
+                    <Text style={tw`text-[8px] text-gray-400 mr-1`}>Max</Text>
+                    <Text style={tw`text-[10px] font-bold text-gray-600`}>
+                      {preset.weight_lbs} lbs
+                    </Text>
+                  </View>
                 </View>
                 <Text style={tw`text-[10px] text-gray-500 mt-1`}>
                   {preset.description}

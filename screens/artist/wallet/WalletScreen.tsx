@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  Image,
-  Pressable,
-  ScrollView,
-  RefreshControl,
-} from "react-native";
+import { View, Text, Image, Pressable, RefreshControl } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
@@ -433,19 +426,26 @@ const WalletScreen = () => {
                       <Text style={tw`text-[16px]`}>No transactions found</Text>
                     </View>
                   ) : (
-                    transactions?.map((item: any, index: number) => (
-                      <WalletContainer
-                        key={index}
-                        status={item.trans_status}
-                        amount={item.trans_amount}
-                        dateTime={item.createdAt}
-                        onPress={() =>
-                          navigation.navigate("TransactionDetailsScreen", {
-                            transaction: item,
-                          })
-                        }
-                      />
-                    ))
+                    transactions
+                      ?.sort(
+                        (a: any, b: any) =>
+                          new Date(b.createdAt).getTime() -
+                          new Date(a.createdAt).getTime(),
+                      )
+                      .slice(0, 5)
+                      .map((item: any, index: number) => (
+                        <WalletContainer
+                          key={index}
+                          status={item.trans_status}
+                          amount={item.trans_amount}
+                          dateTime={item.createdAt}
+                          onPress={() =>
+                            navigation.navigate("TransactionDetailsScreen", {
+                              transaction: item,
+                            })
+                          }
+                        />
+                      ))
                   )}
                 </View>
               ) : (

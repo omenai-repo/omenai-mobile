@@ -20,8 +20,6 @@ type ArtworkDimensionsErrorsType = {
   weight: string;
 };
 
-type PackagingType = "rolled" | "stretched";
-
 export default function ArtworkDimensions() {
   const {
     setActiveIndex,
@@ -31,15 +29,15 @@ export default function ArtworkDimensions() {
   } = uploadArtworkStore();
 
   const [dimensions, setDimensions] = useState({
-    length: "",
-    height: "",
+    length: artworkUploadData.length?.replace("in", "") || "",
+    height: artworkUploadData.height?.replace("in", "") || "",
+    weight: artworkUploadData.weight?.replace("lb", "") || "",
   });
 
-  const [formErrors, setFormErrors] = useState<
-    Omit<ArtworkDimensionsErrorsType, "weight">
-  >({
+  const [formErrors, setFormErrors] = useState<ArtworkDimensionsErrorsType>({
     length: "",
     height: "",
+    weight: "",
   });
 
   const checkIsDisabled = () => {
@@ -53,7 +51,7 @@ export default function ArtworkDimensions() {
   };
 
   const handleValidationChecks = (
-    label: keyof Omit<ArtworkDimensionsErrorsType, "weight">,
+    label: keyof ArtworkDimensionsErrorsType,
     value: string,
   ) => {
     if (value.trim() === "") {
@@ -79,10 +77,17 @@ export default function ArtworkDimensions() {
     }
   }, [dimensions.height]);
 
+  useEffect(() => {
+    if (dimensions.weight) {
+      handleValidationChecks("weight", dimensions.weight);
+    }
+  }, [dimensions.weight]);
+
   const handleProceed = () => {
     // Store values with units
     updateArtworkUploadData("length", `${dimensions.length}in`);
     updateArtworkUploadData("height", `${dimensions.height}in`);
+    updateArtworkUploadData("weight", `${dimensions.weight}lb`);
 
     setActiveIndex(activeIndex + 1);
   };
@@ -134,6 +139,20 @@ export default function ArtworkDimensions() {
                 placeHolder="e.g 24"
                 value={dimensions.height}
                 errorMessage={formErrors.height}
+              />
+            </View>
+
+            <View>
+              <Input
+                label="Weight (lb)"
+                keyboardType="numeric"
+                onInputChange={(text) => {
+                  setDimensions((prev) => ({ ...prev, weight: text }));
+                  handleValidationChecks("weight", text);
+                }}
+                placeHolder="e.g 5"
+                value={dimensions.weight}
+                errorMessage={formErrors.weight}
               />
             </View>
           </View>

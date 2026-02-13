@@ -145,8 +145,8 @@ export function getRecommendedPreset(
 
   for (const preset of presets) {
     if (packagingType === "rolled") {
-      // For tubes: the LONGER dimension must fit in tube length
-      if (artLong <= preset.max_art.length) {
+      // For tubes: the SHORTER dimension determines the minimum tube length required
+      if (artShort <= preset.max_art.length) {
         return preset;
       }
     } else {
@@ -178,8 +178,8 @@ export function checkFit(
   const artShort = Math.min(artLength, artHeight);
 
   if (packagingType === "rolled") {
-    // For tubes: the LONGER dimension must fit in tube length
-    return artLong <= preset.max_art.length;
+    // For tubes: the SHORTER dimension determines the minimum tube length required
+    return artShort <= preset.max_art.length;
   } else {
     // For boxes: both dimensions must fit
     const boxLong = Math.max(preset.max_art.length, preset.max_art.width || 0);

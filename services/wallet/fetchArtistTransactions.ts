@@ -10,7 +10,7 @@ type fetchArtistTransactionsType = {
 };
 
 export async function fetchArtistTransactions({
-  year = "2025",
+  year = new Date().getFullYear().toString(),
   limit = 10,
   page = 1,
   status,
