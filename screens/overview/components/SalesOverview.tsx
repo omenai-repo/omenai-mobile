@@ -161,6 +161,9 @@ export default function SalesOverview({
             noOfSections={4}
             formatYLabel={formatYAxisLabel}
             isAnimated
+            roundedTop={false}
+            barBorderTopLeftRadius={3}
+            barBorderTopRightRadius={3}
             animationDuration={1200}
             frontColor={colors.black}
             showValuesAsTopLabel={false}

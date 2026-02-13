@@ -13,7 +13,7 @@
 const baseConfig = {
   captureUncaught: true,
   captureUnhandledRejections: true,
-  environment: process.env.NODE_ENV,
+  environment: process.env.EXPO_PUBLIC_ENV,
 };
 
 export const clientConfig = {

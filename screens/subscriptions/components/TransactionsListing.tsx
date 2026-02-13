@@ -5,9 +5,11 @@ import {
   ActivityIndicator,
   FlatList,
   Platform,
+  Pressable,
 } from "react-native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
 import { formatISODate } from "#utils/utils_formatISODate";
@@ -26,6 +28,7 @@ type Txn = {
 
 export default function TransactionsListing() {
   const { userSession: user } = useAppStore();
+  const navigation = useNavigation<any>(); // Add navigation hook
 
   const {
     data: transactions,
@@ -83,9 +86,20 @@ export default function TransactionsListing() {
     <View
       style={[tw`bg-white rounded-2xl border border-slate-200 p-6`, shadow()]}
     >
-      <Text style={tw`text-base font-semibold text-slate-900 mb-4`}>
-        Recent Transaction Activity
-      </Text>
+      <View style={tw`flex-row items-center justify-between mb-4`}>
+        <Text style={tw`text-base font-semibold text-slate-900`}>
+          Recent Transaction Activity
+        </Text>
+        <Pressable
+          onPress={() => navigation.navigate("SubscriptionHistory")}
+          style={tw`flex-row items-center`}
+        >
+          <Text style={tw`text-sm font-medium text-slate-600 mr-1`}>
+            Show All
+          </Text>
+          <Ionicons name="arrow-forward" size={16} color="#475569" />
+        </Pressable>
+      </View>
 
       {list.length === 0 ? (
         <View style={tw`items-center justify-center py-12`}>
@@ -98,7 +112,8 @@ export default function TransactionsListing() {
           <View style={tw`absolute left-6 top-0 bottom-0 w-0.5 bg-slate-200`} />
 
           <FlatList
-            data={list}
+            // Show only top 5 items
+            data={list.slice(0, 5)}
             keyExtractor={(item) => item.trans_id}
             contentContainerStyle={tw`pr-1`}
             renderItem={({ item, index }) => <Row item={item} index={index} />}

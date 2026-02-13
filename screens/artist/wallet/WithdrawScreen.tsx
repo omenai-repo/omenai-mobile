@@ -183,6 +183,10 @@ export const WithdrawScreen = ({
             <ScrollView
               showsVerticalScrollIndicator={false}
               style={tw`flex-1`}
+              contentContainerStyle={[
+                tw`flex-grow`,
+                Platform.OS === "android" && tw`pb-[150px]`,
+              ]}
               keyboardShouldPersistTaps="handled"
             >
               <View style={tw`p-[25px]`}>

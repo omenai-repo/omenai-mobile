@@ -25,7 +25,7 @@ export default function GalleryArtworksListing() {
 
   const ARTWORKS_QK = useMemo(
     () => ["artworks", userSession?.id, userType],
-    [userSession?.id, userType]
+    [userSession?.id, userType],
   );
 
   const artworksQuery = useQuery({
@@ -79,8 +79,10 @@ export default function GalleryArtworksListing() {
         <FittedBlackButton
           value="Upload artwork"
           onClick={() => navigation.navigate(screenName.gallery.uploadArtwork)}
+          style={tw`h-[36px] px-4`}
+          textStyle={tw`text-[13px]`}
         >
-          <Feather name="plus" color={"#fff"} size={20} />
+          <Feather name="plus" color={"#fff"} size={16} />
         </FittedBlackButton>
       </View>
 

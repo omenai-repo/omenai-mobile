@@ -17,7 +17,7 @@ type VersionCheckResult = {
 /** Compares two semantic versions. Returns true if currentVersion < requiredVersion */
 const compareVersions = (
   currentVersion: string,
-  requiredVersion: string
+  requiredVersion: string,
 ): boolean => {
   try {
     const current = currentVersion.split(".").map(Number);
@@ -40,7 +40,7 @@ const compareVersions = (
 
 /** Hook to check app version from Firebase and determine if update is needed (Real-time) */
 export const useVersionCheck = (
-  onUpdateNeeded?: (result: VersionCheckResult) => void
+  onUpdateNeeded?: (result: VersionCheckResult) => void,
 ): VersionCheckResult => {
   const [versionCheckResult, setVersionCheckResult] =
     useState<VersionCheckResult>({
@@ -107,7 +107,7 @@ export const useVersionCheck = (
       };
 
       console.log(
-        `[VersionCheck] Current: ${currentVersion}, Required: ${remoteVersion}, Needs Update: ${needsUpdate}`
+        `[VersionCheck] Current: ${currentVersion}, Required: ${remoteVersion}, Needs Update: ${needsUpdate}`,
       );
       setVersionCheckResult(result);
 
@@ -115,7 +115,7 @@ export const useVersionCheck = (
         onUpdateNeededRef.current(result);
       }
     },
-    [handleAndroidUpdate]
+    [handleAndroidUpdate],
   );
 
   const handleSnapshotError = useCallback((error: any) => {
@@ -138,13 +138,15 @@ export const useVersionCheck = (
         const docRef = doc(
           db,
           "versions",
-          process.env.NODE_ENV === "production" ? "production" : "development"
+          process.env.EXPO_PUBLIC_ENV === "production"
+            ? "production"
+            : "development",
         );
 
         unsubscribe = onSnapshot(
           docRef,
           (snapshot: any) => handleVersionSnapshot(snapshot, currentVersion),
-          handleSnapshotError
+          handleSnapshotError,
         );
       } catch (error) {
         const errorMessage =
