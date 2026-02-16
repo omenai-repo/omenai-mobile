@@ -67,7 +67,7 @@ const AddPrimaryAcctScreen = () => {
   const [branchSearchText, setBranchSearchText] = useState("");
   const [branchList, setBranchList] = useState<BankOption[]>([]);
   const [filteredBranchList, setFilteredBranchList] = useState<BankOption[]>(
-    [],
+    []
   );
   const [selectedBranch, setSelectedBranch] = useState<BankOption | null>(null);
   const [acctNumber, setAcctNumber] = useState("");
@@ -75,25 +75,6 @@ const AddPrimaryAcctScreen = () => {
   const [isValidated, setIsValidated] = useState(false);
 
   const isEditing = !!walletData?.primary_withdrawal_account;
-
-  useEffect(() => {
-    if (isEditing) {
-      const account = walletData.primary_withdrawal_account;
-
-      setAcctName(account.account_name);
-      setAcctNumber(account.account_number);
-      setSelectedBank({
-        label: account.bank_name,
-        value: account.bank_code,
-        id: String(account.bank_id),
-      });
-      setSelectedBranch({
-        label: account.bank_branch,
-        value: account.bank_branch,
-      });
-      setIsValidated(true); // Assuming existing data is valid
-    }
-  }, [walletData, isEditing]);
 
   const animation = useRef(null);
   const prevAcctNumberRef = useRef("");
@@ -120,7 +101,7 @@ const AddPrimaryAcctScreen = () => {
             id: bank.id,
           }))
           .sort((a: BankOption, b: BankOption) =>
-            a.label.localeCompare(b.label),
+            a.label.localeCompare(b.label)
           );
 
         setBankList(formattedData);
@@ -146,7 +127,7 @@ const AddPrimaryAcctScreen = () => {
     }
 
     const filtered = bankList.filter((bank) =>
-      bank.label.toLowerCase().includes(text.toLowerCase()),
+      bank.label.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredBankList(filtered);
   };
@@ -169,7 +150,7 @@ const AddPrimaryAcctScreen = () => {
                 id: branch.id,
               }))
               .sort((a: BankOption, b: BankOption) =>
-                a.label.localeCompare(b.label),
+                a.label.localeCompare(b.label)
               );
 
             setBranchList(formatted);
@@ -193,14 +174,14 @@ const AddPrimaryAcctScreen = () => {
     if (text.trim().length < 2) return;
 
     const filtered = branchList.filter((branch) =>
-      branch.label.toLowerCase().includes(text.toLowerCase()),
+      branch.label.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredBranchList(filtered);
   };
 
   const handleBranchSearchDebounced = useCallback(
     debounce(handleBranchSearch, 300),
-    [branchList],
+    [branchList]
   );
 
   const debouncedSearch = useCallback(debounce(handleSearch, 300), [bankList]);
@@ -367,7 +348,7 @@ const AddPrimaryAcctScreen = () => {
             />
 
             {supportedCountryCodes.includes(
-              userSession.address.countryCode,
+              userSession.address.countryCode
             ) && (
               <CustomSelectPicker
                 data={filteredBranchList}

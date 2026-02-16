@@ -13,21 +13,21 @@ import { useCollectorOrders } from "#hooks/useCollectorOrders";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FilterDropdown from "./components/FilterDropdown";
 
-export type OrderTabsTypes = "pending" | "history";
+export type OrderTabsTypes = "orders" | "history";
 
 export default function Orders() {
   const navigation = useNavigation<any>();
   const { data, isLoading, isRefetching, refetch } = useCollectorOrders();
   const insets = useSafeAreaInsets();
 
-  const [selectedTab, setSelectedTab] = useState<OrderTabsTypes>("pending");
+  const [selectedTab, setSelectedTab] = useState<OrderTabsTypes>("orders");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
 
   // Choose list by tab
   const tabOrders = useMemo(() => {
     if (!data) return [];
-    return selectedTab === "pending"
+    return selectedTab === "orders"
       ? data.pendingOrders ?? []
       : data.completedOrders ?? [];
   }, [data, selectedTab]);
@@ -40,8 +40,37 @@ export default function Orders() {
     return tabOrders.filter((o) => {
       const dt = new Date(o?.updatedAt ?? o?.createdAt ?? Date.now());
       const matchesYear = dt.getFullYear() === selectedYear;
-      const matchesStatus =
-        statusFilter === "all" || o?.status === statusFilter;
+
+      let matchesStatus = true;
+      if (statusFilter !== "all") {
+        switch (statusFilter) {
+          case "pending":
+            matchesStatus = o.order_accepted?.status === "";
+            break;
+          case "awaiting_payment":
+            matchesStatus =
+              o.order_accepted?.status === "accepted" &&
+              o.payment_information?.status === "pending";
+            break;
+          case "delivery_in_progress":
+            matchesStatus =
+              o.order_accepted?.status === "accepted" &&
+              o.payment_information?.status === "completed" &&
+              !o.shipping_details?.delivery_confirmed;
+            break;
+          case "completed":
+            matchesStatus =
+              o.status === "completed" &&
+              o.shipping_details?.delivery_confirmed;
+            break;
+          case "declined":
+            matchesStatus = o.order_accepted?.status === "declined";
+            break;
+          default:
+            matchesStatus = true;
+        }
+      }
+
       return matchesYear && matchesStatus;
     });
   }, [tabOrders, selectedYear, statusFilter]);
@@ -51,7 +80,7 @@ export default function Orders() {
     () => [
       {
         title: "Orders",
-        key: "pending",
+        key: "orders",
         count: data?.pendingOrders?.length ?? 0,
       },
       { title: "Order History", key: "history" },
@@ -130,12 +159,23 @@ export default function Orders() {
             ]}
           >
             <FilterDropdown
-              data={[
-                { label: "All Status", value: "all" },
-                { label: "Pending", value: "pending" },
-                { label: "Processing", value: "processing" },
-                { label: "Completed", value: "completed" },
-              ]}
+              data={
+                selectedTab === "orders"
+                  ? [
+                      { label: "All Status", value: "all" },
+                      { label: "Pending", value: "pending" },
+                      { label: "Awaiting Payment", value: "awaiting_payment" },
+                      {
+                        label: "Delivery in Progress",
+                        value: "delivery_in_progress",
+                      },
+                    ]
+                  : [
+                      { label: "All Status", value: "all" },
+                      { label: "Completed", value: "completed" },
+                      { label: "Declined", value: "declined" },
+                    ]
+              }
               selectedValue={statusFilter}
               onSelect={(val) => setStatusFilter(val)}
               // Ensure dropdown content is above other elements
@@ -144,7 +184,7 @@ export default function Orders() {
             <YearDropdown
               selectedYear={selectedYear}
               setSelectedYear={setSelectedYear}
-              style={tw`mb-0 flex-1`}
+              style={tw`mb-0 w-[120px]`}
             />
           </View>
 

@@ -28,7 +28,7 @@ type Txn = {
 
 export default function TransactionsListing() {
   const { userSession: user } = useAppStore();
-  const navigation = useNavigation<any>(); // Add navigation hook
+  const navigation = useNavigation<any>();
 
   const {
     data: transactions,

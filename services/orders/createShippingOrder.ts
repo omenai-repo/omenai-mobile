@@ -23,6 +23,7 @@ export async function createShippingOrder(
         origin_address,
         designation,
       }),
+      shouldLogout: false,
     });
     const result = await response.json();
     return { isOk: response.ok, message: result.message };

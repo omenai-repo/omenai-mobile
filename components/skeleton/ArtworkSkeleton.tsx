@@ -11,7 +11,7 @@ const { width: screenWidth } = Dimensions.get("window");
  */
 export default function ArtworkSkeleton() {
   return (
-    <View style={tw`flex-1 bg-white px-5 pt-20`}>
+    <View style={tw`flex-1 bg-white px-5`}>
       {/* Image placeholder */}
       <View style={tw`items-center mb-6`}>
         <Skeleton
