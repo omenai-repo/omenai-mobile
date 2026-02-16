@@ -25,11 +25,14 @@ export default function EditProfile() {
   const { updateModal } = useModalStore();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  console.log(JSON.stringify(userSession));
 
   const [fullname, setFullName] = useState<string>(userSession.name);
   const [email, setEmail] = useState<string>(userSession.email);
   const [phoneNumber, setPhoneNumber] = useState<string>(userSession.phone);
-  const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
+  const [selectedPreferences, setSelectedPreferences] = useState<string[]>(
+    userSession.preferences || [],
+  );
   const [formErrors, setFormErrors] = useState<EditProfileErrorsTypes>({
     name: "",
   });

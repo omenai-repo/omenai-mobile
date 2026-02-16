@@ -34,7 +34,9 @@ export const OrdersList: React.FC<OrdersListProps> = ({
     <FlatList
       data={data}
       keyExtractor={(item, index) =>
-        item?.order_id?.toString?.() ?? item?.artwork_data?._id ?? `order-${index}`
+        item?.order_id?.toString?.() ??
+        item?.artwork_data?._id ??
+        `order-${index}`
       }
       showsVerticalScrollIndicator={false}
       contentContainerStyle={tw`pb-[30px]`}
@@ -59,13 +61,23 @@ export const OrdersList: React.FC<OrdersListProps> = ({
           status={selectedTab}
           lastId={index === data.length - 1}
           seller_designation={item?.seller_designation}
-          acceptBtn={selectedTab === "pending" && onAccept ? () => onAccept(item) : undefined}
-          declineBtn={selectedTab === "pending" && onDecline ? () => onDecline(item) : undefined}
+          acceptBtn={
+            selectedTab === "pending" && onAccept
+              ? () => onAccept(item)
+              : undefined
+          }
+          declineBtn={
+            selectedTab === "pending" && onDecline
+              ? () => onDecline(item)
+              : undefined
+          }
           delivered={item?.shipping_details?.delivery_confirmed}
           order_accepted={item?.order_accepted?.status}
           order_decline_reason={item?.order_accepted?.reason}
           payment_status={item?.payment_information?.status}
-          tracking_status={item?.shipping_details?.shipment_information?.tracking?.id}
+          tracking_status={
+            item?.shipping_details?.shipment_information?.tracking?.id
+          }
           trackBtn={() => onTrack(item)}
           {...(renderExclusivityType && {
             exclusivity_type: renderExclusivityType(item),
