@@ -239,12 +239,6 @@ const WalletScreen = () => {
           style={{ paddingTop: insets.top + 16 }}
         >
           <View>
-            {/* <Image
-              style={tw.style(`w-[130px] h-[30px] mt-[80px] android:mt-[40px] ml-[20px]`)}
-              resizeMode="contain"
-              source={require('../../../assets/omenai-logo.png')}
-            /> */}
-
             {/* Balances card */}
             <View
               style={[
