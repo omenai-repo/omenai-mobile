@@ -10,7 +10,7 @@ export default {
     name: "Omenai",
     scheme: "omenaimobile",
     slug: "omenai-app",
-    owner: "omenai",
+    owner: "omenaiinc",
     version: APP_VERSION,
     orientation: "portrait",
     newArchEnabled: true,

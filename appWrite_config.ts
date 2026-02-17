@@ -1,6 +1,6 @@
 import { Client, Storage, TablesDB } from "appwrite";
 const client = new Client();
-const endpoint = "https://cloud.appwrite.io/v1";
+const endpoint = process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT;
 
 client
   .setEndpoint(endpoint)
