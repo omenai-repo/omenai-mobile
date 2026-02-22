@@ -15,7 +15,7 @@ export const PricingBreakdown = ({
   discountEligible,
   discountAmount,
 }: any) => (
-  <View style={tw`bg-white rounded-2xl border border-slate-100 p-5 mb-5`}>
+  <View style={tw`bg-white rounded-sm border border-slate-100 p-5 mb-5`}>
     {!isInitialSubscription && (
       <View
         style={tw`flex-row items-center justify-between pb-3 border-b border-slate-100`}
@@ -41,7 +41,7 @@ export const PricingBreakdown = ({
               <Text style={tw`text-[12px] font-semibold text-emerald-600`}>
                 Welcome Discount
               </Text>
-              <View style={tw`px-1.5 py-0.5 bg-emerald-100 rounded`}>
+              <View style={tw`px-1.5 py-0.5 bg-emerald-100 rounded-sm`}>
                 <Text
                   style={tw`text-[9px] font-bold text-emerald-700 uppercase`}
                 >
@@ -75,7 +75,7 @@ export const PricingBreakdown = ({
       </View>
       {discountEligible && (
         <View
-          style={tw`mt-4 p-3 rounded-md bg-emerald-50 border border-emerald-200`}
+          style={tw`mt-4 p-3 rounded-sm bg-emerald-50 border border-emerald-200`}
         >
           <Text style={tw`text-[12px] text-emerald-800`}>
             <Text style={tw`font-semibold`}>Note:</Text> You won't be charged
@@ -85,7 +85,7 @@ export const PricingBreakdown = ({
       )}
       {!showCharge && !isInitialSubscription && !discountEligible && (
         <View
-          style={tw`mt-4 p-3 rounded-md bg-amber-50 border border-amber-200`}
+          style={tw`mt-4 p-3 rounded-sm bg-amber-50 border border-amber-200`}
         >
           <Text style={tw`text-[12px] text-amber-800`}>
             <Text style={tw`font-semibold`}>Note:</Text> Your plan change will

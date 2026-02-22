@@ -24,7 +24,7 @@ export async function fetchCuratedArtworks({
     }).then(async (res) => {
       const result = await res.json();
 
-      return result;
+      return { isOk: res.ok, ...result };
     });
 
     return response;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
-import WithModal from "#components/modal/WithModal";
+
 import OrderSkeleton from "#components/skeleton/OrderSkeleton";
 import { getSingleOrder } from "#services/orders/getSingleOrder";
 import { checkLockStatus } from "#services/orders/checkLockStatus";
@@ -53,19 +53,19 @@ export default function Payment() {
 
   if (isLoading)
     return (
-      <WithModal>
+      <>
         <BackHeaderTitle title="Confirm order details" />
         <OrderSkeleton />
-      </WithModal>
+      </>
     );
 
   if (!isLoading && artworkDetails.data !== null)
     return (
-      <WithModal>
+      <>
         <OrderDetails
           data={artworkDetails.data}
           locked={artworkDetails.locked}
         />
-      </WithModal>
+      </>
     );
 }

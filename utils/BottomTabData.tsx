@@ -20,6 +20,8 @@ import {
   shippingInActive,
   walletActive,
   walletInActive,
+  billingActive,
+  billingInActive,
 } from "./SvgImages";
 import WalletScreen from "#screens/artist/wallet/WalletScreen";
 import OrderScreen from "#screens/artist/orders/OrderScreen";
@@ -86,7 +88,7 @@ export const BottomTabDataIndividual = [
     id: 2,
     activeIcon: catalogueIcon,
     inActiveIcon: catalogueIconFocused,
-    name: "Catalog",
+    name: "Artworks",
     component: Catalog,
   },
   {
@@ -137,8 +139,8 @@ export const BottomTabDataGallery = (account: any) => [
   {
     id: 4,
     name: "Billing",
-    activeIcon: ordersActive,
-    inActiveIcon: ordersInActive,
+    activeIcon: billingActive,
+    inActiveIcon: billingInActive,
     component: Subscriptions,
   },
   {

@@ -11,7 +11,7 @@ const StatusBadgeBase = ({
   order_accepted,
   delivered,
 }: StatusBadgeProps) => {
-  const badgeBaseStyle = tw`flex-row items-center px-3 py-1 rounded-lg`;
+  const badgeBaseStyle = tw`flex-row items-center px-3 py-1 rounded-sm`;
 
   if (
     status === "pending" &&

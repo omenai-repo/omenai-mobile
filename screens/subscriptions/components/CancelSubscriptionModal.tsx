@@ -97,7 +97,7 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
         <Pressable onPress={() => !loading && onClose()} style={tw`absolute inset-0`} />
         <Animated.View
           style={[
-            tw`w-11/12 max-w:420px bg-white rounded-2xl overflow-hidden`,
+            tw`w-11/12 max-w:420px bg-white rounded-sm overflow-hidden`,
             { transform: [{ scale }] },
             cardShadow(),
           ]}
@@ -114,7 +114,7 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
               </View>
               <Pressable
                 onPress={() => !loading && onClose()}
-                style={tw`p-1 rounded-lg`}
+                style={tw`p-1 rounded-sm`}
                 android_ripple={{ color: "#fecaca" }}
               >
                 <Ionicons name="close" size={18} color="#94a3b8" />
@@ -128,13 +128,13 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
               <Text style={tw`text-sm text-slate-700`}>
                 Your subscription will remain active until:
               </Text>
-              <View style={tw`bg-slate-100 rounded-lg px-4 py-3 mt-2`}>
+              <View style={tw`bg-slate-100 rounded-sm px-4 py-3 mt-2`}>
                 <Text style={tw`font-semibold text-slate-900`}>{formattedEnd}</Text>
               </View>
             </View>
 
             {/* Warning box */}
-            <View style={tw`bg-amber-50 border border-amber-200 rounded-lg p-4`}>
+            <View style={tw`bg-amber-50 border border-amber-200 rounded-sm p-4`}>
               <View style={tw`flex-row`}>
                 <Ionicons name="alert-circle" size={18} color="#b45309" style={tw`mr-2 mt-0.5`} />
                 <View style={tw`flex-1`}>
@@ -151,7 +151,7 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
             </View>
 
             {!!err && (
-              <View style={tw`mt-4 bg-red-50 border border-red-200 rounded-lg p-3`}>
+              <View style={tw`mt-4 bg-red-50 border border-red-200 rounded-sm p-3`}>
                 <Text style={tw`text-red-700 text-xs`}>{err}</Text>
               </View>
             )}
@@ -164,7 +164,7 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
                 onPress={() => !loading && onClose()}
                 style={({ pressed }) =>
                   tw.style(
-                    `px-4 h-11 rounded-lg items-center justify-center bg-white border border-slate-300 mr-2`,
+                    `px-4 h-11 rounded-sm items-center justify-center bg-white border border-slate-300 mr-2`,
                     pressed ? "opacity-95" : ""
                   )
                 }
@@ -179,7 +179,7 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
                 onPress={handleCancel}
                 style={({ pressed }) =>
                   tw.style(
-                    `px-4 h-11 rounded-lg items-center justify-center bg-red-600`,
+                    `px-4 h-11 rounded-sm items-center justify-center bg-red-600`,
                     pressed ? "opacity-90" : ""
                   )
                 }

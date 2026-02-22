@@ -28,7 +28,7 @@ export const PlanCTA = ({
         }
 
         return tw.style(
-          `mt-5 h-12 rounded-md items-center justify-center`,
+          `mt-5 h-12 rounded-sm items-center justify-center`,
           name === "Pro"
             ? "bg-slate-900"
             : "bg-slate-100 border border-slate-200",

@@ -6,12 +6,7 @@ import tw from "twrnc";
 import GenericFilterOptionBox from "./FilterOptionBox";
 import { SharedFilterStore } from "./types";
 
-const rarityFilterOptions = [
-  { option: "Unique Work", value: "Unique" },
-  { option: "Limited Edition", value: "Limited edition" },
-  { option: "Open Edition", value: "Open edition" },
-  { option: "Unknown edition", value: "Unknown edition" },
-];
+const rarityFilterOptions = [{ option: "Unique Work", value: "Unique" }];
 
 export default function GenericRarityFilter({
   store,
@@ -26,7 +21,7 @@ export default function GenericRarityFilter({
       <TouchableOpacity onPress={() => setOpenDropdown(!openDropdown)}>
         <View
           style={[
-            tw`h-14 px-5 items-center gap-2.5 flex-row rounded-lg`,
+            tw`h-14 px-5 items-center gap-2.5 flex-row rounded-sm`,
             { borderWidth: 1, borderColor: colors.inputBorder },
           ]}
         >
@@ -37,7 +32,7 @@ export default function GenericRarityFilter({
             {filterOptions.rarity.length > 0 && (
               <View
                 style={[
-                  tw`px-2.5 rounded-lg py-1`,
+                  tw`px-2.5 rounded-sm py-1`,
                   { backgroundColor: "#f5f5f5" },
                 ]}
               >

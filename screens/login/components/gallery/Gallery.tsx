@@ -1,6 +1,6 @@
 import React from "react";
 import { useGalleryAuthLoginStore } from "#store/auth/login/GalleryAuthLoginStore";
-import WithModal from "#components/modal/WithModal";
+
 import { useLoginHandler } from "#hooks/useLoginHandler";
 import LoginForm from "../LoginForm";
 
@@ -28,7 +28,7 @@ export default function Gallery({ biometricProps }: GalleryProps) {
     handleLogin(galleryLoginData, setIsLoading, clearInputs);
 
   return (
-    <WithModal>
+    <>
       <LoginForm
         loginData={galleryLoginData}
         setEmail={setEmail}
@@ -36,11 +36,11 @@ export default function Gallery({ biometricProps }: GalleryProps) {
         isLoading={isLoading}
         handleSubmit={handleSubmit}
         biometricProps={biometricProps}
-        emailLabel="Gallery Email address"
-        emailPlaceholder="Enter your gallery email address"
+        emailLabel="Email address"
+        emailPlaceholder="Enter your email address"
         loginButtonLabel="Sign In Gallery"
         forgotPasswordType="gallery"
       />
-    </WithModal>
+    </>
   );
 }

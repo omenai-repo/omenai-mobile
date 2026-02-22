@@ -34,7 +34,7 @@ export function WithdrawalAmountInput({
       <Text style={tw`mb-2 font-medium`}>Enter Amount</Text>
 
       {/* You Send */}
-      <View style={tw`bg-white border border-[#00000020] rounded-xl p-4`}>
+      <View style={tw`bg-white border border-[#00000020] rounded-sm p-4`}>
         <Text style={tw`text-sm mb-1 text-gray-600`}>You Send</Text>
         <TextInput
           ref={amountInputRef}
@@ -59,7 +59,7 @@ export function WithdrawalAmountInput({
       </View>
 
       {/* You Get */}
-      <View style={tw`bg-white border border-[#00000020] rounded-xl p-4 mt-4`}>
+      <View style={tw`bg-white border border-[#00000020] rounded-sm p-4 mt-4`}>
         <Text style={tw`text-sm mb-1 text-gray-600`}>You Get</Text>
         <Text style={tw`text-base font-bold text-[#1A1A1A]`}>
           {convertedAmount

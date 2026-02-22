@@ -1,4 +1,4 @@
-import { View, TextInput, Modal, ScrollView } from "react-native";
+import { View, TextInput, Modal, ScrollView, Text } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import Input from "#components/inputs/Input";
@@ -13,7 +13,7 @@ import { validateBankAcct } from "#services/wallet/validateBankAct";
 import { useModalStore } from "#store/modal/modalStore";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { fetchBankBranches } from "#services/wallet/fetchBankBranches";
-import WithModal from "#components/modal/WithModal";
+
 import LottieView from "lottie-react-native";
 import loaderAnimation from "../../../assets/other/loader-animation.json";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -67,7 +67,7 @@ const AddPrimaryAcctScreen = () => {
   const [branchSearchText, setBranchSearchText] = useState("");
   const [branchList, setBranchList] = useState<BankOption[]>([]);
   const [filteredBranchList, setFilteredBranchList] = useState<BankOption[]>(
-    []
+    [],
   );
   const [selectedBranch, setSelectedBranch] = useState<BankOption | null>(null);
   const [acctNumber, setAcctNumber] = useState("");
@@ -101,7 +101,7 @@ const AddPrimaryAcctScreen = () => {
             id: bank.id,
           }))
           .sort((a: BankOption, b: BankOption) =>
-            a.label.localeCompare(b.label)
+            a.label.localeCompare(b.label),
           );
 
         setBankList(formattedData);
@@ -127,7 +127,7 @@ const AddPrimaryAcctScreen = () => {
     }
 
     const filtered = bankList.filter((bank) =>
-      bank.label.toLowerCase().includes(text.toLowerCase())
+      bank.label.toLowerCase().includes(text.toLowerCase()),
     );
     setFilteredBankList(filtered);
   };
@@ -150,7 +150,7 @@ const AddPrimaryAcctScreen = () => {
                 id: branch.id,
               }))
               .sort((a: BankOption, b: BankOption) =>
-                a.label.localeCompare(b.label)
+                a.label.localeCompare(b.label),
               );
 
             setBranchList(formatted);
@@ -174,14 +174,14 @@ const AddPrimaryAcctScreen = () => {
     if (text.trim().length < 2) return;
 
     const filtered = branchList.filter((branch) =>
-      branch.label.toLowerCase().includes(text.toLowerCase())
+      branch.label.toLowerCase().includes(text.toLowerCase()),
     );
     setFilteredBranchList(filtered);
   };
 
   const handleBranchSearchDebounced = useCallback(
     debounce(handleBranchSearch, 300),
-    [branchList]
+    [branchList],
   );
 
   const debouncedSearch = useCallback(debounce(handleSearch, 300), [bankList]);
@@ -283,7 +283,7 @@ const AddPrimaryAcctScreen = () => {
   };
 
   return (
-    <WithModal>
+    <>
       <ScrollView
         contentContainerStyle={tw`flex-1`}
         showsVerticalScrollIndicator={false}
@@ -348,7 +348,7 @@ const AddPrimaryAcctScreen = () => {
             />
 
             {supportedCountryCodes.includes(
-              userSession.address.countryCode
+              userSession.address.countryCode,
             ) && (
               <CustomSelectPicker
                 data={filteredBranchList}
@@ -394,14 +394,19 @@ const AddPrimaryAcctScreen = () => {
               disabled={isValidated} // Disable when validated to match web
             />
 
-            <Input
-              label="Account Name"
-              disabled={true}
-              onInputChange={() => {}}
-              placeHolder="Account Name"
-              value={acctName}
-              containerStyle={{ flex: 0, opacity: 0.7 }}
-            />
+            <View>
+              <Input
+                label="Account Name"
+                disabled={true}
+                onInputChange={() => {}}
+                placeHolder="Account Name"
+                value={acctName}
+                containerStyle={{ flex: 0, opacity: 0.7 }}
+              />
+              <Text style={tw`text-[10px] text-gray-500 mt-1 ml-1`}>
+                * Account name is automatically fetched and cannot be edited.
+              </Text>
+            </View>
           </View>
 
           <View style={tw`mt-[50px] mx-[20px]`}>
@@ -444,12 +449,7 @@ const AddPrimaryAcctScreen = () => {
           </View>
         </View>
         <Modal visible={fetchingBanks} transparent animationType="fade">
-          <View
-            style={[
-              tw`flex-1 justify-center items-center`,
-              { backgroundColor: `${colors.black}80` },
-            ]}
-          >
+          <View style={tw`flex-1 justify-center items-center bg-white`}>
             <LottieView
               autoPlay
               ref={animation}
@@ -462,7 +462,7 @@ const AddPrimaryAcctScreen = () => {
           </View>
         </Modal>
       </ScrollView>
-    </WithModal>
+    </>
   );
 };
 

@@ -117,7 +117,7 @@ export default function SavedArtworks() {
           navigation.navigate(screenName.artwork, { title: name, url, art_id })
         }
         activeOpacity={0.9}
-        style={tw`flex-row bg-white rounded-xl overflow-hidden mb-4 border border-gray-100 shadow-sm`}
+        style={tw`flex-row bg-white rounded-sm overflow-hidden mb-4 border border-gray-100 shadow-sm`}
       >
         {/* Image Section */}
         <View style={tw`w-[120px] h-[150px] bg-gray-50`}>
@@ -154,7 +154,7 @@ export default function SavedArtworks() {
 
           <TouchableOpacity
             onPress={handleRemove}
-            style={tw`flex-row items-center self-start bg-red-50 px-3 py-2 rounded-lg gap-2 mt-auto`}
+            style={tw`flex-row items-center self-start bg-red-50 px-3 py-2 rounded-sm gap-2 mt-auto`}
           >
             <AntDesign name="heart" size={14} color={"#ff0000"} />
             <Text

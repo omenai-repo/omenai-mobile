@@ -158,7 +158,7 @@ export default function UploadBlocker({
             style={tw`absolute inset-0 bg-[#2A9EDF] rounded-full opacity-20`}
           />
           <View
-            style={tw`relative w-20 h-20 bg-[#0f172a] border border-[#47748E]/30 rounded-2xl items-center justify-center shadow-2xl`}
+            style={tw`relative w-20 h-20 bg-[#0f172a] border border-[#47748E]/30 rounded-sm items-center justify-center shadow-2xl`}
           >
             <Animated.View
               style={{
@@ -203,7 +203,7 @@ export default function UploadBlocker({
               {/* Hours */}
               <View style={tw`flex-1 items-center`}>
                 <View
-                  style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-lg w-full h-20 items-center justify-center overflow-hidden`}
+                  style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-sm w-full h-20 items-center justify-center overflow-hidden`}
                 >
                   <Text style={tw`text-[32px] font-light text-white`}>
                     {timeLeft.hours}
@@ -222,7 +222,7 @@ export default function UploadBlocker({
               {/* Minutes */}
               <View style={tw`flex-1 items-center`}>
                 <View
-                  style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-lg w-full h-20 items-center justify-center overflow-hidden`}
+                  style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-sm w-full h-20 items-center justify-center overflow-hidden`}
                 >
                   <Text style={tw`text-[32px] font-light text-white`}>
                     {timeLeft.minutes}
@@ -241,7 +241,7 @@ export default function UploadBlocker({
               {/* Seconds */}
               <View style={tw`flex-1 items-center`}>
                 <View
-                  style={tw`relative bg-[#0f172a]/50 border border-[#2A9EDF]/30 rounded-lg w-full h-20 items-center justify-center overflow-hidden shadow-lg`}
+                  style={tw`relative bg-[#0f172a]/50 border border-[#2A9EDF]/30 rounded-sm w-full h-20 items-center justify-center overflow-hidden shadow-lg`}
                 >
                   <Text style={tw`text-[32px] font-medium text-[#2A9EDF]`}>
                     {timeLeft.seconds}

@@ -63,7 +63,7 @@ export default function PackagingSelector({
   return (
     <View style={tw`mb-6`}>
       {/* Header with Type Toggle */}
-      <View style={tw`bg-gray-50 border border-gray-200 rounded-xl p-4 mb-4`}>
+      <View style={tw`bg-gray-50 border border-gray-200 rounded-sm p-4 mb-4`}>
         <View style={tw`flex-row items-center justify-between`}>
           <View style={tw`flex-1`}>
             <Text style={tw`text-sm font-semibold text-gray-900 capitalize`}>
@@ -77,7 +77,7 @@ export default function PackagingSelector({
             onPress={() =>
               onTypeChange(packagingType === "rolled" ? "stretched" : "rolled")
             }
-            style={tw`px-3 py-1.5 rounded-lg border border-indigo-100`}
+            style={tw`px-3 py-1.5 rounded-sm border border-indigo-100`}
           >
             <Text style={tw`text-xs font-medium text-indigo-600`}>
               Switch to {packagingType === "rolled" ? "Stretched" : "Rolled"}
@@ -104,7 +104,7 @@ export default function PackagingSelector({
               onPress={() => isCompatible && handleSelectPreset(preset)}
               disabled={!isCompatible}
               style={[
-                tw`border rounded-xl overflow-hidden`,
+                tw`border rounded-sm overflow-hidden`,
                 { width: "48%" },
                 !isCompatible && tw`opacity-50`,
                 isSelected ? tw`border-gray-900 border-2` : tw`border-gray-200`,
@@ -114,7 +114,7 @@ export default function PackagingSelector({
               {/* Recommended Badge */}
               {isRecommended && isCompatible && (
                 <View
-                  style={tw`absolute top-0 left-0 z-10 bg-emerald-500 px-2 py-1 rounded-br-lg`}
+                  style={tw`absolute top-0 left-0 z-10 bg-emerald-500 px-2 py-1 rounded-br-sm`}
                 >
                   <Text style={tw`text-white text-[10px] font-bold`}>
                     ✓ BEST FIT
@@ -163,7 +163,7 @@ export default function PackagingSelector({
                     {preset.label}
                   </Text>
                   <View
-                    style={tw`bg-gray-100 px-1.5 py-0.5 rounded flex-row items-baseline`}
+                    style={tw`bg-gray-100 px-1.5 py-0.5 rounded-sm flex-row items-baseline`}
                   >
                     <Text style={tw`text-[8px] text-gray-400 mr-1`}>Max</Text>
                     <Text style={tw`text-[10px] font-bold text-gray-600`}>
@@ -188,7 +188,7 @@ export default function PackagingSelector({
       <TouchableOpacity
         onPress={handleCustom}
         style={[
-          tw`mt-3 border-2 border-dashed rounded-xl flex-row items-center p-4`,
+          tw`mt-3 border-2 border-dashed rounded-sm flex-row items-center p-4`,
           isCustom ? tw`border-gray-900 bg-gray-50` : tw`border-gray-300`,
         ]}
         activeOpacity={0.7}

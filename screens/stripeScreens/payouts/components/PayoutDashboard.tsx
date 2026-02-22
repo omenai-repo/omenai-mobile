@@ -7,6 +7,10 @@ import { retrieveBalance } from "#services/stripe/retrieveBalance";
 import { colors } from "#config/colors.config";
 import { fetchTransactions } from "#services/transactions/fetchTransactions";
 import ScrollWrapper from "#components/general/ScrollWrapper";
+import PayoutSummary from "./PayoutSummary";
+import { PurchaseTransactionModelSchemaTypes } from "#types/types";
+import { TransactionSkeletonCard } from "#components/skeleton/TransactionSkeletonCard";
+import SkeletonBox from "#components/skeleton/SkeletonBox";
 
 type TransactionsTableProps = {
   transactions: (PurchaseTransactionModelSchemaTypes & {
@@ -24,7 +28,7 @@ export default function PayoutDashboard({
 }) {
   const { updateModal } = useModalStore();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState();
   const [transactions, setTransactions] = useState<
     (PurchaseTransactionModelSchemaTypes & {
@@ -48,7 +52,6 @@ export default function PayoutDashboard({
       }
 
       const transactions_result = await fetchTransactions();
-      console.log(transactions_result);
       if (transactions_result?.isOk) {
         setTransactions(
           transactions_result.data.map(
@@ -56,13 +59,13 @@ export default function PayoutDashboard({
               transaction: PurchaseTransactionModelSchemaTypes & {
                 createdAt: string;
                 updatedAt: string;
-              }
+              },
             ) => ({
               ...transaction,
               createdAt: String(transaction.createdAt),
               updatedAt: String(transaction.updatedAt),
-            })
-          )
+            }),
+          ),
         );
       } else {
         updateModal({
@@ -80,45 +83,21 @@ export default function PayoutDashboard({
 
   if (isLoading)
     return (
-      <View style={{ gap: 20, opacity: 0.7 }}>
-        <View
-          style={{
-            height: 200,
-            backgroundColor: colors.grey50,
-            borderRadius: 15,
-          }}
-        />
-        <View style={{ gap: 10 }}>
-          <View
-            style={{
-              height: 50,
-              backgroundColor: colors.grey50,
-              borderRadius: 10,
-            }}
-          />
-          <View
-            style={{
-              height: 50,
-              backgroundColor: colors.grey50,
-              borderRadius: 10,
-            }}
-          />
-          <View
-            style={{
-              height: 50,
-              backgroundColor: colors.grey50,
-              borderRadius: 10,
-            }}
-          />
-        </View>
+      <View style={{ gap: 20 }}>
+        <SkeletonBox width="100%" height={200} radius={15} />
+        <TransactionSkeletonCard count={5} />
       </View>
     );
 
   return (
     <View style={{ flex: 1 }}>
-      <BalanceBox account_id={account_id} balance={balance} />
+      <PayoutSummary transactions={transactions} />
+      <View style={{ marginBottom: 20 }}>
+        <BalanceBox account_id={account_id} balance={balance} />
+      </View>
+
       <ScrollWrapper
-        style={{ flex: 1, marginTop: 15 }}
+        style={{ flex: 1, marginTop: 5 }}
         showsVerticalScrollIndicator={false}
       >
         <Transactions transactions={transactions} />

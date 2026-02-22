@@ -12,10 +12,12 @@ export const PinCreationModal = ({
   visible,
   onClose,
   setVisible,
+  walletId,
 }: {
   visible: boolean;
   onClose: () => void;
   setVisible: (visible: boolean) => void;
+  walletId: string;
 }) => {
   const [pin, setPin] = useState<string[]>(["", "", "", ""]);
   const [confirmPin, setConfirmPin] = useState<string[]>(["", "", "", ""]);
@@ -41,7 +43,7 @@ export const PinCreationModal = ({
   const createPinChangeHandler =
     (
       setter: React.Dispatch<React.SetStateAction<string[]>>,
-      refs: React.MutableRefObject<(TextInput | null)[]>
+      refs: React.MutableRefObject<(TextInput | null)[]>,
     ) =>
     (value: string, index: number) => {
       setError(""); // Clear error on any keypress
@@ -62,7 +64,7 @@ export const PinCreationModal = ({
   const handlePinChange = createPinChangeHandler(setPin, pinRefs);
   const handleConfirmPinChange = createPinChangeHandler(
     setConfirmPin,
-    confirmPinRefs
+    confirmPinRefs,
   );
 
   const handleSubmit = async () => {
@@ -86,7 +88,7 @@ export const PinCreationModal = ({
 
     setLoading(true);
     try {
-      const response = await updateWalletPin(pinStr);
+      const response = await updateWalletPin(pinStr, walletId);
       if (response?.isOk) {
         onClose();
         updateModal({
@@ -97,7 +99,8 @@ export const PinCreationModal = ({
       } else {
         setError(response?.message || "Failed to set PIN");
       }
-    } catch {
+    } catch (error) {
+      console.log(error);
       setError("An error occurred");
     } finally {
       setLoading(false);
@@ -116,7 +119,7 @@ export const PinCreationModal = ({
           intensity={30}
           style={tw`absolute top-0 left-0 right-0 bottom-0`}
         />
-        <View style={tw`bg-white rounded-2xl p-6 w-4/5`}>
+        <View style={tw`bg-white rounded-sm p-6 w-4/5`}>
           <Text style={tw`text-xl font-bold mb-4`}>Create Wallet PIN</Text>
 
           <Text style={tw`mb-2`}>Enter new wallet PIN:</Text>
@@ -146,7 +149,7 @@ export const PinCreationModal = ({
           <Pressable
             style={[
               { backgroundColor: colors.black },
-              tw`py-4 rounded-lg`,
+              tw`py-4 rounded-sm`,
               loading ? { opacity: 0.5 } : {},
             ]}
             onPress={handleSubmit}

@@ -1,11 +1,5 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  PixelRatio,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View, PixelRatio } from "react-native";
+import tw from "twrnc";
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -48,16 +42,16 @@ export default function ViewHistoryCard({
         const { width, height } = resizeImageDimensions(
           { width: defaultWidth, height: defaultHeight },
           displayWidth,
-          300 // Optional maxHeight
+          300, // Optional maxHeight
         );
         setImageDimensions({ height, width });
       },
       (error) => {
         console.warn(
           "Failed to get image size for history card:",
-          error?.message || error
+          error?.message || error,
         );
-      }
+      },
     );
 
     return () => {
@@ -67,45 +61,36 @@ export default function ViewHistoryCard({
 
   return (
     <View>
-      <View style={{ flex: 1 }} />
+      <View style={tw`flex-1`} />
       <TouchableOpacity
         activeOpacity={1}
-        style={styles.container}
         onPress={() => {
           navigation.navigate(screenName.artwork, { art_id, url });
         }}
       >
         <Image
           source={{ uri: image_href }}
-          style={{
-            width: imageDimensions.width,
-            height: imageDimensions.height,
-            borderRadius: 10,
-          }}
+          style={[
+            tw`rounded-sm`,
+            {
+              width: imageDimensions.width,
+              height: imageDimensions.height,
+            },
+          ]}
           resizeMode="cover"
         />
-        <View style={styles.mainDetailsContainer}>
+        <View style={tw`mt-2.5 w-[200px]`}>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={{
-              fontSize: 16,
-              color: "#1A1A1A",
-              fontFamily: fontNames.dmSans + "Medium",
-            }}
+            style={tw`text-base font-serif leading-snug text-dark font-medium`}
           >
             {artwork}
           </Text>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={{
-              fontSize: 14,
-              color: "#1A1A1A",
-              opacity: 0.7,
-              marginTop: 2,
-              fontFamily: fontNames.dmSans + "Regular",
-            }}
+            style={tw`text-xs text-fluid-xs text-slate-500 mt-0.5`}
           >
             {artist}
           </Text>
@@ -114,16 +99,3 @@ export default function ViewHistoryCard({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    // width: 270,
-    // padding: 10,
-    // borderRadius: 10,
-    // backgroundColor: "#f0f0f0",
-  },
-  mainDetailsContainer: {
-    marginTop: 10,
-    width: 200,
-  },
-});

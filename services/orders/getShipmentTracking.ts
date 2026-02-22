@@ -14,7 +14,7 @@ export async function getShipmentTracking(order_id: string) {
     return {
       isOk: response.ok,
       message: result.message,
-      data: result,
+      data: result.data,
     };
   } catch (error) {
     return {

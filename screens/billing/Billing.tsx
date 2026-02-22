@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import type { PlanProps, SubscriptionModelSchemaTypes } from "#types/types";
-import WithModal from "#components/modal/WithModal";
+
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import Header from "./components/Header";
 import Plan from "./components/Plan";
@@ -136,34 +136,26 @@ export default function Billing() {
 
   if (checkingOnboarding) {
     return (
-      <WithModal>
+      <>
         <BackHeaderTitle title="Billing" />
         <ScrollWrapper style={styles.container}>
           <PlansSkeleton />
         </ScrollWrapper>
-      </WithModal>
+      </>
     );
   }
 
   // Priority 1: Verification Blocker
   if (!isVerified) {
-    return (
-      <WithModal>
-        <LockScreen name={userSession?.name} />
-      </WithModal>
-    );
+    return <LockScreen name={userSession?.name} />;
   }
 
   if (!isOnboarded) {
-    return (
-      <WithModal>
-        <OnboardingRequiredBlock />
-      </WithModal>
-    );
+    return <OnboardingRequiredBlock />;
   }
 
   return (
-    <WithModal>
+    <>
       <BackHeaderTitle title="Billing" />
       <ScrollWrapper style={styles.container}>
         <Header selectedTab={selectedTab} handleUpdate={setSelectedTab} />
@@ -188,7 +180,7 @@ export default function Billing() {
           />
         )}
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }
 

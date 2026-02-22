@@ -45,9 +45,9 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
               ]}
             />
             <View style={tw`absolute left-[20px] top-[20px]`}>
-              <View style={tw`w-[180px] h-[14px] bg-[#d1d5db] rounded mb-[10px]`} />
-              <View style={tw`w-[140px] h-[12px] bg-[#d1d5db] rounded mb-[6px]`} />
-              <View style={tw`w-[100px] h-[10px] bg-[#d1d5db] rounded`} />
+              <View style={tw`w-[180px] h-[14px] bg-[#d1d5db] rounded-sm mb-[10px]`} />
+              <View style={tw`w-[140px] h-[12px] bg-[#d1d5db] rounded-sm mb-[6px]`} />
+              <View style={tw`w-[100px] h-[10px] bg-[#d1d5db] rounded-sm`} />
             </View>
           </View>
         </View>

@@ -1,10 +1,8 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { Pressable, Text, View } from "react-native";
 import { colors } from "#config/colors.config";
+import React, { useState } from "react";
 import { Feather, Octicons } from "@expo/vector-icons";
-import { SvgXml } from "react-native-svg";
-import { downArrIcon, upArrwIcon } from "#utils/SvgImages";
-import { LinearGradient } from "expo-linear-gradient";
+
 import tw from "twrnc";
 import Animated, { FadeInDown, FadeOut } from "react-native-reanimated";
 
@@ -16,28 +14,40 @@ export default function Coverage() {
   };
 
   return (
-    <View style={styles.container}>
-      <Pressable onPress={handleToggle} style={styles.header}>
-        <Text style={styles.title}>Covered by the Omenai Guarantee</Text>
+    <View style={tw`bg-white rounded-sm px-4 border border-neutral-200`}>
+      <Pressable onPress={handleToggle} style={tw`py-4 flex-row items-center`}>
+        <Text style={tw`text-sm text-neutral-600 flex-1`}>
+          Covered by the Omenai Guarantee
+        </Text>
 
-        <SvgXml xml={!expand ? downArrIcon : upArrwIcon} />
+        <Feather
+          name={expand ? "minus" : "plus"}
+          size={20}
+          style={tw`text-neutral-600`}
+        />
       </Pressable>
-      {!expand && (
+      {expand && (
         <Animated.View
           entering={FadeInDown.duration(600).damping(300)} // Duration in milliseconds
           exiting={FadeOut.duration(500).damping(300)}
-          style={tw`mb-[20px]`}
+          style={tw`pb-[16px]`}
         >
-          <View style={tw`h-[1px] w-full bg-[#00000033]`} />
+          <View style={tw`h-[1px] w-full bg-neutral-200`} />
 
-          <View style={styles.mainContainer}>
-            <View style={styles.detailItem}>
-              <Feather name="lock" size={16} color={"#000"} />
-              <Text style={[styles.detailItemText]}>Secure Checkout</Text>
+          <View style={tw`pt-4 gap-4`}>
+            <View style={tw`flex-row gap-3 items-center`}>
+              <Feather name="lock" size={16} style={tw`text-neutral-500`} />
+              <Text style={tw`text-[13px] text-neutral-500`}>
+                Secure Checkout
+              </Text>
             </View>
-            <View style={styles.detailItem}>
-              <Octicons name="verified" size={16} color={"#000"} />
-              <Text style={[styles.detailItemText]}>
+            <View style={tw`flex-row gap-3 items-center`}>
+              <Octicons
+                name="verified"
+                size={16}
+                style={tw`text-neutral-500`}
+              />
+              <Text style={[tw`text-[13px] text-neutral-500`]}>
                 Authenticity Guarantee
               </Text>
             </View>
@@ -47,39 +57,3 @@ export default function Coverage() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    paddingHorizontal: 25,
-    borderWidth: 1,
-    borderColor: "#00000033",
-  },
-  header: {
-    paddingVertical: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.black,
-    flex: 1,
-  },
-  mainContainer: {
-    paddingTop: 25,
-    paddingBottom: 5,
-    gap: 25,
-  },
-  detailItem: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-  },
-  detailItemText: {
-    color: "#000",
-    fontSize: 14,
-    lineHeight: 20,
-  },
-});

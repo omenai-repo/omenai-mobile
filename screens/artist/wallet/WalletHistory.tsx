@@ -7,11 +7,11 @@ import {
 } from "react-native";
 import React, { useMemo, useState } from "react";
 import tw from "twrnc";
+import { TransactionSkeletonCard } from "#components/skeleton/TransactionSkeletonCard";
 import YearDropdown from "../orders/YearDropdown";
 import { WalletContainer } from "./WalletScreen";
 import { fetchArtistTransactions } from "#services/wallet/fetchArtistTransactions";
 import Loader from "#components/general/Loader";
-import ListSkeleton from "#components/skeleton/ListSkeleton";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackScreenButton from "#components/buttons/BackScreenButton";
@@ -84,50 +84,60 @@ const WalletHistory = ({ navigation }: any) => {
         <Text style={tw`text-[16px] font-medium text-[#1A1A1A]`}>
           Transaction History
         </Text>
-        <YearDropdown
-          selectedYear={selectedYear}
-          setSelectedYear={setSelectedYear}
-          style={tw`mb-0`}
-        />
+        <View style={tw`w-[120px]`}>
+          <YearDropdown
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+            style={tw`mb-0`}
+          />
+        </View>
       </View>
 
       {/* List */}
       {transactions.length > 0 && (
-        <FlatList
-          data={transactions}
-          keyExtractor={(item, index) =>
-            `${item.trans_id ?? item.id ?? "txn"}-${index}`
-          }
-          renderItem={({ item }) => (
-            <WalletContainer
-              status={item.trans_status}
-              amount={item.trans_amount}
-              dateTime={item.createdAt}
-              onPress={() =>
-                navigation.navigate("TransactionDetailsScreen", {
-                  transaction: item,
-                })
-              }
-            />
-          )}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={tw`gap-[8px] pb-[100px]`}
-          onEndReached={() => {
-            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-          }}
-          onEndReachedThreshold={0.6}
-          ListFooterComponent={
-            isFetchingNextPage ? <Loader size={200} height={100} /> : null
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={isFetching && !isFetchingNextPage}
-              onRefresh={() => refetch()}
-              tintColor="#000"
-              colors={["#000"]}
-            />
-          }
-        />
+        <View
+          style={[
+            tw`mx-5 bg-white rounded-md border border-gray-200 overflow-hidden flex-1`,
+            { marginBottom: insets.bottom + 24 },
+          ]}
+        >
+          <FlatList
+            data={transactions}
+            keyExtractor={(item, index) =>
+              `${item.trans_id ?? item.id ?? "txn"}-${index}`
+            }
+            renderItem={({ item, index }) => (
+              <WalletContainer
+                status={item.trans_status}
+                amount={item.trans_amount}
+                dateTime={item.createdAt}
+                isLast={false}
+                onPress={() =>
+                  navigation.navigate("TransactionDetailsScreen", {
+                    transaction: item,
+                  })
+                }
+              />
+            )}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={tw`gap-2.5`}
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+            }}
+            onEndReachedThreshold={0.6}
+            ListFooterComponent={
+              isFetchingNextPage ? <Loader size={200} height={100} /> : null
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={isFetching && !isFetchingNextPage}
+                onRefresh={() => refetch()}
+                tintColor="#000"
+                colors={["#000"]}
+              />
+            }
+          />
+        </View>
       )}
 
       {/* Empty state */}
@@ -145,7 +155,10 @@ const WalletHistory = ({ navigation }: any) => {
 
       {/* Initial loader */}
       {isLoading && transactions.length === 0 && (
-        <ListSkeleton count={6} itemHeight={60} showImage={false} />
+        <TransactionSkeletonCard
+          count={7}
+          style={[tw`mx-5`, { marginBottom: insets.bottom + 24 }]}
+        />
       )}
     </View>
   );

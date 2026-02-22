@@ -7,7 +7,7 @@ import tw from "twrnc";
 
 import { useAppStore } from "#store/app/appStore";
 import { screenName } from "#constants/screenNames.constants";
-import WithModal from "#components/modal/WithModal";
+
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 
@@ -99,7 +99,7 @@ export default function Profile() {
   );
 
   return (
-    <WithModal>
+    <>
       <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         style={[tw`flex-1 bg-white px-5`, { paddingTop: insets.top + 16 }]}
@@ -107,6 +107,6 @@ export default function Profile() {
       >
         <ProfileLayout menuItems={menuItems} headerComponent={Header} />
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }

@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
 import { getNumberOfColumns } from "#utils/utils_screen";
 import tw from "twrnc";
+import { CatalogCardTypes } from "#types/types";
 
 export default function Collections() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -33,7 +34,7 @@ export default function Collections() {
 
   return (
     <View style={tw`flex-1 bg-white`}>
-      <BackHeaderTitle title="Art collections" />
+      <BackHeaderTitle title="Browse By Medium" />
       <FlatList
         data={mediums}
         numColumns={getNumberOfColumns()}

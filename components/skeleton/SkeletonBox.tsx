@@ -1,9 +1,10 @@
 import React from "react";
 import { Skeleton } from "moti/skeleton";
+import { DimensionValue } from "react-native";
 
 type SkeletonBoxProps = {
-  width: number;
-  height: number;
+  width: DimensionValue;
+  height: DimensionValue;
   radius?: number;
   colorMode?: "light" | "dark";
 };

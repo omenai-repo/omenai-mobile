@@ -15,7 +15,7 @@ export const Pill = ({ label, value, onTap, selected }: PillProps) => {
     <Pressable onPress={() => onTap(value)}>
       <View
         style={[
-          tw`px-[15px] py-[10px] rounded-lg bg-[#f1f1f1]`,
+          tw`px-[15px] py-[10px] rounded-sm bg-[#f1f1f1]`,
           selected && { backgroundColor: colors.primary_black },
         ]}
       >

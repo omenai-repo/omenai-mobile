@@ -32,6 +32,7 @@ export default function SearchInput() {
         onChangeText={setSearchQuery}
         onSubmitEditing={handleSearch}
         returnKeyType="search"
+        testID="search-input"
       />
       <TouchableOpacity
         style={styles.searchButton}

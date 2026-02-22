@@ -48,7 +48,7 @@ export default function PremiumStateCard({
           {/* Main Card */}
           <View
             style={[
-              tw`w-full rounded-3xl overflow-hidden`,
+              tw`w-full rounded-sm overflow-hidden`,
               {
                 backgroundColor: colors.primary_black,
                 shadowColor: "#000",

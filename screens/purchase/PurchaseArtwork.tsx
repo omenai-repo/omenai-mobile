@@ -18,7 +18,7 @@ import ShippingDetails from "./components/ShippingDetails";
 import { fetchsingleArtworkOnPurchase } from "#services/artworks/fetchSingleArtworkOnPurchase";
 import OrderSkeleton from "#components/skeleton/OrderSkeleton";
 import PriceQuoteSent from "./components/PriceQuoteSent";
-import WithModal from "#components/modal/WithModal";
+
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
@@ -60,7 +60,7 @@ export default function PurchaseArtwork() {
         // Smooth, non-blocking UI update (React 18)
         startTransition(() => {
           setSelectedSectionIndex(
-            selectedSectionIndex > 1 ? selectedSectionIndex - 1 : 1
+            selectedSectionIndex > 1 ? selectedSectionIndex - 1 : 1,
           );
         });
         return;
@@ -95,11 +95,11 @@ export default function PurchaseArtwork() {
       setSelectedSectionIndex,
       queryClient,
       userId,
-    ]
+    ],
   );
 
   return (
-    <WithModal>
+    <>
       <View style={{ flex: 1, backgroundColor: colors.white }}>
         <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
           {selectedSectionIndex !== 3 && (
@@ -151,7 +151,7 @@ export default function PurchaseArtwork() {
           </ScrollWrapper>
         </KeyboardAvoidingView>
       </View>
-    </WithModal>
+    </>
   );
 }
 

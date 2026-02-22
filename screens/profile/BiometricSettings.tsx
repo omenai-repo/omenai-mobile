@@ -11,7 +11,7 @@ import {
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
-import WithModal from "#components/modal/WithModal";
+
 import { useAppStore } from "#store/app/appStore";
 import { useBiometrics, UserType } from "#hooks/useBiometrics";
 import PasswordInput from "#components/inputs/PasswordInput";
@@ -123,7 +123,7 @@ export default function BiometricSettings() {
 
   if (!isBiometricSupported) {
     return (
-      <WithModal>
+      <>
         <View style={[tw`flex-1 bg-white`]}>
           <BackHeaderTitle title="Biometric Login" />
           <View style={tw`flex-1 items-center justify-center px-5`}>
@@ -133,12 +133,12 @@ export default function BiometricSettings() {
             </Text>
           </View>
         </View>
-      </WithModal>
+      </>
     );
   }
 
   return (
-    <WithModal>
+    <>
       <View style={[tw`flex-1 bg-white`]}>
         <BackHeaderTitle title="Biometric Login" />
 
@@ -211,6 +211,6 @@ export default function BiometricSettings() {
           </View>
         </Modal>
       </View>
-    </WithModal>
+    </>
   );
 }

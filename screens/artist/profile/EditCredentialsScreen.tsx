@@ -260,7 +260,7 @@ export default function EditCredentialsScreen() {
             style={tw.style(
               (editingQuestionKey === "social" ||
                 editingQuestionKey === "cv") &&
-                `bg-white p-5 rounded-lg w-[90%]`,
+                `bg-white p-5 rounded-sm w-[90%]`,
             )}
           >
             {renderModalContent()}

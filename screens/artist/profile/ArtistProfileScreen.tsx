@@ -63,7 +63,7 @@ export default function ArtistProfileScreen() {
   useFocusEffect(
     useCallback(() => {
       handleFetchUserSession();
-    }, [handleFetchUserSession])
+    }, [handleFetchUserSession]),
   );
 
   const checkEditEligibility = async () => {
@@ -85,7 +85,7 @@ export default function ArtistProfileScreen() {
         setIsLoading(false);
         setIsEligible(true);
         setEligibilityResponse(
-          response?.body?.message ?? "You are not eligible at this time."
+          response?.body?.message ?? "You are not eligible at this time.",
         );
       }
     } catch (error: any) {
@@ -115,7 +115,7 @@ export default function ArtistProfileScreen() {
       },
       ...commonMenuItems,
     ],
-    [navigation, commonMenuItems]
+    [navigation, commonMenuItems],
   );
 
   const Header = (
@@ -160,27 +160,29 @@ export default function ArtistProfileScreen() {
   );
 
   return (
-    <WithGalleryModal>
-      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-      {!isLoading ? (
-        !isEligible ? (
-          <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-            <ProfileLayout menuItems={menuItems} headerComponent={Header} />
-          </ScrollWrapper>
+    <>
+      <WithGalleryModal>
+        <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+        {!isLoading ? (
+          !isEligible ? (
+            <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
+              <ProfileLayout menuItems={menuItems} headerComponent={Header} />
+            </ScrollWrapper>
+          ) : (
+            <EligibityResponseScreen
+              label={
+                eligibilityResponse ||
+                `You’re currently not eligible to update your credentials. Please try again in:`
+              }
+              daysLeft={eligibilityData?.body?.eligibility?.daysLeft}
+              onPress={() => setIsEligible(false)}
+            />
+          )
         ) : (
-          <EligibityResponseScreen
-            label={
-              eligibilityResponse ||
-              `You’re currently not eligible to update your credentials. Please try again in:`
-            }
-            daysLeft={eligibilityData?.body?.eligibility?.daysLeft}
-            onPress={() => setIsEligible(false)}
-          />
-        )
-      ) : (
-        <LoadingContainer label="" />
-      )}
-    </WithGalleryModal>
+          <LoadingContainer label="" />
+        )}
+      </WithGalleryModal>
+    </>
   );
 }
 

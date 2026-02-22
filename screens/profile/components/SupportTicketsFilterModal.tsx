@@ -34,7 +34,7 @@ function FilterSection({
             key={option.value}
             onPress={() => onSelect(option.value)}
             style={[
-              tw`px-4 py-2.5 rounded-lg border`,
+              tw`px-4 py-2.5 rounded-sm border`,
               selectedValue === option.value
                 ? { backgroundColor: colors.black, borderColor: colors.black }
                 : tw`bg-white border-gray-200`,

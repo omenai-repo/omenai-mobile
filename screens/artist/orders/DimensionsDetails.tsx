@@ -16,7 +16,7 @@ import { updateShippingQuote } from "#services/orders/updateShippingQuote";
 import { useQueryClient } from "@tanstack/react-query";
 import { useModalStore } from "#store/modal/modalStore";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import WithModal from "#components/modal/WithModal";
+
 import { validateOrderMeasurement } from "#lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
 import { useAppStore } from "#store/app/appStore";
 import { format } from "date-fns";
@@ -173,10 +173,11 @@ const DimensionsDetails = () => {
           },
           packaging_type: packagingType,
           exhibition_status:
-            userType === "gallery"
+            userType === "gallery" && isOnExhibition
               ? {
-                  is_on_exhibition: isOnExhibition,
+                  is_on_exhibition: true,
                   exhibition_end_date: expoEndDate || "",
+                  status: "scheduled",
                 }
               : null,
           hold_status: null,
@@ -238,7 +239,7 @@ const DimensionsDetails = () => {
   };
 
   return (
-    <WithModal>
+    <>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <BackHeaderTitle title="Packaging Dimensions" />
 
@@ -257,7 +258,7 @@ const DimensionsDetails = () => {
               {userType === "artist" &&
                 (exclusivityType === "non-exclusive" || !exclusivityType) && (
                   <View
-                    style={tw`mb-5 flex-row bg-amber-50 border border-amber-100 rounded-lg p-3`}
+                    style={tw`mb-5 flex-row bg-amber-50 border border-amber-100 rounded-sm p-3`}
                   >
                     <Ionicons
                       name="warning"
@@ -323,7 +324,7 @@ const DimensionsDetails = () => {
               {/* Selected Dimensions Summary */}
               {usePreset && dimensions.length && (
                 <View
-                  style={tw`bg-white border border-gray-200 rounded-xl p-4 mt-2`}
+                  style={tw`bg-white border border-gray-200 rounded-sm p-4 mt-2`}
                 >
                   <Text
                     style={tw`text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4`}
@@ -390,7 +391,7 @@ const DimensionsDetails = () => {
                 {isOnExhibition && (
                   <View style={tw`mt-4`}>
                     <View
-                      style={tw`mb-3 flex-row bg-blue-50 border border-blue-100 rounded-lg p-3`}
+                      style={tw`mb-3 flex-row bg-blue-50 border border-blue-100 rounded-sm p-3`}
                     >
                       <Ionicons
                         name="information-circle"
@@ -415,7 +416,7 @@ const DimensionsDetails = () => {
                     </Text>
                     <Pressable
                       onPress={showDatePicker}
-                      style={tw`bg-white border border-gray-200 rounded-lg px-4 py-3`}
+                      style={tw`bg-white border border-gray-200 rounded-sm px-4 py-3`}
                     >
                       <Text style={tw`text-gray-900`}>
                         {expoEndDate
@@ -469,7 +470,7 @@ const DimensionsDetails = () => {
               ) : (
                 <Pressable
                   onPress={() => setIsChecked(!isChecked)}
-                  style={tw`bg-white border border-gray-200 rounded-lg p-4 flex-row gap-3 shadow-sm`}
+                  style={tw`bg-white border border-gray-200 rounded-sm p-4 flex-row gap-3 shadow-sm`}
                 >
                   <View style={tw`mt-0.5`}>
                     <Ionicons
@@ -503,7 +504,7 @@ const DimensionsDetails = () => {
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
-    </WithModal>
+    </>
   );
 };
 

@@ -139,7 +139,7 @@ export default function SupportWidget() {
       >
         <View
           style={[
-            tw`bg-white rounded-t-3xl overflow-hidden`,
+            tw`bg-white rounded-t-sm overflow-hidden`,
             { height: SCREEN_HEIGHT * 0.85, paddingBottom: insets.bottom },
           ]}
         >

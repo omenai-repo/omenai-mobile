@@ -2,7 +2,7 @@ import { Text, View, ScrollView, RefreshControl } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
-import WithModal from "#components/modal/WithModal";
+
 import TabSwitcher from "#components/orders/TabSwitcher";
 import OrderslistingLoader from "#screens/galleryOrders/components/OrderslistingLoader";
 import EmptyOrdersListing from "#screens/galleryOrders/components/EmptyOrdersListing";
@@ -148,7 +148,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
   };
 
   return (
-    <WithModal>
+    <>
       <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
         <TabSwitcher
           tabs={tabs}
@@ -159,7 +159,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
         />
 
         <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
+          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-md p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
         >
           {renderContent()}
         </View>
@@ -172,6 +172,6 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
           refresh={() => queryClient.invalidateQueries({ queryKey })}
         />
       </View>
-    </WithModal>
+    </>
   );
 };

@@ -44,7 +44,7 @@ export default function PackagingTypeSelector({
       <TouchableOpacity
         onPress={handleRolledClick}
         style={[
-          tw`p-4 rounded-xl border-2 mb-4`,
+          tw`p-4 rounded-sm border-2 mb-4`,
           value === "rolled"
             ? tw`border-gray-900 bg-gray-50`
             : tw`border-gray-200`,
@@ -90,7 +90,7 @@ export default function PackagingTypeSelector({
         <Animated.View
           entering={FadeIn.duration(200)}
           exiting={FadeOut.duration(150)}
-          style={tw`border border-red-200 rounded-xl overflow-hidden`}
+          style={tw`border border-red-200 rounded-sm overflow-hidden`}
         >
           {/* Warning Header */}
           <View style={tw`bg-red-50 p-4`}>

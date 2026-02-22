@@ -5,7 +5,8 @@ export const getImageFileView = (
   fileId: string,
   width: number,
   height?: number,
-  format?: string
+  format?: string,
+  quality: number = 90,
 ) => {
   const fileData = storage.getFilePreview({
     bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID!,
@@ -14,7 +15,7 @@ export const getImageFileView = (
     width: width, // width, will be resized using this value.
     height: height ?? 0, // height, ignored when 0
     gravity: ImageGravity.Center, // crop center
-    quality: 90, // slight compression
+    quality: quality, // configurable compression
     borderWidth: 0, // border width
     borderColor: "FFFFFF", // border color
     borderRadius: 0, // border radius

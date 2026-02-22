@@ -7,7 +7,6 @@ import { questions } from "#screens/artistOnboarding/ArtistOnboarding";
 import ViewItem from "./ViewItem";
 import { getDocFileView } from "#lib/storage/getDocFileView";
 import CredentialsSkeleton from "#components/skeleton/CredentialsSkeleton";
-import WithModal from "#components/modal/WithModal";
 
 const { width } = Dimensions.get("window");
 
@@ -51,7 +50,7 @@ export default function ViewCredentialsScreen() {
   const documentation = credentials.documentation;
 
   return (
-    <WithModal>
+    <>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <BackHeaderTitle title="View Credentials" />
         <ScrollView
@@ -96,6 +95,6 @@ export default function ViewCredentialsScreen() {
           </View>
         </ScrollView>
       </View>
-    </WithModal>
+    </>
   );
 }

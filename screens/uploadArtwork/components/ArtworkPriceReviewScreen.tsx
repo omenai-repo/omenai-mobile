@@ -153,7 +153,7 @@ export default function ArtworkPriceReviewScreen({
           <Pressable
             onPress={() => refetch()}
             style={[
-              tw`px-4 py-2 rounded-xl`,
+              tw`px-4 py-2 rounded-sm`,
               { backgroundColor: colors.black },
             ]}
           >
@@ -163,7 +163,7 @@ export default function ArtworkPriceReviewScreen({
             onPress={() => {
               navigation.goBack();
             }}
-            style={tw`px-4 py-2 bg-white border border-gray-300 rounded-xl`}
+            style={tw`px-4 py-2 bg-white border border-gray-300 rounded-sm`}
           >
             <Text style={tw`text-black`}>Back</Text>
           </Pressable>
@@ -176,7 +176,7 @@ export default function ArtworkPriceReviewScreen({
     <View style={tw`flex-1 bg-[#F7F7F7] px-6 py-8 mb-[40px]`}>
       <Text style={tw`text-xl font-bold mb-4`}>Proposed Artwork Price</Text>
 
-      <View style={tw`bg-white rounded-xl p-5 border border-[#00000020] mb-6`}>
+      <View style={tw`bg-white rounded-sm p-5 border border-[#00000020] mb-6`}>
         <Text style={tw`text-sm text-gray-600 mb-1`}>
           Omenai will list your art piece for:
         </Text>
@@ -315,7 +315,7 @@ export default function ArtworkPriceReviewScreen({
             setActiveIndex(1);
             clearData();
           }}
-          style={tw`flex-1 py-3 border border-gray-400 rounded-xl justify-center items-center`}
+          style={tw`flex-1 py-3 border border-gray-400 rounded-sm justify-center items-center`}
         >
           <Text style={tw`text-gray-700 font-semibold`}>Cancel</Text>
         </Pressable>
@@ -323,7 +323,7 @@ export default function ArtworkPriceReviewScreen({
         <Pressable
           onPress={handleConfirmPress}
           style={[
-            tw`flex-1 py-3 rounded-xl justify-center items-center`,
+            tw`flex-1 py-3 rounded-sm justify-center items-center`,
             canProceed
               ? { backgroundColor: colors.black }
               : { backgroundColor: "#22222260" },

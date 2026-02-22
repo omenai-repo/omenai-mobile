@@ -50,7 +50,10 @@ const MiniArtworkCard = memo(
     const fetchWidth = Math.round(displayWidth * dpr);
     const image_href = getImageFileView(url, fetchWidth);
 
-    const expiryDate = useMemo(() => (countdown ? new Date(countdown) : null), [countdown]);
+    const expiryDate = useMemo(
+      () => (countdown ? new Date(countdown) : null),
+      [countdown],
+    );
 
     const showCountdown = !galleryView && expiryDate && availability;
 
@@ -59,6 +62,7 @@ const MiniArtworkCard = memo(
         activeOpacity={1}
         style={tw`flex flex-col pb-[20px]`}
         onPress={() => navigation.push(screenName.artwork, { art_id, url })}
+        testID="artwork-card"
       >
         <ArtworkImage
           imageWidth={displayWidth}
@@ -79,10 +83,12 @@ const MiniArtworkCard = memo(
 
         {!galleryView && <ArtworkStatus availability={availability} />}
 
-        {showCountdown && <ExclusivityCountdown expiresAt={expiryDate} art_id={art_id} />}
+        {showCountdown && (
+          <ExclusivityCountdown expiresAt={expiryDate} art_id={art_id} />
+        )}
       </TouchableOpacity>
     );
-  }
+  },
 );
 
 MiniArtworkCard.displayName = "MiniArtworkCard";

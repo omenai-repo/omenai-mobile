@@ -11,12 +11,8 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { Feather } from "@expo/vector-icons";
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "#constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "#utils/apiRequest";
 import { TransactionStatusIcon } from "./TransactionStatusIcon";
 
 interface VerifyTransactionModalProps {
@@ -97,15 +93,10 @@ export default function VerifyTransactionModal(
     const run = async () => {
       try {
         if (!transactionId) throw new Error("Missing transaction id");
-        const res = await fetch(
+        const res = await apiRequest(
           `${apiUrl}/api/transactions/verify_FLW_transaction`,
           {
             method: "POST",
-            headers: {
-              Origin: originHeader,
-              "User-Agent": userAgent,
-              Authorization: authorization,
-            },
             body: JSON.stringify({ transaction_id: transactionId }),
           },
         );
@@ -149,7 +140,7 @@ export default function VerifyTransactionModal(
       <View style={tw`flex-1 bg-[#00000066] justify-center items-center px-5`}>
         <Animated.View
           style={[
-            tw`w-full max-w-[360px] rounded-3xl p-6`,
+            tw`w-full max-w-[360px] rounded-sm p-6`,
             {
               backgroundColor: "#FFFFFFE6",
               transform: [{ scale }],
@@ -221,7 +212,7 @@ export default function VerifyTransactionModal(
               <View style={tw`w-full mt-6`}>
                 <TouchableOpacity
                   onPress={onGoToDashboard}
-                  style={tw`h-12 rounded-2xl bg-[#1a1a1a] items-center justify-center flex-row`}
+                  style={tw`h-12 rounded-sm bg-[#1a1a1a] items-center justify-center flex-row`}
                 >
                   <Feather name="eye" size={18} color="#fff" style={tw`mr-2`} />
                   <Text style={tw`text-white font-medium`}>View my orders</Text>
@@ -229,7 +220,7 @@ export default function VerifyTransactionModal(
 
                 <TouchableOpacity
                   onPress={onGoHome}
-                  style={tw`h-12 rounded-2xl bg-white items-center justify-center flex-row mt-3 border border-gray-200`}
+                  style={tw`h-12 rounded-sm bg-white items-center justify-center flex-row mt-3 border border-gray-200`}
                 >
                   <Feather
                     name="arrow-left"

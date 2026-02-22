@@ -46,7 +46,7 @@ export default function GalleryProfile() {
           setUserData((prev) =>
             prev.name === parsed.name && prev.email === parsed.email
               ? prev
-              : { name: parsed.name, email: parsed.email }
+              : { name: parsed.name, email: parsed.email },
           );
         } catch {
           // silently ignore; UI still shows store values
@@ -57,7 +57,7 @@ export default function GalleryProfile() {
       return () => {
         active = false;
       };
-    }, [])
+    }, []),
   );
 
   const menuItems = useProfileMenuOptions(navigation, "gallery");
@@ -96,12 +96,14 @@ export default function GalleryProfile() {
   );
 
   return (
-    <WithGalleryModal>
-      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-      <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-        <ProfileLayout menuItems={menuItems} headerComponent={Header} />
-      </ScrollWrapper>
-    </WithGalleryModal>
+    <>
+      <WithGalleryModal>
+        <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+        <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
+          <ProfileLayout menuItems={menuItems} headerComponent={Header} />
+        </ScrollWrapper>
+      </WithGalleryModal>
+    </>
   );
 }
 

@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import InActiveSubscription from "./features/InActiveSubscription";
 import { useAppStore } from "#store/app/appStore";
 import ActiveSubscriptions from "./features/ActiveSubscriptions";
-import WithModal from "#components/modal/WithModal";
+
 import { useModalStore } from "#store/modal/modalStore";
 import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
 import ScrollWrapper from "#components/general/ScrollWrapper";
@@ -168,7 +168,7 @@ export default function Subscriptions() {
   };
 
   return (
-    <WithModal>
+    <>
       <View
         style={{
           paddingTop: isSubscriptionBillingEnabled ? 0 : insets.top + 16,
@@ -186,7 +186,7 @@ export default function Subscriptions() {
 
         {renderContent()}
       </View>
-    </WithModal>
+    </>
   );
 }
 

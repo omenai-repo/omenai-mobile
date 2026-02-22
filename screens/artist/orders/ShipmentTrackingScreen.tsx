@@ -6,32 +6,21 @@ import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { useRoute } from "@react-navigation/native";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import TrackingDowntimeBlocker from "#components/blockers/tracking/TrackingDowntimeBlocker";
-import WithModal from "#components/modal/WithModal";
+
 import { OrderShippingDetailsTypes, TrackingEvent } from "#types/types";
 import { SkeletonRow } from "./components/tracking/SkeletonRow";
 import TrackingSearchBar from "./components/tracking/TrackingSearchBar";
-import TrackingResult from "./components/tracking/TrackingResult";
+import TrackingResult, {
+  TrackingData,
+} from "./components/tracking/TrackingResult";
 import TrackingNoResult from "./components/tracking/TrackingNoResult";
 import TrackingInitialState from "./components/tracking/TrackingInitialState";
 
-interface TrackingData {
-  artwork_data: {
-    title: string;
-    url: string;
-  };
-  tracking_number: string;
-  events: TrackingEvent[];
-  order_date: string;
-  shipping_details: OrderShippingDetailsTypes & {
-    shipment_information: OrderShippingDetailsTypes["shipment_information"] & {
-      planned_shipping_date: string;
-    };
-  };
-}
-
 export default function ShipmentTrackingScreen({ navigation }: any) {
-  const { tracking_id } = useRoute<any>().params || {};
-  const [trackingInput, setTrackingInput] = useState(tracking_id || "");
+  const { tracking_id, orderId } = useRoute<any>().params || {};
+  const [trackingInput, setTrackingInput] = useState(
+    orderId || tracking_id || "",
+  );
   const [trackingData, setTrackingData] = useState<TrackingData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchAttempted, setSearchAttempted] = useState(false);
@@ -68,7 +57,7 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
 
   if (isFlagLoading) {
     return (
-      <WithModal>
+      <>
         <View style={tw`flex-1 bg-gray-50`}>
           <BackHeaderTitle title="Track Shipment" />
           <View style={tw`px-4 py-8`}>
@@ -79,13 +68,13 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
             <SkeletonRow widthPct="100%" height={200} borderRadius={12} />
           </View>
         </View>
-      </WithModal>
+      </>
     );
   }
 
   if (isTrackingEnabled) {
     return (
-      <WithModal>
+      <>
         <View style={tw`flex-1 bg-gray-50`}>
           <BackHeaderTitle title="Track Shipment" />
 
@@ -125,12 +114,12 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
             </ScrollView>
           </View>
         </View>
-      </WithModal>
+      </>
     );
   }
 
   return (
-    <WithModal>
+    <>
       <View style={tw`flex-1 bg-gray-50`}>
         <BackHeaderTitle title="Track Shipment" />
         <TrackingDowntimeBlocker
@@ -139,6 +128,6 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
           externalLinkText="Track on DHL Global Website"
         />
       </View>
-    </WithModal>
+    </>
   );
 }

@@ -13,12 +13,12 @@ export default function BillingInfo() {
   return (
     <View style={[tw`w-full`, {}]}>
       <View
-        style={[tw`bg-white rounded-2xl border border-slate-200 overflow-hidden`, cardShadow()]}
+        style={[tw`bg-white rounded-sm border border-slate-200 overflow-hidden`, cardShadow()]}
       >
         {/* Header */}
         <View style={tw`bg-slate-50 px-5 py-4 border-b border-slate-200`}>
           <View style={tw`flex-row items-center`}>
-            <View style={tw.style(`p-2 bg-white rounded-lg mr-3`, cardShadowSm())}>
+            <View style={tw.style(`p-2 bg-white rounded-sm mr-3`, cardShadowSm())}>
               <Ionicons name="person-circle-outline" size={20} color="#475569" />
             </View>
             <Text style={tw`text-slate-900 font-semibold`}>Billing Information</Text>

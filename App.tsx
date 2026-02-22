@@ -34,6 +34,27 @@ import { Analytics } from "#utils/analytics";
 import * as Updates from "expo-updates";
 import { SupportProvider } from "#providers/SupportProvider";
 import SupportWidget from "#components/support/SupportWidget";
+import WithModal from "#components/modal/WithModal";
+import { Text, TextInput } from "react-native";
+
+// Set default font for all Text and TextInput components
+// @ts-ignore
+if (Text.defaultProps) {
+  // @ts-ignore
+  Text.defaultProps.style = { fontFamily: "WorkSans-Light" };
+} else {
+  // @ts-ignore
+  Text.defaultProps = { style: { fontFamily: "WorkSans-Light" } };
+}
+
+// @ts-ignore
+if (TextInput.defaultProps) {
+  // @ts-ignore
+  TextInput.defaultProps.style = { fontFamily: "WorkSans-Light" };
+} else {
+  // @ts-ignore
+  TextInput.defaultProps = { style: { fontFamily: "WorkSans-Light" } };
+}
 
 // Vexo analytic initialization
 Analytics.init(process.env.EXPO_PUBLIC_VEXO_ID as string);
@@ -124,11 +145,18 @@ export default function App() {
   };
 
   const [fontsLoaded] = useFonts({
-    nunitoSans: require("./assets/fonts/nunito-sans.ttf"),
+    "WorkSans-Light": require("./assets/fonts/Work_Sans/static/WorkSans-Light.ttf"),
+    "WorkSans-ExtraLight": require("./assets/fonts/Work_Sans/static/WorkSans-ExtraLight.ttf"),
+    "WorkSans-Regular": require("./assets/fonts/Work_Sans/static/WorkSans-Regular.ttf"),
+    "WorkSans-Medium": require("./assets/fonts/Work_Sans/static/WorkSans-Medium.ttf"),
+    "WorkSans-SemiBold": require("./assets/fonts/Work_Sans/static/WorkSans-SemiBold.ttf"),
+    "WorkSans-Bold": require("./assets/fonts/Work_Sans/static/WorkSans-Bold.ttf"),
+    "PTSerif-Regular": require("./assets/fonts/PT_Serif/PTSerif-Regular.ttf"),
+    "PTSerif-Bold": require("./assets/fonts/PT_Serif/PTSerif-Bold.ttf"),
   });
 
   const onLayoutRootView = useCallback(() => {
-    if (appIsReady) {
+    if (appIsReady && fontsLoaded) {
       // This tells the splash screen to hide immediately! If we call this after
       // `setAppIsReady`, then we may see a blank screen while the app is
       // loading its initial state and rendering its first pixels. So instead,
@@ -138,7 +166,7 @@ export default function App() {
         console.error("Failed to hide splash screen:", err);
       });
     }
-  }, [appIsReady]);
+  }, [appIsReady, fontsLoaded]);
 
   const [queryClient] = useState(
     () =>
@@ -160,7 +188,7 @@ export default function App() {
     return () => unsubscribe.remove();
   }, []);
 
-  if (!appIsReady) {
+  if (!appIsReady || !fontsLoaded) {
     return null;
   }
 
@@ -177,22 +205,24 @@ export default function App() {
                   urlScheme="omenaimobile"
                 >
                   <NavigationContainer ref={navigationRef} linking={linking}>
-                    <View style={{ flex: 1 }}>
-                      {/* AUTH SCREENS */}
-                      {!isLoggedIn && <AuthNavigation />}
-                      {/* App screens */}
-                      {isLoggedIn && userType === "gallery" && (
-                        <GalleryNavigation />
-                      )}
-                      {isLoggedIn && userType === "user" && (
-                        <IndividualNavigation />
-                      )}
-                      {isLoggedIn && userType === "artist" && (
-                        <ArtistNavigation />
-                      )}
+                    <WithModal>
+                      <View style={{ flex: 1 }}>
+                        {/* AUTH SCREENS */}
+                        {!isLoggedIn && <AuthNavigation />}
+                        {/* App screens */}
+                        {isLoggedIn && userType === "gallery" && (
+                          <GalleryNavigation />
+                        )}
+                        {isLoggedIn && userType === "user" && (
+                          <IndividualNavigation />
+                        )}
+                        {isLoggedIn && userType === "artist" && (
+                          <ArtistNavigation />
+                        )}
 
-                      <SupportWidget />
-                    </View>
+                        <SupportWidget />
+                      </View>
+                    </WithModal>
                   </NavigationContainer>
                 </StripeProvider>
               </BottomSheetModalProvider>

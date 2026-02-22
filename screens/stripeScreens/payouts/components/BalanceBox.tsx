@@ -1,15 +1,25 @@
-import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { colors } from '#config/colors.config';
-import LongBlackButton from '#components/buttons/LongBlackButton';
-import { retrieveBalance } from '#services/stripe/retrieveBalance';
-import { useModalStore } from '#store/modal/modalStore';
-import { utils_getCurrencySymbol } from '#utils/utils_getCurrencySymbol';
-import { generateStripeLoginLink } from '#services/stripe/generateStripeLoginLink';
-import { utils_formatPrice } from '#utils/utils_priceFormatter';
-import { AntDesign, Feather } from '@expo/vector-icons';
+import {
+  Linking,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from "react-native";
+import React, { useState } from "react";
+import { colors } from "#config/colors.config";
+import { useModalStore } from "#store/modal/modalStore";
+import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
+import { generateStripeLoginLink } from "#services/stripe/generateStripeLoginLink";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import tw from "twrnc";
 
-export default function BalanceBox({ account_id, balance }: { account_id: string; balance: any }) {
+export default function BalanceBox({
+  account_id,
+  balance,
+}: {
+  account_id: string;
+  balance: any;
+}) {
   const [pendingLoginLink, setPendingLoginLink] = useState(false);
 
   const { updateModal } = useModalStore();
@@ -26,8 +36,8 @@ export default function BalanceBox({ account_id, balance }: { account_id: string
       }
     } else {
       updateModal({
-        message: 'Something went wrong, please try again or contact support',
-        modalType: 'error',
+        message: "Something went wrong, please try again or contact support",
+        modalType: "error",
         showModal: true,
       });
     }
@@ -39,86 +49,42 @@ export default function BalanceBox({ account_id, balance }: { account_id: string
     const currency = utils_getCurrencySymbol(balance.available[0].currency);
 
     return (
-      <View style={styles.container}>
+      <View
+        style={tw`border border-[#333333] bg-[${colors.primary_black}] rounded-[10px] p-2.5 px-[25px] py-[25px]`}
+      >
         <Text
-          style={{
-            textAlign: 'center',
-            fontSize: 14,
-            color: colors.primary_black,
-            marginTop: 10,
-          }}
+          style={tw`text-left text-sm uppercase text-white mt-2.5 opacity-70 tracking-[1px] px-[5px]`}
         >
-          Stripe Pending Balance
+          Payout Balance
         </Text>
         <Text
-          style={{
-            fontSize: 22,
-            fontWeight: 600,
-            textAlign: 'center',
-            marginTop: 10,
-            color: colors.primary_black,
-          }}
+          style={tw`text-[32px] font-semibold text-left mt-2.5 text-white px-[5px]`}
         >
           {utils_formatPrice(balance.pending[0].amount / 100, currency)}
         </Text>
-        <View
-          style={{
-            gap: 10,
-            marginTop: 15,
-            paddingTop: 15,
-            borderTopColor: colors.grey50,
-            borderTopWidth: 1,
-          }}
-        >
-          {balance.pending[0].amount / 100 > 0 && (
-            <View style={styles.disclaimer}>
-              <AntDesign size={16} name="warning" color={'#ff0000'} />
-              <Text style={{ fontSize: 12, color: '#ff0000', flex: 1 }}>
-                The balance is yet to be settled, once settled, you’ll receive payout to your bank
-                account
+        <View style={tw`gap-5 mt-[30px] pt-0`}>
+          <View style={tw`bg-white/10 rounded-sm p-3 flex-row`}>
+            <Text style={tw`text-[13px] text-white/90 flex-1 leading-[18px]`}>
+              Balance on Stripe is automatically transferred to your connected
+              bank account.
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={tw`h-10 bg-white items-center justify-center border border-white rounded-sm flex-row gap-2.5`}
+            onPress={generateLoginLink}
+            disabled={pendingLoginLink}
+          >
+            {pendingLoginLink ? (
+              <ActivityIndicator color={colors.primary_black} size="small" />
+            ) : (
+              <Text style={tw`text-[${colors.primary_black}] font-medium`}>
+                Open Stripe dashboard
               </Text>
-            </View>
-          )}
-          <LongBlackButton
-            value="View Stripe Dashboard"
-            onClick={generateLoginLink}
-            isLoading={pendingLoginLink}
-          />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderColor: colors.grey50,
-    borderRadius: 10,
-    borderWidth: 1,
-    padding: 10,
-  },
-  mainContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-    paddingBottom: 20,
-    borderTopWidth: 1,
-    borderTopColor: colors.grey50,
-  },
-  button: {
-    height: 50,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.grey50,
-    borderRadius: 10,
-  },
-  disclaimer: {
-    backgroundColor: '#FFBF0015',
-    borderRadius: 10,
-    padding: 15,
-    paddingHorizontal: 15,
-    flexDirection: 'row',
-    gap: 10,
-  },
-});

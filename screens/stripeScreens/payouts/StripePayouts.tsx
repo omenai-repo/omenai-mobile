@@ -1,6 +1,6 @@
 import { StyleSheet, View, RefreshControl } from "react-native";
 import React, { useEffect, useState } from "react";
-import WithModal from "#components/modal/WithModal";
+
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { checkIsStripeOnboarded } from "#services/stripe/checkIsStripeOnboarded";
 import FormSkeleton from "#components/skeleton/FormSkeleton";
@@ -74,9 +74,9 @@ export default function StripePayouts({
 
   if (!loading && showScreen)
     return (
-      <WithModal>
+      <>
         <BackHeaderTitle
-          title={isSubmitted ? "Stripe Payout" : "Complete stripe onboarding"}
+          title={isSubmitted ? "Payout" : "Complete stripe onboarding"}
         />
         <ScrollWrapper
           contentContainerStyle={styles.container}
@@ -97,7 +97,7 @@ export default function StripePayouts({
             />
           )}
         </ScrollWrapper>
-      </WithModal>
+      </>
     );
 }
 

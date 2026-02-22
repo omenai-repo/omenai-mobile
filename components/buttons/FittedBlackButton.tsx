@@ -45,12 +45,12 @@ export default function FittedBlackButton({
 
   const defaultTextStyle: TextStyle = {
     color: isDisabled || isLoading ? colors.inputLabel : colors.white,
-    fontSize: 16,
-    fontWeight: "400",
+    fontSize: 14,
+    fontWeight: "300",
   };
 
   const containerStyle = [
-    tw`flex flex-row items-center justify-center rounded-lg gap-[10px] px-5`,
+    tw`flex flex-row items-center justify-center rounded-md gap-[10px] px-5`,
     defaultContainerStyle,
     responsive &&
       ({
@@ -65,18 +65,18 @@ export default function FittedBlackButton({
   if (isDisabled || isLoading) {
     return (
       <View style={containerStyle}>
-        {isDisabled ? (
-          <>
-            <Text style={mergedTextStyle}>{value}</Text>
-            {children}
-          </>
-        ) : (
+        {isLoading ? (
           <LottieView
             autoPlay
             ref={animation}
             style={tw`w-[100px] h-[100px]`}
             source={loaderAnimation}
           />
+        ) : (
+          <>
+            <Text style={mergedTextStyle}>{value}</Text>
+            {children}
+          </>
         )}
       </View>
     );

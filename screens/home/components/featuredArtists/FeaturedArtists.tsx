@@ -1,21 +1,13 @@
 import React from "react";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  PixelRatio,
-} from "react-native";
+import { Text, View, FlatList, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { colors } from "#config/colors.config";
-import { fontNames } from "#constants/fontNames.constants";
+import tw from "twrnc";
 import { getFeaturedArtists } from "#services/overview/fetchFeaturedArtist";
-import { getImageFileView } from "#lib/storage/getImageFileView";
 import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import ArtistCard from "./ArtistCard";
+import SectionHeader from "#components/general/SectionHeader";
 
 type Artist = {
   author_id: string;
@@ -43,67 +35,9 @@ const FeaturedArtists = () => {
     gcTime: 15 * 60_000,
   });
 
-  const ArtistCard = ({
-    image,
-    name,
-    details,
-    totalLikes,
-  }: {
-    image: string;
-    name: string;
-    details: { birthyear: string; country: string };
-    totalLikes?: number;
-  }) => {
-    const dpr = PixelRatio.get();
-    const displayWidth = 300;
-    const fetchWidth = Math.round(displayWidth * dpr);
-    const image_href = getImageFileView(image, fetchWidth);
-    return (
-      <View style={styles.artistCard}>
-        <Image source={{ uri: image_href }} style={styles.artistImage} />
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <View style={styles.artistInfo}>
-            <Text style={styles.artistName}>{name}</Text>
-            <Text style={styles.artistDetails}>
-              {details.country + " b." + details.birthyear}
-            </Text>
-          </View>
-          <View style={{ marginTop: 5 }}>
-            <Text
-              style={{
-                fontSize: 12,
-                color: "#858585",
-                fontFamily: fontNames.dmSans + "Regular",
-              }}
-            >
-              {totalLikes || 0} Likes
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
-  };
-
   return (
-    <View style={{ marginTop: 40 }}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
-          paddingHorizontal: 20,
-        }}
-      >
-        <Text style={{ fontSize: 18, fontWeight: "500", flex: 1 }}>
-          Artists to watch
-        </Text>
-      </View>
+    <View style={tw`mt-6`}>
+      <SectionHeader subtitle="FEATURED ARTISTS" title="Artists to watch" />
 
       {artists.length > 0 ? (
         <FlatList
@@ -111,14 +45,9 @@ const FeaturedArtists = () => {
           keyExtractor={(item) => item.author_id}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingLeft: 20,
-            paddingRight: 20,
-            paddingTop: 20,
-            gap: 20,
-          }}
+          contentContainerStyle={tw`px-5 pt-5 gap-5`}
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <Pressable
               onPress={() =>
                 navigation.navigate("DetailsScreen", {
                   type: "artist",
@@ -134,12 +63,12 @@ const FeaturedArtists = () => {
                 details={item.mostLikedArtwork}
                 totalLikes={item.totalLikes}
               />
-            </TouchableOpacity>
+            </Pressable>
           )}
         />
       ) : (
-        <View style={{ padding: 30 }}>
-          <Text style={{ color: colors.grey, textAlign: "center" }}>
+        <View style={tw`p-[30px]`}>
+          <Text style={tw`text-[#858585] text-center`}>
             No featured artists available
           </Text>
         </View>
@@ -147,23 +76,5 @@ const FeaturedArtists = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  artistCard: { width: 300 },
-  artistImage: {
-    width: "100%",
-    height: 200,
-    borderRadius: 5,
-    backgroundColor: "#eee",
-  },
-  artistInfo: { marginTop: 10 },
-  artistName: { fontSize: 14, fontWeight: "600", color: colors.primary_black },
-  artistDetails: {
-    fontSize: 12,
-    color: "#858585",
-    fontFamily: fontNames.dmSans + "Regular",
-    marginTop: 4,
-  },
-});
 
 export default React.memo(FeaturedArtists);

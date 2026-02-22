@@ -11,6 +11,7 @@ const EmptyArtworks = ({
   writeUp,
   darkTheme,
   icon,
+  fixedHeight = false,
 }: {
   size?: number;
   title?: string;
@@ -18,19 +19,24 @@ const EmptyArtworks = ({
   writeUp?: string;
   darkTheme?: boolean;
   icon?: keyof typeof Ionicons.glyphMap;
+  fixedHeight?: boolean;
 }) => {
   const displayTitle = title || writeUp || "No Data Found";
   const displayDescription = description || "It Feels a little empty here.";
 
   return (
-    <View style={tw`flex-1 justify-center items-center px-5 gap-5`}>
+    <View
+      style={tw`justify-center items-center px-5 gap-5 ${
+        fixedHeight ? "py-10" : "flex-1"
+      }`}
+    >
       <View
         style={tw`w-20 h-20 rounded-full bg-gray-100 justify-center items-center ${
           darkTheme ? "bg-white/10" : ""
         }`}
       >
         <Ionicons
-          name={icon || "card"}
+          name={icon || "images-outline"}
           size={size || 46}
           color={darkTheme ? colors.white60 : "#9CA3AF"}
         />

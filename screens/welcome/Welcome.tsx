@@ -10,7 +10,6 @@ import { onboardingdata } from "#constants/onBoardingData.constants";
 import OnBoardingSection from "./components/OnBoardingSection";
 import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import { utils_determineOnboardingPages } from "#utils/utils_determineOnboardingPages";
-import WithModal from "#components/modal/WithModal";
 
 import tw from "twrnc";
 import { StatusBar } from "expo-status-bar";
@@ -60,7 +59,7 @@ export default function Welcome() {
   }
 
   return (
-    <WithModal>
+    <>
       <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
         <StatusBar style="light" />
 
@@ -74,7 +73,7 @@ export default function Welcome() {
         {/* Bottom content container */}
         <View
           style={[
-            tw`rounded-6 py-8 px-8`,
+            tw`rounded-md py-8 px-8`,
             {
               backgroundColor: colors.primary_black,
               position: "absolute",
@@ -122,6 +121,6 @@ export default function Welcome() {
           </View>
         </View>
       </View>
-    </WithModal>
+    </>
   );
 }

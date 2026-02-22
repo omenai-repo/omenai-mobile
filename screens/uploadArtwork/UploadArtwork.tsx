@@ -1,6 +1,11 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useEffect, useState } from "react";
-import WithModal from "#components/modal/WithModal";
 import HeaderIndicator from "./components/HeaderIndicator";
 import ArtworkDetails from "./components/ArtworkDetails";
 import ArtworkDimensions from "./components/ArtworkDimensions";
@@ -15,8 +20,8 @@ import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import { uploadArtworkData } from "#services/artworks/uploadArtworkData";
 import SuccessScreen from "./components/SuccessScreen";
 import { useModalStore } from "#store/modal/modalStore";
-import Loader from "#components/general/Loader";
-import FormSkeleton from "#components/skeleton/FormSkeleton";
+import UploadingScreen from "./components/UploadingScreen";
+import UploadArtworkSkeleton from "#components/skeleton/UploadArtworkSkeleton";
 import { useAppStore } from "#store/app/appStore";
 import LockScreen from "#screens/galleryArtworksListing/components/LockScreen";
 import ScrollWrapper from "#components/general/ScrollWrapper";
@@ -106,6 +111,7 @@ export default function UploadArtwork() {
           isSubmitted: response?.details_submitted,
           id: acc?.data.connected_account_id,
           isSubActive: sub_check?.data?.status === "active",
+          plan: sub_check?.data?.plan_details?.type || sub_check?.plan,
         };
       } catch (error: any) {
         updateModal({
@@ -226,7 +232,9 @@ export default function UploadArtwork() {
     <ArtworkDetails key="artwork-details" />,
     <ArtworkDimensions key="artwork-dimensions" />,
     <ArtworkShipping key="artwork-shipping" />,
-    ...(userType === "artist" ? [] : [<Pricing key="pricing" />]),
+    ...(userType === "artist"
+      ? []
+      : [<Pricing key="pricing" plan={isConfirmed?.plan} />]),
     <ArtistDetails key="artist-details" />,
     <UploadImage key="upload-image" handleUpload={handleUpload} />,
     ...(userType === "artist"
@@ -264,7 +272,7 @@ export default function UploadArtwork() {
         >
           {!isLoading && !isUploaded && components[activeIndex - 1]}
           {!isLoading && isUploaded && <SuccessScreen />}
-          {isLoading && <Loader />}
+          {isLoading && <UploadingScreen />}
         </ScrollWrapper>
       </KeyboardAvoidingView>
     </View>
@@ -294,8 +302,8 @@ export default function UploadArtwork() {
     !isArtworkPriceCalculationEnabled || !isArtworkUploadEnabled;
 
   return (
-    <WithModal>
-      {isPageLoading && <FormSkeleton rows={6} />}
+    <>
+      {isPageLoading && <UploadArtworkSkeleton />}
       {!isPageLoading && isUploadDisabled && (
         <UploadBlocker
           entity={userType as "artist" | "gallery"}
@@ -314,7 +322,7 @@ export default function UploadArtwork() {
         !isUploadDisabled &&
         shouldRenderUpload &&
         renderUploadContent()}
-    </WithModal>
+    </>
   );
 }
 

@@ -21,9 +21,6 @@ export const framingList: selectItemProp[] = [
 
 export const rarityList: selectItemProp[] = [
   { label: "Unique", value: "Unique" },
-  { label: "Limited edition", value: "Limited edition" },
-  { label: "Open edition", value: "Open edition" },
-  { label: "Unknown edition", value: "Unknown edition" },
 ];
 
 export const certificateOfAuthenticitySelectOptions: selectItemProp[] = [

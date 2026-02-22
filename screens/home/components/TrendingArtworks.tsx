@@ -1,11 +1,6 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import { View, FlatList } from "react-native";
+import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { fetchArtworks } from "#services/artworks/fetchArtworks";
@@ -13,12 +8,10 @@ import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import ViewAllCategoriesButton from "#components/buttons/ViewAllCategoriesButton";
 import EmptyArtworks from "#components/general/EmptyArtworks";
 import ArtworkCard from "#components/artwork/ArtworkCard";
-import { Feather } from "@expo/vector-icons";
-import { colors } from "#config/colors.config";
 import { screenName } from "#constants/screenNames.constants";
-import { fontNames } from "#constants/fontNames.constants";
 import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import SectionHeader from "#components/general/SectionHeader";
 
 export default function TrendingArtworks({ limit }: { limit: number }) {
   const navigation = useNavigation<any>();
@@ -38,35 +31,16 @@ export default function TrendingArtworks({ limit }: { limit: number }) {
   const showMoreButton = data.length >= limit;
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() =>
+    <View style={tw`mt-6`}>
+      <SectionHeader
+        subtitle="Trending Now"
+        title="Trending Artworks"
+        onActionPress={() =>
           navigation.navigate(screenName.artworksMedium, {
             catalog: "trending",
           })
         }
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            paddingHorizontal: 20,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "500",
-              flex: 1,
-              fontFamily: fontNames.dmSans + "Medium",
-            }}
-          >
-            Trending Now
-          </Text>
-          <Feather name="chevron-right" color={colors.grey} size={20} />
-        </View>
-      </TouchableOpacity>
+      />
 
       {isLoading && <ArtworkCardLoader />}
 
@@ -76,8 +50,8 @@ export default function TrendingArtworks({ limit }: { limit: number }) {
           keyExtractor={(_, i) => `trend-${i}`}
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 20 }}
-          contentContainerStyle={{ paddingLeft: 20, gap: 20, paddingRight: 20 }}
+          style={tw`mt-5`}
+          contentContainerStyle={tw`px-5 gap-5`}
           renderItem={({ item, index }) =>
             index + 1 === data.length && showMoreButton ? (
               <ViewAllCategoriesButton
@@ -102,10 +76,12 @@ export default function TrendingArtworks({ limit }: { limit: number }) {
       )}
 
       {!isLoading && data.length < 1 && (
-        <EmptyArtworks size={70} writeUp="No trending artworks at the moment" />
+        <EmptyArtworks
+          size={70}
+          fixedHeight
+          writeUp="No trending artworks at the moment"
+        />
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({ container: { marginTop: 40 } });

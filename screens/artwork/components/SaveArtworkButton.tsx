@@ -6,6 +6,7 @@ import LongBlackButton from "#components/buttons/LongBlackButton";
 import { AntDesign } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
 import { heartIcon } from "#utils/SvgImages";
+import tw from "twrnc";
 
 type SaveArtworkButtonProps = {
   likeIds: string[];
@@ -29,7 +30,12 @@ export default function SaveArtworkButton({
     setSessionId(userId);
   };
 
-  const { likedState, handleLike } = useLikedState(impressions, likeIds, sessionId, art_id);
+  const { likedState, handleLike } = useLikedState(
+    impressions,
+    likeIds,
+    sessionId,
+    art_id,
+  );
 
   const isSaved = sessionId !== undefined && likedState.ids.includes(sessionId);
 
@@ -43,7 +49,7 @@ export default function SaveArtworkButton({
           {isSaved ? (
             <AntDesign name="heart" size={20} color="#ff0000" />
           ) : (
-            <SvgXml xml={heartIcon} width={20} height={20} fill="#ffffff" />
+            <SvgXml xml={heartIcon} width={20} height={20} fill="#1A1A1A" />
           )}
         </View>
       }

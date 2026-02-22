@@ -8,7 +8,7 @@ export const screenName = {
   home: "Home",
   artwork: "Artwork",
   catalogListing: "Catalog-listing",
-  catalog: "Catalog",
+  artworks: "Artworks",
   orders: "Orders",
   ordersListing: "orders-listing",
   purchaseArtwork: "purchase-artwork",

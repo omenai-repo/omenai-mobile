@@ -45,7 +45,7 @@ export default function Input({
         placeholder={placeHolder}
         placeholderTextColor={colors.grey}
         style={[
-          tw`h-11 w-full border px-3 rounded-lg mt-2.5`,
+          tw`py-3 w-full border px-3 rounded-md mt-2.5`,
           {
             borderColor: colors.inputBorder,
             backgroundColor: "#FAFAFA",

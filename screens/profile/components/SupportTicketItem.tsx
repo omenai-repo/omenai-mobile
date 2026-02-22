@@ -39,11 +39,11 @@ export const SupportTicketItem = ({ item }: SupportTicketItemProps) => {
 
   return (
     <View
-      style={tw`bg-white p-4 rounded-xl border border-gray-100 mb-3 shadow-sm`}
+      style={tw`bg-white p-4 rounded-sm border border-gray-100 mb-3 shadow-sm`}
     >
       <View style={tw`flex-row justify-between items-start mb-2`}>
         <View>
-          <View style={tw`bg-gray-100 px-2 py-1 rounded self-start mb-1`}>
+          <View style={tw`bg-gray-100 px-2 py-1 rounded-sm self-start mb-1`}>
             <Text style={tw`text-[10px] uppercase text-gray-500 font-mono`}>
               {item.ticketId}
             </Text>
@@ -86,7 +86,7 @@ export const SupportTicketItem = ({ item }: SupportTicketItemProps) => {
         <View style={tw`flex-row items-center gap-1`}>
           <Text
             style={[
-              tw`text-[10px] font-bold uppercase px-2 py-0.5 rounded border`,
+              tw`text-[10px] font-bold uppercase px-2 py-0.5 rounded-sm border`,
               priorityStyle,
             ]}
           >

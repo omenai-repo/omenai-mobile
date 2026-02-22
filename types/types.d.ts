@@ -88,6 +88,7 @@ type ArtworkDimensions = {
   length: string;
   height: string;
   weight: string;
+  width: string;
 };
 
 type ArtistCategorization =
@@ -222,7 +223,13 @@ export type ArtworkDataType = {
   artwork_description: string;
   pricing: { price: number; shouldShowPrice: "Yes" | "No"; usd_price: number };
   year: string;
-  dimensions: { depth: string; height: string; width: string; weight: string };
+  dimensions: {
+    depth: string;
+    height: string;
+    width: string;
+    weight: string;
+    length: string;
+  };
   carrier: string;
   rarity: string;
   materials: string;
@@ -235,6 +242,7 @@ export type ArtworkDataType = {
   author_id: string;
   impressions?: number;
   like_IDs?: string[];
+  packaging_type?: string;
 };
 
 type ArtworkFlatlistItem = {

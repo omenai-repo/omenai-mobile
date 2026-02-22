@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import tw from "twrnc";
-import WithModal from "#components/modal/WithModal";
+
 import OrderslistingLoader from "#screens/galleryOrders/components/OrderslistingLoader";
 import TabSwitcher from "#components/orders/TabSwitcher";
 import EmptyOrdersListing from "#screens/galleryOrders/components/EmptyOrdersListing";
@@ -141,7 +141,7 @@ export default function Orders() {
   }, [refetch]);
 
   return (
-    <WithModal>
+    <>
       <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
         <TabSwitcher
           tabs={collectorTabs}
@@ -150,7 +150,7 @@ export default function Orders() {
         />
 
         <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
+          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-md p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
         >
           <View
             style={[
@@ -205,6 +205,6 @@ export default function Orders() {
           )}
         </View>
       </View>
-    </WithModal>
+    </>
   );
 }
