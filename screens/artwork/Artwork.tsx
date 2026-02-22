@@ -410,6 +410,7 @@ export default function Artwork() {
                         artist={item.artist}
                         showPrice={item.pricing.shouldShowPrice === "Yes"}
                         price={item.pricing.usd_price}
+                        availiablity={item.availability}
                       />
                     )}
                   />

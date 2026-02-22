@@ -81,6 +81,7 @@ export default function SimilarArtworks({
                 artist={item.artist}
                 showPrice={item.pricing.shouldShowPrice === "Yes"}
                 price={item.pricing.usd_price}
+                availiablity={item.availability}
               />
             )}
             contentContainerStyle={tw`px-5 gap-5`}

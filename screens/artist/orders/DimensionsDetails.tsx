@@ -177,7 +177,7 @@ const DimensionsDetails = () => {
               ? {
                   is_on_exhibition: true,
                   exhibition_end_date: expoEndDate || "",
-                  status: "scheduled",
+                  status: "pending",
                 }
               : null,
           hold_status: null,

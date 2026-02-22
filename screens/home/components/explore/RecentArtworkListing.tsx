@@ -15,6 +15,7 @@ export default function RecentArtworkListing({ data }: { data: any[] }) {
             url={artwork.url}
             price={artwork.pricing.usd_price || 0}
             showPrice={artwork.pricing.shouldShowPrice === "Yes"}
+            availiablity={artwork.availability}
           />
         ))}
       </View>
@@ -28,6 +29,7 @@ export default function RecentArtworkListing({ data }: { data: any[] }) {
             url={artwork.url}
             price={artwork.pricing.usd_price || 0}
             showPrice={artwork.pricing.shouldShowPrice === "Yes"}
+            availiablity={artwork.availability}
           />
         ))}
       </View>
