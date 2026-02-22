@@ -46,7 +46,7 @@ export default function LongWhiteButton({
   };
 
   const containerStyle = [
-    tw`w-full flex items-center justify-center rounded-lg`,
+    tw`w-full flex items-center justify-center rounded-md`,
     defaultContainerStyle,
     style,
   ];

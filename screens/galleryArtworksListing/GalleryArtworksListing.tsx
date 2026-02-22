@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { Text, View } from "react-native";
-import WithModal from "#components/modal/WithModal";
+
 import { Feather } from "@expo/vector-icons";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -62,7 +62,7 @@ export default function GalleryArtworksListing() {
   const data = artworksQuery.data ?? [];
 
   return (
-    <WithModal>
+    <>
       <View
         style={[
           tw`flex-row items-center gap-2.5 px-5`,
@@ -98,6 +98,6 @@ export default function GalleryArtworksListing() {
           <ArtworksListing data={data} onRefresh={onRefresh} />
         </View>
       )}
-    </WithModal>
+    </>
   );
 }

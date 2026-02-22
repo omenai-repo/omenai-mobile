@@ -146,8 +146,8 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
     <View
       style={tw`
         border-t-[1px] border-l-[1px] border-r-[1px] border-[#E7E7E7] p-[20px]
-        ${id === 0 ? "rounded-t-[15px]" : ""}
-        ${lastId ? "border-b-[1px] rounded-b-[15px]" : ""}
+        ${id === 0 ? "rounded-t-md" : ""}
+        ${lastId ? "border-b-[1px] rounded-b-md" : ""}
       `}
     >
       <View style={tw`flex-row items-center`}>
@@ -172,7 +172,7 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         </OrderHeader>
         <Pressable
           onPress={() => setOpen()}
-          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
+          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-md`}
         >
           <SvgXml xml={open ? dropUpIcon : dropdownIcon} />
         </Pressable>

@@ -14,7 +14,7 @@ export default function NextButton({ isDisabled, handleButtonClick }: Readonly<N
     return (
       <View
         style={[
-          tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-lg`,
+          tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-sm`,
           { backgroundColor: colors.inputBorder },
         ]}
       >
@@ -27,7 +27,7 @@ export default function NextButton({ isDisabled, handleButtonClick }: Readonly<N
     <Pressable
       onPress={handleButtonClick}
       style={({ pressed }) => [
-        tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-lg`,
+        tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-sm`,
         { backgroundColor: colors.black },
         pressed && { opacity: 0.85 },
       ]}

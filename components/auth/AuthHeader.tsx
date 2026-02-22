@@ -64,13 +64,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.black_light,
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 18,
     color: colors.white,
-    fontWeight: "500",
+    fontWeight: "400",
     marginTop: 20,
   },
   subText: {
-    fontSize: 14,
+    fontSize: 12,
     marginTop: 10,
     color: colors.white,
   },

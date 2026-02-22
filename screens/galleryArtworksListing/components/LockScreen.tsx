@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
 import { verifyGalleryRequest } from "#services/verify/verifyGalleryRequest";
-import WithModal from "#components/modal/WithModal";
+
 import { useModalStore } from "#store/modal/modalStore";
 import { useAppStore } from "#store/app/appStore";
 import { colors } from "#config/colors.config";
@@ -47,7 +47,7 @@ export default function LockScreen({ name }: { name: string }) {
   }
 
   return (
-    <WithModal>
+    <>
       <PremiumStateCard
         icon="shield"
         title="Account Verification Required"
@@ -95,6 +95,6 @@ export default function LockScreen({ name }: { name: string }) {
           ) : undefined
         }
       />
-    </WithModal>
+    </>
   );
 }

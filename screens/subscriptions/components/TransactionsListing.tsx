@@ -56,7 +56,7 @@ export default function TransactionsListing() {
   if (isLoading) {
     return (
       <View
-        style={tw`bg-white rounded-2xl border border-slate-200 p-6 items-center justify-center`}
+        style={tw`bg-white rounded-sm border border-slate-200 p-6 items-center justify-center`}
       >
         <ActivityIndicator />
         <Text style={tw`mt-2 text-slate-600`}>Loading transactions…</Text>
@@ -66,12 +66,12 @@ export default function TransactionsListing() {
 
   if (isError) {
     return (
-      <View style={tw`bg-white rounded-2xl border border-slate-200 p-6`}>
+      <View style={tw`bg-white rounded-sm border border-slate-200 p-6`}>
         <Text style={tw`text-base font-semibold text-slate-900 mb-2`}>
           Recent Transaction Activity
         </Text>
         <View
-          style={tw`items-center justify-center py-10 rounded-xl bg-red-50 border border-red-200`}
+          style={tw`items-center justify-center py-10 rounded-sm bg-red-50 border border-red-200`}
         >
           <Ionicons name="alert-circle" size={28} color="#b91c1c" />
           <Text style={tw`mt-2 text-red-700`}>
@@ -84,7 +84,7 @@ export default function TransactionsListing() {
 
   return (
     <View
-      style={[tw`bg-white rounded-2xl border border-slate-200 p-6`, shadow()]}
+      style={[tw`bg-white rounded-sm border border-slate-200 p-6`, shadow()]}
     >
       <View style={tw`flex-row items-center justify-between mb-4`}>
         <Text style={tw`text-base font-semibold text-slate-900`}>
@@ -172,7 +172,7 @@ function Row({ item, index }: { item: Txn; index: number }) {
       </View>
 
       {/* card */}
-      <View style={tw`flex-1 bg-slate-50 rounded-lg p-4`}>
+      <View style={tw`flex-1 bg-slate-50 rounded-sm p-4`}>
         <View style={tw`flex-row items-start justify-between`}>
           <View style={tw`flex-shrink`}>
             <Text style={tw`text-[11px] font-semibold text-slate-500`}>

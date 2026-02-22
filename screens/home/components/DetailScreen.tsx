@@ -108,39 +108,8 @@ const DetailsScreen = () => {
 
   const image_href =
     type === "artist"
-      ? getImageFileView(logo ?? "", 120, 120)
-      : getGalleryLogoFileView(logo ?? "", 120, 120);
-
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 250,
-    height: 250,
-  });
-
-  useEffect(() => {
-    let isMounted = true;
-
-    if (image_href) {
-      Image.getSize(
-        image_href,
-        (defaultWidth, defaultHeight) => {
-          if (!isMounted) return;
-          const { width, height } = resizeImageDimensions(
-            { width: defaultWidth, height: defaultHeight },
-            250, // maxWidth
-            250 // optional maxHeight to fully constrain
-          );
-          setImageDimensions({ width, height });
-        },
-        (error) => {
-          console.warn("Failed to get image size:", error?.message || error);
-        }
-      );
-    }
-
-    return () => {
-      isMounted = false; // clean up to avoid setting state after unmount
-    };
-  }, [image_href]);
+      ? getImageFileView(logo ?? "", 800)
+      : getGalleryLogoFileView(logo ?? "", 800);
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
@@ -158,10 +127,7 @@ const DetailsScreen = () => {
         <Animated.View entering={FadeInDown.delay(100).duration(500)}>
           <Image
             source={{ uri: image_href }}
-            style={tw.style(`rounded-[10px] bg-[#0505]`, {
-              height: imageDimensions.height,
-              width: imageDimensions.width,
-            })}
+            style={tw`rounded-sm bg-[#0505] w-full h-[250px]`}
             resizeMode="cover"
           />
         </Animated.View>
@@ -169,7 +135,7 @@ const DetailsScreen = () => {
         {/* Name */}
         <Animated.View
           entering={FadeInDown.delay(200).duration(500)}
-          style={tw`mt-6`}
+          style={tw`mt-3`}
         >
           <Text style={tw`text-2xl font-bold text-[#1A1A1A]`}>{name}</Text>
         </Animated.View>
@@ -202,7 +168,7 @@ const DetailsScreen = () => {
         {/* Artworks */}
         <Animated.View
           entering={FadeInDown.delay(400).duration(500)}
-          style={tw`mt-8`}
+          style={tw`mt-10`}
         >
           <Text style={tw`text-lg font-semibold text-[#1A1A1A] mb-3`}>
             Artworks

@@ -2,7 +2,7 @@ import React from "react";
 import { useIndividualAuthLoginStore } from "#store/auth/login/IndividualAuthLoginStore";
 import { useLoginHandler } from "#hooks/useLoginHandler";
 import LoginForm from "../LoginForm";
-import WithModal from "#components/modal/WithModal";
+
 type IndividualProps = Readonly<{
   biometricProps: {
     canUseBiometrics: boolean;
@@ -27,7 +27,7 @@ export default function Individual({ biometricProps }: IndividualProps) {
     handleLogin(individualLoginData, setIsLoading, clearInputs);
 
   return (
-    <WithModal>
+    <>
       <LoginForm
         loginData={individualLoginData}
         setEmail={setEmail}
@@ -40,6 +40,6 @@ export default function Individual({ biometricProps }: IndividualProps) {
         loginButtonLabel="Log In"
         forgotPasswordType="individual"
       />
-    </WithModal>
+    </>
   );
 }

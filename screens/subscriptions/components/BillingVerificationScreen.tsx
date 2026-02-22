@@ -199,7 +199,7 @@ export default function BillingVerificationScreen() {
           {isLoading ? (
             <View
               style={[
-                tw`w-full rounded-3xl overflow-hidden`,
+                tw`w-full rounded-sm overflow-hidden`,
                 {
                   backgroundColor: colors.primary_black,
                   shadowColor: "#000",
@@ -222,7 +222,7 @@ export default function BillingVerificationScreen() {
           ) : (
             <Animated.View
               style={[
-                tw`w-full rounded-3xl overflow-hidden`,
+                tw`w-full rounded-sm overflow-hidden`,
                 {
                   transform: [{ scale: cardScale }],
                   opacity: cardOpacity,
@@ -243,7 +243,7 @@ export default function BillingVerificationScreen() {
               >
                 <Result
                   success={!!verified?.isOk}
-                  message={verified?.message ?? ""}
+                  message={verified?.isOk ? "" : verified?.message ?? ""}
                   onPrimary={() =>
                     navigation.navigate(screenName.gallery.subscriptions)
                   }
@@ -311,7 +311,7 @@ function Result({
       >
         {message ||
           (success
-            ? "Your payment was confirmed."
+            ? "Payment processing successful"
             : "We couldn’t confirm the payment.")}
       </Text>
 

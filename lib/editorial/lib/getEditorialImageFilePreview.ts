@@ -1,14 +1,18 @@
 import { ImageFormat, ImageGravity } from "appwrite";
 import { storage } from "#appWrite_config";
 
-export const getEditorialImageFilePreview = (fileId: string, width: number) => {
+export const getEditorialImageFilePreview = (
+  fileId: string,
+  width: number,
+  quality: number = 90,
+) => {
   const fileData = storage.getFilePreview({
     bucketId: process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!!,
     fileId: fileId,
 
     width: width, // width, will be resized using this value.
     gravity: ImageGravity.Center, // crop center
-    quality: 90, // slight compression
+    quality: quality, // configurable compression
     borderWidth: 0, // border width
     borderColor: "FFFFFF", // border color
     borderRadius: 0, // border radius

@@ -1,9 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import React, { useState } from "react";
-import { colors } from "#config/colors.config";
-import { LinearGradient } from "expo-linear-gradient";
-import { SvgXml } from "react-native-svg";
-import { downArrIcon, upArrwIcon } from "#utils/SvgImages";
+import { Feather } from "@expo/vector-icons";
 import tw from "twrnc";
 import Animated, { FadeInDown, FadeOut } from "react-native-reanimated";
 
@@ -15,38 +12,36 @@ export default function ShippingAndTaxes() {
   };
 
   return (
-    <View style={styles.container}>
-      <Pressable onPress={handleToggle} style={styles.header}>
-        <Text style={styles.title}>Shipping & taxes</Text>
+    <View style={tw`bg-white rounded-sm px-4 border border-neutral-200`}>
+      <Pressable onPress={handleToggle} style={tw`py-4 flex-row items-center`}>
+        <Text style={tw`text-sm text-neutral-600 flex-1`}>
+          Shipping & taxes
+        </Text>
 
-        <SvgXml xml={!expand ? downArrIcon : upArrwIcon} />
+        <Feather
+          name={expand ? "minus" : "plus"}
+          size={20}
+          style={tw`text-neutral-600`}
+        />
       </Pressable>
 
-      {!expand && (
+      {expand && (
         <Animated.View
           entering={FadeInDown.duration(600).damping(300)} // Duration in milliseconds
           exiting={FadeOut.duration(500).damping(300)}
-          style={tw`mb-[30px]`}
+          style={tw`pb-[16px]`}
         >
-          <View style={tw`h-[1px] w-full bg-[#00000033]`} />
-          <View style={styles.detailItem}>
+          <View style={tw`h-[1px] w-full bg-neutral-200`} />
+          <View style={tw`gap-3 pt-4`}>
             <Text
-              style={[styles.detailItemText, { width: 120, fontWeight: "500" }]}
+              style={tw`border-l border-neutral-200 pl-3 text-[13px] flex-1 text-neutral-500`}
             >
-              Taxes
+              Shipping calculated at checkout.
             </Text>
-            <Text style={[styles.detailItemText, { flex: 1 }]}>
-              Calculated at checkout
-            </Text>
-          </View>
-          <View style={styles.detailItem}>
             <Text
-              style={[styles.detailItemText, { width: 120, fontWeight: "500" }]}
+              style={tw`border-l border-neutral-200 pl-3 text-[13px] flex-1 text-neutral-500`}
             >
-              Shipping fee
-            </Text>
-            <Text style={[styles.detailItemText, { flex: 1 }]}>
-              Calculated at checkout
+              Duties and taxes may apply.
             </Text>
           </View>
         </Animated.View>
@@ -54,33 +49,3 @@ export default function ShippingAndTaxes() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    paddingHorizontal: 25,
-    borderWidth: 1,
-    borderColor: "#00000033",
-  },
-  header: {
-    paddingVertical: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.black,
-    flex: 1,
-  },
-  detailItem: {
-    flexDirection: "row",
-    gap: 20,
-    paddingTop: 25,
-  },
-  detailItemText: {
-    color: "#000",
-    fontSize: 14,
-  },
-});

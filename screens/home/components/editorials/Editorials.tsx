@@ -1,21 +1,14 @@
 import React from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { listEditorials } from "#lib/editorial/lib/getAllBlogArticles";
 import EditorialCard from "#components/editorials/EditorialCard";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
-import { colors } from "#config/colors.config";
-import { fontNames } from "#constants/fontNames.constants";
-import { Feather } from "@expo/vector-icons";
 import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import SectionHeader from "#components/general/SectionHeader";
+import tw from "twrnc";
 
 export default function Editorials() {
   const navigation = useNavigation<any>();
@@ -33,18 +26,17 @@ export default function Editorials() {
   });
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.headerRow}
-        disabled={data.length === 0}
-        onPress={() =>
-          navigation.navigate("AllEditorialsScreen", { editorials: data })
+    <View style={tw`mt-6 mb-2.5`}>
+      <SectionHeader
+        subtitle="JOURNALS"
+        title="Editorials"
+        onActionPress={
+          data.length > 0
+            ? () =>
+                navigation.navigate("AllEditorialsScreen", { editorials: data })
+            : undefined
         }
-        hitSlop={10}
-      >
-        <Text style={styles.headerText}>Editorials</Text>
-        <Feather name="chevron-right" color={colors.grey} size={20} />
-      </TouchableOpacity>
+      />
 
       {isLoading && data.length === 0 && <ArtworkCardLoader />}
 
@@ -54,9 +46,10 @@ export default function Editorials() {
           keyExtractor={(_, i) => `editorial-${i}`}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.flatListContainer}
+          style={tw`mt-5`}
+          contentContainerStyle={tw`px-5 gap-5`}
           renderItem={({ item }) => (
-            <View style={styles.cardWrapper}>
+            <View>
               <EditorialCard
                 cover={item.cover}
                 headline={item.headline}
@@ -73,8 +66,8 @@ export default function Editorials() {
       )}
 
       {!isLoading && data.length === 0 && (
-        <View style={{ padding: 30 }}>
-          <Text style={{ color: colors.grey, textAlign: "center" }}>
+        <View style={tw`p-[30px]`}>
+          <Text style={tw`text-[#858585] text-center`}>
             No editorials available
           </Text>
         </View>
@@ -82,25 +75,3 @@ export default function Editorials() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { marginTop: 40, marginBottom: 10 },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    justifyContent: "space-between",
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "500",
-    fontFamily: fontNames.dmSans + "Medium",
-  },
-  flatListContainer: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    marginTop: 20,
-    gap: 20,
-  },
-  cardWrapper: {},
-});

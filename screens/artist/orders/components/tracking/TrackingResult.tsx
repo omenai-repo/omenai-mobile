@@ -7,19 +7,23 @@ import { locationIcon } from "#utils/SvgImages";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { formatEventDate } from "#utils/utils_formatEventDate";
 
-interface TrackingData {
-  artwork_data: {
+export interface TrackingData {
+  tracking_number: string;
+  carrier: string;
+  current_status: string;
+  estimated_delivery: string;
+  events: {
+    timestamp: string;
+    location: string;
+    description: string;
+    status_label: string;
+  }[];
+  shipping_details: OrderShippingDetailsTypes;
+  artwork_data?: {
     title: string;
     url: string;
   };
-  tracking_number: string;
-  events: TrackingEvent[];
-  order_date: string;
-  shipping_details: OrderShippingDetailsTypes & {
-    shipment_information: OrderShippingDetailsTypes["shipment_information"] & {
-      planned_shipping_date: string;
-    };
-  };
+  order_date?: string;
 }
 
 interface TrackingResultProps {
@@ -33,19 +37,20 @@ export default function TrackingResult({
 }: Readonly<TrackingResultProps>) {
   const [showAllEvents, setShowAllEvents] = useState(false);
 
-  const formatTimestamp = (isoString: string): string => {
-    const cleanedString = isoString.replace(" GMT", "");
-    const date = new Date(cleanedString);
+  const formatTimestamp = (isoString?: string): string => {
+    if (!isoString) return "TBD";
+    const date = new Date(isoString);
 
     if (Number.isNaN(date.getTime())) {
-      return "Error: Invalid Date could not be parsed.";
+      return "N/A";
     }
 
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
-      weekday: "long",
+      hour: "2-digit",
+      minute: "2-digit",
     };
     return date.toLocaleDateString("en-US", options);
   };
@@ -54,7 +59,7 @@ export default function TrackingResult({
     ? getImageFileView(trackingData.artwork_data.url, 300)
     : "";
 
-  // events: assume chronological (oldest -> newest); the most recent is last element
+  // events: raw data is usually chronological, we reverse it to show newest first
   const events = [...(trackingData?.events ?? [])].reverse();
   const eventsCount = events.length;
   const lastNEvents = events.slice(0, 5);
@@ -64,97 +69,93 @@ export default function TrackingResult({
   return (
     <View style={tw`px-4 pb-8 space-y-4`}>
       {/* Artwork Card */}
-      {trackingData.artwork_data && (
-        <View style={tw`bg-white rounded-2xl px-4 py-3 flex-row items-center`}>
+      {trackingData.artwork_data ? (
+        <View style={tw`bg-white rounded-sm px-4 py-3 flex-row items-center`}>
           {image ? (
-            <Image source={{ uri: image }} style={tw`w-16 h-16 rounded-lg`} />
+            <Image source={{ uri: image }} style={tw`w-16 h-16 rounded-sm`} />
           ) : (
-            <View style={tw`w-16 h-16 rounded-lg bg-gray-200`} />
+            <View style={tw`w-16 h-16 rounded-sm bg-gray-200`} />
           )}
           <View style={tw`ml-4 flex-1`}>
             <Text style={tw`text-black font-semibold text-base`}>
               {trackingData.artwork_data.title}
             </Text>
-            <Text style={tw`text-gray-500 text-[16px] font-medium mt-1`}>
+            <Text style={tw`text-gray-500 text-[14px] font-medium mt-1`}>
               Tracking Number
             </Text>
-            <Text style={tw`text-black text-[16px] font-bold`}>
+            <Text style={tw`text-black text-[14px] font-bold`}>
               #{trackingData.tracking_number}
             </Text>
           </View>
         </View>
+      ) : (
+        <View style={tw`bg-white rounded-sm px-4 py-3`}>
+          <Text style={tw`text-gray-500 text-[14px] font-medium`}>
+            Tracking Number
+          </Text>
+          <Text style={tw`text-black text-lg font-bold`}>
+            #{trackingData.tracking_number}
+          </Text>
+        </View>
       )}
 
       {/* Shipment Details */}
-      <View style={tw`bg-white rounded-2xl p-4 space-y-3`}>
+      <View style={tw`bg-white rounded-sm p-4 space-y-3`}>
         <View style={tw`flex-row justify-between items-start mb-[10px]`}>
           <View style={tw`flex-1 pr-2`}>
-            <Text style={tw`text-gray-500 text-[16px] font-medium`}>
-              Origin Address
+            <Text style={tw`text-gray-500 text-[14px] font-medium`}>
+              Origin
             </Text>
             <Text style={tw`text-black text-sm font-semibold mt-1`}>
-              {trackingData.shipping_details?.addresses.origin.address_line ||
-                "N/A"}
+              {trackingData.shipping_details?.addresses.origin.city},{" "}
+              {trackingData.shipping_details?.addresses.origin.country}
             </Text>
           </View>
           <View style={tw`flex-1 pl-2 items-end`}>
-            <Text style={tw`text-gray-500 text-[16px] font-medium`}>
-              Destination Address
+            <Text style={tw`text-gray-500 text-[14px] font-medium`}>
+              Destination
             </Text>
             <Text style={tw`text-black text-sm font-semibold mt-1`}>
-              {trackingData.shipping_details?.addresses.destination
-                .address_line || "N/A"}
+              {trackingData.shipping_details?.addresses.destination.city},{" "}
+              {trackingData.shipping_details?.addresses.destination.country}
             </Text>
           </View>
         </View>
 
         <View style={tw`flex-row justify-between items-center mb-[10px]`}>
           <View>
-            <Text style={tw`text-gray-500 text-[16px] font-medium`}>
+            <Text style={tw`text-gray-500 text-[14px] font-medium`}>
               Carrier
             </Text>
             <Text style={tw`text-black text-sm font-semibold mt-1`}>
-              {trackingData.shipping_details?.shipment_information?.carrier ||
-                "DHL Express"}
+              {trackingData.carrier || "N/A"}
             </Text>
           </View>
 
           <View style={tw`items-end`}>
-            <Text style={tw`text-gray-500 text-[16px] font-medium`}>
+            <Text style={tw`text-gray-500 text-[14px] font-medium`}>
               Status
             </Text>
-            <Text style={tw`text-blue-600 text-sm font-semibold mt-1`}>
-              In Transit
+            <Text style={tw`text-blue-600 text-sm font-bold mt-1 uppercase`}>
+              {(trackingData.current_status || "Processing").replace(/_/g, " ")}
             </Text>
           </View>
         </View>
 
         <View style={tw`gap-[10px]`}>
           <View>
-            <Text style={tw`text-gray-500 text-[16px] font-medium`}>
-              Estimated delivery date
+            <Text style={tw`text-gray-500 text-[14px] font-medium`}>
+              Estimated Delivery
             </Text>
             <Text style={tw`text-black text-sm font-semibold mt-1`}>
-              {formatTimestamp(
-                trackingData?.shipping_details?.shipment_information
-                  ?.planned_shipping_date,
-              ) || "TBD"}
-            </Text>
-          </View>
-
-          <View style={tw``}>
-            <Text style={tw`text-gray-500 text-[16px] font-medium`}>
-              Order date
-            </Text>
-            <Text style={tw`text-black text-sm font-semibold mt-1`}>
-              {trackingData.order_date || "N/A"}
+              {formatTimestamp(trackingData.estimated_delivery)}
             </Text>
           </View>
         </View>
       </View>
 
       {/* Timeline */}
-      <View style={tw`bg-white rounded-2xl p-4`}>
+      <View style={tw`bg-white rounded-sm p-4`}>
         <Text style={tw`text-black font-semibold text-base mb-4`}>
           Tracking History
         </Text>
@@ -172,37 +173,45 @@ export default function TrackingResult({
 
           {primaryEventsToShow.map((event, idx) => {
             const originalIndex = events.indexOf(event);
-            const isMostRecent = originalIndex === 0;
+            const isMostRecent = idx === 0;
 
             return (
               <View
-                key={`${originalIndex}-${idx}`}
-                style={tw`mb-${originalIndex === eventsCount - 1 ? "0" : "6"}`}
+                key={`${idx}-${event.timestamp}`}
+                style={tw`mb-${idx === eventsCount - 1 ? "0" : "6"}`}
               >
                 <View style={tw`flex-row items-center gap-4`}>
                   <View
                     style={tw`h-10 w-10 ${
-                      isMostRecent ? "bg-blue-100" : "bg-gray-100"
+                      isMostRecent ? "bg-blue-600" : "bg-gray-100"
                     } rounded-full justify-center items-center`}
                   >
-                    <SvgXml xml={locationIcon} width={20} height={20} />
+                    <SvgXml
+                      xml={locationIcon}
+                      width={20}
+                      height={20}
+                      fill={isMostRecent ? "#fff" : "#999"}
+                    />
                   </View>
                   <View style={tw`flex-1`}>
                     <Text style={tw`text-black text-sm font-semibold`}>
                       {event.description}
                     </Text>
-                    <Text
-                      style={tw`text-gray-500 text-[16px] font-medium mt-1`}
-                    >
-                      {formatEventDate(`${event.date} ${event.time}`)}
-                    </Text>
+                    <View style={tw`flex-row items-center gap-2 mt-1`}>
+                      <Text style={tw`text-gray-500 text-[13px] font-medium`}>
+                        {formatTimestamp(event.timestamp)}
+                      </Text>
+                      {event.location && (
+                        <Text style={tw`text-gray-400 text-[13px]`}>
+                          • {event.location}
+                        </Text>
+                      )}
+                    </View>
                   </View>
                 </View>
-                {originalIndex < eventsCount - 1 && (
+                {idx < primaryEventsToShow.length - 1 && (
                   <View style={tw`ml-5 my-2 gap-1`}>
-                    <View style={tw`h-2 bg-gray-300 w-0.5`} />
-                    <View style={tw`h-2 bg-gray-300 w-0.5`} />
-                    <View style={tw`h-2 bg-gray-300 w-0.5`} />
+                    <View style={tw`h-2 bg-gray-200 w-0.5`} />
                   </View>
                 )}
               </View>
@@ -230,7 +239,7 @@ export default function TrackingResult({
       {/* Search Another Shipment */}
       <Pressable
         onPress={handleSearchAgain}
-        style={tw`bg-white rounded-xl py-3 items-center justify-center border border-gray-200 mb-4`}
+        style={tw`bg-white rounded-sm py-3 items-center justify-center border border-gray-200 mb-4`}
       >
         <Text style={tw`text-slate-900 font-semibold text-base`}>
           Search Another Shipment

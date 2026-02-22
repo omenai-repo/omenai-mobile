@@ -7,25 +7,29 @@ type TransactionCardProps = {
   id: string;
   net: string;
   gross: string;
+  date: string;
 };
 
 export default function TransactionCard({
   id,
   gross,
   net,
+  date,
 }: TransactionCardProps) {
   const PillContainer = ({ label }: { label: string }) => {
     return (
       <View style={{ flexWrap: "wrap" }}>
         <View
           style={{
-            paddingVertical: 5,
-            paddingHorizontal: 10,
-            backgroundColor: "#17963925",
-            borderRadius: 8,
+            paddingVertical: 4,
+            paddingHorizontal: 8,
+            backgroundColor: "#17963915",
+            borderRadius: 6,
           }}
         >
-          <Text style={{ fontSize: 12 }}>{label}</Text>
+          <Text style={{ fontSize: 10, color: "#179639", fontWeight: "500" }}>
+            {label}
+          </Text>
         </View>
       </View>
     );
@@ -33,29 +37,47 @@ export default function TransactionCard({
   return (
     <View style={styles.container}>
       <View style={styles.transactionType}>
-        <Feather name="arrow-down-left" size={16} style={{ opacity: 0.8 }} />
+        <Feather
+          name="arrow-down-left"
+          size={16}
+          color={colors.primary_black}
+          style={{ opacity: 0.8 }}
+        />
       </View>
       <View style={styles.mainContainer}>
-        <View style={{ gap: 10 }}>
-          <Text style={{ fontSize: 14, color: colors.primary_black }}>
-            {id}
+        <View style={{ gap: 4, flex: 1 }}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: "500",
+              color: colors.primary_black,
+            }}
+          >
+            #{id}
           </Text>
-          <PillContainer label="Completed" />
+          <Text style={{ fontSize: 12, color: colors.grey }}>{date}</Text>
         </View>
+
         <View
           style={{
-            flex: 1,
             alignItems: "flex-end",
-            gap: 10,
+            gap: 4,
             justifyContent: "center",
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.grey }}>
-            Gross: <Text style={{ color: colors.primary_black }}>{gross}</Text>
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: "600",
+              color: colors.primary_black,
+            }}
+          >
+            {gross}
           </Text>
-          <Text style={{ fontSize: 14, color: colors.grey }}>
-            Net: <Text style={{ color: colors.primary_black }}>{net}</Text>
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Text style={{ fontSize: 12, color: colors.grey }}>Net: {net}</Text>
+            <PillContainer label="Paid" />
+          </View>
         </View>
       </View>
     </View>

@@ -13,7 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 import { SEARCH_QK } from "#utils/queryKeys";
 import { useDebounce } from "#hooks/useDebounce";
 import { useModalStore } from "#store/modal/modalStore";
-import WithModal from "#components/modal/WithModal";
 
 export default function SearchResults() {
   const { searchQuery } = useSearchStore();
@@ -55,7 +54,7 @@ export default function SearchResults() {
   const dataLength = searchQuery.length === 0 ? 0 : data.length;
 
   return (
-    <WithModal>
+    <>
       <View style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}>
         <View style={tw`px-[20px]`}>
           <SearchInput />
@@ -108,6 +107,6 @@ export default function SearchResults() {
           </View>
         )}
       </View>
-    </WithModal>
+    </>
   );
 }

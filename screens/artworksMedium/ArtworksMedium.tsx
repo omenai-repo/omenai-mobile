@@ -8,12 +8,13 @@ import {
 } from "@react-navigation/native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { StackNavigationProp } from "@react-navigation/stack";
-import WithModal from "#components/modal/WithModal";
+
 import FilterButton from "#components/filter/FilterButton";
 import { colors } from "#config/colors.config";
 import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
 import { fetchArtworksByCriteria } from "#services/artworks/fetchArtworksByCriteria";
 import { fetchArtworks } from "#services/artworks/fetchArtworks";
+import { fetchCuratedArtworks } from "#services/artworks/fetchCuratedArtworks";
 import { artworksMediumStore } from "#store/artworks/ArtworksMediumsStore";
 import { screenName } from "#constants/screenNames.constants";
 import { artworksMediumFilterStore } from "#store/artworks/ArtworksMediumFilterStore";
@@ -43,19 +44,53 @@ export default function ArtworksMedium() {
   );
 
   const fetchArtworksData = async ({ pageParam = 1 }) => {
-    let res;
-    if (catalog === "trending") {
-      res = await fetchArtworks({ listingType: "trending", page: pageParam });
-      return res.isOk
-        ? { data: res.body.data, nextCursor: pageParam + 1 }
-        : null;
-    } else {
-      res = await fetchArtworksByCriteria({
-        filters: filterOptions,
-        medium: catalog,
-        page: pageParam,
-      });
-      return res.isOk ? { data: res.data, nextCursor: pageParam + 1 } : null;
+    switch (catalog) {
+      case "trending": {
+        const res = await fetchArtworks({
+          listingType: "trending",
+          page: pageParam,
+        });
+        return res.isOk
+          ? { data: res.body.data, nextCursor: pageParam + 1 }
+          : null;
+      }
+      case "recent": {
+        const res = await fetchArtworks({
+          listingType: "recent",
+          page: pageParam,
+        });
+        return res.isOk
+          ? { data: res.body.data, nextCursor: pageParam + 1 }
+          : null;
+      }
+      case "curated": {
+        const res = await fetchCuratedArtworks({
+          page: pageParam,
+          filters: filterOptions,
+        });
+        return res.isOk ? { data: res.data, nextCursor: pageParam + 1 } : null;
+      }
+      default: {
+        const res = await fetchArtworksByCriteria({
+          filters: filterOptions,
+          medium: catalog,
+          page: pageParam,
+        });
+        return res.isOk ? { data: res.data, nextCursor: pageParam + 1 } : null;
+      }
+    }
+  };
+
+  const getCatalogTitle = () => {
+    switch (catalog) {
+      case "trending":
+        return "Trending";
+      case "curated":
+        return "Curated";
+      case "recent":
+        return "New Arrivals";
+      default:
+        return catalog;
     }
   };
 
@@ -89,12 +124,12 @@ export default function ArtworksMedium() {
   };
 
   return (
-    <WithModal>
+    <>
       <ScrollWrapper
         style={tw.style(`flex-1`, { marginTop: insets.top + 16 })}
         showsVerticalScrollIndicator={false}
       >
-        <View style={tw`z-100 px-2.5`}>
+        <View style={tw`z-100 px-5`}>
           <FilterButton
             handleClick={() =>
               navigation.navigate(screenName.artworkMediumFilterModal)
@@ -103,7 +138,7 @@ export default function ArtworksMedium() {
             <Text
               style={tw`text-lg font-medium text-[${colors.primary_black}] py-5`}
             >
-              {catalog === "trending" ? "Trending" : catalog}
+              {getCatalogTitle()}
             </Text>
           </FilterButton>
         </View>
@@ -117,6 +152,6 @@ export default function ArtworksMedium() {
           />
         )}
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }

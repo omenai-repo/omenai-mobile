@@ -48,7 +48,7 @@ export default function SupportSuccessView({
       </Text>
 
       <View
-        style={tw`w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-6 mb-8 items-center`}
+        style={tw`w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-sm p-6 mb-8 items-center`}
       >
         <Text
           style={tw`text-xs font-bold text-gray-400 tracking-widest mb-2 uppercase`}

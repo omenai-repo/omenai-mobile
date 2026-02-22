@@ -18,7 +18,7 @@ function BillingCardBase({ paymentMethod, plan_id, plan_interval }: Props) {
   const navigation = useNavigation<any>();
   return (
     <View
-      style={tw`bg-white rounded-2xl border border-slate-200 overflow-hidden`}
+      style={tw`bg-white rounded-sm border border-slate-200 overflow-hidden`}
     >
       <View style={tw`bg-slate-50 px-5 py-4 border-b border-slate-200`}>
         <View style={tw`flex-row items-center`}>
@@ -49,7 +49,7 @@ function BillingCardBase({ paymentMethod, plan_id, plan_interval }: Props) {
           onPress={() => navigation.navigate("PaymentMethodChangeScreen")}
           style={({ pressed }) =>
             tw.style(
-              `self-start mt-5 px-4 py-2 rounded-md bg-slate-900`,
+              `self-start mt-5 px-4 py-2 rounded-sm bg-slate-900`,
               pressed && "opacity-80"
             )
           }

@@ -44,9 +44,8 @@ export default function ArtworkDimensions() {
     const isFormValid = Object.values(formErrors).every(
       (error) => error === "",
     );
-    const areAllFieldsFilled = Object.values(dimensions).every(
-      (value) => value !== "",
-    );
+    const areAllFieldsFilled =
+      dimensions.length !== "" && dimensions.height !== "";
     return !(isFormValid && areAllFieldsFilled);
   };
 
@@ -87,7 +86,10 @@ export default function ArtworkDimensions() {
     // Store values with units
     updateArtworkUploadData("length", `${dimensions.length}in`);
     updateArtworkUploadData("height", `${dimensions.height}in`);
-    updateArtworkUploadData("weight", `${dimensions.weight}lb`);
+    updateArtworkUploadData(
+      "weight",
+      dimensions.weight ? `${dimensions.weight}lb` : "",
+    );
 
     setActiveIndex(activeIndex + 1);
   };
@@ -144,7 +146,7 @@ export default function ArtworkDimensions() {
 
             <View>
               <Input
-                label="Weight (lb)"
+                label="Weight (lb) (Optional)"
                 keyboardType="numeric"
                 onInputChange={(text) => {
                   setDimensions((prev) => ({ ...prev, weight: text }));

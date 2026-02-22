@@ -24,7 +24,7 @@ export const ToastView = ({
 }: NotificationProps) => (
   <SafeAreaView edges={["top"]} style={tw`w-full`}>
     <View
-      style={tw`mx-5 mt-2 bg-[${colors.white}] p-4 rounded-xl shadow-lg flex-row items-center gap-3 border border-gray-100`}
+      style={tw`mx-5 mt-2 bg-[${colors.white}] p-4 rounded-sm shadow-lg flex-row items-center gap-3 border border-gray-100`}
     >
       <View
         style={[

@@ -7,7 +7,7 @@ import LargeInput from "#components/inputs/LargeInput";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { galleryProfileUpdate } from "#store/gallery/galleryProfileUpdateStore";
 import { updateProfile } from "#services/update/updateProfile";
-import WithModal from "#components/modal/WithModal";
+
 import { useModalStore } from "#store/modal/modalStore";
 import { logout } from "#utils/logout.utils";
 import UploadNewLogo from "./components/GalleryLogo";
@@ -65,7 +65,7 @@ export default function EditGalleryProfile() {
   };
 
   return (
-    <WithModal>
+    <>
       <BackHeaderTitle
         title={userType === "gallery" ? "Gallery profile" : "Artist profile"}
         callBack={clearData}
@@ -125,7 +125,7 @@ export default function EditGalleryProfile() {
                   Full Address
                 </Text>
                 <View
-                  style={tw`bg-gray-100 p-4 rounded-lg border border-gray-300`}
+                  style={tw`bg-gray-100 p-4 rounded-sm border border-gray-300`}
                 >
                   <AddressField
                     label="Address:"
@@ -195,6 +195,6 @@ export default function EditGalleryProfile() {
           </View>
         </ScrollWrapper>
       </KeyboardAvoidingView>
-    </WithModal>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import tw from "twrnc";
 import Header from "#components/header/Header";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import SalesOverview from "#screens/overview/components/SalesOverview";
-import WithModal from "#components/modal/WithModal";
+
 import PopularArtworks from "#screens/overview/components/PopularArtworks";
 
 import { HighlightCard } from "./HighlightCard";
@@ -44,7 +44,7 @@ const ArtistOverview = () => {
   }, [queryClient, userSession?.id]);
 
   return (
-    <WithModal>
+    <>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
         <ScrollWrapper
@@ -63,7 +63,7 @@ const ArtistOverview = () => {
           <PopularArtworks />
         </ScrollWrapper>
       </View>
-    </WithModal>
+    </>
   );
 };
 

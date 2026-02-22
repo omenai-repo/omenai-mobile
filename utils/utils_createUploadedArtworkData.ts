@@ -19,6 +19,7 @@ export function createUploadedArtworkData(
       height: data.height,
       length: data.length || data.width || "",
       weight: data.weight,
+      width: data.length || data.width || "",
     },
     pricing: {
       price: +data.price,

@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import React, { useState } from "react";
-import WithModal from "#components/modal/WithModal";
+
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import Input from "#components/inputs/Input";
 import GetCodeButton from "./GetCodeButton";
@@ -99,7 +99,7 @@ export default function ChangeGalleryPassword({
   }
 
   return (
-    <WithModal>
+    <>
       <BackHeaderTitle title="Change password" />
       <ScrollWrapper
         style={{
@@ -182,6 +182,6 @@ export default function ChangeGalleryPassword({
           isLoading={loading}
         />
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }

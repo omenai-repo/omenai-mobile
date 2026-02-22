@@ -19,6 +19,7 @@ import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import tw from "twrnc";
 import { useDevice } from "#hooks/useDevice";
+import { ArtworkFlatlistItem } from "#types/types";
 
 export default function PopularArtworks({
   onLoadingChange,
@@ -26,7 +27,7 @@ export default function PopularArtworks({
   onLoadingChange?: (l: boolean) => void;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { userSession } = useAppStore();
+  const { userSession, userType } = useAppStore();
   const { isTablet, horizontalPadding } = useDevice();
 
   const query = useQuery({
@@ -52,6 +53,7 @@ export default function PopularArtworks({
   return (
     <View style={styles.container}>
       <TouchableOpacity
+        disabled={["artist", "gallery"].includes(userType)}
         onPress={() => navigation.navigate(screenName.gallery.artworks)}
       >
         <View
@@ -65,7 +67,9 @@ export default function PopularArtworks({
           >
             Popular artworks
           </Text>
-          <NavBtnComponent onPress={() => {}} />
+          {!["artist", "gallery"].includes(userType) && (
+            <NavBtnComponent onPress={() => {}} />
+          )}
         </View>
       </TouchableOpacity>
 

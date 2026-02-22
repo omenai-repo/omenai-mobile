@@ -12,13 +12,7 @@ export async function getTrackingData(orderId: string) {
     return {
       isOk: response.ok,
       message: result.message,
-      data: {
-        artwork_data: result.artwork_data,
-        tracking_number: result.tracking_number,
-        events: result.events,
-        order_date: result.order_date,
-        shipping_details: result.shipping_details,
-      },
+      data: result.data,
     };
   } catch {
     return {

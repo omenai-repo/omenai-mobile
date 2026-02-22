@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text } from "react-native";
 import React, { useState } from "react";
-import WithModal from "#components/modal/WithModal";
+
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import Input from "#components/inputs/Input";
 import { useAppStore } from "#store/app/appStore";
@@ -112,7 +112,7 @@ export default function EditProfile() {
   };
 
   return (
-    <WithModal>
+    <>
       <BackHeaderTitle title="Edit profile" />
       <ScrollWrapper style={styles.container}>
         <View style={{ gap: 20, marginBottom: 40 }}>
@@ -146,7 +146,7 @@ export default function EditProfile() {
                 Full Address
               </Text>
               <View
-                style={tw`bg-gray-100 p-4 rounded-lg border border-gray-300`}
+                style={tw`bg-gray-100 p-4 rounded-sm border border-gray-300`}
               >
                 {userSession.address.address_line ? (
                   <Text style={tw`text-gray-800`}>
@@ -218,7 +218,7 @@ export default function EditProfile() {
           />
         </View>
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }
 

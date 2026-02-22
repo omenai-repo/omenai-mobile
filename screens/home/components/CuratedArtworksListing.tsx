@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import { View, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCuratedArtworks } from "#services/artworks/fetchCuratedArtworks";
@@ -13,11 +7,12 @@ import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import ViewAllCategoriesButton from "#components/buttons/ViewAllCategoriesButton";
 import EmptyArtworks from "#components/general/EmptyArtworks";
 import ArtworkCard from "#components/artwork/ArtworkCard";
-import { colors } from "#config/colors.config";
+import tw from "twrnc";
 import { screenName } from "#constants/screenNames.constants";
-import { fontNames } from "#constants/fontNames.constants";
 import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import SectionHeader from "#components/general/SectionHeader";
+import { colors } from "#config/colors.config";
 
 export default function CuratedArtworksListing({ limit }: { limit: number }) {
   const navigation = useNavigation<any>();
@@ -37,40 +32,19 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
   const showMoreButton = data.length >= limit;
 
   return (
-    <View style={styles.mainContainer}>
-      <TouchableOpacity
-        activeOpacity={0.7}
-        style={{ paddingHorizontal: 20 }}
-        onPress={() =>
-          navigation.navigate(screenName.artworkCategories, {
-            title: "curated",
+    <View style={[tw`py-10 mt-6`, { backgroundColor: colors.black }]}>
+      <SectionHeader
+        subtitle="CURATED FOR YOU"
+        title="Because you liked"
+        onActionPress={() =>
+          navigation.navigate(screenName.artworksMedium, {
+            catalog: "curated",
           })
         }
-      >
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: "500",
-            color: colors.white,
-            fontFamily: fontNames.dmSans + "Medium",
-          }}
-        >
-          Because you liked
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            color: colors.white,
-            marginTop: 10,
-            opacity: 0.9,
-            fontFamily: fontNames.dmSans + "Regular",
-          }}
-        >
-          Inspired by your taste and recent activity.
-        </Text>
-      </TouchableOpacity>
+        dark
+      />
 
-      <View style={{ marginTop: 20 }}>
+      <View>
         {isLoading && <ArtworkCardLoader />}
         {!isLoading && data.length > 0 && (
           <FlatList
@@ -78,12 +52,8 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             keyExtractor={(_, i) => `curated-${i}`}
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 20 }}
-            contentContainerStyle={{
-              paddingLeft: 20,
-              gap: 20,
-              paddingRight: 20,
-            }}
+            style={tw`mt-5`}
+            contentContainerStyle={tw`px-5 gap-5`}
             renderItem={({ item, index }) =>
               index + 1 === limit && showMoreButton ? (
                 <ViewAllCategoriesButton
@@ -112,18 +82,10 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
           <EmptyArtworks
             writeUp="No artworks to match your interests"
             darkTheme
+            fixedHeight
           />
         )}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    paddingBottom: 50,
-    backgroundColor: colors.black,
-    marginTop: 50,
-    paddingTop: 50,
-  },
-});

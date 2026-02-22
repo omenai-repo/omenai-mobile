@@ -33,14 +33,14 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
   return (
     <View
       style={[
-        tw`relative flex-row items-center bg-white p-[10px] mx-[20px] rounded-lg`,
+        tw`relative flex-row items-center bg-white p-[10px] mx-[20px] rounded-md`,
         { overflow: "visible" },
       ]}
     >
       {/* Animated Pill Background */}
       <Animated.View
         style={[
-          tw`absolute h-[45px] rounded-lg`,
+          tw`absolute h-[45px] rounded-md`,
           // Keep iOS shadow, avoid elevation on Android so it doesn't cover the badge
           Platform.OS === "ios" ? tw`shadow-md` : {},
           {
@@ -48,7 +48,9 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
             width: `${tabWidth}%`,
             left: animatedValue.interpolate({
               inputRange: tabs.map((_, i) => i),
-              outputRange: tabs.map((_, i) => `${i * (100 / tabs.length) + 3}%`),
+              outputRange: tabs.map(
+                (_, i) => `${i * (100 / tabs.length) + 3}%`,
+              ),
             }),
             elevation: Platform.OS === "android" ? 0 : undefined,
           },
@@ -65,7 +67,12 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
             <Text
               style={[
                 tw`text-[13px] font-medium`,
-                { color: tab.key === selectedKey ? colors.white : `${colors.black}99` },
+                {
+                  color:
+                    tab.key === selectedKey
+                      ? colors.white
+                      : `${colors.black}99`,
+                },
               ]}
             >
               {tab.title}

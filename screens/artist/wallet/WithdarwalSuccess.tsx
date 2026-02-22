@@ -18,7 +18,7 @@ export const WithdrawalSuccess = ({ route, navigation }: { route: any; navigatio
         account shortly.
       </Text>
 
-      <Pressable style={tw`bg-[#000] py-4 rounded-lg w-full`} onPress={() => navigation.pop(2)}>
+      <Pressable style={tw`bg-[#000] py-4 rounded-sm w-full`} onPress={() => navigation.pop(2)}>
         <Text style={tw`text-white text-center font-bold`}>Back to Wallet</Text>
       </Pressable>
     </View>

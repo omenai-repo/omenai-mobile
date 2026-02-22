@@ -8,7 +8,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../../config/colors.config";
 import { screenName } from "../../constants/screenNames.constants";
-import WithModal from "#components/modal/WithModal";
+
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { StatusBar } from "expo-status-bar";
 import Artist from "./components/artist/Artist";
@@ -70,7 +70,7 @@ export default function Login() {
       await handleLogin(
         { email, password },
         setIsBiometricLoading,
-        () => {} // No need to clear inputs for biometric login
+        () => {}, // No need to clear inputs for biometric login
       );
     } catch {
       // Error handled by finally
@@ -99,7 +99,7 @@ export default function Login() {
   };
 
   return (
-    <WithModal>
+    <>
       <StatusBar style="light" />
       <AuthHeader
         title="Welcome Back"
@@ -151,7 +151,7 @@ export default function Login() {
           )}
         </ScrollWrapper>
       </KeyboardAvoidingView>
-    </WithModal>
+    </>
   );
 }
 

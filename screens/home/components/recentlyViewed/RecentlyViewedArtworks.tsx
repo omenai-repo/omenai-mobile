@@ -1,5 +1,6 @@
 import React from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, View } from "react-native";
+import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
 import { fetchViewHistory } from "#services/artworks/viewHistory/fetchRecentlyViewedArtworks";
 import { useAppStore } from "#store/app/appStore";
@@ -8,7 +9,7 @@ import EmptyArtworks from "#components/general/EmptyArtworks";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import { HOME_QK } from "#utils/queryKeys";
 
-import { fontNames } from "#constants/fontNames.constants";
+import SectionHeader from "#components/general/SectionHeader";
 
 type ViewHistoryItem = {
   art_id: string;
@@ -34,26 +35,8 @@ export default function RecentlyViewedArtworks() {
   });
 
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
-          paddingHorizontal: 20,
-          marginBottom: 15,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 20,
-            fontFamily: fontNames.dmSans + "Bold",
-            color: "#1A1A1A",
-          }}
-        >
-          Recently viewed artworks
-        </Text>
-      </View>
+    <View style={tw`my-10`}>
+      <SectionHeader subtitle="YOUR ACTIVITY" title="Recently viewed" />
 
       {isLoading && <ArtworkCardLoader />}
 
@@ -63,8 +46,8 @@ export default function RecentlyViewedArtworks() {
           keyExtractor={(_, i) => `rv-${i}`}
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 0 }}
-          contentContainerStyle={{ paddingLeft: 20, paddingRight: 20, gap: 20 }}
+          style={tw`mt-5`}
+          contentContainerStyle={tw`px-5 gap-5`}
           renderItem={({ item }) => (
             <ViewHistoryCard
               art_id={item.art_id}
@@ -77,12 +60,12 @@ export default function RecentlyViewedArtworks() {
       )}
 
       {!isLoading && data.length < 1 && (
-        <EmptyArtworks size={70} writeUp="You haven't viewed an artwork yet" />
+        <EmptyArtworks
+          size={70}
+          fixedHeight
+          writeUp="You haven't viewed an artwork yet"
+        />
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { marginTop: 40, marginBottom: 40 },
-});

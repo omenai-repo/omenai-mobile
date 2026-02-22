@@ -1,41 +1,48 @@
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
 import Input from "../../../../components/inputs/Input";
 import LongBlackButton from "../../../../components/buttons/LongBlackButton";
 import { useForgetPasswordStore } from "../../../../store/auth/forgotPassword/forgotPasswordStore";
 import { colors } from "../../../../config/colors.config";
+import tw from "twrnc";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { screenName } from "../../../../constants/screenNames.constants";
 import { validate } from "../../../../lib/validations/validatorGroup";
 import { sendPasswordResetLink } from "#services/password/sendPasswordResetLink";
-import { accountsRouteParamsType } from "#types/types";
+import { useModalStore } from "#store/modal/modalStore";
 
-export default function Form({
-  setIsSuccess,
-}: {
-  setIsSuccess: (e: boolean) => void;
-}) {
+export default function Form() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { email, setEmail, isLoading, setIsLoading } = useForgetPasswordStore();
-  const route = useRoute();
+  const { updateModal } = useModalStore();
 
   const [formErrors, setFormErrors] = useState({ email: "" });
 
+  useEffect(() => {
+    return () => {
+      setEmail("");
+    };
+  }, [setEmail]);
+
   const handleSubmit = async () => {
     setIsLoading(true);
-
-    const { type } = route.params as accountsRouteParamsType;
-
-    const results = await sendPasswordResetLink({ email }, type);
+    const results = await sendPasswordResetLink({ email }, "individual");
 
     if (results?.isOk) {
-      Alert.alert(results?.body.message);
-      //ADD further logic to navigate to the homepage and hide auth screens
-      setIsSuccess(true);
+      updateModal({
+        message: results?.body.message,
+        showModal: true,
+        modalType: "success",
+        onDismiss: () => navigation.navigate(screenName.login),
+      });
     } else {
-      Alert.alert(results?.body.message);
+      updateModal({
+        message: results?.body.message,
+        showModal: true,
+        modalType: "error",
+      });
     }
 
     setIsLoading(false);
@@ -68,9 +75,9 @@ export default function Form({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <View style={{ gap: 20 }}>
+    <SafeAreaView style={tw`flex-1 px-5`}>
+      <View style={tw`flex-1`}>
+        <View style={tw`gap-5`}>
           <Input
             label="Email address"
             keyboardType="email-address"
@@ -81,12 +88,12 @@ export default function Form({
             errorMessage={formErrors.email}
           />
           {email.length > 0 && (
-            <Text style={styles.moreInfoText}>
+            <Text style={tw`text-[#858585]`}>
               A verification link will be sent to example {email}
             </Text>
           )}
         </View>
-        <View style={{ marginTop: 60 }}>
+        <View style={tw`mt-[60px]`}>
           <LongBlackButton
             value={isLoading ? "Loading..." : "Send verification link"}
             isLoading={isLoading}
@@ -95,9 +102,11 @@ export default function Form({
           />
         </View>
       </View>
-      <View style={{ marginTop: 100 }}>
+      <View style={tw`mt-[100px]`}>
         <Pressable onPress={() => navigation.navigate(screenName.register)}>
-          <Text style={styles.createAccountLink}>
+          <Text
+            style={[tw`text-center text-base`, { color: colors.primary_black }]}
+          >
             Don't have an account? Create one
           </Text>
         </Pressable>
@@ -105,19 +114,3 @@ export default function Form({
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // marginTop: 40,
-    paddingHorizontal: 20,
-  },
-  moreInfoText: {
-    color: "#858585",
-  },
-  createAccountLink: {
-    textAlign: "center",
-    color: colors.primary_black,
-    fontSize: 16,
-  },
-});

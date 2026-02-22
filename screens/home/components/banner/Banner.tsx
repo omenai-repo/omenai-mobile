@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, FlatList, View, Linking, StyleSheet } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, FlatList, View, Linking } from "react-native";
+import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
 import { getPromotionalData } from "#services/promotional/getPromotionalContent";
 import BannerLoader from "./BannerLoader";
@@ -81,7 +82,7 @@ export default function Banner() {
 
   return (
     <View>
-      <View style={{ marginTop: 20 }}>
+      <View style={tw`mt-5`}>
         {isLoading && data.length === 0 && (
           <BannerLoader isTablet={isTablet} cardWidth={CARD_WIDTH} />
         )}
@@ -118,7 +119,7 @@ export default function Banner() {
 
       {/* Pagination - show dots based on scroll positions */}
       {!isTablet && (
-        <View style={styles.indicatorsContainer}>
+        <View style={tw`mt-[15px] flex-row justify-center items-center`}>
           {data.map((item, i) => {
             const inputRange = [
               SNAP_INTERVAL * (i - 1),
@@ -139,7 +140,7 @@ export default function Banner() {
               <Animated.View
                 key={`indicator-${item.headline}`}
                 style={[
-                  styles.indicator,
+                  tw`h-2 rounded-full mx-1`,
                   { width: dotWidth, backgroundColor: dotColor },
                 ]}
               />
@@ -149,7 +150,7 @@ export default function Banner() {
       )}
       {/* Tablet: show dots for scroll positions (total items - visible + 1) */}
       {isTablet && data.length > cardsToShow && (
-        <View style={styles.indicatorsContainer}>
+        <View style={tw`mt-[15px] flex-row justify-center items-center`}>
           {(() => {
             const indicatorsCount = data.length - cardsToShow + 1;
             const indicators = Array.from(
@@ -177,7 +178,7 @@ export default function Banner() {
                 <Animated.View
                   key={id}
                   style={[
-                    styles.indicator,
+                    tw`h-2 rounded-full mx-1`,
                     { width: dotWidth, backgroundColor: dotColor },
                   ]}
                 />
@@ -189,13 +190,3 @@ export default function Banner() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  indicatorsContainer: {
-    marginTop: 15,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  indicator: { height: 8, borderRadius: 4, marginHorizontal: 4 },
-});

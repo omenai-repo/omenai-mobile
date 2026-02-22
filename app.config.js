@@ -67,8 +67,12 @@ export default {
         "expo-font",
         {
           fonts: [
-            "./assets/fonts/nunito-sans.ttf",
-            "./assets/fonts/DMSans.ttf",
+            "./assets/fonts/PT_Serif/PTSerif-Regular.ttf",
+            "./assets/fonts/PT_Serif/PTSerif-Bold.ttf",
+            "./assets/fonts/Work_Sans/static/WorkSans-Light.ttf",
+            "./assets/fonts/Work_Sans/static/WorkSans-ExtraLight.ttf",
+            "./assets/fonts/Work_Sans/static/WorkSans-Regular.ttf",
+            "./assets/fonts/Work_Sans/static/WorkSans-Bold.ttf",
           ],
         },
       ],

@@ -77,12 +77,12 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
     : 'CANCELED';
 
   return (
-    <View style={[tw`bg-white rounded-xl border border-slate-200 p-4`, shadow()]}>
+    <View style={[tw`bg-white rounded-sm border border-slate-200 p-4`, shadow()]}>
       {/* Header */}
       <View style={tw`flex-row items-center justify-between mb-3`}>
         <Text style={tw`text-base font-semibold text-slate-900`}>Your Subscription</Text>
 
-        <View style={tw.style(`px-2 py-1 rounded-lg`, badgeStyles.wrap)}>
+        <View style={tw.style(`px-2 py-1 rounded-sm`, badgeStyles.wrap)}>
           <Text style={tw.style(`text-xs font-semibold`, badgeStyles.text)}>{badgeText}</Text>
         </View>
       </View>
@@ -150,7 +150,7 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
 
       {/* Pending-cancel note */}
       {isPendingCancel && (
-        <View style={tw`mt-3 p-3 rounded-md bg-amber-50 border border-amber-200`}>
+        <View style={tw`mt-3 p-3 rounded-sm bg-amber-50 border border-amber-200`}>
           <Text style={tw`text-[11px] text-amber-800`}>
             <Text style={tw`font-semibold`}>NOTE:</Text> Your subscription cancellation will take
             effect after your current billing cycle.
@@ -167,7 +167,7 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
             }
             style={({ pressed }) =>
               tw.style(
-                `flex-1 h-11 rounded-lg items-center justify-center bg-blue-600`,
+                `flex-1 h-11 rounded-sm items-center justify-center bg-blue-600`,
                 pressed ? 'opacity-90' : '',
               )
             }
@@ -185,7 +185,7 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
                 }
                 style={({ pressed }) =>
                   tw.style(
-                    `flex-1 h-11 rounded-lg items-center justify-center bg-slate-100`,
+                    `flex-1 h-11 rounded-sm items-center justify-center bg-slate-100`,
                     pressed ? 'opacity-95' : '',
                   )
                 }
@@ -199,7 +199,7 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
                 onPress={onOpenCancelModal}
                 style={({ pressed }) =>
                   tw.style(
-                    `ml-2 px-4 h-11 rounded-lg items-center justify-center`,
+                    `ml-2 px-4 h-11 rounded-sm items-center justify-center`,
                     pressed ? 'bg-red-50' : '',
                   )
                 }

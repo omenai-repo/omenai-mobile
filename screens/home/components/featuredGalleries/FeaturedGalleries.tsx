@@ -1,12 +1,6 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import { Image, Text, View, TouchableOpacity, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
+import tw from "twrnc";
 import { colors } from "../../../../config/colors.config";
 import { useNavigation } from "@react-navigation/native";
 import { getFeaturedGalleries } from "#services/overview/fetchFeaturedGallery";
@@ -46,10 +40,13 @@ export default function FeaturedGalleries() {
           })
         }
       >
-        <View style={styles.gallery}>
-          <Image source={{ uri: image_href }} style={styles.image} />
-          <View style={styles.contentContainer}>
-            <Text style={{ fontSize: 14, color: colors.primary_black }}>
+        <View style={tw`flex-1 w-[300px]`}>
+          <Image
+            source={{ uri: image_href }}
+            style={tw`w-full h-[200px] rounded-sm bg-[#eee]`}
+          />
+          <View style={tw`pt-2.5`}>
+            <Text style={tw`text-[14px] text-[${colors.primary_black}]`}>
               {item.name}
             </Text>
           </View>
@@ -59,9 +56,9 @@ export default function FeaturedGalleries() {
   };
 
   return (
-    <View style={{ marginTop: 40 }}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Featured Galleries</Text>
+    <View style={tw`mt-10`}>
+      <View style={tw`flex-row items-center gap-2.5 px-5`}>
+        <Text style={tw`text-lg font-medium flex-1`}>Featured Galleries</Text>
       </View>
       <FlatList
         data={galleries}
@@ -69,36 +66,9 @@ export default function FeaturedGalleries() {
         keyExtractor={(item) => item.gallery_id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingLeft: 20, paddingRight: 20, gap: 20 }}
-        style={{ marginTop: 20 }}
+        contentContainerStyle={tw`px-5 gap-5`}
+        style={tw`mt-5`}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 20,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "500",
-    flex: 1,
-  },
-  gallery: {
-    flex: 1,
-    width: 300,
-  },
-  contentContainer: {
-    paddingTop: 10,
-  },
-  image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 5,
-    backgroundColor: "#eee",
-  },
-});

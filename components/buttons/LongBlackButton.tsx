@@ -77,12 +77,12 @@ export default function LongBlackButton({
 
   const defaultTextStyle: TextStyle = {
     color: textColor,
-    fontSize: 16,
-    fontWeight: "400",
+    fontSize: 14,
+    fontWeight: "300",
   };
 
   const containerStyle = [
-    tw`w-full flex items-center justify-center rounded-lg`,
+    tw`w-full flex items-center justify-center rounded-md`,
     defaultContainerStyle,
     style,
   ];
@@ -92,15 +92,15 @@ export default function LongBlackButton({
   if (isInactive) {
     return (
       <View style={containerStyle} testID={testID}>
-        {isDisabled ? (
-          <Text style={mergedTextStyle}>{value}</Text>
-        ) : (
+        {isLoading ? (
           <LottieView
             autoPlay
             ref={animation}
             style={tw`w-[100px] h-[100px]`}
             source={loaderAnimation}
           />
+        ) : (
+          <Text style={mergedTextStyle}>{value}</Text>
         )}
       </View>
     );

@@ -24,7 +24,7 @@ const YearDropdown = ({
     <View style={[tw`w-full`, style]}>
       <Dropdown
         style={[
-          tw`h-[50px] bg-white rounded-xl border border-gray-200 px-4`,
+          tw`h-[50px] bg-white rounded-md border border-gray-200 px-4`,
           style,
         ]}
         placeholderStyle={tw`text-base text-gray-800 font-semibold`}
@@ -41,14 +41,31 @@ const YearDropdown = ({
         onChange={(item) => {
           setSelectedYear(item.value);
         }}
-        renderItem={(item) => (
-          <View style={tw`p-4 flex-row justify-between items-center`}>
-            <Text style={tw`text-base text-gray-800`}>{item.label}</Text>
-            {item.value === selectedYear && (
-              <Text style={tw`text-blue-500 font-bold`}>✓</Text>
-            )}
-          </View>
-        )}
+        renderItem={(item) => {
+          const isSelected = item.value === selectedYear;
+          return (
+            <View
+              style={[
+                tw`p-4 flex-row justify-between items-center`,
+                isSelected ? tw`bg-slate-100` : null,
+              ]}
+            >
+              <Text
+                style={[
+                  tw`text-base`,
+                  isSelected
+                    ? tw`text-neutral-900 font-bold`
+                    : tw`text-gray-800`,
+                ]}
+              >
+                {item.label}
+              </Text>
+              {isSelected && (
+                <Text style={tw`text-neutral-900 font-bold`}>✓</Text>
+              )}
+            </View>
+          );
+        }}
       />
     </View>
   );

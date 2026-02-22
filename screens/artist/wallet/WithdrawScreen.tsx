@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
-  Text,
   TextInput,
-  Pressable,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -22,7 +20,7 @@ import FormSkeleton from "#components/skeleton/FormSkeleton";
 import { PrimaryAccountDetails } from "./components/withdraw/PrimaryAccountDetails";
 import { WithdrawalAmountInput } from "./components/withdraw/WithdrawalAmountInput";
 import { WithdrawalPinInput } from "./components/withdraw/WithdrawalPinInput";
-import WithModal from "#components/modal/WithModal";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 const WALLET_QK = ["wallet", "artist"] as const;
 const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
@@ -173,7 +171,7 @@ export const WithdrawScreen = ({
 
   if (isWalletWithdrawalEnabled) {
     return (
-      <WithModal>
+      <>
         <View style={tw`flex-1 bg-[#F7F7F7]`}>
           <BackHeaderTitle title="Withdraw Funds" />
           <KeyboardAvoidingView
@@ -207,26 +205,25 @@ export const WithdrawScreen = ({
                 <WithdrawalPinInput
                   otpRef={otpRef}
                   setWalletPin={setWalletPin}
-                  onForgotPin={() => navigation.navigate("ForgotPinScreen")}
+                  onForgotPin={() =>
+                    navigation.navigate("ForgotPinScreen", {
+                      walletId: walletData?.wallet_id,
+                    })
+                  }
                   loading={loading}
                 />
 
-                <Pressable
-                  style={tw`bg-[#000] py-4 rounded-lg mb-[100px] ${
-                    loading ? "opacity-50" : ""
-                  }`}
-                  onPress={handleWithdraw}
-                  disabled={loading}
-                >
-                  <Text style={tw`text-white text-center font-bold`}>
-                    {loading ? "Processing..." : "Withdraw"}
-                  </Text>
-                </Pressable>
+                <LongBlackButton
+                  value="Withdraw"
+                  onClick={handleWithdraw}
+                  isLoading={loading}
+                  style={tw`mb-[100px]`}
+                />
               </View>
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
-      </WithModal>
+      </>
     );
   }
 

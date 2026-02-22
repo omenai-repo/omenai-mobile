@@ -168,14 +168,17 @@ export default function EditPricing({ art_id }: { art_id: string }) {
         </View>
         <View>
           {currency !== "" && price !== 0 && usdPrice !== 0 && (
-            <Text style={{ fontSize: 14, fontWeight: 500, opacity: 0.8 }}>
-              Exchange rate:{" "}
-              {`${utils_formatPrice(price, currency_symbol)} = ${
+            <Input
+              label="USD Equivalent"
+              value={
                 loadingConversion
-                  ? "converting..."
+                  ? "Converting..."
                   : utils_formatPrice(usdPrice, usd_symbol)
-              }`}
-            </Text>
+              }
+              disabled={true}
+              placeHolder=""
+              onInputChange={() => {}}
+            />
           )}
         </View>
         <View style={{ zIndex: 10 }}>

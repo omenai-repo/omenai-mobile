@@ -11,7 +11,7 @@ export const PaymentSection = ({
   sub_data,
   discountEligible,
 }: any) => (
-  <View style={tw`rounded-2xl border border-slate-200 bg-slate-50 p-5`}>
+  <View style={tw`rounded-sm border border-slate-200 bg-slate-50 p-5`}>
     <View style={tw`flex-row items-center justify-between mb-4`}>
       <Text style={tw`text-[14px] font-semibold text-slate-900`}>
         Payment Details

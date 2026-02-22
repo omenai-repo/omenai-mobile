@@ -17,6 +17,7 @@ import tw from "twrnc";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import { fontNames } from "#constants/fontNames.constants";
 import { useDevice } from "#hooks/useDevice";
+import ProgressiveImage from "#components/general/ProgressiveImage";
 
 type ArtworkCardType = {
   title: string;
@@ -54,47 +55,51 @@ export default function ArtworkCard({
   const defaultWidth = isTablet ? screenWidth * 0.4 : screenWidth * 0.7;
   const displayWidth = width > 0 ? width : defaultWidth;
   const fetchWidth = Math.round(displayWidth * dpr);
-  const image_href = getImageFileView(url, fetchWidth);
 
   const [imageDimensions, setImageDimensions] = useState({
     width: 250,
     height: 250,
   });
 
+  const highResUri = getImageFileView(url, fetchWidth);
+  const lowResUri = getImageFileView(url, 20, undefined, undefined, 20);
+
   useEffect(() => {
-    Image.getSize(image_href, (defaultWidth, defaultHeight) => {
+    Image.getSize(highResUri, (defaultWidth, defaultHeight) => {
       const maxHeight = 300;
 
       const { width: resizedWidth, height: resizedHeight } =
         resizeImageDimensions(
           { width: defaultWidth, height: defaultHeight },
           displayWidth,
-          maxHeight
+          maxHeight,
         );
 
       setImageDimensions({ height: resizedHeight, width: resizedWidth });
     });
-  }, [image_href, displayWidth]);
+  }, [highResUri, displayWidth]);
 
   return (
     <View>
       <View style={tw`flex-1`} />
       <TouchableOpacity
         activeOpacity={1}
-        style={[tw`rounded-2xl`, { width: imageDimensions.width }]}
+        style={[tw`rounded-sm`, { width: imageDimensions.width }]}
         onPress={() => {
           navigation.push(screenName.artwork, { art_id, url });
         }}
       >
-        <View style={tw`rounded-[5px] overflow-hidden relative`}>
-          <Image
-            source={{ uri: image_href }}
-            style={{
+        <View style={tw`rounded-sm overflow-hidden relative`}>
+          <ProgressiveImage
+            thumbnailSource={{ uri: lowResUri }}
+            source={{ uri: highResUri }}
+            containerStyle={{
               width: imageDimensions.width,
               height: imageDimensions.height,
-              objectFit: "contain",
-              borderRadius: 5,
-              backgroundColor: "#f5f5f5",
+            }}
+            imageStyle={{
+              width: imageDimensions.width,
+              height: imageDimensions.height,
             }}
             resizeMode="contain"
           />
@@ -103,7 +108,7 @@ export default function ArtworkCard({
           >
             {!galleryView && (
               <View
-                style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
+                style={tw`bg-white/20 h-[30px] w-[30px] rounded-sm flex items-center justify-center`}
               >
                 <LikeComponent
                   art_id={art_id || ""}
@@ -121,10 +126,9 @@ export default function ArtworkCard({
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
-                tw`text-base ${
-                  lightText ? "text-white/90" : "text-[#1A1A1A]"
-                } font-medium w-full`,
-                { fontFamily: fontNames.dmSans + "Medium" },
+                tw`text-base font-serif leading-snug ${
+                  lightText ? "text-white/90" : "text-dark"
+                } w-full`,
               ]}
             >
               {title}
@@ -133,10 +137,9 @@ export default function ArtworkCard({
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
-                tw`text-sm ${
-                  lightText ? "text-white/80" : "text-[#1A1A1A]/70"
-                } w-full mt-0.5`,
-                { fontFamily: fontNames.dmSans + "Regular" },
+                tw`text-xs text-fluid-xs ${
+                  lightText ? "text-white/80" : "text-slate-500"
+                } w-full mt-0.5 font-sans`,
               ]}
             >
               {artist}
@@ -145,62 +148,23 @@ export default function ArtworkCard({
           <View style={tw`flex flex-row items-center gap-2`}>
             {availiablity && (
               <Text
-                style={[
-                  tw`text-base font-bold ${
-                    lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                  } flex-1`,
-                  { fontFamily: fontNames.dmSans + "Bold" },
-                ]}
+                style={tw`text-sm ${showPrice ? "font-bold" : "font-medium"} ${
+                  lightText ? "text-white/90" : "text-[#1A1A1A]/90"
+                } flex-1 font-sans ${showPrice ? "font-bold" : "font-medium"}`}
               >
-                {showPrice ? utils_formatPrice(price) : "Price on request"}
+                {showPrice ? utils_formatPrice(price) : "Price on Request"}
               </Text>
             )}
 
             <View style={tw`flex-wrap`}>
-              {/* {availiablity && (
-                <TouchableOpacity
-                  style={tw`${
-                    lightText ? "bg-white" : "bg-black"
-                  } rounded-full px-5 py-2 w-fit mt-2`}
-                  onPress={() => {
-                    if (showPrice) {
-                      navigation.push(screenName.purchaseArtwork, {
-                        title,
-                      });
-                    } else {
-                      handleRequestPriceQuote();
-                    }
-                  }}
-                  activeOpacity={1}
-                >
-                  <Text
-                    style={[
-                      tw`${lightText ? "text-[#1A1A1A]" : "text-white"} text-sm`,
-                      { fontFamily: fontNames.dmSans + "Medium" },
-                    ]}
-                  >
-                    {showPrice
-                      ? "Purchase"
-                      : loadingPriceQuote
-                      ? "Requesting ..."
-                      : "Request price"}
-                  </Text>
-                </TouchableOpacity>
-              )}  */}
-
               {!availiablity && (
-                // <View style={tw`rounded-full bg-[#E0E0E0] px-5 py-2 mt-2`}>
                 <Text
-                  style={[
-                    tw`text-base font-bold ${
-                      lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                    } flex-1`,
-                    { fontFamily: fontNames.dmSans + "Bold" },
-                  ]}
+                  style={tw`text-sm font-bold ${
+                    lightText ? "text-white/90" : "text-[#1A1A1A]/90"
+                  } flex-1 font-sans font-bold`}
                 >
-                  Sold
+                  SOLD
                 </Text>
-                // </View>
               )}
             </View>
           </View>

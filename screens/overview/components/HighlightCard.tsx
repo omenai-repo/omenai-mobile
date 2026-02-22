@@ -30,7 +30,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
         refetchOnReconnect: true,
         refetchOnWindowFocus: true,
         select: (d: number) => d ?? 0,
-      })
+      }),
     ),
   });
 

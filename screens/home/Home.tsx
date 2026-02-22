@@ -1,21 +1,22 @@
-import React, { useCallback, useState } from 'react';
-import { RefreshControl, View } from 'react-native';
-import { useQueryClient } from '@tanstack/react-query';
-import WithModal from '#components/modal/WithModal';
-import ScrollWrapper from '#components/general/ScrollWrapper';
-import Header from '#components/header/Header';
-import Banner from './components/banner/Banner';
-import NewArtworksListing from './components/NewArtworksListing';
-import TrendingArtworks from './components/TrendingArtworks';
-import CuratedArtworksListing from './components/CuratedArtworksListing';
-import CatalogListing from './components/CatalogListing';
-import RecentlyViewedArtworks from './components/recentlyViewed/RecentlyViewedArtworks';
-import FeaturedArtists from './components/featuredArtists/FeaturedArtists';
-import Editorials from './components/editorials/Editorials';
-import { HOME_QK } from '#utils/queryKeys';
-import { useAppStore } from '#store/app/appStore';
-import BlurStatusBar from '#components/general/BlurStatusBar';
-import { useScrollY } from '#hooks/useScrollY';
+import React, { useCallback, useState } from "react";
+import { RefreshControl, View } from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
+import tw from "twrnc";
+
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import Header from "#components/header/Header";
+import Banner from "./components/banner/Banner";
+import NewArtworksListing from "./components/NewArtworksListing";
+import TrendingArtworks from "./components/TrendingArtworks";
+import CuratedArtworksListing from "./components/CuratedArtworksListing";
+import CatalogListing from "./components/catalog/CatalogListing";
+import RecentlyViewedArtworks from "./components/recentlyViewed/RecentlyViewedArtworks";
+import FeaturedArtists from "./components/featuredArtists/FeaturedArtists";
+import Editorials from "./components/editorials/Editorials";
+import { HOME_QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
+import BlurStatusBar from "#components/general/BlurStatusBar";
+import { useScrollY } from "#hooks/useScrollY";
 
 export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
@@ -27,38 +28,54 @@ export default function Home() {
     setRefreshing(true);
     // Mark everything on Home as stale
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: HOME_QK.banner(userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: HOME_QK.newArtworks(userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: HOME_QK.trending(28, userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: HOME_QK.curated(20, userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: HOME_QK.featuredArtists(userSession?.id) }),
-      queryClient.invalidateQueries({ queryKey: HOME_QK.editorials(userSession?.id) }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.banner(userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.newArtworks(userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.trending(28, userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.curated(20, userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.featuredArtists(userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.editorials(userSession?.id),
+      }),
     ]);
     // Optional: kick a refetch immediately
     await queryClient.refetchQueries({
-      predicate: (q) => Array.isArray(q.queryKey) && q.queryKey[0] === 'home',
+      predicate: (q) => Array.isArray(q.queryKey) && q.queryKey[0] === "home",
     });
     setRefreshing(false);
   }, [queryClient]);
 
   return (
-    <WithModal>
+    <>
       <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         onScroll={onScroll}
       >
         <Header />
         <Banner />
-        <NewArtworksListing />
-        <FeaturedArtists />
-        <TrendingArtworks limit={28} />
-        <CuratedArtworksListing limit={20} />
-        <CatalogListing />
-        <Editorials />
-        <RecentlyViewedArtworks />
+        <View style={tw`mt-10 gap-10`}>
+          <NewArtworksListing />
+          <FeaturedArtists />
+          <TrendingArtworks limit={28} />
+          <CuratedArtworksListing limit={20} />
+          <CatalogListing />
+          <Editorials />
+          <RecentlyViewedArtworks />
+        </View>
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }

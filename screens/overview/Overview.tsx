@@ -1,7 +1,8 @@
 import { StyleSheet, RefreshControl, View } from "react-native";
 import tw from "twrnc";
 import React, { useCallback, useRef, useState } from "react";
-import WithModal from "#components/modal/WithModal";
+
+import WithGalleryModal from "#components/modal/WithGalleryModal";
 import Header from "#components/header/Header";
 import SalesOverview from "./components/SalesOverview";
 import { HighlightCard } from "./components/HighlightCard";
@@ -50,26 +51,28 @@ export default function Overview() {
   }, []);
 
   return (
-    <WithModal>
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-        <ScrollWrapper
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          onScroll={onScroll}
-        >
-          <Header />
-          <View style={styles.container}>
-            <HighlightCard onLoadingChange={handleLoadingChange} />
-          </View>
+    <>
+      <WithGalleryModal>
+        <View style={tw`flex-1 bg-[#F7F7F7]`}>
+          <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+          <ScrollWrapper
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            onScroll={onScroll}
+          >
+            <Header />
+            <View style={styles.container}>
+              <HighlightCard onLoadingChange={handleLoadingChange} />
+            </View>
 
-          <SalesOverview onLoadingChange={handleLoadingChange} />
-          <PopularArtworks onLoadingChange={handleLoadingChange} />
-        </ScrollWrapper>
-      </View>
-    </WithModal>
+            <SalesOverview onLoadingChange={handleLoadingChange} />
+            <PopularArtworks onLoadingChange={handleLoadingChange} />
+          </ScrollWrapper>
+        </View>
+      </WithGalleryModal>
+    </>
   );
 }
 

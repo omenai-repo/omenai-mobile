@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
-import WithModal from "#components/modal/WithModal";
+
 import AuthHeader from "#components/auth/AuthHeader";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -87,7 +87,7 @@ export default function VerifyEmail() {
   };
 
   return (
-    <WithModal>
+    <>
       <AuthHeader
         title="Verify email"
         subTitle={`Verify your account so you can start ${
@@ -142,7 +142,7 @@ export default function VerifyEmail() {
           </Text>
         </View>
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }
 

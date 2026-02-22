@@ -23,7 +23,7 @@ export default function OrderSkeleton() {
       </View>
 
       {/* Order Details Card */}
-      <View style={tw`bg-gray-50 rounded-xl p-4 mb-6`}>
+      <View style={tw`bg-gray-50 rounded-sm p-4 mb-6`}>
         {/* Title */}
         <View style={tw`mb-3`}>
           <Skeleton colorMode="light" height={20} width="70%" radius={4} />

@@ -29,7 +29,7 @@ const Item = ({ name, isChecked, onSelect, onDeselect }: FilterItemProps) => {
       <View style={tw`gap-2.5 flex-row items-center`}>
         <View
           style={[
-            tw`h-5 w-5 items-center justify-center rounded`,
+            tw`h-5 w-5 items-center justify-center rounded-sm`,
             {
               borderWidth: 1,
               borderColor: colors.inputBorder,
@@ -70,7 +70,7 @@ export default function GenericFilterOptionBox({
   return (
     <View
       style={[
-        tw`w-full rounded-lg gap-4 p-4 mt-2.5 bg-white`,
+        tw`w-full rounded-sm gap-4 p-4 mt-2.5 bg-white`,
         {
           borderWidth: 1,
           borderColor: colors.inputBorder,

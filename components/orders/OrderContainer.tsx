@@ -72,8 +72,8 @@ export const OrderContainer = (props: OrderContainerProps) => {
       onPress={() => setOpen(!open)}
       style={tw.style(
         `border-t-[1px] border-l-[1px] border-r-[1px] border-[#E7E7E7] p-[20px]`,
-        id === 0 && `rounded-t-[15px]`,
-        lastId && `border-b-[1px] rounded-b-[15px]`
+        id === 0 && `rounded-t-md`,
+        lastId && `border-b-[1px] rounded-b-md`,
       )}
       accessible
       accessibilityLabel={`Order ${artName}, ${
@@ -84,7 +84,7 @@ export const OrderContainer = (props: OrderContainerProps) => {
       <View style={tw`flex-row items-center`}>
         <OrderHeader image_href={image_href} artId={artId} artName={artName} />
         <View
-          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
+          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-md`}
         >
           {typeof currentIcon === "string" && <SvgXml xml={currentIcon} />}
         </View>

@@ -27,7 +27,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <View style={[tw`w-full h-[50px]`, style]}>
       <Dropdown
         style={[
-          tw`h-[50px] bg-white rounded-xl border border-gray-200 px-4`,
+          tw`h-[50px] bg-white rounded-md border border-gray-200 px-4`,
           style,
         ]}
         placeholderStyle={tw`text-base text-gray-800 font-medium`}
@@ -50,18 +50,22 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             <View
               style={[
                 tw`p-4 flex-row justify-between items-center`,
-                isSelected ? tw`bg-blue-50` : null,
+                isSelected ? tw`bg-slate-100` : null,
               ]}
             >
               <Text
                 style={[
                   tw`text-base`,
-                  isSelected ? tw`text-blue-600 font-bold` : tw`text-gray-800`,
+                  isSelected
+                    ? tw`text-neutral-900 font-bold`
+                    : tw`text-gray-800`,
                 ]}
               >
                 {item.label}
               </Text>
-              {isSelected && <Text style={tw`text-blue-500 font-bold`}>✓</Text>}
+              {isSelected && (
+                <Text style={tw`text-neutral-900 font-bold`}>✓</Text>
+              )}
             </View>
           );
         }}

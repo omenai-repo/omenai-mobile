@@ -150,7 +150,7 @@ export default function DeleteAccountScreen() {
             )}
             {error && (
               <View style={tw`px-5 mb-4`}>
-                <View style={tw`p-4 bg-red-50 rounded-lg border border-red-200`}>
+                <View style={tw`p-4 bg-red-50 rounded-sm border border-red-200`}>
                   <Text style={tw`text-red-600 text-sm`}>{error}</Text>
                 </View>
               </View>

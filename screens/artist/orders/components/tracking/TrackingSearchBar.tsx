@@ -32,10 +32,10 @@ export default function TrackingSearchBar({
 
         <View style={tw`px-4 py-6`}>
           <Text style={tw`text-base font-semibold text-gray-900 mb-2`}>
-            Enter Tracking Number
+            Enter Order ID
           </Text>
           <View
-            style={tw`flex-row items-center bg-white rounded-xl border border-gray-200 overflow-hidden`}
+            style={tw`flex-row items-center bg-white rounded-sm border border-gray-200 overflow-hidden`}
           >
             <Ionicons name="search" size={20} color="#999" style={tw`pl-4`} />
             <TextInput
@@ -50,7 +50,7 @@ export default function TrackingSearchBar({
           <Pressable
             onPress={handleSearch}
             disabled={isLoading || !trackingInput.trim()}
-            style={tw`bg-slate-900 rounded-xl py-3 mt-4 items-center justify-center ${
+            style={tw`bg-slate-900 rounded-sm py-3 mt-4 items-center justify-center ${
               isLoading || !trackingInput.trim() ? "opacity-50" : ""
             }`}
           >

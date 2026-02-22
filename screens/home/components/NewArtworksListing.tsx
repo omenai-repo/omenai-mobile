@@ -1,23 +1,16 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import { View, FlatList } from "react-native";
+import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 import { fetchArtworks } from "#services/artworks/fetchArtworks";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import EmptyArtworks from "#components/general/EmptyArtworks";
-import { Feather } from "@expo/vector-icons";
-import { colors } from "#config/colors.config";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
-import { fontNames } from "#constants/fontNames.constants";
 import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import SectionHeader from "#components/general/SectionHeader";
 
 export default function NewArtworksListing() {
   const navigation = useNavigation<any>();
@@ -34,29 +27,14 @@ export default function NewArtworksListing() {
   });
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate(screenName.catalog)}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: 20,
-            marginBottom: 15,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 20,
-              color: "#1A1A1A",
-              fontFamily: fontNames.dmSans + "Bold",
-            }}
-          >
-            New artworks for you
-          </Text>
-          <Feather name="chevron-right" color={colors.grey} size={24} />
-        </View>
-      </TouchableOpacity>
+    <View style={tw`mt-6`}>
+      <SectionHeader
+        subtitle="Recently Added"
+        title="New Arrivals"
+        onActionPress={() =>
+          navigation.navigate(screenName.artworksMedium, { catalog: "recent" })
+        }
+      />
 
       {isLoading && <ArtworkCardLoader />}
 
@@ -66,8 +44,8 @@ export default function NewArtworksListing() {
           keyExtractor={(_, i) => `new-${i}`}
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 0 }}
-          contentContainerStyle={{ paddingLeft: 20, gap: 20, paddingRight: 20 }}
+          style={tw`mt-5`}
+          contentContainerStyle={tw`px-5 gap-5`}
           initialNumToRender={5}
           maxToRenderPerBatch={5}
           windowSize={5}
@@ -88,10 +66,12 @@ export default function NewArtworksListing() {
       )}
 
       {!isLoading && data.length < 1 && (
-        <EmptyArtworks size={70} writeUp="No new artworks at the moment" />
+        <EmptyArtworks
+          size={70}
+          fixedHeight
+          writeUp="No new artworks at the moment"
+        />
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({ container: { marginTop: 40 } });

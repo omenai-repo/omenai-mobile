@@ -114,7 +114,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
           onPress={(e) => e.stopPropagation()}
           style={tw.style(
             (editingKey === "social" || editingKey === "cv") &&
-              `bg-white p-5 rounded-lg w-[90%]`
+              `bg-white p-5 rounded-sm w-[90%]`
           )}
         >
           {renderEditContent()}

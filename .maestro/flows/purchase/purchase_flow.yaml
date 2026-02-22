@@ -1,0 +1,31 @@
+appId: com.omenai.omenaimobile
+name: "Purchase Flow"
+tags:
+  - purchase
+  - buy-now
+
+---
+- runFlow: ../login/individual-login.yaml
+
+# Navigate to Search
+- tapOn: "Search"
+
+# Search for an artwork that is likely to have 'Buy Now'
+- tapOn:
+    id: "search-input" # Verify ID
+- inputText: "Canvas"
+- pressKey: Enter
+- hideKeyboard
+
+# Select the first artwork result
+- tapOn:
+    index: 0
+    id: "artwork-card" # Verify ID
+
+# Check for "Purchase artwork" button
+- assertVisible: "Purchase artwork"
+- tapOn: "Purchase artwork"
+
+# Verify we are on the Purchase Screen
+- assertVisible: "Order Summary" # Based on component names in file list
+- assertVisible: "Shipping Details"

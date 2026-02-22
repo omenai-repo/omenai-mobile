@@ -31,16 +31,13 @@ export default function PasswordInput({
       <Text style={[tw`text-sm`, { color: colors.inputLabel }]}>{label}</Text>
       <View
         style={[
-          tw`h-[46px] w-full border bg-[#FAFAFA] overflow-hidden rounded-lg mt-2.5 flex-row items-center`,
+          tw`w-full border bg-[#FAFAFA] overflow-hidden rounded-md mt-2.5 flex-row`,
           { borderColor: colors.inputBorder },
         ]}
       >
         <TextInput
           testID={testID}
-          style={[
-            tw`flex-1 h-full px-3 bg-transparent`,
-            { color: colors.black },
-          ]}
+          style={[tw`flex-1 py-3 px-3 bg-transparent`, { color: colors.black }]}
           placeholder={placeHolder}
           placeholderTextColor={colors.inputLabel}
           onChangeText={onInputChange}
@@ -51,7 +48,7 @@ export default function PasswordInput({
           textContentType={textContentType}
         />
         <TouchableOpacity
-          style={tw`w-[50px] h-full items-center justify-center`}
+          style={tw`w-[50px] justify-center items-center`}
           onPress={() => setShowPassword((prev) => !prev)}
         >
           <Feather

@@ -42,7 +42,7 @@ export const ChartTooltip: React.FC<ChartTooltipProps> = ({
     >
       <View
         style={[
-          tw`rounded-lg p-2.5 w-[140px] shadow-lg`,
+          tw`rounded-sm p-2.5 w-[140px] shadow-lg`,
           { backgroundColor: colors.black },
         ]}
       >
