@@ -44,7 +44,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         <TouchableOpacity
           onPress={onPickDocument}
           style={tw.style(
-            `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`
+            `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`,
           )}
         >
           {!cv?.assets && <SvgXml xml={uploadIcon} />}
@@ -114,7 +114,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
           onPress={(e) => e.stopPropagation()}
           style={tw.style(
             (editingKey === "social" || editingKey === "cv") &&
-              `bg-white p-5 rounded-sm w-[90%]`
+              `bg-white p-5 rounded-md w-[90%]`,
           )}
         >
           {renderEditContent()}

@@ -15,7 +15,7 @@ export default function GenericFilterPill({
     <TouchableOpacity onPress={onRemove}>
       <View
         style={[
-          tw`flex-row items-center gap-2.5 py-2.5 px-4 rounded-sm`,
+          tw`flex-row items-center gap-2.5 py-2.5 px-4 rounded-md`,
           { backgroundColor: colors.primary_black },
         ]}
       >

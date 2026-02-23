@@ -36,7 +36,7 @@ export default function NotificationPermissionPrompt({
   return (
     <View
       style={[
-        tw`mt-6 mb-2 bg-gray-50 p-4 rounded-sm border border-gray-200`,
+        tw`mt-6 mb-2 bg-gray-50 p-4 rounded-md border border-gray-200`,
         style,
       ]}
     >

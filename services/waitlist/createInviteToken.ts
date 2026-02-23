@@ -45,7 +45,13 @@ export async function createInviteToken(
       status: response.status,
       referrerKey: response.referrerKey,
     };
-  } catch {
-    return { isOk: false, message: "Something went wrong" };
+  } catch (error: any) {
+    return {
+      isOk: false,
+      message:
+        error?.message ||
+        error?.response?.data?.message ||
+        "Something went wrong",
+    };
   }
 }

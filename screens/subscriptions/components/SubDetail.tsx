@@ -1,17 +1,17 @@
-import React, { useMemo } from 'react';
-import { View, Text, Pressable, Image, Platform } from 'react-native';
-import tw from 'twrnc';
-import { useNavigation } from '@react-navigation/native';
-import { utils_getCurrencySymbol } from '#utils/utils_getCurrencySymbol';
-import { utils_formatPrice } from '#utils/utils_priceFormatter';
-import { daysLeft } from '#utils/utils_daysLeft';
-import { screenName } from '#constants/screenNames.constants';
+import React, { useMemo } from "react";
+import { View, Text, Pressable, Image, Platform } from "react-native";
+import tw from "twrnc";
+import { useNavigation } from "@react-navigation/native";
+import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { daysLeft } from "#utils/utils_daysLeft";
+import { screenName } from "#constants/screenNames.constants";
 
 export type SubData = {
-  status: SubscriptionModelSchemaTypes['status'];
-  expiry_date: SubscriptionModelSchemaTypes['expiry_date'];
+  status: SubscriptionModelSchemaTypes["status"];
+  expiry_date: SubscriptionModelSchemaTypes["expiry_date"];
   upload_tracker: UploadTrackingTypes;
-  plan_details: SubscriptionModelSchemaTypes['plan_details'];
+  plan_details: SubscriptionModelSchemaTypes["plan_details"];
 };
 
 type Props = {
@@ -20,7 +20,11 @@ type Props = {
   logoSource?: any;
 };
 
-export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: Props) {
+export default function SubDetail({
+  sub_data,
+  onOpenCancelModal,
+  logoSource,
+}: Props) {
   const navigation = useNavigation<any>();
   const { status, plan_details, upload_tracker, expiry_date } = sub_data;
 
@@ -31,32 +35,44 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
   const dLeft = Math.max(0, daysLeft?.(expiry_date) ?? 0);
 
   // --- derived states
-  const isActive = status === 'active';
-  const isPendingCancel = status === 'canceled' && !hasExpired; // canceled but still within paid period
-  const isEndedPast = (status === 'canceled' && hasExpired) || status === 'expired';
+  const isActive = status === "active";
+  const isPendingCancel = status === "canceled" && !hasExpired; // canceled but still within paid period
+  const isEndedPast =
+    (status === "canceled" && hasExpired) || status === "expired";
 
   // --- price label
-  const currency_symbol = utils_getCurrencySymbol?.(plan_details.currency) ?? '';
+  const currency_symbol =
+    utils_getCurrencySymbol?.(plan_details.currency) ?? "";
   const price = useMemo(() => {
     const num =
-      plan_details.interval === 'monthly'
+      plan_details.interval === "monthly"
         ? Number(plan_details.value.monthly_price)
         : Number(plan_details.value.annual_price);
-    return utils_formatPrice?.(num, currency_symbol) ?? `${currency_symbol}${num}`;
+    return (
+      utils_formatPrice?.(num, currency_symbol) ?? `${currency_symbol}${num}`
+    );
   }, [plan_details, currency_symbol]);
 
   // --- usage display
   const usagePercentage = useMemo(
-    () => calculateUploadUsagePercentage(upload_tracker.upload_count, upload_tracker.limit),
+    () =>
+      calculateUploadUsagePercentage(
+        upload_tracker.upload_count,
+        upload_tracker.limit,
+      ),
     [upload_tracker],
   );
   const remainingUploads = useMemo(() => {
     return upload_tracker.limit === Number.MAX_SAFE_INTEGER
-      ? 'Unlimited'
-      : Math.max(0, upload_tracker.limit - upload_tracker.upload_count).toString();
+      ? "Unlimited"
+      : Math.max(
+          0,
+          upload_tracker.limit - upload_tracker.upload_count,
+        ).toString();
   }, [upload_tracker]);
   const progressBarColor = useMemo(
-    () => getProgressBarColor(upload_tracker.upload_count, upload_tracker.limit),
+    () =>
+      getProgressBarColor(upload_tracker.upload_count, upload_tracker.limit),
     [upload_tracker],
   );
 
@@ -71,19 +87,25 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
     : { wrap: tw`bg-red-100`, text: tw`text-red-700` };
 
   const badgeText = isActive
-    ? 'ACTIVE'
+    ? "ACTIVE"
     : isPendingCancel
-    ? `ACTIVE • ends in ${dLeft} day${dLeft === 1 ? '' : 's'}`
-    : 'CANCELED';
+    ? `ACTIVE • ends in ${dLeft} day${dLeft === 1 ? "" : "s"}`
+    : "CANCELED";
 
   return (
-    <View style={[tw`bg-white rounded-sm border border-slate-200 p-4`, shadow()]}>
+    <View
+      style={[tw`bg-white rounded-md border border-slate-200 p-4`, shadow()]}
+    >
       {/* Header */}
       <View style={tw`flex-row items-center justify-between mb-3`}>
-        <Text style={tw`text-base font-semibold text-slate-900`}>Your Subscription</Text>
+        <Text style={tw`text-base font-semibold text-slate-900`}>
+          Your Subscription
+        </Text>
 
-        <View style={tw.style(`px-2 py-1 rounded-sm`, badgeStyles.wrap)}>
-          <Text style={tw.style(`text-xs font-semibold`, badgeStyles.text)}>{badgeText}</Text>
+        <View style={tw.style(`px-2 py-1 rounded-md`, badgeStyles.wrap)}>
+          <Text style={tw.style(`text-xs font-semibold`, badgeStyles.text)}>
+            {badgeText}
+          </Text>
         </View>
       </View>
 
@@ -91,9 +113,15 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
       <View style={tw`flex-row items-center justify-between`}>
         <View style={tw`flex-row items-center`}>
           {!!logoSource && (
-            <Image source={logoSource} style={tw`w-5 h-5 mr-2`} resizeMode="contain" />
+            <Image
+              source={logoSource}
+              style={tw`w-5 h-5 mr-2`}
+              resizeMode="contain"
+            />
           )}
-          <Text style={tw`text-slate-900 font-medium`}>{plan_details.type} Plan</Text>
+          <Text style={tw`text-slate-900 font-medium`}>
+            {plan_details.type} Plan
+          </Text>
         </View>
         <Text style={tw`text-lg font-bold text-slate-900`}>{price}</Text>
       </View>
@@ -105,11 +133,13 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
             <Text style={tw`text-xs text-slate-600`}>Period progress</Text>
             <Text style={tw`text-xs text-slate-600`}>{dLeft} day(s) left</Text>
           </View>
-          <View style={tw`h-2 w-full rounded-full bg-slate-200 overflow-hidden`}>
+          <View
+            style={tw`h-2 w-full rounded-full bg-slate-200 overflow-hidden`}
+          >
             <View
               style={[
                 tw`h-2 rounded-full`,
-                { width: `${periodPercent}%`, backgroundColor: '#0f172a' },
+                { width: `${periodPercent}%`, backgroundColor: "#0f172a" },
               ]}
             />
           </View>
@@ -121,24 +151,33 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
         <View style={tw`mt-3`}>
           <View style={tw`flex-row items-center justify-between mb-1`}>
             <Text style={tw`text-[11px] text-slate-600`}>
-              {getUsageDisplayText(upload_tracker.upload_count, upload_tracker.limit)}
+              {getUsageDisplayText(
+                upload_tracker.upload_count,
+                upload_tracker.limit,
+              )}
             </Text>
 
             <View style={tw`flex-row items-center`}>
               <Text style={tw`text-[11px] text-slate-600`}>
                 {upload_tracker.limit === Number.MAX_SAFE_INTEGER
-                  ? 'Unlimited'
+                  ? "Unlimited"
                   : `${remainingUploads} remaining`}
               </Text>
               {upload_tracker.limit !== Number.MAX_SAFE_INTEGER && (
                 <Text style={tw`text-[11px] text-slate-500 ml-1`}>
-                  ({Math.round((upload_tracker.upload_count / upload_tracker.limit) * 100)}% used)
+                  (
+                  {Math.round(
+                    (upload_tracker.upload_count / upload_tracker.limit) * 100,
+                  )}
+                  % used)
                 </Text>
               )}
             </View>
           </View>
 
-          <View style={tw`h-2 w-full rounded-full bg-slate-200 overflow-hidden`}>
+          <View
+            style={tw`h-2 w-full rounded-full bg-slate-200 overflow-hidden`}
+          >
             <View
               style={tw.style(`h-2 rounded-full`, progressBarColor, {
                 width: `${usagePercentage}%`,
@@ -150,10 +189,12 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
 
       {/* Pending-cancel note */}
       {isPendingCancel && (
-        <View style={tw`mt-3 p-3 rounded-sm bg-amber-50 border border-amber-200`}>
+        <View
+          style={tw`mt-3 p-3 rounded-md bg-amber-50 border border-amber-200`}
+        >
           <Text style={tw`text-[11px] text-amber-800`}>
-            <Text style={tw`font-semibold`}>NOTE:</Text> Your subscription cancellation will take
-            effect after your current billing cycle.
+            <Text style={tw`font-semibold`}>NOTE:</Text> Your subscription
+            cancellation will take effect after your current billing cycle.
           </Text>
         </View>
       )}
@@ -163,12 +204,14 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
         {isEndedPast ? (
           <Pressable
             onPress={() =>
-              navigation.navigate(screenName.gallery.billing, { plan_action: 'reactivation' })
+              navigation.navigate(screenName.gallery.billing, {
+                plan_action: "reactivation",
+              })
             }
             style={({ pressed }) =>
               tw.style(
-                `flex-1 h-11 rounded-sm items-center justify-center bg-blue-600`,
-                pressed ? 'opacity-90' : '',
+                `flex-1 h-11 rounded-md items-center justify-center bg-blue-600`,
+                pressed ? "opacity-90" : "",
               )
             }
             accessibilityRole="button"
@@ -181,26 +224,30 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
             <>
               <Pressable
                 onPress={() =>
-                  navigation.navigate(screenName.gallery.billing, { plan_action: null })
+                  navigation.navigate(screenName.gallery.billing, {
+                    plan_action: null,
+                  })
                 }
                 style={({ pressed }) =>
                   tw.style(
-                    `flex-1 h-11 rounded-sm items-center justify-center bg-slate-100`,
-                    pressed ? 'opacity-95' : '',
+                    `flex-1 h-11 rounded-md items-center justify-center bg-slate-100`,
+                    pressed ? "opacity-95" : "",
                   )
                 }
                 accessibilityRole="button"
                 accessibilityLabel="Manage subscription"
               >
-                <Text style={tw`text-slate-700 text-sm font-medium`}>Manage</Text>
+                <Text style={tw`text-slate-700 text-sm font-medium`}>
+                  Manage
+                </Text>
               </Pressable>
 
               <Pressable
                 onPress={onOpenCancelModal}
                 style={({ pressed }) =>
                   tw.style(
-                    `ml-2 px-4 h-11 rounded-sm items-center justify-center`,
-                    pressed ? 'bg-red-50' : '',
+                    `ml-2 px-4 h-11 rounded-md items-center justify-center`,
+                    pressed ? "bg-red-50" : "",
                   )
                 }
                 accessibilityRole="button"
@@ -218,7 +265,10 @@ export default function SubDetail({ sub_data, onOpenCancelModal, logoSource }: P
 
 // ---- UI helpers
 
-function calculateUploadUsagePercentage(uploadCount: number, uploadLimit: number): number {
+function calculateUploadUsagePercentage(
+  uploadCount: number,
+  uploadLimit: number,
+): number {
   if (uploadLimit === Number.MAX_SAFE_INTEGER) return 0; // empty bar for unlimited
   const pct = (uploadCount / Math.max(1, uploadLimit)) * 100;
   if (uploadCount <= 0) return 0;
@@ -226,7 +276,8 @@ function calculateUploadUsagePercentage(uploadCount: number, uploadLimit: number
 }
 
 function getUsageDisplayText(uploadCount: number, uploadLimit: number): string {
-  if (uploadLimit === Number.MAX_SAFE_INTEGER) return `${uploadCount} uploads used`;
+  if (uploadLimit === Number.MAX_SAFE_INTEGER)
+    return `${uploadCount} uploads used`;
   return `${uploadCount} / ${uploadLimit} uploads used`;
 }
 
@@ -246,7 +297,7 @@ function clamp(n: number, min: number, max: number) {
 function shadow() {
   return Platform.select({
     ios: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOpacity: 0.06,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 6 },

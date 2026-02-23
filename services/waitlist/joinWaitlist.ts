@@ -41,7 +41,13 @@ export async function joinWaitlist(
       message: response.message || (result.ok ? "Success" : "Request failed"),
       status: response.status,
     };
-  } catch {
-    return { isOk: false, message: "Something went wrong" };
+  } catch (error: any) {
+    return {
+      isOk: false,
+      message:
+        error?.message ||
+        error?.response?.data?.message ||
+        "Something went wrong",
+    };
   }
 }

@@ -10,6 +10,7 @@ import { validate } from "#lib/validations/validatorGroup";
 import { updateProfile } from "#services/update/updateProfile";
 import { useModalStore } from "#store/modal/modalStore";
 import { logout } from "#utils/logout.utils";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
@@ -19,7 +20,7 @@ type EditProfileErrorsTypes = {
 };
 
 export default function EditProfile() {
-  const { userSession } = useAppStore();
+  const { userSession, setUserSession, userType } = useAppStore();
   const navigation = useNavigation<any>();
 
   const { updateModal } = useModalStore();
@@ -91,15 +92,21 @@ export default function EditProfile() {
       name: fullname,
       preferences: selectedPreferences,
     };
-    const result = await updateProfile("individual", data, userSession.id);
+    const routeType = userType === "user" ? "individual" : userType;
+
+    const result = await updateProfile(routeType as any, data, userSession.id);
 
     if (result.isOk) {
       setIsLoading(false);
+      const updatedSession = { ...userSession, ...data };
+      setUserSession(updatedSession);
+      await utils_storeAsyncData("userSession", JSON.stringify(updatedSession));
+
       updateModal({
-        message: "Profile updated successfully, sign in to view update",
+        message: "Profile updated successfully",
         modalType: "success",
         showModal: true,
-        onDismiss: () => logout(),
+        onDismiss: () => navigation.goBack(),
       });
     } else {
       setIsLoading(false);
@@ -146,7 +153,7 @@ export default function EditProfile() {
                 Full Address
               </Text>
               <View
-                style={tw`bg-gray-100 p-4 rounded-sm border border-gray-300`}
+                style={tw`bg-gray-100 p-4 rounded-md border border-gray-300`}
               >
                 {userSession.address.address_line ? (
                   <Text style={tw`text-gray-800`}>

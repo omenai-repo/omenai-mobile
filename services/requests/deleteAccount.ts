@@ -32,6 +32,7 @@ export async function deleteAccount(
       isOk: false,
       message:
         error?.message ||
+        error?.response?.data?.message ||
         "An error was encountered, please try again later or contact support",
       status: 500,
     };

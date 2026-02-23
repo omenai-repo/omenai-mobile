@@ -9,6 +9,7 @@ import Animated, {
 import Modal from "react-native-modal";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "twrnc";
+import { colors } from "#config/colors.config";
 import { useSupport } from "../../providers/SupportProvider";
 import { useMobileSupportDefaulter } from "../../hooks/useMobileSupportDefaulter";
 import SupportForm from "./SupportForm";
@@ -105,8 +106,9 @@ export default function SupportWidget() {
       <GestureDetector gesture={pan}>
         <Animated.View
           style={[
-            tw`absolute z-50 rounded-full items-center justify-center shadow-lg bg-black`,
+            tw`absolute z-50 rounded-full items-center justify-center shadow-lg`,
             {
+              backgroundColor: colors.black,
               width: BUTTON_SIZE,
               height: BUTTON_SIZE,
               top: initialY,

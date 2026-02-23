@@ -15,7 +15,7 @@ export default function ReceiptSkeleton() {
 
       <View style={tw`p-4`}>
         <View
-          style={tw`bg-white rounded-sm p-5 shadow-sm border border-gray-100`}
+          style={tw`bg-white rounded-md p-5 shadow-sm border border-gray-100`}
         >
           {/* Header Section */}
           <View style={tw`mb-6 flex-row justify-between items-start`}>
@@ -98,7 +98,7 @@ export default function ReceiptSkeleton() {
           </View>
 
           {/* Breakdown */}
-          <View style={tw`bg-gray-50 rounded-sm p-4 mb-6`}>
+          <View style={tw`bg-gray-50 rounded-md p-4 mb-6`}>
             <View style={tw`flex-row justify-between mb-2`}>
               <Skeleton colorMode="light" height={12} width={60} radius={4} />
               <Skeleton colorMode="light" height={12} width={70} radius={4} />

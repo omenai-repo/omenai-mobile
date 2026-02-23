@@ -20,7 +20,7 @@ export const PlanHeader = ({ name }: Readonly<PlanHeaderProps>) => {
       </View>
 
       {name === "Premium" && (
-        <View style={tw`p-2 rounded-sm bg-purple-100`}>
+        <View style={tw`p-2 rounded-md bg-purple-100`}>
           <Ionicons name="sparkles-sharp" size={16} color="#7c3aed" />
         </View>
       )}

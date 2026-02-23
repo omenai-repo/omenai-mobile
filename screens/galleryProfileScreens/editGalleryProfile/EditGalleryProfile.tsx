@@ -9,7 +9,7 @@ import { galleryProfileUpdate } from "#store/gallery/galleryProfileUpdateStore";
 import { updateProfile } from "#services/update/updateProfile";
 
 import { useModalStore } from "#store/modal/modalStore";
-import { logout } from "#utils/logout.utils";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import UploadNewLogo from "./components/GalleryLogo";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import tw from "twrnc";
@@ -22,7 +22,7 @@ export default function EditGalleryProfile() {
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(false);
   const { updateModal } = useModalStore();
-  const { userType, userSession } = useAppStore();
+  const { userType, userSession, setUserSession } = useAppStore();
 
   const { updateData, setProfileUpdateData, clearData } =
     galleryProfileUpdate();
@@ -44,12 +44,18 @@ export default function EditGalleryProfile() {
           showModal: true,
         });
       } else {
-        //throw succcess modal prompting galleries to re-login
+        const updatedSession = { ...userSession, ...updateData };
+        setUserSession(updatedSession);
+        await utils_storeAsyncData(
+          "userSession",
+          JSON.stringify(updatedSession),
+        );
+
         updateModal({
           modalType: "success",
-          message: `${body.message}, please log back in`,
+          message: "Profile updated successfully",
           showModal: true,
-          onDismiss: () => logout(),
+          onDismiss: () => navigation.goBack(),
         });
       }
     } catch (error) {
@@ -125,7 +131,7 @@ export default function EditGalleryProfile() {
                   Full Address
                 </Text>
                 <View
-                  style={tw`bg-gray-100 p-4 rounded-sm border border-gray-300`}
+                  style={tw`bg-gray-100 p-4 rounded-md border border-gray-300`}
                 >
                   <AddressField
                     label="Address:"

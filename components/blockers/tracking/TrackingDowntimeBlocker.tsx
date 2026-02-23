@@ -64,7 +64,7 @@ export default function TrackingDowntimeBlocker({
           duration: 2000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Rotation animation for loader
@@ -73,7 +73,7 @@ export default function TrackingDowntimeBlocker({
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
-      })
+      }),
     ).start();
   }, [pulseAnim, rotateAnim]);
 
@@ -84,7 +84,7 @@ export default function TrackingDowntimeBlocker({
 
   const handleExternalLink = () => {
     Linking.openURL(externalLink).catch((err) =>
-      console.error("Failed to open URL:", err)
+      console.error("Failed to open URL:", err),
     );
   };
 
@@ -140,7 +140,7 @@ export default function TrackingDowntimeBlocker({
 
       {/* Tracking Number Section */}
       <View
-        style={tw`bg-[#1f2937] p-4 rounded-sm w-full max-w-[380px] shadow-lg border border-[rgba(71,116,142,0.3)] mb-6 z-30`}
+        style={tw`bg-[#1f2937] p-4 rounded-md w-full max-w-[380px] shadow-lg border border-[rgba(71,116,142,0.3)] mb-6 z-30`}
       >
         <Text
           style={tw`text-[10px] text-[#818181] uppercase tracking-widest mb-2 font-medium`}
@@ -172,7 +172,7 @@ export default function TrackingDowntimeBlocker({
 
         <TouchableOpacity
           onPress={handleExternalLink}
-          style={tw`flex-row items-center justify-center py-3 px-6 bg-[#2A9EDF] rounded-sm shadow-lg`}
+          style={tw`flex-row items-center justify-center py-3 px-6 bg-[#2A9EDF] rounded-md shadow-lg`}
         >
           <SvgXml xml={globeIcon} width={16} height={16} style={tw`mr-1`} />
           <Text style={tw`text-white font-medium text-sm ml-2`}>
@@ -182,7 +182,7 @@ export default function TrackingDowntimeBlocker({
 
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={tw`flex-row items-center justify-center py-3 px-6 bg-[#0f172a] rounded-sm border border-transparent mt-4 shadow-md`}
+          style={tw`flex-row items-center justify-center py-3 px-6 bg-[#0f172a] rounded-md border border-transparent mt-4 shadow-md`}
         >
           <SvgXml xml={globeIcon} width={16} height={16} style={tw`mr-1`} />
           <Text style={tw`text-white font-medium text-sm ml-2`}>Go Back</Text>

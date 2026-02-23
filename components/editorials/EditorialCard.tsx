@@ -43,7 +43,7 @@ export default function EditorialCard({
         style={[
           { width },
           showDetails
-            ? tw`bg-white rounded-sm border border-[#EFEFEF] pb-5 shadow-sm shadow-black elevation-2`
+            ? tw`bg-white rounded-md border border-[#EFEFEF] pb-5 shadow-sm shadow-black elevation-2`
             : null,
         ]}
       >
@@ -54,14 +54,14 @@ export default function EditorialCard({
             tw`w-full bg-[#858585]`,
             showDetails
               ? tw`rounded-t-sm rounded-b-none h-40`
-              : tw`h-[220px] rounded-sm`,
+              : tw`h-[220px] rounded-md`,
             { height: imageHeight },
           ]}
           imageStyle={[
             tw`w-full`,
             showDetails
               ? tw`rounded-t-sm rounded-b-none h-40`
-              : tw`h-[220px] rounded-sm`,
+              : tw`h-[220px] rounded-md`,
             { height: imageHeight },
           ]}
           resizeMode="cover"

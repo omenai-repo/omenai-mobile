@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { checkIsStripeOnboarded } from "#services/stripe/checkIsStripeOnboarded";
-import FormSkeleton from "#components/skeleton/FormSkeleton";
 import CompleteOnBoarding from "./components/CompleteOnBoarding";
 import { useModalStore } from "#store/modal/modalStore";
 import BlockingScreen from "./components/BlockingScreen";
@@ -11,6 +10,7 @@ import PayoutDashboard from "./components/PayoutDashboard";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { colors } from "#config/colors.config";
 import { useQueryClient } from "@tanstack/react-query";
+import PayoutSkeleton from "#components/skeleton/PayoutSkeleton";
 
 export default function StripePayouts({
   account_id,
@@ -19,7 +19,7 @@ export default function StripePayouts({
   account_id: string;
   showScreen: boolean;
 }) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const [refreshCount, setRefreshCount] = useState<number>(1);
@@ -65,12 +65,7 @@ export default function StripePayouts({
 
   if (!showScreen) return <BlockingScreen />;
 
-  if (loading)
-    return (
-      <View style={{ flex: 1, backgroundColor: colors.white }}>
-        <FormSkeleton rows={3} />
-      </View>
-    );
+  if (loading) return <PayoutSkeleton withHeader={true} />;
 
   if (!loading && showScreen)
     return (

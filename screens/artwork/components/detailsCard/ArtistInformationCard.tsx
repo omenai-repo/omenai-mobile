@@ -17,7 +17,7 @@ export default function ArtistInformationCard({
   return (
     <View
       style={[
-        tw`px-[24px] py-[32px] rounded-sm`,
+        tw`px-[24px] py-[32px] rounded-md`,
         { backgroundColor: colors.black },
       ]}
     >

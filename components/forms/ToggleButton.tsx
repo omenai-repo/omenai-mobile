@@ -9,11 +9,15 @@ interface ToggleButtonProps {
   onPress: () => void;
 }
 
-const ToggleButton: React.FC<ToggleButtonProps> = ({ label, isSelected, onPress }) => (
+const ToggleButton: React.FC<ToggleButtonProps> = ({
+  label,
+  isSelected,
+  onPress,
+}) => (
   <Pressable
     onPress={onPress}
     style={[
-      tw`px-4 py-2 h-[40px] justify-center items-center rounded-sm border-2`,
+      tw`px-4 py-2 h-[40px] justify-center items-center rounded-md border-2`,
       isSelected
         ? { backgroundColor: colors.black, borderColor: colors.black }
         : { backgroundColor: colors.white, borderColor: colors.grey50 },

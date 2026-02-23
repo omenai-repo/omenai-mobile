@@ -140,7 +140,7 @@ export default function VerifyTransactionModal(
       <View style={tw`flex-1 bg-[#00000066] justify-center items-center px-5`}>
         <Animated.View
           style={[
-            tw`w-full max-w-[360px] rounded-sm p-6`,
+            tw`w-full max-w-[360px] rounded-md p-6`,
             {
               backgroundColor: "#FFFFFFE6",
               transform: [{ scale }],
@@ -212,7 +212,7 @@ export default function VerifyTransactionModal(
               <View style={tw`w-full mt-6`}>
                 <TouchableOpacity
                   onPress={onGoToDashboard}
-                  style={tw`h-12 rounded-sm bg-[#1a1a1a] items-center justify-center flex-row`}
+                  style={tw`h-12 rounded-md bg-[#1a1a1a] items-center justify-center flex-row`}
                 >
                   <Feather name="eye" size={18} color="#fff" style={tw`mr-2`} />
                   <Text style={tw`text-white font-medium`}>View my orders</Text>
@@ -220,7 +220,7 @@ export default function VerifyTransactionModal(
 
                 <TouchableOpacity
                   onPress={onGoHome}
-                  style={tw`h-12 rounded-sm bg-white items-center justify-center flex-row mt-3 border border-gray-200`}
+                  style={tw`h-12 rounded-md bg-white items-center justify-center flex-row mt-3 border border-gray-200`}
                 >
                   <Feather
                     name="arrow-left"

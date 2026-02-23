@@ -47,7 +47,7 @@ export default function OnboardingBlockerScreen({
           duration: 600,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     loop.start();
     return () => loop.stop();
@@ -63,7 +63,7 @@ export default function OnboardingBlockerScreen({
       <SafeAreaView />
       <View
         style={[
-          tw`items-center rounded-sm px-7 py-8`,
+          tw`items-center rounded-md px-7 py-8`,
           {
             backgroundColor: colors.white,
             shadowColor: "#000",
@@ -107,7 +107,7 @@ export default function OnboardingBlockerScreen({
         <Pressable
           onPress={handleExploreOmenai}
           style={({ pressed }) => [
-            tw`mt-2 self-stretch rounded-sm py-3 px-6 items-center`,
+            tw`mt-2 self-stretch rounded-md py-3 px-6 items-center`,
             { backgroundColor: colors.primary_black },
             pressed && tw`opacity-85`,
           ]}

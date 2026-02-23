@@ -5,7 +5,7 @@ export const termsAndConditionsStyles = {
   title: [tw`font-medium text-base`, { color: colors.primary_black }],
   buttonsContainer: tw`flex-row gap-2.5 items-center justify-between mt-10`,
   termsContainer: [
-    tw`mt-3 bg-[#FAFAFA] rounded-sm border px-3 py-4`,
+    tw`mt-3 bg-[#FAFAFA] rounded-md border px-3 py-4`,
     { borderColor: colors.inputBorder, gap: 30 },
   ],
 };

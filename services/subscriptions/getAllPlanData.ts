@@ -14,6 +14,12 @@ export async function getAllPlanData() {
       data: result.data,
     };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      message:
+        error?.message ||
+        error?.response?.data?.message ||
+        "An error occurred fetching plans",
+    };
   }
 }

@@ -153,7 +153,7 @@ export default function ArtworkContentSection({
           <View style={tw`mt-4 flex-row items-center gap-[10px]`}>
             {artwork.certificate_of_authenticity === "Yes" && (
               <View
-                style={tw`flex-row items-center justify-center gap-2.5 px-2.5 py-2 rounded-sm bg-[#F2F8F4]`}
+                style={tw`flex-row items-center justify-center gap-2.5 px-2.5 py-2 rounded-md bg-[#F2F8F4]`}
               >
                 <SvgXml xml={licenseIcon} />
                 <Text style={tw`text-[#004617] text-[13px] font-medium`}>

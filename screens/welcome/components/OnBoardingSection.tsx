@@ -98,7 +98,7 @@ export default function OnBoardingSection({
           <View style={tw`w-full flex-row items-center gap-2.5 px-5`}>
             {[0, 1].map((i) => (
               <View
-                style={tw`h-1 bg-white rounded-sm ${
+                style={tw`h-1 bg-white rounded-md ${
                   i <= currentIndex ? "opacity-100" : "opacity-30"
                 } flex-1`}
                 key={i}

@@ -71,7 +71,7 @@ export default function ViewHistoryCard({
         <Image
           source={{ uri: image_href }}
           style={[
-            tw`rounded-sm`,
+            tw`rounded-md`,
             {
               width: imageDimensions.width,
               height: imageDimensions.height,
@@ -90,7 +90,7 @@ export default function ViewHistoryCard({
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={tw`text-xs text-fluid-xs text-slate-500 mt-0.5`}
+            style={tw`text-xs text-slate-500 mt-0.5`}
           >
             {artist}
           </Text>

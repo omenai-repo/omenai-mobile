@@ -21,7 +21,7 @@ export default function TransactionFilters({
       {filters.map((filter) => (
         <TouchableOpacity
           key={filter}
-          style={tw`py-2 px-4 rounded-sm bg-[#f5f5f5] border border-transparent ${
+          style={tw`py-2 px-4 rounded-md bg-[#f5f5f5] border border-transparent ${
             activeFilter === filter ? `bg-[${colors.primary_black}]` : ""
           }`}
           onPress={() => onFilterChange(filter)}

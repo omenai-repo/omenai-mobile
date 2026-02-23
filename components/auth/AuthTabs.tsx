@@ -52,7 +52,7 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
         ]}
       >
         <Animated.View
-          style={[tw`absolute inset-0 rounded-sm`, { backgroundColor }]}
+          style={[tw`absolute inset-0 rounded-md`, { backgroundColor }]}
         />
         <Animated.Text style={[tw`text-sm`, { zIndex: 10, color: textColor }]}>
           {name}

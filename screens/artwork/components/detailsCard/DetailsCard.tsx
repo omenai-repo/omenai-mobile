@@ -32,7 +32,7 @@ export default function DetailsCard({ title, details }: DetailCardProps) {
   };
 
   return (
-    <View style={tw`border border-neutral-200 rounded-sm`}>
+    <View style={tw`border border-neutral-200 rounded-md`}>
       <View
         style={[
           tw`px-[16px] py-[16px] rounded-t-sm`,

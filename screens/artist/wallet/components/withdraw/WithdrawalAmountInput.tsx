@@ -1,7 +1,13 @@
 import React from "react";
-import { View, Text, TextInput, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import tw from "twrnc";
-import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import { Ionicons } from "@expo/vector-icons";
 import { getArtistCurrencySymbol } from "#utils/utils_getArtistCurrencySymbol";
 
 interface WithdrawalAmountInputProps {
@@ -27,55 +33,87 @@ export function WithdrawalAmountInput({
   amountInputRef,
   walletData,
 }: Readonly<WithdrawalAmountInputProps>) {
-  const { width } = useWindowDimensions();
-
   return (
     <View style={tw`mb-6`}>
-      <Text style={tw`mb-2 font-medium`}>Enter Amount</Text>
+      <Text style={tw`mb-3 text-[13px] font-light text-slate-700`}>
+        Withdrawal Amount
+      </Text>
 
       {/* You Send */}
-      <View style={tw`bg-white border border-[#00000020] rounded-sm p-4`}>
-        <Text style={tw`text-sm mb-1 text-gray-600`}>You Send</Text>
-        <TextInput
-          ref={amountInputRef}
-          style={tw`py-3 text-base font-bold text-[#1A1A1A]`}
-          keyboardType="decimal-pad"
-          value={amount}
-          onChangeText={setAmount}
-          placeholder="0.00"
-          editable={!loading}
-        />
+      <View style={tw`bg-[#f8fafc] rounded-md p-4 border border-[#e2e8f0]`}>
+        <View style={tw`flex-row items-center justify-between mb-2`}>
+          <Text style={tw`text-[13px] text-slate-600`}>You Send</Text>
+          <Text style={tw`text-[13px] font-light text-slate-700`}>
+            {walletData?.wallet_currency || "USD"}
+          </Text>
+        </View>
+        <View style={tw`relative justify-center`}>
+          <Text style={tw`absolute left-3 text-slate-500 z-10`}>$</Text>
+          <TextInput
+            ref={amountInputRef}
+            style={tw`w-full pl-8 pr-4 py-2 bg-white border border-slate-300 rounded text-[13px] font-semibold text-black`}
+            keyboardType="decimal-pad"
+            value={amount}
+            onChangeText={setAmount}
+            placeholder="0.00"
+            placeholderTextColor="#9ca3af"
+            editable={!loading}
+          />
+        </View>
       </View>
 
       {/* Convert Button Centered */}
-      <View style={[tw`mt-4`, { marginHorizontal: width / 3.5 }]}>
-        <FittedBlackButton
-          value="Convert"
-          isLoading={loadAmount}
-          isDisabled={!amount || loading}
-          onClick={() => amount && fetchTransferRate()}
-          textStyle={{ fontWeight: "600" }}
-        />
+      <View style={tw`flex-row justify-center my-3`}>
+        <TouchableOpacity
+          disabled={!amount || loading || loadAmount}
+          onPress={() => amount && fetchTransferRate()}
+          style={tw`p-2 bg-slate-100 rounded-md items-center justify-center ${
+            !amount || loading || loadAmount ? "opacity-50" : ""
+          }`}
+        >
+          {loadAmount ? (
+            <ActivityIndicator size="small" color="#475569" />
+          ) : (
+            <Ionicons name="refresh" size={20} color="#475569" />
+          )}
+        </TouchableOpacity>
       </View>
 
-      {/* You Get */}
-      <View style={tw`bg-white border border-[#00000020] rounded-sm p-4 mt-4`}>
-        <Text style={tw`text-sm mb-1 text-gray-600`}>You Get</Text>
-        <Text style={tw`text-base font-bold text-[#1A1A1A]`}>
-          {convertedAmount
-            ? `${getArtistCurrencySymbol(
-                walletData.base_currency,
-              )} ${convertedAmount.toLocaleString()}`
-            : "--"}
-        </Text>
+      {/* You Receive */}
+      <View style={tw`bg-[#f0fdf4] rounded-md p-4 border border-[#bbf7d0]`}>
+        <View style={tw`flex-row items-center justify-between mb-2`}>
+          <Text style={tw`text-[13px] text-green-700`}>You Receive</Text>
+          <Text style={tw`text-[13px] font-light text-green-800`}>
+            {walletData?.base_currency}
+          </Text>
+        </View>
+        <View style={tw`bg-white rounded px-4 py-3 border border-green-300`}>
+          <Text style={tw`text-[13px] font-semibold text-green-800`}>
+            {convertedAmount
+              ? `${getArtistCurrencySymbol(
+                  walletData?.base_currency,
+                )} ${convertedAmount.toLocaleString()}`
+              : "0.00"}
+          </Text>
+        </View>
       </View>
 
-      {rate > 0 && (
-        <Text style={tw`text-xs mt-2 text-gray-500`}>
-          {`Rate: 1 ${walletData.wallet_currency} = ${getArtistCurrencySymbol(
-            walletData.base_currency,
-          )} ${rate.toFixed(2)}`}
-        </Text>
+      {/* Exchange Rate Info */}
+      {rate > 0 && Number(amount) > 0 && convertedAmount > 0 && (
+        <View
+          style={tw`bg-[#eff6ff] rounded-md p-3 border border-[#bfdbfe] mt-4 flex-row items-center gap-2`}
+        >
+          <Ionicons
+            name="information-circle-outline"
+            size={16}
+            color="#2563eb"
+          />
+          <Text style={tw`text-[13px] font-semibold text-blue-700`}>
+            {`Exchange rate: 1 ${
+              walletData?.wallet_currency || "USD"
+            } = ${rate.toFixed(2)} ${walletData?.base_currency}`}
+          </Text>
+        </View>
       )}
     </View>
   );

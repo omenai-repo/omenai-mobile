@@ -23,7 +23,12 @@ export async function uploadArtworkData(
       isOk: false,
       status: error?.status,
       error: error,
-      body: { message: "Error uploading artwork" },
+      body: {
+        message:
+          error?.message ||
+          error?.response?.data?.message ||
+          "Error uploading artwork",
+      },
     };
   }
 }

@@ -9,7 +9,8 @@ import tw from "twrnc";
 import SelectableTag from "#components/general/SelectableTag";
 
 export default function Preferences() {
-  const { pageIndex, setPageIndex, preferences, setPreferences } = useIndividualAuthRegisterStore();
+  const { pageIndex, setPageIndex, preferences, setPreferences } =
+    useIndividualAuthRegisterStore();
 
   const handleSelect = (value: string) => {
     if (preferences.includes(value)) {
@@ -26,7 +27,7 @@ export default function Preferences() {
       </Text>
       <View
         style={[
-          tw`mt-3 bg-[#FAFAFA] rounded-sm border p-3 flex-row flex-wrap`,
+          tw`mt-3 bg-[#FAFAFA] rounded-md border p-3 flex-row flex-wrap`,
           { borderColor: colors.inputBorder, rowGap: 10, columnGap: 10 },
         ]}
       >

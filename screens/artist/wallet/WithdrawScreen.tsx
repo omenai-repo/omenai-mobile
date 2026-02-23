@@ -143,9 +143,12 @@ export const WithdrawScreen = ({
           modalType: "error",
         });
       }
-    } catch {
+    } catch (error: any) {
       updateModal({
-        message: "An error occurred",
+        message:
+          error?.message ||
+          error?.response?.data?.message ||
+          "An error occurred",
         showModal: true,
         modalType: "error",
       });
@@ -188,8 +191,6 @@ export const WithdrawScreen = ({
               keyboardShouldPersistTaps="handled"
             >
               <View style={tw`p-[25px]`}>
-                <PrimaryAccountDetails walletData={walletData} />
-
                 <WithdrawalAmountInput
                   amount={amount}
                   setAmount={setAmount}
@@ -214,7 +215,7 @@ export const WithdrawScreen = ({
                 />
 
                 <LongBlackButton
-                  value="Withdraw"
+                  value="Confirm Withdrawal"
                   onClick={handleWithdraw}
                   isLoading={loading}
                   style={tw`mb-[100px]`}

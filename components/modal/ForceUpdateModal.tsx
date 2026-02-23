@@ -55,7 +55,7 @@ export default function ForceUpdateModal({ isVisible }: ForceUpdateModalProps) {
         <TouchableOpacity
           onPress={handleUpdate}
           style={[
-            tw`w-full h-[52px] rounded-sm flex-row items-center justify-center gap-2`,
+            tw`w-full h-[52px] rounded-md flex-row items-center justify-center gap-2`,
             { backgroundColor: colors.black },
           ]}
           activeOpacity={0.8}
