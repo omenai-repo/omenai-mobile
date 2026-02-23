@@ -14,7 +14,7 @@ export function PrimaryAccountDetails({
     <View style={tw`mb-6`}>
       <Text style={tw`mb-2 font-medium`}>Primary Account Details</Text>
       <View
-        style={tw`bg-[#FFFFFF] border border-[#00000033] p-4 rounded-[15px] gap-[8px]`}
+        style={tw`bg-[#FFFFFF] border border-[#00000033] p-4 rounded-md gap-[8px]`}
       >
         <AccountRow
           label="Account Number:"

@@ -26,7 +26,7 @@ export default function GenericPriceFilter({
       <TouchableOpacity onPress={() => setOpenDropdown(!openDropdown)}>
         <View
           style={[
-            tw`h-14 px-5 items-center gap-2.5 flex-row rounded-sm`,
+            tw`h-14 px-5 items-center gap-2.5 flex-row rounded-md`,
             { borderWidth: 1, borderColor: colors.inputBorder },
           ]}
         >
@@ -35,7 +35,7 @@ export default function GenericPriceFilter({
             {filterOptions.price.length > 0 && (
               <View
                 style={[
-                  tw`px-2.5 rounded-sm py-1`,
+                  tw`px-2.5 rounded-md py-1`,
                   { backgroundColor: "#f5f5f5" },
                 ]}
               >

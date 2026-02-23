@@ -21,13 +21,15 @@ import {
 import { useAppStore } from "#store/app/appStore";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { updateProfile } from "#services/update/updateProfile";
-import { logout } from "#utils/logout.utils";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
+import { useNavigation } from "@react-navigation/native";
 import AlertCard from "#components/general/AlertCard";
 import { colors } from "#config/colors.config";
 import { AddressTypes } from "#types/types";
 
 const EditAddressScreen = () => {
-  const { userSession, userType } = useAppStore();
+  const { userSession, userType, setUserSession } = useAppStore();
+  const navigation = useNavigation<any>();
   const [formErrors, setFormErrors] = useState<
     Partial<AddressTypes & { phone: string }>
   >({
@@ -281,15 +283,23 @@ const EditAddressScreen = () => {
         stateCode: stateCode,
       },
     };
-    const result = await updateProfile("individual", data, userSession.id);
+    const routeType = userType === "user" ? "individual" : userType;
+    const result = await updateProfile(routeType as any, data, userSession.id);
 
     if (result.isOk) {
       setIsLoading(false);
+      const updatedSession = {
+        ...userSession,
+        address: { ...userSession.address, ...data.address },
+      };
+      setUserSession(updatedSession);
+      await utils_storeAsyncData("userSession", JSON.stringify(updatedSession));
+
       updateModal({
-        message: "Address updated successfully, sign in to view update",
+        message: "Address updated successfully",
         modalType: "success",
         showModal: true,
-        onDismiss: () => logout(),
+        onDismiss: () => navigation.goBack(),
       });
     } else {
       setIsLoading(false);

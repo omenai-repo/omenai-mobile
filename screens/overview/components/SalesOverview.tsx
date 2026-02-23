@@ -85,9 +85,25 @@ export default function SalesOverview({
 
   if (query.isLoading && !query.data) {
     return (
-      <View style={tw`bg-[#FAFAFA] rounded-sm pt-5 pb-10 px-2.5 mx-4`}>
-        <View style={tw`flex-row justify-between items-center mb-5`}>
-          <View style={tw`bg-gray-200 rounded-sm w-[100px] h-5`} />
+      <View style={[tw`bg-white rounded-md py-5 px-4 mx-4`, style]}>
+        <View style={tw`flex-row justify-between items-center mb-5 z-20`}>
+          <Text style={tw`text-lg text-black font-semibold`}>
+            Sales Revenue
+          </Text>
+          <Dropdown
+            style={tw`h-[35px] w-[90px] border border-[#E0E0E0] rounded-md px-2`}
+            containerStyle={tw`rounded-md mt-1`}
+            data={years}
+            labelField="label"
+            valueField="value"
+            value={selectedYear}
+            onChange={(item) => setSelectedYear(item.value)}
+            placeholder="Year"
+            placeholderStyle={tw`text-sm text-[#333]`}
+            selectedTextStyle={tw`text-sm text-[#333]`}
+            itemTextStyle={tw`text-sm text-[#333]`}
+            iconStyle={tw`w-5 h-5`}
+          />
         </View>
         <View
           style={[
@@ -117,13 +133,13 @@ export default function SalesOverview({
 
   return (
     <View
-      style={[tw`bg-white rounded-sm py-5 px-4 mx-4 overflow-hidden`, style]}
+      style={[tw`bg-white rounded-md py-5 px-4 mx-4 overflow-hidden`, style]}
     >
       <View style={tw`flex-row justify-between items-center mb-5 z-20`}>
         <Text style={tw`text-lg text-black font-semibold`}>Sales Revenue</Text>
         <Dropdown
-          style={tw`h-[35px] w-[90px] border border-[#E0E0E0] rounded-sm px-2`}
-          containerStyle={tw`rounded-sm mt-1`}
+          style={tw`h-[35px] w-[90px] border border-[#E0E0E0] rounded-md px-2`}
+          containerStyle={tw`rounded-md mt-1`}
           data={years}
           labelField="label"
           valueField="value"

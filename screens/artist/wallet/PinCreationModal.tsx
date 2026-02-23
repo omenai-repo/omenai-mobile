@@ -26,7 +26,7 @@ export const PinCreationModal = ({
 
   const pinRefs = useRef<(TextInput | null)[]>([]);
   const confirmPinRefs = useRef<(TextInput | null)[]>([]);
-  const inputStyle = tw`w-12 h-12 border border-gray-400 rounded-[15px] bg-[#fff] text-center text-xl`;
+  const inputStyle = tw`w-12 h-12 border border-gray-400 rounded-md bg-[#fff] text-center text-xl`;
 
   // ...existing code...
 
@@ -99,9 +99,10 @@ export const PinCreationModal = ({
       } else {
         setError(response?.message || "Failed to set PIN");
       }
-    } catch (error) {
-      console.log(error);
-      setError("An error occurred");
+    } catch (error: any) {
+      setError(
+        error?.message || error?.response?.data?.message || "An error occurred",
+      );
     } finally {
       setLoading(false);
     }
@@ -119,11 +120,11 @@ export const PinCreationModal = ({
           intensity={30}
           style={tw`absolute top-0 left-0 right-0 bottom-0`}
         />
-        <View style={tw`bg-white rounded-sm p-6 w-4/5`}>
+        <View style={tw`bg-white rounded-md p-6 w-4/5`}>
           <Text style={tw`text-xl font-bold mb-4`}>Create Wallet PIN</Text>
 
           <Text style={tw`mb-2`}>Enter new wallet PIN:</Text>
-          <View style={tw`flex-row justify-between mb-[40px]`}>
+          <View style={tw`w-full mb-[40px]`}>
             <PinInputRow
               values={pin}
               refs={pinRefs}
@@ -134,7 +135,7 @@ export const PinCreationModal = ({
           </View>
 
           <Text style={tw`mb-2`}>Confirm wallet PIN:</Text>
-          <View style={tw`flex-row justify-between mb-[30px]`}>
+          <View style={tw`w-full mb-[30px]`}>
             <PinInputRow
               values={confirmPin}
               refs={confirmPinRefs}
@@ -149,7 +150,7 @@ export const PinCreationModal = ({
           <Pressable
             style={[
               { backgroundColor: colors.black },
-              tw`py-4 rounded-sm`,
+              tw`py-4 rounded-md`,
               loading ? { opacity: 0.5 } : {},
             ]}
             onPress={handleSubmit}

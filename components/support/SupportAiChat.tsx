@@ -34,6 +34,64 @@ const SUGGESTIONS = [
   "Certificate of Authenticity?",
 ];
 
+// Global ref to avoid re-typing messages that have already been fully typed once.
+const typedMessageIds = new Set<string>();
+
+const MessageBubble = ({
+  item,
+  shouldAnimate,
+}: {
+  item: Message;
+  shouldAnimate?: boolean;
+}) => {
+  const isAssistant = item.role === "assistant";
+  const [displayedContent, setDisplayedContent] = useState(() => {
+    // Start empty if it's the assistant, explicitly animating, and hasn't been typed before
+    if (shouldAnimate && isAssistant && !typedMessageIds.has(item.id)) {
+      return "";
+    }
+    return item.content;
+  });
+
+  useEffect(() => {
+    if (shouldAnimate && isAssistant && !typedMessageIds.has(item.id)) {
+      let index = 0;
+      const interval = setInterval(() => {
+        setDisplayedContent(item.content.slice(0, index));
+        index++;
+        if (index > item.content.length) {
+          clearInterval(interval);
+          typedMessageIds.add(item.id);
+        }
+      }, 15); // Adjust typing speed here
+
+      return () => clearInterval(interval);
+    } else {
+      setDisplayedContent(item.content);
+    }
+  }, [item.content, item.id, isAssistant, shouldAnimate]);
+
+  return (
+    <View
+      style={[
+        tw`mb-4 max-w-[85%] rounded-md p-4`,
+        item.role === "user"
+          ? [tw`self-end rounded-tr-sm`, { backgroundColor: colors.black }]
+          : tw`bg-gray-100 self-start rounded-tl-sm`,
+      ]}
+    >
+      <Text
+        style={[
+          tw`text-sm leading-6`,
+          item.role === "user" ? tw`text-white` : tw`text-gray-800`,
+        ]}
+      >
+        {item.role === "user" ? item.content : displayedContent}
+      </Text>
+    </View>
+  );
+};
+
 export default function SupportAiChat({
   onSwitchToTicket,
   onActiveChatChange,
@@ -48,6 +106,9 @@ export default function SupportAiChat({
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [input, setInput] = useState("");
+  const [animatingMessageId, setAnimatingMessageId] = useState<string | null>(
+    null,
+  );
   const scrollViewRef = useRef<FlatList>(null);
 
   const updateActiveSessionId = (id: string | null) => {
@@ -71,6 +132,7 @@ export default function SupportAiChat({
         role: "assistant",
         content: responseText,
       };
+      setAnimatingMessageId(aiMessage.id);
       if (activeSessionId) {
         updateSession(
           activeSessionId,
@@ -87,6 +149,7 @@ export default function SupportAiChat({
         content:
           "I apologize, but I'm having trouble connecting right now. Please try again or create a support ticket.",
       };
+      setAnimatingMessageId(errorMessage.id);
       if (activeSessionId) {
         updateSession(
           activeSessionId,
@@ -181,7 +244,7 @@ export default function SupportAiChat({
               <TouchableOpacity
                 key={s}
                 onPress={() => handleSend(s)}
-                style={tw`bg-white border border-gray-200 p-4 rounded-sm mb-2 flex-row justify-between items-center`}
+                style={tw`bg-white border border-gray-200 p-4 rounded-md mb-2 flex-row justify-between items-center`}
               >
                 <Text style={tw`text-sm text-gray-700`}>{s}</Text>
                 <Ionicons name="arrow-forward" size={16} color={colors.black} />
@@ -190,23 +253,11 @@ export default function SupportAiChat({
           </View>
         }
         renderItem={({ item }) => (
-          <View
-            style={[
-              tw`mb-4 max-w-[85%] rounded-sm p-4`,
-              item.role === "user"
-                ? tw`bg-black self-end rounded-tr-sm`
-                : tw`bg-gray-100 self-start rounded-tl-sm`,
-            ]}
-          >
-            <Text
-              style={[
-                tw`text-sm leading-6`,
-                item.role === "user" ? tw`text-white` : tw`text-gray-800`,
-              ]}
-            >
-              {item.content}
-            </Text>
-          </View>
+          <MessageBubble
+            key={item.id}
+            item={item}
+            shouldAnimate={item.id === animatingMessageId}
+          />
         )}
         ListFooterComponent={
           isLoading ? (
@@ -222,7 +273,7 @@ export default function SupportAiChat({
 
       <View style={tw`p-4 border-t border-gray-100 bg-white`}>
         <View
-          style={tw`flex-row items-center gap-2 relative bg-gray-50 border border-gray-200 rounded-sm px-4 py-2`}
+          style={tw`flex-row items-center gap-2 relative bg-gray-50 border border-gray-200 rounded-md px-4 py-2`}
         >
           <TextInput
             value={input}
@@ -236,7 +287,7 @@ export default function SupportAiChat({
             disabled={!input.trim() || isLoading}
             onPress={() => handleSend()}
             style={[
-              tw`p-2 rounded-sm`,
+              tw`p-2 rounded-md`,
               input.trim() && !isLoading
                 ? { backgroundColor: colors.black }
                 : tw`bg-gray-300`,

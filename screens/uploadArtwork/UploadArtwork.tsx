@@ -203,7 +203,8 @@ export default function UploadArtwork() {
         user_id: userId,
       });
       updateModal({
-        message: "Error uploading artwork",
+        message:
+          e?.message || e?.response?.data?.message || "Error uploading artwork",
         modalType: "error",
         showModal: true,
       });

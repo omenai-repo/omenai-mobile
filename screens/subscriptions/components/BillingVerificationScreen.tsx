@@ -199,7 +199,7 @@ export default function BillingVerificationScreen() {
           {isLoading ? (
             <View
               style={[
-                tw`w-full rounded-sm overflow-hidden`,
+                tw`w-full rounded-md overflow-hidden`,
                 {
                   backgroundColor: colors.primary_black,
                   shadowColor: "#000",
@@ -222,7 +222,7 @@ export default function BillingVerificationScreen() {
           ) : (
             <Animated.View
               style={[
-                tw`w-full rounded-sm overflow-hidden`,
+                tw`w-full rounded-md overflow-hidden`,
                 {
                   transform: [{ scale: cardScale }],
                   opacity: cardOpacity,

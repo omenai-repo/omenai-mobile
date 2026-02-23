@@ -19,26 +19,45 @@ export function WithdrawalPinInput({
 }: Readonly<WithdrawalPinInputProps>) {
   return (
     <View style={tw`mb-[50px]`}>
-      <Text style={tw`mb-2 font-medium`}>Enter wallet pin</Text>
-      <OtpInput
-        ref={otpRef}
-        numberOfDigits={4}
-        onTextChange={setWalletPin}
-        onFilled={(text) => setWalletPin(text)}
-        type="numeric"
-        secureTextEntry={true}
-        secureTextEntryDelay={1000}
-        focusColor="#000000"
-        theme={{
-          pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-[15px] bg-white`,
-          pinCodeTextStyle: tw`text-lg text-center`,
-          focusedPinCodeContainerStyle: tw`border-black border-2`,
-        }}
-        disabled={loading}
-      />
-      <Pressable onPress={onForgotPin} style={tw`mt-2`} disabled={loading}>
-        <Text style={tw`text-blue-500 text-center mt-[20px]`}>Forgot PIN?</Text>
-      </Pressable>
+      <Text style={tw`mb-3 text-[13px] font-light text-slate-700`}>
+        Security PIN
+      </Text>
+
+      <View style={tw`bg-[#f8fafc] rounded-md p-3 border border-[#e2e8f0]`}>
+        <Text style={tw`text-center text-[13px] text-slate-600 mb-4 mt-2`}>
+          Enter your 4-digit wallet PIN
+        </Text>
+
+        <View style={tw`items-center justify-center`}>
+          <OtpInput
+            ref={otpRef}
+            numberOfDigits={4}
+            onTextChange={setWalletPin}
+            onFilled={(text) => setWalletPin(text)}
+            type="numeric"
+            secureTextEntry={true}
+            secureTextEntryDelay={1000}
+            focusColor="#1e293b" // slate-800 focus equivalent
+            theme={{
+              containerStyle: tw`gap-3 justify-center`,
+              pinCodeContainerStyle: tw`w-12 h-12 border border-[#94a3b8] rounded-md bg-white`,
+              pinCodeTextStyle: tw`text-base font-semibold text-center`,
+              focusedPinCodeContainerStyle: tw`border-[#1e293b] border-2`,
+            }}
+            disabled={loading}
+          />
+        </View>
+
+        <Pressable
+          onPress={onForgotPin}
+          style={tw`mt-4 mb-2`}
+          disabled={loading}
+        >
+          <Text style={tw`text-red-600 text-[13px] text-center underline`}>
+            Forgot your PIN?
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }

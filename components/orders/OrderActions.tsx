@@ -58,7 +58,7 @@ const OrderActionsBase = ({
       <View style={isTablet && tw`flex-wrap`}>
         <Pressable
           style={[
-            tw`py-3 px-4 rounded-sm items-center`,
+            tw`py-3 px-4 rounded-md items-center`,
             { backgroundColor: colors.black },
           ]}
           onPress={trackBtn}

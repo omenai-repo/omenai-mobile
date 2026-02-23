@@ -43,7 +43,7 @@ export default function FeaturedGalleries() {
         <View style={tw`flex-1 w-[300px]`}>
           <Image
             source={{ uri: image_href }}
-            style={tw`w-full h-[200px] rounded-sm bg-[#eee]`}
+            style={tw`w-full h-[200px] rounded-md bg-[#eee]`}
           />
           <View style={tw`pt-2.5`}>
             <Text style={tw`text-[14px] text-[${colors.primary_black}]`}>

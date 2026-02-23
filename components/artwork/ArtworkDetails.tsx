@@ -27,7 +27,7 @@ export default function ArtworkDetails({
       <Text
         numberOfLines={1}
         ellipsizeMode="tail"
-        style={tw`text-xs text-slate-500 mt-0.5 text-fluid-xs font-sans`}
+        style={tw`text-xs text-slate-500 mt-0.5 font-sans`}
       >
         {artist}
       </Text>

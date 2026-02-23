@@ -1,32 +1,46 @@
-import React, { forwardRef, useImperativeHandle, useEffect, useRef, useState } from 'react';
-import { Platform, Pressable, Text, TextInput, View } from 'react-native';
-import tw from 'twrnc';
-import { useOtpInput } from '../../hooks/useOtpInput';
-import VerticalStick from './VerticalStick';
-import type { OtpInputProps, OtpInputRef } from '../../types/otp';
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Platform, Pressable, Text, TextInput, View } from "react-native";
+import tw from "twrnc";
+import { useOtpInput } from "../../hooks/useOtpInput";
+import VerticalStick from "./VerticalStick";
+import type { OtpInputProps, OtpInputRef } from "../../types/otp";
 
 export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   const {
     models: { text, inputRef, focusedInputIndex, isFocused, placeholder },
-    actions: { clear, handlePress, handleTextChange, focus, handleFocus, handleBlur, blur },
+    actions: {
+      clear,
+      handlePress,
+      handleTextChange,
+      focus,
+      handleFocus,
+      handleBlur,
+      blur,
+    },
     forms: { setTextWithRef },
   } = useOtpInput(props);
-  
+
   const {
     disabled,
     numberOfDigits = 6,
     autoFocus = true,
     hideStick,
-    focusColor = '#A4D0A4',
+    focusColor = "#A4D0A4",
     focusStickBlinkingDuration,
     secureTextEntry = false,
     secureTextEntryDelay,
     theme = {},
     textInputProps,
     textProps,
-    type = 'numeric',
+    type = "numeric",
   } = props;
-  
+
   const {
     containerStyle,
     inputsContainerStyle,
@@ -42,7 +56,11 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   const [lastTypedIndex, setLastTypedIndex] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevTextRef = useRef(text);
-  const cellKeysRef = useRef<{ count: number; keys: string[]; timestamp: number }>({ count: 0, keys: [], timestamp: Date.now() });
+  const cellKeysRef = useRef<{
+    count: number;
+    keys: string[];
+    timestamp: number;
+  }>({ count: 0, keys: [], timestamp: Date.now() });
 
   // Generate stable unique keys per numberOfDigits value
   if (cellKeysRef.current.count !== numberOfDigits) {
@@ -50,14 +68,22 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
     cellKeysRef.current = {
       count: numberOfDigits,
       timestamp,
-      keys: Array.from({ length: numberOfDigits }, (_, i) => `otp-${timestamp}-${i}`),
+      keys: Array.from(
+        { length: numberOfDigits },
+        (_, i) => `otp-${timestamp}-${i}`,
+      ),
     };
   }
   const cellKeys = cellKeysRef.current.keys;
 
-  const baseContainerStyle = tw`w-14 h-14 border border-gray-400 rounded-[15px] bg-white flex items-center justify-center`;
+  const baseContainerStyle = tw`w-14 h-14 border border-gray-400 rounded-md bg-white flex items-center justify-center`;
 
-  useImperativeHandle(ref, () => ({ clear, focus, setValue: setTextWithRef, blur }));
+  useImperativeHandle(ref, () => ({
+    clear,
+    focus,
+    setValue: setTextWithRef,
+    blur,
+  }));
 
   useEffect(() => {
     if (!secureTextEntry || !secureTextEntryDelay) return;
@@ -84,9 +110,12 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
     }
   }, [secureTextEntry]);
 
-  const generatePinCodeContainerStyle = (isFocusedContainer: boolean, char: string) => {
+  const generatePinCodeContainerStyle = (
+    isFocusedContainer: boolean,
+    char: string,
+  ) => {
     const stylesArray = [baseContainerStyle, pinCodeContainerStyle];
-    
+
     if (focusColor && isFocusedContainer) {
       stylesArray.push({ borderColor: focusColor });
     }
@@ -99,7 +128,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
     if (disabledPinCodeContainerStyle && disabled) {
       stylesArray.push(disabledPinCodeContainerStyle);
     }
-    
+
     return stylesArray;
   };
 
@@ -109,13 +138,24 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   };
 
   return (
-    <View style={[tw`flex-row justify-between gap-2`, containerStyle, inputsContainerStyle]}>
+    <View
+      style={[
+        tw`flex-row justify-between gap-2`,
+        containerStyle,
+        inputsContainerStyle,
+      ]}
+    >
       {cellKeys.map((cellKey, index) => {
         const isPlaceholderCell = placeholder && !text?.[index];
-        const char = isPlaceholderCell ? placeholder?.[index] || ' ' : text[index];
-        const isFocusedInput = index === focusedInputIndex && !disabled && isFocused;
-        const isFilledLastInput = text.length === numberOfDigits && index === text.length - 1;
-        const isFocusedContainer = isFocusedInput || (isFilledLastInput && isFocused);
+        const char = isPlaceholderCell
+          ? placeholder?.[index] || " "
+          : text[index];
+        const isFocusedInput =
+          index === focusedInputIndex && !disabled && isFocused;
+        const isFilledLastInput =
+          text.length === numberOfDigits && index === text.length - 1;
+        const isFocusedContainer =
+          isFocusedInput || (isFilledLastInput && isFocused);
         const isMasked = secureTextEntry && index !== lastTypedIndex;
 
         return (
@@ -144,7 +184,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
                   textProps?.style,
                 ]}
               >
-                {char && isMasked ? '•' : char}
+                {char && isMasked ? "•" : char}
               </Text>
             )}
           </Pressable>
@@ -155,26 +195,23 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
         value={text}
         onChangeText={handleTextChange}
         maxLength={numberOfDigits}
-        keyboardType={type === 'numeric' ? 'number-pad' : 'default'}
+        keyboardType={type === "numeric" ? "number-pad" : "default"}
         textContentType="oneTimeCode"
         ref={inputRef}
         autoFocus={autoFocus}
         secureTextEntry={secureTextEntry}
-        autoComplete={Platform.OS === 'android' ? 'sms-otp' : 'one-time-code'}
+        autoComplete={Platform.OS === "android" ? "sms-otp" : "one-time-code"}
         editable={!disabled}
         caretHidden={true}
         testID="otp-input-hidden"
         onFocus={handleFocus}
         onBlur={handleBlur}
-        style={[
-          tw`absolute opacity-0 w-full h-full`,
-          textInputProps?.style,
-        ]}
+        style={[tw`absolute opacity-0 w-full h-full`, textInputProps?.style]}
       />
     </View>
   );
 });
 
-OtpInput.displayName = 'OtpInput';
+OtpInput.displayName = "OtpInput";
 
 export default OtpInput;

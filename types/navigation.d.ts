@@ -22,7 +22,12 @@ export type RootStackParamList = {
   "artwork-categories": { title: string };
   NotificationScreen: undefined;
   ShipmentTrackingScreen: { orderId: string; tracking_id: string };
-  DimensionsDetails: { orderId: string; exclusivityType?: string };
+  DimensionsDetails: {
+    orderId: string;
+    exclusivityType?: string;
+    carrier?: string;
+    artworkDimensions?: any;
+  };
   EditAddressScreen: { currentAddress?: AddressTypes };
   DetailsScreen: {
     type: "artist" | "gallery";

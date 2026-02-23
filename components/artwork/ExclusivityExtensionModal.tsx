@@ -32,7 +32,7 @@ const CheckboxItem = ({
     onPress={onPress}
     activeOpacity={0.9}
     style={[
-      tw`bg-white border rounded-sm p-3 mb-2`,
+      tw`bg-white border rounded-md p-3 mb-2`,
       checked ? tw`border-[#1A1A1A] shadow-md` : tw`border-gray-200`,
     ]}
   >
@@ -40,7 +40,7 @@ const CheckboxItem = ({
       <View style={tw`mt-1`}>
         <View
           style={[
-            tw`w-5 h-5 rounded-sm border items-center justify-center`,
+            tw`w-5 h-5 rounded-md border items-center justify-center`,
             checked ? tw`bg-[#1A1A1A] border-[#1A1A1A]` : tw`border-gray-300`,
           ]}
         >
@@ -148,7 +148,7 @@ export default function ExclusivityExtensionModal({
           { backgroundColor: `${colors.black}80` },
         ]}
       >
-        <View style={tw`bg-white rounded-sm p-5 w-full max-w-md`}>
+        <View style={tw`bg-white rounded-md p-5 w-full max-w-md`}>
           {/* Header */}
           <View style={tw`mb-3`}>
             <Text
@@ -165,7 +165,7 @@ export default function ExclusivityExtensionModal({
           {/* Notice Card */}
           <View
             style={[
-              tw`relative rounded-sm p-4 mb-4`,
+              tw`relative rounded-md p-4 mb-4`,
               { backgroundColor: colors.black_light },
             ]}
           >
@@ -178,7 +178,7 @@ export default function ExclusivityExtensionModal({
             <View style={tw`flex-row items-start gap-3`}>
               <View
                 style={[
-                  tw`w-10 h-10 rounded-sm items-center justify-center`,
+                  tw`w-10 h-10 rounded-md items-center justify-center`,
                   { backgroundColor: `${colors.white}33` },
                 ]}
               >
@@ -255,7 +255,7 @@ export default function ExclusivityExtensionModal({
               onPress={handleExtension}
               activeOpacity={0.9}
               style={[
-                tw`w-full h-11 rounded-sm items-center justify-center`,
+                tw`w-full h-11 rounded-md items-center justify-center`,
                 isFormValid && !loading
                   ? { backgroundColor: colors.black }
                   : tw`bg-gray-300`,

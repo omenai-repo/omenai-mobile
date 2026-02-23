@@ -6,7 +6,7 @@ import {
   View,
   Text,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,6 +27,11 @@ import AlertCard from "#components/general/AlertCard";
 import { Analytics } from "#utils/analytics";
 import PackagingSelector from "#components/packaging/PackagingSelector";
 import { PackagingType } from "#constants/packaging_data";
+import {
+  checkCarrierLimit,
+  checkIfRolledPassesLimit,
+} from "#utils/shippingLimits";
+import CarrierInterventionCard from "#components/packaging/CarrierInterventionCard";
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -37,7 +42,7 @@ type ArtworkDimensionsErrorsType = {
 
 const DimensionsDetails = () => {
   const { userType } = useAppStore();
-  const { orderId, artworkDimensions, exclusivityType } =
+  const { orderId, artworkDimensions, exclusivityType, carrier } =
     useRoute<any>().params;
   const navigation = useNavigation();
 
@@ -65,6 +70,9 @@ const DimensionsDetails = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
+  // Intervention states
+  const [hasDeclinedRolled, setHasDeclinedRolled] = useState(false);
+
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const userId = useAppStore((state) => state.userSession.id);
@@ -78,11 +86,60 @@ const DimensionsDetails = () => {
     return Number(cleanStr) || 0;
   };
 
-  // Parse artwork dimensions from order (default to 24x24 if not provided)
-  const artDims = {
-    length: parseDim(artworkDimensions?.length) || 24,
-    height: parseDim(artworkDimensions?.height) || 24,
-  };
+  const artDims = useMemo(() => {
+    return {
+      length: parseDim(artworkDimensions?.length) || 24,
+      height: parseDim(artworkDimensions?.height) || 24,
+    };
+  }, [artworkDimensions]);
+
+  const isCurrentlyOversized = useMemo(() => {
+    if (!carrier) return false;
+
+    if (
+      usePreset &&
+      (!dimensions.length || !dimensions.width || !dimensions.height)
+    ) {
+      return checkCarrierLimit(
+        artDims.length * 2.54,
+        artDims.height * 2.54,
+        5,
+        10,
+        carrier,
+      );
+    }
+
+    if (
+      !usePreset &&
+      (!dimensions.length || !dimensions.width || !dimensions.height)
+    ) {
+      // Don't prematurely trigger oversize warnings while they are typing custom dimensions
+      return false;
+    }
+
+    const IN_TO_CM = 2.54;
+    return checkCarrierLimit(
+      usePreset
+        ? Number.parseFloat(dimensions.length)
+        : Number.parseFloat(dimensions.length) * IN_TO_CM,
+      usePreset
+        ? Number.parseFloat(dimensions.width)
+        : Number.parseFloat(dimensions.width) * IN_TO_CM,
+      usePreset
+        ? Number.parseFloat(dimensions.height)
+        : Number.parseFloat(dimensions.height) * IN_TO_CM,
+      Number.parseFloat(dimensions.weight || "0"),
+      carrier,
+    );
+  }, [carrier, dimensions, usePreset, artDims]);
+
+  const canBeRolled = useMemo(() => {
+    return checkIfRolledPassesLimit(
+      artDims.length * 2.54,
+      artDims.height * 2.54,
+      carrier || "",
+    );
+  }, [artDims, carrier]);
 
   const showDatePicker = () => setIsDatePickerVisible(true);
   const hideDatePicker = () => setIsDatePickerVisible(false);
@@ -98,15 +155,21 @@ const DimensionsDetails = () => {
     height: string;
     weight: string;
   }) => {
+    setHasDeclinedRolled(false);
     if (details.length) {
       setUsePreset(true);
       setDimensions(details);
       // Clear errors since preset values are valid
       setFormErrors({ height: "", length: "", width: "", weight: "" });
     } else {
-      // Custom mode - clear dimensions
+      // Custom mode - Start with blank dimensions
       setUsePreset(false);
-      setDimensions({ length: "", width: "", height: "", weight: "" });
+      setDimensions({
+        length: "",
+        width: "",
+        height: "",
+        weight: "",
+      });
     }
   };
 
@@ -247,18 +310,13 @@ const DimensionsDetails = () => {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={tw`flex-1`}
         >
-          <ScrollView
-            nestedScrollEnabled={true}
-            style={{ flexGrow: 1 }}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-          >
+          <ScrollView nestedScrollEnabled={true}>
             <View style={tw`mt-[20px] mx-[20px]`}>
               {/* Packaging Selector with Presets */}
               {userType === "artist" &&
                 (exclusivityType === "non-exclusive" || !exclusivityType) && (
                   <View
-                    style={tw`mb-5 flex-row bg-amber-50 border border-amber-100 rounded-sm p-3`}
+                    style={tw`mb-5 flex-row bg-amber-50 border border-amber-100 rounded-md p-3`}
                   >
                     <Ionicons
                       name="warning"
@@ -281,6 +339,7 @@ const DimensionsDetails = () => {
               <PackagingSelector
                 artDimensions={artDims}
                 packagingType={packagingType}
+                carrier={carrier || "Courier"}
                 onTypeChange={setPackagingType}
                 onSelect={handlePresetSelect}
               />
@@ -324,7 +383,7 @@ const DimensionsDetails = () => {
               {/* Selected Dimensions Summary */}
               {usePreset && dimensions.length && (
                 <View
-                  style={tw`bg-white border border-gray-200 rounded-sm p-4 mt-2`}
+                  style={tw`bg-white border border-gray-200 rounded-md p-4 mt-2`}
                 >
                   <Text
                     style={tw`text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4`}
@@ -362,145 +421,178 @@ const DimensionsDetails = () => {
               )}
             </View>
 
-            {/* Exhibition Options (Gallery Only) */}
-            {userType === "gallery" && (
-              <View style={tw`mt-5 mx-[20px]`}>
-                <Text style={tw`text-sm text-gray-600 mb-3`}>
-                  Is artwork on exhibition?
-                </Text>
-                <View style={tw`flex-row gap-4`}>
-                  <View style={tw`flex-1`}>
-                    <ToggleButton
-                      label="Yes"
-                      isSelected={isOnExhibition}
-                      onPress={() => setIsOnExhibition(true)}
-                    />
-                  </View>
-                  <View style={tw`flex-1`}>
-                    <ToggleButton
-                      label="No"
-                      isSelected={!isOnExhibition}
-                      onPress={() => {
-                        setIsOnExhibition(false);
-                        setExpoEndDate(null);
-                      }}
-                    />
-                  </View>
-                </View>
-
-                {isOnExhibition && (
-                  <View style={tw`mt-4`}>
-                    <View
-                      style={tw`mb-3 flex-row bg-blue-50 border border-blue-100 rounded-sm p-3`}
-                    >
-                      <Ionicons
-                        name="information-circle"
-                        size={18}
-                        color="#2563EB"
-                        style={tw`mt-0.5 mr-2`}
-                      />
+            {isCurrentlyOversized || hasDeclinedRolled ? (
+              <View style={tw`mx-4 mb-10`}>
+                <CarrierInterventionCard
+                  orderId={orderId}
+                  carrier={carrier || "Courier"}
+                  hasDeclined={hasDeclinedRolled}
+                  canBeRolled={canBeRolled}
+                  packagingType={packagingType}
+                  onDecline={() => setHasDeclinedRolled(true)}
+                  onSwitchToRolled={() => {
+                    setPackagingType("rolled");
+                    setHasDeclinedRolled(false);
+                  }}
+                  onTryCustomCrate={() => {
+                    setUsePreset(false);
+                    setDimensions({
+                      length: "",
+                      width: "",
+                      height: "",
+                      weight: "",
+                    });
+                    setHasDeclinedRolled(false);
+                  }}
+                />
+              </View>
+            ) : (
+              <View>
+                {/* Exhibition Options (Gallery Only) */}
+                {userType === "gallery" && (
+                  <View style={tw`mt-5 mx-[20px]`}>
+                    <Text style={tw`text-sm text-gray-600 mb-3`}>
+                      Is artwork on exhibition?
+                    </Text>
+                    <View style={tw`flex-row gap-4`}>
                       <View style={tw`flex-1`}>
-                        <Text style={tw`text-sm font-semibold text-blue-700`}>
-                          Automated Logistics
-                        </Text>
-                        <Text style={tw`text-xs text-blue-700 mt-1 leading-5`}>
-                          Select when the exhibition ends. A shipment request
-                          will be automatically triggered on this specific date
-                          and time.
-                        </Text>
+                        <ToggleButton
+                          label="Yes"
+                          isSelected={isOnExhibition}
+                          onPress={() => setIsOnExhibition(true)}
+                        />
+                      </View>
+                      <View style={tw`flex-1`}>
+                        <ToggleButton
+                          label="No"
+                          isSelected={!isOnExhibition}
+                          onPress={() => {
+                            setIsOnExhibition(false);
+                            setExpoEndDate(null);
+                          }}
+                        />
                       </View>
                     </View>
 
-                    <Text style={tw`text-sm text-gray-600 mb-3`}>
-                      when does the exhibition end?
-                    </Text>
-                    <Pressable
-                      onPress={showDatePicker}
-                      style={tw`bg-white border border-gray-200 rounded-sm px-4 py-3`}
-                    >
-                      <Text style={tw`text-gray-900`}>
-                        {expoEndDate
-                          ? format(expoEndDate, "MMM dd, yyyy - hh:mm a")
-                          : "Select date and time"}
-                      </Text>
-                    </Pressable>
-                    <DateTimePickerModal
-                      isVisible={isDatePickerVisible}
-                      mode="datetime"
-                      onConfirm={handleConfirm}
-                      onCancel={hideDatePicker}
-                      minimumDate={new Date()}
-                      display={Platform.OS === "ios" ? "inline" : "default"}
-                    />
+                    {isOnExhibition && (
+                      <View style={tw`mt-4`}>
+                        <View
+                          style={tw`mb-3 flex-row bg-blue-50 border border-blue-100 rounded-md p-3`}
+                        >
+                          <Ionicons
+                            name="information-circle"
+                            size={18}
+                            color="#2563EB"
+                            style={tw`mt-0.5 mr-2`}
+                          />
+                          <View style={tw`flex-1`}>
+                            <Text
+                              style={tw`text-sm font-semibold text-blue-700`}
+                            >
+                              Automated Logistics
+                            </Text>
+                            <Text
+                              style={tw`text-xs text-blue-700 mt-1 leading-5`}
+                            >
+                              Select when the exhibition ends. A shipment
+                              request will be automatically triggered on this
+                              specific date and time.
+                            </Text>
+                          </View>
+                        </View>
+
+                        <Text style={tw`text-sm text-gray-600 mb-3`}>
+                          when does the exhibition end?
+                        </Text>
+                        <Pressable
+                          onPress={showDatePicker}
+                          style={tw`bg-white border border-gray-200 rounded-md px-4 py-3`}
+                        >
+                          <Text style={tw`text-gray-900`}>
+                            {expoEndDate
+                              ? format(expoEndDate, "MMM dd, yyyy - hh:mm a")
+                              : "Select date and time"}
+                          </Text>
+                        </Pressable>
+                        <DateTimePickerModal
+                          isVisible={isDatePickerVisible}
+                          mode="datetime"
+                          onConfirm={handleConfirm}
+                          onCancel={hideDatePicker}
+                          minimumDate={new Date()}
+                          display={Platform.OS === "ios" ? "inline" : "default"}
+                        />
+                      </View>
+                    )}
                   </View>
                 )}
+
+                {/* Agreement Section */}
+                <View style={tw`mt-6 mx-5`}>
+                  {userType === "gallery" ? (
+                    <>
+                      <AlertCard
+                        title="Please review carefully"
+                        description="By accepting this order, you agree to hold the artwork for 24 hours to allow for payment and shipment processing. If the piece is on exhibition and paid for by this buyer, shipment will be scheduled at the exhibition's end date"
+                      />
+
+                      <Pressable
+                        onPress={() => setIsChecked(!isChecked)}
+                        style={tw`mt-4 flex-row items-center gap-3`}
+                      >
+                        <View
+                          style={tw`w-5 h-5 rounded-full border-2 border-gray-400 items-center justify-center`}
+                        >
+                          {isChecked && (
+                            <View
+                              style={[
+                                tw`w-3 h-3 rounded-full`,
+                                { backgroundColor: colors.primary_black },
+                              ]}
+                            />
+                          )}
+                        </View>
+                        <Text style={tw`text-sm text-gray-600 font-medium`}>
+                          I agree and continue
+                        </Text>
+                      </Pressable>
+                    </>
+                  ) : (
+                    <Pressable
+                      onPress={() => setIsChecked(!isChecked)}
+                      style={tw`bg-white border border-gray-200 rounded-md p-4 flex-row gap-3 shadow-sm`}
+                    >
+                      <View style={tw`mt-0.5`}>
+                        <Ionicons
+                          name={isChecked ? "checkbox" : "square-outline"}
+                          size={24}
+                          color={isChecked ? colors.primary_black : "#9CA3AF"}
+                        />
+                      </View>
+                      <View style={tw`flex-1`}>
+                        <Text style={tw`text-sm font-bold text-gray-900`}>
+                          Acknowledge Terms
+                        </Text>
+                        <Text style={tw`text-xs text-gray-500 leading-5`}>
+                          I confirm the selected packaging is sufficient and
+                          ready for pickup.
+                        </Text>
+                      </View>
+                    </Pressable>
+                  )}
+                </View>
+
+                {/* Submit Button */}
+                <View style={tw`mt-12 mx-5 mb-36`}>
+                  <LongBlackButton
+                    value="Accept Order"
+                    onClick={handleSubmit}
+                    isLoading={isLoading}
+                    isDisabled={checkIsDisabled()}
+                  />
+                </View>
               </View>
             )}
-
-            {/* Agreement Section */}
-            <View style={tw`mt-6 mx-5`}>
-              {userType === "gallery" ? (
-                <>
-                  <AlertCard
-                    title="Please review carefully"
-                    description="By accepting this order, you agree to hold the artwork for 24 hours to allow for payment and shipment processing. If the piece is on exhibition and paid for by this buyer, shipment will be scheduled at the exhibition's end date"
-                  />
-
-                  <Pressable
-                    onPress={() => setIsChecked(!isChecked)}
-                    style={tw`mt-4 flex-row items-center gap-3`}
-                  >
-                    <View
-                      style={tw`w-5 h-5 rounded-full border-2 border-gray-400 items-center justify-center`}
-                    >
-                      {isChecked && (
-                        <View
-                          style={[
-                            tw`w-3 h-3 rounded-full`,
-                            { backgroundColor: colors.primary_black },
-                          ]}
-                        />
-                      )}
-                    </View>
-                    <Text style={tw`text-sm text-gray-600 font-medium`}>
-                      I agree and continue
-                    </Text>
-                  </Pressable>
-                </>
-              ) : (
-                <Pressable
-                  onPress={() => setIsChecked(!isChecked)}
-                  style={tw`bg-white border border-gray-200 rounded-sm p-4 flex-row gap-3 shadow-sm`}
-                >
-                  <View style={tw`mt-0.5`}>
-                    <Ionicons
-                      name={isChecked ? "checkbox" : "square-outline"}
-                      size={24}
-                      color={isChecked ? colors.primary_black : "#9CA3AF"}
-                    />
-                  </View>
-                  <View style={tw`flex-1`}>
-                    <Text style={tw`text-sm font-bold text-gray-900`}>
-                      Acknowledge Terms
-                    </Text>
-                    <Text style={tw`text-xs text-gray-500 leading-5`}>
-                      I confirm the selected packaging is sufficient and ready
-                      for pickup.
-                    </Text>
-                  </View>
-                </Pressable>
-              )}
-            </View>
-
-            {/* Submit Button */}
-            <View style={tw`mt-12 mx-5 mb-36`}>
-              <LongBlackButton
-                value="Accept Order"
-                onClick={handleSubmit}
-                isLoading={isLoading}
-                isDisabled={checkIsDisabled()}
-              />
-            </View>
           </ScrollView>
         </KeyboardAvoidingView>
       </View>

@@ -28,7 +28,7 @@ const ArtistCard = ({
       <ProgressiveImage
         thumbnailSource={{ uri: lowResUri }}
         source={{ uri: highResUri }}
-        containerStyle={tw`w-full h-[200px] rounded-sm`}
+        containerStyle={tw`w-full h-[200px] rounded-md`}
         imageStyle={tw`w-full h-[200px]`}
         resizeMode="cover"
       />

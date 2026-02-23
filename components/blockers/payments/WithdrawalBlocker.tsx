@@ -28,7 +28,7 @@ export default function WithdrawalBlocker({
           duration: 2000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [pulseAnim]);
 
@@ -39,7 +39,7 @@ export default function WithdrawalBlocker({
     >
       {/* Modal Card */}
       <View
-        style={tw`relative w-full max-w-[400px] bg-[#0f172a] border border-[#47748E]/30 rounded-sm shadow-2xl p-8 items-center`}
+        style={tw`relative w-full max-w-[400px] bg-[#0f172a] border border-[#47748E]/30 rounded-md shadow-2xl p-8 items-center`}
       >
         {/* Close Button */}
         <TouchableOpacity

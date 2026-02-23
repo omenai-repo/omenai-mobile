@@ -66,7 +66,7 @@ export default function Pricing({ plan }: { plan: string | undefined }) {
       if (index === 0 && value === 0) return false;
       return true;
     });
-    return !(isFormValid && areAllFieldsFilled);
+    return !(isFormValid && areAllFieldsFilled) || loadingConversion;
   };
 
   const handleValidationChecks = (label: string, value: string) => {
@@ -163,44 +163,54 @@ export default function Pricing({ plan }: { plan: string | undefined }) {
         </View>
 
         {/* Price Input + Convert Button */}
-        <View style={tw`flex-row items-end gap-2`}>
-          <View style={tw`flex-1`}>
-            <Input
-              label="Price"
-              onInputChange={(value) => {
-                setLocalPrice(value);
-                if (artworkUploadData.usd_price !== 0) {
-                  updateArtworkUploadData("usd_price", 0);
-                  updateArtworkUploadData("price", 0);
-                }
-              }}
-              placeHolder="Enter your price"
-              value={localPrice}
-              errorMessage={formErrors.price}
-              keyboardType="decimal-pad"
-              disabled={artworkUploadData.currency === ""}
-            />
-          </View>
-          <TouchableOpacity
-            onPress={handleConvert}
-            disabled={!canConvert || loadingConversion}
-            style={[
-              tw`rounded-full items-center justify-center h-11 w-11 mb-0.5`,
-              canConvert && !loadingConversion
-                ? { backgroundColor: colors.black }
-                : tw`bg-gray-100`,
-            ]}
-          >
-            {loadingConversion ? (
-              <ActivityIndicator size="small" color="#9ca3af" />
-            ) : (
-              <MaterialIcons
-                name="sync"
-                size={24}
-                color={canConvert && !loadingConversion ? "#fff" : "#9ca3af"}
+        <View style={tw`gap-1`}>
+          <View style={tw`flex-row items-end gap-2`}>
+            <View style={tw`flex-1`}>
+              <Input
+                label="Price"
+                onInputChange={(value) => {
+                  setLocalPrice(value);
+                  if (artworkUploadData.usd_price !== 0) {
+                    updateArtworkUploadData("usd_price", 0);
+                    updateArtworkUploadData("price", 0);
+                  }
+                }}
+                placeHolder="Enter your price"
+                value={localPrice}
+                errorMessage={formErrors.price}
+                keyboardType="decimal-pad"
+                disabled={artworkUploadData.currency === ""}
               />
-            )}
-          </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              onPress={handleConvert}
+              disabled={!canConvert || loadingConversion}
+              style={[
+                tw`rounded-md items-center justify-center h-10.5 w-11`,
+                canConvert && !loadingConversion
+                  ? { backgroundColor: colors.black }
+                  : tw`bg-gray-100`,
+              ]}
+            >
+              {loadingConversion ? (
+                <ActivityIndicator size="small" color="#9ca3af" />
+              ) : (
+                <MaterialIcons
+                  name="sync"
+                  size={24}
+                  color={canConvert && !loadingConversion ? "#fff" : "#9ca3af"}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+          {canConvert && artworkUploadData.usd_price === 0 && (
+            <View style={tw`flex-row items-center gap-1 mt-1 px-1`}>
+              <Ionicons name="information-circle" size={12} color="#f59e0b" />
+              <Text style={tw`text-amber-500 text-[10px]`}>
+                Please convert your price to proceed
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* USD Equivalent — always visible, disabled */}

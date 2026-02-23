@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 import tw from "twrnc";
 
 export const ForfeitWarning = ({ targetPlan }: { targetPlan: string }) => (
-  <View style={tw`mb-4 rounded-sm bg-amber-50 border border-amber-200 p-3`}>
+  <View style={tw`mb-4 rounded-md bg-amber-50 border border-amber-200 p-3`}>
     <View style={tw`flex-row gap-2`}>
       <Text style={tw`text-amber-600`}>⚠️</Text>
       <Text

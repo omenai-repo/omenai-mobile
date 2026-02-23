@@ -84,12 +84,12 @@ export default function ArtworkCard({
       <View style={tw`flex-1`} />
       <TouchableOpacity
         activeOpacity={1}
-        style={[tw`rounded-sm`, { width: imageDimensions.width }]}
+        style={[tw`rounded-md`, { width: imageDimensions.width }]}
         onPress={() => {
           navigation.push(screenName.artwork, { art_id, url });
         }}
       >
-        <View style={tw`rounded-sm overflow-hidden relative`}>
+        <View style={tw`rounded-md overflow-hidden relative`}>
           <ProgressiveImage
             thumbnailSource={{ uri: lowResUri }}
             source={{ uri: highResUri }}
@@ -108,7 +108,7 @@ export default function ArtworkCard({
           >
             {!galleryView && (
               <View
-                style={tw`bg-white/20 h-[30px] w-[30px] rounded-sm flex items-center justify-center`}
+                style={tw`bg-white/20 h-[30px] w-[30px] rounded-md flex items-center justify-center`}
               >
                 <LikeComponent
                   art_id={art_id || ""}
@@ -137,7 +137,7 @@ export default function ArtworkCard({
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
-                tw`text-xs text-fluid-xs ${
+                tw`text-xs ${
                   lightText ? "text-white/80" : "text-slate-500"
                 } w-full mt-0.5 font-sans`,
               ]}

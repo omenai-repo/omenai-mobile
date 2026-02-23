@@ -20,7 +20,7 @@ export const CatalogCard = ({ image, name, value }: CatalogCardTypes) => {
       }
     >
       <View style={tw`w-[220px] mr-[29px]`}>
-        <Image source={image} style={tw`w-[220px] h-[220px] rounded-sm`} />
+        <Image source={image} style={tw`w-[220px] h-[220px] rounded-md`} />
         <Text style={tw`text-md text-neutral-900 mt-2.5`}>{name}</Text>
       </View>
     </Pressable>

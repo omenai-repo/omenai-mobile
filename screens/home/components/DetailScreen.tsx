@@ -127,7 +127,7 @@ const DetailsScreen = () => {
         <Animated.View entering={FadeInDown.delay(100).duration(500)}>
           <Image
             source={{ uri: image_href }}
-            style={tw`rounded-sm bg-[#0505] w-full h-[250px]`}
+            style={tw`rounded-md bg-[#0505] w-full h-[250px]`}
             resizeMode="cover"
           />
         </Animated.View>

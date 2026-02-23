@@ -12,7 +12,7 @@ import * as ImagePicker from "expo-image-picker";
 import { updateLogo } from "#services/update/updateLogo";
 import { useAppStore } from "#store/app/appStore";
 import { useModalStore } from "#store/modal/modalStore";
-import { logout } from "#utils/logout.utils";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import uploadLogo from "./uploadLogo";
 
 export default function UploadNewLogo() {
@@ -78,11 +78,19 @@ export default function UploadNewLogo() {
             showModal: true,
           });
         } else {
+          // Update local session
+          const updatedSession = { ...userSession, logo: file.fileId };
+          useAppStore.setState({ userSession: updatedSession });
+          await utils_storeAsyncData(
+            "userSession",
+            JSON.stringify(updatedSession),
+          );
+
           updateModal({
-            message: `${body.message}... Please log back in`,
+            message: body.message,
             modalType: "success",
             showModal: true,
-            onDismiss: () => logout(),
+            onDismiss: () => navigation.goBack(),
           });
         }
       }

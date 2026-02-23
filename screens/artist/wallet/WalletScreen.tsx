@@ -29,12 +29,12 @@ export const WalletContainerSkeleton = () => {
       from={{ opacity: 0.3 }}
       animate={{ opacity: 1 }}
       transition={{ loop: true, type: "timing", duration: 800 }}
-      style={[tw`bg-[#E7E7E7] rounded-sm`, style]}
+      style={[tw`bg-[#E7E7E7] rounded-md`, style]}
     />
   );
   return (
     <View
-      style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-sm`}
+      style={tw`bg-white border flex-row items-center p-[15px] mx-[20px] border-[#00000033] rounded-md`}
     >
       <View style={tw`flex-row items-center gap-[15px] flex-1`}>
         <SkeletonBlock style={tw`w-[50px] h-[50px] rounded-[10px]`} />
@@ -142,7 +142,7 @@ const AccountDetailsSkeleton = () => {
       from={{ opacity: 0.3 }}
       animate={{ opacity: 1 }}
       transition={{ loop: true, type: "timing", duration: 1000 }}
-      style={[tw`bg-[#E7E7E7] rounded-sm`, style]}
+      style={[tw`bg-[#E7E7E7] rounded-md`, style]}
     />
   );
   return (
@@ -280,7 +280,7 @@ const WalletScreen = () => {
             {/* Balances card */}
             <View
               style={[
-                tw`rounded-sm border p-[25px] mx-[20px] mt-[30px]`,
+                tw`rounded-md border p-[25px] mx-[20px] mt-[30px]`,
                 { backgroundColor: colors.black, borderColor: "#E7E7E7" },
               ]}
             >
@@ -394,7 +394,7 @@ const WalletScreen = () => {
               return (
                 <View style={tw`mx-[20px] mt-[20px]`}>
                   <View
-                    style={tw`bg-white border border-[#00000033] rounded-sm px-[20px] py-[15px] mb-[20px]`}
+                    style={tw`bg-white border border-[#00000033] rounded-md px-[20px] py-[15px] mb-[20px]`}
                   >
                     <View style={tw`flex-row items-center gap-[20px]`}>
                       <Text style={tw`text-[14px] flex-1`}>

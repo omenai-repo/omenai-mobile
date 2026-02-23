@@ -14,7 +14,7 @@ export default function Coverage() {
   };
 
   return (
-    <View style={tw`bg-white rounded-sm px-4 border border-neutral-200`}>
+    <View style={tw`bg-white rounded-md px-4 border border-neutral-200`}>
       <Pressable onPress={handleToggle} style={tw`py-4 flex-row items-center`}>
         <Text style={tw`text-sm text-neutral-600 flex-1`}>
           Covered by the Omenai Guarantee

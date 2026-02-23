@@ -10,7 +10,7 @@ type BannerLoaderProps = {
 const SkeletonCard = ({ width }: { width?: number }) => (
   <View
     style={[
-      tailwind`flex-row gap-[20px] p-[15px] rounded-sm bg-[#f5f5f5]`,
+      tailwind`flex-row gap-[20px] p-[15px] rounded-md bg-[#f5f5f5]`,
       width ? { width } : { flex: 1 },
     ]}
   >

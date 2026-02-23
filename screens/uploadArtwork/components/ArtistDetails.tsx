@@ -38,16 +38,20 @@ export default function ArtistDetails() {
   );
 
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every(
-      (error) => error === "",
-    );
+    // Synchronously validate fields so users can't bypass via debounce delay
+    const isArtistValid = validate("artist", artworkUploadData.artist).success;
+    const isBirthYearValid = validate(
+      "artist_birthyear",
+      artworkUploadData.artist_birthyear,
+    ).success;
+
     const areAllFieldsFilled = Object.values({
       artist: artworkUploadData.artist,
       birth_year: artworkUploadData.artist_birthyear,
+      country: artworkUploadData.artist_country_origin,
     }).every((value) => value !== "");
 
-    return !(isFormValid && areAllFieldsFilled);
+    return !(isArtistValid && isBirthYearValid && areAllFieldsFilled);
   };
 
   const handleValidationChecks = debounce((label: string, value: string) => {

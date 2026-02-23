@@ -114,7 +114,7 @@ export const BottomTabDataIndividual = [
   },
 ];
 
-export const BottomTabDataGallery = (account: any) => [
+export const BottomTabDataGallery = () => [
   {
     id: 1,
     name: "Overview",
@@ -149,7 +149,6 @@ export const BottomTabDataGallery = (account: any) => [
     activeIcon: walletActive,
     inActiveIcon: walletInActive,
     component: StripePayoutsTab,
-    initialParams: { account },
   },
   {
     id: 6,

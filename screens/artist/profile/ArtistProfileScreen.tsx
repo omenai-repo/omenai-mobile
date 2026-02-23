@@ -90,7 +90,10 @@ export default function ArtistProfileScreen() {
       }
     } catch (error: any) {
       updateModal({
-        message: error?.message ?? "Something went wrong",
+        message:
+          error?.message ||
+          error?.response?.data?.message ||
+          "Something went wrong",
         showModal: true,
         modalType: "error",
       });

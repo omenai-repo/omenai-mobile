@@ -17,14 +17,21 @@ export default function SelectableTag({
     <Pressable
       onPress={onSelect}
       style={[
-        tw`h-10 px-5 rounded-sm border items-center justify-center`,
+        tw`h-10 px-5 rounded-md border items-center justify-center`,
         { borderColor: colors.inputBorder },
-        isSelected ? { backgroundColor: colors.black } : { backgroundColor: "#FAFAFA" },
+        isSelected
+          ? { backgroundColor: colors.black }
+          : { backgroundColor: "#FAFAFA" },
       ]}
       accessibilityRole="button"
       accessibilityState={{ selected: isSelected }}
     >
-      <Text style={[tw`text-xs`, { color: isSelected ? colors.white : colors.primary_black }]}>
+      <Text
+        style={[
+          tw`text-xs`,
+          { color: isSelected ? colors.white : colors.primary_black },
+        ]}
+      >
         {name}
       </Text>
     </Pressable>

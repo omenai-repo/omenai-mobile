@@ -25,7 +25,7 @@ export default function PaymentMethodChangeScreen() {
 
   const displayName = useMemo(
     () => (user?.name ? `Omenai • ${user.name}` : "Omenai"),
-    [user?.name]
+    [user?.name],
   );
 
   const fetchSetupIntent = useCallback(async () => {
@@ -70,7 +70,7 @@ export default function PaymentMethodChangeScreen() {
       setSheetReady(true);
       return true;
     },
-    [displayName, initPaymentSheet, user?.email, user?.name]
+    [displayName, initPaymentSheet, user?.email, user?.name],
   );
 
   useEffect(() => {
@@ -151,7 +151,7 @@ export default function PaymentMethodChangeScreen() {
 
           {error && !initializing && (
             <View
-              style={tw`p-3 mb-3 rounded-sm border border-red-200 bg-red-50`}
+              style={tw`p-3 mb-3 rounded-md border border-red-200 bg-red-50`}
             >
               <Text style={tw`text-red-700`}>{error}</Text>
             </View>
@@ -162,11 +162,11 @@ export default function PaymentMethodChangeScreen() {
             onPress={handleOpenSheet}
             style={({ pressed }) =>
               tw.style(
-                `mt-2 h-12 rounded-sm items-center justify-center`,
+                `mt-2 h-12 rounded-md items-center justify-center`,
                 initializing || presenting || !sheetReady
                   ? "bg-slate-300"
                   : "bg-slate-900",
-                pressed ? "opacity-85" : ""
+                pressed ? "opacity-85" : "",
               )
             }
           >

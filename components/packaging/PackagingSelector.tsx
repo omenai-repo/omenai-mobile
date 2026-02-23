@@ -11,10 +11,12 @@ import {
 } from "#constants/packaging_data";
 import PackagingPreview from "./PackagingPreview";
 import PackagingWarning from "./PackagingWarning";
+import { checkCarrierLimit } from "#utils/shippingLimits";
 
 interface PackagingSelectorProps {
   artDimensions: { length: number; height: number };
   packagingType: PackagingType;
+  carrier: string;
   onTypeChange: (type: PackagingType) => void;
   onSelect: (details: {
     length: string;
@@ -27,6 +29,7 @@ interface PackagingSelectorProps {
 export default function PackagingSelector({
   artDimensions,
   packagingType,
+  carrier,
   onTypeChange,
   onSelect,
 }: Readonly<PackagingSelectorProps>) {
@@ -63,7 +66,7 @@ export default function PackagingSelector({
   return (
     <View style={tw`mb-6`}>
       {/* Header with Type Toggle */}
-      <View style={tw`bg-gray-50 border border-gray-200 rounded-sm p-4 mb-4`}>
+      <View style={tw`bg-gray-50 border border-gray-200 rounded-md p-4 mb-4`}>
         <View style={tw`flex-row items-center justify-between`}>
           <View style={tw`flex-1`}>
             <Text style={tw`text-sm font-semibold text-gray-900 capitalize`}>
@@ -77,7 +80,7 @@ export default function PackagingSelector({
             onPress={() =>
               onTypeChange(packagingType === "rolled" ? "stretched" : "rolled")
             }
-            style={tw`px-3 py-1.5 rounded-sm border border-indigo-100`}
+            style={tw`px-3 py-1.5 rounded-md border border-indigo-100`}
           >
             <Text style={tw`text-xs font-medium text-indigo-600`}>
               Switch to {packagingType === "rolled" ? "Stretched" : "Rolled"}
@@ -95,19 +98,28 @@ export default function PackagingSelector({
             artDimensions.length,
             artDimensions.height,
           );
+          const isOversize = checkCarrierLimit(
+            preset.dims_cm.length,
+            preset.dims_cm.width || 1,
+            preset.dims_cm.height || 1,
+            preset.weight_kg,
+            carrier,
+          );
           const isSelected = selectedPresetId === preset.id && !isCustom;
           const isRecommended = recommendedPreset?.id === preset.id;
+          const isClickable = isCompatible && !isOversize;
 
           return (
             <TouchableOpacity
               key={preset.id}
-              onPress={() => isCompatible && handleSelectPreset(preset)}
-              disabled={!isCompatible}
+              onPress={() => isClickable && handleSelectPreset(preset)}
+              disabled={!isClickable}
               style={[
-                tw`border rounded-sm overflow-hidden`,
+                tw`border rounded-md overflow-hidden`,
                 { width: "48%" },
-                !isCompatible && tw`opacity-50`,
+                (!isCompatible || isOversize) && tw`opacity-50`,
                 isSelected ? tw`border-gray-900 border-2` : tw`border-gray-200`,
+                isOversize && tw`border-amber-200 bg-amber-50`,
               ]}
               activeOpacity={0.7}
             >
@@ -154,6 +166,30 @@ export default function PackagingSelector({
                     </View>
                   </View>
                 )}
+
+                {/* Exceeds Courier Warning */}
+                {isCompatible && isOversize && !isSelected && (
+                  <View
+                    style={tw`absolute inset-0 bg-white/70 items-center justify-center`}
+                  >
+                    <View
+                      style={tw`bg-white px-2 py-1.5 rounded border border-amber-200 items-center`}
+                    >
+                      <Ionicons
+                        name="warning"
+                        size={14}
+                        color="#D97706"
+                        style={tw`mb-1`}
+                      />
+                      <Text
+                        style={tw`text-amber-800 text-[10px] font-bold text-center`}
+                      >
+                        COURIER SIZE
+                        {"\n"}LIMITS
+                      </Text>
+                    </View>
+                  </View>
+                )}
               </View>
 
               {/* Info */}
@@ -163,7 +199,7 @@ export default function PackagingSelector({
                     {preset.label}
                   </Text>
                   <View
-                    style={tw`bg-gray-100 px-1.5 py-0.5 rounded-sm flex-row items-baseline`}
+                    style={tw`bg-gray-100 px-1.5 py-0.5 rounded-md flex-row items-baseline`}
                   >
                     <Text style={tw`text-[8px] text-gray-400 mr-1`}>Max</Text>
                     <Text style={tw`text-[10px] font-bold text-gray-600`}>
@@ -188,7 +224,7 @@ export default function PackagingSelector({
       <TouchableOpacity
         onPress={handleCustom}
         style={[
-          tw`mt-3 border-2 border-dashed rounded-sm flex-row items-center p-4`,
+          tw`mt-3 border-2 border-dashed rounded-md flex-row items-center p-4`,
           isCustom ? tw`border-gray-900 bg-gray-50` : tw`border-gray-300`,
         ]}
         activeOpacity={0.7}

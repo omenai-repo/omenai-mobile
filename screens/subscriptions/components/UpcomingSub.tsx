@@ -44,7 +44,7 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
     <View style={[tw`w-full`, {}]}>
       <View
         style={[
-          tw`bg-white rounded-sm border border-slate-200 overflow-hidden`,
+          tw`bg-white rounded-md border border-slate-200 overflow-hidden`,
           tw`h-auto`, // height grows with content
           shadow(),
         ]}
@@ -93,7 +93,7 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
                 }
                 style={({ pressed }) =>
                   tw.style(
-                    `mt-5 px-5 h-11 rounded-sm items-center justify-center bg-slate-900`,
+                    `mt-5 px-5 h-11 rounded-md items-center justify-center bg-slate-900`,
                     pressed ? "opacity-90" : "",
                   )
                 }
@@ -111,7 +111,7 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
               {/* Plan details */}
               <View style={tw`flex-row items-start justify-between`}>
                 <View style={tw`flex-row items-center`}>
-                  <View style={tw`p-2 bg-slate-100 rounded-sm mr-3`}>
+                  <View style={tw`p-2 bg-slate-100 rounded-md mr-3`}>
                     {logoSource ? (
                       <Image
                         source={logoSource}
@@ -145,7 +145,7 @@ export default function UpcomingSub({ sub_data, logoSource }: Props) {
 
               {/* Billing period card */}
               <View
-                style={tw`p-4 rounded-sm bg-blue-50 border border-blue-200`}
+                style={tw`p-4 rounded-md bg-blue-50 border border-blue-200`}
               >
                 <View style={tw`flex-row`}>
                   <Ionicons

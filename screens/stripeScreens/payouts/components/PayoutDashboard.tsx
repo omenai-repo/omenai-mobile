@@ -1,16 +1,14 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import React, { useEffect, useState } from "react";
 import BalanceBox from "./BalanceBox";
 import Transactions from "./Transactions";
 import { useModalStore } from "#store/modal/modalStore";
 import { retrieveBalance } from "#services/stripe/retrieveBalance";
-import { colors } from "#config/colors.config";
 import { fetchTransactions } from "#services/transactions/fetchTransactions";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import PayoutSummary from "./PayoutSummary";
 import { PurchaseTransactionModelSchemaTypes } from "#types/types";
-import { TransactionSkeletonCard } from "#components/skeleton/TransactionSkeletonCard";
-import SkeletonBox from "#components/skeleton/SkeletonBox";
+import PayoutSkeleton from "#components/skeleton/PayoutSkeleton";
 
 type TransactionsTableProps = {
   transactions: (PurchaseTransactionModelSchemaTypes & {
@@ -81,13 +79,7 @@ export default function PayoutDashboard({
     handleFetchBalance();
   }, [refreshCount]);
 
-  if (isLoading)
-    return (
-      <View style={{ gap: 20 }}>
-        <SkeletonBox width="100%" height={200} radius={15} />
-        <TransactionSkeletonCard count={5} />
-      </View>
-    );
+  if (isLoading) return <PayoutSkeleton withHeader={false} />;
 
   return (
     <View style={{ flex: 1 }}>
@@ -106,5 +98,3 @@ export default function PayoutDashboard({
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

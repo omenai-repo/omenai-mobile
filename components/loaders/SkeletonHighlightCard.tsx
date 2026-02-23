@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 import Animated from "react-native-reanimated";
+import { colors } from "#config/colors.config";
 
 type SkeletonCardProps = {
   cardWidth: number;
@@ -24,7 +25,7 @@ export const SkeletonHighlightCard = ({
 
 const styles = StyleSheet.create({
   skeletonCard: {
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.black,
     borderRadius: 12,
     padding: 16,
     marginBottom: 10,

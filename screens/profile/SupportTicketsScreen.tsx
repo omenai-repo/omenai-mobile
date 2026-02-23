@@ -111,7 +111,7 @@ export default function SupportTicketsScreen() {
         <View style={tw`px-4 py-2 bg-white z-10`}>
           <View style={tw`flex-row items-center gap-2 mb-2`}>
             <View
-              style={tw`flex-1 flex-row items-center bg-gray-50 border border-gray-200 rounded-sm px-3 py-3`}
+              style={tw`flex-1 flex-row items-center bg-gray-50 border border-gray-200 rounded-md px-3 py-3`}
             >
               <Ionicons name="search" size={20} color="#9CA3AF" />
               <TextInput
@@ -127,7 +127,7 @@ export default function SupportTicketsScreen() {
               onPress={() =>
                 navigation.navigate(screenName.supportTicketsFilterModal)
               }
-              style={tw`relative p-3 bg-gray-50 border border-gray-200 rounded-sm`}
+              style={tw`relative p-3 bg-gray-50 border border-gray-200 rounded-md`}
             >
               <Ionicons name="options-outline" size={22} color="#374151" />
               {activeFilterCount > 0 && (

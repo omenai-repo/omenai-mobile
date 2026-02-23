@@ -101,14 +101,21 @@ export default function Billing() {
         getAllPlanData(),
         userSession?.id
           ? retrieveSubscriptionData(userSession.id)
-          : Promise.resolve({ isOk: false, data: null }),
+          : Promise.resolve({
+              isOk: false,
+              data: null,
+              message: "User session is invalid",
+            }),
         retrieveSubscriptionDiscount(),
       ]);
 
       if (!results?.isOk && !subResults?.isOk) {
         //throw error
         updateModal({
-          message: "Something went wrong",
+          message:
+            (results as any)?.message ||
+            (subResults as any)?.message ||
+            "Something went wrong",
           modalType: "error",
           showModal: true,
         });

@@ -88,7 +88,7 @@ export const TransactionDetailsScreen = ({ route }: { route: any }) => {
       <ScrollView contentContainerStyle={tw`px-5 pt-6 pb-10`}>
         {/* Transaction Info Card */}
         <View
-          style={tw`bg-white rounded-sm border border-gray-200 overflow-hidden`}
+          style={tw`bg-white rounded-md border border-gray-200 overflow-hidden`}
         >
           {/* Card Header */}
           <View

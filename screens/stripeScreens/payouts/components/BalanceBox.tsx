@@ -63,7 +63,7 @@ export default function BalanceBox({
           {utils_formatPrice(balance.pending[0].amount / 100, currency)}
         </Text>
         <View style={tw`gap-5 mt-[30px] pt-0`}>
-          <View style={tw`bg-white/10 rounded-sm p-3 flex-row`}>
+          <View style={tw`bg-white/10 rounded-md p-3 flex-row`}>
             <Text style={tw`text-[13px] text-white/90 flex-1 leading-[18px]`}>
               Balance on Stripe is automatically transferred to your connected
               bank account.
@@ -71,7 +71,7 @@ export default function BalanceBox({
           </View>
 
           <TouchableOpacity
-            style={tw`h-10 bg-white items-center justify-center border border-white rounded-sm flex-row gap-2.5`}
+            style={tw`h-10 bg-white items-center justify-center border border-white rounded-md flex-row gap-2.5`}
             onPress={generateLoginLink}
             disabled={pendingLoginLink}
           >
