@@ -23,6 +23,7 @@
       }
     },
     "staging": {
+      "environment": "development",
       "distribution": "store",
       "channel": "staging",
       "env": {
