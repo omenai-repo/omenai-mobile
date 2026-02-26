@@ -108,7 +108,10 @@ export default function PayoutSummary({
   );
 }
 
-function SummaryCard({ label, value }: { label: string; value: string }) {
+function SummaryCard({
+  label,
+  value,
+}: Readonly<{ label: string; value: string }>) {
   return (
     <View style={styles.card}>
       <Text style={styles.label}>{label}</Text>
