@@ -17,15 +17,14 @@ import { colors } from "#config/colors.config";
 
 export default function ArtworkPriceReviewScreen({
   onConfirm,
-}: {
+}: Readonly<{
   onConfirm: () => void;
-}) {
+}>) {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
   const { updateModal } = useModalStore();
   const {
     setActiveIndex,
-    activeIndex,
     updateArtworkUploadData,
     artworkUploadData,
     clearData,

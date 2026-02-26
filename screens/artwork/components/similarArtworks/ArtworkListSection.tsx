@@ -20,7 +20,7 @@ export default function ArtworkListSection({
   isLoading,
   onHeaderPress,
   containerStyle,
-}: ArtworkListSectionProps) {
+}: Readonly<ArtworkListSectionProps>) {
   if (!isLoading && (!data || data.length === 0)) {
     return null;
   }

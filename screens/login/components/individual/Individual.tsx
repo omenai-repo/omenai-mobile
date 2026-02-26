@@ -27,19 +27,17 @@ export default function Individual({ biometricProps }: IndividualProps) {
     handleLogin(individualLoginData, setIsLoading, clearInputs);
 
   return (
-    <>
-      <LoginForm
-        loginData={individualLoginData}
-        setEmail={setEmail}
-        setPassword={setPassword}
-        isLoading={isLoading}
-        handleSubmit={handleSubmit}
-        biometricProps={biometricProps}
-        emailLabel="Email address"
-        emailPlaceholder="Enter your email address"
-        loginButtonLabel="Log In"
-        forgotPasswordType="individual"
-      />
-    </>
+    <LoginForm
+      loginData={individualLoginData}
+      setEmail={setEmail}
+      setPassword={setPassword}
+      isLoading={isLoading}
+      handleSubmit={handleSubmit}
+      biometricProps={biometricProps}
+      emailLabel="Email address"
+      emailPlaceholder="Enter your email address"
+      loginButtonLabel="Log In"
+      forgotPasswordType="individual"
+    />
   );
 }

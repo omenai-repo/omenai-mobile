@@ -66,8 +66,6 @@ export default function Orders() {
           case "declined":
             matchesStatus = o.order_accepted?.status === "declined";
             break;
-          default:
-            matchesStatus = true;
         }
       }
 
@@ -141,70 +139,68 @@ export default function Orders() {
   }, [refetch]);
 
   return (
-    <>
-      <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
-        <TabSwitcher
-          tabs={collectorTabs}
-          selectedKey={selectedTab}
-          setSelectedKey={(key) => setSelectedTab(key as OrderTabsTypes)}
-        />
+    <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
+      <TabSwitcher
+        tabs={collectorTabs}
+        selectedKey={selectedTab}
+        setSelectedKey={(key) => setSelectedTab(key as OrderTabsTypes)}
+      />
 
+      <View
+        style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-md p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
+      >
         <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-md p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
+          style={[
+            tw`flex-row items-center gap-2 mb-[25px] z-50 w-full`,
+            { elevation: 50 },
+          ]}
         >
-          <View
-            style={[
-              tw`flex-row items-center gap-2 mb-[25px] z-50 w-full`,
-              { elevation: 50 },
-            ]}
-          >
-            <FilterDropdown
-              data={
-                selectedTab === "orders"
-                  ? [
-                      { label: "All Status", value: "all" },
-                      { label: "Pending", value: "pending" },
-                      { label: "Awaiting Payment", value: "awaiting_payment" },
-                      {
-                        label: "Delivery in Progress",
-                        value: "delivery_in_progress",
-                      },
-                    ]
-                  : [
-                      { label: "All Status", value: "all" },
-                      { label: "Completed", value: "completed" },
-                      { label: "Declined", value: "declined" },
-                    ]
-              }
-              selectedValue={statusFilter}
-              onSelect={(val) => setStatusFilter(val)}
-              // Ensure dropdown content is above other elements
-              style={tw`flex-1`}
-            />
-            <YearDropdown
-              selectedYear={selectedYear}
-              setSelectedYear={setSelectedYear}
-              style={tw`mb-0 w-[120px]`}
-            />
-          </View>
-
-          {isLoading ? (
-            <OrderslistingLoader />
-          ) : currentOrders.length === 0 ? (
-            <EmptyOrdersListing status={selectedTab} />
-          ) : (
-            <FlatList
-              data={currentOrders}
-              keyExtractor={keyExtractor}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={tw`pb-[30px]`}
-              renderItem={renderItem}
-              refreshing={isRefetching}
-              onRefresh={onRefresh}
-            />
-          )}
+          <FilterDropdown
+            data={
+              selectedTab === "orders"
+                ? [
+                    { label: "All Status", value: "all" },
+                    { label: "Pending", value: "pending" },
+                    { label: "Awaiting Payment", value: "awaiting_payment" },
+                    {
+                      label: "Delivery in Progress",
+                      value: "delivery_in_progress",
+                    },
+                  ]
+                : [
+                    { label: "All Status", value: "all" },
+                    { label: "Completed", value: "completed" },
+                    { label: "Declined", value: "declined" },
+                  ]
+            }
+            selectedValue={statusFilter}
+            onSelect={(val) => setStatusFilter(val)}
+            // Ensure dropdown content is above other elements
+            style={tw`flex-1`}
+          />
+          <YearDropdown
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+            style={tw`mb-0 w-[120px]`}
+          />
         </View>
+
+        {isLoading ? (
+          <OrderslistingLoader />
+        ) : currentOrders.length === 0 ? (
+          <EmptyOrdersListing status={selectedTab} />
+        ) : (
+          <FlatList
+            data={currentOrders}
+            keyExtractor={keyExtractor}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={tw`pb-[30px]`}
+            renderItem={renderItem}
+            refreshing={isRefetching}
+            onRefresh={onRefresh}
+          />
+        )}
       </View>
-    </>
+    </View>
   );
 }

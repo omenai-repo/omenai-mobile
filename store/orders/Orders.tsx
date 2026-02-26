@@ -1,5 +1,6 @@
-import { OrderTabsTypes } from '#screens/orders/Orders';
-import { create } from 'zustand';
+import { OrderTabsTypes } from "#screens/orders/Orders";
+import { create } from "zustand";
+import type { CreateOrderModelTypes } from "#types/types";
 
 type OrdersStoreTypes = {
   selectedTab: OrderTabsTypes;
@@ -19,7 +20,7 @@ type OrdersStoreTypes = {
 };
 
 export const useOrderStore = create<OrdersStoreTypes>((set, get) => ({
-  selectedTab: 'pending',
+  selectedTab: "orders",
   setSelectedTab: (e: OrderTabsTypes) => {
     set({ selectedTab: e });
   },

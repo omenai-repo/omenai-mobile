@@ -30,6 +30,10 @@ import SuccessComp from "./SuccessComp";
 import { useAppStore } from "#store/app/appStore";
 import { logout } from "#utils/logout.utils";
 import CredentialsOverview from "./CredentialsOverview";
+import type {
+  ArtistCategorizationAnswerTypes,
+  ArtistCategorizationUpdateDataTypes,
+} from "#types/types";
 
 const { width, height } = Dimensions.get("window");
 
@@ -126,7 +130,7 @@ const ArtistOnboarding = () => {
     }
   >(INITIAL_ONBOARDING_STATE);
   const [cv, setCv] = useState<DocumentPicker.DocumentPickerResult | null>(
-    null
+    null,
   );
   const [documentation, setDocumentation] = useState<{
     cv: string;
@@ -142,7 +146,7 @@ const ArtistOnboarding = () => {
   });
 
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>(
-    {}
+    {},
   );
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -162,7 +166,7 @@ const ArtistOnboarding = () => {
 
   const openEditModal = (
     key: QuestionKey | "cv" | "social",
-    socialKey?: string
+    socialKey?: string,
   ) => {
     setEditingQuestionKey(key as QuestionKey);
     setEditingSocialKey(socialKey || null); // Store which social media is being edited
@@ -445,7 +449,13 @@ const ArtistOnboarding = () => {
       {screen === 1 ? (
         <FirstScreen onPress={() => setScreen(2)} />
       ) : screen === 2 ? (
-        !isLoading ? (
+        isLoading ? (
+          <LoadingContainer
+            label={
+              "This process might take up to minutes, as we’re trying to compile all your onboarding data."
+            }
+          />
+        ) : (
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={tw`flex-1 bg-[#F7F7F7]`}
@@ -522,7 +532,7 @@ const ArtistOnboarding = () => {
                   <Pressable
                     onPress={handleBack}
                     style={tw.style(
-                      `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`
+                      `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`,
                     )}
                   >
                     <Text style={tw`text-[#1A1A1A]] font-bold text-[14px]`}>
@@ -546,7 +556,7 @@ const ArtistOnboarding = () => {
                   disabled={isNextDisabled()}
                   style={tw.style(
                     `h-[51px] rounded-full justify-center items-center flex-1`,
-                    isNextDisabled() ? "bg-[#B5B5B5]" : "bg-[#1A1A1A]"
+                    isNextDisabled() ? "bg-[#B5B5B5]" : "bg-[#1A1A1A]",
                   )}
                 >
                   <Text style={tw`text-white font-bold text-[14px]`}>Next</Text>
@@ -554,12 +564,6 @@ const ArtistOnboarding = () => {
               </View>
             </ScrollView>
           </KeyboardAvoidingView>
-        ) : (
-          <LoadingContainer
-            label={
-              "This process might take up to minutes, as we’re trying to compile all your onboarding data."
-            }
-          />
         )
       ) : (
         screen === 3 && <SuccessComp />

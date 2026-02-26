@@ -27,21 +27,20 @@ export const StatusBadgeItem = ({
   iconColor,
   customBgColor,
 }: StatusBadgeItemProps) => {
-  const IconComponent =
-    family === "AntDesign"
-      ? AntDesign
-      : family === "Feather"
-      ? Feather
-      : family === "MaterialIcons"
-      ? MaterialIcons
-      : Ionicons;
+  const iconsMap = {
+    AntDesign,
+    Feather,
+    MaterialIcons,
+    Ionicons,
+  };
+  const IconComponent = iconsMap[family];
 
   return (
     <View
       style={[
         tw`flex-row items-center px-2.5 py-1 rounded-md`,
-        bgStyle ? tw`${bgStyle}` : {},
-        customBgColor ? { backgroundColor: customBgColor } : {},
+        bgStyle ? tw`${bgStyle}` : undefined,
+        customBgColor ? { backgroundColor: customBgColor } : undefined,
       ]}
     >
       <IconComponent
@@ -51,7 +50,10 @@ export const StatusBadgeItem = ({
         style={tw`mr-1`}
       />
       <Text
-        style={[tw`text-sm font-medium`, textStyle ? tw`${textStyle}` : {}]}
+        style={[
+          tw`text-sm font-medium`,
+          textStyle ? tw`${textStyle}` : undefined,
+        ]}
       >
         {label}
       </Text>

@@ -28,19 +28,17 @@ export default function Gallery({ biometricProps }: GalleryProps) {
     handleLogin(galleryLoginData, setIsLoading, clearInputs);
 
   return (
-    <>
-      <LoginForm
-        loginData={galleryLoginData}
-        setEmail={setEmail}
-        setPassword={setPassword}
-        isLoading={isLoading}
-        handleSubmit={handleSubmit}
-        biometricProps={biometricProps}
-        emailLabel="Email address"
-        emailPlaceholder="Enter your email address"
-        loginButtonLabel="Sign In Gallery"
-        forgotPasswordType="gallery"
-      />
-    </>
+    <LoginForm
+      loginData={galleryLoginData}
+      setEmail={setEmail}
+      setPassword={setPassword}
+      isLoading={isLoading}
+      handleSubmit={handleSubmit}
+      biometricProps={biometricProps}
+      emailLabel="Email address"
+      emailPlaceholder="Enter your email address"
+      loginButtonLabel="Sign In Gallery"
+      forgotPasswordType="gallery"
+    />
   );
 }

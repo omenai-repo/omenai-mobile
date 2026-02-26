@@ -49,7 +49,7 @@ export default function ExtraDetailAccordion({
           <View style={tw`gap-4 pt-4`}>
             {items.map((item, index) => (
               <View
-                key={index}
+                key={item.text || index.toString()}
                 style={tw.style(
                   `flex-row items-center gap-3`,
                   item.hasLeftBorder && `border-l border-neutral-200 pl-3`,

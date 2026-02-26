@@ -54,59 +54,57 @@ export default function SearchResults() {
   const dataLength = searchQuery.length === 0 ? 0 : data.length;
 
   return (
-    <>
-      <View style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}>
-        <View style={tw`px-[20px]`}>
-          <SearchInput />
-          {searchQuery.length > 0 ? (
-            <>
-              <Text
-                style={[
-                  tw`text-[18px] font-medium py-[20px]`,
-                  { color: colors.primary_black },
-                ]}
-              >
-                Search for “{searchQuery}”:
-              </Text>
-              <Text style={tw`text-[16px] text-[#808080]`}>
-                {dataLength} results found
-              </Text>
-            </>
-          ) : (
-            <View>
-              <Text
-                style={[
-                  tw`text-[18px] font-medium py-[20px]`,
-                  { color: colors.primary_black },
-                ]}
-              >
-                Search for artworks on Omenai
-              </Text>
-            </View>
-          )}
-        </View>
-        {isLoading && debouncedSearch.length > 2 && (
-          <View style={tw`mt-[10px]`}>
-            <MiniArtworkCardLoader />
-          </View>
-        )}
-        {!isLoading && dataLength > 0 && (
-          <View style={tw`flex-1 mt-[10px]`}>
-            <ArtworksListing data={data} onRefresh={async () => {}} />
-          </View>
-        )}
-        {searchQuery.length > 0 && dataLength === 0 && !isLoading && (
-          <View style={tw`flex-1`}>
-            <EmptyArtworks
-              description={
-                searchQuery.length < 3 && dataLength === 0
-                  ? "Please enter at least 3 characters to search..."
-                  : `Can't find artwork you're looking for, try checking for mispellings`
-              }
-            />
+    <View style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}>
+      <View style={tw`px-[20px]`}>
+        <SearchInput />
+        {searchQuery.length > 0 ? (
+          <>
+            <Text
+              style={[
+                tw`text-[18px] font-medium py-[20px]`,
+                { color: colors.primary_black },
+              ]}
+            >
+              Search for “{searchQuery}”:
+            </Text>
+            <Text style={tw`text-[16px] text-[#808080]`}>
+              {dataLength} results found
+            </Text>
+          </>
+        ) : (
+          <View>
+            <Text
+              style={[
+                tw`text-[18px] font-medium py-[20px]`,
+                { color: colors.primary_black },
+              ]}
+            >
+              Search for artworks on Omenai
+            </Text>
           </View>
         )}
       </View>
-    </>
+      {isLoading && debouncedSearch.length > 2 && (
+        <View style={tw`mt-[10px]`}>
+          <MiniArtworkCardLoader />
+        </View>
+      )}
+      {!isLoading && dataLength > 0 && (
+        <View style={tw`flex-1 mt-[10px]`}>
+          <ArtworksListing data={data} onRefresh={async () => {}} />
+        </View>
+      )}
+      {searchQuery.length > 0 && dataLength === 0 && !isLoading && (
+        <View style={tw`flex-1`}>
+          <EmptyArtworks
+            description={
+              searchQuery.length < 3 && dataLength === 0
+                ? "Please enter at least 3 characters to search..."
+                : `Can't find artwork you're looking for, try checking for mispellings`
+            }
+          />
+        </View>
+      )}
+    </View>
   );
 }

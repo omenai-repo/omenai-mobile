@@ -77,7 +77,7 @@ const QuestionContainer = ({
             )}
             multiline={!isNumber}
             keyboardType={isNumber ? "numeric" : "default"}
-            placeholder={!isNumber ? "Write about yourself..." : "Enter number"}
+            placeholder={isNumber ? "Enter number" : "Write about yourself..."}
             value={value}
             onChangeText={(text) => {
               if (!isNumber) {

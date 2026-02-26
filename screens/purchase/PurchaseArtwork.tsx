@@ -99,59 +99,57 @@ export default function PurchaseArtwork() {
   );
 
   return (
-    <>
-      <View style={{ flex: 1, backgroundColor: colors.white }}>
-        <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
-          {selectedSectionIndex !== 3 && (
+    <View style={{ flex: 1, backgroundColor: colors.white }}>
+      <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+        {selectedSectionIndex !== 3 && (
+          <View
+            style={{
+              paddingHorizontal: 20,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingBottom: 20,
+            }}
+          >
+            <BackScreenButton handleClick={handleBackNavigation} />
+            <Text style={styles.headerTitle}>
+              {selectedSectionIndex === 1
+                ? "Order Summary"
+                : "Shipping Details"}
+            </Text>
+            <View style={{ width: 50 }} />
+          </View>
+        )}
+      </SafeAreaView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.scrollContainer}
+      >
+        <ScrollWrapper nestedScrollEnabled={true}>
+          {/* <TabsIndicator selectedIndex={selectedSectionIndex} /> */}
+          {isLoading && <OrderSkeleton />}
+          {!isLoading && artworkOrderData ? (
             <View
-              style={{
-                paddingHorizontal: 20,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingBottom: 20,
-              }}
+              key={
+                selectedSectionIndex /* remount on step change for snappy UI */
+              }
             >
-              <BackScreenButton handleClick={handleBackNavigation} />
-              <Text style={styles.headerTitle}>
-                {selectedSectionIndex === 1
-                  ? "Order Summary"
-                  : "Shipping Details"}
-              </Text>
-              <View style={{ width: 50 }} />
+              {selectedSectionIndex === 1 && (
+                <OrderSummary data={artworkOrderData} />
+              )}
+              {selectedSectionIndex === 2 && (
+                <ShippingDetails data={artworkOrderData} />
+              )}
+              {selectedSectionIndex === 3 && (
+                <PriceQuoteSent
+                  handleClick={() => handleBackNavigation(true)}
+                />
+              )}
             </View>
-          )}
-        </SafeAreaView>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.scrollContainer}
-        >
-          <ScrollWrapper nestedScrollEnabled={true}>
-            {/* <TabsIndicator selectedIndex={selectedSectionIndex} /> */}
-            {isLoading && <OrderSkeleton />}
-            {!isLoading && artworkOrderData ? (
-              <View
-                key={
-                  selectedSectionIndex /* remount on step change for snappy UI */
-                }
-              >
-                {selectedSectionIndex === 1 && (
-                  <OrderSummary data={artworkOrderData} />
-                )}
-                {selectedSectionIndex === 2 && (
-                  <ShippingDetails data={artworkOrderData} />
-                )}
-                {selectedSectionIndex === 3 && (
-                  <PriceQuoteSent
-                    handleClick={() => handleBackNavigation(true)}
-                  />
-                )}
-              </View>
-            ) : null}
-          </ScrollWrapper>
-        </KeyboardAvoidingView>
-      </View>
-    </>
+          ) : null}
+        </ScrollWrapper>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 

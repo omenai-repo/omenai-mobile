@@ -18,7 +18,6 @@ import { getImageFileView } from "#lib/storage/getImageFileView";
 import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
 import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
 import EmptyArtworks from "#components/general/EmptyArtworks";
-import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import MiniArtworkCard from "#components/artwork/MiniArtworkCard";
 
 type DetailsRouteProp = RouteProp<

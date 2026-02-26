@@ -15,7 +15,7 @@ export default function Preferences({
   label,
   selectedPreferences,
   setSelectedPreferences,
-}: PreferencesProps) {
+}: Readonly<PreferencesProps>) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

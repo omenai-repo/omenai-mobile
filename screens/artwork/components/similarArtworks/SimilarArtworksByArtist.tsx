@@ -12,7 +12,7 @@ interface SimilarArtworksByArtistProps {
 export default function SimilarArtworksByArtist({
   artist,
   currentArtworkTitle,
-}: SimilarArtworksByArtistProps) {
+}: Readonly<SimilarArtworksByArtistProps>) {
   const { data: similarArtworks = [], isLoading } = useQuery({
     queryKey: ["artist-artworks", artist],
     enabled: !!artist,

@@ -51,28 +51,26 @@ export default function Overview() {
   }, []);
 
   return (
-    <>
-      <WithGalleryModal>
-        <View style={tw`flex-1 bg-[#F7F7F7]`}>
-          <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-          <ScrollWrapper
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            onScroll={onScroll}
-          >
-            <Header />
-            <View style={styles.container}>
-              <HighlightCard onLoadingChange={handleLoadingChange} />
-            </View>
+    <WithGalleryModal>
+      <View style={tw`flex-1 bg-[#F7F7F7]`}>
+        <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+        <ScrollWrapper
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          onScroll={onScroll}
+        >
+          <Header />
+          <View style={styles.container}>
+            <HighlightCard onLoadingChange={handleLoadingChange} />
+          </View>
 
-            <SalesOverview onLoadingChange={handleLoadingChange} />
-            <PopularArtworks onLoadingChange={handleLoadingChange} />
-          </ScrollWrapper>
-        </View>
-      </WithGalleryModal>
-    </>
+          <SalesOverview onLoadingChange={handleLoadingChange} />
+          <PopularArtworks onLoadingChange={handleLoadingChange} />
+        </ScrollWrapper>
+      </View>
+    </WithGalleryModal>
   );
 }
 
