@@ -96,14 +96,12 @@ export default function GalleryProfile() {
   );
 
   return (
-    <>
-      <WithGalleryModal>
-        <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-        <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-          <ProfileLayout menuItems={menuItems} headerComponent={Header} />
-        </ScrollWrapper>
-      </WithGalleryModal>
-    </>
+    <WithGalleryModal>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+      <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
+        <ProfileLayout menuItems={menuItems} headerComponent={Header} />
+      </ScrollWrapper>
+    </WithGalleryModal>
   );
 }
 

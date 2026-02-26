@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 
 import OrderSkeleton from "#components/skeleton/OrderSkeleton";
@@ -53,19 +54,14 @@ export default function Payment() {
 
   if (isLoading)
     return (
-      <>
+      <View>
         <BackHeaderTitle title="Confirm order details" />
         <OrderSkeleton />
-      </>
+      </View>
     );
 
   if (!isLoading && artworkDetails.data !== null)
     return (
-      <>
-        <OrderDetails
-          data={artworkDetails.data}
-          locked={artworkDetails.locked}
-        />
-      </>
+      <OrderDetails data={artworkDetails.data} locked={artworkDetails.locked} />
     );
 }

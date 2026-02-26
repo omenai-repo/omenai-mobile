@@ -17,7 +17,6 @@ import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
 import { useModalStore } from "#store/modal/modalStore";
 import StatusPill from "./StatusPill";
-// removed feature-flag usage here — payment gating moved to OrderContainer
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "twrnc";
@@ -99,13 +98,7 @@ export default function OrderCard({ order }: { readonly order: any }) {
             />
           </View>
           <View style={{ flexWrap: "wrap", marginTop: 15 }}>
-            {!availability ? (
-              <View style={styles.disabledButton}>
-                <Text style={styles.disabledButtonText}>
-                  No action required
-                </Text>
-              </View>
-            ) : (
+            {availability ? (
               <>
                 {/* Pay Now Button */}
                 <View style={tw`flex-1`}>
@@ -165,6 +158,12 @@ export default function OrderCard({ order }: { readonly order: any }) {
                     </View>
                   )}
               </>
+            ) : (
+              <View style={styles.disabledButton}>
+                <Text style={styles.disabledButtonText}>
+                  No action required
+                </Text>
+              </View>
             )}
           </View>
         </View>

@@ -11,7 +11,7 @@ type ExclusivityCheckProps = {
 export default function ExclusivityCheck({
   userType,
   exclusivityType,
-}: ExclusivityCheckProps) {
+}: Readonly<ExclusivityCheckProps>) {
   if (userType !== "artist") return null;
   if (exclusivityType !== "non-exclusive" && exclusivityType) return null;
 

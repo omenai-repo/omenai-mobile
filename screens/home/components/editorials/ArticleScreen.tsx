@@ -29,12 +29,6 @@ const ArticleScreen = () => {
   const imageUrl = getEditorialImageFilePreview(article.cover, 1000);
   const insets = useSafeAreaInsets();
 
-  const formattedDate = article.date
-    ? dayjs(article.date).format("MMMM D, YYYY")
-    : "";
-
-  const readTime = getReadTime(article.content);
-
   return (
     <View style={tw`flex-1 bg-white`}>
       <BlurStatusBar />

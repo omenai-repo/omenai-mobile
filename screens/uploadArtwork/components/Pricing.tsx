@@ -25,7 +25,9 @@ type artworkPricingErrorsType = {
   price: string;
 };
 
-export default function Pricing({ plan }: { plan: string | undefined }) {
+export default function Pricing({
+  plan,
+}: Readonly<{ plan: string | undefined }>) {
   const {
     setActiveIndex,
     activeIndex,
@@ -101,17 +103,23 @@ export default function Pricing({ plan }: { plan: string | undefined }) {
       value,
     );
 
-    if (!conversion_value?.isOk) {
+    if (conversion_value?.isOk) {
+      updateArtworkUploadData("usd_price", conversion_value.data);
+    } else {
       updateModal({
         message: "Unable to retrieve exchange rate value at this time.",
         modalType: "error",
         showModal: true,
       });
-    } else {
-      updateArtworkUploadData("usd_price", conversion_value.data);
     }
 
     setLoadingConversion(false);
+  };
+
+  const getUsdEquivalent = () => {
+    if (loadingConversion) return "Converting...";
+    if (artworkUploadData.usd_price === 0) return "";
+    return utils_formatPrice(artworkUploadData.usd_price, usd_symbol);
   };
 
   const getDisplayPriceOptions = () => {
@@ -217,13 +225,7 @@ export default function Pricing({ plan }: { plan: string | undefined }) {
         <View>
           <Input
             label="USD Equivalent (Calculated)"
-            value={
-              loadingConversion
-                ? "Converting..."
-                : artworkUploadData.usd_price === 0
-                ? ""
-                : utils_formatPrice(artworkUploadData.usd_price, usd_symbol)
-            }
+            value={getUsdEquivalent()}
             disabled={true}
             placeHolder="USD Value"
             onInputChange={() => {}}

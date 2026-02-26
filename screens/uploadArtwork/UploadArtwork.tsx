@@ -1,10 +1,4 @@
-import {
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import HeaderIndicator from "./components/HeaderIndicator";
 import ArtworkDetails from "./components/ArtworkDetails";

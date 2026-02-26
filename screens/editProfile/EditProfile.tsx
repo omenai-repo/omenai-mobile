@@ -9,7 +9,6 @@ import LongBlackButton from "#components/buttons/LongBlackButton";
 import { validate } from "#lib/validations/validatorGroup";
 import { updateProfile } from "#services/update/updateProfile";
 import { useModalStore } from "#store/modal/modalStore";
-import { logout } from "#utils/logout.utils";
 import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { useNavigation } from "@react-navigation/native";

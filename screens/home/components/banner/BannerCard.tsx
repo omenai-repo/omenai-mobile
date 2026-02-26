@@ -4,7 +4,6 @@ import { AntDesign } from "@expo/vector-icons";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
-import { fontNames } from "#constants/fontNames.constants";
 import { MotiView } from "moti";
 
 type BannerItemProps = {

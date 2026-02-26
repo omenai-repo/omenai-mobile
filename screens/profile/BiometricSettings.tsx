@@ -123,94 +123,90 @@ export default function BiometricSettings() {
 
   if (!isBiometricSupported) {
     return (
-      <>
-        <View style={[tw`flex-1 bg-white`]}>
-          <BackHeaderTitle title="Biometric Login" />
-          <View style={tw`flex-1 items-center justify-center px-5`}>
-            <Text style={tw`text-center text-gray-500 text-base`}>
-              Biometric authentication is not supported or not enrolled on this
-              device.
-            </Text>
-          </View>
+      <View style={[tw`flex-1 bg-white`]}>
+        <BackHeaderTitle title="Biometric Login" />
+        <View style={tw`flex-1 items-center justify-center px-5`}>
+          <Text style={tw`text-center text-gray-500 text-base`}>
+            Biometric authentication is not supported or not enrolled on this
+            device.
+          </Text>
         </View>
-      </>
+      </View>
     );
   }
 
   return (
-    <>
-      <View style={[tw`flex-1 bg-white`]}>
-        <BackHeaderTitle title="Biometric Login" />
+    <View style={[tw`flex-1 bg-white`]}>
+      <BackHeaderTitle title="Biometric Login" />
 
-        <View style={tw`px-5 mt-8`}>
-          <View
-            style={tw`flex-row items-center justify-between py-4 border-b border-gray-100`}
-          >
-            <View style={tw`flex-1 pr-4`}>
-              <Text style={tw`text-base font-semibold text-black mb-1`}>
-                Enable {biometricLabel}
+      <View style={tw`px-5 mt-8`}>
+        <View
+          style={tw`flex-row items-center justify-between py-4 border-b border-gray-100`}
+        >
+          <View style={tw`flex-1 pr-4`}>
+            <Text style={tw`text-base font-semibold text-black mb-1`}>
+              Enable {biometricLabel}
+            </Text>
+            <Text style={tw`text-sm text-gray-500`}>
+              Use biometric authentication to log in securely.
+            </Text>
+          </View>
+          <Switch
+            trackColor={{ false: "#767577", true: colors.primary_black }}
+            thumbColor={isEnabled ? "#fff" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={(value) =>
+              value ? handleEnableRequest() : handleDisable()
+            }
+            value={isEnabled}
+          />
+        </View>
+      </View>
+
+      <Modal
+        visible={showPasswordModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowPasswordModal(false)}
+      >
+        <View
+          style={[
+            tw`flex-1 justify-end bg-black/50`,
+            { paddingBottom: keyboardHeight },
+          ]}
+        >
+          <View style={tw`bg-white rounded-t-[20px] p-5 pb-10`}>
+            <View style={tw`flex-row justify-between items-center mb-6`}>
+              <Text style={tw`text-lg font-bold text-black`}>
+                Verify Password
               </Text>
-              <Text style={tw`text-sm text-gray-500`}>
-                Use biometric authentication to log in securely.
-              </Text>
+              <TouchableOpacity onPress={() => setShowPasswordModal(false)}>
+                <Feather name="x" size={24} color="black" />
+              </TouchableOpacity>
             </View>
-            <Switch
-              trackColor={{ false: "#767577", true: colors.primary_black }}
-              thumbColor={isEnabled ? "#fff" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={(value) =>
-                value ? handleEnableRequest() : handleDisable()
-              }
-              value={isEnabled}
+
+            <Text style={tw`text-gray-500 mb-6`}>
+              Please enter your password to enable biometric authentication.
+            </Text>
+
+            <PasswordInput
+              label="Password"
+              placeHolder="Enter your password"
+              value={password}
+              onInputChange={setPassword}
+              errorMessage=""
             />
+
+            <View style={tw`mt-6`}>
+              <LongBlackButton
+                value="Verify & Enable"
+                onClick={handleEnableBiometrics}
+                isLoading={isLoading}
+              />
+            </View>
           </View>
         </View>
-
-        <Modal
-          visible={showPasswordModal}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setShowPasswordModal(false)}
-        >
-          <View
-            style={[
-              tw`flex-1 justify-end bg-black/50`,
-              { paddingBottom: keyboardHeight },
-            ]}
-          >
-            <View style={tw`bg-white rounded-t-[20px] p-5 pb-10`}>
-              <View style={tw`flex-row justify-between items-center mb-6`}>
-                <Text style={tw`text-lg font-bold text-black`}>
-                  Verify Password
-                </Text>
-                <TouchableOpacity onPress={() => setShowPasswordModal(false)}>
-                  <Feather name="x" size={24} color="black" />
-                </TouchableOpacity>
-              </View>
-
-              <Text style={tw`text-gray-500 mb-6`}>
-                Please enter your password to enable biometric authentication.
-              </Text>
-
-              <PasswordInput
-                label="Password"
-                placeHolder="Enter your password"
-                value={password}
-                onInputChange={setPassword}
-                errorMessage=""
-              />
-
-              <View style={tw`mt-6`}>
-                <LongBlackButton
-                  value="Verify & Enable"
-                  onClick={handleEnableBiometrics}
-                  isLoading={isLoading}
-                />
-              </View>
-            </View>
-          </View>
-        </Modal>
-      </View>
-    </>
+      </Modal>
+    </View>
   );
 }

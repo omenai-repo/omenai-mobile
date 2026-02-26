@@ -27,19 +27,17 @@ export default function Artist({ biometricProps }: ArtistProps) {
     handleLogin(artistLoginData, setIsLoading, clearInputs);
 
   return (
-    <>
-      <LoginForm
-        loginData={artistLoginData}
-        setEmail={setEmail}
-        setPassword={setPassword}
-        isLoading={isLoading}
-        handleSubmit={handleSubmit}
-        biometricProps={biometricProps}
-        emailLabel="Email address"
-        emailPlaceholder="Enter your email address"
-        loginButtonLabel="Sign In Artist"
-        forgotPasswordType="artist"
-      />
-    </>
+    <LoginForm
+      loginData={artistLoginData}
+      setEmail={setEmail}
+      setPassword={setPassword}
+      isLoading={isLoading}
+      handleSubmit={handleSubmit}
+      biometricProps={biometricProps}
+      emailLabel="Email address"
+      emailPlaceholder="Enter your email address"
+      loginButtonLabel="Sign In Artist"
+      forgotPasswordType="artist"
+    />
   );
 }

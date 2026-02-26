@@ -39,7 +39,7 @@ export default function CustomDimensionsInput({
   setDimensions,
   formErrors,
   handleValidationChecks,
-}: CustomDimensionsInputProps) {
+}: Readonly<CustomDimensionsInputProps>) {
   if (usePreset) return null;
 
   return (

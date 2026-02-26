@@ -15,7 +15,7 @@ export default function AgreementSection({
   userType,
   isChecked,
   setIsChecked,
-}: AgreementSectionProps) {
+}: Readonly<AgreementSectionProps>) {
   return (
     <View style={tw`mt-6 mx-5`}>
       {userType === "gallery" ? (

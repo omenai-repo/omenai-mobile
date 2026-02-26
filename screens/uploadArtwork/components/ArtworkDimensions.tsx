@@ -12,7 +12,6 @@ import LongBlackButton from "#components/buttons/LongBlackButton";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import tw from "twrnc";
 import { validateOrderMeasurement } from "#lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
-import PackagingTypeSelector from "./PackagingTypeSelector";
 
 type ArtworkDimensionsErrorsType = {
   length: string;

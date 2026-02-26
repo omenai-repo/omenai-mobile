@@ -20,7 +20,7 @@ export default function ExhibitionOptions({
   setIsOnExhibition,
   expoEndDate,
   setExpoEndDate,
-}: ExhibitionOptionsProps) {
+}: Readonly<ExhibitionOptionsProps>) {
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
   if (userType !== "gallery") return null;

@@ -15,7 +15,7 @@ type SelectedDimensionsSummaryProps = {
 export default function SelectedDimensionsSummary({
   usePreset,
   dimensions,
-}: SelectedDimensionsSummaryProps) {
+}: Readonly<SelectedDimensionsSummaryProps>) {
   if (!usePreset || !dimensions.length) return null;
 
   return (

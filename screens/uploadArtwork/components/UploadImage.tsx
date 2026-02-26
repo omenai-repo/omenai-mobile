@@ -1,25 +1,17 @@
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import UploadImageInput from "#components/inputs/UploadImageInput";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import * as ImagePicker from "expo-image-picker";
-import LongWhiteButton from "#components/buttons/LongWhiteButton";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import { useAppStore } from "#store/app/appStore";
 import { useModalStore } from "#store/modal/modalStore";
 
 export default function UploadImage({
   handleUpload,
-}: {
+}: Readonly<{
   handleUpload: () => void;
-}) {
+}>) {
   const { image, setImage } = uploadArtworkStore();
   const { userType } = useAppStore();
   const { updateModal } = useModalStore();

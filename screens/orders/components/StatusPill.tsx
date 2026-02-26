@@ -1,4 +1,3 @@
-import { Text, View } from "react-native";
 import React from "react";
 import { colors } from "#config/colors.config";
 import { StatusBadgeItem } from "#components/orders/StatusBadgeItem";
@@ -12,15 +11,59 @@ type StatusPillProps = {
   availability: boolean;
 };
 
-const getStatusConfig = (props: StatusPillProps) => {
+const getProcessingStatus = (props: StatusPillProps) => {
   const {
-    status,
     payment_status,
     tracking_status,
     order_accepted,
     delivery_confirmed,
-    availability,
   } = props;
+
+  if (order_accepted === "accepted") {
+    if (payment_status === "pending") {
+      return {
+        icon: "info-outline",
+        family: "MaterialIcons" as const,
+        label: "Awaiting payment",
+        customBgColor: "#FFBF0040",
+        iconColor: "#92400E",
+        textStyle: "text-yellow-800",
+      };
+    }
+    if (payment_status === "completed") {
+      return tracking_status && !delivery_confirmed
+        ? {
+            icon: "check-circle",
+            family: "AntDesign" as const,
+            label: "Delivery in progress",
+            customBgColor: "#00800015",
+            iconColor: "#166534",
+            textStyle: "text-green-800",
+          }
+        : {
+            icon: "check-circle",
+            family: "AntDesign" as const,
+            label: "Payment completed",
+            customBgColor: "#00800020",
+            iconColor: "#166534",
+            textStyle: "text-green-800",
+          };
+    }
+  } else if (!order_accepted) {
+    return {
+      icon: "info-outline",
+      family: "MaterialIcons" as const,
+      label: "Order in review",
+      customBgColor: "#FFBF0040",
+      iconColor: "#92400E",
+      textStyle: "text-yellow-800",
+    };
+  }
+  return null;
+};
+
+const getStatusConfig = (props: StatusPillProps) => {
+  const { status, order_accepted, delivery_confirmed, availability } = props;
 
   if (!availability) {
     return {
@@ -44,75 +87,30 @@ const getStatusConfig = (props: StatusPillProps) => {
     };
   }
 
-  switch (status) {
-    case "completed":
-      if (delivery_confirmed) {
-        return {
-          icon: "check-circle",
-          family: "AntDesign" as const,
-          label: "Order has been completed",
-          customBgColor: "#00800015",
-          iconColor: "#166534",
-          textStyle: "text-green-800",
-        };
-      }
-      break;
+  if (status === "completed" && delivery_confirmed) {
+    return {
+      icon: "check-circle",
+      family: "AntDesign" as const,
+      label: "Order has been completed",
+      customBgColor: "#00800015",
+      iconColor: "#166534",
+      textStyle: "text-green-800",
+    };
+  }
 
-    case "pending":
-      if (!order_accepted) {
-        return {
-          icon: "info-outline",
-          family: "MaterialIcons" as const,
-          label: "Order in review",
-          customBgColor: "#FFBF0040",
-          iconColor: "#92400E",
-          textStyle: "text-yellow-800",
-        };
-      }
-      break;
+  if (status === "pending" && !order_accepted) {
+    return {
+      icon: "info-outline",
+      family: "MaterialIcons" as const,
+      label: "Order in review",
+      customBgColor: "#FFBF0040",
+      iconColor: "#92400E",
+      textStyle: "text-yellow-800",
+    };
+  }
 
-    case "processing":
-      if (order_accepted === "accepted") {
-        if (payment_status === "pending") {
-          return {
-            icon: "info-outline",
-            family: "MaterialIcons" as const,
-            label: "Awaiting payment",
-            customBgColor: "#FFBF0040",
-            iconColor: "#92400E",
-            textStyle: "text-yellow-800",
-          };
-        }
-        if (payment_status === "completed") {
-          return tracking_status && !delivery_confirmed
-            ? {
-                icon: "check-circle",
-                family: "AntDesign" as const,
-                label: "Delivery in progress",
-                customBgColor: "#00800015",
-                iconColor: "#166534",
-                textStyle: "text-green-800",
-              }
-            : {
-                icon: "check-circle",
-                family: "AntDesign" as const,
-                label: "Payment completed",
-                customBgColor: "#00800020",
-                iconColor: "#166534",
-                textStyle: "text-green-800",
-              };
-        }
-      } else if (!order_accepted) {
-        return {
-          icon: "info-outline",
-          family: "MaterialIcons" as const,
-          label: "Order in review",
-          customBgColor: "#FFBF0040",
-          iconColor: "#92400E",
-          textStyle: "text-yellow-800",
-        };
-      }
-      break;
+  if (status === "processing") {
+    return getProcessingStatus(props);
   }
 
   // Fallback for general fulfillment if not caught by switch
@@ -130,7 +128,7 @@ const getStatusConfig = (props: StatusPillProps) => {
   return null;
 };
 
-export default function StatusPill(props: StatusPillProps) {
+export default function StatusPill(props: Readonly<StatusPillProps>) {
   const config = getStatusConfig(props);
 
   if (!config) return null;

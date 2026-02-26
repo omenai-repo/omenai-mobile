@@ -104,81 +104,79 @@ export default function SupportTicketsScreen() {
   };
 
   return (
-    <>
-      <View style={tw`flex-1 bg-white`}>
-        <BackHeaderTitle title="Support History" />
+    <View style={tw`flex-1 bg-white`}>
+      <BackHeaderTitle title="Support History" />
 
-        <View style={tw`px-4 py-2 bg-white z-10`}>
-          <View style={tw`flex-row items-center gap-2 mb-2`}>
-            <View
-              style={tw`flex-1 flex-row items-center bg-gray-50 border border-gray-200 rounded-md px-3 py-3`}
-            >
-              <Ionicons name="search" size={20} color="#9CA3AF" />
-              <TextInput
-                placeholder="Search tickets..."
-                style={tw`flex-1 ml-2 text-base text-gray-900`}
-                placeholderTextColor="#9CA3AF"
-                value={searchQuery}
-                onChangeText={handleSearchChange}
-              />
-            </View>
-
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(screenName.supportTicketsFilterModal)
-              }
-              style={tw`relative p-3 bg-gray-50 border border-gray-200 rounded-md`}
-            >
-              <Ionicons name="options-outline" size={22} color="#374151" />
-              {activeFilterCount > 0 && (
-                <View
-                  style={[
-                    tw`absolute -top-1 -right-1 w-5 h-5 rounded-full items-center justify-center`,
-                    { backgroundColor: colors.black },
-                  ]}
-                >
-                  <Text style={tw`text-white text-xs font-bold`}>
-                    {activeFilterCount}
-                  </Text>
-                </View>
-              )}
-            </TouchableOpacity>
+      <View style={tw`px-4 py-2 bg-white z-10`}>
+        <View style={tw`flex-row items-center gap-2 mb-2`}>
+          <View
+            style={tw`flex-1 flex-row items-center bg-gray-50 border border-gray-200 rounded-md px-3 py-3`}
+          >
+            <Ionicons name="search" size={20} color="#9CA3AF" />
+            <TextInput
+              placeholder="Search tickets..."
+              style={tw`flex-1 ml-2 text-base text-gray-900`}
+              placeholderTextColor="#9CA3AF"
+              value={searchQuery}
+              onChangeText={handleSearchChange}
+            />
           </View>
-        </View>
 
-        {/* List */}
-        <View style={tw`flex-1 px-4 bg-gray-50 pt-4`}>
-          {isLoading ? (
-            <ActivityIndicator
-              size="large"
-              color={colors.black}
-              style={tw`mt-10`}
-            />
-          ) : (
-            <FlashList
-              data={flattenData}
-              renderItem={({ item }) => <SupportTicketItem item={item} />}
-              onEndReached={onLoadMore}
-              onEndReachedThreshold={0.5}
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
-              }
-              ListEmptyComponent={<EmptySupportTicket />}
-              contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
-              ListFooterComponent={
-                isFetchingNextPage ? (
-                  <ActivityIndicator
-                    size="small"
-                    color={colors.black}
-                    style={tw`py-4`}
-                  />
-                ) : null
-              }
-            />
-          )}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(screenName.supportTicketsFilterModal)
+            }
+            style={tw`relative p-3 bg-gray-50 border border-gray-200 rounded-md`}
+          >
+            <Ionicons name="options-outline" size={22} color="#374151" />
+            {activeFilterCount > 0 && (
+              <View
+                style={[
+                  tw`absolute -top-1 -right-1 w-5 h-5 rounded-full items-center justify-center`,
+                  { backgroundColor: colors.black },
+                ]}
+              >
+                <Text style={tw`text-white text-xs font-bold`}>
+                  {activeFilterCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
-    </>
+
+      {/* List */}
+      <View style={tw`flex-1 px-4 bg-gray-50 pt-4`}>
+        {isLoading ? (
+          <ActivityIndicator
+            size="large"
+            color={colors.black}
+            style={tw`mt-10`}
+          />
+        ) : (
+          <FlashList
+            data={flattenData}
+            renderItem={({ item }) => <SupportTicketItem item={item} />}
+            onEndReached={onLoadMore}
+            onEndReachedThreshold={0.5}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            }
+            ListEmptyComponent={<EmptySupportTicket />}
+            contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+            ListFooterComponent={
+              isFetchingNextPage ? (
+                <ActivityIndicator
+                  size="small"
+                  color={colors.black}
+                  style={tw`py-4`}
+                />
+              ) : null
+            }
+          />
+        )}
+      </View>
+    </View>
   );
 }

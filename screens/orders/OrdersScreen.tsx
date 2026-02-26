@@ -152,30 +152,28 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
   };
 
   return (
-    <>
-      <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
-        <TabSwitcher
-          tabs={tabs}
-          selectedKey={selectedTab}
-          setSelectedKey={(key) =>
-            setSelectedTab(key as "pending" | "processing" | "completed")
-          }
-        />
+    <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
+      <TabSwitcher
+        tabs={tabs}
+        selectedKey={selectedTab}
+        setSelectedKey={(key) =>
+          setSelectedTab(key as "pending" | "processing" | "completed")
+        }
+      />
 
-        <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-md p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
-        >
-          {renderContent()}
-        </View>
-
-        <DeclineOrderModal
-          isModalVisible={declineModal}
-          setIsModalVisible={setDeclineModal}
-          orderId={orderId}
-          orderModalMetadata={orderModalMetadata}
-          refresh={() => queryClient.invalidateQueries({ queryKey })}
-        />
+      <View
+        style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-md p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
+      >
+        {renderContent()}
       </View>
-    </>
+
+      <DeclineOrderModal
+        isModalVisible={declineModal}
+        setIsModalVisible={setDeclineModal}
+        orderId={orderId}
+        orderModalMetadata={orderModalMetadata}
+        refresh={() => queryClient.invalidateQueries({ queryKey })}
+      />
+    </View>
   );
 };
