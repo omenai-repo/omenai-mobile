@@ -59,67 +59,65 @@ export default function Welcome() {
   }
 
   return (
-    <>
-      <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
-        <StatusBar style="light" />
+    <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
+      <StatusBar style="light" />
 
-        {/* Horizontal Animated Grid Background */}
-        <TiltedGridBackground
-          primaryImages={primaryGridImages}
-          secondaryImages={secondaryGridImages}
-          isActive={isFocused}
-        />
+      {/* Horizontal Animated Grid Background */}
+      <TiltedGridBackground
+        primaryImages={primaryGridImages}
+        secondaryImages={secondaryGridImages}
+        isActive={isFocused}
+      />
 
-        {/* Bottom content container */}
-        <View
-          style={[
-            tw`rounded-md py-8 px-8`,
-            {
-              backgroundColor: colors.primary_black,
-              position: "absolute",
-              bottom: insets.bottom + 20,
-              left: isTablet ? undefined : 12,
-              right: isTablet ? undefined : 12,
-            },
-            isTablet && {
-              alignSelf: "center",
-              width: "100%",
-              maxWidth: 500,
-            },
-          ]}
-        >
-          <Text style={[tw`text-3xl text-white font-medium mb-1.5`]}>
-            Build Your Art World
-          </Text>
+      {/* Bottom content container */}
+      <View
+        style={[
+          tw`rounded-md py-8 px-8`,
+          {
+            backgroundColor: colors.primary_black,
+            position: "absolute",
+            bottom: insets.bottom + 20,
+            left: isTablet ? undefined : 12,
+            right: isTablet ? undefined : 12,
+          },
+          isTablet && {
+            alignSelf: "center",
+            width: "100%",
+            maxWidth: 500,
+          },
+        ]}
+      >
+        <Text style={[tw`text-3xl text-white font-medium mb-1.5`]}>
+          Build Your Art World
+        </Text>
 
-          <Text style={tw`text-sm text-[#FFFFFFB2]`}>
-            Collect, discover, and follow artists shaping contemporary art.
-          </Text>
+        <Text style={tw`text-sm text-[#FFFFFFB2]`}>
+          Collect, discover, and follow artists shaping contemporary art.
+        </Text>
 
-          <View style={tw`gap-3 mt-6`}>
-            <LongBlackButton
-              value="Create Account"
-              onClick={() => handleNavigation(screenName.register)}
-              style={{ backgroundColor: colors.white, height: 48 }}
-              textStyle={[
-                tw`font-semibold`,
-                {
-                  color: colors.black,
-                },
-              ]}
-            />
+        <View style={tw`gap-3 mt-6`}>
+          <LongBlackButton
+            value="Create Account"
+            onClick={() => handleNavigation(screenName.register)}
+            style={{ backgroundColor: colors.white, height: 48 }}
+            textStyle={[
+              tw`font-semibold`,
+              {
+                color: colors.black,
+              },
+            ]}
+          />
 
-            <LongBlackButton
-              value="Log In"
-              onClick={() => handleNavigation(screenName.login)}
-              style={{ height: 48, backgroundColor: colors.black_light }}
-              textStyle={{
-                color: colors.white,
-              }}
-            />
-          </View>
+          <LongBlackButton
+            value="Log In"
+            onClick={() => handleNavigation(screenName.login)}
+            style={{ height: 48, backgroundColor: colors.black_light }}
+            textStyle={{
+              color: colors.white,
+            }}
+          />
         </View>
       </View>
-    </>
+    </View>
   );
 }

@@ -124,34 +124,32 @@ export default function ArtworksMedium() {
   };
 
   return (
-    <>
-      <ScrollWrapper
-        style={tw.style(`flex-1`, { marginTop: insets.top + 16 })}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={tw`z-100 px-5`}>
-          <FilterButton
-            handleClick={() =>
-              navigation.navigate(screenName.artworkMediumFilterModal)
-            }
+    <ScrollWrapper
+      style={tw.style(`flex-1`, { marginTop: insets.top + 16 })}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={tw`z-100 px-5`}>
+        <FilterButton
+          handleClick={() =>
+            navigation.navigate(screenName.artworkMediumFilterModal)
+          }
+        >
+          <Text
+            style={tw`text-lg font-medium text-[${colors.primary_black}] py-5`}
           >
-            <Text
-              style={tw`text-lg font-medium text-[${colors.primary_black}] py-5`}
-            >
-              {getCatalogTitle()}
-            </Text>
-          </FilterButton>
-        </View>
-        {isLoading && <MiniArtworkCardLoader />}
-        {!isLoading && artworks && (
-          <ArtworksListing
-            data={artworks}
-            loadingMore={isFetchingNextPage}
-            onEndReached={handleLoadMore}
-            onRefresh={handleRefresh}
-          />
-        )}
-      </ScrollWrapper>
-    </>
+            {getCatalogTitle()}
+          </Text>
+        </FilterButton>
+      </View>
+      {isLoading && <MiniArtworkCardLoader />}
+      {!isLoading && artworks && (
+        <ArtworksListing
+          data={artworks}
+          loadingMore={isFetchingNextPage}
+          onEndReached={handleLoadMore}
+          onRefresh={handleRefresh}
+        />
+      )}
+    </ScrollWrapper>
   );
 }

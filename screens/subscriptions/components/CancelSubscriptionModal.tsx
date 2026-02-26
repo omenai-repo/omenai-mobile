@@ -27,7 +27,7 @@ export default function CancelSubscriptionModal({
   visible,
   subEnd,
   onClose,
-}: Props) {
+}: Readonly<Props>) {
   const { userSession } = useAppStore();
   const qc = useQueryClient();
   const [loading, setLoading] = useState(false);

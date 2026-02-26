@@ -37,10 +37,10 @@ function getStatusConfig(status: string) {
 export function SubscriptionTransactionRow({
   item,
   index,
-}: {
+}: Readonly<{
   item: Txn;
   index: number;
-}) {
+}>) {
   const { text: statusText, color: statusColor } = getStatusConfig(item.status);
 
   const currencyCode = item.currency ?? "USD";

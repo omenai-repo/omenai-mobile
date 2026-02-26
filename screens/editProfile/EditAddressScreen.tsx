@@ -311,6 +311,12 @@ const EditAddressScreen = () => {
     }
   };
 
+  const getAddressPlaceholder = () => {
+    if (userType === "gallery") return "Input your gallery address here";
+    if (userType === "artist") return "Input your studio address here";
+    return "Input your residential address here";
+  };
+
   return (
     <View style={tw`flex-1 bg-white`}>
       <BackHeaderTitle title="Edit Address" />
@@ -355,13 +361,7 @@ const EditAddressScreen = () => {
                 setAddressLine(text);
                 handleValidationChecks("general", text);
               }}
-              placeHolder={
-                userType === "gallery"
-                  ? "Input your gallery address here"
-                  : userType === "artist"
-                  ? "Input your studio address here"
-                  : "Input your residential address here"
-              }
+              placeHolder={getAddressPlaceholder()}
               value={addressLine}
               errorMessage={formErrors?.address_line}
             />
