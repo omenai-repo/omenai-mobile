@@ -1,7 +1,6 @@
-import { FlatList, View, ListRenderItem } from "react-native";
+import { FlatList, View } from "react-native";
 import React from "react";
 import { mediums } from "#constants/mediums";
-import { CatalogCardTypes } from "#types/types";
 import SectionHeader from "#components/general/SectionHeader";
 import { CatalogCard } from "./CatalogCard";
 import { useNavigation } from "@react-navigation/native";
