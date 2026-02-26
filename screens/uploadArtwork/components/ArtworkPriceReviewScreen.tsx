@@ -173,7 +173,7 @@ export default function ArtworkPriceReviewScreen({
   }
 
   return (
-    <View style={tw`flex-1 bg-[#F7F7F7] px-6 py-8 mb-[40px]`}>
+    <View style={tw`flex-1 bg-[#F7F7F7] px-6 py-8 mb-[40px] rounded-md`}>
       <Text style={tw`text-xl font-bold mb-4`}>Proposed Artwork Price</Text>
 
       <View style={tw`bg-white rounded-md p-5 border border-[#00000020] mb-6`}>
@@ -203,7 +203,7 @@ export default function ArtworkPriceReviewScreen({
 
       {/* Exclusivity / terms alert (mimics web Alert) */}
       <View
-        style={tw`bg-[#FFF3CD] border border-[#FFEEBA] rounded-[16px] px-4 py-5 mb-6`}
+        style={tw`bg-[#FFF3CD] border border-[#FFEEBA] rounded-md px-4 py-5 mb-6`}
       >
         <View style={tw`flex-row items-center mb-5`}>
           <Ionicons

@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { View, Text, ScrollView, Image, Pressable } from "react-native";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { OrderShippingDetailsTypes, TrackingEvent } from "#types/types";
+import { OrderShippingDetailsTypes } from "#types/types";
 import { locationIcon } from "#utils/SvgImages";
 import { getImageFileView } from "#lib/storage/getImageFileView";
-import { formatEventDate } from "#utils/utils_formatEventDate";
 
 export interface TrackingData {
   tracking_number: string;
@@ -201,7 +200,7 @@ export default function TrackingResult({
                       <Text style={tw`text-gray-500 text-[13px] font-medium`}>
                         {formatTimestamp(event.timestamp)}
                       </Text>
-                      {event.location && (
+                      {!!event.location && (
                         <Text style={tw`text-gray-400 text-[13px]`}>
                           • {event.location}
                         </Text>

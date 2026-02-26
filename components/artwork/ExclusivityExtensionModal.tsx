@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
-import { fontNames } from "#constants/fontNames.constants";
 import { useModalStore } from "#store/modal/modalStore";
 import { extendArtworkExclusivity } from "#services/artworks/extendArtworkExclusivity";
 
@@ -151,9 +150,7 @@ export default function ExclusivityExtensionModal({
         <View style={tw`bg-white rounded-md p-5 w-full max-w-md`}>
           {/* Header */}
           <View style={tw`mb-3`}>
-            <Text
-              style={tw`text-lg font-bold text-[#1A1A1A] mb-1 font-sans font-bold`}
-            >
+            <Text style={tw`text-lg text-[#1A1A1A] mb-1 font-sans-bold`}>
               Extend Artwork Exclusivity Contract
             </Text>
             <Text style={tw`text-sm text-[#1A1A1A]/70 font-sans`}>
@@ -185,9 +182,7 @@ export default function ExclusivityExtensionModal({
                 <Text style={[tw``, { color: colors.white }]}>i</Text>
               </View>
               <View style={tw`flex-1`}>
-                <Text
-                  style={tw`font-semibold text-white mb-1 font-sans font-medium`}
-                >
+                <Text style={tw`text-white mb-1 font-sans-medium`}>
                   Contract Extension
                 </Text>
                 <Text style={tw`text-sm text-white/90 font-sans`}>
@@ -207,7 +202,7 @@ export default function ExclusivityExtensionModal({
                   { backgroundColor: colors.black_light },
                 ]}
               />
-              <Text style={tw`text-base font-semibold font-sans font-medium`}>
+              <Text style={tw`text-base font-sans-medium`}>
                 Agreement Terms
               </Text>
             </View>
@@ -218,7 +213,7 @@ export default function ExclusivityExtensionModal({
             >
               <Text style={tw`text-sm font-sans`}>
                 I acknowledge that this artwork will be subject to a{" "}
-                <Text style={tw`font-sans font-bold`}>
+                <Text style={tw`font-sans-bold`}>
                   90-day exclusivity period
                 </Text>{" "}
                 with Omenai and cannot be sold through external channels during
@@ -266,7 +261,7 @@ export default function ExclusivityExtensionModal({
               ) : (
                 <Text
                   style={[
-                    tw`font-sans font-medium`,
+                    tw`font-sans-medium`,
                     {
                       color: colors.white,
                     },
@@ -290,7 +285,7 @@ export default function ExclusivityExtensionModal({
               onPress={() => !loading && onClose()}
               style={tw`mt-3 items-center`}
             >
-              <Text style={tw`text-sm text-[#1A1A1A]/70 font-sans font-medium`}>
+              <Text style={tw`text-sm text-[#1A1A1A]/70 font-sans-medium`}>
                 Cancel
               </Text>
             </TouchableOpacity>

@@ -87,9 +87,7 @@ export default function SalesOverview({
     return (
       <View style={[tw`bg-white rounded-md py-5 px-4 mx-4`, style]}>
         <View style={tw`flex-row justify-between items-center mb-5 z-20`}>
-          <Text style={tw`text-lg text-black font-semibold`}>
-            Sales Revenue
-          </Text>
+          <Text style={tw`text-lg text-black font-medium`}>Sales Revenue</Text>
           <Dropdown
             style={tw`h-[35px] w-[90px] border border-[#E0E0E0] rounded-md px-2`}
             containerStyle={tw`rounded-md mt-1`}
@@ -136,7 +134,7 @@ export default function SalesOverview({
       style={[tw`bg-white rounded-md py-5 px-4 mx-4 overflow-hidden`, style]}
     >
       <View style={tw`flex-row justify-between items-center mb-5 z-20`}>
-        <Text style={tw`text-lg text-black font-semibold`}>Sales Revenue</Text>
+        <Text style={tw`text-lg text-black font-medium`}>Sales Revenue</Text>
         <Dropdown
           style={tw`h-[35px] w-[90px] border border-[#E0E0E0] rounded-md px-2`}
           containerStyle={tw`rounded-md mt-1`}

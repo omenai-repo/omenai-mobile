@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { fontNames } from "#constants/fontNames.constants";
 import tw from "twrnc";
 
 interface SectionHeaderProps {
@@ -16,7 +15,7 @@ export default function SectionHeader({
   title,
   onActionPress,
   dark = false,
-}: SectionHeaderProps) {
+}: Readonly<SectionHeaderProps>) {
   const subtitleColor = dark ? "#a3a3a3" : "#858585";
   const redDotColor = "#E44C3F";
 
@@ -68,7 +67,7 @@ export default function SectionHeader({
           </View>
           <Text
             style={[
-              tw`text-[8px] uppercase tracking-widest font-sans`,
+              tw`text-[8px] uppercase tracking-widest font-sans-regular`,
               { color: subtitleColor },
             ]}
           >

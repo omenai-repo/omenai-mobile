@@ -1,9 +1,9 @@
-import { View, Text, Animated, Easing, Image } from 'react-native';
-import React, { useEffect, useRef } from 'react';
-import tw from 'twrnc';
-import LottieView from 'lottie-react-native';
-import loaderAnimation from '../../assets/other/loader-animation.json';
-import omenaiLogo from '../../assets/omenai-logo.png';
+import { View, Text, Animated, Easing, Image } from "react-native";
+import React, { useEffect, useRef } from "react";
+import tw from "twrnc";
+import LottieView from "lottie-react-native";
+import loaderAnimation from "../../assets/other/loader-animation.json";
+import omenaiLogo from "../../assets/omenai-logo.png";
 
 const LoadingContainer = ({ label }: { label: string }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Start opacity at 0
@@ -36,9 +36,9 @@ const LoadingContainer = ({ label }: { label: string }) => {
       <View style={tw`flex-1 justify-center items-center mb-[100px]`}>
         <Animated.View
           style={[
-            tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
+            tw`bg-[#FFFFFF] rounded-md py-[35px]`,
             {
-              marginHorizontal: '10%',
+              marginHorizontal: "10%",
               opacity: fadeAnim, // Apply fade animation
               transform: [{ scale: scaleAnim }], // Apply scale animation
             },
@@ -46,7 +46,7 @@ const LoadingContainer = ({ label }: { label: string }) => {
         >
           <LottieView
             autoPlay
-            style={{ width: 200, height: 100, alignSelf: 'center' }}
+            style={{ width: 200, height: 100, alignSelf: "center" }}
             source={loaderAnimation}
           />
 
@@ -56,7 +56,9 @@ const LoadingContainer = ({ label }: { label: string }) => {
             Please wait a moment
           </Text>
 
-          <Text style={tw`text-[16px] text-[#1A1A1A]00099] text-center mx-[40px] mt-[10px]`}>
+          <Text
+            style={tw`text-[16px] text-[#1A1A1A]00099] text-center mx-[40px] mt-[10px]`}
+          >
             {label}
           </Text>
         </Animated.View>

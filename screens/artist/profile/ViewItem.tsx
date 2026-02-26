@@ -1,17 +1,10 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Alert,
-  Platform,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, Alert, Platform } from "react-native";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import tw from "twrnc";
-import { colors } from "#config/colors.config";
 import { useModalStore } from "#store/modal/modalStore";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 
 export default function ViewItem({
   title,
@@ -116,31 +109,22 @@ export default function ViewItem({
 
   return (
     <View style={tw`mb-4`}>
-      <Text style={tw`text-[#1A1A1A] text-[14px] font-bold mb-1`}>{title}</Text>
+      <Text style={tw`text-[#1A1A1A] text-sm font-bold mb-1`}>{title}</Text>
       <View
-        style={tw`flex-row justify-between items-center bg-[#F4F4F4] rounded-[10px] p-3`}
+        style={tw`flex-row justify-between items-center bg-[#F4F4F4] rounded-md p-3`}
       >
         <Text style={tw`text-[13px] text-[#333] flex-1 mr-2`} numberOfLines={1}>
           {title === "CV Document" ? "Pdf file" : value}
         </Text>
         {isDownloadable && (
-          <TouchableOpacity
-            style={[
-              tw`px-3 py-1 rounded-[8px]`,
-              { backgroundColor: colors.black },
-              isLoading && { opacity: 0.7 },
-            ]}
-            onPress={downloadFile}
-            disabled={!value || isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="small" color={colors.white} />
-            ) : (
-              <Text style={[tw`text-xs`, { color: colors.white }]}>
-                Download
-              </Text>
-            )}
-          </TouchableOpacity>
+          <FittedBlackButton
+            value="Download"
+            onClick={downloadFile}
+            isLoading={isLoading}
+            isDisabled={!value}
+            style={tw`h-[32px] px-3`}
+            textStyle={tw`text-xs`}
+          />
         )}
       </View>
     </View>

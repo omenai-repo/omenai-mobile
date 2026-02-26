@@ -19,7 +19,12 @@ export default function Editorials() {
     queryFn: async () => {
       const editorials: any = await listEditorials();
       const safe = Array.isArray(editorials.data) ? editorials.data : [];
-      return safe.slice(0, 5);
+      return safe
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime(),
+        )
+        .slice(0, 5);
     },
     staleTime: 5 * 60_000,
     gcTime: 15 * 60_000,

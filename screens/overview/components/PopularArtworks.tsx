@@ -62,11 +62,7 @@ export default function PopularArtworks({
             { paddingHorizontal: isTablet ? horizontalPadding : 20 },
           ]}
         >
-          <Text
-            style={[tw`font-medium flex-1`, { fontSize: isTablet ? 22 : 18 }]}
-          >
-            Popular artworks
-          </Text>
+          <Text style={tw`font-medium flex-1 text-lg`}>Popular artworks</Text>
           {!["artist", "gallery"].includes(userType) && (
             <NavBtnComponent onPress={() => {}} />
           )}

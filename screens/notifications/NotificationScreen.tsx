@@ -79,7 +79,7 @@ const AnimatedNotificationItem = ({ item, index, onPress }: Props) => {
       <Pressable
         onPress={onPress}
         style={tw.style(
-          `border border-[#00000033] rounded-[20px] px-[20px] py-[15px] mx-[20px] mb-[15px]`,
+          `border border-[#00000033] rounded-md px-[20px] py-[15px] mx-[20px] mb-[15px]`,
           isUnread ? `bg-[#E6F0FF]` : `bg-white`,
         )}
       >

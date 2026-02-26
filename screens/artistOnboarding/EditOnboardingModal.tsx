@@ -44,7 +44,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         <TouchableOpacity
           onPress={onPickDocument}
           style={tw.style(
-            `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`,
+            `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-md justify-center items-center`,
           )}
         >
           {!cv?.assets && <SvgXml xml={uploadIcon} />}
@@ -66,7 +66,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
             Edit {editingSocialKey.toUpperCase()}
           </Text>
           <TextInput
-            style={tw`bg-[#F7F7F7] rounded-[20px] h-[50px] p-4 mx-[10px]`}
+            style={tw`bg-[#F7F7F7] rounded-md h-[50px] p-4 mx-[10px]`}
             placeholder={`Enter your ${editingSocialKey} link`}
             value={socials[editingSocialKey]}
             onChangeText={(text) => onUpdateSocials(editingSocialKey, text)}

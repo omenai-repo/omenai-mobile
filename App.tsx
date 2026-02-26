@@ -20,7 +20,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 
-import { AppState, Platform, View } from "react-native";
+import { AppState, Platform, View, Text, TextInput } from "react-native";
 import { configureNotificationHandling } from "#notifications/NotificationService";
 import { useNotifications } from "#hooks/useNotifications";
 import { registerForPushToken } from "#notifications/registerForPushToken";
@@ -35,7 +35,6 @@ import * as Updates from "expo-updates";
 import { SupportProvider } from "#providers/SupportProvider";
 import SupportWidget from "#components/support/SupportWidget";
 import WithModal from "#components/modal/WithModal";
-import { Text, TextInput } from "react-native";
 
 // Set default font for all Text and TextInput components
 // @ts-ignore
@@ -80,7 +79,7 @@ SplashScreen.setOptions({
 });
 
 async function checkForOTAUpdate() {
-  if (Updates.channel !== "staging") return;
+  if (Updates.channel === "production") return;
   try {
     const update = await Updates.checkForUpdateAsync();
     if (update.isAvailable) {
@@ -151,8 +150,12 @@ export default function App() {
     "WorkSans-Medium": require("./assets/fonts/Work_Sans/static/WorkSans-Medium.ttf"),
     "WorkSans-SemiBold": require("./assets/fonts/Work_Sans/static/WorkSans-SemiBold.ttf"),
     "WorkSans-Bold": require("./assets/fonts/Work_Sans/static/WorkSans-Bold.ttf"),
+    "WorkSans-ExtraBold": require("./assets/fonts/Work_Sans/static/WorkSans-ExtraBold.ttf"),
+    "WorkSans-Black": require("./assets/fonts/Work_Sans/static/WorkSans-Black.ttf"),
     "PTSerif-Regular": require("./assets/fonts/PT_Serif/PTSerif-Regular.ttf"),
+    "PTSerif-Italic": require("./assets/fonts/PT_Serif/PTSerif-Italic.ttf"),
     "PTSerif-Bold": require("./assets/fonts/PT_Serif/PTSerif-Bold.ttf"),
+    "PTSerif-BoldItalic": require("./assets/fonts/PT_Serif/PTSerif-BoldItalic.ttf"),
   });
 
   const onLayoutRootView = useCallback(() => {

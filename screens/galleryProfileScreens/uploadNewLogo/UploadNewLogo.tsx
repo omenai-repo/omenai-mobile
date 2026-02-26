@@ -117,7 +117,7 @@ export default function UploadNewLogo() {
         <TouchableOpacity onPress={pickImage} activeOpacity={0.8}>
           {logo === null ? (
             <View
-              style={tw`h-[200px] w-full border border-[#E5E7EB] rounded-[7px] items-center justify-center gap-2 border-dashed bg-[#fff]`}
+              style={tw`h-[200px] w-full border border-[#E5E7EB] rounded-md items-center justify-center gap-2 border-dashed bg-[#fff]`}
             >
               <Feather name="image" size={30} color={colors.grey} />
               <Text style={[tw`text-[14px]`, { color: colors.primary_black }]}>

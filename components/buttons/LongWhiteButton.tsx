@@ -40,18 +40,17 @@ export default function LongWhiteButton({
     opacity: isLoading ? 0.7 : 1,
   };
 
-  const defaultTextStyle: TextStyle = {
-    color: colors.black,
-    fontSize: 16,
-  };
-
   const containerStyle = [
     tw`w-full flex items-center justify-center rounded-md`,
     defaultContainerStyle,
     style,
   ];
 
-  const mergedTextStyle = [defaultTextStyle, textStyle];
+  const mergedTextStyle = [
+    tw`uppercase text-center text-sm tracking-widest`,
+    { color: colors.black },
+    textStyle,
+  ];
 
   return (
     <TouchableOpacity

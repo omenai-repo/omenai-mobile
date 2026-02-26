@@ -38,18 +38,23 @@ const BannerCard = memo(
 
     return (
       <View
-        style={{
-          width: cardWidth,
-          height: 200,
-          backgroundColor: colors.primary_black,
-          borderRadius: 2,
-          overflow: "hidden",
-        }}
+        style={[
+          tw`rounded-md`,
+          {
+            width: cardWidth,
+            height: 200,
+            backgroundColor: colors.primary_black,
+            overflow: "hidden",
+          },
+        ]}
       >
         {/* Low-res Placeholder (instantly visible) */}
         <Image
           source={{ uri: lowResUri }}
-          style={[tw`absolute inset-0 w-full h-full`, { opacity: 0.5 }]}
+          style={[
+            tw`absolute inset-0 w-full h-full rounded-md`,
+            { opacity: 0.5 },
+          ]}
           resizeMode="cover"
           blurRadius={10}
         />
@@ -57,7 +62,7 @@ const BannerCard = memo(
         {/* High-res Image (loads in background) */}
         <Image
           source={{ uri: highResUri }}
-          style={tw`absolute inset-0 w-0 h-0 opacity-0`}
+          style={tw`absolute inset-0 w-0 h-0 opacity-0 rounded-md`}
           onLoad={() => setHighResLoaded(true)}
         />
 
@@ -66,12 +71,12 @@ const BannerCard = memo(
           from={{ opacity: 0 }}
           animate={{ opacity: highResLoaded ? 1 : 0 }}
           transition={{ type: "timing", duration: 500 }}
-          style={tw`flex-1`}
+          style={tw`flex-1 rounded-md`}
         >
           {/* Real Background Image once loaded */}
           <Image
             source={{ uri: highResUri }}
-            style={tw`absolute inset-0 w-full h-full`}
+            style={tw`absolute inset-0 w-full h-full rounded-md`}
             resizeMode="cover"
           />
 
@@ -81,12 +86,12 @@ const BannerCard = memo(
               { backgroundColor: `${colors.black}80` },
             ]}
           >
-            <Text
-              style={tw`text-white text-[18px] font-bold font-sans font-bold`}
-            >
+            <Text style={tw`text-white text-3xl font-sans-semibold`}>
               {headline}
             </Text>
-            <Text style={tw`text-white text-[13px] mt-1 pr-[100px] font-sans`}>
+            <Text
+              style={tw`text-white text-sm mt-1 pr-[100px] font-sans-light tracking-wide`}
+            >
               {subheadline}
             </Text>
 
@@ -97,9 +102,7 @@ const BannerCard = memo(
                 { backgroundColor: `${colors.black}55` },
               ]}
             >
-              <Text style={tw`text-white text-[13px] font-semibold`}>
-                Explore
-              </Text>
+              <Text style={tw`text-white text-sm font-semibold`}>Explore</Text>
               <AntDesign name="arrow-right" color="#fff" size={15} />
             </Pressable>
           </View>

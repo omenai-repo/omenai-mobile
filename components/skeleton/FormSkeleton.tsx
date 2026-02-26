@@ -32,7 +32,7 @@ export default function FormSkeleton({
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7] justify-center items-center px-5`}>
-      <View style={tw`bg-white rounded-[20px] p-5 w-full`}>
+      <View style={tw`bg-white rounded-md p-5 w-full`}>
         {/* Title skeleton */}
         <View style={tw`mb-6`}>
           <Skeleton colorMode={colorMode} height={24} width="60%" radius={4} />

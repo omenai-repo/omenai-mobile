@@ -2,8 +2,6 @@ import { View, Text, Pressable } from "react-native";
 import ProgressiveImage from "#components/general/ProgressiveImage";
 import React from "react";
 import { getEditorialImageFilePreview } from "#lib/editorial/lib/getEditorialImageFilePreview";
-import { colors } from "#config/colors.config";
-import { fontNames } from "#constants/fontNames.constants";
 import { Feather } from "@expo/vector-icons";
 import tw from "twrnc";
 import dayjs from "dayjs";
@@ -53,14 +51,14 @@ export default function EditorialCard({
           containerStyle={[
             tw`w-full bg-[#858585]`,
             showDetails
-              ? tw`rounded-t-sm rounded-b-none h-40`
+              ? tw`rounded-t-md rounded-b-none h-40`
               : tw`h-[220px] rounded-md`,
             { height: imageHeight },
           ]}
           imageStyle={[
             tw`w-full`,
             showDetails
-              ? tw`rounded-t-sm rounded-b-none h-40`
+              ? tw`rounded-t-md rounded-b-none h-40`
               : tw`h-[220px] rounded-md`,
             { height: imageHeight },
           ]}
@@ -82,7 +80,7 @@ export default function EditorialCard({
               <View style={tw`flex-row items-center gap-1`}>
                 <Text
                   style={[
-                    tw`text-[10px] tracking-wider text-neutral-500 font-medium uppercase font-sans font-medium`,
+                    tw`text-[10px] tracking-wider text-neutral-500 font-medium uppercase font-sans-medium`,
                   ]}
                 >
                   Read Story
@@ -95,7 +93,7 @@ export default function EditorialCard({
               </View>
               <Text
                 style={[
-                  tw`text-[10px] text-neutral-500 font-medium tracking-wider font-sans font-medium`,
+                  tw`text-[10px] text-neutral-500 font-medium tracking-wider font-sans-medium`,
                 ]}
               >
                 {formattedDate}

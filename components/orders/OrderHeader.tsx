@@ -18,7 +18,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
   <View style={tw`flex-row items-center gap-[10px] flex-1`}>
     <Image
       source={{ uri: image_href }}
-      style={tw`h-[42px] w-[42px] rounded-[3px]`}
+      style={tw`h-[42px] w-[42px] rounded-md`}
     />
     <View style={tw`gap-[5px] pr-[20px] max-w-[80%]`}>
       <Text
@@ -29,7 +29,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
         {artId}
       </Text>
       <Text
-        style={tw`text-[14px] text-[#454545] font-semibold`}
+        style={tw`text-md capitalize text-[#454545] font-medium`}
         numberOfLines={1}
         ellipsizeMode="tail"
       >
@@ -40,4 +40,4 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
   </View>
 );
 
-export default OrderHeader;
+export default React.memo(OrderHeader);

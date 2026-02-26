@@ -101,11 +101,12 @@ export default function Welcome() {
               value="Create Account"
               onClick={() => handleNavigation(screenName.register)}
               style={{ backgroundColor: colors.white, height: 48 }}
-              textStyle={{
-                color: colors.black,
-                fontSize: 16,
-                fontWeight: "600",
-              }}
+              textStyle={[
+                tw`font-semibold`,
+                {
+                  color: colors.black,
+                },
+              ]}
             />
 
             <LongBlackButton
@@ -114,8 +115,6 @@ export default function Welcome() {
               style={{ height: 48, backgroundColor: colors.black_light }}
               textStyle={{
                 color: colors.white,
-                fontSize: 16,
-                fontWeight: "600",
               }}
             />
           </View>

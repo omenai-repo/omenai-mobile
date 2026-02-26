@@ -1,9 +1,17 @@
-import { View, Text, Animated, Easing, Image, useWindowDimensions, Pressable } from 'react-native';
-import React, { useEffect, useRef } from 'react';
-import tw from 'twrnc';
-import FittedBlackButton from '#components/buttons/FittedBlackButton';
-import omenaiLogo from '../../assets/omenai-logo.png';
-import { logout } from '#utils/logout.utils';
+import {
+  View,
+  Text,
+  Animated,
+  Easing,
+  Image,
+  useWindowDimensions,
+  Pressable,
+} from "react-native";
+import React, { useEffect, useRef } from "react";
+import tw from "twrnc";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import omenaiLogo from "../../assets/omenai-logo.png";
+import { logout } from "#utils/logout.utils";
 
 const FirstScreen = ({ onPress }: { onPress: () => void }) => {
   const { height } = useWindowDimensions();
@@ -34,7 +42,11 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
           marginTop: height / 12,
         })}
       >
-        <Image style={tw.style(`w-[130px] h-[30px]`)} resizeMode="contain" source={omenaiLogo} />
+        <Image
+          style={tw.style(`w-[130px] h-[30px]`)}
+          resizeMode="contain"
+          source={omenaiLogo}
+        />
         <Pressable onPress={logout}>
           <Text style={tw`text-[18px] font-semibold`}>Logout</Text>
         </Pressable>
@@ -46,18 +58,20 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
       >
         <Animated.View
           style={[
-            tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
+            tw`bg-[#FFFFFF] rounded-md py-[35px]`,
             {
-              marginHorizontal: '10%',
+              marginHorizontal: "10%",
               opacity: fadeAnim, // Apply fade animation
               transform: [{ scale: scaleAnim }], // Apply scale animation
             },
           ]}
         >
-          <Text style={tw`text-[16px] leading-[25px] text-[#1A1A1A]00099] text-center mx-[40px]`}>
-            To assist us in evaluating your skills and certifications, please complete a few
-            onboarding questions. This will enable us to accurately assess your experience and
-            expertise.
+          <Text
+            style={tw`text-[16px] leading-[25px] text-[#1A1A1A]00099] text-center mx-[40px]`}
+          >
+            To assist us in evaluating your skills and certifications, please
+            complete a few onboarding questions. This will enable us to
+            accurately assess your experience and expertise.
           </Text>
           <View style={tw`mt-[30px] mx-[30px]`}>
             <FittedBlackButton onClick={onPress} value="Proceed" />

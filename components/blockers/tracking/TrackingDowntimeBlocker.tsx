@@ -116,7 +116,7 @@ export default function TrackingDowntimeBlocker({
         </View>
         <Animated.View
           style={[
-            tw`absolute -bottom-2 -right-2 bg-[#0f172a] p-1 rounded-[20px] border border-[#47748E]`,
+            tw`absolute -bottom-2 -right-2 bg-[#0f172a] p-1 rounded-md border border-[#47748E]`,
             {
               transform: [{ rotate: spin }],
             },
@@ -151,7 +151,7 @@ export default function TrackingDowntimeBlocker({
           <Text style={tw`text-white font-mono text-lg`}>{trackingNumber}</Text>
           <TouchableOpacity
             onPress={() => copyToClipboard(trackingNumber, setCopied)}
-            style={tw`p-2 rounded-[20px] ${
+            style={tw`p-2 rounded-md ${
               copied ? "bg-[#10b981]" : "bg-[rgba(42,158,223,0.1)]"
             }`}
           >

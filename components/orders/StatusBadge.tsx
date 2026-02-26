@@ -1,8 +1,6 @@
 import React, { memo } from "react";
-import { View, Text } from "react-native";
-import tw from "twrnc";
-import { Ionicons } from "@expo/vector-icons";
 import type { StatusBadgeProps } from "#types/orders";
+import { StatusBadgeItem } from "#components/orders/StatusBadgeItem";
 
 const StatusBadgeBase = ({
   status,
@@ -11,8 +9,6 @@ const StatusBadgeBase = ({
   order_accepted,
   delivered,
 }: StatusBadgeProps) => {
-  const badgeBaseStyle = tw`flex-row items-center px-3 py-1 rounded-md`;
-
   if (
     status === "pending" &&
     (order_accepted ?? "") === "" &&
@@ -20,17 +16,13 @@ const StatusBadgeBase = ({
     !tracking_status
   ) {
     return (
-      <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
-        <Ionicons
-          name="time-outline"
-          size={14}
-          color="#92400E"
-          style={tw`mr-1`}
-        />
-        <Text style={tw`text-[12px] font-medium text-yellow-800`}>
-          Awaiting acceptance
-        </Text>
-      </View>
+      <StatusBadgeItem
+        icon="time-outline"
+        label="Awaiting acceptance"
+        bgStyle="bg-yellow-100"
+        textStyle="text-yellow-800"
+        iconColor="#92400E"
+      />
     );
   }
 
@@ -41,17 +33,13 @@ const StatusBadgeBase = ({
     !tracking_status
   ) {
     return (
-      <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
-        <Ionicons
-          name="alert-circle-outline"
-          size={14}
-          color="#92400E"
-          style={tw`mr-1`}
-        />
-        <Text style={tw`text-[12px] font-medium text-yellow-800`}>
-          Awaiting payment
-        </Text>
-      </View>
+      <StatusBadgeItem
+        icon="alert-circle-outline"
+        label="Awaiting payment"
+        bgStyle="bg-yellow-100"
+        textStyle="text-yellow-800"
+        iconColor="#92400E"
+      />
     );
   }
 
@@ -62,17 +50,13 @@ const StatusBadgeBase = ({
     !tracking_status
   ) {
     return (
-      <View style={[badgeBaseStyle, tw`bg-green-100`]}>
-        <Ionicons
-          name="card-outline"
-          size={14}
-          color="#166534"
-          style={tw`mr-1`}
-        />
-        <Text style={tw`text-[12px] font-medium text-green-800`}>
-          Payment completed
-        </Text>
-      </View>
+      <StatusBadgeItem
+        icon="card-outline"
+        label="Payment completed"
+        bgStyle="bg-green-100"
+        textStyle="text-green-800"
+        iconColor="#166534"
+      />
     );
   }
 
@@ -83,17 +67,13 @@ const StatusBadgeBase = ({
     tracking_status
   ) {
     return (
-      <View style={[badgeBaseStyle, tw`bg-green-100`]}>
-        <Ionicons
-          name="car-outline"
-          size={14}
-          color="#166534"
-          style={tw`mr-1`}
-        />
-        <Text style={tw`text-[12px] font-medium text-green-800`}>
-          Delivery in progress
-        </Text>
-      </View>
+      <StatusBadgeItem
+        icon="car-outline"
+        label="Delivery in progress"
+        bgStyle="bg-green-100"
+        textStyle="text-green-800"
+        iconColor="#166534"
+      />
     );
   }
 
@@ -104,49 +84,37 @@ const StatusBadgeBase = ({
     !tracking_status
   ) {
     return (
-      <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
-        <Ionicons
-          name="information-circle-outline"
-          size={14}
-          color="#92400E"
-          style={tw`mr-1`}
-        />
-        <Text style={tw`text-[12px] font-medium text-yellow-800`}>
-          Action required
-        </Text>
-      </View>
+      <StatusBadgeItem
+        icon="information-circle-outline"
+        label="Action required"
+        bgStyle="bg-yellow-100"
+        textStyle="text-yellow-800"
+        iconColor="#92400E"
+      />
     );
   }
 
   if ((order_accepted ?? "") === "declined") {
     return (
-      <View style={[badgeBaseStyle, tw`bg-red-200`]}>
-        <Ionicons
-          name="close-circle-outline"
-          size={14}
-          color="#991B1B"
-          style={tw`mr-1`}
-        />
-        <Text style={tw`text-[12px] font-medium text-red-800`}>
-          Order declined
-        </Text>
-      </View>
+      <StatusBadgeItem
+        icon="close-circle-outline"
+        label="Order declined"
+        bgStyle="bg-red-200"
+        textStyle="text-red-800"
+        iconColor="#991B1B"
+      />
     );
   }
 
   if (status === "completed" && order_accepted === "accepted" && delivered) {
     return (
-      <View style={[badgeBaseStyle, tw`bg-green-100`]}>
-        <Ionicons
-          name="checkmark-done-outline"
-          size={14}
-          color="#166534"
-          style={tw`mr-1`}
-        />
-        <Text style={tw`text-[12px] font-medium text-green-800`}>
-          Order has been fulfilled
-        </Text>
-      </View>
+      <StatusBadgeItem
+        icon="checkmark-done-outline"
+        label="Order has been fulfilled"
+        bgStyle="bg-green-100"
+        textStyle="text-green-800"
+        iconColor="#166534"
+      />
     );
   }
 

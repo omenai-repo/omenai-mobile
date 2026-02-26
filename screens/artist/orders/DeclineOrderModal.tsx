@@ -75,18 +75,18 @@ const ExclusiveDeclineView = ({
       style={tw`flex-row items-center gap-[10px] mb-3`}
     >
       <View
-        style={tw`h-[20px] w-[20px] rounded-[4px] border border-[#E5E7EB] justify-center items-center ${
+        style={tw`h-[20px] w-[20px] rounded-md border border-[#E5E7EB] justify-center items-center ${
           checked ? "bg-[#C71C16]" : ""
         }`}
       >
         <Text style={tw`text-white font-bold`}>✓</Text>
       </View>
-      <Text style={tw`text-[14px]`}>Artwork has been sold off platform</Text>
+      <Text style={tw`text-sm`}>Artwork has been sold off platform</Text>
     </Pressable>
 
     {checked ? (
       <View
-        style={tw`bg-red-50 border border-red-200 rounded-[10px] p-[12px] flex-row items-start gap-[8px] mb-2`}
+        style={tw`bg-red-50 border border-red-200 rounded-md p-[12px] flex-row items-start gap-[8px] mb-2`}
       >
         <View style={tw`mt-[2px]`}>{/* icon placeholder */}</View>
         <View style={tw`flex-1`}>
@@ -122,21 +122,21 @@ const StandardDeclineView = ({
           style={tw`flex-row items-start gap-[10px] mb-4`}
         >
           <View
-            style={tw`h-[20px] w-[20px] rounded-[4px] border border-[#E5E7EB] justify-center items-center ${
+            style={tw`h-[20px] w-[20px] rounded-md border border-[#E5E7EB] justify-center items-center ${
               selectedReason === r ? "bg-[#C71C16]" : ""
             }`}
           >
             <Text style={tw`text-white font-bold`}>✓</Text>
           </View>
           <View style={tw`flex-1`}>
-            <Text style={tw`text-[14px]`}>{r}</Text>
+            <Text style={tw`text-sm`}>{r}</Text>
           </View>
         </Pressable>
       ))}
     </ScrollView>
 
     {selectedReason ? (
-      <View style={tw`p-[10px] bg-red-50 border border-red-100 rounded-[8px]`}>
+      <View style={tw`p-[10px] bg-red-50 border border-red-100 rounded-md`}>
         <Text style={tw`text-[13px] text-[#B91C1C]`}>
           <Text style={tw`font-semibold`}>Client interpretation:</Text>{" "}
           {declineReasonMapping[selectedReason]}
@@ -384,9 +384,9 @@ const DeclineOrderModal = ({
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
-          style={tw`bg-white p-[20px] rounded-[14px] w-[90%] max-h-[80%]`}
+          style={tw`bg-white p-[20px] rounded-md w-[90%] max-h-[80%]`}
         >
-          <Text style={tw`text-[16px] font-semibold mb-4`}>{title}</Text>
+          <Text style={tw`text-sm font-semibold mb-4`}>{title}</Text>
 
           {renderDeclineView()}
 
@@ -395,7 +395,7 @@ const DeclineOrderModal = ({
             onPress={handleDecline}
             disabled={loading}
             style={tw.style(
-              `h-[46px] justify-center items-center rounded-[10px] mt-[16px]`,
+              `h-[46px] justify-center items-center rounded-md mt-[16px]`,
               getButtonBackground(),
             )}
           >

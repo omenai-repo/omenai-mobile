@@ -5,9 +5,7 @@ import * as SplashScreen from "expo-splash-screen";
 
 export default function AnimatedSplashScreen({
   onAnimationFinish,
-}: {
-  onAnimationFinish: () => void;
-}) {
+}: Readonly<{ onAnimationFinish: () => void }>) {
   const animation = useRef<LottieView>(null);
 
   useEffect(() => {

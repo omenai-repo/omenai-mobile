@@ -5,14 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import {
-  FlatList,
-  Image,
-  Text,
-  View,
-  Dimensions,
-  PixelRatio,
-} from "react-native";
+import { Image, Text, View, Dimensions, PixelRatio } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
@@ -21,7 +14,6 @@ import DetailsCard from "./components/detailsCard/DetailsCard";
 import ArtistInformationCard from "./components/detailsCard/ArtistInformationCard";
 import ArtworkImageSection from "./components/ArtworkImageSection";
 import ArtworkContentSection from "./components/ArtworkContentSection";
-import ArtworkCard from "#components/artwork/ArtworkCard";
 import { fetchsingleArtwork } from "#services/artworks/fetchSingleArtwork";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import SimilarArtworks from "./components/similarArtworks/SimilarArtworks";
@@ -33,7 +25,7 @@ import ArtworkSkeleton from "#components/skeleton/ArtworkSkeleton";
 import { useAppStore } from "#store/app/appStore";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { createViewHistory } from "#services/artworks/viewHistory/createViewHistory";
-import { fetchArtworkByArtist } from "#services/artworks/fetchArtworkByArtist";
+import SimilarArtworksByArtist from "./components/similarArtworks/SimilarArtworksByArtist";
 import tw from "twrnc";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
@@ -41,7 +33,6 @@ import ZoomArtwork from "./ZoomArtwork";
 import { useScrollY } from "#hooks/useScrollY";
 import { ArtworkDataType } from "#types/types";
 import { Analytics } from "#utils/analytics";
-import { colors } from "#config/colors.config";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type RouteParams = { art_id: string; url: string };
@@ -107,18 +98,6 @@ export default function Artwork() {
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
-  });
-
-  // 2) Fetch other works by the same artist (depends on artwork)
-  const { data: similarArtworksByArtist = [] } = useQuery({
-    queryKey: ["artist-artworks", artwork?.artist],
-    enabled: !!artwork?.artist,
-    queryFn: async () => {
-      const res = await fetchArtworkByArtist(artwork!.artist as string);
-      if (!res?.isOk) return [];
-      const list = res.body.data as any[];
-      return list.filter((a) => a.title !== artwork!.title);
-    },
   });
 
   // 3) Record view history ONCE per session
@@ -255,6 +234,7 @@ export default function Artwork() {
     if (artwork.pricing?.shouldShowPrice === "Yes") {
       return (
         <LongBlackButton
+          textStyle={tw`uppercase text-center text-sm tracking-widest`}
           value="Purchase artwork"
           isDisabled={false}
           onClick={() =>
@@ -297,9 +277,9 @@ export default function Artwork() {
               paddingBottom: Math.max(insets.bottom, 20) + 40,
             }}
           >
-            <View style={tw`pb-5`}>
+            <View style={tw`pb-8`}>
               {isTabletLandscape ? (
-                <View style={tw`flex-row px-[20px] gap-[30px]`}>
+                <View style={tw`flex-row px-4 gap-8`}>
                   <ArtworkImageSection
                     imageUri={imageUri}
                     imageDimensions={imageDimensions}
@@ -316,7 +296,7 @@ export default function Artwork() {
                   />
                 </View>
               ) : (
-                <View style={tw`pb-5`}>
+                <View>
                   <ArtworkImageSection
                     imageUri={imageUri}
                     imageDimensions={imageDimensions}
@@ -339,8 +319,8 @@ export default function Artwork() {
 
             <View
               style={[
-                tw`mb-[40px] gap-[15px] mx-[20px]`,
-                ["gallery", "artist"].includes(userType) && tw`pb-[40px]`,
+                tw`mb-8 gap-10 px-5`,
+                ["gallery", "artist"].includes(userType) && tw`pb-10`,
               ]}
             >
               <DetailsCard
@@ -379,49 +359,18 @@ export default function Artwork() {
               <SimilarArtworks title={artwork.title} medium={artwork.medium} />
             )}
 
-            {!["gallery", "artist"].includes(userType) &&
-              similarArtworksByArtist.length > 0 && (
-                <View style={tw`mt-5`}>
-                  <Text
-                    style={[
-                      tw`text-sm font-medium mb-5 pl-5`,
-                      { color: colors.black },
-                    ]}
-                  >
-                    Other Works by {artwork.artist}
-                  </Text>
-
-                  <FlatList
-                    data={similarArtworksByArtist}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    keyExtractor={(_, i) => String(i)}
-                    style={{ marginBottom: 20 }}
-                    contentContainerStyle={{
-                      paddingLeft: 20,
-                      paddingRight: 20,
-                      gap: 15,
-                    }}
-                    renderItem={({ item }) => (
-                      <ArtworkCard
-                        art_id={item.art_id}
-                        title={item.title}
-                        url={item.url}
-                        artist={item.artist}
-                        showPrice={item.pricing.shouldShowPrice === "Yes"}
-                        price={item.pricing.usd_price}
-                        availiablity={item.availability}
-                      />
-                    )}
-                  />
-                </View>
-              )}
+            {!["gallery", "artist"].includes(userType) && artwork && (
+              <SimilarArtworksByArtist
+                artist={artwork.artist}
+                currentArtworkTitle={artwork.title}
+              />
+            )}
           </ScrollWrapper>
         )}
 
         {showEmpty && (
           <View style={tw`flex-1 items-center justify-center`}>
-            <Text style={tw`text-[16px] text-[#1A1A1A]`}>
+            <Text style={tw`text-base text-neutral-600`}>
               No details of artwork
             </Text>
           </View>
