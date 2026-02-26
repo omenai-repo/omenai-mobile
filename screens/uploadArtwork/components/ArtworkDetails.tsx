@@ -70,31 +70,24 @@ export default function ArtworkDetails() {
   };
 
   useEffect(() => {
-    if (artworkUploadData.title) {
-      handleValidationChecks("title", artworkUploadData.title);
-    }
-  }, [artworkUploadData.title]);
+    const fieldsToValidate = [
+      { label: "title", value: artworkUploadData.title },
+      { label: "description", value: artworkUploadData.artwork_description },
+      { label: "year", value: artworkUploadData.year?.toString() },
+      { label: "materials", value: artworkUploadData.materials },
+    ];
 
-  useEffect(() => {
-    if (artworkUploadData.artwork_description) {
-      handleValidationChecks(
-        "description",
-        artworkUploadData.artwork_description || "",
-      );
-    }
-  }, [artworkUploadData.artwork_description]);
-
-  useEffect(() => {
-    if (artworkUploadData.year) {
-      handleValidationChecks("year", artworkUploadData.year.toString());
-    }
-  }, [artworkUploadData.year]);
-
-  useEffect(() => {
-    if (artworkUploadData.materials) {
-      handleValidationChecks("materials", artworkUploadData.materials);
-    }
-  }, [artworkUploadData.materials]);
+    fieldsToValidate.forEach(({ label, value }) => {
+      if (value) {
+        handleValidationChecks(label, value);
+      }
+    });
+  }, [
+    artworkUploadData.title,
+    artworkUploadData.artwork_description,
+    artworkUploadData.year,
+    artworkUploadData.materials,
+  ]);
 
   return (
     <View style={tw`flex-1`}>
