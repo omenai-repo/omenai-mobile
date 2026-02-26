@@ -50,7 +50,7 @@ export default function BalanceBox({
 
     return (
       <View
-        style={tw`border border-[#333333] bg-[${colors.primary_black}] rounded-[10px] p-2.5 px-[25px] py-[25px]`}
+        style={tw`border border-[#333333] bg-[${colors.primary_black}] rounded-md p-2.5 px-[25px] py-[25px]`}
       >
         <Text
           style={tw`text-left text-sm uppercase text-white mt-2.5 opacity-70 tracking-[1px] px-[5px]`}

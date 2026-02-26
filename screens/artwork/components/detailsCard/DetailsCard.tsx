@@ -16,14 +16,14 @@ type DetailCardProps = {
 export default function DetailsCard({ title, details }: DetailCardProps) {
   const DetailItem = ({ name, text }: DetailItemProps) => {
     return (
-      <View style={tw`flex-row items-center gap-[16px]`}>
+      <View style={tw`flex-row items-center gap-4`}>
         <Text
-          style={tw`text-neutral-400 font-sans text-[10px] tracking-wider uppercase w-2/6 pr-[16px]`}
+          style={tw`text-neutral-600 font-sans-regular text-xs tracking-wide uppercase w-2/6 pr-4`}
         >
           {name}
         </Text>
         <Text
-          style={tw`text-neutral-800 font-sans text-sm leading-relaxed w-4/6`}
+          style={tw`text-neutral-500 font-sans-regular text-sm leading-relaxed w-4/6`}
         >
           {text}
         </Text>
@@ -33,22 +33,17 @@ export default function DetailsCard({ title, details }: DetailCardProps) {
 
   return (
     <View style={tw`border border-neutral-200 rounded-md`}>
-      <View
-        style={[
-          tw`px-[16px] py-[16px] rounded-t-sm`,
-          { backgroundColor: colors.black },
-        ]}
-      >
+      <View style={[tw`p-4 rounded-t-md`, { backgroundColor: colors.black }]}>
         <Text
           style={[
-            tw`text-[13px] font-medium font-serif tracking-wide`,
+            tw`text-lg font-serif tracking-wider`,
             { color: colors.white },
           ]}
         >
           {title}
         </Text>
       </View>
-      <View style={tw`px-[16px] py-[16px] gap-[16px]`}>
+      <View style={tw`p-4 gap-4`}>
         {details.map((detail, idx) => (
           <DetailItem name={detail.name} text={detail.text} key={idx} />
         ))}

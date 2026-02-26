@@ -31,7 +31,10 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
   keyboardShouldPersistTaps,
 }) => {
   // Wrap children in a container for FlatList
-  const renderItem = () => <View style={{ flex: 1 }}>{children}</View>;
+  const renderItem = React.useCallback(
+    () => <View style={{ flex: 1 }}>{children}</View>,
+    [children],
+  );
 
   return (
     <FlatList

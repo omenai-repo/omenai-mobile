@@ -10,7 +10,7 @@ import { OrderActions } from "#components/orders/OrderActions";
 import { DetailRow } from "./DetailRow";
 import type { OrderContainerProps } from "#types/orders";
 
-export const OrderContainer = (props: OrderContainerProps) => {
+export const OrderContainer = React.memo((props: OrderContainerProps) => {
   const {
     id,
     open,
@@ -82,7 +82,19 @@ export const OrderContainer = (props: OrderContainerProps) => {
       accessibilityRole="button"
     >
       <View style={tw`flex-row items-center`}>
-        <OrderHeader image_href={image_href} artId={artId} artName={artName} />
+        <OrderHeader image_href={image_href} artId={artId} artName={artName}>
+          {!open && (
+            <View style={tw`mt-1`}>
+              <StatusBadge
+                status={status}
+                payment_status={payment_status}
+                tracking_status={tracking_status}
+                order_accepted={order_accepted}
+                delivered={delivered}
+              />
+            </View>
+          )}
+        </OrderHeader>
         <View
           style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-md`}
         >
@@ -97,7 +109,7 @@ export const OrderContainer = (props: OrderContainerProps) => {
           overflow: "hidden",
         }}
       >
-        <View style={tw`gap-[20px] mt-[15px]`}>
+        <View style={tw`gap-5 mt-4`}>
           <DetailRow label="Price" value={price} />
           <DetailRow label="Date" value={dateTime} />
           <DetailRow label="Status">
@@ -137,6 +149,6 @@ export const OrderContainer = (props: OrderContainerProps) => {
       </Animated.View>
     </Pressable>
   );
-};
+});
 
 export default OrderContainer;

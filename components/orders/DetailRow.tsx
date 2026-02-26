@@ -8,17 +8,19 @@ interface DetailRowProps {
   value?: string;
 }
 
-export const DetailRow = ({ label, value, children }: DetailRowProps) => {
-  return (
-    <View style={tw`flex-row items-center gap-[20px]`}>
-      <Text style={tw`text-xs text-gray-400 uppercase font-bold`}>{label}</Text>
-      {value ? (
-        <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-          {value}
+export const DetailRow = React.memo(
+  ({ label, value, children }: DetailRowProps) => {
+    return (
+      <View style={tw`flex-row items-center gap-5`}>
+        <Text style={tw`text-xs text-neutral-600 uppercase font-medium`}>
+          {label}
         </Text>
-      ) : (
-        children
-      )}
-    </View>
-  );
-};
+        {value ? (
+          <Text style={tw`text-sm text-neutral-900 font-medium`}>{value}</Text>
+        ) : (
+          children
+        )}
+      </View>
+    );
+  },
+);

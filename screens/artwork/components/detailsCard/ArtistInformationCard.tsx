@@ -15,41 +15,36 @@ export default function ArtistInformationCard({
   country,
 }: ArtistInformationCardProps) {
   return (
-    <View
-      style={[
-        tw`px-[24px] py-[32px] rounded-md`,
-        { backgroundColor: colors.black },
-      ]}
-    >
+    <View style={[tw`px-6 py-8 rounded-md`, { backgroundColor: colors.black }]}>
       <Text
-        style={tw`text-neutral-400 text-[11px] tracking-wider font-sans uppercase mb-[24px]`}
+        style={tw`text-neutral-400 text-sm tracking-wider font-sans-regular uppercase mb-2`}
       >
         About the Artist
       </Text>
 
-      <Text style={tw`text-white text-[32px] font-serif mb-[32px]`}>
+      <Text style={tw`text-white text-3xl font-serif capitalize`}>
         {artistName}
       </Text>
 
-      <View style={tw`h-[1px] w-full bg-white/20 mb-[32px]`} />
+      <View style={tw`h-[1px] w-full bg-white/20 my-8`} />
 
       <View style={tw`flex-row justify-between w-full pr-[20%]`}>
-        <View style={tw`flex-col gap-[8px]`}>
+        <View style={tw`flex-col gap-2`}>
           <Text
-            style={tw`text-neutral-400 text-[11px] tracking-wider uppercase`}
+            style={tw`text-neutral-400 text-sm tracking-wider font-sans-regular uppercase`}
           >
             Born
           </Text>
-          <Text style={tw`text-white text-[15px]`}>{birthYear || "N/A"}</Text>
+          <Text style={tw`text-white text-base`}>{birthYear || "N/A"}</Text>
         </View>
 
-        <View style={tw`flex-col gap-[8px]`}>
+        <View style={tw`flex-col gap-2`}>
           <Text
-            style={tw`text-neutral-400 text-[11px] tracking-wider uppercase`}
+            style={tw`text-neutral-400 text-sm tracking-wider font-sans-regular uppercase`}
           >
             Origin
           </Text>
-          <Text style={tw`text-white text-[15px]`}>{country || "N/A"}</Text>
+          <Text style={tw`text-white text-base`}>{country || "N/A"}</Text>
         </View>
       </View>
     </View>

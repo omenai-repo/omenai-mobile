@@ -16,7 +16,7 @@ export type CardConfig = {
 const CardComp = ({ title, icon, amount, color, cardWidth }: CardConfig) => (
   <Animated.View
     style={[
-      tw`rounded-[12px] px-[14px] py-[16px]`,
+      tw`rounded-md px-[14px] py-[16px]`,
       {
         width: cardWidth,
         backgroundColor: colors.black,

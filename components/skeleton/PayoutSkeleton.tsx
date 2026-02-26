@@ -7,9 +7,7 @@ import tw from "twrnc";
 
 export default function PayoutSkeleton({
   withHeader = false,
-}: {
-  withHeader?: boolean;
-}) {
+}: Readonly<{ withHeader?: boolean }>) {
   return (
     <View style={tw`flex-1`}>
       {withHeader && <BackHeaderTitle title="Payout" />}

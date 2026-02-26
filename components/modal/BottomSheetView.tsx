@@ -1,8 +1,9 @@
-import { Text, View, Pressable } from "react-native";
+import { Text, View } from "react-native";
 import React from "react";
 import { colors } from "#config/colors.config";
 import { MaterialIcons } from "@expo/vector-icons";
 import tw from "twrnc";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 type NotificationProps = {
   title: string;
@@ -54,13 +55,6 @@ export const BottomSheetView = ({
     </Text>
 
     {/* Dismiss Button */}
-    <Pressable
-      onPress={onDismiss}
-      style={tw`w-full h-[50px] bg-[${colors.primary_black}] rounded-[10px] items-center justify-center`}
-    >
-      <Text style={tw`text-[${colors.white}] text-base font-semibold`}>
-        {buttonText}
-      </Text>
-    </Pressable>
+    <LongBlackButton value={buttonText} onClick={onDismiss} />
   </View>
 );

@@ -66,7 +66,7 @@ export const HighlightCard = ({
   useEffect(() => {
     onLoadingChange?.(
       isFetching ||
-        (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data))
+        (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data)),
     );
   }, [
     isLoading,
@@ -107,7 +107,7 @@ export const HighlightCard = ({
     <Animated.View
       // entering={FadeInUp.delay(100)}
       style={[
-        tw`rounded-[12px] px-[14px] py-[16px]`,
+        tw`rounded-md p-3`,
         {
           width: cardWidth,
           backgroundColor: colors.black,
@@ -117,16 +117,20 @@ export const HighlightCard = ({
     >
       <View style={tw`flex-row justify-between items-center`}>
         <View style={tw`flex-1`}>
-          <Text style={tw`text-[13px] text-[#FFFFFF99] mb-[2px]`}>{title}</Text>
-          <Text style={tw`text-[18px] text-white font-bold`}>{amount}</Text>
+          <Text
+            style={tw`text-xs uppercase font-sans-regular text-neutral-300 mb-[2px]`}
+          >
+            {title}
+          </Text>
+          <Text style={tw`text-lg text-white font-medium`}>{amount}</Text>
         </View>
         <View
           style={[
-            tw`h-[36px] w-[36px] rounded-full justify-center items-center`,
+            tw`h-8 w-8 rounded-full justify-center items-center`,
             { backgroundColor: `${color}22` },
           ]}
         >
-          <Ionicons name={icon} size={18} color={color} />
+          <Ionicons name={icon} size={16} color={color} />
         </View>
       </View>
     </Animated.View>

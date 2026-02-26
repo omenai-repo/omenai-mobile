@@ -52,7 +52,7 @@ const AuthModal = ({
             start={{ x: 2, y: 1 }}
             end={{ x: 0.1, y: 0.8 }}
             style={[
-              tw`bg-white p-[25px] self-center rounded-[16px] border-[1.09px]`,
+              tw`bg-white p-[25px] self-center rounded-md border-[1.09px]`,
               {
                 width: width - 120,
                 borderColor: `${colors.black}1A`,

@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MiniArtworkCard from "#components/artwork/MiniArtworkCard";
 import { FlashList } from "@shopify/flash-list";
+import { ArtworkFlatlistItem } from "#types/types";
 
 export default function ArtworksListing({ data }: { data: any[] }) {
   if (data.length === 0)
@@ -20,6 +21,7 @@ export default function ArtworksListing({ data }: { data: any[] }) {
         renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
           <View style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
             <MiniArtworkCard
+              availability={item.availability}
               title={item.title}
               url={item.url}
               artist={item.artist}
@@ -35,7 +37,6 @@ export default function ArtworksListing({ data }: { data: any[] }) {
         horizontal={false}
         showsHorizontalScrollIndicator={false}
         numColumns={2}
-        estimatedItemSize={278}
       />
     </View>
   );

@@ -1,8 +1,13 @@
-import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
-import React from 'react';
-import tw from 'twrnc';
-import { SvgXml } from 'react-native-svg';
-import { uploadIcon, warningIconSm } from '#utils/SvgImages';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
+import React from "react";
+import tw from "twrnc";
+import { SvgXml } from "react-native-svg";
+import { uploadIcon, warningIconSm } from "#utils/SvgImages";
 
 type CVUploadProps = {
   cv: any;
@@ -16,7 +21,7 @@ const CVUpload = ({ cv, pickDocument }: CVUploadProps) => {
       <TouchableOpacity
         onPress={pickDocument}
         style={tw.style(
-          `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`,
+          `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-md justify-center items-center`,
           {
             marginHorizontal: width / 12,
           },
@@ -31,14 +36,14 @@ const CVUpload = ({ cv, pickDocument }: CVUploadProps) => {
             ? cv.assets[0].name.length > 40
               ? cv.assets[0].name.slice(0, 40)
               : cv.assets[0].name
-            : 'Upload your CV here'}
+            : "Upload your CV here"}
         </Text>
       </TouchableOpacity>
 
       {/* Warning Box */}
       <View
         style={tw.style(
-          `border border-[#FFA500] mt-[20px] flex-row items-center gap-[10px] bg-[#FFF3E0] rounded-[8px] p-[15px]`,
+          `border border-[#FFA500] mt-[20px] flex-row items-center gap-[10px] bg-[#FFF3E0] rounded-md p-[15px]`,
           {
             marginHorizontal: width / 12,
           },
@@ -46,7 +51,8 @@ const CVUpload = ({ cv, pickDocument }: CVUploadProps) => {
       >
         <SvgXml xml={warningIconSm} />
         <Text style={tw`text-[14px] text-[#FFA500] font-medium pr-[30px]`}>
-          Please ensure your CV aligns with the answers you provided in the last sections
+          Please ensure your CV aligns with the answers you provided in the last
+          sections
         </Text>
       </View>
     </View>

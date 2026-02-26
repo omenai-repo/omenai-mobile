@@ -75,47 +75,48 @@ export default function LongBlackButton({
     }),
   };
 
-  const defaultTextStyle: TextStyle = {
-    color: textColor,
-    fontSize: 14,
-    fontWeight: "300",
-  };
-
   const containerStyle = [
     tw`w-full flex items-center justify-center rounded-md`,
     defaultContainerStyle,
     style,
   ];
 
-  const mergedTextStyle = [defaultTextStyle, textStyle];
-
-  if (isInactive) {
-    return (
-      <View style={containerStyle} testID={testID}>
-        {isLoading ? (
-          <LottieView
-            autoPlay
-            ref={animation}
-            style={tw`w-[100px] h-[100px]`}
-            source={loaderAnimation}
-          />
-        ) : (
-          <Text style={mergedTextStyle}>{value}</Text>
-        )}
-      </View>
-    );
-  }
+  const mergedTextStyle = [
+    tw`uppercase text-center text-sm tracking-widest`,
+    { color: textColor },
+    textStyle,
+  ];
 
   return (
     <TouchableOpacity
       activeOpacity={1}
       style={containerStyle}
       onPress={onClick}
+      disabled={isInactive}
       testID={testID}
     >
-      <View style={tw`flex-row items-center justify-center gap-3`}>
-        {icon}
-        <Text style={mergedTextStyle}>{value}</Text>
+      <View style={tw`flex-row items-center justify-center w-full`}>
+        {/* Invisible content to maintain button width */}
+        <View
+          style={tw.style(`flex-row items-center justify-center gap-3`, {
+            opacity: isLoading ? 0 : 1,
+          })}
+        >
+          {icon}
+          <Text style={mergedTextStyle}>{value}</Text>
+        </View>
+
+        {/* Overlay loader */}
+        {isLoading && (
+          <View style={tw`absolute inset-0 items-center justify-center`}>
+            <LottieView
+              autoPlay
+              ref={animation}
+              style={tw`w-[80px] h-[80px]`}
+              source={loaderAnimation}
+            />
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );

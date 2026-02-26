@@ -35,9 +35,7 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
     <Animated.View style={[tw`px-[20px] pt-[20px]`, { opacity: fadeAnim }]}>
       {Array.from({ length: count }).map((_, index) => (
         <View key={index} style={tw`mb-[15px]`}>
-          <View
-            style={tw`bg-[#e5e7eb] rounded-[20px] h-[100px] overflow-hidden`}
-          >
+          <View style={tw`bg-[#e5e7eb] rounded-md h-[100px] overflow-hidden`}>
             <Animated.View
               style={[
                 styles.shimmerOverlay,

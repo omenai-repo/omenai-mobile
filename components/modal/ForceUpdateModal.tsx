@@ -1,9 +1,10 @@
-import { Text, View, TouchableOpacity, Linking, Platform } from "react-native";
+import { Text, View, Linking, Platform } from "react-native";
 import Modal from "react-native-modal";
 import React from "react";
 import { colors } from "#config/colors.config";
 import { MaterialIcons } from "@expo/vector-icons";
 import tw from "twrnc";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 type ForceUpdateModalProps = Readonly<{
   isVisible: boolean;
@@ -52,17 +53,19 @@ export default function ForceUpdateModal({ isVisible }: ForceUpdateModalProps) {
         </Text>
 
         {/* Update Button */}
-        <TouchableOpacity
-          onPress={handleUpdate}
-          style={[
-            tw`w-full h-[52px] rounded-md flex-row items-center justify-center gap-2`,
-            { backgroundColor: colors.black },
-          ]}
-          activeOpacity={0.8}
-        >
-          <Text style={tw`text-white text-base font-medium`}>Update Now</Text>
-          <MaterialIcons name="arrow-forward" size={20} color={colors.white} />
-        </TouchableOpacity>
+        <LongBlackButton
+          value="Update Now"
+          onClick={handleUpdate}
+          icon={
+            <MaterialIcons
+              name="arrow-forward"
+              size={20}
+              color={colors.white}
+            />
+          }
+          style={tw`h-[52px]`}
+          textStyle={tw`text-base font-medium`}
+        />
       </View>
     </Modal>
   );

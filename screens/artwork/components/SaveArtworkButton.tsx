@@ -7,6 +7,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
 import { heartIcon } from "#utils/SvgImages";
 import tw from "twrnc";
+import { colors } from "#config/colors.config";
 
 type SaveArtworkButtonProps = {
   likeIds: string[];
@@ -41,15 +42,26 @@ export default function SaveArtworkButton({
 
   return (
     <LongBlackButton
-      value={isSaved ? "Remove from saved" : "Save artwork to favorites"}
+      style={tw`border-neutral-200`}
+      textStyle={[
+        tw`uppercase text-center text-sm tracking-widest`,
+        { color: colors.black },
+      ]}
+      value={isSaved ? "Remove from collection" : "Save to collection"}
       onClick={() => handleLike(!isSaved)}
       outline
       icon={
         <View style={styles.iconContainer}>
           {isSaved ? (
-            <AntDesign name="heart" size={20} color="#ff0000" />
+            <AntDesign name="heart" size={14} color="#ff0000" />
           ) : (
-            <SvgXml xml={heartIcon} width={20} height={20} fill="#1A1A1A" />
+            <SvgXml
+              xml={heartIcon}
+              width={14}
+              height={14}
+              fill="#CCCCCC"
+              opacity={0.3}
+            />
           )}
         </View>
       }
@@ -59,7 +71,7 @@ export default function SaveArtworkButton({
 
 const styles = StyleSheet.create({
   iconContainer: {
-    width: 20,
-    height: 20,
+    width: 14,
+    height: 14,
   },
 });

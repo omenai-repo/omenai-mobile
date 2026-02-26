@@ -15,20 +15,13 @@ const SkeletonCard = ({ width }: { width?: number }) => (
     ]}
   >
     <View style={{ flex: 1 }}>
-      <View style={{ height: 25, backgroundColor: "#ddd" }} />
+      <View style={tailwind`h-[25px] bg-[#ddd] rounded-md`} />
       <View style={{ marginTop: 20, gap: 10 }}>
-        <View style={{ height: 20, backgroundColor: "#ddd" }} />
-        <View style={{ height: 20, backgroundColor: "#ddd" }} />
+        <View style={tailwind`h-[20px] bg-[#ddd] rounded-md`} />
+        <View style={tailwind`h-[20px] bg-[#ddd] rounded-md`} />
       </View>
     </View>
-    <View
-      style={{
-        height: "100%",
-        width: 170,
-        backgroundColor: "#ddd",
-        borderRadius: 15,
-      }}
-    />
+    <View style={[tailwind`h-full w-[170px] bg-[#ddd] rounded-md`]} />
   </View>
 );
 

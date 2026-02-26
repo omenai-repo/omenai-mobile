@@ -10,7 +10,9 @@ const pulse = {
 };
 
 export const TransactionRowSkeleton = () => (
-  <View style={tw`flex-row items-center px-4 py-3.5 border-b border-gray-100`}>
+  <View
+    style={tw`flex-row items-center px-4 py-3.5 border-b border-neutral-100`}
+  >
     <MotiView {...pulse} style={tw`w-10 h-10 rounded-full bg-gray-200 mr-3`} />
     <View style={tw`flex-1 gap-[6px]`}>
       <MotiView {...pulse} style={tw`h-[13px] w-[140px] rounded bg-gray-200`} />
@@ -34,15 +36,23 @@ interface TransactionSkeletonCardProps {
 export const TransactionSkeletonCard = ({
   count = 7,
   style,
-}: TransactionSkeletonCardProps) => (
-  <View
-    style={[
-      tw`bg-white rounded-md border border-gray-200 overflow-hidden`,
-      style,
-    ]}
-  >
-    {Array.from({ length: count }).map((_, i) => (
-      <TransactionRowSkeleton key={i} />
-    ))}
-  </View>
-);
+}: Readonly<TransactionSkeletonCardProps>) => {
+  const skeletonItems = React.useMemo(
+    () =>
+      Array.from({ length: count }).map((_, i) => `transaction-skeleton-${i}`),
+    [count],
+  );
+
+  return (
+    <View
+      style={[
+        tw`bg-white rounded-md border border-neutral-100 overflow-hidden`,
+        style,
+      ]}
+    >
+      {skeletonItems.map((key) => (
+        <TransactionRowSkeleton key={key} />
+      ))}
+    </View>
+  );
+};

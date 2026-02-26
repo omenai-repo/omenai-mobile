@@ -89,8 +89,8 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
 
     return (
       <>
-        <View style={tw`flex-row items-center mb-[20px]`}>
-          <Text style={tw`text-[16px] text-[#454545] font-semibold flex-1`}>
+        <View style={tw`flex-row items-center mb-5`}>
+          <Text style={tw`text-lg text-[#454545] font-medium flex-1`}>
             Your Orders
           </Text>
           <YearDropdown

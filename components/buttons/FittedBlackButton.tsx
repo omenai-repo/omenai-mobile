@@ -62,36 +62,38 @@ export default function FittedBlackButton({
 
   const mergedTextStyle = [defaultTextStyle, textStyle];
 
-  if (isDisabled || isLoading) {
-    return (
-      <View style={containerStyle}>
-        {isLoading ? (
-          <LottieView
-            autoPlay
-            ref={animation}
-            style={tw`w-[100px] h-[100px]`}
-            source={loaderAnimation}
-          />
-        ) : (
-          <>
-            <Text style={mergedTextStyle}>{value}</Text>
-            {children}
-          </>
-        )}
-      </View>
-    );
-  }
-
   return (
     <Pressable
       style={({ pressed }) => [
         containerStyle,
-        pressed ? { opacity: 0.9 } : null,
+        pressed && !isLoading && !isDisabled ? { opacity: 0.9 } : null,
       ]}
       onPress={onClick}
+      disabled={isDisabled || isLoading}
     >
-      <Text style={mergedTextStyle}>{value}</Text>
-      {children}
+      <View style={tw`flex-row items-center justify-center`}>
+        {/* Invisible content to maintain button width */}
+        <View
+          style={tw.style(`flex-row items-center justify-center gap-[10px]`, {
+            opacity: isLoading ? 0 : 1,
+          })}
+        >
+          <Text style={mergedTextStyle}>{value}</Text>
+          {children}
+        </View>
+
+        {/* Absolutely positioned loader */}
+        {isLoading && (
+          <View style={tw`absolute inset-0 items-center justify-center`}>
+            <LottieView
+              autoPlay
+              ref={animation}
+              style={tw`w-[60px] h-[60px]`}
+              source={loaderAnimation}
+            />
+          </View>
+        )}
+      </View>
     </Pressable>
   );
 }

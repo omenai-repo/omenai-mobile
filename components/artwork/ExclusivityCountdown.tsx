@@ -1,7 +1,6 @@
 import React, { memo, useState, useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import tw from "twrnc";
-import { fontNames } from "#constants/fontNames.constants";
 import ExclusivityExtensionModal from "./ExclusivityExtensionModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
@@ -15,7 +14,7 @@ const TimeDisplay = ({ value, label }: { value: number; label: string }) => (
   <View
     style={tw`bg-white rounded-md px-1.5 py-1 flex-1 items-center shadow-sm`}
   >
-    <Text style={tw`text-[#1A1A1A] font-semibold text-xs font-sans font-bold`}>
+    <Text style={tw`text-[#1A1A1A] text-xs font-sans-semibold`}>
       {String(value).padStart(2, "0")}
     </Text>
     <Text style={tw`text-[#1A1A1A]/50 text-[8px] font-sans`}>{label}</Text>
@@ -39,7 +38,7 @@ const ExpiredState = ({
       style={tw`bg-[#1A1A1A] py-2 px-3 rounded-md`}
       activeOpacity={0.8}
     >
-      <Text style={tw`text-white text-xs text-center font-sans font-medium`}>
+      <Text style={tw`text-white text-xs text-center font-sans-medium`}>
         Extend Contract
       </Text>
     </TouchableOpacity>
@@ -56,7 +55,7 @@ const ActiveCountdown = ({
   >
     <View style={tw`flex-row items-center gap-1 mb-1.5`}>
       <View style={tw`w-1.5 h-1.5 bg-green-500 rounded-full`} />
-      <Text style={tw`text-[#1A1A1A]/70 text-[10px] font-sans font-medium`}>
+      <Text style={tw`text-[#1A1A1A]/70 text-[10px] font-sans-medium`}>
         Exclusivity period ends in:
       </Text>
     </View>

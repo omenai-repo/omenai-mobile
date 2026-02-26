@@ -1,8 +1,8 @@
-import { View, Text, Animated, Easing, Image } from 'react-native';
-import React, { useEffect, useRef } from 'react';
-import tw from 'twrnc';
-import omenaiLogo from '../../../assets/omenai-logo.png';
-import LongBlackButton from '#components/buttons/LongBlackButton';
+import { View, Text, Animated, Easing, Image } from "react-native";
+import React, { useEffect, useRef } from "react";
+import tw from "twrnc";
+import omenaiLogo from "../../../assets/omenai-logo.png";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 const EligibityResponseScreen = ({
   label,
@@ -43,15 +43,17 @@ const EligibityResponseScreen = ({
       <View style={tw`flex-1 justify-center items-center mb-[100px]`}>
         <Animated.View
           style={[
-            tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
+            tw`bg-[#FFFFFF] rounded-md py-[35px]`,
             {
-              marginHorizontal: '10%',
+              marginHorizontal: "10%",
               opacity: fadeAnim, // Apply fade animation
               transform: [{ scale: scaleAnim }], // Apply scale animation
             },
           ]}
         >
-          <Text style={tw`text-[18px] text-[#1A1A1A]00099] leading-[20px] text-center mx-[40px]`}>
+          <Text
+            style={tw`text-[18px] text-[#1A1A1A]00099] leading-[20px] text-center mx-[40px]`}
+          >
             {label}
           </Text>
           {daysLeft && (

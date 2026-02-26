@@ -80,10 +80,12 @@ export default function CustomSelectPicker({
         searchPlaceholder={searchPlaceholder}
         showsVerticalScrollIndicator={false}
         placeholder={placeholder}
-        placeholderStyle={{
-          color: colors.inputLabel,
-          fontSize: 14,
-        }}
+        placeholderStyle={[
+          tw`text-sm`,
+          {
+            color: colors.inputLabel,
+          },
+        ]}
         disable={disable}
         maxHeight={250}
         containerStyle={{
@@ -93,10 +95,12 @@ export default function CustomSelectPicker({
           tw`px-4 h-11 w-full rounded-md border`,
           { borderColor: colors.inputBorder, backgroundColor: "#FAFAFA" },
         ]}
-        selectedTextStyle={{
-          color: disable ? colors.inputLabel : colors.black,
-          fontSize: 14,
-        }}
+        selectedTextStyle={[
+          tw`text-sm`,
+          {
+            color: disable ? colors.inputLabel : colors.black,
+          },
+        ]}
         renderInputSearch={renderInputSearch}
         dropdownPosition={dropdownPosition}
         keyboardAvoiding={true}

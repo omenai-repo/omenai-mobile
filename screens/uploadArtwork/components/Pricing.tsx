@@ -81,7 +81,7 @@ export default function Pricing({ plan }: { plan: string | undefined }) {
 
   /** Called only when user taps the Convert button */
   const handleConvert = async () => {
-    const value = parseInt(localPrice, 10);
+    const value = Number.parseInt(localPrice, 10);
 
     if (Number.isNaN(value) || value <= 0) {
       updateModal({
@@ -124,7 +124,7 @@ export default function Pricing({ plan }: { plan: string | undefined }) {
   const canConvert =
     artworkUploadData.currency !== "" &&
     localPrice !== "" &&
-    parseInt(localPrice, 10) > 0;
+    Number.parseInt(localPrice, 10) > 0;
 
   return (
     <View style={tw`flex-1`}>

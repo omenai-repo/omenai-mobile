@@ -15,7 +15,6 @@ import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
-import { fontNames } from "#constants/fontNames.constants";
 import { useDevice } from "#hooks/useDevice";
 import ProgressiveImage from "#components/general/ProgressiveImage";
 
@@ -126,7 +125,7 @@ export default function ArtworkCard({
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
-                tw`text-base font-serif leading-snug ${
+                tw`text-base capitalize font-serif leading-snug ${
                   lightText ? "text-white/90" : "text-dark"
                 } w-full`,
               ]}
@@ -137,9 +136,9 @@ export default function ArtworkCard({
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
-                tw`text-xs ${
+                tw`text-xs capitalize ${
                   lightText ? "text-white/80" : "text-slate-500"
-                } w-full mt-0.5 font-sans`,
+                } w-full mt-0.5 font-sans-regular`,
               ]}
             >
               {artist}
@@ -148,9 +147,9 @@ export default function ArtworkCard({
           <View style={tw`flex flex-row items-center gap-2`}>
             {availiablity && (
               <Text
-                style={tw`text-sm ${showPrice ? "font-bold" : "font-medium"} ${
+                style={tw`text-sm ${
                   lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                } flex-1 font-sans ${showPrice ? "font-bold" : "font-medium"}`}
+                } flex-1 ${showPrice ? "font-sans-bold" : "font-sans-medium"}`}
               >
                 {showPrice ? utils_formatPrice(price) : "Price on Request"}
               </Text>
@@ -159,9 +158,9 @@ export default function ArtworkCard({
             <View style={tw`flex-wrap`}>
               {!availiablity && (
                 <Text
-                  style={tw`text-sm font-bold ${
+                  style={tw`text-sm ${
                     lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                  } flex-1 font-sans font-bold`}
+                  } flex-1 font-sans-semibold`}
                 >
                   SOLD
                 </Text>

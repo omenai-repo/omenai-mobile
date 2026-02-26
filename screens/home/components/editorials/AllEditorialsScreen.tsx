@@ -24,7 +24,11 @@ export default function AllEditorialsScreen() {
     queryKey: ["all-editorials"],
     queryFn: async () => {
       const response: any = await listEditorials();
-      return response?.data || [];
+      const data = response?.data || [];
+      return data.sort(
+        (a: any, b: any) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime(),
+      );
     },
     placeholderData: initialEditorials,
   });
