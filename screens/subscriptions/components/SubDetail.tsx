@@ -28,7 +28,7 @@ export default function SubDetail({
   sub_data,
   onOpenCancelModal,
   logoSource,
-}: Props) {
+}: Readonly<Props>) {
   const navigation = useNavigation<any>();
   const { status, plan_details, upload_tracker, expiry_date } = sub_data;
 

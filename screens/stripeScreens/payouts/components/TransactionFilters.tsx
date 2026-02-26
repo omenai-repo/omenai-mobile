@@ -13,7 +13,7 @@ type TransactionFiltersProps = {
 export default function TransactionFilters({
   activeFilter,
   onFilterChange,
-}: TransactionFiltersProps) {
+}: Readonly<TransactionFiltersProps>) {
   const filters: FilterType[] = ["all", "30d", "90d", "6m"];
 
   return (
