@@ -13,7 +13,7 @@ export default function ArtistInformationCard({
   artistName,
   birthYear,
   country,
-}: ArtistInformationCardProps) {
+}: Readonly<ArtistInformationCardProps>) {
   return (
     <View style={[tw`px-6 py-8 rounded-md`, { backgroundColor: colors.black }]}>
       <Text

@@ -5,7 +5,6 @@ import Input from "#components/inputs/Input";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import tw from "twrnc";
-import { colors } from "#config/colors.config";
 import { fetchBanks } from "#services/wallet/fetchBanks";
 import { debounce } from "lodash";
 import { useAppStore } from "#store/app/appStore";
@@ -283,42 +282,78 @@ const AddPrimaryAcctScreen = () => {
   };
 
   return (
-    <>
-      <ScrollView
-        contentContainerStyle={tw`flex-1`}
-        showsVerticalScrollIndicator={false}
-        style={tw`bg-[#F7F7F7]`}
-      >
-        <View style={tw`flex-1 bg-[#F7F7F7]`}>
-          <BackHeaderTitle title="Add Primary Account" />
+    <ScrollView
+      contentContainerStyle={tw`flex-1`}
+      showsVerticalScrollIndicator={false}
+      style={tw`bg-[#F7F7F7]`}
+    >
+      <View style={tw`flex-1 bg-[#F7F7F7]`}>
+        <BackHeaderTitle title="Add Primary Account" />
 
-          <View style={tw`mx-[20px] mt-[40px] gap-[20px]`}>
-            <CustomSelectPicker
-              data={
-                userSession?.address
-                  ? [
-                      {
-                        label: userSession.address.country,
-                        value: userSession.address.country,
-                      },
-                    ]
-                  : []
-              }
-              placeholder="Select country"
-              value={userSession?.address?.country || "Select country"}
-              handleSetValue={() => {}}
-              label="Country"
-              disable={true}
-            />
+        <View style={tw`mx-[20px] mt-[40px] gap-[20px]`}>
+          <CustomSelectPicker
+            data={
+              userSession?.address
+                ? [
+                    {
+                      label: userSession.address.country,
+                      value: userSession.address.country,
+                    },
+                  ]
+                : []
+            }
+            placeholder="Select country"
+            value={userSession?.address?.country || "Select country"}
+            handleSetValue={() => {}}
+            label="Country"
+            disable={true}
+          />
 
+          <CustomSelectPicker
+            data={filteredBankList}
+            placeholder="Select bank name"
+            value={selectedBank?.value || ""}
+            renderInputSearch={() => (
+              <TextInput
+                placeholder="Search bank"
+                value={searchText}
+                style={{
+                  padding: 15,
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  backgroundColor: "#fff",
+                  margin: 5,
+                }}
+                onChangeText={(text: string) => {
+                  setSearchText(text);
+                  debouncedSearch(text);
+                }}
+              />
+            )}
+            handleSetValue={(item: { label: string; value: string }) => {
+              setSelectedBank(item);
+              setSelectedBranch(null);
+              setBranchList([]);
+              setFilteredBranchList([]);
+              setBranchSearchText("");
+              setIsValidated(false); // Reset validation on bank change
+            }}
+            label="Bank Name"
+            search={true}
+            searchPlaceholder="Search bank"
+            dropdownPosition="bottom"
+            disable={isValidated}
+          />
+
+          {supportedCountryCodes.includes(userSession.address.countryCode) && (
             <CustomSelectPicker
-              data={filteredBankList}
-              placeholder="Select bank name"
-              value={selectedBank?.value || ""}
+              data={filteredBranchList}
+              placeholder="Select bank branch"
+              value={selectedBranch?.value || ""}
               renderInputSearch={() => (
                 <TextInput
-                  placeholder="Search bank"
-                  value={searchText}
+                  placeholder="Search branch"
+                  value={branchSearchText}
                   style={{
                     padding: 15,
                     borderWidth: 1,
@@ -327,142 +362,102 @@ const AddPrimaryAcctScreen = () => {
                     margin: 5,
                   }}
                   onChangeText={(text: string) => {
-                    setSearchText(text);
-                    debouncedSearch(text);
+                    handleBranchSearch(text);
+                    handleBranchSearchDebounced(text);
                   }}
                 />
               )}
-              handleSetValue={(item: { label: string; value: string }) => {
-                setSelectedBank(item);
-                setSelectedBranch(null);
-                setBranchList([]);
-                setFilteredBranchList([]);
-                setBranchSearchText("");
-                setIsValidated(false); // Reset validation on bank change
+              handleSetValue={(item: BankOption) => {
+                setSelectedBranch(item);
+                setIsValidated(false); // Reset validation on branch change
               }}
-              label="Bank Name"
+              label="Bank Branch"
               search={true}
-              searchPlaceholder="Search bank"
+              searchPlaceholder="Search branch"
               dropdownPosition="bottom"
-              disable={isValidated}
+              disable={!selectedBank || isValidated}
             />
+          )}
 
-            {supportedCountryCodes.includes(
-              userSession.address.countryCode,
-            ) && (
-              <CustomSelectPicker
-                data={filteredBranchList}
-                placeholder="Select bank branch"
-                value={selectedBranch?.value || ""}
-                renderInputSearch={() => (
-                  <TextInput
-                    placeholder="Search branch"
-                    value={branchSearchText}
-                    style={{
-                      padding: 15,
-                      borderWidth: 1,
-                      borderColor: "#ccc",
-                      backgroundColor: "#fff",
-                      margin: 5,
-                    }}
-                    onChangeText={(text: string) => {
-                      handleBranchSearch(text);
-                      handleBranchSearchDebounced(text);
-                    }}
-                  />
-                )}
-                handleSetValue={(item: BankOption) => {
-                  setSelectedBranch(item);
-                  setIsValidated(false); // Reset validation on branch change
-                }}
-                label="Bank Branch"
-                search={true}
-                searchPlaceholder="Search branch"
-                dropdownPosition="bottom"
-                disable={!selectedBank || isValidated}
-              />
-            )}
+          <Input
+            label={"Account number"} // Capitalize label
+            keyboardType="numeric"
+            onInputChange={(text: string) => setAcctNumber(text)}
+            placeHolder={`Enter acct number`}
+            value={acctNumber}
+            errorMessage={""}
+            containerStyle={{ flex: 0 }}
+            disabled={isValidated} // Disable when validated to match web
+          />
 
+          <View>
             <Input
-              label={"Account number"} // Capitalize label
-              keyboardType="numeric"
-              onInputChange={(text: string) => setAcctNumber(text)}
-              placeHolder={`Enter acct number`}
-              value={acctNumber}
-              errorMessage={""}
-              containerStyle={{ flex: 0 }}
-              disabled={isValidated} // Disable when validated to match web
+              label="Account Name"
+              disabled={true}
+              onInputChange={() => {}}
+              placeHolder="Account Name"
+              value={acctName}
+              containerStyle={{ flex: 0, opacity: 0.7 }}
             />
-
-            <View>
-              <Input
-                label="Account Name"
-                disabled={true}
-                onInputChange={() => {}}
-                placeHolder="Account Name"
-                value={acctName}
-                containerStyle={{ flex: 0, opacity: 0.7 }}
-              />
-              <Text style={tw`text-[10px] text-gray-500 mt-1 ml-1`}>
-                * Account name is automatically fetched and cannot be edited.
-              </Text>
-            </View>
-          </View>
-
-          <View style={tw`mt-[50px] mx-[20px]`}>
-            {!isValidated ? (
-              <FittedBlackButton
-                onClick={handleStartFlow}
-                value={"Validate Account"}
-                isDisabled={!acctNumber || isValidating || !selectedBank}
-                isLoading={isValidating}
-                style={{ height: 50 }}
-              />
-            ) : (
-              <View style={tw`gap-2`}>
-                <FittedBlackButton
-                  onClick={handleAddPrimaryAccount}
-                  value={
-                    isEditing ? "Update Primary Account" : "Add Primary Account"
-                  }
-                  isDisabled={isSubmitting}
-                  isLoading={isSubmitting}
-                  style={{ height: 50 }}
-                />
-
-                {/* Optional: Add a button to reset validation if they need to change details */}
-                <FittedBlackButton
-                  onClick={() => setIsValidated(false)}
-                  value={"Change Details"}
-                  isDisabled={isSubmitting}
-                  isLoading={false}
-                  style={{
-                    height: 50,
-                    backgroundColor: "transparent",
-                    borderWidth: 1,
-                    borderColor: "#ccc",
-                  }}
-                  textStyle={{ color: "#666" }}
-                />
-              </View>
-            )}
+            <Text style={tw`text-[10px] text-gray-500 mt-1 ml-1`}>
+              * Account name is automatically fetched and cannot be edited.
+            </Text>
           </View>
         </View>
-        <Modal visible={fetchingBanks} transparent animationType="fade">
-          <View style={tw`flex-1 justify-center items-center bg-white`}>
-            <LottieView
-              autoPlay
-              ref={animation}
-              style={{
-                width: 250,
-                height: 250,
-              }}
-              source={loaderAnimation}
+
+        <View style={tw`mt-[50px] mx-[20px]`}>
+          {isValidated ? (
+            <View style={tw`gap-2`}>
+              <FittedBlackButton
+                onClick={handleAddPrimaryAccount}
+                value={
+                  isEditing ? "Update Primary Account" : "Add Primary Account"
+                }
+                isDisabled={isSubmitting}
+                isLoading={isSubmitting}
+                style={{ height: 50 }}
+              />
+
+              {/* Optional: Add a button to reset validation if they need to change details */}
+              <FittedBlackButton
+                onClick={() => setIsValidated(false)}
+                value={"Change Details"}
+                isDisabled={isSubmitting}
+                isLoading={false}
+                style={{
+                  height: 50,
+                  backgroundColor: "transparent",
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                }}
+                textStyle={{ color: "#666" }}
+              />
+            </View>
+          ) : (
+            <FittedBlackButton
+              onClick={handleStartFlow}
+              value={"Validate Account"}
+              isDisabled={!acctNumber || isValidating || !selectedBank}
+              isLoading={isValidating}
+              style={{ height: 50 }}
             />
-          </View>
-        </Modal>
-      </ScrollView>
-    </>
+          )}
+        </View>
+      </View>
+      <Modal visible={fetchingBanks} transparent animationType="fade">
+        <View style={tw`flex-1 justify-center items-center bg-white`}>
+          <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 250,
+              height: 250,
+            }}
+            source={loaderAnimation}
+          />
+        </View>
+      </Modal>
+    </ScrollView>
   );
 };
 

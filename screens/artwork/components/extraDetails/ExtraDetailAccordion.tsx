@@ -16,7 +16,7 @@ interface ExtraDetailAccordionProps {
 export default function ExtraDetailAccordion({
   title,
   items,
-}: ExtraDetailAccordionProps) {
+}: Readonly<ExtraDetailAccordionProps>) {
   const [expand, setExpand] = useState(false);
 
   const handleToggle = () => {

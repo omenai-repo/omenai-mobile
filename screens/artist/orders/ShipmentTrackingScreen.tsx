@@ -7,7 +7,6 @@ import { useRoute } from "@react-navigation/native";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import TrackingDowntimeBlocker from "#components/blockers/tracking/TrackingDowntimeBlocker";
 
-import { OrderShippingDetailsTypes, TrackingEvent } from "#types/types";
 import { SkeletonRow } from "./components/tracking/SkeletonRow";
 import TrackingSearchBar from "./components/tracking/TrackingSearchBar";
 import TrackingResult, {
@@ -57,77 +56,71 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
 
   if (isFlagLoading) {
     return (
-      <>
-        <View style={tw`flex-1 bg-gray-50`}>
-          <BackHeaderTitle title="Track Shipment" />
-          <View style={tw`px-4 py-8`}>
-            {/* Mimic search bar */}
-            <SkeletonRow widthPct="100%" height={120} borderRadius={12} />
-            <View style={tw`h-6`} />
-            {/* Mimic content */}
-            <SkeletonRow widthPct="100%" height={200} borderRadius={12} />
-          </View>
+      <View style={tw`flex-1 bg-gray-50`}>
+        <BackHeaderTitle title="Track Shipment" />
+        <View style={tw`px-4 py-8`}>
+          {/* Mimic search bar */}
+          <SkeletonRow widthPct="100%" height={120} borderRadius={12} />
+          <View style={tw`h-6`} />
+          {/* Mimic content */}
+          <SkeletonRow widthPct="100%" height={200} borderRadius={12} />
         </View>
-      </>
+      </View>
     );
   }
 
   if (isTrackingEnabled) {
     return (
-      <>
-        <View style={tw`flex-1 bg-gray-50`}>
-          <BackHeaderTitle title="Track Shipment" />
+      <View style={tw`flex-1 bg-gray-50`}>
+        <BackHeaderTitle title="Track Shipment" />
 
-          <View style={tw`flex-1`}>
-            <TrackingSearchBar
-              trackingInput={trackingInput}
-              setTrackingInput={setTrackingInput}
-              handleSearch={handleSearch}
-              isLoading={isLoading}
-            />
+        <View style={tw`flex-1`}>
+          <TrackingSearchBar
+            trackingInput={trackingInput}
+            setTrackingInput={setTrackingInput}
+            handleSearch={handleSearch}
+            isLoading={isLoading}
+          />
 
-            <ScrollView
-              style={tw`flex-1`}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 40 }}
-            >
-              {/* Tracking Results */}
-              {trackingData && !isLoading && (
-                <TrackingResult
-                  trackingData={trackingData}
-                  handleSearchAgain={handleSearchAgain}
-                />
-              )}
+          <ScrollView
+            style={tw`flex-1`}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 40 }}
+          >
+            {/* Tracking Results */}
+            {trackingData && !isLoading && (
+              <TrackingResult
+                trackingData={trackingData}
+                handleSearchAgain={handleSearchAgain}
+              />
+            )}
 
-              {/* Error State */}
-              {searchAttempted && !trackingData && !isLoading && (
-                <TrackingNoResult
-                  error={error}
-                  handleSearchAgain={handleSearchAgain}
-                />
-              )}
+            {/* Error State */}
+            {searchAttempted && !trackingData && !isLoading && (
+              <TrackingNoResult
+                error={error}
+                handleSearchAgain={handleSearchAgain}
+              />
+            )}
 
-              {/* Initial State */}
-              {!searchAttempted && !trackingData && !isLoading && (
-                <TrackingInitialState />
-              )}
-            </ScrollView>
-          </View>
+            {/* Initial State */}
+            {!searchAttempted && !trackingData && !isLoading && (
+              <TrackingInitialState />
+            )}
+          </ScrollView>
         </View>
-      </>
+      </View>
     );
   }
 
   return (
-    <>
-      <View style={tw`flex-1 bg-gray-50`}>
-        <BackHeaderTitle title="Track Shipment" />
-        <TrackingDowntimeBlocker
-          trackingNumber={tracking_id || trackingInput}
-          externalLink="https://www.dhl.com/global-en/home/tracking.html"
-          externalLinkText="Track on DHL Global Website"
-        />
-      </View>
-    </>
+    <View style={tw`flex-1 bg-gray-50`}>
+      <BackHeaderTitle title="Track Shipment" />
+      <TrackingDowntimeBlocker
+        trackingNumber={tracking_id || trackingInput}
+        externalLink="https://www.dhl.com/global-en/home/tracking.html"
+        externalLinkText="Track on DHL Global Website"
+      />
+    </View>
   );
 }

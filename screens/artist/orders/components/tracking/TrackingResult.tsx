@@ -137,7 +137,7 @@ export default function TrackingResult({
             </Text>
             <Text style={tw`text-blue-600 text-sm font-bold mt-1 uppercase`}>
               {(trackingData.current_status || "Processing").replaceAll(
-                /_/g,
+                "_",
                 " ",
               )}
             </Text>
@@ -174,7 +174,6 @@ export default function TrackingResult({
           )}
 
           {primaryEventsToShow.map((event, idx) => {
-            const originalIndex = events.indexOf(event);
             const isMostRecent = idx === 0;
 
             return (

@@ -41,7 +41,9 @@ export const WalletTransactionSection = ({
       </View>
 
       <View style={tw`flex-1`}>
-        {!isLoading ? (
+        {isLoading ? (
+          <TransactionSkeletonCard count={5} style={tw`mb-[150px]`} />
+        ) : (
           <View style={tw`gap-2 mb-[150px]`}>
             {sortedTransactions.length === 0 ? (
               <View style={tw`flex-1 justify-center items-center mt-[50px]`}>
@@ -55,7 +57,9 @@ export const WalletTransactionSection = ({
               >
                 {sortedTransactions.map((item, index) => (
                   <WalletTransactionItem
-                    key={index}
+                    key={
+                      item.trans_id || item.$id || item.id || index.toString()
+                    }
                     status={item.trans_status}
                     amount={item.trans_amount}
                     dateTime={item.createdAt}
@@ -66,8 +70,6 @@ export const WalletTransactionSection = ({
               </View>
             )}
           </View>
-        ) : (
-          <TransactionSkeletonCard count={5} style={tw`mb-[150px]`} />
         )}
       </View>
     </View>

@@ -17,7 +17,6 @@ import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import WithdrawalBlocker from "#components/blockers/payments/WithdrawalBlocker";
 import { useFocusEffect } from "@react-navigation/native";
 import FormSkeleton from "#components/skeleton/FormSkeleton";
-import { PrimaryAccountDetails } from "./components/withdraw/PrimaryAccountDetails";
 import { WithdrawalAmountInput } from "./components/withdraw/WithdrawalAmountInput";
 import { WithdrawalPinInput } from "./components/withdraw/WithdrawalPinInput";
 import LongBlackButton from "#components/buttons/LongBlackButton";
@@ -174,57 +173,55 @@ export const WithdrawScreen = ({
 
   if (isWalletWithdrawalEnabled) {
     return (
-      <>
-        <View style={tw`flex-1 bg-[#F7F7F7]`}>
-          <BackHeaderTitle title="Withdraw Funds" />
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <View style={tw`flex-1 bg-[#F7F7F7]`}>
+        <BackHeaderTitle title="Withdraw Funds" />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={tw`flex-1`}
+        >
+          <ScrollView
+            showsVerticalScrollIndicator={false}
             style={tw`flex-1`}
+            contentContainerStyle={[
+              tw`flex-grow`,
+              Platform.OS === "android" && tw`pb-[150px]`,
+            ]}
+            keyboardShouldPersistTaps="handled"
           >
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              style={tw`flex-1`}
-              contentContainerStyle={[
-                tw`flex-grow`,
-                Platform.OS === "android" && tw`pb-[150px]`,
-              ]}
-              keyboardShouldPersistTaps="handled"
-            >
-              <View style={tw`p-[25px]`}>
-                <WithdrawalAmountInput
-                  amount={amount}
-                  setAmount={setAmount}
-                  convertedAmount={convertedAmount}
-                  rate={rate}
-                  loading={loading}
-                  loadAmount={loadAmount}
-                  fetchTransferRate={fetchTransferRate}
-                  amountInputRef={amountInputRef}
-                  walletData={walletData}
-                />
+            <View style={tw`p-[25px]`}>
+              <WithdrawalAmountInput
+                amount={amount}
+                setAmount={setAmount}
+                convertedAmount={convertedAmount}
+                rate={rate}
+                loading={loading}
+                loadAmount={loadAmount}
+                fetchTransferRate={fetchTransferRate}
+                amountInputRef={amountInputRef}
+                walletData={walletData}
+              />
 
-                <WithdrawalPinInput
-                  otpRef={otpRef}
-                  setWalletPin={setWalletPin}
-                  onForgotPin={() =>
-                    navigation.navigate("ForgotPinScreen", {
-                      walletId: walletData?.wallet_id,
-                    })
-                  }
-                  loading={loading}
-                />
+              <WithdrawalPinInput
+                otpRef={otpRef}
+                setWalletPin={setWalletPin}
+                onForgotPin={() =>
+                  navigation.navigate("ForgotPinScreen", {
+                    walletId: walletData?.wallet_id,
+                  })
+                }
+                loading={loading}
+              />
 
-                <LongBlackButton
-                  value="Confirm Withdrawal"
-                  onClick={handleWithdraw}
-                  isLoading={loading}
-                  style={tw`mb-[100px]`}
-                />
-              </View>
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </View>
-      </>
+              <LongBlackButton
+                value="Confirm Withdrawal"
+                onClick={handleWithdraw}
+                isLoading={loading}
+                style={tw`mb-[100px]`}
+              />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
     );
   }
 

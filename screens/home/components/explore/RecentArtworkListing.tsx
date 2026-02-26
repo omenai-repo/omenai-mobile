@@ -2,7 +2,9 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 
-export default function RecentArtworkListing({ data }: { data: any[] }) {
+export default function RecentArtworkListing({
+  data,
+}: Readonly<{ data: any[] }>) {
   return (
     <View style={styles.artworksContainer}>
       <View style={styles.singleColumn}>

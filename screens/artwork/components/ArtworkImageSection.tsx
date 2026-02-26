@@ -8,13 +8,13 @@ export default function ArtworkImageSection({
   setModalVisible,
   isTabletLandscape,
   screenWidth,
-}: {
+}: Readonly<{
   imageUri: string;
   imageDimensions: { width: number; height: number };
   setModalVisible: (visible: boolean) => void;
   isTabletLandscape: boolean;
   screenWidth: number;
-}) {
+}>) {
   return (
     <View
       style={

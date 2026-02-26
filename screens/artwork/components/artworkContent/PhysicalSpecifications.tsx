@@ -11,10 +11,28 @@ interface PhysicalSpecificationsProps {
   };
 }
 
+const getDimensionWithUnit = (
+  value: string | undefined,
+  defaultUnit: string,
+) => {
+  if (!value || value === "0") return "";
+  const hasUnit =
+    value.includes("cm") ||
+    value.includes("in") ||
+    value.includes("kg") ||
+    value.includes("lb");
+  return hasUnit ? value : `${value}${defaultUnit}`;
+};
+
 export default function PhysicalSpecifications({
   dimensions,
 }: PhysicalSpecificationsProps) {
   if (!dimensions) return null;
+
+  const widthToDisplay =
+    dimensions.width && dimensions.width !== "0"
+      ? dimensions.width
+      : dimensions.length;
 
   return (
     <View
@@ -30,34 +48,17 @@ export default function PhysicalSpecifications({
           >
             <Text style={tw`text-sm text-slate-500 font-light`}>Height</Text>
             <Text style={tw`text-sm text-dark`}>
-              {dimensions.height}
-              {dimensions.height.includes("cm") ||
-              dimensions.height.includes("in")
-                ? ""
-                : "cm"}
+              {getDimensionWithUnit(dimensions.height, "cm")}
             </Text>
           </View>
         )}
-        {((!!dimensions.width && dimensions.width !== "0") ||
-          (!!dimensions.length && dimensions.length !== "0")) && (
+        {!!widthToDisplay && widthToDisplay !== "0" && (
           <View
             style={tw`flex-row items-center justify-between flex-1 min-w-[28%] border-b border-slate-200 pb-2`}
           >
             <Text style={tw`text-sm text-slate-500 font-light`}>Width</Text>
             <Text style={tw`text-sm text-dark`}>
-              {dimensions.width && dimensions.width !== "0"
-                ? dimensions.width
-                : dimensions.length}
-              {(dimensions.width && dimensions.width !== "0"
-                ? dimensions.width
-                : dimensions.length
-              )?.includes("cm") ||
-              (dimensions.width && dimensions.width !== "0"
-                ? dimensions.width
-                : dimensions.length
-              )?.includes("in")
-                ? ""
-                : "cm"}
+              {getDimensionWithUnit(widthToDisplay, "cm")}
             </Text>
           </View>
         )}
@@ -67,11 +68,7 @@ export default function PhysicalSpecifications({
           >
             <Text style={tw`text-sm text-slate-500 font-light`}>Weight</Text>
             <Text style={tw`text-sm text-dark`}>
-              {dimensions.weight}
-              {dimensions.weight.includes("kg") ||
-              dimensions.weight.includes("lb")
-                ? ""
-                : "kg"}
+              {getDimensionWithUnit(dimensions.weight, "kg")}
             </Text>
           </View>
         )}

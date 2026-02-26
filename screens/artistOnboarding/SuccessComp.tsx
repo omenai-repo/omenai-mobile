@@ -4,10 +4,10 @@ import {
   Animated,
   useWindowDimensions,
   Easing,
+  Image,
 } from "react-native";
 import React, { useEffect, useRef } from "react";
 import tw from "twrnc";
-import { Image } from "react-native";
 import omenaiLogo from "../../assets/omenai-logo.png";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { SvgXml } from "react-native-svg";

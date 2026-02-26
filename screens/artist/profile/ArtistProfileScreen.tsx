@@ -163,29 +163,27 @@ export default function ArtistProfileScreen() {
   );
 
   return (
-    <>
-      <WithGalleryModal>
-        <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-        {!isLoading ? (
-          !isEligible ? (
-            <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-              <ProfileLayout menuItems={menuItems} headerComponent={Header} />
-            </ScrollWrapper>
-          ) : (
-            <EligibityResponseScreen
-              label={
-                eligibilityResponse ||
-                `You’re currently not eligible to update your credentials. Please try again in:`
-              }
-              daysLeft={eligibilityData?.body?.eligibility?.daysLeft}
-              onPress={() => setIsEligible(false)}
-            />
-          )
+    <WithGalleryModal>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+      {!isLoading ? (
+        !isEligible ? (
+          <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
+            <ProfileLayout menuItems={menuItems} headerComponent={Header} />
+          </ScrollWrapper>
         ) : (
-          <LoadingContainer label="" />
-        )}
-      </WithGalleryModal>
-    </>
+          <EligibityResponseScreen
+            label={
+              eligibilityResponse ||
+              `You’re currently not eligible to update your credentials. Please try again in:`
+            }
+            daysLeft={eligibilityData?.body?.eligibility?.daysLeft}
+            onPress={() => setIsEligible(false)}
+          />
+        )
+      ) : (
+        <LoadingContainer label="" />
+      )}
+    </WithGalleryModal>
   );
 }
 

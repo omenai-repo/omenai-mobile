@@ -16,7 +16,7 @@ export default function ArtworkHeader({
   medium,
   year,
   rarity,
-}: ArtworkHeaderProps) {
+}: Readonly<ArtworkHeaderProps>) {
   return (
     <View style={tw`my-6`}>
       {/* Artwork Title */}

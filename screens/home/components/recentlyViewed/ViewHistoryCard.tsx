@@ -83,14 +83,14 @@ export default function ViewHistoryCard({
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={tw`text-base font-serif leading-snug text-dark font-medium`}
+            style={tw`text-base capitalize font-serif leading-snug text-dark`}
           >
             {artwork}
           </Text>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={tw`text-xs text-slate-500 mt-0.5`}
+            style={tw`text-xs capitalize text-slate-500 mt-0.5 font-sans-regular`}
           >
             {artist}
           </Text>
