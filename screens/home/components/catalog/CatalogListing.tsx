@@ -1,4 +1,4 @@
-import { FlatList, View } from "react-native";
+import { FlatList, View, ListRenderItem } from "react-native";
 import React from "react";
 import { mediums } from "#constants/mediums";
 import { CatalogCardTypes } from "#types/types";
@@ -20,21 +20,10 @@ export default function CatalogListing() {
       />
       <FlatList
         data={mediums}
-        renderItem={({
-          item,
-          index,
-        }: {
-          item: CatalogCardTypes;
-          index: number;
-        }) => (
-          <CatalogCard
-            name={item.name}
-            image={item.image}
-            key={index}
-            value={item.value}
-          />
+        renderItem={({ item }) => (
+          <CatalogCard name={item.name} image={item.image} value={item.value} />
         )}
-        keyExtractor={(_, index) => JSON.stringify(index)}
+        keyExtractor={(item, index) => item.name || index.toString()}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         style={tw`mt-5`}

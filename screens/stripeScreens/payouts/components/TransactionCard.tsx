@@ -15,7 +15,7 @@ export default function TransactionCard({
   gross,
   net,
   date,
-}: TransactionCardProps) {
+}: Readonly<TransactionCardProps>) {
   const PillContainer = ({ label }: { label: string }) => {
     return (
       <View style={{ flexWrap: "wrap" }}>

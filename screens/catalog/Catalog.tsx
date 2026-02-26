@@ -83,28 +83,26 @@ export default function Catalog() {
   }, [refetch]);
 
   return (
-    <>
-      <View style={[styles.mainContainer, { marginTop: insets.top + 16 }]}>
-        <View style={{ zIndex: 100, paddingHorizontal: 20, width: "100%" }}>
-          <FilterButton>
-            <Text style={styles.headerText}>All artworks</Text>
-          </FilterButton>
-        </View>
-
-        <View style={tailwind`z-5 flex-1 w-[${width}px]`}>
-          {isLoading && flatData.length === 0 ? (
-            <MiniArtworkCardLoader />
-          ) : (
-            <ArtworksListing
-              data={flatData}
-              loadingMore={isFetchingNextPage}
-              onEndReached={handleEndReached}
-              onRefresh={handleRefresh}
-            />
-          )}
-        </View>
+    <View style={[styles.mainContainer, { marginTop: insets.top + 16 }]}>
+      <View style={{ zIndex: 100, paddingHorizontal: 20, width: "100%" }}>
+        <FilterButton>
+          <Text style={styles.headerText}>All artworks</Text>
+        </FilterButton>
       </View>
-    </>
+
+      <View style={tailwind`z-5 flex-1 w-[${width}px]`}>
+        {isLoading && flatData.length === 0 ? (
+          <MiniArtworkCardLoader />
+        ) : (
+          <ArtworksListing
+            data={flatData}
+            loadingMore={isFetchingNextPage}
+            onEndReached={handleEndReached}
+            onRefresh={handleRefresh}
+          />
+        )}
+      </View>
+    </View>
   );
 }
 

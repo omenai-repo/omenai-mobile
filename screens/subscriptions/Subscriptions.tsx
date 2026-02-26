@@ -168,25 +168,21 @@ export default function Subscriptions() {
   };
 
   return (
-    <>
-      <View
-        style={{
-          paddingTop: isSubscriptionBillingEnabled ? 0 : insets.top + 16,
-          flex: 1,
-        }}
-      >
-        {isSubscriptionBillingEnabled || isFlagLoading ? (
-          <BackHeaderTitle
-            title="Subscription & Billing"
-            customGoBack={() =>
-              navigation.navigate(screenName.gallery.overview)
-            }
-          />
-        ) : null}
+    <View
+      style={{
+        paddingTop: isSubscriptionBillingEnabled ? 0 : insets.top + 16,
+        flex: 1,
+      }}
+    >
+      {isSubscriptionBillingEnabled || isFlagLoading ? (
+        <BackHeaderTitle
+          title="Subscription & Billing"
+          customGoBack={() => navigation.navigate(screenName.gallery.overview)}
+        />
+      ) : null}
 
-        {renderContent()}
-      </View>
-    </>
+      {renderContent()}
+    </View>
   );
 }
 

@@ -26,7 +26,7 @@ const getDimensionWithUnit = (
 
 export default function PhysicalSpecifications({
   dimensions,
-}: PhysicalSpecificationsProps) {
+}: Readonly<PhysicalSpecificationsProps>) {
   if (!dimensions) return null;
 
   const widthToDisplay =

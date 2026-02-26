@@ -16,10 +16,10 @@ import tw from "twrnc";
 export default function BalanceBox({
   account_id,
   balance,
-}: {
+}: Readonly<{
   account_id: string;
   balance: any;
-}) {
+}>) {
   const [pendingLoginLink, setPendingLoginLink] = useState(false);
 
   const { updateModal } = useModalStore();

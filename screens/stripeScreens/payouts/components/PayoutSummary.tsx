@@ -26,7 +26,7 @@ const SNAP_INTERVAL = CARD_WIDTH + GAP;
 export default function PayoutSummary({
   transactions,
   currency = "USD",
-}: PayoutSummaryProps) {
+}: Readonly<PayoutSummaryProps>) {
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -83,16 +83,16 @@ export default function PayoutSummary({
         onMomentumScrollEnd={onMomentumScrollEnd}
         scrollEventThrottle={16}
       >
-        {data.map((item, index) => (
-          <SummaryCard key={index} label={item.label} value={item.value} />
+        {data.map((item) => (
+          <SummaryCard key={item.label} label={item.label} value={item.value} />
         ))}
       </ScrollView>
 
       {/* Pagination Indicators */}
       <View style={styles.paginationContainer}>
-        {data.map((_, index) => (
+        {data.map((item, index) => (
           <View
-            key={index}
+            key={item.label}
             style={[
               styles.dot,
               {

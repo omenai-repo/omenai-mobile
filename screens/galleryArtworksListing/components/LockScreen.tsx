@@ -47,54 +47,49 @@ export default function LockScreen({ name }: { name: string }) {
   }
 
   return (
-    <>
-      <PremiumStateCard
-        icon="shield"
-        title="Account Verification Required"
-        description={
-          <Text style={tw`text-center text-sm mb-8 text-neutral-300`}>
-            Your account is being verified. An agent will reach out within 24
-            hours.
-            {userType === "gallery" ? (
-              <Text>
-                {"\n\n"}To expedite, click{" "}
-                <Text style={tw`font-bold text-white`}>
-                  'Send Verification Reminder'
-                </Text>{" "}
-                below.
-              </Text>
-            ) : null}
-          </Text>
-        }
-        onBack={() => navigation.goBack()}
-        actionButton={
-          userType === "gallery" ? (
-            <LongWhiteButton
-              value="Send Verification Reminder"
-              onClick={handleRequestGalleryVerification}
-              outline={false}
-              style={{
-                height: 48,
-                backgroundColor: colors.white,
-                opacity: loading ? 0.7 : 1,
-              }}
-              textStyle={{
-                color: colors.primary_black,
-                fontSize: 14,
-                fontWeight: "bold",
-              }}
-              icon={
-                loading ? (
-                  <ActivityIndicator
-                    size="small"
-                    color={colors.primary_black}
-                  />
-                ) : null
-              }
-            />
-          ) : undefined
-        }
-      />
-    </>
+    <PremiumStateCard
+      icon="shield"
+      title="Account Verification Required"
+      description={
+        <Text style={tw`text-center text-sm mb-8 text-neutral-300`}>
+          Your account is being verified. An agent will reach out within 24
+          hours.
+          {userType === "gallery" ? (
+            <Text>
+              {"\n\n"}To expedite, click{" "}
+              <Text style={tw`font-bold text-white`}>
+                'Send Verification Reminder'
+              </Text>{" "}
+              below.
+            </Text>
+          ) : null}
+        </Text>
+      }
+      onBack={() => navigation.goBack()}
+      actionButton={
+        userType === "gallery" ? (
+          <LongWhiteButton
+            value="Send Verification Reminder"
+            onClick={handleRequestGalleryVerification}
+            outline={false}
+            style={{
+              height: 48,
+              backgroundColor: colors.white,
+              opacity: loading ? 0.7 : 1,
+            }}
+            textStyle={{
+              color: colors.primary_black,
+              fontSize: 14,
+              fontWeight: "bold",
+            }}
+            icon={
+              loading ? (
+                <ActivityIndicator size="small" color={colors.primary_black} />
+              ) : null
+            }
+          />
+        ) : undefined
+      }
+    />
   );
 }

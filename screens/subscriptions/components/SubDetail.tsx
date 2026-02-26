@@ -6,6 +6,10 @@ import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { daysLeft } from "#utils/utils_daysLeft";
 import { screenName } from "#constants/screenNames.constants";
+import {
+  SubscriptionModelSchemaTypes,
+  UploadTrackingTypes,
+} from "#types/types";
 
 export type SubData = {
   status: SubscriptionModelSchemaTypes["status"];
@@ -80,17 +84,16 @@ export default function SubDetail({
   const periodPercent = clamp(Math.max(5, 100 - (dLeft / 30) * 100), 0, 100);
 
   // --- badge content
-  const badgeStyles = isActive
-    ? { wrap: tw`bg-green-100`, text: tw`text-green-700` }
-    : isPendingCancel
-    ? { wrap: tw`bg-amber-100`, text: tw`text-amber-800` }
-    : { wrap: tw`bg-red-100`, text: tw`text-red-700` };
+  let badgeStyles = { wrap: tw`bg-green-100`, text: tw`text-green-700` };
+  let badgeText = "ACTIVE";
 
-  const badgeText = isActive
-    ? "ACTIVE"
-    : isPendingCancel
-    ? `ACTIVE • ends in ${dLeft} day${dLeft === 1 ? "" : "s"}`
-    : "CANCELED";
+  if (isPendingCancel) {
+    badgeStyles = { wrap: tw`bg-amber-100`, text: tw`text-amber-800` };
+    badgeText = `ACTIVE • ends in ${dLeft} day${dLeft === 1 ? "" : "s"}`;
+  } else if (!isActive) {
+    badgeStyles = { wrap: tw`bg-red-100`, text: tw`text-red-700` };
+    badgeText = "CANCELED";
+  }
 
   return (
     <View

@@ -7,8 +7,6 @@ import { screenName } from "#constants/screenNames.constants";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 
-import { fontNames } from "#constants/fontNames.constants";
-
 export default function ViewHistoryCard({
   url,
   art_id,

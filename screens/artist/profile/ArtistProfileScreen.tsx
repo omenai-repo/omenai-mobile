@@ -162,12 +162,13 @@ export default function ArtistProfileScreen() {
     </>
   );
 
-  return (
-    <WithGalleryModal>
-      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-      {isLoading ? (
-        <LoadingContainer label="" />
-      ) : isEligible ? (
+  const renderContent = () => {
+    if (isLoading) {
+      return <LoadingContainer label="" />;
+    }
+
+    if (isEligible) {
+      return (
         <EligibityResponseScreen
           label={
             eligibilityResponse ||
@@ -176,11 +177,20 @@ export default function ArtistProfileScreen() {
           daysLeft={eligibilityData?.body?.eligibility?.daysLeft}
           onPress={() => setIsEligible(false)}
         />
-      ) : (
-        <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-          <ProfileLayout menuItems={menuItems} headerComponent={Header} />
-        </ScrollWrapper>
-      )}
+      );
+    }
+
+    return (
+      <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
+        <ProfileLayout menuItems={menuItems} headerComponent={Header} />
+      </ScrollWrapper>
+    );
+  };
+
+  return (
+    <WithGalleryModal>
+      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+      {renderContent()}
     </WithGalleryModal>
   );
 }

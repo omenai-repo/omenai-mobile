@@ -378,56 +378,54 @@ export default function Checkout() {
     }
   };
   return (
-    <>
-      <View style={tw`flex-1 bg-white`}>
-        <BackHeaderTitle title="Checkout" />
-        <ScrollView
-          contentContainerStyle={tw`px-4 py-5`}
-          showsVerticalScrollIndicator={false}
-        >
-          <CheckoutBanner
-            actionLabel={
-              discountEligible
-                ? "Discount Activation"
-                : plan_change_params.action || "Checkout"
-            }
-            planName={plan.name}
-            interval={interval}
-          />
-          <PricingBreakdown
-            isInitialSubscription={isInitialSubscription}
-            days_left={days_left}
-            upgradeCost={upgradeCost}
-            proratedPrice={proratedPrice}
-            grandTotal={finalGrandTotal}
-            currency={currency}
+    <View style={tw`flex-1 bg-white`}>
+      <BackHeaderTitle title="Checkout" />
+      <ScrollView
+        contentContainerStyle={tw`px-4 py-5`}
+        showsVerticalScrollIndicator={false}
+      >
+        <CheckoutBanner
+          actionLabel={
+            discountEligible
+              ? "Discount Activation"
+              : plan_change_params.action || "Checkout"
+          }
+          planName={plan.name}
+          interval={interval}
+        />
+        <PricingBreakdown
+          isInitialSubscription={isInitialSubscription}
+          days_left={days_left}
+          upgradeCost={upgradeCost}
+          proratedPrice={proratedPrice}
+          grandTotal={finalGrandTotal}
+          currency={currency}
+          showCharge={showCharge}
+          discountEligible={discountEligible}
+          discountAmount={
+            interval === "monthly"
+              ? +plan.pricing.monthly_price
+              : +plan.pricing.annual_price
+          }
+        />
+        <PaymentSection
+          isInitialSubscription={isInitialSubscription}
+          plan={plan}
+          interval={interval}
+          sub_data={sub_data}
+          discountEligible={discountEligible}
+        />
+        {!isInitialSubscription && (
+          <CheckoutCTA
+            payLoading={payLoading}
+            migrateLoading={migrateLoading}
             showCharge={showCharge}
-            discountEligible={discountEligible}
-            discountAmount={
-              interval === "monthly"
-                ? +plan.pricing.monthly_price
-                : +plan.pricing.annual_price
-            }
+            handlePayNow={handlePayNow}
+            handleMigrateToPlan={handleMigrateToPlan}
           />
-          <PaymentSection
-            isInitialSubscription={isInitialSubscription}
-            plan={plan}
-            interval={interval}
-            sub_data={sub_data}
-            discountEligible={discountEligible}
-          />
-          {!isInitialSubscription && (
-            <CheckoutCTA
-              payLoading={payLoading}
-              migrateLoading={migrateLoading}
-              showCharge={showCharge}
-              handlePayNow={handlePayNow}
-              handleMigrateToPlan={handleMigrateToPlan}
-            />
-          )}
-          <View style={tw`h-6`} />
-        </ScrollView>
-      </View>
-    </>
+        )}
+        <View style={tw`h-6`} />
+      </ScrollView>
+    </View>
   );
 }

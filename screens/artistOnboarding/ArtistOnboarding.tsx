@@ -444,132 +444,142 @@ const ArtistOnboarding = () => {
     }
   };
 
-  return (
-    <>
-      {screen === 1 ? (
-        <FirstScreen onPress={() => setScreen(2)} />
-      ) : screen === 2 ? (
-        isLoading ? (
+  const renderScreen = () => {
+    if (screen === 1) {
+      return <FirstScreen onPress={() => setScreen(2)} />;
+    }
+
+    if (screen === 2) {
+      if (isLoading) {
+        return (
           <LoadingContainer
             label={
               "This process might take up to minutes, as we’re trying to compile all your onboarding data."
             }
           />
-        ) : (
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={tw`flex-1 bg-[#F7F7F7]`}
+        );
+      }
+
+      return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={tw`flex-1 bg-[#F7F7F7]`}
+        >
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            ref={scrollViewRef}
           >
-            <ScrollView
-              contentContainerStyle={{ flexGrow: 1 }}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-              ref={scrollViewRef}
-            >
-              <View style={tw`mt-[80px] mx-[25px] mb-[60px]`}>
-                <View style={tw`flex-row items-center justify-between`}>
-                  <Image
-                    style={tw`w-[130px] h-[30px]`}
-                    resizeMode="contain"
-                    source={omenaiLogo}
-                  />
-                  <Pressable onPress={logout}>
-                    <Text style={tw`text-[18px] font-semibold`}>Logout</Text>
-                  </Pressable>
-                </View>
-
-                <Text
-                  style={tw`text-[20px] font-medium text-[#1A1A1A]000] mt-[30px]`}
-                >
-                  {getStageTitle()}
-                </Text>
-                <Text
-                  style={tw`text-[14px] text-[#1A1A1A]00099] mt-[10px] flex-wrap mr-[40px]`}
-                >
-                  {stage === "overview"
-                    ? "Please review your information to make sure your information is correct."
-                    : "Fill in the required information to complete your onboarding."}
-                </Text>
-              </View>
-              <View>{renderStageContent()}</View>
-
-              <OnboardingProgressBar
-                stage={stage}
-                currentQuestionIndex={currentQuestionIndex}
-              />
-
-              <EditOnboardingModal
-                isVisible={isEditModalVisible}
-                onClose={() => setIsEditModalVisible(false)}
-                editingKey={editingQuestionKey}
-                editingSocialKey={editingSocialKey}
-                cv={cv}
-                onPickDocument={pickDocument}
-                socials={documentation.socials}
-                onUpdateSocials={updateSocial}
-                onboardingQuestions={onboardingQuestions}
-                onUpdateQuestion={(key, value) => {
-                  setOnboardingQuestions((prev) => ({
-                    ...prev,
-                    [key]: value,
-                  }));
-                }}
-              />
-              <ConfirmationModal
-                isModalVisible={confirmModal}
-                setIsModalVisible={setConfirmModal}
-                confirmBtn={handleSubmit}
-              />
-              {/* Navigation Buttons */}
-
-              <View
-                style={tw.style(`flex-row gap-[30px] mb-[100px]`, {
-                  marginHorizontal: width / 10,
-                  top: height / 25,
-                })}
-              >
-                {currentQuestionIndex !== 0 && (
-                  <Pressable
-                    onPress={handleBack}
-                    style={tw.style(
-                      `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`,
-                    )}
-                  >
-                    <Text style={tw`text-[#1A1A1A]] font-bold text-[14px]`}>
-                      Back
-                    </Text>
-                  </Pressable>
-                )}
-
-                <Pressable
-                  onPress={() => {
-                    if (stage === "questions") {
-                      handleNext();
-                    } else if (stage === "cv_upload") {
-                      handleCVUpload();
-                    } else if (stage === "socials") {
-                      handleSocials();
-                    } else if (stage === "overview") {
-                      setConfirmModal(true);
-                    }
-                  }}
-                  disabled={isNextDisabled()}
-                  style={tw.style(
-                    `h-[51px] rounded-full justify-center items-center flex-1`,
-                    isNextDisabled() ? "bg-[#B5B5B5]" : "bg-[#1A1A1A]",
-                  )}
-                >
-                  <Text style={tw`text-white font-bold text-[14px]`}>Next</Text>
+            <View style={tw`mt-[80px] mx-[25px] mb-[60px]`}>
+              <View style={tw`flex-row items-center justify-between`}>
+                <Image
+                  style={tw`w-[130px] h-[30px]`}
+                  resizeMode="contain"
+                  source={omenaiLogo}
+                />
+                <Pressable onPress={logout}>
+                  <Text style={tw`text-[18px] font-semibold`}>Logout</Text>
                 </Pressable>
               </View>
-            </ScrollView>
-          </KeyboardAvoidingView>
-        )
-      ) : (
-        screen === 3 && <SuccessComp />
-      )}
-    </>
-  );
+
+              <Text
+                style={tw`text-[20px] font-medium text-[#1A1A1A]000] mt-[30px]`}
+              >
+                {getStageTitle()}
+              </Text>
+              <Text
+                style={tw`text-[14px] text-[#1A1A1A]00099] mt-[10px] flex-wrap mr-[40px]`}
+              >
+                {stage === "overview"
+                  ? "Please review your information to make sure your information is correct."
+                  : "Fill in the required information to complete your onboarding."}
+              </Text>
+            </View>
+            <View>{renderStageContent()}</View>
+
+            <OnboardingProgressBar
+              stage={stage}
+              currentQuestionIndex={currentQuestionIndex}
+            />
+
+            <EditOnboardingModal
+              isVisible={isEditModalVisible}
+              onClose={() => setIsEditModalVisible(false)}
+              editingKey={editingQuestionKey}
+              editingSocialKey={editingSocialKey}
+              cv={cv}
+              onPickDocument={pickDocument}
+              socials={documentation.socials}
+              onUpdateSocials={updateSocial}
+              onboardingQuestions={onboardingQuestions}
+              onUpdateQuestion={(key, value) => {
+                setOnboardingQuestions((prev) => ({
+                  ...prev,
+                  [key]: value,
+                }));
+              }}
+            />
+            <ConfirmationModal
+              isModalVisible={confirmModal}
+              setIsModalVisible={setConfirmModal}
+              confirmBtn={handleSubmit}
+            />
+            {/* Navigation Buttons */}
+
+            <View
+              style={tw.style(`flex-row gap-[30px] mb-[100px]`, {
+                marginHorizontal: width / 10,
+                top: height / 25,
+              })}
+            >
+              {currentQuestionIndex !== 0 && (
+                <Pressable
+                  onPress={handleBack}
+                  style={tw.style(
+                    `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`,
+                  )}
+                >
+                  <Text style={tw`text-[#1A1A1A]] font-bold text-[14px]`}>
+                    Back
+                  </Text>
+                </Pressable>
+              )}
+
+              <Pressable
+                onPress={() => {
+                  if (stage === "questions") {
+                    handleNext();
+                  } else if (stage === "cv_upload") {
+                    handleCVUpload();
+                  } else if (stage === "socials") {
+                    handleSocials();
+                  } else if (stage === "overview") {
+                    setConfirmModal(true);
+                  }
+                }}
+                disabled={isNextDisabled()}
+                style={tw.style(
+                  `h-[51px] rounded-full justify-center items-center flex-1`,
+                  isNextDisabled() ? "bg-[#B5B5B5]" : "bg-[#1A1A1A]",
+                )}
+              >
+                <Text style={tw`text-white font-bold text-[14px]`}>Next</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      );
+    }
+
+    if (screen === 3) {
+      return <SuccessComp />;
+    }
+
+    return null;
+  };
+
+  return <>{renderScreen()}</>;
 };
 
 export default ArtistOnboarding;

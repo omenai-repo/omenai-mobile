@@ -23,6 +23,8 @@ import {
 
 const PAGE_SIZE = 15;
 
+const ItemSeparator = () => <View style={tw`h-3`} />;
+
 const SubscriptionHistory = ({ navigation }: any) => {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -94,7 +96,7 @@ const SubscriptionHistory = ({ navigation }: any) => {
           contentContainerStyle={tw`pb-[100px] px-5 pt-2`}
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
-          ItemSeparatorComponent={() => <View style={tw`h-3`} />}
+          ItemSeparatorComponent={ItemSeparator}
           ListFooterComponent={
             displayedCount < fullList.length ? (
               <Loader size={40} />

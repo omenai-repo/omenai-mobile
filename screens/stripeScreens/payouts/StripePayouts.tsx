@@ -1,4 +1,4 @@
-import { StyleSheet, View, RefreshControl } from "react-native";
+import { StyleSheet, RefreshControl } from "react-native";
 import React, { useEffect, useState } from "react";
 
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
