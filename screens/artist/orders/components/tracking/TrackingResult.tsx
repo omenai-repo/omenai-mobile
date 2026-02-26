@@ -136,7 +136,10 @@ export default function TrackingResult({
               Status
             </Text>
             <Text style={tw`text-blue-600 text-sm font-bold mt-1 uppercase`}>
-              {(trackingData.current_status || "Processing").replace(/_/g, " ")}
+              {(trackingData.current_status || "Processing").replaceAll(
+                /_/g,
+                " ",
+              )}
             </Text>
           </View>
         </View>

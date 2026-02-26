@@ -10,14 +10,17 @@ export const validateYear = (value: string, minAge?: number): string[] => {
     .regex(/^\d{4}$/, {
       message: "Invalid year format. Please enter a four-digit number.",
     })
-    .refine((val) => parseInt(val) <= currentYear, {
+    .refine((val) => Number.parseInt(val) <= currentYear, {
       message: `Year must not be greater than ${currentYear}.`,
     });
 
   if (minAge !== undefined) {
-    schema = schema.refine((val) => currentYear - parseInt(val) >= minAge, {
-      message: `Minimum ${minAge} years.`,
-    });
+    schema = schema.refine(
+      (val) => currentYear - Number.parseInt(val) >= minAge,
+      {
+        message: `Minimum ${minAge} years.`,
+      },
+    );
   }
 
   const result = schema.safeParse(value);

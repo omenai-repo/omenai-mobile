@@ -55,7 +55,7 @@ export default function ExtraDetailAccordion({
                   item.hasLeftBorder && `border-l border-neutral-200 pl-3`,
                 )}
               >
-                {item.icon && item.icon}
+                {item?.icon}
                 <Text style={tw`text-sm text-neutral-500 flex-1`}>
                   {item.text}
                 </Text>
