@@ -50,51 +50,45 @@ export default function ViewCredentialsScreen() {
   const documentation = credentials.documentation;
 
   return (
-    <>
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <BackHeaderTitle title="View Credentials" />
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={tw`pt-[40px] pb-[150px]`}
+    <View style={tw`flex-1 bg-[#F7F7F7]`}>
+      <BackHeaderTitle title="View Credentials" />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={tw`pt-[40px] pb-[150px]`}
+      >
+        <View
+          style={tw.style(
+            `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
+            {
+              marginHorizontal: width / 18,
+            },
+          )}
         >
-          <View
-            style={tw.style(
-              `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
-              {
-                marginHorizontal: width / 18,
-              },
-            )}
-          >
-            {/* Categorization Answers */}
-            {Object.entries(answers).map(([key, value]) => {
-              const questionText =
-                questions.find((q) => q.key === key)?.text || key;
-              if (!value || String(value).trim() === "") return null;
-              return (
-                <ViewItem
-                  key={key}
-                  title={questionText}
-                  value={String(value)}
-                />
-              );
-            })}
+          {/* Categorization Answers */}
+          {Object.entries(answers).map(([key, value]) => {
+            const questionText =
+              questions.find((q) => q.key === key)?.text || key;
+            if (!value || String(value).trim() === "") return null;
+            return (
+              <ViewItem key={key} title={questionText} value={String(value)} />
+            );
+          })}
 
-            {/* Social Links */}
-            {Object.entries(documentation?.socials).map(([key, value]) =>
-              value ? (
-                <ViewItem
-                  key={key}
-                  title={key.toUpperCase()}
-                  value={String(value)}
-                />
-              ) : null,
-            )}
+          {/* Social Links */}
+          {Object.entries(documentation?.socials).map(([key, value]) =>
+            value ? (
+              <ViewItem
+                key={key}
+                title={key.toUpperCase()}
+                value={String(value)}
+              />
+            ) : null,
+          )}
 
-            {/* CV */}
-            {cv && <ViewItem title="CV Document" value={cv} isDownloadable />}
-          </View>
-        </ScrollView>
-      </View>
-    </>
+          {/* CV */}
+          {cv && <ViewItem title="CV Document" value={cv} isDownloadable />}
+        </View>
+      </ScrollView>
+    </View>
   );
 }

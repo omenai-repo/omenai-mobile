@@ -42,7 +42,30 @@ const QuestionContainer = ({
       <View style={tw`h-[1px] bg-[#00000033] my-[20px] mx-[40px]`} />
 
       {/* Conditional Input for Bio, Solo, and Group */}
-      {!options ? (
+      {options ? (
+        // Updated: Special handling for Biennale
+        <View>
+          {options.map((option) => (
+            <Pressable
+              key={option}
+              onPress={() => onSelect(option)}
+              style={tw.style(
+                `py-[10px] justify-center items-center rounded-md mx-[35px]`,
+                value === option && "bg-[#1A1A1A]",
+              )}
+            >
+              <Text
+                style={tw.style(
+                  `text-[16px]`,
+                  value === option && "text-[#FFFFFF]",
+                )}
+              >
+                {option}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : (
         <>
           <TextInput
             style={tw.style(
@@ -107,29 +130,6 @@ const QuestionContainer = ({
               );
             })()}
         </>
-      ) : (
-        // Updated: Special handling for Biennale
-        <View>
-          {options.map((option) => (
-            <Pressable
-              key={option}
-              onPress={() => onSelect(option)}
-              style={tw.style(
-                `py-[10px] justify-center items-center rounded-md mx-[35px]`,
-                value === option && "bg-[#1A1A1A]",
-              )}
-            >
-              <Text
-                style={tw.style(
-                  `text-[16px]`,
-                  value === option && "text-[#FFFFFF]",
-                )}
-              >
-                {option}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
       )}
     </Animated.View>
   );

@@ -140,72 +140,70 @@ export const ForgotPinScreen = ({
   };
 
   return (
-    <>
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <BackHeaderTitle title="Verify OTP" />
+    <View style={tw`flex-1 bg-[#F7F7F7]`}>
+      <BackHeaderTitle title="Verify OTP" />
 
-        <View style={tw`px-[25px] pt-[40px]`}>
-          <Text style={tw`mb-6 text-base text-gray-600 text-center`}>
-            An OTP has been sent to your registered email. Please enter the
-            4-digit code below:
-          </Text>
+      <View style={tw`px-[25px] pt-[40px]`}>
+        <Text style={tw`mb-6 text-base text-gray-600 text-center`}>
+          An OTP has been sent to your registered email. Please enter the
+          4-digit code below:
+        </Text>
 
-          <View style={tw`my-4 mb-8`}>
-            <OtpInput
-              ref={otpInputRef}
-              numberOfDigits={4}
-              onTextChange={setOtp}
-              onFilled={(text) => setOtp(text)}
-              type="numeric"
-              secureTextEntry={true}
-              secureTextEntryDelay={1000}
-              focusColor="#000000"
-              theme={{
-                pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-md bg-white`,
-                pinCodeTextStyle: tw`text-xl text-center`,
-                focusedPinCodeContainerStyle: tw`border-black border-2`,
-              }}
-              disabled={loading}
-            />
-          </View>
-
-          <LongBlackButton
-            value="Verify OTP"
-            onClick={handleVerifyOtp}
-            isLoading={loading}
-            isDisabled={loading || otp.length !== 4}
+        <View style={tw`my-4 mb-8`}>
+          <OtpInput
+            ref={otpInputRef}
+            numberOfDigits={4}
+            onTextChange={setOtp}
+            onFilled={(text) => setOtp(text)}
+            type="numeric"
+            secureTextEntry={true}
+            secureTextEntryDelay={1000}
+            focusColor="#000000"
+            theme={{
+              pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-md bg-white`,
+              pinCodeTextStyle: tw`text-xl text-center`,
+              focusedPinCodeContainerStyle: tw`border-black border-2`,
+            }}
+            disabled={loading}
           />
-
-          <Pressable
-            onPress={handleResendOtp}
-            style={tw`mt-4`}
-            disabled={loadOtp || countdown > 0}
-          >
-            <Text
-              style={[
-                tw`text-[#1A1A1A] text-center`,
-                countdown > 0 ? tw`text-gray-400` : {},
-              ]}
-            >
-              {resendText}
-            </Text>
-          </Pressable>
         </View>
 
-        <Modal visible={loadOtp} transparent animationType="fade">
-          <View style={tw`flex-1 justify-center items-center bg-white`}>
-            <LottieView
-              autoPlay
-              ref={animation}
-              style={{
-                width: 250,
-                height: 250,
-              }}
-              source={loaderAnimation}
-            />
-          </View>
-        </Modal>
+        <LongBlackButton
+          value="Verify OTP"
+          onClick={handleVerifyOtp}
+          isLoading={loading}
+          isDisabled={loading || otp.length !== 4}
+        />
+
+        <Pressable
+          onPress={handleResendOtp}
+          style={tw`mt-4`}
+          disabled={loadOtp || countdown > 0}
+        >
+          <Text
+            style={[
+              tw`text-[#1A1A1A] text-center`,
+              countdown > 0 ? tw`text-gray-400` : {},
+            ]}
+          >
+            {resendText}
+          </Text>
+        </Pressable>
       </View>
-    </>
+
+      <Modal visible={loadOtp} transparent animationType="fade">
+        <View style={tw`flex-1 justify-center items-center bg-white`}>
+          <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 250,
+              height: 250,
+            }}
+            source={loaderAnimation}
+          />
+        </View>
+      </Modal>
+    </View>
   );
 };

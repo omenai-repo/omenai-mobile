@@ -16,7 +16,7 @@ export default function ArtworkPriceSection({
   shouldShowPrice,
   usd_price,
   userType,
-}: ArtworkPriceSectionProps) {
+}: Readonly<ArtworkPriceSectionProps>) {
   return (
     <View>
       <Text

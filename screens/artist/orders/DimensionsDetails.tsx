@@ -1,15 +1,6 @@
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  View,
-  Text,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import React, { useState, useMemo } from "react";
 import tw from "twrnc";
-import { colors } from "#config/colors.config";
-import { Ionicons } from "@expo/vector-icons";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { updateShippingQuote } from "#services/orders/updateShippingQuote";
@@ -19,11 +10,6 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { validateOrderMeasurement } from "#lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
 import { useAppStore } from "#store/app/appStore";
-import { format } from "date-fns";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import ToggleButton from "#components/forms/ToggleButton";
-import DimensionInput from "#components/forms/DimensionInput";
-import AlertCard from "#components/general/AlertCard";
 import { Analytics } from "#utils/analytics";
 import PackagingSelector from "#components/packaging/PackagingSelector";
 import { PackagingType } from "#constants/packaging_data";
@@ -32,6 +18,11 @@ import {
   checkIfRolledPassesLimit,
 } from "#utils/shippingLimits";
 import CarrierInterventionCard from "#components/packaging/CarrierInterventionCard";
+import ExclusivityCheck from "./components/dimensions/ExclusivityCheck";
+import CustomDimensionsInput from "./components/dimensions/CustomDimensionsInput";
+import SelectedDimensionsSummary from "./components/dimensions/SelectedDimensionsSummary";
+import ExhibitionOptions from "./components/dimensions/ExhibitionOptions";
+import AgreementSection from "./components/dimensions/AgreementSection";
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -68,7 +59,6 @@ const DimensionsDetails = () => {
   const [isOnExhibition, setIsOnExhibition] = useState(false);
   const [expoEndDate, setExpoEndDate] = useState<Date | null>(null);
   const [isChecked, setIsChecked] = useState(false);
-  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
   // Intervention states
   const [hasDeclinedRolled, setHasDeclinedRolled] = useState(false);
@@ -140,14 +130,6 @@ const DimensionsDetails = () => {
       carrier || "",
     );
   }, [artDims, carrier]);
-
-  const showDatePicker = () => setIsDatePickerVisible(true);
-  const hideDatePicker = () => setIsDatePickerVisible(false);
-
-  const handleConfirm = (date: Date) => {
-    setExpoEndDate(date);
-    hideDatePicker();
-  };
 
   const handlePresetSelect = (details: {
     length: string;
@@ -302,301 +284,101 @@ const DimensionsDetails = () => {
   };
 
   return (
-    <>
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <BackHeaderTitle title="Packaging Dimensions" />
+    <View style={tw`flex-1 bg-[#F7F7F7]`}>
+      <BackHeaderTitle title="Packaging Dimensions" />
 
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={tw`flex-1`}
-        >
-          <ScrollView nestedScrollEnabled={true}>
-            <View style={tw`mt-[20px] mx-[20px]`}>
-              {/* Packaging Selector with Presets */}
-              {userType === "artist" &&
-                (exclusivityType === "non-exclusive" || !exclusivityType) && (
-                  <View
-                    style={tw`mb-5 flex-row bg-amber-50 border border-amber-100 rounded-md p-3`}
-                  >
-                    <Ionicons
-                      name="warning"
-                      size={16}
-                      color="#D97706"
-                      style={tw`mt-0.5 mr-2`}
-                    />
-                    <View style={tw`flex-1`}>
-                      <Text style={tw`text-sm font-semibold text-gray-900`}>
-                        Exclusivity Check
-                      </Text>
-                      <Text style={tw`text-xs text-gray-600 mt-1 leading-5`}>
-                        Note: This artwork is non-exclusive. Please ensure it
-                        has not been sold elsewhere before proceeding.
-                      </Text>
-                    </View>
-                  </View>
-                )}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={tw`flex-1`}
+      >
+        <ScrollView nestedScrollEnabled={true}>
+          <View style={tw`mt-[20px] mx-[20px]`}>
+            {/* Packaging Selector with Presets */}
+            <ExclusivityCheck
+              userType={userType}
+              exclusivityType={exclusivityType}
+            />
 
-              <PackagingSelector
-                artDimensions={artDims}
-                packagingType={packagingType}
+            <PackagingSelector
+              artDimensions={artDims}
+              packagingType={packagingType}
+              carrier={carrier || "Courier"}
+              onTypeChange={setPackagingType}
+              onSelect={handlePresetSelect}
+            />
+
+            {/* Custom Dimension Inputs (shown when custom selected) */}
+            <CustomDimensionsInput
+              usePreset={usePreset}
+              dimensions={dimensions}
+              setDimensions={setDimensions}
+              formErrors={formErrors}
+              handleValidationChecks={handleValidationChecks}
+            />
+
+            {/* Selected Dimensions Summary */}
+            <SelectedDimensionsSummary
+              usePreset={usePreset}
+              dimensions={dimensions as any}
+            />
+          </View>
+
+          {isCurrentlyOversized || hasDeclinedRolled ? (
+            <View style={tw`mx-4 mb-10`}>
+              <CarrierInterventionCard
+                orderId={orderId}
                 carrier={carrier || "Courier"}
-                onTypeChange={setPackagingType}
-                onSelect={handlePresetSelect}
+                hasDeclined={hasDeclinedRolled}
+                canBeRolled={canBeRolled}
+                packagingType={packagingType}
+                onDecline={() => setHasDeclinedRolled(true)}
+                onSwitchToRolled={() => {
+                  setPackagingType("rolled");
+                  setHasDeclinedRolled(false);
+                }}
+                onTryCustomCrate={() => {
+                  setUsePreset(false);
+                  setDimensions({
+                    length: "",
+                    width: "",
+                    height: "",
+                    weight: "",
+                  });
+                  setHasDeclinedRolled(false);
+                }}
+              />
+            </View>
+          ) : (
+            <View>
+              <ExhibitionOptions
+                userType={userType}
+                isOnExhibition={isOnExhibition}
+                setIsOnExhibition={setIsOnExhibition}
+                expoEndDate={expoEndDate}
+                setExpoEndDate={setExpoEndDate}
               />
 
-              {/* Custom Dimension Inputs (shown when custom selected) */}
-              {!usePreset && (
-                <View style={tw`gap-3 mt-4`}>
-                  <Text style={tw`text-sm font-medium text-gray-700 mb-2`}>
-                    Enter Custom Dimensions (inches / kg)
-                  </Text>
-                  {(["length", "width", "height"] as const).map((field) => (
-                    <DimensionInput
-                      key={field}
-                      field={field}
-                      unit="in"
-                      value={dimensions[field]}
-                      errorMessage={formErrors[field]}
-                      onInputChange={(text) =>
-                        setDimensions((prev) => ({ ...prev, [field]: text }))
-                      }
-                      onValidation={(text) =>
-                        handleValidationChecks(field, text)
-                      }
-                    />
-                  ))}
-                  <DimensionInput
-                    field="weight"
-                    unit="kg"
-                    value={dimensions.weight}
-                    errorMessage={formErrors.weight}
-                    onInputChange={(text) =>
-                      setDimensions((prev) => ({ ...prev, weight: text }))
-                    }
-                    onValidation={(text) =>
-                      handleValidationChecks("weight", text)
-                    }
-                  />
-                </View>
-              )}
+              {/* Agreement Section */}
+              <AgreementSection
+                userType={userType}
+                isChecked={isChecked}
+                setIsChecked={setIsChecked}
+              />
 
-              {/* Selected Dimensions Summary */}
-              {usePreset && dimensions.length && (
-                <View
-                  style={tw`bg-white border border-gray-200 rounded-md p-4 mt-2`}
-                >
-                  <Text
-                    style={tw`text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4`}
-                  >
-                    Selected Package Details
-                  </Text>
-                  <View style={tw`flex-row justify-between`}>
-                    <View style={tw`flex-1 mr-4`}>
-                      <Text style={tw`text-[10px] text-gray-400 mb-1`}>
-                        DIMENSIONS
-                      </Text>
-                      <Text style={tw`text-sm font-medium text-gray-900`}>
-                        {dimensions.length} × {dimensions.width} ×{" "}
-                        {dimensions.height} cm
-                      </Text>
-                      <Text style={tw`text-xs text-gray-500 mt-0.5`}>
-                        {(Number(dimensions.length) / 2.54).toFixed(1)} ×{" "}
-                        {(Number(dimensions.width) / 2.54).toFixed(1)} ×{" "}
-                        {(Number(dimensions.height) / 2.54).toFixed(1)} in
-                      </Text>
-                    </View>
-                    <View style={tw`items-end`}>
-                      <Text style={tw`text-[10px] text-gray-400 mb-1`}>
-                        WEIGHT
-                      </Text>
-                      <Text style={tw`text-sm font-medium text-gray-900`}>
-                        {dimensions.weight} kg
-                      </Text>
-                      <Text style={tw`text-xs text-gray-500 mt-0.5`}>
-                        {(Number(dimensions.weight) * 2.20462).toFixed(1)} lbs
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              )}
-            </View>
-
-            {isCurrentlyOversized || hasDeclinedRolled ? (
-              <View style={tw`mx-4 mb-10`}>
-                <CarrierInterventionCard
-                  orderId={orderId}
-                  carrier={carrier || "Courier"}
-                  hasDeclined={hasDeclinedRolled}
-                  canBeRolled={canBeRolled}
-                  packagingType={packagingType}
-                  onDecline={() => setHasDeclinedRolled(true)}
-                  onSwitchToRolled={() => {
-                    setPackagingType("rolled");
-                    setHasDeclinedRolled(false);
-                  }}
-                  onTryCustomCrate={() => {
-                    setUsePreset(false);
-                    setDimensions({
-                      length: "",
-                      width: "",
-                      height: "",
-                      weight: "",
-                    });
-                    setHasDeclinedRolled(false);
-                  }}
+              {/* Submit Button */}
+              <View style={tw`mt-12 mx-5 mb-36`}>
+                <LongBlackButton
+                  value="Accept Order"
+                  onClick={handleSubmit}
+                  isLoading={isLoading}
+                  isDisabled={checkIsDisabled()}
                 />
               </View>
-            ) : (
-              <View>
-                {/* Exhibition Options (Gallery Only) */}
-                {userType === "gallery" && (
-                  <View style={tw`mt-5 mx-[20px]`}>
-                    <Text style={tw`text-sm text-gray-600 mb-3`}>
-                      Is artwork on exhibition?
-                    </Text>
-                    <View style={tw`flex-row gap-4`}>
-                      <View style={tw`flex-1`}>
-                        <ToggleButton
-                          label="Yes"
-                          isSelected={isOnExhibition}
-                          onPress={() => setIsOnExhibition(true)}
-                        />
-                      </View>
-                      <View style={tw`flex-1`}>
-                        <ToggleButton
-                          label="No"
-                          isSelected={!isOnExhibition}
-                          onPress={() => {
-                            setIsOnExhibition(false);
-                            setExpoEndDate(null);
-                          }}
-                        />
-                      </View>
-                    </View>
-
-                    {isOnExhibition && (
-                      <View style={tw`mt-4`}>
-                        <View
-                          style={tw`mb-3 flex-row bg-blue-50 border border-blue-100 rounded-md p-3`}
-                        >
-                          <Ionicons
-                            name="information-circle"
-                            size={18}
-                            color="#2563EB"
-                            style={tw`mt-0.5 mr-2`}
-                          />
-                          <View style={tw`flex-1`}>
-                            <Text
-                              style={tw`text-sm font-semibold text-blue-700`}
-                            >
-                              Automated Logistics
-                            </Text>
-                            <Text
-                              style={tw`text-xs text-blue-700 mt-1 leading-5`}
-                            >
-                              Select when the exhibition ends. A shipment
-                              request will be automatically triggered on this
-                              specific date and time.
-                            </Text>
-                          </View>
-                        </View>
-
-                        <Text style={tw`text-sm text-gray-600 mb-3`}>
-                          when does the exhibition end?
-                        </Text>
-                        <Pressable
-                          onPress={showDatePicker}
-                          style={tw`bg-white border border-gray-200 rounded-md px-4 py-3`}
-                        >
-                          <Text style={tw`text-gray-900`}>
-                            {expoEndDate
-                              ? format(expoEndDate, "MMM dd, yyyy - hh:mm a")
-                              : "Select date and time"}
-                          </Text>
-                        </Pressable>
-                        <DateTimePickerModal
-                          isVisible={isDatePickerVisible}
-                          mode="datetime"
-                          onConfirm={handleConfirm}
-                          onCancel={hideDatePicker}
-                          minimumDate={new Date()}
-                          display={Platform.OS === "ios" ? "inline" : "default"}
-                        />
-                      </View>
-                    )}
-                  </View>
-                )}
-
-                {/* Agreement Section */}
-                <View style={tw`mt-6 mx-5`}>
-                  {userType === "gallery" ? (
-                    <>
-                      <AlertCard
-                        title="Please review carefully"
-                        description="By accepting this order, you agree to hold the artwork for 24 hours to allow for payment and shipment processing. If the piece is on exhibition and paid for by this buyer, shipment will be scheduled at the exhibition's end date"
-                      />
-
-                      <Pressable
-                        onPress={() => setIsChecked(!isChecked)}
-                        style={tw`mt-4 flex-row items-center gap-3`}
-                      >
-                        <View
-                          style={tw`w-5 h-5 rounded-full border-2 border-gray-400 items-center justify-center`}
-                        >
-                          {isChecked && (
-                            <View
-                              style={[
-                                tw`w-3 h-3 rounded-full`,
-                                { backgroundColor: colors.primary_black },
-                              ]}
-                            />
-                          )}
-                        </View>
-                        <Text style={tw`text-sm text-gray-600 font-medium`}>
-                          I agree and continue
-                        </Text>
-                      </Pressable>
-                    </>
-                  ) : (
-                    <Pressable
-                      onPress={() => setIsChecked(!isChecked)}
-                      style={tw`bg-white border border-gray-200 rounded-md p-4 flex-row gap-3 shadow-sm`}
-                    >
-                      <View style={tw`mt-0.5`}>
-                        <Ionicons
-                          name={isChecked ? "checkbox" : "square-outline"}
-                          size={24}
-                          color={isChecked ? colors.primary_black : "#9CA3AF"}
-                        />
-                      </View>
-                      <View style={tw`flex-1`}>
-                        <Text style={tw`text-sm font-bold text-gray-900`}>
-                          Acknowledge Terms
-                        </Text>
-                        <Text style={tw`text-xs text-gray-500 leading-5`}>
-                          I confirm the selected packaging is sufficient and
-                          ready for pickup.
-                        </Text>
-                      </View>
-                    </Pressable>
-                  )}
-                </View>
-
-                {/* Submit Button */}
-                <View style={tw`mt-12 mx-5 mb-36`}>
-                  <LongBlackButton
-                    value="Accept Order"
-                    onClick={handleSubmit}
-                    isLoading={isLoading}
-                    isDisabled={checkIsDisabled()}
-                  />
-                </View>
-              </View>
-            )}
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
-    </>
+            </View>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

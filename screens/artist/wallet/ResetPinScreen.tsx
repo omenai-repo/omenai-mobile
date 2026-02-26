@@ -157,8 +157,8 @@ export const ResetPinScreen = ({
           <Text style={tw`font-semibold text-[13px] mb-3 text-[#1A1A1A]`}>
             PIN requirements:
           </Text>
-          {PIN_GUIDELINES.map((rule, i) => (
-            <View key={i} style={tw`flex-row items-start gap-2 mb-2`}>
+          {PIN_GUIDELINES.map((rule) => (
+            <View key={rule} style={tw`flex-row items-start gap-2 mb-2`}>
               <Ionicons
                 name="checkmark-circle-outline"
                 size={16}

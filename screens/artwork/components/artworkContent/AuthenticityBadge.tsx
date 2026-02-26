@@ -10,7 +10,7 @@ interface AuthenticityBadgeProps {
 
 export default function AuthenticityBadge({
   certificateOfAuthenticity,
-}: AuthenticityBadgeProps) {
+}: Readonly<AuthenticityBadgeProps>) {
   if (certificateOfAuthenticity?.toLowerCase() !== "yes") return null;
 
   return (

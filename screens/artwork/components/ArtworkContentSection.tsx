@@ -8,7 +8,6 @@ import ArtworkHeader from "./artworkContent/ArtworkHeader";
 import PhysicalSpecifications from "./artworkContent/PhysicalSpecifications";
 import ArtworkPriceSection from "./artworkContent/ArtworkPriceSection";
 import ArtworkActionButtons from "./artworkContent/ArtworkActionButtons";
-import AuthenticityBadge from "./artworkContent/AuthenticityBadge";
 
 export default function ArtworkContentSection({
   artwork,
@@ -16,13 +15,13 @@ export default function ArtworkContentSection({
   isTabletLandscape,
   isTabletSize,
   primaryButton,
-}: {
+}: Readonly<{
   artwork: ArtworkDataType;
   userType: string;
   isTabletLandscape: boolean;
   isTabletSize: boolean;
   primaryButton: React.ReactNode;
-}) {
+}>) {
   return (
     <View style={isTabletLandscape ? [tw`pl-5`, { flex: 0.5 }] : tw``}>
       <ArtworkHeader
@@ -41,10 +40,6 @@ export default function ArtworkContentSection({
         usd_price={artwork.pricing.usd_price}
         userType={userType}
       />
-
-      {/* <AuthenticityBadge
-        certificateOfAuthenticity={artwork.certificate_of_authenticity}
-      /> */}
 
       <ArtworkActionButtons
         primaryButton={primaryButton}

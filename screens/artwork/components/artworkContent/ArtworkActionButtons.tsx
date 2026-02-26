@@ -17,7 +17,7 @@ export default function ArtworkActionButtons({
   likeIds,
   art_id,
   impressions,
-}: ArtworkActionButtonsProps) {
+}: Readonly<ArtworkActionButtonsProps>) {
   return (
     <View style={tw`gap-4 mt-6 w-full`}>
       <View style={tw`w-full`}>{primaryButton}</View>
