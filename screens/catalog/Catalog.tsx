@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { Text, View, Dimensions } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { colors } from "#config/colors.config";
 import FilterButton from "#components/filter/FilterButton";
@@ -83,10 +83,19 @@ export default function Catalog() {
   }, [refetch]);
 
   return (
-    <View style={[styles.mainContainer, { marginTop: insets.top + 16 }]}>
-      <View style={{ zIndex: 100, paddingHorizontal: 20, width: "100%" }}>
+    <View
+      style={[tailwind`flex-1 items-center`, { marginTop: insets.top + 16 }]}
+    >
+      <View style={tailwind`z-50 px-5 w-full mb-4`}>
         <FilterButton>
-          <Text style={styles.headerText}>All artworks</Text>
+          <Text
+            style={[
+              tailwind`text-lg font-sans-medium`,
+              { color: colors.primary_black },
+            ]}
+          >
+            Discover Artworks
+          </Text>
         </FilterButton>
       </View>
 
@@ -105,15 +114,3 @@ export default function Catalog() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: colors.primary_black,
-  },
-});
