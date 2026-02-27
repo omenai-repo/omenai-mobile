@@ -24,53 +24,51 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   placeholder = "Select",
 }) => {
   return (
-    <View style={[tw`w-full h-[50px]`, style]}>
-      <Dropdown
-        style={[
-          tw`h-[50px] bg-white rounded-md border border-gray-200 px-4`,
-          style,
-        ]}
-        placeholderStyle={tw`text-base text-gray-800 font-medium`}
-        selectedTextStyle={tw`text-base text-gray-800 font-medium`}
-        inputSearchStyle={tw`h-10 text-base`}
-        iconStyle={tw`w-5 h-5`}
-        data={data}
-        search={false}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={placeholder}
-        value={selectedValue}
-        onChange={(item) => {
-          onSelect(item.value);
-        }}
-        renderItem={(item) => {
-          const isSelected = item.value === selectedValue;
-          return (
-            <View
+    <Dropdown
+      style={[
+        tw`h-[42px] bg-white rounded-md border border-gray-200 px-3`,
+        style,
+      ]}
+      placeholderStyle={tw`text-[13px] text-gray-800 font-sans-medium`}
+      selectedTextStyle={tw`text-[13px] text-gray-800 font-sans-medium`}
+      inputSearchStyle={tw`h-8 text-[13px] font-sans-regular`}
+      iconStyle={tw`w-4 h-4`}
+      data={data}
+      search={false}
+      maxHeight={300}
+      labelField="label"
+      valueField="value"
+      placeholder={placeholder}
+      value={selectedValue}
+      onChange={(item) => {
+        onSelect(item.value);
+      }}
+      renderItem={(item) => {
+        const isSelected = item.value === selectedValue;
+        return (
+          <View
+            style={[
+              tw`p-3 flex-row justify-between items-center`,
+              isSelected ? tw`bg-slate-100` : null,
+            ]}
+          >
+            <Text
               style={[
-                tw`p-4 flex-row justify-between items-center`,
-                isSelected ? tw`bg-slate-100` : null,
+                tw`text-sm`,
+                isSelected
+                  ? tw`text-neutral-900 font-sans-medium`
+                  : tw`text-gray-800 font-sans-regular`,
               ]}
             >
-              <Text
-                style={[
-                  tw`text-base`,
-                  isSelected
-                    ? tw`text-neutral-900 font-bold`
-                    : tw`text-gray-800`,
-                ]}
-              >
-                {item.label}
-              </Text>
-              {isSelected && (
-                <Text style={tw`text-neutral-900 font-bold`}>✓</Text>
-              )}
-            </View>
-          );
-        }}
-      />
-    </View>
+              {item.label}
+            </Text>
+            {isSelected && (
+              <Text style={tw`text-neutral-900 font-sans-medium`}>✓</Text>
+            )}
+          </View>
+        );
+      }}
+    />
   );
 };
 

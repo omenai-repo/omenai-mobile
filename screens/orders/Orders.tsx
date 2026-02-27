@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, View } from "react-native";
 import tw from "twrnc";
-
 import OrderslistingLoader from "#screens/galleryOrders/components/OrderslistingLoader";
 import TabSwitcher from "#components/orders/TabSwitcher";
 import EmptyOrdersListing from "#screens/galleryOrders/components/EmptyOrdersListing";
@@ -151,7 +150,7 @@ export default function Orders() {
       >
         <View
           style={[
-            tw`flex-row items-center gap-2 mb-[25px] z-50 w-full`,
+            tw`flex-row items-center gap-2 mb-6 z-50 w-full`,
             { elevation: 50 },
           ]}
         >

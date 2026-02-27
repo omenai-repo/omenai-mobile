@@ -11,33 +11,30 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
 import { SEARCH_QK } from "#utils/queryKeys";
-import { useDebounce } from "#hooks/useDebounce";
+
 import { useModalStore } from "#store/modal/modalStore";
 
 export default function SearchResults() {
-  const { searchQuery } = useSearchStore();
+  const { searchQuery, submittedQuery } = useSearchStore();
   const insets = useSafeAreaInsets();
   const { updateModal } = useModalStore();
-
-  const debouncedSearch = useDebounce(searchQuery, 400);
 
   const {
     data = [],
     isLoading,
     error,
   } = useQuery({
-    queryKey: SEARCH_QK.query(debouncedSearch),
+    queryKey: SEARCH_QK.query(submittedQuery),
     queryFn: async () => {
-      const results = await fetchSearchKeyWordResults(debouncedSearch);
+      const results = await fetchSearchKeyWordResults(submittedQuery);
       if (results.isOk) {
         return results.body.data;
       } else {
         throw new Error(results.body || "Search failed");
       }
     },
-    enabled: debouncedSearch.length > 2,
+    enabled: submittedQuery.length > 2,
     staleTime: 1000 * 60 * 5,
-    placeholderData: (prev) => prev,
     retry: 1,
   });
 
@@ -51,31 +48,30 @@ export default function SearchResults() {
     }
   }, [error, updateModal]);
 
-  const dataLength = searchQuery.length === 0 ? 0 : data.length;
+  const dataLength = submittedQuery.length === 0 ? 0 : data.length;
 
   return (
     <View style={[tw`flex-1 bg-white`, { paddingTop: insets.top + 16 }]}>
-      <View style={tw`px-[20px]`}>
+      <View style={tw`px-5`}>
         <SearchInput />
-        {searchQuery.length > 0 ? (
-          <>
+        {submittedQuery.length > 0 ? (
+          <View style={tw`pt-6 pb-2 gap-1`}>
             <Text
-              style={[
-                tw`text-[18px] font-medium py-[20px]`,
-                { color: colors.primary_black },
-              ]}
+              style={[tw`text-xl font-serif`, { color: colors.primary_black }]}
             >
-              Search for “{searchQuery}”:
+              Results for “{submittedQuery}”
             </Text>
-            <Text style={tw`text-[16px] text-[#808080]`}>
-              {dataLength} results found
+            <Text
+              style={tw`text-xs uppercase tracking-widest font-sans-regular text-neutral-500`}
+            >
+              {dataLength} {dataLength === 1 ? "Artwork" : "Artworks"}
             </Text>
-          </>
+          </View>
         ) : (
           <View>
             <Text
               style={[
-                tw`text-[18px] font-medium py-[20px]`,
+                tw`text-lg font-sans-medium py-6`,
                 { color: colors.primary_black },
               ]}
             >
@@ -84,8 +80,8 @@ export default function SearchResults() {
           </View>
         )}
       </View>
-      {isLoading && debouncedSearch.length > 2 && (
-        <View style={tw`mt-[10px]`}>
+      {isLoading && submittedQuery.length > 2 && (
+        <View style={tw`flex-1 mt-[10px]`}>
           <MiniArtworkCardLoader />
         </View>
       )}
@@ -94,11 +90,11 @@ export default function SearchResults() {
           <ArtworksListing data={data} onRefresh={async () => {}} />
         </View>
       )}
-      {searchQuery.length > 0 && dataLength === 0 && !isLoading && (
+      {submittedQuery.length > 0 && dataLength === 0 && !isLoading && (
         <View style={tw`flex-1`}>
           <EmptyArtworks
             description={
-              searchQuery.length < 3 && dataLength === 0
+              submittedQuery.length < 3 && dataLength === 0
                 ? "Please enter at least 3 characters to search..."
                 : `Can't find artwork you're looking for, try checking for mispellings`
             }

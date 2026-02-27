@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import { RefreshControl, View } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import tw from "twrnc";
-
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import Header from "#components/header/Header";
 import Banner from "./components/banner/Banner";

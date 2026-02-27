@@ -41,7 +41,7 @@ const BannerCard = memo(
           tw`rounded-md`,
           {
             width: cardWidth,
-            height: 200,
+            minHeight: 200,
             backgroundColor: colors.primary_black,
             overflow: "hidden",
           },
@@ -81,11 +81,11 @@ const BannerCard = memo(
 
           <View
             style={[
-              tw`flex-1 pt-[30px] pl-[20px]`,
+              tw`flex-1 justify-center px-5 py-4`,
               { backgroundColor: `${colors.black}80` },
             ]}
           >
-            <Text style={tw`text-white text-3xl font-sans-semibold`}>
+            <Text style={tw`text-white text-3xl font-sans-medium`}>
               {headline}
             </Text>
             <Text

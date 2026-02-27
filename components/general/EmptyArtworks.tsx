@@ -43,14 +43,14 @@ const EmptyArtworks = ({
       </View>
       <View style={tw`items-center gap-2`}>
         <Text
-          style={tw`text-lg font-semibold text-slate-900 text-center ${
+          style={tw`text-lg font-sans-medium text-slate-900 text-center ${
             darkTheme ? "text-white" : ""
           }`}
         >
           {displayTitle}
         </Text>
         <Text
-          style={tw`text-sm text-gray-500 text-center ${
+          style={tw`text-sm text-gray-500 font-sans text-center ${
             darkTheme ? "text-white/60" : ""
           }`}
         >
