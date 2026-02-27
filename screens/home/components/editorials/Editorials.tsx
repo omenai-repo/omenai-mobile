@@ -10,7 +10,7 @@ import { useAppStore } from "#store/app/appStore";
 import SectionHeader from "#components/general/SectionHeader";
 import tw from "twrnc";
 
-export default function Editorials() {
+export default function Editorials({ hideAction }: { hideAction?: boolean }) {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
 
@@ -36,7 +36,7 @@ export default function Editorials() {
         subtitle="JOURNALS"
         title="Editorials"
         onActionPress={
-          data.length > 0
+          data.length > 0 && !hideAction
             ? () =>
                 navigation.navigate("AllEditorialsScreen", { editorials: data })
             : undefined

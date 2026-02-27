@@ -8,14 +8,22 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "#constants/screenNames.constants";
 import tw from "twrnc";
 
-export default function CatalogListing() {
+export default function CatalogListing({
+  hideAction,
+}: {
+  hideAction?: boolean;
+}) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   return (
     <View style={tw`mt-6`}>
       <SectionHeader
         subtitle="FEATURED COLLECTIONS"
         title="Browse by medium"
-        onActionPress={() => navigation.navigate(screenName.collections)}
+        onActionPress={
+          hideAction
+            ? undefined
+            : () => navigation.navigate(screenName.collections)
+        }
       />
       <FlatList
         data={mediums}

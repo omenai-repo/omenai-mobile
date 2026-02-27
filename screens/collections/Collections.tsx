@@ -7,7 +7,6 @@ import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
 import { getNumberOfColumns } from "#utils/utils_screen";
 import tw from "twrnc";
-import { CatalogCardTypes } from "#types/types";
 
 export default function Collections() {
   const navigation = useNavigation<StackNavigationProp<any>>();

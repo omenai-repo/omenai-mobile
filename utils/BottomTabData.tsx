@@ -28,6 +28,7 @@ import OrderScreen from "#screens/artist/orders/OrderScreen";
 import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
 import ArtistProfileScreen from "#screens/artist/profile/ArtistProfileScreen";
 import Home from "#screens/home/Home";
+import GuestOverview from "#screens/overview/GuestOverview";
 import Catalog from "#screens/catalog/Catalog";
 import SearchResults from "#screens/searchResults/SearchResults";
 import Orders from "#screens/orders/Orders";
@@ -35,6 +36,7 @@ import Profile from "#screens/profile/Profile";
 import Overview from "#screens/overview/Overview";
 import GalleryOrdersListing from "#screens/galleryOrders/GalleryOrdersListing";
 import Subscriptions from "#screens/subscriptions/Subscriptions";
+import GuestProfilePlaceholder from "#screens/guest/GuestProfilePlaceholder";
 import GalleryProfile from "#screens/galleryProfileScreens/galleryProfile/GalleryProfile";
 import StripePayoutsTab from "#screens/stripeScreens/payouts/StripePayoutsTab";
 
@@ -111,6 +113,37 @@ export const BottomTabDataIndividual = [
     inActiveIcon: profileIconFocused,
     name: "Profile",
     component: Profile,
+  },
+];
+
+export const BottomTabDataGuest = [
+  {
+    id: 1,
+    activeIcon: homeIcon,
+    inActiveIcon: homeIconFocused,
+    name: "Overview",
+    component: GuestOverview,
+  },
+  {
+    id: 2,
+    activeIcon: catalogueIcon,
+    inActiveIcon: catalogueIconFocused,
+    name: "Artworks",
+    component: Catalog,
+  },
+  {
+    id: 3,
+    activeIcon: searchIcon,
+    inActiveIcon: searchIconFocused,
+    name: "Search",
+    component: SearchResults,
+  },
+  {
+    id: 4,
+    activeIcon: profileIcon,
+    inActiveIcon: profileIconFocused,
+    name: "Profile",
+    component: GuestProfilePlaceholder,
   },
 ];
 

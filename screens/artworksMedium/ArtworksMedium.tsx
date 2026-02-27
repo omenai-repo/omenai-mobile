@@ -135,7 +135,7 @@ export default function ArtworksMedium() {
           }
         >
           <Text
-            style={tw`text-lg font-medium text-[${colors.primary_black}] py-5`}
+            style={tw`text-lg font-sans-medium text-[${colors.primary_black}] py-5`}
           >
             {getCatalogTitle()}
           </Text>

@@ -35,6 +35,7 @@ import * as Updates from "expo-updates";
 import { SupportProvider } from "#providers/SupportProvider";
 import SupportWidget from "#components/support/SupportWidget";
 import WithModal from "#components/modal/WithModal";
+import GuestLoginModal from "#components/guest/GuestLoginModal";
 
 // Set default font for all Text and TextInput components
 // @ts-ignore
@@ -223,6 +224,7 @@ export default function App() {
                           <ArtistNavigation />
                         )}
 
+                        <GuestLoginModal />
                         <SupportWidget />
                       </View>
                     </WithModal>

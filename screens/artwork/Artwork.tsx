@@ -24,6 +24,7 @@ import { useModalStore } from "#store/modal/modalStore";
 import ArtworkSkeleton from "#components/skeleton/ArtworkSkeleton";
 import { useAppStore } from "#store/app/appStore";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 import { createViewHistory } from "#services/artworks/viewHistory/createViewHistory";
 import SimilarArtworksByArtist from "./components/similarArtworks/SimilarArtworksByArtist";
 import tw from "twrnc";
@@ -31,7 +32,6 @@ import ScrollWrapper from "#components/general/ScrollWrapper";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import ZoomArtwork from "./ZoomArtwork";
 import { useScrollY } from "#hooks/useScrollY";
-import { ArtworkDataType } from "#types/types";
 import { Analytics } from "#utils/analytics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -69,6 +69,7 @@ export default function Artwork() {
 
   const { updateModal } = useModalStore();
   const { userType, userSession } = useAppStore();
+  const { openGuestLoginModal } = useGuestLoginModalStore();
   const { isTabletLandscape, screenWidth } = useTabletLandscape();
   const isTabletSize = Math.min(screenWidth) >= 768;
 
@@ -237,11 +238,18 @@ export default function Artwork() {
           textStyle={tw`uppercase text-center text-sm tracking-widest`}
           value="Purchase artwork"
           isDisabled={false}
-          onClick={() =>
-            navigation.navigate(screenName.purchaseArtwork, {
-              art_id: artwork.art_id,
-            })
-          }
+          onClick={() => {
+            if (!userSession) {
+              openGuestLoginModal({
+                screen: screenName.artwork,
+                params: { art_id: artwork.art_id, url: artwork.url },
+              });
+            } else {
+              navigation.navigate(screenName.purchaseArtwork, {
+                art_id: artwork.art_id,
+              });
+            }
+          }}
           testID="purchase-artwork-button"
         />
       );
@@ -340,7 +348,7 @@ export default function Artwork() {
                   },
                   {
                     name: "Packaging",
-                    text: formatPackaging(artwork.packaging_type),
+                    text: formatPackaging(artwork.carrier),
                   },
                   {
                     name: "Description",
@@ -356,7 +364,11 @@ export default function Artwork() {
             </View>
 
             {!["gallery", "artist"].includes(userType) && (
-              <SimilarArtworks title={artwork.title} medium={artwork.medium} />
+              <SimilarArtworks
+                title={artwork.title}
+                medium={artwork.medium}
+                hideAction={!userSession}
+              />
             )}
 
             {!["gallery", "artist"].includes(userType) && artwork && (
