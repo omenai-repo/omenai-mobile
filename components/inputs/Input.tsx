@@ -38,14 +38,16 @@ export default function Input({
 }: InputProps & { testID?: string }) {
   return (
     <View style={[containerStyle]}>
-      <Text style={[tw`text-sm`, { color: colors.grey }]}>{label}</Text>
+      <Text style={[tw`text-sm font-sans-regular`, { color: colors.grey }]}>
+        {label}
+      </Text>
       <TextInput
         testID={testID}
         onChangeText={onInputChange}
         placeholder={placeHolder}
         placeholderTextColor={colors.grey}
         style={[
-          tw`py-3 w-full border px-3 rounded-md mt-2.5 text-sm`,
+          tw`py-3 w-full border px-3 rounded-md mt-2.5 text-sm font-sans-regular`,
           {
             borderColor: colors.inputBorder,
             backgroundColor: "#FAFAFA",
