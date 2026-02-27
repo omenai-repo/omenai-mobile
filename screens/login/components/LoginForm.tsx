@@ -130,7 +130,7 @@ export default function LoginForm({
             })
           }
         >
-          <Text style={tw`text-sm text-center`}>
+          <Text style={tw`text-sm font-sans-regular text-center`}>
             Forgot password? Click here
           </Text>
         </TouchableOpacity>

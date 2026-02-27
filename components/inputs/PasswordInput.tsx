@@ -28,7 +28,11 @@ export default function PasswordInput({
 
   return (
     <View>
-      <Text style={[tw`text-sm`, { color: colors.inputLabel }]}>{label}</Text>
+      <Text
+        style={[tw`text-sm font-sans-regular`, { color: colors.inputLabel }]}
+      >
+        {label}
+      </Text>
       <View
         style={[
           tw`w-full border bg-[#FAFAFA] overflow-hidden rounded-md mt-2.5 flex-row`,
@@ -37,7 +41,10 @@ export default function PasswordInput({
       >
         <TextInput
           testID={testID}
-          style={[tw`flex-1 py-3 px-3 bg-transparent`, { color: colors.black }]}
+          style={[
+            tw`flex-1 py-3 px-3 bg-transparent font-sans-regular text-sm`,
+            { color: colors.black },
+          ]}
           placeholder={placeHolder}
           placeholderTextColor={colors.inputLabel}
           onChangeText={onInputChange}

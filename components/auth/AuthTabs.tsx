@@ -54,7 +54,12 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
         <Animated.View
           style={[tw`absolute inset-0 rounded-md`, { backgroundColor }]}
         />
-        <Animated.Text style={[tw`text-sm`, { zIndex: 10, color: textColor }]}>
+        <Animated.Text
+          style={[
+            tw`text-sm font-sans-regular text-center`,
+            { zIndex: 10, color: textColor },
+          ]}
+        >
           {name}
         </Animated.Text>
       </Pressable>
