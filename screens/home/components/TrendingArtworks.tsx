@@ -13,7 +13,13 @@ import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import SectionHeader from "#components/general/SectionHeader";
 
-export default function TrendingArtworks({ limit }: { limit: number }) {
+export default function TrendingArtworks({
+  limit,
+  hideAction,
+}: {
+  limit: number;
+  hideAction?: boolean;
+}) {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
 
@@ -35,10 +41,13 @@ export default function TrendingArtworks({ limit }: { limit: number }) {
       <SectionHeader
         subtitle="Trending Now"
         title="Trending Artworks"
-        onActionPress={() =>
-          navigation.navigate(screenName.artworksMedium, {
-            catalog: "trending",
-          })
+        onActionPress={
+          hideAction
+            ? undefined
+            : () =>
+                navigation.navigate(screenName.artworksMedium, {
+                  catalog: "trending",
+                })
         }
       />
 

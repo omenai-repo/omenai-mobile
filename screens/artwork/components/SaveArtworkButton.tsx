@@ -8,6 +8,8 @@ import { SvgXml } from "react-native-svg";
 import { heartIcon } from "#utils/SvgImages";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
+import { useAppStore } from "#store/app/appStore";
+import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 
 type SaveArtworkButtonProps = {
   likeIds: string[];
@@ -21,6 +23,8 @@ export default function SaveArtworkButton({
   impressions,
 }: SaveArtworkButtonProps) {
   const [sessionId, setSessionId] = useState("");
+  const { userSession } = useAppStore();
+  const { openGuestLoginModal } = useGuestLoginModalStore();
 
   useEffect(() => {
     handleFetchUserSessionData();
@@ -48,7 +52,13 @@ export default function SaveArtworkButton({
         { color: colors.black },
       ]}
       value={isSaved ? "Remove from collection" : "Save to collection"}
-      onClick={() => handleLike(!isSaved)}
+      onClick={() => {
+        if (!userSession) {
+          openGuestLoginModal();
+        } else {
+          handleLike(!isSaved);
+        }
+      }}
       outline
       icon={
         <View style={styles.iconContainer}>

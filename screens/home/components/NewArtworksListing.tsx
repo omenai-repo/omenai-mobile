@@ -12,7 +12,11 @@ import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import SectionHeader from "#components/general/SectionHeader";
 
-export default function NewArtworksListing() {
+export default function NewArtworksListing({
+  hideAction,
+}: {
+  hideAction?: boolean;
+}) {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
 
@@ -31,8 +35,13 @@ export default function NewArtworksListing() {
       <SectionHeader
         subtitle="Recently Added"
         title="New Arrivals"
-        onActionPress={() =>
-          navigation.navigate(screenName.artworksMedium, { catalog: "recent" })
+        onActionPress={
+          hideAction
+            ? undefined
+            : () =>
+                navigation.navigate(screenName.artworksMedium, {
+                  catalog: "recent",
+                })
         }
       />
 

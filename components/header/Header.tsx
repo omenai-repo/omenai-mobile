@@ -1,25 +1,43 @@
-import { Image, StyleSheet, View, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { Ionicons } from '@expo/vector-icons';
+import { Image, View, TouchableOpacity, Text } from "react-native";
+import React from "react";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { Ionicons } from "@expo/vector-icons";
 
-import omenaiLogo from '../../assets/omenai-logo.png';
-import tailwind from 'twrnc';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import omenaiLogo from "../../assets/omenai-logo.png";
+import tailwind from "twrnc";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
+import { colors } from "#config/colors.config";
 
-export default function Header({ showNotification = true }: { showNotification?: boolean }) {
+export default function Header({
+  showNotification = true,
+  showAuthButton = false,
+}: {
+  showNotification?: boolean;
+  showAuthButton?: boolean;
+}) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const insets = useSafeAreaInsets();
+  const { openGuestLoginModal } = useGuestLoginModalStore();
 
   const handleNotificationPress = () => {
-    navigation.navigate('NotificationScreen');
+    navigation.navigate("NotificationScreen");
   };
 
   return (
-    <View style={[styles.mainContainer, { marginTop: insets.top + 16 }]}>
+    <View
+      style={[
+        tailwind`flex-row items-center px-5 self-center gap-5`,
+        { marginTop: insets.top + 16 },
+      ]}
+    >
       <View style={tailwind`flex-1`}>
-        <Image style={tailwind`w-[130px] h-[30px]`} resizeMode="contain" source={omenaiLogo} />
+        <Image
+          style={tailwind`w-[130px] h-[30px]`}
+          resizeMode="contain"
+          source={omenaiLogo}
+        />
       </View>
 
       {showNotification && (
@@ -31,16 +49,20 @@ export default function Header({ showNotification = true }: { showNotification?:
           </View>
         </TouchableOpacity>
       )}
+
+      {showAuthButton && (
+        <TouchableOpacity
+          style={[
+            tailwind`px-4 py-2 rounded-md`,
+            { backgroundColor: colors.black },
+          ]}
+          onPress={() => openGuestLoginModal()}
+        >
+          <Text style={tailwind`text-white text-xs font-sans-medium`}>
+            Log in
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    gap: 20,
-  },
-});
