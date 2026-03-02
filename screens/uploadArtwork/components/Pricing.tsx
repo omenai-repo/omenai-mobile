@@ -35,8 +35,13 @@ export default function Pricing({
     updateArtworkUploadData,
   } = uploadArtworkStore();
 
+  // Determine if display price should be locked
+  const isDisplayPriceLocked = ["basic", "pro"].includes(
+    plan?.toLowerCase() || "",
+  );
+
   useEffect(() => {
-    if (["basic", "pro"].includes(plan?.toLowerCase() || "")) {
+    if (isDisplayPriceLocked) {
       updateArtworkUploadData("shouldShowPrice", "Yes");
     }
   }, [plan]);
@@ -123,7 +128,7 @@ export default function Pricing({
   };
 
   const getDisplayPriceOptions = () => {
-    if (["basic", "pro"].includes(plan?.toLowerCase() || "")) {
+    if (isDisplayPriceLocked) {
       return displayPrice.filter((option) => option.value === "Yes");
     }
     return displayPrice;
@@ -242,9 +247,9 @@ export default function Pricing({
             handleSetValue={(item) =>
               updateArtworkUploadData("shouldShowPrice", item.value)
             }
-            disable={["basic", "pro"].includes(plan?.toLowerCase() || "")}
+            disable={isDisplayPriceLocked}
           />
-          {["basic", "pro"].includes(plan?.toLowerCase() || "") && (
+          {isDisplayPriceLocked && (
             <Text style={tw`text-[10px] text-slate-400 mt-1`}>
               * Upgrade your plan to unlock advanced pricing visibility options.
             </Text>

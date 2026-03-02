@@ -15,7 +15,7 @@ import { getCurrencyConversion } from "#services/exchange_rate/getCurrencyConver
 import { updateArtworkPrice } from "#services/artworks/updateArtworkPrice";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "#constants/screenNames.constants";
-import { ArtworkPriceFilterData } from "#types/types";
+import { useAppStore } from "#store/app/appStore";
 
 type artworkPricingErrorsType = {
   price: string;

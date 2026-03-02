@@ -64,9 +64,11 @@ export default function CustomSelectPicker({
 
   return (
     <View style={{ zIndex: zIndex }}>
-      <Text style={[tw`text-sm mb-2.5`, { color: colors.inputLabel }]}>
-        {label}
-      </Text>
+      {!!label && (
+        <Text style={[tw`text-sm mb-2.5`, { color: colors.inputLabel }]}>
+          {label}
+        </Text>
+      )}
       <Dropdown
         ref={dropdownRef}
         value={value}
