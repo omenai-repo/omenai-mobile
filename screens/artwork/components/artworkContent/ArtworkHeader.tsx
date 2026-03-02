@@ -35,22 +35,22 @@ export default function ArtworkHeader({
 
       {/* Artwork Details */}
       <View
-        style={tw`flex-row w-full flex-wrap items-center gap-3s border-t border-b border-slate-100 py-4 mt-6`}
+        style={tw`flex-row w-full flex-wrap items-center gap-3 border-t border-b border-slate-100 py-4 mt-6`}
       >
         <Text
-          style={tw`font-sans text-xs uppercase tracking-widest text-slate-500`}
+          style={tw`font-sans text-xs uppercase tracking-wider text-slate-500`}
         >
           {medium}
         </Text>
         <View style={tw`h-3 w-[1px] bg-slate-200`} />
         <Text
-          style={tw`font-sans text-xs uppercase tracking-widest text-slate-500`}
+          style={tw`font-sans text-center text-xs uppercase tracking-wider text-slate-500`}
         >
           {year}
         </Text>
         <View style={tw`h-3 w-[1px] bg-slate-200`} />
         <Text
-          style={tw`font-sans text-xs uppercase tracking-widest text-slate-500`}
+          style={tw`font-sans text-center text-xs uppercase tracking-wider text-slate-500`}
         >
           {rarity}
         </Text>
