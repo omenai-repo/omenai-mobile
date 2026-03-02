@@ -5,7 +5,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  PixelRatio,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { colors } from "#config/colors.config";
@@ -42,24 +41,22 @@ export default function GalleryMiniArtworkCard({
   });
   const [renderImage, setRenderImage] = useState(false);
 
-  const dpr = PixelRatio.get();
   const displayWidth = (screenWidth - 60) / 2; // screen width minus paddings applied to grid view then divided by two
-  const fetchWidth = Math.round(displayWidth * dpr); // high-res fetch width
-  const image_href = getImageFileView(url, fetchWidth);
+  const image_href = getImageFileView(url, 300);
 
   useEffect(() => {
-    const image_href = getImageFileView(url, fetchWidth);
+    const image_href = getImageFileView(url, 300);
 
     Image.getSize(image_href, (defaultWidth, defaultHeight) => {
       const { width, height } = resizeImageDimensions(
         { width: defaultWidth, height: defaultHeight },
         displayWidth,
-        300 // optional max height
+        300, // optional max height
       );
       setImageDimensions({ height, width });
       setRenderImage(true);
     });
-  }, [url, screenWidth, fetchWidth, displayWidth]);
+  }, [url, screenWidth, displayWidth]);
 
   return (
     <TouchableOpacity
@@ -105,8 +102,14 @@ export default function GalleryMiniArtworkCard({
         />
       )}
       <View style={styles.mainDetailsContainer}>
-        <Text style={{ fontSize: 14, color: colors.primary_black }}>{title}</Text>
-        <Text style={{ fontSize: 12, color: colors.primary_black, opacity: 0.7 }}>{artist}</Text>
+        <Text style={{ fontSize: 14, color: colors.primary_black }}>
+          {title}
+        </Text>
+        <Text
+          style={{ fontSize: 12, color: colors.primary_black, opacity: 0.7 }}
+        >
+          {artist}
+        </Text>
         <Text>{utils_formatPrice(usd_price, "$")}</Text>
       </View>
     </TouchableOpacity>

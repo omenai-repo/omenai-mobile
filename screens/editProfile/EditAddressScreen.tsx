@@ -25,7 +25,6 @@ import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import { useNavigation } from "@react-navigation/native";
 import AlertCard from "#components/general/AlertCard";
 import { colors } from "#config/colors.config";
-import { AddressTypes } from "#types/types";
 
 const EditAddressScreen = () => {
   const { userSession, userType, setUserSession } = useAppStore();

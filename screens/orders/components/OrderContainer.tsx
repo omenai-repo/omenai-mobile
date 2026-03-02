@@ -7,7 +7,6 @@ import { getImageFileView } from "#lib/storage/getImageFileView";
 import { dropdownIcon, dropUpIcon } from "#utils/SvgImages";
 import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
-import { InvoiceTypes } from "#types/types";
 import { OrderExpiryTimer } from "./container/OrderExpiryTimer";
 import { OrderStatusDetails } from "./container/OrderStatusDetails";
 import { OrderPaymentAction } from "./container/OrderPaymentAction";
@@ -71,7 +70,7 @@ const OrderContainer: React.FC<OrderContainerProps> = React.memo(
     invoice,
     invoiceNumber,
   }) => {
-    const image_href = getImageFileView(url, 700);
+    const image_href = getImageFileView(url, 300);
     const [remainingTime, setRemainingTime] = useState<number>(0);
     const [contentHeight, setContentHeight] = useState<number>(0);
     const [confirmOrderModal, setConfirmOrderModal] = useState(false);

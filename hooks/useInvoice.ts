@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { InvoiceTypes } from "#types/types";
 import { apiUrl } from "#constants/apiUrl.constants";
 import { apiRequest } from "#utils/apiRequest";
 

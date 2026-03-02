@@ -70,8 +70,8 @@ export const WithdrawScreen = ({
     try {
       setLoadAmount(true);
       const response = await getTransferRate({
-        source: walletData.base_currency,
-        destination: walletData.wallet_currency,
+        source: walletData.wallet_currency || "USD",
+        destination: walletData.base_currency,
         amount: Number.parseFloat(amount),
       });
       if (response.isOk) {

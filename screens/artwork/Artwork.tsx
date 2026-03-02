@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { Image, Text, View, Dimensions, PixelRatio } from "react-native";
+import { Image, Text, View, Dimensions } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
@@ -28,6 +28,7 @@ import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 import { createViewHistory } from "#services/artworks/viewHistory/createViewHistory";
 import SimilarArtworksByArtist from "./components/similarArtworks/SimilarArtworksByArtist";
 import tw from "twrnc";
+import { Ionicons } from "@expo/vector-icons";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import ZoomArtwork from "./ZoomArtwork";
@@ -129,26 +130,21 @@ export default function Artwork() {
     });
   }, [artwork, userSession?.id, userType]);
 
-  const dpr = PixelRatio.get();
   const displayWidth = Math.max(200, screenWidth - 40);
-  const fetchWidth = useMemo(
-    () => Math.round(displayWidth * dpr),
-    [displayWidth, dpr],
-  );
 
   const imageUri = useMemo(
-    () => (artwork ? getImageFileView(artwork.url, fetchWidth) : ""),
-    [artwork, fetchWidth],
+    () => (artwork ? getImageFileView(artwork.url, 500) : ""),
+    [artwork],
   );
 
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 350,
-    height: 250,
-  });
-  useEffect(() => {
-    if (!imageUri) return;
-    Image.getSize(imageUri, (w, h) => {
-      const maxWidth = screenWidth - 40; // padding
+  const [imageDimensions, setImageDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+
+  const handleImageLoad = useCallback(
+    (w: number, h: number) => {
+      const maxWidth = screenWidth - 40;
       const maxHeight = isTabletLandscape ? 500 : 400;
       const next = resizeImageDimensions(
         { width: w, height: h },
@@ -156,8 +152,9 @@ export default function Artwork() {
         maxHeight,
       );
       setImageDimensions(next);
-    });
-  }, [imageUri, isTabletLandscape, screenWidth]);
+    },
+    [screenWidth, isTabletLandscape],
+  );
 
   const handleRequestPriceQuote = useCallback(async () => {
     if (!artwork) return;
@@ -267,7 +264,6 @@ export default function Artwork() {
   };
 
   const loadingMain = isLoadingArtwork && !artwork;
-  const showEmpty = !loadingMain && !artwork && !isArtworkError;
 
   return (
     <>
@@ -294,6 +290,7 @@ export default function Artwork() {
                     setModalVisible={setModalVisible}
                     isTabletLandscape={isTabletLandscape}
                     screenWidth={screenWidth}
+                    onImageLoad={handleImageLoad}
                   />
                   <ArtworkContentSection
                     artwork={artwork}
@@ -311,6 +308,7 @@ export default function Artwork() {
                     setModalVisible={setModalVisible}
                     isTabletLandscape={isTabletLandscape}
                     screenWidth={screenWidth}
+                    onImageLoad={handleImageLoad}
                   />
                   <View style={tw`px-5`}>
                     <ArtworkContentSection
@@ -380,10 +378,20 @@ export default function Artwork() {
           </ScrollWrapper>
         )}
 
-        {showEmpty && (
-          <View style={tw`flex-1 items-center justify-center`}>
-            <Text style={tw`text-base text-neutral-600`}>
-              No details of artwork
+        {(isArtworkError || (!loadingMain && !artwork)) && (
+          <View style={tw`flex-1 items-center justify-center px-8`}>
+            <View
+              style={tw`w-20 h-20 rounded-full bg-neutral-100 items-center justify-center mb-5`}
+            >
+              <Ionicons name="image-outline" size={36} color="#a3a3a3" />
+            </View>
+            <Text style={tw`text-lg font-semibold text-neutral-800 mb-2`}>
+              Artwork not found
+            </Text>
+            <Text
+              style={tw`text-sm text-neutral-500 text-center leading-relaxed`}
+            >
+              This artwork may have been removed or is no longer available.
             </Text>
           </View>
         )}

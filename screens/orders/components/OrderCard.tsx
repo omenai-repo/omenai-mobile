@@ -60,7 +60,7 @@ export default function OrderCard({ order }: { readonly order: any }) {
     }
   }
 
-  let image_href = getImageFileView(url, 700);
+  let image_href = getImageFileView(url, 300);
 
   return (
     <View style={{ paddingVertical: 10, gap: 15 }}>

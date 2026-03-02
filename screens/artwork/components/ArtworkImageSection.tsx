@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Pressable, Image } from "react-native";
+import {
+  View,
+  Pressable,
+  Image,
+  NativeSyntheticEvent,
+  ImageLoadEventData,
+} from "react-native";
 import tw from "twrnc";
 
 export default function ArtworkImageSection({
@@ -8,13 +14,23 @@ export default function ArtworkImageSection({
   setModalVisible,
   isTabletLandscape,
   screenWidth,
+  onImageLoad,
 }: Readonly<{
   imageUri: string;
-  imageDimensions: { width: number; height: number };
+  imageDimensions: { width: number; height: number } | null;
   setModalVisible: (visible: boolean) => void;
   isTabletLandscape: boolean;
   screenWidth: number;
+  onImageLoad: (w: number, h: number) => void;
 }>) {
+  const fallbackHeight = isTabletLandscape ? 400 : 300;
+  const height = imageDimensions?.height ?? fallbackHeight;
+
+  const handleLoad = (e: NativeSyntheticEvent<ImageLoadEventData>) => {
+    const { width: w, height: h } = e.nativeEvent.source;
+    onImageLoad(w, h);
+  };
+
   return (
     <View
       style={
@@ -31,17 +47,19 @@ export default function ArtworkImageSection({
           source={{ uri: imageUri }}
           style={[
             {
-              height: imageDimensions.height,
+              height,
               width: screenWidth,
               resizeMode:
+                imageDimensions &&
                 imageDimensions.width > imageDimensions.height
                   ? "cover"
                   : "contain",
               alignSelf: "center",
-              backgroundColor: "white",
+              backgroundColor: imageDimensions ? "white" : "#f5f5f5",
             },
             isTabletLandscape && { maxWidth: "100%", maxHeight: 500 },
           ]}
+          onLoad={handleLoad}
         />
       </Pressable>
     </View>

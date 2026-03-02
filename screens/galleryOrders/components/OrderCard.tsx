@@ -1,13 +1,10 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { colors } from "#config/colors.config";
 import { orderCardStatusTypes } from "#screens/galleryOrders/components/OrdersListing";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import tw from "twrnc";
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
 
 export type ordersColorsTypes = { bgColor: string; textColor: string };
 
@@ -107,7 +104,7 @@ export default function OrderCard({
     );
   };
 
-  let image_href = getImageFileView(url, 700);
+  let image_href = getImageFileView(url, 300);
 
   return (
     <View style={{ paddingVertical: 10 }}>

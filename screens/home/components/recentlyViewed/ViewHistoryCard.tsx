@@ -1,4 +1,4 @@
-import { Image, Text, TouchableOpacity, View, PixelRatio } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import tw from "twrnc";
 import React, { useEffect, useState } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -20,10 +20,8 @@ export default function ViewHistoryCard({
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const dpr = PixelRatio.get();
   const displayWidth = 300;
-  const fetchWidth = Math.round(displayWidth * dpr);
-  const image_href = getImageFileView(url, fetchWidth);
+  const image_href = getImageFileView(url, 300);
 
   const [imageDimensions, setImageDimensions] = useState({
     width: 200,

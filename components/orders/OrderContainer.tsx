@@ -31,7 +31,7 @@ export const OrderContainer = React.memo((props: OrderContainerProps) => {
     exclusivity_type,
   } = props;
 
-  const image_href = getImageFileView(url, 700);
+  const image_href = getImageFileView(url, 300);
   const animatedOpacity = React.useRef(new Animated.Value(0)).current;
   const animatedMaxHeight = React.useRef(new Animated.Value(0)).current;
 

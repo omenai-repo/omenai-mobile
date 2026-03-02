@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, Text, ScrollView, Image, Pressable } from "react-native";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { OrderShippingDetailsTypes } from "#types/types";
 import { locationIcon } from "#utils/SvgImages";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 
