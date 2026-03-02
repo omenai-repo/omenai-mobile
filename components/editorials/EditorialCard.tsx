@@ -1,5 +1,4 @@
-import { View, Text, Pressable } from "react-native";
-import ProgressiveImage from "#components/general/ProgressiveImage";
+import { View, Text, Pressable, Image } from "react-native";
 import React from "react";
 import { getEditorialImageFilePreview } from "#lib/editorial/lib/getEditorialImageFilePreview";
 import { Feather } from "@expo/vector-icons";
@@ -23,8 +22,7 @@ export default function EditorialCard({
   date,
   showDetails,
 }: EditorialCardProps) {
-  const highResUri = getEditorialImageFilePreview(cover, 500);
-  const lowResUri = getEditorialImageFilePreview(cover, 20, 20);
+  const imageUri = getEditorialImageFilePreview(cover, 500);
 
   const formattedDate = date
     ? dayjs(date).format("MMM YYYY").toUpperCase()
@@ -45,18 +43,10 @@ export default function EditorialCard({
             : null,
         ]}
       >
-        <ProgressiveImage
-          thumbnailSource={{ uri: lowResUri }}
-          source={{ uri: highResUri }}
-          containerStyle={[
+        <Image
+          source={{ uri: imageUri }}
+          style={[
             tw`w-full bg-[#858585]`,
-            showDetails
-              ? tw`rounded-t-md rounded-b-none h-40`
-              : tw`h-[220px] rounded-md`,
-            { height: imageHeight },
-          ]}
-          imageStyle={[
-            tw`w-full`,
             showDetails
               ? tw`rounded-t-md rounded-b-none h-40`
               : tw`h-[220px] rounded-md`,

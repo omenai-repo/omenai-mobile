@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   View,
   RefreshControl,
-  PixelRatio,
 } from "react-native";
 import React, { useEffect, useState, useMemo } from "react";
 import { colors } from "#config/colors.config";
@@ -86,14 +85,7 @@ export default function SavedArtworks() {
     impressions,
     pricing,
   }: SavedArtworkItemProps) => {
-    const dpr = PixelRatio.get();
-    const size = 120;
-    const fetchWidth = Math.round(size * dpr);
-
-    const image_href = useMemo(
-      () => getImageFileView(url, fetchWidth),
-      [url, fetchWidth],
-    );
+    const image_href = useMemo(() => getImageFileView(url, 120), [url]);
 
     const { handleLike } = useLikedState(
       impressions,

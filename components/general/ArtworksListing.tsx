@@ -16,7 +16,6 @@ import { useAppStore } from "#store/app/appStore";
 
 import { useDevice } from "#hooks/useDevice";
 import { colors } from "#config/colors.config";
-import { ArtworkSchemaTypes } from "#types/types";
 
 export default function ArtworksListing({
   data,

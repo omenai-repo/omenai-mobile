@@ -19,7 +19,6 @@ import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import tw from "twrnc";
 import { useDevice } from "#hooks/useDevice";
-import { ArtworkFlatlistItem } from "#types/types";
 
 export default function PopularArtworks({
   onLoadingChange,

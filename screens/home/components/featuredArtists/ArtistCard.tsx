@@ -1,6 +1,5 @@
 import React from "react";
-import { Text, View, PixelRatio } from "react-native";
-import ProgressiveImage from "#components/general/ProgressiveImage";
+import { Image, Text, View } from "react-native";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import { getImageFileView } from "#lib/storage/getImageFileView";
@@ -17,19 +16,12 @@ const ArtistCard = ({
   details: { birthyear: string; country: string };
   totalLikes?: number;
 }) => {
-  const dpr = PixelRatio.get();
-  const displayWidth = 300;
-  const fetchWidth = Math.round(displayWidth * dpr);
-  const highResUri = getImageFileView(image, fetchWidth);
-  const lowResUri = getImageFileView(image, 20, undefined, undefined, 20);
-
+  const imageUri = getImageFileView(image, 300);
   return (
     <View style={tw`w-[300px]`}>
-      <ProgressiveImage
-        thumbnailSource={{ uri: lowResUri }}
-        source={{ uri: highResUri }}
-        containerStyle={tw`w-full h-[200px] rounded-md`}
-        imageStyle={tw`w-full h-[200px]`}
+      <Image
+        source={{ uri: imageUri }}
+        style={tw`w-full h-[200px] rounded-md`}
         resizeMode="cover"
       />
       <View style={tw`flex-row items-center justify-between mt-[10px]`}>

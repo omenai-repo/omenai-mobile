@@ -7,7 +7,6 @@ import { retrieveBalance } from "#services/stripe/retrieveBalance";
 import { fetchTransactions } from "#services/transactions/fetchTransactions";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import PayoutSummary from "./PayoutSummary";
-import { PurchaseTransactionModelSchemaTypes } from "#types/types";
 import PayoutSkeleton from "#components/skeleton/PayoutSkeleton";
 
 type TransactionsTableProps = {

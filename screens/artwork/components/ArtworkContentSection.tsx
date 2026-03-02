@@ -3,7 +3,6 @@ import { View } from "react-native";
 import tw from "twrnc";
 import ShippingAndTaxes from "./extraDetails/ShippingAndTaxes";
 import Coverage from "./extraDetails/Coverage";
-import { ArtworkDataType } from "#types/types";
 import ArtworkHeader from "./artworkContent/ArtworkHeader";
 import PhysicalSpecifications from "./artworkContent/PhysicalSpecifications";
 import ArtworkPriceSection from "./artworkContent/ArtworkPriceSection";

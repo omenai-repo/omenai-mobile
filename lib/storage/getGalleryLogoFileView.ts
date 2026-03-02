@@ -5,7 +5,7 @@ export const getGalleryLogoFileView = (
   fileId: string,
   width: number,
   height?: number,
-  format?: string
+  format?: string,
 ) => {
   const fileData = storage.getFilePreview({
     bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!!,

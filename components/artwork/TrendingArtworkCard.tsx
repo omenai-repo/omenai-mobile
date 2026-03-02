@@ -1,6 +1,12 @@
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "#config/colors.config";
 import { getImageFileView } from "#lib/storage/getImageFileView";
@@ -37,7 +43,7 @@ export default function TrendingArtworkCard({
 
   let imageWidth = 0;
   imageWidth = (screenWidth - 60) / 2; //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
-  const image_href = getImageFileView(image, imageWidth);
+  const image_href = getImageFileView(image, 300);
 
   useEffect(() => {
     // Fetch the image to get its dimensions
