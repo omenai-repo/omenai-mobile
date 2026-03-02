@@ -67,7 +67,7 @@ export default function Home() {
         <Banner />
         <View style={tw`mt-10 gap-10`}>
           <NewArtworksListing />
-          <FeaturedArtists />
+          {/* <FeaturedArtists /> */}
           <TrendingArtworks limit={28} />
           <CuratedArtworksListing limit={20} />
           <CatalogListing />

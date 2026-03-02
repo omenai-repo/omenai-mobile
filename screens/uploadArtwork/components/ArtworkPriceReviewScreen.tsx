@@ -14,6 +14,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
 import { colors } from "#config/colors.config";
+import ConsentCheckbox from "#components/inputs/ConsentCheckbox";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 
 export default function ArtworkPriceReviewScreen({
   onConfirm,
@@ -37,7 +39,17 @@ export default function ArtworkPriceReviewScreen({
   const [penaltyConsent, setPenaltyConsent] = useState(false);
   const [priceConsent, setPriceConsent] = useState(false);
 
-  const canProceed = acknowledgment && penaltyConsent && priceConsent;
+  // Display price gating based on artist categorization
+  const isEmerging = userSession?.categorization?.toLowerCase() === "emerging";
+  const [displayPriceValue, setDisplayPriceValue] = useState(
+    isEmerging ? "Yes" : "",
+  );
+
+  const canProceed =
+    acknowledgment &&
+    penaltyConsent &&
+    priceConsent &&
+    displayPriceValue !== "";
 
   // prepare query inputs
   const heightNum = Number.parseFloat(
@@ -83,7 +95,19 @@ export default function ArtworkPriceReviewScreen({
       updateArtworkUploadData("price", response.data.price);
       updateArtworkUploadData("usd_price", response.data.usd_price);
       updateArtworkUploadData("currency", response.data.currency);
-      updateArtworkUploadData("shouldShowPrice", response.data.shouldShowPrice);
+      if (
+        !artworkUploadData.shouldShowPrice ||
+        userSession?.categorization?.toLowerCase() === "emerging"
+      ) {
+        updateArtworkUploadData(
+          "shouldShowPrice",
+          response.data.shouldShowPrice,
+        );
+        // Also sync local state
+        if (userSession?.categorization?.toLowerCase() === "emerging") {
+          setDisplayPriceValue("Yes");
+        }
+      }
 
       return response.data;
     },
@@ -172,139 +196,152 @@ export default function ArtworkPriceReviewScreen({
   }
 
   return (
-    <View style={tw`flex-1 bg-[#F7F7F7] px-6 py-8 mb-[40px] rounded-md`}>
-      <Text style={tw`text-xl font-bold mb-4`}>Proposed Artwork Price</Text>
-
-      <View style={tw`bg-white rounded-md p-5 border border-[#00000020] mb-6`}>
-        <Text style={tw`text-sm text-gray-600 mb-1`}>
-          Omenai will list your art piece for:
+    <View style={tw`flex-1 mb-[40px] rounded-md`}>
+      <View
+        style={tw`bg-white items-center rounded-md p-5 border border-neutral-200 mb-6`}
+      >
+        <Text
+          style={[
+            tw`text-base font-sans-medium text-center uppercase`,
+            { color: colors.black },
+          ]}
+        >
+          Proposed Listing Price
         </Text>
-        <Text style={tw`text-2xl font-bold text-black`}>
+        <Text style={[tw`text-5xl font-bold mt-3`, { color: colors.black }]}>
           {priceData?.usd_price
             ? `$${Number(priceData.usd_price).toLocaleString()}`
             : "-"}
         </Text>
 
-        <Text style={tw`text-sm mt-3 text-gray-500`}>
-          ({userSession.base_currency} equivalent:{" "}
-          {getArtistCurrencySymbol(priceData.currency)}{" "}
-          {Number(priceData.price).toLocaleString(undefined, {
-            maximumFractionDigits: 2,
-          })}
-          )
+        <View style={tw`bg-slate-50 rounded-full px-3 py-2 mt-2`}>
+          <Text style={tw`text-xs text-slate-400 font-sans-medium`}>
+            Local currency equivalent:{" "}
+            <Text style={tw`text-slate-500 font-sans-semibold`}>
+              {priceData.currency}{" "}
+              {Number(priceData.price).toLocaleString(undefined, {
+                maximumFractionDigits: 2,
+              })}
+            </Text>
+          </Text>
+        </View>
+        <Text style={tw`text-xs text-slate-400 mt-3 text-center`}>
+          This price is calculated based on your artist tier, the medium, and
+          dimensions of the artwork. Consistent pricing helps build collector
+          trust.
         </Text>
       </View>
-
-      <Text style={tw`text-gray-600 text-sm mb-6`}>
-        If you agree with the price, you can proceed to upload your piece. If
-        not, tap cancel to review your details.
-      </Text>
 
       {/* Exclusivity / terms alert (mimics web Alert) */}
       <View
-        style={tw`bg-[#FFF3CD] border border-[#FFEEBA] rounded-md px-4 py-5 mb-6`}
+        style={tw`bg-amber-50/50 border border-amber-200 rounded-md px-4 py-5 mb-6`}
       >
-        <View style={tw`flex-row items-center mb-5`}>
-          <Ionicons
-            name="warning-outline"
-            size={20}
-            color="#856404"
-            style={tw`mr-3`}
-          />
-          <Text style={tw`text-[#856404] font-semibold`}>
-            Exclusivity Agreement
-          </Text>
+        <View style={tw`flex-row items-center justify-between mb-5`}>
+          <View style={tw`flex-row items-center`}>
+            <Ionicons
+              name="warning-outline"
+              size={20}
+              color={tw.color("amber-900")}
+              style={tw`mr-3`}
+            />
+            <Text style={tw`text-amber-900 font-semibold`}>
+              Exclusivity Agreement
+            </Text>
+          </View>
+          <View
+            style={[
+              tw`px-2.5 py-1 rounded-full`,
+              canProceed ? tw`bg-green-100` : tw`bg-gray-100`,
+            ]}
+          >
+            <Text
+              style={[
+                tw`text-[10px] font-semibold`,
+                canProceed ? tw`text-green-700` : tw`text-gray-500`,
+              ]}
+            >
+              {
+                [priceConsent, acknowledgment, penaltyConsent].filter(Boolean)
+                  .length
+              }{" "}
+              of 3
+            </Text>
+          </View>
         </View>
         <View style={tw`flex-1`}>
-          {/* Price consent */}
-          <Pressable
-            onPress={() => setPriceConsent((s) => !s)}
-            style={tw`flex-row items-start gap-3 mb-3`}
+          <ConsentCheckbox
+            checked={priceConsent}
+            onToggle={() => setPriceConsent((s) => !s)}
           >
-            <View
-              style={[
-                tw`w-5 h-5 rounded-md border border-[#856404] items-center justify-center`,
-                priceConsent
-                  ? { backgroundColor: colors.black }
-                  : { backgroundColor: colors.white },
-              ]}
-            >
-              {priceConsent ? (
-                <Text style={[{ color: colors.white }]}>✓</Text>
-              ) : null}
-            </View>
-            <Text style={tw`text-[#856404] text-sm flex-1`}>
-              I accept the price stipulated for this artwork and agree to have
-              it listed on the platform at this price. I understand that I may
-              cancel this upload if I do not agree.
-            </Text>
-          </Pressable>
+            I accept the price stipulated for this artwork and agree to have it
+            listed on the platform at this price. I understand that I may cancel
+            this upload if I do not agree.
+          </ConsentCheckbox>
 
-          {/* Acknowledgment with link to Terms */}
-          <Pressable
-            onPress={() => setAcknowledgment((s) => !s)}
-            style={tw`flex-row items-start gap-3 mb-3`}
+          <ConsentCheckbox
+            checked={acknowledgment}
+            onToggle={() => setAcknowledgment((s) => !s)}
           >
-            <View
-              style={[
-                tw`w-5 h-5 rounded-md border border-[#856404] items-center justify-center`,
-                acknowledgment
-                  ? { backgroundColor: colors.black }
-                  : { backgroundColor: colors.white },
-              ]}
-            >
-              {acknowledgment ? (
-                <Text style={[{ color: colors.white }]}>✓</Text>
-              ) : null}
-            </View>
+            I acknowledge that this artwork is subject to a 90-day exclusivity
+            period with Omenai as stipulated in the{" "}
+            <Text onPress={openTerms} style={tw`underline font-semibold`}>
+              Terms of Agreement
+            </Text>{" "}
+            and may not be sold through external channels during this time.
+          </ConsentCheckbox>
 
-            <Text style={tw`text-[#856404] text-sm flex-1`}>
-              I acknowledge that this artwork is subject to a 90-day exclusivity
-              period with Omenai as stipulated in the{" "}
-              <Text onPress={openTerms} style={tw`underline font-semibold`}>
-                Terms of Agreement
-              </Text>{" "}
-              and may not be sold through external channels during this time.
-            </Text>
-          </Pressable>
-
-          {/* Penalty consent with link */}
-          <Pressable
-            onPress={() => setPenaltyConsent((s) => !s)}
-            style={tw`flex-row items-start gap-3`}
+          <ConsentCheckbox
+            checked={penaltyConsent}
+            onToggle={() => setPenaltyConsent((s) => !s)}
+            isLast
           >
-            <View
-              style={[
-                tw`w-5 h-5 rounded-md border border-[#856404] items-center justify-center`,
-                penaltyConsent
-                  ? { backgroundColor: colors.black }
-                  : { backgroundColor: colors.white },
-              ]}
-            >
-              {penaltyConsent ? (
-                <Text style={[{ color: colors.white }]}>✓</Text>
-              ) : null}
-            </View>
-
-            <Text style={tw`text-[#856404] text-sm flex-1`}>
-              I agree that any breach of this exclusivity obligation will result
-              in a 10% penalty fee deducted from my next successful sale on the
-              platform as stipulated in the{" "}
-              <Text onPress={openTerms} style={tw`underline font-semibold`}>
-                Terms of Agreement
-              </Text>
-              .
+            I agree that any breach of this exclusivity obligation will result
+            in a 10% penalty fee deducted from my next successful sale on the
+            platform as stipulated in the{" "}
+            <Text onPress={openTerms} style={tw`underline font-semibold`}>
+              Terms of Agreement
             </Text>
-          </Pressable>
+            .
+          </ConsentCheckbox>
         </View>
       </View>
 
-      <View style={tw`flex-row items-center justify-between mb-2`}>
-        <Text style={tw`text-gray-500 text-sm`}>
-          Acknowledgment: {acknowledgment ? "✔️" : "❌"} | Penalty:{" "}
-          {penaltyConsent ? "✔️" : "❌"} | Price:
-          {priceConsent ? "✔️" : "❌"}
+      {/* Display Price Option */}
+      <View
+        style={tw`bg-white border border-[#E5E7EB] rounded-md px-4 py-5 mb-6`}
+      >
+        <Text style={tw`text-sm font-semibold text-gray-800 mb-1`}>
+          Price Display
         </Text>
+        <Text style={tw`text-xs text-gray-400`}>
+          Would you like to mask the artwork's price from public view?
+        </Text>
+
+        <View style={tw`mt-3`}>
+          <CustomSelectPicker
+            label=""
+            data={
+              isEmerging
+                ? [{ label: "Yes, display the price", value: "Yes" }]
+                : [
+                    { label: "Yes, display the price", value: "Yes" },
+                    { label: "No, don't display the price", value: "No" },
+                  ]
+            }
+            placeholder="Select"
+            value={displayPriceValue}
+            handleSetValue={(item) => {
+              setDisplayPriceValue(item.value);
+              updateArtworkUploadData("shouldShowPrice", item.value);
+            }}
+            disable={isEmerging}
+          />
+        </View>
+        {isEmerging && (
+          <Text style={tw`text-xs text-slate-500 mt-2`}>
+            Pricing visibility change is unlocked at higher artist tiers.
+          </Text>
+        )}
       </View>
 
       <View style={tw`flex-row gap-4 mt-4`}>
