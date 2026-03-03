@@ -30,7 +30,6 @@ const IndividualAddressVerification = () => {
     setAddress,
     setCity,
     setZipCode,
-    setPhone,
     setState,
     setCountry,
     setCountryCode,
@@ -72,11 +71,7 @@ const IndividualAddressVerification = () => {
   } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
 
   const handleSubmit = () => {
-    handleVerifyAddress(
-      individualRegisterData.address,
-      individualRegisterData.phone,
-      "delivery",
-    );
+    handleVerifyAddress(individualRegisterData.address, "", "delivery");
   };
 
   return (
@@ -86,7 +81,6 @@ const IndividualAddressVerification = () => {
         stateData={stateData}
         cityData={cityData}
         addressData={individualRegisterData.address}
-        phone={individualRegisterData.phone}
         formErrors={formErrors}
         onCountrySelect={handleCountrySelect}
         onStateSelect={handleStateSelect}
@@ -99,22 +93,13 @@ const IndividualAddressVerification = () => {
           setZipCode(text);
           handleValidationChecks("general", text);
         }}
-        onPhoneChange={(text) => {
-          setPhone(text);
-          handleValidationChecks("general", text);
-        }}
         addressLabel="Collector's Address"
         addressPlaceholder="Input your residential address here"
       />
 
       <AddressVerificationActions
         isLoading={isLoading}
-        isDisabled={
-          !checkIsFormValid(
-            individualRegisterData.address,
-            individualRegisterData.phone,
-          )
-        }
+        isDisabled={!checkIsFormValid(individualRegisterData.address)}
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
       />

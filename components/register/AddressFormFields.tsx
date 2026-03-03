@@ -15,14 +15,20 @@ interface AddressFormFieldsProps {
     address_line: string;
     zip: string;
   };
-  phone?: string;
-  formErrors: Partial<AddressTypes & { phone: string }>;
-  onCountrySelect: (item: { label: string; value: string; currency?: string }) => void;
-  onStateSelect: (item: { label: string; value: string; isoCode?: string }) => void;
+  formErrors: Partial<AddressTypes>;
+  onCountrySelect: (item: {
+    label: string;
+    value: string;
+    currency?: string;
+  }) => void;
+  onStateSelect: (item: {
+    label: string;
+    value: string;
+    isoCode?: string;
+  }) => void;
   onCitySelect: (item: { label: string; value: string }) => void;
   onAddressChange: (text: string) => void;
   onZipChange: (text: string) => void;
-  onPhoneChange?: (text: string) => void;
   addressLabel?: string;
   addressPlaceholder?: string;
   countryLabel?: string;
@@ -34,14 +40,12 @@ export const AddressFormFields = ({
   stateData,
   cityData,
   addressData,
-  phone,
   formErrors,
   onCountrySelect,
   onStateSelect,
   onCitySelect,
   onAddressChange,
   onZipChange,
-  onPhoneChange,
   addressLabel = "Address",
   addressPlaceholder = "Input your address here",
   countryLabel = "Country of residence",
@@ -108,17 +112,6 @@ export const AddressFormFields = ({
           errorMessage={formErrors?.zip}
         />
       </View>
-
-      {onPhoneChange && (
-        <Input
-          label="Phone number"
-          keyboardType="phone-pad"
-          onInputChange={onPhoneChange}
-          placeHolder="+12345678990"
-          value={phone || ""}
-          errorMessage={formErrors?.phone}
-        />
-      )}
     </>
   );
 };

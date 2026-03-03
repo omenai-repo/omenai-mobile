@@ -32,6 +32,7 @@ export function useLoginHandler(userType: UserType) {
     isBiometricSupported,
     isBiometricEnabled,
     saveCredentials,
+    getCredentials,
     authenticate,
     getStoredEmail,
     deleteCredentials,
@@ -207,7 +208,34 @@ export function useLoginHandler(userType: UserType) {
     setIsLoading(false);
   };
 
-  return { handleLogin };
+  const handleBiometricOnlyLogin = async (
+    setIsLoading: (loading: boolean) => void,
+  ) => {
+    setIsLoading(true);
+    try {
+      const { success } = await authenticate();
+      if (!success) return false;
+
+      const credentials = await getCredentials(userType);
+      if (!credentials) return false;
+
+      const { email, token: password } = credentials;
+
+      await handleLogin(
+        { email, password },
+        setIsLoading,
+        () => {}, // No need to clear inputs for biometric login
+      );
+      return true;
+    } catch (e) {
+      console.error("Biometric only login failed:", e);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { handleLogin, handleBiometricOnlyLogin };
 }
 
 function mapUserData(resultsBody: any, userType: UserType) {

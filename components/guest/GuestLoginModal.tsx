@@ -122,9 +122,12 @@ export default function GuestLoginModal() {
     navigation.navigate("AuthNavigation", { screen: screenName.register });
   };
 
-  const otherLogin = () => {
+  const otherLogin = (accountType: "artist" | "gallery") => {
     closeGuestLoginModal();
-    navigation.navigate("AuthNavigation", { screen: screenName.login });
+    navigation.navigate("AuthNavigation", {
+      screen: screenName.login,
+      params: { account_type: accountType },
+    });
   };
 
   const handleClose = () => {
@@ -268,14 +271,14 @@ export default function GuestLoginModal() {
               <View style={tw`gap-3`}>
                 <LongWhiteButton
                   value="Sign in as Artist"
-                  onClick={otherLogin}
+                  onClick={() => otherLogin("artist")}
                   style={{ height: 48 }}
                   borderColor={colors.inputBorder}
                 />
 
                 <LongWhiteButton
                   value="Sign in as Gallery"
-                  onClick={otherLogin}
+                  onClick={() => otherLogin("gallery")}
                   style={{ height: 48 }}
                   borderColor={colors.inputBorder}
                 />

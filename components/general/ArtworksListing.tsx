@@ -1,11 +1,10 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import {
-  FlatList,
   View,
-  ScrollView,
   NativeSyntheticEvent,
   NativeScrollEvent,
   RefreshControl,
+  ScrollView,
 } from "react-native";
 import MiniArtworkCard from "#components/artwork/MiniArtworkCard";
 import EmptyArtworks from "./EmptyArtworks";
@@ -56,8 +55,7 @@ export default function ArtworksListing({
 
   const debouncedOnEndReached = useMemo(() => {
     if (!onEndReached) return null;
-    const fn = debounce(onEndReached, 300, { leading: false, trailing: true });
-    return fn;
+    return debounce(onEndReached, 300, { leading: false, trailing: true });
   }, [onEndReached]);
 
   useEffect(() => {
@@ -75,39 +73,59 @@ export default function ArtworksListing({
   };
 
   const renderColumn = (columnData: any[]) => (
-    <FlatList
-      data={columnData}
-      keyExtractor={(item) => String(item.art_id)}
-      renderItem={({ item }) => (
-        <View style={tw`mb-2`}>
+    <View>
+      {columnData.map((item) => (
+        <View key={String(item.art_id)} style={tw`mb-2`}>
           <MiniArtworkCard
             title={item.title}
             url={item.url}
             artist={item.artist}
             showPrice={item.pricing.shouldShowPrice === "Yes"}
             price={item.pricing.usd_price}
-            impressions={item.impressions}
-            like_IDs={item.like_IDs}
+            impressions={item.impressions ?? 0}
+            like_IDs={item.like_IDs ?? []}
             art_id={item.art_id}
-            availability={item.availability}
+            availability={(item as any).availability}
             galleryView={userType === "user" ? true : false}
             countdown={
-              item.exclusivity_status?.exclusivity_end_date
-                ? (item.exclusivity_status.exclusivity_end_date as Date)
+              (item as any).exclusivity_status?.exclusivity_end_date
+                ? ((item as any).exclusivity_status
+                    .exclusivity_end_date as Date)
                 : null
             }
           />
         </View>
-      )}
-      scrollEnabled={false}
-      showsVerticalScrollIndicator={false}
-    />
+      ))}
+    </View>
   );
 
   if (!Array.isArray(data) || data.length === 0) {
     return (
+      <View style={tw`flex-1`}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={tw`flex-1`}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.black}
+              colors={[colors.black]}
+            />
+          }
+        >
+          <EmptyArtworks />
+        </ScrollView>
+      </View>
+    );
+  }
+
+  return (
+    <View style={tw`flex-1`}>
       <ScrollView
-        contentContainerStyle={tw`flex-1`}
+        showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -117,40 +135,23 @@ export default function ArtworksListing({
           />
         }
       >
-        <EmptyArtworks />
+        <View
+          style={[
+            tw`flex-row justify-between gap-2.5`,
+            { paddingHorizontal: horizontalPadding },
+          ]}
+        >
+          {columnsData.map(
+            (column: { id: string; data: ArtworkSchemaTypes[] }) => (
+              <View key={column.id} style={[{ flex: 1 / numColumns }]}>
+                {renderColumn(column.data)}
+              </View>
+            ),
+          )}
+        </View>
+        {loadingMore && <Loader size={150} height={0} />}
+        <View style={tw`mb-[5px]`} />
       </ScrollView>
-    );
-  }
-
-  return (
-    <ScrollView
-      onScroll={handleScroll}
-      scrollEventThrottle={16}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          tintColor={colors.black}
-          colors={[colors.black]}
-        />
-      }
-    >
-      <View
-        style={[
-          tw`flex-row justify-between gap-2.5`,
-          { paddingHorizontal: horizontalPadding },
-        ]}
-      >
-        {columnsData.map((column) => (
-          <View key={column.id} style={[{ flex: 1 / numColumns }]}>
-            {renderColumn(column.data)}
-          </View>
-        ))}
-      </View>
-      {/* Loader at the bottom */}
-      {loadingMore && <Loader size={150} height={0} />}
-      <View style={tw`mb-5px]`} />
-    </ScrollView>
+    </View>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, View, StyleSheet, ViewStyle, StyleProp } from "react-native";
+import { StyleSheet, ViewStyle, StyleProp, Animated } from "react-native";
 
 interface ScrollWrapperProps {
   children: React.ReactNode;
@@ -30,30 +30,22 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
   nestedScrollEnabled,
   keyboardShouldPersistTaps,
 }) => {
-  // Wrap children in a container for FlatList
-  const renderItem = React.useCallback(
-    () => <View style={{ flex: 1 }}>{children}</View>,
-    [children],
-  );
-
   return (
-    <FlatList
-      data={[{ key: "content" }]}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.key}
+    <Animated.ScrollView
       style={[styles.container, style]}
       contentContainerStyle={contentContainerStyle}
       showsVerticalScrollIndicator={showsVerticalScrollIndicator}
       showsHorizontalScrollIndicator={showsHorizontalScrollIndicator}
       onScroll={onScroll}
-      onEndReached={onEndReached}
-      onEndReachedThreshold={onEndReachedThreshold}
       refreshControl={refreshControl}
       horizontal={horizontal}
       scrollEventThrottle={16} // For smooth scrolling
       nestedScrollEnabled={nestedScrollEnabled}
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
-    />
+      onScrollEndDrag={onEndReached}
+    >
+      {children}
+    </Animated.ScrollView>
   );
 };
 
