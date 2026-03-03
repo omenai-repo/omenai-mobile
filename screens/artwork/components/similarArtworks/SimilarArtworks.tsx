@@ -43,7 +43,7 @@ export default function SimilarArtworks({
 
   return (
     <ArtworkListSection
-      title="Hot Recommendations"
+      title="Curated for You"
       data={data || []}
       isLoading={isLoading}
       onHeaderPress={

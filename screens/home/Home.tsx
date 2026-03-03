@@ -10,7 +10,6 @@ import TrendingArtworks from "./components/TrendingArtworks";
 import CuratedArtworksListing from "./components/CuratedArtworksListing";
 import CatalogListing from "./components/catalog/CatalogListing";
 import RecentlyViewedArtworks from "./components/recentlyViewed/RecentlyViewedArtworks";
-import FeaturedArtists from "./components/featuredArtists/FeaturedArtists";
 import Editorials from "./components/editorials/Editorials";
 import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";

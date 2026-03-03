@@ -5,23 +5,31 @@ import AuthTabs from "../../components/auth/AuthTabs";
 import Individual from "./components/individual/Individual";
 import Gallery from "./components/gallery/Gallery";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { colors } from "../../config/colors.config";
 import { screenName } from "../../constants/screenNames.constants";
-
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { StatusBar } from "expo-status-bar";
 import Artist from "./components/artist/Artist";
 import { useIndividualAuthLoginStore } from "#store/auth/login/IndividualAuthLoginStore";
 import { useArtistAuthLoginStore } from "#store/auth/login/ArtistAuthLoginStore";
 import { useGalleryAuthLoginStore } from "#store/auth/login/GalleryAuthLoginStore";
-
 import { useBiometrics, UserType } from "#hooks/useBiometrics";
 import { useLoginHandler } from "#hooks/useLoginHandler";
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const route = useRoute<any>();
+
+  // initialize selectedIndex based on route params if provided
+  const initialIndex = (() => {
+    const accountType = route.params?.account_type;
+    if (accountType === "artist") return 1;
+    if (accountType === "gallery") return 2;
+    return 0; // default to collector
+  })();
+
+  const [selectedIndex, setSelectedIndex] = useState(initialIndex);
   const clearIndividual = useIndividualAuthLoginStore((s) => s.clearInputs);
   const clearArtist = useArtistAuthLoginStore((s) => s.clearInputs);
   const clearGallery = useGalleryAuthLoginStore((s) => s.clearInputs);

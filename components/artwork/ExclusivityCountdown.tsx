@@ -130,7 +130,9 @@ export default memo(function ExclusivityCountdown({
   return (
     <>
       {isExpired ? (
-        <ExpiredState onExtendContract={handleExtendContract} />
+        userType !== "" ? (
+          <ExpiredState onExtendContract={handleExtendContract} />
+        ) : null
       ) : (
         <ActiveCountdown timeLeft={timeLeft} />
       )}
