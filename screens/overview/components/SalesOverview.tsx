@@ -1,5 +1,5 @@
 import { useDevice } from "#hooks/useDevice";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleProp, Text, View, ViewStyle } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { getSalesActivityData } from "#services/overview/getSalesActivityData";
@@ -41,8 +41,8 @@ export default function SalesOverview({
       const res = await getSalesActivityData(selectedYear);
       return salesDataAlgorithm(res.data);
     },
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
@@ -55,8 +55,8 @@ export default function SalesOverview({
   const data = query.data ?? [];
   const isEmpty = data.every((item: any) => item.value === 0);
 
-  const customLabel = (val: string) => {
-    return (
+  const customLabel = useCallback(
+    (val: string) => (
       <View style={[tw`w-[50px] items-center`, isTablet && { marginLeft: 10 }]}>
         <Text
           style={tw`text-gray-400 font-medium text-[11px] mb-1.5 text-center`}
@@ -64,44 +64,75 @@ export default function SalesOverview({
           {val}
         </Text>
       </View>
-    );
-  };
+    ),
+    [isTablet],
+  );
 
-  const formattedData = data.map((item: any, index: number) => ({
-    value: item.value,
-    label: item.label,
-    labelComponent: () => customLabel(item.label),
-    index,
-  }));
+  const formattedData = useMemo(
+    () =>
+      data.map((item: any, index: number) => ({
+        value: item.value,
+        label: item.label,
+        labelComponent: () => customLabel(item.label),
+        index,
+      })),
+    [data, customLabel],
+  );
 
-  const formatYAxisLabel = (label: string) => {
+  const renderTooltip = useCallback(
+    (item: any, index: number) => {
+      const maxValue = Math.max(...formattedData.map((d) => d.value));
+      return (
+        <View
+          style={{
+            marginLeft: -15,
+            backgroundColor: "transparent",
+          }}
+        >
+          <ChartTooltip
+            value={item.value}
+            label={item.label}
+            index={index}
+            maxValue={maxValue}
+            totalBars={formattedData.length}
+          />
+        </View>
+      );
+    },
+    [formattedData],
+  );
+
+  const renderHeader = useCallback(
+    () => (
+      <View style={tw`flex-row justify-between items-center mb-5 z-20`}>
+        <Text style={tw`text-lg text-black font-medium`}>Sales Revenue</Text>
+        <Dropdown
+          style={tw`h-[35px] w-[90px] border border-[#E0E0E0] rounded-md px-2`}
+          containerStyle={tw`rounded-md mt-1`}
+          data={years}
+          labelField="label"
+          valueField="value"
+          value={selectedYear}
+          onChange={(item) => setSelectedYear(item.value)}
+          placeholder="Year"
+          placeholderStyle={tw`text-sm text-[#333]`}
+          selectedTextStyle={tw`text-sm text-[#333]`}
+          itemTextStyle={tw`text-sm text-[#333]`}
+          iconStyle={tw`w-5 h-5`}
+        />
+      </View>
+    ),
+    [selectedYear],
+  );
+
+  const formatYAxisLabel = useCallback((label: string) => {
     const value = Number.parseFloat(label);
     if (value < 0) return "";
     if (value >= 1000) {
       return `$${(value / 1000).toFixed(0)}k`;
     }
     return `$${value}`;
-  };
-
-  const renderHeader = () => (
-    <View style={tw`flex-row justify-between items-center mb-5 z-20`}>
-      <Text style={tw`text-lg text-black font-medium`}>Sales Revenue</Text>
-      <Dropdown
-        style={tw`h-[35px] w-[90px] border border-[#E0E0E0] rounded-md px-2`}
-        containerStyle={tw`rounded-md mt-1`}
-        data={years}
-        labelField="label"
-        valueField="value"
-        value={selectedYear}
-        onChange={(item) => setSelectedYear(item.value)}
-        placeholder="Year"
-        placeholderStyle={tw`text-sm text-[#333]`}
-        selectedTextStyle={tw`text-sm text-[#333]`}
-        itemTextStyle={tw`text-sm text-[#333]`}
-        iconStyle={tw`w-5 h-5`}
-      />
-    </View>
-  );
+  }, []);
 
   if (query.isLoading && !query.data) {
     return (
@@ -169,25 +200,7 @@ export default function SalesOverview({
             animationDuration={1200}
             frontColor={colors.black}
             showValuesAsTopLabel={false}
-            renderTooltip={(item: any, index: number) => {
-              const maxValue = Math.max(...formattedData.map((d) => d.value));
-              return (
-                <View
-                  style={{
-                    marginLeft: -15, // Center tooltip roughly over bar
-                    backgroundColor: "transparent",
-                  }}
-                >
-                  <ChartTooltip
-                    value={item.value}
-                    label={item.label}
-                    index={index}
-                    maxValue={maxValue}
-                    totalBars={formattedData.length}
-                  />
-                </View>
-              );
-            }}
+            renderTooltip={renderTooltip}
             width={chartWidth}
             height={200}
             labelWidth={40}

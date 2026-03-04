@@ -35,8 +35,8 @@ export default function PopularArtworks({
       const res = await fetchPopularArtworks();
       return res?.data ?? [];
     },
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
