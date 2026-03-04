@@ -1,12 +1,12 @@
 import {
   Dimensions,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { Image, ImageLoadEventData } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "#config/colors.config";
 import { getImageFileView } from "#lib/storage/getImageFileView";
@@ -24,11 +24,9 @@ type TrendingArtworkCardType = {
   art_id: string;
 };
 
-export default function TrendingArtworkCard({
+function TrendingArtworkCard({
   image,
   artist,
-  rarity,
-  medium,
   title,
   likes,
   art_id,
@@ -36,23 +34,25 @@ export default function TrendingArtworkCard({
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const screenWidth = Dimensions.get("window").width;
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
-
-  let imageWidth = 0;
-  imageWidth = (screenWidth - 60) / 2; //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
+  const imageWidth = (screenWidth - 60) / 2;
   const image_href = getImageFileView(image, 300);
 
-  useEffect(() => {
-    // Fetch the image to get its dimensions
-    Image.getSize(image_href, (width, height) => {
-      // Calculate the image height based on the screen width and image aspect ratio
-      const aspectRatio = height / width;
-      setImageDimensions({ height: height * aspectRatio, width: width });
-    });
-  }, [image_href, screenWidth]);
+  const [imageDimensions, setImageDimensions] = useState({
+    width: imageWidth,
+    height: 200,
+  });
+
+  const handleImageLoad = useCallback(
+    (e: ImageLoadEventData) => {
+      const { source } = e;
+      const aspectRatio = source.height / source.width;
+      setImageDimensions({
+        width: imageWidth,
+        height: imageWidth * aspectRatio,
+      });
+    },
+    [imageWidth],
+  );
 
   return (
     <TouchableOpacity
@@ -67,9 +67,12 @@ export default function TrendingArtworkCard({
               style={{
                 width: imageDimensions.width,
                 height: imageDimensions.height,
-                objectFit: "cover",
               }}
-              resizeMode="contain"
+              contentFit="cover"
+              transition={200}
+              cachePolicy="memory-disk"
+              recyclingKey={art_id}
+              onLoad={handleImageLoad}
             />
           </View>
           <View style={styles.likeContainer}>
@@ -88,15 +91,13 @@ export default function TrendingArtworkCard({
               {likes} {likes > 1 ? "Likes" : "Like"}
             </Text>
           </View>
-          {/* <View style={styles.tagsContainer}>
-                        <Text style={styles.tags}>{medium}</Text>
-                        <Text style={styles.tags}>{rarity}</Text>
-                    </View> */}
         </View>
       </View>
     </TouchableOpacity>
   );
 }
+
+export default React.memo(TrendingArtworkCard);
 
 const styles = StyleSheet.create({
   container: {

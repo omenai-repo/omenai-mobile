@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { FlatList, RefreshControl } from "react-native";
 import tw from "twrnc";
 import OrderContainer from "./OrderContainer";
@@ -18,21 +18,41 @@ interface OrdersListProps {
   renderExclusivityType?: (item: any) => string;
 }
 
-export const OrdersList: React.FC<OrdersListProps> = React.memo(
-  ({
-    data,
-    openSection,
-    toggleRecentOrder,
-    selectedTab,
-    isRefreshing,
-    onRefresh,
-    onAccept,
-    onDecline,
-    onTrack,
-    renderExclusivityType,
-  }) => {
-    const renderItem = useCallback(
-      ({ item, index }: { item: any; index: number }) => (
+export const OrdersList: React.FC<OrdersListProps> = ({
+  data,
+  openSection,
+  toggleRecentOrder,
+  selectedTab,
+  isRefreshing,
+  onRefresh,
+  onAccept,
+  onDecline,
+  onTrack,
+  renderExclusivityType,
+}) => {
+  return (
+    <FlatList
+      data={data}
+      keyExtractor={(item, index) =>
+        item?.order_id?.toString?.() ??
+        item?.artwork_data?._id ??
+        `order-${index}`
+      }
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={tw`pb-[30px]`}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={onRefresh}
+          tintColor="#000"
+          colors={["#000"]}
+        />
+      }
+      initialNumToRender={5}
+      maxToRenderPerBatch={5}
+      windowSize={10}
+      removeClippedSubviews={true}
+      renderItem={({ item, index }) => (
         <OrderContainer
           id={index}
           url={item?.artwork_data?.url}
@@ -67,43 +87,7 @@ export const OrdersList: React.FC<OrdersListProps> = React.memo(
             exclusivity_type: renderExclusivityType(item),
           })}
         />
-      ),
-      [
-        openSection,
-        toggleRecentOrder,
-        selectedTab,
-        data.length,
-        onAccept,
-        onDecline,
-        onTrack,
-        renderExclusivityType,
-      ],
-    );
-
-    return (
-      <FlatList
-        data={data}
-        keyExtractor={(item, index) =>
-          item?.order_id?.toString?.() ??
-          item?.artwork_data?._id ??
-          `order-${index}`
-        }
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={tw`pb-[30px]`}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-            tintColor="#000"
-            colors={["#000"]}
-          />
-        }
-        initialNumToRender={5}
-        maxToRenderPerBatch={5}
-        windowSize={10}
-        removeClippedSubviews={true}
-        renderItem={renderItem}
-      />
-    );
-  },
-);
+      )}
+    />
+  );
+};

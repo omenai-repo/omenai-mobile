@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
@@ -31,6 +31,33 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
 
   const showMoreButton = data.length >= limit;
 
+  const renderItem = useCallback(
+    ({ item, index }: { item: any; index: number }) =>
+      index + 1 === limit && showMoreButton ? (
+        <ViewAllCategoriesButton
+          label="View all curated artworks"
+          listingType="curated"
+          darkMode
+        />
+      ) : (
+        <ArtworkCard
+          title={item.title}
+          url={item.url}
+          artist={item.artist}
+          showPrice={item.pricing.shouldShowPrice === "Yes"}
+          price={item.pricing.usd_price}
+          availiablity={item.availability}
+          lightText
+          impressions={item.impressions}
+          like_IDs={item.like_IDs}
+          art_id={item.art_id}
+        />
+      ),
+    [limit, showMoreButton],
+  );
+
+  const keyExtractor = useCallback((_: any, i: number) => `curated-${i}`, []);
+
   return (
     <View style={[tw`py-10 mt-6`, { backgroundColor: colors.black }]}>
       <SectionHeader
@@ -49,33 +76,16 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
         {!isLoading && data.length > 0 && (
           <FlatList
             data={data}
-            keyExtractor={(_, i) => `curated-${i}`}
+            keyExtractor={keyExtractor}
             horizontal
             showsHorizontalScrollIndicator={false}
             style={tw`mt-5`}
             contentContainerStyle={tw`px-5 gap-5`}
-            renderItem={({ item, index }) =>
-              index + 1 === limit && showMoreButton ? (
-                <ViewAllCategoriesButton
-                  label="View all curated artworks"
-                  listingType="curated"
-                  darkMode
-                />
-              ) : (
-                <ArtworkCard
-                  title={item.title}
-                  url={item.url}
-                  artist={item.artist}
-                  showPrice={item.pricing.shouldShowPrice === "Yes"}
-                  price={item.pricing.usd_price}
-                  availiablity={item.availability}
-                  lightText
-                  impressions={item.impressions}
-                  like_IDs={item.like_IDs}
-                  art_id={item.art_id}
-                />
-              )
-            }
+            renderItem={renderItem}
+            initialNumToRender={5}
+            maxToRenderPerBatch={5}
+            windowSize={5}
+            removeClippedSubviews
           />
         )}
         {!isLoading && data.length < 1 && (

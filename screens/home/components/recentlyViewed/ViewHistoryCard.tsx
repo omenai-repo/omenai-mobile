@@ -1,13 +1,13 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import tw from "twrnc";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { Image, ImageLoadEventData } from "expo-image";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
 import { getImageFileView } from "#lib/storage/getImageFileView";
-import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 
-export default function ViewHistoryCard({
+function ViewHistoryCard({
   url,
   art_id,
   artist,
@@ -24,36 +24,21 @@ export default function ViewHistoryCard({
   const image_href = getImageFileView(url, 300);
 
   const [imageDimensions, setImageDimensions] = useState({
-    width: 200,
+    width: displayWidth,
     height: 200,
   });
 
-  useEffect(() => {
-    let isMounted = true;
-
-    Image.getSize(
-      image_href,
-      (defaultWidth, defaultHeight) => {
-        if (!isMounted) return;
-        const { width, height } = resizeImageDimensions(
-          { width: defaultWidth, height: defaultHeight },
-          displayWidth,
-          300, // Optional maxHeight
-        );
-        setImageDimensions({ height, width });
-      },
-      (error) => {
-        console.warn(
-          "Failed to get image size for history card:",
-          error?.message || error,
-        );
-      },
-    );
-
-    return () => {
-      isMounted = false;
-    };
-  }, [image_href]);
+  const handleImageLoad = useCallback(
+    (e: ImageLoadEventData) => {
+      const { source } = e;
+      const aspectRatio = source.height / source.width;
+      setImageDimensions({
+        width: displayWidth,
+        height: displayWidth * aspectRatio,
+      });
+    },
+    [displayWidth],
+  );
 
   return (
     <View>
@@ -69,11 +54,15 @@ export default function ViewHistoryCard({
           style={[
             tw`rounded-md`,
             {
-              width: imageDimensions.width,
+              width: displayWidth,
               height: imageDimensions.height,
             },
           ]}
-          resizeMode="cover"
+          contentFit="cover"
+          transition={200}
+          cachePolicy="memory-disk"
+          recyclingKey={art_id}
+          onLoad={handleImageLoad}
         />
         <View style={tw`mt-2.5 w-[200px]`}>
           <Text
@@ -95,3 +84,5 @@ export default function ViewHistoryCard({
     </View>
   );
 }
+
+export default React.memo(ViewHistoryCard);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { FlatList, View } from "react-native";
 import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
@@ -34,6 +34,23 @@ export default function RecentlyViewedArtworks() {
     gcTime: 10 * 60_000,
   });
 
+  const renderItem = useCallback(
+    ({ item }: { item: ViewHistoryItem }) => (
+      <ViewHistoryCard
+        art_id={item.art_id}
+        artist={item.artist}
+        artwork={item.artwork}
+        url={item.url}
+      />
+    ),
+    [],
+  );
+
+  const keyExtractor = useCallback(
+    (_: ViewHistoryItem, i: number) => `rv-${i}`,
+    [],
+  );
+
   return (
     <View style={tw`my-10`}>
       <SectionHeader subtitle="YOUR ACTIVITY" title="Recently viewed" />
@@ -43,19 +60,16 @@ export default function RecentlyViewedArtworks() {
       {!isLoading && data.length > 0 && (
         <FlatList
           data={data}
-          keyExtractor={(_, i) => `rv-${i}`}
+          keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
           contentContainerStyle={tw`px-5 gap-5`}
-          renderItem={({ item }) => (
-            <ViewHistoryCard
-              art_id={item.art_id}
-              artist={item.artist}
-              artwork={item.artwork}
-              url={item.url}
-            />
-          )}
+          renderItem={renderItem}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          removeClippedSubviews
         />
       )}
 
