@@ -1,5 +1,6 @@
-import { Image, Text, View, TouchableOpacity, Dimensions } from "react-native";
-import React, { useEffect, useState } from "react";
+import { Text, View, TouchableOpacity, Dimensions } from "react-native";
+import React, { useCallback, useState } from "react";
+import { Image, ImageLoadEventData } from "expo-image";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -9,6 +10,7 @@ import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import { useDevice } from "#hooks/useDevice";
+
 type ArtworkCardType = {
   title: string;
   url: string;
@@ -24,7 +26,7 @@ type ArtworkCardType = {
   galleryView?: boolean;
 };
 
-export default function ArtworkCard({
+function ArtworkCard({
   title,
   url,
   artist,
@@ -44,22 +46,23 @@ export default function ArtworkCard({
   const defaultWidth = isTablet ? screenWidth * 0.4 : screenWidth * 0.7;
   const displayWidth = width > 0 ? width : defaultWidth;
 
-  const [imageHeight, setImageHeight] = useState<number | null>(null);
+  const [imageHeight, setImageHeight] = useState<number>(200);
 
   const imageUri = getImageFileView(url, 300);
 
-  useEffect(() => {
-    setImageHeight(null);
-    Image.getSize(imageUri, (origWidth, origHeight) => {
+  const handleImageLoad = useCallback(
+    (e: ImageLoadEventData) => {
+      const { source } = e;
       const maxHeight = 300;
       const { height: resizedHeight } = resizeImageDimensions(
-        { width: origWidth, height: origHeight },
+        { width: source.width, height: source.height },
         displayWidth,
         maxHeight,
       );
       setImageHeight(resizedHeight);
-    });
-  }, [imageUri, displayWidth]);
+    },
+    [displayWidth],
+  );
 
   return (
     <View>
@@ -79,7 +82,11 @@ export default function ArtworkCard({
                 width: displayWidth,
                 height: imageHeight,
               }}
-              resizeMode="contain"
+              contentFit="cover"
+              transition={200}
+              cachePolicy="memory-disk"
+              recyclingKey={art_id}
+              onLoad={handleImageLoad}
             />
           ) : (
             <View
@@ -161,3 +168,5 @@ export default function ArtworkCard({
     </View>
   );
 }
+
+export default React.memo(ArtworkCard);

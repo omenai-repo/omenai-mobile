@@ -41,8 +41,8 @@ export default function SalesOverview({
       const res = await getSalesActivityData(selectedYear);
       return salesDataAlgorithm(res.data);
     },
-    staleTime: 60_000,
-    gcTime: 5 * 60_000,
+    staleTime: 0,
+    gcTime: 0,
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
@@ -56,15 +56,19 @@ export default function SalesOverview({
   const isEmpty = data.every((item: any) => item.value === 0);
 
   const customLabel = useCallback(
-    (val: string) => (
-      <View style={[tw`w-[50px] items-center`, isTablet && { marginLeft: 10 }]}>
-        <Text
-          style={tw`text-gray-400 font-medium text-[11px] mb-1.5 text-center`}
+    (val: string) => {
+      return (
+        <View
+          style={[tw`w-[50px] items-center`, isTablet && { marginLeft: 10 }]}
         >
-          {val}
-        </Text>
-      </View>
-    ),
+          <Text
+            style={tw`text-gray-400 font-medium text-[11px] mb-1.5 text-center`}
+          >
+            {val}
+          </Text>
+        </View>
+      );
+    },
     [isTablet],
   );
 
@@ -79,28 +83,14 @@ export default function SalesOverview({
     [data, customLabel],
   );
 
-  const renderTooltip = useCallback(
-    (item: any, index: number) => {
-      const maxValue = Math.max(...formattedData.map((d) => d.value));
-      return (
-        <View
-          style={{
-            marginLeft: -15,
-            backgroundColor: "transparent",
-          }}
-        >
-          <ChartTooltip
-            value={item.value}
-            label={item.label}
-            index={index}
-            maxValue={maxValue}
-            totalBars={formattedData.length}
-          />
-        </View>
-      );
-    },
-    [formattedData],
-  );
+  const formatYAxisLabel = useCallback((label: string) => {
+    const value = Number.parseFloat(label);
+    if (value < 0) return "";
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(0)}k`;
+    }
+    return `$${value}`;
+  }, []);
 
   const renderHeader = useCallback(
     () => (
@@ -124,15 +114,6 @@ export default function SalesOverview({
     ),
     [selectedYear],
   );
-
-  const formatYAxisLabel = useCallback((label: string) => {
-    const value = Number.parseFloat(label);
-    if (value < 0) return "";
-    if (value >= 1000) {
-      return `$${(value / 1000).toFixed(0)}k`;
-    }
-    return `$${value}`;
-  }, []);
 
   if (query.isLoading && !query.data) {
     return (
@@ -200,7 +181,25 @@ export default function SalesOverview({
             animationDuration={1200}
             frontColor={colors.black}
             showValuesAsTopLabel={false}
-            renderTooltip={renderTooltip}
+            renderTooltip={(item: any, index: number) => {
+              const maxValue = Math.max(...formattedData.map((d) => d.value));
+              return (
+                <View
+                  style={{
+                    marginLeft: -15, // Center tooltip roughly over bar
+                    backgroundColor: "transparent",
+                  }}
+                >
+                  <ChartTooltip
+                    value={item.value}
+                    label={item.label}
+                    index={index}
+                    maxValue={maxValue}
+                    totalBars={formattedData.length}
+                  />
+                </View>
+              );
+            }}
             width={chartWidth}
             height={200}
             labelWidth={40}

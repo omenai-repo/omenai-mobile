@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -35,8 +35,8 @@ export default function PopularArtworks({
       const res = await fetchPopularArtworks();
       return res?.data ?? [];
     },
-    staleTime: 60_000,
-    gcTime: 5 * 60_000,
+    staleTime: 0,
+    gcTime: 0,
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
@@ -48,6 +48,28 @@ export default function PopularArtworks({
 
   const isLoading = query.isLoading && !query.data;
   const data = query.data ?? [];
+
+  const renderItem = useCallback(
+    ({ item }: { item: ArtworkFlatlistItem }) => (
+      <ArtworkCard
+        title={item.title}
+        url={item.url}
+        artist={item.artist}
+        showPrice={item.pricing.shouldShowPrice === "Yes"}
+        price={item.pricing.usd_price}
+        impressions={item.impressions}
+        like_IDs={item.like_IDs}
+        art_id={item.art_id}
+        galleryView
+      />
+    ),
+    [],
+  );
+
+  const keyExtractor = useCallback(
+    (item: ArtworkFlatlistItem, index: number) => String(item.art_id ?? index),
+    [],
+  );
 
   return (
     <View style={styles.container}>
@@ -73,20 +95,8 @@ export default function PopularArtworks({
       {!isLoading && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
-            <ArtworkCard
-              title={item.title}
-              url={item.url}
-              artist={item.artist}
-              showPrice={item.pricing.shouldShowPrice === "Yes"}
-              price={item.pricing.usd_price}
-              impressions={item.impressions}
-              like_IDs={item.like_IDs}
-              art_id={item.art_id}
-              galleryView
-            />
-          )}
-          keyExtractor={(item, index) => String(item.art_id ?? index)}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
           style={{ marginTop: isTablet ? 40 : 30 }}
@@ -95,6 +105,10 @@ export default function PopularArtworks({
             paddingRight: isTablet ? horizontalPadding : 20,
             gap: 20,
           }}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          removeClippedSubviews
         />
       )}
 

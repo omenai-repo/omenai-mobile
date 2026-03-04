@@ -1,18 +1,17 @@
 import {
   Dimensions,
-  Image,
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { Image, ImageLoadEventData } from "expo-image";
 import { colors } from "#config/colors.config";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
-import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import EditArtworkButton from "#components/buttons/EditArtworkButton";
 import tw from "twrnc";
@@ -25,7 +24,7 @@ type MiniArtworkCardType = {
   usd_price: number;
 };
 
-export default function GalleryMiniArtworkCard({
+function GalleryMiniArtworkCard({
   url,
   title,
   art_id,
@@ -35,72 +34,61 @@ export default function GalleryMiniArtworkCard({
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const screenWidth = Dimensions.get("window").width;
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
-  const [renderImage, setRenderImage] = useState(false);
-
-  const displayWidth = (screenWidth - 60) / 2; // screen width minus paddings applied to grid view then divided by two
+  const displayWidth = (screenWidth - 60) / 2;
   const image_href = getImageFileView(url, 300);
 
-  useEffect(() => {
-    const image_href = getImageFileView(url, 300);
+  const [imageDimensions, setImageDimensions] = useState({
+    width: displayWidth,
+    height: 200,
+  });
 
-    Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-      const { width, height } = resizeImageDimensions(
-        { width: defaultWidth, height: defaultHeight },
-        displayWidth,
-        300, // optional max height
-      );
-      setImageDimensions({ height, width });
-      setRenderImage(true);
-    });
-  }, [url, screenWidth, displayWidth]);
+  const handleImageLoad = useCallback(
+    (e: ImageLoadEventData) => {
+      const { source } = e;
+      const aspectRatio = source.height / source.width;
+      setImageDimensions({
+        width: displayWidth,
+        height: displayWidth * aspectRatio,
+      });
+    },
+    [displayWidth],
+  );
 
   return (
     <TouchableOpacity
       activeOpacity={1}
-      style={[tw`ml-0`, { width: imageDimensions.width }]}
+      style={[tw`ml-0`, { width: displayWidth }]}
       onPress={() => {
         navigation.push(screenName.artwork, { art_id, url });
       }}
     >
-      {renderImage ? (
-        <View
+      <View
+        style={{
+          width: displayWidth,
+          height: imageDimensions.height,
+          position: "relative",
+        }}
+      >
+        <Image
+          source={{ uri: image_href }}
           style={{
-            width: imageDimensions.width,
+            width: displayWidth,
             height: imageDimensions.height,
-            position: "relative",
           }}
-        >
-          <Image
-            source={{ uri: image_href }}
-            style={{
-              width: imageDimensions.width,
-              height: imageDimensions.height,
-              objectFit: "contain",
-            }}
-            resizeMode="contain"
-          />
-          <EditArtworkButton
-            handlePress={() => {
-              navigation.navigate(screenName.gallery.editArtwork, {
-                art_id: art_id,
-              });
-              console.log("here");
-            }}
-          />
-        </View>
-      ) : (
-        <View
-          style={{
-            width: imageDimensions.width || (screenWidth - 60) / 2,
-            height: imageDimensions.height || 200,
-            backgroundColor: "#f5f5f5",
+          contentFit="cover"
+          transition={200}
+          cachePolicy="memory-disk"
+          recyclingKey={art_id}
+          onLoad={handleImageLoad}
+        />
+        <EditArtworkButton
+          handlePress={() => {
+            navigation.navigate(screenName.gallery.editArtwork, {
+              art_id: art_id,
+            });
           }}
         />
-      )}
+      </View>
       <View style={styles.mainDetailsContainer}>
         <Text style={{ fontSize: 14, color: colors.primary_black }}>
           {title}
@@ -115,6 +103,8 @@ export default function GalleryMiniArtworkCard({
     </TouchableOpacity>
   );
 }
+
+export default React.memo(GalleryMiniArtworkCard);
 
 const styles = StyleSheet.create({
   mainDetailsContainer: {

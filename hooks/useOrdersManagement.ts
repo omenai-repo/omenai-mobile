@@ -36,8 +36,8 @@ export const useOrdersManagement = ({
         return [];
       }
     },
-    staleTime: 60_000,
-    gcTime: 5 * 60_000,
+    staleTime: 0,
+    gcTime: 0,
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
@@ -64,12 +64,6 @@ export const useOrdersManagement = ({
     return filterByYear(completed);
   }, [selectedTab, filterByYear, pending, processing, completed]);
 
-  const currentOrders = useMemo(
-    () => getCurrentOrders(),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedTab, filterByYear, pending, processing, completed],
-  );
-
   const toggleRecentOrder = useCallback((key: string | number) => {
     const k = String(key);
     setOpenSection((prev) => ({
@@ -91,7 +85,7 @@ export const useOrdersManagement = ({
     pending,
     processing,
     completed,
-    currentOrders,
+    currentOrders: getCurrentOrders(),
     toggleRecentOrder,
     isInitialLoading,
     isRefreshing,
