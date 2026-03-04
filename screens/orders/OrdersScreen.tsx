@@ -1,5 +1,5 @@
-import { Text, View, ScrollView, RefreshControl } from "react-native";
-import React, { useState } from "react";
+import { Text, View, RefreshControl } from "react-native";
+import React, { useState, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 
@@ -54,11 +54,11 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
     errorMessage,
   });
 
-  const isArtworkExclusiveDate = (createdAt: string | Date) => {
+  const isArtworkExclusiveDate = useCallback((createdAt: string | Date) => {
     const created = new Date(createdAt).getTime();
     const diffDays = (Date.now() - created) / (1000 * 60 * 60 * 24);
     return diffDays <= 90;
-  };
+  }, []);
 
   const tabs = [
     { title: "Pending", key: "pending", count: pending?.length ?? 0 },
@@ -66,23 +66,26 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
     { title: "Completed", key: "completed" },
   ];
 
-  const handleDecline = (item: any) => {
-    const isExclusive =
-      userType === "artist" &&
-      item?.artwork_data?.exclusivity_status?.exclusivity_type ===
-        "exclusive" &&
-      isArtworkExclusiveDate(item?.createdAt);
+  const handleDecline = useCallback(
+    (item: any) => {
+      const isExclusive =
+        userType === "artist" &&
+        item?.artwork_data?.exclusivity_status?.exclusivity_type ===
+          "exclusive" &&
+        isArtworkExclusiveDate(item?.createdAt);
 
-    setOrderId(item?.order_id);
-    setOrderModalMetadata({
-      is_current_order_exclusive: isExclusive,
-      art_id: item?.artwork_data?.art_id,
-      seller_designation: item?.seller_designation || userType,
-    });
-    setDeclineModal(true);
-  };
+      setOrderId(item?.order_id);
+      setOrderModalMetadata({
+        is_current_order_exclusive: isExclusive,
+        art_id: item?.artwork_data?.art_id,
+        seller_designation: item?.seller_designation || userType,
+      });
+      setDeclineModal(true);
+    },
+    [userType, isArtworkExclusiveDate],
+  );
 
-  const renderContent = () => {
+  const renderContent = useCallback(() => {
     if (isInitialLoading) {
       return <OrderslistingLoader />;
     }
@@ -101,17 +104,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
         </View>
 
         {currentOrders.length === 0 ? (
-          <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
-            refreshControl={
-              <RefreshControl
-                refreshing={isRefreshing}
-                onRefresh={ordersQuery.refetch}
-              />
-            }
-          >
-            <EmptyOrdersListing status={selectedTab} />
-          </ScrollView>
+          <EmptyOrdersListing status={selectedTab} />
         ) : (
           <OrdersList
             data={currentOrders}
@@ -149,7 +142,19 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
         )}
       </>
     );
-  };
+  }, [
+    isInitialLoading,
+    selectedYear,
+    currentOrders,
+    selectedTab,
+    openSection,
+    toggleRecentOrder,
+    isRefreshing,
+    ordersQuery,
+    navigation,
+    userType,
+    handleDecline,
+  ]);
 
   return (
     <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
