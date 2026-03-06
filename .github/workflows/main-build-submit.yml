@@ -32,6 +32,56 @@ jobs:
       - name: 📦 Install dependencies
         run: yarn install
 
+        - name: 🔨 Build Android
+        id: build-android
+        run: |
+          # Build and capture output
+          set +e  # Don't exit on error immediately
+          BUILD_OUTPUT=$(eas build --platform android --profile production --non-interactive --wait 2>&1)
+          BUILD_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+
+          echo "$BUILD_OUTPUT"
+
+          # Check if build command failed
+          if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            echo "❌ Build command failed with exit code $BUILD_EXIT_CODE"
+            echo "Build output:"
+            echo "$BUILD_OUTPUT"
+            exit $BUILD_EXIT_CODE
+          fi
+
+          # Extract build ID using multiple methods for reliability
+          # Method 1: Extract from URL pattern (builds/xxxxx-xxxxx-xxxxx)
+          BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -oE 'builds/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}' | head -1 | cut -d'/' -f2)
+
+          # Method 2: If Method 1 fails, try extracting from JSON output or other patterns
+          if [ -z "$BUILD_ID" ]; then
+            BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -oE '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}' | head -1)
+          fi
+
+          if [ -z "$BUILD_ID" ]; then
+            echo "❌ Failed to extract build ID from output"
+            echo "Build output:"
+            echo "$BUILD_OUTPUT"
+            exit 1
+          fi
+
+          echo "✅ Built Android with ID: $BUILD_ID"
+          echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
+
+      - name: 📱 Submit to Google Play Console
+        run: |
+          # IMPORTANT: We use --id instead of --latest to ensure we submit the exact build we just created
+          BUILD_ID="${{ steps.build-android.outputs.build_id }}"
+          if [ -z "$BUILD_ID" ]; then
+            echo "❌ Build ID is empty, cannot submit"
+            exit 1
+          fi
+          echo "📱 Submitting build $BUILD_ID with profile production"
+          eas submit --platform android --id "$BUILD_ID" --profile production --non-interactive
+
+
       - name: 🔨 Build iOS
         id: build-ios
         run: |
@@ -80,52 +130,3 @@ jobs:
           fi
           echo "📱 Submitting build $BUILD_ID with profile production"
           eas submit --platform ios --id "$BUILD_ID" --profile production --non-interactive
-
-      - name: 🔨 Build Android
-        id: build-android
-        run: |
-          # Build and capture output
-          set +e  # Don't exit on error immediately
-          BUILD_OUTPUT=$(eas build --platform android --profile production --non-interactive --wait 2>&1)
-          BUILD_EXIT_CODE=$?
-          set -e  # Re-enable exit on error
-
-          echo "$BUILD_OUTPUT"
-
-          # Check if build command failed
-          if [ $BUILD_EXIT_CODE -ne 0 ]; then
-            echo "❌ Build command failed with exit code $BUILD_EXIT_CODE"
-            echo "Build output:"
-            echo "$BUILD_OUTPUT"
-            exit $BUILD_EXIT_CODE
-          fi
-
-          # Extract build ID using multiple methods for reliability
-          # Method 1: Extract from URL pattern (builds/xxxxx-xxxxx-xxxxx)
-          BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -oE 'builds/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}' | head -1 | cut -d'/' -f2)
-
-          # Method 2: If Method 1 fails, try extracting from JSON output or other patterns
-          if [ -z "$BUILD_ID" ]; then
-            BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -oE '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}' | head -1)
-          fi
-
-          if [ -z "$BUILD_ID" ]; then
-            echo "❌ Failed to extract build ID from output"
-            echo "Build output:"
-            echo "$BUILD_OUTPUT"
-            exit 1
-          fi
-
-          echo "✅ Built Android with ID: $BUILD_ID"
-          echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
-
-      - name: 📱 Submit to Google Play Console
-        run: |
-          # IMPORTANT: We use --id instead of --latest to ensure we submit the exact build we just created
-          BUILD_ID="${{ steps.build-android.outputs.build_id }}"
-          if [ -z "$BUILD_ID" ]; then
-            echo "❌ Build ID is empty, cannot submit"
-            exit 1
-          fi
-          echo "📱 Submitting build $BUILD_ID with profile production"
-          eas submit --platform android --id "$BUILD_ID" --profile production --non-interactive

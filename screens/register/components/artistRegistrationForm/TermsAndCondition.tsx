@@ -14,10 +14,16 @@ type CheckboxItemProps = {
   readonly isSelected: boolean;
 };
 
-const CheckboxItem = ({ onPress, text, isSelected }: Readonly<CheckboxItemProps>) => (
+const CheckboxItem = ({
+  onPress,
+  text,
+  isSelected,
+}: Readonly<CheckboxItemProps>) => (
   <Pressable onPress={onPress} style={tw`flex-row gap-[15px]`}>
     <SvgXml xml={isSelected ? checkedBox : uncheckedBox} />
-    <Text style={tw`text-[14px] text-[#858585] leading-[20px] mr-[30px]`}>{text}</Text>
+    <Text style={tw`text-[14px] text-[#858585] leading-[20px] mr-[30px]`}>
+      {text}
+    </Text>
   </Pressable>
 );
 
@@ -60,19 +66,25 @@ const TermsAndCondition = () => {
   };
 
   const isProceedDisabled =
-    !selectedTerms.includes(0) || !selectedTerms.includes(2) || !selectedTerms.includes(1);
+    !selectedTerms.includes(0) ||
+    !selectedTerms.includes(2) ||
+    !selectedTerms.includes(1);
 
   const additionalContent = (
     <View style={tw`mb-[20px]`}>
-      <Text style={tw`text-[15px] font-semibold text-black mb-[8px]`}>Please note:</Text>
+      <Text style={tw`text-[15px] font-semibold text-black mb-[8px]`}>
+        Please note:
+      </Text>
       <View style={tw`ml-[10px]`}>
         <Text style={tw`text-[13px] text-gray-700 leading-[20px] mb-[5px]`}>
-          • The platform takes a 35% commission on each artwork sale which covers marketing,
-          platform visibility, payment processing, shipping coordination, and customer service.
+          • The platform takes a 39% commission on each artwork sale which
+          covers marketing, platform visibility, payment processing, shipping
+          coordination, and customer service.
         </Text>
         <Text style={tw`text-[13px] text-gray-700 leading-[20px]`}>
-          • All potential artists on the platform must undergo a mandatory onboarding and
-          verification process before accessing core platform features.
+          • All potential artists on the platform must undergo a mandatory
+          onboarding and verification process before accessing core platform
+          features.
         </Text>
       </View>
     </View>
