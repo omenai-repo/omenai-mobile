@@ -45,6 +45,8 @@ export default function InputForm({
 
   const { value: collectorOnboardingEnabled, loading: collectorLoading } =
     useLowRiskFeatureFlag("collectoronboardingenabled", false);
+  const { value: artistOnboardingEnabled, loading: artistLoading } =
+    useLowRiskFeatureFlag("artistonboardingenabled");
   const { value: galleryOnboardingEnabled, loading: galleryLoading } =
     useLowRiskFeatureFlag("galleryonboardingenabled");
   const { value: waitlistActivated, loading: waitlistLoading } =
@@ -64,7 +66,10 @@ export default function InputForm({
         stateIndex={selectedIndex}
         handleSelect={handleTabSwitch}
       />
-      {collectorLoading || galleryLoading || waitlistLoading ? (
+      {collectorLoading ||
+      artistLoading ||
+      galleryLoading ||
+      waitlistLoading ? (
         <FormSkeleton style={tw`mt-2`} rows={4} />
       ) : (
         <>
@@ -74,7 +79,7 @@ export default function InputForm({
           {selectedIndex === 1 && (
             <ArtistForm
               onInviteValidated={onArtistInviteValidated}
-              isEnabled={galleryOnboardingEnabled}
+              isEnabled={artistOnboardingEnabled}
               waitlistActivated={waitlistActivated}
             />
           )}

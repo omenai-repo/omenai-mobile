@@ -1,4 +1,8 @@
-const uploadImage = async (file: { uri: string; name: string; type: string }) => {
+const uploadImage = async (file: {
+  uri: string;
+  name: string;
+  type: string;
+}) => {
   const formData = new FormData();
 
   formData.append("fileId", "unique()"); // Appwrite will auto-generate an ID
@@ -8,7 +12,7 @@ const uploadImage = async (file: { uri: string; name: string; type: string }) =>
     type: file.type,
   } as any); // TS expects a `File`, so we cast
 
-  const url = `https://cloud.appwrite.io/v1/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID}/files`;
+  const url = `${process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID}/files`;
   const res = await fetch(url, {
     method: "POST",
     headers: {
