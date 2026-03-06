@@ -1,0 +1,35 @@
+appId: com.omenai.omenaimobile
+name: "Verify Subscriptions Flow"
+tags:
+  - profile
+  - subscriptions
+  - billing
+  - gallery
+
+---
+# This flow assumes a logged-in Gallery user (since Galleries use Billing)
+- runFlow: ../login/gallery-login.yaml
+
+# Wait for overview to load
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+# Go to Billing Tab
+- tapOn: "Billing"
+
+# Assert we are on the Billing screen
+- extendedWaitUntil:
+    visible: "Billing"
+    timeout: 10000
+- assertVisible: "Billing"
+
+# Check Subscription details exist (basic sanity check)
+# Depending on UI it could show "Subscription plan", "Current Plan", etc.
+- assertVisible: "plan" # Case-insensitive if possible, or explicit text from component
+
+# As an extra step, we could check if a "Cancel" or "Upgrade" button is visible
+# For a generic verify script:
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Subscription"

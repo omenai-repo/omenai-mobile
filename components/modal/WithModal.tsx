@@ -4,6 +4,7 @@ import CustomModal from "./CustomModal";
 import { useModalStore } from "#store/modal/modalStore";
 import { colors } from "#config/colors.config";
 import ConfirmationModal from "./ConfirmationModal";
+import WebViewModal from "./WebViewModal";
 
 export type WithModalProps = {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export default function WithModal({ children }: WithModalProps) {
     modalMessage,
     modalType,
     modalStyle,
+    webViewUrl,
   } = useModalStore();
 
   useEffect(() => {
@@ -43,6 +45,7 @@ export default function WithModal({ children }: WithModalProps) {
         child={confirmationModal}
       />
       <CustomModal />
+      <WebViewModal url={webViewUrl} />
     </View>
   );
 }

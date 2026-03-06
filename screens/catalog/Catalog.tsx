@@ -94,7 +94,7 @@ export default function Catalog() {
               { color: colors.primary_black },
             ]}
           >
-            Discover Artworks
+            All Works
           </Text>
         </FilterButton>
       </View>

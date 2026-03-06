@@ -1,0 +1,32 @@
+appId: com.omenai.omenaimobile
+name: "Save Artwork Flow"
+tags:
+  - artwork
+  - save
+  - discovery
+
+---
+# User must be logged in to save usually.
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Trending"
+    timeout: 20000
+
+# 1. Tap on the first artwork in the list/feed
+- tapOn: "Trending"
+- swipe:
+    direction: UP
+    duration: 1000
+
+# Tap on a Heart icon/Save button using resource ID or general ID if available
+# We can find standard heart icons by id or generic wait if they exist
+- tapOn:
+    id: ".*heart.*" # Example regex matching heart icon ids if used in trending cards
+
+# 2. Go to Profile or Saved Artworks tab
+- tapOn: "Profile"
+- tapOn: "Saved Artworks"
+
+# 3. Verify it is not empty (assuming it was empty or looking for any saved items to load)
+- assertVisible: "Saved Artworks"

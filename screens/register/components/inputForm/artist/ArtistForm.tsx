@@ -2,22 +2,21 @@ import { View } from "react-native";
 import React from "react";
 import tw from "twrnc";
 import ArtistRegisterationForms from "../../artistRegistrationForm/ArtistRegisterationForms";
-import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import OnboardingBlockerScreen from "#components/blockers/onboarding/OnboardingBlockerScreen";
 import ArtistWaitlistForm from "../../artistWaitlistForm/ArtistWaitlistForm";
 
 type ArtistFormProps = Readonly<{
   onInviteValidated?: (validated: boolean) => void;
+  isEnabled: boolean;
+  waitlistActivated: boolean;
 }>;
 
-const ArtistForm = ({ onInviteValidated }: ArtistFormProps) => {
-  const { value: collectorOnboardingEnabled } = useLowRiskFeatureFlag(
-    "galleryonboardingenabled"
-  );
-  const { value: waitlistActivated } =
-    useLowRiskFeatureFlag("waitlistActivated");
-
-  if (!collectorOnboardingEnabled) {
+const ArtistForm = ({
+  onInviteValidated,
+  isEnabled,
+  waitlistActivated,
+}: ArtistFormProps) => {
+  if (!isEnabled) {
     return <OnboardingBlockerScreen />;
   }
 

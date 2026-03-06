@@ -32,7 +32,9 @@ export default function ArtworkDetails() {
     artworkUploadData,
   } = uploadArtworkStore();
 
-  const [year, setYear] = useState<string>("");
+  const [year, setYear] = useState<string>(
+    artworkUploadData.year === 0 ? "" : artworkUploadData.year.toString(),
+  );
 
   const [formErrors, setFormErrors] = useState<artworkDetailsErrorsType>({
     title: "",
@@ -60,6 +62,10 @@ export default function ArtworkDetails() {
   };
 
   const handleValidationChecks = (label: string, value: string) => {
+    if (value.trim() === "") {
+      setFormErrors((prev) => ({ ...prev, [label]: "" }));
+      return;
+    }
     const { success, errors }: { success: boolean; errors: string[] | [] } =
       validate(label, value);
     if (!success) {
@@ -73,14 +79,18 @@ export default function ArtworkDetails() {
     const fieldsToValidate = [
       { label: "title", value: artworkUploadData.title },
       { label: "description", value: artworkUploadData.artwork_description },
-      { label: "year", value: artworkUploadData.year?.toString() },
+      {
+        label: "year",
+        value:
+          artworkUploadData.year === 0
+            ? ""
+            : artworkUploadData.year?.toString(),
+      },
       { label: "materials", value: artworkUploadData.materials },
     ];
 
     fieldsToValidate.forEach(({ label, value }) => {
-      if (value) {
-        handleValidationChecks(label, value);
-      }
+      handleValidationChecks(label, value || "");
     });
   }, [
     artworkUploadData.title,

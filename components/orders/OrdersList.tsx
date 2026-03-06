@@ -48,9 +48,9 @@ export const OrdersList: React.FC<OrdersListProps> = ({
           colors={["#000"]}
         />
       }
-      initialNumToRender={5}
-      maxToRenderPerBatch={5}
-      windowSize={10}
+      initialNumToRender={15}
+      maxToRenderPerBatch={15}
+      windowSize={5}
       removeClippedSubviews={true}
       renderItem={({ item, index }) => (
         <OrderContainer

@@ -1,0 +1,45 @@
+appId: com.omenai.omenaimobile
+name: "Edit Profile Flow"
+tags:
+  - profile
+  - edit
+  - individual
+
+---
+# This flow assumes a logged-in User
+- runFlow: ../login/individual-login.yaml
+
+# Wait for overview to load
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+# Go to Profile Tab
+- tapOn: "Profile"
+
+# Look for Edit Profile button
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 10000
+- tapOn: "Edit profile"
+
+# Assert we are on the Edit Profile screen
+- assertVisible: "Personal Details"
+
+# Update Name
+- tapOn: "Full name"
+- clearText
+- inputText: "Maestro Updated Name"
+- hideKeyboard
+
+# Wait for save capability and tap changes
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Update profile"
+- tapOn: "Update profile"
+
+# Wait for success message or return to profile
+- extendedWaitUntil:
+    visible: "Profile Details updated successfully"
+    timeout: 10000
+- assertVisible: "Profile"

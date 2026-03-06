@@ -1,0 +1,81 @@
+appId: com.omenai.omenaimobile
+name: "Gallery Registration Flow"
+tags:
+  - registration
+  - gallery
+  - auth
+
+---
+- runFlow: ../login/welcome-onboarding-skip.yaml
+
+- tapOn: "Create Account"
+
+- assertVisible: "Create an account"
+- tapOn: "Gallery"
+
+# Step 1: Account Details
+- tapOn: "Enter your full name" # Gallery Name
+- inputText: "Maestro Test Gallery"
+
+- tapOn: "Enter your email address"
+- inputText: "maestro_gallery@test.com"
+
+- tapOn: "Enter password"
+- inputText: "Test12345@"
+
+- tapOn: "Enter password again"
+- inputText: "Test12345@"
+- hideKeyboard
+
+- tapOn: "Next"
+
+# Step 2: Extra Details
+- tapOn: "Enter your full name" # Administrator's Name
+- inputText: "Test Admin"
+
+- tapOn: "Write a description of your gallery"
+- inputText: "This is a maestro test gallery description."
+- hideKeyboard
+
+- tapOn: "Next"
+
+# Step 3: Address Verification
+- tapOn: "Input your gallery address here"
+- inputText: "123 Gallery St"
+- hideKeyboard
+- tapOn: "Zip/Postal code"
+- inputText: "10001"
+- hideKeyboard
+- tapOn: "Phone number"
+- inputText: "8001234567"
+- hideKeyboard
+
+- tapOn: "Select Country"
+- tapOn: "United States"
+
+- tapOn: "Select State"
+- tapOn: "New York"
+
+- tapOn: "Select City"
+- tapOn: "New York City"
+
+- tapOn: "Next"
+
+# Step 4: Upload Logo
+# Similar to Artist, tapping to open picker and proceeding.
+- tapOn: "Upload gallery logo"
+# (Skipping native picker)
+- tapOn: "Next"
+
+# Step 5: Terms & Conditions
+- assertVisible: "Accept terms and conditions"
+- tapOn: "By ticking this box, I accept the Terms of use and Privacy Policy of creating an account with Omenai."
+
+- tapOn: "Create my account"
+
+# Wait for completion
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- assertVisible: "Overview"

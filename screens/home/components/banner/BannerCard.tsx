@@ -95,7 +95,7 @@ const BannerCard = memo(
             </Text>
 
             <Pressable
-              onPress={() => handleClick(highResUri)}
+              onPress={() => handleClick(cta)}
               style={[
                 tw`mt-4 flex-row items-center gap-2 px-4 py-2 rounded-md w-[110px]`,
                 { backgroundColor: `${colors.black}55` },
