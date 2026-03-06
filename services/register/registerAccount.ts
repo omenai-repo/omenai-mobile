@@ -1,8 +1,3 @@
-import {
-  ArtistRegisterData,
-  GalleryRegisterData,
-  IndividualRegisterData,
-} from "#types/types";
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { apiRequest } from "../../utils/apiRequest";
 
