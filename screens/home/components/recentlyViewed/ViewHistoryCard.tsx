@@ -27,7 +27,6 @@ function ViewHistoryCard({
     width: displayWidth,
     height: 200,
   });
-  const [hasError, setHasError] = useState(false);
 
   const handleImageLoad = useCallback(
     (e: ImageLoadEventData) => {
@@ -41,10 +40,8 @@ function ViewHistoryCard({
     [displayWidth],
   );
 
-  if (hasError) return null;
-
   return (
-    <View style={tw`mr-5`}>
+    <View>
       <View style={tw`flex-1`} />
       <TouchableOpacity
         activeOpacity={1}
@@ -66,7 +63,6 @@ function ViewHistoryCard({
           cachePolicy="memory-disk"
           recyclingKey={art_id}
           onLoad={handleImageLoad}
-          onError={() => setHasError(true)}
         />
         <View style={tw`mt-2.5 w-[200px]`}>
           <Text
