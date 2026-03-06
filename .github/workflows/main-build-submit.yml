@@ -32,7 +32,7 @@ jobs:
       - name: 📦 Install dependencies
         run: yarn install
 
-        - name: 🔨 Build Android
+      - name: 🔨 Build Android
         id: build-android
         run: |
           # Build and capture output
@@ -80,7 +80,6 @@ jobs:
           fi
           echo "📱 Submitting build $BUILD_ID with profile production"
           eas submit --platform android --id "$BUILD_ID" --profile production --non-interactive
-
 
       - name: 🔨 Build iOS
         id: build-ios
