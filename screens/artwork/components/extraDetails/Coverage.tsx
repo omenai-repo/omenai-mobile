@@ -14,15 +14,13 @@ export default function Coverage() {
       items={[
         {
           text: "Encrypted payment security.",
-          hasLeftBorder: true,
-          // icon: <Feather name="lock" size={14} style={tw`text-neutral-500`} />,
+          icon: <Feather name="lock" size={14} style={tw`text-neutral-500`} />,
         },
         {
           text: "Verified Certificate of Authenticity.",
-          hasLeftBorder: true,
-          // icon: (
-          //   <Octicons name="verified" size={14} style={tw`text-neutral-500`} />
-          // ),
+          icon: (
+            <Octicons name="verified" size={14} style={tw`text-neutral-500`} />
+          ),
         },
         {
           text: "Learn more",
