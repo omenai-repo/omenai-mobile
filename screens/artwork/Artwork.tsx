@@ -163,6 +163,10 @@ export default function Artwork() {
     const us = await utils_getAsyncData("userSession");
     if (!us.value) {
       setLoadingPriceQuote(false);
+      openGuestLoginModal({
+        screen: screenName.artwork,
+        params: { art_id: artwork.art_id, url: artwork.url },
+      });
       return;
     }
     const { email, name, id } = JSON.parse(us.value);

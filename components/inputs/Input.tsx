@@ -63,7 +63,9 @@ export default function Input({
         editable={!disabled}
       />
       {errorMessage && errorMessage?.length > 0 && (
-        <Text style={tw`text-red-500 mt-0.5`}>{errorMessage || ""}</Text>
+        <Text style={tw`text-red-500 mt-0.5 font-sans-regular text-sm`}>
+          {errorMessage || ""}
+        </Text>
       )}
     </View>
   );

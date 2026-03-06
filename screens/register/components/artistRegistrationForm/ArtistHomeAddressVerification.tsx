@@ -21,7 +21,7 @@ const ArtistHomeAddressVerification = () => {
         label: item.name,
         currency: item.currency,
       })),
-    []
+    [],
   );
 
   const {
@@ -45,7 +45,8 @@ const ArtistHomeAddressVerification = () => {
     setBaseCurrency,
   } = useArtistAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } = useAddressForm();
+  const { formErrors, handleValidationChecks, checkIsFormValid } =
+    useAddressForm();
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -61,7 +62,7 @@ const ArtistHomeAddressVerification = () => {
       setStateData,
       setCityData,
       setBaseCurrency,
-    }
+    },
   );
 
   const {
@@ -74,7 +75,11 @@ const ArtistHomeAddressVerification = () => {
   } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
 
   const handleSubmit = () => {
-    handleVerifyAddress(artistRegisterData.address, artistRegisterData.phone, "pickup");
+    handleVerifyAddress(
+      artistRegisterData.address,
+      artistRegisterData.phone,
+      "pickup",
+    );
   };
 
   return (
@@ -99,7 +104,7 @@ const ArtistHomeAddressVerification = () => {
         }}
         onPhoneChange={(text) => {
           setPhone(text);
-          handleValidationChecks("general", text);
+          handleValidationChecks("phone", text);
         }}
         addressLabel="Home Address"
         addressPlaceholder="Input your home address here"
@@ -107,7 +112,12 @@ const ArtistHomeAddressVerification = () => {
 
       <AddressVerificationActions
         isLoading={isLoading}
-        isDisabled={!checkIsFormValid(artistRegisterData.address, artistRegisterData.phone)}
+        isDisabled={
+          !checkIsFormValid(
+            artistRegisterData.address,
+            artistRegisterData.phone,
+          )
+        }
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
       />

@@ -52,8 +52,8 @@ export const mediumListing: selectItemProp[] = [
     value: "Acrylic on canvas/linen/panel",
   },
   {
-    label: "Mixed media on paper/canvas",
-    value: "Mixed media on paper/canvas",
+    label: "Mixed media on canvas/paper",
+    value: "Mixed media on canvas/paper",
   },
   { label: "Oil on canvas/panel", value: "Oil on canvas/panel" },
 ];

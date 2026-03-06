@@ -105,8 +105,8 @@ export default function PopularArtworks({
             paddingRight: isTablet ? horizontalPadding : 20,
             gap: 20,
           }}
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
+          initialNumToRender={15}
+          maxToRenderPerBatch={15}
           windowSize={5}
           removeClippedSubviews
         />

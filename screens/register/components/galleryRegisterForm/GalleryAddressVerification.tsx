@@ -101,7 +101,7 @@ const GalleryAddressVerification = () => {
         }}
         onPhoneChange={(text) => {
           setPhone(text);
-          handleValidationChecks("general", text);
+          handleValidationChecks("phone", text);
         }}
         addressLabel="Gallery Address"
         addressPlaceholder="Input your gallery address here"

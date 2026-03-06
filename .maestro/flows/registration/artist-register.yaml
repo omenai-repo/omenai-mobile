@@ -1,0 +1,80 @@
+appId: com.omenai.omenaimobile
+name: "Artist Registration Flow"
+tags:
+  - registration
+  - artist
+  - auth
+
+---
+- runFlow: ../login/welcome-onboarding-skip.yaml
+
+- tapOn: "Create Account"
+
+- assertVisible: "Create an account"
+- tapOn: "Artist"
+
+# Step 1: Account Details
+- tapOn: "Enter your full name"
+- inputText: "Maestro Artist"
+
+- tapOn: "Enter your email address"
+- inputText: "maestro_artist@test.com"
+
+- tapOn: "Enter password"
+- inputText: "Test12345@"
+
+- tapOn: "Enter password again"
+- inputText: "Test12345@"
+- hideKeyboard
+
+- tapOn: "Next"
+
+# Step 2: Home Address Verification
+- tapOn: "Input your home address here"
+- inputText: "123 Artist Lane"
+- hideKeyboard
+- tapOn: "Zip/Postal code"
+- inputText: "10001"
+- hideKeyboard
+- tapOn: "Phone number"
+- inputText: "8001234567"
+- hideKeyboard
+
+# Select Country (assume Select component)
+- tapOn: "Select Country"
+- tapOn: "United States"
+
+- tapOn: "Select State"
+- tapOn: "New York"
+
+- tapOn: "Select City"
+- tapOn: "New York City"
+
+- tapOn: "Next"
+
+# Step 3: Upload Photo
+# Tapping the placeholder to open the image picker
+- tapOn: "Photo must be 1040 x 1040"
+# (Skipping native picker steps here as it's environment-dependent. The Next button requires the image to be loaded.)
+# This might require manual intervention or specific device setup in Maestro Studio.
+
+# For now, we will attempt to proceed or stop here if blocked
+- tapOn: "Next"
+
+# Step 4: Artist Preference
+- assertVisible: "Select your art style"
+- tapOn: "Photography"
+- tapOn: "Next"
+
+# Step 5: Terms & Conditions
+- assertVisible: "Accept terms and conditions"
+- tapOn: "By ticking this box, I accept the Terms of use and Privacy Policy of creating an account with Omenai."
+
+- tapOn: "Create my account"
+
+# Wait for completion
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- assertVisible: "Overview"

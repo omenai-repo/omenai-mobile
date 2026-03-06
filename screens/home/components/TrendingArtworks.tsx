@@ -87,8 +87,8 @@ export default function TrendingArtworks({
           style={tw`mt-5`}
           contentContainerStyle={tw`px-5 gap-5`}
           renderItem={renderItem}
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
+          initialNumToRender={15}
+          maxToRenderPerBatch={15}
           windowSize={5}
           removeClippedSubviews
         />

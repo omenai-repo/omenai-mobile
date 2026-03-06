@@ -10,6 +10,7 @@ interface ExtraDetailAccordionProps {
     text: string;
     icon?: React.ReactNode;
     hasLeftBorder?: boolean;
+    onPress?: () => void;
   }[];
 }
 
@@ -47,20 +48,41 @@ export default function ExtraDetailAccordion({
         >
           <View style={tw`h-[1px] w-full bg-neutral-200`} />
           <View style={tw`gap-4 pt-4`}>
-            {items.map((item, index) => (
-              <View
-                key={item.text || index.toString()}
-                style={tw.style(
-                  `flex-row items-center gap-3`,
-                  item.hasLeftBorder && `border-l border-neutral-200 pl-3`,
-                )}
-              >
-                {item?.icon}
-                <Text style={tw`text-sm text-neutral-500 flex-1`}>
-                  {item.text}
-                </Text>
-              </View>
-            ))}
+            {items.map((item, index) => {
+              const content = (
+                <View
+                  key={item.text || index.toString()}
+                  style={tw.style(
+                    `flex-row items-center gap-3`,
+                    item.hasLeftBorder && `border-l border-neutral-200 pl-3`,
+                  )}
+                >
+                  {item?.icon}
+                  <Text
+                    style={tw.style(
+                      `text-sm flex-1`,
+                      item.onPress
+                        ? `text-blue-500 underline`
+                        : `text-neutral-500`,
+                    )}
+                  >
+                    {item.text}
+                  </Text>
+                </View>
+              );
+
+              if (item.onPress) {
+                return (
+                  <Pressable
+                    key={item.text || index.toString()}
+                    onPress={item.onPress}
+                  >
+                    {content}
+                  </Pressable>
+                );
+              }
+              return content;
+            })}
           </View>
         </Animated.View>
       )}

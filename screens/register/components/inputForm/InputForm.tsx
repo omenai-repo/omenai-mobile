@@ -9,6 +9,8 @@ import GalleryForm from "./gallery/GalleryForm";
 import ArtistForm from "./artist/ArtistForm";
 import tw from "twrnc";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
+import FormSkeleton from "#components/skeleton/FormSkeleton";
 
 type InputFormProps = Readonly<{
   onTabChange?: (index: number) => void;
@@ -41,6 +43,13 @@ export default function InputForm({
   const insets = useSafeAreaInsets();
   const [tabsKey, setTabsKey] = useState("init");
 
+  const { value: collectorOnboardingEnabled, loading: collectorLoading } =
+    useLowRiskFeatureFlag("collectoronboardingenabled", false);
+  const { value: galleryOnboardingEnabled, loading: galleryLoading } =
+    useLowRiskFeatureFlag("galleryonboardingenabled");
+  const { value: waitlistActivated, loading: waitlistLoading } =
+    useLowRiskFeatureFlag("waitlistActivated");
+
   useEffect(() => {
     // Force remount of AuthTabs after first paint to ensure animated values initialize
     const t = setTimeout(() => setTabsKey("ready"), 0);
@@ -55,12 +64,28 @@ export default function InputForm({
         stateIndex={selectedIndex}
         handleSelect={handleTabSwitch}
       />
-      {selectedIndex === 0 && <IndividualForm />}
-      {selectedIndex === 1 && (
-        <ArtistForm onInviteValidated={onArtistInviteValidated} />
-      )}
-      {selectedIndex === 2 && (
-        <GalleryForm onInviteValidated={onGalleryInviteValidated} />
+      {collectorLoading || galleryLoading || waitlistLoading ? (
+        <FormSkeleton style={tw`mt-2`} rows={4} />
+      ) : (
+        <>
+          {selectedIndex === 0 && (
+            <IndividualForm isEnabled={collectorOnboardingEnabled} />
+          )}
+          {selectedIndex === 1 && (
+            <ArtistForm
+              onInviteValidated={onArtistInviteValidated}
+              isEnabled={galleryOnboardingEnabled}
+              waitlistActivated={waitlistActivated}
+            />
+          )}
+          {selectedIndex === 2 && (
+            <GalleryForm
+              onInviteValidated={onGalleryInviteValidated}
+              isEnabled={galleryOnboardingEnabled}
+              waitlistActivated={waitlistActivated}
+            />
+          )}
+        </>
       )}
     </View>
   );

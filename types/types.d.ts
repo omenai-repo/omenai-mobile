@@ -600,10 +600,8 @@ type ArtworkMediumTypes =
   | "Photography"
   | "Works on paper"
   | "Acrylic on canvas/linen/panel"
-  | "Mixed media on paper/canvas"
-  | "Sculpture (Resin/plaster/clay)"
-  | "Oil on canvas/panel"
-  | "Sculpture (Bronze/stone/metal)";
+  | "Mixed media on canvas/paper"
+  | "Oil on canvas/panel";
 
 type ArtistCategory =
   | "Emerging"

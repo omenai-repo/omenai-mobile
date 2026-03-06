@@ -1,0 +1,54 @@
+appId: com.omenai.omenaimobile
+name: "Individual Registration Flow"
+tags:
+  - registration
+  - individual
+  - auth
+
+---
+- runFlow: ../login/welcome-onboarding-skip.yaml
+
+- tapOn: "Create Account"
+
+- assertVisible: "Create an account"
+- assertVisible: "Collector"
+
+# Step 1: Account Details
+- tapOn: "Enter your full name"
+- inputText: "Maestro Test User"
+
+- tapOn: "Enter your email address"
+- inputText: "maestro_collector@test.com"
+
+- tapOn: "Enter password"
+- inputText: "Test12345@"
+
+- tapOn: "Enter password again"
+- inputText: "Test12345@"
+- hideKeyboard
+
+- tapOn: "Next"
+
+# Step 2: Preferences
+- assertVisible: "Select your art preference"
+- tapOn: "Photography"
+- tapOn: "Works on paper"
+- tapOn: "Acrylic on canvas/linen/panel"
+- tapOn: "Mixed media on canvas/paper"
+- tapOn: "Oil on canvas/panel"
+
+- tapOn: "Next"
+
+# Step 3: Terms & Conditions
+- assertVisible: "Accept terms and conditions"
+# Assuming the first term contains "By ticking this box", tap it.
+- tapOn: "By ticking this box, I accept the Terms of use and Privacy Policy of creating an account with Omenai."
+
+- tapOn: "Create my account"
+
+# Wait for completion and transition to Overview
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- assertVisible: "Trending"
