@@ -102,7 +102,7 @@ export default function OnboardingBlockerScreen({
             { color: "#4B5563" },
           ]}
         >
-          Thank you for your patience ❤️
+          Thank you for your patience.
         </Text>
         <Pressable
           onPress={handleExploreOmenai}
