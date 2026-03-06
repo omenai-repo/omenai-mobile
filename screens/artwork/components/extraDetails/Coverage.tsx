@@ -2,10 +2,9 @@ import React from "react";
 import { Feather, Octicons } from "@expo/vector-icons";
 import ExtraDetailAccordion from "./ExtraDetailAccordion";
 import tw from "twrnc";
-import { useModalStore } from "#store/modal/modalStore";
+import * as WebBrowser from "expo-web-browser";
 
 export default function Coverage() {
-  const { setWebViewUrl } = useModalStore();
   const learnMoreUrl = `${process.env.EXPO_PUBLIC_API_ORIGIN}legal?ent=collector`;
 
   return (
@@ -24,8 +23,9 @@ export default function Coverage() {
         },
         {
           text: "Learn more",
-          hasLeftBorder: true,
-          onPress: () => setWebViewUrl(learnMoreUrl),
+          onPress: async () => {
+            await WebBrowser.openBrowserAsync(learnMoreUrl);
+          },
         },
       ]}
     />

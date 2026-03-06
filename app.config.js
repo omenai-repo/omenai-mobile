@@ -61,6 +61,8 @@ export default {
     runtimeVersion: RUNTIME_VERSION,
     updates: {
       url: "https://u.expo.dev/cfba8b4b-06f7-460a-8fa2-f8671ea18107",
+      checkAutomatically: "ON_LOAD",
+      fallbackToCacheTimeout: 30000,
     },
     plugins: [
       [
