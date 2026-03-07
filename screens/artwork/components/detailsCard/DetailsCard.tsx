@@ -23,7 +23,7 @@ export default function DetailsCard({ title, details }: DetailCardProps) {
           {name}
         </Text>
         <Text
-          style={tw`text-neutral-500 font-sans-regular text-sm leading-relaxed w-4/6`}
+          style={tw`text-neutral-500 font-sans-regular text-sm leading-relaxed w-4/6 pr-2`}
         >
           {text}
         </Text>

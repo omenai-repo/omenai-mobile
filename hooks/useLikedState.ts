@@ -1,13 +1,15 @@
 import { updateArtworkImpressions } from "#services/artworks/updateArtworkImpressions";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 
 function useLikedState(
   initialImpressions: number,
   initialLikeIds: string[],
   sessionId: string | undefined,
-  art_id: string
+  art_id: string,
 ) {
+  const { openGuestLoginModal } = useGuestLoginModalStore();
 
   // Initialize stateful data copy of likes data
   const [likedState, setLikedState] = useState({
@@ -35,22 +37,24 @@ function useLikedState(
   //   },
   // });
 
-  const updateLikesMutation = async ({state, sessionId}: {state: boolean, sessionId: string}) => {
+  const updateLikesMutation = async ({
+    state,
+    sessionId,
+  }: {
+    state: boolean;
+    sessionId: string;
+  }) => {
     const data = await updateArtworkImpressions(art_id, state, sessionId);
-    if(data?.isOk){
-
-    }else{
+    if (data?.isOk) {
+    } else {
       setLikedState({ count: initialImpressions, ids: initialLikeIds });
     }
-  }
+  };
 
   // handle onClick like button
   const handleLike = async (state: any) => {
-    // Pop up login modal
-    // TODO: Create login modal
-
-    if (sessionId === undefined) {
-      // toggleLoginModal(true);
+    if (sessionId === undefined || sessionId === "") {
+      openGuestLoginModal();
     } else {
       if (state) {
         setLikedState((prev) => ({

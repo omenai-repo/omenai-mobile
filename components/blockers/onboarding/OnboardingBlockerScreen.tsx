@@ -94,7 +94,7 @@ export default function OnboardingBlockerScreen({
           ]}
         >
           {message ||
-            "We\u2019re fixing some issues right now. Please check back soon or explore other parts of the app and see what tickles your fancy."}
+            "We are currently completing updates to the registration system.\nPlease check back shortly, or continue exploring the platform."}
         </Text>
         <Text
           style={[
