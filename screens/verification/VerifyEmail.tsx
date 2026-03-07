@@ -13,7 +13,6 @@ import { resendVerifyCode } from "#services/verify/resendVerifyCode";
 import { verifyEmail } from "#services/verify/verifyEmail";
 import { screenName } from "#constants/screenNames.constants";
 import ScrollWrapper from "#components/general/ScrollWrapper";
-import { verifyEmailRouteParamsType } from "#types/types";
 
 export default function VerifyEmail() {
   const route = useRoute();
@@ -138,7 +137,7 @@ export default function VerifyEmail() {
             Feel free to contact us should you have any issues on
           </Text>
           <Text style={[styles.extraText, { textDecorationLine: "underline" }]}>
-            moses@omenai.net
+            support@omenai.app
           </Text>
         </View>
       </ScrollWrapper>
