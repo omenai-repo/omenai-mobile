@@ -42,7 +42,7 @@ const useTabletLandscape = () => {
   const [win, setWin] = useState(Dimensions.get("window"));
   useEffect(() => {
     const sub = Dimensions.addEventListener("change", ({ window }) =>
-      setWin(window),
+      setWin(window)
     );
     return () => sub?.remove();
   }, []);
@@ -124,7 +124,7 @@ export default function Artwork() {
       artwork.artist,
       artwork.art_id,
       userSession.id,
-      artwork.url,
+      artwork.url
     ).catch(() => {
       // silent fail
     });
@@ -134,7 +134,7 @@ export default function Artwork() {
 
   const imageUri = useMemo(
     () => (artwork ? getImageFileView(artwork.url, 500) : ""),
-    [artwork],
+    [artwork]
   );
 
   const [imageDimensions, setImageDimensions] = useState<{
@@ -149,11 +149,11 @@ export default function Artwork() {
       const next = resizeImageDimensions(
         { width: w, height: h },
         maxWidth,
-        maxHeight,
+        maxHeight
       );
       setImageDimensions(next);
     },
-    [screenWidth, isTabletLandscape],
+    [screenWidth, isTabletLandscape]
   );
 
   const handleRequestPriceQuote = useCallback(async () => {
@@ -223,10 +223,32 @@ export default function Artwork() {
   }, [artwork, updateModal, userType]);
 
   const renderPrimaryButton = () => {
-    if (!artwork || !isLoggedIn) return null;
+    if (!artwork) return null;
 
     if (["gallery", "artist"].includes(userType)) {
       return null;
+    }
+
+    // Guest users: show the button but open the login modal on press
+    if (!isLoggedIn) {
+      if (!artwork.availability) {
+        return <LongBlackButton value="Sold" isDisabled onClick={() => {}} />;
+      }
+      const guestLabel =
+        artwork.pricing?.shouldShowPrice === "Yes"
+          ? "Purchase artwork"
+          : "Request price";
+      return (
+        <LongBlackButton
+          textStyle={tw`uppercase text-center text-sm tracking-widest`}
+          value={guestLabel}
+          isDisabled={false}
+          onClick={() => ({
+            screen: screenName.artwork,
+            params: { art_id: artwork.art_id, url: artwork.url },
+          })}
+        />
+      );
     }
 
     if (!artwork.availability) {

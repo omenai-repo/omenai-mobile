@@ -143,7 +143,7 @@ const ArtistOnboarding = () => {
     }
   >(INITIAL_ONBOARDING_STATE);
   const [cv, setCv] = useState<DocumentPicker.DocumentPickerResult | null>(
-    null,
+    null
   );
   const [documentation, setDocumentation] = useState<{
     cv: string;
@@ -161,7 +161,7 @@ const ArtistOnboarding = () => {
   });
 
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>(
-    {},
+    {}
   );
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -181,7 +181,7 @@ const ArtistOnboarding = () => {
 
   const openEditModal = (
     key: QuestionKey | "cv" | "social",
-    socialKey?: string,
+    socialKey?: string
   ) => {
     setEditingQuestionKey(key as QuestionKey);
     setEditingSocialKey(socialKey || null); // Store which social media is being edited
@@ -500,7 +500,7 @@ const ArtistOnboarding = () => {
             <View style={tw`mt-[80px] mx-[25px] mb-[60px]`}>
               <View style={tw`flex-row items-center justify-between`}>
                 <Image
-                  style={tw`w-[130px] h-[30px]`}
+                  style={tw`w-[90px] h-[22px]`}
                   resizeMode="contain"
                   source={omenaiLogo}
                 />

@@ -55,8 +55,8 @@ export default function PopularArtworks({
         title={item.title}
         url={item.url}
         artist={item.artist}
-        showPrice={item.pricing.shouldShowPrice === "Yes"}
-        price={item.pricing.usd_price}
+        showPrice={item.pricing?.shouldShowPrice === "Yes"}
+        price={item.pricing?.usd_price}
         availiablity={item.availability}
         impressions={item.impressions}
         like_IDs={item.like_IDs}

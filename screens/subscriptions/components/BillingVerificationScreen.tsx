@@ -59,12 +59,15 @@ export default function BillingVerificationScreen() {
       if (isDiscounted && setupIntentId && planId) {
         const response = await verifyDiscountedSubscriptionCharge(
           setupIntentId,
-          planId,
+          planId
         );
         if (!response?.isOk) {
           return {
             isOk: false,
-            message: response?.message ?? "Verification failed.",
+            message:
+              response?.message ??
+              (response as any)?.body?.message ??
+              "Verification failed.",
           };
         }
         return { isOk: true, message: response.message };
@@ -78,7 +81,10 @@ export default function BillingVerificationScreen() {
       if (!response?.isOk) {
         return {
           isOk: false,
-          message: response?.message ?? "Verification failed.",
+          message:
+            response?.message ??
+            (response as any)?.body?.message ??
+            "Verification failed.",
         };
       }
       return { isOk: true, message: response.message };

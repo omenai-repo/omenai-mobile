@@ -41,7 +41,7 @@ function ArtworkCard({
   galleryView = false,
   availiablity,
 }: ArtworkCardType) {
-  const { isLoggedIn } = useAppStore();
+  const userSession = useAppStore((s) => s.userSession);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { isTablet } = useDevice();
   const screenWidth = Dimensions.get("window").width;
@@ -59,11 +59,11 @@ function ArtworkCard({
       const { height: resizedHeight } = resizeImageDimensions(
         { width: source.width, height: source.height },
         displayWidth,
-        maxHeight,
+        maxHeight
       );
       setImageHeight(resizedHeight);
     },
-    [displayWidth],
+    [displayWidth]
   );
 
   return (
@@ -142,31 +142,29 @@ function ArtworkCard({
               {artist}
             </Text>
           </View>
-          {isLoggedIn && (
-            <View style={tw`flex flex-row items-center gap-2`}>
-              {availiablity && (
+          <View style={tw`flex flex-row items-center gap-2`}>
+            {availiablity !== false && userSession?.id && (
+              <Text
+                style={tw`text-sm ${
+                  lightText ? "text-white/90" : "text-[#1A1A1A]/90"
+                } flex-1 ${showPrice ? "font-sans-bold" : "font-sans-medium"}`}
+              >
+                {showPrice ? utils_formatPrice(price) : "Price on Request"}
+              </Text>
+            )}
+
+            <View style={tw`flex-wrap`}>
+              {availiablity === false && (
                 <Text
                   style={tw`text-sm ${
                     lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                  } flex-1 ${showPrice ? "font-sans-bold" : "font-sans-medium"}`}
+                  } flex-1 font-sans-semibold`}
                 >
-                  {showPrice ? utils_formatPrice(price) : "Price on Request"}
+                  SOLD
                 </Text>
               )}
-
-              <View style={tw`flex-wrap`}>
-                {!availiablity && (
-                  <Text
-                    style={tw`text-sm ${
-                      lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                    } flex-1 font-sans-semibold`}
-                  >
-                    SOLD
-                  </Text>
-                )}
-              </View>
             </View>
-          )}
+          </View>
         </View>
       </TouchableOpacity>
     </View>

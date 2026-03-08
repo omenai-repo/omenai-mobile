@@ -1,10 +1,12 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import ArtworkCard from "#components/artwork/ArtworkCard";
+import { useAppStore } from "#store/app/appStore";
 
 export default function RecentArtworkListing({
   data,
 }: Readonly<{ data: any[] }>) {
+  const userSession = useAppStore((s) => s.userSession);
   return (
     <View style={styles.artworksContainer}>
       <View style={styles.singleColumn}>
@@ -16,7 +18,9 @@ export default function RecentArtworkListing({
             artist={artwork.artist}
             url={artwork.url}
             price={artwork.pricing.usd_price || 0}
-            showPrice={artwork.pricing.shouldShowPrice === "Yes"}
+            showPrice={
+              !!userSession?.id && artwork.pricing.shouldShowPrice === "Yes"
+            }
             availiablity={artwork.availability}
           />
         ))}
@@ -30,7 +34,9 @@ export default function RecentArtworkListing({
             artist={artwork.artist}
             url={artwork.url}
             price={artwork.pricing.usd_price || 0}
-            showPrice={artwork.pricing.shouldShowPrice === "Yes"}
+            showPrice={
+              !!userSession?.id && artwork.pricing.shouldShowPrice === "Yes"
+            }
             availiablity={artwork.availability}
           />
         ))}

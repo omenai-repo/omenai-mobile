@@ -1,6 +1,7 @@
 import React from "react";
-import { StyleSheet, View, ViewStyle } from "react-native";
+import { View, ViewStyle } from "react-native";
 import Animated from "react-native-reanimated";
+import tw from "twrnc";
 import { colors } from "#config/colors.config";
 
 type SkeletonCardProps = {
@@ -13,37 +14,23 @@ export const SkeletonHighlightCard = ({
   style,
 }: SkeletonCardProps) => {
   return (
-    <Animated.View style={[styles.skeletonCard, { width: cardWidth }, style]}>
-      <View style={{ flex: 1 }}>
-        <View style={styles.skeletonLine} />
-        <View style={[styles.skeletonLine, { width: "50%", marginTop: 6 }]} />
+    <Animated.View
+      style={[
+        tw`rounded-md p-3 flex-row items-center justify-between`,
+        {
+          width: cardWidth,
+          backgroundColor: colors.black,
+        },
+        style,
+      ]}
+    >
+      <View style={tw`flex-1`}>
+        <View style={tw`h-3 w-[70%] bg-neutral-800 rounded-sm mb-[6px]`} />
+        <View style={tw`h-5 w-[50%] bg-neutral-800 rounded-sm`} />
       </View>
-      <View style={styles.skeletonCircle} />
+      <View
+        style={tw`h-8 w-8 rounded-full bg-neutral-800 ml-[10px] items-center justify-center`}
+      />
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  skeletonCard: {
-    backgroundColor: colors.black,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  skeletonCircle: {
-    height: 36,
-    width: 36,
-    borderRadius: 18,
-    backgroundColor: "#333",
-    marginLeft: 10,
-  },
-  skeletonLine: {
-    height: 10,
-    width: "70%",
-    borderRadius: 4,
-    backgroundColor: "#333",
-  },
-});

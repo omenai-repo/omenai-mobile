@@ -79,7 +79,7 @@ export const ResetPinScreen = ({
         setTimeout(() => navigation.pop(2), 2000);
       } else {
         updateModal({
-          message: (response as any)?.message || "Failed to reset PIN",
+          message: response?.body?.message || "Failed to reset PIN",
           showModal: true,
           modalType: "error",
         });

@@ -30,8 +30,8 @@ const MiniArtworkCard = memo(
     url,
     artist,
     title,
-    showPrice,
-    price,
+    showPrice = false,
+    price = 0,
     art_id,
     impressions,
     like_IDs,
@@ -50,7 +50,7 @@ const MiniArtworkCard = memo(
 
     const expiryDate = useMemo(
       () => (countdown ? new Date(countdown) : null),
-      [countdown],
+      [countdown]
     );
 
     const showCountdown = !galleryView && expiryDate && availability;
@@ -86,7 +86,7 @@ const MiniArtworkCard = memo(
         )}
       </TouchableOpacity>
     );
-  },
+  }
 );
 
 MiniArtworkCard.displayName = "MiniArtworkCard";

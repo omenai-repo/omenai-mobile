@@ -1,6 +1,7 @@
 // screens/overview/HighlightCard.tsx
 import React, { useEffect } from "react";
 import { Text, View } from "react-native";
+import CardComp from "#components/general/CardComp";
 import { useDevice } from "#hooks/useDevice";
 import Animated from "react-native-reanimated";
 import tw from "twrnc";
@@ -93,53 +94,10 @@ export const HighlightCard = ({
   // Calculate width for each card
   const cardWidth = (width - totalPadding - totalGap) / cols;
 
-  const CardComp = ({
-    title,
-    icon,
-    amount,
-    color,
-  }: {
-    title: string;
-    icon: keyof typeof Ionicons.glyphMap;
-    amount: number | string;
-    color: string;
-  }) => (
-    <Animated.View
-      // entering={FadeInUp.delay(100)}
-      style={[
-        tw`rounded-md p-3`,
-        {
-          width: cardWidth,
-          backgroundColor: colors.black,
-          borderColor: "#ffffff10",
-        },
-      ]}
-    >
-      <View style={tw`flex-row justify-between items-center`}>
-        <View style={tw`flex-1`}>
-          <Text
-            style={tw`text-xs uppercase font-sans-regular text-neutral-300 mb-[2px]`}
-          >
-            {title}
-          </Text>
-          <Text style={tw`text-lg text-white font-medium`}>{amount}</Text>
-        </View>
-        <View
-          style={[
-            tw`h-8 w-8 rounded-full justify-center items-center`,
-            { backgroundColor: `${color}22` },
-          ]}
-        >
-          <Ionicons name={icon} size={16} color={color} />
-        </View>
-      </View>
-    </Animated.View>
-  );
-
   if (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data)) {
     return (
       <View
-        style={tw.style(`mx-[20px] mt-[20px] mb-[15px] flex-row flex-wrap`, {
+        style={tw.style(`mx-5 mt-5 mb-[15px] flex-row flex-wrap`, {
           gap,
         })}
       >
@@ -152,7 +110,7 @@ export const HighlightCard = ({
 
   return (
     <View
-      style={tw.style(`mx-[20px] mt-[20px] mb-[15px] flex-row flex-wrap`, {
+      style={tw.style(`mx-5 mt-5 mb-[15px] flex-row flex-wrap`, {
         gap,
       })}
     >
@@ -161,24 +119,28 @@ export const HighlightCard = ({
         icon="wallet-outline"
         amount={wallet}
         color="#FFD700"
+        cardWidth={cardWidth}
       />
       <CardComp
         title="Revenue"
         icon="cash-outline"
         amount={revenue}
         color="#00C851"
+        cardWidth={cardWidth}
       />
       <CardComp
         title="Net Earnings"
         icon="stats-chart-outline"
         amount={net}
         color="#FF4444"
+        cardWidth={cardWidth}
       />
       <CardComp
         title="Sold Artworks"
         icon="pricetags-outline"
         amount={soldArtwork}
         color="#00BFFF"
+        cardWidth={cardWidth}
       />
     </View>
   );
