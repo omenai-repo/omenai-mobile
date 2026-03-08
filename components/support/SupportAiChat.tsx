@@ -7,12 +7,15 @@ import {
   Keyboard,
   ActivityIndicator,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../store/app/appStore";
 import { colors } from "#config/colors.config";
 import { useMutation } from "@tanstack/react-query";
+import { useKeyboardHeight } from "../../hooks/useKeyboardHeight";
 import {
   useSupportChatStore,
   Message,
@@ -106,8 +109,9 @@ export default function SupportAiChat({
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [input, setInput] = useState("");
+  const keyboardHeight = useKeyboardHeight();
   const [animatingMessageId, setAnimatingMessageId] = useState<string | null>(
-    null,
+    null
   );
   const scrollViewRef = useRef<FlatList>(null);
 
@@ -137,7 +141,7 @@ export default function SupportAiChat({
         updateSession(
           activeSessionId,
           [...variables.messages, aiMessage],
-          userId,
+          userId
         );
       }
     },
@@ -154,7 +158,7 @@ export default function SupportAiChat({
         updateSession(
           activeSessionId,
           [...variables.messages, errorMessage],
-          userId,
+          userId
         );
       }
     },
@@ -224,7 +228,16 @@ export default function SupportAiChat({
   }
 
   return (
-    <View style={tw`flex-1`}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={[
+        tw`flex-1`,
+        Platform.OS === "android"
+          ? { paddingBottom: keyboardHeight }
+          : undefined,
+      ]}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+    >
       <FlatList
         ref={scrollViewRef}
         data={messages}
@@ -311,6 +324,6 @@ export default function SupportAiChat({
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

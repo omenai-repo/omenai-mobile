@@ -21,6 +21,14 @@ export async function fetchIncomeData(route: RouteIdentifier) {
     const result = await response.json();
     return { isOk: response.ok, data: result.data };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching income data",
+      },
+    };
   }
 }

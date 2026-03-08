@@ -24,6 +24,14 @@ export async function createConnectedAccount(customer: {
       account_id: result.account_id,
     };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error creating connected account",
+      },
+    };
   }
 }

@@ -28,8 +28,12 @@ export const updateSubscriptionPlan = async (
     return {
       isOk: false,
       status: error?.status,
-      message:
-        "An error was encountered, please try again later or contact support",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "An error was encountered, please try again later or contact support",
+      },
       error: error,
     };
   }

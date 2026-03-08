@@ -38,7 +38,7 @@ const OverviewContainer = ({
         </Pressable>
       </View>
 
-      <Text style={tw`text-[13px] text-[#1A1A1A]00080] font-semibold mt-[3px]`}>
+      <Text style={tw`text-sm text-[#1A1A1A]00080] font-semibold mt-[3px]`}>
         Your answer: {data}
       </Text>
 

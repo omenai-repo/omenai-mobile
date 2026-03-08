@@ -24,7 +24,12 @@ export async function sendOtpCode() {
   } catch (error: any) {
     return {
       isOk: false,
-      message: error.response?.data?.message || "Failed to send OTP",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Failed to send OTP",
+      },
     };
   }
 }

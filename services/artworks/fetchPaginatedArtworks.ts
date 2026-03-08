@@ -20,10 +20,14 @@ export async function fetchPaginatedArtworks(page: number, filters?: any) {
       count: result.pageCount || 1,
     };
   } catch (error: any) {
-    console.log(error);
     return {
       isOk: false,
-      body: { message: "Error loading artworks" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error loading artworks",
+      },
       data: [],
       count: 1,
       page: 1,

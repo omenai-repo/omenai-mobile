@@ -30,6 +30,14 @@ export const createPaymentIntent = async (
     const result = await res.json();
     return result;
   } catch (error: any) {
-    console.log("create payment intent api error ---- ", error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error creating payment intent",
+      },
+    };
   }
 };

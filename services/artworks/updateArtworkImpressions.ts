@@ -19,11 +19,15 @@ export async function updateArtworkImpressions(
     });
 
     return response;
-  } catch (error) {
-    console.log("error" + error);
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error updating artwork impressions" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error updating artwork impressions",
+      },
     };
   }
 }

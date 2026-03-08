@@ -27,11 +27,15 @@ export async function createShippingOrder(
     });
     const result = await response.json();
     return { isOk: response.ok, message: result.message };
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      error,
-      message: (error as any).message || "Error creating shipping order",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error creating shipping order",
+      },
     };
   }
 }

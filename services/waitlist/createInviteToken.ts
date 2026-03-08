@@ -48,10 +48,12 @@ export async function createInviteToken(
   } catch (error: any) {
     return {
       isOk: false,
-      message:
-        error?.message ||
-        error?.response?.data?.message ||
-        "Something went wrong",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Something went wrong",
+      },
     };
   }
 }

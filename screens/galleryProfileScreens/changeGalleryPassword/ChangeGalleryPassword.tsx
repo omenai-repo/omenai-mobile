@@ -54,13 +54,13 @@ export default function ChangeGalleryPassword({
     if (response?.isOk) {
       updateModal({
         modalType: "success",
-        message: response.message,
+        message: response?.body?.message,
         showModal: true,
       });
     } else {
       updateModal({
         modalType: "error",
-        message: response?.message,
+        message: response?.body?.message,
         showModal: true,
       });
     }
@@ -81,7 +81,7 @@ export default function ChangeGalleryPassword({
       });
       updateModal({
         modalType: "success",
-        message: response.message,
+        message: response?.body?.message,
         showModal: true,
         onDismiss: () => {
           navigation.goBack();
@@ -90,7 +90,7 @@ export default function ChangeGalleryPassword({
     } else {
       updateModal({
         modalType: "error",
-        message: response?.message,
+        message: response?.body?.message,
         showModal: true,
       });
     }

@@ -23,10 +23,15 @@ export async function getArtistCredentials() {
     };
 
     return ParsedResponse;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error fetch credentials" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching credentials",
+      },
     };
   }
 }

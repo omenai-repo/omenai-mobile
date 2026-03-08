@@ -48,7 +48,11 @@ export const InitialPaymentForm = ({
       if (discountEligible) {
         const response = await createPaymentMethodSetupIntent();
         if (!response?.isOk) {
-          throw new Error(response?.message || "Failed to create setup intent");
+          throw new Error(
+            response?.message ||
+              response?.body?.message ||
+              "Failed to create setup intent",
+          );
         }
         return response.client_secret;
       }
@@ -68,7 +72,11 @@ export const InitialPaymentForm = ({
       );
 
       if (!response.isOk) {
-        throw new Error(response.message || "Failed to create payment intent");
+        throw new Error(
+          response?.message ||
+            response?.body?.message ||
+            "Failed to create payment intent",
+        );
       }
       return response.client_secret;
     },

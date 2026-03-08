@@ -1,9 +1,8 @@
-import { View, Dimensions } from "react-native";
+import { View } from "react-native";
 import React from "react";
 import tw from "twrnc";
 import { questions } from "./ArtistOnboarding";
-
-const { width } = Dimensions.get("window");
+import { colors } from "#config/colors.config";
 
 interface OnboardingProgressBarProps {
   stage: "questions" | "cv_upload" | "socials" | "overview";
@@ -18,38 +17,33 @@ const OnboardingProgressBar: React.FC<OnboardingProgressBarProps> = ({
 
   return (
     <View
-      style={tw.style(
-        `flex-row justify-center items-center self-center absolute`,
-        {
-          top: -30,
-          width: width - 50, // Fill screen width with 20px margin on each side
-          marginHorizontal: 20, // Add 20px margin on left and right
-        }
-      )}
+      style={tw`flex-row justify-between items-center w-full px-1 mb-5 mt-8 gap-1`}
     >
       {questions.map((question, index) => (
         <View
           key={question.key}
           style={tw.style(
-            `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
-            index <= currentQuestionIndex ? "bg-[#000]" : "bg-[#E0E0E0]"
+            `h-[4px] flex-1 rounded-full`, // Use flex-1 to distribute width evenly
+            index <= currentQuestionIndex
+              ? `bg-[${colors.black}]`
+              : `bg-neutral-200`,
           )}
         />
       ))}
 
       <View
         style={tw.style(
-          `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
+          `h-[4px] flex-1 rounded-full`, // Use flex-1 to distribute width evenly
           stage === "cv_upload" || stage === "socials"
-            ? "bg-[#000]"
-            : "bg-[#E0E0E0]"
+            ? `bg-[${colors.black}]`
+            : `bg-neutral-200`,
         )}
       />
 
       <View
         style={tw.style(
-          `h-[3px] flex-1 mx-[2px] rounded-full`, // Use flex-1 to distribute width evenly
-          stage === "socials" ? "bg-[#000]" : "bg-[#E0E0E0]"
+          `h-[4px] flex-1 rounded-full`, // Use flex-1 to distribute width evenly
+          stage === "socials" ? `bg-[${colors.black}]` : `bg-neutral-200`,
         )}
       />
     </View>

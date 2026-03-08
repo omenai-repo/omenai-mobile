@@ -10,6 +10,7 @@ import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import { useDevice } from "#hooks/useDevice";
+import { useAppStore } from "#store/app/appStore";
 
 type ArtworkCardType = {
   title: string;
@@ -40,6 +41,7 @@ function ArtworkCard({
   galleryView = false,
   availiablity,
 }: ArtworkCardType) {
+  const { isLoggedIn } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { isTablet } = useDevice();
   const screenWidth = Dimensions.get("window").width;
@@ -140,29 +142,31 @@ function ArtworkCard({
               {artist}
             </Text>
           </View>
-          <View style={tw`flex flex-row items-center gap-2`}>
-            {availiablity && (
-              <Text
-                style={tw`text-sm ${
-                  lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                } flex-1 ${showPrice ? "font-sans-bold" : "font-sans-medium"}`}
-              >
-                {showPrice ? utils_formatPrice(price) : "Price on Request"}
-              </Text>
-            )}
-
-            <View style={tw`flex-wrap`}>
-              {!availiablity && (
+          {isLoggedIn && (
+            <View style={tw`flex flex-row items-center gap-2`}>
+              {availiablity && (
                 <Text
                   style={tw`text-sm ${
                     lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                  } flex-1 font-sans-semibold`}
+                  } flex-1 ${showPrice ? "font-sans-bold" : "font-sans-medium"}`}
                 >
-                  SOLD
+                  {showPrice ? utils_formatPrice(price) : "Price on Request"}
                 </Text>
               )}
+
+              <View style={tw`flex-wrap`}>
+                {!availiablity && (
+                  <Text
+                    style={tw`text-sm ${
+                      lightText ? "text-white/90" : "text-[#1A1A1A]/90"
+                    } flex-1 font-sans-semibold`}
+                  >
+                    SOLD
+                  </Text>
+                )}
+              </View>
             </View>
-          </View>
+          )}
         </View>
       </TouchableOpacity>
     </View>

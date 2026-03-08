@@ -33,7 +33,7 @@ const ConfirmationModal = ({
         >
           <View style={tw`flex-row self-center items-center gap-[20px]`}>
             <SvgXml xml={warningIconSm} />
-            <Text style={tw`text-[16px] text-[#1A1A1A] font-medium`}>
+            <Text style={tw`text-sm text-[#1A1A1A] font-medium`}>
               Verify your Information
             </Text>
           </View>

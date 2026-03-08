@@ -25,7 +25,12 @@ export async function loginAccount(
       isOk: false,
       status: error?.status,
       error,
-      body: { message: "Error logging into account" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error logging into account",
+      },
     };
   }
 }

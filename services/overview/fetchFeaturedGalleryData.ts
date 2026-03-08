@@ -20,6 +20,14 @@ export async function getFeaturedGalleryData({
 
     return { isOk: res.ok, message: result.message, data: result };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching featured gallery data",
+      },
+    };
   }
 }

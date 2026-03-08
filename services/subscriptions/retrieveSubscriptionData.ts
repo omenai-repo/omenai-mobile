@@ -19,10 +19,12 @@ export async function retrieveSubscriptionData(gallery_id: string) {
   } catch (error: any) {
     return {
       isOk: false,
-      message:
-        error?.message ||
-        error?.response?.data?.message ||
-        "An error occurred fetching subscription data",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "An error occurred fetching subscription data",
+      },
     };
   }
 }

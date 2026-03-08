@@ -15,6 +15,7 @@ import { screenName } from "#constants/screenNames.constants";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import EditArtworkButton from "#components/buttons/EditArtworkButton";
 import tw from "twrnc";
+import { useAppStore } from "#store/app/appStore";
 
 type MiniArtworkCardType = {
   title: string;
@@ -31,6 +32,7 @@ function GalleryMiniArtworkCard({
   artist,
   usd_price,
 }: MiniArtworkCardType) {
+  const { isLoggedIn } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const screenWidth = Dimensions.get("window").width;
@@ -98,7 +100,7 @@ function GalleryMiniArtworkCard({
         >
           {artist}
         </Text>
-        <Text>{utils_formatPrice(usd_price, "$")}</Text>
+        {isLoggedIn && <Text>{utils_formatPrice(usd_price, "$")}</Text>}
       </View>
     </TouchableOpacity>
   );

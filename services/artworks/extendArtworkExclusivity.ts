@@ -18,11 +18,15 @@ export async function extendArtworkExclusivity(art_id: string) {
       message: result.message,
       data: result.data,
     };
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
-      message:
-        "An error was encountered, please try again later or contact support",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error extending artwork exclusivity",
+      },
     };
   }
 }

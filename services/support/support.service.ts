@@ -44,11 +44,15 @@ export async function createSupportTicket(payload: Payload) {
       message: result.message,
       ticketId: result.ticketId,
     };
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
-      message:
-        "An error was encountered, please try again later or contact support",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "An error was encountered, please try again later or contact support",
+      },
     };
   }
 }
@@ -68,11 +72,15 @@ export async function fetchUserSupportTickets(params: URLSearchParams) {
       pagination: result.pagination,
       success: result.success,
     };
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
-      message:
-        "An error was encountered, please try again later or contact support",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "An error was encountered, please try again later or contact support",
+      },
     };
   }
 }

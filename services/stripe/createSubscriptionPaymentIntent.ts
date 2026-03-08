@@ -34,11 +34,15 @@ export const createSubscriptionPaymentIntent = async (
       message: result.message,
       client_secret: result.paymentIntent,
     };
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
-      message:
-        "An error was encountered, please try again later or contact support",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "An error was encountered, please try again later or contact support",
+      },
     };
   }
 };

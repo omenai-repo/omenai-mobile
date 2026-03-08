@@ -27,10 +27,14 @@ export async function getNotificationHistory({
 
     return { isOk: res.ok, data: result.data };
   } catch (error: any) {
-    console.log(error);
     return {
       isOk: false,
-      error: error.message || "An error occurred while fetching notifications.",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "An error occurred while fetching notifications.",
+      },
     };
   }
 }

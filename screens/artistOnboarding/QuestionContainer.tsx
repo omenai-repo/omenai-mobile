@@ -1,9 +1,9 @@
 import { View, Text, Pressable, useWindowDimensions } from "react-native";
 import React from "react";
-import { QuestionKey } from "./ArtistOnboarding";
 import tw from "twrnc";
 import { TextInput } from "react-native";
 import { Animated } from "react-native";
+import { colors } from "#config/colors.config";
 
 const QuestionContainer = ({
   question,
@@ -26,7 +26,7 @@ const QuestionContainer = ({
   return (
     <Animated.View
       style={[
-        tw`border border-[#BDBDBDB2] rounded-md py-[25px] self-center`,
+        tw`border border-neutral-200 rounded-md py-8 self-center px-6`,
         {
           width: width - 50,
           backgroundColor: isModalVisible ? "#ffff" : "#FFFFFFB5",
@@ -34,12 +34,10 @@ const QuestionContainer = ({
         animatedStyle,
       ]}
     >
-      <Text
-        style={tw`text-[16px] text-[#1A1A1A] font-medium text-center px-[50px]`}
-      >
+      <Text style={tw`text-sm text-[#1A1A1A] text-center font-sans-regular 1`}>
         {question}
       </Text>
-      <View style={tw`h-[1px] bg-[#00000033] my-[20px] mx-[40px]`} />
+      <View style={tw`h-[1px] bg-neutral-200 my-5`} />
 
       {/* Conditional Input for Bio, Solo, and Group */}
       {options ? (
@@ -50,14 +48,16 @@ const QuestionContainer = ({
               key={option}
               onPress={() => onSelect(option)}
               style={tw.style(
-                `py-[10px] justify-center items-center rounded-md mx-[35px]`,
-                value === option && "bg-[#1A1A1A]",
+                `py-3.5 justify-center items-center rounded-md mb-4 border`,
+                value === option
+                  ? `bg-[${colors.black}] border-[${colors.black}]`
+                  : "bg-transparent border-neutral-100",
               )}
             >
               <Text
                 style={tw.style(
-                  `text-[16px]`,
-                  value === option && "text-[#FFFFFF]",
+                  `text-sm font-sans-regular`,
+                  value === option ? "text-white" : "text-[#1A1A1A]",
                 )}
               >
                 {option}
@@ -69,7 +69,7 @@ const QuestionContainer = ({
         <>
           <TextInput
             style={tw.style(
-              `bg-[#F7F7F7] rounded-md pt-[20px] pl-[20px] mx-[30px]`,
+              `bg-neutral-100 rounded-md p-5 text-sm font-sans-regular`,
               isNumber ? "py-[15px]" : "h-[97px]",
               {
                 textAlignVertical: "top",
@@ -81,14 +81,8 @@ const QuestionContainer = ({
             value={value}
             onChangeText={(text) => {
               if (!isNumber) {
-                // Count words
-                const wordCount = text
-                  .trim()
-                  .split(/\s+/)
-                  .filter((word) => word !== "").length;
-
-                // Allow text input only if word count is within the limit
-                if (wordCount <= 250) {
+                // Allow text input only if character count is within the limit
+                if (text.length <= 500) {
                   onSelect(text);
                 }
               } else {
@@ -99,31 +93,28 @@ const QuestionContainer = ({
           />
           {!isNumber &&
             (() => {
-              const wordCount = value
-                .trim()
-                .split(/\s+/)
-                .filter((word) => word !== "").length;
-              const isLimitExceeded = wordCount > 249;
+              const charCount = value.length;
+              const isLimitExceeded = charCount >= 500;
 
               return (
                 <View>
                   <Text
                     style={tw.style(
-                      `text-[12px] text-right mr-[30px] mt-[5px]`,
+                      `text-sm text-right font-sans-regular mt-1.5`,
                       isLimitExceeded
-                        ? "text-[#FF0000]"
-                        : "text-[#1A1A1A]00080]",
+                        ? "text-red-600"
+                        : `text-[${colors.black}]`,
                     )}
                   >
-                    {wordCount}/250 words
+                    {charCount}/500 Characters
                   </Text>
 
                   {/* Warning Message */}
                   {isLimitExceeded && (
                     <Text
-                      style={tw`text-[12px] text-[#FF0000] text-center mt-[5px]`}
+                      style={tw`text-sm text-red-600 text-center mt-1.5 font-sans-regular`}
                     >
-                      You have exceeded the word limit!
+                      You have reached the character limit!
                     </Text>
                   )}
                 </View>

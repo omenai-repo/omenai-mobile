@@ -29,7 +29,12 @@ export async function getArtworkPriceForArtist({
   } catch (error: any) {
     return {
       isOk: false,
-      message: error.response?.data?.message || "Failed to get artwork price",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Failed to get artwork price",
+      },
     };
   }
 }

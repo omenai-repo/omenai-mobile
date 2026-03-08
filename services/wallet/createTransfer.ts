@@ -27,8 +27,12 @@ export async function createTransfer(payload: {
   } catch (error: any) {
     return {
       isOk: false,
-      message:
-        error.message || error.response?.data?.message || "Transfer failed",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Transfer failed",
+      },
     };
   }
 }

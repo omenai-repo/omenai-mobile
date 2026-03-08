@@ -25,7 +25,12 @@ export async function verifyOtpCode(otp_pin: string) {
   } catch (error: any) {
     return {
       isOk: false,
-      message: error.response?.data?.message || "Invalid OTP",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Invalid OTP",
+      },
     };
   }
 }

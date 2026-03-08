@@ -1,4 +1,3 @@
-import { ArtistCategorizationUpdateDataTypes } from "#types/types";
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { apiRequest } from "../../utils/apiRequest";
 
@@ -20,10 +19,15 @@ export async function artistOnboarding(
     };
 
     return ParsedResponse;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error onboarding artist" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error onboarding artist",
+      },
     };
   }
 }

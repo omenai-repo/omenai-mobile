@@ -20,7 +20,12 @@ export const fetchArtworkByArtist = async (artist: string) => {
   } catch (error: any) {
     return {
       isOk: false,
-      body: { message: error.message },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching artwork by artist",
+      },
     };
   }
 };

@@ -22,10 +22,15 @@ export async function updateProfile(
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error updating profile" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error updating profile",
+      },
     };
   }
 }

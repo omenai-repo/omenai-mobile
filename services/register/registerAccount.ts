@@ -29,7 +29,12 @@ export async function registerAccount(
       isOk: false,
       status: error?.status,
       error: error,
-      body: { message: "Error creating account" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error creating account",
+      },
     };
   }
 }

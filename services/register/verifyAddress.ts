@@ -21,10 +21,15 @@ export async function verifyAddress(payload: {
       body: await response.json(),
     };
     return ParsedResponse;
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error verify address" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error verify address",
+      },
     };
   }
 }

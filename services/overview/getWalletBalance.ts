@@ -13,10 +13,15 @@ export async function getWalletBalance({ id }: { id: string }) {
     const result = await response.json();
 
     return result;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error fetching wallet balance" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching wallet balance",
+      },
     };
   }
 }

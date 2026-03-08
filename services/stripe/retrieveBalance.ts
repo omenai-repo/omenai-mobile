@@ -15,6 +15,14 @@ export async function retrieveBalance(account: string) {
       data: result.data,
     };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error retrieving Stripe balance",
+      },
+    };
   }
 }

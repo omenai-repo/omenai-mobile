@@ -23,10 +23,15 @@ export async function getSalesActivityData(year?: string) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error fetching gallery artwork highlight" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching gallery artwork highlight",
+      },
     };
   }
 }

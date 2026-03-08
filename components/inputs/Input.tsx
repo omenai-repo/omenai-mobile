@@ -21,39 +21,47 @@ type InputProps = {
   disabled?: boolean;
   defaultValue?: string;
   containerStyle?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<ViewStyle>;
 };
 
-export default function Input({
-  label,
-  onInputChange,
-  placeHolder,
-  keyboardType,
-  value,
-  errorMessage,
-  handleBlur,
-  disabled,
-  defaultValue,
-  containerStyle,
-  testID,
-}: InputProps & { testID?: string }) {
+export default function Input(props: InputProps & { testID?: string }) {
+  const {
+    label,
+    onInputChange,
+    placeHolder,
+    keyboardType,
+    value,
+    errorMessage,
+    handleBlur,
+    disabled,
+    defaultValue,
+    containerStyle,
+    inputStyle,
+    testID,
+  } = props;
+
   return (
     <View style={[containerStyle]}>
-      <Text style={[tw`text-sm font-sans-regular`, { color: colors.grey }]}>
-        {label}
-      </Text>
+      {label !== "" && (
+        <Text style={[tw`text-sm font-sans-regular`, { color: colors.grey }]}>
+          {label}
+        </Text>
+      )}
       <TextInput
         testID={testID}
         onChangeText={onInputChange}
         placeholder={placeHolder}
         placeholderTextColor={colors.grey}
         style={[
-          tw`py-3 w-full border px-3 rounded-md mt-2.5 text-sm font-sans-regular`,
+          tw`py-3 w-full border px-3 rounded-md text-sm font-sans-regular`,
+          label !== "" && label !== undefined && tw`mt-2.5`,
           {
             borderColor: colors.inputBorder,
             backgroundColor: "#FAFAFA",
             color: colors.primary_black,
           },
           disabled && { color: `${colors.primary_black}70` },
+          inputStyle,
         ]}
         keyboardType={keyboardType}
         autoCapitalize="none"

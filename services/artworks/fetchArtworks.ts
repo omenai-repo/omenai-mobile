@@ -27,10 +27,15 @@ export async function fetchArtworks({
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error fetching post impressions" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching artworks",
+      },
     };
   }
 }

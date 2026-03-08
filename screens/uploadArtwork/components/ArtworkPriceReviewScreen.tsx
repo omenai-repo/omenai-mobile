@@ -154,8 +154,8 @@ export default function ArtworkPriceReviewScreen({
           autoPlay
           ref={animation}
           style={{
-            width: 200,
-            height: 200,
+            width: 120,
+            height: 120,
           }}
           source={loaderAnimation}
         />

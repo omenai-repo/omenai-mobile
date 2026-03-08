@@ -23,10 +23,15 @@ export async function fetchTrendingArtworks({
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error fetching similar posts" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching trending artworks",
+      },
     };
   }
 }

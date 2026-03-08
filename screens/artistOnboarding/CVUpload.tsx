@@ -8,6 +8,7 @@ import React from "react";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
 import { uploadIcon, warningIconSm } from "#utils/SvgImages";
+import { colors } from "#config/colors.config";
 
 type CVUploadProps = {
   cv: any;
@@ -21,7 +22,7 @@ const CVUpload = ({ cv, pickDocument }: CVUploadProps) => {
       <TouchableOpacity
         onPress={pickDocument}
         style={tw.style(
-          `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-md justify-center items-center`,
+          `border border-neutral-100 bg-neutral-200 h-[160px] rounded-md justify-center items-center`,
           {
             marginHorizontal: width / 12,
           },
@@ -30,7 +31,7 @@ const CVUpload = ({ cv, pickDocument }: CVUploadProps) => {
         {!cv?.assets && <SvgXml xml={uploadIcon} />}
 
         <Text
-          style={tw`text-[12px] text-[#1A1A1A]000] font-medium mt-[15px] text-center mx-[30px]`}
+          style={tw`text-sm text-[${colors.black}] font-sans-medium mt-[15px] text-center`}
         >
           {cv?.assets
             ? cv.assets[0].name.length > 40
@@ -50,7 +51,7 @@ const CVUpload = ({ cv, pickDocument }: CVUploadProps) => {
         )}
       >
         <SvgXml xml={warningIconSm} />
-        <Text style={tw`text-[14px] text-[#FFA500] font-medium pr-[30px]`}>
+        <Text style={tw`text-sm text-[#FFA500] font-sans-medium pr-[30px]`}>
           Please ensure your CV aligns with the answers you provided in the last
           sections
         </Text>

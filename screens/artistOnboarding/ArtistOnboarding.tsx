@@ -17,7 +17,6 @@ import * as DocumentPicker from "expo-document-picker";
 import QuestionContainer from "./QuestionContainer";
 import CVUpload from "./CVUpload";
 import Socials from "./Socials";
-import ConfirmationModal from "./ConfirmationModal";
 import OnboardingProgressBar from "./OnboardingProgressBar";
 import EditOnboardingModal from "./EditOnboardingModal";
 import uploadArtistDoc from "#screens/register/components/artistRegistrationForm/uploadArtistDoc";
@@ -29,11 +28,9 @@ import FirstScreen from "./FirstScreen";
 import SuccessComp from "./SuccessComp";
 import { useAppStore } from "#store/app/appStore";
 import { logout } from "#utils/logout.utils";
-import CredentialsOverview from "./CredentialsOverview";
-import type {
-  ArtistCategorizationAnswerTypes,
-  ArtistCategorizationUpdateDataTypes,
-} from "#types/types";
+import SubmissionOverview from "./SubmissionOverview";
+import { colors } from "#config/colors.config";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 
 const { width, height } = Dimensions.get("window");
 
@@ -48,7 +45,14 @@ export type QuestionKey =
   | "museum_exhibition"
   | "art_fair";
 
-const SOCIAL_KEYS = ["instagram", "twitter", "linkedin", "facebook"] as const;
+const SOCIAL_KEYS = [
+  "instagram",
+  "twitter",
+  "linkedin",
+  "facebook",
+  "behance",
+  "tiktok",
+] as const;
 
 const INITIAL_ONBOARDING_STATE = {
   bio: "",
@@ -67,6 +71,8 @@ const INITIAL_SOCIALS_STATE = {
   twitter: "",
   linkedin: "",
   facebook: "",
+  behance: "",
+  tiktok: "",
 };
 
 export const questions: {
@@ -75,41 +81,48 @@ export const questions: {
   options?: string[];
   isNumber?: boolean;
 }[] = [
-  { key: "bio", text: "Tell us about yourself and your art style?" }, // Open-ended string input
-  { key: "graduate", text: "Are you a Graduate?", options: ["Yes", "No"] }, // Yes/No buttons
+  {
+    key: "bio",
+    text: "Describe yourself and your art style (This would be publicly visible)",
+  }, // Open-ended string input
+  {
+    key: "graduate",
+    text: "Are you a Graduate from an accredited art institution?",
+    options: ["Yes", "No"],
+  }, // Yes/No buttons
   {
     key: "mfa",
-    text: "If yes, do you own an MFA (Masters in Fine Arts)?",
+    text: "Do you have an MFA (Masters in Fine Arts)?",
     options: ["Yes", "No"],
   },
   {
     key: "solo",
-    text: "How many solo exhibitions have you done?",
+    text: "How many solo exhibitions have you had? (approximate)",
     isNumber: true,
   }, // Numeric input
   {
     key: "group",
-    text: "How many group exhibitions have you participated in?",
+    text: "How many group exhibitions have you had? (approximate)",
     isNumber: true,
   }, // Numeric input
   {
-    key: "museum_collection",
-    text: "Is your artwork in any museum collection?",
-    options: ["Yes", "No"],
-  },
-  {
     key: "biennale",
-    text: "Which Biennale have you been a part of?",
-    options: ["Venice", "Others", "None"],
-  },
-  {
-    key: "museum_exhibition",
-    text: "Has your piece been featured in a museum exhibition?",
-    options: ["Yes", "No"],
+    text: "Which Bienalle have you participated in?",
+    options: ["Venice", "Other recognized Biennale events", "None"],
   },
   {
     key: "art_fair",
-    text: "Have you been featured in an art fair by a Gallery?",
+    text: "Have you been featured in an Art Fair by a gallery?",
+    options: ["Yes", "No"],
+  },
+  {
+    key: "museum_exhibition",
+    text: "Have your piece been featured in any Museum Exhibition?",
+    options: ["Yes", "No"],
+  },
+  {
+    key: "museum_collection",
+    text: "Is your work featured in any Museum Collection?",
     options: ["Yes", "No"],
   },
 ];
@@ -139,6 +152,8 @@ const ArtistOnboarding = () => {
       twitter: string;
       linkedin: string;
       facebook: string;
+      behance: string;
+      tiktok: string;
     };
   }>({
     cv: "",
@@ -155,8 +170,8 @@ const ArtistOnboarding = () => {
   >(null);
 
   const [editingSocialKey, setEditingSocialKey] = useState<string | null>(null);
-  const [confirmModal, setConfirmModal] = useState(false);
   const [screen, setScreen] = useState(1);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -293,6 +308,10 @@ const ArtistOnboarding = () => {
       return !hasSocialsFilled();
     }
 
+    if (stage === "overview") {
+      return !isConfirmed;
+    }
+
     return false;
   };
 
@@ -364,7 +383,6 @@ const ArtistOnboarding = () => {
 
       const results = await artistOnboarding(payload);
       console.log({ results });
-      setConfirmModal(false);
       if (results?.isOk) {
         const resultsBody = results?.body;
         setOnboardingQuestions(INITIAL_ONBOARDING_STATE);
@@ -399,7 +417,7 @@ const ArtistOnboarding = () => {
       case "socials":
         return "Upload your Social Handles";
       case "overview":
-        return "An overview of your Information";
+        return "Review and Submit Your Artist Profile";
       default:
         return "";
     }
@@ -428,19 +446,27 @@ const ArtistOnboarding = () => {
         );
       case "overview":
         return (
-          <CredentialsOverview
-            onboardingQuestions={onboardingQuestions}
-            documentationSocials={documentation.socials}
-            documentationCv={documentation.cv}
-            cvAssets={cv?.assets ?? undefined}
-            openSections={openSections}
-            toggleSection={toggleSection}
-            openEditModal={openEditModal}
+          <SubmissionOverview
+            isConfirmed={isConfirmed}
+            setIsConfirmed={setIsConfirmed}
+            onNavigateBack={handleBack}
             width={width}
           />
         );
       default:
         return null;
+    }
+  };
+
+  const nextHandler = () => {
+    if (stage === "questions") {
+      handleNext();
+    } else if (stage === "cv_upload") {
+      handleCVUpload();
+    } else if (stage === "socials") {
+      handleSocials();
+    } else if (stage === "overview") {
+      handleSubmit();
     }
   };
 
@@ -450,7 +476,7 @@ const ArtistOnboarding = () => {
     }
 
     if (screen === 2) {
-      if (isLoading) {
+      if (isLoading && stage !== "overview") {
         return (
           <LoadingContainer
             label={
@@ -479,29 +505,38 @@ const ArtistOnboarding = () => {
                   source={omenaiLogo}
                 />
                 <Pressable onPress={logout}>
-                  <Text style={tw`text-[18px] font-semibold`}>Logout</Text>
+                  <Text style={tw`text-sm font-sans-regular`}>Logout</Text>
                 </Pressable>
               </View>
 
+              <OnboardingProgressBar
+                stage={stage}
+                currentQuestionIndex={currentQuestionIndex}
+              />
+
               <Text
-                style={tw`text-[20px] font-medium text-[#1A1A1A]000] mt-[30px]`}
+                style={[
+                  tw`text-lg font-sans-medium ${
+                    stage === "overview" ? "mt-7" : ""
+                  }`,
+                  { color: colors.black },
+                ]}
               >
                 {getStageTitle()}
               </Text>
               <Text
-                style={tw`text-[14px] text-[#1A1A1A]00099] mt-[10px] flex-wrap mr-[40px]`}
+                style={[
+                  tw`text-sm font-sans-regular tracking-wide mt-2.5 flex-wrap mr-10`,
+                  { color: colors.black },
+                ]}
               >
                 {stage === "overview"
                   ? "Please review your information to make sure your information is correct."
                   : "Fill in the required information to complete your onboarding."}
               </Text>
             </View>
-            <View>{renderStageContent()}</View>
 
-            <OnboardingProgressBar
-              stage={stage}
-              currentQuestionIndex={currentQuestionIndex}
-            />
+            <View>{renderStageContent()}</View>
 
             <EditOnboardingModal
               isVisible={isEditModalVisible}
@@ -520,52 +555,39 @@ const ArtistOnboarding = () => {
                 }));
               }}
             />
-            <ConfirmationModal
-              isModalVisible={confirmModal}
-              setIsModalVisible={setConfirmModal}
-              confirmBtn={handleSubmit}
-            />
             {/* Navigation Buttons */}
 
             <View
-              style={tw.style(`flex-row gap-[30px] mb-[100px]`, {
-                marginHorizontal: width / 10,
-                top: height / 25,
-              })}
+              style={[
+                tw`flex-row justify-between items-center mb-[100px]`,
+                {
+                  marginHorizontal: width / 10,
+                  top: height / 25,
+                },
+              ]}
             >
-              {currentQuestionIndex !== 0 && (
-                <Pressable
-                  onPress={handleBack}
-                  style={tw.style(
-                    `h-[51px] rounded-full bg-[#F7F7F7] justify-center items-center flex-1 border-2 border-[#000000]`,
-                  )}
-                >
-                  <Text style={tw`text-[#1A1A1A]] font-bold text-[14px]`}>
-                    Back
-                  </Text>
-                </Pressable>
+              {currentQuestionIndex !== 0 && stage !== "overview" && (
+                <FittedBlackButton
+                  value="Back"
+                  onClick={handleBack}
+                  style={tw`w-2/5 border bg-transparent`}
+                  textStyle={tw`text-[${colors.black}]`}
+                />
               )}
 
-              <Pressable
-                onPress={() => {
-                  if (stage === "questions") {
-                    handleNext();
-                  } else if (stage === "cv_upload") {
-                    handleCVUpload();
-                  } else if (stage === "socials") {
-                    handleSocials();
-                  } else if (stage === "overview") {
-                    setConfirmModal(true);
-                  }
-                }}
-                disabled={isNextDisabled()}
-                style={tw.style(
-                  `h-[51px] rounded-full justify-center items-center flex-1`,
-                  isNextDisabled() ? "bg-[#B5B5B5]" : "bg-[#1A1A1A]",
-                )}
-              >
-                <Text style={tw`text-white font-bold text-[14px]`}>Next</Text>
-              </Pressable>
+              <FittedBlackButton
+                value={
+                  stage === "overview" ? "Submit for Verification" : "Next"
+                }
+                onClick={nextHandler}
+                isDisabled={isNextDisabled()}
+                isLoading={isLoading}
+                style={
+                  currentQuestionIndex === 0 || stage === "overview"
+                    ? tw`flex-1`
+                    : tw`w-2/5`
+                }
+              />
             </View>
           </ScrollView>
         </KeyboardAvoidingView>

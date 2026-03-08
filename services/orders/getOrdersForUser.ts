@@ -22,11 +22,15 @@ export async function getOrdersForUser() {
 
     const result = await response.json();
     return { isOk: response.ok, message: result.message, data: result.data };
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
     return {
       isOk: false,
-      message: "Error fetching orders",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching orders",
+      },
     };
   }
 }

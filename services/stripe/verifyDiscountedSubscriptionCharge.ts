@@ -28,10 +28,12 @@ export const verifyDiscountedSubscriptionCharge = async (
 
     const result = await res.json();
     return { isOk: res.ok, message: result.message };
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
       message:
+        error.message ||
+        error?.response?.data?.message ||
         "An error was encountered, please try again later or contact support",
     };
   }

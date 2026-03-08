@@ -22,6 +22,14 @@ export async function fetchArtistWalletData() {
 
     return { isOk: res.ok, message: result.message, data: result.wallet };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching wallet data",
+      },
+    };
   }
 }
