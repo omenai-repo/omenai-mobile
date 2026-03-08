@@ -43,6 +43,14 @@ export async function createCheckoutSession(
       url: result.url,
     };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error creating checkout session",
+      },
+    };
   }
 }

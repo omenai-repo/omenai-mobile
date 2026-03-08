@@ -12,6 +12,14 @@ export async function getCurrencyConversion(currency: string, amount: number) {
 
     return { isOk: res.ok, data: result.data };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching currency conversion",
+      },
+    };
   }
 }

@@ -22,10 +22,12 @@ export async function confirmOrderDelivery(
   } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error updating order status" },
-      message: error.message || "Error updating order status",
-      status: error?.status,
-      error: error,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error updating order status",
+      },
     };
   }
 }

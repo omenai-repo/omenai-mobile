@@ -1,6 +1,5 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { apiRequest } from "../../utils/apiRequest";
-import { ArtworkSchemaTypes } from "#types/types";
 
 export async function requestArtworkPrice(
   data: Pick<
@@ -20,11 +19,15 @@ export async function requestArtworkPrice(
 
     const result = await response.json();
     return { isOk: response.ok, message: result.message, data: result.data };
-  } catch (error) {
-    console.log("error" + error);
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error requesting price quote for artwork" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error requesting price quote for artwork",
+      },
     };
   }
 }

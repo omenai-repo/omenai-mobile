@@ -18,10 +18,15 @@ export async function resendVerifyCode(route: RouteIdentifier, id: string) {
     };
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error sending code, try again later" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error sending code, try again later",
+      },
     };
   }
 }

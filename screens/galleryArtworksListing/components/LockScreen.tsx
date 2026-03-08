@@ -29,13 +29,15 @@ export default function LockScreen({ name }: { name: string }) {
         navigation.goBack();
       } else {
         updateModal({
-          message: response?.message || "Error sending verification reminder",
+          message:
+            response?.body?.message ||
+            response?.message ||
+            "Error sending verification reminder",
           modalType: "error",
           showModal: true,
         });
       }
     } catch (error) {
-      console.error("Error sending verification reminder:", error);
       updateModal({
         message: "Error sending verification reminder",
         modalType: "error",

@@ -15,10 +15,15 @@ export async function fetchSearchKeyWordResults(searchTerm: string) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error fetching search" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching search",
+      },
     };
   }
 }

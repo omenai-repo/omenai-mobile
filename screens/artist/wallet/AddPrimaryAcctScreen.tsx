@@ -450,8 +450,8 @@ const AddPrimaryAcctScreen = () => {
             autoPlay
             ref={animation}
             style={{
-              width: 250,
-              height: 250,
+              width: 120,
+              height: 120,
             }}
             source={loaderAnimation}
           />

@@ -28,10 +28,15 @@ export async function fetchCuratedArtworks({
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error fetching arteorks" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching curated artworks",
+      },
     };
   }
 }

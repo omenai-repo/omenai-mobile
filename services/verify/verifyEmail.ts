@@ -20,10 +20,15 @@ export async function verifyEmail(
       body: await response.json(),
     };
     return ParsedResponse;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error verifying token, try again later" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error verifying token, try again later",
+      },
     };
   }
 }

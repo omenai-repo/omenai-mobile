@@ -18,6 +18,14 @@ export async function checkIsStripeOnboarded(accountId: string) {
       details_submitted: result.details_submitted,
     };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error checking Stripe onboarding status",
+      },
+    };
   }
 }

@@ -16,10 +16,15 @@ export async function getShipmentTracking(order_id: string) {
       message: result.message,
       data: result.data,
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error fetching shipment data" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching shipment data",
+      },
     };
   }
 }

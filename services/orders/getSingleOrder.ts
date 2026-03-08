@@ -12,6 +12,14 @@ export const getSingleOrder = async (order_id: string) => {
     const result = await res.json();
     return { isOk: res.ok, message: result.message, data: result.data };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching order details",
+      },
+    };
   }
 };

@@ -23,10 +23,15 @@ export async function deleteGalleryAccount() {
       return { isOk: res.ok, message: result.message };
     });
     return response;
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
-      message: "Error deleting account",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error deleting account",
+      },
     };
   }
 }

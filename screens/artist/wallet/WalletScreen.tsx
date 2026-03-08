@@ -161,8 +161,16 @@ const WalletScreen = () => {
                 />
 
                 <FittedBlackButton
-                  value="Withdraw Funds"
-                  onClick={handleWithdrawPress}
+                  value={
+                    walletData?.wallet_pin
+                      ? "Withdraw Funds"
+                      : "Create wallet pin"
+                  }
+                  onClick={
+                    walletData?.wallet_pin
+                      ? handleWithdrawPress
+                      : () => setShowPinModal(true)
+                  }
                   isDisabled={isLoading}
                   style={tw`bg-white px-3`}
                   textStyle={[

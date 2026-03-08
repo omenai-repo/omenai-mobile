@@ -28,13 +28,18 @@ export async function updatePassword(
       },
     ).then(async (res) => {
       const result = await res.json();
-      return { isOk: res.ok, message: result.message };
+      return { isOk: res.ok, body: { message: result.message } };
     });
     return response;
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
-      message: "Error reseting password",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error reseting password",
+      },
     };
   }
 }

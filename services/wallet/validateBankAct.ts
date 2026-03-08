@@ -18,6 +18,14 @@ export async function validateBankAcct(
 
     return { isOk: res.ok, data: result.account_data };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error validating bank account",
+      },
+    };
   }
 }

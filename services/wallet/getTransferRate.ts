@@ -20,7 +20,12 @@ export async function getTransferRate(params: {
   } catch (error: any) {
     return {
       isOk: false,
-      message: error.response?.data?.message || "Failed to get rate",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Failed to get rate",
+      },
     };
   }
 }

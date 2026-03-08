@@ -34,6 +34,14 @@ export async function fetchArtistTransactions({
 
     return { isOk: res.ok, message: result.message, data: result.data };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching transactions",
+      },
+    };
   }
 }

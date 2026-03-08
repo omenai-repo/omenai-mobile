@@ -14,7 +14,7 @@ interface CredentialsOverviewProps {
   toggleSection: (key: string) => void;
   openEditModal: (
     key: QuestionKey | "cv" | "social",
-    socialKey?: string
+    socialKey?: string,
   ) => void;
   width: number;
 }
@@ -35,13 +35,13 @@ const CredentialsOverview: React.FC<CredentialsOverviewProps> = ({
         `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
         {
           marginHorizontal: width / 18,
-        }
+        },
       )}
     >
       {/* Map through onboarding questions */}
       {Object.entries(onboardingQuestions)
         .filter(
-          ([_, value]) => typeof value === "string" && value.trim() !== ""
+          ([_, value]) => typeof value === "string" && value.trim() !== "",
         )
         .map(([key, value]) => {
           // Find the corresponding question text
@@ -63,12 +63,12 @@ const CredentialsOverview: React.FC<CredentialsOverviewProps> = ({
 
       {/* Map through documentation socials */}
       {Object.entries(documentationSocials)
-        .filter(([_, value]) => value.trim() !== "")
+        .filter(([_, value]) => value && value.trim() !== "")
         .map(([key, value]) => (
           <OverviewContainer
             key={key}
             index={key}
-            title={key.toUpperCase()}
+            title={key.charAt(0).toUpperCase() + key.slice(1)}
             data={value}
             open={openSections[key]}
             setOpen={() => toggleSection(key)}

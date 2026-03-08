@@ -29,10 +29,15 @@ export async function getEditEligibility() {
     };
 
     return res;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error checking eligibility" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error checking eligibility",
+      },
     };
   }
 }

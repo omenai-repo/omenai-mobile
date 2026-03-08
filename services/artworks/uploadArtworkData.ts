@@ -25,7 +25,7 @@ export async function uploadArtworkData(
       error: error,
       body: {
         message:
-          error?.message ||
+          error.message ||
           error?.response?.data?.message ||
           "Error uploading artwork",
       },

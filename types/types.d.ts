@@ -276,10 +276,16 @@ type verifyEmailRouteParamsType = {
 
 type ArtistDocumentationTypes = {
   cv?: string;
-  socials?: { [key?: Socials]: string };
+  socials?: { [key in Socials]?: string };
 };
 
-type Socials = "instagram" | "twitter" | "facebook" | "linkedin";
+type Socials =
+  | "instagram"
+  | "twitter"
+  | "facebook"
+  | "linkedin"
+  | "behance"
+  | "tiktok";
 
 type ArtistCategorizationUpdateDataTypes = {
   answers: ArtistCategorizationAnswerTypes;

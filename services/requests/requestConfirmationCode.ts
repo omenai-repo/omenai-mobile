@@ -21,13 +21,18 @@ export async function requestPasswordConfirmationCode(route: string) {
       },
     ).then(async (res) => {
       const result = await res.json();
-      return { isOk: res.ok, message: result.message };
+      return { isOk: res.ok, body: { message: result.message } };
     });
     return response;
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
-      message: "Error getting confirmation code",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error getting confirmation code",
+      },
     };
   }
 }

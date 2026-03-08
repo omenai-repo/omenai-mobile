@@ -14,6 +14,14 @@ export async function fetchBankBranches(bankCode: string) {
 
     return { isOk: res.ok, data: result.bank_branches };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching bank branches",
+      },
+    };
   }
 }

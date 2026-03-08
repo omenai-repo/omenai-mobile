@@ -98,10 +98,7 @@ const BottomTabNav = () => {
       </Tab.Navigator>
 
       <Modal visible={isModalVisible} transparent={true} animationType="fade">
-        <Pressable
-          onPressOut={() => setModalVisible(false)}
-          style={tw`flex-1 bg-[#0003] justify-center items-center`}
-        >
+        <View style={tw`flex-1 bg-[#0003] justify-center items-center`}>
           <BlurView
             intensity={30}
             style={tw`absolute top-0 left-0 right-0 bottom-0`}
@@ -140,7 +137,7 @@ const BottomTabNav = () => {
               </View>
             </Animated.View>
           </Pressable>
-        </Pressable>
+        </View>
       </Modal>
     </>
   );

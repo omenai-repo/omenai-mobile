@@ -3,6 +3,7 @@ import { View, Text } from "react-native";
 import tw from "twrnc";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import ArtworkStatusBadge from "#components/artwork/ArtworkStatusBadge";
+import { useAppStore } from "#store/app/appStore";
 
 interface ArtworkPriceSectionProps {
   availability: boolean;
@@ -17,6 +18,10 @@ export default function ArtworkPriceSection({
   usd_price,
   userType,
 }: Readonly<ArtworkPriceSectionProps>) {
+  const { isLoggedIn } = useAppStore();
+
+  if (!isLoggedIn) return null;
+
   return (
     <View>
       <Text

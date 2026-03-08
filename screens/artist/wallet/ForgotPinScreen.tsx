@@ -44,7 +44,7 @@ export const ForgotPinScreen = ({
         const response = await sendOtpCode();
         if (!response?.isOk) {
           updateModal({
-            message: response?.message || "Failed to send OTP",
+            message: response?.body?.message || "Failed to send OTP",
             showModal: true,
             modalType: "error",
           });
@@ -84,7 +84,7 @@ export const ForgotPinScreen = ({
         navigation.navigate("ResetPinScreen", { walletId });
       } else {
         updateModal({
-          message: response?.message || "Invalid OTP",
+          message: response?.body?.message || "Invalid OTP",
           showModal: true,
           modalType: "error",
         });
@@ -115,7 +115,7 @@ export const ForgotPinScreen = ({
       const response = await sendOtpCode();
       if (!response?.isOk) {
         updateModal({
-          message: response?.message || "Failed to resend OTP",
+          message: response?.body?.message || "Failed to resend OTP",
           showModal: true,
           modalType: "error",
         });
@@ -197,8 +197,8 @@ export const ForgotPinScreen = ({
             autoPlay
             ref={animation}
             style={{
-              width: 250,
-              height: 250,
+              width: 120,
+              height: 120,
             }}
             source={loaderAnimation}
           />

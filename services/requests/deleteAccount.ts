@@ -30,10 +30,12 @@ export async function deleteAccount(
   } catch (error: any) {
     return {
       isOk: false,
-      message:
-        error?.message ||
-        error?.response?.data?.message ||
-        "An error was encountered, please try again later or contact support",
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "An error was encountered, please try again later or contact support",
+      },
       status: 500,
     };
   }

@@ -22,6 +22,14 @@ export async function fetchBanks() {
 
     return { isOk: res.ok, data: result };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching banks",
+      },
+    };
   }
 }

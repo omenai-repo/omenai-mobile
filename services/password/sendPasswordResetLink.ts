@@ -21,10 +21,15 @@ export async function sendPasswordResetLink(
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error logging into account" },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error sending password reset link",
+      },
     };
   }
 }

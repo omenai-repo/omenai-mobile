@@ -69,7 +69,7 @@ export default function Artwork() {
   const { art_id, url } = route.params as RouteParams;
 
   const { updateModal } = useModalStore();
-  const { userType, userSession } = useAppStore();
+  const { userType, userSession, isLoggedIn } = useAppStore();
   const { openGuestLoginModal } = useGuestLoginModalStore();
   const { isTabletLandscape, screenWidth } = useTabletLandscape();
   const isTabletSize = Math.min(screenWidth) >= 768;
@@ -223,7 +223,7 @@ export default function Artwork() {
   }, [artwork, updateModal, userType]);
 
   const renderPrimaryButton = () => {
-    if (!artwork) return null;
+    if (!artwork || !isLoggedIn) return null;
 
     if (["gallery", "artist"].includes(userType)) {
       return null;
@@ -240,16 +240,9 @@ export default function Artwork() {
           value="Purchase artwork"
           isDisabled={false}
           onClick={() => {
-            if (!userSession) {
-              openGuestLoginModal({
-                screen: screenName.artwork,
-                params: { art_id: artwork.art_id, url: artwork.url },
-              });
-            } else {
-              navigation.navigate(screenName.purchaseArtwork, {
-                art_id: artwork.art_id,
-              });
-            }
+            navigation.navigate(screenName.purchaseArtwork, {
+              art_id: artwork.art_id,
+            });
           }}
           testID="purchase-artwork-button"
         />

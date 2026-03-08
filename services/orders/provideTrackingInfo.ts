@@ -21,13 +21,15 @@ export async function provideTrackingInfo({
     });
 
     return response;
-  } catch (error) {
-    console.log("error" + error);
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error updating order status" },
-      message: (error as any).message || "Error updating order status",
-      error: error,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error updating order status",
+      },
     };
   }
 }
