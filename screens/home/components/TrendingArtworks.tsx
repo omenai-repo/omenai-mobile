@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { View, FlatList } from "react-native";
+import React from "react";
+import { View, ScrollView } from "react-native";
 import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
@@ -36,33 +36,6 @@ export default function TrendingArtworks({
 
   const showMoreButton = data.length >= limit;
 
-  const renderItem = useCallback(
-    ({ item, index }: { item: any; index: number }) =>
-      index + 1 === data.length && showMoreButton ? (
-        <ViewAllCategoriesButton
-          label="View all trending artworks"
-          listingType="trending"
-        />
-      ) : (
-        <ArtworkCard
-          title={item.title}
-          url={item.url}
-          artist={item.artist}
-          showPrice={
-            !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
-          }
-          price={item.pricing?.usd_price}
-          availiablity={item.availability}
-          impressions={item.impressions}
-          like_IDs={item.like_IDs}
-          art_id={item.art_id}
-        />
-      ),
-    [data.length, showMoreButton]
-  );
-
-  const keyExtractor = useCallback((_: any, i: number) => `trend-${i}`, []);
-
   return (
     <View style={tw`mt-6`}>
       <SectionHeader
@@ -81,19 +54,37 @@ export default function TrendingArtworks({
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <FlatList
-          data={data}
-          keyExtractor={keyExtractor}
+        <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          contentContainerStyle={tw`px-5 gap-5`}
-          renderItem={renderItem}
-          initialNumToRender={15}
-          maxToRenderPerBatch={15}
-          windowSize={5}
-          removeClippedSubviews
-        />
+          contentContainerStyle={tw`px-5`}
+        >
+          <View style={tw`flex-row gap-5`}>
+            {data.map((item: any, i: number) => (
+              <ArtworkCard
+                key={item.art_id ?? `trend-${i}`}
+                title={item.title}
+                url={item.url}
+                artist={item.artist}
+                showPrice={
+                  !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
+                }
+                price={item.pricing?.usd_price}
+                availiablity={item.availability}
+                impressions={item.impressions}
+                like_IDs={item.like_IDs}
+                art_id={item.art_id}
+              />
+            ))}
+            {showMoreButton && (
+              <ViewAllCategoriesButton
+                label="View all trending artworks"
+                listingType="trending"
+              />
+            )}
+          </View>
+        </ScrollView>
       )}
 
       {!isLoading && data.length < 1 && (
