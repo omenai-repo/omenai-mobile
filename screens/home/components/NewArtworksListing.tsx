@@ -1,5 +1,5 @@
 import React from "react";
-import { View, FlatList } from "react-native";
+import { View, ScrollView } from "react-native";
 import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
 import ArtworkCard from "#components/artwork/ArtworkCard";
@@ -48,32 +48,31 @@ export default function NewArtworksListing({
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <FlatList
-          data={data}
-          keyExtractor={(_, i) => `new-${i}`}
+        <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          contentContainerStyle={tw`px-5 gap-5`}
-          initialNumToRender={15}
-          maxToRenderPerBatch={15}
-          windowSize={5}
-          renderItem={({ item }) => (
-            <ArtworkCard
-              title={item.title}
-              url={item.url}
-              artist={item.artist}
-              showPrice={
-                !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
-              }
-              price={item.pricing?.usd_price}
-              availiablity={item.availability}
-              impressions={item.impressions}
-              like_IDs={item.like_IDs}
-              art_id={item.art_id}
-            />
-          )}
-        />
+          contentContainerStyle={tw`px-5`}
+        >
+          <View style={tw`flex-row gap-5`}>
+            {data.map((item: any, i: number) => (
+              <ArtworkCard
+                key={item.art_id ?? `new-${i}`}
+                title={item.title}
+                url={item.url}
+                artist={item.artist}
+                showPrice={
+                  !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
+                }
+                price={item.pricing?.usd_price}
+                availiablity={item.availability}
+                impressions={item.impressions}
+                like_IDs={item.like_IDs}
+                art_id={item.art_id}
+              />
+            ))}
+          </View>
+        </ScrollView>
       )}
 
       {!isLoading && data.length < 1 && (

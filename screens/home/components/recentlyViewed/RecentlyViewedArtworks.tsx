@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { FlatList, View } from "react-native";
+import React from "react";
+import { ScrollView, View } from "react-native";
 import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
 import { fetchViewHistory } from "#services/artworks/viewHistory/fetchRecentlyViewedArtworks";
@@ -34,23 +34,6 @@ export default function RecentlyViewedArtworks() {
     gcTime: 10 * 60_000,
   });
 
-  const renderItem = useCallback(
-    ({ item }: { item: ViewHistoryItem }) => (
-      <ViewHistoryCard
-        art_id={item.art_id}
-        artist={item.artist}
-        artwork={item.artwork}
-        url={item.url}
-      />
-    ),
-    [],
-  );
-
-  const keyExtractor = useCallback(
-    (_: ViewHistoryItem, i: number) => `rv-${i}`,
-    [],
-  );
-
   return (
     <View style={tw`my-10`}>
       <SectionHeader subtitle="YOUR ACTIVITY" title="Recently viewed" />
@@ -58,19 +41,24 @@ export default function RecentlyViewedArtworks() {
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <FlatList
-          data={data}
-          keyExtractor={keyExtractor}
+        <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          contentContainerStyle={tw`px-5 gap-5`}
-          renderItem={renderItem}
-          initialNumToRender={15}
-          maxToRenderPerBatch={15}
-          windowSize={5}
-          removeClippedSubviews
-        />
+          contentContainerStyle={tw`px-5`}
+        >
+          <View style={tw`flex-row gap-5`}>
+            {data.map((item: ViewHistoryItem, i: number) => (
+              <ViewHistoryCard
+                key={item.art_id ?? `rv-${i}`}
+                art_id={item.art_id}
+                artist={item.artist}
+                artwork={item.artwork}
+                url={item.url}
+              />
+            ))}
+          </View>
+        </ScrollView>
       )}
 
       {!isLoading && data.length < 1 && (
