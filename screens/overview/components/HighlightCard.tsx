@@ -83,7 +83,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
   if (isLoadingAny) {
     return (
       <View
-        style={tw.style(`mx-[20px] mb-[15px] flex-row flex-wrap`, {
+        style={tw.style(`mx-5 mt-5 mb-[15px] flex-row flex-wrap`, {
           gap,
         })}
       >
@@ -96,7 +96,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
 
   return (
     <View
-      style={tw.style(`mx-[20px] mb-[15px] flex-row flex-wrap`, {
+      style={tw.style(`mx-5 mt-5 mb-[15px] flex-row flex-wrap`, {
         gap,
       })}
     >

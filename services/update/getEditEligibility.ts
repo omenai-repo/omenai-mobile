@@ -17,7 +17,7 @@ export async function getEditEligibility() {
       {
         method: "POST",
         body: JSON.stringify({
-          artist_id: "9ef44111-5336-4a07-a59d-121628a90acd",
+          artist_id: userId,
         }),
       },
     );

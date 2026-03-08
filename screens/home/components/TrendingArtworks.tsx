@@ -48,15 +48,17 @@ export default function TrendingArtworks({
           title={item.title}
           url={item.url}
           artist={item.artist}
-          showPrice={item.pricing.shouldShowPrice === "Yes"}
-          price={item.pricing.usd_price}
+          showPrice={
+            !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
+          }
+          price={item.pricing?.usd_price}
           availiablity={item.availability}
           impressions={item.impressions}
           like_IDs={item.like_IDs}
           art_id={item.art_id}
         />
       ),
-    [data.length, showMoreButton],
+    [data.length, showMoreButton]
   );
 
   const keyExtractor = useCallback((_: any, i: number) => `trend-${i}`, []);

@@ -80,8 +80,8 @@ export default function ArtworksListing({
             title={item.title}
             url={item.url}
             artist={item.artist}
-            showPrice={item.pricing.shouldShowPrice === "Yes"}
-            price={item.pricing.usd_price}
+            showPrice={item.pricing?.shouldShowPrice === "Yes"}
+            price={item.pricing?.usd_price}
             impressions={item.impressions ?? 0}
             like_IDs={item.like_IDs ?? []}
             art_id={item.art_id}
@@ -146,7 +146,7 @@ export default function ArtworksListing({
               <View key={column.id} style={[{ flex: 1 / numColumns }]}>
                 {renderColumn(column.data)}
               </View>
-            ),
+            )
           )}
         </View>
         {loadingMore && <Loader size={150} height={0} />}

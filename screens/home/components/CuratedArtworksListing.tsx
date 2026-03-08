@@ -53,7 +53,7 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
           art_id={item.art_id}
         />
       ),
-    [limit, showMoreButton],
+    [limit, showMoreButton]
   );
 
   const keyExtractor = useCallback((_: any, i: number) => `curated-${i}`, []);

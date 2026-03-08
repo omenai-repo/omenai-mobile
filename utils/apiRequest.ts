@@ -1,5 +1,6 @@
 import { getApiHeaders } from "./apiHeaders";
 import { logout } from "./logout.utils";
+import { useAppStore } from "../store/app/appStore";
 
 type RequestOptions = RequestInit & {
   auth?: boolean;
@@ -23,7 +24,8 @@ export async function apiRequest(url: string, options: RequestOptions = {}) {
   );
 
   if (response.status === 403) {
-    if (shouldLogout) {
+    const { isLoggedIn } = useAppStore.getState();
+    if (shouldLogout && auth && isLoggedIn) {
       console.warn(`[API] 403 Forbidden detected at ${url}. Logging out...`);
       await logout();
     } else {

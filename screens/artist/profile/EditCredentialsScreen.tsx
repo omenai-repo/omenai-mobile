@@ -28,7 +28,7 @@ const { width } = Dimensions.get("window");
 
 export default function EditCredentialsScreen() {
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>(
-    {},
+    {}
   );
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editingQuestionKey, setEditingQuestionKey] = useState<
@@ -36,7 +36,7 @@ export default function EditCredentialsScreen() {
   >(null);
   const [editingSocialKey, setEditingSocialKey] = useState<string | null>(null);
   const [cv, setCv] = useState<DocumentPicker.DocumentPickerResult | null>(
-    null,
+    null
   );
   const [isLoading, setIsLoading] = useState(true);
   const [credentials, setCredentials] = useState<any>(null);
@@ -73,7 +73,7 @@ export default function EditCredentialsScreen() {
 
   const openEditModal = (
     key: QuestionKey | "cv" | "social",
-    socialKey?: string,
+    socialKey?: string
   ) => {
     setEditingQuestionKey(key as QuestionKey);
     setEditingSocialKey(socialKey || null); // Store which social media is being edited
@@ -148,7 +148,7 @@ export default function EditCredentialsScreen() {
           <TouchableOpacity
             onPress={pickDocument}
             style={tw.style(
-              `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-md justify-center items-center`,
+              `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-md justify-center items-center`
             )}
           >
             {!cv?.assets && <SvgXml xml={uploadIcon} />}
@@ -194,7 +194,7 @@ export default function EditCredentialsScreen() {
 
     if (editingQuestionKey) {
       const questionDetails = questions.find(
-        (q) => q.key === editingQuestionKey,
+        (q) => q.key === editingQuestionKey
       );
       return (
         <QuestionContainer
@@ -260,7 +260,7 @@ export default function EditCredentialsScreen() {
             style={tw.style(
               (editingQuestionKey === "social" ||
                 editingQuestionKey === "cv") &&
-                `bg-white p-5 rounded-md w-[90%]`,
+                `bg-white p-5 rounded-md w-[90%]`
             )}
           >
             {renderModalContent()}

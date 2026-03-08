@@ -1,4 +1,4 @@
-import { StyleSheet, RefreshControl, View } from "react-native";
+import { RefreshControl, View } from "react-native";
 import tw from "twrnc";
 import React, { useCallback, useRef, useState } from "react";
 
@@ -62,9 +62,7 @@ export default function Overview() {
           onScroll={onScroll}
         >
           <Header />
-          <View style={styles.container}>
-            <HighlightCard onLoadingChange={handleLoadingChange} />
-          </View>
+          <HighlightCard onLoadingChange={handleLoadingChange} />
 
           <SalesOverview onLoadingChange={handleLoadingChange} />
           <PopularArtworks onLoadingChange={handleLoadingChange} />
@@ -73,7 +71,3 @@ export default function Overview() {
     </WithGalleryModal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { paddingVertical: 20 },
-});

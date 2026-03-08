@@ -13,7 +13,7 @@ export default function ArtworkStatus({
     <View style={tw`mt-3 pt-3 border-t border-gray-200`}>
       <View style={tw`flex-row items-center justify-between`}>
         <Text style={tw`text-gray-600 text-xs font-sans-regular`}>Status:</Text>
-        {availability ? (
+        {availability !== false ? (
           <View style={tw`bg-green-50 px-2 py-1 rounded-full`}>
             <Text style={tw`text-green-700 text-xs font-sans-medium`}>
               Available
