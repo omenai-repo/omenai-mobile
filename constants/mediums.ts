@@ -3,7 +3,7 @@ import oil_art from "#assets/images/oil_art.png";
 import photography_art from "#assets/images/photography_art.png";
 import mixedMedia from "#assets/images/mixed_media_art.png";
 
-export const mediums = <CatalogCardTypes[]>[
+export const mediums = [
   { name: "Photography", value: "Photography", image: photography_art },
   {
     name: "Acrylic on canvas/linen/panel",
@@ -11,9 +11,9 @@ export const mediums = <CatalogCardTypes[]>[
     image: acrylic_art,
   },
   {
-    name: "Mixed media on canvas/paper",
-    value: "Mixed media on canvas/paper",
+    name: "Mixed media on canvas",
+    value: "Mixed media on canvas",
     image: mixedMedia,
   },
   { name: "Oil on canvas/panel", value: "Oil on canvas/panel", image: oil_art },
-];
+] as CatalogCardTypes[];
