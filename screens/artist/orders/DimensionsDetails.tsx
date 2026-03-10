@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import LongBlackButton from "#components/buttons/LongBlackButton";
@@ -33,8 +33,13 @@ type ArtworkDimensionsErrorsType = {
 
 const DimensionsDetails = () => {
   const { userType } = useAppStore();
-  const { orderId, artworkDimensions, exclusivityType, carrier } =
-    useRoute<any>().params;
+  const {
+    orderId,
+    artworkDimensions,
+    exclusivityType,
+    carrier,
+    shippingOrigin,
+  } = useRoute<any>().params;
   const navigation = useNavigation();
 
   // Packaging type state - default to rolled for better shipping rates
@@ -60,6 +65,10 @@ const DimensionsDetails = () => {
   const [expoEndDate, setExpoEndDate] = useState<Date | null>(null);
   const [isChecked, setIsChecked] = useState(false);
 
+  // The current active pickup address. Defaults to shippingOrigin.
+  const [selectedPickupAddress, setSelectedPickupAddress] =
+    useState<AddressTypes | null>(shippingOrigin || null);
+
   // Intervention states
   const [hasDeclinedRolled, setHasDeclinedRolled] = useState(false);
 
@@ -72,7 +81,7 @@ const DimensionsDetails = () => {
     if (!val) return 0;
     const str = String(val);
     // Remove everything that is NOT a digit or a decimal point
-    const cleanStr = str.replaceAll(/[^\d.]/g, "");
+    const cleanStr = str.replace(/[^\d.]/g, "");
     return Number(cleanStr) || 0;
   };
 
@@ -130,6 +139,10 @@ const DimensionsDetails = () => {
       carrier || "",
     );
   }, [artDims, carrier]);
+
+  useEffect(() => {
+    setSelectedPickupAddress(shippingOrigin || null);
+  }, [shippingOrigin]);
 
   const handlePresetSelect = (details: {
     length: string;
@@ -217,14 +230,13 @@ const DimensionsDetails = () => {
             weight: Number.parseFloat(dimensions.weight) || 0,
           },
           packaging_type: packagingType,
-          exhibition_status:
-            userType === "gallery" && isOnExhibition
-              ? {
-                  is_on_exhibition: true,
-                  exhibition_end_date: expoEndDate || "",
-                  status: "pending",
-                }
-              : null,
+          exhibition_status: isOnExhibition
+            ? {
+                is_on_exhibition: true,
+                exhibition_end_date: expoEndDate || "",
+                status: "pending",
+              }
+            : null,
           hold_status: null,
         },
       };
@@ -291,7 +303,11 @@ const DimensionsDetails = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={tw`flex-1`}
       >
-        <ScrollView nestedScrollEnabled={true}>
+        <ScrollView
+          nestedScrollEnabled={true}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={tw`pb-20`}
+        >
           <View style={tw`mt-[20px] mx-[20px]`}>
             {/* Packaging Selector with Presets */}
             <ExclusivityCheck
@@ -352,10 +368,13 @@ const DimensionsDetails = () => {
             <View>
               <ExhibitionOptions
                 userType={userType}
+                orderId={orderId}
                 isOnExhibition={isOnExhibition}
                 setIsOnExhibition={setIsOnExhibition}
                 expoEndDate={expoEndDate}
                 setExpoEndDate={setExpoEndDate}
+                pickupAddress={selectedPickupAddress}
+                onAddressUpdated={setSelectedPickupAddress}
               />
 
               {/* Agreement Section */}
@@ -366,7 +385,7 @@ const DimensionsDetails = () => {
               />
 
               {/* Submit Button */}
-              <View style={tw`mt-12 mx-5 mb-36`}>
+              <View style={tw`mt-12 mx-5 mb-10`}>
                 <LongBlackButton
                   value="Accept Order"
                   onClick={handleSubmit}
