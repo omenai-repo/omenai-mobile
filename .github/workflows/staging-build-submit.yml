@@ -3,7 +3,7 @@ name: Staging Build and Submit
 on:
   push:
     branches:
-      - staginggg
+      - feat/update-pickup-address
   workflow_dispatch:
 
 jobs:
