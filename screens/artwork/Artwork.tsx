@@ -130,8 +130,6 @@ export default function Artwork() {
     });
   }, [artwork, userSession?.id, userType]);
 
-  const displayWidth = Math.max(200, screenWidth - 40);
-
   const imageUri = useMemo(
     () => (artwork ? getImageFileView(artwork.url, 500) : ""),
     [artwork]
@@ -220,7 +218,7 @@ export default function Artwork() {
       });
     }
     setLoadingPriceQuote(false);
-  }, [artwork, updateModal, userType]);
+  }, [artwork, updateModal, userType, openGuestLoginModal]);
 
   const renderPrimaryButton = () => {
     if (!artwork) return null;
@@ -243,10 +241,12 @@ export default function Artwork() {
           textStyle={tw`uppercase text-center text-sm tracking-widest`}
           value={guestLabel}
           isDisabled={false}
-          onClick={() => ({
-            screen: screenName.artwork,
-            params: { art_id: artwork.art_id, url: artwork.url },
-          })}
+          onClick={() =>
+            openGuestLoginModal({
+              screen: screenName.artwork,
+              params: { art_id: artwork.art_id, url: artwork.url },
+            })
+          }
         />
       );
     }
