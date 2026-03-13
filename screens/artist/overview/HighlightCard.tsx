@@ -1,12 +1,9 @@
 // screens/overview/HighlightCard.tsx
 import React, { useEffect } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import CardComp from "#components/general/CardComp";
 import { useDevice } from "#hooks/useDevice";
-import Animated from "react-native-reanimated";
 import tw from "twrnc";
-import { colors } from "#config/colors.config";
-import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { fetchArtistHighlightData } from "#services/overview/fetchArtistHighlightData";
 import { QK } from "#utils/queryKeys";
@@ -67,7 +64,7 @@ export const HighlightCard = ({
   useEffect(() => {
     onLoadingChange?.(
       isFetching ||
-        (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data)),
+        (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data))
     );
   }, [
     isLoading,

@@ -38,7 +38,7 @@ const MiniArtworkCard = memo(
     galleryView = false,
     availability,
     countdown,
-  }: MiniArtworkCardType) => {
+  }: Readonly<MiniArtworkCardType>) => {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const screenWidth = Dimensions.get("window").width - 10;

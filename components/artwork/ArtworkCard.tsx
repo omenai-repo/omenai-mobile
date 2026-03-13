@@ -40,7 +40,7 @@ function ArtworkCard({
   like_IDs,
   galleryView = false,
   availiablity,
-}: ArtworkCardType) {
+}: Readonly<ArtworkCardType>) {
   const userSession = useAppStore((s) => s.userSession);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { isTablet } = useDevice();
@@ -77,7 +77,7 @@ function ArtworkCard({
         }}
       >
         <View style={tw`rounded-md overflow-hidden relative`}>
-          {imageHeight !== null ? (
+          {imageHeight ? (
             <Image
               source={{ uri: imageUri }}
               style={{

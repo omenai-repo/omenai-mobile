@@ -23,8 +23,8 @@ export default function Coverage() {
         },
         {
           text: "Learn more",
-          onPress: async () => {
-            await WebBrowser.openBrowserAsync(learnMoreUrl);
+          onPress: () => {
+            WebBrowser.openBrowserAsync(learnMoreUrl);
           },
         },
       ]}

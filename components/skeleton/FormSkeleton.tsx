@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
-import { View } from "react-native";
+import { View, StyleProp, ViewStyle } from "react-native";
 import { Skeleton } from "moti/skeleton";
 import tw from "twrnc";
-import { StyleProp, ViewStyle } from "react-native";
 
 type FormSkeletonProps = {
   colorMode?: "light" | "dark";
@@ -30,7 +29,7 @@ export default function FormSkeleton({
 }: Readonly<FormSkeletonProps>) {
   const skeletonRows = useMemo(
     () => Array.from({ length: rows }).map((_, i) => `skeleton-row-${i}`),
-    [rows],
+    [rows]
   );
 
   return (
