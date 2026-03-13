@@ -7,11 +7,11 @@ import GenericFilterOptionBox from "./FilterOptionBox";
 import { SharedFilterStore } from "./types";
 
 export const optionsMedium = [
-  "Photography",
   "Works on paper",
   "Acrylic on canvas/linen/panel",
   "Mixed media on canvas",
   "Oil on canvas/panel",
+  "Photography",
 ];
 
 export default function GenericMediumFilter({

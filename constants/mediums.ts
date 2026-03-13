@@ -4,7 +4,6 @@ import photography_art from "#assets/images/photography_art.png";
 import mixedMedia from "#assets/images/mixed_media_art.png";
 
 export const mediums = [
-  { name: "Photography", value: "Photography", image: photography_art },
   {
     name: "Acrylic on canvas/linen/panel",
     value: "Acrylic on canvas/linen/panel",
@@ -16,4 +15,5 @@ export const mediums = [
     image: mixedMedia,
   },
   { name: "Oil on canvas/panel", value: "Oil on canvas/panel", image: oil_art },
+  { name: "Photography", value: "Photography", image: photography_art },
 ] as CatalogCardTypes[];

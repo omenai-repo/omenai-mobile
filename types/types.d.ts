@@ -603,11 +603,11 @@ type WithdrawalAccount = {
 };
 
 type ArtworkMediumTypes =
-  | "Photography"
   | "Works on paper"
   | "Acrylic on canvas/linen/panel"
   | "Mixed media on canvas"
-  | "Oil on canvas/panel";
+  | "Oil on canvas/panel"
+  | "Photography";
 
 type ArtistCategory =
   | "Emerging"
