@@ -15,7 +15,7 @@ type FilterButtonProps = {
 export default function FilterButton({
   children,
   handleClick,
-}: FilterButtonProps) {
+}: Readonly<FilterButtonProps>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   return (

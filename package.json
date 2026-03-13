@@ -10,7 +10,9 @@
     "lint": "expo lint",
     "build:dev": "eas build --profile development --env-file .env.local",
     "build:staging": "eas build --profile preview --env-file .env.staging",
-    "build:prod": "eas build --profile production --env-file .env.production"
+    "build:prod": "eas build --profile production --env-file .env.production",
+    "update:staging": "eas update --channel staging --environment preview",
+    "update:prod": "eas update --channel production --environment production"
   },
   "dependencies": {
     "@expo/config": "~12.0.7",

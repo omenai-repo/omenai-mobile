@@ -39,6 +39,7 @@
     },
     "production": {
       "distribution": "store",
+      "environment": "production",
       "env": {
         "EXPO_PUBLIC_ENV": "production"
       },

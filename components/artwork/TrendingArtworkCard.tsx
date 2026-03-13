@@ -30,7 +30,7 @@ function TrendingArtworkCard({
   title,
   likes,
   art_id,
-}: TrendingArtworkCardType) {
+}: Readonly<TrendingArtworkCardType>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const screenWidth = Dimensions.get("window").width;
@@ -51,7 +51,7 @@ function TrendingArtworkCard({
         height: imageWidth * aspectRatio,
       });
     },
-    [imageWidth],
+    [imageWidth]
   );
 
   return (
