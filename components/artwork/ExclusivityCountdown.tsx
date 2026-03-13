@@ -127,15 +127,19 @@ export default memo(function ExclusivityCountdown({
     });
   };
 
+  let countdownContent: React.ReactNode = (
+    <ActiveCountdown timeLeft={timeLeft} />
+  );
+
+  if (isExpired) {
+    countdownContent = userType ? (
+      <ExpiredState onExtendContract={handleExtendContract} />
+    ) : null;
+  }
+
   return (
     <>
-      {isExpired ? (
-        userType !== "" ? (
-          <ExpiredState onExtendContract={handleExtendContract} />
-        ) : null
-      ) : (
-        <ActiveCountdown timeLeft={timeLeft} />
-      )}
+      {countdownContent}
 
       <ExclusivityExtensionModal
         visible={showModal}
