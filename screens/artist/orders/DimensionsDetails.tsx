@@ -4,6 +4,7 @@ import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { updateShippingQuote } from "#services/orders/updateShippingQuote";
+import { updateOrderPickupAddress } from "#services/orders/updateOrderPickupAddress";
 import { useQueryClient } from "@tanstack/react-query";
 import { useModalStore } from "#store/modal/modalStore";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -207,6 +208,27 @@ const DimensionsDetails = () => {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
+
+      // Auto-save pickup address if it was changed but not explicitly saved
+      if (
+        selectedPickupAddress &&
+        JSON.stringify(selectedPickupAddress) !== JSON.stringify(shippingOrigin)
+      ) {
+        const addressResult = await updateOrderPickupAddress({
+          type: "pickup",
+          pickupAddress: selectedPickupAddress,
+          order_id: orderId,
+        });
+        if (!addressResult.isOk) {
+          updateModal({
+            message: addressResult.message || "Failed to save pickup address",
+            modalType: "error",
+            showModal: true,
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
 
       // Convert inches to cm for API (preset values are already in cm)
       const IN_TO_CM = 2.54;

@@ -1,8 +1,7 @@
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import tw from "twrnc";
 import { City, State } from "country-state-city";
-import LongBlackButton from "#components/buttons/LongBlackButton";
 import { AddressFormFields } from "#components/register/AddressFormFields";
 import { country_codes } from "#json/country_alpha_2_codes";
 import { Ionicons } from "@expo/vector-icons";
@@ -48,6 +47,7 @@ export default function PickupAddressSection({
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const userId = useAppStore((state) => state.userSession.id);
+  const userType = useAppStore((state) => state.userType);
 
   const [stateData, setStateData] = useState<
     { label: string; value: string; isoCode?: string }[]
@@ -66,10 +66,13 @@ export default function PickupAddressSection({
   );
 
   useEffect(() => {
-    if (pickupAddress && !currentAddress) {
-      setCurrentAddress(pickupAddress);
+    if (!pickupAddress) return;
+
+    setCurrentAddress((prev) => {
+      if (prev) return prev;
       setFormAddress(pickupAddress);
-    }
+      return pickupAddress;
+    });
   }, [pickupAddress]);
 
   useEffect(() => {
@@ -137,7 +140,7 @@ export default function PickupAddressSection({
         setIsEditing(false);
         setIsRecentlyUpdated(true);
 
-        // Invalidate queries to fetch updated data that might affect packaging fits
+        // Force order data refresh so packaging rules update based on pickup region.
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["orders", userId] }),
           queryClient.invalidateQueries({ queryKey: ["orders", "gallery"] }),
@@ -150,9 +153,10 @@ export default function PickupAddressSection({
           showModal: true,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       updateModal({
-        message: "Something went wrong while updating your address",
+        message:
+          error?.message || "Something went wrong while updating your address",
         modalType: "error",
         showModal: true,
       });
@@ -164,7 +168,7 @@ export default function PickupAddressSection({
   if (!isEditing) {
     return (
       <View
-        style={tw`border border-neutral-200 rounded-md bg-white p-5 shadow-sm`}
+        style={tw`mt-5 border border-neutral-200 rounded-md bg-white p-5 shadow-sm`}
       >
         {isRecentlyUpdated && (
           <View
@@ -202,7 +206,7 @@ export default function PickupAddressSection({
         </View>
 
         {currentAddress ? (
-          <View style={tw`mb-4`}>
+          <View>
             <Text style={tw`text-sm font-medium text-neutral-900 mb-1`}>
               {currentAddress.address_line}
             </Text>
@@ -214,25 +218,27 @@ export default function PickupAddressSection({
             </Text>
           </View>
         ) : (
-          <View style={tw`mb-4`}>
+          <View>
             <Text style={tw`text-sm text-neutral-500 italic`}>
               No pickup address set.
             </Text>
           </View>
         )}
 
-        <Pressable
-          onPress={handleEditClick}
-          style={({ pressed }) =>
-            tw`flex-row items-center justify-center bg-neutral-50 border border-neutral-200 py-3 px-4 rounded-md mt-1 ${
-              pressed ? "opacity-70" : ""
-            }`
-          }
-        >
-          <Text style={tw`text-sm font-medium text-neutral-800`}>
-            Change pickup address for this order
-          </Text>
-        </Pressable>
+        {userType === "gallery" && (
+          <Pressable
+            onPress={handleEditClick}
+            style={({ pressed }) =>
+              tw`flex-row items-center justify-center bg-neutral-50 border border-neutral-200 py-3 px-4 rounded-md mt-5 ${
+                pressed ? "opacity-70" : ""
+              }`
+            }
+          >
+            <Text style={tw`text-sm font-medium text-neutral-800`}>
+              Change pickup address for this order
+            </Text>
+          </Pressable>
+        )}
       </View>
     );
   }
