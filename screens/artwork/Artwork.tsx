@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { Image, Text, View, Dimensions } from "react-native";
+import { Text, View, Dimensions } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
