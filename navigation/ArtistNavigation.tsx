@@ -29,7 +29,7 @@ import { TransactionDetailsScreen } from "#screens/artist/wallet/TransactionDeta
 import Artwork from "#screens/artwork/Artwork";
 import EditArtwork from "#screens/editArtwork/EditArtwork";
 import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
-import { BottomTabDataArtist } from "#utils/BottomTabData";
+import { getBottomTabDataArtist } from "#utils/BottomTabData";
 import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
 import ViewCredentialsScreen from "#screens/artist/profile/ViewCredentials";
 import CustomTabBar from "./components/TabButton";
@@ -44,7 +44,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const ArtistTabBar = (props: any) => (
-  <CustomTabBar {...props} tabData={BottomTabDataArtist} />
+  <CustomTabBar {...props} tabData={getBottomTabDataArtist()} />
 );
 
 const BottomTabNav = () => {
@@ -85,7 +85,7 @@ const BottomTabNav = () => {
           headerShown: false,
         }}
       >
-        {BottomTabDataArtist.map(({ name, component, id }) => (
+        {getBottomTabDataArtist().map(({ name, component, id }: { name: string; component: any; id: number }) => (
           <Tab.Screen
             key={id}
             name={name}

@@ -1,3 +1,4 @@
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect, useState, useCallback } from "react";
@@ -177,8 +178,10 @@ export default function App() {
       new QueryClient({
         defaultOptions: {
           queries: {
-            refetchOnMount: false,
-            refetchOnReconnect: false,
+            staleTime: 5 * 60_000, // 5 minutes — avoid redundant refetches
+            gcTime: 30 * 60_000, // 30 minutes — keep cached data in memory
+            refetchOnMount: true,
+            refetchOnReconnect: true,
             refetchOnWindowFocus: false, // RN: safe to disable
           },
         },

@@ -40,7 +40,7 @@ import GuestProfilePlaceholder from "#screens/guest/GuestProfilePlaceholder";
 import GalleryProfile from "#screens/galleryProfileScreens/galleryProfile/GalleryProfile";
 import StripePayoutsTab from "#screens/stripeScreens/payouts/StripePayoutsTab";
 
-export const BottomTabDataArtist = [
+export const getBottomTabDataArtist = () => [
   {
     id: 1,
     activeIcon: overviewActive,
@@ -78,7 +78,7 @@ export const BottomTabDataArtist = [
   },
 ];
 
-export const BottomTabDataIndividual = [
+export const getBottomTabDataIndividual = () => [
   {
     id: 1,
     activeIcon: homeIcon,
@@ -116,7 +116,7 @@ export const BottomTabDataIndividual = [
   },
 ];
 
-export const BottomTabDataGuest = [
+export const getBottomTabDataGuest = () => [
   {
     id: 1,
     activeIcon: homeIcon,
@@ -147,7 +147,7 @@ export const BottomTabDataGuest = [
   },
 ];
 
-export const BottomTabDataGallery = () => [
+export const getBottomTabDataGallery = () => [
   {
     id: 1,
     name: "Overview",

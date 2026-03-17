@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  InteractionManager,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import { fetchPopularArtworks } from "#services/artworks/fetchPopularArtworks";
 import ArtworkCard from "#components/artwork/ArtworkCard";
@@ -20,14 +21,34 @@ import { useAppStore } from "#store/app/appStore";
 import tw from "twrnc";
 import { useDevice } from "#hooks/useDevice";
 
-export default function PopularArtworks({
+export default React.memo(function PopularArtworks({
   onLoadingChange,
 }: {
   onLoadingChange?: (l: boolean) => void;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { userSession, userType } = useAppStore();
-  const { isTablet, horizontalPadding } = useDevice();
+  const { isTablet, horizontalPadding, width } = useDevice();
+  const estimatedItemSize = useMemo(
+    () => (isTablet ? width * 0.4 + 20 : width * 0.7 + 20),
+    [isTablet, width]
+  );
+  const horizontalContentStyle = useMemo(
+    () => ({
+      paddingLeft: isTablet ? horizontalPadding : 20,
+      paddingRight: isTablet ? horizontalPadding : 20,
+    }),
+    [horizontalPadding, isTablet]
+  );
+
+  const [interactionsComplete, setInteractionsComplete] = useState(false);
+
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      setInteractionsComplete(true);
+    });
+    return () => task.cancel();
+  }, []);
 
   const query = useQuery({
     queryKey: QK.popularArtworks(userSession?.id),
@@ -35,11 +56,7 @@ export default function PopularArtworks({
       const res = await fetchPopularArtworks();
       return res?.data ?? [];
     },
-    staleTime: 0,
-    gcTime: 0,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    refetchOnWindowFocus: true,
+    enabled: interactionsComplete,
   });
 
   useEffect(() => {
@@ -64,12 +81,12 @@ export default function PopularArtworks({
         galleryView
       />
     ),
-    [],
+    []
   );
 
   const keyExtractor = useCallback(
     (item: ArtworkFlatlistItem, index: number) => String(item.art_id ?? index),
-    [],
+    []
   );
 
   return (
@@ -94,23 +111,20 @@ export default function PopularArtworks({
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={{ marginTop: isTablet ? 40 : 30 }}
-          contentContainerStyle={{
-            paddingLeft: isTablet ? horizontalPadding : 20,
-            paddingRight: isTablet ? horizontalPadding : 20,
-            gap: 20,
-          }}
-          initialNumToRender={15}
-          maxToRenderPerBatch={15}
-          windowSize={5}
-          removeClippedSubviews
-        />
+        <View style={{ marginTop: isTablet ? 40 : 30, height: 320 }}>
+          <FlashList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            horizontal
+            nestedScrollEnabled
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={horizontalContentStyle}
+            ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
+            // @ts-expect-error - FlashList expects estimatedItemSize but type definition might be outdated
+            estimatedItemSize={estimatedItemSize}
+          />
+        </View>
       )}
 
       {!isLoading && data.length === 0 && (
@@ -120,7 +134,7 @@ export default function PopularArtworks({
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: { paddingTop: 25, paddingBottom: 100 },
