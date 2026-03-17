@@ -1,12 +1,12 @@
 import { RefreshControl, View } from "react-native";
 import tw from "twrnc";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { FlashList } from "@shopify/flash-list";
 
 import WithGalleryModal from "#components/modal/WithGalleryModal";
 import Header from "#components/header/Header";
 import SalesOverview from "./components/SalesOverview";
 import { HighlightCard } from "./components/HighlightCard";
-import ScrollWrapper from "#components/general/ScrollWrapper";
 import PopularArtworks from "./components/PopularArtworks";
 import { useQueryClient } from "@tanstack/react-query";
 import { QK } from "#utils/queryKeys";
@@ -46,27 +46,56 @@ export default function Overview() {
     inflight.current += isLoading ? 1 : -1;
     if (inflight.current <= 0) {
       inflight.current = 0;
-      setRefreshing(false);
+      requestAnimationFrame(() => setRefreshing(false));
     }
   }, []);
+
+  const sections = useMemo(
+    () => [
+      { key: "header" },
+      { key: "highlights" },
+      { key: "sales" },
+      { key: "popular" },
+    ],
+    []
+  );
+
+  const renderSection = useCallback(
+    ({ item }: { item: { key: string } }) => {
+      switch (item.key) {
+        case "header":
+          return <Header />;
+        case "highlights":
+          return <HighlightCard onLoadingChange={handleLoadingChange} />;
+        case "sales":
+          return <SalesOverview onLoadingChange={handleLoadingChange} />;
+        case "popular":
+          return <PopularArtworks onLoadingChange={handleLoadingChange} />;
+        default:
+          return null;
+      }
+    },
+    [handleLoadingChange]
+  );
 
   return (
     <WithGalleryModal>
       <View style={tw`flex-1 bg-[#F7F7F7]`}>
         <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-        <ScrollWrapper
+        <FlashList
+          data={sections}
+          renderItem={renderSection}
+          keyExtractor={(item) => item.key}
           showsVerticalScrollIndicator={false}
+          nestedScrollEnabled
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           onScroll={onScroll}
-        >
-          <Header />
-          <HighlightCard onLoadingChange={handleLoadingChange} />
-
-          <SalesOverview onLoadingChange={handleLoadingChange} />
-          <PopularArtworks onLoadingChange={handleLoadingChange} />
-        </ScrollWrapper>
+          scrollEventThrottle={16}
+          // @ts-expect-error - FlashList expects estimatedItemSize but type definition might be outdated
+          estimatedItemSize={380}
+        />
       </View>
     </WithGalleryModal>
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import { BottomTabDataGuest } from "#utils/BottomTabData";
+import { getBottomTabDataGuest } from "#utils/BottomTabData";
 import CustomTabBar from "./components/TabButton";
 import { wrapWithHighRisk } from "#utils/wrapWithProvider";
 import { screenName } from "#constants/screenNames.constants";
@@ -21,7 +21,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const GuestTabBar = (props: any) => (
-  <CustomTabBar {...props} tabData={BottomTabDataGuest} />
+  <CustomTabBar {...props} tabData={getBottomTabDataGuest()} />
 );
 
 const GuestTabNavigationScreens = () => {
@@ -32,7 +32,7 @@ const GuestTabNavigationScreens = () => {
         headerShown: false,
       }}
     >
-      {BottomTabDataGuest.map(({ name, component, id }) => (
+      {getBottomTabDataGuest().map(({ name, component, id }: { name: string; component: any; id: number }) => (
         <Tab.Screen
           key={id}
           name={name}

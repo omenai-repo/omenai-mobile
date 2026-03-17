@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 import { colors } from "#config/colors.config";
 
-export default function Header({
+export default React.memo(function Header({
   showNotification = true,
   showAuthButton = false,
 }: {
@@ -65,4 +65,4 @@ export default function Header({
       )}
     </View>
   );
-}
+});
