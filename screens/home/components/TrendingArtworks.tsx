@@ -75,6 +75,7 @@ export default function TrendingArtworks({
                 impressions={item.impressions}
                 like_IDs={item.like_IDs}
                 art_id={item.art_id}
+                hideBackground
               />
             ))}
             {showMoreButton && (

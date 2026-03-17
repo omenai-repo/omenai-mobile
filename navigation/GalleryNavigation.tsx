@@ -16,7 +16,7 @@ import UploadNewLogo from "#screens/galleryProfileScreens/uploadNewLogo/UploadNe
 import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
 import DimensionsDetails from "#screens/artist/orders/DimensionsDetails";
 import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
-import { BottomTabDataGallery } from "#utils/BottomTabData";
+import { getBottomTabDataGallery } from "#utils/BottomTabData";
 import CustomTabBar from "./components/TabButton";
 import NotificationScreen from "#screens/notifications/NotificationScreen";
 import PaymentMethodChangeScreen from "#screens/subscriptions/components/PaymentMethodChangeScreen";
@@ -57,7 +57,7 @@ export default function GalleryNavigation() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const tabs = useMemo(() => BottomTabDataGallery(), []);
+  const tabs = useMemo(() => getBottomTabDataGallery(), []);
 
   const GalleryTabNavigationScreens = useCallback(() => {
     return (
@@ -65,7 +65,7 @@ export default function GalleryNavigation() {
         tabBar={(props) => <CustomTabBar {...props} tabData={tabs} />}
         screenOptions={{ headerShown: false }}
       >
-        {tabs.map(({ name, component, id }) => (
+        {tabs.map(({ name, component, id }: { name: string; component: any; id: number }) => (
           <Tab.Screen
             key={id}
             name={name}

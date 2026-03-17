@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, InteractionManager } from "react-native";
 import CardComp from "#components/general/CardComp";
 import { fetchHighlightData } from "#services/overview/fetchHighlightData";
 import tw from "twrnc";
@@ -15,7 +15,15 @@ type HighlightCardProps = {
   onLoadingChange?: (loading: boolean) => void;
 };
 
-export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
+export const HighlightCard = React.memo(({ onLoadingChange }: HighlightCardProps) => {
+  const [interactionsComplete, setInteractionsComplete] = useState(false);
+
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      setInteractionsComplete(true);
+    });
+    return () => task.cancel();
+  }, []);
   const { isTablet, width } = useDevice();
   const { userSession } = useAppStore();
 
@@ -30,6 +38,7 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
         refetchOnReconnect: true,
         refetchOnWindowFocus: true,
         select: (d: number) => d ?? 0,
+        enabled: interactionsComplete, // Defer fetching until navigation transitions complete
       }),
     ),
   });
@@ -112,4 +121,4 @@ export const HighlightCard = ({ onLoadingChange }: HighlightCardProps) => {
       ))}
     </View>
   );
-};
+});

@@ -31,6 +31,8 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
 
   const showMoreButton = data.length >= limit;
 
+
+
   return (
     <View style={[tw`py-10 mt-6`, { backgroundColor: colors.black }]}>
       <SectionHeader
@@ -69,6 +71,7 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
                   impressions={item.impressions}
                   like_IDs={item.like_IDs}
                   art_id={item.art_id}
+                  hideBackground
                 />
               ))}
               {showMoreButton && (
