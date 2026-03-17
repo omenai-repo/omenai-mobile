@@ -1,6 +1,6 @@
 import { useDevice } from "#hooks/useDevice";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { StyleProp, Text, View, ViewStyle } from "react-native";
+import { StyleProp, Text, View, ViewStyle, InteractionManager } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { getSalesActivityData } from "#services/overview/getSalesActivityData";
 import { salesDataAlgorithm } from "#utils/utils_salesDataAlgorithm";
@@ -19,7 +19,7 @@ const years = [
   { label: currentYear.toString(), value: currentYear.toString() },
 ];
 
-export default function SalesOverview({
+export default React.memo(function SalesOverview({
   onLoadingChange,
   customWidth,
   style,
@@ -31,6 +31,14 @@ export default function SalesOverview({
   const { userSession } = useAppStore();
   const { width, isTablet } = useDevice();
   const [selectedYear, setSelectedYear] = useState(currentYear.toString());
+  const [interactionsComplete, setInteractionsComplete] = useState(false);
+
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      setInteractionsComplete(true);
+    });
+    return () => task.cancel();
+  }, []);
 
   const activeWidth = customWidth ?? width - 32; // If customWidth provided, use it. Else use screen width - 32 (margin)
   const chartWidth = activeWidth - 32; // Subtract internal padding (px-4 = 32)
@@ -41,11 +49,7 @@ export default function SalesOverview({
       const res = await getSalesActivityData(selectedYear);
       return salesDataAlgorithm(res.data);
     },
-    staleTime: 0,
-    gcTime: 0,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    refetchOnWindowFocus: true,
+    enabled: interactionsComplete, // Defer fetching until navigation finishes
   });
 
   useEffect(() => {
@@ -145,6 +149,33 @@ export default function SalesOverview({
   const maxDataValue = Math.max(...formattedData.map((d) => d.value));
   const chartMaxValue = maxDataValue > 0 ? maxDataValue * 2 : 1000;
 
+  const tooltipMaxValue = useMemo(
+    () => Math.max(0, ...formattedData.map((d) => d.value)),
+    [formattedData]
+  );
+
+  const renderTooltip = useCallback(
+    (item: any, index: number) => {
+      return (
+        <View
+          style={{
+            marginLeft: -15, // Center tooltip roughly over bar
+            backgroundColor: "transparent",
+          }}
+        >
+          <ChartTooltip
+            value={item.value}
+            label={item.label}
+            index={index}
+            maxValue={tooltipMaxValue}
+            totalBars={formattedData.length}
+          />
+        </View>
+      );
+    },
+    [tooltipMaxValue, formattedData.length]
+  );
+
   return (
     <View
       style={[tw`bg-white rounded-md py-5 px-4 mx-4 overflow-hidden`, style]}
@@ -181,25 +212,7 @@ export default function SalesOverview({
             animationDuration={1200}
             frontColor={colors.black}
             showValuesAsTopLabel={false}
-            renderTooltip={(item: any, index: number) => {
-              const maxValue = Math.max(...formattedData.map((d) => d.value));
-              return (
-                <View
-                  style={{
-                    marginLeft: -15, // Center tooltip roughly over bar
-                    backgroundColor: "transparent",
-                  }}
-                >
-                  <ChartTooltip
-                    value={item.value}
-                    label={item.label}
-                    index={index}
-                    maxValue={maxValue}
-                    totalBars={formattedData.length}
-                  />
-                </View>
-              );
-            }}
+            renderTooltip={renderTooltip}
             width={chartWidth}
             height={200}
             labelWidth={40}
@@ -214,4 +227,4 @@ export default function SalesOverview({
       )}
     </View>
   );
-}
+});

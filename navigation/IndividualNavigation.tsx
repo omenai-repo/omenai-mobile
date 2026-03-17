@@ -1,3 +1,4 @@
+import React from "react";
 import { screenName } from "#constants/screenNames.constants";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -14,7 +15,7 @@ import ArtworkCategoriesFilterModal from "#screens/artworkCategories/components/
 import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
 import Collections from "#screens/collections/Collections";
 import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
-import { BottomTabDataIndividual } from "#utils/BottomTabData";
+import { getBottomTabDataIndividual } from "#utils/BottomTabData";
 import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
 import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
 import CustomTabBar from "./components/TabButton";
@@ -42,7 +43,7 @@ const Stack = createStackNavigator();
 const hideHeader = { headerShown: false };
 
 const IndividualTabBar = (props: any) => (
-  <CustomTabBar {...props} tabData={BottomTabDataIndividual} />
+  <CustomTabBar {...props} tabData={getBottomTabDataIndividual()} />
 );
 
 const IndividualTabNavigationScreens = () => {
@@ -53,7 +54,7 @@ const IndividualTabNavigationScreens = () => {
         headerShown: false,
       }}
     >
-      {BottomTabDataIndividual.map(({ name, component, id }) => (
+      {getBottomTabDataIndividual().map(({ name, component, id }: { name: string; component: any; id: number }) => (
         <Tab.Screen
           key={id}
           name={name}
