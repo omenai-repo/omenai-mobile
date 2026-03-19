@@ -1,6 +1,12 @@
 import { useDevice } from "#hooks/useDevice";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { StyleProp, Text, View, ViewStyle, InteractionManager } from "react-native";
+import {
+  StyleProp,
+  Text,
+  View,
+  ViewStyle,
+  InteractionManager,
+} from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { getSalesActivityData } from "#services/overview/getSalesActivityData";
 import { salesDataAlgorithm } from "#utils/utils_salesDataAlgorithm";
@@ -73,7 +79,7 @@ export default React.memo(function SalesOverview({
         </View>
       );
     },
-    [isTablet],
+    [isTablet]
   );
 
   const formattedData = useMemo(
@@ -84,7 +90,7 @@ export default React.memo(function SalesOverview({
         labelComponent: () => customLabel(item.label),
         index,
       })),
-    [data, customLabel],
+    [data, customLabel]
   );
 
   const formatYAxisLabel = useCallback((label: string) => {
@@ -116,35 +122,8 @@ export default React.memo(function SalesOverview({
         />
       </View>
     ),
-    [selectedYear],
+    [selectedYear]
   );
-
-  if (query.isLoading && !query.data) {
-    return (
-      <View style={[tw`bg-white rounded-md py-5 px-4 mx-4`, style]}>
-        {renderHeader()}
-        <View
-          style={[
-            tw`flex-row items-end h-[100px] relative`,
-            { justifyContent: "space-around", height: 260 },
-          ]}
-        >
-          {Array.from({ length: 12 }).map((_, i) => (
-            <View
-              key={i}
-              style={{
-                width: 10,
-                height: Math.random() * 60 + 20,
-                backgroundColor: "#E0E0E0",
-                borderRadius: 4,
-                marginBottom: 5,
-              }}
-            />
-          ))}
-        </View>
-      </View>
-    );
-  }
 
   const maxDataValue = Math.max(...formattedData.map((d) => d.value));
   const chartMaxValue = maxDataValue > 0 ? maxDataValue * 2 : 1000;
@@ -175,6 +154,33 @@ export default React.memo(function SalesOverview({
     },
     [tooltipMaxValue, formattedData.length]
   );
+
+  if (query.isLoading && !query.data) {
+    return (
+      <View style={[tw`bg-white rounded-md py-5 px-4 mx-4`, style]}>
+        {renderHeader()}
+        <View
+          style={[
+            tw`flex-row items-end h-[100px] relative`,
+            { justifyContent: "space-around", height: 260 },
+          ]}
+        >
+          {Array.from({ length: 12 }).map((_, i) => (
+            <View
+              key={i}
+              style={{
+                width: 10,
+                height: Math.random() * 60 + 20,
+                backgroundColor: "#E0E0E0",
+                borderRadius: 4,
+                marginBottom: 5,
+              }}
+            />
+          ))}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View

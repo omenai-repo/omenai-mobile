@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View, ScrollView } from "react-native";
 import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
@@ -26,8 +26,6 @@ export default function NewArtworksListing({
       const results = await fetchArtworks({ listingType: "recent", page: 1 });
       return results?.isOk ? results.body.data ?? [] : [];
     },
-    staleTime: 60_000,
-    gcTime: 10 * 60_000,
   });
 
   return (
@@ -54,10 +52,10 @@ export default function NewArtworksListing({
           style={tw`mt-5`}
           contentContainerStyle={tw`px-5`}
         >
-          <View style={tw`flex-row gap-5`}>
-            {data.map((item: any, i: number) => (
+          <View style={tw`flex-row gap-5 items-center`}>
+            {data.map((item: any, index: number) => (
               <ArtworkCard
-                key={item.art_id ?? `new-${i}`}
+                key={item.art_id ?? `new-${index}`}
                 title={item.title}
                 url={item.url}
                 artist={item.artist}
@@ -69,6 +67,7 @@ export default function NewArtworksListing({
                 impressions={item.impressions}
                 like_IDs={item.like_IDs}
                 art_id={item.art_id}
+                image_format={item.image_format}
                 hideBackground
               />
             ))}

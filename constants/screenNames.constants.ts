@@ -34,6 +34,9 @@ export const screenName = {
   biometricSettings: "biometric-settings",
   supportTickets: "support-tickets",
   supportTicketsFilterModal: "support-tickets-filter-modal",
+  artist: {
+    reviewHub: "Review",
+  },
   gallery: {
     overview: "Overview",
     artworks: "Artworks",

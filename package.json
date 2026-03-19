@@ -111,7 +111,8 @@
   "resolutions": {
     "wrap-ansi": "7.0.0",
     "string-width": "4.1.0",
-    "react-native-webview": "13.15.0"
+    "react-native-webview": "13.15.0",
+    "undici": "6.24.1"
   },
   "private": true,
   "volta": {

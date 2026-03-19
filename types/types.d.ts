@@ -361,10 +361,14 @@ type ArtworkSchemaTypes = {
   artist_country_origin: string;
   certificate_of_authenticity: string;
   artwork_description?: string;
-  framing: string;
+  // framing: string;
   signature: string;
   should_show_on_sub_active?: boolean;
   role_access: RoleAccess;
+  image_format?: {
+    ratio: string;
+    orientation: "landscape" | "portrait" | "square";
+  };
 };
 
 type editorialListingType = {
@@ -393,6 +397,7 @@ type ArtworkUploadStateTypes = {
   materials: string;
   height: string;
   width: string;
+  length?: string;
   depth?: string;
   weight: string;
   price: number;
@@ -402,10 +407,17 @@ type ArtworkUploadStateTypes = {
   artist_country_origin: string;
   certificate_of_authenticity: string;
   artwork_description?: string;
+  packaging_type?: string;
   framing: string;
   signature: string;
   currency: string;
   role_access: RoleAccess;
+  algorithm_recommendation?: {
+    recommendedPrice: number;
+    priceRange: [number, number, number, number, number];
+    meanPrice: number;
+  };
+  hasAutoApprovalsRemaining?: number | boolean;
 };
 
 type OrderAcceptedStatusTypes = {

@@ -25,7 +25,7 @@ export default function GalleryArtworksListing() {
 
   const ARTWORKS_QK = useMemo(
     () => ["artworks", userSession?.id, userType],
-    [userSession?.id, userType],
+    [userSession?.id, userType]
   );
 
   const artworksQuery = useQuery({
@@ -59,7 +59,7 @@ export default function GalleryArtworksListing() {
   }, [artworksQuery]);
 
   const isInitialLoading = artworksQuery.isLoading && !artworksQuery.data;
-  const data = artworksQuery.data ?? [];
+  const data = useMemo(() => artworksQuery.data ?? [], [artworksQuery.data]);
 
   return (
     <>

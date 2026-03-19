@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity } from "react-native";
 import React, { useMemo } from "react";
-import { Image, useImage } from "expo-image";
+import { Image } from "expo-image";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -8,7 +8,6 @@ import { screenName } from "#constants/screenNames.constants";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
-import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import { useDevice } from "#hooks/useDevice";
 import { useAppStore } from "#store/app/appStore";
 
@@ -27,6 +26,7 @@ type ArtworkCardType = {
   galleryView?: boolean;
   disableLikeButton?: boolean;
   hideBackground?: boolean;
+  image_format?: { ratio: string; orientation?: string };
 };
 
 function ArtworkCard({
@@ -44,6 +44,7 @@ function ArtworkCard({
   disableLikeButton = false,
   availiablity,
   hideBackground = false,
+  image_format,
 }: Readonly<ArtworkCardType>) {
   const userSession = useAppStore((s) => s.userSession);
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -51,54 +52,31 @@ function ArtworkCard({
   const defaultWidth = isTablet ? screenWidth * 0.4 : screenWidth * 0.7;
   const displayWidth = width > 0 ? width : defaultWidth;
 
-  const imageHeight = 250;
   // Request a higher resolution for high-density screens
   const imageUri = getImageFileView(
     url,
-    Math.max(400, Math.round(displayWidth * 2)),
+    Math.max(350, Math.round(displayWidth * 2)),
   );
 
-  const image = useImage(imageUri);
-
   const imageAspectRatio = useMemo(() => {
-    if (!image?.width || !image?.height) {
-      return 1;
+    if (image_format?.ratio) {
+      const [w, h] = image_format.ratio.split(":");
+      const ratio = Number(w) / Number(h);
+      if (!isNaN(ratio) && ratio > 0) return ratio;
     }
-    return image.width / image.height;
-  }, [image?.height, image?.width]);
+    return 1; // Fallback in case a ratio parsing fails
+  }, [image_format?.ratio]);
 
-  // Artsy logic: In a horizontal rail, the dynamic width depends on the aspect ratio.
-  // We clamp it between a reasonable min (140) and max (400) to keep the UI consistent.
-  const dynamicWidth = useMemo(() => {
-    if (width > 0) return width; // Fixed width for Grid mode
-    const calculatedWidth = imageHeight * imageAspectRatio;
-    return Math.max(140, Math.min(400, calculatedWidth));
-  }, [width, imageAspectRatio, imageHeight]);
+  // New logic: Fixed width, dynamic height based on aspect ratio from backend.
+  // We cap the height at 350 to prevent extremely tall images.
+  const dynamicHeight = useMemo(() => {
+    const calculatedHeight = displayWidth / imageAspectRatio;
+    return Math.max(150, Math.min(350, calculatedHeight));
+  }, [displayWidth, imageAspectRatio]);
 
-  const calculatedImageSize = useMemo(() => {
-    return resizeImageDimensions(
-      {
-        width: image?.width || displayWidth,
-        height: image?.height || imageHeight,
-      },
-      dynamicWidth,
-      imageHeight,
-    );
-  }, [dynamicWidth, imageHeight, image?.width, image?.height, displayWidth]);
+  const dynamicWidth = displayWidth;
 
-  // If the image is extremely tall/portrait, we might prefer "cover" if it gets too narrow,
-  // but for rails, "contain" within the calculated width is usually better to avoid cropping.
-  // Actually, if we perfectly calculate the container width, "cover" and "contain" become almost identical.
   const usePortraitCover = imageAspectRatio < 0.8;
-
-  const hasLetterbox = useMemo(() => {
-    if (usePortraitCover) return false;
-    return (
-      Math.abs(calculatedImageSize.width - dynamicWidth) > 2 ||
-      Math.abs(calculatedImageSize.height - imageHeight) > 2
-    );
-  }, [calculatedImageSize, dynamicWidth, imageHeight, usePortraitCover]);
-
   return (
     <View>
       <View style={tw`flex-1`} />
@@ -113,7 +91,7 @@ function ArtworkCard({
           <View
             style={{
               width: dynamicWidth,
-              height: imageHeight,
+              height: dynamicHeight,
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: hideBackground ? "transparent" : "#f0f0f0", // Subtle placeholder background
@@ -122,8 +100,8 @@ function ArtworkCard({
             <Image
               source={{ uri: imageUri }}
               style={{
-                width: calculatedImageSize.width,
-                height: calculatedImageSize.height,
+                width: dynamicWidth,
+                height: dynamicHeight,
               }}
               contentFit={usePortraitCover ? "cover" : "contain"}
               transition={200}
@@ -134,7 +112,7 @@ function ArtworkCard({
           <View
             style={[
               tw`absolute top-0 left-0 flex items-end justify-end p-3`,
-              { width: dynamicWidth, height: imageHeight },
+              { width: dynamicWidth, height: dynamicHeight },
             ]}
           >
             {!galleryView && !disableLikeButton && (
