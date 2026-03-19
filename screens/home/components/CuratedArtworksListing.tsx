@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
@@ -55,10 +55,10 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             style={tw`mt-5`}
             contentContainerStyle={tw`px-5`}
           >
-            <View style={tw`flex-row gap-5`}>
-              {data.map((item: any, i: number) => (
+            <View style={tw`flex-row gap-5 items-center`}>
+              {data.map((item: any, index: number) => (
                 <ArtworkCard
-                  key={item.art_id ?? `curated-${i}`}
+                  key={item.art_id ?? `curated-${index}`}
                   title={item.title}
                   url={item.url}
                   artist={item.artist}
@@ -72,6 +72,7 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
                   like_IDs={item.like_IDs}
                   art_id={item.art_id}
                   hideBackground
+                  image_format={item.image_format}
                 />
               ))}
               {showMoreButton && (

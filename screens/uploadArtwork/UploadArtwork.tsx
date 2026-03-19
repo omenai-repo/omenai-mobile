@@ -10,6 +10,10 @@ import UploadImage from "./components/UploadImage";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import uploadImage from "#services/artworks/uploadArtworkImage";
 import { createUploadedArtworkData } from "#utils/utils_createUploadedArtworkData";
+import {
+  getImageAspectRatio,
+  getRatioString,
+} from "#utils/utils_getImageAspectRatio";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import { uploadArtworkData } from "#services/artworks/uploadArtworkData";
 import SuccessScreen from "./components/SuccessScreen";
@@ -143,6 +147,9 @@ export default function UploadArtwork() {
           fileId: fileUploaded.$id,
         };
 
+        const aspect_ratio = await getImageAspectRatio(imageparams.uri);
+        const image_format = getRatioString(aspect_ratio);
+
         const data = createUploadedArtworkData(
           artworkUploadData,
           file.fileId,
@@ -151,6 +158,7 @@ export default function UploadArtwork() {
             role: userType === "artist" ? "artist" : "gallery",
             designation: null,
           },
+          image_format,
         );
         const upload_response = await uploadArtworkData(data);
         if (upload_response.isOk) {

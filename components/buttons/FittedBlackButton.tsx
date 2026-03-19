@@ -22,6 +22,7 @@ type FittedBlackButtonProps = {
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   responsive?: boolean;
+  iconPosition?: "left" | "right";
 };
 
 export default function FittedBlackButton({
@@ -33,6 +34,7 @@ export default function FittedBlackButton({
   style,
   textStyle,
   responsive = false,
+  iconPosition = "right",
 }: FittedBlackButtonProps) {
   const animation = useRef(null);
   const { isTablet } = useDevice();
@@ -74,12 +76,14 @@ export default function FittedBlackButton({
       <View style={tw`flex-row items-center justify-center`}>
         {/* Invisible content to maintain button width */}
         <View
-          style={tw.style(`flex-row items-center justify-center gap-[10px]`, {
-            opacity: isLoading ? 0 : 1,
-          })}
+          style={[
+            tw`flex-row items-center justify-center gap-[10px]`,
+            { opacity: isLoading ? 0 : 1 },
+          ]}
         >
+          {iconPosition === "left" && children}
           <Text style={mergedTextStyle}>{value}</Text>
-          {children}
+          {iconPosition === "right" && children}
         </View>
 
         {/* Absolutely positioned loader */}

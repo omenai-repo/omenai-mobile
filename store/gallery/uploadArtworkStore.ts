@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { ArtworkUploadStateTypes, RoleAccess } from "#types/types";
 
 type UploadArtworkStoreType = {
   image: any;
@@ -7,7 +6,7 @@ type UploadArtworkStoreType = {
   activeIndex: number;
   setActiveIndex: (e: number) => void;
   artworkUploadData: ArtworkUploadStateTypes;
-  updateArtworkUploadData: (label: string, value: string | number) => void;
+  updateArtworkUploadData: (label: string, value: unknown) => void;
   clearData: () => void;
   isUploaded: boolean;
   setIsUploaded: (value: boolean) => void;
@@ -47,8 +46,9 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>(
       usd_price: 0,
       role_access: {} as RoleAccess,
       packaging_type: "rolled",
+      hasAutoApprovalsRemaining: 0,
     },
-    updateArtworkUploadData: (label: string, value: string | number) => {
+    updateArtworkUploadData: (label: string, value: unknown) => {
       const data: Record<string, any> = get().artworkUploadData;
 
       if (label in data) {
@@ -85,6 +85,7 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>(
           usd_price: 0,
           role_access: {} as RoleAccess,
           packaging_type: "rolled",
+          hasAutoApprovalsRemaining: 0,
         },
         isUploaded: false,
         activeIndex: 1,
@@ -95,5 +96,5 @@ export const uploadArtworkStore = create<UploadArtworkStoreType>(
     setIsUploaded: (value: boolean) => {
       set({ isUploaded: value });
     },
-  }),
+  })
 );

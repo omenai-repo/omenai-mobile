@@ -22,6 +22,7 @@ type LongBlackButtonProps = {
   outline?: boolean;
   borderColor?: string;
   icon?: React.ReactNode;
+  iconPosition?: "left" | "right";
   testID?: string;
 };
 
@@ -35,6 +36,7 @@ export default function LongBlackButton({
   outline = false,
   borderColor = colors.black,
   icon,
+  iconPosition = "left",
   testID,
 }: LongBlackButtonProps) {
   const animation = useRef(null);
@@ -98,12 +100,14 @@ export default function LongBlackButton({
       <View style={tw`flex-row items-center justify-center w-full`}>
         {/* Invisible content to maintain button width */}
         <View
-          style={tw.style(`flex-row items-center justify-center gap-3`, {
-            opacity: isLoading ? 0 : 1,
-          })}
+          style={[
+            tw`flex-row items-center justify-center gap-3`,
+            { opacity: isLoading ? 0 : 1 },
+          ]}
         >
-          {icon}
+          {iconPosition === "left" && icon}
           <Text style={mergedTextStyle}>{value}</Text>
+          {iconPosition === "right" && icon}
         </View>
 
         {/* Overlay loader */}

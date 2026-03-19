@@ -14,6 +14,7 @@ export default function TrendingArtworksListing({ data }: { data: any[] }) {
             image={artwork.url}
             likes={artwork.impressions}
             art_id={artwork.art_id ?? `trend-${idx}`}
+            image_format={artwork.image_format}
           />
         ))}
       </View>
@@ -26,6 +27,7 @@ export default function TrendingArtworksListing({ data }: { data: any[] }) {
             image={artwork.url}
             likes={artwork.impressions}
             art_id={artwork.art_id ?? `trend-${idx}`}
+            image_format={artwork.image_format}
           />
         ))}
       </View>

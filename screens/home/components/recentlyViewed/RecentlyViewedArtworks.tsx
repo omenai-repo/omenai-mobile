@@ -25,6 +25,7 @@ type ViewHistoryItem = {
   availability?: boolean;
   impressions?: number;
   like_IDs?: string[];
+  image_format?: { ratio: string; orientation?: string };
 };
 
 function RecentlyViewedArtworks() {
@@ -62,10 +63,10 @@ function RecentlyViewedArtworks() {
             paddingRight: isTablet ? horizontalPadding : 20,
           }}
         >
-          <View style={tw`flex-row gap-5`}>
-            {recentArtworks.map((item: ViewHistoryItem, i: number) => (
+          <View style={tw`flex-row gap-5 items-center`}>
+            {recentArtworks.map((item: ViewHistoryItem, index: number) => (
               <ArtworkCard
-                key={item.art_id ?? `rv-${i}`}
+                key={item.art_id ?? `rv-${index}`}
                 title={item.title ?? item.artwork ?? "Untitled"}
                 url={item.url}
                 artist={item.artist ?? "Unknown artist"}
@@ -77,6 +78,7 @@ function RecentlyViewedArtworks() {
                 impressions={item.impressions ?? 0}
                 like_IDs={item.like_IDs ?? []}
                 art_id={item.art_id}
+                image_format={item.image_format}
                 disableLikeButton
                 hideBackground
               />

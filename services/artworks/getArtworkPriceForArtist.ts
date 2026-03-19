@@ -7,6 +7,7 @@ interface ArtworkPriceParams {
   height: number;
   width: number;
   currency: string;
+  artistId: string;
 }
 
 export async function getArtworkPriceForArtist({
@@ -15,17 +16,32 @@ export async function getArtworkPriceForArtist({
   height,
   width,
   currency,
+  artistId,
 }: ArtworkPriceParams) {
   try {
+    const params = new URLSearchParams({
+      medium,
+      category,
+      height: String(height),
+      width: String(width),
+      currency: currency.toUpperCase(),
+      id: artistId,
+    });
+
     const res = await apiRequest(
-      `${apiUrl}/api/artworks/getArtworkPriceForArtist?medium=${medium}&category=${category}&height=${height}&width=${width}&currency=${currency}`,
+      `${apiUrl}/api/artworks/getArtworkPriceForArtist?${params.toString()}`,
       {
         method: "GET",
-      },
+      }
     );
 
     const result = await res.json();
-    return { isOk: res.ok, data: result.data };
+    return {
+      isOk: res.ok,
+      data: result.data,
+      message: result.message,
+      raw: result,
+    };
   } catch (error: any) {
     return {
       isOk: false,

@@ -22,11 +22,14 @@ import {
   walletInActive,
   billingActive,
   billingInActive,
+  reviewHubActive,
+  reviewHubInActive,
 } from "./SvgImages";
 import WalletScreen from "#screens/artist/wallet/WalletScreen";
 import OrderScreen from "#screens/artist/orders/OrderScreen";
 import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
 import ArtistProfileScreen from "#screens/artist/profile/ArtistProfileScreen";
+import ArtistReviewHub from "#screens/artist/reviews/ArtistReviewHub";
 import Home from "#screens/home/Home";
 import GuestOverview from "#screens/overview/GuestOverview";
 import Catalog from "#screens/catalog/Catalog";
@@ -71,6 +74,13 @@ export const getBottomTabDataArtist = () => [
   },
   {
     id: 5,
+    activeIcon: reviewHubActive,
+    inActiveIcon: reviewHubInActive,
+    name: "Review",
+    component: ArtistReviewHub,
+  },
+  {
+    id: 6,
     activeIcon: profileActive,
     inActiveIcon: profileInActive,
     name: "Profile",

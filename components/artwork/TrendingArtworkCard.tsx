@@ -22,6 +22,7 @@ type TrendingArtworkCardType = {
   medium?: string;
   likes: number;
   art_id: string;
+  image_format?: { ratio: string; orientation?: string };
 };
 
 function TrendingArtworkCard({
@@ -30,6 +31,7 @@ function TrendingArtworkCard({
   title,
   likes,
   art_id,
+  image_format,
 }: Readonly<TrendingArtworkCardType>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
@@ -37,22 +39,20 @@ function TrendingArtworkCard({
   const imageWidth = (screenWidth - 60) / 2;
   const image_href = getImageFileView(image, 300);
 
-  const [imageDimensions, setImageDimensions] = useState({
-    width: imageWidth,
-    height: 200,
-  });
-
-  const handleImageLoad = useCallback(
-    (e: ImageLoadEventData) => {
-      const { source } = e;
-      const aspectRatio = source.height / source.width;
-      setImageDimensions({
-        width: imageWidth,
-        height: imageWidth * aspectRatio,
-      });
-    },
-    [imageWidth]
-  );
+  const imageDimensions = React.useMemo(() => {
+    let height = imageWidth; // Default fallback (1:1 aspect ratio)
+    if (image_format?.ratio) {
+      const [w, h] = image_format.ratio.split(":");
+      const ratio = Number(w) / Number(h);
+      if (!isNaN(ratio) && ratio > 0) {
+        height = imageWidth / ratio;
+      }
+    }
+    return {
+      width: imageWidth,
+      height: Math.max(100, Math.min(height, 500)), // Clamp height to reasonable bounds
+    };
+  }, [imageWidth, image_format?.ratio]);
 
   return (
     <TouchableOpacity
@@ -72,7 +72,6 @@ function TrendingArtworkCard({
               transition={200}
               cachePolicy="memory-disk"
               recyclingKey={art_id}
-              onLoad={handleImageLoad}
             />
           </View>
           <View style={styles.likeContainer}>

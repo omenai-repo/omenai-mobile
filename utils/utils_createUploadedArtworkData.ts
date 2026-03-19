@@ -9,6 +9,7 @@ export function createUploadedArtworkData(
   url: string,
   id: string,
   role_access: RoleAccess,
+  image_format?: { ratio: string; orientation: "landscape" | "portrait" | "square" } | null
 ): Omit<
   ArtworkSchemaTypes,
   "art_id" | "should_show_on_sub_active" | "availability"
@@ -41,6 +42,7 @@ export function createUploadedArtworkData(
     packaging_type: data.packaging_type,
     signature: data.signature,
     role_access: role_access,
+    image_format: image_format || undefined,
   };
 
   return updatedArwordData;

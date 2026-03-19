@@ -3,7 +3,6 @@ import { View, Text, Pressable, useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import { useModalStore } from "#store/modal/modalStore";
-import { getArtistCurrencySymbol } from "#utils/utils_getArtistCurrencySymbol";
 import { getArtworkPriceForArtist } from "#services/artworks/getArtworkPriceForArtist";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import { useAppStore } from "#store/app/appStore";
@@ -16,6 +15,8 @@ import * as WebBrowser from "expo-web-browser";
 import { colors } from "#config/colors.config";
 import ConsentCheckbox from "#components/inputs/ConsentCheckbox";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PriceDisputeTriggerCard from "./PriceDisputeTriggerCard";
 
 export default function ArtworkPriceReviewScreen({
   onConfirm,
@@ -23,8 +24,9 @@ export default function ArtworkPriceReviewScreen({
   onConfirm: () => void;
 }>) {
   const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { updateModal } = useModalStore();
+  const { updateModal, setRetainModal } = useModalStore();
   const {
     setActiveIndex,
     updateArtworkUploadData,
@@ -34,6 +36,26 @@ export default function ArtworkPriceReviewScreen({
   const { userSession } = useAppStore();
   const animation = useRef<LottieView | null>(null);
 
+  const parseHasAutoApprovalsRemaining = (value: unknown): boolean => {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value > 0;
+    if (typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+      if (["false", "0", "no", "none", ""].includes(normalized)) {
+        return false;
+      }
+
+      if (["true", "1", "yes"].includes(normalized)) {
+        return true;
+      }
+
+      const numeric = Number.parseFloat(normalized);
+      return Number.isNaN(numeric) ? true : numeric > 0;
+    }
+
+    return Boolean(value);
+  };
+
   // consent states like web
   const [acknowledgment, setAcknowledgment] = useState(false);
   const [penaltyConsent, setPenaltyConsent] = useState(false);
@@ -42,7 +64,7 @@ export default function ArtworkPriceReviewScreen({
   // Display price gating based on artist categorization
   const isEmerging = userSession?.categorization?.toLowerCase() === "emerging";
   const [displayPriceValue, setDisplayPriceValue] = useState(
-    isEmerging ? "Yes" : "",
+    isEmerging ? "Yes" : ""
   );
 
   const canProceed =
@@ -53,12 +75,12 @@ export default function ArtworkPriceReviewScreen({
 
   // prepare query inputs
   const heightNum = Number.parseFloat(
-    extractNumberString(artworkUploadData.height || ""),
+    extractNumberString(artworkUploadData.height || "")
   );
   const widthNum = Number.parseFloat(
     extractNumberString(
-      artworkUploadData.width || artworkUploadData.length || "",
-    ),
+      artworkUploadData.width || artworkUploadData.length || ""
+    )
   );
 
   // Use tanstack/react-query for fetching price
@@ -83,25 +105,50 @@ export default function ArtworkPriceReviewScreen({
         currency: userSession.base_currency,
         height: heightNum,
         width: widthNum,
+        artistId: userSession.id,
       };
 
       const response = await getArtworkPriceForArtist(payload);
 
       if (!response?.isOk) {
-        throw new Error(response?.data?.message || "Failed to fetch price");
+        const fullErrorMessage =
+          response?.message ||
+          response?.body?.message ||
+          response?.raw?.message ||
+          "Failed to fetch price";
+
+        console.error("Artwork price API error:", {
+          payload,
+          response,
+          message: fullErrorMessage,
+        });
+
+        throw new Error(fullErrorMessage);
       }
 
       // update upload store with returned price fields so rest of flow can use it
       updateArtworkUploadData("price", response.data.price);
       updateArtworkUploadData("usd_price", response.data.usd_price);
       updateArtworkUploadData("currency", response.data.currency);
+      updateArtworkUploadData(
+        "algorithm_recommendation",
+        response.data.algorithm_recommendation || response.data.price_data
+      );
+      const hasAutoApprovalsRemaining = parseHasAutoApprovalsRemaining(
+        response.data.hasAutoApprovalsRemaining
+      );
+
+      updateArtworkUploadData(
+        "hasAutoApprovalsRemaining",
+        hasAutoApprovalsRemaining ? 1 : 0
+      );
       if (
         !artworkUploadData.shouldShowPrice ||
         userSession?.categorization?.toLowerCase() === "emerging"
       ) {
         updateArtworkUploadData(
           "shouldShowPrice",
-          response.data.shouldShowPrice,
+          response.data.shouldShowPrice
         );
         // Also sync local state
         if (userSession?.categorization?.toLowerCase() === "emerging") {
@@ -146,9 +193,10 @@ export default function ArtworkPriceReviewScreen({
   if (isLoading) {
     return (
       <View
-        style={tw.style(`flex-1 justify-center items-center`, {
-          marginTop: height / 8,
-        })}
+        style={[
+          tw`flex-1 justify-center items-center`,
+          { marginTop: height / 8 },
+        ]}
       >
         <LottieView
           autoPlay
@@ -196,7 +244,7 @@ export default function ArtworkPriceReviewScreen({
   }
 
   return (
-    <View style={tw`flex-1 mb-[40px] rounded-md`}>
+    <View style={tw`flex-1 rounded-md`}>
       <View
         style={tw`bg-white items-center rounded-md p-5 border border-neutral-200 mb-6`}
       >
@@ -311,10 +359,10 @@ export default function ArtworkPriceReviewScreen({
         style={tw`bg-white border border-[#E5E7EB] rounded-md px-4 py-5 mb-6`}
       >
         <Text style={tw`text-sm font-semibold text-gray-800 mb-1`}>
-          Price Display
+          Pricing Visibility
         </Text>
         <Text style={tw`text-xs text-gray-400`}>
-          Would you like to mask the artwork's price from public view?
+          Control how collectors view the price of this artwork.
         </Text>
 
         <View style={tw`mt-3`}>
@@ -322,10 +370,21 @@ export default function ArtworkPriceReviewScreen({
             label=""
             data={
               isEmerging
-                ? [{ label: "Yes, display the price", value: "Yes" }]
+                ? [
+                    {
+                      label: "Public: Display price to all collectors",
+                      value: "Yes",
+                    },
+                  ]
                 : [
-                    { label: "Yes, display the price", value: "Yes" },
-                    { label: "No, don't display the price", value: "No" },
+                    {
+                      label: "Public: Display price to all collectors",
+                      value: "Yes",
+                    },
+                    {
+                      label: "Private: Mask price (inquiries only)",
+                      value: "No",
+                    },
                   ]
             }
             placeholder="Select"
@@ -344,32 +403,47 @@ export default function ArtworkPriceReviewScreen({
         )}
       </View>
 
-      <View style={tw`flex-row gap-4 mt-4`}>
-        <Pressable
-          onPress={() => {
-            navigation.goBack();
-            setActiveIndex(1);
-            clearData();
-          }}
-          style={tw`flex-1 py-3 border border-gray-400 rounded-md justify-center items-center`}
-        >
-          <Text style={tw`text-gray-700 font-semibold`}>Cancel</Text>
-        </Pressable>
+      <PriceDisputeTriggerCard
+        onPress={() =>
+          setRetainModal({ showModal: true, retainModal: "proposalPrice" })
+        }
+      />
 
-        <Pressable
-          onPress={handleConfirmPress}
-          style={[
-            tw`flex-1 py-3 rounded-md justify-center items-center`,
-            canProceed
-              ? { backgroundColor: colors.black }
-              : { backgroundColor: "#22222260" },
-          ]}
-          disabled={!canProceed}
-        >
-          <Text style={[tw`font-semibold`, { color: colors.white }]}>
-            Upload
-          </Text>
-        </Pressable>
+      <View
+        style={[
+          tw`mt-1`,
+          {
+            paddingBottom: Math.max(insets.bottom, 10),
+          },
+        ]}
+      >
+        <View style={tw`flex-row gap-3`}>
+          <Pressable
+            onPress={() => {
+              navigation.goBack();
+              setActiveIndex(1);
+              clearData();
+            }}
+            style={tw`flex-1 py-3 border border-gray-400 rounded-md justify-center items-center`}
+          >
+            <Text style={tw`text-gray-700 font-sans-medium`}>Cancel</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={handleConfirmPress}
+            style={[
+              tw`flex-1 py-3 rounded-md justify-center items-center`,
+              canProceed
+                ? { backgroundColor: colors.black }
+                : { backgroundColor: "#22222260" },
+            ]}
+            disabled={!canProceed}
+          >
+            <Text style={[tw`font-sans-medium`, { color: colors.white }]}>
+              Upload
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
