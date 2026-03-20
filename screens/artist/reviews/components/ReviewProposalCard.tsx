@@ -30,7 +30,7 @@ function getCurationMessage(review: any) {
   if (status === "PENDING_ARTIST_ACTION") {
     const note =
       review?.review?.admin_notes ||
-      "We propose this counter-offer to ensure a rapid sell-through rate based on market traction.";
+      "We propose this market value to ensure a rapid sell-through rate based on market traction.";
 
     return {
       title: "Reviewer Notes",
@@ -188,7 +188,7 @@ export default function ReviewProposalCard({
                   <Text
                     style={tw`text-xs tracking-[1px] font-sans-semibold text-amber-600 mb-0.5 uppercase`}
                   >
-                    COUNTER OFFER
+                    PROPOSED VALUE
                   </Text>
                   <Text
                     style={tw`text-lg font-sans-bold text-slate-900 leading-tight`}
@@ -218,7 +218,7 @@ export default function ReviewProposalCard({
                   style={tw`text-base font-sans-medium text-slate-900 capitalize`}
                 >
                   {labelFromJustificationType(
-                    review?.artist_review?.justification_type,
+                    review?.artist_review?.justification_type
                   )}
                 </Text>
               </View>

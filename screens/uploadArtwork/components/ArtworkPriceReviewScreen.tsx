@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
 import { colors } from "#config/colors.config";
+import { screenName } from "#constants/screenNames.constants";
 import ConsentCheckbox from "#components/inputs/ConsentCheckbox";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -26,7 +27,7 @@ export default function ArtworkPriceReviewScreen({
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { updateModal, setRetainModal } = useModalStore();
+  const { updateModal } = useModalStore();
   const {
     setActiveIndex,
     updateArtworkUploadData,
@@ -71,7 +72,7 @@ export default function ArtworkPriceReviewScreen({
     acknowledgment &&
     penaltyConsent &&
     priceConsent &&
-    displayPriceValue !== "";
+    (isEmerging || displayPriceValue !== "");
 
   // prepare query inputs
   const heightNum = Number.parseFloat(
@@ -280,6 +281,12 @@ export default function ArtworkPriceReviewScreen({
         </Text>
       </View>
 
+      <PriceDisputeTriggerCard
+        onPress={() =>
+          navigation.navigate(screenName.artist.proposalPrice as never)
+        }
+      />
+
       {/* Exclusivity / terms alert (mimics web Alert) */}
       <View
         style={tw`bg-amber-50/50 border border-amber-200 rounded-md px-4 py-5 mb-6`}
@@ -355,59 +362,40 @@ export default function ArtworkPriceReviewScreen({
       </View>
 
       {/* Display Price Option */}
-      <View
-        style={tw`bg-white border border-[#E5E7EB] rounded-md px-4 py-5 mb-6`}
-      >
-        <Text style={tw`text-sm font-semibold text-gray-800 mb-1`}>
-          Pricing Visibility
-        </Text>
-        <Text style={tw`text-xs text-gray-400`}>
-          Control how collectors view the price of this artwork.
-        </Text>
-
-        <View style={tw`mt-3`}>
-          <CustomSelectPicker
-            label=""
-            data={
-              isEmerging
-                ? [
-                    {
-                      label: "Public: Display price to all collectors",
-                      value: "Yes",
-                    },
-                  ]
-                : [
-                    {
-                      label: "Public: Display price to all collectors",
-                      value: "Yes",
-                    },
-                    {
-                      label: "Private: Mask price (inquiries only)",
-                      value: "No",
-                    },
-                  ]
-            }
-            placeholder="Select"
-            value={displayPriceValue}
-            handleSetValue={(item) => {
-              setDisplayPriceValue(item.value);
-              updateArtworkUploadData("shouldShowPrice", item.value);
-            }}
-            disable={isEmerging}
-          />
-        </View>
-        {isEmerging && (
-          <Text style={tw`text-xs text-slate-500 mt-2`}>
-            Pricing visibility change is unlocked at higher artist tiers.
+      {!isEmerging && (
+        <View
+          style={tw`bg-white border border-[#E5E7EB] rounded-md px-4 py-5 mb-6`}
+        >
+          <Text style={tw`text-sm font-semibold text-gray-800 mb-1`}>
+            Pricing Visibility
           </Text>
-        )}
-      </View>
+          <Text style={tw`text-xs text-gray-400`}>
+            Control how collectors view the price of this artwork.
+          </Text>
 
-      <PriceDisputeTriggerCard
-        onPress={() =>
-          setRetainModal({ showModal: true, retainModal: "proposalPrice" })
-        }
-      />
+          <View style={tw`mt-3`}>
+            <CustomSelectPicker
+              label=""
+              data={[
+                {
+                  label: "Public: Display price to all collectors",
+                  value: "Yes",
+                },
+                {
+                  label: "Private: Mask price (inquiries only)",
+                  value: "No",
+                },
+              ]}
+              placeholder="Select"
+              value={displayPriceValue}
+              handleSetValue={(item) => {
+                setDisplayPriceValue(item.value);
+                updateArtworkUploadData("shouldShowPrice", item.value);
+              }}
+            />
+          </View>
+        </View>
+      )}
 
       <View
         style={[

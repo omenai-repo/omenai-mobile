@@ -19,7 +19,7 @@ export default function ConsentCheckbox({
   return (
     <Pressable
       onPress={onToggle}
-      style={tw`flex-row items-start gap-3 ${isLast ? "" : "mb-3"}`}
+      style={tw`flex-row items-start gap-3 ${isLast ? "" : "mb-4"}`}
     >
       <View
         style={[
@@ -31,9 +31,7 @@ export default function ConsentCheckbox({
       >
         {checked ? <Text style={tw`text-white text-xs`}>✓</Text> : null}
       </View>
-      <Text style={tw`text-slate-600 text-xs flex-1 leading-relaxed`}>
-        {children}
-      </Text>
+      <Text style={tw`text-slate-600 text-base flex-1`}>{children}</Text>
     </Pressable>
   );
 }

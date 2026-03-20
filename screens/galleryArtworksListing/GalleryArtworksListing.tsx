@@ -50,7 +50,6 @@ export default function GalleryArtworksListing() {
     refetchOnReconnect: true, // only if stale
     refetchOnWindowFocus: true, // only if stale
     enabled: !!userSession?.id,
-    select: (list: any[]) => [...list].reverse(), // keep your reverse order
   });
 
   // Pull-to-refresh: force a network refetch now

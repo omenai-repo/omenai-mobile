@@ -4,6 +4,10 @@ export const validateYear = (value: string, minAge?: number): string[] => {
   const currentYear = new Date().getFullYear();
 
   const isArtistBirthYear = minAge !== undefined;
+  const maxAllowedYear =
+    isArtistBirthYear && minAge !== undefined
+      ? currentYear - minAge
+      : currentYear;
 
   let schema: z.ZodType<string, any, string> = z
     .string()
@@ -20,8 +24,10 @@ export const validateYear = (value: string, minAge?: number): string[] => {
           : "Year must be 1000 or later.",
       }
     )
-    .refine((val) => Number.parseInt(val) <= currentYear, {
-      message: `Year cannot be in the future (max ${currentYear}).`,
+    .refine((val) => Number.parseInt(val) <= maxAllowedYear, {
+      message: isArtistBirthYear
+        ? `Birth year must be ${maxAllowedYear} or earlier.`
+        : `Year cannot be in the future (max ${currentYear}).`,
     });
 
   if (minAge !== undefined) {

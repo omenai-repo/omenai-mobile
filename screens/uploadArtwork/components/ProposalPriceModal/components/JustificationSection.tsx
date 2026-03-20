@@ -29,11 +29,11 @@ export default function JustificationSection({
   onPickProofDocument,
 }: Readonly<JustificationSectionProps>) {
   return (
-    <View style={tw`bg-white border border-neutral-200 rounded-md p-3 mb-4`}>
-      <Text style={tw`text-sm font-sans-semibold text-gray-800 mb-1`}>
+    <View style={tw`bg-white border border-neutral-200 rounded-md p-4 my-7`}>
+      <Text style={tw`text-base font-sans-semibold text-slate-800 mb-1`}>
         Data Source / Justification
       </Text>
-      <Text style={tw`text-xs text-gray-500 mb-3`}>
+      <Text style={tw`text-base font-sans-regular text-slate-500 mb-4`}>
         Select the basis for this override request.
       </Text>
 
@@ -56,14 +56,14 @@ export default function JustificationSection({
       />
 
       {needsProof && (
-        <View style={tw`mt-3`}>
-          <Text
-            style={tw`text-[12px] font-sans-semibold text-neutral-700 mb-2`}
-          >
-            Verification Format
+        <View style={tw`mt-4`}>
+          <Text style={tw`text-base font-sans-semibold text-slate-700 mb-3`}>
+            {proofFormat === "DOCUMENT"
+              ? "Verification format (upload a document backing up your claim)"
+              : "Verification format (link to verify your claim)"}
           </Text>
 
-          <View style={tw`flex-row bg-neutral-100 rounded-md p-1 mb-3`}>
+          <View style={tw`flex-row bg-neutral-100 rounded-md p-1 mb-4`}>
             <Pressable
               onPress={() => onChangeProofFormat("DOCUMENT")}
               style={[
@@ -72,7 +72,7 @@ export default function JustificationSection({
               ]}
             >
               <Feather name="upload-cloud" size={14} color="#4B5563" />
-              <Text style={tw`text-xs text-neutral-700 ml-1`}>Document</Text>
+              <Text style={tw`text-base text-neutral-700 ml-1`}>Document</Text>
             </Pressable>
 
             <Pressable
@@ -83,7 +83,7 @@ export default function JustificationSection({
               ]}
             >
               <Feather name="link" size={14} color="#4B5563" />
-              <Text style={tw`text-xs text-neutral-700 ml-1`}>URL Link</Text>
+              <Text style={tw`text-base text-neutral-700 ml-1`}>URL Link</Text>
             </Pressable>
           </View>
 
@@ -98,28 +98,28 @@ export default function JustificationSection({
                 autoCapitalize="none"
                 placeholder="https://example.com/your-proof"
                 placeholderTextColor={colors.grey}
-                style={[tw`flex-1 text-sm ml-2`, { color: colors.black }]}
+                style={[tw`flex-1 text-base ml-2`, { color: colors.black }]}
               />
             </View>
           ) : (
             <Pressable
               onPress={onPickProofDocument}
-              style={tw`border border-dashed border-neutral-300 rounded-md px-3 py-3`}
+              style={tw`border border-dashed border-neutral-300 rounded-md px-3 py-4`}
             >
               {justificationFileName ? (
                 <View style={tw`flex-row items-center justify-between`}>
                   <Text
-                    style={tw`text-xs text-neutral-700 flex-1 mr-2`}
+                    style={tw`text-base text-neutral-700 flex-1 mr-2`}
                     numberOfLines={1}
                   >
                     {justificationFileName}
                   </Text>
-                  <Text style={tw`text-xs text-red-500`}>Replace</Text>
+                  <Text style={tw`text-base text-red-500`}>Replace</Text>
                 </View>
               ) : (
                 <View style={tw`items-center`}>
                   <Feather name="upload-cloud" size={16} color="#6B7280" />
-                  <Text style={tw`text-xs text-neutral-600 mt-1`}>
+                  <Text style={tw`text-base text-neutral-600 mt-1`}>
                     Tap to upload PDF or image proof
                   </Text>
                 </View>
