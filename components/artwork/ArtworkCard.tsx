@@ -55,7 +55,7 @@ function ArtworkCard({
   // Request a higher resolution for high-density screens
   const imageUri = getImageFileView(
     url,
-    Math.max(350, Math.round(displayWidth * 2)),
+    Math.max(350, Math.round(displayWidth * 2))
   );
 
   const imageAspectRatio = useMemo(() => {

@@ -328,21 +328,18 @@ export default function ArtworkPriceReviewScreen({
             checked={priceConsent}
             onToggle={() => setPriceConsent((s) => !s)}
           >
-            I accept the price stipulated for this artwork and agree to have it
-            listed on the platform at this price. I understand that I may cancel
-            this upload if I do not agree.
+            I agree to list this artwork at the finalized listing price
           </ConsentCheckbox>
 
           <ConsentCheckbox
             checked={acknowledgment}
             onToggle={() => setAcknowledgment((s) => !s)}
           >
-            I acknowledge that this artwork is subject to a 90-day exclusivity
-            period with Omenai as stipulated in the{" "}
+            I acknowledge the 90-day exclusivity period per Omenai&apos;s{" "}
             <Text onPress={openTerms} style={tw`underline font-semibold`}>
-              Terms of Agreement
+              Terms of Use
             </Text>{" "}
-            and may not be sold through external channels during this time.
+            and will not sell this piece externally.
           </ConsentCheckbox>
 
           <ConsentCheckbox
@@ -350,13 +347,8 @@ export default function ArtworkPriceReviewScreen({
             onToggle={() => setPenaltyConsent((s) => !s)}
             isLast
           >
-            I agree that any breach of this exclusivity obligation will result
-            in a 10% penalty fee deducted from my next successful sale on the
-            platform as stipulated in the{" "}
-            <Text onPress={openTerms} style={tw`underline font-semibold`}>
-              Terms of Agreement
-            </Text>
-            .
+            I accept that a breach of exclusivity incurs a 10% penalty on my
+            next platform sale.
           </ConsentCheckbox>
         </View>
       </View>
