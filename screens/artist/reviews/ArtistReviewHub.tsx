@@ -51,7 +51,7 @@ export default function ArtistReviewHub() {
 
   const queryKey = useMemo(
     () => ["artist_price_reviews", artistId, activeTab, currentPage],
-    [artistId, activeTab, currentPage],
+    [artistId, activeTab, currentPage]
   );
 
   const listQuery = useQuery({
@@ -80,12 +80,17 @@ export default function ArtistReviewHub() {
       return;
     }
 
+    const fetchedPage = listQuery.data?.meta?.currentPage;
+    if (typeof fetchedPage === "number" && fetchedPage !== currentPage) {
+      return;
+    }
+
     setMeta(
       listQuery.data.meta || {
         currentPage: 1,
         totalPages: 1,
         totalItems: 0,
-      },
+      }
     );
 
     setReviews((prev) => {
@@ -125,12 +130,16 @@ export default function ArtistReviewHub() {
       });
 
       setCurrentPage(1);
-      setReviews([]);
+
       await queryClient.invalidateQueries({
-        queryKey: ["artist_price_reviews", artistId, activeTab],
+        queryKey: ["artist_price_reviews", artistId],
+        exact: false,
       });
 
-      await listQuery.refetch();
+      await queryClient.refetchQueries({
+        queryKey: ["artist_price_reviews", artistId],
+        type: "active",
+      });
     },
     onError: (error: any) => {
       updateModal({

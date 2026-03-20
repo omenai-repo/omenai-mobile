@@ -36,6 +36,7 @@ export const screenName = {
   supportTicketsFilterModal: "support-tickets-filter-modal",
   artist: {
     reviewHub: "Review",
+    proposalPrice: "proposal-price",
   },
   gallery: {
     overview: "Overview",

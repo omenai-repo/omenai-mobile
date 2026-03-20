@@ -3,7 +3,6 @@ import React from "react";
 import { useModalStore } from "#store/modal/modalStore";
 import CancelSubscriptionModal from "./modals/CancelSubscriptionModal";
 import DeleteAccountSuccessModal from "./modals/DeleteAccountSuccessModal";
-import ProposalPriceModal from "#screens/uploadArtwork/components/ProposalPriceModal";
 import tw from "twrnc";
 import { ToastView } from "./ToastView";
 import { BottomSheetView } from "./BottomSheetView";
@@ -38,7 +37,6 @@ export default function CustomModal({
   const modals: { [key: string]: React.ReactElement } = {
     cancleSubscription: <CancelSubscriptionModal />,
     deleteAccountSuccess: <DeleteAccountSuccessModal />,
-    proposalPrice: <ProposalPriceModal />,
   };
 
   const handleDismiss = () => {

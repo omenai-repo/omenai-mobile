@@ -7,7 +7,6 @@ import {
   ScrollView,
   Text,
   TextInput,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -28,8 +27,8 @@ import {
 } from "#utils/utils_getImageAspectRatio";
 import { createPriceReviewRequest } from "#services/artworks/createPriceReviewRequest";
 import { screenName } from "#constants/screenNames.constants";
-import { Ionicons } from "@expo/vector-icons";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import AgreementSection from "./components/AgreementSection";
 import JustificationSection from "./components/JustificationSection";
 import PriceStatusNotice from "./components/PriceStatusNotice";
@@ -59,10 +58,9 @@ const parseHasAutoApprovalsRemaining = (value: unknown): boolean => {
 export default function ProposalPriceModal() {
   const navigation = useNavigation<any>();
   const queryClient = useQueryClient();
-  const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const keyboardHeight = useKeyboardHeight();
-  const { setRetainModal, updateModal } = useModalStore();
+  const { updateModal } = useModalStore();
   const { userSession } = useAppStore();
   const { image, artworkUploadData, updateArtworkUploadData, clearData } =
     uploadArtworkStore();
@@ -78,7 +76,9 @@ export default function ProposalPriceModal() {
   const [justificationType, setJustificationType] = useState<
     JustificationType | ""
   >("");
-  const [proofFormat, setProofFormat] = useState<"LINK" | "DOCUMENT">("LINK");
+  const [proofFormat, setProofFormat] = useState<"LINK" | "DOCUMENT">(
+    "DOCUMENT"
+  );
   const [justificationUrl, setJustificationUrl] = useState("");
   const [justificationFileName, setJustificationFileName] = useState("");
   const [justificationFileMeta, setJustificationFileMeta] = useState<{
@@ -217,7 +217,7 @@ export default function ProposalPriceModal() {
   };
 
   const handleClose = () => {
-    setRetainModal({ showModal: false, retainModal: null });
+    navigation.goBack();
   };
 
   const openTerms = async () => {
@@ -390,16 +390,12 @@ export default function ProposalPriceModal() {
 
       clearData();
       setSubmittedProposalPrice(null);
-      setRetainModal({ showModal: false, retainModal: null });
 
       if (response.status === "AUTO_APPROVED") {
         updateModal({
           showModal: true,
           modalType: "success",
-          message:
-            response?.message ||
-            response?.data?.message ||
-            "Price approved! Your artwork is being published.",
+          message: "Price approved! Your artwork is being published.",
           onDismiss: () => {
             updateModal({
               showModal: false,
@@ -413,10 +409,7 @@ export default function ProposalPriceModal() {
         updateModal({
           showModal: true,
           modalType: "success",
-          message:
-            response?.message ||
-            response?.data?.message ||
-            "Review submitted. We'll notify you shortly.",
+          message: "Review submitted. We'll notify you shortly.",
           onDismiss: () => {
             queryClient.invalidateQueries({
               queryKey: ["artist_price_reviews"],
@@ -442,45 +435,28 @@ export default function ProposalPriceModal() {
   };
 
   return (
-    <View
-      style={[
-        tw`bg-white rounded-t-xl w-full`,
-        {
-          height: Math.max(560, Math.round(height * 0.86)),
-        },
-      ]}
-    >
-      <View style={tw`w-full items-center pt-2.5 pb-3`}>
-        <View style={tw`w-10 h-1 bg-neutral-300 rounded-full`} />
-      </View>
-
-      <View style={tw`px-4 pb-3 border-b border-neutral-200 bg-white`}>
-        <View style={tw`flex-row items-start justify-between`}>
-          <View style={tw`flex-1 pr-3`}>
-            <Text
-              style={[tw`text-lg font-sans-semibold`, { color: colors.black }]}
-            >
-              Propose New Price
-            </Text>
-            <Text style={tw`text-xs text-neutral-500 mt-1`}>
-              Adjust the baseline pricing and visibility for this specific
-              artwork.
-            </Text>
-          </View>
-          <Pressable
-            onPress={handleClose}
-            style={tw`w-8 h-8 rounded-full bg-neutral-100 items-center justify-center`}
-          >
-            <Ionicons name="close" size={17} color="#737373" />
-          </Pressable>
-        </View>
+    <View style={tw`bg-white flex-1 w-full`}>
+      <View
+        style={[
+          tw`px-5 pb-4 border-b border-neutral-200 bg-white`,
+          { paddingTop: insets.top + 12 },
+        ]}
+      >
+        <Text
+          style={[tw`text-2xl font-sans-semibold`, { color: colors.black }]}
+        >
+          Propose New Price
+        </Text>
+        <Text style={tw`text-base text-neutral-500 mt-1`}>
+          Adjust the baseline pricing and visibility for this specific artwork.
+        </Text>
       </View>
 
       <ScrollView
         style={tw`flex-1`}
         contentContainerStyle={{
           paddingHorizontal: 16,
-          paddingTop: 16,
+          paddingTop: 20,
           paddingBottom: Math.max(insets.bottom + keyboardHeight + 72, 96),
         }}
         showsVerticalScrollIndicator={false}
@@ -489,11 +465,9 @@ export default function ProposalPriceModal() {
         <PricingOverrideCard recommendedPrice={recommendedPrice} />
 
         <View
-          style={tw`bg-white border border-neutral-200 rounded-md p-3 mb-4`}
+          style={tw`bg-white border border-neutral-200 rounded-md p-4 mt-7`}
         >
-          <Text
-            style={tw`text-[12px] font-sans-semibold text-neutral-700 mb-2`}
-          >
+          <Text style={tw`text-base font-sans-semibold text-neutral-700 mb-3`}>
             Target Listing Price (USD)
           </Text>
           <View
@@ -539,12 +513,12 @@ export default function ProposalPriceModal() {
 
         {!isEmerging && (
           <View
-            style={tw`bg-white border border-neutral-200 rounded-md p-3 mb-4`}
+            style={tw`bg-white border border-neutral-200 rounded-md p-4 mt-7`}
           >
-            <Text style={tw`text-sm font-sans-semibold text-gray-800 mb-1`}>
+            <Text style={tw`text-base font-sans-semibold text-gray-800 mb-2`}>
               Pricing Visibility
             </Text>
-            <Text style={tw`text-xs text-gray-500 mb-3`}>
+            <Text style={tw`text-base text-gray-500 mb-4`}>
               Control how collectors view the price of this artwork.
             </Text>
 
@@ -575,17 +549,6 @@ export default function ProposalPriceModal() {
           </View>
         )}
 
-        <AgreementSection
-          agreementCount={agreementCount}
-          priceConsent={priceConsent}
-          acknowledgment={acknowledgment}
-          penaltyConsent={penaltyConsent}
-          onTogglePriceConsent={() => setPriceConsent((prev) => !prev)}
-          onToggleAcknowledgment={() => setAcknowledgment((prev) => !prev)}
-          onTogglePenaltyConsent={() => setPenaltyConsent((prev) => !prev)}
-          onOpenTerms={openTerms}
-        />
-
         {requiresJustification && (
           <JustificationSection
             justificationType={justificationType}
@@ -614,12 +577,12 @@ export default function ProposalPriceModal() {
         {requiresJustification && (
           <View
             style={[
-              tw`border rounded-md px-3 py-3 mb-1 bg-white`,
+              tw`border rounded-md px-4 py-4 mb-2 bg-white`,
               { borderColor: colors.inputBorder },
             ]}
           >
             <Text
-              style={tw`text-[12px] font-sans-semibold text-neutral-700 mb-2`}
+              style={tw`text-base font-sans-semibold text-neutral-700 mb-3`}
             >
               Contextual Notes
             </Text>
@@ -634,18 +597,29 @@ export default function ProposalPriceModal() {
               numberOfLines={5}
               placeholder="Help our review team understand the price change..."
               placeholderTextColor={colors.grey}
-              style={[tw`text-sm min-h-[110px]`, { color: colors.black }]}
+              style={[tw`text-base min-h-[110px]`, { color: colors.black }]}
             />
           </View>
         )}
+
+        <AgreementSection
+          agreementCount={agreementCount}
+          priceConsent={priceConsent}
+          acknowledgment={acknowledgment}
+          penaltyConsent={penaltyConsent}
+          onTogglePriceConsent={() => setPriceConsent((prev) => !prev)}
+          onToggleAcknowledgment={() => setAcknowledgment((prev) => !prev)}
+          onTogglePenaltyConsent={() => setPenaltyConsent((prev) => !prev)}
+          onOpenTerms={openTerms}
+        />
         {inputError && (
-          <Text style={tw`text-xs text-red-500 mt-2`}>{inputError}</Text>
+          <Text style={tw`text-base text-red-500 mt-2`}>{inputError}</Text>
         )}
       </ScrollView>
 
       <View
         style={[
-          tw`px-4 pt-3 pb-2 border-t border-neutral-200 bg-white flex-row gap-2`,
+          tw`px-4 pt-4 pb-3 border-t border-neutral-200 bg-white flex-row gap-3`,
           { paddingBottom: Math.max(insets.bottom + 8, 14) },
         ]}
       >
@@ -661,28 +635,19 @@ export default function ProposalPriceModal() {
           </Text>
         </Pressable>
 
-        <Pressable
-          onPress={handleSubmit}
-          style={[
-            tw`rounded-md py-3 items-center justify-center flex-1`,
-            {
-              backgroundColor: canSubmit
-                ? isAutoApproveZone
-                  ? colors.black
-                  : "#D97706"
-                : "#9CA3AF",
-            },
-          ]}
-          disabled={!canSubmit || isSubmitting}
-        >
-          <Text style={[tw`font-sans-semibold`, { color: colors.white }]}>
-            {isSubmitting
-              ? "Submitting..."
-              : isAutoApproveZone
-              ? "Submit & Continue"
-              : "Submit for Verification"}
-          </Text>
-        </Pressable>
+        <View style={tw`flex-1`}>
+          <LongBlackButton
+            value={
+              isAutoApproveZone
+                ? "Submit & Continue"
+                : "Submit for Verification"
+            }
+            onClick={handleSubmit}
+            isDisabled={!canSubmit}
+            isLoading={isSubmitting}
+            textStyle={tw`font-sans-semibold tracking-normal normal-case text-sm`}
+          />
+        </View>
       </View>
     </View>
   );

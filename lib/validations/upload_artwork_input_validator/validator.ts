@@ -18,7 +18,7 @@ export const validate = (label: string, value: string) => {
     length: (value: string) => validateMeasurement(value),
     price: (value: string) => validatePrice(value),
     weight: (value: string) => validateWeight(value),
-    artist_birthyear: (value: string) => validateYear(value, 16),
+    artist_birthyear: (value: string) => validateYear(value, 18),
     description: (value: string) => validateBasicText(value),
     artist_country_origin: (value: string) => validateBasicText(value),
   };

@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
 import tw from "twrnc";
 import { getNumberOfColumns } from "#utils/utils_screen";
+import { useAppStore } from "#store/app/appStore";
 import ExclusivityCountdown from "./ExclusivityCountdown";
 import ArtworkImage from "./ArtworkImage";
 import ArtworkDetails from "./ArtworkDetails";
@@ -40,6 +41,7 @@ const MiniArtworkCard = memo(
     countdown,
   }: Readonly<MiniArtworkCardType>) => {
     const navigation = useNavigation<StackNavigationProp<any>>();
+    const { userSession } = useAppStore();
 
     const screenWidth = Dimensions.get("window").width - 10;
     const dividerNum = getNumberOfColumns();
@@ -53,7 +55,8 @@ const MiniArtworkCard = memo(
       [countdown]
     );
 
-    const showCountdown = !galleryView && expiryDate && availability;
+    const showCountdown =
+      !galleryView && expiryDate && availability && userSession?.id;
 
     return (
       <TouchableOpacity
@@ -79,7 +82,9 @@ const MiniArtworkCard = memo(
           price={price}
         />
 
-        {!galleryView && <ArtworkStatus availability={availability} />}
+        {!galleryView && userSession?.id && (
+          <ArtworkStatus availability={availability} />
+        )}
 
         {showCountdown && (
           <ExclusivityCountdown expiresAt={expiryDate} art_id={art_id} />

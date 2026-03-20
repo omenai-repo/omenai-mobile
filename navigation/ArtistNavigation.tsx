@@ -21,6 +21,7 @@ import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryP
 import UploadNewLogo from "#screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo";
 import EditCredentialsScreen from "#screens/artist/profile/EditCredentialsScreen";
 import UploadArtwork from "#screens/uploadArtwork/UploadArtwork";
+import ProposalPriceScreen from "#screens/uploadArtwork/ProposalPriceScreen";
 import { WithdrawScreen } from "#screens/artist/wallet/WithdrawScreen";
 import { ForgotPinScreen } from "#screens/artist/wallet/ForgotPinScreen";
 import { ResetPinScreen } from "#screens/artist/wallet/ResetPinScreen";
@@ -85,16 +86,26 @@ const BottomTabNav = () => {
           headerShown: false,
         }}
       >
-        {getBottomTabDataArtist().map(({ name, component, id }: { name: string; component: any; id: number }) => (
-          <Tab.Screen
-            key={id}
-            name={name}
-            component={component}
-            options={{
-              tabBarShowLabel: false,
-            }}
-          />
-        ))}
+        {getBottomTabDataArtist().map(
+          ({
+            name,
+            component,
+            id,
+          }: {
+            name: string;
+            component: any;
+            id: number;
+          }) => (
+            <Tab.Screen
+              key={id}
+              name={name}
+              component={component}
+              options={{
+                tabBarShowLabel: false,
+              }}
+            />
+          )
+        )}
       </Tab.Navigator>
 
       <Modal visible={isModalVisible} transparent={true} animationType="fade">
@@ -238,6 +249,10 @@ const ArtistNavigation = () => {
       <Stack.Screen
         name={screenName.gallery.uploadArtwork}
         component={wrapWithHighRisk(UploadArtwork)}
+      />
+      <Stack.Screen
+        name={screenName.artist.proposalPrice}
+        component={wrapWithHighRisk(ProposalPriceScreen)}
       />
       <Stack.Screen
         name={screenName.artwork}

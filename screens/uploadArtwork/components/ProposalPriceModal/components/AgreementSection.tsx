@@ -25,22 +25,22 @@ export default function AgreementSection({
   onOpenTerms,
 }: Readonly<AgreementSectionProps>) {
   return (
-    <View style={tw`bg-amber-50 border border-amber-200 rounded-md p-3 mb-4`}>
-      <View style={tw`flex-row items-center justify-between mb-3`}>
+    <View style={tw`bg-amber-50 border border-amber-200 rounded-md p-4 mt-7`}>
+      <View style={tw`flex-row items-center justify-between mb-4`}>
         <View style={tw`flex-row items-center`}>
           <MaterialIcons name="warning-amber" size={16} color="#B45309" />
           <Text
-            style={tw`text-[11px] font-sans-semibold text-amber-800 ml-1 uppercase`}
+            style={tw`text-base font-sans-semibold text-amber-800 ml-1 uppercase`}
           >
             Exclusivity & Pricing Agreement
           </Text>
         </View>
-        <Text style={tw`text-[10px] text-amber-700 font-sans-semibold`}>
+        <Text style={tw`text-base text-amber-700 font-sans-semibold`}>
           {agreementCount}/3
         </Text>
       </View>
 
-      <View style={tw`bg-white border border-amber-200 rounded-md p-3 mb-2`}>
+      <View style={tw`bg-white border border-amber-200 rounded-md p-4 mb-3`}>
         <ConsentCheckbox checked={priceConsent} onToggle={onTogglePriceConsent}>
           I agree to list this artwork at the finalized listing price.
         </ConsentCheckbox>
@@ -77,7 +77,7 @@ export default function AgreementSection({
         </ConsentCheckbox>
       </View>
 
-      <View style={tw`flex-row items-center justify-between mt-1`}>
+      <View style={tw`flex-row items-center justify-between mt-2`}>
         <View style={tw`flex-row items-center gap-1`}>
           {[1, 2, 3].map((step) => (
             <View
@@ -89,7 +89,7 @@ export default function AgreementSection({
             />
           ))}
         </View>
-        <Text style={tw`text-[10px] text-amber-700`}>{agreementCount}/3</Text>
+        <Text style={tw`text-sm text-amber-700`}>{agreementCount}/3</Text>
       </View>
     </View>
   );

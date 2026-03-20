@@ -53,8 +53,7 @@ export default function PriceStatusNotice({
       iconColor: "#16A34A",
       containerStyle: tw`bg-green-50 border-green-200`,
       textStyle: tw`text-green-800`,
-      message:
-        "This price falls within your tier's acceptable variance. It will be auto-approved instantly.",
+      message: "Price approved! Your artwork is being published.",
     },
     allowanceExhausted: {
       iconName: "time-outline",
@@ -80,7 +79,7 @@ export default function PriceStatusNotice({
   return (
     <View
       style={[
-        tw`mt-2 p-3 rounded-md border flex-row items-start`,
+        tw`mt-3 p-4 rounded-md border flex-row items-start`,
         containerStyle,
       ]}
     >
@@ -88,10 +87,10 @@ export default function PriceStatusNotice({
         name={iconName}
         size={16}
         color={iconColor}
-        style={tw`mt-0.5 mr-2`}
+        style={tw`mt-1 mr-3`}
       />
 
-      <Text style={[tw`text-xs leading-5 flex-1`, textStyle]}>{message}</Text>
+      <Text style={[tw`text-base leading-6 flex-1`, textStyle]}>{message}</Text>
     </View>
   );
 }
