@@ -15,7 +15,9 @@ type HighlightCardProps = {
   onLoadingChange?: (loading: boolean) => void;
 };
 
-export const HighlightCard = React.memo(({ onLoadingChange }: HighlightCardProps) => {
+export const HighlightCard = React.memo(function HighlightCard({
+  onLoadingChange,
+}: HighlightCardProps) {
   const [interactionsComplete, setInteractionsComplete] = useState(false);
 
   useEffect(() => {

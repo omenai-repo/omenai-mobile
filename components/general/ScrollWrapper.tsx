@@ -14,6 +14,11 @@ interface ScrollWrapperProps {
   horizontal?: boolean;
   nestedScrollEnabled?: boolean;
   keyboardShouldPersistTaps?: "always" | "handled" | "never";
+  contentInsetAdjustmentBehavior?:
+    | "automatic"
+    | "scrollableAxes"
+    | "never"
+    | "always";
 }
 
 const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
@@ -29,6 +34,7 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
   horizontal = false,
   nestedScrollEnabled,
   keyboardShouldPersistTaps,
+  contentInsetAdjustmentBehavior,
 }) => {
   return (
     <Animated.ScrollView
@@ -42,6 +48,7 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
       scrollEventThrottle={16} // For smooth scrolling
       nestedScrollEnabled={nestedScrollEnabled}
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+      contentInsetAdjustmentBehavior={contentInsetAdjustmentBehavior}
       onScrollEndDrag={onEndReached}
     >
       {children}

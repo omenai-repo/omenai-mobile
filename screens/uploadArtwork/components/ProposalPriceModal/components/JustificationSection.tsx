@@ -120,7 +120,7 @@ export default function JustificationSection({
                 <View style={tw`items-center`}>
                   <Feather name="upload-cloud" size={16} color="#6B7280" />
                   <Text style={tw`text-base text-neutral-600 mt-1`}>
-                    Tap to upload PDF or image proof
+                    Tap to upload PDF proof
                   </Text>
                 </View>
               )}

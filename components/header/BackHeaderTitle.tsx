@@ -11,12 +11,14 @@ type BackHeaderTitleProps = {
   title: string;
   callBack?: () => void;
   customGoBack?: () => void;
+  rightAction?: React.ReactNode;
 };
 
 export default function BackHeaderTitle({
   title,
   callBack,
   customGoBack,
+  rightAction,
 }: Readonly<BackHeaderTitleProps>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const insets = useSafeAreaInsets();
@@ -44,7 +46,9 @@ export default function BackHeaderTitle({
         <Text style={[styles.topTitle, isTablet && { fontSize: 20 }]}>
           {title}
         </Text>
-        <View style={{ width: isTablet ? 60 : 50 }} />
+        <View style={{ width: isTablet ? 60 : 50, alignItems: "flex-end" }}>
+          {rightAction}
+        </View>
       </View>
     </View>
   );
