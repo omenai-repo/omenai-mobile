@@ -31,14 +31,14 @@ export default React.memo(function PopularArtworks({
   const { isTablet, horizontalPadding, width } = useDevice();
   const estimatedItemSize = useMemo(
     () => (isTablet ? width * 0.4 + 20 : width * 0.7 + 20),
-    [isTablet, width]
+    [isTablet, width],
   );
   const horizontalContentStyle = useMemo(
     () => ({
       paddingLeft: isTablet ? horizontalPadding : 20,
       paddingRight: isTablet ? horizontalPadding : 20,
     }),
-    [horizontalPadding, isTablet]
+    [horizontalPadding, isTablet],
   );
 
   const [interactionsComplete, setInteractionsComplete] = useState(false);
@@ -79,14 +79,15 @@ export default React.memo(function PopularArtworks({
         like_IDs={item.like_IDs}
         art_id={item.art_id}
         galleryView
+        hideBackground
       />
     ),
-    []
+    [],
   );
 
   const keyExtractor = useCallback(
     (item: ArtworkFlatlistItem, index: number) => String(item.art_id ?? index),
-    []
+    [],
   );
 
   return (
@@ -111,7 +112,7 @@ export default React.memo(function PopularArtworks({
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <View style={{ marginTop: isTablet ? 40 : 30, height: 320 }}>
+        <View style={{ marginTop: isTablet ? 40 : 30 }}>
           <FlashList
             data={data}
             renderItem={renderItem}

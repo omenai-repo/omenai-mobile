@@ -11,7 +11,6 @@ import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import ArtworksListing from "#components/general/ArtworksListing";
 import { useQuery } from "@tanstack/react-query";
-import { useModalStore } from "#store/modal/modalStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppStore } from "#store/app/appStore";
 import tw from "twrnc";
@@ -19,30 +18,20 @@ import { colors } from "#config/colors.config";
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { updateModal } = useModalStore();
   const insets = useSafeAreaInsets();
   const { userSession, userType } = useAppStore();
 
   const ARTWORKS_QK = useMemo(
     () => ["artworks", userSession?.id, userType],
-    [userSession?.id, userType]
+    [userSession?.id, userType],
   );
 
   const artworksQuery = useQuery({
     queryKey: ARTWORKS_QK,
     queryFn: async () => {
-      try {
-        const res = await fetchAllArtworksById();
-        if (!res?.isOk) throw new Error("Failed to fetch artworks");
-        return Array.isArray(res.data) ? res.data : [];
-      } catch (e: any) {
-        updateModal({
-          message: e?.message ?? "Failed to fetch artworks",
-          showModal: true,
-          modalType: "error",
-        });
-        return [];
-      }
+      const res = await fetchAllArtworksById();
+      if (!res?.isOk) throw new Error("Failed to fetch artworks");
+      return Array.isArray(res.data) ? res.data : [];
     },
     staleTime: 0,
     gcTime: 0,
@@ -92,6 +81,21 @@ export default function GalleryArtworksListing() {
         >
           <MiniArtworkCardLoader />
         </ScrollWrapper>
+      ) : artworksQuery.isError ? (
+        <View style={tw`flex-1 items-center justify-center px-8`}>
+          <Text style={tw`text-base font-medium text-neutral-800 mb-2`}>
+            Failed to load artworks
+          </Text>
+          <Text style={tw`text-sm text-neutral-500 text-center mb-4`}>
+            Please check your connection and try again.
+          </Text>
+          <FittedBlackButton
+            value="Retry"
+            onClick={() => artworksQuery.refetch()}
+            style={tw`h-[36px] px-6`}
+            textStyle={tw`text-[13px]`}
+          />
+        </View>
       ) : (
         <View style={tw`flex-1 mt-5`}>
           <ArtworksListing data={data} onRefresh={onRefresh} />

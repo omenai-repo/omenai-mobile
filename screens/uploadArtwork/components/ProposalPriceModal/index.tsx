@@ -77,7 +77,7 @@ export default function ProposalPriceModal() {
     JustificationType | ""
   >("");
   const [proofFormat, setProofFormat] = useState<"LINK" | "DOCUMENT">(
-    "DOCUMENT"
+    "DOCUMENT",
   );
   const [justificationUrl, setJustificationUrl] = useState("");
   const [justificationFileName, setJustificationFileName] = useState("");
@@ -87,7 +87,7 @@ export default function ProposalPriceModal() {
     type: string;
   } | null>(null);
   const [shouldShowPrice, setShouldShowPrice] = useState<"Yes" | "No">(
-    artworkUploadData?.shouldShowPrice === "No" ? "No" : "Yes"
+    artworkUploadData?.shouldShowPrice === "No" ? "No" : "Yes",
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -95,12 +95,12 @@ export default function ProposalPriceModal() {
   const recommendedPricePlaceholder =
     recommendedPrice > 0 ? recommendedPrice.toLocaleString() : "0";
   const hasAutoApprovalsRemaining = parseHasAutoApprovalsRemaining(
-    (artworkUploadData as any)?.hasAutoApprovalsRemaining ?? true
+    (artworkUploadData as any)?.hasAutoApprovalsRemaining ?? true,
   );
   const isEmerging =
     (userSession?.categorization || "").toLowerCase() === "emerging";
   const agreementCount = [priceConsent, acknowledgment, penaltyConsent].filter(
-    Boolean
+    Boolean,
   ).length;
 
   const allTermsAccepted = agreementCount === 3;
@@ -166,7 +166,7 @@ export default function ProposalPriceModal() {
           "X-Appwrite-Key": process.env.EXPO_PUBLIC_APPWRITE_UPLOAD_KEY!,
         },
         body: formData,
-      }
+      },
     );
 
     const result = await res.json();
@@ -194,7 +194,7 @@ export default function ProposalPriceModal() {
     const isMimeSupported =
       mimeType.length > 0 && supportedProofMimeTypes.has(mimeType);
     const hasSupportedExtension = supportedProofExtensions.some((ext) =>
-      fileName.endsWith(ext)
+      fileName.endsWith(ext),
     );
 
     if (!isMimeSupported && !hasSupportedExtension) {
@@ -243,7 +243,7 @@ export default function ProposalPriceModal() {
 
     if (nextPrice < recommendedPrice) {
       setInputError(
-        `Price cannot be set lower than the algorithm baseline of $${recommendedPrice.toLocaleString()}.`
+        `Price cannot be set lower than the algorithm baseline of $${recommendedPrice.toLocaleString()}.`,
       );
       return;
     }
@@ -260,7 +260,7 @@ export default function ProposalPriceModal() {
 
     if (requiresJustification && needsProof && !hasProof) {
       setInputError(
-        "Proof via link or document is required for this selection."
+        "Proof via link or document is required for this selection.",
       );
       return;
     }
@@ -270,7 +270,7 @@ export default function ProposalPriceModal() {
       (!proposalReason || proposalReason.trim() === "")
     ) {
       setInputError(
-        "Please provide contextual notes to justify this price change."
+        "Please provide contextual notes to justify this price change.",
       );
       return;
     }
@@ -346,7 +346,7 @@ export default function ProposalPriceModal() {
           role: "artist",
           designation: userSession?.categorization || null,
         } as any,
-        image_format
+        image_format,
       );
 
       const fallbackAlgorithm = {
@@ -384,7 +384,7 @@ export default function ProposalPriceModal() {
 
       if (!response?.isOk) {
         throw new Error(
-          response?.message || "Unable to submit review request right now."
+          response?.message || "Unable to submit review request right now.",
         );
       }
 
@@ -425,10 +425,13 @@ export default function ProposalPriceModal() {
         });
       }
     } catch (error: any) {
-      setInputError(
-        error?.message ||
-          "Unable to submit price review now. Please try again later."
-      );
+      updateModal({
+        showModal: true,
+        modalType: "error",
+        message:
+          error?.message ||
+          "Unable to submit price review now. Please try again later.",
+      });
     } finally {
       setIsSubmitting(false);
     }

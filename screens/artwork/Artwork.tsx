@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { Text, View, Dimensions } from "react-native";
+import { Text, View, Dimensions, Pressable } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
@@ -28,13 +28,15 @@ import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 import { createViewHistory } from "#services/artworks/viewHistory/createViewHistory";
 import SimilarArtworksByArtist from "./components/similarArtworks/SimilarArtworksByArtist";
 import tw from "twrnc";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import ZoomArtwork from "./ZoomArtwork";
 import { useScrollY } from "#hooks/useScrollY";
 import { Analytics } from "#utils/analytics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import EditArtworkModal from "./components/EditArtworkSection";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 type RouteParams = { art_id: string; url: string };
 
@@ -42,7 +44,7 @@ const useTabletLandscape = () => {
   const [win, setWin] = useState(Dimensions.get("window"));
   useEffect(() => {
     const sub = Dimensions.addEventListener("change", ({ window }) =>
-      setWin(window)
+      setWin(window),
     );
     return () => sub?.remove();
   }, []);
@@ -81,6 +83,7 @@ export default function Artwork() {
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { onScroll } = useScrollY();
+  const editModalRef = useRef<BottomSheetModal>(null);
 
   // 1) Fetch the artwork (cached; no re-fetch during staleTime window from App.tsx)
   const {
@@ -124,7 +127,7 @@ export default function Artwork() {
       artwork.artist,
       artwork.art_id,
       userSession.id,
-      artwork.url
+      artwork.url,
     ).catch(() => {
       // silent fail
     });
@@ -132,7 +135,7 @@ export default function Artwork() {
 
   const imageUri = useMemo(
     () => (artwork ? getImageFileView(artwork.url, 500) : ""),
-    [artwork]
+    [artwork],
   );
 
   const [imageDimensions, setImageDimensions] = useState<{
@@ -147,11 +150,11 @@ export default function Artwork() {
       const next = resizeImageDimensions(
         { width: w, height: h },
         maxWidth,
-        maxHeight
+        maxHeight,
       );
       setImageDimensions(next);
     },
-    [screenWidth, isTabletLandscape]
+    [screenWidth, isTabletLandscape],
   );
 
   const handleRequestPriceQuote = useCallback(async () => {
@@ -287,7 +290,16 @@ export default function Artwork() {
   return (
     <>
       <View style={tw`flex-1 bg-white`}>
-        <BackHeaderTitle title="" />
+        <BackHeaderTitle
+          title=""
+          rightAction={
+            userType === "gallery" && artwork?.author_id === userSession?.id ? (
+              <Pressable onPress={() => editModalRef.current?.present()}>
+                <Feather name="edit" size={20} color="#333" />
+              </Pressable>
+            ) : undefined
+          }
+        />
 
         {loadingMain && <ArtworkSkeleton />}
 
@@ -420,6 +432,15 @@ export default function Artwork() {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
       />
+      {artwork &&
+        userType === "gallery" &&
+        artwork.author_id === userSession?.id && (
+          <EditArtworkModal
+            ref={editModalRef}
+            art_id={artwork.art_id}
+            currentDescription={artwork.artwork_description || ""}
+          />
+        )}
     </>
   );
 }

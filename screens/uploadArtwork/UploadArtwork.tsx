@@ -163,8 +163,11 @@ export default function UploadArtwork() {
         const upload_response = await uploadArtworkData(data);
         if (upload_response.isOk) {
           //display success screen
-          await queryClient.invalidateQueries({
+          queryClient.invalidateQueries({
             queryKey: ["artworks", "galleryOrArtist", "all"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["artworks", userSession?.id, userType],
           });
           Analytics.track("artwork_uploaded", {
             role: userType,
