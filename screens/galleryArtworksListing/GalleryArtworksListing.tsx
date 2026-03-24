@@ -81,21 +81,6 @@ export default function GalleryArtworksListing() {
         >
           <MiniArtworkCardLoader />
         </ScrollWrapper>
-      ) : artworksQuery.isError ? (
-        <View style={tw`flex-1 items-center justify-center px-8`}>
-          <Text style={tw`text-base font-medium text-neutral-800 mb-2`}>
-            Failed to load artworks
-          </Text>
-          <Text style={tw`text-sm text-neutral-500 text-center mb-4`}>
-            Please check your connection and try again.
-          </Text>
-          <FittedBlackButton
-            value="Retry"
-            onClick={() => artworksQuery.refetch()}
-            style={tw`h-[36px] px-6`}
-            textStyle={tw`text-[13px]`}
-          />
-        </View>
       ) : (
         <View style={tw`flex-1 mt-5`}>
           <ArtworksListing data={data} onRefresh={onRefresh} />
