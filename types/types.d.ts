@@ -67,16 +67,6 @@ type ShipmentDimensions = {
   weight: number;
 };
 
-type AddressTypes = {
-  address_line: string;
-  city: string;
-  country: string;
-  countryCode: string;
-  state: string;
-  stateCode: string;
-  zip: string;
-};
-
 type PaymentStatusTypes = {
   status: "pending" | "completed";
   transaction_value: string;
@@ -235,31 +225,12 @@ type ArtworkFlatlistItem = {
   art_id: string;
   impressions: number;
   like_IDs: string[];
-};
-
-type OrderAcceptedStatusTypes = {
-  status: "accepted" | "declined" | "";
-  reason?: string;
-};
-type TrackingInformationTypes = {
-  id: string;
-  link: string;
-};
-type PaymentStatusTypes = {
-  status: "pending" | "completed";
-  transaction_value: string;
-  transaction_date: string;
-  transaction_reference: string;
+  image_format?: { ratio: string; orientation?: string };
 };
 
 type ShippingQuoteTypes = {
   fees: string;
   taxes: string;
-};
-
-type OrderAcceptedStatusTypes = {
-  status: "accepted" | "declined" | "";
-  reason?: string;
 };
 
 type RouteParamsType = {
@@ -420,10 +391,6 @@ type ArtworkUploadStateTypes = {
   hasAutoApprovalsRemaining?: number | boolean;
 };
 
-type OrderAcceptedStatusTypes = {
-  status: "accepted" | "declined" | "";
-  reason?: string;
-};
 type ShippingQuoteTypes = {
   package_carrier: string;
   shipping_fees: string;

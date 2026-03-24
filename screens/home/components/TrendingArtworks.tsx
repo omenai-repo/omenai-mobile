@@ -60,7 +60,7 @@ export default function TrendingArtworks({
           style={tw`mt-5`}
           contentContainerStyle={tw`px-5`}
         >
-          <View style={tw`flex-row gap-5`}>
+          <View style={tw`flex-row gap-5 items-end`}>
             {data.map((item: any, i: number) => (
               <ArtworkCard
                 key={item.art_id ?? `trend-${i}`}
@@ -76,6 +76,7 @@ export default function TrendingArtworks({
                 like_IDs={item.like_IDs}
                 art_id={item.art_id}
                 hideBackground
+                image_format={item.image_format}
               />
             ))}
             {showMoreButton && (

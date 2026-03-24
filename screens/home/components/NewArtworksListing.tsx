@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { View, ScrollView } from "react-native";
 import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
@@ -52,7 +52,7 @@ export default function NewArtworksListing({
           style={tw`mt-5`}
           contentContainerStyle={tw`px-5`}
         >
-          <View style={tw`flex-row gap-5 items-center`}>
+          <View style={tw`flex-row gap-5 items-end`}>
             {data.map((item: any, index: number) => (
               <ArtworkCard
                 key={item.art_id ?? `new-${index}`}
