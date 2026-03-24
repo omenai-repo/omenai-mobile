@@ -30,9 +30,9 @@ export default function PhysicalSpecifications({
   if (!dimensions) return null;
 
   const widthToDisplay =
-    dimensions.width && dimensions.width !== "0"
-      ? dimensions.width
-      : dimensions.length;
+    dimensions.length && dimensions.length !== "0"
+      ? dimensions.length
+      : dimensions.width;
 
   return (
     <View
