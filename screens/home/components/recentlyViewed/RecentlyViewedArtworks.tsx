@@ -30,7 +30,7 @@ type ViewHistoryItem = {
 
 function RecentlyViewedArtworks() {
   const userSessionId = useAppStore((s) => s.userSession?.id);
-  const { isTablet, horizontalPadding, width } = useDevice();
+  const { isTablet, horizontalPadding } = useDevice();
   const userId = userSessionId;
 
   const { data = [], isLoading } = useQuery({
@@ -63,7 +63,7 @@ function RecentlyViewedArtworks() {
             paddingRight: isTablet ? horizontalPadding : 20,
           }}
         >
-          <View style={tw`flex-row gap-5 items-center`}>
+          <View style={tw`flex-row gap-5 items-end`}>
             {recentArtworks.map((item: ViewHistoryItem, index: number) => (
               <ArtworkCard
                 key={item.art_id ?? `rv-${index}`}
@@ -81,6 +81,7 @@ function RecentlyViewedArtworks() {
                 image_format={item.image_format}
                 disableLikeButton
                 hideBackground
+                useImageLoadAspectRatio
               />
             ))}
           </View>

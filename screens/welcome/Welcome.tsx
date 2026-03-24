@@ -117,7 +117,7 @@ export default function Welcome() {
             }}
           />
 
-          <Pressable
+          {/* <Pressable
             onPress={() => navigation.navigate("GuestNavigation")}
             style={tw`items-center mt-2`}
           >
@@ -126,7 +126,7 @@ export default function Welcome() {
             >
               Browse as Guest
             </Text>
-          </Pressable>
+          </Pressable> */}
         </View>
       </View>
     </View>
