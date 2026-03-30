@@ -1,4 +1,4 @@
-import { Image, Text, View, TouchableOpacity, FlatList } from "react-native";
+import { Image, Text, View, TouchableOpacity, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import tw from "twrnc";
 import { colors } from "../../../../config/colors.config";
@@ -60,15 +60,16 @@ export default function FeaturedGalleries() {
       <View style={tw`flex-row items-center gap-2.5 px-5`}>
         <Text style={tw`text-lg font-medium flex-1`}>Featured Galleries</Text>
       </View>
-      <FlatList
-        data={galleries}
-        renderItem={({ item }) => <GalleryCard item={item} />}
-        keyExtractor={(item) => item.gallery_id}
+      <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={tw`px-5 gap-5`}
         style={tw`mt-5`}
-      />
+        contentContainerStyle={tw`px-5 gap-5`}
+      >
+        {galleries.map((item) => (
+          <GalleryCard key={item.gallery_id} item={item} />
+        ))}
+      </ScrollView>
     </View>
   );
 }

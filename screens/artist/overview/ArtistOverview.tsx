@@ -54,10 +54,8 @@ const ArtistOverview = () => {
         onScroll={onScroll}
       >
         <Header />
-
         {/* Highlight Cards & Sales chart use their own queries and report loading via onLoadingChange if needed */}
         <HighlightCard />
-
         <SalesOverview />
         <PopularArtworks />
       </ScrollWrapper>

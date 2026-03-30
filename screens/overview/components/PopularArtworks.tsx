@@ -37,6 +37,7 @@ export default React.memo(function PopularArtworks({
     () => ({
       paddingLeft: isTablet ? horizontalPadding : 20,
       paddingRight: isTablet ? horizontalPadding : 20,
+      marginTop: isTablet ? 40 : 30,
     }),
     [horizontalPadding, isTablet],
   );
@@ -68,19 +69,22 @@ export default React.memo(function PopularArtworks({
 
   const renderItem = useCallback(
     ({ item }: { item: ArtworkFlatlistItem }) => (
-      <ArtworkCard
-        title={item.title}
-        url={item.url}
-        artist={item.artist}
-        showPrice={item.pricing?.shouldShowPrice === "Yes"}
-        price={item.pricing?.usd_price}
-        availiablity={item.availability}
-        impressions={item.impressions}
-        like_IDs={item.like_IDs}
-        art_id={item.art_id}
-        galleryView
-        hideBackground
-      />
+      <View style={{ alignSelf: "flex-end" }}>
+        <ArtworkCard
+          title={item.title}
+          url={item.url}
+          artist={item.artist}
+          showPrice={item.pricing?.shouldShowPrice === "Yes"}
+          price={item.pricing?.usd_price}
+          availiablity={item.availability}
+          impressions={item.impressions}
+          like_IDs={item.like_IDs}
+          art_id={item.art_id}
+          galleryView
+          hideBackground
+          useImageLoadAspectRatio
+        />
+      </View>
     ),
     [],
   );
@@ -104,7 +108,7 @@ export default React.memo(function PopularArtworks({
         >
           <Text style={tw`font-medium flex-1 text-lg`}>Popular artworks</Text>
           {!["artist", "gallery"].includes(userType) && (
-            <NavBtnComponent onPress={() => {}} />
+            <NavBtnComponent onPress={() => { }} />
           )}
         </View>
       </TouchableOpacity>
@@ -112,20 +116,18 @@ export default React.memo(function PopularArtworks({
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <View style={{ marginTop: isTablet ? 40 : 30 }}>
-          <FlashList
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            horizontal
-            nestedScrollEnabled
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={horizontalContentStyle}
-            ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
-            // @ts-expect-error - FlashList expects estimatedItemSize but type definition might be outdated
-            estimatedItemSize={estimatedItemSize}
-          />
-        </View>
+        <FlashList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          horizontal
+          nestedScrollEnabled
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={horizontalContentStyle}
+          ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
+          // @ts-expect-error - FlashList types may not include estimatedItemSize in this version.
+          estimatedItemSize={estimatedItemSize}
+        />
       )}
 
       {!isLoading && data.length === 0 && (
@@ -138,5 +140,5 @@ export default React.memo(function PopularArtworks({
 });
 
 const styles = StyleSheet.create({
-  container: { paddingTop: 25, paddingBottom: 100 },
+  container: { paddingTop: 25, paddingBottom: 60 },
 });

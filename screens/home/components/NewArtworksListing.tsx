@@ -19,6 +19,7 @@ export default function NewArtworksListing({
 }) {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
+  const limit = 20;
 
   const { data = [], isLoading } = useQuery({
     queryKey: HOME_QK.newArtworks(userSession?.id),
@@ -26,6 +27,7 @@ export default function NewArtworksListing({
       const results = await fetchArtworks({ listingType: "recent", page: 1 });
       return results?.isOk ? results.body.data ?? [] : [];
     },
+    select: (rows) => rows.slice(0, limit),
   });
 
   return (
@@ -50,28 +52,27 @@ export default function NewArtworksListing({
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          contentContainerStyle={tw`px-5`}
+          contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-end" }]}
         >
-          <View style={tw`flex-row gap-5 items-end`}>
-            {data.map((item: any, index: number) => (
-              <ArtworkCard
-                key={item.art_id ?? `new-${index}`}
-                title={item.title}
-                url={item.url}
-                artist={item.artist}
-                showPrice={
-                  !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
-                }
-                price={item.pricing?.usd_price}
-                availiablity={item.availability}
-                impressions={item.impressions}
-                like_IDs={item.like_IDs}
-                art_id={item.art_id}
-                image_format={item.image_format}
-                hideBackground
-              />
-            ))}
-          </View>
+          {data.map((item: any, index: number) => (
+            <ArtworkCard
+              key={item.art_id?.toString() ?? `new-${index}`}
+              title={item.title}
+              url={item.url}
+              artist={item.artist}
+              showPrice={
+                !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
+              }
+              price={item.pricing?.usd_price}
+              availiablity={item.availability}
+              impressions={item.impressions}
+              like_IDs={item.like_IDs}
+              art_id={item.art_id}
+              image_format={item.image_format}
+              hideBackground
+              useImageLoadAspectRatio
+            />
+          ))}
         </ScrollView>
       )}
 

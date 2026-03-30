@@ -29,6 +29,7 @@ export default function EditorialCard({
     : "";
 
   const imageHeight = showDetails ? 160 : 220; // h-40 is 160px
+  const detailsCardHeight = 250;
 
   return (
     <Pressable
@@ -37,9 +38,9 @@ export default function EditorialCard({
     >
       <View
         style={[
-          { width },
+          { width, height: showDetails ? detailsCardHeight : undefined },
           showDetails
-            ? tw`bg-white rounded-md border border-[#EFEFEF] pb-5 shadow-sm shadow-black elevation-2`
+            ? tw`bg-white rounded-md border border-[#EFEFEF] pb-5 shadow-sm shadow-black elevation-2 overflow-hidden`
             : null,
         ]}
       >
@@ -47,26 +48,24 @@ export default function EditorialCard({
           source={{ uri: imageUri }}
           style={[
             tw`w-full bg-[#858585]`,
-            showDetails
-              ? tw`rounded-t-md rounded-b-none h-40`
-              : tw`h-[220px] rounded-md`,
+            showDetails ? tw`rounded-t-md rounded-b-none` : tw`rounded-md`,
             { height: imageHeight },
           ]}
           resizeMode="cover"
         />
-        <View style={showDetails ? tw`px-2.5` : null}>
+        <View style={showDetails ? tw`px-2.5 flex-1 justify-between` : null}>
           <Text
             numberOfLines={2}
             style={[
               tw`font-serif text-sm text-[#0F172A] mt-[15px] font-medium`,
-              showDetails ? tw`mt-2.5 mb-[15px] leading-5` : null,
+              showDetails ? tw`mt-2.5 mb-2 leading-5` : null,
             ]}
           >
             {headline}
           </Text>
 
           {showDetails && (
-            <View style={tw`flex-row justify-between items-center mt-auto`}>
+            <View style={tw`flex-row justify-between items-center`}>
               <View style={tw`flex-row items-center gap-1`}>
                 <Text
                   style={[

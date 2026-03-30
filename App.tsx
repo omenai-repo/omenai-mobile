@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useEffect, useState, useCallback } from "react";
 import { useAppStore } from "#store/app/appStore";
 import { utils_appInit } from "#utils/utils_appInit";
 import { useFonts } from "expo-font";

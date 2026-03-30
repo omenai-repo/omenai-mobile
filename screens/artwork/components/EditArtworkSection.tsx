@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useMemo, useState } from "react";
-import { View, Text, TextInput, Pressable } from "react-native";
+import { View, Text, TextInput, Pressable, Switch } from "react-native";
 import tw from "twrnc";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -20,19 +20,29 @@ import LongBlackButton from "#components/buttons/LongBlackButton";
 type EditArtworkModalProps = Readonly<{
   art_id: string;
   currentDescription: string;
+  currentAvailability?: boolean;
 }>;
 
 const EditArtworkModal = forwardRef<BottomSheetModal, EditArtworkModalProps>(
-  ({ art_id, currentDescription }, ref) => {
+  ({ art_id, currentDescription, currentAvailability }, ref) => {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const queryClient = useQueryClient();
     const { updateModal, updateConfirmationModal, clear } = useModalStore();
 
     const [description, setDescription] = useState(currentDescription ?? "");
+    const currentIsSold = currentAvailability === false;
+    const [markAsSold, setMarkAsSold] = useState<boolean>(currentIsSold);
+
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
-    const hasChanges = description.trim() !== (currentDescription ?? "").trim();
+    const trimmedDescription = description.trim();
+    const trimmedCurrentDescription = (currentDescription ?? "").trim();
+    const hasDescriptionChanges =
+      trimmedDescription !== trimmedCurrentDescription;
+    const hasSoldChanges = markAsSold !== currentIsSold;
+    const canSave =
+      hasSoldChanges || (hasDescriptionChanges && trimmedDescription !== "");
 
     const snapPoints = useMemo(() => ["70%"], []);
 
@@ -43,14 +53,19 @@ const EditArtworkModal = forwardRef<BottomSheetModal, EditArtworkModalProps>(
     }, [ref]);
 
     const handleSave = async () => {
-      if (!hasChanges || description.trim() === "") return;
+      if (!canSave || saving) return;
 
       setSaving(true);
       try {
-        const result = await updateArtwork(
-          { artwork_description: description.trim() },
-          art_id,
-        );
+        const filter: Record<string, any> = {};
+        if (hasSoldChanges) {
+          filter.availability = markAsSold ? false : true;
+        }
+        if (hasDescriptionChanges && trimmedDescription !== "") {
+          filter.artwork_description = trimmedDescription;
+        }
+
+        const result = await updateArtwork(filter, art_id);
 
         if (result.isOk) {
           await queryClient.invalidateQueries({
@@ -213,11 +228,32 @@ const EditArtworkModal = forwardRef<BottomSheetModal, EditArtworkModalProps>(
             ]}
           />
 
+          <View style={tw`flex-row items-center justify-between mt-5 mb-2`}>
+            <View>
+              <Text style={tw`text-sm font-sans-medium text-slate-700`}>
+                Mark as sold
+              </Text>
+
+              <Text style={tw`text-xs font-sans-regular text-slate-500 mb-1`}>
+                {markAsSold
+                  ? "This artwork will be marked as sold."
+                  : "This artwork will be marked as available."}
+              </Text>
+            </View>
+            <Switch
+              value={markAsSold}
+              onValueChange={setMarkAsSold}
+              trackColor={{ false: "#cbd5e1", true: colors.primary_black }}
+              thumbColor={markAsSold ? "#fff" : "#f8fafc"}
+            />
+
+          </View>
+
           <LongBlackButton
             value="Save Changes"
             onClick={handleSave}
             isLoading={saving}
-            isDisabled={!hasChanges || saving}
+            isDisabled={!canSave || saving}
             style={tw`mt-4`}
           />
 

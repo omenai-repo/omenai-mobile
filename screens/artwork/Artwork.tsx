@@ -170,18 +170,9 @@ export default function Artwork() {
       });
       return;
     }
-    const { email, name, id } = JSON.parse(us.value);
+    const { email, id } = JSON.parse(us.value);
 
-    const artwork_data = {
-      title: artwork.title,
-      artist: artwork.artist,
-      art_id: artwork.art_id,
-      url: artwork.url,
-      medium: artwork.medium,
-      pricing: { ...artwork.pricing, currency: "USD" },
-    };
-
-    const results = await requestArtworkPrice(artwork_data, email, name);
+    const results = await requestArtworkPrice(artwork.art_id, id);
     if (results.isOk) {
       Analytics.track("artwork_price_requested", {
         ids: {
@@ -191,12 +182,11 @@ export default function Artwork() {
         title: artwork.title,
         artist: artwork.artist,
         user_type: userType,
-        payload: artwork_data,
         response: results,
       });
 
       updateModal({
-        message: `Price quote for ${artwork_data.title} has been sent to ${email}`,
+        message: `Price quote for ${artwork.title} has been sent to ${email}`,
         showModal: true,
         modalType: "success",
       });
@@ -209,12 +199,12 @@ export default function Artwork() {
         title: artwork.title,
         artist: artwork.artist,
         error_message: results.message,
-        payload: artwork_data,
         response: results,
       });
 
       updateModal({
         message:
+          results.message ||
           "Something went wrong, please try again or contact us for assistance.",
         showModal: true,
         modalType: "error",
@@ -293,7 +283,9 @@ export default function Artwork() {
         <BackHeaderTitle
           title=""
           rightAction={
-            userType === "gallery" && artwork?.author_id === userSession?.id ? (
+            userType === "gallery" &&
+            artwork?.author_id === userSession?.id &&
+            artwork?.availability !== false ? (
               <Pressable onPress={() => editModalRef.current?.present()}>
                 <Feather name="edit" size={20} color="#333" />
               </Pressable>
@@ -439,6 +431,7 @@ export default function Artwork() {
             ref={editModalRef}
             art_id={artwork.art_id}
             currentDescription={artwork.artwork_description || ""}
+            currentAvailability={artwork.availability}
           />
         )}
     </>

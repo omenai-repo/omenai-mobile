@@ -51,36 +51,35 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             horizontal
             showsHorizontalScrollIndicator={false}
             style={tw`mt-5`}
-            contentContainerStyle={tw`px-5`}
+            contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-end" }]}
           >
-            <View style={tw`flex-row gap-5 items-end`}>
-              {data.map((item: any, index: number) => (
-                <ArtworkCard
-                  key={item.art_id ?? `curated-${index}`}
-                  title={item.title}
-                  url={item.url}
-                  artist={item.artist}
-                  showPrice={
-                    !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
-                  }
-                  price={item.pricing?.usd_price}
-                  availiablity={item.availability}
-                  lightText
-                  impressions={item.impressions}
-                  like_IDs={item.like_IDs}
-                  art_id={item.art_id}
-                  hideBackground
-                  image_format={item.image_format}
-                />
-              ))}
-              {showMoreButton && (
-                <ViewAllCategoriesButton
-                  label="View all curated artworks"
-                  listingType="curated"
-                  darkMode
-                />
-              )}
-            </View>
+            {data.map((item: any, index: number) => (
+              <ArtworkCard
+                key={item.art_id?.toString() ?? `curated-${index}`}
+                title={item.title}
+                url={item.url}
+                artist={item.artist}
+                showPrice={
+                  !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
+                }
+                price={item.pricing?.usd_price}
+                availiablity={item.availability}
+                lightText
+                impressions={item.impressions}
+                like_IDs={item.like_IDs}
+                art_id={item.art_id}
+                hideBackground
+                image_format={item.image_format}
+                useImageLoadAspectRatio
+              />
+            ))}
+            {showMoreButton && (
+              <ViewAllCategoriesButton
+                label="View all curated artworks"
+                listingType="curated"
+                darkMode
+              />
+            )}
           </ScrollView>
         )}
         {!isLoading && data.length < 1 && (
