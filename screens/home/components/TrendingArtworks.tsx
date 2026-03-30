@@ -58,34 +58,33 @@ export default function TrendingArtworks({
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          contentContainerStyle={tw`px-5`}
+          contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-end" }]}
         >
-          <View style={tw`flex-row gap-5 items-end`}>
-            {data.map((item: any, i: number) => (
-              <ArtworkCard
-                key={item.art_id ?? `trend-${i}`}
-                title={item.title}
-                url={item.url}
-                artist={item.artist}
-                showPrice={
-                  !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
-                }
-                price={item.pricing?.usd_price}
-                availiablity={item.availability}
-                impressions={item.impressions}
-                like_IDs={item.like_IDs}
-                art_id={item.art_id}
-                hideBackground
-                image_format={item.image_format}
-              />
-            ))}
-            {showMoreButton && (
-              <ViewAllCategoriesButton
-                label="View all trending artworks"
-                listingType="trending"
-              />
-            )}
-          </View>
+          {data.map((item: any, index: number) => (
+            <ArtworkCard
+              key={item.art_id?.toString() ?? `trend-${index}`}
+              title={item.title}
+              url={item.url}
+              artist={item.artist}
+              showPrice={
+                !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
+              }
+              price={item.pricing?.usd_price}
+              availiablity={item.availability}
+              impressions={item.impressions}
+              like_IDs={item.like_IDs}
+              art_id={item.art_id}
+              hideBackground
+              image_format={item.image_format}
+              useImageLoadAspectRatio
+            />
+          ))}
+          {showMoreButton && (
+            <ViewAllCategoriesButton
+              label="View all trending artworks"
+              listingType="trending"
+            />
+          )}
         </ScrollView>
       )}
 

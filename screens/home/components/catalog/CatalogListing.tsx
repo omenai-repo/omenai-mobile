@@ -1,4 +1,4 @@
-import { FlatList, View } from "react-native";
+import { View, ScrollView } from "react-native";
 import React from "react";
 import { mediums } from "#constants/mediums";
 import SectionHeader from "#components/general/SectionHeader";
@@ -25,17 +25,21 @@ export default function CatalogListing({
             : () => navigation.navigate(screenName.collections)
         }
       />
-      <FlatList
-        data={mediums}
-        renderItem={({ item }) => (
-          <CatalogCard name={item.name} image={item.image} value={item.value} />
-        )}
-        keyExtractor={(item, index) => item.name || index.toString()}
-        horizontal={true}
+      <ScrollView
+        horizontal
         showsHorizontalScrollIndicator={false}
         style={tw`mt-5`}
-        contentContainerStyle={tw`pl-5`}
-      />
+        contentContainerStyle={tw`pl-5 gap-4`}
+      >
+        {mediums.map((item, index) => (
+          <CatalogCard
+            key={item.name || index.toString()}
+            name={item.name}
+            image={item.image}
+            value={item.value}
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 }

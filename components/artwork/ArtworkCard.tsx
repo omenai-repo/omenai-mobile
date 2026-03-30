@@ -1,5 +1,11 @@
-import { Text, View, TouchableOpacity, Platform } from "react-native";
 import React, { useCallback, useMemo, useState } from "react";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  Platform,
+  StyleSheet,
+} from "react-native";
 import { Image, ImageLoadEventData } from "expo-image";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -17,6 +23,7 @@ type ArtworkCardType = {
   price: number;
   artist: string;
   showPrice?: boolean;
+  hidePriceLabel?: boolean;
   availiablity?: boolean;
   lightText?: boolean;
   width?: number;
@@ -30,17 +37,70 @@ type ArtworkCardType = {
   useImageLoadAspectRatio?: boolean;
 };
 
-// Artsy pattern: fixed constants, height derived from aspect ratio
-const MAX_IMAGE_HEIGHT = 380;
-const MIN_IMAGE_HEIGHT = 180;
+const MAX_IMAGE_HEIGHT = 380; // px
+const MIN_IMAGE_HEIGHT = 100; // px
+
 const DEFAULT_ASPECT_RATIO = 1;
 
-const parseAspectRatio = (ratio?: string) => {
+const DPR_MULTIPLIER = Platform.OS === "ios" ? 2 : 1.5;
+const IMAGE_TRANSITION_MS = Platform.OS === "ios" ? 200 : 0;
+const S = StyleSheet.create({
+  likeButton: {
+    height: 32,
+    width: 32,
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  titleWrap: {
+    flexWrap: "wrap",
+    width: "100%",
+  },
+});
+const TW_OVERLAY = tw`absolute bottom-3 right-3`;
+const parseAspectRatio = (ratio?: string): number | null => {
   if (!ratio) return null;
-  const [w, h] = ratio.split(":");
-  const parsed = Number(w) / Number(h);
-  if (!isNaN(parsed) && parsed > 0) return parsed;
-  return null;
+  const parts = ratio.split(":");
+  if (parts.length !== 2) return null;
+  const w = Number(parts[0]);
+  const h = Number(parts[1]);
+  if (!isFinite(w) || !isFinite(h) || h === 0 || w <= 0 || h <= 0) return null;
+  return w / h;
+};
+
+const computeDimensions = (
+  width: number,
+  imageAspectRatio: number,
+  isTablet: boolean,
+  screenWidth: number,
+): { cardWidth: number; imageDisplayHeight: number } => {
+  if (width > 0) {
+    const rawHeight = width / imageAspectRatio;
+    return {
+      cardWidth: width,
+      imageDisplayHeight: Math.round(
+        Math.min(MAX_IMAGE_HEIGHT, Math.max(MIN_IMAGE_HEIGHT, rawHeight)),
+      ),
+    };
+  }
+
+  const fixedWidth = Math.round(
+    isTablet ? screenWidth * 0.35 : screenWidth * 0.65,
+  );
+  const rawHeight = fixedWidth / imageAspectRatio;
+
+  return {
+    cardWidth: fixedWidth,
+    imageDisplayHeight: Math.round(
+      Math.min(MAX_IMAGE_HEIGHT, Math.max(MIN_IMAGE_HEIGHT, rawHeight)),
+    ),
+  };
 };
 
 function ArtworkCard({
@@ -48,6 +108,7 @@ function ArtworkCard({
   url,
   artist,
   showPrice,
+  hidePriceLabel = false,
   price,
   lightText,
   width = 0,
@@ -79,64 +140,30 @@ function ArtworkCard({
   const handleImageLoad = useCallback(
     (event: ImageLoadEventData) => {
       if (!useImageLoadAspectRatio) return;
-      const { width: loadedWidth, height: loadedHeight } = event.source;
-      if (!loadedWidth || !loadedHeight) return;
+      const { width: w, height: h } = event.source;
+      if (!w || !h || h === 0) return;
 
-      const nextRatio = loadedWidth / loadedHeight;
-      if (!isNaN(nextRatio) && nextRatio > 0) {
-        setLoadedAspectRatio((current) => {
-          if (current && Math.abs(current - nextRatio) < 0.01) {
-            return current;
-          }
-          return nextRatio;
-        });
-      }
+      const nextRatio = w / h;
+      if (!isFinite(nextRatio) || nextRatio <= 0) return;
+
+      setLoadedAspectRatio((prev) => {
+        if (prev !== null && Math.abs(prev - nextRatio) < 0.005) return prev;
+        return nextRatio;
+      });
     },
     [useImageLoadAspectRatio],
   );
 
-  // Calculate card dimensions — all synchronous, no layout shifts
-  const { cardWidth, imageDisplayWidth, imageDisplayHeight } = useMemo(() => {
-    if (width > 0) {
-      // Grid mode: width is fixed by parent, height varies by aspect ratio
-      const h = Math.round(
-        Math.min(
-          MAX_IMAGE_HEIGHT,
-          Math.max(MIN_IMAGE_HEIGHT, width / imageAspectRatio),
-        ),
-      );
-      return {
-        cardWidth: width,
-        imageDisplayWidth: width,
-        imageDisplayHeight: h,
-      };
-    }
+  const { cardWidth, imageDisplayHeight } = useMemo(
+    () => computeDimensions(width, imageAspectRatio, isTablet, screenWidth),
+    [width, imageAspectRatio, isTablet, screenWidth],
+  );
 
-    // Horizontal rail mode: FIXED width, VARIABLE height (Artsy pattern)
-    // Fixed width lets FlashList predict layout → no scroll jumps
-    const fixedWidth = Math.round(
-      isTablet ? screenWidth * 0.35 : screenWidth * 0.65,
-    );
-    const h = Math.round(
-      Math.min(
-        MAX_IMAGE_HEIGHT,
-        Math.max(MIN_IMAGE_HEIGHT, fixedWidth / imageAspectRatio),
-      ),
-    );
-
-    return {
-      cardWidth: fixedWidth,
-      imageDisplayWidth: fixedWidth,
-      imageDisplayHeight: h,
-    };
-  }, [width, imageAspectRatio, isTablet, screenWidth]);
-
-  // Request optimized image size — smaller on Android to reduce decode time
   const imageUri = useMemo(
     () =>
       getImageFileView(
         url,
-        Math.round(cardWidth * (Platform.OS === "ios" ? 2 : 1.5)),
+        Math.round(cardWidth * DPR_MULTIPLIER),
         undefined,
         undefined,
         Platform.OS === "ios" ? 90 : 70,
@@ -144,90 +171,57 @@ function ArtworkCard({
     [url, cardWidth],
   );
 
-  // Stable navigation callback (Artsy pattern: prevents child re-renders)
   const handlePress = useCallback(() => {
     navigation.push(screenName.artwork, { art_id, url });
   }, [navigation, art_id, url]);
-
-  // Memoize style objects to prevent re-creation per render
-  const touchableStyle = useMemo(
-    () => [tw`rounded-md`, { width: cardWidth }],
-    [cardWidth],
-  );
-
-  const imageContainerStyle = useMemo(
-    () => ({
-      width: cardWidth,
-      height: imageDisplayHeight,
-      backgroundColor: hideBackground ? "transparent" : "#f0f0f0",
-      borderRadius: 6,
-      overflow: "hidden" as const,
-    }),
-    [cardWidth, imageDisplayHeight, hideBackground],
-  );
-
-  const imageStyle = useMemo(
-    () => ({
-      width: imageDisplayWidth,
-      height: imageDisplayHeight,
-    }),
-    [imageDisplayWidth, imageDisplayHeight],
-  );
-
-  const overlayStyle = useMemo(() => [tw`absolute bottom-3 right-3`], []);
-
-  const metaStyle = useMemo(
-    () => [tw`mt-3`, { width: cardWidth }],
-    [cardWidth],
-  );
 
   return (
     <View>
       <TouchableOpacity
         activeOpacity={0.8}
-        style={touchableStyle}
+        style={[tw`rounded-md`, { width: cardWidth }]}
         onPress={handlePress}
       >
-        <View style={imageContainerStyle}>
+        <View
+          style={{
+            width: cardWidth,
+            height: imageDisplayHeight,
+            backgroundColor: hideBackground ? "transparent" : "#f0f0f0",
+            borderRadius: 6,
+            overflow: "hidden",
+          }}
+        >
           <Image
             source={{ uri: imageUri }}
-            style={imageStyle}
+            style={{ width: cardWidth, height: imageDisplayHeight }}
             contentFit="cover"
-            transition={Platform.OS === "ios" ? 200 : 0}
+            transition={IMAGE_TRANSITION_MS}
             cachePolicy="memory-disk"
             placeholder={null}
-            priority="low"
+            priority="normal"
             onLoad={handleImageLoad}
           />
           {!galleryView && !disableLikeButton && (
-            <View style={overlayStyle}>
-              <View
-                style={[
-                  tw`h-[32px] w-[32px] rounded-md flex items-center justify-center`,
-                  {
-                    backgroundColor: "rgba(0,0,0,0.35)",
-                  },
-                ]}
-              >
+            <View style={TW_OVERLAY}>
+              <View style={S.likeButton}>
                 <LikeComponent
-                  art_id={art_id || ""}
-                  impressions={impressions || 0}
-                  likeIds={like_IDs || []}
+                  art_id={art_id ?? ""}
+                  impressions={impressions ?? 0}
+                  likeIds={like_IDs ?? []}
                   lightText={true}
                 />
               </View>
             </View>
           )}
         </View>
-        <View style={metaStyle}>
-          <View style={tw`flex-wrap w-full`}>
+        <View style={[tw`mt-3`, { width: cardWidth }]}>
+          <View style={S.titleWrap}>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
-                tw`text-base capitalize font-serif leading-snug ${
-                  lightText ? "text-white/90" : "text-dark"
-                } w-full`,
+                tw`text-base capitalize font-serif leading-snug w-full`,
+                lightText ? tw`text-white/90` : tw`text-dark`,
               ]}
             >
               {title}
@@ -236,36 +230,36 @@ function ArtworkCard({
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
-                tw`text-xs capitalize ${
-                  lightText ? "text-white/80" : "text-slate-500"
-                } w-full mt-0.5 font-sans-regular`,
+                tw`text-xs capitalize w-full mt-0.5 font-sans-regular`,
+                lightText ? tw`text-white/80` : tw`text-slate-500`,
               ]}
             >
               {artist}
             </Text>
           </View>
-          <View style={tw`flex flex-row items-center gap-2`}>
-            {availiablity !== false && userSession?.id && (
+          <View style={S.metaRow}>
+            {availiablity !== false && userSession?.id && !hidePriceLabel && (
               <Text
-                style={tw`text-sm ${
-                  lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                } flex-1 ${showPrice ? "font-sans-bold" : "font-sans-medium"}`}
+                style={[
+                  tw`text-sm flex-1`,
+                  lightText ? tw`text-white/90` : tw`text-[#1A1A1A]/90`,
+                  showPrice ? tw`font-sans-bold` : tw`font-sans-medium`,
+                ]}
               >
                 {showPrice ? utils_formatPrice(price) : "Price on Request"}
               </Text>
             )}
 
-            <View style={tw`flex-wrap`}>
-              {availiablity === false && (
-                <Text
-                  style={tw`text-sm ${
-                    lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                  } flex-1 font-sans-semibold`}
-                >
-                  SOLD
-                </Text>
-              )}
-            </View>
+            {availiablity === false && (
+              <Text
+                style={[
+                  tw`text-sm flex-1 font-sans-semibold`,
+                  lightText ? tw`text-white/90` : tw`text-[#1A1A1A]/90`,
+                ]}
+              >
+                SOLD
+              </Text>
+            )}
           </View>
         </View>
       </TouchableOpacity>
@@ -273,13 +267,12 @@ function ArtworkCard({
   );
 }
 
-const areLikeIdsEqual = (prevLikeIds?: string[], nextLikeIds?: string[]) => {
-  if (prevLikeIds === nextLikeIds) return true;
-  if (!prevLikeIds && !nextLikeIds) return true;
-  if (!prevLikeIds || !nextLikeIds) return false;
-  if (prevLikeIds.length !== nextLikeIds.length) return false;
-  for (let i = 0; i < prevLikeIds.length; i += 1) {
-    if (prevLikeIds[i] !== nextLikeIds[i]) return false;
+const areLikeIdsEqual = (prev?: string[], next?: string[]): boolean => {
+  if (prev === next) return true;
+  if (!prev || !next) return false;
+  if (prev.length !== next.length) return false;
+  for (let i = 0; i < prev.length; i += 1) {
+    if (prev[i] !== next[i]) return false;
   }
   return true;
 };
@@ -293,6 +286,7 @@ const arePropsEqual = (
   prev.price === next.price &&
   prev.artist === next.artist &&
   prev.showPrice === next.showPrice &&
+  prev.hidePriceLabel === next.hidePriceLabel &&
   prev.availiablity === next.availiablity &&
   prev.lightText === next.lightText &&
   prev.width === next.width &&
@@ -303,6 +297,7 @@ const arePropsEqual = (
   prev.hideBackground === next.hideBackground &&
   prev.useImageLoadAspectRatio === next.useImageLoadAspectRatio &&
   prev.image_format?.ratio === next.image_format?.ratio &&
+  prev.image_format?.orientation === next.image_format?.orientation &&
   areLikeIdsEqual(prev.like_IDs, next.like_IDs);
 
 export default React.memo(ArtworkCard, arePropsEqual);

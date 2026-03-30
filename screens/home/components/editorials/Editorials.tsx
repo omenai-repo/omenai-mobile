@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { listEditorials } from "#lib/editorial/lib/getAllBlogArticles";
@@ -46,28 +46,26 @@ export default function Editorials({ hideAction }: { hideAction?: boolean }) {
       {isLoading && data.length === 0 && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <FlatList
-          data={data}
-          keyExtractor={(_, i) => `editorial-${i}`}
+        <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          contentContainerStyle={tw`px-5 gap-5`}
-          renderItem={({ item }) => (
-            <View>
-              <EditorialCard
-                cover={item.cover}
-                headline={item.headline}
-                width={280}
-                date={item.date}
-                showDetails={true}
-                onPress={() =>
-                  navigation.navigate("ArticleScreen", { article: item })
-                }
-              />
-            </View>
-          )}
-        />
+          contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-start" }]}
+        >
+          {data.map((item: any, i: number) => (
+            <EditorialCard
+              key={`editorial-${i}`}
+              cover={item.cover}
+              headline={item.headline}
+              width={280}
+              date={item.date}
+              showDetails={true}
+              onPress={() =>
+                navigation.navigate("ArticleScreen", { article: item })
+              }
+            />
+          ))}
+        </ScrollView>
       )}
 
       {!isLoading && data.length === 0 && (

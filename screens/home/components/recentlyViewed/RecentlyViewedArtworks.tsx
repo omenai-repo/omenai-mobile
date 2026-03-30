@@ -13,6 +13,7 @@ import { useDevice } from "#hooks/useDevice";
 import SectionHeader from "#components/general/SectionHeader";
 
 type ViewHistoryItem = {
+  _id?: string;
   art_id: string;
   url: string;
   artist?: string;
@@ -32,6 +33,7 @@ function RecentlyViewedArtworks() {
   const userSessionId = useAppStore((s) => s.userSession?.id);
   const { isTablet, horizontalPadding } = useDevice();
   const userId = userSessionId;
+  const ITEM_GAP = 20;
 
   const { data = [], isLoading } = useQuery({
     queryKey: HOME_QK.recentlyViewed(userId),
@@ -61,30 +63,31 @@ function RecentlyViewedArtworks() {
           contentContainerStyle={{
             paddingLeft: isTablet ? horizontalPadding : 20,
             paddingRight: isTablet ? horizontalPadding : 20,
+            gap: ITEM_GAP,
+            alignItems: "flex-end",
           }}
         >
-          <View style={tw`flex-row gap-5 items-end`}>
-            {recentArtworks.map((item: ViewHistoryItem, index: number) => (
-              <ArtworkCard
-                key={item.art_id ?? `rv-${index}`}
-                title={item.title ?? item.artwork ?? "Untitled"}
-                url={item.url}
-                artist={item.artist ?? "Unknown artist"}
-                showPrice={
-                  !!userSessionId && item.pricing?.shouldShowPrice === "Yes"
-                }
-                price={item.pricing?.usd_price ?? 0}
-                availiablity={item.availability ?? true}
-                impressions={item.impressions ?? 0}
-                like_IDs={item.like_IDs ?? []}
-                art_id={item.art_id}
-                image_format={item.image_format}
-                disableLikeButton
-                hideBackground
-                useImageLoadAspectRatio
-              />
-            ))}
-          </View>
+          {recentArtworks.map((item, index) => (
+            <ArtworkCard
+              key={item._id ?? `${item.art_id?.toString() ?? "rv"}-${index}`}
+              title={item.title ?? item.artwork ?? "Untitled"}
+              url={item.url}
+              artist={item.artist ?? "Unknown artist"}
+              showPrice={
+                !!userSessionId && item.pricing?.shouldShowPrice === "Yes"
+              }
+              price={item.pricing?.usd_price ?? 0}
+              availiablity={item.availability ?? true}
+              impressions={item.impressions ?? 0}
+              like_IDs={item.like_IDs ?? []}
+              art_id={item.art_id}
+              image_format={item.image_format}
+              disableLikeButton
+              hideBackground
+              hidePriceLabel
+              useImageLoadAspectRatio
+            />
+          ))}
         </ScrollView>
       )}
 

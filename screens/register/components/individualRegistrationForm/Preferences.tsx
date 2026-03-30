@@ -43,7 +43,7 @@ export default function Preferences() {
       <View style={tw`flex-row gap-2.5 items-center mt-10 justify-between`}>
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <NextButton
-          isDisabled={preferences.length < 5}
+          isDisabled={preferences.length < 1}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>
