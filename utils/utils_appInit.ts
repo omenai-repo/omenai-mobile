@@ -2,6 +2,29 @@ import { useAppStore } from "../store/app/appStore";
 import { logout } from "./logout.utils";
 import { utils_getAsyncData } from "./utils_asyncStorage";
 
+const sanitizeSessionLogo = (logo: unknown): string => {
+  if (typeof logo !== "string") return "";
+
+  const trimmed = logo.trim();
+  if (!trimmed) return "";
+
+  // blob: urls are ephemeral and cannot be restored from persisted storage.
+  if (trimmed.toLowerCase().startsWith("blob:")) {
+    return "";
+  }
+
+  return trimmed;
+};
+
+const sanitizePersistedSession = (session: any) => {
+  if (!session || typeof session !== "object") return session;
+
+  return {
+    ...session,
+    logo: sanitizeSessionLogo(session.logo),
+  };
+};
+
 export const utils_appInit = async () => {
   const userData = await utils_getAsyncData("userSession");
   const loginDate = await utils_getAsyncData("loginTimeStamp");
@@ -16,7 +39,7 @@ export const utils_appInit = async () => {
   if (isSessionValid) {
     if (userData?.value) {
       try {
-        const value = JSON.parse(userData.value);
+        const value = sanitizePersistedSession(JSON.parse(userData.value));
         useAppStore.setState({
           isLoggedIn: true,
           userSession: value,

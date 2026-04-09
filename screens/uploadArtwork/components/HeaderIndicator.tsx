@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Platform, StatusBar } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import BackScreenButton from "#components/buttons/BackScreenButton";
 import { colors } from "#config/colors.config";
@@ -8,7 +8,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useAppStore } from "#store/app/appStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function HeaderIndicator() {
+export default function HeaderIndicator({
+  shouldUseArtistReviewFlow,
+}: Readonly<{
+  shouldUseArtistReviewFlow: boolean;
+}>) {
   const { userType } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { activeIndex, setActiveIndex, isUploaded, clearData } =
@@ -19,10 +23,10 @@ export default function HeaderIndicator() {
     "Upload artwork",
     "Dimensions",
     "Shipping",
-    ...(userType !== "artist" ? ["Pricing"] : []),
+    ...(userType !== "artist" || !shouldUseArtistReviewFlow ? ["Pricing"] : []),
     "Artist details",
     "Upload image",
-    ...(userType === "artist" ? ["Artwork Price Review"] : []),
+    ...(shouldUseArtistReviewFlow ? ["Artwork Price Review"] : []),
   ];
 
   return (
