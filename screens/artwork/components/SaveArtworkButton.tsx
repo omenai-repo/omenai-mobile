@@ -8,7 +8,6 @@ import { SvgXml } from "react-native-svg";
 import { heartIcon } from "#utils/SvgImages";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
-import { useAppStore } from "#store/app/appStore";
 import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 
 type SaveArtworkButtonProps = {
@@ -23,7 +22,6 @@ export default function SaveArtworkButton({
   impressions,
 }: SaveArtworkButtonProps) {
   const [sessionId, setSessionId] = useState("");
-  const { userSession } = useAppStore();
   const { openGuestLoginModal } = useGuestLoginModalStore();
 
   useEffect(() => {
@@ -53,7 +51,7 @@ export default function SaveArtworkButton({
       ]}
       value={isSaved ? "Remove from collection" : "Save to collection"}
       onClick={() => {
-        if (!userSession) {
+        if (!sessionId) {
           openGuestLoginModal();
         } else {
           handleLike(!isSaved);

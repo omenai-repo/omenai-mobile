@@ -1,33 +1,25 @@
+import { ID } from "appwrite";
+import { storage } from "#appWrite_config";
+
 const uploadArtistDoc = async (file: {
   uri: string;
   name: string;
   type: string;
+  size?: number;
 }) => {
-  const formData = new FormData();
-
-  formData.append("fileId", "unique()"); // Appwrite will auto-generate an ID
-  formData.append("file", {
+  const normalizedFile = {
     uri: file.uri,
-    name: file.name,
-    type: file.type,
-  } as any); // TS expects a `File`, so we cast
+    name: file.name || `artist-doc-${Date.now()}.pdf`,
+    type: file.type || "application/pdf",
+    size: file.size ?? 0,
+  };
 
-  const res = await fetch(
-    `${process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID}/files`,
-    {
-      method: "POST",
-      headers: {
-        "X-Appwrite-Project": process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
-        "X-Appwrite-Key": process.env.EXPO_PUBLIC_APPWRITE_UPLOAD_KEY!,
-      },
-      body: formData,
-    },
-  );
-
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.message || "Upload failed");
-
-  return json; // file metadata
+  const fileUploaded = await storage.createFile({
+    bucketId: process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID!,
+    fileId: ID.unique(),
+    file: normalizedFile as any,
+  });
+  return fileUploaded;
 };
 
 export default uploadArtistDoc;

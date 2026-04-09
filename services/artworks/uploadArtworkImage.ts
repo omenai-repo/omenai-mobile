@@ -2,32 +2,39 @@ const uploadImage = async (file: {
   uri: string;
   name: string;
   type: string;
+  size?: number;
 }) => {
-  const formData = new FormData();
-
-  formData.append("fileId", "unique()"); // Appwrite will auto-generate an ID
-  formData.append("file", {
+  const normalizedFile = {
     uri: file.uri,
-    name: file.name,
-    type: file.type,
-  } as any); // TS expects a `File`, so we cast
+    name: file.name || `artwork-${Date.now()}.jpg`,
+    type: file.type || "image/jpeg",
+  };
 
-  const url = `${process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID}/files`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "X-Appwrite-Project": process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
-      "X-Appwrite-Key": process.env.EXPO_PUBLIC_APPWRITE_UPLOAD_KEY!,
+  const formData = new FormData();
+  formData.append("fileId", "unique()");
+  formData.append("file", normalizedFile as any);
+
+  const res = await fetch(
+    `${process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID}/files`,
+    {
+      method: "POST",
+      headers: {
+        "X-Appwrite-Project": process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
+      },
+      body: formData,
     },
-    body: formData,
-  });
+  );
 
   const json = await res.json();
   if (!res.ok) {
-    throw new Error(json.message || "Upload failed");
+    throw new Error(json?.message || "Upload failed");
   }
 
-  return json; // file metadata
+  if (!json?.$id) {
+    throw new Error("Upload failed: file id missing");
+  }
+
+  return json;
 };
 
 export default uploadImage;

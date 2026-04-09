@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  getStateFromPath as getStateFromPathDefault,
+} from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useAppStore } from "#store/app/appStore";
 import { utils_appInit } from "#utils/utils_appInit";
@@ -36,6 +39,8 @@ import { SupportProvider } from "#providers/SupportProvider";
 import SupportWidget from "#components/support/SupportWidget";
 import WithModal from "#components/modal/WithModal";
 import GuestLoginModal from "#components/guest/GuestLoginModal";
+import { screenName } from "#constants/screenNames.constants";
+import { sanitizeDeepLinkPath } from "#config/deepLinking.config";
 
 // Set default font for all Text and TextInput components
 // @ts-ignore
@@ -128,20 +133,86 @@ export default function App() {
     }
 
     prepare();
-  }, []);
+  }, [setExpoPushToken]);
 
   const prefix = Linking.createURL("/");
 
   const config = {
     screens: {
-      CancleOrderPayment: "CancleOrderPayment",
-      SuccessOrderPayment: "SuccessOrderPayment",
+      Login: "login",
+      [screenName.cancleOrderPayment]: "CancleOrderPayment",
+      [screenName.successOrderPayment]: "SuccessOrderPayment",
+      Individual: {
+        screens: {
+          Overview: "dl/individual/overview",
+          Artworks: "dl/individual/artworks",
+          Search: "dl/individual/search",
+          Orders: "dl/individual/orders",
+          Profile: "dl/individual/profile",
+          [screenName.artwork]: "dl/individual/artwork/:id",
+        },
+      },
+      Artist: {
+        screens: {
+          Overview: "dl/artist/overview",
+          Artworks: "dl/artist/artworks",
+          Orders: "dl/artist/orders",
+          Review: "dl/artist/review",
+          Profile: "dl/artist/profile",
+          [screenName.artwork]: "dl/artist/artwork/:id",
+        },
+      },
+      Gallery: {
+        screens: {
+          Overview: "dl/gallery/overview",
+          Artworks: "dl/gallery/artworks",
+          Orders: "dl/gallery/orders",
+          Billing: "dl/gallery/billing",
+          Payouts: "dl/gallery/payouts",
+          Profile: "dl/gallery/profile",
+          [screenName.artwork]: "dl/gallery/artwork/:id",
+        },
+      },
     },
   };
 
   const linking = {
-    prefixes: [prefix],
+    prefixes: [prefix, "https://omenai.app"],
     config,
+    getInitialURL: async () => {
+      const url = await Linking.getInitialURL();
+      if (!url) return null;
+
+      const path = Linking.parse(url).path ?? "";
+      const sanitizedPath = sanitizeDeepLinkPath(path, {
+        isLoggedIn,
+        userType,
+      });
+
+      return `${prefix}${sanitizedPath}`;
+    },
+    subscribe: (listener: (url: string) => void) => {
+      const onReceiveURL = ({ url }: { url: string }) => {
+        const path = Linking.parse(url).path ?? "";
+        const sanitizedPath = sanitizeDeepLinkPath(path, {
+          isLoggedIn,
+          userType,
+        });
+
+        listener(`${prefix}${sanitizedPath}`);
+      };
+
+      const subscription = Linking.addEventListener("url", onReceiveURL);
+      return () => subscription.remove();
+    },
+    getStateFromPath: (path: string, options: any) => {
+      const sanitizedPath = sanitizeDeepLinkPath(path, {
+        isLoggedIn,
+        userType,
+      });
+
+      return getStateFromPathDefault(sanitizedPath, options);
+    },
   };
 
   const [fontsLoaded] = useFonts({

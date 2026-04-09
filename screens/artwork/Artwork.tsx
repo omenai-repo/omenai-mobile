@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import DetailsCard from "./components/detailsCard/DetailsCard";
 import ArtistInformationCard from "./components/detailsCard/ArtistInformationCard";
+import { getCountryName } from "#utils/utils_getCountryName";
 import ArtworkImageSection from "./components/ArtworkImageSection";
 import ArtworkContentSection from "./components/ArtworkContentSection";
 import { fetchsingleArtwork } from "#services/artworks/fetchSingleArtwork";
@@ -380,7 +381,7 @@ export default function Artwork() {
               <ArtistInformationCard
                 artistName={artwork.artist}
                 birthYear={artwork.artist_birthyear}
-                country={artwork.artist_country_origin}
+                country={getCountryName(artwork.artist_country_origin)}
               />
             </View>
 

@@ -182,7 +182,7 @@ export default function SavedArtworks() {
                 artistName={artwork.artist}
                 url={artwork.url}
                 art_id={artwork.art_id}
-                likeIds={artwork.like_ids}
+                likeIds={artwork.like_IDs || []}
                 impressions={artwork.impressions}
                 index={index}
                 key={index}

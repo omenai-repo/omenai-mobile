@@ -1,12 +1,11 @@
 import { Platform } from "react-native";
-import { authorization, userAgent } from "../config/api.config";
 import { getSecureItem } from "./secureStore";
 
 export const getApiHeaders = async (authenticated: boolean = true) => {
   const headers: any = {
     "Content-Type": "application/json",
-    "User-Agent": userAgent,
-    "x-access-key": authorization,
+    "User-Agent": process.env.EXPO_PUBLIC_API_USER_AGENT!,
+    "x-access-key": process.env.EXPO_PUBLIC_API_AUTHORIZATION!,
     "x-omenai-client": Platform.OS === "ios" ? "ios" : "android",
   };
 

@@ -31,7 +31,7 @@ export default function ArtistDetails() {
   const transformedCountries = useMemo(
     () =>
       Country.getAllCountries().map((item: ICountry) => ({
-        value: item.isoCode,
+        value: item.name,
         label: item.name,
       })),
     [],
