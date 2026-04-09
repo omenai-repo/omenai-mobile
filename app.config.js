@@ -30,6 +30,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: "com.omenai.omenaimobile",
       buildNumber: IOS_BUILD_NUMBER,
+      associatedDomains: ["applinks:omenai.app"],
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         NSUserNotificationUsageDescription:
@@ -49,6 +50,20 @@ export default {
       permissions: ["android.permission.RECORD_AUDIO"],
       versionCode: ANDROID_VERSION_CODE,
       softwareKeyboardLayoutMode: "pan",
+      intentFilters: [
+        {
+          action: "VIEW",
+          autoVerify: true,
+          data: [
+            {
+              scheme: "https",
+              host: "omenai.app",
+              pathPrefix: "/dl",
+            },
+          ],
+          category: ["BROWSABLE", "DEFAULT"],
+        },
+      ],
     },
     web: {
       favicon: "./assets/favicon.png",

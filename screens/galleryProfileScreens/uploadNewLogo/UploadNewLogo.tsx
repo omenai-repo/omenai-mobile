@@ -49,9 +49,10 @@ export default function UploadNewLogo() {
 
   const handleUpload = async () => {
     const logoParams = {
-      name: logo.assets[0].fileName,
+      name: logo.assets[0].fileName || `logo-${Date.now()}.jpg`,
       uri: logo.assets[0].uri,
-      type: logo.assets[0].mimeType,
+      type: logo.assets[0].mimeType || "image/jpeg",
+      size: logo.assets[0].fileSize,
     };
 
     try {

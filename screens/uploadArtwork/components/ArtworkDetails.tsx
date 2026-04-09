@@ -44,21 +44,42 @@ export default function ArtworkDetails() {
   });
 
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every(
-      (error) => error === "",
-    );
-    const areAllFieldsFilled = Object.values({
-      title: artworkUploadData.title,
-      materials: artworkUploadData.materials,
-      year: artworkUploadData.year,
-      medium: artworkUploadData.medium,
-      rarity: artworkUploadData.rarity,
-      certificate_of_auth: artworkUploadData.certificate_of_authenticity,
-      signature: artworkUploadData.signature,
-    }).every((value) => value !== "");
+    const isTitleValid = validate("title", artworkUploadData.title).success;
+    const isDescriptionValid = validate(
+      "description",
+      artworkUploadData.artwork_description || "",
+    ).success;
+    const isMaterialsValid = validate(
+      "materials",
+      artworkUploadData.materials,
+    ).success;
+    const isYearValid = validate(
+      "year",
+      artworkUploadData.year === 0
+        ? ""
+        : artworkUploadData.year?.toString() || "",
+    ).success;
 
-    return !(isFormValid && areAllFieldsFilled);
+    const isFormValid =
+      isTitleValid &&
+      isDescriptionValid &&
+      isMaterialsValid &&
+      isYearValid &&
+      Object.values(formErrors).every((error) => error === "");
+
+    const areAllFieldsFilled = [
+      artworkUploadData.title,
+      artworkUploadData.artwork_description,
+      artworkUploadData.materials,
+      artworkUploadData.medium,
+      artworkUploadData.rarity,
+      artworkUploadData.certificate_of_authenticity,
+      artworkUploadData.signature,
+    ].every((value) => (value || "").trim() !== "");
+
+    const isYearFilled = artworkUploadData.year !== 0;
+
+    return !(isFormValid && areAllFieldsFilled && isYearFilled);
   };
 
   const handleValidationChecks = (label: string, value: string) => {

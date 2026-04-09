@@ -1,49 +1,49 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from "expo-secure-store";
 
 export const utils_storeAsyncData = async (key: string, value: string) => {
-    try {
-        await AsyncStorage.setItem(key, value);
-        return true
-    } catch (e) {
-        console.error('Failed to save data');
-    }
+  try {
+    await SecureStore.setItemAsync(key, value);
+    return true;
+  } catch {
+    console.error("Failed to save data");
+  }
 
-    return false
+  return false;
 };
 
 export const utils_getAsyncData = async (key: string) => {
-    try {
-        const value = await AsyncStorage.getItem(key);
-        if (value !== null) {
-            return {isOk: true, value:value};
-        } else {
-            console.log('No data found for key:', key);
+  try {
+    const value = await SecureStore.getItemAsync(key);
+    if (value !== null) {
+      return { isOk: true, value: value };
+    } else {
+      console.log("No data found for key:", key);
     }
-    } catch (e) {
-        console.error('Failed to fetch the data');
-    }
+  } catch {
+    console.error("Failed to fetch the data");
+  }
 
-    return {
-        isOk: false
-    }
+  return {
+    isOk: false,
+  };
 };
 
 export const utils_clearLocalStorage = async () => {
-    try {
-        const keys = ['userSession', 'loginTimeStamp'];
-        await AsyncStorage.multiRemove(keys);
-        console.log('Local storage cleared successfully');
-    } catch (e) {
-      console.error('Failed to clear local storage');
-    }
+  try {
+    const keys = ["userSession", "loginTimeStamp"];
+    await Promise.all(keys.map((key) => SecureStore.deleteItemAsync(key)));
+    console.log("Local storage cleared successfully");
+  } catch {
+    console.error("Failed to clear local storage");
+  }
 };
 
 export const utils_handleFetchUserID = async () => {
-    const userdata = await utils_getAsyncData('userSession');
-    if(userdata.value){
-        const userId = JSON.parse(userdata.value).id
-        return(userId)
-    }
+  const userdata = await utils_getAsyncData("userSession");
+  if (userdata.value) {
+    const userId = JSON.parse(userdata.value).id;
+    return userId;
+  }
 
-    return
-}
+  return;
+};

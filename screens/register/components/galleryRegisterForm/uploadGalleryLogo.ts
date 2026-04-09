@@ -3,10 +3,18 @@ import { ID } from "appwrite";
 
 const uploadGalleryLogoContent = async (file: any) => {
   if (!file) return;
+
+  const normalizedFile = {
+    uri: file.uri,
+    name: file.name || `logo-${Date.now()}.jpg`,
+    type: file.type || "image/jpeg",
+    size: file.size ?? 0,
+  };
+
   const fileUploaded = await storage.createFile({
     bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
     fileId: ID.unique(),
-    file: file,
+    file: normalizedFile as any,
   });
   return fileUploaded;
 };

@@ -12,6 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as DocumentPicker from "expo-document-picker";
 import * as WebBrowser from "expo-web-browser";
+import { ID } from "appwrite";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import { useModalStore } from "#store/modal/modalStore";
@@ -29,6 +30,7 @@ import { createPriceReviewRequest } from "#services/artworks/createPriceReviewRe
 import { screenName } from "#constants/screenNames.constants";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import LongBlackButton from "#components/buttons/LongBlackButton";
+import { storage } from "#appWrite_config";
 import AgreementSection from "./components/AgreementSection";
 import JustificationSection from "./components/JustificationSection";
 import PriceStatusNotice from "./components/PriceStatusNotice";
@@ -85,6 +87,7 @@ export default function ProposalPriceModal() {
     uri: string;
     name: string;
     type: string;
+    size?: number;
   } | null>(null);
   const [shouldShowPrice, setShouldShowPrice] = useState<"Yes" | "No">(
     artworkUploadData?.shouldShowPrice === "No" ? "No" : "Yes",
@@ -148,33 +151,21 @@ export default function ProposalPriceModal() {
     uri: string;
     name: string;
     type: string;
+    size?: number;
   }) => {
-    const formData = new FormData();
-    formData.append("fileId", "unique()");
-    formData.append("file", {
+    const normalizedFile = {
       uri: file.uri,
-      name: file.name,
-      type: file.type,
-    } as any);
+      name: file.name || `proof-${Date.now()}.pdf`,
+      type: file.type || "application/pdf",
+      size: file.size ?? 0,
+    };
 
-    const res = await fetch(
-      `${process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID}/files`,
-      {
-        method: "POST",
-        headers: {
-          "X-Appwrite-Project": process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
-          "X-Appwrite-Key": process.env.EXPO_PUBLIC_APPWRITE_UPLOAD_KEY!,
-        },
-        body: formData,
-      },
-    );
-
-    const result = await res.json();
-    if (!res.ok) {
-      throw new Error(result?.message || "Proof document upload failed");
-    }
-
-    return result;
+    const fileUploaded = await storage.createFile({
+      bucketId: process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID!,
+      fileId: ID.unique(),
+      file: normalizedFile as any,
+    });
+    return fileUploaded;
   };
 
   const pickProofDocument = async () => {
@@ -211,6 +202,7 @@ export default function ProposalPriceModal() {
       uri: first.uri,
       name: first.name || "proof-document",
       type: first.mimeType || "application/octet-stream",
+      size: first.size,
     });
     setJustificationUrl("");
     if (inputError) setInputError(null);
@@ -304,6 +296,7 @@ export default function ProposalPriceModal() {
         uri: artworkImageAsset.uri,
         name: artworkImageAsset.fileName || `artwork-${Date.now()}.jpg`,
         type: artworkImageAsset.mimeType || "image/jpeg",
+        size: artworkImageAsset.fileSize,
       });
 
       if (!uploadedArtwork?.$id) {

@@ -350,6 +350,7 @@ const ArtistOnboarding = () => {
       uri: cv.assets[0].uri,
       name: cv.assets[0].name,
       type: cv.assets[0].mimeType,
+      size: cv.assets[0].size,
     };
 
     const fileUploaded = await uploadArtistDoc(files);
