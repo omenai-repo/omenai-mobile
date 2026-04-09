@@ -4,16 +4,16 @@ import UploadImageInput from "#components/inputs/UploadImageInput";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import * as ImagePicker from "expo-image-picker";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
-import { useAppStore } from "#store/app/appStore";
 import { useModalStore } from "#store/modal/modalStore";
 
 export default function UploadImage({
   handleUpload,
+  shouldUseDirectPricingFlow,
 }: Readonly<{
   handleUpload: () => void;
+  shouldUseDirectPricingFlow: boolean;
 }>) {
   const { image, setImage } = uploadArtworkStore();
-  const { userType } = useAppStore();
   const { updateModal } = useModalStore();
 
   const [isImageChanging, setIsImageChanging] = useState(false);
@@ -87,7 +87,7 @@ export default function UploadImage({
           <LongBlackButton outline value="Change image" onClick={pickImage} />
         )}
         <LongBlackButton
-          value={userType === "gallery" ? "Proceed" : "Get price quote"}
+          value={shouldUseDirectPricingFlow ? "Proceed" : "Get price quote"}
           onClick={handleUpload}
           isLoading={false}
           isDisabled={image === null}

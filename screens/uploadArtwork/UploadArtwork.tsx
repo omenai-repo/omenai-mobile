@@ -52,12 +52,17 @@ export default function UploadArtwork() {
     clearData,
   } = uploadArtworkStore();
   const { updateModal } = useModalStore();
+  const normalizedCategorization = userSession?.categorization?.trim().toLowerCase();
+  const isEmergingArtist = normalizedCategorization === "emerging";
+  const hasArtistCategorization = Boolean(normalizedCategorization);
+  const shouldUseArtistReviewFlow = userType === "artist" && isEmergingArtist;
+  const shouldUseDirectPricingFlow = userType !== "artist" || !isEmergingArtist;
 
   useEffect(() => {
     return () => {
       clearData();
     };
-  }, []);
+  }, [clearData]);
 
   useEffect(() => {
     if (userType === "gallery") {
@@ -220,7 +225,7 @@ export default function UploadArtwork() {
 
   const handleUpload = async () => {
     try {
-      if (userType === "gallery") {
+      if (shouldUseDirectPricingFlow) {
         await handleArtworkUpload();
       } else {
         setActiveIndex(activeIndex + 1);
@@ -238,12 +243,16 @@ export default function UploadArtwork() {
     <ArtworkDetails key="artwork-details" />,
     <ArtworkDimensions key="artwork-dimensions" />,
     <ArtworkShipping key="artwork-shipping" />,
-    ...(userType === "artist"
-      ? []
-      : [<Pricing key="pricing" plan={isConfirmed?.plan} />]),
+    ...(shouldUseDirectPricingFlow
+      ? [<Pricing key="pricing" plan={isConfirmed?.plan} />]
+      : []),
     <ArtistDetails key="artist-details" />,
-    <UploadImage key="upload-image" handleUpload={handleUpload} />,
-    ...(userType === "artist"
+    <UploadImage
+      key="upload-image"
+      handleUpload={handleUpload}
+      shouldUseDirectPricingFlow={shouldUseDirectPricingFlow}
+    />,
+    ...(shouldUseArtistReviewFlow
       ? [
           <ArtworkPriceReviewScreen
             key="price-review"
@@ -263,7 +272,7 @@ export default function UploadArtwork() {
 
   const renderUploadContent = () => (
     <View style={{ paddingBottom: insets.bottom + 16, flex: 1 }}>
-      <HeaderIndicator />
+      <HeaderIndicator shouldUseArtistReviewFlow={shouldUseArtistReviewFlow} />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -301,6 +310,7 @@ export default function UploadArtwork() {
 
   const isPageLoading =
     (userType === "gallery" && loadGalleryCheck) ||
+    (userType === "artist" && !hasArtistCategorization) ||
     isPriceFlagLoading ||
     isUploadFlagLoading;
 

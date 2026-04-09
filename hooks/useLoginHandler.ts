@@ -23,6 +23,20 @@ const USER_ID_MAP = {
   artist: "artist_id",
 } as const;
 
+const sanitizeSessionLogo = (logo: unknown): string => {
+  if (typeof logo !== "string") return "";
+
+  const trimmed = logo.trim();
+  if (!trimmed) return "";
+
+  // blob: urls are in-memory references and become invalid across sessions.
+  if (trimmed.toLowerCase().startsWith("blob:")) {
+    return "";
+  }
+
+  return trimmed;
+};
+
 export function useLoginHandler(userType: UserType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { setUserSession, setUserType, setIsLoggedIn, expoPushToken } =
@@ -37,6 +51,16 @@ export function useLoginHandler(userType: UserType) {
     getStoredEmail,
     deleteCredentials,
   } = useBiometrics();
+
+  const sanitizeErrorMessage = (message: unknown) => {
+    if (typeof message !== "string") return "Something went wrong. Please try again.";
+
+    if (message.toLowerCase().includes("unable to resolve data for blob")) {
+      return "A temporary device data error occurred. Please restart the app and try again.";
+    }
+
+    return message;
+  };
 
   const finalizeLogin = (data: any, clearInputs: () => void) => {
     setUserSession(data);
@@ -148,7 +172,7 @@ export function useLoginHandler(userType: UserType) {
         });
       }
       updateModal({
-        message: results?.body.message,
+        message: sanitizeErrorMessage(results?.body.message),
         showModal: true,
         modalType: "error",
       });
@@ -246,7 +270,7 @@ function mapUserData(resultsBody: any, userType: UserType) {
     verified: resultsBody.verified,
     address: resultsBody.address,
     phone: resultsBody.phone,
-    logo: resultsBody.logo,
+    logo: sanitizeSessionLogo(resultsBody.logo),
   };
 
   switch (userType) {

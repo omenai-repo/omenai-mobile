@@ -15,6 +15,7 @@ import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
 import { useModalStore } from "#store/modal/modalStore";
 import { getFlag } from "#utils/getFlag";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useAppStore } from "#store/app/appStore";
 
 const transformedCurrencies = currencies.map((item) => ({
   value: item.code,
@@ -28,6 +29,7 @@ type artworkPricingErrorsType = {
 export default function Pricing({
   plan,
 }: Readonly<{ plan: string | undefined }>) {
+  const { userType } = useAppStore();
   const {
     setActiveIndex,
     activeIndex,
@@ -36,15 +38,15 @@ export default function Pricing({
   } = uploadArtworkStore();
 
   // Determine if display price should be locked
-  const isDisplayPriceLocked = ["basic", "pro"].includes(
-    plan?.toLowerCase() || "",
-  );
+  const isArtist = userType === "artist";
+  const isDisplayPriceLocked =
+    isArtist || ["basic", "pro"].includes(plan?.toLowerCase() || "");
 
   useEffect(() => {
     if (isDisplayPriceLocked) {
       updateArtworkUploadData("shouldShowPrice", "Yes");
     }
-  }, [plan]);
+  }, [isDisplayPriceLocked, updateArtworkUploadData]);
 
   const { updateModal } = useModalStore();
 
@@ -237,24 +239,26 @@ export default function Pricing({
           />
         </View>
 
-        {/* Display price */}
-        <View style={tw`z-[10]`}>
-          <CustomSelectPicker
-            label="Display price"
-            data={getDisplayPriceOptions()}
-            placeholder="Select"
-            value={artworkUploadData.shouldShowPrice}
-            handleSetValue={(item) =>
-              updateArtworkUploadData("shouldShowPrice", item.value)
-            }
-            disable={isDisplayPriceLocked}
-          />
-          {isDisplayPriceLocked && (
-            <Text style={tw`text-[10px] text-slate-400 mt-1`}>
-              * Upgrade your plan to unlock advanced pricing visibility options.
-            </Text>
-          )}
-        </View>
+        {/* Display price (gallery only). Artist listings are always public. */}
+        {!isArtist && (
+          <View style={tw`z-[10]`}>
+            <CustomSelectPicker
+              label="Display price"
+              data={getDisplayPriceOptions()}
+              placeholder="Select"
+              value={artworkUploadData.shouldShowPrice}
+              handleSetValue={(item) =>
+                updateArtworkUploadData("shouldShowPrice", item.value)
+              }
+              disable={isDisplayPriceLocked}
+            />
+            {isDisplayPriceLocked && (
+              <Text style={tw`text-[10px] text-slate-400 mt-1`}>
+                * Upgrade your plan to unlock advanced pricing visibility options.
+              </Text>
+            )}
+          </View>
+        )}
       </View>
 
       <View style={tw`z-[2]`}>
