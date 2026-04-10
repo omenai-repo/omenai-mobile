@@ -4,6 +4,9 @@ import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import Input from "#components/inputs/Input";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import ArtistExclusivityAgreementSection, {
+  isArtistExclusivityComplete,
+} from "./ArtistExclusivityAgreementSection";
 import { displayPrice } from "#data/uploadArtworkForm.data";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
@@ -28,7 +31,12 @@ type artworkPricingErrorsType = {
 
 export default function Pricing({
   plan,
-}: Readonly<{ plan: string | undefined }>) {
+  onFinalProceed,
+}: Readonly<{
+  plan: string | undefined;
+  /** When set (e.g. artist self-priced last step), run this instead of advancing the stepper. */
+  onFinalProceed?: () => void | Promise<void>;
+}>) {
   const { userType } = useAppStore();
   const {
     setActiveIndex,
@@ -50,6 +58,17 @@ export default function Pricing({
 
   const { updateModal } = useModalStore();
 
+  /** Non-emerging artists on this screen must accept exclusivity before upload (same terms as price review). */
+  const requiresArtistExclusivity = isArtist;
+  const [priceConsent, setPriceConsent] = useState(false);
+  const [acknowledgment, setAcknowledgment] = useState(false);
+  const [penaltyConsent, setPenaltyConsent] = useState(false);
+  const exclusivityComplete = isArtistExclusivityComplete(
+    priceConsent,
+    acknowledgment,
+    penaltyConsent,
+  );
+
   const [formErrors, setFormErrors] = useState<artworkPricingErrorsType>({
     price: "",
   });
@@ -59,7 +78,6 @@ export default function Pricing({
     artworkUploadData.price === 0 ? "" : artworkUploadData.price.toString(),
   );
 
-  const currency_symbol = utils_getCurrencySymbol(artworkUploadData.currency);
   const usd_symbol = utils_getCurrencySymbol("USD");
 
   const checkIsDisabled = () => {
@@ -75,7 +93,12 @@ export default function Pricing({
       if (index === 0 && value === 0) return false;
       return true;
     });
-    return !(isFormValid && areAllFieldsFilled) || loadingConversion;
+    const pricingReady =
+      isFormValid && areAllFieldsFilled && !loadingConversion;
+    if (requiresArtistExclusivity) {
+      return !(pricingReady && exclusivityComplete);
+    }
+    return !pricingReady;
   };
 
   const handleValidationChecks = (label: string, value: string) => {
@@ -141,9 +164,28 @@ export default function Pricing({
     localPrice !== "" &&
     Number.parseInt(localPrice, 10) > 0;
 
+  const handleProceedPress = () => {
+    if (requiresArtistExclusivity && !exclusivityComplete) {
+      updateModal({
+        showModal: true,
+        modalType: "error",
+        message:
+          "All artworks by Omenai artists include a 90-day exclusivity clause. Please read and accept every item below before continuing.",
+      });
+      return;
+    }
+    if (onFinalProceed) {
+      void onFinalProceed();
+    } else {
+      setActiveIndex(activeIndex + 1);
+    }
+  };
+
   return (
     <View style={tw`flex-1`}>
-      <View style={tw`gap-5 mb-12 z-10`}>
+      <View
+        style={tw`gap-5 z-10 ${requiresArtistExclusivity ? "mb-6" : "mb-6"}`}
+      >
         {/* Currency */}
         <View style={tw`z-[11]`}>
           <CustomSelectPicker
@@ -261,10 +303,25 @@ export default function Pricing({
         )}
       </View>
 
-      <View style={tw`z-[2]`}>
+      {/* Artist exclusivity: pinned to bottom with Proceed (no large gap above) */}
+      {requiresArtistExclusivity && (
+        <View style={tw`mt-3 mb-6`}>
+          <ArtistExclusivityAgreementSection
+            priceConsent={priceConsent}
+            acknowledgment={acknowledgment}
+            penaltyConsent={penaltyConsent}
+            onTogglePriceConsent={() => setPriceConsent((s) => !s)}
+            onToggleAcknowledgment={() => setAcknowledgment((s) => !s)}
+            onTogglePenaltyConsent={() => setPenaltyConsent((s) => !s)}
+            subtitle="All artist listings on Omenai include a 90-day exclusivity period. You must confirm each point below to set your price and upload."
+          />
+        </View>
+      )}
+
+      <View style={tw`z-[2] mt-0`}>
         <LongBlackButton
           value="Proceed"
-          onClick={() => setActiveIndex(activeIndex + 1)}
+          onClick={handleProceedPress}
           isLoading={false}
           isDisabled={checkIsDisabled()}
         />

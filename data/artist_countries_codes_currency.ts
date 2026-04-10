@@ -142,6 +142,13 @@ export const artist_countries_codes_currency = [
     currency: "USD",
     symbol: "$",
   },
+  {
+    name: "United Kingdom",
+    alpha2: "GB",
+    alpha3: "GBR",
+    currency: "GBP",
+    symbol: "£",
+  },
 
   // --- SEPA Countries (Euro Currency) ---
   {
@@ -302,13 +309,6 @@ export const artist_countries_codes_currency = [
     name: "Spain",
     alpha2: "ES",
     alpha3: "ESP",
-    currency: "EUR",
-    symbol: "€",
-  },
-  {
-    name: "Vatican City",
-    alpha2: "VA",
-    alpha3: "VAT",
     currency: "EUR",
     symbol: "€",
   },

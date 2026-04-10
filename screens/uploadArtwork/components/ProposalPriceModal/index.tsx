@@ -34,6 +34,7 @@ import JustificationSection from "./components/JustificationSection";
 import PriceStatusNotice from "./components/PriceStatusNotice";
 import PricingOverrideCard from "./components/PricingOverrideCard";
 import { JustificationType } from "./types";
+import { uploadToAppwrite } from "#utils/uploadToAppwrite";
 
 const parseHasAutoApprovalsRemaining = (value: unknown): boolean => {
   if (typeof value === "boolean") return value;
@@ -150,43 +151,14 @@ export default function ProposalPriceModal() {
     name: string;
     type: string;
     size?: number;
-  }) => {
-    if (!file?.uri) {
-      throw new Error("Document file path is missing.");
-    }
-
-    const normalizedFile = {
-      uri: file.uri,
-      name: file.name || `proof-${Date.now()}.pdf`,
-      type: file.type || "application/pdf",
-    };
-
-    const formData = new FormData();
-    formData.append("fileId", "unique()");
-    formData.append("file", normalizedFile as any);
-
-    const res = await fetch(
-      `${process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID}/files`,
-      {
-        method: "POST",
-        headers: {
-          "X-Appwrite-Project": process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
-        },
-        body: formData,
-      },
-    );
-
-    const json = await res.json();
-    if (!res.ok) {
-      throw new Error(json?.message || "Document upload failed");
-    }
-
-    if (!json?.$id) {
-      throw new Error("Document upload failed: file id missing");
-    }
-
-    return json;
-  };
+  }) =>
+    uploadToAppwrite({
+      bucketId: process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID!,
+      file,
+      fallbackName: `proof-${Date.now()}.pdf`,
+      fallbackType: "application/pdf",
+      errorMessage: "Document upload failed",
+    });
 
   const pickProofDocument = async () => {
     const result = await DocumentPicker.getDocumentAsync({

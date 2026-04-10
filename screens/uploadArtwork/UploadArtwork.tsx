@@ -57,6 +57,7 @@ export default function UploadArtwork() {
   const hasArtistCategorization = Boolean(normalizedCategorization);
   const shouldUseArtistReviewFlow = userType === "artist" && isEmergingArtist;
   const shouldUseDirectPricingFlow = userType !== "artist" || !isEmergingArtist;
+  const isArtistSelfPriced = userType === "artist" && !isEmergingArtist;
 
   useEffect(() => {
     return () => {
@@ -223,9 +224,9 @@ export default function UploadArtwork() {
     }
   };
 
-  const handleUpload = async () => {
+  const handleUploadFromImageStep = async () => {
     try {
-      if (shouldUseDirectPricingFlow) {
+      if (userType === "gallery") {
         await handleArtworkUpload();
       } else {
         setActiveIndex(activeIndex + 1);
@@ -239,28 +240,52 @@ export default function UploadArtwork() {
     }
   };
 
-  const components = [
-    <ArtworkDetails key="artwork-details" />,
-    <ArtworkDimensions key="artwork-dimensions" />,
-    <ArtworkShipping key="artwork-shipping" />,
-    ...(shouldUseDirectPricingFlow
-      ? [<Pricing key="pricing" plan={isConfirmed?.plan} />]
-      : []),
-    <ArtistDetails key="artist-details" />,
-    <UploadImage
-      key="upload-image"
-      handleUpload={handleUpload}
-      shouldUseDirectPricingFlow={shouldUseDirectPricingFlow}
-    />,
-    ...(shouldUseArtistReviewFlow
-      ? [
-          <ArtworkPriceReviewScreen
-            key="price-review"
-            onConfirm={handleArtworkUpload}
-          />,
-        ]
-      : []),
-  ];
+  const imageStepButtonLabel =
+    userType === "gallery"
+      ? "Proceed"
+      : isEmergingArtist
+        ? "Get price quote"
+        : "Proceed";
+
+  const components = isArtistSelfPriced
+    ? [
+        <ArtworkDetails key="artwork-details" />,
+        <ArtworkDimensions key="artwork-dimensions" />,
+        <ArtworkShipping key="artwork-shipping" />,
+        <ArtistDetails key="artist-details" />,
+        <UploadImage
+          key="upload-image"
+          handleUpload={handleUploadFromImageStep}
+          primaryButtonLabel={imageStepButtonLabel}
+        />,
+        <Pricing
+          key="pricing"
+          plan={isConfirmed?.plan}
+          onFinalProceed={handleArtworkUpload}
+        />,
+      ]
+    : [
+        <ArtworkDetails key="artwork-details" />,
+        <ArtworkDimensions key="artwork-dimensions" />,
+        <ArtworkShipping key="artwork-shipping" />,
+        ...(shouldUseDirectPricingFlow
+          ? [<Pricing key="pricing" plan={isConfirmed?.plan} />]
+          : []),
+        <ArtistDetails key="artist-details" />,
+        <UploadImage
+          key="upload-image"
+          handleUpload={handleUploadFromImageStep}
+          primaryButtonLabel={imageStepButtonLabel}
+        />,
+        ...(shouldUseArtistReviewFlow
+          ? [
+              <ArtworkPriceReviewScreen
+                key="price-review"
+                onConfirm={handleArtworkUpload}
+              />,
+            ]
+          : []),
+      ];
 
   const shouldShowVerificationBlock =
     !userSession?.gallery_verified && !isConfirmed?.isSubActive;
@@ -272,7 +297,10 @@ export default function UploadArtwork() {
 
   const renderUploadContent = () => (
     <View style={{ paddingBottom: insets.bottom + 16, flex: 1 }}>
-      <HeaderIndicator shouldUseArtistReviewFlow={shouldUseArtistReviewFlow} />
+      <HeaderIndicator
+        shouldUseArtistReviewFlow={shouldUseArtistReviewFlow}
+        isArtistSelfPriced={isArtistSelfPriced}
+      />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -346,7 +374,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    marginTop: 20,
-    paddingTop: 20,
+    marginTop: 8,
+    paddingTop: 8,
   },
 });
