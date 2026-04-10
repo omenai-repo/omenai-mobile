@@ -1,7 +1,10 @@
-import React from "react";
-import { View, Text } from "react-native";
+import React, { useMemo, useState } from "react";
+import { View, Text, Pressable } from "react-native";
 import tw from "twrnc";
 import { AccountRow } from "#components/general/AccountRow";
+import * as Clipboard from "expo-clipboard";
+import { Feather } from "@expo/vector-icons";
+import { useModalStore } from "#store/modal/modalStore";
 
 interface PrimaryAccountDetailsProps {
   walletData: any;
@@ -10,16 +13,71 @@ interface PrimaryAccountDetailsProps {
 export function PrimaryAccountDetails({
   walletData,
 }: Readonly<PrimaryAccountDetailsProps>) {
+  const [isRevealed, setIsRevealed] = useState(false);
+  const { updateModal } = useModalStore();
+  const accountType = walletData?.primary_withdrawal_account?.type;
+  const accountIdentifierLabel =
+    accountType === "eu" ? "IBAN:" : "Account Number:";
+  const rawAccountIdentifier =
+    accountType === "eu"
+      ? walletData?.primary_withdrawal_account?.iban
+      : walletData?.primary_withdrawal_account?.account_number;
+
+  const accountIdentifierValue = useMemo(() => {
+    const raw = rawAccountIdentifier || "";
+    if (!raw) return "-";
+
+    if (isRevealed) {
+      if (accountType === "eu") {
+        return raw.replace(/(.{4})/g, "$1 ").trim();
+      }
+      return raw;
+    }
+
+    if (accountType === "eu") {
+      if (raw.length < 8) return raw;
+      return `${raw.slice(0, 4)} •••• •••• •••• ${raw.slice(-4)}`;
+    }
+    if (raw.length < 4) return raw;
+    return `•••• •••• ${raw.slice(-4)}`;
+  }, [accountType, isRevealed, rawAccountIdentifier]);
+
+  const copyIdentifier = async () => {
+    if (!rawAccountIdentifier) return;
+    await Clipboard.setStringAsync(rawAccountIdentifier);
+    updateModal({
+      message: `${accountIdentifierLabel.replace(":", "")} copied.`,
+      showModal: true,
+      modalType: "success",
+    });
+  };
+
   return (
     <View style={tw`mb-6`}>
       <Text style={tw`mb-2 font-medium`}>Primary Account Details</Text>
       <View
         style={tw`bg-[#FFFFFF] border border-[#00000033] p-4 rounded-md gap-[8px]`}
       >
-        <AccountRow
-          label="Account Number:"
-          value={walletData?.primary_withdrawal_account?.account_number}
-        />
+        <View style={tw`flex-row items-center justify-between`}>
+          <View style={tw`flex-1`}>
+            <AccountRow label={accountIdentifierLabel} value={accountIdentifierValue} />
+          </View>
+          <View style={tw`flex-row gap-1 pl-1`}>
+            <Pressable
+              onPress={() => setIsRevealed((prev) => !prev)}
+              style={tw`p-1`}
+            >
+              <Feather
+                name={isRevealed ? "eye-off" : "eye"}
+                size={16}
+                color="#64748B"
+              />
+            </Pressable>
+            <Pressable onPress={copyIdentifier} style={tw`p-1`}>
+              <Feather name="copy" size={16} color="#64748B" />
+            </Pressable>
+          </View>
+        </View>
         <AccountRow
           label="Bank Name:"
           value={walletData?.primary_withdrawal_account?.bank_name}

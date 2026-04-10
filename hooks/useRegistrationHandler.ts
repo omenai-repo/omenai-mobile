@@ -26,7 +26,6 @@ export function useRegistrationHandler(accountType: AccountType) {
       const { confirmPassword, ...rest } = data;
       let payload = { ...rest, device_push_token: expoPushToken ?? "" };
 
-      console.log("Registration Payload:", JSON.stringify(payload, null, 2));
       let uploadedFileId: string | null = null;
 
       // Handle logo upload for gallery and artist
@@ -34,10 +33,16 @@ export function useRegistrationHandler(accountType: AccountType) {
         (accountType === "gallery" || accountType === "artist") &&
         data.logo
       ) {
+        const logoAsset = data.logo?.assets?.[0];
+        if (!logoAsset?.uri) {
+          throw new Error("Please select a valid image before creating account.");
+        }
+
         const files = {
-          uri: data.logo.assets[0].uri,
-          name: data.logo.assets[0].fileName,
-          type: data.logo.assets[0].mimeType,
+          uri: logoAsset.uri,
+          name: logoAsset.fileName || `logo-${Date.now()}.jpg`,
+          type: logoAsset.mimeType || "image/jpeg",
+          size: logoAsset.fileSize ?? 0,
         };
 
         const fileUploaded = await uploadLogo(files);

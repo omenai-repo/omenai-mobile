@@ -570,16 +570,48 @@ type NextChargeParams = {
   id: string;
 };
 
-type WithdrawalAccount = {
+type BankBranch = {
+  label: string;
+  value: string;
+  id?: string;
+};
+
+type AfricaWithdrawalAccount = {
+  type: "africa";
   account_number: string;
   bank_name: string;
   account_name: string;
   bank_id: string;
   bank_code: string;
-  bank_branch?: string;
+  branch?: BankBranch | null;
   bank_country: string;
   beneficiary_id: number;
 };
+
+type UKWithdrawalAccount = {
+  type: "uk";
+  account_number: string;
+  sort_code: string;
+  bank_name: string;
+  account_name: string;
+  bank_country: string;
+  beneficiary_id: number;
+};
+
+type EUWithdrawalAccount = {
+  type: "eu";
+  iban: string;
+  swift_code: string;
+  bank_name: string;
+  account_name: string;
+  bank_country: string;
+  beneficiary_id: number;
+};
+
+type WithdrawalAccount =
+  | AfricaWithdrawalAccount
+  | UKWithdrawalAccount
+  | EUWithdrawalAccount;
 
 type ArtworkMediumTypes =
   | "Works on paper"

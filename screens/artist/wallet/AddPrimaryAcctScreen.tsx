@@ -31,7 +31,7 @@ type Bank = {
   code: string;
 };
 
-const supportedCountryCodes = [
+const COUNTRIES_WITH_BANK_BRANCHES = [
   "BJ",
   "CM",
   "TD",
@@ -45,8 +45,108 @@ const supportedCountryCodes = [
   "SL",
   "TZ",
   "UG",
-  // 'NG',
 ];
+
+const AFRICAN_COUNTRIES = [
+  "NG",
+  "GH",
+  "KE",
+  "UG",
+  "ZA",
+  "TZ",
+  "RW",
+  "CM",
+  "CI",
+  "SN",
+  "BJ",
+  "TD",
+  "CG",
+  "GA",
+  "MW",
+  "SL",
+  "EG",
+  "MA",
+  "US",
+] as const;
+
+const SEPA_COUNTRY_CODES = [
+  "AD",
+  "AT",
+  "BE",
+  "BG",
+  "CH",
+  "CY",
+  "CZ",
+  "DE",
+  "DK",
+  "EE",
+  "ES",
+  "FI",
+  "FR",
+  "GR",
+  "HR",
+  "HU",
+  "IE",
+  "IS",
+  "IT",
+  "LI",
+  "LT",
+  "LU",
+  "LV",
+  "MC",
+  "MT",
+  "NL",
+  "NO",
+  "PL",
+  "PT",
+  "RO",
+  "SE",
+  "SI",
+  "SK",
+  "SM",
+  "VA",
+] as const;
+
+type WalletRegion = "africa" | "uk" | "eu";
+
+const resolveWalletRegion = (countryCode?: string): WalletRegion => {
+  const code = countryCode?.toUpperCase() || "";
+  if (code === "US") return "africa";
+  if (code === "GB") return "uk";
+  if (SEPA_COUNTRY_CODES.includes(code as (typeof SEPA_COUNTRY_CODES)[number])) {
+    return "eu";
+  }
+  if (AFRICAN_COUNTRIES.includes(code as (typeof AFRICAN_COUNTRIES)[number])) {
+    return "africa";
+  }
+  return "eu";
+};
+
+const isValidUKBankDetails = (accountNumber: string, sortCode: string): boolean => {
+  const cleanSortCode = sortCode.replace(/[\s-]/g, "");
+  const cleanAccountNumber = accountNumber.replace(/\s/g, "");
+  return /^[0-9]{6}$/.test(cleanSortCode) && /^[0-9]{8}$/.test(cleanAccountNumber);
+};
+
+const isValidIBAN = (iban: string): boolean => {
+  const cleanIban = iban.replace(/\s/g, "").toUpperCase();
+  if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$/.test(cleanIban)) return false;
+  const rearranged = cleanIban.substring(4) + cleanIban.substring(0, 4);
+  const numericString = rearranged
+    .split("")
+    .map((char) => {
+      const code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) return (code - 55).toString();
+      return char;
+    })
+    .join("");
+  let checksum = numericString.slice(0, 2);
+  for (let offset = 2; offset < numericString.length; offset += 7) {
+    const slice = checksum + numericString.substring(offset, offset + 7);
+    checksum = (parseInt(slice, 10) % 97).toString();
+  }
+  return parseInt(checksum, 10) === 1;
+};
 
 const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
 const BASE_TXNS_QK = ["wallet", "artist", "txns"] as const;
@@ -71,27 +171,35 @@ const AddPrimaryAcctScreen = () => {
   const [selectedBranch, setSelectedBranch] = useState<BankOption | null>(null);
   const [acctNumber, setAcctNumber] = useState("");
   const [acctName, setAcctName] = useState("");
+  const [manualBankName, setManualBankName] = useState("");
+  const [sortCode, setSortCode] = useState("");
+  const [iban, setIban] = useState("");
+  const [swiftCode, setSwiftCode] = useState("");
   const [isValidated, setIsValidated] = useState(false);
 
   const isEditing = !!walletData?.primary_withdrawal_account;
+  const regionType = resolveWalletRegion(userSession?.address?.countryCode);
+  const showBranches =
+    regionType === "africa" &&
+    !!selectedBank &&
+    COUNTRIES_WITH_BANK_BRANCHES.includes(userSession.address.countryCode);
 
   const animation = useRef(null);
   const prevAcctNumberRef = useRef("");
 
   useEffect(() => {
+    if (regionType !== "africa") return;
     if (acctNumber !== prevAcctNumberRef.current) {
-      // Clear acct name only if there was a previously validated name
       if (acctName) setAcctName("");
       setIsValidated(false);
-      // Update the previous value
       prevAcctNumberRef.current = acctNumber;
     }
-  }, [acctNumber, acctName]);
+  }, [acctNumber, acctName, regionType]);
 
   const fetchBankList = async () => {
     setFetchingBanks(true);
     try {
-      const response = await fetchBanks();
+      const response = await fetchBanks(userSession.address.countryCode);
       if (response?.isOk && Array.isArray(response?.data.banks)) {
         const formattedData: BankOption[] = response.data.banks
           .map((bank: Bank & { id: string }): BankOption & { id: string } => ({
@@ -119,9 +227,15 @@ const AddPrimaryAcctScreen = () => {
 
   const handleSearch = (text: string) => {
     setSearchText(text);
+    const trimmedText = text.trim();
 
-    if (text.trim().length < 3) {
-      setFilteredBankList([]);
+    if (trimmedText.length === 0) {
+      setFilteredBankList(bankList);
+      return;
+    }
+
+    if (trimmedText.length < 3) {
+      setFilteredBankList(bankList);
       return;
     }
 
@@ -136,7 +250,8 @@ const AddPrimaryAcctScreen = () => {
     const fetchBranches = async () => {
       if (
         selectedBank?.value &&
-        supportedCountryCodes.includes(userSession.address.countryCode)
+        COUNTRIES_WITH_BANK_BRANCHES.includes(userSession.address.countryCode) &&
+        regionType === "africa"
       ) {
         try {
           setFetchingBanks(true);
@@ -166,11 +281,20 @@ const AddPrimaryAcctScreen = () => {
     };
 
     fetchBranches();
-  }, [selectedBank, userSession.address.countryCode]);
+  }, [selectedBank, userSession.address.countryCode, regionType]);
 
   const handleBranchSearch = (text: string) => {
     setBranchSearchText(text);
-    if (text.trim().length < 2) return;
+    const trimmedText = text.trim();
+
+    if (trimmedText.length === 0) {
+      setFilteredBranchList(branchList);
+      return;
+    }
+    if (trimmedText.length < 2) {
+      setFilteredBranchList(branchList);
+      return;
+    }
 
     const filtered = branchList.filter((branch) =>
       branch.label.toLowerCase().includes(text.toLowerCase()),
@@ -229,9 +353,20 @@ const AddPrimaryAcctScreen = () => {
   });
 
   const handleStartFlow = async () => {
+    if (regionType !== "africa") {
+      return;
+    }
     if (!selectedBank) {
       updateModal({
         message: "Please select a bank",
+        showModal: true,
+        modalType: "error",
+      });
+      return;
+    }
+    if (showBranches && !selectedBranch) {
+      updateModal({
+        message: "Please select a bank branch",
         showModal: true,
         modalType: "error",
       });
@@ -263,18 +398,89 @@ const AddPrimaryAcctScreen = () => {
   };
 
   const handleAddPrimaryAccount = () => {
-    // Match Web Payload Structure exactly
-    const payload = {
-      owner_id: userSession.id,
-      account_details: {
+    if (regionType === "uk") {
+      if (!acctName || !manualBankName || !acctNumber || !sortCode) {
+        updateModal({
+          message: "Please fill all required UK account fields",
+          showModal: true,
+          modalType: "error",
+        });
+        return;
+      }
+      if (!isValidUKBankDetails(acctNumber, sortCode)) {
+        updateModal({
+          message: "Invalid UK account number or sort code",
+          showModal: true,
+          modalType: "error",
+        });
+        return;
+      }
+    }
+
+    if (regionType === "eu") {
+      if (!acctName || !manualBankName || !iban || !swiftCode) {
+        updateModal({
+          message: "Please fill all required account fields",
+          showModal: true,
+          modalType: "error",
+        });
+        return;
+      }
+      if (!isValidIBAN(iban)) {
+        updateModal({
+          message: "Invalid IBAN. Please check and try again.",
+          showModal: true,
+          modalType: "error",
+        });
+        return;
+      }
+    }
+
+    if (regionType === "africa" && !isValidated) {
+      updateModal({
+        message: "Please validate your account before submitting",
+        showModal: true,
+        modalType: "error",
+      });
+      return;
+    }
+
+    let account_details: any = null;
+
+    if (regionType === "africa") {
+      account_details = {
+        type: "africa",
         account_number: acctNumber,
         bank_name: selectedBank?.label || "",
         account_name: acctName,
         bank_id: selectedBank?.id || "",
         bank_code: selectedBank?.value || "",
-        branch: selectedBranch, // Passing whatever we have (string or object structure if changed upstream)
+        branch: selectedBranch,
         bank_country: userSession.address.countryCode,
-      },
+      };
+    } else if (regionType === "uk") {
+      account_details = {
+        type: "uk",
+        account_number: acctNumber,
+        sort_code: sortCode.replace(/[\s-]/g, ""),
+        bank_name: manualBankName,
+        account_name: acctName,
+        bank_country: userSession.address.countryCode,
+      };
+    } else {
+      account_details = {
+        type: "eu",
+        iban: iban.replace(/\s/g, "").toUpperCase(),
+        swift_code: swiftCode.trim().toUpperCase(),
+        bank_name: manualBankName,
+        account_name: acctName,
+        bank_country: userSession.address.countryCode,
+      };
+    }
+
+    const payload = {
+      owner_id: userSession.id,
+      account_details,
       base_currency: userSession.base_currency,
     };
 
@@ -309,104 +515,186 @@ const AddPrimaryAcctScreen = () => {
             disable={true}
           />
 
-          <CustomSelectPicker
-            data={filteredBankList}
-            placeholder="Select bank name"
-            value={selectedBank?.value || ""}
-            renderInputSearch={() => (
-              <TextInput
-                placeholder="Search bank"
-                value={searchText}
-                style={{
-                  padding: 15,
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                  backgroundColor: "#fff",
-                  margin: 5,
+          {regionType === "africa" && (
+            <>
+              <CustomSelectPicker
+                data={filteredBankList}
+                placeholder="Select bank name"
+                value={selectedBank?.value || ""}
+                renderInputSearch={() => (
+                  <TextInput
+                    placeholder="Search bank"
+                    value={searchText}
+                    style={{
+                      padding: 15,
+                      borderWidth: 1,
+                      borderColor: "#ccc",
+                      backgroundColor: "#fff",
+                      margin: 5,
+                    }}
+                    onChangeText={(text: string) => {
+                      setSearchText(text);
+                      debouncedSearch(text);
+                    }}
+                  />
+                )}
+                handleSetValue={(item: { label: string; value: string }) => {
+                  setSelectedBank(item);
+                  setSelectedBranch(null);
+                  setBranchList([]);
+                  setFilteredBranchList([]);
+                  setBranchSearchText("");
+                  setIsValidated(false);
                 }}
-                onChangeText={(text: string) => {
-                  setSearchText(text);
-                  debouncedSearch(text);
-                }}
+                label="Bank Name"
+                search={true}
+                searchPlaceholder="Search bank"
+                dropdownPosition="bottom"
+                disable={isValidated}
               />
-            )}
-            handleSetValue={(item: { label: string; value: string }) => {
-              setSelectedBank(item);
-              setSelectedBranch(null);
-              setBranchList([]);
-              setFilteredBranchList([]);
-              setBranchSearchText("");
-              setIsValidated(false); // Reset validation on bank change
-            }}
-            label="Bank Name"
-            search={true}
-            searchPlaceholder="Search bank"
-            dropdownPosition="bottom"
-            disable={isValidated}
-          />
 
-          {supportedCountryCodes.includes(userSession.address.countryCode) && (
-            <CustomSelectPicker
-              data={filteredBranchList}
-              placeholder="Select bank branch"
-              value={selectedBranch?.value || ""}
-              renderInputSearch={() => (
-                <TextInput
-                  placeholder="Search branch"
-                  value={branchSearchText}
-                  style={{
-                    padding: 15,
-                    borderWidth: 1,
-                    borderColor: "#ccc",
-                    backgroundColor: "#fff",
-                    margin: 5,
+              {showBranches && (
+                <CustomSelectPicker
+                  data={filteredBranchList}
+                  placeholder="Select bank branch"
+                  value={selectedBranch?.value || ""}
+                  renderInputSearch={() => (
+                    <TextInput
+                      placeholder="Search branch"
+                      value={branchSearchText}
+                      style={{
+                        padding: 15,
+                        borderWidth: 1,
+                        borderColor: "#ccc",
+                        backgroundColor: "#fff",
+                        margin: 5,
+                      }}
+                      onChangeText={(text: string) => {
+                        handleBranchSearch(text);
+                        handleBranchSearchDebounced(text);
+                      }}
+                    />
+                  )}
+                  handleSetValue={(item: BankOption) => {
+                    setSelectedBranch(item);
+                    setIsValidated(false);
                   }}
-                  onChangeText={(text: string) => {
-                    handleBranchSearch(text);
-                    handleBranchSearchDebounced(text);
-                  }}
+                  label="Bank Branch"
+                  search={true}
+                  searchPlaceholder="Search branch"
+                  dropdownPosition="bottom"
+                  disable={!selectedBank || isValidated}
                 />
               )}
-              handleSetValue={(item: BankOption) => {
-                setSelectedBranch(item);
-                setIsValidated(false); // Reset validation on branch change
-              }}
-              label="Bank Branch"
-              search={true}
-              searchPlaceholder="Search branch"
-              dropdownPosition="bottom"
-              disable={!selectedBank || isValidated}
-            />
+
+              <Input
+                label={"Account number"}
+                keyboardType="numeric"
+                onInputChange={(text: string) => setAcctNumber(text)}
+                placeHolder={`Enter acct number`}
+                value={acctNumber}
+                errorMessage={""}
+                containerStyle={{ flex: 0 }}
+                disabled={isValidated}
+              />
+
+              <View>
+                <Input
+                  label="Account Name"
+                  disabled={true}
+                  onInputChange={() => {}}
+                  placeHolder="Account Name"
+                  value={acctName}
+                  containerStyle={{ flex: 0, opacity: 0.7 }}
+                />
+                <Text style={tw`text-[10px] text-gray-500 mt-1 ml-1`}>
+                  * Account name is automatically fetched and cannot be edited.
+                </Text>
+              </View>
+            </>
           )}
 
-          <Input
-            label={"Account number"} // Capitalize label
-            keyboardType="numeric"
-            onInputChange={(text: string) => setAcctNumber(text)}
-            placeHolder={`Enter acct number`}
-            value={acctNumber}
-            errorMessage={""}
-            containerStyle={{ flex: 0 }}
-            disabled={isValidated} // Disable when validated to match web
-          />
+          {regionType === "uk" && (
+            <>
+              <Input
+                label="Account Holder Name"
+                onInputChange={(text: string) => setAcctName(text)}
+                placeHolder="Enter account holder name"
+                value={acctName}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+              <Input
+                label="Bank Name"
+                onInputChange={(text: string) => setManualBankName(text)}
+                placeHolder="Enter bank name"
+                value={manualBankName}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+              <Input
+                label="Account Number"
+                keyboardType="numeric"
+                onInputChange={(text: string) => setAcctNumber(text)}
+                placeHolder="8-digit account number"
+                value={acctNumber}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+              <Input
+                label="Sort Code"
+                keyboardType="default"
+                onInputChange={(text: string) => setSortCode(text)}
+                placeHolder="123456 or 12-34-56"
+                value={sortCode}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+            </>
+          )}
 
-          <View>
-            <Input
-              label="Account Name"
-              disabled={true}
-              onInputChange={() => {}}
-              placeHolder="Account Name"
-              value={acctName}
-              containerStyle={{ flex: 0, opacity: 0.7 }}
-            />
-            <Text style={tw`text-[10px] text-gray-500 mt-1 ml-1`}>
-              * Account name is automatically fetched and cannot be edited.
-            </Text>
-          </View>
+          {regionType === "eu" && (
+            <>
+              <Input
+                label="Account Holder Name"
+                onInputChange={(text: string) => setAcctName(text)}
+                placeHolder="Enter account holder name"
+                value={acctName}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+              <Input
+                label="Bank Name"
+                onInputChange={(text: string) => setManualBankName(text)}
+                placeHolder="Enter bank name"
+                value={manualBankName}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+              <Input
+                label="IBAN"
+                onInputChange={(text: string) => setIban(text.toUpperCase())}
+                placeHolder="Enter IBAN"
+                value={iban}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+              <Input
+                label="SWIFT / BIC"
+                onInputChange={(text: string) =>
+                  setSwiftCode(text.toUpperCase())
+                }
+                placeHolder="Enter SWIFT/BIC code"
+                value={swiftCode}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+            </>
+          )}
         </View>
 
         <View style={tw`mt-[50px] mx-[20px]`}>
-          {isValidated ? (
+          {regionType === "africa" && isValidated ? (
             <View style={tw`gap-2`}>
               <FittedBlackButton
                 onClick={handleAddPrimaryAccount}
@@ -433,12 +721,22 @@ const AddPrimaryAcctScreen = () => {
                 textStyle={{ color: "#666" }}
               />
             </View>
-          ) : (
+          ) : regionType === "africa" ? (
             <FittedBlackButton
               onClick={handleStartFlow}
               value={"Validate Account"}
-              isDisabled={!acctNumber || isValidating || !selectedBank}
+              isDisabled={
+                !acctNumber || isValidating || !selectedBank || (showBranches && !selectedBranch)
+              }
               isLoading={isValidating}
+              style={{ height: 50 }}
+            />
+          ) : (
+            <FittedBlackButton
+              onClick={handleAddPrimaryAccount}
+              value={isEditing ? "Update Primary Account" : "Add Primary Account"}
+              isDisabled={isSubmitting}
+              isLoading={isSubmitting}
               style={{ height: 50 }}
             />
           )}

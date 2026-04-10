@@ -15,6 +15,7 @@ export async function registerAccount(
   try {
     const response = await apiRequest(url, {
       method: "POST",
+      auth: false,
       body: JSON.stringify(payload),
     });
     console.log(payload);

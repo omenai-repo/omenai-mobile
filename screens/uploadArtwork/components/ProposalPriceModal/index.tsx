@@ -12,7 +12,6 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as DocumentPicker from "expo-document-picker";
 import * as WebBrowser from "expo-web-browser";
-import { ID } from "appwrite";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import { useModalStore } from "#store/modal/modalStore";
@@ -30,7 +29,6 @@ import { createPriceReviewRequest } from "#services/artworks/createPriceReviewRe
 import { screenName } from "#constants/screenNames.constants";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import LongBlackButton from "#components/buttons/LongBlackButton";
-import { storage } from "#appWrite_config";
 import AgreementSection from "./components/AgreementSection";
 import JustificationSection from "./components/JustificationSection";
 import PriceStatusNotice from "./components/PriceStatusNotice";
@@ -153,19 +151,41 @@ export default function ProposalPriceModal() {
     type: string;
     size?: number;
   }) => {
+    if (!file?.uri) {
+      throw new Error("Document file path is missing.");
+    }
+
     const normalizedFile = {
       uri: file.uri,
       name: file.name || `proof-${Date.now()}.pdf`,
       type: file.type || "application/pdf",
-      size: file.size ?? 0,
     };
 
-    const fileUploaded = await storage.createFile({
-      bucketId: process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID!,
-      fileId: ID.unique(),
-      file: normalizedFile as any,
-    });
-    return fileUploaded;
+    const formData = new FormData();
+    formData.append("fileId", "unique()");
+    formData.append("file", normalizedFile as any);
+
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID}/files`,
+      {
+        method: "POST",
+        headers: {
+          "X-Appwrite-Project": process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
+        },
+        body: formData,
+      },
+    );
+
+    const json = await res.json();
+    if (!res.ok) {
+      throw new Error(json?.message || "Document upload failed");
+    }
+
+    if (!json?.$id) {
+      throw new Error("Document upload failed: file id missing");
+    }
+
+    return json;
   };
 
   const pickProofDocument = async () => {
