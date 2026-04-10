@@ -2,11 +2,13 @@ import { apiUrl } from "#constants/apiUrl.constants";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import { apiRequest } from "../../utils/apiRequest";
 
-export async function fetchBanks() {
-  let countryCode = "";
-  const userSession = await utils_getAsyncData("userSession");
-  if (userSession.value) {
-    countryCode = JSON.parse(userSession.value).address.countryCode;
+export async function fetchBanks(countryCodeArg?: string) {
+  let countryCode = countryCodeArg || "";
+  if (!countryCode) {
+    const userSession = await utils_getAsyncData("userSession");
+    if (userSession.value) {
+      countryCode = JSON.parse(userSession.value).address.countryCode;
+    }
   }
   if (countryCode.length < 1) return;
 

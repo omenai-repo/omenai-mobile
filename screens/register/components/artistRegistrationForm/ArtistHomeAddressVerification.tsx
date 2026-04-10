@@ -16,11 +16,15 @@ const ArtistHomeAddressVerification = () => {
 
   const transformedCountries = useMemo(
     () =>
-      artist_countries_codes_currency.map((item) => ({
-        value: item.alpha2,
-        label: item.name,
-        currency: item.currency,
-      })),
+      [...artist_countries_codes_currency]
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+        )
+        .map((item) => ({
+          value: item.alpha2,
+          label: item.name,
+          currency: item.currency,
+        })),
     [],
   );
 
