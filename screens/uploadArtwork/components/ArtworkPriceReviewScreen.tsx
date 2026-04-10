@@ -9,15 +9,15 @@ import { useAppStore } from "#store/app/appStore";
 import LottieView from "lottie-react-native";
 import loaderAnimation from "../../../assets/other/loader-animation.json";
 import { extractNumberString } from "#utils/utils_editStringToNumber";
-import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import * as WebBrowser from "expo-web-browser";
 import { colors } from "#config/colors.config";
 import { screenName } from "#constants/screenNames.constants";
-import ConsentCheckbox from "#components/inputs/ConsentCheckbox";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PriceDisputeTriggerCard from "./PriceDisputeTriggerCard";
+import ArtistExclusivityAgreementSection, {
+  isArtistExclusivityComplete,
+} from "./ArtistExclusivityAgreementSection";
 
 export default function ArtworkPriceReviewScreen({
   onConfirm,
@@ -68,11 +68,14 @@ export default function ArtworkPriceReviewScreen({
     isEmerging ? "Yes" : ""
   );
 
+  const exclusivityComplete = isArtistExclusivityComplete(
+    priceConsent,
+    acknowledgment,
+    penaltyConsent,
+  );
+
   const canProceed =
-    acknowledgment &&
-    penaltyConsent &&
-    priceConsent &&
-    (isEmerging || displayPriceValue !== "");
+    exclusivityComplete && (isEmerging || displayPriceValue !== "");
 
   // prepare query inputs
   const heightNum = Number.parseFloat(
@@ -163,19 +166,6 @@ export default function ArtworkPriceReviewScreen({
     refetchOnWindowFocus: false,
     retry: 1,
   });
-
-  // handle the in-app opening of Terms/Legal link
-  const openTerms = async () => {
-    try {
-      await WebBrowser.openBrowserAsync("https://omenai.app/legal?ent=artist");
-    } catch {
-      updateModal({
-        showModal: true,
-        modalType: "error",
-        message: "Something went wrong while opening the Terms of Agreement.",
-      });
-    }
-  };
 
   // Upload/confirm handler for mobile — call onConfirm only when all consents are accepted
   const handleConfirmPress = () => {
@@ -287,70 +277,16 @@ export default function ArtworkPriceReviewScreen({
         }
       />
 
-      {/* Exclusivity / terms alert (mimics web Alert) */}
-      <View
-        style={tw`bg-amber-50/50 border border-amber-200 rounded-md px-4 py-5 mb-6`}
-      >
-        <View style={tw`flex-row items-center justify-between mb-5`}>
-          <View style={tw`flex-row items-center`}>
-            <Ionicons
-              name="warning-outline"
-              size={20}
-              color={tw.color("amber-900")}
-              style={tw`mr-3`}
-            />
-            <Text style={tw`text-amber-900 font-semibold`}>
-              Exclusivity Agreement
-            </Text>
-          </View>
-          <View
-            style={[
-              tw`px-2.5 py-1 rounded-full`,
-              canProceed ? tw`bg-green-100` : tw`bg-gray-100`,
-            ]}
-          >
-            <Text
-              style={[
-                tw`text-[10px] font-semibold`,
-                canProceed ? tw`text-green-700` : tw`text-gray-500`,
-              ]}
-            >
-              {
-                [priceConsent, acknowledgment, penaltyConsent].filter(Boolean)
-                  .length
-              }{" "}
-              of 3
-            </Text>
-          </View>
-        </View>
-        <View style={tw`flex-1`}>
-          <ConsentCheckbox
-            checked={priceConsent}
-            onToggle={() => setPriceConsent((s) => !s)}
-          >
-            I agree to list this artwork at the finalized listing price
-          </ConsentCheckbox>
-
-          <ConsentCheckbox
-            checked={acknowledgment}
-            onToggle={() => setAcknowledgment((s) => !s)}
-          >
-            I acknowledge the 90-day exclusivity period per Omenai&apos;s{" "}
-            <Text onPress={openTerms} style={tw`underline font-semibold`}>
-              Terms of Use
-            </Text>{" "}
-            and will not sell this piece externally.
-          </ConsentCheckbox>
-
-          <ConsentCheckbox
-            checked={penaltyConsent}
-            onToggle={() => setPenaltyConsent((s) => !s)}
-            isLast
-          >
-            I accept that a breach of exclusivity incurs a 10% penalty on my
-            next platform sale.
-          </ConsentCheckbox>
-        </View>
+      <View style={tw`mb-6`}>
+        <ArtistExclusivityAgreementSection
+          priceConsent={priceConsent}
+          acknowledgment={acknowledgment}
+          penaltyConsent={penaltyConsent}
+          onTogglePriceConsent={() => setPriceConsent((s) => !s)}
+          onToggleAcknowledgment={() => setAcknowledgment((s) => !s)}
+          onTogglePenaltyConsent={() => setPenaltyConsent((s) => !s)}
+          subtitle="All artist listings on Omenai include a 90-day exclusivity period. You must confirm each point below before uploading."
+        />
       </View>
 
       {/* Display Price Option */}

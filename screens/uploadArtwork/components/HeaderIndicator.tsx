@@ -10,8 +10,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function HeaderIndicator({
   shouldUseArtistReviewFlow,
+  isArtistSelfPriced,
 }: Readonly<{
   shouldUseArtistReviewFlow: boolean;
+  isArtistSelfPriced: boolean;
 }>) {
   const { userType } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -19,15 +21,26 @@ export default function HeaderIndicator({
     uploadArtworkStore();
   const insets = useSafeAreaInsets();
 
-  const titles = [
-    "Upload artwork",
-    "Dimensions",
-    "Shipping",
-    ...(userType !== "artist" || !shouldUseArtistReviewFlow ? ["Pricing"] : []),
-    "Artist details",
-    "Upload image",
-    ...(shouldUseArtistReviewFlow ? ["Artwork Price Review"] : []),
-  ];
+  const titles = isArtistSelfPriced
+    ? [
+        "Upload artwork",
+        "Dimensions",
+        "Shipping",
+        "Artist details",
+        "Upload image",
+        "Pricing",
+      ]
+    : [
+        "Upload artwork",
+        "Dimensions",
+        "Shipping",
+        ...(userType !== "artist" || !shouldUseArtistReviewFlow
+          ? ["Pricing"]
+          : []),
+        "Artist details",
+        "Upload image",
+        ...(shouldUseArtistReviewFlow ? ["Artwork Price Review"] : []),
+      ];
 
   return (
     <View

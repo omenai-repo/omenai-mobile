@@ -8,10 +8,10 @@ import { useModalStore } from "#store/modal/modalStore";
 
 export default function UploadImage({
   handleUpload,
-  shouldUseDirectPricingFlow,
+  primaryButtonLabel,
 }: Readonly<{
   handleUpload: () => void;
-  shouldUseDirectPricingFlow: boolean;
+  primaryButtonLabel: string;
 }>) {
   const { image, setImage } = uploadArtworkStore();
   const { updateModal } = useModalStore();
@@ -87,7 +87,7 @@ export default function UploadImage({
           <LongBlackButton outline value="Change image" onClick={pickImage} />
         )}
         <LongBlackButton
-          value={shouldUseDirectPricingFlow ? "Proceed" : "Get price quote"}
+          value={primaryButtonLabel}
           onClick={handleUpload}
           isLoading={false}
           isDisabled={image === null}
