@@ -66,7 +66,6 @@ const AFRICAN_COUNTRIES = [
   "SL",
   "EG",
   "MA",
-  "US",
 ] as const;
 
 const SEPA_COUNTRY_CODES = [
@@ -107,11 +106,11 @@ const SEPA_COUNTRY_CODES = [
   "VA",
 ] as const;
 
-type WalletRegion = "africa" | "uk" | "eu";
+type WalletRegion = "africa" | "uk" | "eu" | "us";
 
 const resolveWalletRegion = (countryCode?: string): WalletRegion => {
   const code = countryCode?.toUpperCase() || "";
-  if (code === "US") return "africa";
+  if (code === "US") return "us";
   if (code === "GB") return "uk";
   if (SEPA_COUNTRY_CODES.includes(code as (typeof SEPA_COUNTRY_CODES)[number])) {
     return "eu";
@@ -173,6 +172,7 @@ const AddPrimaryAcctScreen = () => {
   const [acctName, setAcctName] = useState("");
   const [manualBankName, setManualBankName] = useState("");
   const [sortCode, setSortCode] = useState("");
+  const [routingNumber, setRoutingNumber] = useState("");
   const [iban, setIban] = useState("");
   const [swiftCode, setSwiftCode] = useState("");
   const [isValidated, setIsValidated] = useState(false);
@@ -399,7 +399,7 @@ const AddPrimaryAcctScreen = () => {
 
   const handleAddPrimaryAccount = () => {
     if (regionType === "uk") {
-      if (!acctName || !manualBankName || !acctNumber || !sortCode) {
+      if (!acctName || !acctNumber || !sortCode) {
         updateModal({
           message: "Please fill all required UK account fields",
           showModal: true,
@@ -417,8 +417,27 @@ const AddPrimaryAcctScreen = () => {
       }
     }
 
+    if (regionType === "us") {
+      if (!acctName || !acctNumber || !routingNumber) {
+        updateModal({
+          message: "Please fill all required US account fields",
+          showModal: true,
+          modalType: "error",
+        });
+        return;
+      }
+      if (!/^\d{9}$/.test(routingNumber)) {
+        updateModal({
+          message: "US routing number must be exactly 9 digits",
+          showModal: true,
+          modalType: "error",
+        });
+        return;
+      }
+    }
+
     if (regionType === "eu") {
-      if (!acctName || !manualBankName || !iban || !swiftCode) {
+      if (!acctName || !iban || !swiftCode) {
         updateModal({
           message: "Please fill all required account fields",
           showModal: true,
@@ -463,16 +482,25 @@ const AddPrimaryAcctScreen = () => {
         type: "uk",
         account_number: acctNumber,
         sort_code: sortCode.replace(/[\s-]/g, ""),
-        bank_name: manualBankName,
+        bank_name: manualBankName || "UK Bank",
         account_name: acctName,
         bank_country: userSession.address.countryCode,
+      };
+    } else if (regionType === "us") {
+      account_details = {
+        type: "us",
+        account_number: acctNumber,
+        routing_number: routingNumber,
+        bank_name: manualBankName || "US Bank",
+        account_name: acctName,
+        bank_country: "US",
       };
     } else {
       account_details = {
         type: "eu",
         iban: iban.replace(/\s/g, "").toUpperCase(),
         swift_code: swiftCode.trim().toUpperCase(),
-        bank_name: manualBankName,
+        bank_name: manualBankName || "EU Bank",
         account_name: acctName,
         bank_country: userSession.address.countryCode,
       };
@@ -627,7 +655,7 @@ const AddPrimaryAcctScreen = () => {
               <Input
                 label="Bank Name"
                 onInputChange={(text: string) => setManualBankName(text)}
-                placeHolder="Enter bank name"
+                placeHolder="Enter bank name (optional)"
                 value={manualBankName}
                 errorMessage=""
                 containerStyle={{ flex: 0 }}
@@ -647,6 +675,45 @@ const AddPrimaryAcctScreen = () => {
                 onInputChange={(text: string) => setSortCode(text)}
                 placeHolder="123456 or 12-34-56"
                 value={sortCode}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+            </>
+          )}
+
+          {regionType === "us" && (
+            <>
+              <Input
+                label="Account Holder Name"
+                onInputChange={(text: string) => setAcctName(text)}
+                placeHolder="Enter account holder name"
+                value={acctName}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+              <Input
+                label="Bank Name"
+                onInputChange={(text: string) => setManualBankName(text)}
+                placeHolder="Enter bank name (optional)"
+                value={manualBankName}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+              <Input
+                label="Account Number"
+                keyboardType="numeric"
+                onInputChange={(text: string) => setAcctNumber(text)}
+                placeHolder="Enter account number"
+                value={acctNumber}
+                errorMessage=""
+                containerStyle={{ flex: 0 }}
+              />
+              <Input
+                label="Routing Number (ABA)"
+                keyboardType="numeric"
+                onInputChange={(text: string) => setRoutingNumber(text)}
+                placeHolder="Enter 9-digit routing number"
+                value={routingNumber}
                 errorMessage=""
                 containerStyle={{ flex: 0 }}
               />

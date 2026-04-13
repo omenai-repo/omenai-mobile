@@ -592,7 +592,17 @@ type UKWithdrawalAccount = {
   type: "uk";
   account_number: string;
   sort_code: string;
-  bank_name: string;
+  bank_name?: string;
+  account_name: string;
+  bank_country: string;
+  beneficiary_id: number;
+};
+
+type USWithdrawalAccount = {
+  type: "us";
+  account_number: string;
+  routing_number: string;
+  bank_name?: string;
   account_name: string;
   bank_country: string;
   beneficiary_id: number;
@@ -602,7 +612,7 @@ type EUWithdrawalAccount = {
   type: "eu";
   iban: string;
   swift_code: string;
-  bank_name: string;
+  bank_name?: string;
   account_name: string;
   bank_country: string;
   beneficiary_id: number;
@@ -611,6 +621,7 @@ type EUWithdrawalAccount = {
 type WithdrawalAccount =
   | AfricaWithdrawalAccount
   | UKWithdrawalAccount
+  | USWithdrawalAccount
   | EUWithdrawalAccount;
 
 type ArtworkMediumTypes =

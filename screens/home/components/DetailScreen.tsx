@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   Image,
-  useWindowDimensions,
   FlatList,
   Pressable,
 } from "react-native";

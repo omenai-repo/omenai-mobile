@@ -8,7 +8,7 @@ import { useModalStore } from "#store/modal/modalStore";
 
 interface PrimaryAccountDetailsProps {
   accountNumber: string | undefined;
-  accountType?: "africa" | "uk" | "eu";
+  accountType?: "africa" | "uk" | "eu" | "us";
   bankName: string | undefined;
   accountName: string | undefined;
   onPressChange: () => void;
