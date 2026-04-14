@@ -9,12 +9,12 @@ import React, { useMemo, useState } from "react";
 import tw from "twrnc";
 import { TransactionSkeletonCard } from "#components/skeleton/TransactionSkeletonCard";
 import YearDropdown from "../orders/YearDropdown";
-import { WalletContainer } from "./WalletScreen";
 import { fetchArtistTransactions } from "#services/wallet/fetchArtistTransactions";
 import Loader from "#components/general/Loader";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackScreenButton from "#components/buttons/BackScreenButton";
+import { WalletTransactionItem } from "./components/WalletTransactionItem";
 
 const BASE_TXNS_QK = ["wallet", "artist", "txns"] as const;
 const txnsKey = (year: number) =>
@@ -22,7 +22,8 @@ const txnsKey = (year: number) =>
 
 const PAGE_SIZE = 10; // assuming API default is 10
 
-const WalletHistory = ({ navigation }: any) => {
+const WalletHistory = ({ navigation, route }: any) => {
+  const walletId = route?.params?.walletId;
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const currentYear = new Date().getFullYear();
@@ -43,6 +44,7 @@ const WalletHistory = ({ navigation }: any) => {
         page: Number(pageParam),
         status: "all",
         year: String(selectedYear),
+        wallet_id: walletId,
       });
       if (!res?.isOk) throw new Error("Failed to fetch transactions");
       const items = Array.isArray(res.data) ? res.data : [];
@@ -59,6 +61,7 @@ const WalletHistory = ({ navigation }: any) => {
     refetchOnMount: true, // only if stale
     refetchOnWindowFocus: true, // only if stale
     refetchOnReconnect: true, // only if stale
+    enabled: true,
   });
 
   const transactions = useMemo(
@@ -107,7 +110,7 @@ const WalletHistory = ({ navigation }: any) => {
               `${item.trans_id ?? item.id ?? "txn"}-${index}`
             }
             renderItem={({ item, index }) => (
-              <WalletContainer
+              <WalletTransactionItem
                 status={item.trans_status}
                 amount={item.trans_amount}
                 dateTime={item.createdAt}
