@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 
 type TransactionStatus = "FAILED" | "PENDING" | "SUCCESSFUL";
+type BeneficiaryDetails = any;
 
 const getStatusConfig = (status: TransactionStatus) => {
   switch (status) {
@@ -70,7 +71,12 @@ const DetailRow = ({
     style={tw`flex-row justify-between items-start py-3 border-b border-gray-100`}
   >
     <Text style={tw`text-gray-500 text-sm flex-1`}>{label}</Text>
-    <Text style={tw`text-black text-sm font-semibold flex-1 text-right`}>
+    <Text
+      numberOfLines={1}
+      adjustsFontSizeToFit
+      minimumFontScale={0.85}
+      style={tw`text-black text-sm font-semibold flex-1 text-right ml-2`}
+    >
       {value}
     </Text>
   </View>
@@ -80,6 +86,7 @@ export const TransactionDetailsScreen = ({ route }: { route: any }) => {
   const { transaction } = route.params;
   const status = transaction?.trans_status as TransactionStatus;
   const config = getStatusConfig(status);
+  const beneficiary = transaction?.beneficiary_details as BeneficiaryDetails;
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
@@ -133,6 +140,75 @@ export const TransactionDetailsScreen = ({ route }: { route: any }) => {
               value={formatISODate(transaction?.createdAt)}
             />
           </View>
+
+          {beneficiary && (
+            <View style={tw`px-5 pt-4`}>
+              <Text style={tw`text-xs font-semibold text-gray-500 mb-2`}>
+                Beneficiary Details
+              </Text>
+              <DetailRow
+                label="Account Name"
+                value={beneficiary?.account_name ?? "—"}
+              />
+              <DetailRow
+                label="Bank Country"
+                value={beneficiary?.bank_country ?? "—"}
+              />
+
+              {beneficiary?.type === "us" && (
+                <>
+                  <DetailRow
+                    label="Account Number"
+                    value={beneficiary?.account_number ?? "—"}
+                  />
+                  <DetailRow
+                    label="Routing Number"
+                    value={beneficiary?.routing_number ?? "—"}
+                  />
+                  {beneficiary?.bank_name ? (
+                    <DetailRow label="Bank Name" value={beneficiary.bank_name} />
+                  ) : null}
+                </>
+              )}
+
+              {beneficiary?.type === "africa" && (
+                <>
+                  <DetailRow
+                    label="Account Number"
+                    value={beneficiary?.account_number ?? "—"}
+                  />
+                  <DetailRow label="Bank Name" value={beneficiary?.bank_name ?? "—"} />
+                  <DetailRow label="Bank Code" value={beneficiary?.bank_code ?? "—"} />
+                </>
+              )}
+
+              {beneficiary?.type === "uk" && (
+                <>
+                  <DetailRow
+                    label="Account Number"
+                    value={beneficiary?.account_number ?? "—"}
+                  />
+                  <DetailRow label="Sort Code" value={beneficiary?.sort_code ?? "—"} />
+                  {beneficiary?.bank_name ? (
+                    <DetailRow label="Bank Name" value={beneficiary.bank_name} />
+                  ) : null}
+                </>
+              )}
+
+              {beneficiary?.type === "eu" && (
+                <>
+                  <DetailRow label="IBAN" value={beneficiary?.iban ?? "—"} />
+                  <DetailRow
+                    label="SWIFT Code"
+                    value={beneficiary?.swift_code ?? "—"}
+                  />
+                  {beneficiary?.bank_name ? (
+                    <DetailRow label="Bank Name" value={beneficiary.bank_name} />
+                  ) : null}
+                </>
+              )}
+            </View>
+          )}
 
           {/* Accent Message Box */}
           {config.message ? (

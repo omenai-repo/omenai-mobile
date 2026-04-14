@@ -3,6 +3,7 @@ import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import { apiRequest } from "../../utils/apiRequest";
 
 type fetchArtistTransactionsType = {
+  wallet_id?: string;
   year?: string;
   limit?: number;
   status?: string;
@@ -10,15 +11,18 @@ type fetchArtistTransactionsType = {
 };
 
 export async function fetchArtistTransactions({
+  wallet_id: walletIdArg,
   year = new Date().getFullYear().toString(),
   limit = 10,
   page = 1,
   status,
 }: fetchArtistTransactionsType) {
-  let wallet_id = "";
-  const userSession = await utils_getAsyncData("userSession");
-  if (userSession.value) {
-    wallet_id = JSON.parse(userSession.value).walletId;
+  let wallet_id = walletIdArg || "";
+  if (!wallet_id) {
+    const userSession = await utils_getAsyncData("userSession");
+    if (userSession.value) {
+      wallet_id = JSON.parse(userSession.value).walletId;
+    }
   }
   if (wallet_id.length < 1) return;
 

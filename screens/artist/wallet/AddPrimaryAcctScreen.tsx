@@ -18,6 +18,7 @@ import loaderAnimation from "../../../assets/other/loader-animation.json";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { WALLET_QK } from "#utils/queryKeys";
 import { addPrimaryAcct } from "#services/wallet/addPrimaryAcct";
+import { fetchArtistProfile } from "#services/artist/fetchArtistProfile";
 
 type BankOption = {
   label: string;
@@ -173,16 +174,30 @@ const AddPrimaryAcctScreen = () => {
   const [manualBankName, setManualBankName] = useState("");
   const [sortCode, setSortCode] = useState("");
   const [routingNumber, setRoutingNumber] = useState("");
+  const [routingNumberError, setRoutingNumberError] = useState("");
   const [iban, setIban] = useState("");
   const [swiftCode, setSwiftCode] = useState("");
   const [isValidated, setIsValidated] = useState(false);
 
   const isEditing = !!walletData?.primary_withdrawal_account;
-  const regionType = resolveWalletRegion(userSession?.address?.countryCode);
+  const { data: artistProfile } = useQuery({
+    queryKey: ["artist", "profile", userSession.id],
+    queryFn: async () => {
+      const res = await fetchArtistProfile(userSession.id);
+      return res?.isOk ? res.data : null;
+    },
+    enabled: !!userSession.id,
+  });
+
+  const effectiveAddress = artistProfile?.address || userSession?.address || {};
+  const effectiveCountryCode = effectiveAddress?.countryCode || "";
+  const effectiveBaseCurrency =
+    artistProfile?.base_currency || userSession?.base_currency || "";
+  const regionType = resolveWalletRegion(effectiveCountryCode);
   const showBranches =
     regionType === "africa" &&
     !!selectedBank &&
-    COUNTRIES_WITH_BANK_BRANCHES.includes(userSession.address.countryCode);
+    COUNTRIES_WITH_BANK_BRANCHES.includes(effectiveCountryCode);
 
   const animation = useRef(null);
   const prevAcctNumberRef = useRef("");
@@ -199,7 +214,7 @@ const AddPrimaryAcctScreen = () => {
   const fetchBankList = async () => {
     setFetchingBanks(true);
     try {
-      const response = await fetchBanks(userSession.address.countryCode);
+      const response = await fetchBanks(effectiveCountryCode);
       if (response?.isOk && Array.isArray(response?.data.banks)) {
         const formattedData: BankOption[] = response.data.banks
           .map((bank: Bank & { id: string }): BankOption & { id: string } => ({
@@ -250,7 +265,7 @@ const AddPrimaryAcctScreen = () => {
     const fetchBranches = async () => {
       if (
         selectedBank?.value &&
-        COUNTRIES_WITH_BANK_BRANCHES.includes(userSession.address.countryCode) &&
+        COUNTRIES_WITH_BANK_BRANCHES.includes(effectiveCountryCode) &&
         regionType === "africa"
       ) {
         try {
@@ -281,7 +296,7 @@ const AddPrimaryAcctScreen = () => {
     };
 
     fetchBranches();
-  }, [selectedBank, userSession.address.countryCode, regionType]);
+  }, [selectedBank, effectiveCountryCode, regionType]);
 
   const handleBranchSearch = (text: string) => {
     setBranchSearchText(text);
@@ -475,7 +490,7 @@ const AddPrimaryAcctScreen = () => {
         bank_id: selectedBank?.id || "",
         bank_code: selectedBank?.value || "",
         branch: selectedBranch,
-        bank_country: userSession.address.countryCode,
+        bank_country: effectiveCountryCode,
       };
     } else if (regionType === "uk") {
       account_details = {
@@ -484,7 +499,7 @@ const AddPrimaryAcctScreen = () => {
         sort_code: sortCode.replace(/[\s-]/g, ""),
         bank_name: manualBankName || "UK Bank",
         account_name: acctName,
-        bank_country: userSession.address.countryCode,
+        bank_country: effectiveCountryCode,
       };
     } else if (regionType === "us") {
       account_details = {
@@ -502,14 +517,14 @@ const AddPrimaryAcctScreen = () => {
         swift_code: swiftCode.trim().toUpperCase(),
         bank_name: manualBankName || "EU Bank",
         account_name: acctName,
-        bank_country: userSession.address.countryCode,
+        bank_country: effectiveCountryCode,
       };
     }
 
     const payload = {
       owner_id: userSession.id,
       account_details,
-      base_currency: userSession.base_currency,
+      base_currency: effectiveBaseCurrency,
     };
 
     submitPrimaryAcct(payload);
@@ -525,23 +540,16 @@ const AddPrimaryAcctScreen = () => {
         <BackHeaderTitle title="Add Primary Account" />
 
         <View style={tw`mx-[20px] mt-[40px] gap-[20px]`}>
-          <CustomSelectPicker
-            data={
-              userSession?.address
-                ? [
-                    {
-                      label: userSession.address.country,
-                      value: userSession.address.country,
-                    },
-                  ]
-                : []
-            }
-            placeholder="Select country"
-            value={userSession?.address?.country || "Select country"}
-            handleSetValue={() => {}}
-            label="Country"
-            disable={true}
-          />
+          <View>
+            <Text style={tw`text-[13px] text-[#454545] mb-2`}>Country</Text>
+            <View
+              style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-md px-[14px] justify-center`}
+            >
+              <Text style={tw`text-[14px] text-[#1A1A1A]`}>
+                {effectiveAddress?.country || "—"}
+              </Text>
+            </View>
+          </View>
 
           {regionType === "africa" && (
             <>
@@ -711,10 +719,19 @@ const AddPrimaryAcctScreen = () => {
               <Input
                 label="Routing Number (ABA)"
                 keyboardType="numeric"
-                onInputChange={(text: string) => setRoutingNumber(text)}
+                onInputChange={(text: string) => {
+                  const digitsOnly = text.replace(/\D/g, "");
+                  console.log(digitsOnly);
+                  if (digitsOnly.length > 9) {
+                    setRoutingNumberError("Routing number cannot exceed 9 digits.");
+                  } else {
+                    setRoutingNumberError("");
+                  }
+                  setRoutingNumber(digitsOnly.slice(0, 9));
+                }}
                 placeHolder="Enter 9-digit routing number"
                 value={routingNumber}
-                errorMessage=""
+                errorMessage={routingNumberError}
                 containerStyle={{ flex: 0 }}
               />
             </>

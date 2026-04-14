@@ -67,7 +67,10 @@ const WalletScreen = () => {
   } = useQuery({
     queryKey: TXNS_QK,
     queryFn: async () => {
-      const res = await fetchArtistTransactions({ status: "all" });
+      const res = await fetchArtistTransactions({
+        status: "all",
+        wallet_id: walletIdentifier,
+      });
       if (!res?.isOk) {
         updateModal({
           message: "Error fetching transactions",
@@ -78,12 +81,15 @@ const WalletScreen = () => {
       }
       return res.data;
     },
+    enabled: !!walletData,
     staleTime: 30_000, // 30s
     gcTime: 10 * 60_000, // 10m
     refetchOnMount: true,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   });
+
+  const walletIdentifier = walletData?.wallet_id || walletData?.walletId;
 
   // Spinner should reflect only these two queries being (re)fetched
 
@@ -113,7 +119,7 @@ const WalletScreen = () => {
     } else {
       navigation.navigate("WithdrawScreen", { walletData });
     }
-  }, [navigation, walletData]);
+  }, [navigation, walletData, updateModal]);
 
   const isLoading = walletLoading || txnsLoading;
 
@@ -221,7 +227,10 @@ const WalletScreen = () => {
             transactions={transactions || []}
             isLoading={isLoading}
             onPressShowAll={() =>
-              navigation.navigate("WalletHistory", { transactions })
+              navigation.navigate("WalletHistory", {
+                transactions,
+                walletId: walletIdentifier,
+              })
             }
             onPressTransaction={(item) =>
               navigation.navigate("TransactionDetailsScreen", {
@@ -234,7 +243,7 @@ const WalletScreen = () => {
             visible={showPinModal}
             setVisible={setShowPinModal}
             onClose={() => setShowPinModal(false)}
-            walletId={walletData?.wallet_id}
+            walletId={walletIdentifier}
           />
         </ScrollWrapper>
       </View>
