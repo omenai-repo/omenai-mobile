@@ -53,11 +53,16 @@ export default function UploadArtwork() {
   } = uploadArtworkStore();
   const { updateModal } = useModalStore();
   const normalizedCategorization = userSession?.categorization?.trim().toLowerCase();
-  const isEmergingArtist = normalizedCategorization === "emerging";
+  const isCustomPricingEligibleArtist = [
+    "emerging",
+    "early mid-career",
+  ].includes(normalizedCategorization || "");
   const hasArtistCategorization = Boolean(normalizedCategorization);
-  const shouldUseArtistReviewFlow = userType === "artist" && isEmergingArtist;
-  const shouldUseDirectPricingFlow = userType !== "artist" || !isEmergingArtist;
-  const isArtistSelfPriced = userType === "artist" && !isEmergingArtist;
+  const shouldUseArtistReviewFlow =
+    userType === "artist" && isCustomPricingEligibleArtist;
+  const shouldUseDirectPricingFlow =
+    userType !== "artist" || !isCustomPricingEligibleArtist;
+  const isArtistSelfPriced = userType === "artist" && !isCustomPricingEligibleArtist;
 
   useEffect(() => {
     return () => {
@@ -243,7 +248,7 @@ export default function UploadArtwork() {
   const imageStepButtonLabel =
     userType === "gallery"
       ? "Proceed"
-      : isEmergingArtist
+      : isCustomPricingEligibleArtist
         ? "Get price quote"
         : "Proceed";
 

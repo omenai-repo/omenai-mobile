@@ -8,7 +8,7 @@ import { useModalStore } from "#store/modal/modalStore";
 
 interface PrimaryAccountDetailsProps {
   accountNumber: string | undefined;
-  accountType?: "africa" | "uk" | "eu" | "us";
+  accountType?: "africa" | "uk" | "eu" | "us" | "international";
   bankName: string | undefined;
   accountName: string | undefined;
   onPressChange: () => void;
@@ -24,20 +24,33 @@ export const PrimaryAccountDetails = ({
   const [isRevealed, setIsRevealed] = useState(false);
   const { updateModal } = useModalStore();
   const accountIdentifierLabel =
-    accountType === "eu" ? "IBAN:" : "Account Number:";
+    accountType === "eu" || accountType === "international"
+      ? "IBAN:"
+      : "Account Number:";
+  const displayBankName = bankName
+    ? bankName.toUpperCase()
+    : accountType === "eu"
+      ? "EUROPEAN BANK"
+      : accountType === "us"
+        ? "US BANK"
+        : accountType === "uk"
+          ? "UK BANK"
+          : accountType === "international"
+            ? "INTERNATIONAL BANK"
+            : "BANK";
 
   const displayValue = useMemo(() => {
     const raw = accountNumber || "";
     if (!raw) return "-";
 
     if (isRevealed) {
-      if (accountType === "eu") {
+      if (accountType === "eu" || accountType === "international") {
         return raw.replace(/(.{4})/g, "$1 ").trim();
       }
       return raw;
     }
 
-    if (accountType === "eu") {
+    if (accountType === "eu" || accountType === "international") {
       if (raw.length < 8) return raw;
       const start = raw.slice(0, 4);
       const end = raw.slice(-4);
@@ -65,7 +78,7 @@ export const PrimaryAccountDetails = ({
       >
         <DetailRow
           label="Bank Name:"
-          value={bankName}
+          value={displayBankName}
           textStyle={tw`uppercase text-center`}
         />
         <DetailRow

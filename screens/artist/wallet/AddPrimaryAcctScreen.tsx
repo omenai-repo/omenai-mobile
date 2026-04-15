@@ -107,7 +107,15 @@ const SEPA_COUNTRY_CODES = [
   "VA",
 ] as const;
 
-type WalletRegion = "africa" | "uk" | "eu" | "us";
+type WalletRegion = "africa" | "uk" | "eu" | "us" | "international";
+
+const REGION_LABELS: Record<WalletRegion, string> = {
+  africa: "African Transfer",
+  uk: "UK - Sort Code",
+  us: "US - ACH / Wire",
+  eu: "SEPA / SWIFT",
+  international: "International Transfer",
+};
 
 const resolveWalletRegion = (countryCode?: string): WalletRegion => {
   const code = countryCode?.toUpperCase() || "";
@@ -119,7 +127,7 @@ const resolveWalletRegion = (countryCode?: string): WalletRegion => {
   if (AFRICAN_COUNTRIES.includes(code as (typeof AFRICAN_COUNTRIES)[number])) {
     return "africa";
   }
-  return "eu";
+  return "international";
 };
 
 const isValidUKBankDetails = (accountNumber: string, sortCode: string): boolean => {
@@ -451,7 +459,7 @@ const AddPrimaryAcctScreen = () => {
       }
     }
 
-    if (regionType === "eu") {
+    if (regionType === "eu" || regionType === "international") {
       if (!acctName || !iban || !swiftCode) {
         updateModal({
           message: "Please fill all required account fields",
@@ -510,12 +518,13 @@ const AddPrimaryAcctScreen = () => {
         account_name: acctName,
         bank_country: "US",
       };
-    } else {
+    } else if (regionType === "eu" || regionType === "international") {
       account_details = {
-        type: "eu",
+        type: regionType,
         iban: iban.replace(/\s/g, "").toUpperCase(),
         swift_code: swiftCode.trim().toUpperCase(),
-        bank_name: manualBankName || "EU Bank",
+        bank_name:
+          regionType === "eu" ? manualBankName || "EU Bank" : manualBankName,
         account_name: acctName,
         bank_country: effectiveCountryCode,
       };
@@ -547,6 +556,17 @@ const AddPrimaryAcctScreen = () => {
             >
               <Text style={tw`text-[14px] text-[#1A1A1A]`}>
                 {effectiveAddress?.country || "—"}
+              </Text>
+            </View>
+          </View>
+
+          <View>
+            <Text style={tw`text-[13px] text-[#454545] mb-2`}>Region</Text>
+            <View
+              style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-md px-[14px] justify-center`}
+            >
+              <Text style={tw`text-[14px] text-[#1A1A1A]`}>
+                {REGION_LABELS[regionType]}
               </Text>
             </View>
           </View>
@@ -723,7 +743,9 @@ const AddPrimaryAcctScreen = () => {
                   const digitsOnly = text.replace(/\D/g, "");
                   console.log(digitsOnly);
                   if (digitsOnly.length > 9) {
-                    setRoutingNumberError("Routing number cannot exceed 9 digits.");
+                    setRoutingNumberError(
+                      "Routing number cannot exceed 9 digits.",
+                    );
                   } else {
                     setRoutingNumberError("");
                   }
@@ -737,7 +759,7 @@ const AddPrimaryAcctScreen = () => {
             </>
           )}
 
-          {regionType === "eu" && (
+          {(regionType === "eu" || regionType === "international") && (
             <>
               <Input
                 label="Account Holder Name"
