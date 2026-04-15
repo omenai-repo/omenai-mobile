@@ -99,8 +99,12 @@ export default function ProposalPriceModal() {
   const hasAutoApprovalsRemaining = parseHasAutoApprovalsRemaining(
     (artworkUploadData as any)?.hasAutoApprovalsRemaining ?? true,
   );
-  const isEmerging =
-    (userSession?.categorization || "").toLowerCase() === "emerging";
+  const normalizedCategorization =
+    (userSession?.categorization || "").trim().toLowerCase();
+  const isCustomPricingEligibleArtist = [
+    "emerging",
+    "early mid-career",
+  ].includes(normalizedCategorization);
   const agreementCount = [priceConsent, acknowledgment, penaltyConsent].filter(
     Boolean,
   ).length;
@@ -499,7 +503,7 @@ export default function ProposalPriceModal() {
           )}
         </View>
 
-        {!isEmerging && (
+        {!isCustomPricingEligibleArtist && (
           <View
             style={tw`bg-white border border-neutral-200 rounded-md p-4 mt-7`}
           >

@@ -17,24 +17,37 @@ export function PrimaryAccountDetails({
   const { updateModal } = useModalStore();
   const accountType = walletData?.primary_withdrawal_account?.type;
   const accountIdentifierLabel =
-    accountType === "eu" ? "IBAN:" : "Account Number:";
+    accountType === "eu" || accountType === "international"
+      ? "IBAN:"
+      : "Account Number:";
   const rawAccountIdentifier =
-    accountType === "eu"
+    accountType === "eu" || accountType === "international"
       ? walletData?.primary_withdrawal_account?.iban
       : walletData?.primary_withdrawal_account?.account_number;
+  const displayBankName = walletData?.primary_withdrawal_account?.bank_name
+    ? walletData.primary_withdrawal_account.bank_name.toUpperCase()
+    : accountType === "eu"
+      ? "EUROPEAN BANK"
+      : accountType === "us"
+        ? "US BANK"
+        : accountType === "uk"
+          ? "UK BANK"
+          : accountType === "international"
+            ? "INTERNATIONAL BANK"
+            : "BANK";
 
   const accountIdentifierValue = useMemo(() => {
     const raw = rawAccountIdentifier || "";
     if (!raw) return "-";
 
     if (isRevealed) {
-      if (accountType === "eu") {
+      if (accountType === "eu" || accountType === "international") {
         return raw.replace(/(.{4})/g, "$1 ").trim();
       }
       return raw;
     }
 
-    if (accountType === "eu") {
+    if (accountType === "eu" || accountType === "international") {
       if (raw.length < 8) return raw;
       return `${raw.slice(0, 4)} •••• •••• •••• ${raw.slice(-4)}`;
     }
@@ -80,7 +93,7 @@ export function PrimaryAccountDetails({
         </View>
         <AccountRow
           label="Bank Name:"
-          value={walletData?.primary_withdrawal_account?.bank_name}
+          value={displayBankName}
         />
         <AccountRow
           label="Account Name:"

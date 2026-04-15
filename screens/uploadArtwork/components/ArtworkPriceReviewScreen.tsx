@@ -63,9 +63,13 @@ export default function ArtworkPriceReviewScreen({
   const [priceConsent, setPriceConsent] = useState(false);
 
   // Display price gating based on artist categorization
-  const isEmerging = userSession?.categorization?.toLowerCase() === "emerging";
+  const normalizedCategorization = userSession?.categorization?.trim().toLowerCase();
+  const isCustomPricingEligibleArtist = [
+    "emerging",
+    "early mid-career",
+  ].includes(normalizedCategorization || "");
   const [displayPriceValue, setDisplayPriceValue] = useState(
-    isEmerging ? "Yes" : ""
+    isCustomPricingEligibleArtist ? "Yes" : ""
   );
 
   const exclusivityComplete = isArtistExclusivityComplete(
@@ -75,7 +79,8 @@ export default function ArtworkPriceReviewScreen({
   );
 
   const canProceed =
-    exclusivityComplete && (isEmerging || displayPriceValue !== "");
+    exclusivityComplete &&
+    (isCustomPricingEligibleArtist || displayPriceValue !== "");
 
   // prepare query inputs
   const heightNum = Number.parseFloat(
@@ -148,14 +153,14 @@ export default function ArtworkPriceReviewScreen({
       );
       if (
         !artworkUploadData.shouldShowPrice ||
-        userSession?.categorization?.toLowerCase() === "emerging"
+        isCustomPricingEligibleArtist
       ) {
         updateArtworkUploadData(
           "shouldShowPrice",
           response.data.shouldShowPrice
         );
         // Also sync local state
-        if (userSession?.categorization?.toLowerCase() === "emerging") {
+        if (isCustomPricingEligibleArtist) {
           setDisplayPriceValue("Yes");
         }
       }
@@ -290,7 +295,7 @@ export default function ArtworkPriceReviewScreen({
       </View>
 
       {/* Display Price Option */}
-      {!isEmerging && (
+      {!isCustomPricingEligibleArtist && (
         <View
           style={tw`bg-white border border-[#E5E7EB] rounded-md px-4 py-5 mb-6`}
         >

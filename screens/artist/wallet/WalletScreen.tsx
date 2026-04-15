@@ -204,7 +204,9 @@ const WalletScreen = () => {
             ) : (
               <PrimaryAccountDetails
                 accountNumber={
-                  walletData?.primary_withdrawal_account?.type === "eu"
+                  walletData?.primary_withdrawal_account?.type === "eu" ||
+                  walletData?.primary_withdrawal_account?.type ===
+                    "international"
                     ? walletData?.primary_withdrawal_account?.iban
                     : walletData?.primary_withdrawal_account?.account_number
                 }

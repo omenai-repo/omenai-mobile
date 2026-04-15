@@ -115,11 +115,18 @@ export const artist_countries_codes_currency = [
     symbol: "FCFA",
   },
   {
-    name: "Congo",
+    name: "Republic of Congo",
     alpha2: "CG",
     alpha3: "COG",
     currency: "XAF",
     symbol: "FCFA",
+  },
+  {
+    name: "Democratic Republic of Congo",
+    alpha2: "CD",
+    alpha3: "COD",
+    currency: "CDF",
+    symbol: "FC",
   },
   {
     name: "Malawi",
