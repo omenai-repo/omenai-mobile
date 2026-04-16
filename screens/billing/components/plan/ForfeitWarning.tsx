@@ -12,7 +12,7 @@ export const ForfeitWarning = ({ targetPlan }: { targetPlan: string }) => (
         <Text>Selecting this plan will </Text>
         <Text style={tw`font-bold`}>forfeit</Text>
         <Text> your one-time </Text>
-        <Text style={tw`font-bold`}>2-month free trial</Text>
+        <Text style={tw`font-bold`}>1-month free trial</Text>
         <Text> on the monthly </Text>
         <Text style={tw`capitalize font-bold`}>{targetPlan}</Text>
         <Text> plan.</Text>

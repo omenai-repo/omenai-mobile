@@ -29,7 +29,6 @@ export async function fetchArtistHighlightData(tag: string) {
 
   if (tag === 'artworks') {
     const result = await getArtworkHighlightData({ sessionId: userId });
-    console.log(result);
     return result?.isOk ? result.data.length : 0;
   }
 

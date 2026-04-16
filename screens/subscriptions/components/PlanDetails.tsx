@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
 import { colors } from '#config/colors.config';
 import omenai_logo from '#assets/icons/omenai_logo_cut.png';
 import { utils_formatPrice } from '#utils/utils_priceFormatter';
@@ -35,7 +35,6 @@ export default function PlanDetails({
   const { setRetainModal } = useModalStore();
 
   const currency_symbol = utils_getCurrencySymbol(payment.currency);
-  console.log(sub_status);
   return (
     <View>
       <View style={styles.container}>
@@ -122,7 +121,7 @@ export default function PlanDetails({
                   setRetainModal({
                     retainModal: 'cancleSubscription',
                     showModal: true,
-                    message: end_date,
+                    message: formatIntlDateTime(end_date),
                   })
                 }
               />

@@ -1,6 +1,5 @@
 import { apiUrl } from "#constants/apiUrl.constants";
 import { apiRequest } from "../../utils/apiRequest";
-import { WithdrawalAccount } from "#types/types";
 
 type addPrimaryAcctProp = {
   owner_id: string;
@@ -13,7 +12,6 @@ export async function addPrimaryAcct({
   account_details,
   base_currency,
 }: addPrimaryAcctProp) {
-  console.log({ owner_id, account_details, base_currency });
   try {
     const url = `${apiUrl}/api/wallet/add_primary_account`;
     const res = await apiRequest(url, {

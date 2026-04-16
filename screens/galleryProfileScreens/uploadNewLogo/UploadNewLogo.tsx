@@ -95,10 +95,9 @@ export default function UploadNewLogo() {
           });
         }
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
       updateModal({
-        message: "An error occured, please try again",
+        message: error.message || error?.response?.data?.message || "An error occured, please try again",
         modalType: "error",
         showModal: true,
       });

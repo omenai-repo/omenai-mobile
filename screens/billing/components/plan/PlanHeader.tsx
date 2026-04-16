@@ -13,13 +13,13 @@ export const PlanHeader = ({ name }: Readonly<PlanHeaderProps>) => {
       <View>
         <Text style={tw`text-slate-900 text-lg font-bold`}>{name}</Text>
         <Text style={tw`mt-1 text-slate-600 text-xs`}>
-          {name === "Basic" ? "Essential features to get started" : null}
-          {name === "Pro" ? "Perfect for growing businesses" : null}
-          {name === "Premium" ? "Advanced features for scale" : null}
+          {name === "Foundation" ? "Essential features to get started" : null}
+          {name === "Gallery" ? "Perfect for growing galleries" : null}
+          {name === "Principal" ? "Advanced features for scale" : null}
         </Text>
       </View>
 
-      {name === "Premium" && (
+      {name === "Principal" && (
         <View style={tw`p-2 rounded-md bg-purple-100`}>
           <Ionicons name="sparkles-sharp" size={16} color="#7c3aed" />
         </View>

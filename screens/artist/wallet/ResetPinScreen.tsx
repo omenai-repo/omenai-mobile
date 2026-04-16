@@ -69,7 +69,6 @@ export const ResetPinScreen = ({
     setLoading(true);
     try {
       const response = await updateWalletPin(newPin, walletId);
-      console.log("walletId", walletId);
       if (response?.isOk) {
         updateModal({
           message: "PIN reset successfully",

@@ -263,9 +263,7 @@ const DimensionsDetails = () => {
         },
       };
 
-      console.log("Payload:", JSON.stringify(payload, null, 2));
       const response = await updateShippingQuote(payload);
-      console.log("Response:", JSON.stringify(response, null, 2));
 
       if (response.isOk) {
         Analytics.track("order_accepted", {
@@ -306,7 +304,6 @@ const DimensionsDetails = () => {
         });
       }
     } catch (error: any) {
-      console.log("Error:", error);
       updateModal({
         message: error.message,
         modalType: "error",

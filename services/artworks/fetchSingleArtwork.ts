@@ -15,7 +15,6 @@ export async function fetchsingleArtwork(art_id: string) {
         body: await res.json(),
       };
 
-      console.log("Fetched artwork details:", ParsedResponse);
       return ParsedResponse;
     });
 

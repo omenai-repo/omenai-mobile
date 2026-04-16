@@ -25,10 +25,7 @@ export async function registerForPushToken(): Promise<string | null> {
     // Get the project ID from the config
     const projectId = Constants.expoConfig?.extra?.eas?.projectId;
 
-    console.log("Debug: Project ID found:", projectId);
-
     if (!projectId) {
-      console.log("Debug: No Project ID found, cannot generate EAS token");
       // If we can't find the project ID, we can't generate a valid token for EAS build
       return null;
     }
@@ -37,7 +34,6 @@ export async function registerForPushToken(): Promise<string | null> {
       projectId,
     });
     const token = tokenData.data;
-    console.log("Debug: Token generated:", token);
 
     // Create Android notification channel if available
     if (Platform.OS === "android") {

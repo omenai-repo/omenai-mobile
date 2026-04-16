@@ -383,7 +383,6 @@ const ArtistOnboarding = () => {
       };
 
       const results = await artistOnboarding(payload);
-      console.log({ results });
       if (results?.isOk) {
         const resultsBody = results?.body;
         setOnboardingQuestions(INITIAL_ONBOARDING_STATE);

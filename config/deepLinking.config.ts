@@ -1,3 +1,5 @@
+import { deeplinkScreensByRole } from "#config/deeplinkScreens";
+
 type AppRole = "individual" | "artist" | "gallery";
 
 const ROLE_TO_USER_TYPE: Record<
@@ -23,6 +25,7 @@ const FALLBACK_TARGET = "overview";
 const DEEP_LINK_PATH_REGEX = /^\/?dl\/(individual|artist|gallery)(?:\/(.*))?$/i;
 const SAFE_SEGMENT_REGEX = /^[a-z0-9_-]+$/i;
 const SAFE_ARTWORK_ID_REGEX = /^[a-z0-9._:-]+$/i;
+const SAFE_TOKEN_REGEX = /^[A-Za-z0-9._-]{16,512}$/;
 const ALLOWED_STATIC_TARGETS = new Set([
   "overview",
   "artworks",
@@ -33,6 +36,19 @@ const ALLOWED_STATIC_TARGETS = new Set([
   "billing",
   "payouts",
 ]);
+
+// Build a stricter, role-aware allowlist from the deeplink screens config
+const ALLOWED_TARGETS_BY_ROLE: Record<AppRole, Set<string>> = {
+  individual: new Set(
+    (deeplinkScreensByRole.individual || []).map((r) => r.toLowerCase()),
+  ),
+  artist: new Set(
+    (deeplinkScreensByRole.artist || []).map((r) => r.toLowerCase()),
+  ),
+  gallery: new Set(
+    (deeplinkScreensByRole.gallery || []).map((r) => r.toLowerCase()),
+  ),
+};
 
 const removeLeadingSlash = (value: string) => value.replace(/^\/+/, "");
 
@@ -46,7 +62,7 @@ const parseRoleAndTargetFromPath = (path: string) => {
   return { role, target };
 };
 
-const normalizeTarget = (target: string) => {
+const normalizeTarget = (target: string, role: AppRole) => {
   const segments = target
     .split("/")
     .map((segment) => segment.trim())
@@ -54,14 +70,22 @@ const normalizeTarget = (target: string) => {
 
   if (segments.length === 0) return FALLBACK_TARGET;
 
+  const allowedForRole = ALLOWED_TARGETS_BY_ROLE[role] ?? new Set<string>();
+
   if (segments[0] === "artwork") {
     const artworkId = segments[1];
     if (!artworkId || segments.length !== 2) return FALLBACK_TARGET;
     if (!SAFE_ARTWORK_ID_REGEX.test(artworkId)) return FALLBACK_TARGET;
+    // Ensure this role is allowed to deeplink into artwork
+    if (!allowedForRole.has("artwork")) return FALLBACK_TARGET;
     return `artwork/${artworkId}`;
   }
 
-  if (segments.length === 1 && ALLOWED_STATIC_TARGETS.has(segments[0])) {
+  if (
+    segments.length === 1 &&
+    (ALLOWED_STATIC_TARGETS.has(segments[0]) ||
+      allowedForRole.has(segments[0]))
+  ) {
     return segments[0];
   }
 
@@ -69,6 +93,7 @@ const normalizeTarget = (target: string) => {
   if (
     segments.length === 1 &&
     !ALLOWED_STATIC_TARGETS.has(segments[0]) &&
+    !allowedForRole.has(segments[0]) &&
     SAFE_SEGMENT_REGEX.test(segments[0])
   ) {
     return segments[0];
@@ -88,7 +113,7 @@ export const sanitizeDeepLinkPath = (
 
   const { role, target } = parsed;
   const expectedUserType = ROLE_TO_USER_TYPE[role];
-  const safeTarget = normalizeTarget(target);
+  const safeTarget = normalizeTarget(target, role);
 
   if (!options.isLoggedIn) {
     return "login";
@@ -106,4 +131,11 @@ export const sanitizeDeepLinkPath = (
   }
 
   return `dl/${role}/${safeTarget}`;
+};
+
+export const extractSafeDeepLinkToken = (rawToken: unknown): string | undefined => {
+  if (typeof rawToken !== "string") return undefined;
+  const trimmed = rawToken.trim();
+  if (!SAFE_TOKEN_REGEX.test(trimmed)) return undefined;
+  return trimmed;
 };

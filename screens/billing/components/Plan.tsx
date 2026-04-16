@@ -8,10 +8,6 @@ import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
 import { utils_determinePlanChange } from "#utils/utils_determinePlanChange";
 import { DiscountData } from "#services/subscriptions/retrieveSubscriptionDiscount";
-import {
-  SubscriptionModelSchemaTypes,
-  SubscriptionPlanDataTypes,
-} from "#types/types";
 import { PlanHeader } from "./plan/PlanHeader";
 import { PlanPricing } from "./plan/PlanPricing";
 import { PlanFeatures } from "./plan/PlanFeatures";
@@ -83,12 +79,9 @@ export default function Plan({
 
   const { monthly_price, annual_price } = pricing;
 
-  // Discount eligibility logic
+  // Only Gallery Monthly is eligible for the 1‑month free offer.
   const isEligibleForDiscount =
-    discount !== null &&
-    discount.plan === name.toLowerCase() &&
-    discount.redeemed === false &&
-    tab === "monthly";
+    !!discount && discount.redeemed === false && name === "Gallery" && tab === "monthly";
 
   const showForfeitWarning =
     !!discount && discount.redeemed === false && !isEligibleForDiscount;
@@ -107,13 +100,13 @@ export default function Plan({
 
   // Update button text for discount
   const finalButtonText =
-    isEligibleForDiscount && !isDisabled ? "Claim 2 months free" : buttonText;
+    isEligibleForDiscount && !isDisabled ? "Claim 1 month free" : buttonText;
 
   const yearlySave =
     tab === "yearly"
       ? Math.max(0, Number(monthly_price) * 12 - Number(annual_price)).toFixed(
-          0,
-        )
+        0,
+      )
       : null;
 
   const handleNavigate = () => {
@@ -129,8 +122,8 @@ export default function Plan({
 
   return (
     <View style={[tw`relative w-full`, { marginVertical: 12 }]}>
-      {/* Most Popular badge for Pro */}
-      {name === "Pro" && (
+      {/* Most Popular badge for Gallery */}
+      {name === "Gallery" && (
         <View style={tw`absolute -top-3 self-center z-10`}>
           <View style={tw`px-3 py-1 rounded-full bg-slate-900`}>
             <Text style={tw`text-white font-semibold`}>Most Popular</Text>
@@ -142,7 +135,7 @@ export default function Plan({
       <View
         style={[
           tw`rounded-md overflow-hidden bg-white`,
-          name === "Pro"
+          name === "Gallery"
             ? tw`border-2 border-slate-900`
             : tw`border border-slate-200`,
           cardShadow(),
@@ -172,9 +165,7 @@ export default function Plan({
             <PlanFeatures featureList={featureList} />
 
             {/* Forfeit Warning */}
-            {showForfeitWarning && (
-              <ForfeitWarning targetPlan={discount.plan} />
-            )}
+            {showForfeitWarning && <ForfeitWarning targetPlan="Gallery" />}
 
             {/* CTA */}
             <PlanCTA

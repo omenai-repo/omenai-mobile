@@ -7,7 +7,6 @@ export async function requestPasswordConfirmationCode(route: string) {
   const userSession = await utils_getAsyncData("userSession");
   if (userSession.value) {
     id = JSON.parse(userSession.value).id;
-    console.log("id", id);
   } else {
     return;
   }
