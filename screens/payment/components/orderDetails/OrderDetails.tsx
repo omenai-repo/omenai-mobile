@@ -22,7 +22,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import VerifyTransactionModal from "../success/VerifyTransactionModal";
 import * as Crypto from "expo-crypto";
 import { Analytics } from "#utils/analytics";
-import { CreateOrderModelTypes } from "#types/types";
 
 interface RedirectParams {
   status: "successful" | "cancelled";
@@ -103,7 +102,6 @@ export default function OrderDetails({
 
     setMainPageLoader(true);
     const { paymentIntent } = await fetchPaymentSheetParams();
-    console.log("payment intent ---- ", paymentIntent);
 
     const { error } = await initPaymentSheet({
       merchantDisplayName: "Omenai, Inc.",
@@ -115,7 +113,6 @@ export default function OrderDetails({
 
     if (error) {
       initOnceRef.current = false; // allow retry if init failed
-      console.log("Failed to init payment  --- ", error);
       updateModal({
         message: error.message,
         modalType: "error",

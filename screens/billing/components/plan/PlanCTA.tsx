@@ -29,7 +29,7 @@ export const PlanCTA = ({
 
         return tw.style(
           `mt-5 h-12 rounded-md items-center justify-center`,
-          name === "Pro"
+          name === "Gallery"
             ? "bg-slate-900"
             : "bg-slate-100 border border-slate-200",
           opacityStyle,
@@ -40,7 +40,7 @@ export const PlanCTA = ({
     >
       <Text
         style={tw`${
-          name === "Pro" ? "text-white" : "text-slate-900"
+          name === "Gallery" ? "text-white" : "text-slate-900"
         } text-sm font-medium`}
       >
         {finalButtonText}

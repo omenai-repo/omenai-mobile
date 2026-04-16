@@ -40,7 +40,6 @@ export default function ProvideTrackingInfo() {
         response: results,
       });
       setCompleted(true);
-      console.log(results);
     } else {
       Analytics.track("order_ship_failed", {
         order_id: currentId,
@@ -50,7 +49,6 @@ export default function ProvideTrackingInfo() {
         message: (results as any).body?.message || (results as any).message,
         response: results,
       });
-      console.log(results);
     }
 
     setIsLoading(false);

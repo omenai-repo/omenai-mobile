@@ -91,7 +91,7 @@ const ExclusiveDeclineView = ({
         <View style={tw`mt-[2px]`}>{/* icon placeholder */}</View>
         <View style={tw`flex-1`}>
           <Text style={tw`text-[13px] text-[#B91C1C]`}>
-            This artwork is still subject to Omenai's 90-day exclusivity policy.
+            This artwork is still subject to Omenai&apos;s 90-day exclusivity policy.
             In accordance with our Terms of Use, a 10% penalty fee will be
             deducted from your next successful sale on the platform.
           </Text>
@@ -112,7 +112,7 @@ const StandardDeclineView = ({
 }) => (
   <>
     <Text style={tw`text-[13px] text-[#6B7280] mb-3`}>
-      Please choose a reason that best explains why you're declining this order.
+      Please choose a reason that best explains why you&apos;re declining this order.
     </Text>
     <ScrollView style={tw`max-h-[220px] mb-4`}>
       {reasons.map((r) => (
@@ -245,7 +245,6 @@ const DeclineOrderModal = ({
       seller_designation,
       art_id,
     );
-    console.log("Decline order response:", res);
 
     if (res?.isOk) {
       Analytics.track("order_declined", {
@@ -291,7 +290,6 @@ const DeclineOrderModal = ({
         },
         response: res,
       });
-      console.log("Decline order failed:", res);
       updateModal({
         message: res?.message || "Failed to decline order",
         showModal: true,

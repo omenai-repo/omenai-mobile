@@ -14,14 +14,6 @@ export async function createCheckoutSession(
   success_url: string,
   cancel_url: string,
 ) {
-  console.log({
-    item,
-    amount,
-    gallery_id,
-    meta,
-    cancel_url,
-    success_url,
-  });
   try {
     const res = await apiRequest(`${apiUrl}/api/stripe/createCheckoutSession`, {
       method: "POST",

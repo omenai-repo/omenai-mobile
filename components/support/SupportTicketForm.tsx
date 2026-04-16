@@ -166,10 +166,6 @@ export default function SupportTicketForm({
   } = useMutation({
     mutationFn: createSupportTicket,
     onSuccess: (response) => {
-      console.log(
-        "Support Ticket Response:",
-        JSON.stringify(response, null, 2),
-      );
       if (!response.isOk) {
         updateModal({
           message: response.message || "Failed to create ticket",

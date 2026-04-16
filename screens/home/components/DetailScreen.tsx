@@ -18,6 +18,7 @@ import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
 import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
 import EmptyArtworks from "#components/general/EmptyArtworks";
 import MiniArtworkCard from "#components/artwork/MiniArtworkCard";
+import { useTrackScreen } from "appdoctor-rn";
 
 type DetailsRouteProp = RouteProp<
   {
@@ -34,6 +35,7 @@ type DetailsRouteProp = RouteProp<
 const DetailsScreen = () => {
   const route = useRoute<DetailsRouteProp>();
   const { type, id, name, logo } = route.params;
+  useTrackScreen(`details_${type}`);
 
   const [bio, setBio] = useState("");
   const [artworks, setArtworks] = useState<any[]>([]);
@@ -56,7 +58,6 @@ const DetailsScreen = () => {
         : await getFeaturedGalleryData({ gallery_id: id });
 
     if (res?.isOk) {
-      console.log(res.data);
       setBio(res.data?.data?.bio ?? "");
       const arts =
         type === "artist"

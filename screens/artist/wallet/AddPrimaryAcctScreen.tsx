@@ -366,7 +366,6 @@ const AddPrimaryAcctScreen = () => {
       }
     },
     onError: (error: any) => {
-      console.log(error);
       updateModal({
         message: error.message || "An unexpected error occurred",
         showModal: true,
@@ -741,7 +740,6 @@ const AddPrimaryAcctScreen = () => {
                 keyboardType="numeric"
                 onInputChange={(text: string) => {
                   const digitsOnly = text.replace(/\D/g, "");
-                  console.log(digitsOnly);
                   if (digitsOnly.length > 9) {
                     setRoutingNumberError(
                       "Routing number cannot exceed 9 digits.",

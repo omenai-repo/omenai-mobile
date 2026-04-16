@@ -178,7 +178,6 @@ export default function ProvideShippingQuoteModal() {
         queryClient.invalidateQueries({ queryKey: ["orders", "artist"] }),
       ]);
       setCompleted(true);
-      console.log(results);
     } else {
       Analytics.track("order_accept_failed", {
         order_id: currentId,
@@ -188,7 +187,6 @@ export default function ProvideShippingQuoteModal() {
         message: results?.body?.message,
         response: results,
       });
-      console.log(results);
     }
 
     setIsLoading(false);

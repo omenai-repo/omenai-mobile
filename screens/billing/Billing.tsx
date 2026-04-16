@@ -1,6 +1,5 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import type { PlanProps, SubscriptionModelSchemaTypes } from "#types/types";
 
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import Header from "./components/Header";
@@ -42,15 +41,6 @@ export default function Billing() {
     userType === "gallery"
       ? userSession?.gallery_verified
       : userSession?.artist_verified || userSession?.verified;
-
-  console.log("Debug Verification:", {
-    userType,
-    isVerified,
-    gallery_verified: userSession?.gallery_verified,
-    verified: userSession?.verified,
-    artist_verified: userSession?.artist_verified,
-    fullSession: JSON.stringify(userSession || {}, null, 2),
-  });
 
   // Check onboarding status
   useEffect(() => {
@@ -130,9 +120,6 @@ export default function Billing() {
         setPlans(sortedPlans);
         setSubData(subResults?.data);
         setDiscount(discountResults?.discount ?? null);
-        console.log("Plans Data:", JSON.stringify(sortedPlans, null, 2));
-        console.log("Subscription Data:", JSON.stringify(subResults, null, 2));
-        console.log("Discount Data:", JSON.stringify(discountResults, null, 2));
       }
 
       setLoading(false);
@@ -163,8 +150,12 @@ export default function Billing() {
 
   return (
     <>
-      <BackHeaderTitle title="Billing" />
+      <BackHeaderTitle title="Pricing plans" />
       <ScrollWrapper style={styles.container}>
+        <View style={styles.titleBlock}>
+          <Text style={styles.eyebrow}>SUBSCRIPTION</Text>
+          <Text style={styles.heading}>Choose your plan</Text>
+        </View>
         <Header selectedTab={selectedTab} handleUpdate={setSelectedTab} />
         {loading && <PlansSkeleton />}
         {!loading && plans.length > 0 && (
@@ -196,6 +187,21 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     marginTop: 20,
+  },
+  titleBlock: {
+    marginBottom: 14,
+  },
+  eyebrow: {
+    fontSize: 10,
+    letterSpacing: 2.5,
+    color: "#A8A09A",
+    marginBottom: 8,
+  },
+  heading: {
+    fontSize: 30,
+    lineHeight: 36,
+    color: "#111827",
+    fontFamily: "WorkSans-Light",
   },
   mainContainer: {
     marginTop: 20,

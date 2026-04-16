@@ -32,9 +32,8 @@ export const utils_clearLocalStorage = async () => {
   try {
     const keys = ["userSession", "loginTimeStamp"];
     await Promise.all(keys.map((key) => SecureStore.deleteItemAsync(key)));
-    console.log("Local storage cleared successfully");
   } catch {
-    console.error("Failed to clear local storage");
+    console.error("Failed to clear secure storage");
   }
 };
 

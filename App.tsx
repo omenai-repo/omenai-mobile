@@ -40,7 +40,10 @@ import SupportWidget from "#components/support/SupportWidget";
 import WithModal from "#components/modal/WithModal";
 import GuestLoginModal from "#components/guest/GuestLoginModal";
 import { screenName } from "#constants/screenNames.constants";
-import { sanitizeDeepLinkPath } from "#config/deepLinking.config";
+import {
+  sanitizeDeepLinkPath,
+  extractSafeDeepLinkToken,
+} from "#config/deepLinking.config";
 
 // Set default font for all Text and TextInput components
 // @ts-ignore
@@ -177,29 +180,35 @@ export default function App() {
   };
 
   const linking = {
-    prefixes: [prefix, "https://omenai.app"],
+    prefixes: [prefix, "https://omenai.app", "omenai://"],
     config,
     getInitialURL: async () => {
       const url = await Linking.getInitialURL();
       if (!url) return null;
 
-      const path = Linking.parse(url).path ?? "";
+      const parsed = Linking.parse(url);
+      const path = parsed.path ?? "";
+      const token = extractSafeDeepLinkToken(parsed.queryParams?.token);
       const sanitizedPath = sanitizeDeepLinkPath(path, {
         isLoggedIn,
         userType,
       });
 
-      return `${prefix}${sanitizedPath}`;
+      const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : "";
+      return `${prefix}${sanitizedPath}${tokenQuery}`;
     },
     subscribe: (listener: (url: string) => void) => {
       const onReceiveURL = ({ url }: { url: string }) => {
-        const path = Linking.parse(url).path ?? "";
+        const parsed = Linking.parse(url);
+        const path = parsed.path ?? "";
+        const token = extractSafeDeepLinkToken(parsed.queryParams?.token);
         const sanitizedPath = sanitizeDeepLinkPath(path, {
           isLoggedIn,
           userType,
         });
 
-        listener(`${prefix}${sanitizedPath}`);
+        const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : "";
+        listener(`${prefix}${sanitizedPath}${tokenQuery}`);
       };
 
       const subscription = Linking.addEventListener("url", onReceiveURL);
