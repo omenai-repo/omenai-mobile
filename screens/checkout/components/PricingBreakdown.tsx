@@ -78,8 +78,8 @@ export const PricingBreakdown = ({
           style={tw`mt-4 p-3 rounded-md bg-emerald-50 border border-emerald-200`}
         >
           <Text style={tw`text-[12px] text-emerald-800`}>
-            <Text style={tw`font-semibold`}>Note:</Text> You won't be charged
-            today. We'll save your card for future billing.
+            <Text style={tw`font-semibold`}>Note:</Text> You won&apos;t be charged
+            today. We&apos;ll save your card for future billing.
           </Text>
         </View>
       )}
