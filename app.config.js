@@ -80,6 +80,13 @@ export default {
       fallbackToCacheTimeout: 30000,
     },
     plugins: [
+      "@react-native-community/datetimepicker",
+      "expo-image",
+      "expo-sharing",
+      [
+        "@stripe/stripe-react-native",
+        {},
+      ],
       [
         "expo-font",
         {
