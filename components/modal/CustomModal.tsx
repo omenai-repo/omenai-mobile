@@ -30,6 +30,7 @@ export default function CustomModal({
     modalType,
     retainModal,
     updateModal,
+    setRetainModal,
     modalStyle,
     onDismiss: storeOnDismiss,
   } = useModalStore();
@@ -44,12 +45,16 @@ export default function CustomModal({
       onDismiss();
     } else {
       if (storeOnDismiss) storeOnDismiss();
-      updateModal({
-        message: modalMessage,
-        showModal: false,
-        modalType: modalType,
-        modalStyle: modalStyle,
-      });
+      if (retainModal) {
+        setRetainModal({ showModal: false, retainModal: null });
+      } else {
+        updateModal({
+          message: modalMessage,
+          showModal: false,
+          modalType: modalType,
+          modalStyle: modalStyle,
+        });
+      }
     }
   };
 

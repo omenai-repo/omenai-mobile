@@ -30,6 +30,7 @@ import { useQuery } from "@tanstack/react-query";
 import GalleryOverviewStack from "#navigation/GalleryOverviewStack";
 import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
 import ArtistRoster from "#screens/gallery/artistRoster/ArtistRoster";
+import AddArtistToRosterModal from "#screens/gallery/artistRoster/AddArtistToRosterModal";
 import ShowsFairsEvents from "#screens/gallery/showsFairsEvents/ShowsFairsEvents";
 import GalleryOrdersListing from "#screens/galleryOrders/GalleryOrdersListing";
 import Subscriptions from "#screens/subscriptions/Subscriptions";
@@ -428,6 +429,10 @@ export default function GalleryNavigation() {
         <Stack.Screen
           name={screenName.supportTicketsFilterModal}
           component={wrapWithHighRisk(SupportTicketsFilterModal)}
+        />
+        <Stack.Screen
+          name={screenName.gallery.addArtistToRoster}
+          component={wrapWithHighRisk(AddArtistToRosterModal)}
         />
       </Stack.Group>
     </Stack.Navigator>

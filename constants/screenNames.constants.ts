@@ -43,6 +43,7 @@ export const screenName = {
     artworks: "Artworks",
     more: "More",
     artistRoster: "Artist Roster",
+    addArtistToRoster: "add-artist-to-roster",
     showsFairsEvents: "Shows, Fairs & Events",
     uploadArtwork: "upload-artwork",
     uploadNewLogo: "upload-new-gallery-logo",
