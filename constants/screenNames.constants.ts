@@ -41,6 +41,9 @@ export const screenName = {
   gallery: {
     overview: "Overview",
     artworks: "Artworks",
+    more: "More",
+    artistRoster: "Artist Roster",
+    showsFairsEvents: "Shows, Fairs & Events",
     uploadArtwork: "upload-artwork",
     uploadNewLogo: "upload-new-gallery-logo",
     orders: "Orders",

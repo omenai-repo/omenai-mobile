@@ -9,12 +9,18 @@ import PopularArtworks from "./components/PopularArtworks";
 import { useQueryClient } from "@tanstack/react-query";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import { useMoreSheet } from "#navigation/components/MoreSheetContext";
 
 export default function Overview() {
   const [refreshing, setRefreshing] = useState(false);
   const inflight = useRef(0);
+  const hasOpenedFromPull = useRef(false);
+  const isDragging = useRef(false);
+  const dragStartedAtTop = useRef(false);
+  const dragStartedInHeader = useRef(false);
   const qc = useQueryClient();
   const { userSession } = useAppStore();
+  const { openSearchSheet } = useMoreSheet();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -45,6 +51,44 @@ export default function Overview() {
     }
   }, []);
 
+  const handleScroll = useCallback(
+    (event: any) => {
+      const yOffset = event.nativeEvent.contentOffset.y;
+      if (
+        isDragging.current &&
+        dragStartedAtTop.current &&
+        dragStartedInHeader.current &&
+        yOffset < -45 &&
+        !hasOpenedFromPull.current
+      ) {
+        hasOpenedFromPull.current = true;
+        openSearchSheet();
+        return;
+      }
+
+      if (yOffset > -10) {
+        hasOpenedFromPull.current = false;
+      }
+    },
+    [openSearchSheet],
+  );
+
+  const handleScrollBeginDrag = useCallback((event: any) => {
+    isDragging.current = true;
+    dragStartedAtTop.current = event.nativeEvent.contentOffset.y <= 0;
+  }, []);
+
+  const handleScrollEndDrag = useCallback(() => {
+    isDragging.current = false;
+    dragStartedAtTop.current = false;
+    dragStartedInHeader.current = false;
+  }, []);
+
+  const handleTouchStart = useCallback((event: any) => {
+    // Only allow search pull gesture when touch begins in top header zone.
+    dragStartedInHeader.current = event.nativeEvent.locationY <= 120;
+  }, []);
+
   return (
     <WithGalleryModal>
       <Animated.ScrollView
@@ -54,6 +98,11 @@ export default function Overview() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        onTouchStart={handleTouchStart}
+        onScroll={handleScroll}
+        onScrollBeginDrag={handleScrollBeginDrag}
+        onScrollEndDrag={handleScrollEndDrag}
+        onMomentumScrollEnd={handleScrollEndDrag}
         scrollEventThrottle={16}
       >
         <HighlightCard onLoadingChange={handleLoadingChange} />
