@@ -157,7 +157,7 @@ export default React.memo(function SalesOverview({
 
   if (query.isLoading && !query.data) {
     return (
-      <View style={[tw`bg-white rounded-md py-5 px-4 mx-4`, style]}>
+      <View style={[tw`bg-white rounded-md py-5 px-4`, style]}>
         {renderHeader()}
         <View
           style={[
@@ -184,7 +184,7 @@ export default React.memo(function SalesOverview({
 
   return (
     <View
-      style={[tw`bg-white rounded-md py-5 px-4 mx-4 overflow-hidden`, style]}
+      style={[tw`bg-white rounded-md py-5 px-4 overflow-hidden`, style]}
     >
       {renderHeader()}
 

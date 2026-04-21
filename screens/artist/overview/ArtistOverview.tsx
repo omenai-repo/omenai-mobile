@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { View, RefreshControl } from "react-native";
 import tw from "twrnc";
-import Header from "#components/header/Header";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import SalesOverview from "#screens/overview/components/SalesOverview";
 
@@ -11,13 +10,10 @@ import { HighlightCard } from "./HighlightCard";
 import { useQueryClient } from "@tanstack/react-query";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
-import BlurStatusBar from "#components/general/BlurStatusBar";
-import { useScrollY } from "#hooks/useScrollY";
 
 const ArtistOverview = () => {
   const queryClient = useQueryClient();
   const { userSession } = useAppStore();
-  const { scrollY, onScroll } = useScrollY();
   const isAnyFetching = false;
 
   const onRefresh = useCallback(async () => {
@@ -45,16 +41,14 @@ const ArtistOverview = () => {
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
-      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
       <ScrollWrapper
         showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
+        style={tw`flex-1 bg-[#F7F7F7] px-5`}
         refreshControl={
           <RefreshControl refreshing={isAnyFetching} onRefresh={onRefresh} />
         }
-        onScroll={onScroll}
       >
-        <Header />
-        {/* Highlight Cards & Sales chart use their own queries and report loading via onLoadingChange if needed */}
         <HighlightCard />
         <SalesOverview />
         <PopularArtworks />

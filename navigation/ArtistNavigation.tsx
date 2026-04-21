@@ -6,7 +6,7 @@ import tw from "twrnc";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SvgXml } from "react-native-svg";
 import { starEffect } from "#utils/SvgImages";
-import ArtistOverview from "#screens/artist/overview/ArtistOverview";
+import ArtistOverviewStack from "#navigation/ArtistOverviewStack";
 import { createStackNavigator } from "@react-navigation/stack";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { logout } from "#utils/logout.utils";
@@ -174,7 +174,7 @@ const ArtistNavigation = () => {
       />
       <Stack.Screen
         name="ArtistOverview"
-        component={wrapWithHighRisk(ArtistOverview)}
+        component={wrapWithHighRisk(ArtistOverviewStack)}
       />
       <Stack.Screen
         name={"NotificationScreen"}

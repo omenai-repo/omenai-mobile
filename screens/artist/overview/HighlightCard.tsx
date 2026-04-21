@@ -64,7 +64,7 @@ export const HighlightCard = ({
   useEffect(() => {
     onLoadingChange?.(
       isFetching ||
-        (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data))
+      (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data))
     );
   }, [
     isLoading,
@@ -94,9 +94,9 @@ export const HighlightCard = ({
   if (isLoading && !(qSales.data && qNet.data && qRev.data && qBal.data)) {
     return (
       <View
-        style={tw.style(`mx-5 mt-5 mb-[15px] flex-row flex-wrap`, {
+        style={[tw`mt-2 mb-[15px] flex-row flex-wrap`, {
           gap,
-        })}
+        }]}
       >
         {["shim-1", "shim-2", "shim-3", "shim-4"].map((key) => (
           <SkeletonHighlightCard key={key} cardWidth={cardWidth} />
@@ -107,9 +107,9 @@ export const HighlightCard = ({
 
   return (
     <View
-      style={tw.style(`mx-5 mt-5 mb-[15px] flex-row flex-wrap`, {
+      style={[tw`mt-2 mb-[15px] flex-row flex-wrap`, {
         gap,
-      })}
+      }]}
     >
       <CardComp
         title="Wallet Balance"

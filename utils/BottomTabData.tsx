@@ -1,4 +1,4 @@
-import ArtistOverview from "#screens/artist/overview/ArtistOverview";
+import ArtistOverviewStack from "#navigation/ArtistOverviewStack";
 import {
   catalogueIcon,
   catalogueIconFocused,
@@ -30,13 +30,13 @@ import OrderScreen from "#screens/artist/orders/OrderScreen";
 import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
 import ArtistProfileScreen from "#screens/artist/profile/ArtistProfileScreen";
 import ArtistReviewHub from "#screens/artist/reviews/ArtistReviewHub";
-import Home from "#screens/home/Home";
+import IndividualHomeStack from "#navigation/IndividualHomeStack";
 import GuestOverview from "#screens/overview/GuestOverview";
 import Catalog from "#screens/catalog/Catalog";
 import SearchResults from "#screens/searchResults/SearchResults";
 import Orders from "#screens/orders/Orders";
 import Profile from "#screens/profile/Profile";
-import Overview from "#screens/overview/Overview";
+import GalleryOverviewStack from "#navigation/GalleryOverviewStack";
 import GalleryOrdersListing from "#screens/galleryOrders/GalleryOrdersListing";
 import Subscriptions from "#screens/subscriptions/Subscriptions";
 import GuestProfilePlaceholder from "#screens/guest/GuestProfilePlaceholder";
@@ -49,7 +49,7 @@ export const getBottomTabDataArtist = () => [
     activeIcon: overviewActive,
     inActiveIcon: overviewInActive,
     name: "Overview",
-    component: ArtistOverview,
+    component: ArtistOverviewStack,
   },
   {
     id: 2,
@@ -94,7 +94,7 @@ export const getBottomTabDataIndividual = () => [
     activeIcon: homeIcon,
     inActiveIcon: homeIconFocused,
     name: "Overview",
-    component: Home,
+    component: IndividualHomeStack,
   },
   {
     id: 2,
@@ -163,7 +163,7 @@ export const getBottomTabDataGallery = () => [
     name: "Overview",
     activeIcon: overviewActive,
     inActiveIcon: overviewInActive,
-    component: Overview,
+    component: GalleryOverviewStack,
   },
   {
     id: 2,

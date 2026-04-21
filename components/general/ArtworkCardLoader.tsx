@@ -32,7 +32,7 @@ export default function ArtworkCardLoader() {
       horizontal={true}
       showsHorizontalScrollIndicator={false}
       style={tw`mt-5`}
-      contentContainerStyle={tw`pl-5 gap-5 pr-5`}
+      contentContainerStyle={tw`gap-5 pr-5`}
     />
   );
 }

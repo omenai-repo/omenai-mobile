@@ -116,12 +116,7 @@ export default {
         },
       ],
 
-      [
-        "expo-web-browser",
-        {
-          experimentalLauncherActivity: true,
-        },
-      ],
+      "expo-web-browser",
       [
         "expo-secure-store",
         {

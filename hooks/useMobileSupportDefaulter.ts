@@ -1,29 +1,75 @@
-import { useNavigationState } from "@react-navigation/native";
-import { useMemo } from "react";
-import { SupportCategory } from "../types/types";
+import { useEffect, useMemo, useState } from "react";
+
+import { navigationRef } from "#navigation/RootNavigation";
 
 interface SupportDefault {
   category: SupportCategory;
   referenceId: string;
 }
 
+type RouteLike = {
+  name: string;
+  params?: object;
+  state?: { index: number; routes: RouteLike[] };
+};
+
+function getDeepestFocusedRoute(
+  state: { index: number; routes: RouteLike[] } | undefined,
+): RouteLike | null {
+  if (!state || typeof state.index !== "number") return null;
+  const route = state.routes[state.index];
+  if (!route) return null;
+  if (
+    route.state &&
+    typeof route.state.index === "number" &&
+    Array.isArray(route.state.routes)
+  ) {
+    return getDeepestFocusedRoute(route.state);
+  }
+  return route;
+}
+
+function readFocusedRoute(): RouteLike | null {
+  try {
+    if (!navigationRef.isReady()) return null;
+    return getDeepestFocusedRoute(
+      navigationRef.getRootState() as {
+        index: number;
+        routes: RouteLike[];
+      },
+    );
+  } catch {
+    return null;
+  }
+}
+
 export function useMobileSupportDefaulter(): SupportDefault {
-  const currentRoute = useNavigationState((state) => {
-    if (!state || typeof state.index !== "number") return null;
-    const route = state.routes[state.index];
-    if (route.state && typeof route.state.index === "number") {
-      // Nested navigator
-      return route.state.routes[route.state.index];
-    }
-    return route;
-  });
+  const [currentRoute, setCurrentRoute] = useState<RouteLike | null>(() =>
+    readFocusedRoute(),
+  );
+
+  useEffect(() => {
+    const sync = () => setCurrentRoute(readFocusedRoute());
+
+    sync();
+
+    const unsub =
+      typeof navigationRef.addListener === "function"
+        ? navigationRef.addListener("state", sync)
+        : () => {};
+
+    const t = setTimeout(sync, 0);
+    return () => {
+      clearTimeout(t);
+      unsub();
+    };
+  }, []);
 
   const defaults = useMemo((): SupportDefault => {
     if (!currentRoute) return { category: "GENERAL", referenceId: "" };
     const { name, params } = currentRoute;
     const routeParams = params as any;
 
-    // Configuration for route matching
     const ROUTE_CONFIG = [
       {
         keywords: ["Login", "Register", "ForgotPassword", "VerifyEmail"],
@@ -57,7 +103,6 @@ export function useMobileSupportDefaulter(): SupportDefault {
       },
     ] as const;
 
-    // Find first matching config
     for (const config of ROUTE_CONFIG) {
       if (config.keywords.some((keyword) => name.includes(keyword))) {
         return {
