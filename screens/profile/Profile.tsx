@@ -39,18 +39,8 @@ export default function Profile() {
     navigation.navigate(screenName.savedArtworks);
   }, [navigation]);
 
-  const goToChangePassword = useCallback(() => {
-    navigation.navigate(screenName.gallery.changePassword, {
-      routeName: "individual",
-    });
-  }, [navigation]);
-
   const goToEditProfile = useCallback(() => {
     navigation.navigate(screenName.editProfile);
-  }, [navigation]);
-
-  const goToDeleteAccount = useCallback(() => {
-    navigation.navigate(screenName.deleteAccount, { routeName: "individual" });
   }, [navigation]);
 
   const commonMenuItems = useProfileMenuOptions(navigation, "individual");

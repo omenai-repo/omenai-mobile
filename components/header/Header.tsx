@@ -1,14 +1,42 @@
-import { Image, View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 
 import omenaiLogo from "../../assets/omenai-logo.png";
 import tailwind from "twrnc";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 import { colors } from "#config/colors.config";
+
+export function GalleryOverviewLogo() {
+  return (
+    <Image
+      source={omenaiLogo}
+      style={tailwind`w-[130px] h-[30px]`}
+      contentFit="contain"
+      cachePolicy="none"
+    />
+  );
+}
+
+export function GalleryOverviewNotificationButton() {
+  const navigation = useNavigation<StackNavigationProp<any>>();
+
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.navigate("NotificationScreen")}
+      activeOpacity={0.7}
+    >
+      <View
+        style={tailwind`bg-[#f0f0f0] h-[40px] w-[40px] rounded-full flex items-center justify-center`}
+      >
+        <Ionicons name="notifications-outline" size={22} color="#1A1A1A" />
+      </View>
+    </TouchableOpacity>
+  );
+}
 
 export default React.memo(function Header({
   showNotification = true,
@@ -17,38 +45,17 @@ export default React.memo(function Header({
   showNotification?: boolean;
   showAuthButton?: boolean;
 }) {
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  const insets = useSafeAreaInsets();
   const { openGuestLoginModal } = useGuestLoginModalStore();
-
-  const handleNotificationPress = () => {
-    navigation.navigate("NotificationScreen");
-  };
 
   return (
     <View
-      style={[
-        tailwind`flex-row items-center px-5 self-center gap-5`,
-        { marginTop: insets.top + 16 },
-      ]}
+      style={tailwind`flex-row items-center self-center gap-5`}
     >
       <View style={tailwind`flex-1`}>
-        <Image
-          style={tailwind`w-[130px] h-[30px]`}
-          resizeMode="contain"
-          source={omenaiLogo}
-        />
+        <GalleryOverviewLogo />
       </View>
 
-      {showNotification && (
-        <TouchableOpacity onPress={handleNotificationPress} activeOpacity={0.7}>
-          <View
-            style={tailwind`bg-[#f0f0f0] h-[40px] w-[40px] rounded-full flex items-center justify-center`}
-          >
-            <Ionicons name="notifications-outline" size={22} color="#1A1A1A" />
-          </View>
-        </TouchableOpacity>
-      )}
+      {showNotification && <GalleryOverviewNotificationButton />}
 
       {showAuthButton && (
         <TouchableOpacity

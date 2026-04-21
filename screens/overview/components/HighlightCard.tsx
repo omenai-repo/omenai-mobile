@@ -94,9 +94,9 @@ export const HighlightCard = React.memo(function HighlightCard({
   if (isLoadingAny) {
     return (
       <View
-        style={tw.style(`mx-5 mt-5 mb-[15px] flex-row flex-wrap`, {
+        style={[tw`mt-5 mb-[15px] flex-row flex-wrap`, {
           gap,
-        })}
+        }]}
       >
         {["shim1", "shim2", "shim3", "shim4"].map((key) => (
           <SkeletonHighlightCard key={key} cardWidth={cardWidth} />
@@ -107,9 +107,9 @@ export const HighlightCard = React.memo(function HighlightCard({
 
   return (
     <View
-      style={tw.style(`mx-5 mt-5 mb-[15px] flex-row flex-wrap`, {
+      style={[tw`mt-5 mb-[15px] flex-row flex-wrap`, {
         gap,
-      })}
+      }]}
     >
       {allCards.map((c) => (
         <CardComp

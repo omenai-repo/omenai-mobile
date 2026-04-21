@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import {
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  InteractionManager,
 } from "react-native";
-import { FlashList } from "@shopify/flash-list";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import { fetchPopularArtworks } from "#services/artworks/fetchPopularArtworks";
 import ArtworkCard from "#components/artwork/ArtworkCard";
@@ -19,7 +18,6 @@ import { useQuery } from "@tanstack/react-query";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import tw from "twrnc";
-import { useDevice } from "#hooks/useDevice";
 
 export default React.memo(function PopularArtworks({
   onLoadingChange,
@@ -28,36 +26,15 @@ export default React.memo(function PopularArtworks({
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { userSession, userType } = useAppStore();
-  const { isTablet, horizontalPadding, width } = useDevice();
-  const estimatedItemSize = useMemo(
-    () => (isTablet ? width * 0.4 + 20 : width * 0.7 + 20),
-    [isTablet, width],
-  );
-  const horizontalContentStyle = useMemo(
-    () => ({
-      paddingLeft: isTablet ? horizontalPadding : 20,
-      paddingRight: isTablet ? horizontalPadding : 20,
-      marginTop: isTablet ? 40 : 30,
-    }),
-    [horizontalPadding, isTablet],
-  );
-
-  const [interactionsComplete, setInteractionsComplete] = useState(false);
-
-  useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(() => {
-      setInteractionsComplete(true);
-    });
-    return () => task.cancel();
-  }, []);
+  const userId = userSession?.id;
 
   const query = useQuery({
-    queryKey: QK.popularArtworks(userSession?.id),
+    queryKey: QK.popularArtworks(userId),
     queryFn: async () => {
       const res = await fetchPopularArtworks();
       return res?.data ?? [];
     },
-    enabled: interactionsComplete,
+    enabled: !!userId,
   });
 
   useEffect(() => {
@@ -67,45 +44,13 @@ export default React.memo(function PopularArtworks({
   const isLoading = query.isLoading && !query.data;
   const data = query.data ?? [];
 
-  const renderItem = useCallback(
-    ({ item }: { item: ArtworkFlatlistItem }) => (
-      <View style={{ alignSelf: "flex-end" }}>
-        <ArtworkCard
-          title={item.title}
-          url={item.url}
-          artist={item.artist}
-          showPrice={item.pricing?.shouldShowPrice === "Yes"}
-          price={item.pricing?.usd_price}
-          availiablity={item.availability}
-          impressions={item.impressions}
-          like_IDs={item.like_IDs}
-          art_id={item.art_id}
-          galleryView
-          hideBackground
-          useImageLoadAspectRatio
-        />
-      </View>
-    ),
-    [],
-  );
-
-  const keyExtractor = useCallback(
-    (item: ArtworkFlatlistItem, index: number) => String(item.art_id ?? index),
-    [],
-  );
-
   return (
     <View style={styles.container}>
       <TouchableOpacity
         disabled={["artist", "gallery"].includes(userType)}
         onPress={() => navigation.navigate(screenName.gallery.artworks)}
       >
-        <View
-          style={[
-            tw`flex-row items-center`,
-            { paddingHorizontal: isTablet ? horizontalPadding : 20 },
-          ]}
-        >
+        <View style={tw`flex-row items-center`}>
           <Text style={tw`font-medium flex-1 text-lg`}>Popular artworks</Text>
           {!["artist", "gallery"].includes(userType) && (
             <NavBtnComponent onPress={() => { }} />
@@ -116,18 +61,30 @@ export default React.memo(function PopularArtworks({
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <FlashList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
+        <ScrollView
           horizontal
           nestedScrollEnabled
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={horizontalContentStyle}
-          ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
-          // @ts-expect-error - FlashList types may not include estimatedItemSize in this version.
-          estimatedItemSize={estimatedItemSize}
-        />
+          contentContainerStyle={[tw`gap-5 pt-5`, { alignItems: "flex-end" }]}
+        >
+          {data.map((item: ArtworkFlatlistItem, index: number) => (
+            <ArtworkCard
+              key={item.art_id?.toString() ?? `popular-${index}`}
+              title={item.title}
+              url={item.url}
+              artist={item.artist}
+              showPrice={item.pricing?.shouldShowPrice === "Yes"}
+              price={item.pricing?.usd_price}
+              availiablity={item.availability}
+              impressions={item.impressions}
+              like_IDs={item.like_IDs}
+              art_id={item.art_id}
+              galleryView
+              hideBackground
+              useImageLoadAspectRatio
+            />
+          ))}
+        </ScrollView>
       )}
 
       {!isLoading && data.length === 0 && (

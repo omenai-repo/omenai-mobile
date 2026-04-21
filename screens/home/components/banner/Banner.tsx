@@ -81,41 +81,39 @@ export default function Banner() {
   };
 
   return (
-    <View>
-      <View style={tw`mt-5`}>
-        {isLoading && data.length === 0 && (
-          <BannerLoader isTablet={isTablet} cardWidth={CARD_WIDTH} />
-        )}
+    <View style={tw`mt-2`}>
+      {isLoading && data.length === 0 && (
+        <BannerLoader isTablet={isTablet} cardWidth={CARD_WIDTH} />
+      )}
 
-        {!isLoading && data.length > 0 && (
-          <Animated.FlatList
-            ref={flatListRef}
-            data={data}
-            renderItem={({ item }) => (
-              <BannerCard
-                {...item}
-                handleClick={handleClick}
-                cardWidth={CARD_WIDTH}
-              />
-            )}
-            keyExtractor={(item) => item.headline}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={SNAP_INTERVAL}
-            decelerationRate="fast"
-            bounces={false}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-              {
-                useNativeDriver: false,
-              },
-            )}
-            scrollEventThrottle={16}
-            contentContainerStyle={{ paddingHorizontal: SIDE_PADDING }}
-            ItemSeparatorComponent={() => <View style={{ width: CARD_GAP }} />}
-          />
-        )}
-      </View>
+      {!isLoading && data.length > 0 && (
+        <Animated.FlatList
+          ref={flatListRef}
+          data={data}
+          renderItem={({ item }) => (
+            <BannerCard
+              {...item}
+              handleClick={handleClick}
+              cardWidth={CARD_WIDTH}
+            />
+          )}
+          keyExtractor={(item) => item.headline}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={SNAP_INTERVAL}
+          decelerationRate="fast"
+          bounces={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            {
+              useNativeDriver: false,
+            },
+          )}
+          scrollEventThrottle={16}
+          contentContainerStyle={{ paddingHorizontal: SIDE_PADDING }}
+          ItemSeparatorComponent={() => <View style={{ width: CARD_GAP }} />}
+        />
+      )}
 
       {/* Pagination - show dots based on scroll positions */}
       {!isTablet && (

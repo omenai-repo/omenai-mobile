@@ -39,9 +39,9 @@ export default function NewArtworksListing({
           hideAction
             ? undefined
             : () =>
-                navigation.navigate(screenName.artworksMedium, {
-                  catalog: "recent",
-                })
+              navigation.navigate(screenName.artworksMedium, {
+                catalog: "recent",
+              })
         }
       />
 
