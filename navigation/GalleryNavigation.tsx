@@ -28,16 +28,18 @@ import SupportTicketsFilterModal from "#screens/profile/components/SupportTicket
 import SubscriptionHistory from "#screens/subscriptions/SubscriptionHistory";
 import { useQuery } from "@tanstack/react-query";
 import GalleryOverviewStack from "#navigation/GalleryOverviewStack";
+import GalleryShowsFairsEventsStack from "#navigation/GalleryShowsFairsEventsStack";
 import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
 import ArtistRoster from "#screens/gallery/artistRoster/ArtistRoster";
 import AddArtistToRosterModal from "#screens/gallery/artistRoster/AddArtistToRosterModal";
-import ShowsFairsEvents from "#screens/gallery/showsFairsEvents/ShowsFairsEvents";
+import ShowsFairsEventDetails from "#screens/gallery/showsFairsEvents/ShowsFairsEventDetails";
 import GalleryOrdersListing from "#screens/galleryOrders/GalleryOrdersListing";
 import Subscriptions from "#screens/subscriptions/Subscriptions";
 import StripePayoutsTab from "#screens/stripeScreens/payouts/StripePayoutsTab";
 import GalleryProfile from "#screens/galleryProfileScreens/galleryProfile/GalleryProfile";
 import GalleryTabBar from "./components/GalleryTabBar";
 import MoreSheet from "./components/MoreSheet";
+import { logout } from "#utils/logout.utils";
 import {
   MoreSheetProvider,
   useMoreSheet,
@@ -109,7 +111,7 @@ const galleryMoreTabs = [
     id: 6,
     name: screenName.gallery.showsFairsEvents,
     label: "Shows, Fairs & Events",
-    component: ShowsFairsEvents,
+    component: GalleryShowsFairsEventsStack,
   },
   {
     id: 7,
@@ -155,7 +157,7 @@ export default function GalleryNavigation() {
 
   const GalleryTabNavigationScreens = useCallback(() => {
     function GalleryTabs() {
-      const { isMoreSheetOpen, closeMoreSheet, openMoreSheet, mode } = useMoreSheet();
+      const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
       const tabNavigationRef = useRef<any>(null);
 
       const navigateToScreen = useCallback((routeName: string) => {
@@ -252,6 +254,14 @@ export default function GalleryNavigation() {
             keywords: ["settings", "account"],
             onPress: () => navigateToScreen(screenName.gallery.profile),
           },
+          {
+            key: "logout",
+            label: "Logout",
+            routeName: "logout",
+            keywords: ["sign out", "log out"],
+            isDanger: true,
+            onPress: () => void logout(),
+          },
         ],
         [navigateToScreen],
       );
@@ -264,6 +274,7 @@ export default function GalleryNavigation() {
               "payouts",
               "support-tickets",
               "profile-management",
+              "logout",
             ].includes(item.key),
           ),
         [moreSheetItems],
@@ -309,8 +320,6 @@ export default function GalleryNavigation() {
             visible={isMoreSheetOpen}
             onClose={closeMoreSheet}
             menuItems={moreMenuItems}
-            searchItems={moreSheetItems}
-            mode={mode}
           />
         </>
       );
@@ -364,6 +373,10 @@ export default function GalleryNavigation() {
       <Stack.Screen
         name={screenName.gallery.orders}
         component={wrapWithHighRisk(GalleryOrdersListing)}
+      />
+      <Stack.Screen
+        name={screenName.gallery.showsFairsEventDetails}
+        component={wrapWithHighRisk(ShowsFairsEventDetails)}
       />
       <Stack.Screen
         name="DimensionsDetails"

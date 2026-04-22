@@ -62,3 +62,10 @@ export const WALLET_QK = {
     acctNumber,
   ],
 };
+
+export const EVENTS_QK = {
+  allShows: ["events", "shows"] as const,
+  allFairsEvents: (filter: string) => ["events", "fairs-events", filter] as const,
+  details: (eventId: string, source: "show" | "event") =>
+    ["events", "details", source, eventId] as const,
+};

@@ -79,7 +79,7 @@ export default function Plan({
 
   const { monthly_price, annual_price } = pricing;
 
-  // Only Gallery Monthly is eligible for the 1‑month free offer.
+  // Only Gallery Monthly is eligible for the 14-day free offer.
   const isEligibleForDiscount =
     !!discount && discount.redeemed === false && name === "Gallery" && tab === "monthly";
 
@@ -100,7 +100,9 @@ export default function Plan({
 
   // Update button text for discount
   const finalButtonText =
-    isEligibleForDiscount && !isDisabled ? "Claim 1 month free" : buttonText;
+    isEligibleForDiscount && !isDisabled
+      ? "Claim 14 days free subscription"
+      : buttonText;
 
   const yearlySave =
     tab === "yearly"
