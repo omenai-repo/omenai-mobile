@@ -45,6 +45,7 @@ export const screenName = {
     artistRoster: "Artist Roster",
     addArtistToRoster: "add-artist-to-roster",
     showsFairsEvents: "Shows, Fairs & Events",
+    showsFairsEventDetails: "shows-fairs-event-details",
     uploadArtwork: "upload-artwork",
     uploadNewLogo: "upload-new-gallery-logo",
     orders: "Orders",
