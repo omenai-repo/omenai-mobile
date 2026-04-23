@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import {
   StackActions,
   useFocusEffect,
@@ -22,7 +22,12 @@ import {
   searchArtistsForRoster,
 } from "#services/roster/galleryRoster";
 import { useAppStore } from "#store/app/appStore";
+import { useModalStore } from "#store/modal/modalStore";
 import type { ArtistSearchResult } from "#types/roster.types";
+import {
+  isValidRosterBirthYear,
+  rosterBirthYearValidationMessage,
+} from "#utils/rosterBirthYear";
 
 const ROSTER_QK = (galleryId: string) => ["gallery-roster", galleryId] as const;
 
@@ -31,6 +36,7 @@ export default function AddArtistToRosterModal() {
   const route = useRoute<any>();
   const queryClient = useQueryClient();
   const { userSession } = useAppStore();
+  const { updateModal } = useModalStore();
 
   const galleryId =
     route.params?.galleryId ?? (userSession?.id as string | undefined) ?? "";
@@ -199,7 +205,14 @@ export default function AddArtistToRosterModal() {
   const isGhost = !artistId && !!ghostLabel;
   const showTombstoneFields =
     Boolean(name.trim()) || (!artistId && query.trim().length >= 2);
-  const isMissingGhostData = isGhost && (!birthyear.trim() || !country_of_origin.trim());
+  const birthyearTrimmed = birthyear.trim();
+  const countryTrimmed = country_of_origin.trim();
+  const ghostBirthYearInvalid =
+    birthyearTrimmed.length > 0 &&
+    !isValidRosterBirthYear(birthyearTrimmed);
+  const isMissingGhostData =
+    isGhost &&
+    (!isValidRosterBirthYear(birthyearTrimmed) || !countryTrimmed);
   const isButtonDisabled =
     !galleryId ||
     (!artistId && !ghostLabel) ||
@@ -208,7 +221,23 @@ export default function AddArtistToRosterModal() {
 
   const handleConfirmAdd = async () => {
     if (!galleryId) {
-      Alert.alert("Missing gallery", "Please sign in again and retry.");
+      updateModal({
+        showModal: true,
+        modalType: "error",
+        message: "Missing gallery. Please sign in again and retry.",
+      });
+      return;
+    }
+    if (
+      !artistId &&
+      ghostLabel &&
+      !isValidRosterBirthYear(birthyear.trim())
+    ) {
+      updateModal({
+        showModal: true,
+        modalType: "error",
+        message: rosterBirthYearValidationMessage(),
+      });
       return;
     }
     setIsSubmitting(true);
@@ -227,10 +256,18 @@ export default function AddArtistToRosterModal() {
       if (res.isOk) {
         setView("success");
       } else {
-        Alert.alert("Could not add artist", res.message || "Please try again.");
+        updateModal({
+          showModal: true,
+          modalType: "error",
+          message: res.message || "Could not add artist. Please try again.",
+        });
       }
     } catch {
-      Alert.alert("Could not add artist", "An unexpected error occurred.");
+      updateModal({
+        showModal: true,
+        modalType: "error",
+        message: "Could not add artist. An unexpected error occurred.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -288,6 +325,9 @@ export default function AddArtistToRosterModal() {
             birthyear={birthyear}
             onBirthyearChange={setBirthyear}
             onBirthyearFocus={commitTypedNameAsNewGhost}
+            birthYearError={
+              ghostBirthYearInvalid ? rosterBirthYearValidationMessage() : null
+            }
             country_of_origin={country_of_origin}
             countryOptions={countryOptions}
             onCountryChange={setCountry_of_origin}

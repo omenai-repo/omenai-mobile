@@ -66,6 +66,8 @@ export const WALLET_QK = {
 export const EVENTS_QK = {
   allShows: ["events", "shows"] as const,
   allFairsEvents: (filter: string) => ["events", "fairs-events", filter] as const,
+  galleryProgramming: (galleryId: string) =>
+    ["events", "gallery-programming", galleryId] as const,
   details: (eventId: string, source: "show" | "event") =>
     ["events", "details", source, eventId] as const,
 };

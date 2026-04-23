@@ -318,11 +318,12 @@ type ArtworkSchemaTypes = {
   artist: string;
   year: number;
   title: string;
-  medium: string;
+  medium: ArtworkMediumTypes | "";
   rarity: string;
   materials: string;
   dimensions: ArtworkDimensions;
-  url: string;
+  url?: string;
+  image_url?: string;
   pricing: ArtworkPricing;
   art_id: string;
   author_id: string;
@@ -332,14 +333,22 @@ type ArtworkSchemaTypes = {
   artist_country_origin: string;
   certificate_of_authenticity: string;
   artwork_description?: string;
-  // framing: string;
   signature: string;
   should_show_on_sub_active?: boolean;
+  availability: boolean;
+  packaging_type: ArtworkPackagingType;
   role_access: RoleAccess;
-  image_format?: {
+  artist_id: string;
+  exclusivity_status: {
+    exclusivity_type: "exclusive" | "non-exclusive" | null;
+    exclusivity_end_date: Date | null;
+    order_auto_rejection_count: number;
+  };
+  image_format: {
     ratio: string;
     orientation: "landscape" | "portrait" | "square";
   };
+  exhibition_status?: ArtworkExhibitionStatus | null;
 };
 
 type editorialListingType = {
