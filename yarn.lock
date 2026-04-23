@@ -7726,6 +7726,11 @@ react-native-gifted-charts@^1.4.70:
   dependencies:
     gifted-charts-core "0.1.80"
 
+react-native-haptic-feedback@>=2.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-haptic-feedback/-/react-native-haptic-feedback-3.0.0.tgz#a1e144c491885e65917cafb0c17d4ad2891ecc7e"
+  integrity sha512-yxBQFHhXU8S0xupGtzDRToGw5yMWezUdLzxtlx2Oi9YpjPwprWZWCw8foPt0S2t84B0ZikzZYyOHiMSXIelUxg==
+
 react-native-iphone-x-helper@^1.0.3:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
@@ -7806,6 +7811,13 @@ react-native-siren@^0.0.7:
   dependencies:
     apisauce "^3.1.0"
     react-native-device-info "^8.7.0"
+
+react-native-sortables@^1.9.4:
+  version "1.9.4"
+  resolved "https://registry.yarnpkg.com/react-native-sortables/-/react-native-sortables-1.9.4.tgz#c013ecb69457ba4b139f67f03ee2782437a450d7"
+  integrity sha512-a6hxT+gl14HA5Sm8UiLXJqF8KMEQVa+mUJd75OnzoVsmrxUDtjAatlMdV0kI9qTQDT/ZSFLPRmdUhOR762IA4g==
+  optionalDependencies:
+    react-native-haptic-feedback ">=2.0.0"
 
 react-native-svg@15.15.3:
   version "15.15.3"

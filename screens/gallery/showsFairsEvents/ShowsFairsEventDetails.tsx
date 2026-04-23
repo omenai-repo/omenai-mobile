@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   RefreshControl,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,6 +19,7 @@ import { EVENTS_QK } from "#utils/queryKeys";
 import {
   archiveGalleryEvent,
   fetchEventDashboardData,
+  updateArtworkSequence,
   updateEventArtworks,
   updateEventDetails,
 } from "#services/events/events.service";
@@ -432,8 +433,20 @@ export default function ShowsFairsEventDetails() {
           artworks={artworks}
           onAddInventoryClick={handleOpenAddWorks}
           onRemoveArtwork={handleRemoveArtwork}
-          onReorderArtworks={async (_newIds) => {
-            // Mobile placeholder until drag-and-drop sequence updates are added.
+          onReorderArtworks={async (newIds) => {
+            const res = await updateArtworkSequence(
+              eventId,
+              galleryId,
+              newIds,
+            );
+            if (!res.isOk) {
+              throw new Error(
+                res.message || "Failed to save the new order.",
+              );
+            }
+            await queryClient.invalidateQueries({
+              queryKey: ["eventDashboard", eventId, galleryId],
+            });
           }}
         />
 

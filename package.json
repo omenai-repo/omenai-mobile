@@ -86,6 +86,7 @@
     "react-native-render-html": "^6.3.4",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.23.0",
+    "react-native-sortables": "^1.9.4",
     "react-native-svg": "15.15.3",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-uuid": "^2.0.2",
