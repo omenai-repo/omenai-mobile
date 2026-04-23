@@ -17,6 +17,7 @@ type AddArtistTombstoneFieldsProps = {
   birthyear: string;
   onBirthyearChange: (t: string) => void;
   onBirthyearFocus: () => void;
+  birthYearError?: string | null;
   country_of_origin: string;
   countryOptions: CountryOption[];
   onCountryChange: (value: string) => void;
@@ -30,6 +31,7 @@ export function AddArtistTombstoneFields({
   birthyear,
   onBirthyearChange,
   onBirthyearFocus,
+  birthYearError,
   country_of_origin,
   countryOptions,
   onCountryChange,
@@ -62,6 +64,9 @@ export function AddArtistTombstoneFields({
             keyboardType="number-pad"
             style={formTextInputStyle}
           />
+          {!!birthYearError && (
+            <Text style={tw`text-red-600 text-xs mt-1`}>{birthYearError}</Text>
+          )}
         </View>
         <View style={tw`flex-1 min-w-0 z-20`}>
           <CustomSelectPicker

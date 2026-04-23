@@ -1,4 +1,5 @@
 import { apiUrl } from "#constants/apiUrl.constants";
+import type { CreateGalleryEventPayload } from "#lib/validation/galleryEventValidation";
 import { apiRequest } from "#utils/apiRequest";
 
 export type EventTemporalStatus = "Upcoming" | "Active" | "Past";
@@ -43,15 +44,7 @@ export type GalleryEventRecord = {
   };
   is_published?: boolean;
   vip_access_token?: string;
-};
-
-export type GalleryInventoryArtwork = {
-  art_id: string;
-  title: string;
-  artist: string;
-  image_url?: string;
-  url?: string;
-  availability?: boolean;
+  analytics?: EventDashboardAnalytics;
 };
 
 export type EventDashboardAnalytics = {
@@ -363,10 +356,43 @@ export async function archiveGalleryEvent(eventId: string, galleryId: string) {
   }
 }
 
+export type GalleryInventoryPagination = {
+  page: number;
+  limit: number;
+  total: number;
+  hasMore: boolean;
+};
+
+export async function fetchGalleryProgramming(gallery_id: string) {
+  try {
+    const response = await apiRequest(
+      `${apiUrl}/api/requests/gallery/events/fetch?gallery_id=${encodeURIComponent(gallery_id)}`,
+      { method: "GET" },
+    );
+    const result = await response.json();
+    return {
+      isOk: response.ok && result?.isOk !== false,
+      activeEvents: (result?.activeEvents ?? []) as GalleryEventRecord[],
+      pastEvents: (result?.pastEvents ?? []) as GalleryEventRecord[],
+      message: result?.message as string | undefined,
+    };
+  } catch (error: any) {
+    return {
+      isOk: false,
+      activeEvents: [] as GalleryEventRecord[],
+      pastEvents: [] as GalleryEventRecord[],
+      message:
+        error?.message ||
+        error?.response?.data?.message ||
+        "Failed to load programming.",
+    };
+  }
+}
+
 export async function fetchGalleryInventory(
   galleryId: string,
   page = 1,
-  limit = 24,
+  limit = 20,
   searchTerm = "",
 ) {
   try {
@@ -375,10 +401,17 @@ export async function fetchGalleryInventory(
       { method: "GET" },
     );
     const result = await response.json();
+    const pagination = result?.pagination as GalleryInventoryPagination | undefined;
     return {
       isOk: response.ok,
       message: result?.message as string | undefined,
-      data: (result?.data ?? []) as GalleryInventoryArtwork[],
+      data: result?.data,
+      pagination: pagination ?? {
+        page,
+        limit,
+        total: 0,
+        hasMore: false,
+      },
     };
   } catch (error: any) {
     return {
@@ -387,12 +420,40 @@ export async function fetchGalleryInventory(
         error?.message ||
         error?.response?.data?.message ||
         "Failed to fetch gallery inventory.",
-      data: [] as GalleryInventoryArtwork[],
+      data: [],
+      pagination: {
+        page: 1,
+        limit,
+        total: 0,
+        hasMore: false,
+      },
     };
   }
 }
 
-export async function fetchEventDashboardAnalytics(eventId: string, galleryId: string) {
+export async function createGalleryEvent(payload: CreateGalleryEventPayload) {
+  try {
+    const response = await apiRequest(`${apiUrl}/api/requests/gallery/events/create`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    return {
+      isOk: response.ok,
+      message: result?.message as string | undefined,
+    };
+  } catch (error: any) {
+    return {
+      isOk: false,
+      message:
+        error?.message ||
+        error?.response?.data?.message ||
+        "Failed to create event.",
+    };
+  }
+}
+
+export async function fetchEventDashboardData(eventId: string, galleryId: string) {
   try {
     const response = await apiRequest(
       `${apiUrl}/api/requests/gallery/events/fetchEventDashboardData?event_id=${encodeURIComponent(eventId)}&gallery_id=${encodeURIComponent(galleryId)}`,
@@ -402,7 +463,7 @@ export async function fetchEventDashboardAnalytics(eventId: string, galleryId: s
     return {
       isOk: response.ok,
       message: result?.message as string | undefined,
-      analytics: (result?.data?.event?.analytics ?? {}) as EventDashboardAnalytics,
+      data: result?.data,
     };
   } catch (error: any) {
     return {
@@ -410,8 +471,8 @@ export async function fetchEventDashboardAnalytics(eventId: string, galleryId: s
       message:
         error?.message ||
         error?.response?.data?.message ||
-        "Failed to fetch event analytics.",
-      analytics: {} as EventDashboardAnalytics,
+        "Failed to fetch event dashboard data.",
+      data: undefined,
     };
   }
 }

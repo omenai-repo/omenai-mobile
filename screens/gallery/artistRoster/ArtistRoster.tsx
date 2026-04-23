@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Alert, FlatList, RefreshControl, Text, View } from "react-native";
+import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -22,6 +22,7 @@ import {
   removeArtistFromRosterService,
 } from "#services/roster/galleryRoster";
 import { useAppStore } from "#store/app/appStore";
+import { useModalStore } from "#store/modal/modalStore";
 import type { RosterArtist } from "#types/roster.types";
 
 const ROSTER_QK = (galleryId: string) => ["gallery-roster", galleryId] as const;
@@ -31,6 +32,7 @@ export default function ArtistRoster() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const { userSession } = useAppStore();
+  const { updateModal, updateConfirmationModal, clear } = useModalStore();
   const galleryId = userSession?.id ?? "";
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -64,41 +66,70 @@ export default function ArtistRoster() {
   const confirmRemove = useCallback(
     (artist: RosterArtist) => {
       if (removingId !== null) return;
-      Alert.alert(
-        "Remove artist",
-        `Remove ${artist.name} from your represented artists?`,
-        [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Remove",
-            style: "destructive",
-            onPress: async () => {
-              if (!galleryId || !artist.artist_id) {
-                Alert.alert("Error", "Invalid gallery or artist. Please try again.");
-                return;
-              }
-              setRemovingId(artist.artist_id);
-              try {
-                const res = await removeArtistFromRosterService(galleryId, artist.artist_id);
-                if (!res.isOk) {
-                  Alert.alert(
-                    "Error",
-                    res.message || "Could not remove artist. Please try again.",
-                  );
-                  return;
-                }
-                await queryClient.invalidateQueries({ queryKey: ROSTER_QK(galleryId) });
-              } catch {
-                Alert.alert("Error", "An unexpected error occurred. Please try again later.");
-              } finally {
-                setRemovingId(null);
-              }
-            },
-          },
-        ],
-      );
+      updateConfirmationModal({
+        child: (
+          <View style={tw`p-3`}>
+            <Text style={tw`text-base text-neutral-900 mb-2`}>Remove artist</Text>
+            <Text style={tw`text-sm text-neutral-600 mb-5 font-sans-normal`}>
+              Remove <Text style={tw`font-sans-semibold`}>{artist.name}</Text> from your represented artists?
+            </Text>
+            <View style={tw`flex-row gap-3`}>
+              <TouchableOpacity
+                style={tw`flex-1 py-3 border border-neutral-300 rounded-sm items-center`}
+                activeOpacity={0.85}
+                onPress={() => clear()}
+              >
+                <Text style={tw`text-sm text-neutral-700`}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={tw`flex-1 py-3 bg-red-600 rounded-sm items-center`}
+                activeOpacity={0.85}
+                onPress={async () => {
+                  clear();
+                  if (!galleryId || !artist.artist_id) {
+                    updateModal({
+                      showModal: true,
+                      modalType: "error",
+                      message: "Invalid gallery or artist. Please try again.",
+                    });
+                    return;
+                  }
+                  setRemovingId(artist.artist_id);
+                  try {
+                    const res = await removeArtistFromRosterService(
+                      galleryId,
+                      artist.artist_id,
+                    );
+                    if (!res.isOk) {
+                      updateModal({
+                        showModal: true,
+                        modalType: "error",
+                        message:
+                          res.message || "Could not remove artist. Please try again.",
+                      });
+                      return;
+                    }
+                    await queryClient.invalidateQueries({ queryKey: ROSTER_QK(galleryId) });
+                  } catch {
+                    updateModal({
+                      showModal: true,
+                      modalType: "error",
+                      message:
+                        "An unexpected error occurred. Please try again later.",
+                    });
+                  } finally {
+                    setRemovingId(null);
+                  }
+                }}
+              >
+                <Text style={tw`text-sm text-white`}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ),
+      });
     },
-    [galleryId, queryClient, removingId],
+    [galleryId, queryClient, removingId, updateConfirmationModal, clear, updateModal],
   );
 
   const openAdd = useCallback(() => {
