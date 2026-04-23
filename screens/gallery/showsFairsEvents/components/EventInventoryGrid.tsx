@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -17,8 +17,6 @@ interface EventInventoryGridProps {
   onReorderArtworks: (newSequenceIds: string[]) => Promise<void>;
 }
 
-type ArtworkFilter = "All" | "Available" | "Sold";
-
 const resolveArtworkImage = (image?: string, width = 900) => {
   if (!image) return "";
   if (/^https?:\/\//i.test(image)) return image;
@@ -26,16 +24,11 @@ const resolveArtworkImage = (image?: string, width = 900) => {
 };
 
 const getAvailabilityLabel = (artwork: EventArtwork) => {
-  if (!artwork.availability) return "Sold";
-
-  const shouldShowPrice = artwork.pricing?.shouldShowPrice !== "No";
   const rawPrice = artwork.pricing?.usd_price ?? artwork.pricing?.price;
 
-  if (shouldShowPrice && typeof rawPrice === "number" && Number.isFinite(rawPrice)) {
+  if (typeof rawPrice === "number" && Number.isFinite(rawPrice)) {
     return `$${rawPrice.toLocaleString()}`;
   }
-
-  return "Available";
 };
 
 export default function EventInventoryGrid({
@@ -45,14 +38,7 @@ export default function EventInventoryGrid({
 }: EventInventoryGridProps) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateModal, updateConfirmationModal, clear } = useModalStore();
-  const [artworkFilter, setArtworkFilter] = useState<ArtworkFilter>("All");
   const [isRemoving, setIsRemoving] = useState<string | null>(null);
-
-  const filteredArtworks = useMemo(() => {
-    if (artworkFilter === "All") return artworks;
-    if (artworkFilter === "Available") return artworks.filter((item) => item.availability);
-    return artworks.filter((item) => !item.availability);
-  }, [artworks, artworkFilter]);
 
   const handleConfirmRemove = (artworkId: string) => {
     updateConfirmationModal({
@@ -107,8 +93,7 @@ export default function EventInventoryGrid({
               Active Inventory
             </Text>
             <Text style={tw`text-sm text-neutral-800 mt-1`}>
-              {filteredArtworks.length}
-              {artworkFilter !== "All" ? ` / ${artworks.length}` : ""} works
+              {artworks.length} works
             </Text>
           </View>
           <TouchableOpacity
@@ -129,33 +114,8 @@ export default function EventInventoryGrid({
         </View>
       </View>
 
-      <View style={tw`flex-row gap-2 mb-4`}>
-        {(["All", "Available", "Sold"] as ArtworkFilter[]).map((filter) => (
-          <TouchableOpacity
-            key={filter}
-            onPress={() => setArtworkFilter(filter)}
-            style={[
-              tw`px-3 py-2 rounded-sm border`,
-              artworkFilter === filter
-                ? tw`bg-black border-black`
-                : tw`bg-white border-neutral-300`,
-            ]}
-            activeOpacity={0.8}
-          >
-            <Text
-              style={[
-                tw`text-[10px] uppercase tracking-widest`,
-                artworkFilter === filter ? tw`text-white` : tw`text-neutral-700`,
-              ]}
-            >
-              {filter}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
       <FlatList
-        data={filteredArtworks}
+        data={artworks}
         keyExtractor={(item, index) => `${item.art_id || "art"}-${index}`}
         numColumns={2}
         columnWrapperStyle={tw`gap-3`}
@@ -174,11 +134,24 @@ export default function EventInventoryGrid({
                   })
                 }
               >
-                <Image
-                  source={{ uri: imageUrl }}
-                  style={tw`h-44 rounded-md bg-neutral-200`}
-                  resizeMode="cover"
-                />
+                <View style={tw`relative`}>
+                  <Image
+                    source={{ uri: imageUrl }}
+                    style={tw`h-44 rounded-md bg-neutral-200`}
+                    resizeMode="cover"
+                  />
+                  {!item.availability && (
+                    <View
+                      style={tw`absolute top-2 left-2 px-2 py-1 rounded-sm z-10 bg-[${colors.black}]`}
+                    >
+                      <Text
+                        style={tw`text-[9px] uppercase tracking-widest text-white font-sans-medium`}
+                      >
+                        Sold
+                      </Text>
+                    </View>
+                  )}
+                </View>
                 <Text numberOfLines={1} style={tw`text-sm text-neutral-900 mt-2`}>
                   {item.title}
                 </Text>
@@ -205,7 +178,7 @@ export default function EventInventoryGrid({
         ListEmptyComponent={
           <View style={tw`py-12 items-center`}>
             <Text style={tw`text-xs uppercase tracking-widest text-neutral-500`}>
-              No {artworkFilter.toLowerCase()} artworks found.
+              No artworks currently assigned to this event.
             </Text>
           </View>
         }
