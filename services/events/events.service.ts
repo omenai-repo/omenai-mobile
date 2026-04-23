@@ -334,6 +334,39 @@ export async function updateEventArtworks(
   }
 }
 
+export async function updateArtworkSequence(
+  eventId: string,
+  galleryId: string,
+  newSequence: string[],
+) {
+  try {
+    const response = await apiRequest(
+      `${apiUrl}/api/requests/gallery/events/updateArtworkSequence`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          eventId,
+          galleryId,
+          newSequence,
+        }),
+      },
+    );
+    const result = await response.json();
+    return {
+      isOk: response.ok,
+      message: result?.message as string | undefined,
+    };
+  } catch (error: any) {
+    return {
+      isOk: false,
+      message:
+        error?.message ||
+        error?.response?.data?.message ||
+        "Failed to update artwork order.",
+    };
+  }
+}
+
 export async function archiveGalleryEvent(eventId: string, galleryId: string) {
   try {
     const response = await apiRequest(`${apiUrl}/api/requests/gallery/events/archive`, {
