@@ -244,6 +244,8 @@ export default function EventInventoryGrid({
           columns={2}
           rowGap={16}
           columnGap={12}
+          dragActivationDelay={0}
+          dragActivationFailOffset={24}
           onDragEnd={onDragEnd}
           renderItem={renderItem}
           // Parent ScrollView (RNGH) handles scroll; no nested list scroll
