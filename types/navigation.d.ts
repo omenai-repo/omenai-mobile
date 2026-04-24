@@ -36,6 +36,17 @@ export type RootStackParamList = {
     name?: string;
     logo?: string;
   };
+  "individual-shows": undefined;
+  "individual-show-details": { eventId: string };
+  "individual-fairs-events": undefined;
+  "individual-fair-event-details": { eventId: string };
+  "individual-galleries": undefined;
+  "individual-gallery-details": {
+    galleryId: string;
+    name?: string;
+    logo?: string;
+  };
+  "individual-gallery-shows": { galleryId: string; galleryName?: string };
   ArticleScreen: { article: EditorialSchemaTypes };
   AllEditorialsScreen: { editorials: EditorialSchemaTypes[] };
   MigrationUpgradeCheckout: undefined;

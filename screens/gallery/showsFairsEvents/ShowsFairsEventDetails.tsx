@@ -444,9 +444,6 @@ export default function ShowsFairsEventDetails() {
                 res.message || "Failed to save the new order.",
               );
             }
-            await queryClient.invalidateQueries({
-              queryKey: ["eventDashboard", eventId, galleryId],
-            });
           }}
         />
 

@@ -30,6 +30,13 @@ import CancleOrderPayment from "#screens/payment/components/cancel/CancleOrderPa
 import SuccessOrderPayment from "#screens/payment/components/success/SuccessOrderPayment";
 import BiometricSettings from "#screens/profile/BiometricSettings";
 import ViewReceiptScreen from "#screens/orders/ViewReceiptScreen";
+import ShowsScreen from "#screens/individual/shows/ShowsScreen";
+import ShowDetailsScreen from "#screens/individual/shows/ShowDetailsScreen";
+import FairsEventsScreen from "#screens/individual/fairsEvents/FairsEventsScreen";
+import FairEventDetailsScreen from "#screens/individual/fairsEvents/FairEventDetailsScreen";
+import GalleriesScreen from "#screens/individual/galleries/GalleriesScreen";
+import GalleryDetailsScreen from "#screens/individual/galleries/GalleryDetailsScreen";
+import GalleryShowsScreen from "#screens/individual/galleries/GalleryShowsScreen";
 
 type CustomTabBarIconProps = {
   name: any;
@@ -164,6 +171,34 @@ export default function IndividualNavigation() {
       <Stack.Screen
         name={"DetailsScreen"}
         component={wrapWithHighRisk(DetailsScreen)}
+      />
+      <Stack.Screen
+        name={screenName.individual.shows}
+        component={wrapWithHighRisk(ShowsScreen)}
+      />
+      <Stack.Screen
+        name={screenName.individual.showDetails}
+        component={wrapWithHighRisk(ShowDetailsScreen)}
+      />
+      <Stack.Screen
+        name={screenName.individual.fairsEvents}
+        component={wrapWithHighRisk(FairsEventsScreen)}
+      />
+      <Stack.Screen
+        name={screenName.individual.fairEventDetails}
+        component={wrapWithHighRisk(FairEventDetailsScreen)}
+      />
+      <Stack.Screen
+        name={screenName.individual.galleries}
+        component={wrapWithHighRisk(GalleriesScreen)}
+      />
+      <Stack.Screen
+        name={screenName.individual.galleryDetails}
+        component={wrapWithHighRisk(GalleryDetailsScreen)}
+      />
+      <Stack.Screen
+        name={screenName.individual.galleryShows}
+        component={wrapWithHighRisk(GalleryShowsScreen)}
       />
       <Stack.Screen
         name={screenName.deleteAccount}

@@ -77,6 +77,7 @@ export default function TrendingArtworks({
               hideBackground
               image_format={item.image_format}
               useImageLoadAspectRatio
+              metadataMode="trending"
             />
           ))}
           {showMoreButton && (

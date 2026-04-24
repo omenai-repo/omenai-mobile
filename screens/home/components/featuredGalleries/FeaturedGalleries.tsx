@@ -1,74 +1,117 @@
 import { Image, Text, View, TouchableOpacity, ScrollView } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import tw from "twrnc";
-import { colors } from "../../../../config/colors.config";
 import { useNavigation } from "@react-navigation/native";
-import { getFeaturedGalleries } from "#services/overview/fetchFeaturedGallery";
+import FollowComponent from "#components/follow/FollowComponent";
+import { useGalleryFollow } from "#hooks/useGalleryFollow";
 import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
+import { useFeaturedGalleries } from "#screens/individual/hooks/useGalleries";
+import SectionHeader from "#components/general/SectionHeader";
+import { screenName } from "#constants/screenNames.constants";
 
-type Gallery = {
-  gallery_id: string;
-  name: string;
-  logo: string;
-};
+const SKELETON_ITEMS = ["skeleton-1", "skeleton-2", "skeleton-3"];
 
 export default function FeaturedGalleries() {
   const navigation = useNavigation<any>();
-  const [galleries, setGalleries] = useState<Gallery[]>([]);
+  const { data: galleries = [], isLoading } = useFeaturedGalleries(10);
+  const { isFollowingFor, toggleFollow, isLoadingFollowed, hasUser } = useGalleryFollow();
 
-  useEffect(() => {
-    fetchGalleries();
-  }, []);
+  const GalleryCard = ({ item }: { item: any }) => {
+    const image_href = getGalleryLogoFileView(item.logo, 600);
+    const isFollowing = isFollowingFor(item.gallery_id);
 
-  const fetchGalleries = async () => {
-    const res = await getFeaturedGalleries();
-    if (res?.isOk) {
-      setGalleries(res.data);
-    }
-  };
-
-  const GalleryCard = ({ item }: { item: Gallery }) => {
-    const image_href = getGalleryLogoFileView(item.logo, 200);
     return (
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate("DetailsScreen", {
-            type: "gallery",
-            id: item.gallery_id,
-            name: item.name,
-            logo: item.logo,
-          })
-        }
-      >
-        <View style={tw`flex-1 w-[300px]`}>
-          <Image
-            source={{ uri: image_href }}
-            style={tw`w-full h-[200px] rounded-md bg-[#eee]`}
-          />
-          <View style={tw`pt-2.5`}>
-            <Text style={tw`text-[14px] text-[${colors.primary_black}]`}>
+      <View style={tw`w-[260px] rounded-sm border border-neutral-200 bg-white overflow-hidden`}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate(screenName.individual.galleryDetails, {
+              galleryId: item.gallery_id,
+              name: item.name,
+              logo: item.logo,
+            })
+          }
+          activeOpacity={0.85}
+        >
+          <View style={tw`w-full h-[195px] bg-neutral-100 items-center justify-center`}>
+            {item.logo ? (
+              <Image
+                source={{ uri: image_href }}
+                style={tw`w-full h-full`}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text style={tw`text-4xl font-serif text-neutral-300 uppercase`}>
+                {item.name?.charAt(0)}
+              </Text>
+            )}
+          </View>
+        </TouchableOpacity>
+
+        <View style={tw`p-4 flex-row items-center justify-between`}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(screenName.individual.galleryDetails, {
+                galleryId: item.gallery_id,
+                name: item.name,
+                logo: item.logo,
+              })
+            }
+            style={tw`flex-1 mr-3`}
+            activeOpacity={0.8}
+          >
+            <Text numberOfLines={1} style={tw`font-serif text-lg text-neutral-900`}>
               {item.name}
             </Text>
-          </View>
+            {!!item.address?.city && (
+              <Text numberOfLines={1} style={tw`mt-1 text-[10px] uppercase tracking-widest text-neutral-500`}>
+                {item.address.city}
+                {item.address?.country ? `, ${item.address.country}` : ""}
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          <FollowComponent
+            isFollowing={isFollowing}
+            onPress={() => {
+              void toggleFollow(item.gallery_id);
+            }}
+            disabled={!hasUser || isLoadingFollowed}
+          />
         </View>
-      </TouchableOpacity>
+      </View>
     );
   };
 
   return (
-    <View style={tw`mt-10`}>
-      <View style={tw`flex-row items-center gap-2.5 px-5`}>
-        <Text style={tw`text-lg font-medium flex-1`}>Featured Galleries</Text>
-      </View>
+    <View style={tw`mt-6`}>
+      <SectionHeader
+        subtitle="FEATURED GALLERIES"
+        title={`Featured Galleries (${galleries.length})`}
+        onActionPress={() => navigation.navigate(screenName.individual.galleries)}
+      />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         style={tw`mt-5`}
         contentContainerStyle={tw`px-5 gap-5`}
       >
-        {galleries.map((item) => (
-          <GalleryCard key={item.gallery_id} item={item} />
-        ))}
+        {isLoading
+          ? SKELETON_ITEMS.map((item) => (
+              <View
+                key={item}
+                style={tw`w-[260px] rounded-sm border border-neutral-200 bg-white overflow-hidden`}
+              >
+                <View style={tw`w-full h-[195px] bg-neutral-100`} />
+                <View style={tw`p-4`}>
+                  <View style={tw`h-5 w-36 bg-neutral-200 rounded-sm`} />
+                  <View style={tw`h-3 w-28 bg-neutral-200 rounded-sm mt-2`} />
+                  <View style={tw`h-7 w-24 bg-neutral-200 rounded-sm mt-3`} />
+                </View>
+              </View>
+            ))
+          : galleries.map((item) => (
+              <GalleryCard key={item.gallery_id} item={item} />
+            ))}
       </ScrollView>
     </View>
   );

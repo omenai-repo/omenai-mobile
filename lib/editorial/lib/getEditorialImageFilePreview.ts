@@ -7,7 +7,7 @@ export const getEditorialImageFilePreview = (
   quality: number = 90,
 ) => {
   const fileData = storage.getFilePreview({
-    bucketId: process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!!,
+    bucketId: process.env.EXPO_PUBLIC_APPWRITE_EDITORIAL_BUCKET_ID!,
     fileId: fileId,
 
     width: width, // width, will be resized using this value.

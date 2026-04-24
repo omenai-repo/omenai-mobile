@@ -51,6 +51,13 @@ const ROUTES_BY_ROLE: Record<DeeplinkRole, string[]> = {
     "biometric-settings",
     "ViewReceiptScreen",
     "support-tickets",
+    "individual-shows",
+    "individual-show-details",
+    "individual-fairs-events",
+    "individual-fair-event-details",
+    "individual-galleries",
+    "individual-gallery-details",
+    "individual-gallery-shows",
   ],
   artist: [
     "Overview",
