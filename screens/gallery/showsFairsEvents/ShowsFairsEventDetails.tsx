@@ -370,13 +370,14 @@ export default function ShowsFairsEventDetails() {
           isUploadingCover={
             isCoverUploadInProgress || updateCoverMutation.isPending
           }
+          isRefreshingData={isRefetching}
           onCoverImageChange={handleReplaceCoverImage}
           onEditClick={handleOpenEditModal}
         />
 
         <VipEarlyAccessSection event={event} />
 
-        {/* 2. Analytics Row */}
+        {/* 2. Analytics Row
         <View style={tw`flex-row gap-3 mb-4`}>
           {[
             {
@@ -415,6 +416,7 @@ export default function ShowsFairsEventDetails() {
             </View>
           ))}
         </View>
+        */}
 
         {/* 3. Installation view */}
         <InstallationViewsManager

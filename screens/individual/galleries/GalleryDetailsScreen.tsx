@@ -50,11 +50,8 @@ export default function GalleryDetailsScreen() {
   const available = data?.available_artists ?? [];
 
   const onViewAllShows = useCallback(() => {
-    navigation.navigate(screenName.individual.galleryShows, {
-      galleryId,
-      galleryName,
-    });
-  }, [navigation, galleryId, galleryName]);
+    setActiveTab("shows");
+  }, []);
 
   const onArtistNamePress = useCallback(
     (artistName: string) => {

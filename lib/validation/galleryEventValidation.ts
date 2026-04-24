@@ -26,7 +26,7 @@ const ExhibitionSchema = BaseEventSchema.extend({
 const ArtFairSchema = BaseEventSchema.extend({
   event_type: z.literal("art_fair"),
   location: LocationSchema,
-  booth_number: z.string().optional(),
+  booth_number: z.string().min(1, "Booth number is required"),
   vip_preview_date: z.preprocess(
     (val) => (val === "" || val === null ? undefined : val),
     z.coerce.date().optional(),

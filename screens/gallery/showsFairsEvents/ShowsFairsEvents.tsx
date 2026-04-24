@@ -175,10 +175,10 @@ export default function ShowsFairsEvents() {
           </Text>
         </View>
         <View style={tw`p-3`}>
-          <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500`}>
+          <Text style={tw`text-xs uppercase tracking-widest text-neutral-500`}>
             {item.gallery?.name || "Gallery"}
           </Text>
-          <Text numberOfLines={2} style={tw`text-sm text-neutral-900 mt-1`}>
+          <Text numberOfLines={2} style={tw`font-serif text-sm text-neutral-900 mt-1`}>
             {item.title}
           </Text>
           <Text numberOfLines={1} style={tw`text-xs text-neutral-500 mt-1`}>

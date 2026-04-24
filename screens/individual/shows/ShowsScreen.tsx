@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
@@ -11,6 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import Loader from "#components/general/Loader";
 import { useShows } from "#screens/individual/hooks/useShows";
 import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
 import { getEventStatus, type GalleryEventRecord } from "#services/events/events.service";
@@ -163,8 +163,8 @@ export default function ShowsScreen() {
       <View style={tw`flex-1 bg-white`}>
         <BackHeaderTitle title="Exhibitions" />
         <View style={tw`flex-1 items-center justify-center`}>
-          <ActivityIndicator color="#171717" />
-          <Text style={tw`mt-4 text-sm text-neutral-500`}>Loading exhibitions...</Text>
+          <Loader size={100} height={120} />
+          {/* <Text style={tw`mt-4 text-sm text-neutral-500`}>Loading exhibitions...</Text> */}
         </View>
       </View>
     );

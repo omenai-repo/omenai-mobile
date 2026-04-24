@@ -158,6 +158,24 @@ export default function Artwork() {
     [screenWidth, isTabletLandscape],
   );
 
+  const handleBack = useCallback(() => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+    if (userType === "gallery") {
+      navigation.navigate("Gallery" as any, {
+        screen: screenName.gallery.overview,
+      });
+    } else if (userType === "artist") {
+      navigation.navigate("Artist" as any, { screen: "Overview" });
+    } else if (userType === "user") {
+      navigation.navigate("Individual" as any, { screen: "Overview" });
+    } else {
+      navigation.navigate("GuestTabs" as any, { screen: "Overview" });
+    }
+  }, [navigation, userType]);
+
   const handleRequestPriceQuote = useCallback(async () => {
     if (!artwork) return;
     setLoadingPriceQuote(true);
@@ -283,6 +301,7 @@ export default function Artwork() {
       <View style={tw`flex-1 bg-white`}>
         <BackHeaderTitle
           title=""
+          customGoBack={handleBack}
           rightAction={
             userType === "gallery" &&
             artwork?.author_id === userSession?.id &&

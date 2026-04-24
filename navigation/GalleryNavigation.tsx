@@ -38,7 +38,7 @@ import Subscriptions from "#screens/subscriptions/Subscriptions";
 import StripePayoutsTab from "#screens/stripeScreens/payouts/StripePayoutsTab";
 import GalleryProfile from "#screens/galleryProfileScreens/galleryProfile/GalleryProfile";
 import GalleryTabBar from "./components/GalleryTabBar";
-import MoreSheet from "./components/MoreSheet";
+import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
 import { logout } from "#utils/logout.utils";
 import {
   MoreSheetProvider,
@@ -55,6 +55,7 @@ import {
   shippingInActive,
   walletActive,
   billingActive,
+  billingInActive,
 } from "#utils/SvgImages";
 import { View } from "react-native";
 
@@ -90,11 +91,11 @@ const galleryTabs = [
   },
   {
     id: 4,
-    name: screenName.gallery.artistRoster,
-    label: "Artist Roster",
-    component: ArtistRoster,
-    activeIcon: shippingActive,
-    inActiveIcon: shippingInActive,
+    name: screenName.gallery.subscriptions,
+    label: "Subscription",
+    component: Subscriptions,
+    activeIcon: billingActive,
+    inActiveIcon: billingInActive,
   },
   {
     id: 5,
@@ -115,9 +116,9 @@ const galleryMoreTabs = [
   },
   {
     id: 7,
-    name: screenName.gallery.subscriptions,
-    label: "Subscription",
-    component: Subscriptions,
+    name: screenName.gallery.artistRoster,
+    label: "Artist Roster",
+    component: ArtistRoster,
   },
   {
     id: 8,
@@ -172,7 +173,7 @@ export default function GalleryNavigation() {
         tabNavigationRef.current.getParent()?.navigate(routeName);
       }, []);
 
-      const moreSheetItems = useMemo(
+      const moreSheetItems = useMemo<MoreSheetItem[]>(
         () => [
           {
             key: "overview",
@@ -191,20 +192,20 @@ export default function GalleryNavigation() {
             onPress: () => navigateToScreen(screenName.gallery.artworks),
           },
           {
-            key: "artist-roster",
-            label: "Artist Roster",
-            routeName: screenName.gallery.artistRoster,
-            icon: shippingActive,
-            keywords: ["artists"],
-            onPress: () => navigateToScreen(screenName.gallery.artistRoster),
-          },
-          {
             key: "shows-fairs-events",
             label: "Shows, Fairs & Events",
             routeName: screenName.gallery.showsFairsEvents,
             icon: reviewHubActive,
             keywords: ["show", "fair", "events"],
             onPress: () => navigateToScreen(screenName.gallery.showsFairsEvents),
+          },
+          {
+            key: "artist-roster",
+            label: "Artist Roster",
+            routeName: screenName.gallery.artistRoster,
+            expoIconName: "list-outline" as const,
+            keywords: ["artists", "roster"],
+            onPress: () => navigateToScreen(screenName.gallery.artistRoster),
           },
           {
             key: "orders",
@@ -270,7 +271,7 @@ export default function GalleryNavigation() {
           moreSheetItems.filter((item) =>
             [
               "shows-fairs-events",
-              "subscription",
+              "artist-roster",
               "payouts",
               "support-tickets",
               "profile-management",

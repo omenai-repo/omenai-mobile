@@ -57,7 +57,6 @@ const ROUTES_BY_ROLE: Record<DeeplinkRole, string[]> = {
     "individual-fair-event-details",
     "individual-galleries",
     "individual-gallery-details",
-    "individual-gallery-shows",
   ],
   artist: [
     "Overview",
