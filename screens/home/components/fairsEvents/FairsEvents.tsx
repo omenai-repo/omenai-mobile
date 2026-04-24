@@ -3,12 +3,18 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import SectionHeader from "#components/general/SectionHeader";
-import { getImageFileView } from "#lib/storage/getImageFileView";
+import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
 import { useFairsEventsPreview } from "#screens/individual/hooks/useFairsEvents";
 import { screenName } from "#constants/screenNames.constants";
 import { getEventStatus } from "#services/events/events.service";
 
 const SKELETON_ITEMS = ["skeleton-1", "skeleton-2", "skeleton-3"];
+const resolveCoverImageUri = (coverImage?: string) =>
+  coverImage
+    ? /^https?:\/\//i.test(coverImage)
+      ? coverImage
+      : getPromotionalFileView(coverImage, 700)
+    : "";
 
 export default function FairsEvents() {
   const navigation = useNavigation<any>();
@@ -54,7 +60,9 @@ export default function FairsEvents() {
               >
                 <View style={tw`relative`}>
                   <Image
-                    source={{ uri: getImageFileView(event.cover_image, 700) }}
+                    source={{
+                      uri: resolveCoverImageUri(event.cover_image),
+                    }}
                     style={tw`w-full h-[170px] rounded-md bg-[#EAEAEA]`}
                   />
                   <View style={tw`absolute top-3 left-3`}>

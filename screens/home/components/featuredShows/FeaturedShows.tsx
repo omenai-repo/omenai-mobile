@@ -3,12 +3,18 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import SectionHeader from "#components/general/SectionHeader";
-import { getImageFileView } from "#lib/storage/getImageFileView";
+import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
 import { useFeaturedShows } from "#screens/individual/hooks/useFeaturedShows";
 import { screenName } from "#constants/screenNames.constants";
 import { getEventStatus } from "#services/events/events.service";
 
 const SKELETON_ITEMS = ["skeleton-1", "skeleton-2", "skeleton-3"];
+const resolveCoverImageUri = (coverImage?: string) =>
+  coverImage
+    ? /^https?:\/\//i.test(coverImage)
+      ? coverImage
+      : getPromotionalFileView(coverImage, 700)
+    : "";
 
 export default function FeaturedShows() {
   const navigation = useNavigation<any>();
@@ -17,7 +23,7 @@ export default function FeaturedShows() {
   return (
     <View style={tw`mt-6`}>
       <SectionHeader
-        title="FEATURED SHOWS"
+        title="Featured Shows"
         subtitle="Shows to discover"
         onActionPress={() => navigation.navigate(screenName.individual.shows)}
       />
@@ -52,7 +58,7 @@ export default function FeaturedShows() {
               >
                 <View style={tw`relative`}>
                   <Image
-                    source={{ uri: getImageFileView(show.cover_image, 700) }}
+                    source={{ uri: resolveCoverImageUri(show.cover_image) }}
                     style={tw`w-full h-[170px] rounded-md bg-[#EAEAEA]`}
                   />
                   <View style={tw`absolute top-3 left-3`}>

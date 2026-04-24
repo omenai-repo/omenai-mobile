@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import tw from "twrnc";
-import { getImageFileView } from "#lib/storage/getImageFileView";
+import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
 import {
   getEventStatus,
   type GalleryEventRecord,
@@ -12,6 +12,13 @@ type Props = {
   onPress: () => void;
 };
 
+const resolveCoverImageUri = (coverImage?: string) =>
+  coverImage
+    ? /^https?:\/\//i.test(coverImage)
+      ? coverImage
+      : getPromotionalFileView(coverImage, 900)
+    : "";
+
 export default function EventCard({ item, onPress }: Props) {
   const status = getEventStatus(item.start_date, item.end_date);
   const isClosed = status === "Past";
@@ -21,7 +28,7 @@ export default function EventCard({ item, onPress }: Props) {
     <Pressable style={tw`mb-5`} onPress={onPress}>
       <View style={tw`relative`}>
         <Image
-          source={{ uri: getImageFileView(item.cover_image, 900) }}
+          source={{ uri: resolveCoverImageUri(item.cover_image) }}
           style={tw`w-full h-[220px] rounded-md bg-[#EDEDED]`}
         />
         <View style={tw`absolute top-3 left-3`}>

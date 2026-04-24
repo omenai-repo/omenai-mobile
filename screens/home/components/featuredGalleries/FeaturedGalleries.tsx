@@ -37,7 +37,7 @@ export default function FeaturedGalleries() {
               <Image
                 source={{ uri: image_href }}
                 style={tw`w-full h-full`}
-                resizeMode="contain"
+                resizeMode="cover"
               />
             ) : (
               <Text style={tw`text-4xl font-serif text-neutral-300 uppercase`}>
