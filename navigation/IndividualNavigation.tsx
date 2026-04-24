@@ -36,13 +36,6 @@ import FairsEventsScreen from "#screens/individual/fairsEvents/FairsEventsScreen
 import FairEventDetailsScreen from "#screens/individual/fairsEvents/FairEventDetailsScreen";
 import GalleriesScreen from "#screens/individual/galleries/GalleriesScreen";
 import GalleryDetailsScreen from "#screens/individual/galleries/GalleryDetailsScreen";
-import GalleryShowsScreen from "#screens/individual/galleries/GalleryShowsScreen";
-
-type CustomTabBarIconProps = {
-  name: any;
-  focused: boolean;
-  title: string;
-};
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -195,10 +188,6 @@ export default function IndividualNavigation() {
       <Stack.Screen
         name={screenName.individual.galleryDetails}
         component={wrapWithHighRisk(GalleryDetailsScreen)}
-      />
-      <Stack.Screen
-        name={screenName.individual.galleryShows}
-        component={wrapWithHighRisk(GalleryShowsScreen)}
       />
       <Stack.Screen
         name={screenName.deleteAccount}

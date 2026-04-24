@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
@@ -11,6 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import tw from "twrnc";
+import Loader from "#components/general/Loader";
 import { screenName } from "#constants/screenNames.constants";
 import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
 import { getEventStatus, type GalleryEventRecord } from "#services/events/events.service";
@@ -286,8 +286,8 @@ export default function GalleryShowsTabContent({ galleryId, isActive, galleryNam
   if (isLoading) {
     return (
       <View style={tw`flex-1 items-center justify-center py-20`}>
-        <ActivityIndicator color="#171717" />
-        <Text style={tw`mt-3 text-xs uppercase tracking-widest text-neutral-400`}>Loading exhibitions...</Text>
+        <Loader size={90} height={110} />
+        {/* <Text style={tw`mt-3 text-xs uppercase tracking-widest text-neutral-400`}>Loading exhibitions...</Text> */}
       </View>
     );
   }
@@ -367,7 +367,7 @@ export default function GalleryShowsTabContent({ galleryId, isActive, galleryNam
             ]}
           >
             {isFetchingNextPage ? (
-              <ActivityIndicator size="small" color="#171717" />
+              <Loader size={56} height={70} />
             ) : (
               <Text style={tw`text-xs uppercase tracking-widest font-sans font-medium text-neutral-900`}>
                 Load more shows

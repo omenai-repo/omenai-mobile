@@ -23,6 +23,7 @@ type EventDetailsHeaderCardProps = {
   source: "show" | "event";
   isSavingDetails: boolean;
   isUploadingCover: boolean;
+  isRefreshingData?: boolean;
   onCoverImageChange: () => void;
   onEditClick: () => void;
 };
@@ -32,6 +33,7 @@ export default function EventDetailsHeaderCard({
   source,
   isSavingDetails,
   isUploadingCover,
+  isRefreshingData = false,
   onCoverImageChange,
   onEditClick,
 }: EventDetailsHeaderCardProps) {
@@ -40,6 +42,25 @@ export default function EventDetailsHeaderCard({
   const { updateModal } = useModalStore();
 
   const galleryId = event.gallery_id || userSession?.id || "";
+  const rawEventType = String((event as any)?.event_type || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[-\s]+/g, "_");
+  const eventType =
+    rawEventType === "artfair"
+      ? "art_fair"
+      : rawEventType === "viewingroom"
+        ? "viewing_room"
+        : rawEventType;
+  const eventTypeLabel = eventType ? eventType.replace(/_/g, " ") : "presentation";
+  const eventTitle = String(event?.title || "").trim() || "Untitled Presentation";
+  const publishedLabel = event?.is_published ? "Event Published" : "Draft";
+  const showHeaderPlaceholder =
+    isRefreshingData &&
+    !event?.title &&
+    !event?.event_type &&
+    !event?.start_date &&
+    !event?.end_date;
 
   const publishMutation = useMutation({
     mutationFn: (targetStatus: boolean) =>
@@ -91,23 +112,32 @@ export default function EventDetailsHeaderCard({
     return `${start} - ${end}`;
   };
 
-  let status = "Upcoming";
-  let statusColor = "bg-amber-50 text-amber-700 border-amber-200";
-
   const now = new Date().getTime();
   const startDate = event.start_date ? new Date(event.start_date).getTime() : 0;
   const endDate = event.end_date ? new Date(event.end_date).getTime() : 0;
 
+  let status: "Upcoming" | "Active" | "Past" | "Archived" = "Upcoming";
   if (event.is_archived) {
     status = "Archived";
-    statusColor = "bg-neutral-100 text-neutral-500 border-neutral-200";
-  } else if (now > endDate) {
+  } else if (endDate && now > endDate) {
     status = "Past";
-    statusColor = "bg-neutral-100 text-neutral-600 border-neutral-300";
-  } else if (now >= startDate && now <= endDate) {
+  } else if (startDate && now >= startDate && (!endDate || now <= endDate)) {
     status = "Active";
-    statusColor = "bg-green-50 text-green-700 border-green-200";
   }
+
+  const statusPalette: Record<
+    typeof status,
+    { bg: string; border: string; text: string }
+  > = {
+    Upcoming: { bg: "#FFFBEB", border: "#FDE68A", text: "#B45309" },
+    Active: { bg: "#F0FDF4", border: "#BBF7D0", text: "#15803D" },
+    Past: { bg: "#F5F5F5", border: "#D4D4D4", text: "#525252" },
+    Archived: { bg: "#F5F5F5", border: "#E5E5E5", text: "#737373" },
+  };
+  const statusStyle = statusPalette[status];
+  const publishedPalette = event?.is_published
+    ? { bg: "#F0FDF4", border: "#BBF7D0", text: "#15803D" }
+    : { bg: "#FFFBEB", border: "#FDE68A", text: "#B45309" };
 
   const hasLogisticsDetails =
     !!(event as any).vip_preview_date ||
@@ -124,6 +154,19 @@ export default function EventDetailsHeaderCard({
       return event.external_url;
     }
   })();
+
+  if (showHeaderPlaceholder) {
+    return (
+      <View style={tw`gap-4 mb-4`}>
+        <View style={tw`bg-white rounded-md border border-neutral-200 p-3`}>
+          <View style={tw`h-36 bg-neutral-100 rounded-sm mb-3`} />
+          <View style={tw`items-center py-3`}>
+            <ActivityIndicator size="small" color="#737373" />
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={tw`gap-4 mb-4`}>
@@ -183,16 +226,19 @@ export default function EventDetailsHeaderCard({
           </View>
 
           {/* Event Details */}
-          <View style={tw`flex-1`}>
+          <View>
             {/* Event Type & Status */}
             <View style={tw`flex-row items-center flex-wrap gap-2 mb-1`}>
               <View
-                style={[tw`px-2 py-1 rounded-full border`, tw`${statusColor}`]}
+                style={[
+                  tw`px-2 py-1 rounded-full border`,
+                  { backgroundColor: statusStyle.bg, borderColor: statusStyle.border },
+                ]}
               >
                 <Text
                   style={[
                     tw`text-[9px] uppercase tracking-widest`,
-                    tw`${statusColor}`,
+                    { color: statusStyle.text },
                   ]}
                 >
                   {status}
@@ -202,31 +248,32 @@ export default function EventDetailsHeaderCard({
               <View
                 style={[
                   tw`px-2.5 py-0.5 rounded-full border`,
-                  event.is_published
-                    ? tw`bg-green-50 border-green-200`
-                    : tw`bg-amber-50 border-amber-200`,
+                  {
+                    backgroundColor: publishedPalette.bg,
+                    borderColor: publishedPalette.border,
+                  },
                 ]}
               >
                 <Text
                   style={[
                     tw`text-[9px] uppercase tracking-widest font-medium`,
-                    event.is_published ? tw`text-green-700` : tw`text-amber-700`,
+                    { color: publishedPalette.text },
                   ]}
                 >
-                  {event.is_published ? "Event Published" : "Draft"}
+                  {publishedLabel}
                 </Text>
               </View>
 
               <Text
                 style={tw`text-[9px] uppercase tracking-widest text-neutral-400`}
               >
-                {event.event_type.replace("_", " ")}
+                {eventTypeLabel}
               </Text>
             </View>
 
             {/* Title & Date */}
             <Text style={tw`text-lg text-neutral-900`} numberOfLines={2}>
-              {event.title}
+              {eventTitle}
             </Text>
             <Text style={tw`text-xs text-neutral-500 mt-1`}>
               {formatDateRange(event.start_date, event.end_date)}
@@ -312,7 +359,7 @@ export default function EventDetailsHeaderCard({
           </View>
         )}
 
-        {event.event_type === "art_fair" && (
+        {eventType === "art_fair" && (
           <>
             {!!event.booth_number && (
               <View
@@ -346,7 +393,7 @@ export default function EventDetailsHeaderCard({
           </>
         )}
 
-        {event.event_type === "exhibition" && (
+        {eventType === "exhibition" && (
           <>
             {!!event.location?.venue && (
               <View
@@ -380,7 +427,7 @@ export default function EventDetailsHeaderCard({
           </>
         )}
 
-        {event.event_type === "viewing_room" && !!event.external_url && (
+        {eventType === "viewing_room" && !!event.external_url && (
           <View
             style={tw`flex-col px-4 py-3 border-r border-neutral-100 min-w-[42%]`}
           >

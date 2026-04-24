@@ -17,8 +17,8 @@ export default function FeaturedShows() {
   return (
     <View style={tw`mt-6`}>
       <SectionHeader
-        subtitle="FEATURED SHOWS"
-        title="Shows to discover"
+        title="FEATURED SHOWS"
+        subtitle="Shows to discover"
         onActionPress={() => navigation.navigate(screenName.individual.shows)}
       />
       <ScrollView

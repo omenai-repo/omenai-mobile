@@ -46,7 +46,6 @@ export type RootStackParamList = {
     name?: string;
     logo?: string;
   };
-  "individual-gallery-shows": { galleryId: string; galleryName?: string };
   ArticleScreen: { article: EditorialSchemaTypes };
   AllEditorialsScreen: { editorials: EditorialSchemaTypes[] };
   MigrationUpgradeCheckout: undefined;

@@ -16,6 +16,7 @@ export type MoreSheetItem = {
   key: string;
   label: string;
   icon?: string;
+  expoIconName?: React.ComponentProps<typeof Ionicons>["name"];
   routeName: string;
   keywords?: string[];
   isDanger?: boolean;
@@ -86,7 +87,9 @@ export default function MoreSheet({
                     onPress={() => onPressItem(item)}
                   >
                     <View style={tw`w-5 h-5 items-center justify-center`}>
-                      {item.icon ? (
+                      {item.expoIconName ? (
+                        <Ionicons name={item.expoIconName} size={17} color="white" />
+                      ) : item.icon ? (
                         <SvgXml xml={item.icon} width={17} height={17} />
                       ) : item.isDanger ? (
                         <Ionicons name="log-out-outline" size={17} color="#EF4444" />

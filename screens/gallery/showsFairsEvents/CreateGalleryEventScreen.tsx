@@ -236,7 +236,8 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
     const res = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsMultipleSelection: true,
-      quality: 0.85,
+      quality: 1,
+      selectionLimit: 12,
     });
     if (res.canceled || !res.assets?.length) return;
     const next: PickedAsset[] = res.assets.map((a, i) => ({
@@ -281,7 +282,7 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
     }
 
     payload.event_type = "art_fair";
-    if (formData.booth_number.trim()) payload.booth_number = formData.booth_number.trim();
+    payload.booth_number = formData.booth_number.trim();
     if (formData.vip_preview_date.trim())
       payload.vip_preview_date = formData.vip_preview_date.trim();
     return payload;
@@ -345,21 +346,22 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
         errorMessage: "Cover image upload failed",
       });
 
-      const installationViewIds: string[] = [];
-      for (const asset of installationAssets) {
-        const up = await uploadToAppwrite({
-          bucketId: appwriteConfig.promotionalBucketId,
-          file: {
-            uri: asset.uri,
-            name: asset.name,
-            type: asset.mimeType || "image/jpeg",
-          },
-          fallbackName: asset.name,
-          fallbackType: asset.mimeType || "image/jpeg",
-          errorMessage: "Installation image upload failed",
-        });
-        installationViewIds.push(up.$id);
-      }
+      const installationUploads = await Promise.all(
+        installationAssets.map((asset) =>
+          uploadToAppwrite({
+            bucketId: appwriteConfig.promotionalBucketId,
+            file: {
+              uri: asset.uri,
+              name: asset.name,
+              type: asset.mimeType || "image/jpeg",
+            },
+            fallbackName: asset.name,
+            fallbackType: asset.mimeType || "image/jpeg",
+            errorMessage: "Installation image upload failed",
+          }),
+        ),
+      );
+      const installationViewIds = installationUploads.map((up) => up.$id);
 
       const dbPayload = {
         ...pendingPayload,
@@ -414,12 +416,12 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
       <KeyboardAwareScrollView
         style={tw`flex-1`}
         contentContainerStyle={[
-          tw`px-4 pb-10`,
-          { paddingTop: 8, paddingBottom: insets.bottom + 24 },
+          tw`px-4`,
+          { paddingTop: 8, paddingBottom: Math.max(insets.bottom + 24, 32) },
         ]}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid
-        extraScrollHeight={80}
+        // extraScrollHeight={80}
         enableResetScrollToCoords={false}
       >
         <Text style={tw`text-sm text-neutral-500 mb-8`}>
@@ -672,7 +674,7 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
               <View style={tw`gap-4`}>
                 <View>
                   <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mb-2`}>
-                    Booth Number (optional)
+                    Booth Number
                   </Text>
                   <TextInput
                     value={formData.booth_number}
@@ -681,6 +683,9 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
                     placeholderTextColor={colors.inputLabel}
                     style={formTextInputStyle}
                   />
+                  {errors.booth_number ? (
+                    <Text style={tw`text-[10px] text-red-600 mt-1`}>{errors.booth_number}</Text>
+                  ) : null}
                 </View>
                 <View>
                   <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mb-2`}>
@@ -737,6 +742,7 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
           onClick={() => onContinueToArtwork()}
           isLoading={isSubmitting || isFinalizing}
           isDisabled={isFinalizing}
+          style={tw`mb-16`}
         />
       </KeyboardAwareScrollView>
 
