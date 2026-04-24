@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { screenName } from "#constants/screenNames.constants";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
+import { View } from "react-native";
 import SavedArtworks from "#screens/savedArtworks/SavedArtworks";
 import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
 import PurchaseArtwork from "#screens/purchase/PurchaseArtwork";
@@ -15,10 +16,8 @@ import ArtworkCategoriesFilterModal from "#screens/artworkCategories/components/
 import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
 import Collections from "#screens/collections/Collections";
 import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
-import { getBottomTabDataIndividual } from "#utils/BottomTabData";
 import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
 import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
-import CustomTabBar from "./components/TabButton";
 import DetailsScreen from "#screens/home/components/DetailScreen";
 import ArticleScreen from "#screens/home/components/editorials/ArticleScreen";
 import AllEditorialsScreen from "#screens/home/components/editorials/AllEditorialsScreen";
@@ -36,35 +35,207 @@ import FairsEventsScreen from "#screens/individual/fairsEvents/FairsEventsScreen
 import FairEventDetailsScreen from "#screens/individual/fairsEvents/FairEventDetailsScreen";
 import GalleriesScreen from "#screens/individual/galleries/GalleriesScreen";
 import GalleryDetailsScreen from "#screens/individual/galleries/GalleryDetailsScreen";
+import IndividualHomeStack from "#navigation/IndividualHomeStack";
+import Catalog from "#screens/catalog/Catalog";
+import Orders from "#screens/orders/Orders";
+import Profile from "#screens/profile/Profile";
+import GalleryTabBar from "./components/GalleryTabBar";
+import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
+import {
+  MoreSheetProvider,
+  useMoreSheet,
+} from "./components/MoreSheetContext";
+import { logout } from "#utils/logout.utils";
+import {
+  homeIcon,
+  homeIconFocused,
+  catalogueIcon,
+  catalogueIconFocused,
+  searchIcon,
+  searchIconFocused,
+  orderIcon,
+  orderIconFocused,
+} from "#utils/SvgImages";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const hideHeader = { headerShown: false };
 
-const IndividualTabBar = (props: any) => (
-  <CustomTabBar {...props} tabData={getBottomTabDataIndividual()} />
-);
+const moreLabel = "More";
+
+const individualTabs = [
+  {
+    id: 1,
+    name: screenName.home,
+    label: "Overview",
+    component: IndividualHomeStack,
+    activeIcon: homeIcon,
+    inActiveIcon: homeIconFocused,
+  },
+  {
+    id: 2,
+    name: screenName.catalogListing,
+    label: "Artworks",
+    component: Catalog,
+    activeIcon: catalogueIcon,
+    inActiveIcon: catalogueIconFocused,
+  },
+  {
+    id: 3,
+    name: "individual-more",
+    label: moreLabel,
+    component: () => <View style={{ flex: 1, backgroundColor: "#F7F7F7" }} />,
+  },
+  {
+    id: 4,
+    name: screenName.searchResults,
+    label: "Search",
+    component: SearchResults,
+    activeIcon: searchIcon,
+    inActiveIcon: searchIconFocused,
+  },
+  {
+    id: 5,
+    name: screenName.orders,
+    label: "Orders",
+    component: Orders,
+    activeIcon: orderIcon,
+    inActiveIcon: orderIconFocused,
+  },
+];
+
+const individualMoreTabs = [
+  {
+    id: 6,
+    name: screenName.profile,
+    label: "Profile",
+    component: Profile,
+  },
+  {
+    id: 7,
+    name: screenName.individual.shows,
+    label: "Shows",
+    component: ShowsScreen,
+  },
+  {
+    id: 8,
+    name: screenName.individual.fairsEvents,
+    label: "Fairs & Events",
+    component: FairsEventsScreen,
+  },
+  {
+    id: 9,
+    name: screenName.individual.galleries,
+    label: "Galleries",
+    component: GalleriesScreen,
+  },
+];
 
 const IndividualTabNavigationScreens = () => {
-  return (
-    <Tab.Navigator
-      tabBar={IndividualTabBar}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      {getBottomTabDataIndividual().map(({ name, component, id }: { name: string; component: any; id: number }) => (
-        <Tab.Screen
-          key={id}
-          name={name}
-          component={component}
-          options={{
-            tabBarShowLabel: false,
-          }}
+  function IndividualTabs() {
+    const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
+    const tabNavigationRef = useRef<any>(null);
+
+    const navigateToScreen = useCallback((routeName: string) => {
+      if (!tabNavigationRef.current) return;
+      const tabRouteNames = [...individualTabs, ...individualMoreTabs].map(
+        ({ name }) => name,
+      );
+      if (tabRouteNames.includes(routeName)) {
+        tabNavigationRef.current.navigate(routeName);
+        return;
+      }
+      tabNavigationRef.current.getParent()?.navigate(routeName);
+    }, []);
+
+    const moreSheetItems = useMemo<MoreSheetItem[]>(
+      () => [
+        {
+          key: "shows",
+          label: "Shows",
+          routeName: screenName.individual.shows,
+          expoIconName: "images-outline" as const,
+          onPress: () => navigateToScreen(screenName.individual.shows),
+        },
+        {
+          key: "fairs-events",
+          label: "Fairs & Events",
+          routeName: screenName.individual.fairsEvents,
+          expoIconName: "calendar-outline" as const,
+          onPress: () => navigateToScreen(screenName.individual.fairsEvents),
+        },
+        {
+          key: "galleries",
+          label: "Galleries",
+          routeName: screenName.individual.galleries,
+          expoIconName: "business-outline" as const,
+          onPress: () => navigateToScreen(screenName.individual.galleries),
+        },
+        {
+          key: "profile",
+          label: "Profile",
+          routeName: screenName.profile,
+          expoIconName: "person-outline" as const,
+          onPress: () => navigateToScreen(screenName.profile),
+        },
+        {
+          key: "logout",
+          label: "Logout",
+          routeName: "logout",
+          isDanger: true,
+          onPress: () => void logout(),
+        },
+      ],
+      [navigateToScreen],
+    );
+
+    return (
+      <>
+        <Tab.Navigator
+          tabBar={(props) => (
+            <>
+              {(tabNavigationRef.current = props.navigation, null)}
+              <GalleryTabBar
+                {...props}
+                tabMeta={individualTabs}
+                moreRouteName="individual-more"
+                onPressMore={openMoreSheet}
+              />
+            </>
+          )}
+          screenOptions={{ headerShown: false }}
+        >
+          {individualTabs.map(({ name, component, id }) => (
+            <Tab.Screen
+              key={id}
+              name={name}
+              component={component}
+              options={{ tabBarShowLabel: false, headerShown: false }}
+            />
+          ))}
+          {individualMoreTabs.map(({ name, component, id }) => (
+            <Tab.Screen
+              key={id}
+              name={name}
+              component={component}
+              options={{ tabBarShowLabel: false, headerShown: false }}
+            />
+          ))}
+        </Tab.Navigator>
+        <MoreSheet
+          visible={isMoreSheetOpen}
+          onClose={closeMoreSheet}
+          menuItems={moreSheetItems}
         />
-      ))}
-    </Tab.Navigator>
+      </>
+    );
+  }
+
+  return (
+    <MoreSheetProvider>
+      <IndividualTabs />
+    </MoreSheetProvider>
   );
 };
 
@@ -104,10 +275,6 @@ export default function IndividualNavigation() {
       <Stack.Screen
         name={screenName.artwork}
         component={wrapWithHighRisk(Artwork)}
-      />
-      <Stack.Screen
-        name={screenName.searchResults}
-        component={wrapWithHighRisk(SearchResults)}
       />
       <Stack.Screen
         name={screenName.purchaseArtwork}
@@ -166,24 +333,12 @@ export default function IndividualNavigation() {
         component={wrapWithHighRisk(DetailsScreen)}
       />
       <Stack.Screen
-        name={screenName.individual.shows}
-        component={wrapWithHighRisk(ShowsScreen)}
-      />
-      <Stack.Screen
         name={screenName.individual.showDetails}
         component={wrapWithHighRisk(ShowDetailsScreen)}
       />
       <Stack.Screen
-        name={screenName.individual.fairsEvents}
-        component={wrapWithHighRisk(FairsEventsScreen)}
-      />
-      <Stack.Screen
         name={screenName.individual.fairEventDetails}
         component={wrapWithHighRisk(FairEventDetailsScreen)}
-      />
-      <Stack.Screen
-        name={screenName.individual.galleries}
-        component={wrapWithHighRisk(GalleriesScreen)}
       />
       <Stack.Screen
         name={screenName.individual.galleryDetails}

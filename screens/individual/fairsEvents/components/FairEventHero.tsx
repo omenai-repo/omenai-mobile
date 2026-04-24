@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, Image, Pressable, ScrollView, Text, View } from "react-native";
 import tw from "twrnc";
-import { getImageFileView } from "#lib/storage/getImageFileView";
+import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
 import type { GalleryEventRecord } from "#services/events/events.service";
 
 type Props = {
@@ -9,6 +9,12 @@ type Props = {
 };
 
 const { width: screenWidth } = Dimensions.get("window");
+const resolveProgramImageUri = (imageId?: string) =>
+  imageId
+    ? /^https?:\/\//i.test(imageId)
+      ? imageId
+      : getPromotionalFileView(imageId, 1400)
+    : "";
 
 export default function FairEventHero({ event }: Props) {
   const images = useMemo(
@@ -60,7 +66,7 @@ export default function FairEventHero({ event }: Props) {
         {images.map((img, idx) => (
           <View key={`${img}-${idx}`} style={{ width: heroWidth, height: 280 }}>
             <Image
-              source={{ uri: getImageFileView(img, 1400) }}
+              source={{ uri: resolveProgramImageUri(img) }}
               style={tw`w-full h-full`}
               resizeMode="cover"
             />

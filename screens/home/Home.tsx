@@ -15,6 +15,8 @@ import { useAppStore } from "#store/app/appStore";
 import FairsEvents from "./components/fairsEvents/FairsEvents";
 import FeaturedShows from "./components/featuredShows/FeaturedShows";
 import FeaturedGalleries from "./components/featuredGalleries/FeaturedGalleries";
+import FeaturedFeed from "./components/featuredFeed/FeaturedFeed";
+import CuratorPicks from "./components/curatorPicks/CuratorPicks";
 
 export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
@@ -39,6 +41,12 @@ export default function Home() {
       }),
       queryClient.invalidateQueries({
         queryKey: HOME_QK.featuredArtists(userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.featuredFeed(userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.curatorPicks(userSession?.id),
       }),
       queryClient.invalidateQueries({
         queryKey: HOME_QK.editorials(userSession?.id),
@@ -70,6 +78,8 @@ export default function Home() {
       >
         <Banner />
         <View style={tw`mt-10 gap-10`}>
+          <FeaturedFeed />
+          <CuratorPicks />
           <FairsEvents />
           <NewArtworksListing />
           <FeaturedShows />

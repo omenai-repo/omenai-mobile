@@ -42,6 +42,10 @@ export const HOME_QK = {
 
   featuredArtists: (userId?: string) => ["home", "featuredArtists", userId],
 
+  featuredFeed: (userId?: string) => ["home", "featuredFeed", userId],
+
+  curatorPicks: (userId?: string) => ["home", "curatorPicks", userId],
+
   featuredShows: (userId?: string) => ["home", "featuredShows", userId],
 
   featuredGalleries: (userId?: string) => ["home", "featuredGalleries", userId],
