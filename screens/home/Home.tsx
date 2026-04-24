@@ -12,6 +12,9 @@ import RecentlyViewedArtworks from "./components/recentlyViewed/RecentlyViewedAr
 import Editorials from "./components/editorials/Editorials";
 import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import FairsEvents from "./components/fairsEvents/FairsEvents";
+import FeaturedShows from "./components/featuredShows/FeaturedShows";
+import FeaturedGalleries from "./components/featuredGalleries/FeaturedGalleries";
 
 export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
@@ -40,6 +43,15 @@ export default function Home() {
       queryClient.invalidateQueries({
         queryKey: HOME_QK.editorials(userSession?.id),
       }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.fairsEventsPreview(userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.featuredShows(userSession?.id),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: HOME_QK.featuredGalleries(userSession?.id),
+      }),
     ]);
     // Optional: kick a refetch immediately
     await queryClient.refetchQueries({
@@ -58,11 +70,14 @@ export default function Home() {
       >
         <Banner />
         <View style={tw`mt-10 gap-10`}>
+          <FairsEvents />
           <NewArtworksListing />
+          <FeaturedShows />
           {/* <FeaturedArtists /> */}
           <TrendingArtworks limit={28} />
           <CuratedArtworksListing limit={20} />
           <CatalogListing />
+          <FeaturedGalleries />
           <Editorials />
           <RecentlyViewedArtworks />
         </View>

@@ -38,6 +38,15 @@ export const screenName = {
     reviewHub: "Review",
     proposalPrice: "proposal-price",
   },
+  individual: {
+    shows: "individual-shows",
+    showDetails: "individual-show-details",
+    fairsEvents: "individual-fairs-events",
+    fairEventDetails: "individual-fair-event-details",
+    galleries: "individual-galleries",
+    galleryDetails: "individual-gallery-details",
+    galleryShows: "individual-gallery-shows",
+  },
   gallery: {
     overview: "Overview",
     artworks: "Artworks",

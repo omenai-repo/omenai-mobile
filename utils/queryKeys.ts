@@ -42,9 +42,19 @@ export const HOME_QK = {
 
   featuredArtists: (userId?: string) => ["home", "featuredArtists", userId],
 
+  featuredShows: (userId?: string) => ["home", "featuredShows", userId],
+
+  featuredGalleries: (userId?: string) => ["home", "featuredGalleries", userId],
+
+  fairsEventsPreview: (userId?: string) => ["home", "fairsEventsPreview", userId],
+
   editorials: (userId?: string) => ["home", "editorials", userId],
 
   recentlyViewed: (userId?: string) => ["home", "recentlyViewed", userId],
+};
+
+export const ENGAGEMENTS_QK = {
+  userFollowedIds: (sessionId?: string) => ["user-followed-ids", sessionId] as const,
 };
 
 export const ORDERS_QK = ["orders", "artist"] as const;
@@ -66,8 +76,35 @@ export const WALLET_QK = {
 export const EVENTS_QK = {
   allShows: ["events", "shows"] as const,
   allFairsEvents: (filter: string) => ["events", "fairs-events", filter] as const,
+  fairsEventsInfinite: ["events", "fairs-events", "infinite", "all"] as const,
+  fairsEventsPaged: (filter: string, page: number, limit: number) =>
+    ["events", "fairs-events", filter, page, limit] as const,
+  showsList: ["events", "shows", "list"] as const,
+  galleriesList: (page: number, limit: number) =>
+    ["events", "galleries", page, limit] as const,
+  galleriesDirectory: (pageSize: number) =>
+    ["events", "galleries", "directory", pageSize] as const,
   galleryProgramming: (galleryId: string) =>
     ["events", "gallery-programming", galleryId] as const,
   details: (eventId: string, source: "show" | "event") =>
     ["events", "details", source, eventId] as const,
+  galleryOverview: (galleryId: string) =>
+    ["events", "gallery", "overview", galleryId] as const,
+  galleryProfile: (galleryId: string) => ["events", "gallery", "profile", galleryId] as const,
+  /** Matches web `GalleryWorksWrapper` query — include filters so cache splits per filter set. */
+  galleryWorks: (
+    galleryId: string,
+    filters: { artist?: string; medium?: string; price?: string } = {},
+  ) =>
+    [
+      "events",
+      "gallery",
+      "works",
+      galleryId,
+      filters.artist ?? "All",
+      filters.medium ?? "All",
+      filters.price ?? "All",
+    ] as const,
+  galleryShowsTab: (galleryId: string) => ["events", "gallery", "shows", galleryId] as const,
+  galleryContact: (galleryId: string) => ["events", "gallery", "contact", galleryId] as const,
 };

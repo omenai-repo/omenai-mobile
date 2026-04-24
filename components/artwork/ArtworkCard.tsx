@@ -35,6 +35,7 @@ type ArtworkCardType = {
   hideBackground?: boolean;
   image_format?: { ratio: string; orientation?: string };
   useImageLoadAspectRatio?: boolean;
+  metadataMode?: "default" | "trending";
 };
 
 const MAX_IMAGE_HEIGHT = 380; // px
@@ -121,6 +122,7 @@ function ArtworkCard({
   hideBackground = false,
   image_format,
   useImageLoadAspectRatio = false,
+  metadataMode = "default",
 }: Readonly<ArtworkCardType>) {
   const userSession = useAppStore((s) => s.userSession);
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -215,52 +217,106 @@ function ArtworkCard({
           )}
         </View>
         <View style={[tw`mt-3`, { width: cardWidth }]}>
-          <View style={S.titleWrap}>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={[
-                tw`text-base capitalize font-serif leading-snug w-full`,
-                lightText ? tw`text-white/90` : tw`text-dark`,
-              ]}
-            >
-              {title}
-            </Text>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={[
-                tw`text-xs capitalize w-full mt-0.5 font-sans-regular`,
-                lightText ? tw`text-white/80` : tw`text-slate-500`,
-              ]}
-            >
-              {artist}
-            </Text>
-          </View>
-          <View style={S.metaRow}>
-            {availiablity !== false && userSession?.id && !hidePriceLabel && (
-              <Text
+          {metadataMode === "trending" ? (
+            <>
+              <View style={S.titleWrap}>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={[
+                    tw`text-base capitalize font-serif leading-snug w-full`,
+                    lightText ? tw`text-white/90` : tw`text-neutral-900`,
+                  ]}
+                >
+                  {title}
+                </Text>
+              </View>
+              <View
                 style={[
-                  tw`text-sm flex-1`,
-                  lightText ? tw`text-white/90` : tw`text-[#1A1A1A]/90`,
-                  showPrice ? tw`font-sans-bold` : tw`font-sans-medium`,
+                  tw`mt-2 pt-2 flex-row items-center justify-between border-neutral-200`,
+                  { borderTopWidth: 1 },
                 ]}
               >
-                {showPrice ? utils_formatPrice(price) : "Price on Request"}
-              </Text>
-            )}
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={[
+                    tw`text-xs font-sans-regular flex-1 mr-2`,
+                    lightText ? tw`text-white/80` : tw`text-slate-500`,
+                  ]}
+                >
+                  {artist}
+                </Text>
+                <View style={tw`flex-row items-center`}>
+                  <Text
+                    style={[
+                      tw`text-[10px] font-sans-medium`,
+                      lightText ? tw`text-white/80` : tw`text-neutral-800`,
+                    ]}
+                  >
+                    {impressions ?? 0}
+                  </Text>
+                  <Text
+                    style={[
+                      tw`text-[9px] uppercase tracking-wide ml-1`,
+                      lightText ? tw`text-white/70` : tw`text-neutral-400`,
+                    ]}
+                  >
+                    like(s)
+                  </Text>
+                </View>
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={S.titleWrap}>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={[
+                    tw`text-base capitalize font-serif leading-snug w-full`,
+                    lightText ? tw`text-white/90` : tw`text-neutral-900`,
+                  ]}
+                >
+                  {title}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={[
+                    tw`text-xs capitalize w-full mt-0.5 font-sans-regular`,
+                    lightText ? tw`text-white/80` : tw`text-slate-500`,
+                  ]}
+                >
+                  {artist}
+                </Text>
+              </View>
+              <View style={S.metaRow}>
+                {availiablity !== false && (galleryView || userSession?.id) && !hidePriceLabel && (
+                  <Text
+                    style={[
+                      tw`text-sm flex-1`,
+                      lightText ? tw`text-white/90` : tw`text-[#1A1A1A]/90`,
+                      showPrice ? tw`font-sans-bold` : tw`font-sans-medium`,
+                    ]}
+                  >
+                    {showPrice ? utils_formatPrice(price) : "Price on Request"}
+                  </Text>
+                )}
 
-            {availiablity === false && (
-              <Text
-                style={[
-                  tw`text-sm flex-1 font-sans-semibold`,
-                  lightText ? tw`text-white/90` : tw`text-[#1A1A1A]/90`,
-                ]}
-              >
-                SOLD
-              </Text>
-            )}
-          </View>
+                {availiablity === false && (
+                  <Text
+                    style={[
+                      tw`text-sm flex-1 font-sans-semibold`,
+                      lightText ? tw`text-white/90` : tw`text-[#1A1A1A]/90`,
+                    ]}
+                  >
+                    SOLD
+                  </Text>
+                )}
+              </View>
+            </>
+          )}
         </View>
       </TouchableOpacity>
     </View>
@@ -295,6 +351,7 @@ const arePropsEqual = (
   prev.galleryView === next.galleryView &&
   prev.disableLikeButton === next.disableLikeButton &&
   prev.hideBackground === next.hideBackground &&
+  prev.metadataMode === next.metadataMode &&
   prev.useImageLoadAspectRatio === next.useImageLoadAspectRatio &&
   prev.image_format?.ratio === next.image_format?.ratio &&
   prev.image_format?.orientation === next.image_format?.orientation &&

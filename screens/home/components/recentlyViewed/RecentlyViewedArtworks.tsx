@@ -50,7 +50,7 @@ function RecentlyViewedArtworks() {
   const recentArtworks = useMemo(() => data as ViewHistoryItem[], [data]);
 
   return (
-    <View style={tw`my-10`}>
+    <View style={tw`mt-6 mb-10`}>
       <SectionHeader subtitle="YOUR ACTIVITY" title="Recently viewed" />
 
       {isLoading && <ArtworkCardLoader />}
