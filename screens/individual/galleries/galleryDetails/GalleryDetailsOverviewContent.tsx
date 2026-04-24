@@ -180,7 +180,7 @@ function HistoryRail({ events, cardWidth, onOpenEvent, onViewAll }: HistoryRailP
 export type RosterBlockProps = {
   title: string;
   artists: GalleryOverviewArtist[];
-  onArtistPress: (name: string) => void;
+  onArtistPress: (artist: GalleryOverviewArtist) => void;
   contentWidth: number;
 };
 
@@ -195,7 +195,7 @@ export function RosterBlock({ title, artists, onArtistPress, contentWidth }: Ros
         {artists.map((a, i) => (
           <Pressable
             key={a.artist_id}
-            onPress={() => onArtistPress(a.name)}
+            onPress={() => onArtistPress(a)}
             style={({ pressed }) => [
               {
                 width: colW,
@@ -220,7 +220,7 @@ type OverviewProps = {
   contentWidth: number;
   railCardWidth: number;
   navigation: NavigationProp<any>;
-  onArtistNamePress: (name: string) => void;
+  onArtistPress: (artist: GalleryOverviewArtist) => void;
   onViewAllShows: () => void;
   isRefetching: boolean;
   onRefresh: () => void;
@@ -231,7 +231,7 @@ export default function GalleryDetailsOverviewContent({
   contentWidth,
   railCardWidth,
   navigation,
-  onArtistNamePress,
+  onArtistPress,
   onViewAllShows,
   isRefetching,
   onRefresh,
@@ -283,13 +283,13 @@ export default function GalleryDetailsOverviewContent({
           <RosterBlock
             title="Represented Artists"
             artists={represented}
-            onArtistPress={onArtistNamePress}
+            onArtistPress={onArtistPress}
             contentWidth={contentWidth}
           />
           <RosterBlock
             title="Works Available By"
             artists={available}
-            onArtistPress={onArtistNamePress}
+            onArtistPress={onArtistPress}
             contentWidth={contentWidth}
           />
         </View>

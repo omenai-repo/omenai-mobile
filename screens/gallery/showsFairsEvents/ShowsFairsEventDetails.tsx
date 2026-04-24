@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   RefreshControl,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

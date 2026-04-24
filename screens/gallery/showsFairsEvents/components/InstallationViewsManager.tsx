@@ -4,6 +4,9 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Modal,
+  Pressable,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -17,7 +20,7 @@ import { updateEventInstallationViews } from "#services/events/events.service";
 import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
 import { useModalStore } from "#store/modal/modalStore";
 import { uploadToAppwrite } from "#utils/uploadToAppwrite";
-import { storage } from "#appWrite_config";
+import { deleteFromAppwrite } from "#utils/deleteFromAppwrite";
 
 type InstallationViewsManagerProps = {
   eventId: string;
@@ -38,6 +41,9 @@ export default function InstallationViewsManager({
   const slideGap = 12;
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [selectedAssets, setSelectedAssets] = useState<ImagePicker.ImagePickerAsset[]>([]);
+  const [isUploadingPreviewSelection, setIsUploadingPreviewSelection] = useState(false);
   const onViewableItemsChanged = useRef(
     ({
       viewableItems,
@@ -60,8 +66,8 @@ export default function InstallationViewsManager({
   }, [existingViews.length, activeIndex]);
 
   const addInstallationViewMutation = useMutation({
-    mutationFn: (imageId: string) =>
-      updateEventInstallationViews(eventId, galleryId, imageId, "add"),
+    mutationFn: (imageIds: string | string[]) =>
+      updateEventInstallationViews(eventId, galleryId, imageIds, "add"),
     onSuccess: async (result) => {
       if (!result.isOk) {
         updateModal({
@@ -76,12 +82,18 @@ export default function InstallationViewsManager({
       updateModal({
         showModal: true,
         modalType: "success",
-        message: "Installation image added.",
+        message: "Installation view(s) added.",
       });
+      setSelectedAssets([]);
+      setIsPreviewOpen(false);
+      setIsUploadingPreviewSelection(false);
+    },
+    onError: () => {
+      setIsUploadingPreviewSelection(false);
     },
   });
 
-  const handleAddInstallationImage = async () => {
+  const pickInstallationImages = async (openPreview = true) => {
     if (!galleryId) {
       updateModal({
         showModal: true,
@@ -102,27 +114,47 @@ export default function InstallationViewsManager({
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
+      allowsMultipleSelection: true,
+      selectionLimit: 12,
       quality: 0.9,
     });
 
     if (pickerResult.canceled || !pickerResult.assets?.length) return;
-    const asset = pickerResult.assets[0];
+    setSelectedAssets((prev) => [...prev, ...pickerResult.assets]);
+    if (openPreview) {
+      setIsPreviewOpen(true);
+    }
+  };
+
+  const handleAddInstallationImage = async () => {
+    await pickInstallationImages(true);
+  };
+
+  const handleUploadSelectedAssets = async () => {
+    if (!selectedAssets.length) return;
+    setIsUploadingPreviewSelection(true);
 
     try {
-      const upload = await uploadToAppwrite({
-        bucketId: appwriteConfig.promotionalBucketId,
-        file: {
-          uri: asset.uri,
-          name: asset.fileName || `installation-${Date.now()}.jpg`,
-          type: asset.mimeType || "image/jpeg",
-        },
-        fallbackName: `installation-${Date.now()}.jpg`,
-        fallbackType: "image/jpeg",
-        errorMessage: "Failed to upload installation image",
-      });
+      const uploadedIds = await Promise.all(
+        selectedAssets.map(async (asset, index) => {
+          const upload = await uploadToAppwrite({
+            bucketId: appwriteConfig.promotionalBucketId!,
+            file: {
+              uri: asset.uri,
+              name: asset.fileName || `installation-${Date.now()}-${index}.jpg`,
+              type: asset.mimeType || "image/jpeg",
+            },
+            fallbackName: `installation-${Date.now()}-${index}.jpg`,
+            fallbackType: "image/jpeg",
+            errorMessage: "Failed to upload installation image",
+          });
+          return upload.$id;
+        }),
+      );
 
-      addInstallationViewMutation.mutate(upload.$id);
+      addInstallationViewMutation.mutate(uploadedIds);
     } catch (error: any) {
+      setIsUploadingPreviewSelection(false);
       updateModal({
         showModal: true,
         modalType: "error",
@@ -131,15 +163,20 @@ export default function InstallationViewsManager({
     }
   };
 
+  const removeSelectedAsset = (indexToRemove: number) => {
+    setSelectedAssets((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+
   const removeInstallationViewMutation = useMutation({
     mutationFn: async (imageId: string) => {
       if (!appwriteConfig.promotionalBucketId) {
         throw new Error("Promotional storage bucket is not configured.");
       }
 
-      await storage.deleteFile({
+      await deleteFromAppwrite({
         bucketId: appwriteConfig.promotionalBucketId,
         fileId: imageId,
+        errorMessage: "Unable to delete installation image from storage.",
       });
 
       return updateEventInstallationViews(eventId, galleryId, imageId, "remove");
@@ -329,6 +366,139 @@ export default function InstallationViewsManager({
           )}
         </View>
       )}
+      <Modal
+        visible={isPreviewOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          if (!addInstallationViewMutation.isPending && !isUploadingPreviewSelection) {
+            setIsPreviewOpen(false);
+          }
+        }}
+      >
+        <Pressable
+          style={tw`flex-1 bg-[rgba(0,0,0,0.45)] items-center justify-center px-4`}
+          onPress={() => {
+            if (!addInstallationViewMutation.isPending && !isUploadingPreviewSelection) {
+              setIsPreviewOpen(false);
+            }
+          }}
+        >
+          <Pressable
+            style={tw`w-full max-w-[700px] bg-white rounded-md border border-neutral-200`}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={tw`px-4 py-3 border-b border-neutral-100`}>
+              <Text style={tw`text-base text-neutral-900`}>Preview Installation Views</Text>
+              <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mt-1`}>
+                Selected files ({selectedAssets.length})
+              </Text>
+            </View>
+
+            <View style={tw`px-4 py-4`}>
+              {selectedAssets.length === 0 ? (
+                <View style={tw`py-8 items-center`}>
+                  <Text style={tw`text-xs uppercase tracking-widest text-neutral-500`}>
+                    No images selected.
+                  </Text>
+                  <TouchableOpacity
+                    style={tw`mt-3 px-4 py-2 border border-neutral-300 rounded-sm`}
+                    activeOpacity={0.85}
+                    onPress={() => void pickInstallationImages(false)}
+                    disabled={
+                      addInstallationViewMutation.isPending || isUploadingPreviewSelection
+                    }
+                  >
+                    <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-700`}>
+                      Add images
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View>
+                  <View style={tw`flex-row items-center justify-between mb-3`}>
+                    <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500`}>
+                      Preview ({selectedAssets.length})
+                    </Text>
+                    <TouchableOpacity
+                      style={tw`px-3 py-1.5 border border-neutral-300 rounded-sm`}
+                      activeOpacity={0.85}
+                      onPress={() => void pickInstallationImages(false)}
+                      disabled={
+                        addInstallationViewMutation.isPending || isUploadingPreviewSelection
+                      }
+                    >
+                      <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-700`}>
+                        Add more
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={[tw`border border-neutral-200 rounded-sm p-2`, { maxHeight: 280 }]}>
+                    <ScrollView showsVerticalScrollIndicator>
+                      <View style={tw`flex-row flex-wrap`}>
+                        {selectedAssets.map((item, index) => (
+                          <View
+                            key={`preview-${index}`}
+                            style={[
+                              tw`rounded-sm overflow-hidden bg-neutral-100 border border-neutral-200 mb-2 mr-2`,
+                              { width: 104, maxWidth: 104, aspectRatio: 4 / 3 },
+                            ]}
+                          >
+                            <Image source={{ uri: item.uri }} style={tw`w-full h-full`} resizeMode="cover" />
+                            {!addInstallationViewMutation.isPending && !isUploadingPreviewSelection && (
+                              <TouchableOpacity
+                                onPress={() => removeSelectedAsset(index)}
+                                style={tw`absolute top-1 right-1 bg-red-600 rounded-sm px-1.5 py-1`}
+                                activeOpacity={0.85}
+                              >
+                                <Text style={tw`text-[8px] uppercase tracking-widest text-white`}>
+                                  X
+                                </Text>
+                              </TouchableOpacity>
+                            )}
+                          </View>
+                        ))}
+                      </View>
+                    </ScrollView>
+                  </View>
+                </View>
+              )}
+            </View>
+
+            <View style={tw`px-4 py-3 border-t border-neutral-100 flex-row justify-end gap-3`}>
+              <TouchableOpacity
+                style={tw`px-4 py-2`}
+                onPress={() => {
+                  if (!addInstallationViewMutation.isPending && !isUploadingPreviewSelection) {
+                    setIsPreviewOpen(false);
+                  }
+                }}
+                disabled={addInstallationViewMutation.isPending || isUploadingPreviewSelection}
+              >
+                <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-600`}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={tw`px-4 py-2 bg-black rounded-sm`}
+                onPress={handleUploadSelectedAssets}
+                disabled={
+                  addInstallationViewMutation.isPending ||
+                  isUploadingPreviewSelection ||
+                  selectedAssets.length === 0
+                }
+              >
+                <Text style={tw`text-[10px] uppercase tracking-widest text-white`}>
+                  {addInstallationViewMutation.isPending || isUploadingPreviewSelection
+                    ? "Uploading..."
+                    : `Confirm & Upload (${selectedAssets.length})`}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

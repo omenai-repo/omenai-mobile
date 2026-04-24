@@ -84,6 +84,46 @@ export async function fetchGalleryShowsPage(galleryId: string, page: number, lim
   }
 }
 
+export type GalleryArtistFloorRow = {
+  artist_id: string;
+  name: string;
+  country?: string;
+  birthyear?: string;
+  isRepresented?: boolean;
+  totalWorks?: number;
+  artworks?: unknown[];
+};
+
+export async function fetchGalleryArtistsPage(
+  galleryId: string,
+  page: number,
+  limit = 10,
+  artistId?: string,
+) {
+  const q = new URLSearchParams({
+    id: galleryId,
+    page: String(page),
+    limit: String(limit),
+    artist: artistId ?? "",
+  });
+  try {
+    const res = await apiRequest(`${apiUrl}/api/partners/getGalleryArtists?${q.toString()}`, {
+      method: "GET",
+    });
+    const result = (await res.json()) as {
+      data?: GalleryArtistFloorRow[];
+      pagination?: { page: number; totalPages: number; total?: number; limit?: number };
+    };
+    return {
+      isOk: res.ok,
+      data: Array.isArray(result.data) ? result.data : [],
+      pagination: result.pagination,
+    };
+  } catch {
+    return { isOk: false, data: [] as GalleryArtistFloorRow[], pagination: undefined };
+  }
+}
+
 export async function fetchGalleryContact(galleryId: string) {
   try {
     const res = await apiRequest(

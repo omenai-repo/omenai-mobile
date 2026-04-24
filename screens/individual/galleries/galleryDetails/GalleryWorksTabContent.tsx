@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -70,26 +70,64 @@ export function priceFromGalleryWork(art: GalleryWorkRow): number {
 const H_PAD = 20;
 const COL_GAP = 8;
 
-type Props = { galleryId: string; isActive: boolean };
+export type GalleryArtistFilterOption = {
+  id: string;
+  name: string;
+};
 
-export default function GalleryWorksTabContent({ galleryId, isActive }: Props) {
+type WorksProps = {
+  galleryId: string;
+  isActive: boolean;
+  artistOptions?: GalleryArtistFilterOption[];
+  selectedArtistId?: string;
+};
+
+export default function GalleryWorksTabContent({
+  galleryId,
+  isActive,
+  artistOptions = [],
+  selectedArtistId,
+}: WorksProps) {
   const navigation = useNavigation<any>();
   const { width: screenW } = useWindowDimensions();
   const cardW = useMemo(() => (screenW - H_PAD * 2 - COL_GAP) / 2, [screenW]);
 
+  const [artistFilter, setArtistFilter] = useState("All");
   const [mediumFilter, setMediumFilter] = useState("All");
   const [priceFilter, setPriceFilter] = useState("All");
   const [immersiveOpen, setImmersiveOpen] = useState(false);
 
   const filters = useMemo(
-    () => ({ artist: "All" as const, medium: mediumFilter, price: priceFilter }),
-    [mediumFilter, priceFilter],
+    () => ({ artist: artistFilter, medium: mediumFilter, price: priceFilter }),
+    [artistFilter, mediumFilter, priceFilter],
+  );
+
+  useEffect(() => {
+    if (!selectedArtistId) return;
+    setArtistFilter(selectedArtistId);
+  }, [selectedArtistId]);
+
+  const artistFilterOptions = useMemo(
+    () => [
+      { label: "All", value: "All" },
+      ...artistOptions.map((artist) => ({
+        label: artist.name,
+        value: artist.id,
+      })),
+    ],
+    [artistOptions],
+  );
+
+  const selectedArtistName = useMemo(
+    () => artistOptions.find((artist) => artist.id === artistFilter)?.name ?? "",
+    [artistOptions, artistFilter],
   );
 
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: EVENTS_QK.galleryWorks(galleryId, filters),
     queryFn: async ({ pageParam = 1 }) =>
       fetchGalleryWorksPage(galleryId, pageParam as number, {
+        artist: artistFilter,
         medium: mediumFilter,
         price: priceFilter,
       }),
@@ -176,6 +214,17 @@ export default function GalleryWorksTabContent({ galleryId, isActive }: Props) {
   const filterStrip = (
     <View style={tw`px-5 pt-3 pb-4 border-b border-neutral-100`}>
       <View style={tw`flex-row flex-wrap gap-2`}>
+        <View style={[tw`flex-1`, { minWidth: 148, zIndex: 500 }]}>
+          <CustomSelectPicker
+            label=""
+            placeholder="Artist"
+            value={artistFilter}
+            data={artistFilterOptions}
+            handleSetValue={(e) => setArtistFilter(e.value)}
+            zIndex={500}
+            dropdownPosition="bottom"
+          />
+        </View>
         <View style={[tw`flex-1`, { minWidth: 148, zIndex: 400 }]}>
           <CustomSelectPicker
             label=""
@@ -239,7 +288,9 @@ export default function GalleryWorksTabContent({ galleryId, isActive }: Props) {
         contentContainerStyle={tw`px-5 pb-8 pt-2`}
       >
         <Text style={tw`text-[11px] text-neutral-500 mb-3`}>
-          {items.length} work{items.length === 1 ? "" : "s"}
+          {artistFilter !== "All" && selectedArtistName
+            ? `Works by ${selectedArtistName} (${items.length})`
+            : `${items.length} work${items.length === 1 ? "" : "s"}`}
         </Text>
         <View style={tw`flex-row justify-between`}>
           <View style={{ width: cardW }}>{columnsData[0].map(renderArtwork)}</View>

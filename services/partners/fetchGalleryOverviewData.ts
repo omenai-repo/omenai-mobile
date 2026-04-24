@@ -14,6 +14,10 @@ export type GalleryOverviewEvent = {
 export type GalleryOverviewArtist = {
   artist_id: string;
   name: string;
+  totalWorks?: number;
+  total_works?: number;
+  availableWorks?: number;
+  available_works?: number;
 };
 
 export type GalleryOverviewData = {
