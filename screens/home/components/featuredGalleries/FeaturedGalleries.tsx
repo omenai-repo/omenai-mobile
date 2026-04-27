@@ -21,7 +21,7 @@ export default function FeaturedGalleries() {
     const isFollowing = isFollowingFor(item.gallery_id);
 
     return (
-      <View style={tw`w-[260px] rounded-sm border border-neutral-200 bg-white overflow-hidden`}>
+      <View style={tw`w-[260px] rounded-md bg-white overflow-hidden`}>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate(screenName.individual.galleryDetails, {
@@ -85,7 +85,6 @@ export default function FeaturedGalleries() {
   return (
     <View style={tw`mt-6`}>
       <SectionHeader
-        subtitle="FEATURED GALLERIES"
         title={`Featured Galleries (${galleries.length})`}
         onActionPress={() => navigation.navigate(screenName.individual.galleries)}
       />
@@ -99,7 +98,7 @@ export default function FeaturedGalleries() {
           ? SKELETON_ITEMS.map((item) => (
               <View
                 key={item}
-                style={tw`w-[260px] rounded-sm border border-neutral-200 bg-white overflow-hidden`}
+                style={tw`w-[260px] rounded-md bg-white overflow-hidden`}
               >
                 <View style={tw`w-full h-[195px] bg-neutral-100`} />
                 <View style={tw`p-4`}>

@@ -49,7 +49,7 @@ export default function Editorials({ hideAction }: { hideAction?: boolean }) {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={tw`mt-5`}
+          style={tw`mt-6`}
           contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-start" }]}
         >
           {data.map((item: any, i: number) => (

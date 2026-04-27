@@ -10,7 +10,7 @@ import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 import { useDevice } from "#hooks/useDevice";
 
-const SIDE_PADDING = 15;
+const SIDE_PADDING = 0;
 const CARD_GAP = 15;
 
 type BannerItemProps = {
@@ -81,7 +81,7 @@ export default function Banner() {
   };
 
   return (
-    <View style={tw`mt-2`}>
+    <View style={tw`mt-6`}>
       {isLoading && data.length === 0 && (
         <BannerLoader isTablet={isTablet} cardWidth={CARD_WIDTH} />
       )}
@@ -126,7 +126,7 @@ export default function Banner() {
             ];
             const dotWidth = scrollX.interpolate({
               inputRange,
-              outputRange: [8, 16, 8],
+              outputRange: [6, 12, 6],
               extrapolate: "clamp",
             });
             const dotColor = scrollX.interpolate({
@@ -138,7 +138,7 @@ export default function Banner() {
               <Animated.View
                 key={`indicator-${item.headline}`}
                 style={[
-                  tw`h-2 rounded-full mx-1`,
+                  tw`h-1.5 rounded-full mx-0.5`,
                   { width: dotWidth, backgroundColor: dotColor },
                 ]}
               />
@@ -164,7 +164,7 @@ export default function Banner() {
               ];
               const dotWidth = scrollX.interpolate({
                 inputRange,
-                outputRange: [8, 16, 8],
+                outputRange: [6, 12, 6],
                 extrapolate: "clamp",
               });
               const dotColor = scrollX.interpolate({
@@ -176,7 +176,7 @@ export default function Banner() {
                 <Animated.View
                   key={id}
                   style={[
-                    tw`h-2 rounded-full mx-1`,
+                    tw`h-1.5 rounded-full mx-0.5`,
                     { width: dotWidth, backgroundColor: dotColor },
                   ]}
                 />

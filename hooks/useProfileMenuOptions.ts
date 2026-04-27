@@ -4,7 +4,6 @@ import {
   changePasswsordIcon,
   getDeleteIcon,
   getLockIcon,
-  notesIcon,
 } from "#utils/SvgImages";
 import { ProfileMenuItem } from "#components/profile/ProfileMenuItems";
 import { colors } from "#config/colors.config";
@@ -31,12 +30,6 @@ export const useProfileMenuOptions = (
         subText: "Enable/Disable biometric authentication",
         handlePress: () => navigation.navigate(screenName.biometricSettings),
         svgIcon: getLockIcon(colors.black, 25, 25),
-      },
-      {
-        name: "Support Tickets",
-        subText: "View your support history",
-        handlePress: () => navigation.navigate(screenName.supportTickets),
-        svgIcon: notesIcon,
       },
       {
         name: "Delete account",

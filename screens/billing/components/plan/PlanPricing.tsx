@@ -22,7 +22,7 @@ export const PlanPricing = ({
   const billingPeriod = tab === "monthly" ? "month" : "year";
   const startPrice = isEligibleForDiscount ? "$0" : prettyAmount;
   const durationText = isEligibleForDiscount
-    ? "for 1 month"
+    ? "for 14 days"
     : `/${billingPeriod}`;
 
   return (

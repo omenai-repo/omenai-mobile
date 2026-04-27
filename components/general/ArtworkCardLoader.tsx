@@ -23,7 +23,7 @@ export function SingleArtworkCardLoader({
   );
 }
 
-export default function ArtworkCardLoader() {
+export default function ArtworkCardLoader({ containerStyle }: Readonly<{ containerStyle?: ViewStyle }>) {
   return (
     <FlatList
       data={[0, 1]}
@@ -31,7 +31,7 @@ export default function ArtworkCardLoader() {
       keyExtractor={(_, index) => JSON.stringify(index)}
       horizontal={true}
       showsHorizontalScrollIndicator={false}
-      style={tw`mt-5 pl-5`}
+      style={[tw`mt-5 pl-5`, containerStyle]}
       contentContainerStyle={tw`gap-5 pr-5`}
     />
   );

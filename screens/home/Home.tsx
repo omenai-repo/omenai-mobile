@@ -69,28 +69,28 @@ export default function Home() {
   }, [queryClient, userSession?.id]);
 
   return (
-      <ScrollWrapper
-        showsVerticalScrollIndicator={false}
-        contentInsetAdjustmentBehavior="automatic"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
+    <ScrollWrapper
+      showsVerticalScrollIndicator={false}
+      contentInsetAdjustmentBehavior="automatic"
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <View style={tw`gap-10`}>
+        <FeaturedFeed />
+        <CuratorPicks />
+        <FairsEvents />
+        <TrendingArtworks limit={28} />
+        <FeaturedShows />
+        <CuratedArtworksListing limit={20} />
+        <FeaturedGalleries />
+        <Editorials />
         <Banner />
-        <View style={tw`mt-10 gap-10`}>
-          <FeaturedFeed />
-          <CuratorPicks />
-          <FairsEvents />
-          <NewArtworksListing />
-          <FeaturedShows />
-          {/* <FeaturedArtists /> */}
-          <TrendingArtworks limit={28} />
-          <CuratedArtworksListing limit={20} />
-          <CatalogListing />
-          <FeaturedGalleries />
-          <Editorials />
-          <RecentlyViewedArtworks />
-        </View>
-      </ScrollWrapper>
+        {/* <NewArtworksListing /> */}
+        {/* <FeaturedArtists /> */}
+        <CatalogListing />
+        <RecentlyViewedArtworks />
+      </View>
+    </ScrollWrapper>
   );
 }

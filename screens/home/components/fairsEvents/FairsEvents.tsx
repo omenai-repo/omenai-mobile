@@ -23,8 +23,7 @@ export default function FairsEvents() {
   return (
     <View style={tw`mt-6`}>
       <SectionHeader
-        subtitle="FAIRS & EVENTS"
-        title="Latest fairs and events"
+        title="Fairs & Events"
         onActionPress={() => navigation.navigate(screenName.individual.fairsEvents)}
       />
       <ScrollView

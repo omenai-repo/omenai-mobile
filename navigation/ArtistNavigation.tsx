@@ -5,7 +5,19 @@ import ArtistOnboarding from "#screens/artistOnboarding/ArtistOnboarding";
 import tw from "twrnc";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SvgXml } from "react-native-svg";
-import { starEffect } from "#utils/SvgImages";
+import {
+  starEffect,
+  ordersActive,
+  ordersInActive,
+  overviewActive,
+  overviewInActive,
+  profileActive,
+  reviewHubActive,
+  walletActive,
+  walletInActive,
+  shippingActive,
+  shippingInActive,
+} from "#utils/SvgImages";
 import ArtistOverviewStack from "#navigation/ArtistOverviewStack";
 import { createStackNavigator } from "@react-navigation/stack";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
@@ -30,27 +42,97 @@ import { TransactionDetailsScreen } from "#screens/artist/wallet/TransactionDeta
 import Artwork from "#screens/artwork/Artwork";
 import EditArtwork from "#screens/editArtwork/EditArtwork";
 import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
-import { getBottomTabDataArtist } from "#utils/BottomTabData";
 import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
 import ViewCredentialsScreen from "#screens/artist/profile/ViewCredentials";
-import CustomTabBar from "./components/TabButton";
+import GalleryTabBar from "./components/GalleryTabBar";
 import NotificationScreen from "#screens/notifications/NotificationScreen";
 import DeleteAccountScreen from "#screens/deleteAccount/DeleteAccountScreen";
 import { wrapWithHighRisk, wrapWithLowRisk } from "#utils/wrapWithProvider";
 import BiometricSettings from "#screens/profile/BiometricSettings";
 import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
 import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
+import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
+import {
+  MoreSheetProvider,
+  useMoreSheet,
+} from "./components/MoreSheetContext";
+import ArtistReviewHub from "#screens/artist/reviews/ArtistReviewHub";
+import ArtistProfileScreen from "#screens/artist/profile/ArtistProfileScreen";
+import WalletScreen from "#screens/artist/wallet/WalletScreen";
+import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const ArtistTabBar = (props: any) => (
-  <CustomTabBar {...props} tabData={getBottomTabDataArtist()} />
-);
+const moreLabel = "More";
+
+const artistTabs = [
+  {
+    id: 1,
+    name: "Overview",
+    label: "Overview",
+    component: ArtistOverviewStack,
+    activeIcon: overviewActive,
+    inActiveIcon: overviewInActive,
+  },
+  {
+    id: 2,
+    name: "Wallet",
+    label: "Wallet",
+    component: WalletScreen,
+    activeIcon: walletActive,
+    inActiveIcon: walletInActive,
+  },
+  {
+    id: 3,
+    name: "artist-more",
+    label: moreLabel,
+    component: () => <View style={{ flex: 1, backgroundColor: "#F7F7F7" }} />,
+  },
+  {
+    id: 4,
+    name: "Artworks",
+    label: "Artworks",
+    component: GalleryArtworksListing,
+    activeIcon: shippingActive,
+    inActiveIcon: shippingInActive,
+  },
+  {
+    id: 5,
+    name: "Orders",
+    label: "Orders",
+    component: OrderScreen,
+    activeIcon: ordersActive,
+    inActiveIcon: ordersInActive,
+  },
+];
+
+const artistMoreTabs = [
+  {
+    id: 6,
+    name: "Review",
+    label: "Review",
+    component: ArtistReviewHub,
+  },
+  {
+    id: 7,
+    name: "Profile",
+    label: "Profile",
+    component: ArtistProfileScreen,
+  },
+  {
+    id: 8,
+    name: screenName.supportTickets,
+    label: "Support Tickets",
+    component: SupportTicketsScreen,
+  },
+];
 
 const BottomTabNav = () => {
   const { userSession } = useAppStore();
   const [isModalVisible, setModalVisible] = useState(false);
+  const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
+  const tabNavigationRef = useRef<any>(null);
 
   useEffect(() => {
     if (!userSession.artist_verified) {
@@ -78,35 +160,97 @@ const BottomTabNav = () => {
     ]).start();
   }, []);
 
+  const navigateToScreen = (routeName: string) => {
+    if (!tabNavigationRef.current) return;
+    const tabRouteNames = [...artistTabs, ...artistMoreTabs].map(
+      ({ name }) => name,
+    );
+    if (tabRouteNames.includes(routeName)) {
+      tabNavigationRef.current.navigate(routeName);
+      return;
+    }
+    tabNavigationRef.current.getParent()?.navigate(routeName);
+  };
+
+  const moreSheetItems: MoreSheetItem[] = [
+    {
+      key: "review",
+      label: "Review",
+      routeName: "Review",
+      icon: reviewHubActive,
+      keywords: ["ratings", "feedback"],
+      onPress: () => navigateToScreen("Review"),
+    },
+    {
+      key: "profile",
+      label: "Profile",
+      routeName: "Profile",
+      icon: profileActive,
+      keywords: ["account", "settings"],
+      onPress: () => navigateToScreen("Profile"),
+    },
+    {
+      key: "support-tickets",
+      label: "Support Tickets",
+      routeName: screenName.supportTickets,
+      icon: reviewHubActive,
+      keywords: ["support", "help"],
+      onPress: () => navigateToScreen(screenName.supportTickets),
+    },
+    {
+      key: "logout",
+      label: "Logout",
+      routeName: "logout",
+      keywords: ["sign out", "log out"],
+      isDanger: true,
+      onPress: () => void logout(),
+    },
+  ];
+
   return (
     <>
       <Tab.Navigator
-        tabBar={ArtistTabBar}
+        tabBar={(props) => (
+          <>
+            {(tabNavigationRef.current = props.navigation, null)}
+            <GalleryTabBar
+              {...props}
+              tabMeta={artistTabs}
+              moreRouteName="artist-more"
+              onPressMore={openMoreSheet}
+            />
+          </>
+        )}
         screenOptions={{
           headerShown: false,
         }}
       >
-        {getBottomTabDataArtist().map(
-          ({
-            name,
-            component,
-            id,
-          }: {
-            name: string;
-            component: any;
-            id: number;
-          }) => (
-            <Tab.Screen
-              key={id}
-              name={name}
-              component={component}
-              options={{
-                tabBarShowLabel: false,
-              }}
-            />
-          )
-        )}
+        {artistTabs.map(({ name, component, id }) => (
+          <Tab.Screen
+            key={id}
+            name={name}
+            component={component}
+            options={{
+              tabBarShowLabel: false,
+            }}
+          />
+        ))}
+        {artistMoreTabs.map(({ name, component, id }) => (
+          <Tab.Screen
+            key={id}
+            name={name}
+            component={component}
+            options={{
+              tabBarShowLabel: false,
+            }}
+          />
+        ))}
       </Tab.Navigator>
+      <MoreSheet
+        visible={isMoreSheetOpen}
+        onClose={closeMoreSheet}
+        menuItems={moreSheetItems}
+      />
 
       <Modal visible={isModalVisible} transparent={true} animationType="fade">
         <View style={tw`flex-1 bg-[#0003] justify-center items-center`}>
@@ -163,7 +307,14 @@ const ArtistNavigation = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Artist" component={wrapWithHighRisk(BottomTabNav)} />
+      <Stack.Screen
+        name="Artist"
+        component={wrapWithHighRisk(() => (
+          <MoreSheetProvider>
+            <BottomTabNav />
+          </MoreSheetProvider>
+        ))}
+      />
       <Stack.Screen
         name="ShipmentTrackingScreen"
         component={wrapWithLowRisk(ShipmentTrackingScreen)}

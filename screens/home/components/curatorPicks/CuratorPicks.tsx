@@ -32,7 +32,6 @@ export default function CuratorPicks() {
   return (
     <View style={tw`mt-6`}>
       <SectionHeader
-        subtitle="CURATOR'S PICKS"
         title="Curator's Picks"
       />
       <ScrollView
@@ -43,34 +42,34 @@ export default function CuratorPicks() {
       >
         {isLoading
           ? SKELETON_ITEMS.map((item) => (
-              <View key={item} style={tw`w-[170px]`}>
-                <View style={tw`w-full h-[220px] rounded-sm bg-[#EAEAEA]`} />
-                <View style={tw`h-3 w-24 rounded-sm bg-[#E6E6E6] mt-3`} />
-                <View style={tw`h-4 w-32 rounded-sm bg-[#E6E6E6] mt-2`} />
-              </View>
-            ))
+            <View key={item} style={tw`w-[170px]`}>
+              <View style={tw`w-full h-[220px] rounded-sm bg-[#EAEAEA]`} />
+              <View style={tw`h-3 w-24 rounded-sm bg-[#E6E6E6] mt-3`} />
+              <View style={tw`h-4 w-32 rounded-sm bg-[#E6E6E6] mt-2`} />
+            </View>
+          ))
           : picks.map((item: any, index: number) => {
-              const artwork = item.data;
-              return (
-                <ArtworkCard
-                  key={item.identifier || artwork.art_id || `curator-pick-${index}`}
-                  title={artwork.title}
-                  url={artwork.url}
-                  artist={artwork.artist}
-                  showPrice={
-                    !!userSession?.id && artwork.pricing?.shouldShowPrice === "Yes"
-                  }
-                  price={artwork.pricing?.usd_price}
-                  availiablity={artwork.availability}
-                  impressions={artwork.impressions}
-                  like_IDs={artwork.like_IDs}
-                  art_id={artwork.art_id}
-                  image_format={artwork.image_format}
-                  hideBackground
-                  useImageLoadAspectRatio
-                />
-              );
-            })}
+            const artwork = item.data;
+            return (
+              <ArtworkCard
+                key={item.identifier || artwork.art_id || `curator-pick-${index}`}
+                title={artwork.title}
+                url={artwork.url}
+                artist={artwork.artist}
+                showPrice={
+                  !!userSession?.id && artwork.pricing?.shouldShowPrice === "Yes"
+                }
+                price={artwork.pricing?.usd_price}
+                availiablity={artwork.availability}
+                impressions={artwork.impressions}
+                like_IDs={artwork.like_IDs}
+                art_id={artwork.art_id}
+                image_format={artwork.image_format}
+                hideBackground
+                useImageLoadAspectRatio
+              />
+            );
+          })}
       </ScrollView>
     </View>
   );

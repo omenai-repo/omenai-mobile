@@ -132,6 +132,12 @@ const galleryMoreTabs = [
     label: "Profile",
     component: GalleryProfile,
   },
+  {
+    id: 10,
+    name: screenName.supportTickets,
+    label: "Support Tickets",
+    component: SupportTicketsScreen,
+  },
 ];
 
 type accountStateType = {
