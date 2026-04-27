@@ -130,6 +130,12 @@ const individualMoreTabs = [
     label: "Galleries",
     component: GalleriesScreen,
   },
+  {
+    id: 10,
+    name: screenName.supportTickets,
+    label: "Support Tickets",
+    component: SupportTicketsScreen,
+  },
 ];
 
 const IndividualTabNavigationScreens = () => {
@@ -178,6 +184,13 @@ const IndividualTabNavigationScreens = () => {
           routeName: screenName.profile,
           expoIconName: "person-outline" as const,
           onPress: () => navigateToScreen(screenName.profile),
+        },
+        {
+          key: "support-tickets",
+          label: "Support Tickets",
+          routeName: screenName.supportTickets,
+          expoIconName: "help-circle-outline" as const,
+          onPress: () => navigateToScreen(screenName.supportTickets),
         },
         {
           key: "logout",

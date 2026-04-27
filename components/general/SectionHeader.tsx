@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import tw from "twrnc";
 
 interface SectionHeaderProps {
-  subtitle: string;
+  subtitle?: string;
   title: string;
   onActionPress?: () => void;
   dark?: boolean;
@@ -44,40 +44,41 @@ export default function SectionHeader({
   return (
     <View style={tw`flex-row items-center justify-between px-5`}>
       <View style={tw`flex-1 mr-4`}>
-        <View style={tw`flex-row items-center mb-1`}>
-          <View style={tw`w-3 h-3 justify-center items-center mr-1`}>
-            {/* Animated outer circle */}
-            <Animated.View
+        {subtitle && (
+          <View style={tw`flex-row items-center mb-1`}>
+            <View style={tw`w-3 h-3 justify-center items-center mr-1`}>
+              {/* Animated outer circle */}
+              <Animated.View
+                style={[
+                  tw`absolute w-1.5 h-1.5 rounded-full`,
+                  {
+                    backgroundColor: redDotColor,
+                    opacity: opacity,
+                    transform: [{ scale: scale }],
+                  },
+                ]}
+              />
+              {/* Static inner circle */}
+              <View
+                style={[
+                  tw`w-1.5 h-1.5 rounded-full`,
+                  { backgroundColor: redDotColor },
+                ]}
+              />
+            </View>
+            <Text
               style={[
-                tw`absolute w-1.5 h-1.5 rounded-full`,
-                {
-                  backgroundColor: redDotColor,
-                  opacity: opacity,
-                  transform: [{ scale: scale }],
-                },
+                tw`text-[8px] uppercase tracking-widest font-sans-regular`,
+                { color: subtitleColor },
               ]}
-            />
-            {/* Static inner circle */}
-            <View
-              style={[
-                tw`w-1.5 h-1.5 rounded-full`,
-                { backgroundColor: redDotColor },
-              ]}
-            />
+            >
+              {subtitle}
+            </Text>
           </View>
-          <Text
-            style={[
-              tw`text-[8px] uppercase tracking-widest font-sans-regular`,
-              { color: subtitleColor },
-            ]}
-          >
-            {subtitle}
-          </Text>
-        </View>
+        )}
         <Text
-          style={tw`text-lg font-serif ${
-            dark ? "text-white" : "text-gray-800"
-          }`}
+          style={tw`text-lg font-serif ${dark ? "text-white" : "text-gray-800"
+            }`}
         >
           {title}
         </Text>

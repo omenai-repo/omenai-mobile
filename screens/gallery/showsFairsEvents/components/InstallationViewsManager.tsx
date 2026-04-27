@@ -6,7 +6,6 @@ import {
   Image,
   Modal,
   Pressable,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -26,7 +25,7 @@ type InstallationViewsManagerProps = {
   eventId: string;
   galleryId: string;
   existingViews: string[];
-  onUploadSuccess: () => void;
+  onUploadSuccess: () => void | Promise<void>;
 };
 
 export default function InstallationViewsManager({
@@ -35,6 +34,7 @@ export default function InstallationViewsManager({
   existingViews,
   onUploadSuccess,
 }: InstallationViewsManagerProps) {
+  const MAX_INSTALLATION_SELECTION = 12;
   const { updateModal, updateConfirmationModal, clear } = useModalStore();
   const windowWidth = Dimensions.get("window").width;
   const slideWidth = windowWidth - 56;
@@ -44,6 +44,7 @@ export default function InstallationViewsManager({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [selectedAssets, setSelectedAssets] = useState<ImagePicker.ImagePickerAsset[]>([]);
   const [isUploadingPreviewSelection, setIsUploadingPreviewSelection] = useState(false);
+  const [uploadProgressText, setUploadProgressText] = useState("");
   const onViewableItemsChanged = useRef(
     ({
       viewableItems,
@@ -78,18 +79,25 @@ export default function InstallationViewsManager({
         return;
       }
 
-      onUploadSuccess();
-      updateModal({
-        showModal: true,
-        modalType: "success",
-        message: "Installation view(s) added.",
-      });
+      // Close/reset preview UI first so success feedback is not blocked by modal layering.
       setSelectedAssets([]);
       setIsPreviewOpen(false);
       setIsUploadingPreviewSelection(false);
+      setUploadProgressText("");
+
+      // Wait for parent refresh to settle, then show success.
+      await Promise.resolve(onUploadSuccess());
+      setTimeout(() => {
+        updateModal({
+          showModal: true,
+          modalType: "success",
+          message: "Installation view(s) added.",
+        });
+      }, 0);
     },
     onError: () => {
       setIsUploadingPreviewSelection(false);
+      setUploadProgressText("");
     },
   });
 
@@ -112,15 +120,35 @@ export default function InstallationViewsManager({
       return;
     }
 
+    const remainingSlots = MAX_INSTALLATION_SELECTION - selectedAssets.length;
+    if (remainingSlots <= 0) {
+      updateModal({
+        showModal: true,
+        modalType: "error",
+        message: `You can upload a maximum of ${MAX_INSTALLATION_SELECTION} images at once.`,
+      });
+      if (openPreview) setIsPreviewOpen(true);
+      return;
+    }
+
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsMultipleSelection: true,
-      selectionLimit: 12,
+      selectionLimit: remainingSlots,
       quality: 0.9,
     });
 
     if (pickerResult.canceled || !pickerResult.assets?.length) return;
-    setSelectedAssets((prev) => [...prev, ...pickerResult.assets]);
+    const nextAssets = pickerResult.assets.slice(0, remainingSlots);
+    const skippedCount = pickerResult.assets.length - nextAssets.length;
+    setSelectedAssets((prev) => [...prev, ...nextAssets]);
+    if (skippedCount > 0) {
+      updateModal({
+        showModal: true,
+        modalType: "error",
+        message: `Only ${MAX_INSTALLATION_SELECTION} images are allowed. ${skippedCount} image(s) were not added.`,
+      });
+    }
     if (openPreview) {
       setIsPreviewOpen(true);
     }
@@ -133,28 +161,41 @@ export default function InstallationViewsManager({
   const handleUploadSelectedAssets = async () => {
     if (!selectedAssets.length) return;
     setIsUploadingPreviewSelection(true);
+    setUploadProgressText("Preparing upload...");
 
     try {
-      const uploadedIds = await Promise.all(
-        selectedAssets.map(async (asset, index) => {
-          const upload = await uploadToAppwrite({
-            bucketId: appwriteConfig.promotionalBucketId!,
-            file: {
-              uri: asset.uri,
-              name: asset.fileName || `installation-${Date.now()}-${index}.jpg`,
-              type: asset.mimeType || "image/jpeg",
-            },
-            fallbackName: `installation-${Date.now()}-${index}.jpg`,
-            fallbackType: "image/jpeg",
-            errorMessage: "Failed to upload installation image",
-          });
-          return upload.$id;
-        }),
-      );
+      const uploadedIds: string[] = [];
+      const maxConcurrent = 3;
+      const total = selectedAssets.length;
 
+      for (let i = 0; i < selectedAssets.length; i += maxConcurrent) {
+        const batch = selectedAssets.slice(i, i + maxConcurrent);
+        const batchUploads = await Promise.all(
+          batch.map(async (asset, batchIndex) => {
+            const absoluteIndex = i + batchIndex;
+            const upload = await uploadToAppwrite({
+              bucketId: appwriteConfig.promotionalBucketId!,
+              file: {
+                uri: asset.uri,
+                name: asset.fileName || `installation-${Date.now()}-${absoluteIndex}.jpg`,
+                type: asset.mimeType || "image/jpeg",
+              },
+              fallbackName: `installation-${Date.now()}-${absoluteIndex}.jpg`,
+              fallbackType: "image/jpeg",
+              errorMessage: "Failed to upload installation image",
+            });
+            return upload.$id;
+          }),
+        );
+        uploadedIds.push(...batchUploads);
+        setUploadProgressText(`Uploading ${Math.min(i + batch.length, total)} of ${total}...`);
+      }
+
+      setUploadProgressText("Finalizing...");
       addInstallationViewMutation.mutate(uploadedIds);
     } catch (error: any) {
       setIsUploadingPreviewSelection(false);
+      setUploadProgressText("");
       updateModal({
         showModal: true,
         modalType: "error",
@@ -376,27 +417,32 @@ export default function InstallationViewsManager({
           }
         }}
       >
-        <Pressable
-          style={tw`flex-1 bg-[rgba(0,0,0,0.45)] items-center justify-center px-4`}
-          onPress={() => {
-            if (!addInstallationViewMutation.isPending && !isUploadingPreviewSelection) {
-              setIsPreviewOpen(false);
-            }
-          }}
-        >
+        <View style={tw`flex-1 items-center justify-center px-4`}>
           <Pressable
-            style={tw`w-full max-w-[700px] bg-white rounded-md border border-neutral-200`}
-            onPress={(e) => e.stopPropagation()}
-          >
+            style={tw`absolute inset-0 bg-[rgba(0,0,0,0.45)]`}
+            onPress={() => {
+              if (!addInstallationViewMutation.isPending && !isUploadingPreviewSelection) {
+                setIsPreviewOpen(false);
+              }
+            }}
+          />
+          <View style={tw`w-full max-w-[700px] bg-white rounded-md border border-neutral-200`}>
             <View style={tw`px-4 py-3 border-b border-neutral-100`}>
               <Text style={tw`text-base text-neutral-900`}>Preview Installation Views</Text>
               <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mt-1`}>
-                Selected files ({selectedAssets.length})
+                Selected files ({selectedAssets.length}/{MAX_INSTALLATION_SELECTION})
               </Text>
             </View>
 
             <View style={tw`px-4 py-4`}>
-              {selectedAssets.length === 0 ? (
+              {isUploadingPreviewSelection ? (
+                <View style={tw`py-12 items-center`}>
+                  <ActivityIndicator size="small" color="#171717" />
+                  <Text style={tw`mt-3 text-[10px] uppercase tracking-widest text-neutral-600`}>
+                    {uploadProgressText || "Uploading..."}
+                  </Text>
+                </View>
+              ) : selectedAssets.length === 0 ? (
                 <View style={tw`py-8 items-center`}>
                   <Text style={tw`text-xs uppercase tracking-widest text-neutral-500`}>
                     No images selected.
@@ -425,42 +471,51 @@ export default function InstallationViewsManager({
                       activeOpacity={0.85}
                       onPress={() => void pickInstallationImages(false)}
                       disabled={
-                        addInstallationViewMutation.isPending || isUploadingPreviewSelection
+                        addInstallationViewMutation.isPending ||
+                        isUploadingPreviewSelection ||
+                        selectedAssets.length >= MAX_INSTALLATION_SELECTION
                       }
                     >
                       <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-700`}>
-                        Add more
+                        {selectedAssets.length >= MAX_INSTALLATION_SELECTION
+                          ? "Max reached"
+                          : "Add more"}
                       </Text>
                     </TouchableOpacity>
                   </View>
 
-                  <View style={[tw`border border-neutral-200 rounded-sm p-2`, { maxHeight: 280 }]}>
-                    <ScrollView showsVerticalScrollIndicator>
-                      <View style={tw`flex-row flex-wrap`}>
-                        {selectedAssets.map((item, index) => (
-                          <View
-                            key={`preview-${index}`}
-                            style={[
-                              tw`rounded-sm overflow-hidden bg-neutral-100 border border-neutral-200 mb-2 mr-2`,
-                              { width: 104, maxWidth: 104, aspectRatio: 4 / 3 },
-                            ]}
-                          >
-                            <Image source={{ uri: item.uri }} style={tw`w-full h-full`} resizeMode="cover" />
-                            {!addInstallationViewMutation.isPending && !isUploadingPreviewSelection && (
-                              <TouchableOpacity
-                                onPress={() => removeSelectedAsset(index)}
-                                style={tw`absolute top-1 right-1 bg-red-600 rounded-sm px-1.5 py-1`}
-                                activeOpacity={0.85}
-                              >
-                                <Text style={tw`text-[8px] uppercase tracking-widest text-white`}>
-                                  X
-                                </Text>
-                              </TouchableOpacity>
-                            )}
-                          </View>
-                        ))}
-                      </View>
-                    </ScrollView>
+                  <View style={[tw`border border-neutral-200 rounded-sm p-2`, { height: 320 }]}>
+                    <FlatList
+                      data={selectedAssets}
+                      keyExtractor={(_, index) => `preview-${index}`}
+                      numColumns={3}
+                      showsVerticalScrollIndicator
+                      nestedScrollEnabled
+                      keyboardShouldPersistTaps="handled"
+                      columnWrapperStyle={tw`justify-start`}
+                      contentContainerStyle={tw`pb-2`}
+                      renderItem={({ item, index }) => (
+                        <View
+                          style={[
+                            tw`rounded-sm overflow-hidden bg-neutral-100 border border-neutral-200 mb-2 mr-2`,
+                            { width: 104, maxWidth: 104, aspectRatio: 4 / 3 },
+                          ]}
+                        >
+                          <Image source={{ uri: item.uri }} style={tw`w-full h-full`} resizeMode="cover" />
+                          {!addInstallationViewMutation.isPending && !isUploadingPreviewSelection && (
+                            <TouchableOpacity
+                              onPress={() => removeSelectedAsset(index)}
+                              style={tw`absolute top-1 right-1 bg-red-600 rounded-sm px-1.5 py-1`}
+                              activeOpacity={0.85}
+                            >
+                              <Text style={tw`text-[8px] uppercase tracking-widest text-white`}>
+                                X
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      )}
+                    />
                   </View>
                 </View>
               )}
@@ -496,8 +551,8 @@ export default function InstallationViewsManager({
                 </Text>
               </TouchableOpacity>
             </View>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
     </View>
   );

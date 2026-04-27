@@ -165,11 +165,8 @@ export default function FeaturedFeed() {
   if (!isLoading && featuredItems.length === 0) return null;
 
   return (
-    <View style={tw`mt-6`}>
-      <SectionHeader
-        subtitle="FEATURED"
-        title="Featured"
-      />
+    <View style={tw`mt-2`}>
+      <SectionHeader title="Featured"/>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -177,58 +174,58 @@ export default function FeaturedFeed() {
       >
         {isLoading
           ? SKELETON_ITEMS.map((item) => (
-              <View
-                key={item}
-                style={tw`w-[280px] rounded-sm border border-neutral-200 bg-white overflow-hidden`}
-              >
-                <View style={tw`h-[180px] w-full bg-neutral-200`} />
-                <View style={tw`p-3`}>
-                  <View style={tw`h-3 w-20 rounded-sm bg-neutral-200`} />
-                  <View style={tw`h-4 w-44 rounded-sm bg-neutral-200 mt-2`} />
-                  <View style={tw`h-3 w-32 rounded-sm bg-neutral-200 mt-2`} />
-                </View>
+            <View
+              key={item}
+              style={tw`w-[280px] rounded-md bg-white overflow-hidden`}
+            >
+              <View style={tw`h-[180px] w-full bg-neutral-200`} />
+              <View style={tw`p-3`}>
+                <View style={tw`h-3 w-20 rounded-sm bg-neutral-200`} />
+                <View style={tw`h-4 w-44 rounded-sm bg-neutral-200 mt-2`} />
+                <View style={tw`h-3 w-32 rounded-sm bg-neutral-200 mt-2`} />
               </View>
-            ))
+            </View>
+          ))
           : featuredItems.map((item: FeaturedItem, index: number) => {
-              const imageUri = resolveImage(item);
-              const title = resolveTitle(item);
-              const subtitle = resolveSubtitle(item);
-              const label = resolveLabel(item);
+            const imageUri = resolveImage(item);
+            const title = resolveTitle(item);
+            const subtitle = resolveSubtitle(item);
+            const label = resolveLabel(item);
 
-              return (
-                <Pressable
-                  key={item.identifier || `${item.type || "item"}-${index}`}
-                  onPress={() => {
-                    void onPressItem(item);
-                  }}
-                  style={tw`w-[280px] rounded-sm border border-neutral-200 bg-white overflow-hidden`}
-                >
-                  {imageUri ? (
-                    <Image source={{ uri: imageUri }} style={tw`w-full h-[180px] bg-neutral-100`} />
-                  ) : (
-                    <View style={tw`w-full h-[180px] bg-[#0D2040] items-center justify-center`}>
-                      <Ionicons name="image-outline" size={24} color="#E5E7EB" />
-                    </View>
-                  )}
-                  <View style={tw`p-3`}>
-                    <Text style={tw`text-xs font-sans-regular uppercase tracking-widest text-neutral-500`}>
-                      {label}
-                    </Text>
-                    <Text
-                      numberOfLines={2}
-                      style={tw`text-base font-serif text-neutral-900 mt-1 leading-snug`}
-                    >
-                      {title}
-                    </Text>
-                    {!!subtitle && (
-                      <Text numberOfLines={1} style={tw`text-xs text-neutral-600 mt-1`}>
-                        {subtitle}
-                      </Text>
-                    )}
+            return (
+              <Pressable
+                key={item.identifier || `${item.type || "item"}-${index}`}
+                onPress={() => {
+                  void onPressItem(item);
+                }}
+                style={tw`w-[280px] rounded-md bg-white overflow-hidden`}
+              >
+                {imageUri ? (
+                  <Image source={{ uri: imageUri }} style={tw`w-full h-[180px] bg-neutral-100`} />
+                ) : (
+                  <View style={tw`w-full h-[180px] bg-[#0D2040] items-center justify-center`}>
+                    <Ionicons name="image-outline" size={24} color="#E5E7EB" />
                   </View>
-                </Pressable>
-              );
-            })}
+                )}
+                <View style={tw`p-3`}>
+                  <Text style={tw`text-xs font-sans-regular uppercase tracking-widest text-neutral-500`}>
+                    {label}
+                  </Text>
+                  <Text
+                    numberOfLines={2}
+                    style={tw`text-base font-serif text-neutral-900 mt-1 leading-snug`}
+                  >
+                    {title}
+                  </Text>
+                  {!!subtitle && (
+                    <Text numberOfLines={1} style={tw`text-xs text-neutral-600 mt-1`}>
+                      {subtitle}
+                    </Text>
+                  )}
+                </View>
+              </Pressable>
+            );
+          })}
       </ScrollView>
     </View>
   );

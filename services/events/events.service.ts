@@ -283,7 +283,7 @@ export async function updateEventInstallationViews(
       `${apiUrl}/api/requests/gallery/events/updateInstallationViews`,
       {
         method: "PATCH",
-        body: JSON.stringify({ event_id: eventId, gallery_id: galleryId, image_urls, type }),
+        body: JSON.stringify({ event_id: galleryId, gallery_id: eventId, image_urls, type }),
       },
     );
     const result = await response.json();

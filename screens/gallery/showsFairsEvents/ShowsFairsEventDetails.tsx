@@ -67,6 +67,19 @@ export default function ShowsFairsEventDetails() {
         });
         return;
       }
+      queryClient.setQueryData(
+        ["eventDashboard", eventId, galleryId],
+        (prev: any) => {
+          if (!prev?.event) return prev;
+          return {
+            ...prev,
+            event: {
+              ...prev.event,
+              is_archived: true,
+            },
+          };
+        },
+      );
       await queryClient.invalidateQueries({ queryKey: EVENTS_QK.allShows });
       await queryClient.invalidateQueries({
         queryKey: EVENTS_QK.allFairsEvents("all"),
@@ -449,7 +462,7 @@ export default function ShowsFairsEventDetails() {
           }}
         />
 
-        {!event.is_archived && (
+        {!event.is_archived && !isRefetching && (
           <View style={tw`mt-6 pt-5 border-t border-red-100`}>
             <View style={tw`bg-red-50 border border-red-100 rounded-md p-4`}>
               <Text style={tw`text-sm text-red-900`}>Archive Event</Text>
