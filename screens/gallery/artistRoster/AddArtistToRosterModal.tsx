@@ -53,6 +53,7 @@ export default function AddArtistToRosterModal() {
   const [results, setResults] = useState<ArtistSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isClosingSuccess, setIsClosingSuccess] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const queryRef = useRef("");
@@ -80,6 +81,7 @@ export default function AddArtistToRosterModal() {
     setResults([]);
     setIsSearching(false);
     setIsSubmitting(false);
+    setIsClosingSuccess(false);
     setShowSuggestions(false);
   }, []);
 
@@ -273,8 +275,14 @@ export default function AddArtistToRosterModal() {
     }
   };
 
-  const handleSuccessDone = () => {
-    void leaveModalAfterSuccess();
+  const handleSuccessDone = async () => {
+    if (isClosingSuccess) return;
+    setIsClosingSuccess(true);
+    try {
+      await leaveModalAfterSuccess();
+    } finally {
+      setIsClosingSuccess(false);
+    }
   };
 
   const displayName = name.trim() || query.trim();
@@ -347,6 +355,7 @@ export default function AddArtistToRosterModal() {
           displayName={displayName}
           successLogo={successLogo}
           onDone={handleSuccessDone}
+          isDoneLoading={isClosingSuccess}
         />
       )}
     </KeyboardAvoidingView>

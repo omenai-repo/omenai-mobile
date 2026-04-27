@@ -45,7 +45,7 @@ export const PricingBreakdown = ({
                 <Text
                   style={tw`text-[9px] font-bold text-emerald-700 uppercase`}
                 >
-                  1 MONTH FREE
+                  14 DAYS FREE
                 </Text>
               </View>
             </View>

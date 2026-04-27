@@ -493,7 +493,7 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
                 key={type.id}
                 onPress={() => handleChange("event_type", type.id)}
                 style={[
-                  tw`px-4 py-3 rounded-sm border`,
+                  tw`px-4 py-3 rounded-md border`,
                   active
                     ? tw`bg-[${colors.black}] border-[${colors.black}]`
                     : tw`bg-white border-neutral-200`,

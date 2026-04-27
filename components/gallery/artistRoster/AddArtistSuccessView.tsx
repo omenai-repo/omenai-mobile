@@ -10,12 +10,14 @@ type AddArtistSuccessViewProps = {
   displayName: string;
   successLogo: string | null;
   onDone: () => void;
+  isDoneLoading?: boolean;
 };
 
 export function AddArtistSuccessView({
   displayName,
   successLogo,
   onDone,
+  isDoneLoading = false,
 }: AddArtistSuccessViewProps) {
   return (
     <ScrollView
@@ -46,7 +48,13 @@ export function AddArtistSuccessView({
         has been successfully added to your roster of represented artists.
       </Text>
 
-      <LongBlackButton value="Done" onClick={onDone} outline />
+      <LongBlackButton
+        value={isDoneLoading ? "Finishing…" : "Done"}
+        onClick={onDone}
+        outline
+        isLoading={isDoneLoading}
+        isDisabled={isDoneLoading}
+      />
     </ScrollView>
   );
 }

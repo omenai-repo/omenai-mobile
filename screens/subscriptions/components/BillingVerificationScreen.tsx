@@ -43,6 +43,18 @@ export default function BillingVerificationScreen() {
     planId,
   } = route?.params ?? {};
 
+  const navigateToGallerySubscriptions = () => {
+    navigation.navigate("Gallery", {
+      screen: screenName.gallery.subscriptions,
+    });
+  };
+
+  const navigateToGalleryBilling = () => {
+    navigation.navigate("Gallery", {
+      screen: screenName.gallery.billing,
+    });
+  };
+
   // animations (for the result card)
   const cardScale = useRef(new Animated.Value(0.96)).current;
   const cardOpacity = useRef(new Animated.Value(0)).current;
@@ -162,9 +174,7 @@ export default function BillingVerificationScreen() {
         actionButton={
           <LongWhiteButton
             value="Go back to billing page"
-            onClick={() =>
-              navigation.navigate(screenName.gallery.subscriptions)
-            }
+            onClick={navigateToGalleryBilling}
             outline={false}
             style={{
               height: 48,
@@ -250,8 +260,10 @@ export default function BillingVerificationScreen() {
                 <Result
                   success={!!verified?.isOk}
                   message={verified?.isOk ? "" : verified?.message ?? ""}
-                  onPrimary={() =>
-                    navigation.navigate(screenName.gallery.subscriptions)
+                  onPrimary={
+                    verified?.isOk
+                      ? navigateToGallerySubscriptions
+                      : navigateToGalleryBilling
                   }
                 />
               </LinearGradient>
