@@ -76,7 +76,7 @@ export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   }
   const cellKeys = cellKeysRef.current.keys;
 
-  const baseContainerStyle = tw`w-14 h-14 border border-gray-400 rounded-md bg-white flex items-center justify-center`;
+  const baseContainerStyle = tw`w-14 h-14 border border-gray-400 rounded-sm bg-white flex items-center justify-center`;
 
   useImperativeHandle(ref, () => ({
     clear,

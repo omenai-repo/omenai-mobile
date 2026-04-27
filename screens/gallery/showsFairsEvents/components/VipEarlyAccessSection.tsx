@@ -84,7 +84,7 @@ export default function VipEarlyAccessSection({
   };
 
   return (
-    <View style={tw`bg-white rounded-md border border-neutral-200 p-3 mb-4`}>
+    <View style={tw`bg-white rounded-sm border border-neutral-200 p-3 mb-4`}>
       <View style={tw`flex-row items-center gap-2 mb-1`}>
         <Ionicons name="key-outline" size={14} color={colors.black} />
         <Text

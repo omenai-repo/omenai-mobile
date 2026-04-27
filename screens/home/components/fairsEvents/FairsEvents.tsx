@@ -34,7 +34,7 @@ export default function FairsEvents() {
         {isLoading
           ? SKELETON_ITEMS.map((item) => (
               <View key={item} style={tw`w-[250px]`}>
-                <View style={tw`w-full h-[170px] rounded-md bg-[#EAEAEA]`} />
+                <View style={tw`w-full h-[170px] rounded-sm bg-[#EAEAEA]`} />
                 <View style={tw`h-3 w-24 rounded-sm bg-[#E6E6E6] mt-3`} />
                 <View style={tw`h-4 w-48 rounded-sm bg-[#E6E6E6] mt-2`} />
                 <View style={tw`h-3 w-36 rounded-sm bg-[#E6E6E6] mt-2`} />
@@ -62,7 +62,7 @@ export default function FairsEvents() {
                     source={{
                       uri: resolveCoverImageUri(event.cover_image),
                     }}
-                    style={tw`w-full h-[170px] rounded-md bg-[#EAEAEA]`}
+                    style={tw`w-full h-[170px] rounded-sm bg-[#EAEAEA]`}
                   />
                   <View style={tw`absolute top-3 left-3`}>
                     <Text

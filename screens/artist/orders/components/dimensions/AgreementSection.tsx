@@ -49,7 +49,7 @@ export default function AgreementSection({
       ) : (
         <Pressable
           onPress={() => setIsChecked(!isChecked)}
-          style={tw`bg-white border border-gray-200 rounded-md p-4 flex-row gap-3 shadow-sm`}
+          style={tw`bg-white border border-gray-200 rounded-sm p-4 flex-row gap-3 shadow-sm`}
         >
           <View style={tw`mt-0.5`}>
             <Ionicons

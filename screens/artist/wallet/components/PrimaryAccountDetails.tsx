@@ -74,7 +74,7 @@ export const PrimaryAccountDetails = ({
   return (
     <View style={tw`mt-5`}>
       <View
-        style={tw`bg-white border border-neutral-100 rounded-md p-5 mb-5 gap-2.5`}
+        style={tw`bg-white border border-neutral-100 rounded-sm p-5 mb-5 gap-2.5`}
       >
         <DetailRow
           label="Bank Name:"

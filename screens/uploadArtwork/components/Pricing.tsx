@@ -243,7 +243,7 @@ export default function Pricing({
               onPress={handleConvert}
               disabled={!canConvert || loadingConversion}
               style={[
-                tw`rounded-md items-center justify-center h-10.5 w-11`,
+                tw`rounded-sm items-center justify-center h-10.5 w-11`,
                 canConvert && !loadingConversion
                   ? { backgroundColor: colors.black }
                   : tw`bg-gray-100`,

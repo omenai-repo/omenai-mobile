@@ -8,7 +8,7 @@ import tw from "twrnc";
  * Mimics the plan cards layout.
  */
 const PlanCard = () => (
-  <View style={tw`bg-white rounded-md p-5 border border-gray-200 mb-4`}>
+  <View style={tw`bg-white rounded-sm p-5 border border-gray-200 mb-4`}>
     {/* Plan name */}
     <View style={tw`mb-3`}>
       <Skeleton colorMode="light" height={24} width={120} radius={4} />

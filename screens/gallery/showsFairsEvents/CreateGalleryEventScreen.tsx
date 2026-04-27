@@ -20,7 +20,9 @@ import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 
 import LongBlackButton from "#components/buttons/LongBlackButton";
+import LongWhiteButton from "#components/buttons/LongWhiteButton";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import PremiumStateCard from "#components/general/PremiumStateCard";
 import { formTextInputStyle } from "#components/gallery/artistRoster/addArtistFormStyles";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import { colors } from "#config/colors.config";
@@ -34,6 +36,7 @@ import { useAppStore } from "#store/app/appStore";
 import { useModalStore } from "#store/modal/modalStore";
 import { uploadToAppwrite } from "#utils/uploadToAppwrite";
 import { EVENTS_QK } from "#utils/queryKeys";
+import { screenName } from "#constants/screenNames.constants";
 import {
   GalleryEventValidationSchema,
   type CreateGalleryEventPayload,
@@ -42,7 +45,7 @@ import ArtworkSelectorModal from "./components/ArtworkSelectorModal";
 
 /** Multiline variant of `formTextInputStyle` (same border / fill as roster & other forms). */
 const formMultilineInputStyle = [
-  tw`w-full rounded-md border px-4 py-3 text-sm`,
+  tw`w-full rounded-sm border px-4 py-3 text-sm`,
   {
     borderColor: colors.inputBorder,
     backgroundColor: "#FAFAFA",
@@ -91,16 +94,19 @@ function formatYmdForDisplay(ymd: string): string {
 type PickedAsset = { uri: string; mimeType?: string; name: string };
 type DateFieldKey = "start_date" | "end_date" | "vip_preview_date";
 
-type CreateStackParam = { "create-gallery-event": undefined };
+type CreateStackParam = {
+  "create-gallery-event": { accessRestricted?: boolean } | undefined;
+};
 type Props = NativeStackScreenProps<CreateStackParam, "create-gallery-event">;
 
-export default function CreateGalleryEventScreen({ navigation }: Props) {
+export default function CreateGalleryEventScreen({ navigation, route }: Props) {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
 
   const galleryId = (userSession?.id as string) || "";
+  const isAccessRestricted = Boolean(route?.params?.accessRestricted);
 
   const [formData, setFormData] = useState({
     gallery_id: galleryId,
@@ -204,7 +210,7 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
     } else {
       setFormData((prev) => ({ ...prev, [field]: value } as typeof prev));
     }
-  }, []);
+  }, [formData]);
 
   const pickCover = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -410,6 +416,35 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
     }
   };
 
+  if (isAccessRestricted) {
+    return (
+      <PremiumStateCard
+        icon="lock-closed"
+        title="Access Restricted"
+        description="You are not eligible to access this resource because it requires a higher subscription tier. Upgrade to the Principal plan to unlock this feature and gain full access."
+        onBack={() => navigation.goBack()}
+        actionButton={
+          <LongWhiteButton
+            value="Upgrade to Principal Plan"
+            onClick={() =>
+              (navigation as any).navigate(screenName.gallery.billing, { plan_action: null })
+            }
+            outline={false}
+            style={{
+              height: 48,
+              backgroundColor: colors.white,
+            }}
+            textStyle={{
+              color: colors.primary_black,
+              fontSize: 14,
+              fontWeight: "bold",
+            }}
+          />
+        }
+      />
+    );
+  }
+
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <BackHeaderTitle title="Curate event" />
@@ -435,7 +470,7 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
         <Pressable
           onPress={pickCover}
           style={[
-            tw`w-full rounded-md border overflow-hidden mb-1`,
+            tw`w-full rounded-sm border overflow-hidden mb-1`,
             { borderColor: colors.inputBorder, backgroundColor: "#FAFAFA" },
           ]}
         >
@@ -474,7 +509,7 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
           <TouchableOpacity
             onPress={addInstallationImages}
             style={[
-              tw`h-20 w-20 border border-dashed rounded-md items-center justify-center`,
+              tw`h-20 w-20 border border-dashed rounded-sm items-center justify-center`,
               { borderColor: colors.inputBorder, backgroundColor: "#FAFAFA" },
             ]}
           >
@@ -493,7 +528,7 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
                 key={type.id}
                 onPress={() => handleChange("event_type", type.id)}
                 style={[
-                  tw`px-4 py-3 rounded-md border`,
+                  tw`px-4 py-3 rounded-sm border`,
                   active
                     ? tw`bg-[${colors.black}] border-[${colors.black}]`
                     : tw`bg-white border-neutral-200`,
@@ -720,7 +755,7 @@ export default function CreateGalleryEventScreen({ navigation }: Props) {
                           setFormData((p) => ({ ...p, vip_preview_date: "" }));
                           setErrors((e) => ({ ...e, vip_preview_date: "" }));
                         }}
-                        style={tw`px-3 py-3 border border-neutral-300 rounded-md`}
+                        style={tw`px-3 py-3 border border-neutral-300 rounded-sm`}
                       >
                         <Text style={tw`text-xs text-neutral-700`}>Clear</Text>
                       </TouchableOpacity>

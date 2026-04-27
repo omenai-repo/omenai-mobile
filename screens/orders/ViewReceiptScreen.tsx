@@ -99,7 +99,7 @@ export default function ViewReceiptScreen() {
         <BackHeaderTitle title="View Receipt" />
         <ScrollView contentContainerStyle={tw`p-4 flex-1`}>
           <View
-            style={tw`bg-white rounded-md flex-1 justify-center items-center p-5 shadow-sm border border-gray-100`}
+            style={tw`bg-white rounded-sm flex-1 justify-center items-center p-5 shadow-sm border border-gray-100`}
           >
             <Text style={tw`text-gray-500`}>Invoice not found</Text>
           </View>
@@ -113,7 +113,7 @@ export default function ViewReceiptScreen() {
       <BackHeaderTitle title="View Receipt" />
       <ScrollView contentContainerStyle={tw`p-4`}>
         <View
-          style={tw`bg-white rounded-md p-5 shadow-sm border border-gray-100`}
+          style={tw`bg-white rounded-sm p-5 shadow-sm border border-gray-100`}
         >
           {/* Header Section */}
           <View style={tw`mb-6 flex-row justify-between items-start`}>
@@ -128,7 +128,7 @@ export default function ViewReceiptScreen() {
                 Paid on {formatDate(activeInvoice.paidAt)}
               </Text>
             </View>
-            <View style={tw`bg-green-100 px-3 py-1 rounded-md`}>
+            <View style={tw`bg-green-100 px-3 py-1 rounded-sm`}>
               <Text style={tw`text-green-700 text-xs font-bold uppercase`}>
                 Paid
               </Text>
@@ -177,7 +177,7 @@ export default function ViewReceiptScreen() {
           </View>
 
           {/* Breakdown */}
-          <View style={tw`bg-gray-50 rounded-md p-4 mb-6`}>
+          <View style={tw`bg-gray-50 rounded-sm p-4 mb-6`}>
             <View style={tw`flex-row justify-between mb-2`}>
               <Text style={tw`text-xs text-gray-500`}>Subtotal</Text>
               <Text style={tw`text-xs font-medium text-gray-900`}>

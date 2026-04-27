@@ -12,7 +12,7 @@ interface ExclusivityCountdownProps {
 
 const TimeDisplay = ({ value, label }: { value: number; label: string }) => (
   <View
-    style={tw`bg-white rounded-md px-1.5 py-1 flex-1 items-center shadow-sm`}
+    style={tw`bg-white rounded-sm px-1.5 py-1 flex-1 items-center shadow-sm`}
   >
     <Text style={tw`text-[#1A1A1A] text-xs font-sans-semibold`}>
       {String(value).padStart(2, "0")}
@@ -26,7 +26,7 @@ const ExpiredState = ({
 }: {
   onExtendContract: () => void;
 }) => (
-  <View style={tw`bg-amber-50 border border-amber-200 rounded-md p-2 mt-2`}>
+  <View style={tw`bg-amber-50 border border-amber-200 rounded-sm p-2 mt-2`}>
     <View style={tw`flex-row items-start gap-2 mb-2`}>
       <View style={tw`w-3 h-3 bg-amber-500 rounded-full mt-0.5`} />
       <Text style={tw`text-amber-800 text-xs flex-1 font-sans`}>
@@ -35,7 +35,7 @@ const ExpiredState = ({
     </View>
     <TouchableOpacity
       onPress={onExtendContract}
-      style={tw`bg-[#1A1A1A] py-2 px-3 rounded-md`}
+      style={tw`bg-[#1A1A1A] py-2 px-3 rounded-sm`}
       activeOpacity={0.8}
     >
       <Text style={tw`text-white text-xs text-center font-sans-medium`}>
@@ -51,7 +51,7 @@ const ActiveCountdown = ({
   timeLeft: { days: number; hours: number; minutes: number; seconds: number };
 }) => (
   <View
-    style={tw`bg-[#1A1A1A]/5 rounded-md p-2 mt-2 border border-[#1A1A1A]/10`}
+    style={tw`bg-[#1A1A1A]/5 rounded-sm p-2 mt-2 border border-[#1A1A1A]/10`}
   >
     <View style={tw`flex-row items-center gap-1 mb-1.5`}>
       <View style={tw`w-1.5 h-1.5 bg-green-500 rounded-full`} />

@@ -13,7 +13,7 @@ export default function Header({ selectedTab, handleUpdate }: BillingHeaderProps
   const tabs: billingTabs[] = ["monthly", "yearly"];
 
   return (
-    <View style={tw`px-1 py-1 flex-row items-center gap-1.5 bg-white border border-[#DDD8D0] rounded-md`}>
+    <View style={tw`px-1 py-1 flex-row items-center gap-1.5 bg-white border border-[#DDD8D0] rounded-sm`}>
       {tabs.map((tab: billingTabs, index: number) => (
         <TouchableOpacity
           onPress={() => handleUpdate(tab)}
@@ -23,7 +23,7 @@ export default function Header({ selectedTab, handleUpdate }: BillingHeaderProps
         >
           <View
             style={[
-              tw`h-full w-full bg-white rounded-md items-center justify-center`,
+              tw`h-full w-full bg-white rounded-sm items-center justify-center`,
               selectedTab === tab && { backgroundColor: colors.black },
             ]}
           >

@@ -16,7 +16,7 @@ export const SkeletonHighlightCard = ({
   return (
     <Animated.View
       style={[
-        tw`rounded-md p-3 flex-row items-center justify-between`,
+        tw`rounded-sm p-3 flex-row items-center justify-between`,
         {
           width: cardWidth,
           backgroundColor: colors.black,

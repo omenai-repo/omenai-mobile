@@ -27,7 +27,7 @@ export default function Preferences() {
       </Text>
       <View
         style={[
-          tw`mt-3 bg-[#FAFAFA] rounded-md border p-3 flex-row flex-wrap`,
+          tw`mt-3 bg-[#FAFAFA] rounded-sm border p-3 flex-row flex-wrap`,
           { borderColor: colors.inputBorder, rowGap: 10, columnGap: 10 },
         ]}
       >

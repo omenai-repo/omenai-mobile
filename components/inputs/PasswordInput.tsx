@@ -35,7 +35,7 @@ export default function PasswordInput({
       </Text>
       <View
         style={[
-          tw`w-full border bg-[#FAFAFA] overflow-hidden rounded-md mt-2.5 flex-row`,
+          tw`w-full border bg-[#FAFAFA] overflow-hidden rounded-sm mt-2.5 flex-row`,
           { borderColor: colors.inputBorder },
         ]}
       >

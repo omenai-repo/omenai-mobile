@@ -23,7 +23,7 @@ export default function OtherMessageInput({
       </Text>
       <TextInput
         style={[
-          tw`rounded-md p-4 text-[15px] min-h-[100px] bg-[#FAFAFA]`,
+          tw`rounded-sm p-4 text-[15px] min-h-[100px] bg-[#FAFAFA]`,
           {
             borderWidth: 1,
             borderColor: message ? colors.primary_black : colors.inputBorder,

@@ -26,7 +26,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   return (
     <Dropdown
       style={[
-        tw`h-[42px] bg-white rounded-md border border-gray-200 px-3`,
+        tw`h-[42px] bg-white rounded-sm border border-gray-200 px-3`,
         style,
       ]}
       placeholderStyle={tw`text-[13px] text-gray-800 font-sans-medium`}

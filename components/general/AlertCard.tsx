@@ -30,7 +30,7 @@ const AlertCard: React.FC<AlertCardProps> = ({
   return (
     <View
       style={[
-        tw`rounded-md relative overflow-hidden mb-3 p-4`,
+        tw`rounded-sm relative overflow-hidden mb-3 p-4`,
         {
           borderWidth: 2,
           backgroundColor: backgroundColor,

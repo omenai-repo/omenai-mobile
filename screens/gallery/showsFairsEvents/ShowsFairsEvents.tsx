@@ -23,6 +23,7 @@ import {
 import { screenName } from "#constants/screenNames.constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppStore } from "#store/app/appStore";
+import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
 
 type ProgrammingTab = "active" | "past";
 
@@ -129,6 +130,19 @@ export default function ShowsFairsEvents() {
     refetchOnMount: "always",
   });
 
+  const subscriptionQuery = useQuery({
+    queryKey: ["subscription_precheck", galleryId, "create_event_gate"],
+    queryFn: async () => {
+      const res = await retrieveSubscriptionData(galleryId);
+      if (!res?.isOk) {
+        throw new Error(res?.message || "Failed to load subscription details");
+      }
+      return res;
+    },
+    enabled: !!galleryId,
+    staleTime: 5 * 60 * 1000,
+  });
+
   const currentList = useMemo(() => {
     if (!programmingQuery.data) return [];
     return programmingTab === "active"
@@ -144,7 +158,23 @@ export default function ShowsFairsEvents() {
   };
 
   const isLoadingInitial = programmingQuery.isLoading;
+  const isCheckingCreateEventAccess = subscriptionQuery.isLoading;
   const handleCreateEvent = () => {
+    if (isCheckingCreateEventAccess) return;
+
+    const currentPlan = String(
+      subscriptionQuery.data?.data?.plan_details?.type || subscriptionQuery.data?.plan || "",
+    )
+      .trim()
+      .toLowerCase();
+
+    if (currentPlan !== "principal") {
+      navigation.navigate(screenName.gallery.createGalleryEvent, {
+        accessRestricted: true,
+      });
+      return;
+    }
+
     navigation.navigate(screenName.gallery.createGalleryEvent);
   };
 
@@ -153,7 +183,7 @@ export default function ShowsFairsEvents() {
     return (
       <TouchableOpacity
         key={item.event_id}
-        style={tw`w-[48%] bg-white rounded-md border border-neutral-200 mb-4 overflow-hidden`}
+        style={tw`w-[48%] bg-white rounded-sm border border-neutral-200 mb-4 overflow-hidden`}
         activeOpacity={0.85}
         onPress={() =>
           navigation.push(screenName.gallery.showsFairsEventDetails, {
@@ -204,9 +234,10 @@ export default function ShowsFairsEvents() {
           </Text>
         </View>
         <TouchableOpacity
-          style={tw`h-[36px] px-3 rounded-md bg-[${colors.black}] items-center justify-center`}
+          style={tw`h-[36px] px-3 rounded-sm bg-[${colors.black}] items-center justify-center`}
           activeOpacity={0.85}
           onPress={handleCreateEvent}
+          disabled={isCheckingCreateEventAccess}
         >
           <Text style={tw`text-[10px] uppercase tracking-widest text-white`}>
             + Create Event
@@ -242,13 +273,13 @@ export default function ShowsFairsEvents() {
             <ProgrammingTabs activeTab={programmingTab} onChange={setProgrammingTab} />
 
             {programmingQuery.isError ? (
-              <View style={tw`bg-white border border-neutral-200 rounded-md p-4`}>
+              <View style={tw`bg-white border border-neutral-200 rounded-sm p-4`}>
                 <Text style={tw`text-sm text-neutral-700`}>
                   Failed to load programming. Pull to refresh and try again.
                 </Text>
               </View>
             ) : currentList.length === 0 ? (
-              <View style={tw`bg-white border border-neutral-200 rounded-md p-4`}>
+              <View style={tw`bg-white border border-neutral-200 rounded-sm p-4`}>
                 <Text style={tw`text-xs text-neutral-500`}>
                   {programmingTab === "past"
                     ? "No past archives yet."

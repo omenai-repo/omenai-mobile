@@ -14,7 +14,7 @@ export default function DeleteAccountCard({
   return (
     <View
       style={[
-        tw`bg-white rounded-md p-5 mb-6`,
+        tw`bg-white rounded-sm p-5 mb-6`,
         {
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 1 },

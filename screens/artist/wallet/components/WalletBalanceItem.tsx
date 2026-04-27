@@ -15,7 +15,7 @@ interface WalletBalanceItemProps {
   isMain?: boolean;
 }
 
-const skeletonBaseStyle = tw`bg-[#ffffff20] rounded-md`;
+const skeletonBaseStyle = tw`bg-[#ffffff20] rounded-sm`;
 
 const BalanceSkeleton = ({ style }: { style: any }) => (
   <MotiView

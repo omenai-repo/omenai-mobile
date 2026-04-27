@@ -20,7 +20,7 @@ export default function PackagingWarning({
   if (type === "stretched") {
     return (
       <View
-        style={tw`mt-4 bg-red-50 border border-red-200 rounded-md overflow-hidden`}
+        style={tw`mt-4 bg-red-50 border border-red-200 rounded-sm overflow-hidden`}
       >
         <View style={tw`p-4`}>
           <View style={tw`flex-row items-center mb-2`}>
@@ -58,7 +58,7 @@ export default function PackagingWarning({
 
   return (
     <View
-      style={tw`mt-4 flex-row bg-amber-50 border border-amber-100 rounded-md p-3`}
+      style={tw`mt-4 flex-row bg-amber-50 border border-amber-100 rounded-sm p-3`}
     >
       <Ionicons
         name="warning"

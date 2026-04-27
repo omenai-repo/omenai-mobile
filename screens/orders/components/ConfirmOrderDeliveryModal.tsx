@@ -98,7 +98,7 @@ const ConfirmOrderDeliveryModal = ({
         <Pressable
           onPress={(e) => e.stopPropagation()}
           style={tw.style(
-            `bg-white py-[20px] px-[10px] w-full self-center rounded-md`,
+            `bg-white py-[20px] px-[10px] w-full self-center rounded-sm`,
             {
               width: width - 60,
             },

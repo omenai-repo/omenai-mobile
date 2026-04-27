@@ -46,7 +46,7 @@ function PaymentMethodCardBase({ card }: Props) {
         </View>
       </View>
 
-      <View style={tw`bg-slate-100 p-3 rounded-md items-center justify-center`}>
+      <View style={tw`bg-slate-100 p-3 rounded-sm items-center justify-center`}>
         <Ionicons name={icon.name} size={28} />
       </View>
     </View>

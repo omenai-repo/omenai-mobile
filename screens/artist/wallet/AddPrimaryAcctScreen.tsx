@@ -551,7 +551,7 @@ const AddPrimaryAcctScreen = () => {
           <View>
             <Text style={tw`text-[13px] text-[#454545] mb-2`}>Country</Text>
             <View
-              style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-md px-[14px] justify-center`}
+              style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-sm px-[14px] justify-center`}
             >
               <Text style={tw`text-[14px] text-[#1A1A1A]`}>
                 {effectiveAddress?.country || "—"}
@@ -562,7 +562,7 @@ const AddPrimaryAcctScreen = () => {
           <View>
             <Text style={tw`text-[13px] text-[#454545] mb-2`}>Region</Text>
             <View
-              style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-md px-[14px] justify-center`}
+              style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-sm px-[14px] justify-center`}
             >
               <Text style={tw`text-[14px] text-[#1A1A1A]`}>
                 {REGION_LABELS[regionType]}

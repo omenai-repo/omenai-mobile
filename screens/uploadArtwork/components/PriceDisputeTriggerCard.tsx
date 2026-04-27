@@ -13,7 +13,7 @@ export default function PriceDisputeTriggerCard({
 }: Readonly<PriceDisputeTriggerCardProps>) {
   return (
     <View
-      style={tw`bg-neutral-50 border border-neutral-200 rounded-md p-4 mb-6`}
+      style={tw`bg-neutral-50 border border-neutral-200 rounded-sm p-4 mb-6`}
     >
       <Text
         style={[tw`text-sm font-sans-semibold mb-1`, { color: colors.black }]}

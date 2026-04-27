@@ -29,7 +29,7 @@ export default function ViewAllCategoriesButton({
     >
       <View
         style={tw.style(
-          "rounded-md border border-black px-5 py-2.5 mt-[120px] mx-[30px] flex-row items-center gap-2.5",
+          "rounded-sm border border-black px-5 py-2.5 mt-[120px] mx-[30px] flex-row items-center gap-2.5",
           darkMode && "border-white",
         )}
       >

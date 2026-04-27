@@ -25,7 +25,7 @@ export default function AgreementSection({
   onOpenTerms,
 }: Readonly<AgreementSectionProps>) {
   return (
-    <View style={tw`bg-amber-50 border border-amber-200 rounded-md p-4 mt-7`}>
+    <View style={tw`bg-amber-50 border border-amber-200 rounded-sm p-4 mt-7`}>
       <View style={tw`flex-row items-center justify-between mb-4`}>
         <View style={tw`flex-row items-center`}>
           <MaterialIcons name="warning-amber" size={16} color="#B45309" />
@@ -40,7 +40,7 @@ export default function AgreementSection({
         </Text>
       </View>
 
-      <View style={tw`bg-white border border-amber-200 rounded-md p-4 mb-3`}>
+      <View style={tw`bg-white border border-amber-200 rounded-sm p-4 mb-3`}>
         <ConsentCheckbox checked={priceConsent} onToggle={onTogglePriceConsent}>
           I agree to list this artwork at the finalized listing price.
         </ConsentCheckbox>

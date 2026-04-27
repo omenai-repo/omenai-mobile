@@ -40,7 +40,7 @@ export default function AnimatedScreenContainer({
       <View style={tw`flex-1 justify-center items-center mb-[100px]`}>
         <Animated.View
           style={[
-            tw`bg-[#FFFFFF] rounded-md py-[35px] w-[80%]`,
+            tw`bg-[#FFFFFF] rounded-sm py-[35px] w-[80%]`,
             {
               opacity: fadeAnim, // Apply fade animation
               transform: [{ scale: scaleAnim }], // Apply scale animation

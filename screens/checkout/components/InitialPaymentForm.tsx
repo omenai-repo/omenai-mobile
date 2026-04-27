@@ -152,7 +152,7 @@ export const InitialPaymentForm = ({
 
   if (error) {
     return (
-      <View style={tw`p-4 bg-red-50 border border-red-200 rounded-md`}>
+      <View style={tw`p-4 bg-red-50 border border-red-200 rounded-sm`}>
         <Text style={tw`text-red-600 text-center text-xs`}>
           Unable to load payment details. Please try again later.
         </Text>
@@ -166,7 +166,7 @@ export const InitialPaymentForm = ({
         disabled={loading || !clientSecret}
         onPress={handleSubscribe}
         style={[
-          tw`w-full py-3 rounded-md items-center justify-center`,
+          tw`w-full py-3 rounded-sm items-center justify-center`,
           loading || !clientSecret
             ? { backgroundColor: `${colors.black}4D` }
             : { backgroundColor: colors.black },

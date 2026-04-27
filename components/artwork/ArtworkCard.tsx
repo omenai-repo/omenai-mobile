@@ -181,7 +181,7 @@ function ArtworkCard({
     <View>
       <TouchableOpacity
         activeOpacity={0.8}
-        style={[tw`rounded-md`, { width: cardWidth }]}
+        style={[tw`rounded-sm`, { width: cardWidth }]}
         onPress={handlePress}
       >
         <View
@@ -189,7 +189,6 @@ function ArtworkCard({
             width: cardWidth,
             height: imageDisplayHeight,
             backgroundColor: hideBackground ? "transparent" : "#f0f0f0",
-            borderRadius: 6,
             overflow: "hidden",
           }}
         >

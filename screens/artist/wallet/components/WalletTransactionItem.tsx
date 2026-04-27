@@ -78,7 +78,7 @@ export const WalletTransactionItem = ({
         </Text>
         <View
           style={[
-            tw`mt-1 rounded-md px-1.5 py-[1px]`,
+            tw`mt-1 rounded-sm px-1.5 py-[1px]`,
             { backgroundColor: config.bgColor },
           ]}
         >

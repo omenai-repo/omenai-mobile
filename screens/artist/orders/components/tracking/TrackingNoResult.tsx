@@ -28,7 +28,7 @@ export default function TrackingNoResult({
       </Text>
       <Pressable
         onPress={handleSearchAgain}
-        style={tw`bg-slate-900 rounded-md px-6 py-3`}
+        style={tw`bg-slate-900 rounded-sm px-6 py-3`}
       >
         <Text style={tw`text-white font-semibold text-base`}>Try Again</Text>
       </Pressable>

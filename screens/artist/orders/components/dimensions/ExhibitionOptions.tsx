@@ -51,7 +51,7 @@ export default function ExhibitionOptions({
         Is artwork on exhibition?
       </Text>
       <View
-        style={tw`border border-neutral-200 rounded-md bg-white overflow-hidden`}
+        style={tw`border border-neutral-200 rounded-sm bg-white overflow-hidden`}
       >
         <Pressable
           onPress={() => setIsOnExhibition(true)}
@@ -100,7 +100,7 @@ export default function ExhibitionOptions({
       {isOnExhibition && (
         <View style={tw`mt-4`}>
           <View
-            style={tw`mb-3 flex-row bg-blue-50 border border-blue-100 rounded-md p-3`}
+            style={tw`mb-3 flex-row bg-blue-50 border border-blue-100 rounded-sm p-3`}
           >
             <Ionicons
               name="information-circle"
@@ -125,7 +125,7 @@ export default function ExhibitionOptions({
           </Text>
           <Pressable
             onPress={showDatePicker}
-            style={tw`bg-white border border-gray-200 rounded-md px-4 py-3`}
+            style={tw`bg-white border border-gray-200 rounded-sm px-4 py-3`}
           >
             <Text style={tw`text-gray-900`}>
               {expoEndDate

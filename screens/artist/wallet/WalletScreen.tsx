@@ -144,7 +144,7 @@ const WalletScreen = () => {
             {/* Balances card */}
             <View
               style={[
-                tw`rounded-md border p-5`,
+                tw`rounded-sm border p-5`,
                 { backgroundColor: colors.black, borderColor: "#E7E7E7" },
               ]}
             >

@@ -21,7 +21,7 @@ export default function FeaturedGalleries() {
     const isFollowing = isFollowingFor(item.gallery_id);
 
     return (
-      <View style={tw`w-[260px] rounded-md bg-white overflow-hidden`}>
+      <View style={tw`w-[250px]`}>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate(screenName.individual.galleryDetails, {
@@ -32,7 +32,7 @@ export default function FeaturedGalleries() {
           }
           activeOpacity={0.85}
         >
-          <View style={tw`w-full h-[195px] bg-neutral-100 items-center justify-center`}>
+          <View style={tw`w-full h-[170px] rounded-sm bg-neutral-100 overflow-hidden items-center justify-center`}>
             {item.logo ? (
               <Image
                 source={{ uri: image_href }}
@@ -47,7 +47,7 @@ export default function FeaturedGalleries() {
           </View>
         </TouchableOpacity>
 
-        <View style={tw`p-4 flex-row items-center justify-between`}>
+        <View style={tw`mt-4 flex-row items-center justify-between`}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate(screenName.individual.galleryDetails, {
@@ -59,7 +59,7 @@ export default function FeaturedGalleries() {
             style={tw`flex-1 mr-3`}
             activeOpacity={0.8}
           >
-            <Text numberOfLines={1} style={tw`font-serif text-lg text-neutral-900`}>
+            <Text numberOfLines={1} style={tw`font-serif text-base text-neutral-900`}>
               {item.name}
             </Text>
             {!!item.address?.city && (
@@ -92,16 +92,13 @@ export default function FeaturedGalleries() {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={tw`mt-5`}
-        contentContainerStyle={tw`px-5 gap-5`}
+        contentContainerStyle={tw`px-5 gap-4`}
       >
         {isLoading
           ? SKELETON_ITEMS.map((item) => (
-              <View
-                key={item}
-                style={tw`w-[260px] rounded-md bg-white overflow-hidden`}
-              >
-                <View style={tw`w-full h-[195px] bg-neutral-100`} />
-                <View style={tw`p-4`}>
+              <View key={item} style={tw`w-[250px]`}>
+                <View style={tw`w-full h-[170px] rounded-sm bg-neutral-100`} />
+                <View style={tw`mt-3`}>
                   <View style={tw`h-5 w-36 bg-neutral-200 rounded-sm`} />
                   <View style={tw`h-3 w-28 bg-neutral-200 rounded-sm mt-2`} />
                   <View style={tw`h-7 w-24 bg-neutral-200 rounded-sm mt-3`} />

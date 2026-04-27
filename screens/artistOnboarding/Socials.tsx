@@ -147,7 +147,7 @@ const Socials = ({ socials, setSocials }: SocialsProps) => {
             {/* URL Input with Unified Border */}
             <View
               style={tw.style(
-                `flex-1 flex-row items-center border border-neutral-200 rounded-md overflow-hidden bg-[#FAFAFA] h-[45px]`,
+                `flex-1 flex-row items-center border border-neutral-200 rounded-sm overflow-hidden bg-[#FAFAFA] h-[45px]`,
                 !link.type && `opacity-50`,
               )}
             >
@@ -180,7 +180,7 @@ const Socials = ({ socials, setSocials }: SocialsProps) => {
             {/* Trash Button */}
             <TouchableOpacity
               onPress={() => removeLink(index)}
-              style={tw`p-2 rounded-md h-[45px] justify-center`}
+              style={tw`p-2 rounded-sm h-[45px] justify-center`}
             >
               <FontAwesome6 name="trash-can" size={16} color="#EF4444" />
             </TouchableOpacity>

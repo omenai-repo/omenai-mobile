@@ -17,7 +17,7 @@ function PaymentMethodBankBase({ bank }: Props) {
           {bank.account_type ?? "account"} •••• {bank.last4}
         </Text>
       </View>
-      <View style={tw`p-2 bg-slate-100 rounded-md`}>
+      <View style={tw`p-2 bg-slate-100 rounded-sm`}>
         <Ionicons name="business-outline" size={22} />
       </View>
     </View>

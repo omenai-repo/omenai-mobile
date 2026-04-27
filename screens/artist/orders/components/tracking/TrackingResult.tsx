@@ -68,11 +68,11 @@ export default function TrackingResult({
     <View style={tw`px-4 pb-8 space-y-4`}>
       {/* Artwork Card */}
       {trackingData.artwork_data ? (
-        <View style={tw`bg-white rounded-md px-4 py-3 flex-row items-center`}>
+        <View style={tw`bg-white rounded-sm px-4 py-3 flex-row items-center`}>
           {image ? (
-            <Image source={{ uri: image }} style={tw`w-16 h-16 rounded-md`} />
+            <Image source={{ uri: image }} style={tw`w-16 h-16 rounded-sm`} />
           ) : (
-            <View style={tw`w-16 h-16 rounded-md bg-gray-200`} />
+            <View style={tw`w-16 h-16 rounded-sm bg-gray-200`} />
           )}
           <View style={tw`ml-4 flex-1`}>
             <Text style={tw`text-black font-semibold text-base`}>
@@ -87,7 +87,7 @@ export default function TrackingResult({
           </View>
         </View>
       ) : (
-        <View style={tw`bg-white rounded-md px-4 py-3`}>
+        <View style={tw`bg-white rounded-sm px-4 py-3`}>
           <Text style={tw`text-gray-500 text-[14px] font-medium`}>
             Tracking Number
           </Text>
@@ -98,7 +98,7 @@ export default function TrackingResult({
       )}
 
       {/* Shipment Details */}
-      <View style={tw`bg-white rounded-md p-4 space-y-3`}>
+      <View style={tw`bg-white rounded-sm p-4 space-y-3`}>
         <View style={tw`flex-row justify-between items-start mb-[10px]`}>
           <View style={tw`flex-1 pr-2`}>
             <Text style={tw`text-gray-500 text-[14px] font-medium`}>
@@ -156,7 +156,7 @@ export default function TrackingResult({
       </View>
 
       {/* Timeline */}
-      <View style={tw`bg-white rounded-md p-4`}>
+      <View style={tw`bg-white rounded-sm p-4`}>
         <Text style={tw`text-black font-semibold text-base mb-4`}>
           Tracking History
         </Text>
@@ -239,7 +239,7 @@ export default function TrackingResult({
       {/* Search Another Shipment */}
       <Pressable
         onPress={handleSearchAgain}
-        style={tw`bg-white rounded-md py-3 items-center justify-center border border-gray-200 mb-4`}
+        style={tw`bg-white rounded-sm py-3 items-center justify-center border border-gray-200 mb-4`}
       >
         <Text style={tw`text-slate-900 font-semibold text-base`}>
           Search Another Shipment

@@ -14,7 +14,7 @@ export default function BillingInfo() {
     <View style={[tw`w-full`, {}]}>
       <View
         style={[
-          tw`bg-white rounded-md border border-slate-200 overflow-hidden`,
+          tw`bg-white rounded-sm border border-slate-200 overflow-hidden`,
           cardShadow(),
         ]}
       >
@@ -22,7 +22,7 @@ export default function BillingInfo() {
         <View style={tw`bg-slate-50 px-5 py-4 border-b border-slate-200`}>
           <View style={tw`flex-row items-center`}>
             <View
-              style={tw.style(`p-2 bg-white rounded-md mr-3`, cardShadowSm())}
+              style={tw.style(`p-2 bg-white rounded-sm mr-3`, cardShadowSm())}
             >
               <Ionicons
                 name="person-circle-outline"

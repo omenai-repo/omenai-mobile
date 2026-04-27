@@ -18,7 +18,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
   <View style={tw`flex-row items-center gap-[10px] flex-1`}>
     <Image
       source={{ uri: image_href }}
-      style={tw`h-[42px] w-[42px] rounded-md`}
+      style={tw`h-[42px] w-[42px] rounded-sm`}
     />
     <View style={tw`gap-[5px] pr-[20px] max-w-[80%]`}>
       <Text

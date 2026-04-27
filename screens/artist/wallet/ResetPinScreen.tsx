@@ -118,7 +118,7 @@ export const ResetPinScreen = ({
             secureTextEntryDelay={1000}
             focusColor="#000000"
             theme={{
-              pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-md bg-white`,
+              pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-sm bg-white`,
               pinCodeTextStyle: tw`text-xl text-center`,
               focusedPinCodeContainerStyle: tw`border-black border-2`,
             }}
@@ -141,7 +141,7 @@ export const ResetPinScreen = ({
             secureTextEntryDelay={1000}
             focusColor="#000000"
             theme={{
-              pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-md bg-white`,
+              pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-sm bg-white`,
               pinCodeTextStyle: tw`text-xl text-center`,
               focusedPinCodeContainerStyle: tw`border-black border-2`,
             }}
@@ -151,7 +151,7 @@ export const ResetPinScreen = ({
 
         {/* PIN Guidelines */}
         <View
-          style={tw`bg-white border border-[#E7E7E7] rounded-md px-4 py-4 mt-2`}
+          style={tw`bg-white border border-[#E7E7E7] rounded-sm px-4 py-4 mt-2`}
         >
           <Text style={tw`font-semibold text-[13px] mb-3 text-[#1A1A1A]`}>
             PIN requirements:

@@ -411,7 +411,7 @@ export default function ShowsFairsEventDetails() {
           ].map((metric) => (
             <View
               key={metric.label}
-              style={tw`flex-1 bg-white border border-neutral-200 rounded-md px-3 pb-1 pt-3 justify-between`}
+              style={tw`flex-1 bg-white border border-neutral-200 rounded-sm px-3 pb-1 pt-3 justify-between`}
             >
               <Text
                 style={tw`text-xs font-sans-normal uppercase tracking-widest text-neutral-500`}
@@ -464,7 +464,7 @@ export default function ShowsFairsEventDetails() {
 
         {!event.is_archived && !isRefetching && (
           <View style={tw`mt-6 pt-5 border-t border-red-100`}>
-            <View style={tw`bg-red-50 border border-red-100 rounded-md p-4`}>
+            <View style={tw`bg-red-50 border border-red-100 rounded-sm p-4`}>
               <Text style={tw`text-sm text-red-900`}>Archive Event</Text>
               <Text style={tw`text-xs text-red-700 mt-1 leading-5`}>
                 Archiving this event removes it from active programming and

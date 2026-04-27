@@ -67,6 +67,10 @@ export const SEARCH_QK = {
   query: (query: string) => ["search", "results", query],
 };
 
+export const SUBSCRIPTION_QK = {
+  precheck: (userId?: string) => ["subscription_precheck", userId] as const,
+};
+
 export const WALLET_QK = {
   artist: ["wallet", "artist"] as const,
   validate: (bankCode: string, acctNumber: string) => [

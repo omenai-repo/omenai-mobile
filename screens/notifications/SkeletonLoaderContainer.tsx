@@ -35,7 +35,7 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
     <Animated.View style={[tw`px-[20px] pt-[20px]`, { opacity: fadeAnim }]}>
       {Array.from({ length: count }).map((_, index) => (
         <View key={index} style={tw`mb-[15px]`}>
-          <View style={tw`bg-[#e5e7eb] rounded-md h-[100px] overflow-hidden`}>
+          <View style={tw`bg-[#e5e7eb] rounded-sm h-[100px] overflow-hidden`}>
             <Animated.View
               style={[
                 styles.shimmerOverlay,
@@ -46,12 +46,12 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
             />
             <View style={tw`absolute left-[20px] top-[20px]`}>
               <View
-                style={tw`w-[180px] h-[14px] bg-[#d1d5db] rounded-md mb-[10px]`}
+                style={tw`w-[180px] h-[14px] bg-[#d1d5db] rounded-sm mb-[10px]`}
               />
               <View
-                style={tw`w-[140px] h-[12px] bg-[#d1d5db] rounded-md mb-[6px]`}
+                style={tw`w-[140px] h-[12px] bg-[#d1d5db] rounded-sm mb-[6px]`}
               />
-              <View style={tw`w-[100px] h-[10px] bg-[#d1d5db] rounded-md`} />
+              <View style={tw`w-[100px] h-[10px] bg-[#d1d5db] rounded-sm`} />
             </View>
           </View>
         </View>

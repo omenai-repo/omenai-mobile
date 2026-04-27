@@ -52,7 +52,7 @@ export function SubscriptionTransactionRow({
 
   return (
     <View
-      style={tw`bg-white rounded-md p-4 border border-gray-200 flex-row items-start justify-between`}
+      style={tw`bg-white rounded-sm p-4 border border-gray-200 flex-row items-start justify-between`}
     >
       <View style={tw`flex-shrink mr-2`}>
         <Text style={tw`text-xs font-semibold text-gray-500 mb-1`}>

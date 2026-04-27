@@ -102,7 +102,7 @@ export default function ReviewProposalCard({
 
   return (
     <View
-      style={tw`bg-white border border-neutral-200 rounded-md overflow-hidden mb-4`}
+      style={tw`bg-white border border-neutral-200 rounded-sm overflow-hidden mb-4`}
     >
       <TouchableOpacity
         activeOpacity={0.7}
@@ -111,7 +111,7 @@ export default function ReviewProposalCard({
       >
         <View style={tw`flex-row items-center`}>
           <View
-            style={tw`w-[70px] h-[70px] rounded-md overflow-hidden bg-neutral-100 border border-neutral-200`}
+            style={tw`w-[70px] h-[70px] rounded-sm overflow-hidden bg-neutral-100 border border-neutral-200`}
           >
             {formattedImageUrl ? (
               <Image
@@ -206,7 +206,7 @@ export default function ReviewProposalCard({
 
       {isExpanded && (
         <View style={tw`border-t border-neutral-200 bg-neutral-50 p-4`}>
-          <View style={tw`bg-white border border-neutral-200 rounded-md p-4`}>
+          <View style={tw`bg-white border border-neutral-200 rounded-sm p-4`}>
             <View>
               <View style={tw`mb-4`}>
                 <Text
@@ -259,7 +259,7 @@ export default function ReviewProposalCard({
             )}
           </View>
 
-          <View style={[tw`mt-3 rounded-md p-4`, curationMessage.container]}>
+          <View style={[tw`mt-3 rounded-sm p-4`, curationMessage.container]}>
             <Text
               style={[
                 tw`text-xs tracking-[1px] font-sans-semibold mb-1`,

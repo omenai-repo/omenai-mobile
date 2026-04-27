@@ -158,7 +158,7 @@ export default function EventDetailsHeaderCard({
   if (showHeaderPlaceholder) {
     return (
       <View style={tw`gap-4 mb-4`}>
-        <View style={tw`bg-white rounded-md border border-neutral-200 p-3`}>
+        <View style={tw`bg-white rounded-sm border border-neutral-200 p-3`}>
           <View style={tw`h-36 bg-neutral-100 rounded-sm mb-3`} />
           <View style={tw`items-center py-3`}>
             <ActivityIndicator size="small" color="#737373" />
@@ -171,7 +171,7 @@ export default function EventDetailsHeaderCard({
   return (
     <View style={tw`gap-4 mb-4`}>
       {/* Event Details Header */}
-      <View style={tw`bg-white rounded-md border border-neutral-200 p-3`}>
+      <View style={tw`bg-white rounded-sm border border-neutral-200 p-3`}>
         <View style={tw`gap-3`}>
           <View
             style={tw`w-full h-36 shrink-0 bg-neutral-50 overflow-hidden rounded-sm border border-neutral-100 relative`}
@@ -334,7 +334,7 @@ export default function EventDetailsHeaderCard({
 
       {/* 2. Dynamic Logistics & Metadata Strip */}
       <View
-        style={tw`bg-white rounded-md border border-neutral-200 flex-row flex-wrap items-center`}
+        style={tw`bg-white rounded-sm border border-neutral-200 flex-row flex-wrap items-center`}
       >
         {/* Universal: VIP Preview Date */}
         {(event as any).vip_preview_date && (

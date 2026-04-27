@@ -40,7 +40,7 @@ export default function EditorialCard({
         style={[
           { width, height: showDetails ? detailsCardHeight : undefined },
           showDetails
-            ? tw`bg-white rounded-md border border-[#EFEFEF] pb-5 shadow-sm shadow-black elevation-2 overflow-hidden`
+            ? tw`rounded-sm pb-5 overflow-hidden`
             : null,
         ]}
       >
@@ -48,12 +48,12 @@ export default function EditorialCard({
           source={{ uri: imageUri }}
           style={[
             tw`w-full bg-[#858585]`,
-            showDetails ? tw`rounded-t-md rounded-b-none` : tw`rounded-md`,
+            showDetails ? tw`rounded-t-sm rounded-b-none` : tw`rounded-sm`,
             { height: imageHeight },
           ]}
           resizeMode="cover"
         />
-        <View style={showDetails ? tw`px-2.5 flex-1 justify-between` : null}>
+        <View style={showDetails ? tw`flex-1 justify-between` : null}>
           <Text
             numberOfLines={2}
             style={[

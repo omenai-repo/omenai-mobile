@@ -131,7 +131,7 @@ export default function EditGalleryProfile() {
                   Full Address
                 </Text>
                 <View
-                  style={tw`bg-gray-100 p-4 rounded-md border border-gray-300`}
+                  style={tw`bg-gray-100 p-4 rounded-sm border border-gray-300`}
                 >
                   <AddressField
                     label="Address:"

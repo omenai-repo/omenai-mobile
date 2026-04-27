@@ -23,7 +23,7 @@ export default function ArtworkImage({
   like_IDs,
 }: Readonly<ArtworkImageProps>) {
   return (
-    <View style={tw`rounded-md overflow-hidden relative`}>
+    <View style={tw`rounded-sm overflow-hidden relative`}>
       <View style={tw`w-full flex items-center justify-center`}>
         {MiniImage({ maxWidth: imageWidth, url: image_href })}
       </View>
@@ -35,7 +35,7 @@ export default function ArtworkImage({
       >
         {galleryView && (
           <View
-            style={tw`bg-white/20 h-[30px] w-[30px] rounded-md flex items-center justify-center`}
+            style={tw`bg-white/20 h-[30px] w-[30px] rounded-sm flex items-center justify-center`}
           >
             <LikeComponent
               art_id={art_id}

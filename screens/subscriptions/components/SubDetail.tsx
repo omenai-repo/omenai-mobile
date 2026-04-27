@@ -97,7 +97,7 @@ export default function SubDetail({
 
   return (
     <View
-      style={[tw`bg-white rounded-md border border-slate-200 p-4`, shadow()]}
+      style={[tw`bg-white rounded-sm border border-slate-200 p-4`, shadow()]}
     >
       {/* Header */}
       <View style={tw`flex-row items-center justify-between mb-3`}>
@@ -105,7 +105,7 @@ export default function SubDetail({
           Your Subscription
         </Text>
 
-        <View style={tw.style(`px-2 py-1 rounded-md`, badgeStyles.wrap)}>
+        <View style={tw.style(`px-2 py-1 rounded-sm`, badgeStyles.wrap)}>
           <Text style={tw.style(`text-xs font-semibold`, badgeStyles.text)}>
             {badgeText}
           </Text>
@@ -193,7 +193,7 @@ export default function SubDetail({
       {/* Pending-cancel note */}
       {isPendingCancel && (
         <View
-          style={tw`mt-3 p-3 rounded-md bg-amber-50 border border-amber-200`}
+          style={tw`mt-3 p-3 rounded-sm bg-amber-50 border border-amber-200`}
         >
           <Text style={tw`text-[11px] text-amber-800`}>
             <Text style={tw`font-semibold`}>NOTE:</Text> Your subscription
@@ -213,7 +213,7 @@ export default function SubDetail({
             }
             style={({ pressed }) =>
               tw.style(
-                `flex-1 h-11 rounded-md items-center justify-center bg-blue-600`,
+                `flex-1 h-11 rounded-sm items-center justify-center bg-blue-600`,
                 pressed ? "opacity-90" : "",
               )
             }
@@ -233,7 +233,7 @@ export default function SubDetail({
                 }
                 style={({ pressed }) =>
                   tw.style(
-                    `flex-1 h-11 rounded-md items-center justify-center bg-slate-100`,
+                    `flex-1 h-11 rounded-sm items-center justify-center bg-slate-100`,
                     pressed ? "opacity-95" : "",
                   )
                 }
@@ -249,7 +249,7 @@ export default function SubDetail({
                 onPress={onOpenCancelModal}
                 style={({ pressed }) =>
                   tw.style(
-                    `ml-2 px-4 h-11 rounded-md items-center justify-center`,
+                    `ml-2 px-4 h-11 rounded-sm items-center justify-center`,
                     pressed ? "bg-red-50" : "",
                   )
                 }

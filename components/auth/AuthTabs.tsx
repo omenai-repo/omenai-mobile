@@ -47,12 +47,12 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
       <Pressable
         onPress={onClick}
         style={({ pressed }) => [
-          tw`h-[46px] flex-1 rounded-md items-center justify-center overflow-hidden`,
+          tw`h-[46px] flex-1 rounded-sm items-center justify-center overflow-hidden`,
           pressed && { opacity: 0.8 },
         ]}
       >
         <Animated.View
-          style={[tw`absolute inset-0 rounded-md`, { backgroundColor }]}
+          style={[tw`absolute inset-0 rounded-sm`, { backgroundColor }]}
         />
         <Animated.Text
           style={[
@@ -74,7 +74,7 @@ export default function AuthTabs({
 }: AuthTabsProps) {
   return (
     <View
-      style={tw`w-full bg-[#FAFAFA] border border-[#E0E0E0] rounded-md p-1 flex-row gap-[15px]`}
+      style={tw`w-full bg-[#FAFAFA] border border-[#E0E0E0] rounded-sm p-1 flex-row gap-[15px]`}
     >
       {tabs.map((i, idx) => (
         <TabItem

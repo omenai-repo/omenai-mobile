@@ -26,7 +26,7 @@ const QuestionContainer = ({
   return (
     <Animated.View
       style={[
-        tw`border border-neutral-200 rounded-md py-8 self-center px-6`,
+        tw`border border-neutral-200 rounded-sm py-8 self-center px-6`,
         {
           width: width - 50,
           backgroundColor: isModalVisible ? "#ffff" : "#FFFFFFB5",
@@ -48,7 +48,7 @@ const QuestionContainer = ({
               key={option}
               onPress={() => onSelect(option)}
               style={tw.style(
-                `py-3.5 justify-center items-center rounded-md mb-4 border`,
+                `py-3.5 justify-center items-center rounded-sm mb-4 border`,
                 value === option
                   ? `bg-[${colors.black}] border-[${colors.black}]`
                   : "bg-transparent border-neutral-100",
@@ -69,7 +69,7 @@ const QuestionContainer = ({
         <>
           <TextInput
             style={tw.style(
-              `bg-neutral-100 rounded-md p-5 text-sm font-sans-regular`,
+              `bg-neutral-100 rounded-sm p-5 text-sm font-sans-regular`,
               isNumber ? "py-[15px]" : "h-[97px]",
               {
                 textAlignVertical: "top",

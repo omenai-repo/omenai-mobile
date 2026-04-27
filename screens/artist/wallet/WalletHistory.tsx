@@ -100,7 +100,7 @@ const WalletHistory = ({ navigation, route }: any) => {
       {transactions.length > 0 && (
         <View
           style={[
-            tw`mx-5 bg-white rounded-md border border-gray-200 overflow-hidden flex-1`,
+            tw`mx-5 bg-white rounded-sm border border-gray-200 overflow-hidden flex-1`,
             { marginBottom: insets.bottom + 24 },
           ]}
         >

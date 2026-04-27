@@ -50,7 +50,7 @@ const NotificationDetailsModal = ({
             style={tw`w-full max-w-[400px]`}
           >
             <TouchableWithoutFeedback onPress={() => {}}>
-              <View style={tw`bg-white rounded-md p-[20px] shadow-lg`}>
+              <View style={tw`bg-white rounded-sm p-[20px] shadow-lg`}>
                 {/* Close Button */}
                 <TouchableOpacity
                   onPress={onClose}

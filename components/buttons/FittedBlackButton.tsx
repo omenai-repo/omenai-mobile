@@ -52,7 +52,7 @@ export default function FittedBlackButton({
   };
 
   const containerStyle = [
-    tw`flex flex-row items-center justify-center rounded-md gap-[10px] px-5`,
+    tw`flex flex-row items-center justify-center rounded-sm gap-[10px] px-5`,
     defaultContainerStyle,
     responsive &&
       ({

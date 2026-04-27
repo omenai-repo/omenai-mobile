@@ -53,7 +53,7 @@ export const WalletTransactionSection = ({
               </View>
             ) : (
               <View
-                style={tw`bg-white rounded-md border border-neutral-100 overflow-hidden`}
+                style={tw`bg-white rounded-sm border border-neutral-100 overflow-hidden`}
               >
                 {sortedTransactions.map((item, index) => (
                   <WalletTransactionItem

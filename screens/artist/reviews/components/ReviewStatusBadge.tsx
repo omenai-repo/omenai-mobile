@@ -65,7 +65,7 @@ export default function ReviewStatusBadge({
 
   return (
     <View
-      style={[tw`px-2 py-1 rounded-md flex-row items-center`, config.badge]}
+      style={[tw`px-2 py-1 rounded-sm flex-row items-center`, config.badge]}
     >
       <Feather
         name={config.icon as any}

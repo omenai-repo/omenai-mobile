@@ -72,7 +72,7 @@ export default function Welcome() {
       {/* Bottom content container */}
       <View
         style={[
-          tw`rounded-md py-8 px-8`,
+          tw`rounded-sm py-8 px-8`,
           {
             backgroundColor: colors.primary_black,
             position: "absolute",

@@ -111,7 +111,7 @@ export default function LoginForm({
               onPress={biometricProps.handleBiometricLogin}
               disabled={biometricProps.isBiometricLoading || isLoading}
               style={[
-                tw`items-center justify-center rounded-md h-[52px] w-[52px]`,
+                tw`items-center justify-center rounded-sm h-[52px] w-[52px]`,
                 {
                   backgroundColor: colors.black,
                   opacity:

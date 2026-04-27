@@ -14,7 +14,7 @@ export function GalleryOverviewLogo() {
   return (
     <Image
       source={omenaiLogo}
-      style={tailwind`w-[130px] h-[30px]`}
+      style={tailwind`w-[112px] h-[24px]`}
       contentFit="contain"
       cachePolicy="none"
     />
@@ -60,7 +60,7 @@ export default React.memo(function Header({
       {showAuthButton && (
         <TouchableOpacity
           style={[
-            tailwind`px-4 py-2 rounded-md`,
+            tailwind`px-4 py-2 rounded-sm`,
             { backgroundColor: colors.black },
           ]}
           onPress={() => openGuestLoginModal()}

@@ -49,7 +49,7 @@ export default function SupportChatHistory({
             <TouchableOpacity
               key={sess.id}
               onPress={() => onSelectSession(sess.id)}
-              style={tw`bg-white border border-gray-200 p-4 rounded-md mb-2`}
+              style={tw`bg-white border border-gray-200 p-4 rounded-sm mb-2`}
             >
               <View style={tw`flex-row justify-between mb-1`}>
                 <Text

@@ -223,7 +223,7 @@ const EditArtworkModal = forwardRef<BottomSheetModal, EditArtworkModalProps>(
             placeholderTextColor="#a1a1aa"
             textAlignVertical="top"
             style={[
-              tw`border border-slate-200 rounded-md p-3 text-sm text-slate-800 leading-relaxed`,
+              tw`border border-slate-200 rounded-sm p-3 text-sm text-slate-800 leading-relaxed`,
               { minHeight: 120 },
             ]}
           />

@@ -23,7 +23,7 @@ export function WithdrawalPinInput({
         Security PIN
       </Text>
 
-      <View style={tw`bg-[#f8fafc] rounded-md p-3 border border-[#e2e8f0]`}>
+      <View style={tw`bg-[#f8fafc] rounded-sm p-3 border border-[#e2e8f0]`}>
         <Text style={tw`text-center text-[13px] text-slate-600 mb-4 mt-2`}>
           Enter your 4-digit wallet PIN
         </Text>
@@ -40,7 +40,7 @@ export function WithdrawalPinInput({
             focusColor="#1e293b" // slate-800 focus equivalent
             theme={{
               containerStyle: tw`gap-3 justify-center`,
-              pinCodeContainerStyle: tw`w-12 h-12 border border-[#94a3b8] rounded-md bg-white`,
+              pinCodeContainerStyle: tw`w-12 h-12 border border-[#94a3b8] rounded-sm bg-white`,
               pinCodeTextStyle: tw`text-base font-semibold text-center`,
               focusedPinCodeContainerStyle: tw`border-[#1e293b] border-2`,
             }}

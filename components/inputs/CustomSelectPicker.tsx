@@ -94,7 +94,7 @@ export default function CustomSelectPicker({
           borderRadius: 5,
         }}
         style={[
-          tw`px-4 h-11 w-full rounded-md border`,
+          tw`px-4 h-11 w-full rounded-sm border`,
           { borderColor: colors.inputBorder, backgroundColor: "#FAFAFA" },
         ]}
         selectedTextStyle={[

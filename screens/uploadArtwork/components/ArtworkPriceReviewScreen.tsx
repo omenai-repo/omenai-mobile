@@ -220,7 +220,7 @@ export default function ArtworkPriceReviewScreen({
           <Pressable
             onPress={() => refetch()}
             style={[
-              tw`px-4 py-2 rounded-md`,
+              tw`px-4 py-2 rounded-sm`,
               { backgroundColor: colors.black },
             ]}
           >
@@ -230,7 +230,7 @@ export default function ArtworkPriceReviewScreen({
             onPress={() => {
               navigation.goBack();
             }}
-            style={tw`px-4 py-2 bg-white border border-gray-300 rounded-md`}
+            style={tw`px-4 py-2 bg-white border border-gray-300 rounded-sm`}
           >
             <Text style={tw`text-black`}>Back</Text>
           </Pressable>
@@ -240,9 +240,9 @@ export default function ArtworkPriceReviewScreen({
   }
 
   return (
-    <View style={tw`flex-1 rounded-md`}>
+    <View style={tw`flex-1 rounded-sm`}>
       <View
-        style={tw`bg-white items-center rounded-md p-5 border border-neutral-200 mb-6`}
+        style={tw`bg-white items-center rounded-sm p-5 border border-neutral-200 mb-6`}
       >
         <Text
           style={[
@@ -297,7 +297,7 @@ export default function ArtworkPriceReviewScreen({
       {/* Display Price Option */}
       {!isCustomPricingEligibleArtist && (
         <View
-          style={tw`bg-white border border-[#E5E7EB] rounded-md px-4 py-5 mb-6`}
+          style={tw`bg-white border border-[#E5E7EB] rounded-sm px-4 py-5 mb-6`}
         >
           <Text style={tw`text-sm font-semibold text-gray-800 mb-1`}>
             Pricing Visibility
@@ -345,7 +345,7 @@ export default function ArtworkPriceReviewScreen({
               setActiveIndex(1);
               clearData();
             }}
-            style={tw`flex-1 py-3 border border-gray-400 rounded-md justify-center items-center`}
+            style={tw`flex-1 py-3 border border-gray-400 rounded-sm justify-center items-center`}
           >
             <Text style={tw`text-gray-700 font-sans-medium`}>Cancel</Text>
           </Pressable>
@@ -353,7 +353,7 @@ export default function ArtworkPriceReviewScreen({
           <Pressable
             onPress={handleConfirmPress}
             style={[
-              tw`flex-1 py-3 rounded-md justify-center items-center`,
+              tw`flex-1 py-3 rounded-sm justify-center items-center`,
               canProceed
                 ? { backgroundColor: colors.black }
                 : { backgroundColor: "#22222260" },

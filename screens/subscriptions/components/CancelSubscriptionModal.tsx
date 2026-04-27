@@ -105,7 +105,7 @@ export default function CancelSubscriptionModal({
         />
         <Animated.View
           style={[
-            tw`w-11/12 max-w:420px bg-white rounded-md overflow-hidden`,
+            tw`w-11/12 max-w:420px bg-white rounded-sm overflow-hidden`,
             { transform: [{ scale }] },
             cardShadow(),
           ]}
@@ -126,7 +126,7 @@ export default function CancelSubscriptionModal({
               </View>
               <Pressable
                 onPress={() => !loading && onClose()}
-                style={tw`p-1 rounded-md`}
+                style={tw`p-1 rounded-sm`}
                 android_ripple={{ color: "#fecaca" }}
               >
                 <Ionicons name="close" size={18} color="#94a3b8" />
@@ -140,7 +140,7 @@ export default function CancelSubscriptionModal({
               <Text style={tw`text-sm text-slate-700`}>
                 Your subscription will remain active until:
               </Text>
-              <View style={tw`bg-slate-100 rounded-md px-4 py-3 mt-2`}>
+              <View style={tw`bg-slate-100 rounded-sm px-4 py-3 mt-2`}>
                 <Text style={tw`font-semibold text-slate-900`}>
                   {formattedEnd}
                 </Text>
@@ -149,7 +149,7 @@ export default function CancelSubscriptionModal({
 
             {/* Warning box */}
             <View
-              style={tw`bg-amber-50 border border-amber-200 rounded-md p-4`}
+              style={tw`bg-amber-50 border border-amber-200 rounded-sm p-4`}
             >
               <View style={tw`flex-row`}>
                 <Ionicons
@@ -173,7 +173,7 @@ export default function CancelSubscriptionModal({
 
             {!!err && (
               <View
-                style={tw`mt-4 bg-red-50 border border-red-200 rounded-md p-3`}
+                style={tw`mt-4 bg-red-50 border border-red-200 rounded-sm p-3`}
               >
                 <Text style={tw`text-red-700 text-xs`}>{err}</Text>
               </View>
@@ -187,7 +187,7 @@ export default function CancelSubscriptionModal({
                 onPress={() => !loading && onClose()}
                 style={({ pressed }) =>
                   tw.style(
-                    `px-4 h-11 rounded-md items-center justify-center bg-white border border-slate-300 mr-2`,
+                    `px-4 h-11 rounded-sm items-center justify-center bg-white border border-slate-300 mr-2`,
                     pressed ? "opacity-95" : "",
                   )
                 }
@@ -204,7 +204,7 @@ export default function CancelSubscriptionModal({
                 onPress={handleCancel}
                 style={({ pressed }) =>
                   tw.style(
-                    `px-4 h-11 rounded-md items-center justify-center bg-red-600`,
+                    `px-4 h-11 rounded-sm items-center justify-center bg-red-600`,
                     pressed ? "opacity-90" : "",
                   )
                 }

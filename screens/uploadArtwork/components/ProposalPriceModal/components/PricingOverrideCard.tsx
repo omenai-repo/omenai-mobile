@@ -11,7 +11,7 @@ export default function PricingOverrideCard({
   recommendedPrice,
 }: Readonly<PricingOverrideCardProps>) {
   return (
-    <View style={[tw`rounded-md p-5`, { backgroundColor: colors.black }]}>
+    <View style={[tw`rounded-sm p-5`, { backgroundColor: colors.black }]}>
       <Text style={tw`text-white font-sans-semibold text-base mb-3`}>
         Pricing Override
       </Text>
@@ -27,7 +27,7 @@ export default function PricingOverrideCard({
       <View style={tw`gap-4`}>
         <View style={tw`flex-row gap-3 items-start`}>
           <View
-            style={tw`w-8 h-8 rounded-md bg-[#12284B] items-center justify-center`}
+            style={tw`w-8 h-8 rounded-sm bg-[#12284B] items-center justify-center`}
           >
             <Ionicons
               name="shield-checkmark-outline"
@@ -48,7 +48,7 @@ export default function PricingOverrideCard({
 
         <View style={tw`flex-row gap-3 items-start`}>
           <View
-            style={tw`w-8 h-8 rounded-md bg-[#12284B] items-center justify-center`}
+            style={tw`w-8 h-8 rounded-sm bg-[#12284B] items-center justify-center`}
           >
             <Ionicons name="trending-up-outline" size={16} color="#60A5FA" />
           </View>

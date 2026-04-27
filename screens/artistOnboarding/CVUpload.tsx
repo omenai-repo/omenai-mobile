@@ -22,7 +22,7 @@ const CVUpload = ({ cv, pickDocument }: CVUploadProps) => {
       <TouchableOpacity
         onPress={pickDocument}
         style={tw.style(
-          `border border-neutral-100 bg-neutral-200 h-[160px] rounded-md justify-center items-center`,
+          `border border-neutral-100 bg-neutral-200 h-[160px] rounded-sm justify-center items-center`,
           {
             marginHorizontal: width / 12,
           },
@@ -44,7 +44,7 @@ const CVUpload = ({ cv, pickDocument }: CVUploadProps) => {
       {/* Warning Box */}
       <View
         style={tw.style(
-          `border border-[#FFA500] mt-[20px] flex-row items-center gap-[10px] bg-[#FFF3E0] rounded-md p-[15px]`,
+          `border border-[#FFA500] mt-[20px] flex-row items-center gap-[10px] bg-[#FFF3E0] rounded-sm p-[15px]`,
           {
             marginHorizontal: width / 12,
           },

@@ -21,7 +21,7 @@ export default function SearchInput() {
   return (
     <View
       style={[
-        tw`h-[55px] bg-[#FAFAFA] border border-neutral-100 pl-4 pr-1.5 py-1.5 flex-row items-center rounded-md`,
+        tw`h-[55px] bg-[#FAFAFA] border border-neutral-100 pl-4 pr-1.5 py-1.5 flex-row items-center rounded-sm`,
       ]}
     >
       <TextInput
@@ -36,7 +36,7 @@ export default function SearchInput() {
       />
       <TouchableOpacity
         style={[
-          tw`h-full rounded-md items-center justify-center px-5`,
+          tw`h-full rounded-sm items-center justify-center px-5`,
           { backgroundColor: colors.primary_black },
         ]}
         activeOpacity={0.5}

@@ -14,7 +14,7 @@ export default function FeatureNotAvailable({
   return (
     <View style={tw`flex-1 items-center justify-center px-8 mt-5`}>
       <View
-        style={tw`items-center p-8 bg-white rounded-md shadow-xl w-full max-w-sm`}
+        style={tw`items-center p-8 bg-white rounded-sm shadow-xl w-full max-w-sm`}
       >
         <Text style={tw`text-2xl font-extrabold text-black mb-2 text-center`}>
           Coming Soon!

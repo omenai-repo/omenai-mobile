@@ -29,7 +29,7 @@ export default function EventCard({ item, onPress }: Props) {
       <View style={tw`relative`}>
         <Image
           source={{ uri: resolveCoverImageUri(item.cover_image) }}
-          style={tw`w-full h-[220px] rounded-md bg-[#EDEDED]`}
+          style={tw`w-full h-[220px] rounded-sm bg-[#EDEDED]`}
         />
         <View style={tw`absolute top-3 left-3`}>
           <Text

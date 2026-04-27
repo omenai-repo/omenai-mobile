@@ -9,7 +9,7 @@ interface PlanFeaturesProps {
 
 export const PlanFeatures = ({ featureList }: Readonly<PlanFeaturesProps>) => {
   return (
-    <View style={tw`rounded-md bg-slate-50 p-3`}>
+    <View style={tw`rounded-sm bg-slate-50 p-3`}>
       {featureList.map((benefit, i) => (
         <View key={`${benefit}-${i}`} style={tw`flex-row items-start mb-2`}>
           <Ionicons

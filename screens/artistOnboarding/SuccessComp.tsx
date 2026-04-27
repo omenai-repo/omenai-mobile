@@ -58,7 +58,7 @@ const SuccessComp = () => {
       >
         <Animated.View
           style={[
-            tw`bg-[#FFFFFF] rounded-md py-[35px]`,
+            tw`bg-[#FFFFFF] rounded-sm py-[35px]`,
             {
               marginHorizontal: "5%",
               opacity: fadeAnim, // Apply fade animation
