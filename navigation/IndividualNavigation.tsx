@@ -29,11 +29,11 @@ import CancleOrderPayment from "#screens/payment/components/cancel/CancleOrderPa
 import SuccessOrderPayment from "#screens/payment/components/success/SuccessOrderPayment";
 import BiometricSettings from "#screens/profile/BiometricSettings";
 import ViewReceiptScreen from "#screens/orders/ViewReceiptScreen";
-import ShowsScreen from "#screens/individual/shows/ShowsScreen";
+// import ShowsScreen from "#screens/individual/shows/ShowsScreen";
 import ShowDetailsScreen from "#screens/individual/shows/ShowDetailsScreen";
-import FairsEventsScreen from "#screens/individual/fairsEvents/FairsEventsScreen";
+// import FairsEventsScreen from "#screens/individual/fairsEvents/FairsEventsScreen";
 import FairEventDetailsScreen from "#screens/individual/fairsEvents/FairEventDetailsScreen";
-import GalleriesScreen from "#screens/individual/galleries/GalleriesScreen";
+// import GalleriesScreen from "#screens/individual/galleries/GalleriesScreen";
 import GalleryDetailsScreen from "#screens/individual/galleries/GalleryDetailsScreen";
 import IndividualHomeStack from "#navigation/IndividualHomeStack";
 import Catalog from "#screens/catalog/Catalog";
@@ -112,24 +112,25 @@ const individualMoreTabs = [
     label: "Profile",
     component: Profile,
   },
-  {
-    id: 7,
-    name: screenName.individual.shows,
-    label: "Shows",
-    component: ShowsScreen,
-  },
-  {
-    id: 8,
-    name: screenName.individual.fairsEvents,
-    label: "Fairs & Events",
-    component: FairsEventsScreen,
-  },
-  {
-    id: 9,
-    name: screenName.individual.galleries,
-    label: "Galleries",
-    component: GalleriesScreen,
-  },
+  // Temporarily hidden: Shows + Fairs & Events + Galleries (individual More tab targets).
+  // {
+  //   id: 7,
+  //   name: screenName.individual.shows,
+  //   label: "Shows",
+  //   component: ShowsScreen,
+  // },
+  // {
+  //   id: 8,
+  //   name: screenName.individual.fairsEvents,
+  //   label: "Fairs & Events",
+  //   component: FairsEventsScreen,
+  // },
+  // {
+  //   id: 9,
+  //   name: screenName.individual.galleries,
+  //   label: "Galleries",
+  //   component: GalleriesScreen,
+  // },
   {
     id: 10,
     name: screenName.supportTickets,
@@ -157,27 +158,28 @@ const IndividualTabNavigationScreens = () => {
 
     const moreSheetItems = useMemo<MoreSheetItem[]>(
       () => [
-        {
-          key: "shows",
-          label: "Shows",
-          routeName: screenName.individual.shows,
-          expoIconName: "images-outline" as const,
-          onPress: () => navigateToScreen(screenName.individual.shows),
-        },
-        {
-          key: "fairs-events",
-          label: "Fairs & Events",
-          routeName: screenName.individual.fairsEvents,
-          expoIconName: "calendar-outline" as const,
-          onPress: () => navigateToScreen(screenName.individual.fairsEvents),
-        },
-        {
-          key: "galleries",
-          label: "Galleries",
-          routeName: screenName.individual.galleries,
-          expoIconName: "business-outline" as const,
-          onPress: () => navigateToScreen(screenName.individual.galleries),
-        },
+        // Temporarily hidden: Shows + Fairs & Events + Galleries (More sheet; stack routes still exist for deep links / home sections).
+        // {
+        //   key: "shows",
+        //   label: "Shows",
+        //   routeName: screenName.individual.shows,
+        //   expoIconName: "images-outline" as const,
+        //   onPress: () => navigateToScreen(screenName.individual.shows),
+        // },
+        // {
+        //   key: "fairs-events",
+        //   label: "Fairs & Events",
+        //   routeName: screenName.individual.fairsEvents,
+        //   expoIconName: "calendar-outline" as const,
+        //   onPress: () => navigateToScreen(screenName.individual.fairsEvents),
+        // },
+        // {
+        //   key: "galleries",
+        //   label: "Galleries",
+        //   routeName: screenName.individual.galleries,
+        //   expoIconName: "business-outline" as const,
+        //   onPress: () => navigateToScreen(screenName.individual.galleries),
+        // },
         {
           key: "profile",
           label: "Profile",

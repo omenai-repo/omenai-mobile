@@ -20,12 +20,16 @@ export default function FeaturedShows() {
   const navigation = useNavigation<any>();
   const { data: shows = [], isLoading } = useFeaturedShows(10);
 
+  if (!isLoading && shows.length === 0) {
+    return null;
+  }
+
   return (
     <View style={tw`mt-6`}>
       <SectionHeader
         title="Featured Shows"
         subtitle="Shows to discover"
-        onActionPress={() => navigation.navigate(screenName.individual.shows)}
+        // onActionPress={() => navigation.navigate(screenName.individual.shows)}
       />
       <ScrollView
         horizontal

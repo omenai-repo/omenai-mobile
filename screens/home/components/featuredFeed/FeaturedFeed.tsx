@@ -54,6 +54,10 @@ export default function FeaturedFeed() {
     gcTime: 15 * 60_000,
   });
 
+  if (!isLoading && featuredItems.length === 0) {
+    return null;
+  }
+
   const resolveImage = (item: FeaturedItem) => {
     const itemType = normalizeType(item.type);
     const data = item.data ?? {};
@@ -161,8 +165,6 @@ export default function FeaturedFeed() {
       await openPromotion(data.cta);
     }
   };
-
-  if (!isLoading && featuredItems.length === 0) return null;
 
   return (
     <View style={tw`mt-2`}>

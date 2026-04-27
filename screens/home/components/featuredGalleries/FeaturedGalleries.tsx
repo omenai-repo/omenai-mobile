@@ -90,7 +90,7 @@ export default function FeaturedGalleries() {
     <View style={tw`mt-6`}>
       <SectionHeader
         title={`Featured Galleries (${galleries.length})`}
-        onActionPress={() => navigation.navigate(screenName.individual.galleries)}
+        // onActionPress={() => navigation.navigate(screenName.individual.galleries)}
       />
       <ScrollView
         horizontal
