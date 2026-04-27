@@ -27,7 +27,9 @@ export default function CuratorPicks() {
     gcTime: 15 * 60_000,
   });
 
-  if (!isLoading && picks.length === 0) return null;
+  if (!isLoading && picks.length === 0) {
+    return null;
+  }
 
   return (
     <View style={tw`mt-6`}>

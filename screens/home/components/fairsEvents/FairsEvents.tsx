@@ -20,11 +20,15 @@ export default function FairsEvents() {
   const navigation = useNavigation<any>();
   const { data: events = [], isLoading } = useFairsEventsPreview(10);
 
+  if (!isLoading && events.length === 0) {
+    return null;
+  }
+
   return (
     <View style={tw`mt-6`}>
       <SectionHeader
         title="Fairs & Events"
-        onActionPress={() => navigation.navigate(screenName.individual.fairsEvents)}
+        // onActionPress={() => navigation.navigate(screenName.individual.fairsEvents)}
       />
       <ScrollView
         horizontal
