@@ -457,13 +457,13 @@ export default function ProposalPriceModal() {
         <PricingOverrideCard recommendedPrice={recommendedPrice} />
 
         <View
-          style={tw`bg-white border border-neutral-200 rounded-md p-4 mt-7`}
+          style={tw`bg-white border border-neutral-200 rounded-sm p-4 mt-7`}
         >
           <Text style={tw`text-base font-sans-semibold text-neutral-700 mb-3`}>
             Target Listing Price (USD)
           </Text>
           <View
-            style={tw`border border-neutral-200 rounded-md px-3 flex-row items-center h-[50px]`}
+            style={tw`border border-neutral-200 rounded-sm px-3 flex-row items-center h-[50px]`}
           >
             <Text
               style={[
@@ -505,7 +505,7 @@ export default function ProposalPriceModal() {
 
         {!isCustomPricingEligibleArtist && (
           <View
-            style={tw`bg-white border border-neutral-200 rounded-md p-4 mt-7`}
+            style={tw`bg-white border border-neutral-200 rounded-sm p-4 mt-7`}
           >
             <Text style={tw`text-base font-sans-semibold text-gray-800 mb-2`}>
               Pricing Visibility
@@ -569,7 +569,7 @@ export default function ProposalPriceModal() {
         {requiresJustification && (
           <View
             style={[
-              tw`border rounded-md px-4 py-4 mb-2 bg-white`,
+              tw`border rounded-sm px-4 py-4 mb-2 bg-white`,
               { borderColor: colors.inputBorder },
             ]}
           >
@@ -618,7 +618,7 @@ export default function ProposalPriceModal() {
         <Pressable
           onPress={handleClose}
           style={[
-            tw`rounded-md py-3 items-center justify-center border border-neutral-300 px-5`,
+            tw`rounded-sm py-3 items-center justify-center border border-neutral-300 px-5`,
             { minWidth: 90 },
           ]}
         >

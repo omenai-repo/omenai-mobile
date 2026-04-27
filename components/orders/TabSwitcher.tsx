@@ -33,14 +33,14 @@ const TabSwitcher = ({ tabs, selectedKey, setSelectedKey }: Props) => {
   return (
     <View
       style={[
-        tw`relative flex-row items-center bg-white p-[10px] mx-[20px] rounded-md`,
+        tw`relative flex-row items-center bg-white p-[10px] mx-[20px] rounded-sm`,
         { overflow: "visible" },
       ]}
     >
       {/* Animated Pill Background */}
       <Animated.View
         style={[
-          tw`absolute h-[45px] rounded-md`,
+          tw`absolute h-[45px] rounded-sm`,
           // Keep iOS shadow, avoid elevation on Android so it doesn't cover the badge
           Platform.OS === "ios" ? tw`shadow-md` : {},
           {

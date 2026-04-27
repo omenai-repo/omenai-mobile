@@ -62,7 +62,7 @@ export default function SupportForm({
             )}
             <View
               style={[
-                tw`w-10 h-10 rounded-md items-center justify-center`,
+                tw`w-10 h-10 rounded-sm items-center justify-center`,
                 { backgroundColor: colors.black },
               ]}
             >

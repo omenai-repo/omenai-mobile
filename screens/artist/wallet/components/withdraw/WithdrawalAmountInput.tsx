@@ -40,7 +40,7 @@ export function WithdrawalAmountInput({
       </Text>
 
       {/* You Send */}
-      <View style={tw`bg-[#f8fafc] rounded-md p-4 border border-[#e2e8f0]`}>
+      <View style={tw`bg-[#f8fafc] rounded-sm p-4 border border-[#e2e8f0]`}>
         <View style={tw`flex-row items-center justify-between mb-2`}>
           <Text style={tw`text-[13px] text-slate-600`}>You Send</Text>
           <Text style={tw`text-[13px] font-light text-slate-700`}>
@@ -67,7 +67,7 @@ export function WithdrawalAmountInput({
         <TouchableOpacity
           disabled={!amount || loading || loadAmount}
           onPress={() => amount && fetchTransferRate()}
-          style={tw`p-2 bg-slate-100 rounded-md items-center justify-center ${
+          style={tw`p-2 bg-slate-100 rounded-sm items-center justify-center ${
             !amount || loading || loadAmount ? "opacity-50" : ""
           }`}
         >
@@ -80,7 +80,7 @@ export function WithdrawalAmountInput({
       </View>
 
       {/* You Receive */}
-      <View style={tw`bg-[#f0fdf4] rounded-md p-4 border border-[#bbf7d0]`}>
+      <View style={tw`bg-[#f0fdf4] rounded-sm p-4 border border-[#bbf7d0]`}>
         <View style={tw`flex-row items-center justify-between mb-2`}>
           <Text style={tw`text-[13px] text-green-700`}>You Receive</Text>
           <Text style={tw`text-[13px] font-light text-green-800`}>
@@ -101,7 +101,7 @@ export function WithdrawalAmountInput({
       {/* Exchange Rate Info */}
       {rate > 0 && Number(amount) > 0 && convertedAmount > 0 && (
         <View
-          style={tw`bg-[#eff6ff] rounded-md p-3 border border-[#bfdbfe] mt-4 flex-row items-center gap-2`}
+          style={tw`bg-[#eff6ff] rounded-sm p-3 border border-[#bfdbfe] mt-4 flex-row items-center gap-2`}
         >
           <Ionicons
             name="information-circle-outline"

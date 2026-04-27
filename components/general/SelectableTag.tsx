@@ -17,7 +17,7 @@ export default function SelectableTag({
     <Pressable
       onPress={onSelect}
       style={[
-        tw`h-10 px-5 rounded-md border items-center justify-center`,
+        tw`h-10 px-5 rounded-sm border items-center justify-center`,
         { borderColor: colors.inputBorder },
         isSelected
           ? { backgroundColor: colors.black }

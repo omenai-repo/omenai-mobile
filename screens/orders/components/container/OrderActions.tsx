@@ -75,7 +75,7 @@ export const OrderActions = ({
         !tracking_link && (
           <View
             style={[
-              tw`rounded-md`,
+              tw`rounded-sm`,
               {
                 padding: 10,
                 backgroundColor: "#f3f3f3",
@@ -91,7 +91,7 @@ export const OrderActions = ({
       {payment_information === "completed" && userType === "user" && (
         <LongBlackButton
           value="View receipt"
-          style={tw`bg-gray-100 rounded-md h-[40px]`}
+          style={tw`bg-gray-100 rounded-sm h-[40px]`}
           textStyle={tw`text-xs font-semibold text-gray-900`}
           onClick={() => {
             navigation.navigate("ViewReceiptScreen", {

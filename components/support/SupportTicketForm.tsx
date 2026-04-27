@@ -283,7 +283,7 @@ export default function SupportTicketForm({
         <View style={tw`mb-4`}>
           <Text style={tw`mb-2 text-gray-600 font-medium`}>Email Address</Text>
           <TextInput
-            style={tw`border border-gray-300 rounded-md p-3 text-black bg-gray-50`}
+            style={tw`border border-gray-300 rounded-sm p-3 text-black bg-gray-50`}
             value={guestEmail}
             onChangeText={setGuestEmail}
             placeholder="your@email.com"
@@ -318,7 +318,7 @@ export default function SupportTicketForm({
         <View style={tw`mt-4`}>
           <Text style={tw`mb-2 text-gray-600 font-medium`}>{fieldLabel}</Text>
           <TextInput
-            style={tw`border border-gray-300 rounded-md p-3 text-black bg-gray-50`}
+            style={tw`border border-gray-300 rounded-sm p-3 text-black bg-gray-50`}
             value={referenceId}
             onChangeText={setReferenceId}
             placeholder={fieldPlaceholder}
@@ -334,7 +334,7 @@ export default function SupportTicketForm({
           </Text>
           <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
-            style={tw`border border-gray-300 rounded-md p-3 bg-gray-50 flex-row justify-between items-center`}
+            style={tw`border border-gray-300 rounded-sm p-3 bg-gray-50 flex-row justify-between items-center`}
           >
             <Text style={tw`text-black`}>
               {transactionDate ? transactionDate.toDateString() : "Select Date"}
@@ -355,7 +355,7 @@ export default function SupportTicketForm({
 
       <Text style={tw`mb-2 text-gray-600 font-medium mt-4`}>Message</Text>
       <TextInput
-        style={tw`border border-gray-300 rounded-md p-3 mb-6 h-32 text-black bg-gray-50 text-base`}
+        style={tw`border border-gray-300 rounded-sm p-3 mb-6 h-32 text-black bg-gray-50 text-base`}
         value={message}
         onChangeText={setMessage}
         multiline

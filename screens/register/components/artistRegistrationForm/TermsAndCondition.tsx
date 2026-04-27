@@ -80,7 +80,7 @@ const TermsAndCondition = () => {
       </Text>
 
       <View
-        style={tw`bg-white border border-gray-200 rounded-md p-[24px] mb-[24px]`}
+        style={tw`bg-white border border-gray-200 rounded-sm p-[24px] mb-[24px]`}
       >
         <Text style={tw`text-[14px] font-semibold text-black mb-[16px]`}>
           Platform Terms

@@ -108,7 +108,7 @@ export default function SuccessPaymentModal({
         {/* Card */}
         <View
           style={[
-            tw`w-11/12 bg-white rounded-md overflow-hidden`,
+            tw`w-11/12 bg-white rounded-sm overflow-hidden`,
             { maxWidth: 420, ...shadow() },
           ]}
         >
@@ -196,7 +196,7 @@ export default function SuccessPaymentModal({
               onPress={onPrimaryPress}
               style={({ pressed }) =>
                 tw.style(
-                  `h-12 rounded-md items-center justify-center bg-slate-900`,
+                  `h-12 rounded-sm items-center justify-center bg-slate-900`,
                   pressed ? "opacity-90" : "",
                 )
               }

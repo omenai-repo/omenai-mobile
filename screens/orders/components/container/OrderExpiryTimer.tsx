@@ -31,7 +31,7 @@ export const OrderExpiryTimer = ({
     return (
       <View style={tw`mt-3`}>
         <View
-          style={tw`flex-row items-center bg-[#FFF1F0] border border-[#FCA5A5] px-3 py-2 rounded-md`}
+          style={tw`flex-row items-center bg-[#FFF1F0] border border-[#FCA5A5] px-3 py-2 rounded-sm`}
         >
           <Ionicons name="time-outline" size={16} color="#C71C16" />
           <Text style={tw`ml-2 text-[13px] text-[#C71C16]`}>

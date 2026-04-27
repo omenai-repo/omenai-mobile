@@ -90,7 +90,7 @@ export default function CarrierInterventionCard({
             onPress={onSwitchToRolled}
             style={tw`flex-row items-center p-4 bg-white border border-gray-200 rounded-lg`}
           >
-            <View style={tw`bg-emerald-100 p-2 rounded-md mr-3`}>
+            <View style={tw`bg-emerald-100 p-2 rounded-sm mr-3`}>
               <Ionicons name="cube" size={20} color="#059669" />
             </View>
             <View style={tw`flex-1`}>
@@ -112,7 +112,7 @@ export default function CarrierInterventionCard({
           onPress={onTryCustomCrate}
           style={tw`flex-row items-center p-4 bg-white border border-gray-200 rounded-lg`}
         >
-          <View style={tw`bg-blue-100 p-2 rounded-md mr-3`}>
+          <View style={tw`bg-blue-100 p-2 rounded-sm mr-3`}>
             <Ionicons name="resize" size={20} color="#2563EB" />
           </View>
           <View style={tw`flex-1`}>

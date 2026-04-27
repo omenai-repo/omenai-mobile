@@ -79,7 +79,7 @@ export default function PriceStatusNotice({
   return (
     <View
       style={[
-        tw`mt-3 p-4 rounded-md border flex-row items-start`,
+        tw`mt-3 p-4 rounded-sm border flex-row items-start`,
         containerStyle,
       ]}
     >

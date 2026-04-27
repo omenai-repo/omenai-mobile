@@ -18,10 +18,10 @@ export const CatalogCard = ({ image, name, value }: CatalogCardTypes) => {
         })
       }
     >
-      <View style={tw`w-[220px] rounded-md bg-white shadow-sm shadow-black elevation-2 overflow-hidden`}>
+      <View style={tw`w-[220px] rounded-sm overflow-hidden`}>
         <Image source={image} style={tw`w-[220px] h-[220px]`} />
-        <View style={tw`px-3 py-3`}>
-          <Text style={tw`text-md text-neutral-900`}>{name}</Text>
+        <View style={tw`py-3`}>
+          <Text style={tw`text-md text-neutral-900 text-left font-sans-regular`}>{name}</Text>
         </View>
       </View>
     </Pressable>

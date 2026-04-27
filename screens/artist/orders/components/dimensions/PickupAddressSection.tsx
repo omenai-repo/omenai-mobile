@@ -168,11 +168,11 @@ export default function PickupAddressSection({
   if (!isEditing) {
     return (
       <View
-        style={tw`mt-5 border border-neutral-200 rounded-md bg-white p-5 shadow-sm`}
+        style={tw`mt-5 border border-neutral-200 rounded-sm bg-white p-5 shadow-sm`}
       >
         {isRecentlyUpdated && (
           <View
-            style={tw`flex-row items-center bg-green-50 border border-green-100 p-3 rounded-md mb-3`}
+            style={tw`flex-row items-center bg-green-50 border border-green-100 p-3 rounded-sm mb-3`}
           >
             <Ionicons
               name="checkmark-circle"
@@ -229,7 +229,7 @@ export default function PickupAddressSection({
           <Pressable
             onPress={handleEditClick}
             style={({ pressed }) =>
-              tw`flex-row items-center justify-center bg-neutral-50 border border-neutral-200 py-3 px-4 rounded-md mt-5 ${
+              tw`flex-row items-center justify-center bg-neutral-50 border border-neutral-200 py-3 px-4 rounded-sm mt-5 ${
                 pressed ? "opacity-70" : ""
               }`
             }
@@ -245,7 +245,7 @@ export default function PickupAddressSection({
 
   return (
     <View
-      style={tw`mt-5 border border-neutral-100 rounded-md bg-white p-5 shadow-sm`}
+      style={tw`mt-5 border border-neutral-100 rounded-sm bg-white p-5 shadow-sm`}
     >
       <View style={tw`border-b border-neutral-100 pb-3 mb-4`}>
         <Text style={tw`text-[15px] font-medium text-neutral-900`}>

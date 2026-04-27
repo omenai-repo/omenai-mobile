@@ -95,7 +95,7 @@ const BannerCard = memo(
 
           <Pressable
             onPress={() => handleClick(cta)}
-            style={tw`mt-4 flex-row items-center gap-2 px-4 py-2 rounded-md border border-white self-start`}
+            style={tw`mt-4 flex-row items-center gap-2 px-4 py-2 rounded-sm border border-white self-start`}
           >
             <Text style={tw`text-white text-sm font-semibold`}>Explore</Text>
             <AntDesign name="arrow-right" color="#fff" size={15} />

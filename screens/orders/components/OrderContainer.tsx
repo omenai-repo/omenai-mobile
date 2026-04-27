@@ -176,7 +176,7 @@ const OrderContainer: React.FC<OrderContainerProps> = React.memo(
           </OrderHeader>
           <Pressable
             onPress={() => setOpen()}
-            style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-md`}
+            style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-sm`}
           >
             <SvgXml xml={open ? dropUpIcon : dropdownIcon} />
           </Pressable>

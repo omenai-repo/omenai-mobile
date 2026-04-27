@@ -17,7 +17,7 @@ export default function NextButton({
     return (
       <View
         style={[
-          tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-md`,
+          tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-sm`,
           { backgroundColor: colors.inputBorder },
         ]}
       >
@@ -30,7 +30,7 @@ export default function NextButton({
     <Pressable
       onPress={handleButtonClick}
       style={({ pressed }) => [
-        tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-md`,
+        tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-sm`,
         { backgroundColor: colors.black },
         pressed && { opacity: 0.85 },
       ]}

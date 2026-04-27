@@ -15,7 +15,7 @@ export default function ArtistInformationCard({
   country,
 }: Readonly<ArtistInformationCardProps>) {
   return (
-    <View style={[tw`px-6 py-8 rounded-md`, { backgroundColor: colors.black }]}>
+    <View style={[tw`px-6 py-8 rounded-sm`, { backgroundColor: colors.black }]}>
       <Text
         style={tw`text-neutral-400 text-sm tracking-wider font-sans-regular uppercase mb-2`}
       >

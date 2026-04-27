@@ -38,7 +38,7 @@ export const StatusBadgeItem = ({
   return (
     <View
       style={[
-        tw`flex-row items-center px-2.5 py-1 rounded-md`,
+        tw`flex-row items-center px-2.5 py-1 rounded-sm`,
         bgStyle ? tw`${bgStyle}` : undefined,
         customBgColor ? { backgroundColor: customBgColor } : undefined,
       ]}

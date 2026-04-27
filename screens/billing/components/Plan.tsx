@@ -136,7 +136,7 @@ export default function Plan({
       {/* Card */}
       <View
         style={[
-          tw`rounded-md overflow-hidden bg-white`,
+          tw`rounded-sm overflow-hidden bg-white`,
           name === "Gallery"
             ? tw`border-2 border-slate-900`
             : tw`border border-slate-200`,

@@ -160,7 +160,7 @@ export const ForgotPinScreen = ({
             secureTextEntryDelay={1000}
             focusColor="#000000"
             theme={{
-              pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-md bg-white`,
+              pinCodeContainerStyle: tw`w-14 h-14 border border-gray-400 rounded-sm bg-white`,
               pinCodeTextStyle: tw`text-xl text-center`,
               focusedPinCodeContainerStyle: tw`border-black border-2`,
             }}

@@ -47,14 +47,13 @@ export const retrieveSubscriptionDiscount = async (): Promise<{
       discount: discountData,
     };
   } catch (error: any) {
+    console.log("[retrieveSubscriptionDiscount] error:", error);
     return {
       isOk: false,
-      body: {
-        message:
-          error.message ||
-          error?.response?.data?.message ||
-          "An error was encountered, please try again later or contact support",
-      },
+      message:
+        error.message ||
+        error?.response?.data?.message ||
+        "An error was encountered, please try again later or contact support",
     };
   }
 };

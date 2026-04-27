@@ -31,7 +31,7 @@ export const PinCreationModal = ({
 
   const pinRefs = useRef<(TextInput | null)[]>([]);
   const confirmPinRefs = useRef<(TextInput | null)[]>([]);
-  const inputStyle = tw`w-12 h-12 border border-gray-400 rounded-md bg-[#fff] text-center text-xl`;
+  const inputStyle = tw`w-12 h-12 border border-gray-400 rounded-sm bg-[#fff] text-center text-xl`;
 
   const { updateModal } = useModalStore();
 
@@ -131,7 +131,7 @@ export const PinCreationModal = ({
           ]}
           onPress={onClose}
         >
-          <Pressable style={tw`bg-white rounded-md p-6 w-4/5`}>
+          <Pressable style={tw`bg-white rounded-sm p-6 w-4/5`}>
             <View style={tw`flex-row justify-between items-center mb-4`}>
               <Text style={tw`text-xl font-bold`}>Create Wallet PIN</Text>
               <Pressable onPress={onClose}>

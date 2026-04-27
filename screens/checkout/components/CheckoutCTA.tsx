@@ -14,7 +14,7 @@ export const CheckoutCTA = ({
     disabled={payLoading || migrateLoading}
     onPress={showCharge ? handlePayNow : handleMigrateToPlan}
     style={[
-      tw`mt-5 w-full py-3 rounded-md items-center justify-center`,
+      tw`mt-5 w-full py-3 rounded-sm items-center justify-center`,
       payLoading || migrateLoading
         ? { backgroundColor: `${colors.black}4D` }
         : { backgroundColor: colors.black },

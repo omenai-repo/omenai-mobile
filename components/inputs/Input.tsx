@@ -53,7 +53,7 @@ export default function Input(props: InputProps & { testID?: string }) {
         placeholder={placeHolder}
         placeholderTextColor={colors.grey}
         style={[
-          tw`py-3 w-full border px-3 rounded-md text-sm font-sans-regular`,
+          tw`py-3 w-full border px-3 rounded-sm text-sm font-sans-regular`,
           label !== "" && label !== undefined && tw`mt-2.5`,
           {
             borderColor: colors.inputBorder,

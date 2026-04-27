@@ -46,7 +46,7 @@ export const TransactionSkeletonCard = ({
   return (
     <View
       style={[
-        tw`bg-white rounded-md border border-neutral-100 overflow-hidden`,
+        tw`bg-white rounded-sm border border-neutral-100 overflow-hidden`,
         style,
       ]}
     >

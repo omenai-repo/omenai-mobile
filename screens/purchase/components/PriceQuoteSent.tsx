@@ -127,7 +127,7 @@ export default function PriceQuoteSent({
       <View style={tw`mb-8 mt-auto`}>
         <TouchableOpacity
           onPress={handleClick}
-          style={tw`w-full bg-[${colors.primary_black}] py-4 rounded-md items-center`}
+          style={tw`w-full bg-[${colors.primary_black}] py-4 rounded-sm items-center`}
         >
           <Text style={tw`text-white font-medium text-base`}>
             Continue Browsing

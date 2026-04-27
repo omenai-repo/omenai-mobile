@@ -18,7 +18,7 @@ const UnitDropdown = ({ units, selectedUnit, onSelect }: UnitDropdownProps) => {
   return (
     <View style={tw`relative w-full`}>
       <Dropdown
-        style={tw`h-[50px] bg-white rounded-md border border-gray-300 px-3`}
+        style={tw`h-[50px] bg-white rounded-sm border border-gray-300 px-3`}
         placeholderStyle={tw`text-base text-gray-800`}
         selectedTextStyle={tw`text-base text-gray-800`}
         inputSearchStyle={tw`h-10 text-base`}

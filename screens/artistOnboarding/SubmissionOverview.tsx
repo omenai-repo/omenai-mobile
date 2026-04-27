@@ -19,7 +19,7 @@ const SubmissionOverview: React.FC<SubmissionOverviewProps> = ({
 }) => {
   return (
     <View
-      style={tw.style(`bg-white border border-gray-100 rounded-md p-6`, {
+      style={tw.style(`bg-white border border-gray-100 rounded-sm p-6`, {
         marginHorizontal: width / 18,
       })}
     >
@@ -43,7 +43,7 @@ const SubmissionOverview: React.FC<SubmissionOverviewProps> = ({
 
       {/* Verification Warning Box */}
       <View
-        style={tw`bg-yellow-50 rounded-md p-4 mb-6 border border-yellow-200`}
+        style={tw`bg-yellow-50 rounded-sm p-4 mb-6 border border-yellow-200`}
       >
         <View style={tw`flex-row items-center mb-2`}>
           <FontAwesome6 name="triangle-exclamation" size={16} color="#B45309" />
@@ -65,7 +65,7 @@ const SubmissionOverview: React.FC<SubmissionOverviewProps> = ({
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => setIsConfirmed(!isConfirmed)}
-        style={tw`flex-row p-4 rounded-md mb-8 border bg-neutral-50 border-neutral-200`}
+        style={tw`flex-row p-4 rounded-sm mb-8 border bg-neutral-50 border-neutral-200`}
       >
         <View
           style={tw.style(
@@ -86,7 +86,7 @@ const SubmissionOverview: React.FC<SubmissionOverviewProps> = ({
       {/* Footer Nav */}
       <TouchableOpacity
         onPress={onNavigateBack}
-        style={tw`flex-row items-center justify-center py-3 bg-neutral-100 rounded-md border border-neutral-200`}
+        style={tw`flex-row items-center justify-center py-3 bg-neutral-100 rounded-sm border border-neutral-200`}
       >
         <Ionicons name="information-circle-outline" size={20} color="#4B5563" />
         <Text style={tw`ml-2 text-sm font-sans-medium text-slate-700`}>

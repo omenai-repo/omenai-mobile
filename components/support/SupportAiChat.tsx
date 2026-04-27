@@ -77,7 +77,7 @@ const MessageBubble = ({
   return (
     <View
       style={[
-        tw`mb-4 max-w-[85%] rounded-md p-4`,
+        tw`mb-4 max-w-[85%] rounded-sm p-4`,
         item.role === "user"
           ? [tw`self-end rounded-tr-sm`, { backgroundColor: colors.black }]
           : tw`bg-gray-100 self-start rounded-tl-sm`,
@@ -257,7 +257,7 @@ export default function SupportAiChat({
               <TouchableOpacity
                 key={s}
                 onPress={() => handleSend(s)}
-                style={tw`bg-white border border-gray-200 p-4 rounded-md mb-2 flex-row justify-between items-center`}
+                style={tw`bg-white border border-gray-200 p-4 rounded-sm mb-2 flex-row justify-between items-center`}
               >
                 <Text style={tw`text-sm text-gray-700`}>{s}</Text>
                 <Ionicons name="arrow-forward" size={16} color={colors.black} />
@@ -286,7 +286,7 @@ export default function SupportAiChat({
 
       <View style={tw`p-4 border-t border-gray-100 bg-white`}>
         <View
-          style={tw`flex-row items-center gap-2 relative bg-gray-50 border border-gray-200 rounded-md px-4 py-2`}
+          style={tw`flex-row items-center gap-2 relative bg-gray-50 border border-gray-200 rounded-sm px-4 py-2`}
         >
           <TextInput
             value={input}
@@ -300,7 +300,7 @@ export default function SupportAiChat({
             disabled={!input.trim() || isLoading}
             onPress={() => handleSend()}
             style={[
-              tw`p-2 rounded-md`,
+              tw`p-2 rounded-sm`,
               input.trim() && !isLoading
                 ? { backgroundColor: colors.black }
                 : tw`bg-gray-300`,

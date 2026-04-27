@@ -21,7 +21,7 @@ const ArtistCard = ({
     <View style={tw`w-[300px]`}>
       <Image
         source={{ uri: imageUri }}
-        style={tw`w-full h-[200px] rounded-md`}
+        style={tw`w-full h-[200px] rounded-sm`}
         resizeMode="cover"
       />
       <View style={tw`flex-row items-center justify-between mt-[10px]`}>

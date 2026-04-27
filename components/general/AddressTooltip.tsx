@@ -31,7 +31,7 @@ export const AddressTooltip = ({
         <View style={[tw`absolute top-0 right-16`, { width: width / 2 }]}>
           <View
             style={[
-              tw`rounded-md py-2.5 px-4`,
+              tw`rounded-sm py-2.5 px-4`,
               { backgroundColor: `${colors.black}` },
             ]}
           >

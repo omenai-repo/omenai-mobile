@@ -29,7 +29,7 @@ export default function JustificationSection({
   onPickProofDocument,
 }: Readonly<JustificationSectionProps>) {
   return (
-    <View style={tw`bg-white border border-neutral-200 rounded-md p-4 my-7`}>
+    <View style={tw`bg-white border border-neutral-200 rounded-sm p-4 my-7`}>
       <Text style={tw`text-base font-sans-semibold text-slate-800 mb-1`}>
         Data Source / Justification
       </Text>
@@ -63,11 +63,11 @@ export default function JustificationSection({
               : "Verification format (link to verify your claim)"}
           </Text>
 
-          <View style={tw`flex-row bg-neutral-100 rounded-md p-1 mb-4`}>
+          <View style={tw`flex-row bg-neutral-100 rounded-sm p-1 mb-4`}>
             <Pressable
               onPress={() => onChangeProofFormat("DOCUMENT")}
               style={[
-                tw`flex-1 py-2 rounded-md items-center justify-center flex-row`,
+                tw`flex-1 py-2 rounded-sm items-center justify-center flex-row`,
                 proofFormat === "DOCUMENT" ? tw`bg-white` : null,
               ]}
             >
@@ -78,7 +78,7 @@ export default function JustificationSection({
             <Pressable
               onPress={() => onChangeProofFormat("LINK")}
               style={[
-                tw`flex-1 py-2 rounded-md items-center justify-center flex-row`,
+                tw`flex-1 py-2 rounded-sm items-center justify-center flex-row`,
                 proofFormat === "LINK" ? tw`bg-white` : null,
               ]}
             >
@@ -89,7 +89,7 @@ export default function JustificationSection({
 
           {proofFormat === "LINK" ? (
             <View
-              style={tw`border border-neutral-200 rounded-md px-3 flex-row items-center h-[46px]`}
+              style={tw`border border-neutral-200 rounded-sm px-3 flex-row items-center h-[46px]`}
             >
               <Feather name="link" size={14} color="#9CA3AF" />
               <TextInput
@@ -104,7 +104,7 @@ export default function JustificationSection({
           ) : (
             <Pressable
               onPress={onPickProofDocument}
-              style={tw`border border-dashed border-neutral-300 rounded-md px-3 py-4`}
+              style={tw`border border-dashed border-neutral-300 rounded-sm px-3 py-4`}
             >
               {justificationFileName ? (
                 <View style={tw`flex-row items-center justify-between`}>

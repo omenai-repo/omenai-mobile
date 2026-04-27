@@ -174,12 +174,9 @@ export default function FeaturedFeed() {
       >
         {isLoading
           ? SKELETON_ITEMS.map((item) => (
-            <View
-              key={item}
-              style={tw`w-[280px] rounded-md bg-white overflow-hidden`}
-            >
-              <View style={tw`h-[180px] w-full bg-neutral-200`} />
-              <View style={tw`p-3`}>
+            <View key={item} style={tw`w-[250px]`}>
+              <View style={tw`h-[170px] w-full rounded-sm bg-neutral-200`} />
+              <View style={tw`mt-3`}>
                 <View style={tw`h-3 w-20 rounded-sm bg-neutral-200`} />
                 <View style={tw`h-4 w-44 rounded-sm bg-neutral-200 mt-2`} />
                 <View style={tw`h-3 w-32 rounded-sm bg-neutral-200 mt-2`} />
@@ -198,16 +195,19 @@ export default function FeaturedFeed() {
                 onPress={() => {
                   void onPressItem(item);
                 }}
-                style={tw`w-[280px] rounded-md bg-white overflow-hidden`}
+                style={tw`w-[250px]`}
               >
                 {imageUri ? (
-                  <Image source={{ uri: imageUri }} style={tw`w-full h-[180px] bg-neutral-100`} />
+                  <Image
+                    source={{ uri: imageUri }}
+                    style={tw`w-full h-[170px] rounded-sm bg-neutral-100`}
+                  />
                 ) : (
-                  <View style={tw`w-full h-[180px] bg-[#0D2040] items-center justify-center`}>
+                  <View style={tw`w-full h-[170px] rounded-sm bg-[#0D2040] items-center justify-center`}>
                     <Ionicons name="image-outline" size={24} color="#E5E7EB" />
                   </View>
                 )}
-                <View style={tw`p-3`}>
+                <View style={tw`mt-2`}>
                   <Text style={tw`text-xs font-sans-regular uppercase tracking-widest text-neutral-500`}>
                     {label}
                   </Text>

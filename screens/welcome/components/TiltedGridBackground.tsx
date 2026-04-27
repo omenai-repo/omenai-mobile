@@ -60,13 +60,13 @@ const GridItem = React.memo(
       {imageSource ? (
         <Image
           source={imageSource}
-          style={tw`w-full h-full rounded-md`}
+          style={tw`w-full h-full rounded-sm`}
           resizeMode="cover"
         />
       ) : (
         <View
           style={[
-            tw`w-full h-full rounded-md`,
+            tw`w-full h-full rounded-sm`,
             {
               backgroundColor,
             },

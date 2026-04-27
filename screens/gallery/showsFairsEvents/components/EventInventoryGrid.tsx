@@ -154,7 +154,7 @@ export default function EventInventoryGrid({
                 <View style={tw`relative`}>
                   <Image
                     source={{ uri: imageUrl }}
-                    style={tw`h-44 rounded-md bg-neutral-200`}
+                    style={tw`h-44 rounded-sm bg-neutral-200`}
                     resizeMode="cover"
                   />
                   {!item.availability && (

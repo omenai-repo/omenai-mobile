@@ -17,7 +17,7 @@ export default function ExclusivityCheck({
 
   return (
     <View
-      style={tw`mb-5 flex-row bg-amber-50 border border-amber-100 rounded-md p-3`}
+      style={tw`mb-5 flex-row bg-amber-50 border border-amber-100 rounded-sm p-3`}
     >
       <Ionicons
         name="warning"

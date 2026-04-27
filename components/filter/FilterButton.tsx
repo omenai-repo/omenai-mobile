@@ -31,7 +31,7 @@ export default function FilterButton({
         }}
       >
         <View
-          style={tw`flex-row items-center gap-2 px-2.5 py-1.5 rounded-md border border-neutral-200`}
+          style={tw`flex-row items-center gap-2 px-2.5 py-1.5 rounded-sm border border-neutral-200`}
         >
           <Text
             style={[

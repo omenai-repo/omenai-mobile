@@ -11,7 +11,7 @@ export const CheckoutBanner = ({
   planName: string;
   interval: string;
 }) => (
-  <View style={tw`rounded-md bg-slate-900 p-5 mb-4`}>
+  <View style={tw`rounded-sm bg-slate-900 p-5 mb-4`}>
     <Text style={tw`text-[10px] uppercase tracking-widest text-slate-300 mb-2`}>
       Subscription {actionLabel}
     </Text>

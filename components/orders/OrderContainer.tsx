@@ -96,7 +96,7 @@ export const OrderContainer = React.memo((props: OrderContainerProps) => {
           )}
         </OrderHeader>
         <View
-          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-md`}
+          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-sm`}
         >
           {typeof currentIcon === "string" && <SvgXml xml={currentIcon} />}
         </View>

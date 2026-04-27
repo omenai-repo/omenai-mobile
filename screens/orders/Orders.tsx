@@ -146,7 +146,7 @@ export default function Orders() {
       />
 
       <View
-        style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-md p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
+        style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-sm p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
       >
         <View
           style={[

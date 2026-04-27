@@ -28,7 +28,7 @@ const ConfirmationModal = ({
         <Pressable
           onPress={(e) => e.stopPropagation()}
           style={tw.style(
-            `bg-white p-5 border border-[#0000001A] rounded-md w-[80%]`,
+            `bg-white p-5 border border-[#0000001A] rounded-sm w-[80%]`,
           )}
         >
           <View style={tw`flex-row self-center items-center gap-[20px]`}>
@@ -47,7 +47,7 @@ const ConfirmationModal = ({
 
           {/* <Pressable
             onPress={confirmBtn}
-            style={tw`rounded-md mt-[30px] border border-[#000000] h-[40px] justify-center items-center`}
+            style={tw`rounded-sm mt-[30px] border border-[#000000] h-[40px] justify-center items-center`}
           >
             <Text style={tw`text-[14px] text-[#1A1A1A]000] font-medium`}>
               I understand and I wish to Proceed

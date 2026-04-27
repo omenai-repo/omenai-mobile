@@ -75,7 +75,7 @@ const ExclusiveDeclineView = ({
       style={tw`flex-row items-center gap-[10px] mb-3`}
     >
       <View
-        style={tw`h-[20px] w-[20px] rounded-md border border-[#E5E7EB] justify-center items-center ${
+        style={tw`h-[20px] w-[20px] rounded-sm border border-[#E5E7EB] justify-center items-center ${
           checked ? "bg-[#C71C16]" : ""
         }`}
       >
@@ -86,7 +86,7 @@ const ExclusiveDeclineView = ({
 
     {checked ? (
       <View
-        style={tw`bg-red-50 border border-red-200 rounded-md p-[12px] flex-row items-start gap-[8px] mb-2`}
+        style={tw`bg-red-50 border border-red-200 rounded-sm p-[12px] flex-row items-start gap-[8px] mb-2`}
       >
         <View style={tw`mt-[2px]`}>{/* icon placeholder */}</View>
         <View style={tw`flex-1`}>
@@ -122,7 +122,7 @@ const StandardDeclineView = ({
           style={tw`flex-row items-start gap-[10px] mb-4`}
         >
           <View
-            style={tw`h-[20px] w-[20px] rounded-md border border-[#E5E7EB] justify-center items-center ${
+            style={tw`h-[20px] w-[20px] rounded-sm border border-[#E5E7EB] justify-center items-center ${
               selectedReason === r ? "bg-[#C71C16]" : ""
             }`}
           >
@@ -136,7 +136,7 @@ const StandardDeclineView = ({
     </ScrollView>
 
     {selectedReason ? (
-      <View style={tw`p-[10px] bg-red-50 border border-red-100 rounded-md`}>
+      <View style={tw`p-[10px] bg-red-50 border border-red-100 rounded-sm`}>
         <Text style={tw`text-[13px] text-[#B91C1C]`}>
           <Text style={tw`font-semibold`}>Client interpretation:</Text>{" "}
           {declineReasonMapping[selectedReason]}
@@ -382,7 +382,7 @@ const DeclineOrderModal = ({
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
-          style={tw`bg-white p-[20px] rounded-md w-[90%] max-h-[80%]`}
+          style={tw`bg-white p-[20px] rounded-sm w-[90%] max-h-[80%]`}
         >
           <Text style={tw`text-sm font-semibold mb-4`}>{title}</Text>
 
@@ -393,7 +393,7 @@ const DeclineOrderModal = ({
             onPress={handleDecline}
             disabled={loading}
             style={tw.style(
-              `h-[46px] justify-center items-center rounded-md mt-[16px]`,
+              `h-[46px] justify-center items-center rounded-sm mt-[16px]`,
               getButtonBackground(),
             )}
           >

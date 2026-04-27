@@ -19,6 +19,7 @@ import { colors } from "#config/colors.config";
 import { screenName } from "#constants/screenNames.constants";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import PlansSkeleton from "#components/skeleton/PlansSkeleton";
+import { SUBSCRIPTION_QK } from "#utils/queryKeys";
 
 export default function Subscriptions() {
   const navigation = useNavigation<any>();
@@ -34,7 +35,7 @@ export default function Subscriptions() {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["subscription_precheck"],
+    queryKey: SUBSCRIPTION_QK.precheck(userSession?.id),
     queryFn: async () => {
       try {
         // Fetch account ID first, as it's required for the next call

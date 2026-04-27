@@ -19,7 +19,7 @@ export default function SelectedDimensionsSummary({
   if (!usePreset || !dimensions.length) return null;
 
   return (
-    <View style={tw`bg-white border border-gray-200 rounded-md p-4 mt-2`}>
+    <View style={tw`bg-white border border-gray-200 rounded-sm p-4 mt-2`}>
       <Text
         style={tw`text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4`}
       >

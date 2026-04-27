@@ -372,7 +372,7 @@ export default function EditEventBottomSheet({
                     {editForm.vipPreviewDate ? (
                       <TouchableOpacity
                         onPress={() => setEditForm((prev) => ({ ...prev, vipPreviewDate: "" }))}
-                        style={tw`px-3 py-3 border border-neutral-300 rounded-md`}
+                        style={tw`px-3 py-3 border border-neutral-300 rounded-sm`}
                       >
                         <Text style={tw`text-xs text-neutral-700`}>Clear</Text>
                       </TouchableOpacity>

@@ -77,7 +77,7 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
       <View style={tw`flex-1 justify-center pb-20`}>
         <Animated.View
           style={[
-            tw`bg-white rounded-md py-8 px-6 border border-neutral-100 shadow-sm`,
+            tw`bg-white rounded-sm py-8 px-6 border border-neutral-100 shadow-sm`,
             {
               marginHorizontal: width / 18,
               opacity: fadeAnim, // Apply fade animation
@@ -101,7 +101,7 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
             {onboardingItems.map((item, idx) => (
               <View key={idx} style={tw`flex-row items-center gap-3`}>
                 <View
-                  style={tw`w-8 h-8 items-center justify-center bg-slate-50 rounded-md`}
+                  style={tw`w-8 h-8 items-center justify-center bg-slate-50 rounded-sm`}
                 >
                   {item.icon}
                 </View>

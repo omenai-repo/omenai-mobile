@@ -95,7 +95,7 @@ export const TransactionDetailsScreen = ({ route }: { route: any }) => {
       <ScrollView contentContainerStyle={tw`px-5 pt-6 pb-10`}>
         {/* Transaction Info Card */}
         <View
-          style={tw`bg-white rounded-md border border-gray-200 overflow-hidden`}
+          style={tw`bg-white rounded-sm border border-gray-200 overflow-hidden`}
         >
           {/* Card Header */}
           <View
@@ -215,7 +215,7 @@ export const TransactionDetailsScreen = ({ route }: { route: any }) => {
             <View style={tw`px-5 pb-5 pt-4`}>
               <View
                 style={[
-                  tw`flex-row items-start gap-[8px] p-3 rounded-md border`,
+                  tw`flex-row items-start gap-[8px] p-3 rounded-sm border`,
                   {
                     backgroundColor: config.bgColor,
                     borderColor: config.borderColor,

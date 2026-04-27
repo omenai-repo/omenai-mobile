@@ -111,7 +111,7 @@ export default function ViewItem({
     <View style={tw`mb-4`}>
       <Text style={tw`text-[#1A1A1A] text-sm font-bold mb-1`}>{title}</Text>
       <View
-        style={tw`flex-row justify-between items-center bg-[#F4F4F4] rounded-md p-3`}
+        style={tw`flex-row justify-between items-center bg-[#F4F4F4] rounded-sm p-3`}
       >
         <Text style={tw`text-[13px] text-[#333] flex-1 mr-2`} numberOfLines={1}>
           {title === "CV Document" ? "Pdf file" : value}

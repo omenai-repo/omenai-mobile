@@ -18,7 +18,7 @@ export default function BackFormButton({
       onPress={handleBackClick}
       disabled={disabled}
       style={({ pressed }) => [
-        tw`h-11 w-[70px] rounded-md border flex-row items-center justify-center`,
+        tw`h-11 w-[70px] rounded-sm border flex-row items-center justify-center`,
         { borderColor: colors.primary_black },
         pressed && !disabled ? { opacity: 0.8 } : null,
       ]}

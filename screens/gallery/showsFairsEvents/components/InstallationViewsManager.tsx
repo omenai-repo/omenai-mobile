@@ -289,7 +289,7 @@ export default function InstallationViewsManager({
   };
 
   return (
-    <View style={tw`bg-white rounded-md border border-neutral-200 p-3 mb-4`}>
+    <View style={tw`bg-white rounded-sm border border-neutral-200 p-3 mb-4`}>
       <View style={tw`flex-row items-center justify-between mb-2`}>
         <View>
           <Text style={tw`text-sm text-neutral-900`}>Installation Views</Text>
@@ -315,7 +315,7 @@ export default function InstallationViewsManager({
       </View>
 
       {existingViews.length === 0 ? (
-        <View style={tw`h-44 rounded-md bg-neutral-100 items-center justify-center`}>
+        <View style={tw`h-44 rounded-sm bg-neutral-100 items-center justify-center`}>
           <Ionicons name="image-outline" size={28} color="#A3A3A3" />
           <Text style={tw`text-xs text-neutral-500 mt-2`}>
             No installation views uploaded yet.
@@ -352,7 +352,7 @@ export default function InstallationViewsManager({
               return (
                 <View
                   style={[
-                    tw`h-56 rounded-md bg-neutral-200 mr-3 overflow-hidden`,
+                    tw`h-56 rounded-sm bg-neutral-200 mr-3 overflow-hidden`,
                     { width: slideWidth },
                   ]}
                 >
@@ -426,7 +426,7 @@ export default function InstallationViewsManager({
               }
             }}
           />
-          <View style={tw`w-full max-w-[700px] bg-white rounded-md border border-neutral-200`}>
+          <View style={tw`w-full max-w-[700px] bg-white rounded-sm border border-neutral-200`}>
             <View style={tw`px-4 py-3 border-b border-neutral-100`}>
               <Text style={tw`text-base text-neutral-900`}>Preview Installation Views</Text>
               <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mt-1`}>

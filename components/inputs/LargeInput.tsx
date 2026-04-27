@@ -43,7 +43,7 @@ export default function LargeInput({
         onChangeText={onInputChange}
         placeholder={placeHolder}
         style={[
-          tw`w-full rounded-md mt-2 text-sm`,
+          tw`w-full rounded-sm mt-2 text-sm`,
           inputStyle,
           height ? { height } : { height: 140 },
           {
