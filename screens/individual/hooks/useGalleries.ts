@@ -7,13 +7,21 @@ import type { GalleryContactData, GalleryProfile } from "#services/partners/gall
 import { HOME_QK, EVENTS_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 
+function isExcludedGalleryName(name?: string | null) {
+  return (name ?? "").trim().toLowerCase() === "omenai gallery";
+}
+
+function filterExcludedGalleries(galleries: GalleryListRecord[]) {
+  return galleries.filter((gallery) => !isExcludedGalleryName(gallery?.name));
+}
+
 export function useGalleries(page = 1, limit = 15) {
   return useQuery({
     queryKey: EVENTS_QK.galleriesList(page, limit),
     queryFn: async () => {
       const res = await fetchGalleries(page, limit);
       return {
-        data: res?.isOk ? res.data : [],
+        data: res?.isOk ? filterExcludedGalleries(res.data) : [],
         pagination: res?.pagination,
       };
     },
@@ -27,7 +35,9 @@ export function useGalleriesDirectoryPageSize(pageSize = 15) {
     queryFn: async ({ pageParam }) => {
       const res = await fetchGalleries(pageParam, pageSize);
       return {
-        data: res?.isOk ? res.data : ([] as GalleryListRecord[]),
+        data: res?.isOk
+          ? filterExcludedGalleries(res.data)
+          : ([] as GalleryListRecord[]),
         pagination: res?.pagination,
       };
     },
@@ -50,7 +60,7 @@ export function useFeaturedGalleries(limit = 10) {
     queryKey: HOME_QK.featuredGalleries(userSession?.id),
     queryFn: async () => {
       const res = await fetchGalleries(1, limit);
-      return res?.isOk ? res.data : [];
+      return res?.isOk ? filterExcludedGalleries(res.data) : [];
     },
     staleTime: 5 * 60_000,
     gcTime: 15 * 60_000,

@@ -16,6 +16,10 @@ export default function FeaturedGalleries() {
   const { data: galleries = [], isLoading } = useFeaturedGalleries(10);
   const { isFollowingFor, toggleFollow, isLoadingFollowed, hasUser } = useGalleryFollow();
 
+  if (!isLoading && galleries.length === 0) {
+    return null;
+  }
+
   const GalleryCard = ({ item }: { item: any }) => {
     const image_href = getGalleryLogoFileView(item.logo, 600);
     const isFollowing = isFollowingFor(item.gallery_id);
