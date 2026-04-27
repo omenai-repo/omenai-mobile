@@ -204,7 +204,7 @@ export default function ShowsFairsEvents() {
           </Text>
         </View>
         <TouchableOpacity
-          style={tw`h-[36px] px-3 rounded-sm bg-[${colors.black}] items-center justify-center`}
+          style={tw`h-[36px] px-3 rounded-md bg-[${colors.black}] items-center justify-center`}
           activeOpacity={0.85}
           onPress={handleCreateEvent}
         >
