@@ -7,8 +7,10 @@ import type { GalleryContactData, GalleryProfile } from "#services/partners/gall
 import { HOME_QK, EVENTS_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
 
+const EXCLUDED_GALLERY_NAMES = new Set(["omenai gallery", "ankh gallery"]);
+
 function isExcludedGalleryName(name?: string | null) {
-  return (name ?? "").trim().toLowerCase() === "omenai gallery";
+  return EXCLUDED_GALLERY_NAMES.has((name ?? "").trim().toLowerCase());
 }
 
 function filterExcludedGalleries(galleries: GalleryListRecord[]) {
