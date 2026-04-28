@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React from "react";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 import { useAppStore } from "#store/app/appStore";
@@ -22,6 +22,9 @@ export default function RecentArtworkListing({
               !!userSession?.id && artwork.pricing.shouldShowPrice === "Yes"
             }
             availiablity={artwork.availability}
+            image_format={artwork.image_format}
+            hideBackground
+            useImageLoadAspectRatio
           />
         ))}
       </View>
@@ -38,6 +41,9 @@ export default function RecentArtworkListing({
               !!userSession?.id && artwork.pricing.shouldShowPrice === "Yes"
             }
             availiablity={artwork.availability}
+            image_format={artwork.image_format}
+            hideBackground
+            useImageLoadAspectRatio
           />
         ))}
       </View>

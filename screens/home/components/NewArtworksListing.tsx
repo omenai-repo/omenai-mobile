@@ -1,5 +1,6 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
 import ArtworkCard from "#components/artwork/ArtworkCard";
@@ -48,15 +49,18 @@ export default function NewArtworksListing({
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <ScrollView
+        <FlashList
+          data={data}
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-end" }]}
-        >
-          {data.map((item: any, index: number) => (
+          contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
+          ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+          keyExtractor={(item: any, index) =>
+            item.art_id?.toString() ?? `new-${index}`
+          }
+          renderItem={({ item }) => (
             <ArtworkCard
-              key={item.art_id?.toString() ?? `new-${index}`}
               title={item.title}
               url={item.url}
               artist={item.artist}
@@ -72,8 +76,8 @@ export default function NewArtworksListing({
               hideBackground
               useImageLoadAspectRatio
             />
-          ))}
-        </ScrollView>
+          )}
+        />
       )}
 
       {!isLoading && data.length < 1 && (

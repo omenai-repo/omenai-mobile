@@ -1,7 +1,8 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
+import { FlashList } from "@shopify/flash-list";
 import { fetchCuratedArtworks } from "#services/artworks/fetchCuratedArtworks";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import ViewAllCategoriesButton from "#components/buttons/ViewAllCategoriesButton";
@@ -47,15 +48,18 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
       <View>
         {isLoading && <ArtworkCardLoader />}
         {!isLoading && data.length > 0 && (
-          <ScrollView
+          <FlashList
+            data={data}
             horizontal
             showsHorizontalScrollIndicator={false}
             style={tw`mt-5`}
-            contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-end" }]}
-          >
-            {data.map((item: any, index: number) => (
+            contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
+            ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+            keyExtractor={(item: any, index) =>
+              item.art_id?.toString() ?? `curated-${index}`
+            }
+            renderItem={({ item }) => (
               <ArtworkCard
-                key={item.art_id?.toString() ?? `curated-${index}`}
                 title={item.title}
                 url={item.url}
                 artist={item.artist}
@@ -72,15 +76,17 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
                 image_format={item.image_format}
                 useImageLoadAspectRatio
               />
-            ))}
-            {showMoreButton && (
-              <ViewAllCategoriesButton
-                label="View all curated artworks"
-                listingType="curated"
-                darkMode
-              />
             )}
-          </ScrollView>
+            ListFooterComponent={
+              showMoreButton ? (
+                <ViewAllCategoriesButton
+                  label="View all curated artworks"
+                  listingType="curated"
+                  darkMode
+                />
+              ) : null
+            }
+          />
         )}
         {!isLoading && data.length < 1 && (
           <EmptyArtworks

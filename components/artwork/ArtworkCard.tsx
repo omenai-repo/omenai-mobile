@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Text,
   View,
@@ -16,6 +16,12 @@ import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
 import { useDevice } from "#hooks/useDevice";
 import { useAppStore } from "#store/app/appStore";
+import {
+  ARTWORK_CARD_IMAGE_HEIGHT,
+  ARTWORK_CARD_MAX_WIDTH,
+  ARTWORK_CARD_MIN_WIDTH,
+  ARTWORK_CARD_MIN_IMAGE_HEIGHT,
+} from "./artworkCard.constants";
 
 type ArtworkCardType = {
   title: string;
@@ -36,10 +42,10 @@ type ArtworkCardType = {
   image_format?: { ratio: string; orientation?: string };
   useImageLoadAspectRatio?: boolean;
   metadataMode?: "default" | "trending";
+  fixedImageHeight?: number;
+  frameBackgroundColor?: string;
+  useFixedImageFrame?: boolean;
 };
-
-const MAX_IMAGE_HEIGHT = 380; // px
-const MIN_IMAGE_HEIGHT = 100; // px
 
 const DEFAULT_ASPECT_RATIO = 1;
 
@@ -78,29 +84,36 @@ const parseAspectRatio = (ratio?: string): number | null => {
 const computeDimensions = (
   width: number,
   imageAspectRatio: number,
+  fixedImageHeight: number,
   isTablet: boolean,
-  screenWidth: number,
-): { cardWidth: number; imageDisplayHeight: number } => {
+  useFixedImageFrame: boolean,
+): { cardWidth: number; imageFrameHeight: number } => {
   if (width > 0) {
-    const rawHeight = width / imageAspectRatio;
+    const variableHeight = Math.max(
+      ARTWORK_CARD_MIN_IMAGE_HEIGHT,
+      Math.round(width / Math.max(imageAspectRatio, 0.01)),
+    );
     return {
       cardWidth: width,
-      imageDisplayHeight: Math.round(
-        Math.min(MAX_IMAGE_HEIGHT, Math.max(MIN_IMAGE_HEIGHT, rawHeight)),
-      ),
+      imageFrameHeight: useFixedImageFrame
+        ? Math.max(ARTWORK_CARD_MIN_IMAGE_HEIGHT, fixedImageHeight)
+        : variableHeight,
     };
   }
 
-  const fixedWidth = Math.round(
-    isTablet ? screenWidth * 0.35 : screenWidth * 0.65,
-  );
-  const rawHeight = fixedWidth / imageAspectRatio;
+  const rawWidth = fixedImageHeight * imageAspectRatio;
+  const minWidth = isTablet ? ARTWORK_CARD_MIN_WIDTH.tablet : ARTWORK_CARD_MIN_WIDTH.phone;
+  const maxWidth = isTablet ? ARTWORK_CARD_MAX_WIDTH.tablet : ARTWORK_CARD_MAX_WIDTH.phone;
+  const ratioDrivenWidth = Math.round(Math.max(minWidth, Math.min(maxWidth, rawWidth)));
 
   return {
-    cardWidth: fixedWidth,
-    imageDisplayHeight: Math.round(
-      Math.min(MAX_IMAGE_HEIGHT, Math.max(MIN_IMAGE_HEIGHT, rawHeight)),
-    ),
+    cardWidth: ratioDrivenWidth,
+    imageFrameHeight: useFixedImageFrame
+      ? Math.max(ARTWORK_CARD_MIN_IMAGE_HEIGHT, fixedImageHeight)
+      : Math.max(
+          ARTWORK_CARD_MIN_IMAGE_HEIGHT,
+          Math.round(ratioDrivenWidth / Math.max(imageAspectRatio, 0.01)),
+        ),
   };
 };
 
@@ -123,10 +136,13 @@ function ArtworkCard({
   image_format,
   useImageLoadAspectRatio = false,
   metadataMode = "default",
+  fixedImageHeight,
+  frameBackgroundColor,
+  useFixedImageFrame = true,
 }: Readonly<ArtworkCardType>) {
   const userSession = useAppStore((s) => s.userSession);
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { isTablet, width: screenWidth } = useDevice();
+  const { isTablet } = useDevice();
 
   const metadataAspectRatio = useMemo(
     () => parseAspectRatio(image_format?.ratio),
@@ -136,8 +152,21 @@ function ArtworkCard({
     null,
   );
 
+  useEffect(() => {
+    // FlashList reuses cells; reset per-item load ratio so prior item state
+    // doesn't briefly affect the next card during fast horizontal scroll.
+    setLoadedAspectRatio(null);
+  }, [url, art_id]);
+
   const imageAspectRatio =
-    loadedAspectRatio ?? metadataAspectRatio ?? DEFAULT_ASPECT_RATIO;
+    metadataAspectRatio ??
+    loadedAspectRatio ??
+    DEFAULT_ASPECT_RATIO;
+
+  const resolvedFixedImageHeight = useMemo(
+    () => fixedImageHeight ?? (isTablet ? ARTWORK_CARD_IMAGE_HEIGHT.tablet : ARTWORK_CARD_IMAGE_HEIGHT.phone),
+    [fixedImageHeight, isTablet],
+  );
 
   const handleImageLoad = useCallback(
     (event: ImageLoadEventData) => {
@@ -156,9 +185,16 @@ function ArtworkCard({
     [useImageLoadAspectRatio],
   );
 
-  const { cardWidth, imageDisplayHeight } = useMemo(
-    () => computeDimensions(width, imageAspectRatio, isTablet, screenWidth),
-    [width, imageAspectRatio, isTablet, screenWidth],
+  const { cardWidth, imageFrameHeight } = useMemo(
+    () =>
+      computeDimensions(
+        width,
+        imageAspectRatio,
+        resolvedFixedImageHeight,
+        isTablet,
+        useFixedImageFrame,
+      ),
+    [width, imageAspectRatio, resolvedFixedImageHeight, isTablet, useFixedImageFrame],
   );
 
   const imageUri = useMemo(
@@ -187,16 +223,21 @@ function ArtworkCard({
         <View
           style={{
             width: cardWidth,
-            height: imageDisplayHeight,
-            backgroundColor: hideBackground ? "transparent" : "#f0f0f0",
+            height: imageFrameHeight,
+            backgroundColor: hideBackground
+              ? "transparent"
+              : frameBackgroundColor ?? "#f0f0f0",
             overflow: "hidden",
+            alignItems: useFixedImageFrame ? "center" : undefined,
+            justifyContent: useFixedImageFrame ? "center" : undefined,
           }}
         >
           <Image
             source={{ uri: imageUri }}
-            style={{ width: cardWidth, height: imageDisplayHeight }}
-            contentFit="cover"
+            style={{ width: cardWidth, height: imageFrameHeight }}
+            contentFit="contain"
             transition={IMAGE_TRANSITION_MS}
+            recyclingKey={art_id ?? url}
             cachePolicy="memory-disk"
             placeholder={null}
             priority="normal"
@@ -350,6 +391,7 @@ const arePropsEqual = (
   prev.galleryView === next.galleryView &&
   prev.disableLikeButton === next.disableLikeButton &&
   prev.hideBackground === next.hideBackground &&
+  prev.useFixedImageFrame === next.useFixedImageFrame &&
   prev.metadataMode === next.metadataMode &&
   prev.useImageLoadAspectRatio === next.useImageLoadAspectRatio &&
   prev.image_format?.ratio === next.image_format?.ratio &&

@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import tw from "twrnc";
 import { useQuery } from "@tanstack/react-query";
 import { fetchViewHistory } from "#services/artworks/viewHistory/fetchRecentlyViewedArtworks";
@@ -8,7 +9,6 @@ import EmptyArtworks from "#components/general/EmptyArtworks";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import { HOME_QK } from "#utils/queryKeys";
 import ArtworkCard from "#components/artwork/ArtworkCard";
-import { useDevice } from "#hooks/useDevice";
 
 import SectionHeader from "#components/general/SectionHeader";
 
@@ -31,7 +31,6 @@ type ViewHistoryItem = {
 
 function RecentlyViewedArtworks() {
   const userSessionId = useAppStore((s) => s.userSession?.id);
-  const { isTablet, horizontalPadding } = useDevice();
   const userId = userSessionId;
   const ITEM_GAP = 20;
 
@@ -56,20 +55,21 @@ function RecentlyViewedArtworks() {
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <ScrollView
+        <FlashList
+          data={recentArtworks}
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
+          ItemSeparatorComponent={() => <View style={{ width: ITEM_GAP }} />}
           contentContainerStyle={{
-            paddingLeft: isTablet ? horizontalPadding : 20,
-            paddingRight: isTablet ? horizontalPadding : 20,
-            gap: ITEM_GAP,
             alignItems: "flex-end",
+            paddingHorizontal: 20,
           }}
-        >
-          {recentArtworks.map((item, index) => (
+          keyExtractor={(item, index) =>
+            item._id ?? `${item.art_id?.toString() ?? "rv"}-${index}`
+          }
+          renderItem={({ item }) => (
             <ArtworkCard
-              key={item._id ?? `${item.art_id?.toString() ?? "rv"}-${index}`}
               title={item.title ?? item.artwork ?? "Untitled"}
               url={item.url}
               artist={item.artist ?? "Unknown artist"}
@@ -87,8 +87,8 @@ function RecentlyViewedArtworks() {
               hidePriceLabel
               useImageLoadAspectRatio
             />
-          ))}
-        </ScrollView>
+          )}
+        />
       )}
 
       {!isLoading && data.length < 1 && (

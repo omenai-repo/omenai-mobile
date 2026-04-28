@@ -1,10 +1,11 @@
-import { Text, TouchableOpacity, View, FlatList } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { colors } from "#config/colors.config";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import { Feather } from "@expo/vector-icons";
 import tw from "twrnc";
+import { FlashList } from "@shopify/flash-list";
 
 interface ArtworkListSectionProps {
   title: string;
@@ -48,7 +49,7 @@ export default function ArtworkListSection({
         {isLoading ? (
           <ArtworkCardLoader />
         ) : (
-          <FlatList
+          <FlashList
             data={data}
             renderItem={({ item }) => (
               <ArtworkCard
@@ -59,6 +60,9 @@ export default function ArtworkListSection({
                 showPrice={item.pricing?.shouldShowPrice === "Yes"}
                 price={item.pricing?.usd_price}
                 availiablity={item.availability}
+                image_format={item.image_format}
+                hideBackground
+                useImageLoadAspectRatio
               />
             )}
             contentContainerStyle={tw`px-5 gap-5`}

@@ -1,5 +1,6 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
@@ -54,15 +55,18 @@ export default function TrendingArtworks({
       {isLoading && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <ScrollView
+        <FlashList
+          data={data}
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-end" }]}
-        >
-          {data.map((item: any, index: number) => (
+          contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
+          ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+          keyExtractor={(item: any, index) =>
+            item.art_id?.toString() ?? `trend-${index}`
+          }
+          renderItem={({ item }) => (
             <ArtworkCard
-              key={item.art_id?.toString() ?? `trend-${index}`}
               title={item.title}
               url={item.url}
               artist={item.artist}
@@ -79,14 +83,16 @@ export default function TrendingArtworks({
               useImageLoadAspectRatio
               metadataMode="trending"
             />
-          ))}
-          {showMoreButton && (
-            <ViewAllCategoriesButton
-              label="View all trending artworks"
-              listingType="trending"
-            />
           )}
-        </ScrollView>
+          ListFooterComponent={
+            showMoreButton ? (
+              <ViewAllCategoriesButton
+                label="View all trending artworks"
+                listingType="trending"
+              />
+            ) : null
+          }
+        />
       )}
 
       {!isLoading && data.length < 1 && (

@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   Pressable,
-  ScrollView,
   Text,
   useWindowDimensions,
   View,
@@ -11,6 +8,7 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { FlashList } from "@shopify/flash-list";
 import tw from "twrnc";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 import ArtworksImmersiveModal from "#components/artworks/ArtworksImmersiveModal";
@@ -44,6 +42,7 @@ export type GalleryWorkRow = {
   title: string;
   url: string;
   artist: string;
+  image_format?: { ratio: string; orientation?: string };
   availability?: boolean;
   impressions?: number;
   like_IDs?: string[];
@@ -68,7 +67,7 @@ export function priceFromGalleryWork(art: GalleryWorkRow): number {
 }
 
 const H_PAD = 20;
-const COL_GAP = 8;
+const COL_GAP = 16;
 
 export type GalleryArtistFilterOption = {
   id: string;
@@ -146,21 +145,11 @@ export default function GalleryWorksTabContent({
     [data],
   );
 
-  const columnsData = useMemo(() => {
-    const left: GalleryWorkRow[] = [];
-    const right: GalleryWorkRow[] = [];
-    items.forEach((item, index) => {
-      if (index % 2 === 0) left.push(item);
-      else right.push(item);
-    });
-    return [left, right];
-  }, [items]);
-
   const renderArtwork = useCallback(
     (art: GalleryWorkRow) => {
       const price = priceFromGalleryWork(art);
       return (
-        <View key={art.art_id} style={tw`mb-4`}>
+        <View style={[tw`mb-4`, { width: cardW }]}>
           <ArtworkCard
             title={art.title}
             url={art.url}
@@ -174,22 +163,15 @@ export default function GalleryWorksTabContent({
             width={cardW}
             galleryView
             disableLikeButton
+            image_format={art.image_format}
+            hideBackground
             useImageLoadAspectRatio
+            useFixedImageFrame={false}
           />
         </View>
       );
     },
     [cardW],
-  );
-
-  const onGridScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (!hasNextPage || isFetchingNextPage) return;
-      const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-      const nearBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 220;
-      if (nearBottom) void fetchNextPage();
-    },
-    [hasNextPage, isFetchingNextPage, fetchNextPage],
   );
 
   if (!isActive) return null;
@@ -281,23 +263,28 @@ export default function GalleryWorksTabContent({
   return (
     <View style={tw`flex-1`}>
       {filterStrip}
-      <ScrollView
+      <FlashList
+        data={items}
+        numColumns={2}
+        masonry
+        keyExtractor={(item) => item.art_id}
         showsVerticalScrollIndicator={false}
-        onScroll={onGridScroll}
-        scrollEventThrottle={16}
         contentContainerStyle={tw`px-5 pb-8 pt-2`}
-      >
-        <Text style={tw`text-[11px] text-neutral-500 mb-3`}>
-          {artistFilter !== "All" && selectedArtistName
-            ? `Works by ${selectedArtistName} (${items.length})`
-            : `${items.length} work${items.length === 1 ? "" : "s"}`}
-        </Text>
-        <View style={tw`flex-row justify-between`}>
-          <View style={{ width: cardW }}>{columnsData[0].map(renderArtwork)}</View>
-          <View style={{ width: cardW }}>{columnsData[1].map(renderArtwork)}</View>
-        </View>
-        {isFetchingNextPage ? <Loader size={56} height={90} /> : null}
-      </ScrollView>
+        onEndReached={() => {
+          if (!hasNextPage || isFetchingNextPage) return;
+          void fetchNextPage();
+        }}
+        onEndReachedThreshold={0.45}
+        ListHeaderComponent={
+          <Text style={tw`text-[11px] text-neutral-500 mb-3`}>
+            {artistFilter !== "All" && selectedArtistName
+              ? `Works by ${selectedArtistName} (${items.length})`
+              : `${items.length} work${items.length === 1 ? "" : "s"}`}
+          </Text>
+        }
+        ListFooterComponent={isFetchingNextPage ? <Loader size={56} height={90} /> : null}
+        renderItem={({ item }) => renderArtwork(item)}
+      />
       <ArtworksImmersiveModal
         visible={immersiveOpen}
         onClose={() => setImmersiveOpen(false)}
