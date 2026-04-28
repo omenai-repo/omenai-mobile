@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import {
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import { fetchPopularArtworks } from "#services/artworks/fetchPopularArtworks";
 import ArtworkCard from "#components/artwork/ArtworkCard";
@@ -61,15 +61,18 @@ export default React.memo(function PopularArtworks({
       {isLoading && <ArtworkCardLoader containerStyle={tw`pl-0`} />}
 
       {!isLoading && data.length > 0 && (
-        <ScrollView
+        <FlashList
+          data={data}
           horizontal
           nestedScrollEnabled
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={[tw`gap-5 pt-5`, { alignItems: "flex-end" }]}
-        >
-          {data.map((item: ArtworkFlatlistItem, index: number) => (
+          contentContainerStyle={[tw`pt-5`, { alignItems: "flex-end" }]}
+          ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+          keyExtractor={(item: ArtworkFlatlistItem, index) =>
+            item.art_id?.toString() ?? `popular-${index}`
+          }
+          renderItem={({ item }) => (
             <ArtworkCard
-              key={item.art_id?.toString() ?? `popular-${index}`}
               title={item.title}
               url={item.url}
               artist={item.artist}
@@ -81,10 +84,11 @@ export default React.memo(function PopularArtworks({
               art_id={item.art_id}
               galleryView
               hideBackground
+              image_format={item.image_format}
               useImageLoadAspectRatio
             />
-          ))}
-        </ScrollView>
+          )}
+        />
       )}
 
       {!isLoading && data.length === 0 && (

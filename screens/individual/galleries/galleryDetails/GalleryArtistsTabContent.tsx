@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { FlashList } from "@shopify/flash-list";
 import tw from "twrnc";
 import type { GalleryOverviewArtist } from "#services/partners/fetchGalleryOverviewData";
 import ArtworkCard from "#components/artwork/ArtworkCard";
@@ -28,7 +29,6 @@ export default function GalleryArtistsTabContent({
 }: Props) {
   const { width: screenW } = useWindowDimensions();
   const contentWidth = screenW - 32;
-  const floorCardWidth = Math.min(220, screenW * 0.52);
 
   const {
     data: floorData,
@@ -114,9 +114,15 @@ export default function GalleryArtistsTabContent({
             </Text>
           </Pressable>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`gap-3`}>
-          {artworks.map((art) => (
-            <View key={art.art_id} style={{ width: floorCardWidth }}>
+        <FlashList
+          data={artworks}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ alignItems: "flex-start" }}
+          ItemSeparatorComponent={() => <View style={tw`w-3`} />}
+          keyExtractor={(art) => art.art_id}
+          renderItem={({ item: art }) => (
+            <View>
               <ArtworkCard
                 title={art.title}
                 url={art.url}
@@ -127,14 +133,15 @@ export default function GalleryArtistsTabContent({
                 availiablity={art.availability}
                 impressions={art.impressions ?? 0}
                 like_IDs={art.like_IDs ?? []}
-                width={floorCardWidth}
                 galleryView
                 disableLikeButton
+                image_format={art.image_format}
+                hideBackground
                 useImageLoadAspectRatio
               />
             </View>
-          ))}
-        </ScrollView>
+          )}
+        />
       </View>
     );
   };

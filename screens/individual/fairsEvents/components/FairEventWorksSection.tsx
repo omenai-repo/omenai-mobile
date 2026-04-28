@@ -125,6 +125,9 @@ export default function FairEventWorksSection({ event }: { event: GalleryEventRe
                     like_IDs={art.like_IDs ?? []}
                     art_id={art.art_id}
                     width={cardWidth}
+                    image_format={art.image_format}
+                    hideBackground
+                    useFixedImageFrame={false}
                     useImageLoadAspectRatio
                   />
                 </View>

@@ -11,6 +11,7 @@ export type EventArtwork = {
   artist: string;
   url: string;
   availability: boolean;
+  image_format?: { ratio: string; orientation?: string };
   medium?: string;
   year?: string;
   author_id?: string;
