@@ -204,7 +204,7 @@ function ArtworkCard({
         Math.round(cardWidth * DPR_MULTIPLIER),
         undefined,
         undefined,
-        Platform.OS === "ios" ? 90 : 70,
+        90,
       ),
     [url, cardWidth],
   );

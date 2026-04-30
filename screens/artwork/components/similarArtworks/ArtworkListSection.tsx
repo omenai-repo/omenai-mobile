@@ -65,7 +65,8 @@ export default function ArtworkListSection({
                 useImageLoadAspectRatio
               />
             )}
-            contentContainerStyle={tw`px-5 gap-5`}
+            contentContainerStyle={tw`px-5`}
+            ItemSeparatorComponent={() => <View style={tw`w-5`} />}
             keyExtractor={(item, index) => item.art_id || index.toString()}
             horizontal={true}
             showsHorizontalScrollIndicator={false}

@@ -80,6 +80,15 @@ export default {
       fallbackToCacheTimeout: 30000,
     },
     plugins: [
+      [
+        "expo-build-properties",
+        {
+          android: {
+            enableMinifyInReleaseBuilds: true,
+            enableShrinkResourcesInReleaseBuilds: true,
+          },
+        },
+      ],
       "@react-native-community/datetimepicker",
       "expo-image",
       "expo-sharing",
