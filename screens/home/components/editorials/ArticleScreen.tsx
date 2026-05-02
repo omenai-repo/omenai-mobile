@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   View,
   Text,
@@ -7,27 +7,103 @@ import {
   useWindowDimensions,
 } from "react-native";
 import RenderHtml from "react-native-render-html";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import tw from "twrnc";
 import { getEditorialImageFilePreview } from "#lib/editorial/lib/getEditorialImageFilePreview";
+import {
+  canFetchFullEditorial,
+  editorialNeedsRemoteFetch,
+  editorialRowToArticle,
+  fetchEditorialDocument,
+} from "#lib/editorial/lib/fetchEditorialDocument";
 import { useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useQuery } from "@tanstack/react-query";
 import BlurStatusBar from "#components/general/BlurStatusBar";
-import { EditorialSchemaTypes } from "#types/types";
-
-dayjs.extend(relativeTime);
-
-const getReadTime = (content: string) => {
-  const wordCount = content?.split(/\s+/)?.length || 0;
-  return Math.ceil(wordCount / 200);
-};
+import ArticleDetailSkeleton from "./ArticleDetailSkeleton";
 
 const ArticleScreen = () => {
-  const { article } = useRoute().params as { article: EditorialSchemaTypes };
+  const { article: routeArticle } = useRoute().params as {
+    article: EditorialSchemaTypes;
+  };
+  const articleRecord = routeArticle as unknown as Record<string, unknown>;
+
+  const needsRemote = editorialNeedsRemoteFetch(routeArticle);
+  const canFetch = canFetchFullEditorial(articleRecord);
+
+  const detailQueryKey = useMemo(
+    () => [
+      "editorial-detail",
+      String(articleRecord.$id ?? ""),
+      String(routeArticle.slug ?? ""),
+    ],
+    [articleRecord.$id, routeArticle.slug],
+  );
+
+  const { data: fetchedArticle, isLoading, isError } = useQuery({
+    queryKey: detailQueryKey,
+    queryFn: async () => {
+      const res = await fetchEditorialDocument(articleRecord);
+      if (!res.isOk) return null;
+      return editorialRowToArticle(res.data);
+    },
+    enabled: needsRemote && canFetch,
+    staleTime: 5 * 60_000,
+    gcTime: 15 * 60_000,
+  });
+
+  const article = useMemo(() => {
+    if (!needsRemote) return routeArticle;
+    if (fetchedArticle) {
+      return { ...routeArticle, ...fetchedArticle };
+    }
+    return routeArticle;
+  }, [needsRemote, routeArticle, fetchedArticle]);
+
   const { width } = useWindowDimensions();
   const imageUrl = getEditorialImageFilePreview(article.cover, 1000);
   const insets = useSafeAreaInsets();
+
+  if (needsRemote && !canFetch) {
+    return (
+      <View style={[tw`flex-1 bg-white items-center justify-center`, { paddingTop: insets.top }]}>
+        <BlurStatusBar />
+        <Text style={tw`text-neutral-500 px-6 text-center font-sans-regular`}>
+          {`This editorial could not be opened. Please contact support if this keeps happening.`}
+        </Text>
+      </View>
+    );
+  }
+
+  if (needsRemote && isLoading) {
+    return (
+      <View style={tw`flex-1 bg-white`}>
+        <BlurStatusBar />
+        <ArticleDetailSkeleton contentTopInset={insets.top} />
+      </View>
+    );
+  }
+
+  if (needsRemote && isError) {
+    return (
+      <View style={[tw`flex-1 bg-white items-center justify-center`, { paddingTop: insets.top }]}>
+        <BlurStatusBar />
+        <Text style={tw`text-neutral-500 px-6 text-center font-sans-regular`}>
+          Could not load this editorial. Go back and open it again, or try again later.
+        </Text>
+      </View>
+    );
+  }
+
+  if (needsRemote && !fetchedArticle) {
+    return (
+      <View style={[tw`flex-1 bg-white items-center justify-center`, { paddingTop: insets.top }]}>
+        <BlurStatusBar />
+        <Text style={tw`text-neutral-500 px-6 text-center font-sans-regular`}>
+          Editorial unavailable.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={tw`flex-1 bg-white`}>

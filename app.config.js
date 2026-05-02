@@ -86,6 +86,17 @@ export default {
           android: {
             enableMinifyInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,
+            // R8 fails on optional class references unless ignored (see minifyReleaseWithR8).
+            extraProguardRules: `
+              # Stripe: push provisioning classes are optional; @stripe/stripe-react-native still references them.
+              -dontwarn com.stripe.android.pushProvisioning.**
+
+              # Firebase Installations references firebase-ktx; KTX module not on the Android classpath here.
+              -dontwarn com.google.firebase.ktx.**
+
+              # Nimbus JOSE JWT optional Ed25519/X25519 paths reference Tink subtle APIs not bundled.
+              -dontwarn com.google.crypto.tink.subtle.**
+            `.trim(),
           },
         },
       ],
