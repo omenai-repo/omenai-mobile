@@ -361,11 +361,12 @@ type editorialListingType = {
 
 type EditorialSchemaTypes = {
   headline: string;
-  summary: string;
+  summary?: string;
   cover: string;
   date: Date | string;
-  content: string;
+  content?: string;
   slug: string;
+  $id?: string;
 };
 
 type ArtworkUploadStateTypes = {

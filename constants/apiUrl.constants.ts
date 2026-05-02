@@ -1,5 +1,14 @@
 export { getApiHeaders } from "../utils/apiHeaders";
 
+/** Linear-time; avoids regex backtracking on long slash runs */
+function stripTrailingSlashes(url: string): string {
+  let end = url.length;
+  while (end > 0 && url[end - 1] === "/") {
+    end -= 1;
+  }
+  return end === url.length ? url : url.slice(0, end);
+}
+
 const getConfiguredApiUrl = () => {
   const rawUrl =
     process.env.EXPO_PUBLIC_ENV === "production"
@@ -15,7 +24,7 @@ const getConfiguredApiUrl = () => {
     return "";
   }
 
-  return normalized.replace(/\/+$/, "");
+  return stripTrailingSlashes(normalized);
 };
 
 export const apiUrl = getConfiguredApiUrl();
