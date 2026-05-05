@@ -195,7 +195,7 @@ export default function FairsEventsScreen() {
         <BackHeaderTitle title="Fairs & Events" />
         <View style={tw`flex-1 items-center justify-center px-6`}>
           <Text style={tw`text-center text-sm text-neutral-500`}>Failed to load events.</Text>
-          <Pressable onPress={() => void refetch()} style={tw`mt-4 border border-neutral-300 px-4 py-2 rounded-sm`}>
+          <Pressable onPress={() => refetch()} style={tw`mt-4 border border-neutral-300 px-4 py-2 rounded-sm`}>
             <Text style={tw`text-sm text-neutral-900`}>Retry</Text>
           </Pressable>
         </View>
@@ -260,7 +260,7 @@ export default function FairsEventsScreen() {
             {hasNextPage ? (
               <View style={tw`mt-8 items-center`}>
                 <Pressable
-                  onPress={() => void fetchNextPage()}
+                  onPress={() => fetchNextPage()}
                   disabled={isFetchingNextPage}
                   style={({ pressed }) => [
                     tw`border border-neutral-200 px-8 py-3 rounded-sm`,

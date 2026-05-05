@@ -28,7 +28,7 @@ type EventDetailsHeaderCardProps = {
   onEditClick: () => void;
 };
 
-export default function EventDetailsHeaderCard({
+function EventDetailsHeaderCardImpl({
   event,
   source,
   isSavingDetails,
@@ -461,4 +461,8 @@ export default function EventDetailsHeaderCard({
       </View>
     </View>
   );
+}
+
+export default function EventDetailsHeaderCard(props: EventDetailsHeaderCardProps) {
+  return <EventDetailsHeaderCardImpl {...props} />;
 }

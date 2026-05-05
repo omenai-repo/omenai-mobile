@@ -76,8 +76,7 @@ export default function FeaturedGalleries() {
 
           <FollowComponent
             isFollowing={isFollowing}
-            onPress={() => {
-              void toggleFollow(item.gallery_id);
+            onPress={() => {toggleFollow(item.gallery_id);
             }}
             disabled={!hasUser || isLoadingFollowed}
           />

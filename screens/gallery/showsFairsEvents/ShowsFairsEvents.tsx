@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   RefreshControl,
   ScrollView,
@@ -24,6 +23,7 @@ import { screenName } from "#constants/screenNames.constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppStore } from "#store/app/appStore";
 import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
+import Loader from "#components/general/Loader";
 
 type ProgrammingTab = "active" | "past";
 
@@ -159,16 +159,16 @@ export default function ShowsFairsEvents() {
 
   const isLoadingInitial = programmingQuery.isLoading;
   const isCheckingCreateEventAccess = subscriptionQuery.isLoading;
+  const currentPlan = String(
+    subscriptionQuery.data?.data?.plan_details?.type || subscriptionQuery.data?.plan || "",
+  )
+    .trim()
+    .toLowerCase();
+  const hasPrincipalPlan = currentPlan === "principal";
+
   const handleCreateEvent = () => {
     if (isCheckingCreateEventAccess) return;
-
-    const currentPlan = String(
-      subscriptionQuery.data?.data?.plan_details?.type || subscriptionQuery.data?.plan || "",
-    )
-      .trim()
-      .toLowerCase();
-
-    if (currentPlan !== "principal") {
+    if (!hasPrincipalPlan) {
       navigation.navigate(screenName.gallery.createGalleryEvent, {
         accessRestricted: true,
       });
@@ -219,6 +219,79 @@ export default function ShowsFairsEvents() {
     );
   };
 
+  const renderProgrammingContent = () => {
+    if (!galleryId) {
+      return (
+        <View style={tw`flex-1 items-center justify-center px-6`}>
+          <Text style={tw`text-sm text-neutral-600 text-center`}>
+            Sign in with a gallery account to view programming.
+          </Text>
+        </View>
+      );
+    }
+
+    if (isLoadingInitial) {
+      return (
+        <View style={tw`flex-1 items-center justify-center`}>
+          <Loader size={100} height={120} />
+        </View>
+      );
+    }
+
+    const renderProgrammingList = () => {
+      if (programmingQuery.isError) {
+        return (
+          <View style={tw`bg-white border border-neutral-200 rounded-sm p-4`}>
+            <Text style={tw`text-sm text-neutral-700`}>
+              Failed to load programming. Pull to refresh and try again.
+            </Text>
+          </View>
+        );
+      }
+
+      if (currentList.length === 0) {
+        return (
+          <View style={tw`bg-white border border-neutral-200 rounded-sm p-4`}>
+            <Text style={tw`text-xs text-neutral-500`}>
+              {programmingTab === "past"
+                ? "No past archives yet."
+                : "No upcoming or active programming yet."}
+            </Text>
+          </View>
+        );
+      }
+
+      return (
+        <View style={tw`flex-row flex-wrap justify-between`}>
+          {currentList.map((item) => renderRow(item))}
+        </View>
+      );
+    };
+
+    return (
+      <ScrollView
+        style={tw`flex-1`}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{
+          paddingTop: 18,
+          paddingHorizontal: 16,
+          paddingBottom: insets.bottom + 30,
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={tw`mb-8`}>
+          <ProgrammingTabs activeTab={programmingTab} onChange={setProgrammingTab} />
+          {renderProgrammingList()}
+        </View>
+
+        <View style={{ height: 2 }} />
+      </ScrollView>
+    );
+  };
+
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <View
@@ -245,57 +318,7 @@ export default function ShowsFairsEvents() {
         </TouchableOpacity>
       </View>
 
-      {!galleryId ? (
-        <View style={tw`flex-1 items-center justify-center px-6`}>
-          <Text style={tw`text-sm text-neutral-600 text-center`}>
-            Sign in with a gallery account to view programming.
-          </Text>
-        </View>
-      ) : isLoadingInitial ? (
-        <View style={tw`flex-1 items-center justify-center`}>
-          <ActivityIndicator size="large" color={colors.black} />
-        </View>
-      ) : (
-        <ScrollView
-          style={tw`flex-1`}
-          contentInsetAdjustmentBehavior="automatic"
-          contentContainerStyle={{
-            paddingTop: 18,
-            paddingHorizontal: 16,
-            paddingBottom: insets.bottom + 30,
-          }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={tw`mb-8`}>
-            <ProgrammingTabs activeTab={programmingTab} onChange={setProgrammingTab} />
-
-            {programmingQuery.isError ? (
-              <View style={tw`bg-white border border-neutral-200 rounded-sm p-4`}>
-                <Text style={tw`text-sm text-neutral-700`}>
-                  Failed to load programming. Pull to refresh and try again.
-                </Text>
-              </View>
-            ) : currentList.length === 0 ? (
-              <View style={tw`bg-white border border-neutral-200 rounded-sm p-4`}>
-                <Text style={tw`text-xs text-neutral-500`}>
-                  {programmingTab === "past"
-                    ? "No past archives yet."
-                    : "No upcoming or active programming yet."}
-                </Text>
-              </View>
-            ) : (
-              <View style={tw`flex-row flex-wrap justify-between`}>
-                {currentList.map((item) => renderRow(item))}
-              </View>
-            )}
-          </View>
-
-          <View style={{ height: 2 }} />
-        </ScrollView>
-      )}
+      {renderProgrammingContent()}
     </View>
   );
 }

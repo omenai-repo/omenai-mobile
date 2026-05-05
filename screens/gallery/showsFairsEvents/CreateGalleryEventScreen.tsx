@@ -99,7 +99,7 @@ type CreateStackParam = {
 };
 type Props = NativeStackScreenProps<CreateStackParam, "create-gallery-event">;
 
-export default function CreateGalleryEventScreen({ navigation, route }: Props) {
+function CreateGalleryEventScreenImpl({ navigation, route }: Props) {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const { userSession } = useAppStore();
@@ -815,4 +815,8 @@ export default function CreateGalleryEventScreen({ navigation, route }: Props) {
       />
     </View>
   );
+}
+
+export default function CreateGalleryEventScreen(props: Props) {
+  return <CreateGalleryEventScreenImpl {...props} />;
 }

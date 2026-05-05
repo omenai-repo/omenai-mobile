@@ -5,7 +5,6 @@ import {
   Pressable,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,9 +16,9 @@ import tw from "twrnc";
 import { GalleryEventRecord } from "#services/events/events.service";
 import { colors } from "#config/colors.config";
 import { formTextInputStyle } from "#components/gallery/artistRoster/addArtistFormStyles";
-import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import { artist_countries_codes_currency } from "#data/artist_countries_codes_currency";
 import LongBlackButton from "#components/buttons/LongBlackButton";
+import EventTypeSpecificFields from "./EventTypeSpecificFields";
 
 type EditFormState = {
   title: string;
@@ -35,6 +34,7 @@ type EditFormState = {
 };
 
 type DateFieldKey = "startDate" | "endDate" | "vipPreviewDate";
+type NormalizedEventType = "art_fair" | "exhibition" | "viewing_room" | string;
 
 function startOfToday(): Date {
   const d = new Date();
@@ -64,6 +64,61 @@ function formatYmdForDisplay(ymd: string): string {
   return d ? format(d, "MMM d, yyyy") : "";
 }
 
+function normalizeEventType(event: GalleryEventRecord): NormalizedEventType {
+  const rawEventType = String((event as any)?.event_type || "")
+    .toLowerCase()
+    .trim()
+    .replaceAll(/[-\s]+/g, "_");
+  if (rawEventType === "viewingroom") return "viewing_room";
+  if (rawEventType === "artfair") return "art_fair";
+  return rawEventType;
+}
+
+function validateEditPayload(form: EditFormState, eventType: NormalizedEventType) {
+  const errors: Record<string, string> = {};
+  if (!form.title.trim()) errors.title = "Title is required.";
+  if (!form.startDate.trim()) errors.startDate = "Opening date is required.";
+  if (!form.endDate.trim()) errors.endDate = "Closing date is required.";
+
+  if (eventType === "art_fair" && !form.boothNumber.trim()) {
+    return { errors, boothError: "Booth number is required." };
+  }
+
+  return { errors, boothError: "" };
+}
+
+function buildEditPayload(form: EditFormState, eventType: NormalizedEventType) {
+  const payload: Record<string, unknown> = {
+    title: form.title.trim(),
+    description: form.description.trim(),
+    start_date: form.startDate.trim(),
+    end_date: form.endDate.trim(),
+  };
+
+  switch (eventType) {
+    case "art_fair":
+      payload.booth_number = form.boothNumber.trim();
+      payload.location = {
+        city: form.city.trim(),
+        country: form.country.trim(),
+      };
+      if (form.vipPreviewDate.trim()) payload.vip_preview_date = form.vipPreviewDate.trim();
+      return payload;
+    case "exhibition":
+      payload.location = {
+        venue: form.venue.trim(),
+        city: form.city.trim(),
+        country: form.country.trim(),
+      };
+      return payload;
+    case "viewing_room":
+      payload.external_url = form.externalUrl.trim() || null;
+      return payload;
+    default:
+      return payload;
+  }
+}
+
 type EditEventBottomSheetProps = {
   isOpen: boolean;
   event: GalleryEventRecord;
@@ -80,16 +135,7 @@ export default function EditEventBottomSheet({
   onSave,
 }: EditEventBottomSheetProps) {
   const insets = useSafeAreaInsets();
-  const rawEventType = String((event as any)?.event_type || "")
-    .toLowerCase()
-    .trim()
-    .replaceAll(/[-\s]+/g, "_");
-  const eventType =
-    rawEventType === "viewingroom"
-      ? "viewing_room"
-      : rawEventType === "artfair"
-        ? "art_fair"
-        : rawEventType;
+  const eventType = normalizeEventType(event);
   const eventTypeLabel = eventType ? eventType.replaceAll(/_/g, " ") : "presentation";
   const [boothError, setBoothError] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -181,46 +227,19 @@ export default function EditEventBottomSheet({
   };
 
   const handleSave = () => {
-    const nextErrors: Record<string, string> = {};
-    if (!editForm.title.trim()) nextErrors.title = "Title is required.";
-    if (!editForm.startDate.trim()) nextErrors.startDate = "Opening date is required.";
-    if (!editForm.endDate.trim()) nextErrors.endDate = "Closing date is required.";
-    if (Object.keys(nextErrors).length) {
-      setErrors(nextErrors);
+    const validation = validateEditPayload(editForm, eventType);
+    if (Object.keys(validation.errors).length) {
+      setErrors(validation.errors);
+      return;
+    }
+    if (validation.boothError) {
+      setBoothError(validation.boothError);
       return;
     }
 
-    if (eventType === "art_fair" && !editForm.boothNumber.trim()) {
-      setBoothError("Booth number is required.");
-      return;
-    }
     setBoothError("");
     setErrors({});
-    const payload: Record<string, unknown> = {
-      title: editForm.title.trim(),
-      description: editForm.description.trim(),
-      start_date: editForm.startDate.trim(),
-      end_date: editForm.endDate.trim(),
-    };
-
-    if (eventType === "art_fair") {
-      payload.booth_number = editForm.boothNumber.trim();
-      payload.location = {
-        city: editForm.city.trim(),
-        country: editForm.country.trim(),
-      };
-      if (editForm.vipPreviewDate.trim()) payload.vip_preview_date = editForm.vipPreviewDate.trim();
-    } else if (eventType === "exhibition") {
-      payload.location = {
-        venue: editForm.venue.trim(),
-        city: editForm.city.trim(),
-        country: editForm.country.trim(),
-      };
-    } else if (eventType === "viewing_room") {
-      payload.external_url = editForm.externalUrl.trim() || null;
-    }
-
-    onSave(payload);
+    onSave(buildEditPayload(editForm, eventType));
   };
 
   return (
@@ -305,140 +324,16 @@ export default function EditEventBottomSheet({
               </View>
             </View>
 
-            {eventType === "art_fair" ? (
-              <View style={tw`mb-4 gap-4`}>
-                <View>
-                  <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mb-2`}>
-                    Booth Number *
-                  </Text>
-                  <TextInput
-                    value={editForm.boothNumber}
-                    onChangeText={(value) => {
-                      if (boothError) setBoothError("");
-                      setEditForm((prev) => ({ ...prev, boothNumber: value }));
-                    }}
-                    placeholder="e.g. C14"
-                    placeholderTextColor={colors.inputLabel}
-                    style={formTextInputStyle}
-                  />
-                  {boothError ? <Text style={tw`text-[10px] text-red-600 mt-1`}>{boothError}</Text> : null}
-                </View>
-                <View style={tw`z-20`}>
-                  <CustomSelectPicker
-                    label="Event Location (Country)"
-                    placeholder="Select country"
-                    value={editForm.country}
-                    data={countryOptions}
-                    search
-                    searchPlaceholder="Search countries"
-                    handleSetValue={(item) =>
-                      setEditForm((prev) => ({ ...prev, country: String(item.value || "") }))
-                    }
-                    zIndex={5000}
-                  />
-                </View>
-                <View>
-                  <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mb-2`}>City</Text>
-                  <TextInput
-                    value={editForm.city}
-                    onChangeText={(value) => setEditForm((prev) => ({ ...prev, city: value }))}
-                    placeholder="e.g. Miami"
-                    placeholderTextColor={colors.inputLabel}
-                    style={formTextInputStyle}
-                  />
-                </View>
-                <View>
-                  <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mb-2`}>
-                    VIP Preview Date (optional)
-                  </Text>
-                  <View style={tw`flex-row items-center gap-2`}>
-                    <Pressable
-                      onPress={() => setActiveDateField("vipPreviewDate")}
-                      style={[...formTextInputStyle, tw`flex-1 flex-row items-center justify-between`]}
-                    >
-                      <Text
-                        style={{
-                          color: editForm.vipPreviewDate ? colors.black : colors.inputLabel,
-                          fontSize: 14,
-                        }}
-                        numberOfLines={1}
-                      >
-                        {editForm.vipPreviewDate
-                          ? formatYmdForDisplay(editForm.vipPreviewDate)
-                          : "Select date"}
-                      </Text>
-                      <Ionicons name="calendar-outline" size={20} color="#737373" />
-                    </Pressable>
-                    {editForm.vipPreviewDate ? (
-                      <TouchableOpacity
-                        onPress={() => setEditForm((prev) => ({ ...prev, vipPreviewDate: "" }))}
-                        style={tw`px-3 py-3 border border-neutral-300 rounded-sm`}
-                      >
-                        <Text style={tw`text-xs text-neutral-700`}>Clear</Text>
-                      </TouchableOpacity>
-                    ) : null}
-                  </View>
-                </View>
-              </View>
-            ) : null}
-
-            {eventType === "exhibition" ? (
-              <View style={tw`mb-4 gap-4`}>
-                <View>
-                  <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mb-2`}>
-                    Venue / Gallery Name
-                  </Text>
-                  <TextInput
-                    value={editForm.venue}
-                    onChangeText={(value) => setEditForm((prev) => ({ ...prev, venue: value }))}
-                    placeholder="e.g. Main Space"
-                    placeholderTextColor={colors.inputLabel}
-                    style={formTextInputStyle}
-                  />
-                </View>
-                <View style={tw`z-20`}>
-                  <CustomSelectPicker
-                    label="Event Location (Country)"
-                    placeholder="Select country"
-                    value={editForm.country}
-                    data={countryOptions}
-                    search
-                    searchPlaceholder="Search countries"
-                    handleSetValue={(item) =>
-                      setEditForm((prev) => ({ ...prev, country: String(item.value || "") }))
-                    }
-                    zIndex={5000}
-                  />
-                </View>
-                <View>
-                  <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mb-2`}>City</Text>
-                  <TextInput
-                    value={editForm.city}
-                    onChangeText={(value) => setEditForm((prev) => ({ ...prev, city: value }))}
-                    placeholder="e.g. London"
-                    placeholderTextColor={colors.inputLabel}
-                    style={formTextInputStyle}
-                  />
-                </View>
-              </View>
-            ) : null}
-
-            {eventType === "viewing_room" ? (
-              <View style={tw`gap-2 mb-3`}>
-                <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500`}>
-                  External Link (optional)
-                </Text>
-                <TextInput
-                  value={editForm.externalUrl}
-                  onChangeText={(value) => setEditForm((prev) => ({ ...prev, externalUrl: value }))}
-                  autoCapitalize="none"
-                  keyboardType="url"
-                  placeholder="https://..."
-                  placeholderTextColor={colors.inputLabel}
-                  style={formTextInputStyle}
-                />
-              </View>
-            ) : null}
+            <EventTypeSpecificFields
+              eventType={eventType}
+              editForm={editForm}
+              boothError={boothError}
+              setBoothError={setBoothError}
+              setEditForm={setEditForm}
+              setActiveDateField={setActiveDateField}
+              countryOptions={countryOptions}
+              formatDateForDisplay={formatYmdForDisplay}
+            />
 
             <View style={tw`gap-2 mb-3`}>
               <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500`}>
