@@ -419,119 +419,113 @@ const AddPrimaryAcctScreen = () => {
     }
   };
 
+  const showAccountError = (message: string) => {
+    updateModal({
+      message,
+      showModal: true,
+      modalType: "error",
+    });
+  };
+
+  const getAccountValidationError = (): string | null => {
+    switch (regionType) {
+      case "uk":
+        if (!acctName || !acctNumber || !sortCode) {
+          return "Please fill all required UK account fields";
+        }
+        if (!isValidUKBankDetails(acctNumber, sortCode)) {
+          return "Invalid UK account number or sort code";
+        }
+        return null;
+      case "us":
+        if (!acctName || !acctNumber || !routingNumber) {
+          return "Please fill all required US account fields";
+        }
+        if (!/^\d{9}$/.test(routingNumber)) {
+          return "US routing number must be exactly 9 digits";
+        }
+        return null;
+      case "eu":
+      case "international":
+        if (!acctName || !iban || !swiftCode) {
+          return "Please fill all required account fields";
+        }
+        if (!isValidIBAN(iban)) {
+          return "Invalid IBAN. Please check and try again.";
+        }
+        return null;
+      case "africa":
+        return isValidated
+          ? null
+          : "Please validate your account before submitting";
+      default:
+        return null;
+    }
+  };
+
+  const buildAccountDetails = (): any | null => {
+    switch (regionType) {
+      case "africa":
+        return {
+          type: "africa",
+          account_number: acctNumber,
+          bank_name: selectedBank?.label || "",
+          account_name: acctName,
+          bank_id: selectedBank?.id || "",
+          bank_code: selectedBank?.value || "",
+          branch: selectedBranch,
+          bank_country: effectiveCountryCode,
+        };
+      case "uk":
+        return {
+          type: "uk",
+          account_number: acctNumber,
+          sort_code: sortCode.replaceAll(/[\s-]/g, ""),
+          bank_name: manualBankName || "UK Bank",
+          account_name: acctName,
+          bank_country: effectiveCountryCode,
+        };
+      case "us":
+        return {
+          type: "us",
+          account_number: acctNumber,
+          routing_number: routingNumber,
+          bank_name: manualBankName || "US Bank",
+          account_name: acctName,
+          bank_country: "US",
+        };
+      case "eu":
+      case "international":
+        return {
+          type: regionType,
+          iban: iban.replaceAll(/\s/g, "").toUpperCase(),
+          swift_code: swiftCode.trim().toUpperCase(),
+          bank_name:
+            regionType === "eu" ? manualBankName || "EU Bank" : manualBankName,
+          account_name: acctName,
+          bank_country: effectiveCountryCode,
+        };
+      default:
+        return null;
+    }
+  };
+
   const handleAddPrimaryAccount = () => {
-    if (regionType === "uk") {
-      if (!acctName || !acctNumber || !sortCode) {
-        updateModal({
-          message: "Please fill all required UK account fields",
-          showModal: true,
-          modalType: "error",
-        });
-        return;
-      }
-      if (!isValidUKBankDetails(acctNumber, sortCode)) {
-        updateModal({
-          message: "Invalid UK account number or sort code",
-          showModal: true,
-          modalType: "error",
-        });
-        return;
-      }
-    }
-
-    if (regionType === "us") {
-      if (!acctName || !acctNumber || !routingNumber) {
-        updateModal({
-          message: "Please fill all required US account fields",
-          showModal: true,
-          modalType: "error",
-        });
-        return;
-      }
-      if (!/^\d{9}$/.test(routingNumber)) {
-        updateModal({
-          message: "US routing number must be exactly 9 digits",
-          showModal: true,
-          modalType: "error",
-        });
-        return;
-      }
-    }
-
-    if (regionType === "eu" || regionType === "international") {
-      if (!acctName || !iban || !swiftCode) {
-        updateModal({
-          message: "Please fill all required account fields",
-          showModal: true,
-          modalType: "error",
-        });
-        return;
-      }
-      if (!isValidIBAN(iban)) {
-        updateModal({
-          message: "Invalid IBAN. Please check and try again.",
-          showModal: true,
-          modalType: "error",
-        });
-        return;
-      }
-    }
-
-    if (regionType === "africa" && !isValidated) {
-      updateModal({
-        message: "Please validate your account before submitting",
-        showModal: true,
-        modalType: "error",
-      });
+    const validationError = getAccountValidationError();
+    if (validationError) {
+      showAccountError(validationError);
       return;
     }
 
-    let account_details: any = null;
-
-    if (regionType === "africa") {
-      account_details = {
-        type: "africa",
-        account_number: acctNumber,
-        bank_name: selectedBank?.label || "",
-        account_name: acctName,
-        bank_id: selectedBank?.id || "",
-        bank_code: selectedBank?.value || "",
-        branch: selectedBranch,
-        bank_country: effectiveCountryCode,
-      };
-    } else if (regionType === "uk") {
-      account_details = {
-        type: "uk",
-        account_number: acctNumber,
-        sort_code: sortCode.replaceAll(/[\s-]/g, ""),
-        bank_name: manualBankName || "UK Bank",
-        account_name: acctName,
-        bank_country: effectiveCountryCode,
-      };
-    } else if (regionType === "us") {
-      account_details = {
-        type: "us",
-        account_number: acctNumber,
-        routing_number: routingNumber,
-        bank_name: manualBankName || "US Bank",
-        account_name: acctName,
-        bank_country: "US",
-      };
-    } else if (regionType === "eu" || regionType === "international") {
-      account_details = {
-        type: regionType,
-        iban: iban.replaceAll(/\s/g, "").toUpperCase(),
-        swift_code: swiftCode.trim().toUpperCase(),
-        bank_name:
-          regionType === "eu" ? manualBankName || "EU Bank" : manualBankName,
-        account_name: acctName,
-        bank_country: effectiveCountryCode,
-      };
+    const accountDetails = buildAccountDetails();
+    if (!accountDetails) {
+      showAccountError("Unsupported region for account details.");
+      return;
     }
 
     const payload = {
       owner_id: userSession.id,
-      account_details,
+      account_details: accountDetails,
       base_currency: effectiveBaseCurrency,
     };
 

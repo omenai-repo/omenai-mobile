@@ -145,6 +145,190 @@ type accountStateType = {
   gallery_verified: boolean;
 };
 
+const allGalleryTabRouteNames = [...galleryTabs, ...galleryMoreTabs].map(
+  ({ name }) => name,
+);
+
+const moreMenuKeys = [
+  "shows-fairs-events",
+  "artist-roster",
+  "payouts",
+  "support-tickets",
+  "profile-management",
+  "logout",
+];
+
+function buildMoreSheetItems(
+  navigateToScreen: (routeName: string) => void,
+): MoreSheetItem[] {
+  return [
+    {
+      key: "overview",
+      label: "Overview",
+      routeName: screenName.gallery.overview,
+      icon: overviewActive,
+      keywords: ["dashboard", "home"],
+      onPress: () => navigateToScreen(screenName.gallery.overview),
+    },
+    {
+      key: "artworks",
+      label: "Artworks",
+      routeName: screenName.gallery.artworks,
+      icon: shippingActive,
+      keywords: ["listing", "catalog"],
+      onPress: () => navigateToScreen(screenName.gallery.artworks),
+    },
+    {
+      key: "shows-fairs-events",
+      label: "Shows, Fairs & Events",
+      routeName: screenName.gallery.showsFairsEvents,
+      icon: reviewHubActive,
+      keywords: ["show", "fair", "events"],
+      onPress: () => navigateToScreen(screenName.gallery.showsFairsEvents),
+    },
+    {
+      key: "artist-roster",
+      label: "Artist Roster",
+      routeName: screenName.gallery.artistRoster,
+      expoIconName: "list-outline" as const,
+      keywords: ["artists", "roster"],
+      onPress: () => navigateToScreen(screenName.gallery.artistRoster),
+    },
+    {
+      key: "orders",
+      label: "Orders",
+      routeName: screenName.gallery.orders,
+      icon: ordersActive,
+      keywords: ["shipping", "fulfillment"],
+      onPress: () => navigateToScreen(screenName.gallery.orders),
+    },
+    {
+      key: "billing",
+      label: "Billing",
+      routeName: screenName.gallery.billing,
+      icon: billingActive,
+      keywords: ["plans", "payments"],
+      onPress: () => navigateToScreen(screenName.gallery.billing),
+    },
+    {
+      key: "subscription",
+      label: "Subscriptions",
+      routeName: screenName.gallery.subscriptions,
+      icon: billingActive,
+      keywords: ["billing"],
+      onPress: () => navigateToScreen(screenName.gallery.subscriptions),
+    },
+    {
+      key: "payouts",
+      label: "Payouts",
+      routeName: screenName.gallery.stripePayouts,
+      icon: walletActive,
+      keywords: ["stripe", "withdrawals"],
+      onPress: () => navigateToScreen(screenName.gallery.stripePayouts),
+    },
+    {
+      key: "support-tickets",
+      label: "Support Tickets",
+      routeName: screenName.supportTickets,
+      icon: reviewHubActive,
+      keywords: ["support", "help"],
+      onPress: () => navigateToScreen(screenName.supportTickets),
+    },
+    {
+      key: "profile-management",
+      label: "Profile",
+      routeName: screenName.gallery.profile,
+      icon: profileActive,
+      keywords: ["settings", "account"],
+      onPress: () => navigateToScreen(screenName.gallery.profile),
+    },
+    {
+      key: "logout",
+      label: "Logout",
+      routeName: "logout",
+      keywords: ["sign out", "log out"],
+      isDanger: true,
+      onPress: () => void logout(),
+    },
+  ];
+}
+
+function GalleryTabs() {
+  const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
+  const tabNavigationRef = useRef<any>(null);
+
+  const navigateToScreen = useCallback((routeName: string) => {
+    if (!tabNavigationRef.current) return;
+    if (allGalleryTabRouteNames.includes(routeName)) {
+      tabNavigationRef.current.navigate(routeName);
+      return;
+    }
+    tabNavigationRef.current.getParent()?.navigate(routeName);
+  }, []);
+
+  const moreSheetItems = useMemo<MoreSheetItem[]>(
+    () => buildMoreSheetItems(navigateToScreen),
+    [navigateToScreen],
+  );
+
+  const moreMenuItems = useMemo(
+    () => moreSheetItems.filter((item) => moreMenuKeys.includes(item.key)),
+    [moreSheetItems],
+  );
+
+  return (
+    <>
+      <Tab.Navigator
+        tabBar={(props) => (
+          <>
+            {(tabNavigationRef.current = props.navigation, null)}
+            <GalleryTabBar
+              {...props}
+              tabMeta={galleryTabs}
+              moreRouteName={screenName.gallery.more}
+              onPressMore={openMoreSheet}
+            />
+          </>
+        )}
+        screenOptions={{ headerShown: false }}
+      >
+        {galleryTabs.map(({ name, component, id }) => (
+          <Tab.Screen
+            key={id}
+            name={name}
+            component={component}
+            options={{ tabBarShowLabel: false, headerShown: false }}
+          />
+        ))}
+        {galleryMoreTabs.map(({ name, component, id }) => (
+          <Tab.Screen
+            key={id}
+            name={name}
+            component={component}
+            options={{
+              tabBarShowLabel: false,
+              headerShown: false,
+            }}
+          />
+        ))}
+      </Tab.Navigator>
+      <MoreSheet
+        visible={isMoreSheetOpen}
+        onClose={closeMoreSheet}
+        menuItems={moreMenuItems}
+      />
+    </>
+  );
+}
+
+function GalleryTabNavigationScreens() {
+  return (
+    <MoreSheetProvider>
+      <GalleryTabs />
+    </MoreSheetProvider>
+  );
+}
+
 export default function GalleryNavigation() {
   const { data: account } = useQuery({
     queryKey: ["gallery_account_id"],
@@ -161,183 +345,6 @@ export default function GalleryNavigation() {
     },
     staleTime: 5 * 60 * 1000,
   });
-
-  const GalleryTabNavigationScreens = useCallback(() => {
-    function GalleryTabs() {
-      const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
-      const tabNavigationRef = useRef<any>(null);
-
-      const navigateToScreen = useCallback((routeName: string) => {
-        if (!tabNavigationRef.current) return;
-        const tabRouteNames = [...galleryTabs, ...galleryMoreTabs].map(
-          ({ name }) => name,
-        );
-        if (tabRouteNames.includes(routeName)) {
-          tabNavigationRef.current.navigate(routeName);
-          return;
-        }
-        tabNavigationRef.current.getParent()?.navigate(routeName);
-      }, []);
-
-      const moreSheetItems = useMemo<MoreSheetItem[]>(
-        () => [
-          {
-            key: "overview",
-            label: "Overview",
-            routeName: screenName.gallery.overview,
-            icon: overviewActive,
-            keywords: ["dashboard", "home"],
-            onPress: () => navigateToScreen(screenName.gallery.overview),
-          },
-          {
-            key: "artworks",
-            label: "Artworks",
-            routeName: screenName.gallery.artworks,
-            icon: shippingActive,
-            keywords: ["listing", "catalog"],
-            onPress: () => navigateToScreen(screenName.gallery.artworks),
-          },
-          {
-            key: "shows-fairs-events",
-            label: "Shows, Fairs & Events",
-            routeName: screenName.gallery.showsFairsEvents,
-            icon: reviewHubActive,
-            keywords: ["show", "fair", "events"],
-            onPress: () => navigateToScreen(screenName.gallery.showsFairsEvents),
-          },
-          {
-            key: "artist-roster",
-            label: "Artist Roster",
-            routeName: screenName.gallery.artistRoster,
-            expoIconName: "list-outline" as const,
-            keywords: ["artists", "roster"],
-            onPress: () => navigateToScreen(screenName.gallery.artistRoster),
-          },
-          {
-            key: "orders",
-            label: "Orders",
-            routeName: screenName.gallery.orders,
-            icon: ordersActive,
-            keywords: ["shipping", "fulfillment"],
-            onPress: () => navigateToScreen(screenName.gallery.orders),
-          },
-          {
-            key: "billing",
-            label: "Billing",
-            routeName: screenName.gallery.billing,
-            icon: billingActive,
-            keywords: ["plans", "payments"],
-            onPress: () => navigateToScreen(screenName.gallery.billing),
-          },
-          {
-            key: "subscription",
-            label: "Subscriptions",
-            routeName: screenName.gallery.subscriptions,
-            icon: billingActive,
-            keywords: ["billing"],
-            onPress: () => navigateToScreen(screenName.gallery.subscriptions),
-          },
-          {
-            key: "payouts",
-            label: "Payouts",
-            routeName: screenName.gallery.stripePayouts,
-            icon: walletActive,
-            keywords: ["stripe", "withdrawals"],
-            onPress: () => navigateToScreen(screenName.gallery.stripePayouts),
-          },
-          {
-            key: "support-tickets",
-            label: "Support Tickets",
-            routeName: screenName.supportTickets,
-            icon: reviewHubActive,
-            keywords: ["support", "help"],
-            onPress: () => navigateToScreen(screenName.supportTickets),
-          },
-          {
-            key: "profile-management",
-            label: "Profile",
-            routeName: screenName.gallery.profile,
-            icon: profileActive,
-            keywords: ["settings", "account"],
-            onPress: () => navigateToScreen(screenName.gallery.profile),
-          },
-          {
-            key: "logout",
-            label: "Logout",
-            routeName: "logout",
-            keywords: ["sign out", "log out"],
-            isDanger: true,
-            onPress: () => void logout(),
-          },
-        ],
-        [navigateToScreen],
-      );
-      const moreMenuItems = useMemo(
-        () =>
-          moreSheetItems.filter((item) =>
-            [
-              "shows-fairs-events",
-              "artist-roster",
-              "payouts",
-              "support-tickets",
-              "profile-management",
-              "logout",
-            ].includes(item.key),
-          ),
-        [moreSheetItems],
-      );
-
-      return (
-        <>
-          <Tab.Navigator
-            tabBar={(props) => (
-              <>
-                {(tabNavigationRef.current = props.navigation, null)}
-                <GalleryTabBar
-                  {...props}
-                  tabMeta={galleryTabs}
-                  moreRouteName={screenName.gallery.more}
-                  onPressMore={openMoreSheet}
-                />
-              </>
-            )}
-            screenOptions={{ headerShown: false }}
-          >
-            {galleryTabs.map(({ name, component, id }) => (
-              <Tab.Screen
-                key={id}
-                name={name}
-                component={component}
-                options={{ tabBarShowLabel: false, headerShown: false }}
-              />
-            ))}
-            {galleryMoreTabs.map(({ name, component, id, label }) => (
-              <Tab.Screen
-                key={id}
-                name={name}
-                component={component}
-                options={{
-                  tabBarShowLabel: false,
-                  headerShown: false,
-                }}
-              />
-            ))}
-          </Tab.Navigator>
-          <MoreSheet
-            visible={isMoreSheetOpen}
-            onClose={closeMoreSheet}
-            menuItems={moreMenuItems}
-          />
-        </>
-      );
-    }
-
-    return (
-      <MoreSheetProvider>
-        <GalleryTabs />
-      </MoreSheetProvider>
-    );
-  }, []);
 
   if (account?.connected_account_id === null && account?.gallery_verified)
     return (

@@ -58,7 +58,7 @@ export default React.memo(function PopularArtworks({
         </View>
       </TouchableOpacity>
 
-      {isLoading && <ArtworkCardLoader containerStyle={tw`pl-0`} />}
+      {isLoading && <ArtworkCardLoader containerStyle={tw`!pl-0 !ml-0`} />}
 
       {!isLoading && data.length > 0 && (
         <FlashList

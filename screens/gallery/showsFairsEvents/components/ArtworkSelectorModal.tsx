@@ -147,7 +147,7 @@ export default function ArtworkSelectorModal({
         setSelectedArtworkIds([]);
       }
       wasOpenRef.current = true;
-      void loadInventory(1, debouncedSearch, false);
+      loadInventory(1, debouncedSearch, false);
     } else {
       wasOpenRef.current = false;
     }
@@ -183,7 +183,7 @@ export default function ArtworkSelectorModal({
 
   const handleLoadMore = () => {
     if (!hasMore || loadingMore || inventoryLoading) return;
-    void loadInventory(page + 1, debouncedSearch, true);
+    loadInventory(page + 1, debouncedSearch, true);
   };
 
   const handleSubmit = async () => {
