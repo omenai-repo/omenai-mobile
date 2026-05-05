@@ -110,7 +110,7 @@ export default function ProposalPriceModal() {
   ).length;
 
   const allTermsAccepted = agreementCount === 3;
-  const proposedNumber = Number.parseFloat(proposalPrice.replace(/,/g, ""));
+  const proposedNumber = Number.parseFloat(proposalPrice.replaceAll(/,/g, ""));
   const artistCategory = (userSession?.categorization || "").toLowerCase();
   const categoryVariances: Record<string, number> = {
     emerging: 0.1,
@@ -223,7 +223,7 @@ export default function ProposalPriceModal() {
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
-    const nextPrice = Number.parseFloat(proposalPrice.replace(/,/g, ""));
+    const nextPrice = Number.parseFloat(proposalPrice.replaceAll(/,/g, ""));
     if (Number.isNaN(nextPrice) || nextPrice <= 0) {
       setInputError("Please enter a valid target listing price.");
       return;

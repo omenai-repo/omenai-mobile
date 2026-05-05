@@ -2,17 +2,16 @@ import React from "react";
 import { View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { FlashList } from "@shopify/flash-list";
-import { useAppStore } from "#store/app/appStore";
 import { HOME_QK } from "#utils/queryKeys";
 import { fetchCurationData } from "#services/curation/fetchCurationData";
 import SectionHeader from "#components/general/SectionHeader";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import tw from "twrnc";
+import { useAppStore } from "#store/app/appStore";
 
 export default function CuratorPicks() {
-  const { userSession } = useAppStore();
-
+  const userSession = useAppStore((s) => s.userSession);
   const { data: picks = [], isLoading } = useQuery({
     queryKey: HOME_QK.curatorPicks(userSession?.id),
     queryFn: async () => {
@@ -53,18 +52,7 @@ export default function CuratorPicks() {
             const artwork = item.data;
             return (
               <ArtworkCard
-                title={artwork.title}
-                url={artwork.url}
-                artist={artwork.artist}
-                showPrice={
-                  !!userSession?.id && artwork.pricing?.shouldShowPrice === "Yes"
-                }
-                price={artwork.pricing?.usd_price}
-                availiablity={artwork.availability}
-                impressions={artwork.impressions}
-                like_IDs={artwork.like_IDs}
-                art_id={artwork.art_id}
-                image_format={artwork.image_format}
+                artwork={artwork}
                 hideBackground
                 useImageLoadAspectRatio
               />

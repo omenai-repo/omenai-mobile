@@ -53,14 +53,7 @@ export default function ArtworkListSection({
             data={data}
             renderItem={({ item }) => (
               <ArtworkCard
-                art_id={item.art_id}
-                title={item.title}
-                url={item.url}
-                artist={item.artist}
-                showPrice={item.pricing?.shouldShowPrice === "Yes"}
-                price={item.pricing?.usd_price}
-                availiablity={item.availability}
-                image_format={item.image_format}
+                artwork={item}
                 hideBackground
                 useImageLoadAspectRatio
               />

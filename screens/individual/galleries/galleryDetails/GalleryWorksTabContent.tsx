@@ -151,19 +151,17 @@ export default function GalleryWorksTabContent({
       return (
         <View style={[tw`mb-4`, { width: cardW }]}>
           <ArtworkCard
-            title={art.title}
-            url={art.url}
-            artist={art.artist}
-            art_id={art.art_id}
-            price={price}
-            showPrice={price > 0}
-            availiablity={art.availability}
-            impressions={art.impressions ?? 0}
-            like_IDs={art.like_IDs ?? []}
+            artwork={{
+              ...art,
+              pricing: {
+                ...((typeof art.pricing === "object" ? art.pricing : {}) as object),
+                usd_price: price,
+                shouldShowPrice: price > 0 ? "Yes" : "No",
+              },
+            }}
             width={cardW}
             galleryView
             disableLikeButton
-            image_format={art.image_format}
             hideBackground
             useImageLoadAspectRatio
             useFixedImageFrame={false}

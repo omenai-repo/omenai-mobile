@@ -62,7 +62,7 @@ function OverviewHighlightWithEvents({ event, status, description, onPressEvent 
         </Pressable>
         <Pressable onPress={() => onPressEvent(event)} style={({ pressed }) => [pressed && tw`opacity-80`]}>
           <Text style={tw`mt-6 text-xs text-neutral-500 uppercase tracking-widest`}>
-            {String(event.event_type ?? "event").replace(/_/g, " ")}
+            {String(event.event_type ?? "event").replaceAll(/_/g, " ")}
           </Text>
           <Text style={tw`mt-2 font-serif text-3xl text-neutral-900 leading-tight`}>
             {event.title}

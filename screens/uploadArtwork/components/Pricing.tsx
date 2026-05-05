@@ -184,7 +184,7 @@ export default function Pricing({
   return (
     <View style={tw`flex-1`}>
       <View
-        style={tw`gap-5 z-10 ${requiresArtistExclusivity ? "mb-6" : "mb-6"}`}
+        style={tw`gap-5 z-10 mb-6`}
       >
         {/* Currency */}
         <View style={tw`z-[11]`}>

@@ -124,18 +124,16 @@ export default function GalleryArtistsTabContent({
           renderItem={({ item: art }) => (
             <View>
               <ArtworkCard
-                title={art.title}
-                url={art.url}
-                artist={art.artist}
-                art_id={art.art_id}
-                price={priceFromGalleryWork(art)}
-                showPrice={priceFromGalleryWork(art) > 0}
-                availiablity={art.availability}
-                impressions={art.impressions ?? 0}
-                like_IDs={art.like_IDs ?? []}
+                artwork={{
+                  ...art,
+                  pricing: {
+                    ...((typeof art.pricing === "object" ? art.pricing : {}) as object),
+                    usd_price: priceFromGalleryWork(art),
+                    shouldShowPrice: priceFromGalleryWork(art) > 0 ? "Yes" : "No",
+                  },
+                }}
                 galleryView
                 disableLikeButton
-                image_format={art.image_format}
                 hideBackground
                 useImageLoadAspectRatio
               />

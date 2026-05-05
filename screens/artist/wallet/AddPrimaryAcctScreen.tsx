@@ -131,13 +131,13 @@ const resolveWalletRegion = (countryCode?: string): WalletRegion => {
 };
 
 const isValidUKBankDetails = (accountNumber: string, sortCode: string): boolean => {
-  const cleanSortCode = sortCode.replace(/[\s-]/g, "");
-  const cleanAccountNumber = accountNumber.replace(/\s/g, "");
+  const cleanSortCode = sortCode.replaceAll(/[\s-]/g, "");
+  const cleanAccountNumber = accountNumber.replaceAll(/\s/g, "");
   return /^[0-9]{6}$/.test(cleanSortCode) && /^[0-9]{8}$/.test(cleanAccountNumber);
 };
 
 const isValidIBAN = (iban: string): boolean => {
-  const cleanIban = iban.replace(/\s/g, "").toUpperCase();
+  const cleanIban = iban.replaceAll(/\s/g, "").toUpperCase();
   if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$/.test(cleanIban)) return false;
   const rearranged = cleanIban.substring(4) + cleanIban.substring(0, 4);
   const numericString = rearranged
@@ -151,9 +151,9 @@ const isValidIBAN = (iban: string): boolean => {
   let checksum = numericString.slice(0, 2);
   for (let offset = 2; offset < numericString.length; offset += 7) {
     const slice = checksum + numericString.substring(offset, offset + 7);
-    checksum = (parseInt(slice, 10) % 97).toString();
+    checksum = (Number.parseInt(slice, 10) % 97).toString();
   }
-  return parseInt(checksum, 10) === 1;
+  return Number.parseInt(checksum, 10) === 1;
 };
 
 const TXNS_QK = ["wallet", "artist", "txns", { status: "all" }] as const;
@@ -503,7 +503,7 @@ const AddPrimaryAcctScreen = () => {
       account_details = {
         type: "uk",
         account_number: acctNumber,
-        sort_code: sortCode.replace(/[\s-]/g, ""),
+        sort_code: sortCode.replaceAll(/[\s-]/g, ""),
         bank_name: manualBankName || "UK Bank",
         account_name: acctName,
         bank_country: effectiveCountryCode,
@@ -520,7 +520,7 @@ const AddPrimaryAcctScreen = () => {
     } else if (regionType === "eu" || regionType === "international") {
       account_details = {
         type: regionType,
-        iban: iban.replace(/\s/g, "").toUpperCase(),
+        iban: iban.replaceAll(/\s/g, "").toUpperCase(),
         swift_code: swiftCode.trim().toUpperCase(),
         bank_name:
           regionType === "eu" ? manualBankName || "EU Bank" : manualBankName,
@@ -739,7 +739,7 @@ const AddPrimaryAcctScreen = () => {
                 label="Routing Number (ABA)"
                 keyboardType="numeric"
                 onInputChange={(text: string) => {
-                  const digitsOnly = text.replace(/\D/g, "");
+                  const digitsOnly = text.replaceAll(/\D/g, "");
                   if (digitsOnly.length > 9) {
                     setRoutingNumberError(
                       "Routing number cannot exceed 9 digits.",

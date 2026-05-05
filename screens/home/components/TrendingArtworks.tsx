@@ -11,8 +11,8 @@ import EmptyArtworks from "#components/general/EmptyArtworks";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 import { screenName } from "#constants/screenNames.constants";
 import { HOME_QK } from "#utils/queryKeys";
-import { useAppStore } from "#store/app/appStore";
 import SectionHeader from "#components/general/SectionHeader";
+import { useAppStore } from "#store/app/appStore";
 
 export default function TrendingArtworks({
   limit,
@@ -67,19 +67,8 @@ export default function TrendingArtworks({
           }
           renderItem={({ item }) => (
             <ArtworkCard
-              title={item.title}
-              url={item.url}
-              artist={item.artist}
-              showPrice={
-                !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
-              }
-              price={item.pricing?.usd_price}
-              availiablity={item.availability}
-              impressions={item.impressions}
-              like_IDs={item.like_IDs}
-              art_id={item.art_id}
+              artwork={item}
               hideBackground
-              image_format={item.image_format}
               useImageLoadAspectRatio
               metadataMode="trending"
             />

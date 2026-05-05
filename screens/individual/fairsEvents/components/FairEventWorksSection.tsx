@@ -115,17 +115,8 @@ export default function FairEventWorksSection({ event }: { event: GalleryEventRe
               {column.map((art) => (
                 <View key={art.art_id} style={tw`mb-5`}>
                   <ArtworkCard
-                    title={art.title}
-                    url={art.url}
-                    artist={art.artist}
-                    showPrice={art.pricing?.shouldShowPrice === "Yes"}
-                    price={art.pricing?.usd_price ?? 0}
-                    availiablity={art.availability}
-                    impressions={art.impressions ?? 0}
-                    like_IDs={art.like_IDs ?? []}
-                    art_id={art.art_id}
+                    artwork={art}
                     width={cardWidth}
-                    image_format={art.image_format}
                     hideBackground
                     useFixedImageFrame={false}
                     useImageLoadAspectRatio

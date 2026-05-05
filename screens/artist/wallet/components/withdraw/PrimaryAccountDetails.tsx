@@ -42,7 +42,7 @@ export function PrimaryAccountDetails({
 
     if (isRevealed) {
       if (accountType === "eu" || accountType === "international") {
-        return raw.replace(/(.{4})/g, "$1 ").trim();
+        return raw.replaceAll(/(.{4})/g, "$1 ").trim();
       }
       return raw;
     }
@@ -59,7 +59,7 @@ export function PrimaryAccountDetails({
     if (!rawAccountIdentifier) return;
     await Clipboard.setStringAsync(rawAccountIdentifier);
     updateModal({
-      message: `${accountIdentifierLabel.replace(":", "")} copied.`,
+      message: `${accountIdentifierLabel.replaceAll(":", "")} copied.`,
       showModal: true,
       modalType: "success",
     });

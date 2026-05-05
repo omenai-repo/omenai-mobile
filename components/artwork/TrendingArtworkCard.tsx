@@ -5,8 +5,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback, useState } from "react";
-import { Image, ImageLoadEventData } from "expo-image";
+import React from "react";
+import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "#config/colors.config";
 import { getImageFileView } from "#lib/storage/getImageFileView";
@@ -44,7 +44,7 @@ function TrendingArtworkCard({
     if (image_format?.ratio) {
       const [w, h] = image_format.ratio.split(":");
       const ratio = Number(w) / Number(h);
-      if (!isNaN(ratio) && ratio > 0) {
+      if (!Number.isNaN(ratio) && ratio > 0) {
         height = imageWidth / ratio;
       }
     }

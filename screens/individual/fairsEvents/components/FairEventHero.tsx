@@ -47,7 +47,7 @@ export default function FairEventHero({ event }: Props) {
     return () => clearInterval(timer);
   }, [heroWidth, images.length, isMulti]);
 
-  const eventLabel = event.event_type.replace(/_/g, " ").toUpperCase();
+  const eventLabel = event.event_type.replaceAll(/_/g, " ").toUpperCase();
 
   return (
     <View style={tw`overflow-hidden bg-[#111]`}>

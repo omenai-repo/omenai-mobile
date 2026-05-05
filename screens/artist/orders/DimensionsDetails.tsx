@@ -82,7 +82,7 @@ const DimensionsDetails = () => {
     if (!val) return 0;
     const str = String(val);
     // Remove everything that is NOT a digit or a decimal point
-    const cleanStr = str.replace(/[^\d.]/g, "");
+    const cleanStr = str.replaceAll(/[^\d.]/g, "");
     return Number(cleanStr) || 0;
   };
 
