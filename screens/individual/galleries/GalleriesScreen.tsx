@@ -156,7 +156,7 @@ export default function GalleriesScreen() {
         onOpenDetails={() => onOpenDetails(item)}
         isFollowing={isFollowingFor(item.gallery_id)}
         onToggleFollow={() => {
-          void toggleFollow(item.gallery_id);
+          toggleFollow(item.gallery_id);
         }}
         followDisabled={!hasUser || isLoadingFollowed}
         locationText={directoryLocation(item)}

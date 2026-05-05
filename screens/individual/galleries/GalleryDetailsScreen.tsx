@@ -69,11 +69,11 @@ export default function GalleryDetailsScreen() {
   }, []);
 
   const onRefreshOverview = useCallback(() => {
-    void refetch();
-    void refetchProfile();
-    void queryClient.invalidateQueries({ queryKey: ["events", "gallery", "works", galleryId] });
-    void queryClient.invalidateQueries({ queryKey: EVENTS_QK.galleryShowsTab(galleryId) });
-    void queryClient.invalidateQueries({ queryKey: EVENTS_QK.galleryContact(galleryId) });
+    refetch();
+    refetchProfile();
+    queryClient.invalidateQueries({ queryKey: ["events", "gallery", "works", galleryId] });
+    queryClient.invalidateQueries({ queryKey: EVENTS_QK.galleryShowsTab(galleryId) });
+    queryClient.invalidateQueries({ queryKey: EVENTS_QK.galleryContact(galleryId) });
   }, [refetch, refetchProfile, queryClient, galleryId]);
 
   return (
