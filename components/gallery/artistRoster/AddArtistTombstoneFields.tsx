@@ -57,7 +57,7 @@ export function AddArtistTombstoneFields({
           <Text style={formFieldLabelStyle}>Birth year</Text>
           <TextInput
             value={birthyear}
-            onChangeText={(t) => onBirthyearChange(t.replace(/\D/g, "").slice(0, 4))}
+            onChangeText={(t) => onBirthyearChange(t.replaceAll(/\D/g, "").slice(0, 4))}
             onFocus={onBirthyearFocus}
             placeholder="e.g. 1985"
             placeholderTextColor={colors.inputLabel}

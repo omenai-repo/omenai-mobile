@@ -70,21 +70,14 @@ function RecentlyViewedArtworks() {
           }
           renderItem={({ item }) => (
             <ArtworkCard
-              title={item.title ?? item.artwork ?? "Untitled"}
-              url={item.url}
-              artist={item.artist ?? "Unknown artist"}
-              showPrice={
-                !!userSessionId && item.pricing?.shouldShowPrice === "Yes"
-              }
-              price={item.pricing?.usd_price ?? 0}
-              availiablity={item.availability ?? true}
-              impressions={item.impressions ?? 0}
-              like_IDs={item.like_IDs ?? []}
-              art_id={item.art_id}
-              image_format={item.image_format}
+              artwork={{
+                ...item,
+                title: item.title ?? item.artwork ?? "Untitled",
+                artist: item.artist ?? "Unknown artist",
+              }}
+              rootHidePrice
               disableLikeButton
               hideBackground
-              hidePriceLabel
               useImageLoadAspectRatio
             />
           )}

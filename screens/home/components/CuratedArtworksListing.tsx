@@ -60,20 +60,9 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             }
             renderItem={({ item }) => (
               <ArtworkCard
-                title={item.title}
-                url={item.url}
-                artist={item.artist}
-                showPrice={
-                  !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
-                }
-                price={item.pricing?.usd_price}
-                availiablity={item.availability}
+                artwork={item}
                 lightText
-                impressions={item.impressions}
-                like_IDs={item.like_IDs}
-                art_id={item.art_id}
                 hideBackground
-                image_format={item.image_format}
                 useImageLoadAspectRatio
               />
             )}

@@ -83,14 +83,14 @@ export default function EditEventBottomSheet({
   const rawEventType = String((event as any)?.event_type || "")
     .toLowerCase()
     .trim()
-    .replace(/[-\s]+/g, "_");
+    .replaceAll(/[-\s]+/g, "_");
   const eventType =
     rawEventType === "viewingroom"
       ? "viewing_room"
       : rawEventType === "artfair"
         ? "art_fair"
         : rawEventType;
-  const eventTypeLabel = eventType ? eventType.replace(/_/g, " ") : "presentation";
+  const eventTypeLabel = eventType ? eventType.replaceAll(/_/g, " ") : "presentation";
   const [boothError, setBoothError] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [activeDateField, setActiveDateField] = useState<DateFieldKey | null>(null);

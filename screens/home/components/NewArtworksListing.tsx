@@ -10,8 +10,8 @@ import EmptyArtworks from "#components/general/EmptyArtworks";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
 import { HOME_QK } from "#utils/queryKeys";
-import { useAppStore } from "#store/app/appStore";
 import SectionHeader from "#components/general/SectionHeader";
+import { useAppStore } from "#store/app/appStore";
 
 export default function NewArtworksListing({
   hideAction,
@@ -61,18 +61,7 @@ export default function NewArtworksListing({
           }
           renderItem={({ item }) => (
             <ArtworkCard
-              title={item.title}
-              url={item.url}
-              artist={item.artist}
-              showPrice={
-                !!userSession?.id && item.pricing?.shouldShowPrice === "Yes"
-              }
-              price={item.pricing?.usd_price}
-              availiablity={item.availability}
-              impressions={item.impressions}
-              like_IDs={item.like_IDs}
-              art_id={item.art_id}
-              image_format={item.image_format}
+              artwork={item}
               hideBackground
               useImageLoadAspectRatio
             />

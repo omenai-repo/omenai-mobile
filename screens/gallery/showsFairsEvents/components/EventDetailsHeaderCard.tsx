@@ -45,14 +45,14 @@ export default function EventDetailsHeaderCard({
   const rawEventType = String((event as any)?.event_type || "")
     .toLowerCase()
     .trim()
-    .replace(/[-\s]+/g, "_");
+    .replaceAll(/[-\s]+/g, "_");
   const eventType =
     rawEventType === "artfair"
       ? "art_fair"
       : rawEventType === "viewingroom"
         ? "viewing_room"
         : rawEventType;
-  const eventTypeLabel = eventType ? eventType.replace(/_/g, " ") : "presentation";
+  const eventTypeLabel = eventType ? eventType.replaceAll(/_/g, " ") : "presentation";
   const eventTitle = String(event?.title || "").trim() || "Untitled Presentation";
   const publishedLabel = event?.is_published ? "Event Published" : "Draft";
   const showHeaderPlaceholder =
@@ -149,7 +149,7 @@ export default function EventDetailsHeaderCard({
   const externalHostname = (() => {
     if (!event.external_url) return "";
     try {
-      return new URL(event.external_url).hostname.replace("www.", "");
+      return new URL(event.external_url).hostname.replaceAll("www.", "");
     } catch {
       return event.external_url;
     }

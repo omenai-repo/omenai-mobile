@@ -73,18 +73,9 @@ export default React.memo(function PopularArtworks({
           }
           renderItem={({ item }) => (
             <ArtworkCard
-              title={item.title}
-              url={item.url}
-              artist={item.artist}
-              showPrice={item.pricing?.shouldShowPrice === "Yes"}
-              price={item.pricing?.usd_price}
-              availiablity={item.availability}
-              impressions={item.impressions}
-              like_IDs={item.like_IDs}
-              art_id={item.art_id}
+              artwork={item}
               galleryView
               hideBackground
-              image_format={item.image_format}
               useImageLoadAspectRatio
             />
           )}

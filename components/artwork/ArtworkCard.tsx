@@ -23,23 +23,31 @@ import {
   ARTWORK_CARD_MIN_IMAGE_HEIGHT,
 } from "./artworkCard.constants";
 
+type ArtworkCardArtwork = Partial<
+  Omit<ArtworkDataType, "pricing" | "year" | "medium">
+> &
+  Partial<Omit<ArtworkFlatlistItem, "pricing" | "year" | "image_format" | "medium">> &
+  Partial<Omit<ArtworkSchemaTypes, "pricing" | "year" | "image_format" | "medium">> & {
+  image_url?: string;
+  medium?: string;
+  image_format?: {
+    ratio?: string;
+    orientation?: string;
+  };
+  pricing?: Partial<ArtworkPricing> & {
+    shouldShowPrice?: "Yes" | "No";
+  };
+  year?: string | number;
+};
+
 type ArtworkCardType = {
-  title: string;
-  url: string;
-  price: number;
-  artist: string;
-  showPrice?: boolean;
-  hidePriceLabel?: boolean;
-  availiablity?: boolean;
-  lightText?: boolean;
+  artwork: ArtworkCardArtwork;
   width?: number;
-  art_id?: string;
-  impressions?: number;
-  like_IDs?: string[];
+  rootHidePrice?: boolean;
+  lightText?: boolean;
   galleryView?: boolean;
   disableLikeButton?: boolean;
   hideBackground?: boolean;
-  image_format?: { ratio: string; orientation?: string };
   useImageLoadAspectRatio?: boolean;
   metadataMode?: "default" | "trending";
   fixedImageHeight?: number;
@@ -77,7 +85,7 @@ const parseAspectRatio = (ratio?: string): number | null => {
   if (parts.length !== 2) return null;
   const w = Number(parts[0]);
   const h = Number(parts[1]);
-  if (!isFinite(w) || !isFinite(h) || h === 0 || w <= 0 || h <= 0) return null;
+  if (!Number.isFinite(w) || !Number.isFinite(h) || h === 0 || w <= 0 || h <= 0) return null;
   return w / h;
 };
 
@@ -118,22 +126,13 @@ const computeDimensions = (
 };
 
 function ArtworkCard({
-  title,
-  url,
-  artist,
-  showPrice,
-  hidePriceLabel = false,
-  price,
-  lightText,
+  artwork,
   width = 0,
-  impressions,
-  art_id,
-  like_IDs,
+  rootHidePrice = false,
+  lightText = false,
   galleryView = false,
   disableLikeButton = false,
-  availiablity,
   hideBackground = false,
-  image_format,
   useImageLoadAspectRatio = false,
   metadataMode = "default",
   fixedImageHeight,
@@ -143,10 +142,21 @@ function ArtworkCard({
   const userSession = useAppStore((s) => s.userSession);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { isTablet } = useDevice();
+  const title = artwork.title ?? "";
+  const artist = artwork.artist ?? "";
+  const url = artwork.url ?? artwork?.image_url ?? "";
+  const art_id = artwork.art_id ?? "";
+  const impressions = artwork.impressions ?? 0;
+  const like_IDs = artwork.like_IDs ?? [];
+  const availability = artwork.availability ?? true;
+  const imageFormat = artwork.image_format;
+  const price = artwork.pricing?.usd_price ?? 0;
+  const canShowPriceLabel = galleryView || !!userSession?.id;
+  const showPrice = canShowPriceLabel && artwork.pricing?.shouldShowPrice === "Yes";
 
   const metadataAspectRatio = useMemo(
-    () => parseAspectRatio(image_format?.ratio),
-    [image_format?.ratio],
+    () => parseAspectRatio(imageFormat?.ratio),
+    [imageFormat?.ratio],
   );
   const [loadedAspectRatio, setLoadedAspectRatio] = useState<number | null>(
     null,
@@ -175,7 +185,7 @@ function ArtworkCard({
       if (!w || !h || h === 0) return;
 
       const nextRatio = w / h;
-      if (!isFinite(nextRatio) || nextRatio <= 0) return;
+      if (!Number.isFinite(nextRatio) || nextRatio <= 0) return;
 
       setLoadedAspectRatio((prev) => {
         if (prev !== null && Math.abs(prev - nextRatio) < 0.005) return prev;
@@ -332,7 +342,7 @@ function ArtworkCard({
                 </Text>
               </View>
               <View style={S.metaRow}>
-                {availiablity !== false && (galleryView || userSession?.id) && !hidePriceLabel && (
+                {!rootHidePrice && availability !== false && canShowPriceLabel && (
                   <Text
                     style={[
                       tw`text-sm flex-1`,
@@ -344,7 +354,7 @@ function ArtworkCard({
                   </Text>
                 )}
 
-                {availiablity === false && (
+                {!rootHidePrice && availability === false && (
                   <Text
                     style={[
                       tw`text-sm flex-1 font-sans-semibold`,
@@ -377,25 +387,26 @@ const arePropsEqual = (
   prev: Readonly<ArtworkCardType>,
   next: Readonly<ArtworkCardType>,
 ) =>
-  prev.title === next.title &&
-  prev.url === next.url &&
-  prev.price === next.price &&
-  prev.artist === next.artist &&
-  prev.showPrice === next.showPrice &&
-  prev.hidePriceLabel === next.hidePriceLabel &&
-  prev.availiablity === next.availiablity &&
-  prev.lightText === next.lightText &&
+  prev.artwork.title === next.artwork.title &&
+  prev.artwork.url === next.artwork.url &&
+  prev.artwork.image_url === next.artwork.image_url &&
+  prev.artwork.artist === next.artwork.artist &&
+  prev.artwork.pricing?.usd_price === next.artwork.pricing?.usd_price &&
+  prev.artwork.pricing?.shouldShowPrice === next.artwork.pricing?.shouldShowPrice &&
+  prev.artwork.availability === next.artwork.availability &&
+  prev.artwork.art_id === next.artwork.art_id &&
+  prev.artwork.impressions === next.artwork.impressions &&
   prev.width === next.width &&
-  prev.art_id === next.art_id &&
-  prev.impressions === next.impressions &&
+  prev.rootHidePrice === next.rootHidePrice &&
+  prev.lightText === next.lightText &&
   prev.galleryView === next.galleryView &&
   prev.disableLikeButton === next.disableLikeButton &&
   prev.hideBackground === next.hideBackground &&
   prev.useFixedImageFrame === next.useFixedImageFrame &&
   prev.metadataMode === next.metadataMode &&
   prev.useImageLoadAspectRatio === next.useImageLoadAspectRatio &&
-  prev.image_format?.ratio === next.image_format?.ratio &&
-  prev.image_format?.orientation === next.image_format?.orientation &&
-  areLikeIdsEqual(prev.like_IDs, next.like_IDs);
+  prev.artwork.image_format?.ratio === next.artwork.image_format?.ratio &&
+  prev.artwork.image_format?.orientation === next.artwork.image_format?.orientation &&
+  areLikeIdsEqual(prev.artwork.like_IDs, next.artwork.like_IDs);
 
 export default React.memo(ArtworkCard, arePropsEqual);
