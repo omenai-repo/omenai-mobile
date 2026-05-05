@@ -20,7 +20,7 @@ export default function GalleryContactTabContent({ galleryId, isActive }: Props)
   }, [data]);
 
   const openMap = () => {
-    if (mapUrl) void Linking.openURL(mapUrl);
+    if (mapUrl) Linking.openURL(mapUrl);
   };
 
   if (!isActive) return null;

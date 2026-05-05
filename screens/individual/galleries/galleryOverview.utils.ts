@@ -3,16 +3,7 @@ import type { GalleryOverviewEvent } from "#services/partners/fetchGalleryOvervi
 
 export type HeadlinerStatus = "Active" | "Upcoming" | "Closed" | null;
 
-
-export function computeGalleryHeadliner(events: GalleryOverviewEvent[] | undefined) {
-  if (!events?.length) {
-    return {
-      highlightEvent: null as GalleryOverviewEvent | null,
-      historyEvents: [] as GalleryOverviewEvent[],
-      status: null as HeadlinerStatus,
-    };
-  }
-
+function categorizeEvents(events: GalleryOverviewEvent[]) {
   const active: GalleryOverviewEvent[] = [];
   let earliestUpcoming: GalleryOverviewEvent | null = null;
   let latestPast: GalleryOverviewEvent | null = null;
@@ -25,32 +16,48 @@ export function computeGalleryHeadliner(events: GalleryOverviewEvent[] | undefin
 
     if (st === "Active") {
       active.push(event);
-    } else if (st === "Upcoming") {
+      continue;
+    }
+
+    if (st === "Upcoming") {
       if (startTime < earliestUpcomingTime) {
         earliestUpcomingTime = startTime;
         earliestUpcoming = event;
       }
-    } else {
-      if (startTime > latestPastTime) {
-        latestPastTime = startTime;
-        latestPast = event;
-      }
+      continue;
+    }
+
+    if (startTime > latestPastTime) {
+      latestPastTime = startTime;
+      latestPast = event;
     }
   }
 
-  let headliner: GalleryOverviewEvent | null = null;
-  let currentStatus: HeadlinerStatus = null;
+  return { active, earliestUpcoming, latestPast };
+}
 
-  if (active.length > 0) {
-    headliner = active[0];
-    currentStatus = "Active";
-  } else if (earliestUpcoming) {
-    headliner = earliestUpcoming;
-    currentStatus = "Upcoming";
-  } else if (latestPast) {
-    headliner = latestPast;
-    currentStatus = "Closed";
+export function computeGalleryHeadliner(events: GalleryOverviewEvent[] | undefined) {
+  if (!events?.length) {
+    return {
+      highlightEvent: null as GalleryOverviewEvent | null,
+      historyEvents: [] as GalleryOverviewEvent[],
+      status: null as HeadlinerStatus,
+    };
   }
+
+  const { active, earliestUpcoming, latestPast } = categorizeEvents(events);
+  const headliner =
+    active[0] ??
+    earliestUpcoming ??
+    latestPast ??
+    null;
+  const currentStatus: HeadlinerStatus = active[0]
+    ? "Active"
+    : earliestUpcoming
+      ? "Upcoming"
+      : latestPast
+        ? "Closed"
+        : null;
 
   const historyEvents = headliner
     ? events.filter((e) => e.event_id !== headliner!.event_id)

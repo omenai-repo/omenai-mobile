@@ -49,7 +49,7 @@ export default function GalleryProfileHeader({ galleryId, profile, nameFallback 
           <FollowComponent
             isFollowing={isFollowing}
             onPress={() => {
-              void toggleFollow(galleryId);
+              toggleFollow(galleryId);
             }}
             disabled={!hasUser || isLoadingFollowed}
           />

@@ -189,7 +189,7 @@ export default function GalleryArtistsTabContent({
         {hasNextPage && (
           <View style={tw`py-10 items-center border-t border-neutral-100`}>
             <Pressable
-              onPress={() => void fetchNextPage()}
+              onPress={() => fetchNextPage()}
               disabled={isFetchingNextPage}
               style={tw`border border-neutral-300 px-6 py-3 rounded-sm`}
             >

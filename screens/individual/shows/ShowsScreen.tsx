@@ -150,7 +150,7 @@ export default function ShowsScreen() {
           <Text style={tw`text-center text-sm text-neutral-500`}>
             Failed to load exhibitions. Please try again.
           </Text>
-          <Pressable onPress={() => void refetch()} style={tw`mt-4 border border-neutral-300 px-4 py-2 rounded-sm`}>
+          <Pressable onPress={() => refetch()} style={tw`mt-4 border border-neutral-300 px-4 py-2 rounded-sm`}>
             <Text style={tw`text-sm text-neutral-900`}>Retry</Text>
           </Pressable>
         </View>

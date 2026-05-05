@@ -34,6 +34,126 @@ import UploadBlocker from "#components/blockers/upload/UploadBlocker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Analytics } from "#utils/analytics";
 
+function deriveUploadFlow(userType: string | undefined, categorization?: string) {
+  const normalizedCategorization = categorization?.trim().toLowerCase() || "";
+  const isCustomPricingEligibleArtist = [
+    "emerging",
+    "early mid-career",
+  ].includes(normalizedCategorization);
+  const hasArtistCategorization = Boolean(normalizedCategorization);
+  const shouldUseArtistReviewFlow =
+    userType === "artist" && isCustomPricingEligibleArtist;
+  const shouldUseDirectPricingFlow =
+    userType !== "artist" || !isCustomPricingEligibleArtist;
+  const isArtistSelfPriced =
+    userType === "artist" && !isCustomPricingEligibleArtist;
+
+  return {
+    isCustomPricingEligibleArtist,
+    hasArtistCategorization,
+    shouldUseArtistReviewFlow,
+    shouldUseDirectPricingFlow,
+    isArtistSelfPriced,
+  };
+}
+
+function getImageStepButtonLabel(
+  userType: string | undefined,
+  isCustomPricingEligibleArtist: boolean,
+) {
+  if (userType === "gallery") return "Proceed";
+  if (isCustomPricingEligibleArtist) return "Get price quote";
+  return "Proceed";
+}
+
+function buildUploadComponents({
+  isArtistSelfPriced,
+  shouldUseDirectPricingFlow,
+  shouldUseArtistReviewFlow,
+  imageStepButtonLabel,
+  isConfirmedPlan,
+  handleUploadFromImageStep,
+  handleArtworkUpload,
+}: {
+  isArtistSelfPriced: boolean;
+  shouldUseDirectPricingFlow: boolean;
+  shouldUseArtistReviewFlow: boolean;
+  imageStepButtonLabel: string;
+  isConfirmedPlan: string | undefined;
+  handleUploadFromImageStep: () => Promise<void>;
+  handleArtworkUpload: () => Promise<void>;
+}) {
+  if (isArtistSelfPriced) {
+    return [
+      <ArtworkDetails key="artwork-details" />,
+      <ArtworkDimensions key="artwork-dimensions" />,
+      <ArtworkShipping key="artwork-shipping" />,
+      <ArtistDetails key="artist-details" />,
+      <UploadImage
+        key="upload-image"
+        handleUpload={handleUploadFromImageStep}
+        primaryButtonLabel={imageStepButtonLabel}
+      />,
+      <Pricing
+        key="pricing"
+        plan={isConfirmedPlan}
+        onFinalProceed={handleArtworkUpload}
+      />,
+    ];
+  }
+
+  return [
+    <ArtworkDetails key="artwork-details" />,
+    <ArtworkDimensions key="artwork-dimensions" />,
+    <ArtworkShipping key="artwork-shipping" />,
+    ...(shouldUseDirectPricingFlow
+      ? [<Pricing key="pricing" plan={isConfirmedPlan} />]
+      : []),
+    <ArtistDetails key="artist-details" />,
+    <UploadImage
+      key="upload-image"
+      handleUpload={handleUploadFromImageStep}
+      primaryButtonLabel={imageStepButtonLabel}
+    />,
+    ...(shouldUseArtistReviewFlow
+      ? [
+          <ArtworkPriceReviewScreen
+            key="price-review"
+            onConfirm={handleArtworkUpload}
+          />,
+        ]
+      : []),
+  ];
+}
+
+function deriveGateState({
+  userType,
+  userSession,
+  isSubActive,
+  showLockScreen,
+}: {
+  userType: string | undefined;
+  userSession: any;
+  isSubActive: boolean | undefined;
+  showLockScreen: boolean;
+}) {
+  const shouldShowVerificationBlock =
+    !userSession?.gallery_verified && !isSubActive;
+  const shouldShowSubscriptionBlock =
+    userSession?.gallery_verified && !isSubActive;
+  const shouldShowMixedVerification =
+    !userSession?.gallery_verified && isSubActive;
+  const canUpload = userSession?.gallery_verified && isSubActive;
+  const shouldShowLock =
+    userType === "gallery"
+      ? shouldShowVerificationBlock || shouldShowMixedVerification
+      : showLockScreen;
+  const shouldRenderUpload =
+    userType === "gallery" ? canUpload : !showLockScreen;
+
+  return { shouldShowSubscriptionBlock, shouldShowLock, shouldRenderUpload };
+}
+
 export default function UploadArtwork() {
   const insets = useSafeAreaInsets();
   const { userSession, userType } = useAppStore();
@@ -52,17 +172,13 @@ export default function UploadArtwork() {
     clearData,
   } = uploadArtworkStore();
   const { updateModal } = useModalStore();
-  const normalizedCategorization = userSession?.categorization?.trim().toLowerCase();
-  const isCustomPricingEligibleArtist = [
-    "emerging",
-    "early mid-career",
-  ].includes(normalizedCategorization || "");
-  const hasArtistCategorization = Boolean(normalizedCategorization);
-  const shouldUseArtistReviewFlow =
-    userType === "artist" && isCustomPricingEligibleArtist;
-  const shouldUseDirectPricingFlow =
-    userType !== "artist" || !isCustomPricingEligibleArtist;
-  const isArtistSelfPriced = userType === "artist" && !isCustomPricingEligibleArtist;
+  const {
+    isCustomPricingEligibleArtist,
+    hasArtistCategorization,
+    shouldUseArtistReviewFlow,
+    shouldUseDirectPricingFlow,
+    isArtistSelfPriced,
+  } = deriveUploadFlow(userType, userSession?.categorization);
 
   useEffect(() => {
     return () => {
@@ -71,13 +187,14 @@ export default function UploadArtwork() {
   }, [clearData]);
 
   useEffect(() => {
+    if (userType !== "gallery" && userType !== "artist") return;
     if (userType === "gallery") {
       setShouldPreCheck(true);
-    } else if (userType === "artist") {
-      setShouldPreCheck(false);
-      const shouldLock = !userSession.artist_verified || !userSession.verified;
-      setShowLockScreen(shouldLock);
+      return;
     }
+    setShouldPreCheck(false);
+    const shouldLock = !userSession.artist_verified || !userSession.verified;
+    setShowLockScreen(shouldLock);
   }, [userType, userSession]);
 
   const { data: isConfirmed, isLoading: loadGalleryCheck } = useQuery({
@@ -231,11 +348,11 @@ export default function UploadArtwork() {
 
   const handleUploadFromImageStep = async () => {
     try {
-      if (userType === "gallery") {
-        await handleArtworkUpload();
-      } else {
+      if (userType !== "gallery") {
         setActiveIndex(activeIndex + 1);
+        return;
       }
+      await handleArtworkUpload();
     } catch {
       updateModal({
         message: "Error during upload. Please try again.",
@@ -245,60 +362,19 @@ export default function UploadArtwork() {
     }
   };
 
-  const imageStepButtonLabel =
-    userType === "gallery"
-      ? "Proceed"
-      : isCustomPricingEligibleArtist
-        ? "Get price quote"
-        : "Proceed";
-
-  const components = isArtistSelfPriced
-    ? [
-        <ArtworkDetails key="artwork-details" />,
-        <ArtworkDimensions key="artwork-dimensions" />,
-        <ArtworkShipping key="artwork-shipping" />,
-        <ArtistDetails key="artist-details" />,
-        <UploadImage
-          key="upload-image"
-          handleUpload={handleUploadFromImageStep}
-          primaryButtonLabel={imageStepButtonLabel}
-        />,
-        <Pricing
-          key="pricing"
-          plan={isConfirmed?.plan}
-          onFinalProceed={handleArtworkUpload}
-        />,
-      ]
-    : [
-        <ArtworkDetails key="artwork-details" />,
-        <ArtworkDimensions key="artwork-dimensions" />,
-        <ArtworkShipping key="artwork-shipping" />,
-        ...(shouldUseDirectPricingFlow
-          ? [<Pricing key="pricing" plan={isConfirmed?.plan} />]
-          : []),
-        <ArtistDetails key="artist-details" />,
-        <UploadImage
-          key="upload-image"
-          handleUpload={handleUploadFromImageStep}
-          primaryButtonLabel={imageStepButtonLabel}
-        />,
-        ...(shouldUseArtistReviewFlow
-          ? [
-              <ArtworkPriceReviewScreen
-                key="price-review"
-                onConfirm={handleArtworkUpload}
-              />,
-            ]
-          : []),
-      ];
-
-  const shouldShowVerificationBlock =
-    !userSession?.gallery_verified && !isConfirmed?.isSubActive;
-  const shouldShowSubscriptionBlock =
-    userSession?.gallery_verified && !isConfirmed?.isSubActive;
-  const shouldShowMixedVerification =
-    !userSession?.gallery_verified && isConfirmed?.isSubActive;
-  const canUpload = userSession?.gallery_verified && isConfirmed?.isSubActive;
+  const imageStepButtonLabel = getImageStepButtonLabel(
+    userType,
+    isCustomPricingEligibleArtist,
+  );
+  const components = buildUploadComponents({
+    isArtistSelfPriced,
+    shouldUseDirectPricingFlow,
+    shouldUseArtistReviewFlow,
+    imageStepButtonLabel,
+    isConfirmedPlan: isConfirmed?.plan,
+    handleUploadFromImageStep,
+    handleArtworkUpload,
+  });
 
   const renderUploadContent = () => (
     <View style={{ paddingBottom: insets.bottom + 16, flex: 1 }}>
@@ -326,13 +402,13 @@ export default function UploadArtwork() {
     </View>
   );
 
-  const shouldShowLock =
-    userType === "gallery"
-      ? shouldShowVerificationBlock || shouldShowMixedVerification
-      : showLockScreen;
-
-  const shouldRenderUpload =
-    userType === "gallery" ? canUpload : !showLockScreen;
+  const { shouldShowSubscriptionBlock, shouldShowLock, shouldRenderUpload } =
+    deriveGateState({
+      userType,
+      userSession,
+      isSubActive: isConfirmed?.isSubActive,
+      showLockScreen,
+    });
 
   const {
     value: isArtworkPriceCalculationEnabled,

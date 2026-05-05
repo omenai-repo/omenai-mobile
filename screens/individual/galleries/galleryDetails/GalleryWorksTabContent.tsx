@@ -270,7 +270,7 @@ export default function GalleryWorksTabContent({
         contentContainerStyle={tw`px-5 pb-8 pt-2`}
         onEndReached={() => {
           if (!hasNextPage || isFetchingNextPage) return;
-          void fetchNextPage();
+          fetchNextPage();
         }}
         onEndReachedThreshold={0.45}
         ListHeaderComponent={

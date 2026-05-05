@@ -56,7 +56,83 @@ const parseHasAutoApprovalsRemaining = (value: unknown): boolean => {
   return Boolean(value);
 };
 
-export default function ProposalPriceModal() {
+const getSubmissionValidationError = ({
+  nextPrice,
+  recommendedPrice,
+  allTermsAccepted,
+  requiresJustification,
+  justificationType,
+  needsProof,
+  hasProof,
+  proposalReason,
+  userId,
+  artworkImageUri,
+  proofFormat,
+  justificationFileMeta,
+}: {
+  nextPrice: number;
+  recommendedPrice: number;
+  allTermsAccepted: boolean;
+  requiresJustification: boolean;
+  justificationType: JustificationType | "";
+  needsProof: boolean;
+  hasProof: boolean;
+  proposalReason: string;
+  userId?: string;
+  artworkImageUri?: string;
+  proofFormat: "LINK" | "DOCUMENT";
+  justificationFileMeta: {
+    uri: string;
+    name: string;
+    type: string;
+    size?: number;
+  } | null;
+}) => {
+  if (Number.isNaN(nextPrice) || nextPrice <= 0) {
+    return "Please enter a valid target listing price.";
+  }
+
+  if (nextPrice < recommendedPrice) {
+    return `Price cannot be set lower than the algorithm baseline of $${recommendedPrice.toLocaleString()}.`;
+  }
+
+  if (!allTermsAccepted) {
+    return "Please accept the exclusivity and pricing agreement.";
+  }
+
+  if (requiresJustification && !justificationType) {
+    return "Please select a data source / justification.";
+  }
+
+  if (requiresJustification && needsProof && !hasProof) {
+    return "Proof via link or document is required for this selection.";
+  }
+
+  if (requiresJustification && (!proposalReason || proposalReason.trim() === "")) {
+    return "Please provide contextual notes to justify this price change.";
+  }
+
+  if (!userId) {
+    return "Unable to identify artist profile. Please sign in again.";
+  }
+
+  if (!artworkImageUri) {
+    return "Artwork image is missing. Please upload/select an image.";
+  }
+
+  if (
+    requiresJustification &&
+    needsProof &&
+    proofFormat === "DOCUMENT" &&
+    !justificationFileMeta
+  ) {
+    return "Please attach a proof document.";
+  }
+
+  return null;
+};
+
+function ProposalPriceModalImpl() {
   const navigation = useNavigation<any>();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
@@ -224,63 +300,25 @@ export default function ProposalPriceModal() {
     if (isSubmitting) return;
 
     const nextPrice = Number.parseFloat(proposalPrice.replaceAll(/,/g, ""));
-    if (Number.isNaN(nextPrice) || nextPrice <= 0) {
-      setInputError("Please enter a valid target listing price.");
-      return;
-    }
-
-    if (nextPrice < recommendedPrice) {
-      setInputError(
-        `Price cannot be set lower than the algorithm baseline of $${recommendedPrice.toLocaleString()}.`,
-      );
-      return;
-    }
-
-    if (!allTermsAccepted) {
-      setInputError("Please accept the exclusivity and pricing agreement.");
-      return;
-    }
-
-    if (requiresJustification && !justificationType) {
-      setInputError("Please select a data source / justification.");
-      return;
-    }
-
-    if (requiresJustification && needsProof && !hasProof) {
-      setInputError(
-        "Proof via link or document is required for this selection.",
-      );
-      return;
-    }
-
-    if (
-      requiresJustification &&
-      (!proposalReason || proposalReason.trim() === "")
-    ) {
-      setInputError(
-        "Please provide contextual notes to justify this price change.",
-      );
-      return;
-    }
-
-    if (!userSession?.id) {
-      setInputError("Unable to identify artist profile. Please sign in again.");
-      return;
-    }
-
     const artworkImageAsset = image?.assets?.[0];
-    if (!artworkImageAsset?.uri) {
-      setInputError("Artwork image is missing. Please upload/select an image.");
-      return;
-    }
 
-    if (
-      requiresJustification &&
-      needsProof &&
-      proofFormat === "DOCUMENT" &&
-      !justificationFileMeta
-    ) {
-      setInputError("Please attach a proof document.");
+    const validationError = getSubmissionValidationError({
+      nextPrice,
+      recommendedPrice,
+      allTermsAccepted,
+      requiresJustification,
+      justificationType,
+      needsProof,
+      hasProof,
+      proposalReason,
+      userId: userSession?.id,
+      artworkImageUri: artworkImageAsset?.uri,
+      proofFormat,
+      justificationFileMeta,
+    });
+
+    if (validationError) {
+      setInputError(validationError);
       return;
     }
 
@@ -643,4 +681,8 @@ export default function ProposalPriceModal() {
       </View>
     </View>
   );
+}
+
+export default function ProposalPriceModal() {
+  return <ProposalPriceModalImpl />;
 }
