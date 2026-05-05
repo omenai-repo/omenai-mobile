@@ -41,9 +41,11 @@ import WithModal from "#components/modal/WithModal";
 import GuestLoginModal from "#components/guest/GuestLoginModal";
 import { screenName } from "#constants/screenNames.constants";
 import {
-  sanitizeDeepLinkPath,
+  normalizeIncomingDeepLinkPath,
   extractSafeDeepLinkToken,
+  buildAppUrlFromPathAndToken,
 } from "#config/deepLinking.config";
+import { verifyDeepLinkToken } from "#services/deeplink/verifyDeepLinkToken";
 
 // Set default font for all Text and TextInput components
 // @ts-ignore
@@ -152,6 +154,7 @@ export default function App() {
           Search: "dl/individual/search",
           Orders: "dl/individual/orders",
           Profile: "dl/individual/profile",
+          [screenName.payment]: "dl/individual/payment",
           [screenName.artwork]: "dl/individual/artwork/:id",
         },
       },
@@ -182,45 +185,45 @@ export default function App() {
   const linking = {
     prefixes: [prefix, "https://omenai.app", "omenai://"],
     config,
-    getInitialURL: async () => {
-      const url = await Linking.getInitialURL();
-      if (!url) return null;
-
+    resolveIncomingUrl: async (url: string) => {
       const parsed = Linking.parse(url);
       const path = parsed.path ?? "";
       const token = extractSafeDeepLinkToken(parsed.queryParams?.token);
-      const sanitizedPath = sanitizeDeepLinkPath(path, {
-        isLoggedIn,
-        userType,
+      const verified = token ? await verifyDeepLinkToken(token) : null;
+      const normalizedPath = normalizeIncomingDeepLinkPath({
+        path,
+        options: { isLoggedIn, userType },
+        verifiedPayload: verified?.payload,
+        hasToken: !!token,
       });
 
-      const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : "";
-      return `${prefix}${sanitizedPath}${tokenQuery}`;
+      return buildAppUrlFromPathAndToken(prefix, normalizedPath, token);
+    },
+    getInitialURL: async () => {
+      const url = await Linking.getInitialURL();
+      if (!url) return null;
+      return linking.resolveIncomingUrl(url);
     },
     subscribe: (listener: (url: string) => void) => {
       const onReceiveURL = ({ url }: { url: string }) => {
-        const parsed = Linking.parse(url);
-        const path = parsed.path ?? "";
-        const token = extractSafeDeepLinkToken(parsed.queryParams?.token);
-        const sanitizedPath = sanitizeDeepLinkPath(path, {
-          isLoggedIn,
-          userType,
-        });
-
-        const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : "";
-        listener(`${prefix}${sanitizedPath}${tokenQuery}`);
+        linking
+          .resolveIncomingUrl(url)
+          .then((safeUrl) => listener(safeUrl))
+          .catch(() => listener(`${prefix}login`));
       };
 
       const subscription = Linking.addEventListener("url", onReceiveURL);
       return () => subscription.remove();
     },
     getStateFromPath: (path: string, options: any) => {
-      const sanitizedPath = sanitizeDeepLinkPath(path, {
-        isLoggedIn,
-        userType,
+      const [rawPath] = path.split("?");
+      const normalizedPath = normalizeIncomingDeepLinkPath({
+        path: rawPath ?? path,
+        options: { isLoggedIn, userType },
+        hasToken: false,
       });
 
-      return getStateFromPathDefault(sanitizedPath, options);
+      return getStateFromPathDefault(normalizedPath, options);
     },
   };
 
