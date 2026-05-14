@@ -1,14 +1,18 @@
-import { StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
-import React, { useState } from "react";
-import AuthHeader from "../../components/auth/AuthHeader";
-import AuthTabs from "../../components/auth/AuthTabs";
+import {
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import AuthHeader from "#components/auth/AuthHeader";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import AuthTabs from "#components/auth/AuthTabs";
 import Individual from "./components/individual/Individual";
 import Gallery from "./components/gallery/Gallery";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { colors } from "../../config/colors.config";
-import { screenName } from "../../constants/screenNames.constants";
-import ScrollWrapper from "#components/general/ScrollWrapper";
+import { colors } from "#config/colors.config";
+import { screenName } from "#constants/screenNames.constants";
 import { StatusBar } from "expo-status-bar";
 import Artist from "./components/artist/Artist";
 import { useIndividualAuthLoginStore } from "#store/auth/login/IndividualAuthLoginStore";
@@ -16,17 +20,37 @@ import { useArtistAuthLoginStore } from "#store/auth/login/ArtistAuthLoginStore"
 import { useGalleryAuthLoginStore } from "#store/auth/login/GalleryAuthLoginStore";
 import { useBiometrics, UserType } from "#hooks/useBiometrics";
 import { useLoginHandler } from "#hooks/useLoginHandler";
+import { getLoginSubtitle } from "./loginSubtitles";
+import { useModalStore } from "#store/modal/modalStore";
+import type { HandleLoginFn } from "#hooks/loginSubmitOptions";
+
+const userTypes: UserType[] = ["individual", "artist", "gallery"];
+
+function tabIndexFromAccountType(
+  accountType: string | undefined,
+): number | null {
+  if (accountType === "artist") return 1;
+  if (accountType === "gallery") return 2;
+  if (accountType === "individual") return 0;
+  return null;
+}
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute<any>();
+  const { updateModal } = useModalStore();
+  const isMountedRef = useRef(true);
 
-  // initialize selectedIndex based on route params if provided
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const initialIndex = (() => {
-    const accountType = route.params?.account_type;
-    if (accountType === "artist") return 1;
-    if (accountType === "gallery") return 2;
-    return 0; // default to collector
+    const idx = tabIndexFromAccountType(route.params?.account_type);
+    return idx ?? 0;
   })();
 
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
@@ -38,11 +62,45 @@ export default function Login() {
     useBiometrics();
   const [canUseBiometrics, setCanUseBiometrics] = useState(false);
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
+  const biometricCheckGen = useRef(0);
 
-  const userTypes: UserType[] = ["individual", "artist", "gallery"];
   const currentUserType = userTypes[selectedIndex];
 
   const { handleLogin } = useLoginHandler(currentUserType);
+
+  const setSubmitLoading = useCallback((loading: boolean) => {
+    setIsBiometricLoading(loading);
+    useIndividualAuthLoginStore.getState().setIsLoading(loading);
+    useArtistAuthLoginStore.getState().setIsLoading(loading);
+    useGalleryAuthLoginStore.getState().setIsLoading(loading);
+  }, []);
+
+  const showBiometricError = useCallback(
+    (message: string) => {
+      updateModal({
+        message,
+        showModal: true,
+        modalType: "error",
+      });
+    },
+    [updateModal],
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      const idx = tabIndexFromAccountType(route.params?.account_type);
+      if (idx !== null) setSelectedIndex(idx);
+    }, [route.params?.account_type]),
+  );
+
+  useEffect(() => {
+    const myGen = ++biometricCheckGen.current;
+    (async () => {
+      const enabled = await isBiometricEnabled(currentUserType);
+      if (myGen !== biometricCheckGen.current) return;
+      setCanUseBiometrics(enabled);
+    })();
+  }, [selectedIndex, currentUserType, isBiometricEnabled]);
 
   const biometricName = (() => {
     switch (biometricType) {
@@ -55,106 +113,130 @@ export default function Login() {
     }
   })();
 
-  React.useEffect(() => {
-    checkBiometricStatus();
-  }, [selectedIndex]);
-
-  const checkBiometricStatus = async () => {
-    const enabled = await isBiometricEnabled(currentUserType);
-    setCanUseBiometrics(enabled);
-  };
-
+  /**
+   * Device auth before reading stored credentials from SecureStore.
+   * Server login uses `postLoginFlow: finalize_only` so we do not run the
+   * post-login “enable biometrics” prompts again (avoids a second device prompt).
+   */
   const handleBiometricLogin = async () => {
-    setIsBiometricLoading(true);
+    setSubmitLoading(true);
     try {
-      const { success } = await authenticate();
-      if (!success) return;
+      const { success } = await authenticate(
+        "Sign in with your saved login",
+      );
+      if (!success) {
+        showBiometricError(
+          "Biometric sign-in was cancelled or did not succeed. Try email and password, or try again.",
+        );
+        return;
+      }
 
       const credentials = await getCredentials(currentUserType);
-      if (!credentials) return;
+      if (!credentials) {
+        showBiometricError(
+          "No saved login for this account type. Sign in with email and password once, then enable biometric login from the prompt after you log in.",
+        );
+        return;
+      }
 
       const { email, token: password } = credentials;
 
       await handleLogin(
         { email, password },
-        setIsBiometricLoading,
-        () => {}, // No need to clear inputs for biometric login
+        setSubmitLoading,
+        () => {},
+        { postLoginFlow: "finalize_only" },
       );
     } catch {
-      // Error handled by finally
+      showBiometricError(
+        "Something went wrong during biometric sign-in. Please try again.",
+      );
     } finally {
-      setIsBiometricLoading(false);
+      if (isMountedRef.current) {
+        setSubmitLoading(false);
+      }
     }
   };
 
-  // Reset all forms
   const resetAll = () => {
     clearIndividual();
     clearArtist();
     clearGallery();
   };
 
-  // Reset on tab switch
   const handleTabSwitch = (e: number) => {
     resetAll();
     setSelectedIndex(e);
   };
 
-  // Reset on back
   const handleBack = () => {
     resetAll();
     navigation.navigate(screenName.welcome);
   };
+
+  const biometricProps = {
+    canUseBiometrics,
+    handleBiometricLogin,
+    isBiometricLoading,
+    biometricName,
+  };
+
+  const sharedLogin: HandleLoginFn = handleLogin;
 
   return (
     <>
       <StatusBar style="light" />
       <AuthHeader
         title="Welcome Back"
-        subTitle="Access your account so you can start purchasing artwork"
+        subTitle={getLoginSubtitle(selectedIndex)}
         handleBackClick={handleBack}
       />
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={styles.container}
+        keyboardVerticalOffset={0}
       >
         <ScrollWrapper
-          style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            width: "100%",
+            alignSelf: "stretch",
+            paddingHorizontal: 20,
+            paddingTop: 20,
+            paddingBottom: 24,
+          }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          alwaysBounceVertical={false}
+          overScrollMode="never"
+          contentInsetAdjustmentBehavior="never"
         >
           <AuthTabs
             tabs={["Collector", "Artist", "Gallery"]}
             stateIndex={selectedIndex}
             handleSelect={handleTabSwitch}
           />
-          {/* route depending on state */}
           {selectedIndex === 0 && (
             <Individual
-              biometricProps={{
-                canUseBiometrics,
-                handleBiometricLogin,
-                isBiometricLoading,
-                biometricName,
-              }}
+              biometricProps={biometricProps}
+              handleLogin={sharedLogin}
+              setSubmitLoading={setSubmitLoading}
             />
           )}
           {selectedIndex === 1 && (
             <Artist
-              biometricProps={{
-                canUseBiometrics,
-                handleBiometricLogin,
-                isBiometricLoading,
-                biometricName,
-              }}
+              biometricProps={biometricProps}
+              handleLogin={sharedLogin}
+              setSubmitLoading={setSubmitLoading}
             />
           )}
           {selectedIndex === 2 && (
             <Gallery
-              biometricProps={{
-                canUseBiometrics,
-                handleBiometricLogin,
-                isBiometricLoading,
-                biometricName,
-              }}
+              biometricProps={biometricProps}
+              handleLogin={sharedLogin}
+              setSubmitLoading={setSubmitLoading}
             />
           )}
         </ScrollWrapper>

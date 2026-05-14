@@ -1,8 +1,9 @@
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import React, { forwardRef, useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import tw from "twrnc";
 import { colors } from "../../config/colors.config";
+import type { TextInputProps } from "react-native";
 
 type PasswordInputProps = {
   label: string;
@@ -12,18 +13,30 @@ type PasswordInputProps = {
   errorMessage?: string;
   handleBlur?: () => void;
   textContentType?: "newPassword" | "password" | "none";
+  returnKeyType?: TextInputProps["returnKeyType"];
+  onSubmitEditing?: TextInputProps["onSubmitEditing"];
+  blurOnSubmit?: TextInputProps["blurOnSubmit"];
+  autoComplete?: TextInputProps["autoComplete"];
 };
 
-export default function PasswordInput({
-  label,
-  onInputChange,
-  placeHolder,
-  value,
-  errorMessage,
-  handleBlur,
-  textContentType,
-  testID,
-}: PasswordInputProps & { testID?: string }) {
+const PasswordInput = forwardRef<
+  TextInput,
+  PasswordInputProps & { testID?: string }
+>(function PasswordInput(props, ref) {
+  const {
+    label,
+    onInputChange,
+    placeHolder,
+    value,
+    errorMessage,
+    handleBlur,
+    textContentType = "password",
+    testID,
+    returnKeyType,
+    onSubmitEditing,
+    blurOnSubmit,
+    autoComplete,
+  } = props;
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -40,6 +53,7 @@ export default function PasswordInput({
         ]}
       >
         <TextInput
+          ref={ref}
           testID={testID}
           style={[
             tw`flex-1 py-3 px-3 bg-transparent font-sans-regular text-sm`,
@@ -53,10 +67,17 @@ export default function PasswordInput({
           value={value}
           onBlur={handleBlur}
           textContentType={textContentType}
+          returnKeyType={returnKeyType}
+          onSubmitEditing={onSubmitEditing}
+          blurOnSubmit={blurOnSubmit}
+          autoComplete={autoComplete}
+          autoCorrect={false}
         />
         <TouchableOpacity
           style={tw`w-[50px] justify-center items-center`}
           onPress={() => setShowPassword((prev) => !prev)}
+          accessibilityRole="button"
+          accessibilityLabel={showPassword ? "Hide password" : "Show password"}
         >
           <Feather
             name={showPassword ? "eye" : "eye-off"}
@@ -70,4 +91,6 @@ export default function PasswordInput({
       )}
     </View>
   );
-}
+});
+
+export default PasswordInput;

@@ -1,7 +1,7 @@
 import React from "react";
 import { useIndividualAuthLoginStore } from "#store/auth/login/IndividualAuthLoginStore";
-import { useLoginHandler } from "#hooks/useLoginHandler";
 import LoginForm from "../LoginForm";
+import type { HandleLoginFn } from "#hooks/loginSubmitOptions";
 
 type IndividualProps = Readonly<{
   biometricProps: {
@@ -10,21 +10,25 @@ type IndividualProps = Readonly<{
     isBiometricLoading: boolean;
     biometricName: string;
   };
+  handleLogin: HandleLoginFn;
+  setSubmitLoading: (loading: boolean) => void;
 }>;
 
-export default function Individual({ biometricProps }: IndividualProps) {
+export default function Individual({
+  biometricProps,
+  handleLogin,
+  setSubmitLoading,
+}: IndividualProps) {
   const {
     individualLoginData,
     setEmail,
     setPassword,
     clearInputs,
     isLoading,
-    setIsLoading,
   } = useIndividualAuthLoginStore();
-  const { handleLogin } = useLoginHandler("individual");
 
   const handleSubmit = () =>
-    handleLogin(individualLoginData, setIsLoading, clearInputs);
+    handleLogin(individualLoginData, setSubmitLoading, clearInputs);
 
   return (
     <LoginForm

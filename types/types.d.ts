@@ -1,3 +1,5 @@
+type UserType = "individual" | "gallery" | "artist";
+
 type OrderShippingDetailsTypes = {
   addresses: {
     origin: AddressTypes;
