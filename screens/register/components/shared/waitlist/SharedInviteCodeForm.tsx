@@ -47,32 +47,41 @@ export default function SharedInviteCodeForm({
     if (emailError || inviteCodeError) return;
 
     setIsLoading(true);
-
-    const response = await createInviteToken({
-      email: email.trim(),
-      inviteCode: inviteCode.trim(),
-      entity,
-    });
-
-    setIsLoading(false);
-
-    if (response.isOk && response.referrerKey) {
-      updateModal({
-        message: response.message || "Invite code validated!",
-        modalType: "success",
-        showModal: true,
-      });
-      onSuccess({
-        referrerKey: response.referrerKey,
+    try {
+      const response = await createInviteToken({
         email: email.trim(),
         inviteCode: inviteCode.trim(),
+        entity,
       });
-    } else {
+
+      if (response.isOk && response.referrerKey) {
+        updateModal({
+          message: response.message || "Invite code validated!",
+          modalType: "success",
+          showModal: true,
+        });
+        onSuccess({
+          referrerKey: response.referrerKey,
+          email: email.trim(),
+          inviteCode: inviteCode.trim(),
+        });
+      } else {
+        updateModal({
+          message:
+            response.message || "Invalid invite code. Please try again.",
+          modalType: "error",
+          showModal: true,
+        });
+      }
+    } catch {
       updateModal({
-        message: response.message || "Invalid invite code. Please try again.",
+        message:
+          "Unable to verify your invite right now. Check your connection and try again.",
         modalType: "error",
         showModal: true,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 

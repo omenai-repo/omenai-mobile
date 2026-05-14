@@ -23,17 +23,9 @@ import { useLoginHandler } from "#hooks/useLoginHandler";
 import { getLoginSubtitle } from "./loginSubtitles";
 import { useModalStore } from "#store/modal/modalStore";
 import type { HandleLoginFn } from "#hooks/loginSubmitOptions";
+import { tabIndexFromAccountType } from "#utils/auth/tabIndexFromAccountType";
 
 const userTypes: UserType[] = ["individual", "artist", "gallery"];
-
-function tabIndexFromAccountType(
-  accountType: string | undefined,
-): number | null {
-  if (accountType === "artist") return 1;
-  if (accountType === "gallery") return 2;
-  if (accountType === "individual") return 0;
-  return null;
-}
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<any>>();

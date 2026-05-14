@@ -1,5 +1,6 @@
 import { View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
 import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
@@ -11,6 +12,7 @@ import tw from "twrnc";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import FormSkeleton from "#components/skeleton/FormSkeleton";
+import { tabIndexFromAccountType } from "#utils/auth/tabIndexFromAccountType";
 
 type InputFormProps = Readonly<{
   onTabChange?: (index: number) => void;
@@ -23,7 +25,14 @@ export default function InputForm({
   onGalleryInviteValidated,
   onArtistInviteValidated,
 }: InputFormProps) {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const route = useRoute<any>();
+  const onTabChangeRef = useRef(onTabChange);
+  onTabChangeRef.current = onTabChange;
+
+  const [selectedIndex, setSelectedIndex] = useState(() => {
+    const idx = tabIndexFromAccountType(route.params?.account_type);
+    return idx ?? 0;
+  });
   const clearIndividual = useIndividualAuthRegisterStore((s) => s.clearState);
   const clearGallery = useGalleryAuthRegisterStore((s) => s.clearState);
   const clearArtist = useArtistAuthRegisterStore((s) => s.clearState);
@@ -40,8 +49,17 @@ export default function InputForm({
     onTabChange?.(e);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      const idx = tabIndexFromAccountType(route.params?.account_type);
+      if (idx !== null) {
+        setSelectedIndex(idx);
+        onTabChangeRef.current?.(idx);
+      }
+    }, [route.params?.account_type]),
+  );
+
   const insets = useSafeAreaInsets();
-  const [tabsKey, setTabsKey] = useState("init");
 
   const { value: collectorOnboardingEnabled, loading: collectorLoading } =
     useLowRiskFeatureFlag("collectoronboardingenabled", false);
@@ -52,16 +70,9 @@ export default function InputForm({
   const { value: waitlistActivated, loading: waitlistLoading } =
     useLowRiskFeatureFlag("waitlistActivated");
 
-  useEffect(() => {
-    // Force remount of AuthTabs after first paint to ensure animated values initialize
-    const t = setTimeout(() => setTabsKey("ready"), 0);
-    return () => clearTimeout(t);
-  }, []);
-
   return (
     <View style={[tw`flex-1 px-5 mt-5`, { marginBottom: insets.bottom }]}>
       <AuthTabs
-        key={tabsKey}
         tabs={["Collector", "Artist", "Gallery"]}
         stateIndex={selectedIndex}
         handleSelect={handleTabSwitch}

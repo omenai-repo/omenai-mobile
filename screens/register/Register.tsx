@@ -1,12 +1,4 @@
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { colors } from "../../config/colors.config";
 import AuthHeader from "../../components/auth/AuthHeader";
@@ -23,6 +15,9 @@ import InputForm from "./components/inputForm/InputForm";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 
 import FormSkeleton from "#components/skeleton/FormSkeleton";
+import ScrollWrapper, {
+  type ScrollWrapperRef,
+} from "#components/general/ScrollWrapper";
 
 type RootStackParamList = {
   [screenName.welcome]: undefined;
@@ -45,8 +40,6 @@ export default function Register() {
   const { value: waitlistActivated, loading: isLoading } =
     useLowRiskFeatureFlag("waitlistActivated");
 
-  // Show waitlist header only if: gallery tab + waitlist active + NOT validated
-  // Show waitlist header only if: gallery tab + waitlist active + NOT validated
   const isGalleryWaitlist =
     selectedTabIndex === 2 && waitlistActivated && !galleryInviteValidated;
 
@@ -66,21 +59,27 @@ export default function Register() {
     clearArtistState();
   };
 
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<ScrollWrapperRef>(null);
 
   useEffect(() => {
     scrollViewRef.current?.scrollTo?.({ y: 0, animated: false });
   }, [collectorPage, galleryPage, artistPage]);
+
+  const handleBack = () => {
+    resetAll();
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate(screenName.welcome);
+    }
+  };
 
   return (
     <>
       <AuthHeader
         title={isLoading ? " " : headerTitle}
         subTitle={isLoading ? " " : headerSubtitle}
-        handleBackClick={() => {
-          resetAll();
-          navigation.navigate(screenName.welcome);
-        }}
+        handleBackClick={handleBack}
       />
       {isLoading ? (
         <FormSkeleton rows={5} />
@@ -88,31 +87,34 @@ export default function Register() {
         <View style={[tw`flex-1 bg-white`, isTablet && tw`items-center`]}>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : undefined}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+            keyboardVerticalOffset={0}
             style={[
               styles.container,
               isTablet && { width: "100%", maxWidth: 650 },
             ]}
           >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-              <ScrollView
-                ref={scrollViewRef}
-                nestedScrollEnabled
-                style={{ flexGrow: 1 }}
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
-              >
-                <InputForm
-                  onTabChange={(index) => {
-                    setSelectedTabIndex(index);
-                    setGalleryInviteValidated(false);
-                    setArtistInviteValidated(false);
-                  }}
-                  onGalleryInviteValidated={setGalleryInviteValidated}
-                  onArtistInviteValidated={setArtistInviteValidated}
-                />
-              </ScrollView>
-            </TouchableWithoutFeedback>
+            <ScrollWrapper
+              ref={scrollViewRef}
+              nestedScrollEnabled
+              style={{ flexGrow: 1 }}
+              contentContainerStyle={{ flexGrow: 1 }}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              bounces={false}
+              alwaysBounceVertical={false}
+              overScrollMode="never"
+              contentInsetAdjustmentBehavior="never"
+            >
+              <InputForm
+                onTabChange={(index) => {
+                  setSelectedTabIndex(index);
+                  setGalleryInviteValidated(false);
+                  setArtistInviteValidated(false);
+                }}
+                onGalleryInviteValidated={setGalleryInviteValidated}
+                onArtistInviteValidated={setArtistInviteValidated}
+              />
+            </ScrollWrapper>
           </KeyboardAvoidingView>
         </View>
       )}
