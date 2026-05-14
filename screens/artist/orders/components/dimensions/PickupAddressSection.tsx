@@ -156,7 +156,7 @@ export default function PickupAddressSection({
     } catch (error: any) {
       updateModal({
         message:
-          error?.message || "Something went wrong while updating your address",
+          error?.message || error?.body?.message || "Something went wrong while updating your address",
         modalType: "error",
         showModal: true,
       });

@@ -97,7 +97,7 @@ export default function UploadNewLogo() {
       }
     } catch (error: any) {
       updateModal({
-        message: error.message || error?.response?.data?.message || "An error occured, please try again",
+        message: error.message || error?.body?.message || error?.response?.data?.message || "An error occured, please try again",
         modalType: "error",
         showModal: true,
       });

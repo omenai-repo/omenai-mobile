@@ -1,4 +1,10 @@
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import React, { useEffect, useState, useMemo } from "react";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
@@ -9,6 +15,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useModalStore } from "#store/modal/modalStore";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
+import { screenName } from "#constants/screenNames.constants";
+import {
+  getGalleryOrdersSubscriptionNotice,
+  useGallerySubscriptionActiveForOrders,
+} from "#hooks/useGallerySubscriptionActiveForOrders";
 import { validateOrderMeasurement } from "#lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
 import { useAppStore } from "#store/app/appStore";
 import { Analytics } from "#utils/analytics";
@@ -41,7 +52,7 @@ const DimensionsDetails = () => {
     carrier,
     shippingOrigin,
   } = useRoute<any>().params;
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   // Packaging type state - default to rolled for better shipping rates
   const [packagingType, setPackagingType] = useState<PackagingType>("rolled");
@@ -76,6 +87,42 @@ const DimensionsDetails = () => {
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const userId = useAppStore((state) => state.userSession.id);
+
+  const gallerySub = useGallerySubscriptionActiveForOrders({
+    galleryId: userId,
+    enabled: userType === "gallery",
+  });
+
+  const galleryOrdersAcceptBlocked = useMemo(
+    () =>
+      userType === "gallery" &&
+      (gallerySub.isLoading || gallerySub.isError || !gallerySub.isActive),
+    [
+      userType,
+      gallerySub.isLoading,
+      gallerySub.isError,
+      gallerySub.isActive,
+    ],
+  );
+
+  const gallerySubscriptionNotice = useMemo(
+    () =>
+      userType === "gallery"
+        ? getGalleryOrdersSubscriptionNotice({
+            isLoading: gallerySub.isLoading,
+            isError: gallerySub.isError,
+            isActive: gallerySub.isActive,
+            subscriptionData: gallerySub.subscriptionData,
+          })
+        : "",
+    [
+      userType,
+      gallerySub.isLoading,
+      gallerySub.isError,
+      gallerySub.isActive,
+      gallerySub.subscriptionData,
+    ],
+  );
 
   // Helper to safely parse dimension strings (e.g. "32in" -> 32)
   const parseDim = (val: string | number | undefined) => {
@@ -206,6 +253,10 @@ const DimensionsDetails = () => {
   };
 
   const handleSubmit = async () => {
+    if (galleryOrdersAcceptBlocked) {
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -298,14 +349,14 @@ const DimensionsDetails = () => {
           response,
         });
         updateModal({
-          message: response.message,
+          message: response.message || response?.body?.message,
           modalType: "error",
           showModal: true,
         });
       }
     } catch (error: any) {
       updateModal({
-        message: error.message,
+        message: error.message || error?.body?.message,
         modalType: "error",
         showModal: true,
       });
@@ -403,14 +454,35 @@ const DimensionsDetails = () => {
                 setIsChecked={setIsChecked}
               />
 
-              {/* Submit Button */}
+              {/* Submit: accept order (artist / active gallery sub) or subscribe (blocked gallery) */}
               <View style={tw`mt-12 mx-5 mb-10`}>
-                <LongBlackButton
-                  value="Accept Order"
-                  onClick={handleSubmit}
-                  isLoading={isLoading}
-                  isDisabled={checkIsDisabled()}
-                />
+                {galleryOrdersAcceptBlocked ? (
+                  <View style={tw`gap-3`}>
+                    <Text
+                      style={tw`text-[14px] text-[#454545] leading-[20px]`}
+                      accessibilityRole="text"
+                    >
+                      {gallerySubscriptionNotice.trim() ||
+                        "Your gallery subscription is inactive or has expired. Renew your plan to process this order."}
+                    </Text>
+                    <LongBlackButton
+                      value="Renew to process order"
+                      onClick={() =>
+                        navigation.navigate(screenName.gallery.billing, {
+                          plan_action: null,
+                        })
+                      }
+                      textStyle={tw`normal-case tracking-normal`}
+                    />
+                  </View>
+                ) : (
+                  <LongBlackButton
+                    value="Accept Order"
+                    onClick={handleSubmit}
+                    isLoading={isLoading}
+                    isDisabled={checkIsDisabled()}
+                  />
+                )}
               </View>
             </View>
           )}

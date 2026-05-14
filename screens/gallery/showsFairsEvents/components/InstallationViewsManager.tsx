@@ -244,7 +244,7 @@ export default function InstallationViewsManager({
       updateModal({
         showModal: true,
         modalType: "error",
-        message: error?.message || "Unable to remove installation view.",
+        message: error?.message || error?.body?.message || "Unable to remove installation view.",
       });
     },
     onSettled: () => {

@@ -296,10 +296,9 @@ const EditAddressScreen = () => {
         setShowModal(true);
         setAddressVerified(false);
       }
-    } catch (error) {
-      console.error("Error verifying address:", error);
+    } catch (error: any) {
       updateModal({
-        message: "Network error, please check your connection and try again.",
+        message: error?.message || error?.body?.message || "Network error, please check your connection and try again.",
         modalType: "error",
         showModal: true,
       });
@@ -326,10 +325,10 @@ const EditAddressScreen = () => {
     const result =
       userType === "artist"
         ? await updateArtistAddress({
-            artist_id: userSession.id,
-            base_currency: selectedBaseCurrency || userSession.base_currency,
-            address: data.address,
-          })
+          artist_id: userSession.id,
+          base_currency: selectedBaseCurrency || userSession.base_currency,
+          address: data.address,
+        })
         : await updateProfile(routeType as any, data, userSession.id);
 
     if (result.isOk) {

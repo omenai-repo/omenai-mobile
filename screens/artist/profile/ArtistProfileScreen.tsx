@@ -93,6 +93,7 @@ export default function ArtistProfileScreen() {
         message:
           error?.message ||
           error?.response?.data?.message ||
+          error?.body?.message ||
           "Something went wrong",
         showModal: true,
         modalType: "error",

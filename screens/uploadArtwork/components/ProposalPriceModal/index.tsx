@@ -457,6 +457,7 @@ function ProposalPriceModalImpl() {
         modalType: "error",
         message:
           error?.message ||
+          error?.body?.message ||
           "Unable to submit price review now. Please try again later.",
       });
     } finally {

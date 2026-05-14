@@ -2,6 +2,31 @@ import { getApiHeaders } from "./apiHeaders";
 import { logout } from "./logout.utils";
 import { useAppStore } from "../store/app/appStore";
 
+/** Thrown on 403 when JSON body is present; mirrors Axios so `error?.response?.data?.message` works. */
+class ApiForbiddenError extends Error {
+  readonly response: { data: unknown };
+
+  constructor(errorData: unknown) {
+    super(messageFrom403Body(errorData));
+    this.name = "ApiForbiddenError";
+    this.response = { data: errorData };
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+function messageFrom403Body(data: unknown): string {
+  if (typeof data === "string") return data;
+  if (
+    data &&
+    typeof data === "object" &&
+    "message" in data &&
+    typeof (data as { message: unknown }).message === "string"
+  ) {
+    return (data as { message: string }).message;
+  }
+  return "Forbidden";
+}
+
 type RequestOptions = RequestInit & {
   auth?: boolean;
   shouldLogout?: boolean;
@@ -30,7 +55,7 @@ export async function apiRequest(url: string, options: RequestOptions = {}) {
       await logout();
     } else {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Forbidden");
+      throw new ApiForbiddenError(errorData);
     }
   }
 

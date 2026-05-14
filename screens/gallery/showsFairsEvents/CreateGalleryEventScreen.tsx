@@ -409,7 +409,7 @@ function CreateGalleryEventScreenImpl({ navigation, route }: Props) {
       updateModal({
         showModal: true,
         modalType: "error",
-        message: err?.message || "An error occurred during final submission.",
+        message: err?.message || err?.body?.message || "An error occurred during final submission.",
       });
     } finally {
       setIsFinalizing(false);

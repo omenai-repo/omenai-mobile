@@ -247,13 +247,13 @@ export default function AddArtistToRosterModal() {
       const res = artistId
         ? await addArtistToRoster({ gallery_id: galleryId, artist_id: artistId })
         : await addArtistToRoster({
-            gallery_id: galleryId,
-            newGhostData: {
-              name: ghostLabel,
-              birthyear: birthyear.trim(),
-              country_of_origin: country_of_origin.trim(),
-            },
-          });
+          gallery_id: galleryId,
+          newGhostData: {
+            name: ghostLabel,
+            birthyear: birthyear.trim(),
+            country_of_origin: country_of_origin.trim(),
+          },
+        });
 
       if (res.isOk) {
         setView("success");
@@ -264,11 +264,11 @@ export default function AddArtistToRosterModal() {
           message: res.message || "Could not add artist. Please try again.",
         });
       }
-    } catch {
+    } catch (error: any) {
       updateModal({
         showModal: true,
         modalType: "error",
-        message: "Could not add artist. An unexpected error occurred.",
+        message: error?.message || error?.body?.message || "Could not add artist. An unexpected error occurred.",
       });
     } finally {
       setIsSubmitting(false);

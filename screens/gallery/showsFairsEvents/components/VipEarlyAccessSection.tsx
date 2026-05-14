@@ -52,7 +52,7 @@ export default function VipEarlyAccessSection({
       updateModal({
         showModal: true,
         modalType: "error",
-        message: error?.message || "Failed to update VIP access.",
+        message: error?.message || error?.body?.message || "Failed to update VIP access.",
       });
     },
   });

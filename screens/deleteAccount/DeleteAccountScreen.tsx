@@ -118,6 +118,8 @@ export default function DeleteAccountScreen() {
     } catch (err: any) {
       const errorMessage =
         err?.message ||
+        err?.body?.message ||
+        err?.response?.data?.message ||
         "Network error encountered, please try again or contact support";
       setError(errorMessage);
       updateModal({

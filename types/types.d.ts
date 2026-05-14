@@ -191,6 +191,26 @@ type userSessionType = {
   id: string;
   email: string;
 };
+
+type AccountGalleryDiscountStatus = {
+  active: boolean;
+  plan: "gallery" | "pro";
+  isDiscountSub: boolean;
+};
+
+type AccountGallerySubscriptionStatus = {
+  type: "foundation" | "principal" | "gallery" | null;
+  active: boolean;
+  discount: AccountGalleryDiscountStatus;
+};
+
+type AccountGallerySchemaTypes = {
+  gallery_id: string;
+  email: string;
+  connected_account_id: string | null;
+  gallery_verified: boolean;
+  subscription_status: AccountGallerySubscriptionStatus;
+};
 type ArtworkDataType = {
   title: string;
   artist: string;
@@ -371,6 +391,8 @@ type EditorialSchemaTypes = {
 
 type ArtworkUploadStateTypes = {
   artist: string;
+  artist_id?: string;
+  newGhostArtistName?: string;
   year: number;
   title: string;
   medium: string;
@@ -518,6 +540,7 @@ type SubscriptionModelSchemaTypes = {
   };
   subscription_id: string;
   stripe_customer_id: string;
+  isDiscountSub?: boolean;
   start_date: Date;
   expiry_date: Date;
   status: "active" | "canceled" | "expired" | "incomplete";

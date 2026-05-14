@@ -79,14 +79,14 @@ export const WithdrawScreen = ({
         setRate(response.data.rate);
       } else {
         updateModal({
-          message: "Failed to get exchange rate",
+          message: response?.data?.message || response?.body?.message || "Failed to get exchange rate",
           showModal: true,
           modalType: "error",
         });
       }
-    } catch {
+    } catch (error: any) {
       updateModal({
-        message: "Error fetching exchange rate",
+        message: error?.message || error?.body?.message || "Error fetching exchange rate",
         showModal: true,
         modalType: "error",
       });
@@ -146,6 +146,7 @@ export const WithdrawScreen = ({
       updateModal({
         message:
           error?.message ||
+          error?.body?.message ||
           error?.response?.data?.message ||
           "An error occurred",
         showModal: true,

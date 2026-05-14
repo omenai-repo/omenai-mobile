@@ -60,7 +60,7 @@ export default function ViewItem({
       await performDownload(value, file);
     } catch (err: any) {
       updateModal({
-        message: err.message || "Failed to download the file.",
+        message: err.message || err?.body?.message || "Failed to download the file.",
         showModal: true,
         modalType: "error",
       });

@@ -1,24 +1,27 @@
 import React from "react";
 import StripePayouts from "#screens/stripeScreens/payouts/StripePayouts";
 import { useQuery } from "@tanstack/react-query";
-import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import { getAccountID } from "#services/stripe/getAccountID";
 import PayoutSkeleton from "#components/skeleton/PayoutSkeleton";
+import { useAppStore } from "#store/app/appStore";
 
 export default function StripePayoutsTab() {
+  const { userSession } = useAppStore();
+  const galleryId = userSession?.id;
+
   const { data: account, isLoading: isInitializing } = useQuery({
-    queryKey: ["gallery_account_id"],
+    queryKey: ["gallery_account_id", galleryId],
     queryFn: async () => {
-      const userSession = await utils_getAsyncData("userSession");
-      if (!userSession.value)
+      if (!galleryId)
         return { connected_account_id: null, gallery_verified: false };
 
-      const res = await getAccountID(JSON.parse(userSession.value).id);
+      const res = await getAccountID(galleryId);
       return {
         connected_account_id: res?.data?.connected_account_id ?? null,
         gallery_verified: res?.data?.gallery_verified ?? false,
       };
     },
+    enabled: Boolean(galleryId),
     staleTime: 5 * 60 * 1000,
   });
 

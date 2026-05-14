@@ -121,11 +121,11 @@ export default function ArtworkSelectorModal({
         }
         setHasMore(response.pagination?.hasMore ?? false);
         setPage(pageNum);
-      } catch {
+      } catch (error: any) {
         updateModal({
           showModal: true,
           modalType: "error",
-          message: "Unable to load available works.",
+          message: error?.message || error?.body?.message || "Unable to load available works.",
         });
       } finally {
         if (isAppend) {

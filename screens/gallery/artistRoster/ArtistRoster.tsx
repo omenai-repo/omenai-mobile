@@ -110,12 +110,12 @@ export default function ArtistRoster() {
                       return;
                     }
                     await queryClient.invalidateQueries({ queryKey: ROSTER_QK(galleryId) });
-                  } catch {
+                  } catch (error: any) {
                     updateModal({
                       showModal: true,
                       modalType: "error",
                       message:
-                        "An unexpected error occurred. Please try again later.",
+                        error?.message || error?.body?.message || "An unexpected error occurred. Please try again later.",
                     });
                   } finally {
                     setRemovingId(null);

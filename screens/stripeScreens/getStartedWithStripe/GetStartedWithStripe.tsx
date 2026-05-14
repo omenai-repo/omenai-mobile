@@ -169,7 +169,7 @@ export default function GetStartedWithStripe() {
                   Your connected account ID is: {connectedAccountId}{" "}
                 </Text>
                 <Text style={{ fontSize: 14, opacity: 0.7 }}>
-                  Hey, don&apos;t worry, we'll remember it for you!
+                  Hey, don&apos;t worry, we&apos;ll remember it for you!
                 </Text>
               </>
             )}

@@ -145,7 +145,7 @@ export default function ArtistReviewHub() {
       updateModal({
         showModal: true,
         modalType: "error",
-        message: error?.message || "Unable to resolve proposal",
+        message: error?.message || error?.body?.message || "Unable to resolve proposal",
       });
     },
   });

@@ -3,9 +3,10 @@ import { apiUrl } from "../../constants/apiUrl.constants";
 import { apiRequest } from "../../utils/apiRequest";
 
 export type DiscountData = {
-  plan: "pro";
+  plan: "gallery" | "pro";
   active: boolean;
   redeemed: boolean;
+  isDiscountSub: boolean;
 } | null;
 
 export const retrieveSubscriptionDiscount = async (): Promise<{
@@ -31,13 +32,23 @@ export const retrieveSubscriptionDiscount = async (): Promise<{
 
     const result = await res.json();
 
-    let discountData: DiscountData = result.discount;
+    let discountData: DiscountData = null;
 
-    if (result.discount === true) {
+    if (typeof result.discount === "boolean") {
+      discountData = result.discount
+        ? {
+            plan: "gallery",
+            active: true,
+            redeemed: false,
+            isDiscountSub: false,
+          }
+        : null;
+    } else if (result.discount && typeof result.discount === "object") {
       discountData = {
-        plan: "pro",
-        active: true,
-        redeemed: false,
+        plan: result.discount.plan === "pro" ? "pro" : "gallery",
+        active: Boolean(result.discount.active),
+        redeemed: Boolean(result.discount.redeemed),
+        isDiscountSub: Boolean(result.discount.isDiscountSub),
       };
     }
 

@@ -37,9 +37,9 @@ export default function LockScreen({ name }: { name: string }) {
           showModal: true,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       updateModal({
-        message: "Error sending verification reminder",
+        message: error?.message || error?.body?.message || "Error sending verification reminder",
         modalType: "error",
         showModal: true,
       });
@@ -60,7 +60,7 @@ export default function LockScreen({ name }: { name: string }) {
             <Text>
               {"\n\n"}To expedite, click{" "}
               <Text style={tw`font-bold text-white`}>
-                'Send Verification Reminder'
+                Send Verification Reminder
               </Text>{" "}
               below.
             </Text>

@@ -164,7 +164,7 @@ export function useLoginHandler(userType: UserType) {
       if (results?.status && results.status >= 500) {
         Analytics.track("login_failed", {
           user_type: userType,
-          login_data: loginData,
+          login_data: loginData.email,
           status: results.status,
           message: results?.body.message,
           response: results?.body,
@@ -197,8 +197,12 @@ export function useLoginHandler(userType: UserType) {
 
     Analytics.track("login_success", {
       user_type: userType,
-      user_data: resultsBody,
-      login_data: loginData,
+      user_data: {
+        id: resultsBody[USER_ID_MAP[userType]],
+        email: resultsBody.email,
+        verified: Boolean(resultsBody.verified),
+      },
+      login_data: loginData.email,
     });
 
     const data = mapUserData(resultsBody, userType);

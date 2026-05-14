@@ -23,6 +23,7 @@ type FittedBlackButtonProps = {
   textStyle?: StyleProp<TextStyle>;
   responsive?: boolean;
   iconPosition?: "left" | "right";
+  accessibilityLabel?: string;
 };
 
 export default function FittedBlackButton({
@@ -35,6 +36,7 @@ export default function FittedBlackButton({
   textStyle,
   responsive = false,
   iconPosition = "right",
+  accessibilityLabel,
 }: FittedBlackButtonProps) {
   const animation = useRef(null);
   const { isTablet } = useDevice();
@@ -42,7 +44,7 @@ export default function FittedBlackButton({
   const defaultContainerStyle: ViewStyle = {
     height: 44,
     backgroundColor:
-      isDisabled || isLoading ? colors.grey50 : colors.primary_black,
+      isDisabled || isLoading ? colors.grey50 : colors.black,
   };
 
   const defaultTextStyle: TextStyle = {
@@ -72,6 +74,8 @@ export default function FittedBlackButton({
       ]}
       onPress={onClick}
       disabled={isDisabled || isLoading}
+      accessibilityLabel={accessibilityLabel ?? value}
+      accessibilityRole="button"
     >
       <View style={tw`flex-row items-center justify-center`}>
         {/* Invisible content to maintain button width */}

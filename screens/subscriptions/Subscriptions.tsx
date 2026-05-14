@@ -71,9 +71,9 @@ export default function Subscriptions() {
           subscription_data: sub_check.data,
           subscription_plan: sub_check.plan,
         };
-      } catch {
+      } catch (error: any) {
         updateModal({
-          message: "Something went wrong, Please refresh again",
+          message: error?.message || error?.body?.message || "Something went wrong, Please refresh again",
           modalType: "error",
           showModal: true,
         });
