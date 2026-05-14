@@ -12,9 +12,9 @@ import tw from "twrnc";
 
 type SummaryContainerProps = {
   buttonTypes:
-    | "Proceed to shipping"
-    | "Request price quote"
-    | "Proceed to make payment";
+  | "Proceed to shipping"
+  | "Request price quote"
+  | "Proceed to make payment";
   price?: number;
   disableButton?: boolean;
 };
@@ -50,6 +50,7 @@ export default function SummaryContainer({
     //if there isn't a user id
     if (userId.length < 1) return;
 
+    console.log("[SummaryContainer] userId", userId);
     const results = await createShippingOrder(
       userId,
       artworkOrderData.art_id,
@@ -91,7 +92,7 @@ export default function SummaryContainer({
       });
       updateModal({
         modalType: "error",
-        message: results?.message,
+        message: results?.message || results?.body?.message,
         showModal: true,
       });
     }

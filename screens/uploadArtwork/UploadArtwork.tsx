@@ -241,7 +241,7 @@ export default function UploadArtwork() {
         };
       } catch (error: any) {
         updateModal({
-          message: error.message,
+          message: error?.message || error?.body?.message,
           modalType: "error",
           showModal: true,
         });

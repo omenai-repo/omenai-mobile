@@ -91,9 +91,9 @@ export const ForgotPinScreen = ({
         // Clear OTP on error
         otpInputRef.current?.clear();
       }
-    } catch {
+    } catch (error: any) {
       updateModal({
-        message: "An error occurred while verifying OTP",
+        message: error?.message || error?.body?.message,
         showModal: true,
         modalType: "error",
       });
@@ -128,9 +128,9 @@ export const ForgotPinScreen = ({
         });
         otpInputRef.current?.clear();
       }
-    } catch {
+    } catch (error: any) {
       updateModal({
-        message: "Error resending OTP",
+        message: error?.message || error?.body?.message,
         showModal: true,
         modalType: "error",
       });

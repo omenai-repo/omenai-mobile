@@ -13,7 +13,9 @@ import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { verifySubscriptionCharge } from "#services/stripe/verifySubscriptionCharge";
 import { verifyDiscountedSubscriptionCharge } from "#services/stripe/verifyDiscountedSubscriptionCharge";
+import { useAppStore } from "#store/app/appStore";
 import { screenName } from "#constants/screenNames.constants";
+import { invalidateGallerySubscriptionAndOrders } from "#utils/invalidateGallerySubscriptionAndOrders";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "#config/colors.config";
 import LongWhiteButton from "#components/buttons/LongWhiteButton";
@@ -35,6 +37,7 @@ export default function BillingVerificationScreen() {
   const route = useRoute<ScreenRouteProp>();
   const navigation = useNavigation<any>();
   const qc = useQueryClient();
+  const galleryId = useAppStore((s) => s.userSession?.id);
 
   const {
     payment_intent: paymentIntentId,
@@ -125,11 +128,13 @@ export default function BillingVerificationScreen() {
 
   // keep user data fresh after verification succeeds
   useEffect(() => {
-    if (verified?.isOk) {
-      qc.invalidateQueries({ queryKey: ["subscription_precheck"] });
-      qc.invalidateQueries({ queryKey: ["subscription"] });
-    }
-  }, [verified?.isOk, qc]);
+    if (!verified?.isOk) return;
+    void (async () => {
+      await qc.invalidateQueries({ queryKey: ["subscription_precheck"] });
+      await qc.invalidateQueries({ queryKey: ["subscription"] });
+      await invalidateGallerySubscriptionAndOrders(qc, galleryId);
+    })();
+  }, [verified?.isOk, qc, galleryId]);
 
   // Simple loader matching premium design
   const Loader = () => (
@@ -336,7 +341,7 @@ function Result({
       {/* CTA */}
       <View style={tw`w-full`}>
         <LongWhiteButton
-          value={success ? "View Subscription Info" : "Go back to billing page"}
+          value={success ? "View subscription info" : "Go back to billing page"}
           onClick={onPrimary}
           outline={false}
           style={{

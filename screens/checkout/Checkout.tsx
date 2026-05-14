@@ -20,11 +20,8 @@ import { calculateSubscriptionPricing } from "#utils/calculateSubscriptionPricin
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { useStripe } from "@stripe/stripe-react-native";
 import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
+import { invalidateGallerySubscriptionAndOrders } from "#utils/invalidateGallerySubscriptionAndOrders";
 import { Analytics } from "#utils/analytics";
-import {
-  SubscriptionModelSchemaTypes,
-  SubscriptionPlanDataTypes,
-} from "#types/types";
 import { CheckoutBanner } from "./components/CheckoutBanner";
 import { PricingBreakdown } from "./components/PricingBreakdown";
 import { PaymentSection } from "./components/PaymentSection";
@@ -57,6 +54,7 @@ const useCheckoutPricing = (
   plan: any,
   interval: "yearly" | "monthly",
   sub_data: any,
+  isSubscriptionDiscount: boolean,
   startDate: Date,
   days_used: number,
   totalDays: number,
@@ -80,6 +78,7 @@ const useCheckoutPricing = (
       plan,
       days_used,
       totalDays,
+      isSubscriptionDiscount,
     );
   }, [
     startDate,
@@ -89,6 +88,7 @@ const useCheckoutPricing = (
     days_used,
     totalDays,
     isInitialSubscription,
+    isSubscriptionDiscount,
   ]);
 
   const plan_change_params = useMemo(() => {
@@ -164,6 +164,7 @@ export default function Checkout() {
     totalDays,
   );
   const days_left = Math.max(totalDays - days_used, 0);
+  const isSubscriptionDiscount = Boolean(sub_data?.isDiscountSub);
 
   const { proratedPrice, upgradeCost, grandTotal, plan_change_params } =
     useCheckoutPricing(
@@ -171,6 +172,7 @@ export default function Checkout() {
       plan,
       interval,
       sub_data,
+      isSubscriptionDiscount,
       startDate,
       days_used,
       totalDays,
@@ -196,7 +198,7 @@ export default function Checkout() {
     try {
       setPayLoading(true);
 
-      const res = await createStripeTokenizedCharge(grandTotal, {
+      const res = await createStripeTokenizedCharge(finalGrandTotal, {
         name: user.name,
         email: user.email,
         gallery_id: user.id,
@@ -212,7 +214,7 @@ export default function Checkout() {
           user,
           plan,
           interval,
-          amount: grandTotal,
+          amount: finalGrandTotal,
           discount_eligible: discountEligible,
           error: (res as any).error,
           response: res,
@@ -234,7 +236,7 @@ export default function Checkout() {
             user,
             plan,
             interval,
-            amount: grandTotal,
+            amount: finalGrandTotal,
             discount_eligible: discountEligible,
             payment_intent_id: paymentIntentId,
             failure_stage: "3d_secure_authentication",
@@ -253,13 +255,13 @@ export default function Checkout() {
         user,
         plan,
         interval,
-        amount: grandTotal,
+        amount: finalGrandTotal,
         discount_eligible: discountEligible,
         payment_intent_id: paymentIntentId,
         pricing_breakdown: {
           prorated_price: proratedPrice,
           upgrade_cost: upgradeCost,
-          grand_total: grandTotal,
+          grand_total: finalGrandTotal,
         },
       });
 
@@ -272,6 +274,7 @@ export default function Checkout() {
       await queryClient.invalidateQueries({
         queryKey: ["subscription_precheck"],
       });
+      await invalidateGallerySubscriptionAndOrders(queryClient, user?.id);
       navigation.navigate("BillingVerificationScreen", {
         payment_intent: paymentIntentId,
       });
@@ -281,7 +284,7 @@ export default function Checkout() {
         user,
         plan,
         interval,
-        amount: grandTotal,
+        amount: finalGrandTotal,
         discount_eligible: discountEligible,
         failure_stage: "exception",
         error: e,
@@ -356,6 +359,7 @@ export default function Checkout() {
         await queryClient.invalidateQueries({
           queryKey: ["subscription_precheck"],
         });
+        await invalidateGallerySubscriptionAndOrders(queryClient, user?.id);
         navigation.pop(2);
       }
     } catch (e: any) {
@@ -402,6 +406,7 @@ export default function Checkout() {
           currency={currency}
           showCharge={showCharge}
           discountEligible={discountEligible}
+          isSubscriptionDiscount={isSubscriptionDiscount}
           discountAmount={
             interval === "monthly"
               ? +plan.pricing.monthly_price

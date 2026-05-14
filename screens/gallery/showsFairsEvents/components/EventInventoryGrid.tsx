@@ -77,11 +77,11 @@ export default function EventInventoryGrid({
                   setIsRemoving(artworkId);
                   try {
                     await onRemoveArtwork(artworkId);
-                  } catch {
+                  } catch (error: any) {
                     updateModal({
                       showModal: true,
                       modalType: "error",
-                      message: "Failed to remove artwork from event.",
+                      message: error?.message || error?.body?.message || "Failed to remove artwork from event.",
                     });
                   } finally {
                     setIsRemoving(null);
@@ -120,12 +120,12 @@ export default function EventInventoryGrid({
         const newIds = data.map((a) => a.art_id);
         try {
           await onReorderArtworks(newIds);
-        } catch {
+        } catch (error: any) {
           setItems(previousSnapshot);
           updateModal({
             showModal: true,
             modalType: "error",
-            message: "Failed to save the new order.",
+            message: error?.message || error?.body?.message || "Failed to save the new order.",
           });
         }
       })();

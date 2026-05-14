@@ -32,7 +32,6 @@ const USER_TYPE_TO_ROLE: Record<
 const FALLBACK_TARGET = "overview";
 
 const DEEP_LINK_PATH_REGEX = /^\/?dl\/(individual|artist|gallery)(?:\/(.*))?$/i;
-const SAFE_SEGMENT_REGEX = /^[a-z0-9_-]+$/i;
 const SAFE_ARTWORK_ID_REGEX = /^[a-z0-9._:-]+$/i;
 const SAFE_TOKEN_REGEX = /^[A-Za-z0-9._-]{16,512}$/;
 const MAPPED_TARGETS_BY_ROLE: Record<AppRole, Set<string>> = {

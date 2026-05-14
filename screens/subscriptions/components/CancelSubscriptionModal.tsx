@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
 import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
 import { cancelSubscription } from "#services/subscriptions/cancelSubscription";
+import { invalidateGallerySubscriptionAndOrders } from "#utils/invalidateGallerySubscriptionAndOrders";
 
 type Props = {
   visible: boolean;
@@ -72,8 +73,8 @@ export default function CancelSubscriptionModal({
       if (!res?.isOk) {
         setErr(res?.message || "Failed to cancel subscription.");
       } else {
-        // Refresh any dependent queries
-        qc.invalidateQueries({ queryKey: ["subscription_precheck"] });
+        await qc.invalidateQueries({ queryKey: ["subscription_precheck"] });
+        await invalidateGallerySubscriptionAndOrders(qc, userSession.id);
         onClose();
       }
     } catch (e: any) {

@@ -8,6 +8,7 @@ import { useAppStore } from "#store/app/appStore";
 import { createPaymentMethodSetupIntent } from "#services/stripe/createPaymentMethodSetupIntent";
 import { updatePaymentMethod } from "#services/stripe/updatePaymentMethod";
 import SuccessPaymentModal from "./SuccessPaymentModal";
+import { invalidateGallerySubscriptionAndOrders } from "#utils/invalidateGallerySubscriptionAndOrders";
 
 export default function PaymentMethodChangeScreen() {
   const navigation = useNavigation<any>();
@@ -121,14 +122,7 @@ export default function PaymentMethodChangeScreen() {
     }
     await updatePaymentMethod(setupIntentId);
     setSuccessVisible(true);
-  }, [
-    sheetReady,
-    clientSecret,
-    initializeSheet,
-    presentPaymentSheet,
-    navigation,
-    queryClient,
-  ]);
+  }, [sheetReady, clientSecret, initializeSheet, presentPaymentSheet]);
 
   return (
     <>
@@ -161,13 +155,11 @@ export default function PaymentMethodChangeScreen() {
             disabled={initializing || presenting || !sheetReady} // CHANGED
             onPress={handleOpenSheet}
             style={({ pressed }) =>
-              tw.style(
-                `mt-2 h-12 rounded-sm items-center justify-center`,
-                initializing || presenting || !sheetReady
+              tw`mt-2 h-12 rounded-sm items-center justify-center 
+                ${initializing || presenting || !sheetReady
                   ? "bg-slate-300"
-                  : "bg-slate-900",
-                pressed ? "opacity-85" : "",
-              )
+                  : "bg-slate-900"}
+                ${pressed ? "opacity-85" : ""}`
             }
           >
             <Text style={tw`text-white font-medium`}>
@@ -181,9 +173,10 @@ export default function PaymentMethodChangeScreen() {
         onPrimaryPress={async () => {
           setSuccessVisible(false);
           // refresh + go back to billing
-          queryClient.invalidateQueries({
+          await queryClient.invalidateQueries({
             queryKey: ["subscription_precheck"],
           });
+          await invalidateGallerySubscriptionAndOrders(queryClient, user?.id);
           navigation.goBack();
         }}
       />

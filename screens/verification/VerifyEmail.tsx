@@ -76,7 +76,7 @@ export default function VerifyEmail() {
       });
     } catch (error: any) {
       updateModal({
-        message: error?.message || "An unexpected error occurred.",
+        message: error?.message || error?.body?.message || "An unexpected error occurred.",
         modalType: "error",
         showModal: true,
       });

@@ -83,9 +83,9 @@ export const ResetPinScreen = ({
           modalType: "error",
         });
       }
-    } catch {
+    } catch (error: any) {
       updateModal({
-        message: "An error occurred while resetting PIN",
+        message: error?.message || error?.body?.message || "An error occurred while resetting PIN",
         showModal: true,
         modalType: "error",
       });

@@ -29,7 +29,7 @@ export const useOrdersManagement = ({
         return Array.isArray(res.data) ? res.data : [];
       } catch (err: any) {
         updateModal({
-          message: err?.message ?? errorMessage,
+          message: err?.message || err?.body?.message || errorMessage,
           showModal: true,
           modalType: "error",
         });

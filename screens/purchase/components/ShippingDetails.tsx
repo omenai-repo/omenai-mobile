@@ -18,7 +18,6 @@ import {
 import { debounce } from "lodash";
 import { useAppStore } from "#store/app/appStore";
 import { useFormValidation } from "#hooks/useFormValidation";
-import { artworkOrderDataTypes } from "#types/types";
 
 interface SessionAddress {
   address_line: string;

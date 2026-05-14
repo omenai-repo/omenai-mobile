@@ -1,5 +1,5 @@
 import { StyleSheet, RefreshControl } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { checkIsStripeOnboarded } from "#services/stripe/checkIsStripeOnboarded";
@@ -28,7 +28,7 @@ export default function StripePayouts({
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
 
-  async function handleOnBoardingCheck() {
+  const handleOnBoardingCheck = useCallback(async () => {
     const res = await checkIsStripeOnboarded(account_id);
     if (res?.isOk) {
       setIsSubmitted(res.details_submitted);
@@ -39,7 +39,7 @@ export default function StripePayouts({
         showModal: true,
       });
     }
-  }
+  }, [account_id, updateModal]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -50,7 +50,11 @@ export default function StripePayouts({
 
   useEffect(() => {
     async function init() {
-      if (!showScreen) return;
+      if (!showScreen || !account_id) {
+        setIsSubmitted(false);
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       await handleOnBoardingCheck();
       setLoading(false);
@@ -61,7 +65,7 @@ export default function StripePayouts({
     return () => {
       queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
     };
-  }, [showScreen]);
+  }, [showScreen, account_id, queryClient, handleOnBoardingCheck]);
 
   if (!showScreen) return <BlockingScreen />;
 

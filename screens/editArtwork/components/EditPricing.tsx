@@ -15,7 +15,7 @@ import { getCurrencyConversion } from "#services/exchange_rate/getCurrencyConver
 import { updateArtworkPrice } from "#services/artworks/updateArtworkPrice";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "#constants/screenNames.constants";
-import { useAppStore } from "#store/app/appStore";
+import tw from "twrnc";
 
 type artworkPricingErrorsType = {
   price: string;
@@ -123,20 +123,20 @@ export default function EditPricing({ art_id }: { art_id: string }) {
       });
     } else {
       updateModal({
-        message: "Error updating pricing detials",
+        message: update?.message || update?.body?.message || "Error updating pricing detials",
         showModal: true,
         modalType: "error",
       });
     }
-
     setLoading(false);
   };
+
 
   return (
     <View style={styles.container}>
       <View style={styles.inputsContainer}>
-        <View style={{ flexDirection: "row", gap: 10, zIndex: 11 }}>
-          <View style={{ flex: 1 }}>
+        <View style={tw`flex-row gap-10 z-11`}>
+          <View style={tw`flex-1`}>
             <CustomSelectPicker
               label="Currency"
               data={transformedCurrencies}
@@ -151,7 +151,6 @@ export default function EditPricing({ art_id }: { art_id: string }) {
           <View style={{ flex: 1 }}>
             <Input
               label="Price"
-              // onInputChange={value => updateArtworkUploadData('price', parseInt(value, 10))}
               onInputChange={(value) =>
                 handleCurrencyConvert(parseInt(value, 10))
               }
@@ -177,7 +176,7 @@ export default function EditPricing({ art_id }: { art_id: string }) {
               }
               disabled={true}
               placeHolder=""
-              onInputChange={() => {}}
+              onInputChange={() => { }}
             />
           )}
         </View>
@@ -226,3 +225,4 @@ const styles = StyleSheet.create({
     color: colors.inputLabel,
   },
 });
+

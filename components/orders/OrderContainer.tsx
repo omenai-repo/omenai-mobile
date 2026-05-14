@@ -10,7 +10,7 @@ import { OrderActions } from "#components/orders/OrderActions";
 import { DetailRow } from "./DetailRow";
 import type { OrderContainerProps } from "#types/orders";
 
-export const OrderContainer = React.memo((props: OrderContainerProps) => {
+function OrderContainerInner(props: OrderContainerProps) {
   const {
     id,
     open,
@@ -144,11 +144,16 @@ export const OrderContainer = React.memo((props: OrderContainerProps) => {
             trackBtn={trackBtn}
             acceptBtn={props.acceptBtn}
             declineBtn={props.declineBtn}
+            galleryAcceptBlocked={props.galleryAcceptBlocked}
+            gallerySubscriptionNotice={props.gallerySubscriptionNotice}
+            onGallerySubscribeForOrders={props.onGallerySubscribeForOrders}
           />
         </View>
       </Animated.View>
     </Pressable>
   );
-});
+}
+
+export const OrderContainer = React.memo(OrderContainerInner);
 
 export default OrderContainer;

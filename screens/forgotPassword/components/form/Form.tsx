@@ -107,7 +107,7 @@ export default function Form() {
           <Text
             style={[tw`text-center text-base`, { color: colors.primary_black }]}
           >
-            Don't have an account? Create one
+            Don&apos;t have an account? Create one
           </Text>
         </Pressable>
       </View>

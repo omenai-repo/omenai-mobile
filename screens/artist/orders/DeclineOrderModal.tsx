@@ -291,7 +291,7 @@ const DeclineOrderModal = ({
         response: res,
       });
       updateModal({
-        message: res?.message || "Failed to decline order",
+        message: res?.message || res?.body?.message || "Failed to decline order",
         showModal: true,
         modalType: "error",
       });
@@ -316,7 +316,7 @@ const DeclineOrderModal = ({
       await submitDeclineOrder();
     } catch (err: any) {
       updateModal({
-        message: err?.message || "Something went wrong. Try again later.",
+        message: err?.message || err?.body?.message || "Something went wrong. Try again later.",
         showModal: true,
         modalType: "error",
       });

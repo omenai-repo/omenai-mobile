@@ -44,11 +44,11 @@ export default function ArtistExclusivityAgreementSection({
   const openArtistTerms = async () => {
     try {
       await WebBrowser.openBrowserAsync("https://omenai.app/legal?ent=artist");
-    } catch {
+    } catch (error: any) {
       updateModal({
         showModal: true,
         modalType: "error",
-        message: "Something went wrong while opening the Terms of Agreement.",
+        message: error?.message || error?.body?.message || "Something went wrong while opening the Terms of Agreement.",
       });
     }
   };

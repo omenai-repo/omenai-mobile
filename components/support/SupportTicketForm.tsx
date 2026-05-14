@@ -8,7 +8,6 @@ import {
   ScrollView,
 } from "react-native";
 import tw from "twrnc";
-import { SupportCategory } from "../../types/types";
 import { useAppStore } from "../../store/app/appStore";
 import { createSupportTicket } from "../../services/support/support.service";
 import { useSupport } from "../../providers/SupportProvider";
@@ -168,7 +167,7 @@ export default function SupportTicketForm({
     onSuccess: (response) => {
       if (!response.isOk) {
         updateModal({
-          message: response.message || "Failed to create ticket",
+          message: response.message || response?.body?.message || "Failed to create ticket",
           modalType: "error",
           showModal: true,
         });

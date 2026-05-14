@@ -23,6 +23,11 @@ export type OrderContainerProps = {
   acceptBtn?: () => void;
   declineBtn?: () => void;
   seller_designation?: string;
+  /** Gallery: true when subscription must block accepting orders */
+  galleryAcceptBlocked?: boolean;
+  /** Gallery: copy shown when accept is blocked (expiry / inactive) */
+  gallerySubscriptionNotice?: string;
+  onGallerySubscribeForOrders?: () => void;
 };
 
 export type OrderActionsProps = {
@@ -34,6 +39,9 @@ export type OrderActionsProps = {
   trackBtn?: () => void;
   acceptBtn?: () => void;
   declineBtn?: () => void;
+  galleryAcceptBlocked?: boolean;
+  gallerySubscriptionNotice?: string;
+  onGallerySubscribeForOrders?: () => void;
 };
 
 export type StatusBadgeProps = {

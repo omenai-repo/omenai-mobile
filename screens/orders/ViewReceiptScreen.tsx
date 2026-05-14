@@ -3,7 +3,6 @@ import { Platform, ScrollView, Text, View } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
-import { InvoiceTypes } from "#types/types";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useInvoiceQuery } from "#hooks/useInvoice";
@@ -78,9 +77,9 @@ export default function ViewReceiptScreen() {
           modalType: "success",
         });
       }
-    } catch {
+    } catch (error: any) {
       updateModal({
-        message: "Download failed",
+        message: error?.message || error?.body?.message || "Download failed",
         showModal: true,
         modalType: "error",
       });

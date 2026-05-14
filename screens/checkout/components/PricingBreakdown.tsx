@@ -4,6 +4,9 @@ import tw from "twrnc";
 import { PriceRow } from "./PriceRow";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 
+const hasProratedCredit = (amount: number) =>
+  Math.round(amount * 100) > 0;
+
 export const PricingBreakdown = ({
   isInitialSubscription,
   days_left,
@@ -14,7 +17,16 @@ export const PricingBreakdown = ({
   showCharge,
   discountEligible,
   discountAmount,
-}: any) => (
+  isSubscriptionDiscount,
+}: any) => {
+  const showProratedRow =
+    !isInitialSubscription &&
+    !discountEligible &&
+    !isSubscriptionDiscount &&
+    showCharge &&
+    hasProratedCredit(proratedPrice);
+
+  return (
   <View style={tw`bg-white rounded-sm border border-slate-100 p-5 mb-5`}>
     {!isInitialSubscription && (
       <View
@@ -54,12 +66,12 @@ export const PricingBreakdown = ({
             </Text>
           </View>
         )}
-        {!isInitialSubscription && !discountEligible && (
+        {showProratedRow && (
           <PriceRow
             label="Prorated cost"
-            value={showCharge ? proratedPrice : 0}
+            value={proratedPrice}
             currency={currency}
-            minus={showCharge}
+            minus
           />
         )}
       </View>
@@ -95,4 +107,5 @@ export const PricingBreakdown = ({
       )}
     </View>
   </View>
-);
+  );
+};

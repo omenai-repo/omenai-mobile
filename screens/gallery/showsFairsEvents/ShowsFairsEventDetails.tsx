@@ -132,11 +132,11 @@ export default function ShowsFairsEventDetails() {
         message: "Cover image has been updated.",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       updateModal({
         showModal: true,
         modalType: "error",
-        message: "Unable to update cover image.",
+        message: error?.message || error?.body?.message || "Unable to update cover image.",
       });
     },
     onSettled: () => {
@@ -239,7 +239,7 @@ export default function ShowsFairsEventDetails() {
       updateModal({
         showModal: true,
         modalType: "error",
-        message: error?.message || "Unable to upload selected image.",
+        message: error?.message || error?.body?.message || "Unable to upload selected image.",
       });
       setIsCoverUploadInProgress(false);
     }

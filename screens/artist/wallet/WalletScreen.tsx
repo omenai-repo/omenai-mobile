@@ -44,7 +44,7 @@ const WalletScreen = () => {
       const res = await fetchArtistWalletData();
       if (!res?.isOk) {
         updateModal({
-          message: "Error fetching wallet data",
+          message: res?.body?.message || "Error fetching wallet data",
           showModal: true,
           modalType: "error",
         });
@@ -73,7 +73,7 @@ const WalletScreen = () => {
       });
       if (!res?.isOk) {
         updateModal({
-          message: "Error fetching transactions",
+          message: res?.body?.message || "Error fetching transactions",
           showModal: true,
           modalType: "error",
         });

@@ -1,7 +1,7 @@
 import React from "react";
 import { FlatList, RefreshControl } from "react-native";
 import tw from "twrnc";
-import OrderContainer from "./OrderContainer";
+import { OrderContainer } from "./OrderContainer";
 import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 
@@ -16,6 +16,9 @@ interface OrdersListProps {
   onDecline?: (item: any) => void;
   onTrack: (item: any) => void;
   renderExclusivityType?: (item: any) => string;
+  galleryAcceptBlocked?: boolean;
+  gallerySubscriptionNotice?: string;
+  onGallerySubscribeForOrders?: () => void;
 }
 
 export const OrdersList: React.FC<OrdersListProps> = ({
@@ -29,6 +32,9 @@ export const OrdersList: React.FC<OrdersListProps> = ({
   onDecline,
   onTrack,
   renderExclusivityType,
+  galleryAcceptBlocked,
+  gallerySubscriptionNotice,
+  onGallerySubscribeForOrders,
 }) => {
   return (
     <FlatList
@@ -86,6 +92,9 @@ export const OrdersList: React.FC<OrdersListProps> = ({
           {...(renderExclusivityType && {
             exclusivity_type: renderExclusivityType(item),
           })}
+          galleryAcceptBlocked={galleryAcceptBlocked}
+          gallerySubscriptionNotice={gallerySubscriptionNotice}
+          onGallerySubscribeForOrders={onGallerySubscribeForOrders}
         />
       )}
     />

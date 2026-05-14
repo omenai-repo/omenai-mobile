@@ -47,7 +47,7 @@ export default function LongWhiteButton({
   ];
 
   const mergedTextStyle = [
-    tw`uppercase text-center text-sm tracking-widest`,
+    tw`text-center text-sm tracking-widest`,
     { color: colors.black },
     textStyle,
   ];

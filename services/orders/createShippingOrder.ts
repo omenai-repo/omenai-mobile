@@ -1,6 +1,5 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { apiRequest } from "../../utils/apiRequest";
-import { AddressTypes } from "#types/types";
 
 export async function createShippingOrder(
   buyer_id: string,

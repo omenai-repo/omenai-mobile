@@ -44,10 +44,10 @@ export const useAddressVerification = (
 
       setAddressVerified(isVerified);
       setShowModal(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error verifying address:", error);
       updateModal({
-        message: "Network error, please check your connection and try again.",
+        message: error?.message || error?.body?.message || "Network error, please check your connection and try again.",
         modalType: "error",
         showModal: true,
       });

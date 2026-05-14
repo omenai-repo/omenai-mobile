@@ -367,7 +367,7 @@ const AddPrimaryAcctScreen = () => {
     },
     onError: (error: any) => {
       updateModal({
-        message: error.message || "An unexpected error occurred",
+        message: error.message || error?.body?.message || "An unexpected error occurred",
         showModal: true,
         modalType: "error",
       });

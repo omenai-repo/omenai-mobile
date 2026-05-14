@@ -1,5 +1,6 @@
 import { useAppStore } from "../store/app/appStore";
 import { logout } from "./logout.utils";
+import { getSecureItem } from "./secureStore";
 import { utils_getAsyncData } from "./utils_asyncStorage";
 
 const sanitizeSessionLogo = (logo: unknown): string => {
@@ -26,11 +27,17 @@ const sanitizePersistedSession = (session: any) => {
 };
 
 export const utils_appInit = async () => {
+  const token = await getSecureItem("session_token");
+  if (!token) {
+    await logout();
+    return;
+  }
+
   const userData = await utils_getAsyncData("userSession");
   const loginDate = await utils_getAsyncData("loginTimeStamp");
 
   if (!loginDate?.value) {
-    logout();
+    await logout();
     return;
   }
 
@@ -47,13 +54,13 @@ export const utils_appInit = async () => {
         });
       } catch (error) {
         console.error("Failed to parse user data:", error);
-        logout();
+        await logout();
       }
     } else {
-      logout();
+      await logout();
     }
   } else {
-    logout();
+    await logout();
   }
 };
 

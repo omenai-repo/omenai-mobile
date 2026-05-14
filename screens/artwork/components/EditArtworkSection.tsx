@@ -87,9 +87,9 @@ const EditArtworkModal = forwardRef<BottomSheetModal, EditArtworkModalProps>(
             showModal: true,
           });
         }
-      } catch {
+      } catch (error: any) {
         updateModal({
-          message: "An error occurred. Please try again.",
+          message: error?.message || error?.body?.message || "An error occurred. Please try again.",
           modalType: "error",
           showModal: true,
         });
@@ -125,14 +125,14 @@ const EditArtworkModal = forwardRef<BottomSheetModal, EditArtworkModalProps>(
         } else {
           updateModal({
             message:
-              result.message || "Error deleting artwork, try again later",
+              result.message || result?.body?.message || "Error deleting artwork, try again later",
             modalType: "error",
             showModal: true,
           });
         }
-      } catch {
+      } catch (error: any) {
         updateModal({
-          message: "An error occurred. Please try again.",
+          message: error?.message || error?.body?.message || "An error occurred. Please try again.",
           modalType: "error",
           showModal: true,
         });

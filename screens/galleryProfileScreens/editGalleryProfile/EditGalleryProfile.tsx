@@ -58,11 +58,11 @@ export default function EditGalleryProfile() {
           onDismiss: () => navigation.goBack(),
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("EditGalleryProfile.handleSubmit error:", error);
       updateModal({
         modalType: "error",
-        message: "Something went wrong. Please try again later.",
+        message: error?.message || error?.body?.message || "Something went wrong. Please try again later.",
         showModal: true,
       });
     } finally {
