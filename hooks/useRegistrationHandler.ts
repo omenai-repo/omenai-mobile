@@ -1,3 +1,4 @@
+import { useEffect, useRef, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { registerAccount } from "#services/register/registerAccount";
@@ -7,104 +8,78 @@ import { screenName } from "../constants/screenNames.constants";
 import { storage } from "#appWrite_config";
 import uploadLogo from "../screens/galleryProfileScreens/uploadNewLogo/uploadLogo";
 import { Analytics } from "#utils/analytics";
+import {
+  registrationResponseForAnalytics,
+  extractVerifyEmailIdFromRegisterBody,
+} from "#hooks/register/registerResponseUtils";
 
 type AccountType = "individual" | "gallery" | "artist";
 
-const REGISTRATION_ACCOUNT_ID_KEY = {
-  individual: "user_id",
-  gallery: "gallery_id",
-  artist: "artist_id",
-} as const;
-
-type RegistrationAnalyticsResponse = {
-  id?: string;
-  email?: string;
-  verified?: boolean;
-};
-
-/** API `body` (parsed JSON) → only id, email, verified for analytics. */
-function registrationResponseForAnalytics(
-  body: unknown,
-  accountType: AccountType,
-): RegistrationAnalyticsResponse {
-  if (!body || typeof body !== "object") return {};
-
-  const b = body as Record<string, unknown>;
-  const idKey = REGISTRATION_ACCOUNT_ID_KEY[accountType];
-  const rawData = b.data;
-
-  if (typeof rawData === "string") {
-    return {
-      id: rawData,
-      ...(typeof b.email === "string" ? { email: b.email } : {}),
-      ...(typeof b.verified === "boolean" ? { verified: b.verified } : {}),
-    };
-  }
-
-  if (rawData && typeof rawData === "object" && !Array.isArray(rawData)) {
-    const d = rawData as Record<string, unknown>;
-    const id =
-      (typeof d[idKey] === "string" && d[idKey]) ||
-      (typeof d.user_id === "string" && d.user_id) ||
-      (typeof d.gallery_id === "string" && d.gallery_id) ||
-      (typeof d.artist_id === "string" && d.artist_id) ||
-      (typeof d.id === "string" && d.id) ||
-      undefined;
-    const email =
-      (typeof d.email === "string" && d.email) ||
-      (typeof b.email === "string" && b.email) ||
-      undefined;
-    const verified =
-      typeof d.verified === "boolean"
-        ? d.verified
-        : typeof b.verified === "boolean"
-          ? b.verified
-          : undefined;
-
-    return {
-      ...(id ? { id } : {}),
-      ...(email ? { email } : {}),
-      ...(typeof verified === "boolean" ? { verified } : {}),
-    };
-  }
-
-  const topId =
-    (typeof b[idKey] === "string" && b[idKey]) ||
-    (typeof b.id === "string" && b.id) ||
-    undefined;
-
+/** Non-PII shape for analytics only (no name, phone, email, preferences values). */
+function registrationFingerprintForAnalytics(data: Record<string, unknown>) {
   return {
-    ...(topId ? { id: topId as string } : {}),
-    ...(typeof b.email === "string" ? { email: b.email } : {}),
-    ...(typeof b.verified === "boolean" ? { verified: b.verified } : {}),
+    has_phone:
+      typeof data.phone === "string" && data.phone.trim().length > 0,
+    has_preferences:
+      Array.isArray(data.preferences) && data.preferences.length > 0,
+    preferences_count: Array.isArray(data.preferences)
+      ? data.preferences.length
+      : 0,
   };
 }
 
-/** Strip secrets / heavy PII before sending registration form data to analytics. */
-function registrationDataForAnalytics(data: Record<string, unknown>) {
-  const { password, confirmPassword, address, ...rest } = data;
-  return rest;
+function sanitizeErrorMessage(message: unknown) {
+  if (typeof message !== "string")
+    return "Something went wrong. Please try again.";
+
+  if (message.toLowerCase().includes("unable to resolve data for blob")) {
+    return "A temporary device data error occurred. Please restart the app and try again.";
+  }
+
+  return message;
+}
+
+function normalizeEmailInPayload<T extends Record<string, unknown>>(rest: T) {
+  if (typeof rest.email !== "string") return rest;
+  return { ...rest, email: rest.email.trim().toLowerCase() } as T;
 }
 
 export function useRegistrationHandler(accountType: AccountType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const isMountedRef = useRef(true);
   const { updateModal } = useModalStore();
   const { expoPushToken } = useAppStore();
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const safeUpdateModal = useCallback(
+    (args: Parameters<typeof updateModal>[0]) => {
+      if (isMountedRef.current) updateModal(args);
+    },
+    [updateModal],
+  );
 
   const handleRegister = async (
     data: any,
     clearState: () => void,
     setIsLoading: (loading: boolean) => void,
   ) => {
+    let uploadedFileId: string | null = null;
     try {
       setIsLoading(true);
 
-      const { confirmPassword, ...rest } = data;
-      let payload = { ...rest, device_push_token: expoPushToken ?? "" };
+      const { confirmPassword, ...restRaw } = data;
+      const rest = normalizeEmailInPayload(restRaw as Record<string, unknown>);
+      let payload: Record<string, unknown> = {
+        ...rest,
+        device_push_token: expoPushToken ?? "",
+      };
 
-      let uploadedFileId: string | null = null;
-
-      // Handle logo upload for gallery and artist
       if (
         (accountType === "gallery" || accountType === "artist") &&
         data.logo
@@ -130,30 +105,71 @@ export function useRegistrationHandler(accountType: AccountType) {
         payload.logo = uploadedFileId;
       }
 
-      const results = await registerAccount(payload, accountType);
+      const results = await registerAccount(
+        payload as Parameters<typeof registerAccount>[0],
+        accountType,
+      );
 
       if (results?.isOk) {
-        // Track successful registration with all context
+        const verifyId = extractVerifyEmailIdFromRegisterBody(
+          results.body,
+          accountType,
+        );
+
+        if (!verifyId) {
+          Analytics.track("registration_failed", {
+            account_type: accountType,
+            registration_data: registrationFingerprintForAnalytics(
+              data as Record<string, unknown>,
+            ),
+            error_type: "invalid_success_payload",
+            message: "Missing or invalid verify id in register response",
+          });
+
+          if (uploadedFileId) {
+            await storage.deleteFile({
+              bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
+              fileId: uploadedFileId,
+            });
+          }
+
+          safeUpdateModal({
+            message:
+              "We could not finish signup from the server response. Please try again or contact support.",
+            modalType: "error",
+            showModal: true,
+          });
+          return;
+        }
+
         Analytics.track("registration_success", {
           account_type: accountType,
-          registration_data: registrationDataForAnalytics(data),
-          user_id: results.body.data,
-          response: registrationResponseForAnalytics(results.body, accountType),
+          registration_data: registrationFingerprintForAnalytics(
+            data as Record<string, unknown>,
+          ),
+          user_id: verifyId,
+          response: registrationResponseForAnalytics(
+            results.body,
+            accountType,
+          ),
         });
 
         clearState();
-        navigation.navigate(screenName.verifyEmail, {
-          account: { id: results.body.data, type: accountType },
-        });
+        if (isMountedRef.current) {
+          navigation.navigate(screenName.verifyEmail, {
+            account: { id: verifyId, type: accountType },
+          });
+        }
       } else {
-        // Track registration failure only for server errors (500+)
-        const statusCode = (results as any)?.status;
+        const statusCode = (results as { status?: number })?.status;
         if (statusCode && statusCode >= 500) {
           Analytics.track("registration_failed", {
             account_type: accountType,
-            registration_data: registrationDataForAnalytics(data),
+            registration_data: registrationFingerprintForAnalytics(
+              data as Record<string, unknown>,
+            ),
             status_code: statusCode,
-            message: results?.body.message,
+            message: results?.body?.message,
             response: registrationResponseForAnalytics(
               results?.body,
               accountType,
@@ -161,7 +177,6 @@ export function useRegistrationHandler(accountType: AccountType) {
           });
         }
 
-        // Clean up uploaded file if registration failed
         if (uploadedFileId) {
           await storage.deleteFile({
             bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
@@ -169,24 +184,47 @@ export function useRegistrationHandler(accountType: AccountType) {
           });
         }
 
-        updateModal({
-          message: results?.body.message,
+        safeUpdateModal({
+          message: sanitizeErrorMessage(results?.body?.message),
           modalType: "error",
           showModal: true,
         });
       }
-    } catch (error: any) {
-      // Track unexpected registration error
+    } catch (error: unknown) {
+      if (uploadedFileId) {
+        try {
+          await storage.deleteFile({
+            bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
+            fileId: uploadedFileId,
+          });
+        } catch {
+          // best-effort cleanup
+        }
+      }
+
+      const err = error as {
+        message?: string;
+        name?: string;
+        body?: { message?: string };
+      };
+      const rawMessage =
+        typeof err?.message === "string" ? err.message : "Registration failed";
+
       Analytics.track("registration_failed", {
         account_type: accountType,
-        registration_data: registrationDataForAnalytics(data),
-        message: error.message || "Registration failed",
-        error: error,
+        registration_data: registrationFingerprintForAnalytics(
+          data as Record<string, unknown>,
+        ),
+        message: rawMessage.slice(0, 200),
+        error_code: error instanceof Error ? error.name : "unknown",
         error_type: "exception",
       });
 
-      updateModal({
-        message: error.message || error?.body?.message || "Registration failed",
+      safeUpdateModal({
+        message:
+          sanitizeErrorMessage(
+            err.message || err?.body?.message || "Registration failed",
+          ),
         modalType: "error",
         showModal: true,
       });

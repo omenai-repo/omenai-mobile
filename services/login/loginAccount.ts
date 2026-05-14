@@ -1,5 +1,9 @@
 import { apiUrl } from "../../constants/apiUrl.constants";
 import { apiRequest } from "../../utils/apiRequest";
+import {
+  parseApiResponseJson,
+  type ApiJsonBody,
+} from "../../utils/parseApiResponseJson";
 
 type LoginPayload = {
   email: string;
@@ -7,31 +11,7 @@ type LoginPayload = {
   device_push_token?: string;
 };
 
-export type LoginApiJsonBody = {
-  data?: unknown;
-  message?: string;
-  [key: string]: unknown;
-};
-
-async function parseJsonBody(response: Response): Promise<LoginApiJsonBody> {
-  const text = await response.text();
-  if (!text?.trim()) {
-    return {
-      message: "Empty response from server. Please try again.",
-    };
-  }
-  try {
-    return JSON.parse(text) as {
-      data?: unknown;
-      message?: string;
-      [key: string]: unknown;
-    };
-  } catch {
-    return {
-      message: "Invalid response from server. Please try again.",
-    };
-  }
-}
+export type LoginApiJsonBody = ApiJsonBody;
 
 export async function loginAccount(
   payload: LoginPayload,
@@ -56,7 +36,7 @@ export async function loginAccount(
       auth: false,
       body: JSON.stringify(payload),
     });
-    const result = await parseJsonBody(response);
+    const result = await parseApiResponseJson(response);
     return {
       isOk: response.ok,
       status: response.status,
