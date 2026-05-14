@@ -1,8 +1,7 @@
 import React from "react";
 import { useGalleryAuthLoginStore } from "#store/auth/login/GalleryAuthLoginStore";
-
-import { useLoginHandler } from "#hooks/useLoginHandler";
 import LoginForm from "../LoginForm";
+import type { HandleLoginFn } from "#hooks/loginSubmitOptions";
 
 type GalleryProps = Readonly<{
   biometricProps: {
@@ -11,21 +10,25 @@ type GalleryProps = Readonly<{
     isBiometricLoading: boolean;
     biometricName: string;
   };
+  handleLogin: HandleLoginFn;
+  setSubmitLoading: (loading: boolean) => void;
 }>;
 
-export default function Gallery({ biometricProps }: GalleryProps) {
+export default function Gallery({
+  biometricProps,
+  handleLogin,
+  setSubmitLoading,
+}: GalleryProps) {
   const {
     galleryLoginData,
     setEmail,
     setPassword,
     clearInputs,
     isLoading,
-    setIsLoading,
   } = useGalleryAuthLoginStore();
-  const { handleLogin } = useLoginHandler("gallery");
 
   const handleSubmit = () =>
-    handleLogin(galleryLoginData, setIsLoading, clearInputs);
+    handleLogin(galleryLoginData, setSubmitLoading, clearInputs);
 
   return (
     <LoginForm

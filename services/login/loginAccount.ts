@@ -7,6 +7,32 @@ type LoginPayload = {
   device_push_token?: string;
 };
 
+export type LoginApiJsonBody = {
+  data?: unknown;
+  message?: string;
+  [key: string]: unknown;
+};
+
+async function parseJsonBody(response: Response): Promise<LoginApiJsonBody> {
+  const text = await response.text();
+  if (!text?.trim()) {
+    return {
+      message: "Empty response from server. Please try again.",
+    };
+  }
+  try {
+    return JSON.parse(text) as {
+      data?: unknown;
+      message?: string;
+      [key: string]: unknown;
+    };
+  } catch {
+    return {
+      message: "Invalid response from server. Please try again.",
+    };
+  }
+}
+
 export async function loginAccount(
   payload: LoginPayload,
   route: "individual" | "gallery" | "artist",
@@ -30,11 +56,11 @@ export async function loginAccount(
       auth: false,
       body: JSON.stringify(payload),
     });
-    const result = await response.json();
+    const result = await parseJsonBody(response);
     return {
       isOk: response.ok,
       status: response.status,
-      body: result,
+      body: result as LoginApiJsonBody,
     };
   } catch (error: any) {
     const rawMessage = error?.message || "";
@@ -50,9 +76,12 @@ export async function loginAccount(
         message:
           (isBlobResolutionError
             ? "A temporary device data error occurred. Please restart the app and try logging in again."
-            : error.message) ||
+            : typeof error?.message === "string"
+              ? error.message
+              : undefined) ||
+          error?.body?.message ||
           error?.response?.data?.message ||
-          "Error logging into account",
+          "Unable to reach the server. Check your connection and try again.",
       },
     };
   }

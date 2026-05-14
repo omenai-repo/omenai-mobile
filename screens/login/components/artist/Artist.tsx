@@ -1,7 +1,7 @@
 import React from "react";
 import { useArtistAuthLoginStore } from "#store/auth/login/ArtistAuthLoginStore";
-import { useLoginHandler } from "#hooks/useLoginHandler";
 import LoginForm from "../LoginForm";
+import type { HandleLoginFn } from "#hooks/loginSubmitOptions";
 
 type ArtistProps = Readonly<{
   biometricProps: {
@@ -10,21 +10,25 @@ type ArtistProps = Readonly<{
     isBiometricLoading: boolean;
     biometricName: string;
   };
+  handleLogin: HandleLoginFn;
+  setSubmitLoading: (loading: boolean) => void;
 }>;
 
-export default function Artist({ biometricProps }: ArtistProps) {
+export default function Artist({
+  biometricProps,
+  handleLogin,
+  setSubmitLoading,
+}: ArtistProps) {
   const {
     artistLoginData,
     setEmail,
     setPassword,
     clearInputs,
     isLoading,
-    setIsLoading,
   } = useArtistAuthLoginStore();
-  const { handleLogin } = useLoginHandler("artist");
 
   const handleSubmit = () =>
-    handleLogin(artistLoginData, setIsLoading, clearInputs);
+    handleLogin(artistLoginData, setSubmitLoading, clearInputs);
 
   return (
     <LoginForm

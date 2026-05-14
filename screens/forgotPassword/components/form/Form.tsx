@@ -102,7 +102,7 @@ export default function Form() {
           />
         </View>
       </View>
-      <View style={tw`mt-[100px]`}>
+      <View style={tw`mt-5`}>
         <Pressable onPress={() => navigation.navigate(screenName.register)}>
           <Text
             style={[tw`text-center text-base`, { color: colors.primary_black }]}

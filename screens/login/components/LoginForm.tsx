@@ -1,5 +1,12 @@
-import { Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
-import React from "react";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  TextInput,
+  Pressable,
+} from "react-native";
+import React, { useRef } from "react";
 import tw from "twrnc";
 import { useDevice } from "#hooks/useDevice";
 import LongBlackButton from "#components/buttons/LongBlackButton";
@@ -28,7 +35,7 @@ type LoginFormProps = Readonly<{
   emailLabel: string;
   emailPlaceholder: string;
   loginButtonLabel: string;
-  forgotPasswordType: string;
+  forgotPasswordType: UserType;
 }>;
 
 export default function LoginForm({
@@ -45,6 +52,8 @@ export default function LoginForm({
 }: LoginFormProps) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { isTablet } = useDevice();
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
 
   const biometricIcon = (() => {
     if (biometricProps.isBiometricLoading)
@@ -62,6 +71,13 @@ export default function LoginForm({
     );
   })();
 
+  const biometricAccessibilityLabel =
+    biometricProps.biometricName === "Face ID"
+      ? "Sign in with Face ID"
+      : biometricProps.biometricName === "Fingerprint"
+        ? "Sign in with fingerprint"
+        : "Sign in with biometrics";
+
   return (
     <View
       style={[
@@ -75,19 +91,40 @@ export default function LoginForm({
     >
       <View style={tw`gap-5`}>
         <Input
+          ref={emailRef}
           testID="login-email-input"
           label={emailLabel}
           keyboardType="email-address"
           onInputChange={setEmail}
           placeHolder={emailPlaceholder}
           value={loginData.email}
+          returnKeyType="next"
+          blurOnSubmit={false}
+          onSubmitEditing={() => passwordRef.current?.focus()}
+          textContentType="username"
+          autoComplete="email"
         />
         <PasswordInput
+          ref={passwordRef}
           testID="login-password-input"
           label="Password"
           onInputChange={setPassword}
           placeHolder="Enter password"
           value={loginData.password || ""}
+          textContentType="password"
+          autoComplete="password"
+          returnKeyType="go"
+          blurOnSubmit={false}
+          onSubmitEditing={() => {
+            if (
+              loginData.email &&
+              loginData.password &&
+              !isLoading &&
+              !biometricProps.isBiometricLoading
+            ) {
+              handleSubmit();
+            }
+          }}
         />
       </View>
       <View style={tw`gap-5`}>
@@ -107,9 +144,17 @@ export default function LoginForm({
             testID="login-submit-button"
           />
           {biometricProps.canUseBiometrics && (
-            <TouchableOpacity
+            <Pressable
               onPress={biometricProps.handleBiometricLogin}
               disabled={biometricProps.isBiometricLoading || isLoading}
+              accessibilityRole="button"
+              accessibilityLabel={biometricAccessibilityLabel}
+              accessibilityHint="Uses saved email and password after device authentication"
+              accessibilityState={{
+                busy: biometricProps.isBiometricLoading,
+                disabled:
+                  biometricProps.isBiometricLoading || isLoading,
+              }}
               style={[
                 tw`items-center justify-center rounded-sm h-[52px] w-[52px]`,
                 {
@@ -120,7 +165,7 @@ export default function LoginForm({
               ]}
             >
               {biometricIcon}
-            </TouchableOpacity>
+            </Pressable>
           )}
         </View>
         <TouchableOpacity

@@ -19,6 +19,9 @@ interface ScrollWrapperProps {
     | "scrollableAxes"
     | "never"
     | "always";
+  bounces?: boolean;
+  alwaysBounceVertical?: boolean;
+  overScrollMode?: "auto" | "always" | "never";
 }
 
 const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
@@ -35,6 +38,9 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
   nestedScrollEnabled,
   keyboardShouldPersistTaps,
   contentInsetAdjustmentBehavior,
+  bounces = true,
+  alwaysBounceVertical,
+  overScrollMode,
 }) => {
   return (
     <Animated.ScrollView
@@ -50,6 +56,9 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
       keyboardShouldPersistTaps={keyboardShouldPersistTaps}
       contentInsetAdjustmentBehavior={contentInsetAdjustmentBehavior}
       onScrollEndDrag={onEndReached}
+      bounces={bounces}
+      alwaysBounceVertical={alwaysBounceVertical}
+      overScrollMode={overScrollMode}
     >
       {children}
     </Animated.ScrollView>
