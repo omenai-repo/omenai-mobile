@@ -30,7 +30,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: "com.omenai.omenaimobile",
       buildNumber: IOS_BUILD_NUMBER,
-      associatedDomains: ["applinks:omenai.app"],
+      associatedDomains: ["applinks:redirect.omenai.app"],
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         NSUserNotificationUsageDescription:
@@ -57,7 +57,7 @@ export default {
           data: [
             {
               scheme: "https",
-              host: "omenai.app",
+              host: "redirect.omenai.app",
               pathPrefix: "/dl",
             },
           ],
