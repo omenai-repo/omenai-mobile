@@ -35,7 +35,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: "com.omenai.omenaimobile",
       buildNumber: IOS_BUILD_NUMBER,
-      associatedDomains: [`applinks:${deepLinkRedirectHost}`],
+      associatedDomains: ["applinks:staging.redirect.omenai.app"],
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         NSUserNotificationUsageDescription:
@@ -62,7 +62,7 @@ export default {
           data: [
             {
               scheme: "https",
-              host: deepLinkRedirectHost,
+              host: "staging.redirect.omenai.app",
               pathPrefix: "/dl",
             },
           ],
