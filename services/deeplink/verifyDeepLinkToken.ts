@@ -1,18 +1,10 @@
 import { apiUrl } from "#constants/apiUrl.constants";
-import { parseVerifiedDeepLinkPayload } from "#config/deepLinking.config";
 import { apiRequest } from "#utils/apiRequest";
-
-type VerifyDeepLinkResult = {
-  payload: ReturnType<typeof parseVerifiedDeepLinkPayload>;
-  isValid: boolean;
-};
 
 export async function verifyDeepLinkToken(
   token: string,
-): Promise<VerifyDeepLinkResult> {
-  if (!apiUrl) {
-    return { payload: null, isValid: false };
-  }
+): Promise<DeepLinkPayload | null> {
+  if (!apiUrl) return null;
 
   try {
     const response = await apiRequest(`${apiUrl}/api/deeplink/verify`, {
@@ -22,17 +14,11 @@ export async function verifyDeepLinkToken(
       shouldLogout: false,
     });
 
-    if (!response.ok) {
-      return { payload: null, isValid: false };
-    }
+    if (!response.ok) return null;
 
-    const body = (await response.json()) as {
-      data?: unknown;
-      payload?: unknown;
-    };
-    const payload = parseVerifiedDeepLinkPayload(body.data ?? body.payload);
-    return { payload, isValid: !!payload };
+    const body = (await response.json()) as { data: DeepLinkPayload };
+    return body.data ?? null;
   } catch {
-    return { payload: null, isValid: false };
+    return null;
   }
 }

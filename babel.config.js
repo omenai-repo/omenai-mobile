@@ -11,6 +11,7 @@ module.exports = function (api) {
             "#assets": "./assets",
             "#components": "./components",
             "#config": "./config",
+            "#features": "./features",
             "#constants": "./constants",
             "#data": "./data",
             "#hooks": "./hooks",

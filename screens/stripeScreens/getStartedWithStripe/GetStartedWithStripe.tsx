@@ -192,7 +192,6 @@ export default function GetStartedWithStripe() {
               onClick={handleCreateConnectAccount}
               isLoading={accountCreatePending}
               isDisabled={countrySelect.length < 1}
-              style={{ backgroundColor: "#0A2552" }}
             />
           )}
           {connectedAccountId && (
@@ -200,7 +199,6 @@ export default function GetStartedWithStripe() {
               value="Continue to stripe onboarding"
               onClick={handleAccountLink}
               isLoading={accountLinkCreatePending}
-              style={{ backgroundColor: "#0A2552" }}
             />
           )}
         </View>

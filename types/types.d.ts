@@ -728,3 +728,52 @@ type InvoiceTypes = {
   document_created: boolean;
   receipt_sent: boolean;
 };
+
+type DeepLinkPage =
+  | "overview"
+  | "artworks"
+  | "search"
+  | "orders"
+  | "profile"
+  | "review"
+  | "billing"
+  | "payouts"
+  | "artwork"
+  | "payment";
+
+type DeepLinkTabPage = Exclude<DeepLinkPage, "artwork" | "payment">;
+
+type DeepLinkWebRole = "user" | "artist" | "gallery";
+
+type DeepLinkAppRole = "individual" | "artist" | "gallery";
+
+/** POST `/api/deeplink/verify` → `{ data: DeepLinkPayload }` */
+type DeepLinkPayload = {
+  role: DeepLinkWebRole;
+  route: string;
+  payload: { page: string };
+  params: Record<string, string>;
+};
+
+type DeepLinkUserType = "user" | "artist" | "gallery" | "";
+
+type DeepLinkSessionOptions = {
+  isLoggedIn: boolean;
+  userType?: DeepLinkUserType | null;
+};
+
+type DeepLinkNavigationTarget = {
+  type: "navigate";
+  roleWrapper: "Individual" | "Artist" | "Gallery";
+  screen: string;
+  params?: Record<string, unknown>;
+  kind: "tab" | "stack";
+};
+
+type DeepLinkFallback = {
+  type: "fallback";
+  reason: "login" | "overview";
+  appRole?: DeepLinkAppRole;
+};
+
+type DeepLinkResolveResult = DeepLinkNavigationTarget | DeepLinkFallback;
