@@ -36,6 +36,7 @@ import { SupportProvider } from "#providers/SupportProvider";
 import SupportWidget from "#components/support/SupportWidget";
 import WithModal from "#components/modal/WithModal";
 import GuestLoginModal from "#components/guest/GuestLoginModal";
+import { DEEP_LINK_REDIRECT_ORIGIN } from "#constants/deepLink.constants";
 import {
   resolveDeepLinkUrl,
   useDeepLinkFlush,
@@ -140,7 +141,7 @@ export default function App() {
 
   const session = { isLoggedIn, userType };
   const linking = {
-    prefixes: [prefix, "https://redirect.omenai.app", "omenai://"],
+    prefixes: [prefix, DEEP_LINK_REDIRECT_ORIGIN, "omenai://"],
     getStateFromPath: () => undefined,
     resolveIncomingUrl: (url: string) => resolveDeepLinkUrl(url, prefix, session),
     getInitialURL: async () => {

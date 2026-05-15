@@ -5,6 +5,11 @@ const {
   RUNTIME_VERSION,
 } = require("./constants/version.constants");
 
+const isProduction = process.env.EXPO_PUBLIC_ENV === "production";
+const deepLinkRedirectHost = isProduction
+  ? "redirect.omenai.app"
+  : "staging.redirect.omenai.app";
+
 export default {
   expo: {
     name: "Omenai",
@@ -30,7 +35,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: "com.omenai.omenaimobile",
       buildNumber: IOS_BUILD_NUMBER,
-      associatedDomains: ["applinks:redirect.omenai.app"],
+      associatedDomains: [`applinks:${deepLinkRedirectHost}`],
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         NSUserNotificationUsageDescription:
@@ -57,7 +62,7 @@ export default {
           data: [
             {
               scheme: "https",
-              host: "redirect.omenai.app",
+              host: deepLinkRedirectHost,
               pathPrefix: "/dl",
             },
           ],
