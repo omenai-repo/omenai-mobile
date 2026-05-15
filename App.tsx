@@ -141,7 +141,7 @@ export default function App() {
 
   const session = { isLoggedIn, userType };
   const linking = {
-    prefixes: [prefix, "https://staging.redirect.omenai.app", "omenai://"],
+    prefixes: [prefix, DEEP_LINK_REDIRECT_ORIGIN, "omenaimobile://"],
     getStateFromPath: () => undefined,
     resolveIncomingUrl: (url: string) => resolveDeepLinkUrl(url, prefix, session),
     getInitialURL: async () => {
