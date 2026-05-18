@@ -1,8 +1,10 @@
 import {
   fallbackOverviewTarget,
   resolveDeepLinkTarget,
+  resolveLoginDeepLink,
   sessionAppRole,
 } from "#config/deepLinkPageRegistry";
+import { loginAccountTypeFromParams } from "#utils/auth/tabIndexFromAccountType";
 import { screenName } from "#constants/screenNames.constants";
 import { navigate, navigationRef } from "#navigation/RootNavigation";
 import { verifyDeepLinkToken } from "#services/deeplink/verifyDeepLinkToken";
@@ -17,12 +19,24 @@ const resolveAfterVerify = (
   hasToken: boolean,
   options: DeepLinkSessionOptions,
 ): DeepLinkResolveResult => {
-  if (!options.isLoggedIn) return { type: "fallback", reason: "login" };
   if (!payload) {
     return hasToken
       ? { type: "fallback", reason: "overview", appRole: sessionAppRole(options) }
-      : { type: "fallback", reason: "login" };
+      : { type: "fallback", reason: "login", accountType: "individual" };
   }
+
+  if (!options.isLoggedIn) {
+    const page = payload.payload.page.trim().toLowerCase();
+    if (page === "login") {
+      return resolveLoginDeepLink(payload, options);
+    }
+    return {
+      type: "fallback",
+      reason: "login",
+      accountType: loginAccountTypeFromParams(payload.params ?? {}),
+    };
+  }
+
   const result = resolveDeepLinkTarget(payload, options);
   if (result.type === "fallback") {
     return { type: "fallback", reason: "overview", appRole: sessionAppRole(options) };
@@ -51,7 +65,14 @@ const applyDeepLinkResult = (
 
   if (result.type === "fallback") {
     if (result.reason === "login") {
-      navigate(screenName.login);
+      if (options.isLoggedIn) {
+        return navigateToTarget(
+          fallbackOverviewTarget(sessionAppRole(options)),
+        );
+      }
+      navigate(screenName.login, {
+        account_type: result.accountType ?? "individual",
+      });
       return true;
     }
     return navigateToTarget(
@@ -101,6 +122,11 @@ export const resolveDeepLinkUrl = async (
   const payload = token ? await verifyDeepLinkToken(token) : null;
 
   if (payload && !options.isLoggedIn) {
+    const page = payload.payload.page.trim().toLowerCase();
+    if (page === "login") {
+      applyOrQueue(resolveLoginDeepLink(payload, options), options);
+      return toDlUrl(token);
+    }
     pendingPayload = payload;
     return toDlUrl(token);
   }
