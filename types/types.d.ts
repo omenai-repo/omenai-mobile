@@ -737,6 +737,7 @@ type DeepLinkPage =
   | "review"
   | "billing"
   | "payouts"
+  | "wallet"
   | "artwork"
   | "payment"
   | "purchase"

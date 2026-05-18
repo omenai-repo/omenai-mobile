@@ -3,8 +3,8 @@ import {
   resolveDeepLinkTarget,
   resolveLoginDeepLink,
   sessionAppRole,
+  toAppRole,
 } from "#config/deepLinkPageRegistry";
-import { loginAccountTypeFromParams } from "#utils/auth/tabIndexFromAccountType";
 import { screenName } from "#constants/screenNames.constants";
 import { navigate, navigationRef } from "#navigation/RootNavigation";
 import { verifyDeepLinkToken } from "#services/deeplink/verifyDeepLinkToken";
@@ -33,7 +33,7 @@ const resolveAfterVerify = (
     return {
       type: "fallback",
       reason: "login",
-      accountType: loginAccountTypeFromParams(payload.params ?? {}),
+      accountType: toAppRole(payload.role),
     };
   }
 

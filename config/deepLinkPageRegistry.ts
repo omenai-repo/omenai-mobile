@@ -1,5 +1,4 @@
 import { screenName } from "#constants/screenNames.constants";
-import { loginAccountTypeFromParams } from "#utils/auth/tabIndexFromAccountType";
 
 type PageDefinition = {
   kind: "tab" | "stack" | "auth";
@@ -60,6 +59,12 @@ const PAGE_REGISTRY: Record<DeepLinkPage, PageDefinition> = {
     screenName: screenName.gallery.stripePayouts,
     roleWrapper: "Gallery",
   },
+  wallet: {
+    kind: "tab",
+    roles: ["artist"],
+    screenName: screenName.artist.wallet,
+    roleWrapper: "Artist",
+  },
   artwork: {
     kind: "stack",
     roles: ["individual", "artist", "gallery"],
@@ -119,6 +124,7 @@ const TAB_SCREEN_BY_ROLE: Record<
   review: { artist: screenName.artist.reviewHub },
   billing: { gallery: screenName.gallery.subscriptions },
   payouts: { gallery: screenName.gallery.stripePayouts },
+  wallet: { artist: screenName.artist.wallet },
 };
 
 export const toAppRole = (
@@ -179,7 +185,7 @@ export const resolveLoginDeepLink = (
   data: DeepLinkPayload,
   options: DeepLinkSessionOptions,
 ): DeepLinkResolveResult => {
-  const accountType = loginAccountTypeFromParams(data.params ?? {});
+  const accountType = toAppRole(data.role);
 
   if (options.isLoggedIn) {
     return {
@@ -215,7 +221,7 @@ export const resolveDeepLinkTarget = (
     return {
       type: "fallback",
       reason: "login",
-      accountType: loginAccountTypeFromParams(data.params ?? {}),
+      accountType: toAppRole(data.role),
     };
   }
 

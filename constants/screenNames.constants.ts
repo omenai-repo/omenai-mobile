@@ -35,6 +35,7 @@ export const screenName = {
   supportTickets: "support-tickets",
   supportTicketsFilterModal: "support-tickets-filter-modal",
   artist: {
+    wallet: "Wallet",
     reviewHub: "Review",
     proposalPrice: "proposal-price",
   },
