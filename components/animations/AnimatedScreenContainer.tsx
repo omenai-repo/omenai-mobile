@@ -1,7 +1,7 @@
 import { View, Animated, Easing, Image } from "react-native";
 import React, { useEffect, useRef } from "react";
 import tw from "twrnc";
-import omenaiLogo from "../../assets/omenai-logo.png";
+import { images } from "#constants/images.constants";
 
 type AnimatedScreenContainerProps = {
   children: React.ReactNode;
@@ -35,7 +35,7 @@ export default function AnimatedScreenContainer({
       <Image
         style={tw`w-[117px] h-[19px] ml-[25px] mt-[80px]`}
         resizeMode="contain"
-        source={omenaiLogo}
+        source={images.omenaiLogo}
       />
       <View style={tw`flex-1 justify-center items-center mb-[100px]`}>
         <Animated.View

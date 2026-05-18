@@ -5,7 +5,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 
-import omenaiLogo from "../../assets/omenai-logo.png";
+import { images } from "#constants/images.constants";
 import tailwind from "twrnc";
 import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 import { colors } from "#config/colors.config";
@@ -13,7 +13,7 @@ import { colors } from "#config/colors.config";
 export function GalleryOverviewLogo() {
   return (
     <Image
-      source={omenaiLogo}
+      source={images.omenaiLogo}
       style={tailwind`w-[112px] h-[24px]`}
       contentFit="contain"
       cachePolicy="none"

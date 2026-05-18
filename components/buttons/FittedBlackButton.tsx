@@ -10,7 +10,7 @@ import React, { useRef } from "react";
 import LottieView from "lottie-react-native";
 import { colors } from "#config/colors.config";
 import tw from "twrnc";
-import loaderAnimation from "#assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 import { useDevice } from "#hooks/useDevice";
 
 type FittedBlackButtonProps = {
@@ -97,7 +97,7 @@ export default function FittedBlackButton({
               autoPlay
               ref={animation}
               style={tw`w-[60px] h-[60px]`}
-              source={loaderAnimation}
+              source={animations.loader}
             />
           </View>
         )}

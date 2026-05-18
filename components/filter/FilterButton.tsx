@@ -1,7 +1,7 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { colors } from "#config/colors.config";
-import sortIcon from "../../assets/icons/sort-icon.png";
+import { images } from "#constants/images.constants";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "#constants/screenNames.constants";
@@ -42,7 +42,7 @@ export default function FilterButton({
             Filter
           </Text>
           <Image
-            source={sortIcon}
+            source={images.sortIcon}
             style={tw`h-[18px] w-[18px] opacity-70`}
             resizeMode="contain"
           />

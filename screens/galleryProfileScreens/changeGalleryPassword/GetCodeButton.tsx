@@ -2,7 +2,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import React, { useRef } from "react";
 import { colors } from "#config/colors.config";
 import LottieView from "lottie-react-native";
-import loaderAnimation from "#assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 import tw from "twrnc";
 
 type FittedBlackButtonProps = {
@@ -45,7 +45,7 @@ export default function GetCodeButton({
             autoPlay
             ref={animation}
             style={tw`w-[100px] h-[100px]`}
-            source={loaderAnimation}
+            source={animations.loader}
           />
         )}
       </View>

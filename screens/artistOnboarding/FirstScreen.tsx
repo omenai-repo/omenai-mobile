@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useRef } from "react";
 import tw from "twrnc";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
-import omenaiLogo from "../../assets/omenai-logo.png";
+import { images } from "#constants/images.constants";
 import { logout } from "#utils/logout.utils";
 import { FontAwesome6 } from "@expo/vector-icons";
 
@@ -53,19 +53,18 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, scaleAnim]);
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <View
-        style={tw.style(`flex-row items-center justify-between mx-[25px]`, {
-          marginTop: height / 15,
-        })}
+        style={tw`flex-row items-center justify-between mx-[25px] ${`marginTop: ${height / 15}`
+          }`}
       >
         <Image
-          style={tw.style(`w-[130px] h-[30px]`)}
+          style={tw`w-[130px] h-[30px]`}
           resizeMode="contain"
-          source={omenaiLogo}
+          source={images.omenaiLogo}
         />
         <Pressable onPress={logout}>
           <Text style={tw`text-sm font-sans-medium text-slate-700`}>
@@ -116,7 +115,7 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
             style={tw`text-sm font-sans-regular leading-5 text-slate-500 mb-8`}
           >
             Once submitted, our team will review your information and verify
-            your profile. After approval, you'll gain full access to showcase
+            your profile. After approval, you&apos;ll gain full access to showcase
             and sell your work to collectors worldwide.
           </Text>
 

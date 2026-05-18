@@ -14,7 +14,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { fetchBankBranches } from "#services/wallet/fetchBankBranches";
 
 import LottieView from "lottie-react-native";
-import loaderAnimation from "../../../assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { WALLET_QK } from "#utils/queryKeys";
 import { addPrimaryAcct } from "#services/wallet/addPrimaryAcct";
@@ -849,7 +849,7 @@ const AddPrimaryAcctScreen = () => {
               width: 120,
               height: 120,
             }}
-            source={loaderAnimation}
+            source={animations.loader}
           />
         </View>
       </Modal>

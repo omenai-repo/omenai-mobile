@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React, { useEffect, useRef } from "react";
 import tw from "twrnc";
-import omenaiLogo from "../../assets/omenai-logo.png";
+import { images } from "#constants/images.constants";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { SvgXml } from "react-native-svg";
 import { starEffect } from "#utils/SvgImages";
@@ -45,17 +45,12 @@ const SuccessComp = () => {
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <Image
-        style={tw.style(`w-[130px] h-[30px] ml-[20px]`, {
-          marginTop: height / 12,
-        })}
+        style={tw`w-[130px] h-[30px] ml-[20px] ${`marginTop: ${height / 12}`
+          }`}
         resizeMode="contain"
-        source={omenaiLogo}
+        source={images.omenaiLogo}
       />
-      <View
-        style={tw.style({
-          marginTop: height / 5,
-        })}
-      >
+      <View style={tw`marginTop: ${height / 5}`}>
         <Animated.View
           style={[
             tw`bg-[#FFFFFF] rounded-sm py-[35px]`,

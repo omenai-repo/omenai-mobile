@@ -7,7 +7,7 @@ import { sendOtpCode } from "#services/wallet/sendOtpCode";
 import { verifyOtpCode } from "#services/wallet/verifyOtpCode";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import LottieView from "lottie-react-native";
-import loaderAnimation from "../../../assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 import { OtpInput } from "#components/inputs/OtpInput";
 
 export const ForgotPinScreen = ({
@@ -200,7 +200,7 @@ export const ForgotPinScreen = ({
               width: 120,
               height: 120,
             }}
-            source={loaderAnimation}
+            source={animations.loader}
           />
         </View>
       </Modal>

@@ -1,8 +1,7 @@
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { colors } from "../../../../config/colors.config";
-
-import sortIcon from "../../../../assets/icons/sort-icon.png";
+import { colors } from "#config/colors.config";
+import { images } from "#constants/images.constants";
 import { Feather } from "@expo/vector-icons";
 
 type FilterSelectProps = {
@@ -46,7 +45,7 @@ export default function Filters({ dataLength }: FilterComponentProps) {
           ) : (
             <View style={styles.filterButton}>
               <Text style={styles.filterButtonText}>Filters</Text>
-              <Image source={sortIcon} style={styles.sortIcon} />
+              <Image source={images.sortIcon} style={styles.sortIcon} />
             </View>
           )}
         </TouchableOpacity>
