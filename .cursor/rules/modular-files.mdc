@@ -1,5 +1,5 @@
 ---
-description: Hard cap of 300 lines per source file; one responsibility per file
+description: Hard cap of 300 lines per source file; one responsibility per file (Omenai RN)
 alwaysApply: true
 ---
 
@@ -7,54 +7,40 @@ alwaysApply: true
 
 ## Rule
 
-- Every `.ts`, `.tsx`, and `.css` file in this repo MUST stay under **300 lines**, counting code, JSX, and comments.
+- Every `.ts` and `.tsx` file in this repo MUST stay under **300 lines**, counting code, JSX, and comments.
 - If a change pushes a file past the cap, split it before merging.
-- One responsibility per file. A component, hook, server action, route handler, or stylesheet section is a responsibility.
+- One responsibility per file: a component, hook, service module, store, or constant group.
 
-## How to split
+## How to split (Omenai layout)
 
-- **React components** → extract sub-components into `src/components/<feature>/<Piece>.tsx` and compose them.
-- **Big hooks / containers** → split state machines into `src/features/<feature>/<useFoo>.ts` + helpers (`buildPatch.ts`, `sendVerification.ts`, etc.). Keep the orchestrator thin.
-- **Constants / static data** → move to `src/constants/<topic>.ts` and import.
-- **Stylesheets** → split `app/globals.css` siblings into `app/styles/<concern>.css` (`landing.css`, `animations.css`, `analyzer-form.css`, …) and import from `globals.css`.
+- **Screens** → thin `screens/<feature>/<Screen>.tsx` + `screens/<feature>/components/<Piece>.tsx`. Promote reused pieces to `components/<domain>/`.
+- **Shared UI** → `components/<domain>/<Piece>.tsx` (buttons, cards, modals, filters).
+- **Logic** → `hooks/<useFoo>.ts`, `features/<feature>/<helper>.ts`, or `lib/<helper>.ts`.
+- **API / IO** → `services/<domain>/<action>.ts`.
+- **Constants / static data** → `constants/<topic>.ts` or `data/<topic>.ts`.
 
 ## Co-location
 
-- Co-locate hooks/types with a component only when they are **under 30 lines** and used **only by that component**. Otherwise, move them out.
-- Cross-feature shared UI lives in `src/components/ui/`. Cross-feature shared logic lives in `src/lib/`.
+- Co-locate hooks/types with a screen component only when they are **under 30 lines** and used **only** by that screen.
+- Cross-feature shared UI → `components/`. Cross-feature logic → `hooks/`, `lib/`, or `features/`.
 
-## Folder layout
+## Imports
 
-```
-app/                # routes, layouts, route handlers, server actions live next to routes when route-specific
-src/
-  components/<feature>/   # presentational pieces, one per file
-  features/<feature>/     # orchestrators, hooks, server actions
-  lib/                    # cross-feature utilities (calc, vision, supabase clients, …)
-  constants/              # static data
-  hooks/                  # cross-feature hooks
-  types/                  # shared types
-```
+- Use `#` path aliases (`#components/...`, `#screens/...`, `#services/...`). Avoid deep `../../../` chains.
+- See `AGENTS.md` for the full alias table and screen vs component rules.
 
-## Example: too big
+## Example: screen too big
 
 ```typescript
-// src/features/profile/Profile.tsx — 517 lines ❌
+// screens/uploadArtwork/UploadArtwork.tsx — 461 lines ❌
 ```
 
 Split into:
 
 ```typescript
-// src/features/profile/Profile.tsx                 — orchestrator (<150 LOC)
-// src/components/profile/ProfileNav.tsx            — nav + footer
-// src/components/profile/AccountSection.tsx        — account form
-// src/components/profile/BillingSection.tsx        — plan + usage
-// src/components/profile/UsageSection.tsx          — analyses + activity
-// src/components/profile/ProfilePrimitives.tsx     — Field, SectionCard, UsageStat
-// src/constants/profile-plans.ts                   — PLAN_LABEL, PLAN_DESCRIPTION
+// screens/uploadArtwork/UploadArtwork.tsx           — orchestrator (<150 LOC)
+// screens/uploadArtwork/components/Pricing.tsx     — screen-local section
+// screens/uploadArtwork/components/ArtworkForm.tsx
+// hooks/useUploadArtworkForm.ts                    — if shared or large
+// services/artworks/uploadArtworkImage.ts          — API calls
 ```
-
-## Imports
-
-- Use the `@/*` alias (mapped to `./src/*`) for cross-folder imports inside `src/`.
-- Pages in `app/` import features via `@/features/<feature>/<Feature>`. Avoid deep `../../../` chains.

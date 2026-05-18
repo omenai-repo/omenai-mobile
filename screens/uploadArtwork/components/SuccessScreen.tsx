@@ -2,7 +2,7 @@ import { Image, Text, View } from "react-native";
 import React from "react";
 import tw from "twrnc";
 
-import successCheck from "../../../assets/icons/success_check.png";
+import { images } from "#constants/images.constants";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -27,7 +27,7 @@ export default function SuccessScreen() {
           The Painting Of {artworkUploadData.title} has been successfully
           uploaded
         </Text>
-        <Image source={successCheck} style={tw`w-[100px] h-[100px] my-8`} />
+        <Image source={images.successCheck} style={tw`w-[100px] h-[100px] my-8`} />
         <LongBlackButton value="Return to overview" onClick={handleClose} />
       </View>
     </View>

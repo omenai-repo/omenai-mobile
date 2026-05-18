@@ -1,14 +1,9 @@
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { colors } from '../../../../config/colors.config'
 import { Feather } from '@expo/vector-icons';
-import { courselImages } from '../../../../constants/images.constants';
-import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withTiming,
-    Easing,
-} from 'react-native-reanimated';
+import { courselImages } from "#constants/images.constants";
+import Animated, { useSharedValue } from 'react-native-reanimated';
 
 export default function Coursel() {
     const translateX = useSharedValue(0);
@@ -19,7 +14,7 @@ export default function Coursel() {
         if (typeOf === 'backward' && selected < 1) return;
         if (typeOf === 'forward' && selected === courselImages.length - 1) return;
 
-        
+
 
         setSelected(prev => (typeOf === 'backward' ? prev - 1 : prev + 1));
     }
@@ -34,10 +29,10 @@ export default function Coursel() {
                             key={idx}
                             style={
                                 idx === selected ? {
-                                height: '100%',
-                                width: '100%',
-                                transform: [{translateX: translateX}]
-                            } : {display: 'none'}}
+                                    height: '100%',
+                                    width: '100%',
+                                    transform: [{ translateX: translateX }]
+                                } : { display: 'none' }}
                         >
                             <Image
                                 source={i}
@@ -50,7 +45,7 @@ export default function Coursel() {
                     <TouchableOpacity onPress={() => handleClick('backward')}>
                         <View style={styles.toggleButtons}><Feather name='chevron-left' size={25} color={colors.white} /></View>
                     </TouchableOpacity>
-                    <View style={{flex: 1}} />
+                    <View style={{ flex: 1 }} />
                     <TouchableOpacity onPress={() => handleClick('forward')}>
                         <View style={styles.toggleButtons}><Feather name='chevron-right' size={25} color={colors.white} /></View>
                     </TouchableOpacity>
@@ -58,8 +53,8 @@ export default function Coursel() {
             </View>
             <View style={styles.indicators}>
                 {courselImages.map((_, idx) => (
-                    <View 
-                        style={[styles.indicatorItem, idx === selected && {backgroundColor: colors.primary_black}]} 
+                    <View
+                        style={[styles.indicatorItem, idx === selected && { backgroundColor: colors.primary_black }]}
                         key={idx}
                     />
                 ))}

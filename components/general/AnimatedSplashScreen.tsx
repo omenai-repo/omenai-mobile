@@ -2,6 +2,7 @@ import LottieView from "lottie-react-native";
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
+import { animations } from "#constants/animations.constants";
 
 export default function AnimatedSplashScreen({
   onAnimationFinish,
@@ -33,7 +34,7 @@ export default function AnimatedSplashScreen({
           height: "100%",
           backgroundColor: "#ffffff",
         }}
-        source={require("../../assets/other/full_logo_animation.json")}
+        source={animations.fullLogo}
         loop={false}
         resizeMode="contain"
       />

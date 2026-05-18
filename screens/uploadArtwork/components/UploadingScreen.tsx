@@ -1,6 +1,6 @@
 import { Text, useWindowDimensions, View } from "react-native";
 import LottieView from "lottie-react-native";
-import loaderAnimation from "../../../assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 import tw from "twrnc";
 
 export default function UploadingScreen() {
@@ -14,7 +14,7 @@ export default function UploadingScreen() {
       ]}
     >
       <LottieView
-        source={loaderAnimation}
+        source={animations.loader}
         autoPlay
         loop
         style={{ width: 120, height: 120 }}
@@ -23,7 +23,7 @@ export default function UploadingScreen() {
         Uploading your artwork...
       </Text>
       <Text style={tw`text-[13px] text-gray-500 text-center leading-5`}>
-        Please don't close the app while your artwork is being uploaded. This
+        Please don&apos;t close the app while your artwork is being uploaded. This
         may take a moment depending on your connection.
       </Text>
     </View>

@@ -7,7 +7,7 @@ import { getArtworkPriceForArtist } from "#services/artworks/getArtworkPriceForA
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import { useAppStore } from "#store/app/appStore";
 import LottieView from "lottie-react-native";
-import loaderAnimation from "../../../assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 import { extractNumberString } from "#utils/utils_editStringToNumber";
 import { useQuery } from "@tanstack/react-query";
 import { colors } from "#config/colors.config";
@@ -201,7 +201,7 @@ export default function ArtworkPriceReviewScreen({
             width: 120,
             height: 120,
           }}
-          source={loaderAnimation}
+          source={animations.loader}
         />
         <Text style={tw`text-lg font-semibold`}>
           Determining price of art piece...

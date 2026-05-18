@@ -14,6 +14,7 @@ import { useAppStore } from "#store/app/appStore";
 import { getNotificationHistory } from "#services/notification/getNotificationHistory";
 import { updateNotification } from "#services/notification/updateNotification";
 import SkeletonLoaderContainer from "./SkeletonLoaderContainer";
+import { images } from "#constants/images.constants";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -227,7 +228,7 @@ const NotificationScreen = () => {
         style={tw`flex-1 justify-center items-center mt-[100px] px-[100px]`}
       >
         <Image
-          source={require("../../assets/icons/empty-artworks.png")}
+          source={images.emptyArtworks}
           style={tw`w-[120px] h-[120px] mb-4`}
           resizeMode="contain"
         />

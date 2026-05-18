@@ -13,7 +13,7 @@ import FittedBlackButton from "#components/buttons/FittedBlackButton";
 
 import { orderHistoryIcon, savedArtworksIcon } from "#utils/SvgImages";
 import ProfileLayout from "#components/profile/ProfileLayout";
-import omenaiAvatar from "../../assets/images/omenai-avatar.png";
+import { images } from "#constants/images.constants";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
@@ -74,7 +74,7 @@ export default function Profile() {
         />
       ) : (
         <Image
-          source={omenaiAvatar}
+          source={images.omenaiAvatar}
           style={tw`w-[72px] h-[72px] rounded-[36px] bg-[#F2F2F2]`}
         />
       )}

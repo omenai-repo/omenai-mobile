@@ -10,7 +10,7 @@ import React, { useRef } from "react";
 import { colors } from "../../config/colors.config";
 import LottieView from "lottie-react-native";
 import tw from "twrnc";
-import loaderAnimation from "../../assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 
 type LongBlackButtonProps = {
   value: string;
@@ -117,7 +117,7 @@ export default function LongBlackButton({
               autoPlay
               ref={animation}
               style={tw`w-[80px] h-[80px]`}
-              source={loaderAnimation}
+              source={animations.loader}
             />
           </View>
         )}

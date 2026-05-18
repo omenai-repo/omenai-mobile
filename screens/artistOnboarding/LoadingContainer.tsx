@@ -2,7 +2,7 @@ import { Text } from "react-native";
 import React from "react";
 import tw from "twrnc";
 import LottieView from "lottie-react-native";
-import loaderAnimation from "../../assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 import AnimatedScreenContainer from "#components/animations/AnimatedScreenContainer";
 
 const LoadingContainer = ({ label }: { label: string }) => {
@@ -11,7 +11,7 @@ const LoadingContainer = ({ label }: { label: string }) => {
       <LottieView
         autoPlay
         style={{ width: 200, height: 100, alignSelf: "center" }}
-        source={loaderAnimation}
+        source={animations.loader}
       />
 
       <Text

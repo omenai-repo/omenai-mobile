@@ -601,7 +601,7 @@ type NextChargeParams = {
   value: number;
   currency: string;
   type: string;
-  interval: string;
+  interval: "monthly" | "yearly";
   id: string;
 };
 

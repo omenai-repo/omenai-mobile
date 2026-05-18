@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import React, { useState, useRef } from "react";
 import tw from "twrnc";
-import omenaiLogo from "../../assets/omenai-logo.png";
+import { images } from "#constants/images.constants";
 import * as DocumentPicker from "expo-document-picker";
 import QuestionContainer from "./QuestionContainer";
 import CVUpload from "./CVUpload";
@@ -496,7 +496,7 @@ const ArtistOnboarding = () => {
               <Image
                 style={tw`w-[90px] h-[22px]`}
                 resizeMode="contain"
-                source={omenaiLogo}
+                source={images.omenaiLogo}
               />
               <Pressable onPress={logout}>
                 <Text style={tw`text-sm font-sans-regular`}>Logout</Text>

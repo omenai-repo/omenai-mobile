@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { colors } from '#config/colors.config';
-import omenai_logo from '#assets/icons/omenai_logo_cut.png';
+import { images } from "#constants/images.constants";
 import { utils_formatPrice } from '#utils/utils_priceFormatter';
 import { utils_getCurrencySymbol } from '#utils/utils_getCurrencySymbol';
 import Button from './Button';
@@ -45,7 +45,7 @@ export default function PlanDetails({
         </View>
         <View style={styles.bottomContainer}>
           <View style={{ flexDirection: 'row', gap: 10 }}>
-            <Image source={omenai_logo} style={styles.omenaiLogo} />
+            <Image source={images.omenaiLogoCut} style={styles.omenaiLogo} />
             <View style={{ gap: 7 }}>
               <Text style={{ fontSize: 16, fontWeight: 500, color: colors.primary_black }}>
                 Omenai {plan_details.type}
