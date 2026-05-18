@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { colors } from '../../../../config/colors.config'
+import { colors } from '#config/colors.config'
 import { useHomeStore } from '#store/home/homeStore'
 
 type ArtworkSelectItemProps = {

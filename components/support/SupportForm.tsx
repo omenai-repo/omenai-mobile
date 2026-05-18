@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import tw from "twrnc";
-import { SupportCategory } from "../../types/types";
-import { useSupport } from "../../providers/SupportProvider";
+import { SupportCategory } from "#types/types";
+import { useSupport } from "#providers/SupportProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "#config/colors.config";
 import SupportAiChat from "./SupportAiChat";

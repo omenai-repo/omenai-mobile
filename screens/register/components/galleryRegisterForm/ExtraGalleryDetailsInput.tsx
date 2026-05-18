@@ -1,10 +1,10 @@
 import { StyleSheet, View } from "react-native";
 import React from "react";
-import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
-import NextButton from "../../../../components/buttons/NextButton";
-import Input from "../../../../components/inputs/Input";
-import BackFormButton from "../../../../components/buttons/BackFormButton";
-import LargeInput from "../../../../components/inputs/LargeInput";
+import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
+import NextButton from "#components/buttons/NextButton";
+import Input from "#components/inputs/Input";
+import BackFormButton from "#components/buttons/BackFormButton";
+import LargeInput from "#components/inputs/LargeInput";
 import { useFormValidation } from "#hooks/useFormValidation";
 
 export default function ExtraGalleryDetailsInput() {

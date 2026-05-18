@@ -1,15 +1,15 @@
 import { Pressable, Text, View } from "react-native";
 import React, { useState, useEffect } from "react";
-import Input from "../../../../components/inputs/Input";
-import LongBlackButton from "../../../../components/buttons/LongBlackButton";
-import { useForgetPasswordStore } from "../../../../store/auth/forgotPassword/forgotPasswordStore";
-import { colors } from "../../../../config/colors.config";
+import Input from "#components/inputs/Input";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { useForgetPasswordStore } from "#store/auth/forgotPassword/forgotPasswordStore";
+import { colors } from "#config/colors.config";
 import tw from "twrnc";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { screenName } from "../../../../constants/screenNames.constants";
-import { validate } from "../../../../lib/validations/validatorGroup";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "#constants/screenNames.constants";
+import { validate } from "#lib/validations/validatorGroup";
 import { sendPasswordResetLink } from "#services/password/sendPasswordResetLink";
 import { useModalStore } from "#store/modal/modalStore";
 

@@ -1,7 +1,7 @@
 import { TouchableOpacity, View, TextInput, Text } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 import { useSearchStore } from "#store/search/searchStore";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";

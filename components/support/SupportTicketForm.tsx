@@ -8,14 +8,14 @@ import {
   ScrollView,
 } from "react-native";
 import tw from "twrnc";
-import { useAppStore } from "../../store/app/appStore";
-import { createSupportTicket } from "../../services/support/support.service";
-import { useSupport } from "../../providers/SupportProvider";
+import { useAppStore } from "#store/app/appStore";
+import { createSupportTicket } from "#services/support/support.service";
+import { useSupport } from "#providers/SupportProvider";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
-import LongBlackButton from "../buttons/LongBlackButton";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useModalStore } from "#store/modal/modalStore";
-import { navigationRef } from "../../navigation/RootNavigation";
+import { navigationRef } from "#navigation/RootNavigation";
 import { getPathFromState } from "@react-navigation/native";
 import { colors } from "#config/colors.config";
 import * as Linking from "expo-linking";

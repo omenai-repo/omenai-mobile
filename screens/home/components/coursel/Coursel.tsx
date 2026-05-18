@@ -1,6 +1,6 @@
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { colors } from '../../../../config/colors.config'
+import { colors } from '#config/colors.config'
 import { Feather } from '@expo/vector-icons';
 import { courselImages } from "#constants/images.constants";
 import Animated, { useSharedValue } from 'react-native-reanimated';

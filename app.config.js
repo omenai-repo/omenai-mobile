@@ -5,10 +5,14 @@ const {
   RUNTIME_VERSION,
 } = require("./constants/version.constants");
 
-const { getDeepLinkRedirectHost, getAssociatedDomainsIOS } = require("./constants/deepLinkHost.constants");
+const {
+  getAssociatedDomainsIOS,
+  getAndroidIntentFilters,
+} = require("./constants/deepLinkHost.constants");
 
-const deepLinkRedirectHost = getDeepLinkRedirectHost();
 const associatedDomainsIOS = getAssociatedDomainsIOS();
+const androidIntentFilters = getAndroidIntentFilters();
+
 export default {
   expo: {
     name: "Omenai",
@@ -54,20 +58,7 @@ export default {
       permissions: ["android.permission.RECORD_AUDIO"],
       versionCode: ANDROID_VERSION_CODE,
       softwareKeyboardLayoutMode: "pan",
-      intentFilters: [
-        {
-          action: "VIEW",
-          autoVerify: true,
-          data: [
-            {
-              scheme: "https",
-              host: deepLinkRedirectHost,
-              pathPrefix: "/dl",
-            },
-          ],
-          category: ["BROWSABLE", "DEFAULT"],
-        },
-      ],
+      intentFilters: androidIntentFilters,
     },
     web: {
       favicon: "./assets/favicon.png",
@@ -107,10 +98,7 @@ export default {
       "@react-native-community/datetimepicker",
       "expo-image",
       "expo-sharing",
-      [
-        "@stripe/stripe-react-native",
-        {},
-      ],
+      ["@stripe/stripe-react-native", {}],
       [
         "expo-font",
         {

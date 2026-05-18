@@ -7,9 +7,9 @@ import React, {
 } from "react";
 import { Platform, Pressable, Text, TextInput, View } from "react-native";
 import tw from "twrnc";
-import { useOtpInput } from "../../hooks/useOtpInput";
+import { useOtpInput } from "#hooks/useOtpInput";
 import VerticalStick from "./VerticalStick";
-import type { OtpInputProps, OtpInputRef } from "../../types/otp";
+import type { OtpInputProps, OtpInputRef } from "#types/otp";
 
 export const OtpInput = forwardRef<OtpInputRef, OtpInputProps>((props, ref) => {
   const {

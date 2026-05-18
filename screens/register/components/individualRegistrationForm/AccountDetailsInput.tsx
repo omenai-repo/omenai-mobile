@@ -1,9 +1,9 @@
 import { View } from "react-native";
 import React from "react";
-import PasswordInput from "../../../../components/inputs/PasswordInput";
-import Input from "../../../../components/inputs/Input";
-import NextButton from "../../../../components/buttons/NextButton";
-import { useIndividualAuthRegisterStore } from "../../../../store/auth/register/IndividualAuthRegisterStore";
+import PasswordInput from "#components/inputs/PasswordInput";
+import Input from "#components/inputs/Input";
+import NextButton from "#components/buttons/NextButton";
+import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import tw from "twrnc";
 import { useFormValidation } from "#hooks/useFormValidation";
 

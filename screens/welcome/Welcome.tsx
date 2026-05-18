@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { screenName } from "../../constants/screenNames.constants";
-import { colors } from "../../config/colors.config";
+import { screenName } from "#constants/screenNames.constants";
+import { colors } from "#config/colors.config";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { onboardingdata } from "#constants/onBoardingData.constants";
 import OnBoardingSection from "./components/OnBoardingSection";

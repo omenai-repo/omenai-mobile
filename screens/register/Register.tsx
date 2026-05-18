@@ -1,10 +1,10 @@
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { colors } from "../../config/colors.config";
-import AuthHeader from "../../components/auth/AuthHeader";
+import { colors } from "#config/colors.config";
+import AuthHeader from "#components/auth/AuthHeader";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { screenName } from "../../constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 
 import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";

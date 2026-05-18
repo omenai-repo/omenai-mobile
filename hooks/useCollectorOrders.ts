@@ -42,16 +42,16 @@ export function useCollectorOrders() {
       return res.data as CreateOrderModelTypes[];
     },
     select: partition,
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
     refetchOnMount: true,
     refetchOnReconnect: true,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
   });
 
   const invalidate = useCallback(
     () => queryClient.invalidateQueries({ queryKey: ["orders", userId] }),
-    [queryClient]
+    [queryClient, userId],
   );
 
   return { ...query, invalidate };
