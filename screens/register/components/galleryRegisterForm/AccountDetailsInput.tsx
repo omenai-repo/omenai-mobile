@@ -1,5 +1,5 @@
 import React from "react";
-import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
+import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
 import SharedAccountDetailsInput from "../shared/SharedAccountDetailsInput";
 
 export default function AccountDetailsInput() {

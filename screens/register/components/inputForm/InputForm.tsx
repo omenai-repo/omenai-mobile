@@ -4,7 +4,7 @@ import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
 import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
-import AuthTabs from "../../../../components/auth/AuthTabs";
+import AuthTabs from "#components/auth/AuthTabs";
 import IndividualForm from "./individual/IndividualForm";
 import GalleryForm from "./gallery/GalleryForm";
 import ArtistForm from "./artist/ArtistForm";

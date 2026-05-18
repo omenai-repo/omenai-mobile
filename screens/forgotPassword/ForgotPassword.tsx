@@ -1,9 +1,9 @@
 import { KeyboardAvoidingView, Platform, View } from "react-native";
 import React from "react";
-import AuthHeader from "../../components/auth/AuthHeader";
+import AuthHeader from "#components/auth/AuthHeader";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "../../constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 import Form from "./components/form/Form";
 import tw from "twrnc";
 

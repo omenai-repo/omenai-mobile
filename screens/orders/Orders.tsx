@@ -5,25 +5,43 @@ import OrderslistingLoader from "#screens/galleryOrders/components/Orderslisting
 import TabSwitcher from "#components/orders/TabSwitcher";
 import EmptyOrdersListing from "#screens/galleryOrders/components/EmptyOrdersListing";
 import YearDropdown from "#screens/artist/orders/YearDropdown";
-import OrderContainer from "./components/OrderContainer"; // Make sure this path is correct
-import { useNavigation } from "@react-navigation/native";
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import CollectorOrderListItem from "./components/CollectorOrderListItem";
 import { useCollectorOrders } from "#hooks/useCollectorOrders";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FilterDropdown from "./components/FilterDropdown";
+import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
+import type { CollectorOrderPaymentFlags } from "#types/orders";
 
 export type OrderTabsTypes = "orders" | "history";
 
 export default function Orders() {
-  const navigation = useNavigation<any>();
-  const { data, isLoading, isRefetching, refetch } = useCollectorOrders();
+  const { data, isLoading, refetch } = useCollectorOrders();
   const insets = useSafeAreaInsets();
 
   const [selectedTab, setSelectedTab] = useState<OrderTabsTypes>("orders");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
+  const [isPullRefreshing, setIsPullRefreshing] = useState(false);
 
-  // Choose list by tab
+  const { value: isFlutterwavePaymentEnabled, loading: isFlutterwaveLoading } =
+    useHighRiskFeatureFlag("flutterwave_payment_enabled");
+  const { value: isStripePaymentEnabled, loading: isStripeLoading } =
+    useHighRiskFeatureFlag("stripe_payment_enabled");
+
+  const paymentFlags = useMemo<CollectorOrderPaymentFlags>(
+    () => ({
+      isFlutterwavePaymentEnabled,
+      isStripePaymentEnabled,
+      areFlagsLoading: isFlutterwaveLoading || isStripeLoading,
+    }),
+    [
+      isFlutterwavePaymentEnabled,
+      isStripePaymentEnabled,
+      isFlutterwaveLoading,
+      isStripeLoading,
+    ],
+  );
+
   const tabOrders = useMemo(() => {
     if (!data) return [];
     return selectedTab === "orders"
@@ -31,7 +49,6 @@ export default function Orders() {
       : data.completedOrders ?? [];
   }, [data, selectedTab]);
 
-  // Client-side year filter (optional but handy)
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const currentOrders = useMemo(() => {
@@ -72,7 +89,6 @@ export default function Orders() {
     });
   }, [tabOrders, selectedYear, statusFilter]);
 
-  // Tabs (guard length)
   const collectorTabs = useMemo(
     () => [
       {
@@ -85,64 +101,54 @@ export default function Orders() {
     [data?.pendingOrders?.length],
   );
 
-  const toggleRecentOrder = useCallback((key: string | number) => {
-    const k = String(key);
-    setOpenSection((prev) => ({ ...prev, [k]: !prev[k] }));
+  const toggleRecentOrder = useCallback((orderId: string) => {
+    setOpenSection((prev) => ({ ...prev, [orderId]: !prev[orderId] }));
+  }, []);
+
+  const handleTabChange = useCallback((key: string | number) => {
+    setSelectedTab(String(key) as OrderTabsTypes);
+    setOpenSection({});
   }, []);
 
   const keyExtractor = useCallback(
-    (item: any) => `${item.order_id}::${item.artwork_data?._id ?? "na"}`,
+    (item: CreateOrderModelTypes) =>
+      `${item.order_id}::${item.artwork_data?._id ?? "na"}`,
     [],
   );
 
+  const listLength = currentOrders.length;
+
   const renderItem = useCallback(
-    ({ item, index }: { item: any; index: number }) => (
-      <OrderContainer
-        id={index}
-        url={item.artwork_data.url}
-        open={!!openSection[item.order_id]}
-        setOpen={() => toggleRecentOrder(item.order_id)}
-        artId={item.order_id}
-        artName={item.artwork_data.title}
-        price={utils_formatPrice(item.artwork_data.pricing.usd_price)}
-        status={item.status}
-        lastId={index === currentOrders.length - 1}
-        order_accepted={item.order_accepted.status}
-        availability={item.availability}
-        delivery_confirmed={item.shipping_details.delivery_confirmed}
-        tracking_information={
-          item.shipping_details.shipment_information.tracking
-        }
-        payment_information={item.payment_information.status}
-        seller_designation={item.seller_designation}
-        orderId={item.order_id}
-        holdStatus={item.hold_status}
-        updatedAt={item.updatedAt}
-        order_decline_reason={item.order_accepted.reason}
-        trackBtn={() =>
-          navigation.navigate("ShipmentTrackingScreen", {
-            orderId: item.order_id,
-            tracking_id: item.shipping_details.shipment_information.tracking.id,
-          })
-        }
-        invoice={item.invoice}
-        invoiceNumber={item.payment_information.invoice_reference}
+    ({ item, index }: { item: CreateOrderModelTypes; index: number }) => (
+      <CollectorOrderListItem
+        item={item}
+        index={index}
+        isOpen={!!openSection[item.order_id]}
+        isLast={index === listLength - 1}
+        onToggleOpen={toggleRecentOrder}
+        paymentFlags={paymentFlags}
       />
     ),
-    [currentOrders.length, navigation, openSection, toggleRecentOrder],
+    [openSection, listLength, toggleRecentOrder, paymentFlags],
   );
 
-  // Pull-to-refresh
   const onRefresh = useCallback(async () => {
-    await refetch();
+    setIsPullRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setIsPullRefreshing(false);
+    }
   }, [refetch]);
+
+  const showFullLoader = isLoading && !data;
 
   return (
     <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
       <TabSwitcher
         tabs={collectorTabs}
         selectedKey={selectedTab}
-        setSelectedKey={(key) => setSelectedTab(key as OrderTabsTypes)}
+        setSelectedKey={handleTabChange}
       />
 
       <View
@@ -174,7 +180,6 @@ export default function Orders() {
             }
             selectedValue={statusFilter}
             onSelect={(val) => setStatusFilter(val)}
-            // Ensure dropdown content is above other elements
             style={tw`flex-1`}
           />
           <YearDropdown
@@ -184,7 +189,7 @@ export default function Orders() {
           />
         </View>
 
-        {isLoading ? (
+        {showFullLoader ? (
           <OrderslistingLoader />
         ) : currentOrders.length === 0 ? (
           <EmptyOrdersListing status={selectedTab} />
@@ -195,7 +200,8 @@ export default function Orders() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={tw`pb-[30px]`}
             renderItem={renderItem}
-            refreshing={isRefetching}
+            extraData={openSection}
+            refreshing={isPullRefreshing}
             onRefresh={onRefresh}
           />
         )}

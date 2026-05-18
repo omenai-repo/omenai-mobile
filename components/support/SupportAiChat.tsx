@@ -12,16 +12,16 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
-import { useAppStore } from "../../store/app/appStore";
+import { useAppStore } from "#store/app/appStore";
 import { colors } from "#config/colors.config";
 import { useMutation } from "@tanstack/react-query";
-import { useKeyboardHeight } from "../../hooks/useKeyboardHeight";
+import { useKeyboardHeight } from "#hooks/useKeyboardHeight";
 import {
   useSupportChatStore,
   Message,
   ChatSession,
-} from "../../store/support/supportChatStore";
-import { sendAiChatMessage } from "../../services/support/support.service";
+} from "#store/support/supportChatStore";
+import { sendAiChatMessage } from "#services/support/support.service";
 import SupportChatHistory from "./SupportChatHistory";
 
 interface SupportAiChatProps {

@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 import { SafeAreaView } from "react-native-safe-area-context";
 import tw from "twrnc";
 

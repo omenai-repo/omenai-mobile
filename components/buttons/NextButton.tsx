@@ -1,6 +1,6 @@
 import { Text, View, Pressable } from "react-native";
 import React from "react";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 import { AntDesign } from "@expo/vector-icons";
 import tw from "twrnc";
 

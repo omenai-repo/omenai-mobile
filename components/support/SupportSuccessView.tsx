@@ -4,7 +4,7 @@ import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "#config/colors.config";
 import * as Clipboard from "expo-clipboard";
-import LongBlackButton from "../buttons/LongBlackButton";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 interface SupportSuccessViewProps {
   ticketId: string;

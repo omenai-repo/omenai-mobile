@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import tw from "twrnc";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import Banner from "./components/banner/Banner";
-import NewArtworksListing from "./components/NewArtworksListing";
 import TrendingArtworks from "./components/TrendingArtworks";
 import CuratedArtworksListing from "./components/CuratedArtworksListing";
 import CatalogListing from "./components/catalog/CatalogListing";

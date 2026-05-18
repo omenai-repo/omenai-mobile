@@ -7,7 +7,7 @@ import {
   ViewStyle,
 } from "react-native";
 import React, { useRef } from "react";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 import LottieView from "lottie-react-native";
 import tw from "twrnc";
 import { animations } from "#constants/animations.constants";

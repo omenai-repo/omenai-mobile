@@ -8,7 +8,7 @@ import {
   clipboardIcon,
   walletIcon,
   clockIcon,
-} from "../../../utils/SvgImages";
+} from "#utils/SvgImages";
 import { colors } from "#config/colors.config";
 
 type TimelineItemProps = Readonly<{
@@ -96,7 +96,7 @@ export default function PriceQuoteSent({
           Order Received
         </Text>
         <Text style={tw`text-sm text-gray-500 text-center`}>
-          We've sent a confirmation email
+          We&apos;ve sent a confirmation email
         </Text>
       </View>
 

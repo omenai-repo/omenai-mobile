@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import React, { useEffect } from "react";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 import { useSearchStore } from "#store/search/searchStore";
 import { fetchSearchKeyWordResults } from "#services/search/fetchSearchKeywordResults";
 import ArtworksListing from "#components/general/ArtworksListing";

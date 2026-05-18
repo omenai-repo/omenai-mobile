@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import React from "react";
-import { colors } from "../../../../config/colors.config";
-import NextButton from "../../../../components/buttons/NextButton";
+import { colors } from "#config/colors.config";
+import NextButton from "#components/buttons/NextButton";
 import { mediumListing } from "#data/uploadArtworkForm.data";
 import tw from "twrnc";
 import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";

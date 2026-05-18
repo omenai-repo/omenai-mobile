@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 
 type InputProps = {
   label: string;
