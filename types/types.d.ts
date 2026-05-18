@@ -732,16 +732,20 @@ type InvoiceTypes = {
 type DeepLinkPage =
   | "overview"
   | "artworks"
-  | "search"
   | "orders"
   | "profile"
   | "review"
   | "billing"
   | "payouts"
   | "artwork"
-  | "payment";
+  | "payment"
+  | "purchase"
+  | "login";
 
-type DeepLinkTabPage = Exclude<DeepLinkPage, "artwork" | "payment">;
+type DeepLinkTabPage = Exclude<
+  DeepLinkPage,
+  "artwork" | "purchase" | "payment" | "login"
+>;
 
 type DeepLinkWebRole = "user" | "artist" | "gallery";
 
@@ -767,13 +771,14 @@ type DeepLinkNavigationTarget = {
   roleWrapper: "Individual" | "Artist" | "Gallery";
   screen: string;
   params?: Record<string, unknown>;
-  kind: "tab" | "stack";
+  kind: "tab" | "stack" | "auth";
 };
 
 type DeepLinkFallback = {
   type: "fallback";
   reason: "login" | "overview";
   appRole?: DeepLinkAppRole;
+  accountType?: "individual" | "artist" | "gallery";
 };
 
 type DeepLinkResolveResult = DeepLinkNavigationTarget | DeepLinkFallback;

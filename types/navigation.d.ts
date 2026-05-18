@@ -53,7 +53,7 @@ export type RootStackParamList = {
   "billing-plans": { plan_action: "reactivation" | null };
   PaymentMethodChangeScreen: { planId: string; planInterval: string };
   "edit-artwork": { art_id: string };
-  payment: { id: string };
+  payment: { id?: string; order_id?: string; user_id?: string };
   checkout: { plan?: any; interval?: string; sub_data?: any; action?: string };
   [key: string]: any;
 };
