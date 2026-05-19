@@ -17,6 +17,7 @@ export async function verifyDeepLinkToken(
     if (!response.ok) return null;
 
     const body = (await response.json()) as { data: DeepLinkPayload };
+    console.log("body", JSON.stringify(body.data, null, 2));
     return body.data ?? null;
   } catch {
     return null;

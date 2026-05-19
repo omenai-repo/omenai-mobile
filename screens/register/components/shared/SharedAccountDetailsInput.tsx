@@ -5,8 +5,6 @@ import Input from "#components/inputs/Input";
 import PasswordInput from "#components/inputs/PasswordInput";
 import NextButton from "#components/buttons/NextButton";
 import { useFormValidation } from "#hooks/useFormValidation";
-import { useKeyboardHeight } from "#hooks/useKeyboardHeight";
-
 export interface AccountDetailsData {
   name: string;
   email: string;
@@ -47,8 +45,6 @@ export default function SharedAccountDetailsInput({
       password: "",
       confirmPassword: "",
     });
-
-  const keyboardHeight = useKeyboardHeight();
 
   const isButtonDisabled = () => {
     return checkIsDisabled({
@@ -113,7 +109,6 @@ export default function SharedAccountDetailsInput({
           handleButtonClick={actions.handleNext}
         />
       </View>
-      <View style={{ height: keyboardHeight }} />
     </View>
   );
 }

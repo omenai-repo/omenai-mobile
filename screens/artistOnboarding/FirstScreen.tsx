@@ -58,8 +58,9 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <View
-        style={tw`flex-row items-center justify-between mx-[25px] ${`marginTop: ${height / 15}`
-          }`}
+        style={tw.style(`flex-row items-center justify-between mx-[25px]`, {
+          marginTop: height / 15,
+        })}
       >
         <Image
           style={tw`w-[130px] h-[30px]`}
@@ -115,8 +116,8 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
             style={tw`text-sm font-sans-regular leading-5 text-slate-500 mb-8`}
           >
             Once submitted, our team will review your information and verify
-            your profile. After approval, you&apos;ll gain full access to showcase
-            and sell your work to collectors worldwide.
+            your profile. After approval, you&apos;ll gain full access to
+            showcase and sell your work to collectors worldwide.
           </Text>
 
           <FittedBlackButton

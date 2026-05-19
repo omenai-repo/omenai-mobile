@@ -45,12 +45,11 @@ const SuccessComp = () => {
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <Image
-        style={tw`w-[130px] h-[30px] ml-[20px] ${`marginTop: ${height / 12}`
-          }`}
+        style={[tw`w-[130px] h-[30px] ml-[20px]`, { marginTop: height / 12 }]}
         resizeMode="contain"
         source={images.omenaiLogo}
       />
-      <View style={tw`marginTop: ${height / 5}`}>
+      <View style={{ marginTop: height / 5 }}>
         <Animated.View
           style={[
             tw`bg-[#FFFFFF] rounded-sm py-[35px]`,

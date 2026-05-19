@@ -78,14 +78,20 @@ export const ResetPinScreen = ({
         setTimeout(() => navigation.pop(2), 2000);
       } else {
         updateModal({
-          message: response?.body?.message || "Failed to reset PIN",
+          message:
+            response?.data?.message ||
+            response?.body?.message ||
+            "Failed to reset PIN",
           showModal: true,
           modalType: "error",
         });
       }
     } catch (error: any) {
       updateModal({
-        message: error?.message || error?.body?.message || "An error occurred while resetting PIN",
+        message:
+          error?.message ||
+          error?.body?.message ||
+          "An error occurred while resetting PIN",
         showModal: true,
         modalType: "error",
       });

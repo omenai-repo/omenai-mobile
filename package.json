@@ -92,7 +92,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-uuid": "^2.0.2",
     "react-native-virtualized-view": "^1.0.0",
-    "react-native-webview": "13.16.0",
+    "react-native-webview": "13.16.1",
     "react-native-worklets": "0.7.2",
     "rollbar": "^2.26.5",
     "sp-react-native-in-app-updates": "^1.5.0",
@@ -114,7 +114,7 @@
   "resolutions": {
     "wrap-ansi": "7.0.0",
     "string-width": "4.1.0",
-    "react-native-webview": "13.15.0",
+    "react-native-webview": "13.16.1",
     "undici": "6.24.1"
   },
   "private": true,

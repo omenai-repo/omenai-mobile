@@ -9,7 +9,6 @@ import IndividualForm from "./individual/IndividualForm";
 import GalleryForm from "./gallery/GalleryForm";
 import ArtistForm from "./artist/ArtistForm";
 import tw from "twrnc";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import FormSkeleton from "#components/skeleton/FormSkeleton";
 import { tabIndexFromAccountType } from "#utils/auth/tabIndexFromAccountType";
@@ -59,8 +58,6 @@ export default function InputForm({
     }, [route.params?.account_type]),
   );
 
-  const insets = useSafeAreaInsets();
-
   const { value: collectorOnboardingEnabled, loading: collectorLoading } =
     useLowRiskFeatureFlag("collectoronboardingenabled", false);
   const { value: artistOnboardingEnabled, loading: artistLoading } =
@@ -71,7 +68,7 @@ export default function InputForm({
     useLowRiskFeatureFlag("waitlistActivated");
 
   return (
-    <View style={[tw`flex-1 px-5 mt-5`, { marginBottom: insets.bottom }]}>
+    <View style={tw`px-5 mt-5 pb-2`}>
       <AuthTabs
         tabs={["Collector", "Artist", "Gallery"]}
         stateIndex={selectedIndex}

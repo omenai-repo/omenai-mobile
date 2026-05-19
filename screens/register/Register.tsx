@@ -1,15 +1,17 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { colors } from "#config/colors.config";
 import AuthHeader from "#components/auth/AuthHeader";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "#constants/screenNames.constants";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
 import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
 import { useDevice } from "#hooks/useDevice";
+import { useKeyboardHeight } from "#hooks/useKeyboardHeight";
 import tw from "twrnc";
 import InputForm from "./components/inputForm/InputForm";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
@@ -26,6 +28,8 @@ type RootStackParamList = {
 
 export default function Register() {
   const { isTablet } = useDevice();
+  const insets = useSafeAreaInsets();
+  const keyboardHeight = useKeyboardHeight();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { clearState: clearIndividualState, pageIndex: collectorPage } =
     useIndividualAuthRegisterStore();
@@ -84,38 +88,37 @@ export default function Register() {
       {isLoading ? (
         <FormSkeleton rows={5} />
       ) : (
-        <View style={[tw`flex-1 bg-white`, isTablet && tw`items-center`]}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            keyboardVerticalOffset={0}
-            style={[
-              styles.container,
-              isTablet && { width: "100%", maxWidth: 650 },
-            ]}
+        <View
+          style={[
+            tw`flex-1 bg-white`,
+            isTablet && tw`items-center`,
+            isTablet && { width: "100%", maxWidth: 650 },
+          ]}
+        >
+          <ScrollWrapper
+            ref={scrollViewRef}
+            nestedScrollEnabled
+            style={styles.scroll}
+            contentContainerStyle={{
+              paddingBottom: 24 + keyboardHeight + insets.bottom,
+            }}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            bounces
+            alwaysBounceVertical={false}
+            overScrollMode="never"
+            contentInsetAdjustmentBehavior="never"
           >
-            <ScrollWrapper
-              ref={scrollViewRef}
-              nestedScrollEnabled
-              style={{ flexGrow: 1 }}
-              contentContainerStyle={{ flexGrow: 1 }}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-              bounces={false}
-              alwaysBounceVertical={false}
-              overScrollMode="never"
-              contentInsetAdjustmentBehavior="never"
-            >
-              <InputForm
-                onTabChange={(index) => {
-                  setSelectedTabIndex(index);
-                  setGalleryInviteValidated(false);
-                  setArtistInviteValidated(false);
-                }}
-                onGalleryInviteValidated={setGalleryInviteValidated}
-                onArtistInviteValidated={setArtistInviteValidated}
-              />
-            </ScrollWrapper>
-          </KeyboardAvoidingView>
+            <InputForm
+              onTabChange={(index) => {
+                setSelectedTabIndex(index);
+                setGalleryInviteValidated(false);
+                setArtistInviteValidated(false);
+              }}
+              onGalleryInviteValidated={setGalleryInviteValidated}
+              onArtistInviteValidated={setArtistInviteValidated}
+            />
+          </ScrollWrapper>
         </View>
       )}
     </>
@@ -123,8 +126,8 @@ export default function Register() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
+  scroll: {
     flex: 1,
+    backgroundColor: colors.white,
   },
 });
