@@ -18,6 +18,7 @@ import {
 import { debounce } from "lodash";
 import { useAppStore } from "#store/app/appStore";
 import { useFormValidation } from "#hooks/useFormValidation";
+import { hasSavedDeliveryAddress } from "#lib/address/hasSavedDeliveryAddress";
 
 interface SessionAddress {
   address_line: string;
@@ -148,21 +149,23 @@ export default function ShippingDetails({
 
   const { userSession } = useAppStore();
 
-  useEffect(() => {
-    if (
-      userSession &&
-      userSession.address.country &&
-      userSession.address.countryCode &&
-      userSession.address.stateCode
-    ) {
-      populateFormFromSession(userSession);
-    }
-  }, [userSession]);
+  const savedDeliveryAddress = useMemo(
+    () => hasSavedDeliveryAddress(userSession?.address),
+    [userSession?.address],
+  );
 
-  const populateFormFromSession = async (session: UserSession) => {
-    // Set user-level fields
-    setName(session.name);
-    setEmail(session.email);
+  useEffect(() => {
+    if (!userSession) return;
+
+    setName(userSession.name);
+    setEmail(userSession.email);
+
+    if (savedDeliveryAddress) {
+      populateAddressFromSession(userSession);
+    }
+  }, [userSession, savedDeliveryAddress]);
+
+  const populateAddressFromSession = async (session: UserSession) => {
     setDeliveryAddress(session.address.address_line);
     setZipCode(session.address.zip);
 

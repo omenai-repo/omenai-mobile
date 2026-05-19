@@ -6,8 +6,6 @@ import tw from "twrnc";
 import { validateEmail, validateName, UnderlinedLink } from "./waitlistUtils";
 import { joinWaitlist } from "#services/waitlist/joinWaitlist";
 import { useModalStore } from "#store/modal/modalStore";
-import { useKeyboardHeight } from "#hooks/useKeyboardHeight";
-
 type SharedWaitlistFormProps = Readonly<{
   entity: "artist" | "gallery";
   onSwitchToInviteCode: () => void;
@@ -21,7 +19,6 @@ export default function SharedWaitlistForm({
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
-  const keyboardHeight = useKeyboardHeight();
 
   const { updateModal } = useModalStore();
 
@@ -118,7 +115,6 @@ export default function SharedWaitlistForm({
           isLoading={isLoading}
         />
       </View>
-      <View style={{ height: keyboardHeight }} />
     </View>
   );
 }

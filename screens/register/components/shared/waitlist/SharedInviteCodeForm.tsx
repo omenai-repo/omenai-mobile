@@ -10,8 +10,6 @@ import {
 } from "./waitlistUtils";
 import { createInviteToken } from "#services/waitlist/createInviteToken";
 import { useModalStore } from "#store/modal/modalStore";
-import { useKeyboardHeight } from "#hooks/useKeyboardHeight";
-
 type SharedInviteCodeFormProps = Readonly<{
   entity: "artist" | "gallery";
   onSwitchToWaitlist: () => void;
@@ -33,7 +31,6 @@ export default function SharedInviteCodeForm({
     {},
   );
   const [isLoading, setIsLoading] = useState(false);
-  const keyboardHeight = useKeyboardHeight();
 
   const { updateModal } = useModalStore();
 
@@ -138,7 +135,6 @@ export default function SharedInviteCodeForm({
           isLoading={isLoading}
         />
       </View>
-      <View style={{ height: keyboardHeight }} />
     </View>
   );
 }

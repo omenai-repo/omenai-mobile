@@ -16,18 +16,14 @@ import { screenName } from "#constants/screenNames.constants";
 import { createPaymentIntent } from "#services/stripe/createPaymentIntent";
 import Loader from "#components/general/Loader";
 import ScrollWrapper from "#components/general/ScrollWrapper";
-import { PayWithFlutterwave } from "flutterwave-react-native";
-import FlutterwavePayButton from "#components/payment/FlutterwavePayButton";
 import { useQueryClient } from "@tanstack/react-query";
 import VerifyTransactionModal from "../success/VerifyTransactionModal";
 import * as Crypto from "expo-crypto";
 import { Analytics } from "#utils/analytics";
-
-interface RedirectParams {
-  status: "successful" | "cancelled";
-  transaction_id?: string;
-  tx_ref: string;
-}
+import { navigateToCollectorOrders } from "#lib/navigation/navigateToCollectorOrders";
+import FlutterwaveCheckoutButton, {
+  type FlutterwaveRedirectParams,
+} from "./FlutterwaveCheckoutButton";
 
 export default function OrderDetails({
   data,
@@ -222,7 +218,7 @@ export default function OrderDetails({
   };
 
   // Flutterwave handler — also refresh Orders on success
-  const handleOnRedirect = async (p: RedirectParams) => {
+  const handleOnRedirect = async (p: FlutterwaveRedirectParams) => {
     if (p.status === "successful") {
       // Track purchase success
       Analytics.track("artwork_purchase_success", {
@@ -345,33 +341,29 @@ export default function OrderDetails({
                 isDisabled={locked}
               />
             ) : (
-              <PayWithFlutterwave
-                onRedirect={handleOnRedirect}
-                options={{
-                  tx_ref: transactionRef,
-                  amount: Math.ceil(total_price_number * 100) / 100,
-                  currency: "USD",
-                  authorization: process.env.EXPO_PUBLIC_FLW_TEST_PUBLIC_KEY,
-                  customer: {
-                    email: userSession.email,
-                    name: userSession.name,
-                    phonenumber: userSession.phone,
-                  },
-                  payment_options: "card",
-                  meta: {
-                    buyer_id: userSession.id,
-                    buyer_email: userSession.email,
-                    seller_email: data.seller_details.email,
-                    seller_name: data.seller_details.name,
-                    seller_id: data.seller_details.id,
-                    artwork_name: data.artwork_data.title,
-                    art_id: data.artwork_data.art_id,
-                    shipping_cost: feesNum,
-                    unit_price: data.artwork_data.pricing.usd_price,
-                    tax_fees: taxesNum,
-                  },
+              <FlutterwaveCheckoutButton
+                txRef={transactionRef}
+                amount={Math.ceil(total_price_number * 100) / 100}
+                authorization={process.env.EXPO_PUBLIC_FLW_TEST_PUBLIC_KEY}
+                customer={{
+                  email: userSession.email,
+                  name: userSession.name,
+                  phonenumber: userSession.phone,
                 }}
-                customButton={FlutterwavePayButton}
+                meta={{
+                  buyer_id: userSession.id,
+                  buyer_email: userSession.email,
+                  seller_email: data.seller_details.email,
+                  seller_name: data.seller_details.name,
+                  seller_id: data.seller_details.id,
+                  artwork_name: data.artwork_data.title,
+                  art_id: data.artwork_data.art_id,
+                  shipping_cost: feesNum,
+                  unit_price: data.artwork_data.pricing.usd_price,
+                  tax_fees: taxesNum,
+                }}
+                disabled={locked}
+                onRedirect={handleOnRedirect}
               />
             )}
 
@@ -411,7 +403,7 @@ export default function OrderDetails({
         onGoToDashboard={async () => {
           setVerifyState((s) => ({ ...s, visible: false }));
           await invalidateOrdersEverywhere();
-          navigation.navigate(screenName.gallery.orders);
+          navigateToCollectorOrders();
         }}
         onGoHome={async () => {
           setVerifyState((s) => ({ ...s, visible: false }));

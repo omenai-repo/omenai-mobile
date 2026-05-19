@@ -14,6 +14,14 @@ import { useEffect } from "react";
 let pendingResult: DeepLinkResolveResult | null = null;
 let pendingPayload: DeepLinkPayload | null = null;
 
+const loginFallbackForPayload = (
+  payload: DeepLinkPayload,
+): DeepLinkResolveResult => ({
+  type: "fallback",
+  reason: "login",
+  accountType: toAppRole(payload.role),
+});
+
 const resolveAfterVerify = (
   payload: DeepLinkPayload | null,
   hasToken: boolean,
@@ -30,11 +38,7 @@ const resolveAfterVerify = (
     if (page === "login") {
       return resolveLoginDeepLink(payload, options);
     }
-    return {
-      type: "fallback",
-      reason: "login",
-      accountType: toAppRole(payload.role),
-    };
+    return loginFallbackForPayload(payload);
   }
 
   const result = resolveDeepLinkTarget(payload, options);
@@ -128,6 +132,7 @@ export const resolveDeepLinkUrl = async (
       return toDlUrl(token);
     }
     pendingPayload = payload;
+    applyOrQueue(loginFallbackForPayload(payload), options);
     return toDlUrl(token);
   }
 

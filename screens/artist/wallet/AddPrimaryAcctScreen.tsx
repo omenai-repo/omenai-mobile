@@ -121,7 +121,9 @@ const resolveWalletRegion = (countryCode?: string): WalletRegion => {
   const code = countryCode?.toUpperCase() || "";
   if (code === "US") return "us";
   if (code === "GB") return "uk";
-  if (SEPA_COUNTRY_CODES.includes(code as (typeof SEPA_COUNTRY_CODES)[number])) {
+  if (
+    SEPA_COUNTRY_CODES.includes(code as (typeof SEPA_COUNTRY_CODES)[number])
+  ) {
     return "eu";
   }
   if (AFRICAN_COUNTRIES.includes(code as (typeof AFRICAN_COUNTRIES)[number])) {
@@ -130,10 +132,15 @@ const resolveWalletRegion = (countryCode?: string): WalletRegion => {
   return "international";
 };
 
-const isValidUKBankDetails = (accountNumber: string, sortCode: string): boolean => {
+const isValidUKBankDetails = (
+  accountNumber: string,
+  sortCode: string,
+): boolean => {
   const cleanSortCode = sortCode.replaceAll(/[\s-]/g, "");
   const cleanAccountNumber = accountNumber.replaceAll(/\s/g, "");
-  return /^[0-9]{6}$/.test(cleanSortCode) && /^[0-9]{8}$/.test(cleanAccountNumber);
+  return (
+    /^[0-9]{6}$/.test(cleanSortCode) && /^[0-9]{8}$/.test(cleanAccountNumber)
+  );
 };
 
 const isValidIBAN = (iban: string): boolean => {
@@ -367,7 +374,10 @@ const AddPrimaryAcctScreen = () => {
     },
     onError: (error: any) => {
       updateModal({
-        message: error.message || error?.body?.message || "An unexpected error occurred",
+        message:
+          error.message ||
+          error?.body?.message ||
+          "An unexpected error occurred",
         showModal: true,
         modalType: "error",
       });
@@ -824,7 +834,10 @@ const AddPrimaryAcctScreen = () => {
               onClick={handleStartFlow}
               value={"Validate Account"}
               isDisabled={
-                !acctNumber || isValidating || !selectedBank || (showBranches && !selectedBranch)
+                !acctNumber ||
+                isValidating ||
+                !selectedBank ||
+                (showBranches && !selectedBranch)
               }
               isLoading={isValidating}
               style={{ height: 50 }}
@@ -832,7 +845,9 @@ const AddPrimaryAcctScreen = () => {
           ) : (
             <FittedBlackButton
               onClick={handleAddPrimaryAccount}
-              value={isEditing ? "Update Primary Account" : "Add Primary Account"}
+              value={
+                isEditing ? "Update Primary Account" : "Add Primary Account"
+              }
               isDisabled={isSubmitting}
               isLoading={isSubmitting}
               style={{ height: 50 }}
