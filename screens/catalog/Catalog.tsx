@@ -105,6 +105,7 @@ export default function Catalog() {
         ) : (
           <ArtworksListing
             data={flatData}
+            hasMore={!!hasNextPage}
             loadingMore={isFetchingNextPage}
             onEndReached={handleEndReached}
             onRefresh={handleRefresh}

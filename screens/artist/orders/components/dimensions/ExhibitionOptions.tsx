@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
 import PickupAddressSection from "./PickupAddressSection";
+import DestinationAddressSection from "./DestinationAddressSection";
 
 type ExhibitionOptionsProps = {
   userType: string;
@@ -14,6 +15,7 @@ type ExhibitionOptionsProps = {
   expoEndDate: Date | null;
   setExpoEndDate: (val: Date | null) => void;
   pickupAddress: AddressTypes | null;
+  destinationAddress: AddressTypes | null;
   onAddressUpdated: (newAddress: AddressTypes) => void;
 };
 
@@ -25,6 +27,7 @@ export default function ExhibitionOptions({
   expoEndDate,
   setExpoEndDate,
   pickupAddress,
+  destinationAddress,
   onAddressUpdated,
 }: Readonly<ExhibitionOptionsProps>) {
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
@@ -37,7 +40,7 @@ export default function ExhibitionOptions({
     hideDatePicker();
   };
 
-  const actorLabel = userType === "gallery" ? "gallery" : "artist";
+  const isGallery = userType === "gallery";
 
   return (
     <View style={tw`mx-[20px]`}>
@@ -47,6 +50,10 @@ export default function ExhibitionOptions({
         onAddressUpdated={onAddressUpdated}
       />
 
+      <DestinationAddressSection destinationAddress={destinationAddress} />
+
+      {!isGallery ? null : (
+        <>
       <Text style={tw`text-sm text-gray-600 mb-3 mt-7`}>
         Is artwork on exhibition?
       </Text>
@@ -114,8 +121,8 @@ export default function ExhibitionOptions({
               </Text>
               <Text style={tw`text-xs text-blue-700 mt-1 leading-5`}>
                 Select when the exhibition ends. A shipment request will be
-                automatically triggered on this specific date and time for the{" "}
-                {actorLabel}.
+                automatically triggered on this specific date and time for the
+                gallery.
               </Text>
             </View>
           </View>
@@ -142,6 +149,8 @@ export default function ExhibitionOptions({
             display={Platform.OS === "ios" ? "inline" : "default"}
           />
         </View>
+      )}
+        </>
       )}
     </View>
   );

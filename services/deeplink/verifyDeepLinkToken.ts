@@ -1,6 +1,11 @@
 import { apiUrl } from "#constants/apiUrl.constants";
 import { apiRequest } from "#utils/apiRequest";
 
+type VerifyDeepLinkResponse = {
+  success?: boolean;
+  data?: DeepLinkPayload;
+};
+
 export async function verifyDeepLinkToken(
   token: string,
 ): Promise<DeepLinkPayload | null> {
@@ -16,8 +21,8 @@ export async function verifyDeepLinkToken(
 
     if (!response.ok) return null;
 
-    const body = (await response.json()) as { data: DeepLinkPayload };
-    console.log("body", JSON.stringify(body.data, null, 2));
+    const body = (await response.json()) as VerifyDeepLinkResponse;
+    console.log("body", JSON.stringify(body, null, 2));
     return body.data ?? null;
   } catch {
     return null;

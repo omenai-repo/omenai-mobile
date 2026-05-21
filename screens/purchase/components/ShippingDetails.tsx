@@ -43,10 +43,18 @@ const deliveryOptions = [
 type deliveryModeTypes = "Shipping" | "Pickup";
 
 export default function ShippingDetails({
-  data: { pricing },
+  data,
 }: Readonly<{
   data: artworkOrderDataTypes;
 }>) {
+  const pricing = data?.pricing;
+  const artworkPrice =
+    pricing != null &&
+    typeof pricing.usd_price === "number" &&
+    Number.isFinite(pricing.usd_price) &&
+    pricing.usd_price > 0
+      ? pricing.usd_price
+      : undefined;
   const { formErrors, handleValidationChecks, checkIsDisabled } =
     useFormValidation({
       name: "",
@@ -312,7 +320,7 @@ export default function ShippingDetails({
       </View>
       <SummaryContainer
         buttonTypes="Request price quote"
-        price={pricing.shouldShowPrice === "Yes" ? pricing.usd_price : 0}
+        price={artworkPrice}
         disableButton={checkIsDisabled({
           name,
           email,

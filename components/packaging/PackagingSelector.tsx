@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,23 +7,36 @@ import {
   PackagingPreset,
   PackagingType,
   checkFit,
-  getRecommendedPreset,
 } from "#constants/packaging_data";
 import PackagingPreview from "./PackagingPreview";
 import PackagingWarning from "./PackagingWarning";
 import { checkCarrierLimit } from "#utils/shippingLimits";
+import { colors } from "#config/colors.config";
+
+type DimensionDetails = {
+  length: string;
+  width: string;
+  height: string;
+  weight: string;
+};
+
+const EMPTY_DIMENSIONS: DimensionDetails = {
+  length: "",
+  width: "",
+  height: "",
+  weight: "",
+};
+
+function dimensionDetailsKey(details: DimensionDetails): string {
+  return `${details.length}|${details.width}|${details.height}|${details.weight}`;
+}
 
 interface PackagingSelectorProps {
-  artDimensions: { length: number; height: number };
+  artDimensions: { width: number; height: number };
   packagingType: PackagingType;
   carrier: string;
   onTypeChange: (type: PackagingType) => void;
-  onSelect: (details: {
-    length: string;
-    width: string;
-    height: string;
-    weight: string;
-  }) => void;
+  onSelect: (details: DimensionDetails) => void;
 }
 
 export default function PackagingSelector({
@@ -35,30 +48,92 @@ export default function PackagingSelector({
 }: Readonly<PackagingSelectorProps>) {
   const [selectedPresetId, setSelectedPresetId] = useState<string>("");
   const [isCustom, setIsCustom] = useState(false);
+  const userHasManuallySwitched = useRef(false);
+  const onSelectRef = useRef(onSelect);
+  const lastSyncedKeyRef = useRef<string | null>(null);
+
+  onSelectRef.current = onSelect;
 
   const recommendedPreset = useMemo(() => {
-    return getRecommendedPreset(
-      packagingType,
-      artDimensions.length,
-      artDimensions.height,
-    );
-  }, [packagingType, artDimensions.length, artDimensions.height]);
+    const validPresets = PACKAGING_PRESETS[packagingType].filter((preset) => {
+      const fitsArt = checkFit(
+        preset,
+        packagingType,
+        artDimensions.width,
+        artDimensions.height,
+      );
+      const isOversize = checkCarrierLimit(
+        preset.dims_cm.length,
+        preset.dims_cm.width,
+        preset.dims_cm.height,
+        preset.weight_kg,
+        carrier,
+      );
+      return fitsArt && !isOversize;
+    });
+
+    return validPresets.length > 0 ? validPresets[0] : null;
+  }, [packagingType, artDimensions.width, artDimensions.height, carrier]);
+
+  useEffect(() => {
+    userHasManuallySwitched.current = false;
+    lastSyncedKeyRef.current = null;
+    setIsCustom(false);
+    setSelectedPresetId("");
+  }, [packagingType]);
+
+  useEffect(() => {
+    if (userHasManuallySwitched.current) return;
+
+    const details: DimensionDetails = recommendedPreset
+      ? {
+          length: recommendedPreset.dims_cm.length.toFixed(1),
+          width: recommendedPreset.dims_cm.width.toFixed(1),
+          height: recommendedPreset.dims_cm.height.toFixed(1),
+          weight: recommendedPreset.weight_kg.toFixed(1),
+        }
+      : EMPTY_DIMENSIONS;
+
+    const syncKey = dimensionDetailsKey(details);
+    if (lastSyncedKeyRef.current === syncKey) return;
+    lastSyncedKeyRef.current = syncKey;
+
+    if (recommendedPreset) {
+      setIsCustom(false);
+      setSelectedPresetId(recommendedPreset.id);
+    } else {
+      setIsCustom(true);
+      setSelectedPresetId("");
+    }
+
+    onSelectRef.current(details);
+  }, [
+    recommendedPreset,
+    packagingType,
+    artDimensions.width,
+    artDimensions.height,
+  ]);
 
   const handleSelectPreset = (preset: PackagingPreset) => {
+    userHasManuallySwitched.current = true;
     setSelectedPresetId(preset.id);
     setIsCustom(false);
-    onSelect({
+    const details: DimensionDetails = {
       length: preset.dims_cm.length.toFixed(1),
       width: preset.dims_cm.width.toFixed(1),
       height: preset.dims_cm.height.toFixed(1),
       weight: preset.weight_kg.toFixed(1),
-    });
+    };
+    lastSyncedKeyRef.current = dimensionDetailsKey(details);
+    onSelectRef.current(details);
   };
 
   const handleCustom = () => {
+    userHasManuallySwitched.current = true;
     setIsCustom(true);
     setSelectedPresetId("");
-    onSelect({ length: "", width: "", height: "", weight: "" });
+    lastSyncedKeyRef.current = dimensionDetailsKey(EMPTY_DIMENSIONS);
+    onSelectRef.current(EMPTY_DIMENSIONS);
   };
 
   const presets = PACKAGING_PRESETS[packagingType];
@@ -73,16 +148,17 @@ export default function PackagingSelector({
               {packagingType} Packaging
             </Text>
             <Text style={tw`text-xs text-gray-500 mt-1`}>
-              Artwork size: {artDimensions.length}" x {artDimensions.height}"
+              Artwork size: {artDimensions.width}&quot; x {artDimensions.height}
+              &quot;
             </Text>
           </View>
           <TouchableOpacity
             onPress={() =>
               onTypeChange(packagingType === "rolled" ? "stretched" : "rolled")
             }
-            style={tw`px-3 py-1.5 rounded-sm border border-indigo-100`}
+            style={tw`px-3 py-1.5 rounded-sm border border-gray-200`}
           >
-            <Text style={tw`text-xs font-medium text-indigo-600`}>
+            <Text style={[tw`text-xs font-medium`, { color: colors.black }]}>
               Switch to {packagingType === "rolled" ? "Stretched" : "Rolled"}
             </Text>
           </TouchableOpacity>
@@ -95,13 +171,13 @@ export default function PackagingSelector({
           const isCompatible = checkFit(
             preset,
             packagingType,
-            artDimensions.length,
+            artDimensions.width,
             artDimensions.height,
           );
           const isOversize = checkCarrierLimit(
             preset.dims_cm.length,
-            preset.dims_cm.width || 1,
-            preset.dims_cm.height || 1,
+            preset.dims_cm.width,
+            preset.dims_cm.height,
             preset.weight_kg,
             carrier,
           );
@@ -211,8 +287,8 @@ export default function PackagingSelector({
                   {preset.description}
                 </Text>
                 <Text style={tw`text-[10px] text-gray-400 mt-1`}>
-                  {preset.dims_in.length}" × {preset.dims_in.width}" ×{" "}
-                  {preset.dims_in.height}"
+                  {preset.dims_in.length}&quot; × {preset.dims_in.width}&quot; ×{" "}
+                  {preset.dims_in.height}&quot;
                 </Text>
               </View>
             </TouchableOpacity>

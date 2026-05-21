@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import {
   View,
   NativeSyntheticEvent,
@@ -9,27 +15,53 @@ import {
 import MiniArtworkCard from "#components/artwork/MiniArtworkCard";
 import EmptyArtworks from "./EmptyArtworks";
 import Loader from "./Loader";
-import { debounce } from "lodash";
 import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
 
 import { useDevice } from "#hooks/useDevice";
 import { colors } from "#config/colors.config";
 
+const MIN_END_REACHED_OFFSET = 120;
+
+function getEndReachedOffset(viewportHeight: number) {
+  return Math.max(MIN_END_REACHED_OFFSET, viewportHeight * 0.35);
+}
+
+function isNearBottom(
+  { layoutMeasurement, contentOffset, contentSize }: NativeScrollEvent,
+  viewportHeight: number,
+) {
+  const threshold = getEndReachedOffset(viewportHeight);
+  return (
+    layoutMeasurement.height + contentOffset.y >= contentSize.height - threshold
+  );
+}
+
 export default function ArtworksListing({
   data,
   onEndReached,
   onRefresh,
-  loadingMore,
+  loadingMore = false,
+  hasMore = true,
 }: {
   data: ArtworkSchemaTypes[];
   onEndReached?: () => void;
   onRefresh?: () => Promise<void>;
   loadingMore?: boolean;
+  hasMore?: boolean;
 }) {
   const { userType } = useAppStore();
   const { numColumns, horizontalPadding } = useDevice();
   const [refreshing, setRefreshing] = useState(false);
+  const [footerLoading, setFooterLoading] = useState(false);
+  const loadMorePendingRef = useRef(false);
+  const loadingMoreRef = useRef(loadingMore);
+  const hasMoreRef = useRef(hasMore);
+  const scrollViewHeightRef = useRef(0);
+  const lastScrollEventRef = useRef<NativeScrollEvent | null>(null);
+
+  loadingMoreRef.current = loadingMore;
+  hasMoreRef.current = hasMore;
 
   const handleRefresh = useCallback(async () => {
     if (!onRefresh) return;
@@ -53,33 +85,92 @@ export default function ArtworksListing({
     return columns;
   }, [data, numColumns]);
 
-  const debouncedOnEndReached = useMemo(() => {
-    if (!onEndReached) return null;
-    return debounce(onEndReached, 300, { leading: false, trailing: true });
+  useEffect(() => {
+    if (!loadingMore) {
+      loadMorePendingRef.current = false;
+      setFooterLoading(false);
+    }
+  }, [loadingMore]);
+
+  const requestLoadMore = useCallback(() => {
+    if (!onEndReached || !hasMoreRef.current) return;
+    if (loadingMoreRef.current || loadMorePendingRef.current) return;
+    loadMorePendingRef.current = true;
+    setFooterLoading(true);
+    onEndReached();
   }, [onEndReached]);
 
-  useEffect(() => {
-    return () => {
-      debouncedOnEndReached?.cancel?.();
-    };
-  }, [debouncedOnEndReached]);
+  const checkScrollPosition = useCallback(
+    (scrollEvent: NativeScrollEvent) => {
+      if (!onEndReached || !hasMoreRef.current) return;
+      lastScrollEventRef.current = scrollEvent;
+      if (!isNearBottom(scrollEvent, scrollEvent.layoutMeasurement.height)) {
+        return;
+      }
+      requestLoadMore();
+    },
+    [onEndReached, requestLoadMore],
+  );
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!debouncedOnEndReached) return;
-    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const isCloseToBottom =
-      layoutMeasurement.height + contentOffset.y >= contentSize.height - 200;
-    if (isCloseToBottom) debouncedOnEndReached();
-  };
+  const handleScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      checkScrollPosition(event.nativeEvent);
+    },
+    [checkScrollPosition],
+  );
 
-  const renderColumn = (columnData: any[]) => (
+  const handleScrollEnd = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      checkScrollPosition(event.nativeEvent);
+    },
+    [checkScrollPosition],
+  );
+
+  const tryFillShortContent = useCallback(
+    (contentHeight: number) => {
+      const viewportHeight = scrollViewHeightRef.current;
+      if (viewportHeight <= 0 || contentHeight >= viewportHeight) return;
+      requestLoadMore();
+    },
+    [requestLoadMore],
+  );
+
+  const handleContentSizeChange = useCallback(
+    (_width: number, height: number) => {
+      tryFillShortContent(height);
+      const lastEvent = lastScrollEventRef.current;
+      if (
+        lastEvent &&
+        isNearBottom(lastEvent, lastEvent.layoutMeasurement.height)
+      ) {
+        requestLoadMore();
+      }
+    },
+    [tryFillShortContent, requestLoadMore],
+  );
+
+  const handleScrollViewLayout = useCallback(
+    (event: { nativeEvent: { layout: { height: number } } }) => {
+      scrollViewHeightRef.current = event.nativeEvent.layout.height;
+      const lastEvent = lastScrollEventRef.current;
+      if (lastEvent) {
+        tryFillShortContent(lastEvent.contentSize.height);
+      }
+    },
+    [tryFillShortContent],
+  );
+
+  const showFooterLoader =
+    data.length > 0 && (footerLoading || loadingMore) && hasMore;
+
+  const renderColumn = (columnData: ArtworkSchemaTypes[]) => (
     <View>
       {columnData.map((item) => (
         <View key={String(item.art_id)} style={tw`mb-2`}>
           <MiniArtworkCard
-            title={item.title}
-            url={item.url}
-            artist={item.artist}
+            title={item.title ?? ""}
+            url={item.url ?? ""}
+            artist={item.artist ?? ""}
             showPrice={item.pricing?.shouldShowPrice === "Yes"}
             price={item.pricing?.usd_price}
             impressions={item.impressions ?? 0}
@@ -103,6 +194,7 @@ export default function ArtworksListing({
     return (
       <View style={tw`flex-1`}>
         <ScrollView
+          style={tw`flex-1`}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={tw`flex-1`}
           refreshControl={
@@ -123,8 +215,13 @@ export default function ArtworksListing({
   return (
     <View style={tw`flex-1`}>
       <ScrollView
+        style={tw`flex-1`}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
+        onScrollEndDrag={handleScrollEnd}
+        onMomentumScrollEnd={handleScrollEnd}
+        onContentSizeChange={handleContentSizeChange}
+        onLayout={handleScrollViewLayout}
         scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
@@ -146,10 +243,14 @@ export default function ArtworksListing({
               <View key={column.id} style={[{ flex: 1 / numColumns }]}>
                 {renderColumn(column.data)}
               </View>
-            )
+            ),
           )}
         </View>
-        {loadingMore && <Loader size={150} height={0} />}
+        {showFooterLoader && (
+          <View style={tw`items-center py-4`}>
+            <Loader size={56} height={90} />
+          </View>
+        )}
         <View style={tw`mb-[5px]`} />
       </ScrollView>
     </View>

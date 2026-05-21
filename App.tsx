@@ -38,6 +38,7 @@ import WithModal from "#components/modal/WithModal";
 import GuestLoginModal from "#components/guest/GuestLoginModal";
 import { DEEP_LINK_REDIRECT_ORIGIN } from "#constants/deepLink.constants";
 import {
+  flushPendingDeepLinks,
   resolveDeepLinkUrl,
   useDeepLinkFlush,
 } from "#features/deeplink/deepLink";
@@ -139,18 +140,17 @@ export default function App() {
 
   const prefix = Linking.createURL("/");
 
-  const session = { isLoggedIn, userType };
   const linking = {
     prefixes: [prefix, DEEP_LINK_REDIRECT_ORIGIN, "omenaimobile://"],
     getStateFromPath: () => undefined,
-    resolveIncomingUrl: (url: string) => resolveDeepLinkUrl(url, prefix, session),
+    resolveIncomingUrl: (url: string) => resolveDeepLinkUrl(url, prefix),
     getInitialURL: async () => {
       const url = await Linking.getInitialURL();
-      return url ? resolveDeepLinkUrl(url, prefix, session) : null;
+      return url ? resolveDeepLinkUrl(url, prefix) : null;
     },
     subscribe: (listener: (url: string) => void) => {
       const sub = Linking.addEventListener("url", ({ url }) => {
-        resolveDeepLinkUrl(url, prefix, session).then(listener);
+        resolveDeepLinkUrl(url, prefix).then(listener);
       });
       return () => sub.remove();
     },
@@ -222,7 +222,14 @@ export default function App() {
                   publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
                   urlScheme="omenaimobile"
                 >
-                  <NavigationContainer ref={navigationRef} linking={linking}>
+                  <NavigationContainer
+                    ref={navigationRef}
+                    linking={linking}
+                    onReady={() => {
+                      const { isLoggedIn, userType } = useAppStore.getState();
+                      flushPendingDeepLinks({ isLoggedIn, userType });
+                    }}
+                  >
                     <WithModal>
                       <View style={{ flex: 1 }}>
                         {/* AUTH SCREENS */}

@@ -180,19 +180,19 @@ export default function ViewReceiptScreen() {
             <View style={tw`flex-row justify-between mb-2`}>
               <Text style={tw`text-xs text-gray-500`}>Subtotal</Text>
               <Text style={tw`text-xs font-medium text-gray-900`}>
-                {utils_formatPrice(activeInvoice.pricing.unitPrice)}
+                {utils_formatPrice(activeInvoice.pricing.unitPrice ?? 0)}
               </Text>
             </View>
             <View style={tw`flex-row justify-between mb-2`}>
               <Text style={tw`text-xs text-gray-500`}>Shipping</Text>
               <Text style={tw`text-xs font-medium text-gray-900`}>
-                {utils_formatPrice(activeInvoice.pricing.shipping)}
+                {utils_formatPrice(activeInvoice.pricing.shipping ?? 0)}
               </Text>
             </View>
             <View style={tw`flex-row justify-between mb-2`}>
               <Text style={tw`text-xs text-gray-500`}>Tax</Text>
               <Text style={tw`text-xs font-medium text-gray-900`}>
-                {utils_formatPrice(activeInvoice.pricing.taxes)}
+                {utils_formatPrice(activeInvoice.pricing.taxes ?? 0)}
               </Text>
             </View>
             {!!activeInvoice.pricing.discount &&
@@ -200,7 +200,7 @@ export default function ViewReceiptScreen() {
                 <View style={tw`flex-row justify-between mb-2`}>
                   <Text style={tw`text-xs text-green-600`}>Discount</Text>
                   <Text style={tw`text-xs font-medium text-green-600`}>
-                    -{utils_formatPrice(activeInvoice.pricing.discount)}
+                    -{utils_formatPrice(activeInvoice.pricing.discount ?? 0)}
                   </Text>
                 </View>
               )}
@@ -208,7 +208,7 @@ export default function ViewReceiptScreen() {
             <View style={tw`flex-row justify-between items-center`}>
               <Text style={tw`text-sm font-bold text-gray-900`}>Total</Text>
               <Text style={tw`text-base font-bold text-gray-900`}>
-                {utils_formatPrice(activeInvoice.pricing.total)}
+                {utils_formatPrice(activeInvoice.pricing.total ?? 0)}
               </Text>
             </View>
           </View>

@@ -1,4 +1,5 @@
 import { View, Text, Pressable, Animated } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import OrderHeader from "./OrderHeader";
 import React from "react";
 import tw from "twrnc";
@@ -130,9 +131,16 @@ function OrderContainerInner(props: OrderContainerProps) {
           {exclusivity_type === "exclusive" &&
             order_accepted !== "declined" &&
             status !== "completed" && (
-              <Text style={tw`text-[13px] text-amber-500 mt-2`}>
-                This artpiece is still within its exclusivity period
-              </Text>
+              <View style={tw`flex-row items-center gap-1 mt-2`}>
+                <Ionicons
+                  name="information-circle-outline"
+                  size={16}
+                  color={tw.color("gray-500")}
+                />
+                <Text style={tw`text-[13px] text-gray-500 flex-1`}>
+                  This artpiece is still within its exclusivity period
+                </Text>
+              </View>
             )}
 
           <OrderActions
