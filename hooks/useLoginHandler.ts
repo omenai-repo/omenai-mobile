@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
+import { InteractionManager } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { loginAccount, type LoginApiJsonBody } from "#services/login/loginAccount";
@@ -13,6 +14,7 @@ import type { LoginSubmitOptions } from "#hooks/loginSubmitOptions";
 import { mapUserDataFromLoginBody } from "#hooks/login/mapUserDataFromLoginBody";
 import { createPostLoginBiometricHandlers } from "#hooks/login/postLoginBiometricPrompts";
 import { resetAllLoginFormLoading } from "#hooks/login/resetLoginFormLoading";
+import { flushPendingDeepLinks } from "#features/deeplink/deepLink";
 
 type UserType = "individual" | "gallery" | "artist";
 
@@ -88,9 +90,15 @@ export function useLoginHandler(userType: UserType) {
   const finalizeLogin = useCallback((data: any, clearInputs: () => void) => {
     if (!isMountedRef.current) return;
     setUserSession(data);
-    setUserType(data.role === "individual" ? "user" : data.role);
+    const sessionUserType =
+      data.role === "individual" ? "user" : data.role;
+    setUserType(sessionUserType);
     setIsLoggedIn(true);
     clearInputs();
+
+    InteractionManager.runAfterInteractions(() => {
+      flushPendingDeepLinks({ isLoggedIn: true, userType: sessionUserType });
+    });
   }, [setUserSession, setUserType, setIsLoggedIn]);
 
   const { processBiometricFlow } = useMemo(

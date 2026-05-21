@@ -108,15 +108,15 @@ const OrderActionsBase = ({
           <FittedBlackButton
             value="Decline order"
             onClick={() => declineBtn?.()}
-            style={tw`bg-[#C71C16]`}
-            textStyle={tw`text-[13px] font-semibold`}
+            style={tw`h-9 bg-white border border-gray-200`}
+            textStyle={tw`text-[13px] font-semibold text-gray-900`}
           />
         </View>
         <View style={tw`flex-1`}>
           <FittedBlackButton
             value="Accept order"
             onClick={() => acceptBtn?.()}
-            style={tw`bg-[#00C885]`}
+            style={tw`h-9`}
             textStyle={tw`text-[13px] font-semibold`}
           />
         </View>

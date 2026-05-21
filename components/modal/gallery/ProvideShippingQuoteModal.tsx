@@ -276,9 +276,9 @@ export default function ProvideShippingQuoteModal() {
   };
 
   return (
-    <View style={{ height: "100%" }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <Text style={{ fontSize: 16, flex: 1 }}>Provide shipping quote</Text>
+    <View style={tw`h-full`}>
+      <View style={tw`flex-row items-center gap-2.5`}>
+        <Text style={tw`text-lg flex-1`}>Provide shipping quote</Text>
         <CloseButton handlePress={clear} />
       </View>
       {completed ? (
@@ -304,16 +304,7 @@ export default function ProvideShippingQuoteModal() {
           </View>
         </ScrollView>
       )}
-      <View
-        style={{
-          gap: 20,
-          marginTop: 10,
-          position: "absolute",
-          bottom: 20,
-          width: "100%",
-          backgroundColor: "white",
-        }}
-      >
+      <View style={tw`gap-5 mt-2.5 absolute w-full bg-white bottom-5`}>
         {completed ? (
           <LongBlackButton value="Dismiss" onClick={clear} />
         ) : (

@@ -145,6 +145,7 @@ export default function ArtworksMedium() {
       {!isLoading && artworks && (
         <ArtworksListing
           data={artworks}
+          hasMore={!!hasNextPage}
           loadingMore={isFetchingNextPage}
           onEndReached={handleLoadMore}
           onRefresh={handleRefresh}

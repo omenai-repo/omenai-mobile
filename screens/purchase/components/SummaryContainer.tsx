@@ -12,9 +12,9 @@ import tw from "twrnc";
 
 type SummaryContainerProps = {
   buttonTypes:
-  | "Proceed to shipping"
-  | "Request price quote"
-  | "Proceed to make payment";
+    | "Proceed to shipping"
+    | "Request price quote"
+    | "Proceed to make payment";
   price?: number;
   disableButton?: boolean;
 };
@@ -113,7 +113,7 @@ export default function SummaryContainer({
         <View style={tw`flex-row items-center gap-[10px]`}>
           <Text style={tw`text-sm text-[#616161] flex-1`}>Price</Text>
           <Text style={tw`text-sm font-medium text-[#616161]`}>
-            {price ? utils_formatPrice(price) : "Request price"}
+            {price != null && price > 0 ? utils_formatPrice(price) : "—"}
           </Text>
         </View>
         <View style={tw`flex-row items-center gap-[10px]`}>

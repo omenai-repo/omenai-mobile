@@ -777,9 +777,11 @@ type DeepLinkNavigationTarget = {
 
 type DeepLinkFallback = {
   type: "fallback";
-  reason: "login" | "overview";
+  reason: "login" | "overview" | "wrong_account";
   appRole?: DeepLinkAppRole;
   accountType?: "individual" | "artist" | "gallery";
+  requiredRole?: DeepLinkAppRole;
+  currentRole?: DeepLinkAppRole;
 };
 
 type DeepLinkResolveResult = DeepLinkNavigationTarget | DeepLinkFallback;

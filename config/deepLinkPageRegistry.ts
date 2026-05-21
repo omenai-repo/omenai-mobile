@@ -1,4 +1,5 @@
 import { screenName } from "#constants/screenNames.constants";
+import { wrongAccountFallback } from "#lib/deeplink/deepLinkAccountMessage";
 
 type PageDefinition = {
   kind: "tab" | "stack" | "auth";
@@ -225,25 +226,30 @@ export const resolveDeepLinkTarget = (
     };
   }
 
-  const appRole = toAppRole(data.role);
+  const linkRole = toAppRole(data.role);
+  const currentRole = sessionAppRole(options);
 
-  if (!def.roles.includes(appRole)) {
-    return { type: "fallback", reason: "overview", appRole };
+  if (currentRole !== linkRole) {
+    return wrongAccountFallback(linkRole, currentRole);
+  }
+
+  if (!def.roles.includes(linkRole)) {
+    return wrongAccountFallback(linkRole, currentRole);
   }
 
   const params = data.params ?? {};
   if (!hasRequiredParams(page, params)) {
     const fallbackPage = def.missingParamsFallback ?? "overview";
-    return tabTargetForPage(fallbackPage, appRole);
+    return tabTargetForPage(fallbackPage, linkRole);
   }
 
-  const roleWrapper = ROLE_WRAPPER[appRole];
+  const roleWrapper = ROLE_WRAPPER[linkRole];
 
   if (def.kind === "tab") {
     return {
       type: "navigate",
       roleWrapper,
-      screen: resolveTabScreenName(page as DeepLinkTabPage, appRole),
+      screen: resolveTabScreenName(page as DeepLinkTabPage, linkRole),
       kind: "tab",
     };
   }

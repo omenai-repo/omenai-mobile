@@ -28,6 +28,7 @@ export type RootStackParamList = {
     carrier?: string;
     artworkDimensions?: any;
     shippingOrigin?: AddressTypes;
+    shippingDestination?: AddressTypes;
   };
   EditAddressScreen: { currentAddress?: AddressTypes };
   DetailsScreen: {

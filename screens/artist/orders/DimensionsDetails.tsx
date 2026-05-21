@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import LongBlackButton from "#components/buttons/LongBlackButton";
@@ -35,6 +35,7 @@ import CustomDimensionsInput from "./components/dimensions/CustomDimensionsInput
 import SelectedDimensionsSummary from "./components/dimensions/SelectedDimensionsSummary";
 import ExhibitionOptions from "./components/dimensions/ExhibitionOptions";
 import AgreementSection from "./components/dimensions/AgreementSection";
+import CarrierNoteInput from "./components/dimensions/CarrierNoteInput";
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -51,6 +52,7 @@ const DimensionsDetails = () => {
     exclusivityType,
     carrier,
     shippingOrigin,
+    shippingDestination,
   } = useRoute<any>().params;
   const navigation = useNavigation<any>();
 
@@ -76,6 +78,7 @@ const DimensionsDetails = () => {
   const [isOnExhibition, setIsOnExhibition] = useState(false);
   const [expoEndDate, setExpoEndDate] = useState<Date | null>(null);
   const [isChecked, setIsChecked] = useState(false);
+  const [specialInstructions, setSpecialInstructions] = useState("");
 
   // The current active pickup address. Defaults to shippingOrigin.
   const [selectedPickupAddress, setSelectedPickupAddress] =
@@ -97,12 +100,7 @@ const DimensionsDetails = () => {
     () =>
       userType === "gallery" &&
       (gallerySub.isLoading || gallerySub.isError || !gallerySub.isActive),
-    [
-      userType,
-      gallerySub.isLoading,
-      gallerySub.isError,
-      gallerySub.isActive,
-    ],
+    [userType, gallerySub.isLoading, gallerySub.isError, gallerySub.isActive],
   );
 
   const gallerySubscriptionNotice = useMemo(
@@ -133,34 +131,28 @@ const DimensionsDetails = () => {
     return Number(cleanStr) || 0;
   };
 
+  const normalizedCarrier = useMemo(
+    () => (carrier || "").toUpperCase(),
+    [carrier],
+  );
+
   const artDims = useMemo(() => {
     return {
-      length: parseDim(artworkDimensions?.length) || 24,
-      height: parseDim(artworkDimensions?.height) || 24,
+      width: parseDim(artworkDimensions?.width),
+      height: parseDim(artworkDimensions?.height),
     };
   }, [artworkDimensions]);
 
   const isCurrentlyOversized = useMemo(() => {
     if (!carrier) return false;
 
-    if (
-      usePreset &&
-      (!dimensions.length || !dimensions.width || !dimensions.height)
-    ) {
-      return checkCarrierLimit(
-        artDims.length * 2.54,
-        artDims.height * 2.54,
-        5,
-        10,
-        carrier,
-      );
-    }
+    const hasPackageDimensions =
+      dimensions.length &&
+      dimensions.width &&
+      dimensions.height &&
+      dimensions.weight;
 
-    if (
-      !usePreset &&
-      (!dimensions.length || !dimensions.width || !dimensions.height)
-    ) {
-      // Don't prematurely trigger oversize warnings while they are typing custom dimensions
+    if (!hasPackageDimensions) {
       return false;
     }
 
@@ -175,46 +167,64 @@ const DimensionsDetails = () => {
       usePreset
         ? Number.parseFloat(dimensions.height)
         : Number.parseFloat(dimensions.height) * IN_TO_CM,
-      Number.parseFloat(dimensions.weight || "0"),
-      carrier,
+      Number.parseFloat(dimensions.weight),
+      normalizedCarrier,
     );
-  }, [carrier, dimensions, usePreset, artDims]);
+  }, [normalizedCarrier, dimensions, usePreset]);
 
   const canBeRolled = useMemo(() => {
     return checkIfRolledPassesLimit(
-      artDims.length * 2.54,
+      artDims.width * 2.54,
       artDims.height * 2.54,
-      carrier || "",
+      normalizedCarrier,
     );
-  }, [artDims, carrier]);
+  }, [artDims, normalizedCarrier]);
 
   useEffect(() => {
-    setSelectedPickupAddress(shippingOrigin || null);
+    setSelectedPickupAddress((prev) => {
+      const next = shippingOrigin || null;
+      if (!prev && !next) return prev;
+      if (prev && next && JSON.stringify(prev) === JSON.stringify(next)) {
+        return prev;
+      }
+      return next;
+    });
   }, [shippingOrigin]);
 
-  const handlePresetSelect = (details: {
-    length: string;
-    width: string;
-    height: string;
-    weight: string;
-  }) => {
-    setHasDeclinedRolled(false);
-    if (details.length) {
-      setUsePreset(true);
-      setDimensions(details);
-      // Clear errors since preset values are valid
-      setFormErrors({ height: "", length: "", width: "", weight: "" });
-    } else {
-      // Custom mode - Start with blank dimensions
-      setUsePreset(false);
-      setDimensions({
-        length: "",
-        width: "",
-        height: "",
-        weight: "",
-      });
-    }
-  };
+  const handlePresetSelect = useCallback(
+    (details: {
+      length: string;
+      width: string;
+      height: string;
+      weight: string;
+    }) => {
+      setHasDeclinedRolled(false);
+      if (details.length) {
+        setUsePreset(true);
+        setDimensions((prev) =>
+          prev.length === details.length &&
+          prev.width === details.width &&
+          prev.height === details.height &&
+          prev.weight === details.weight
+            ? prev
+            : details,
+        );
+        setFormErrors((prev) =>
+          !prev.height && !prev.length && !prev.width && !prev.weight
+            ? prev
+            : { height: "", length: "", width: "", weight: "" },
+        );
+      } else {
+        setUsePreset(false);
+        setDimensions((prev) =>
+          !prev.length && !prev.width && !prev.height && !prev.weight
+            ? prev
+            : { length: "", width: "", height: "", weight: "" },
+        );
+      }
+    },
+    [],
+  );
 
   const checkIsDisabled = () => {
     const isFormValid = Object.values(formErrors).every(
@@ -227,7 +237,8 @@ const DimensionsDetails = () => {
       length: dimensions.length,
     }).every((value) => value !== "");
 
-    const isExhibitionValid = isOnExhibition ? !!expoEndDate : true;
+    const isExhibitionValid =
+      userType === "gallery" ? (isOnExhibition ? !!expoEndDate : true) : true;
 
     return !(
       isFormValid &&
@@ -297,19 +308,21 @@ const DimensionsDetails = () => {
         order_id: orderId,
         data: {
           dimensions: {
-            length: dimLength || 0,
-            width: dimWidth || 0,
-            height: dimHeight || 0,
-            weight: Number.parseFloat(dimensions.weight) || 0,
+            length: dimLength,
+            width: dimWidth,
+            height: dimHeight,
+            weight: Number.parseFloat(dimensions.weight),
           },
           packaging_type: packagingType,
-          exhibition_status: isOnExhibition
-            ? {
-                is_on_exhibition: true,
-                exhibition_end_date: expoEndDate || "",
-                status: "pending",
-              }
-            : null,
+          specialInstructions: specialInstructions.trim() || undefined,
+          exhibition_status:
+            userType === "gallery" && isOnExhibition
+              ? {
+                  is_on_exhibition: true,
+                  exhibition_end_date: expoEndDate || "",
+                  status: "pending",
+                }
+              : null,
           hold_status: null,
         },
       };
@@ -388,7 +401,7 @@ const DimensionsDetails = () => {
             <PackagingSelector
               artDimensions={artDims}
               packagingType={packagingType}
-              carrier={carrier || "Courier"}
+              carrier={normalizedCarrier}
               onTypeChange={setPackagingType}
               onSelect={handlePresetSelect}
             />
@@ -413,7 +426,7 @@ const DimensionsDetails = () => {
             <View style={tw`mx-4 mb-10`}>
               <CarrierInterventionCard
                 orderId={orderId}
-                carrier={carrier || "Courier"}
+                carrier={normalizedCarrier || "Courier"}
                 hasDeclined={hasDeclinedRolled}
                 canBeRolled={canBeRolled}
                 packagingType={packagingType}
@@ -444,7 +457,13 @@ const DimensionsDetails = () => {
                 expoEndDate={expoEndDate}
                 setExpoEndDate={setExpoEndDate}
                 pickupAddress={selectedPickupAddress}
+                destinationAddress={shippingDestination || null}
                 onAddressUpdated={setSelectedPickupAddress}
+              />
+
+              <CarrierNoteInput
+                value={specialInstructions}
+                onChange={setSpecialInstructions}
               />
 
               {/* Agreement Section */}

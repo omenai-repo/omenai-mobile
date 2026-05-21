@@ -167,7 +167,10 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
                 artworkDimensions: item?.artwork_data?.dimensions,
                 exclusivityType:
                   item?.artwork_data?.exclusivity_status?.exclusivity_type,
-                shippingOrigin: item?.shipping_details?.addresses?.origin || null,
+                shippingOrigin:
+                  item?.shipping_details?.addresses?.origin || null,
+                shippingDestination:
+                  item?.shipping_details?.addresses?.destination || null,
                 carrier:
                   item?.shipping_details?.shipment_information?.carrier ||
                   item?.shipping_quote?.package_carrier ||

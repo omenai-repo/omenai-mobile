@@ -5,12 +5,24 @@ import SummaryContainer from "./SummaryContainer";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 
+function hasArtworkPrice(
+  pricing?: artworkOrderDataTypes["pricing"],
+): pricing is artworkOrderDataTypes["pricing"] {
+  return (
+    pricing != null &&
+    typeof pricing.usd_price === "number" &&
+    Number.isFinite(pricing.usd_price) &&
+    pricing.usd_price > 0
+  );
+}
+
 export default function OrderSummary({
   data: { title, url, artist, art_id, author_id, pricing },
 }: {
   data: artworkOrderDataTypes;
 }) {
   const [image_href, setImageHref] = useState<string>("");
+  const artworkPrice = hasArtworkPrice(pricing) ? pricing.usd_price : undefined;
   useEffect(() => {
     if (url) {
       let image_href = getImageFileView(url, 300);
@@ -38,19 +50,17 @@ export default function OrderSummary({
               {title}
             </Text>
             <Text style={styles.orderItemTitle}>{artist}</Text>
-            {pricing?.shouldShowPrice === "Yes" ? (
+            {artworkPrice != null && (
               <Text style={{ fontSize: 18, fontWeight: "500", marginTop: 15 }}>
-                {utils_formatPrice(pricing.usd_price)}
+                {utils_formatPrice(artworkPrice)}
               </Text>
-            ) : (
-              <Text>Request Price</Text>
             )}
           </View>
         </View>
       </View>
       <SummaryContainer
         buttonTypes="Proceed to shipping"
-        price={pricing?.shouldShowPrice === "Yes" ? pricing.usd_price : 0}
+        price={artworkPrice}
       />
     </View>
   );
