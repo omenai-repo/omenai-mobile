@@ -777,7 +777,7 @@ type DeepLinkNavigationTarget = {
 
 type DeepLinkFallback = {
   type: "fallback";
-  reason: "login" | "overview" | "wrong_account";
+  reason: "login" | "overview" | "wrong_account" | "verify_failed";
   appRole?: DeepLinkAppRole;
   accountType?: "individual" | "artist" | "gallery";
   requiredRole?: DeepLinkAppRole;

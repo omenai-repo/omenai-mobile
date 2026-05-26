@@ -24,7 +24,7 @@ export const clearStaleCredentials = async (): Promise<void> => {
       for (const userType of userTypes) {
         try {
           await SecureStore.deleteItemAsync(
-            `${BIOMETRIC_KEY_PREFIX}${userType}`
+            `${BIOMETRIC_KEY_PREFIX}${userType}`,
           );
         } catch {
           // Ignore errors
@@ -75,15 +75,15 @@ export const useBiometrics = () => {
               types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)
             ) {
               setBiometricType(
-                LocalAuthentication.AuthenticationType.FINGERPRINT
+                LocalAuthentication.AuthenticationType.FINGERPRINT,
               );
             } else if (
               types.includes(
-                LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+                LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
               )
             ) {
               setBiometricType(
-                LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+                LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
               );
             }
           } catch (e) {
@@ -127,7 +127,7 @@ export const useBiometrics = () => {
                   Linking.openSettings();
                 },
               },
-            ]
+            ],
           );
           return {
             success: false,
@@ -147,7 +147,7 @@ export const useBiometrics = () => {
         return { success: false, error: "Authentication failed" };
       }
     },
-    []
+    [],
   );
 
   const saveCredentials = useCallback(
@@ -155,7 +155,7 @@ export const useBiometrics = () => {
       try {
         await SecureStore.setItemAsync(
           `${BIOMETRIC_KEY_PREFIX}${userType}`,
-          JSON.stringify({ email, token })
+          JSON.stringify({ email, token }),
         );
         return true;
       } catch (error) {
@@ -163,13 +163,13 @@ export const useBiometrics = () => {
         return false;
       }
     },
-    []
+    [],
   );
 
   const getCredentials = useCallback(async (userType: UserType) => {
     try {
       const credentials = await SecureStore.getItemAsync(
-        `${BIOMETRIC_KEY_PREFIX}${userType}`
+        `${BIOMETRIC_KEY_PREFIX}${userType}`,
       );
       return credentials ? JSON.parse(credentials) : null;
     } catch (error) {
@@ -193,7 +193,7 @@ export const useBiometrics = () => {
       const credentials = await getCredentials(userType);
       return !!credentials;
     },
-    [getCredentials]
+    [getCredentials],
   );
 
   const getStoredEmail = useCallback(
@@ -206,7 +206,7 @@ export const useBiometrics = () => {
         return null;
       }
     },
-    [getCredentials]
+    [getCredentials],
   );
 
   const isCredentialOwner = useCallback(
@@ -215,7 +215,7 @@ export const useBiometrics = () => {
       if (!storedEmail) return false;
       return storedEmail.toLowerCase() === currentEmail.toLowerCase();
     },
-    [getStoredEmail]
+    [getStoredEmail],
   );
 
   return {
