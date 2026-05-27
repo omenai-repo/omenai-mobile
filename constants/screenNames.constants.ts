@@ -7,6 +7,7 @@ export const screenName = {
   verifyEmail: "verify-email",
   home: "Home",
   artwork: "Artwork",
+  arPreview: "ar-preview",
   catalogListing: "Catalog-listing",
   artworks: "Artworks",
   orders: "Orders",

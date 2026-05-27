@@ -139,6 +139,11 @@ export default function Artwork() {
     [artwork],
   );
 
+  const arArtworkUri = useMemo(
+    () => (artwork ? getImageFileView(artwork.url, 1200) : ""),
+    [artwork],
+  );
+
   const [imageDimensions, setImageDimensions] = useState<{
     width: number;
     height: number;
@@ -341,6 +346,7 @@ export default function Artwork() {
                     isTabletLandscape={isTabletLandscape}
                     isTabletSize={isTabletSize}
                     primaryButton={renderPrimaryButton()}
+                    arArtworkUri={arArtworkUri}
                   />
                 </View>
               ) : (
@@ -360,6 +366,7 @@ export default function Artwork() {
                       isTabletLandscape={isTabletLandscape}
                       isTabletSize={isTabletSize}
                       primaryButton={renderPrimaryButton()}
+                      arArtworkUri={arArtworkUri}
                     />
                   </View>
                 </View>

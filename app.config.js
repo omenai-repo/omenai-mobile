@@ -45,6 +45,8 @@ export default {
           "This app uses notifications to keep you updated.",
         NSFaceIDUsageDescription:
           "Allow Omenai to use Face ID for secure and convenient login.",
+        NSCameraUsageDescription:
+          "Omenai uses the camera to place this artwork in your room with augmented reality.",
       },
     },
     android: {
@@ -55,7 +57,10 @@ export default {
       googleServicesFile: "./google-services.json",
       useNextNotificationsApi: true,
       package: "com.omenai.omenaiapp",
-      permissions: ["android.permission.RECORD_AUDIO"],
+      permissions: [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+      ],
       versionCode: ANDROID_VERSION_CODE,
       softwareKeyboardLayoutMode: "pan",
       intentFilters: androidIntentFilters,
@@ -81,6 +86,10 @@ export default {
           android: {
             enableMinifyInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,
+            manifestQueries: {
+              package: ["com.google.ar.core"],
+            },
+            buildArchs: ["armeabi-v7a", "arm64-v8a"],
             // R8 fails on optional class references unless ignored (see minifyReleaseWithR8).
             extraProguardRules: `
               # Stripe: push provisioning classes are optional; @stripe/stripe-react-native still references them.
@@ -127,7 +136,19 @@ export default {
             "Omenai app accesses your photos to let you upload artworks.",
         },
       ],
-
+      [
+        "@reactvision/react-viro",
+        {
+          android: {
+            xRMode: "AR",
+          },
+          ios: {
+            cameraUsagePermission:
+              "Omenai uses the camera to place this artwork in your room with augmented reality.",
+          },
+        },
+      ],
+      "./plugins/viro-with-simulator.js",
       "expo-web-browser",
       [
         "expo-secure-store",

@@ -14,12 +14,14 @@ export default function ArtworkContentSection({
   isTabletLandscape,
   isTabletSize,
   primaryButton,
+  arArtworkUri,
 }: Readonly<{
   artwork: ArtworkDataType;
   userType: string;
   isTabletLandscape: boolean;
   isTabletSize: boolean;
   primaryButton: React.ReactNode;
+  arArtworkUri: string;
 }>) {
   return (
     <View style={isTabletLandscape ? [tw`pl-5`, { flex: 0.5 }] : tw``}>
@@ -46,6 +48,9 @@ export default function ArtworkContentSection({
         likeIds={artwork.like_IDs || []}
         art_id={artwork.art_id || ""}
         impressions={artwork.impressions || 0}
+        artworkTitle={artwork.title}
+        artworkUri={arArtworkUri}
+        dimensions={artwork.dimensions}
       />
 
       <View style={[tw`mt-8 gap-4`, isTabletSize && tw`flex-row`]}>

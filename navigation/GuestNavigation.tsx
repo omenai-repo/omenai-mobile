@@ -9,6 +9,7 @@ import Filter from "#components/filter/Filter";
 import ArtworkMediumFilterModal from "#screens/artworksMedium/components/filter/ArtworkMediumFilterModal";
 import ArtworkCategoriesFilterModal from "#screens/artworkCategories/components/filter/ArtworkCategoriesFilterModal";
 import Artwork from "#screens/artwork/Artwork";
+import ArPreview from "#screens/ar/ArPreview";
 import SearchResults from "#screens/searchResults/SearchResults";
 import ArticleScreen from "#screens/home/components/editorials/ArticleScreen";
 import DetailsScreen from "#screens/home/components/DetailScreen";
@@ -76,6 +77,11 @@ export default function GuestNavigation() {
       <Stack.Screen
         name={screenName.artwork}
         component={wrapWithHighRisk(Artwork)}
+      />
+      <Stack.Screen
+        name={screenName.arPreview}
+        component={wrapWithHighRisk(ArPreview)}
+        options={{ presentation: "modal", gestureEnabled: false }}
       />
       <Stack.Screen
         name={screenName.searchResults}

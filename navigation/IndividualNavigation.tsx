@@ -7,6 +7,7 @@ import SavedArtworks from "#screens/savedArtworks/SavedArtworks";
 import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
 import PurchaseArtwork from "#screens/purchase/PurchaseArtwork";
 import Artwork from "#screens/artwork/Artwork";
+import ArPreview from "#screens/ar/ArPreview";
 import SearchResults from "#screens/searchResults/SearchResults";
 import Filter from "#components/filter/Filter";
 import EditProfile from "#screens/editProfile/EditProfile";
@@ -290,6 +291,11 @@ export default function IndividualNavigation() {
       <Stack.Screen
         name={screenName.artwork}
         component={wrapWithHighRisk(Artwork)}
+      />
+      <Stack.Screen
+        name={screenName.arPreview}
+        component={wrapWithHighRisk(ArPreview)}
+        options={{ presentation: "modal", gestureEnabled: false }}
       />
       <Stack.Screen
         name={screenName.purchaseArtwork}
