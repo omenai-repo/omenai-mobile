@@ -52,10 +52,7 @@ import BiometricSettings from "#screens/profile/BiometricSettings";
 import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
 import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
 import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
-import {
-  MoreSheetProvider,
-  useMoreSheet,
-} from "./components/MoreSheetContext";
+import { MoreSheetProvider, useMoreSheet } from "./components/MoreSheetContext";
 import ArtistReviewHub from "#screens/artist/reviews/ArtistReviewHub";
 import ArtistProfileScreen from "#screens/artist/profile/ArtistProfileScreen";
 import WalletScreen from "#screens/artist/wallet/WalletScreen";
@@ -212,7 +209,7 @@ const BottomTabNav = () => {
       <Tab.Navigator
         tabBar={(props) => (
           <>
-            {(tabNavigationRef.current = props.navigation, null)}
+            {((tabNavigationRef.current = props.navigation), null)}
             <GalleryTabBar
               {...props}
               tabMeta={artistTabs}
