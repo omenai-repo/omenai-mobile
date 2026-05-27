@@ -3,7 +3,7 @@ name: Staging Build and Submit
 on:
   push:
     branches:
-      - feat/artwork-ar
+      - feat/artwotk-ar
   workflow_dispatch:
 
 jobs:
