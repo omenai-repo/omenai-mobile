@@ -100,6 +100,13 @@ export default {
 
               # Nimbus JOSE JWT optional Ed25519/X25519 paths reference Tink subtle APIs not bundled.
               -dontwarn com.google.crypto.tink.subtle.**
+
+              # Viro / Google VR references optional telemetry + protobuf classes not packaged in release APK.
+              -dontwarn com.google.common.logging.Vr$**
+              -dontwarn com.google.common.logging.nano.**
+              -dontwarn com.google.protobuf.**
+              -dontwarn com.google.protobuf.nano.**
+              -dontwarn logs.proto.wireless.performance.mobile.**
             `.trim(),
           },
         },
