@@ -4,6 +4,7 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { getImageFileView } from "#lib/storage/getImageFileView";
+import { getArtistInitials } from "#utils/getArtistInitials";
 import { useArtistWorks } from "#screens/individual/hooks/useArtistWorks";
 import ArtistProfileHeader from "#screens/individual/artists/artistDetails/ArtistProfileHeader";
 import ArtistWorksContent from "#screens/individual/artists/artistDetails/ArtistWorksContent";
@@ -15,6 +16,8 @@ type RouteParams = RouteProp<
       name?: string;
       logo?: string;
       coverUrl?: string;
+      birthyear?: string;
+      country?: string;
     };
   },
   "params"
@@ -22,7 +25,14 @@ type RouteParams = RouteProp<
 
 export default function ArtistDetailsScreen() {
   const route = useRoute<RouteParams>();
-  const { artistId, name: nameFallback, logo, coverUrl } = route.params;
+  const {
+    artistId,
+    name: nameFallback,
+    logo,
+    coverUrl,
+    birthyear: birthyearFallback,
+    country: countryFallback,
+  } = route.params;
 
   const [mediumFilter, setMediumFilter] = useState("All");
   const [priceFilter, setPriceFilter] = useState("All");
@@ -48,22 +58,32 @@ export default function ArtistDetailsScreen() {
     <>
       <BackHeaderTitle title={artistName} />
       <ScrollView style={tw`flex-1 bg-white`}>
-        {!!coverImageUrl && (
-          <View style={tw`relative w-full h-[200px] bg-neutral-900`}>
-            <Image
-              source={{ uri: coverImageUrl }}
-              style={tw`w-full h-full`}
-              resizeMode="cover"
-            />
-            <View style={tw`absolute inset-0 bg-black/30`} />
-          </View>
-        )}
+        <View style={tw`relative w-full h-[200px] bg-neutral-900`}>
+          {coverImageUrl ? (
+            <>
+              <Image
+                source={{ uri: coverImageUrl }}
+                style={tw`w-full h-full`}
+                resizeMode="cover"
+              />
+              <View style={tw`absolute inset-0 bg-black/30`} />
+            </>
+          ) : (
+            <View style={tw`flex-1 items-center justify-center bg-neutral-800`}>
+              <Text style={tw`font-serif text-5xl text-neutral-300`}>
+                {getArtistInitials(artistName)}
+              </Text>
+            </View>
+          )}
+        </View>
 
         <ArtistProfileHeader
           artistId={artistId}
           profile={profile}
           nameFallback={nameFallback ?? "Artist"}
           logoFallback={logo}
+          birthyearFallback={birthyearFallback}
+          countryFallback={countryFallback}
         />
 
         {showError ? (

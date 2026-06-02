@@ -47,6 +47,7 @@ export const screenName = {
     galleries: "individual-galleries",
     galleryDetails: "individual-gallery-details",
     artistDetails: "individual-artist-details",
+    allArtists: "individual-all-artists",
   },
   gallery: {
     overview: "Overview",

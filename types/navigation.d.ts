@@ -52,7 +52,10 @@ export type RootStackParamList = {
     name?: string;
     logo?: string;
     coverUrl?: string;
+    birthyear?: string;
+    country?: string;
   };
+  "individual-all-artists": undefined;
   ArticleScreen: { article: EditorialSchemaTypes };
   AllEditorialsScreen: { editorials: EditorialSchemaTypes[] };
   MigrationUpgradeCheckout: undefined;
