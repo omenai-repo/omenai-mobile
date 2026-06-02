@@ -7,6 +7,8 @@ export type ArtistProfileData = {
   logo?: string;
   bio?: string;
   followerCount?: number;
+  birthyear?: string;
+  country_of_origin?: string;
   address?: { city?: string; country?: string; state?: string };
 };
 

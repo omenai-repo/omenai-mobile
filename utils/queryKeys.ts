@@ -67,6 +67,7 @@ export const ENGAGEMENTS_QK = {
 };
 
 export const ARTIST_QK = {
+  directory: (userId?: string) => ["artist", "directory", userId] as const,
   works: (
     artistId: string,
     filters: { medium?: string; price?: string } = {},

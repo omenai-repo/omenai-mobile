@@ -79,6 +79,8 @@ export default function FeaturedArtists() {
             name: item.artist,
             logo: item.logo,
             coverUrl: item.mostLikedArtwork?.url,
+            birthyear: item.birthyear,
+            country: item.artistCountry,
           })
         }
         disabled={!hasUser || isLoadingFollowed}
@@ -90,7 +92,7 @@ export default function FeaturedArtists() {
     <View style={tw`mt-6`}>
       <SectionHeader
         title="Featured Artists"
-        onActionPress={() => console.log("View all featured artists")}
+        onActionPress={() => navigation.navigate(screenName.individual.allArtists)}
       />
 
       <FlashList

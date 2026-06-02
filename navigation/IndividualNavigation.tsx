@@ -36,6 +36,7 @@ import FairEventDetailsScreen from "#screens/individual/fairsEvents/FairEventDet
 // import GalleriesScreen from "#screens/individual/galleries/GalleriesScreen";
 import GalleryDetailsScreen from "#screens/individual/galleries/GalleryDetailsScreen";
 import ArtistDetailsScreen from "#screens/individual/artists/ArtistDetailsScreen";
+import AllArtistsScreen from "#screens/individual/artists/AllArtistsScreen";
 import IndividualHomeStack from "#navigation/IndividualHomeStack";
 import Catalog from "#screens/catalog/Catalog";
 import Orders from "#screens/orders/Orders";
@@ -363,6 +364,10 @@ export default function IndividualNavigation() {
       <Stack.Screen
         name={screenName.individual.artistDetails}
         component={wrapWithHighRisk(ArtistDetailsScreen)}
+      />
+      <Stack.Screen
+        name={screenName.individual.allArtists}
+        component={wrapWithHighRisk(AllArtistsScreen)}
       />
       <Stack.Screen
         name={screenName.deleteAccount}
