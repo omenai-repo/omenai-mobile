@@ -1,0 +1,96 @@
+import React, { useMemo, useState } from "react";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import tw from "twrnc";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import { useArtistWorks } from "#screens/individual/hooks/useArtistWorks";
+import ArtistProfileHeader from "#screens/individual/artists/artistDetails/ArtistProfileHeader";
+import ArtistWorksContent from "#screens/individual/artists/artistDetails/ArtistWorksContent";
+
+type RouteParams = RouteProp<
+  {
+    params: {
+      artistId: string;
+      name?: string;
+      logo?: string;
+      coverUrl?: string;
+    };
+  },
+  "params"
+>;
+
+export default function ArtistDetailsScreen() {
+  const route = useRoute<RouteParams>();
+  const { artistId, name: nameFallback, logo, coverUrl } = route.params;
+
+  const [mediumFilter, setMediumFilter] = useState("All");
+  const [priceFilter, setPriceFilter] = useState("All");
+
+  const filters = useMemo(
+    () => ({ medium: mediumFilter, price: priceFilter }),
+    [mediumFilter, priceFilter],
+  );
+
+  const worksQuery = useArtistWorks(artistId, filters);
+  const profile = worksQuery.data?.pages?.[0]?.artist;
+  const artistName = profile?.name ?? nameFallback ?? "Artist";
+
+  const coverImageUrl = useMemo(() => {
+    if (coverUrl) return getImageFileView(coverUrl, 1200);
+    const first = worksQuery.data?.pages?.[0]?.data?.[0]?.url;
+    return first ? getImageFileView(first, 1200) : null;
+  }, [coverUrl, worksQuery.data?.pages]);
+
+  const showError = worksQuery.isError && !worksQuery.isLoading;
+
+  return (
+    <>
+      <BackHeaderTitle title={artistName} />
+      <ScrollView style={tw`flex-1 bg-white`}>
+        {!!coverImageUrl && (
+          <View style={tw`relative w-full h-[200px] bg-neutral-900`}>
+            <Image
+              source={{ uri: coverImageUrl }}
+              style={tw`w-full h-full`}
+              resizeMode="cover"
+            />
+            <View style={tw`absolute inset-0 bg-black/30`} />
+          </View>
+        )}
+
+        <ArtistProfileHeader
+          artistId={artistId}
+          profile={profile}
+          nameFallback={nameFallback ?? "Artist"}
+          logoFallback={logo}
+        />
+
+        {showError ? (
+          <View style={tw`flex-1 items-center justify-center px-6 pt-8`}>
+            <Text
+              style={tw`text-center text-xs uppercase tracking-widest text-neutral-400`}
+            >
+              Could not load this artist. Try again, or go back.
+            </Text>
+            <Pressable
+              onPress={() => worksQuery.refetch()}
+              style={tw`mt-4 border border-neutral-300 rounded-sm px-4 py-2`}
+            >
+              <Text style={tw`text-sm text-neutral-900`}>Retry</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <ArtistWorksContent
+            worksQuery={worksQuery}
+            mediumFilter={mediumFilter}
+            priceFilter={priceFilter}
+            onMediumChange={setMediumFilter}
+            onPriceChange={setPriceFilter}
+            bio={profile?.bio}
+          />
+        )}
+      </ScrollView>
+    </>
+  );
+}
