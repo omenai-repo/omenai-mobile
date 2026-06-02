@@ -47,6 +47,12 @@ export type RootStackParamList = {
     name?: string;
     logo?: string;
   };
+  "individual-artist-details": {
+    artistId: string;
+    name?: string;
+    logo?: string;
+    coverUrl?: string;
+  };
   ArticleScreen: { article: EditorialSchemaTypes };
   AllEditorialsScreen: { editorials: EditorialSchemaTypes[] };
   MigrationUpgradeCheckout: undefined;

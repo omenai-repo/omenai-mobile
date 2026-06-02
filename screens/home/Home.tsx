@@ -16,6 +16,7 @@ import FeaturedShows from "./components/featuredShows/FeaturedShows";
 import FeaturedGalleries from "./components/featuredGalleries/FeaturedGalleries";
 import FeaturedFeed from "./components/featuredFeed/FeaturedFeed";
 import CuratorPicks from "./components/curatorPicks/CuratorPicks";
+import FeaturedArtists from "./components/featuredArtists/FeaturedArtists";
 
 export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
@@ -82,11 +83,11 @@ export default function Home() {
         <TrendingArtworks limit={28} />
         <FeaturedShows />
         <CuratedArtworksListing limit={20} />
+        <FeaturedArtists />
         <FeaturedGalleries />
         <Editorials />
         <Banner />
         {/* <NewArtworksListing /> */}
-        {/* <FeaturedArtists /> */}
         <CatalogListing />
         <RecentlyViewedArtworks />
       </View>

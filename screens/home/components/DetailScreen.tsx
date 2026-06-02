@@ -5,9 +5,9 @@ import {
   ScrollView,
   Image,
   FlatList,
-  Pressable,
 } from "react-native";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import { screenName } from "#constants/screenNames.constants";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -33,16 +33,22 @@ type DetailsRouteProp = RouteProp<
 
 const DetailsScreen = () => {
   const route = useRoute<DetailsRouteProp>();
+  const navigation = useNavigation<any>();
   const { type, id, name, logo } = route.params;
 
-  const [bio, setBio] = useState("");
+  useEffect(() => {
+    if (type === "artist") {
+      navigation.replace(screenName.individual.artistDetails, {
+        artistId: id,
+        name,
+        logo,
+        coverUrl: logo,
+      });
+    }
+  }, [type, id, name, logo, navigation]);
+
   const [artworks, setArtworks] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [expanded, setExpanded] = useState(false);
-  const toggleExpanded = () => setExpanded(!expanded);
-
-  const numberOfLines = expanded ? undefined : 3;
-  const shouldShowToggle = bio && bio.split(" ").length > 20; // adjust threshold
 
   useEffect(() => {
     if (id) getGalleryOrArtistData();
@@ -56,7 +62,6 @@ const DetailsScreen = () => {
         : await getFeaturedGalleryData({ gallery_id: id });
 
     if (res?.isOk) {
-      setBio(res.data?.data?.bio ?? "");
       const arts =
         type === "artist"
           ? res.data?.artist_artworks
@@ -103,17 +108,14 @@ const DetailsScreen = () => {
     />
   );
 
-  const image_href =
-    type === "artist"
-      ? getImageFileView(logo ?? "", 800)
-      : getGalleryLogoFileView(logo ?? "", 800);
+  const image_href = getGalleryLogoFileView(logo ?? "", 800);
+
+  if (type === "artist") return null;
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <Animated.View entering={FadeInDown.duration(600)}>
-        <BackHeaderTitle
-          title={`${type === "artist" ? "Artist" : "Gallery"} Details`}
-        />
+        <BackHeaderTitle title="Gallery Details" />
       </Animated.View>
 
       <ScrollView
@@ -136,31 +138,6 @@ const DetailsScreen = () => {
         >
           <Text style={tw`text-2xl font-bold text-[#1A1A1A]`}>{name}</Text>
         </Animated.View>
-
-        {/* Bio */}
-        {type === "artist" && (
-          <Animated.View
-            entering={FadeInDown.delay(300).duration(500)}
-            style={tw`mt-8`}
-          >
-            <Text style={tw`text-lg font-semibold text-[#1A1A1A] mb-2`}>
-              About
-            </Text>
-            <Text
-              style={tw`text-sm text-[#333] leading-6`}
-              numberOfLines={numberOfLines}
-            >
-              {bio || "No biography available."}
-            </Text>
-            {shouldShowToggle && (
-              <Pressable onPress={toggleExpanded}>
-                <Text style={tw`text-sm text-blue-500 mt-1`}>
-                  {expanded ? "Read less" : "Read more"}
-                </Text>
-              </Pressable>
-            )}
-          </Animated.View>
-        )}
 
         {/* Artworks */}
         <Animated.View

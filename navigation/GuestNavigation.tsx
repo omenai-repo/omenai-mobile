@@ -12,6 +12,7 @@ import Artwork from "#screens/artwork/Artwork";
 import SearchResults from "#screens/searchResults/SearchResults";
 import ArticleScreen from "#screens/home/components/editorials/ArticleScreen";
 import DetailsScreen from "#screens/home/components/DetailScreen";
+import ArtistDetailsScreen from "#screens/individual/artists/ArtistDetailsScreen";
 import ArtworksMedium from "#screens/artworksMedium/ArtworksMedium";
 import Collections from "#screens/collections/Collections";
 import AllEditorialsScreen from "#screens/home/components/editorials/AllEditorialsScreen";
@@ -88,6 +89,10 @@ export default function GuestNavigation() {
       <Stack.Screen
         name={"DetailsScreen"}
         component={wrapWithHighRisk(DetailsScreen)}
+      />
+      <Stack.Screen
+        name={screenName.individual.artistDetails}
+        component={wrapWithHighRisk(ArtistDetailsScreen)}
       />
       <Stack.Screen
         name={screenName.artworksMedium}

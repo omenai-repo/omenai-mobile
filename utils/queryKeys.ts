@@ -50,7 +50,11 @@ export const HOME_QK = {
 
   featuredGalleries: (userId?: string) => ["home", "featuredGalleries", userId],
 
-  fairsEventsPreview: (userId?: string) => ["home", "fairsEventsPreview", userId],
+  fairsEventsPreview: (userId?: string) => [
+    "home",
+    "fairsEventsPreview",
+    userId,
+  ],
 
   editorials: (userId?: string) => ["home", "editorials", userId],
 
@@ -58,7 +62,22 @@ export const HOME_QK = {
 };
 
 export const ENGAGEMENTS_QK = {
-  userFollowedIds: (sessionId?: string) => ["user-followed-ids", sessionId] as const,
+  userFollowedIds: (sessionId?: string) =>
+    ["user-followed-ids", sessionId] as const,
+};
+
+export const ARTIST_QK = {
+  works: (
+    artistId: string,
+    filters: { medium?: string; price?: string } = {},
+  ) =>
+    [
+      "artist",
+      "works",
+      artistId,
+      filters.medium ?? "All",
+      filters.price ?? "All",
+    ] as const,
 };
 
 export const ORDERS_QK = ["orders", "artist"] as const;
@@ -83,7 +102,8 @@ export const WALLET_QK = {
 
 export const EVENTS_QK = {
   allShows: ["events", "shows"] as const,
-  allFairsEvents: (filter: string) => ["events", "fairs-events", filter] as const,
+  allFairsEvents: (filter: string) =>
+    ["events", "fairs-events", filter] as const,
   fairsEventsInfinite: ["events", "fairs-events", "infinite", "all"] as const,
   fairsEventsPaged: (filter: string, page: number, limit: number) =>
     ["events", "fairs-events", filter, page, limit] as const,
@@ -98,7 +118,8 @@ export const EVENTS_QK = {
     ["events", "details", source, eventId] as const,
   galleryOverview: (galleryId: string) =>
     ["events", "gallery", "overview", galleryId] as const,
-  galleryProfile: (galleryId: string) => ["events", "gallery", "profile", galleryId] as const,
+  galleryProfile: (galleryId: string) =>
+    ["events", "gallery", "profile", galleryId] as const,
   /** Matches web `GalleryWorksWrapper` query — include filters so cache splits per filter set. */
   galleryWorks: (
     galleryId: string,
@@ -113,6 +134,8 @@ export const EVENTS_QK = {
       filters.medium ?? "All",
       filters.price ?? "All",
     ] as const,
-  galleryShowsTab: (galleryId: string) => ["events", "gallery", "shows", galleryId] as const,
-  galleryContact: (galleryId: string) => ["events", "gallery", "contact", galleryId] as const,
+  galleryShowsTab: (galleryId: string) =>
+    ["events", "gallery", "shows", galleryId] as const,
+  galleryContact: (galleryId: string) =>
+    ["events", "gallery", "contact", galleryId] as const,
 };

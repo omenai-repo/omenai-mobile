@@ -46,6 +46,7 @@ export const screenName = {
     fairEventDetails: "individual-fair-event-details",
     galleries: "individual-galleries",
     galleryDetails: "individual-gallery-details",
+    artistDetails: "individual-artist-details",
   },
   gallery: {
     overview: "Overview",
