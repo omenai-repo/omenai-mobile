@@ -13,8 +13,6 @@ import { screenName } from "#constants/screenNames.constants";
 import type { ArtistWorkRow } from "#services/partners/artistPartnerApi";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { priceFromGalleryWork } from "#screens/individual/galleries/galleryDetails/GalleryWorksTabContent";
-import ArtistBioSection from "./ArtistBioSection";
-
 const MEDIUM_OPTIONS: { label: string; value: string }[] = [
   { label: "Medium", value: "All" },
   { label: "Photography", value: "Photography" },
@@ -56,7 +54,6 @@ type Props = {
   priceFilter: string;
   onMediumChange: (value: string) => void;
   onPriceChange: (value: string) => void;
-  bio?: string | null;
 };
 
 export default function ArtistWorksContent({
@@ -65,7 +62,6 @@ export default function ArtistWorksContent({
   priceFilter,
   onMediumChange,
   onPriceChange,
-  bio,
 }: Props) {
   const navigation = useNavigation<any>();
   const { width: screenW } = useWindowDimensions();
@@ -76,6 +72,7 @@ export default function ArtistWorksContent({
     data,
     isLoading,
     isError,
+    isFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -90,6 +87,8 @@ export default function ArtistWorksContent({
   );
 
   const totalCount = data?.pages?.[0]?.total ?? items.length;
+  const isInitialWorksLoad = isLoading && items.length === 0;
+  const isFilteringWorks = isFetching && !isInitialWorksLoad && !isFetchingNextPage;
 
   const renderArtwork = useCallback(
     (art: ArtistWorkRow) => {
@@ -169,22 +168,9 @@ export default function ArtistWorksContent({
     </View>
   );
 
-  if (isLoading) {
+  if (isError && items.length === 0) {
     return (
       <View style={tw`flex-1 bg-white`}>
-        <ArtistBioSection bio={bio} />
-        {filterStrip}
-        <View style={tw`flex-1 items-center justify-center py-20`}>
-          <Loader size={90} height={110} />
-        </View>
-      </View>
-    );
-  }
-
-  if (isError) {
-    return (
-      <View style={tw`flex-1 bg-white`}>
-        <ArtistBioSection bio={bio} />
         {filterStrip}
         <View style={tw`py-20 px-4`}>
           <Text style={tw`text-center text-xs uppercase text-neutral-400`}>
@@ -195,10 +181,20 @@ export default function ArtistWorksContent({
     );
   }
 
+  if (isInitialWorksLoad) {
+    return (
+      <View style={tw`flex-1 bg-white`}>
+        {filterStrip}
+        <View style={tw`flex-1 items-center justify-center py-20`}>
+          <Loader size={90} height={110} />
+        </View>
+      </View>
+    );
+  }
+
   if (items.length === 0) {
     return (
       <View style={tw`flex-1 bg-white`}>
-        <ArtistBioSection bio={bio} />
         {filterStrip}
         <View style={tw`py-20 px-4`}>
           <Text style={tw`text-center text-xs uppercase text-neutral-400`}>
@@ -211,7 +207,6 @@ export default function ArtistWorksContent({
 
   return (
     <View style={tw`flex-1 bg-white`}>
-      <ArtistBioSection bio={bio} />
       {filterStrip}
       <FlashList
         data={items}
@@ -219,6 +214,7 @@ export default function ArtistWorksContent({
         masonry
         keyExtractor={(item) => item.art_id}
         showsVerticalScrollIndicator={false}
+        style={isFilteringWorks ? tw`opacity-50` : undefined}
         contentContainerStyle={tw`px-5 pb-8 pt-2`}
         onEndReached={() => {
           if (!hasNextPage || isFetchingNextPage) return;
@@ -226,11 +222,13 @@ export default function ArtistWorksContent({
         }}
         onEndReachedThreshold={0.45}
         ListHeaderComponent={
-          <Text
-            style={tw`text-[11px] text-neutral-500 mb-3 uppercase tracking-widest`}
-          >
-            {totalCount} work{totalCount === 1 ? "" : "s"}
-          </Text>
+          <View style={isFilteringWorks ? tw`opacity-50` : undefined}>
+            <Text
+              style={tw`text-[11px] text-neutral-500 mb-3 uppercase tracking-widest`}
+            >
+              {totalCount} work{totalCount === 1 ? "" : "s"}
+            </Text>
+          </View>
         }
         ListFooterComponent={
           isFetchingNextPage ? <Loader size={56} height={90} /> : null

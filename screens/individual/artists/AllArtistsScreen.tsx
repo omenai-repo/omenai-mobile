@@ -41,7 +41,7 @@ export default function AllArtistsScreen() {
   const cardWidth = useMemo(() => (screenW - H_PAD * 2 - GAP) / 2, [screenW]);
 
   const {
-    data: allArtists = [],
+    data: artists = [],
     isLoading,
     isError,
     refetch,
@@ -52,10 +52,10 @@ export default function AllArtistsScreen() {
 
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const visibleArtists = useMemo(
-    () => allArtists.slice(0, visibleCount) as DirectoryArtist[],
-    [allArtists, visibleCount],
+    () => artists.slice(0, visibleCount),
+    [artists, visibleCount],
   );
-  const hasMore = visibleCount < allArtists.length;
+  const hasMore = visibleCount < artists.length;
 
   const onOpenDetails = useCallback(
     (item: DirectoryArtist) => {

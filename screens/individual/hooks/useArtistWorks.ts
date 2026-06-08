@@ -24,5 +24,6 @@ export function useArtistWorks(
     },
     enabled: Boolean(artistId),
     staleTime: 5 * 60_000,
+    placeholderData: (prev) => prev,
   });
 }

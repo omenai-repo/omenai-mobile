@@ -1,11 +1,14 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
 import ArtistCard from "./ArtistCard";
+import LongWhiteButton from "#components/buttons/LongWhiteButton";
 import SectionHeader from "#components/general/SectionHeader";
+import { colors } from "#config/colors.config";
 import { getArtists } from "#services/overview/fetchArtist";
 import { HOME_QK } from "#utils/queryKeys";
 import { FlashList } from "@shopify/flash-list";
@@ -90,10 +93,7 @@ export default function FeaturedArtists() {
 
   return (
     <View style={tw`mt-6`}>
-      <SectionHeader
-        title="Featured Artists"
-        onActionPress={() => navigation.navigate(screenName.individual.allArtists)}
-      />
+      <SectionHeader subtitle="Featured Artists" title="Artists to watch" />
 
       <FlashList
         data={listData}
@@ -113,6 +113,20 @@ export default function FeaturedArtists() {
           ) : null
         }
       />
+
+      {!isLoading && (
+        <View style={tw`px-5 mt-7`}>
+          <LongWhiteButton
+            value="View all artists"
+            onClick={() => navigation.navigate(screenName.individual.allArtists)}
+            outline
+            borderColor={colors.inputBorder}
+            textStyle={tw`text-neutral-700 font-sans-regular`}
+            style={{ height: 48 }}
+            icon={<Feather name="arrow-right" size={16} color={tw.color("neutral-500")} />}
+          />
+        </View>
+      )}
     </View>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import tw from "twrnc";
@@ -7,6 +7,7 @@ import { getImageFileView } from "#lib/storage/getImageFileView";
 import { getArtistInitials } from "#utils/getArtistInitials";
 import { useArtistWorks } from "#screens/individual/hooks/useArtistWorks";
 import ArtistProfileHeader from "#screens/individual/artists/artistDetails/ArtistProfileHeader";
+import ArtistBioSection from "#screens/individual/artists/artistDetails/ArtistBioSection";
 import ArtistWorksContent from "#screens/individual/artists/artistDetails/ArtistWorksContent";
 
 type RouteParams = RouteProp<
@@ -45,6 +46,12 @@ export default function ArtistDetailsScreen() {
   const worksQuery = useArtistWorks(artistId, filters);
   const profile = worksQuery.data?.pages?.[0]?.artist;
   const artistName = profile?.name ?? nameFallback ?? "Artist";
+  const [bio, setBio] = useState<string | null>(null);
+
+  useEffect(() => {
+    const nextBio = profile?.bio?.trim();
+    if (nextBio) setBio(nextBio);
+  }, [profile?.bio]);
 
   const coverImageUrl = useMemo(() => {
     if (coverUrl) return getImageFileView(coverUrl, 1200);
@@ -52,11 +59,12 @@ export default function ArtistDetailsScreen() {
     return first ? getImageFileView(first, 1200) : null;
   }, [coverUrl, worksQuery.data?.pages]);
 
-  const showError = worksQuery.isError && !worksQuery.isLoading;
+  const showError =
+    worksQuery.isError && !(worksQuery.data?.pages?.length ?? 0);
 
   return (
     <>
-      <BackHeaderTitle title={artistName} />
+      <BackHeaderTitle title='' />
       <ScrollView style={tw`flex-1 bg-white`}>
         <View style={tw`relative w-full h-[200px] bg-neutral-900`}>
           {coverImageUrl ? (
@@ -86,6 +94,8 @@ export default function ArtistDetailsScreen() {
           countryFallback={countryFallback}
         />
 
+        <ArtistBioSection bio={bio} />
+
         {showError ? (
           <View style={tw`flex-1 items-center justify-center px-6 pt-8`}>
             <Text
@@ -107,7 +117,6 @@ export default function ArtistDetailsScreen() {
             priceFilter={priceFilter}
             onMediumChange={setMediumFilter}
             onPriceChange={setPriceFilter}
-            bio={profile?.bio}
           />
         )}
       </ScrollView>

@@ -4,12 +4,15 @@ import tw from "twrnc";
 import { MaterialIcons } from "@expo/vector-icons";
 import FollowComponent from "#components/follow/FollowComponent";
 import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
+import { getImageFileView } from "#lib/storage/getImageFileView";
 import { getArtistInitials } from "#utils/getArtistInitials";
 
 export type DirectoryArtist = {
   artist_id: string;
   name: string;
   logo?: string;
+  cardImage?: string;
+  cardImageIsArtwork?: boolean;
   country_of_origin?: string;
   birthyear?: string;
   followerCount?: number;
@@ -40,7 +43,13 @@ export default function AllArtistCard({
   ]
     .filter(Boolean)
     .join(" · ");
-  const showInitials = !artist.logo || imgError;
+  const imageKey = artist.cardImage ?? artist.logo;
+  const imageUri = imageKey
+    ? artist.cardImageIsArtwork
+      ? getImageFileView(imageKey, 600)
+      : getGalleryLogoFileView(imageKey, 600)
+    : null;
+  const showInitials = !imageUri || imgError;
 
   useEffect(() => {
     setImgError(false);
@@ -64,7 +73,7 @@ export default function AllArtistCard({
             </Text>
           ) : (
             <Image
-              source={{ uri: getGalleryLogoFileView(artist.logo!, 600) }}
+              source={{ uri: imageUri! }}
               style={tw`w-full h-full`}
               resizeMode="cover"
               onError={() => setImgError(true)}
