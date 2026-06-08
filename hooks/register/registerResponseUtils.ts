@@ -10,6 +10,63 @@ export type RegistrationAnalyticsResponse = {
   verified?: boolean;
 };
 
+function extractId(
+  d: Record<string, unknown>,
+  idKey: string,
+): string | undefined {
+  if (typeof d[idKey] === "string") return d[idKey] as string;
+  if (typeof d.user_id === "string") return d.user_id as string;
+  if (typeof d.gallery_id === "string") return d.gallery_id as string;
+  if (typeof d.artist_id === "string") return d.artist_id as string;
+  if (typeof d.id === "string") return d.id as string;
+  return undefined;
+}
+
+function extractEmail(
+  d: Record<string, unknown>,
+  b: Record<string, unknown>,
+): string | undefined {
+  if (typeof d.email === "string") return d.email as string;
+  if (typeof b.email === "string") return b.email as string;
+  return undefined;
+}
+
+function extractVerified(
+  d: Record<string, unknown>,
+  b: Record<string, unknown>,
+): boolean | undefined {
+  if (typeof d.verified === "boolean") return d.verified;
+  if (typeof b.verified === "boolean") return b.verified;
+  return undefined;
+}
+
+function parseDataRecord(
+  rawData: Record<string, unknown>,
+  b: Record<string, unknown>,
+  idKey: string,
+): RegistrationAnalyticsResponse {
+  const id = extractId(rawData, idKey);
+  const email = extractEmail(rawData, b);
+  const verified = extractVerified(rawData, b);
+
+  return {
+    ...(id ? { id } : {}),
+    ...(email ? { email } : {}),
+    ...(typeof verified === "boolean" ? { verified } : {}),
+  };
+}
+
+function parseStringData(
+  rawData: string,
+  b: Record<string, unknown>,
+): RegistrationAnalyticsResponse {
+  return {
+    id: rawData,
+    ...(typeof b.email === "string" ? { email: b.email as string } : {}),
+    ...(typeof b.verified === "boolean" ? { verified: b.verified as boolean } : {}),
+  };
+}
+
 /** API `body` (parsed JSON) → only id, email, verified for analytics. */
 export function registrationResponseForAnalytics(
   body: unknown,
@@ -22,38 +79,11 @@ export function registrationResponseForAnalytics(
   const rawData = b.data;
 
   if (typeof rawData === "string") {
-    return {
-      id: rawData,
-      ...(typeof b.email === "string" ? { email: b.email } : {}),
-      ...(typeof b.verified === "boolean" ? { verified: b.verified } : {}),
-    };
+    return parseStringData(rawData, b);
   }
 
   if (rawData && typeof rawData === "object" && !Array.isArray(rawData)) {
-    const d = rawData as Record<string, unknown>;
-    const id =
-      (typeof d[idKey] === "string" && d[idKey]) ||
-      (typeof d.user_id === "string" && d.user_id) ||
-      (typeof d.gallery_id === "string" && d.gallery_id) ||
-      (typeof d.artist_id === "string" && d.artist_id) ||
-      (typeof d.id === "string" && d.id) ||
-      undefined;
-    const email =
-      (typeof d.email === "string" && d.email) ||
-      (typeof b.email === "string" && b.email) ||
-      undefined;
-    let verified: boolean | undefined;
-    if (typeof d.verified === "boolean") {
-      verified = d.verified;
-    } else if (typeof b.verified === "boolean") {
-      verified = b.verified;
-    }
-
-    return {
-      ...(id ? { id } : {}),
-      ...(email ? { email } : {}),
-      ...(typeof verified === "boolean" ? { verified } : {}),
-    };
+    return parseDataRecord(rawData as Record<string, unknown>, b, idKey);
   }
 
   const topId =
@@ -62,9 +92,9 @@ export function registrationResponseForAnalytics(
     undefined;
 
   return {
-    ...(topId ? { id: topId } : {}),
-    ...(typeof b.email === "string" ? { email: b.email } : {}),
-    ...(typeof b.verified === "boolean" ? { verified: b.verified } : {}),
+    ...(topId ? { id: topId as string } : {}),
+    ...(typeof b.email === "string" ? { email: b.email as string } : {}),
+    ...(typeof b.verified === "boolean" ? { verified: b.verified as boolean } : {}),
   };
 }
 
