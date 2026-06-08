@@ -1,6 +1,6 @@
 import { createNavigationContainerRef } from "@react-navigation/native";
 
-export const navigationRef = createNavigationContainerRef();
+export const navigationRef = createNavigationContainerRef<any>();
 
 export function navigate(name: string, params?: Record<string, unknown>) {
   if (!navigationRef.isReady()) return;
@@ -10,7 +10,7 @@ export function navigate(name: string, params?: Record<string, unknown>) {
       name,
       params,
       merge: true,
-    } as never);
+    });
     return;
   }
 
@@ -18,5 +18,5 @@ export function navigate(name: string, params?: Record<string, unknown>) {
   const current = state?.routes[state.index]?.name;
   if (current === name) return;
 
-  navigationRef.navigate(name as never);
+  navigationRef.navigate(name);
 }

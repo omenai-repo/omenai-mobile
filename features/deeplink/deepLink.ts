@@ -33,9 +33,10 @@ export const resolveDeepLinkUrl = async (
 ): Promise<string> => {
   const generation = beginDeepLinkResolve();
   const token = extractDeepLinkToken(url);
-  const tokenParam = token ? `?token=${encodeURIComponent(token)}` : "";
-  const toDlUrl = (t?: string) =>
-    `${prefix}dl${t ? `?token=${encodeURIComponent(t)}` : ""}`;
+  const toDlUrl = (t?: string) => {
+    const query = t ? `?token=${encodeURIComponent(t)}` : "";
+    return `${prefix}dl${query}`;
+  };
 
   const trackStale = () => {
     Analytics.track("deeplink_resolve_stale", { has_token: Boolean(token) });

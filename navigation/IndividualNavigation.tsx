@@ -119,6 +119,22 @@ const individualMoreTabs = [
   },
 ];
 
+const renderIndividualTabBar = (
+  props: any,
+  navigationRef: React.MutableRefObject<any>,
+  openMoreSheet: () => void,
+) => {
+  navigationRef.current = props.navigation;
+  return (
+    <GalleryTabBar
+      {...props}
+      tabMeta={individualTabs}
+      moreRouteName="individual-more"
+      onPressMore={openMoreSheet}
+    />
+  );
+};
+
 function IndividualTabs() {
   const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
   const tabNavigationRef = useRef<any>(null);
@@ -165,17 +181,7 @@ function IndividualTabs() {
   return (
     <>
       <Tab.Navigator
-        tabBar={(props) => (
-          <>
-            {(tabNavigationRef.current = props.navigation, null)}
-            <GalleryTabBar
-              {...props}
-              tabMeta={individualTabs}
-              moreRouteName="individual-more"
-              onPressMore={openMoreSheet}
-            />
-          </>
-        )}
+        tabBar={(props) => renderIndividualTabBar(props, tabNavigationRef, openMoreSheet)}
         screenOptions={{ headerShown: false }}
       >
         {individualTabs.map(({ name, component, id }) => (

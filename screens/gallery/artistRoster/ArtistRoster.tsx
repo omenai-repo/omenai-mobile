@@ -151,6 +151,39 @@ export default function ArtistRoster() {
     filteredRoster.length === 0 &&
     searchTerm.trim().length > 0;
 
+  let rosterContent;
+  if (isInitialLoading) {
+    rosterContent = <RosterLoadingState />;
+  } else if (emptyRoster) {
+    rosterContent = <RosterEmptyState onAddPress={openAdd} />;
+  } else if (noMatches) {
+    rosterContent = (
+      <RosterNoSearchResultsState
+        searchTerm={searchTerm}
+        onClearSearch={() => setSearchTerm("")}
+      />
+    );
+  } else {
+    rosterContent = (
+      <FlatList
+        data={filteredRoster}
+        keyExtractor={(item) => item.artist_id}
+        contentContainerStyle={tw`px-5 pb-8 pt-5`}
+        refreshControl={
+          <RefreshControl refreshing={rosterQuery.isFetching} onRefresh={onRefresh} />
+        }
+        ListHeaderComponent={listHeader}
+        renderItem={({ item }) => (
+          <RosterArtistRow
+            artist={item}
+            onRemovePress={confirmRemove}
+            removingArtistId={removingId}
+          />
+        )}
+      />
+    );
+  }
+
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <View
@@ -176,33 +209,7 @@ export default function ArtistRoster() {
         Manage the artists actively represented by your gallery on Omenai.
       </Text>
 
-      {isInitialLoading ? (
-        <RosterLoadingState />
-      ) : emptyRoster ? (
-        <RosterEmptyState onAddPress={openAdd} />
-      ) : noMatches ? (
-        <RosterNoSearchResultsState
-          searchTerm={searchTerm}
-          onClearSearch={() => setSearchTerm("")}
-        />
-      ) : (
-        <FlatList
-          data={filteredRoster}
-          keyExtractor={(item) => item.artist_id}
-          contentContainerStyle={tw`px-5 pb-8 pt-5`}
-          refreshControl={
-            <RefreshControl refreshing={rosterQuery.isFetching} onRefresh={onRefresh} />
-          }
-          ListHeaderComponent={listHeader}
-          renderItem={({ item }) => (
-            <RosterArtistRow
-              artist={item}
-              onRemovePress={confirmRemove}
-              removingArtistId={removingId}
-            />
-          )}
-        />
-      )}
+      {rosterContent}
     </View>
   );
 }

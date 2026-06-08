@@ -160,9 +160,6 @@ const ArtistOnboarding = () => {
     socials: INITIAL_SOCIALS_STATE,
   });
 
-  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>(
-    {}
-  );
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editingQuestionKey, setEditingQuestionKey] = useState<
@@ -179,14 +176,6 @@ const ArtistOnboarding = () => {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   };
 
-  const openEditModal = (
-    key: QuestionKey | "cv" | "social",
-    socialKey?: string
-  ) => {
-    setEditingQuestionKey(key as QuestionKey);
-    setEditingSocialKey(socialKey || null); // Store which social media is being edited
-    setIsEditModalVisible(true);
-  };
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -315,12 +304,6 @@ const ArtistOnboarding = () => {
     return false;
   };
 
-  const toggleSection = (key: string) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
 
   const updateSocial = (key: string, value: string) => {
     setDocumentation((prev) => ({

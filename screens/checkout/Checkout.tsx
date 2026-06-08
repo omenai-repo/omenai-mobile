@@ -49,16 +49,27 @@ type ScreenRouteProp = RouteProp<
   "MigrationUpgradeCheckout"
 >;
 
-const useCheckoutPricing = (
-  isInitialSubscription: boolean,
-  plan: any,
-  interval: "yearly" | "monthly",
-  sub_data: any,
-  isSubscriptionDiscount: boolean,
-  startDate: Date,
-  days_used: number,
-  totalDays: number,
-) => {
+type CheckoutPricingParams = {
+  isInitialSubscription: boolean;
+  plan: any;
+  interval: "yearly" | "monthly";
+  sub_data: any;
+  isSubscriptionDiscount: boolean;
+  startDate: Date;
+  days_used: number;
+  totalDays: number;
+};
+
+const useCheckoutPricing = ({
+  isInitialSubscription,
+  plan,
+  interval,
+  sub_data,
+  isSubscriptionDiscount,
+  startDate,
+  days_used,
+  totalDays,
+}: CheckoutPricingParams) => {
   const { proratedPrice, upgradeCost, grandTotal } = useMemo(() => {
     if (isInitialSubscription) {
       if (!plan?.pricing)
@@ -167,7 +178,7 @@ export default function Checkout() {
   const isSubscriptionDiscount = Boolean(sub_data?.isDiscountSub);
 
   const { proratedPrice, upgradeCost, grandTotal, plan_change_params } =
-    useCheckoutPricing(
+    useCheckoutPricing({
       isInitialSubscription,
       plan,
       interval,
@@ -176,7 +187,7 @@ export default function Checkout() {
       startDate,
       days_used,
       totalDays,
-    );
+    });
 
   const showCharge = plan_change_params.shouldCharge;
 

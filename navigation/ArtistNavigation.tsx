@@ -1,5 +1,5 @@
 import { View, Text, Modal, Animated, Easing, Pressable } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { useAppStore } from "#store/app/appStore";
 import ArtistOnboarding from "#screens/artistOnboarding/ArtistOnboarding";
 import tw from "twrnc";
@@ -128,6 +128,22 @@ const artistMoreTabs = [
   },
 ];
 
+const renderArtistTabBar = (
+  props: any,
+  navigationRef: RefObject<any>,
+  openMoreSheet: () => void,
+) => {
+  navigationRef.current = props.navigation;
+  return (
+    <GalleryTabBar
+      {...props}
+      tabMeta={artistTabs}
+      moreRouteName="artist-more"
+      onPressMore={openMoreSheet}
+    />
+  );
+};
+
 const BottomTabNav = () => {
   const { userSession } = useAppStore();
   const [isModalVisible, setModalVisible] = useState(false);
@@ -210,17 +226,7 @@ const BottomTabNav = () => {
   return (
     <>
       <Tab.Navigator
-        tabBar={(props) => (
-          <>
-            {(tabNavigationRef.current = props.navigation, null)}
-            <GalleryTabBar
-              {...props}
-              tabMeta={artistTabs}
-              moreRouteName="artist-more"
-              onPressMore={openMoreSheet}
-            />
-          </>
-        )}
+        tabBar={(props) => renderArtistTabBar(props, tabNavigationRef, openMoreSheet)}
         screenOptions={{
           headerShown: false,
         }}
@@ -298,6 +304,12 @@ const BottomTabNav = () => {
   );
 };
 
+const ArtistBottomTabWrapper = () => (
+  <MoreSheetProvider>
+    <BottomTabNav />
+  </MoreSheetProvider>
+);
+
 const ArtistNavigation = () => {
   const { userSession } = useAppStore();
 
@@ -309,11 +321,7 @@ const ArtistNavigation = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="Artist"
-        component={wrapWithHighRisk(() => (
-          <MoreSheetProvider>
-            <BottomTabNav />
-          </MoreSheetProvider>
-        ))}
+        component={wrapWithHighRisk(ArtistBottomTabWrapper)}
       />
       <Stack.Screen
         name="ShipmentTrackingScreen"

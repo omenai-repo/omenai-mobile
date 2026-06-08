@@ -98,8 +98,8 @@ const FirstScreen = ({ onPress }: { onPress: () => void }) => {
           </Text>
 
           <View style={tw`mb-8 gap-5`}>
-            {onboardingItems.map((item, idx) => (
-              <View key={idx} style={tw`flex-row items-center gap-3`}>
+            {onboardingItems.map((item) => (
+              <View key={item.text} style={tw`flex-row items-center gap-3`}>
                 <View
                   style={tw`w-8 h-8 items-center justify-center bg-slate-50 rounded-sm`}
                 >

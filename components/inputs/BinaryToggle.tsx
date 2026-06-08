@@ -32,17 +32,23 @@ export default function BinaryToggle({
         const isSelected = value === option.value;
         const isDisabled = disabledValue === option.value;
 
-        const buttonStyle = isDisabled
-          ? tw`bg-gray-50 border-gray-100`
-          : isSelected
-            ? { backgroundColor: colors.black, borderColor: colors.black }
-            : tw`bg-white border-gray-200`;
+        let buttonStyle;
+        if (isDisabled) {
+          buttonStyle = tw`bg-gray-50 border-gray-100`;
+        } else if (isSelected) {
+          buttonStyle = { backgroundColor: colors.black, borderColor: colors.black };
+        } else {
+          buttonStyle = tw`bg-white border-gray-200`;
+        }
 
-        const textStyle = isDisabled
-          ? tw`text-gray-300`
-          : isSelected
-            ? { color: colors.white }
-            : tw`text-gray-500`;
+        let textStyle;
+        if (isDisabled) {
+          textStyle = tw`text-gray-300`;
+        } else if (isSelected) {
+          textStyle = { color: colors.white };
+        } else {
+          textStyle = tw`text-gray-500`;
+        }
 
         return (
           <Pressable

@@ -23,6 +23,15 @@ type EditArtworkModalProps = Readonly<{
   currentAvailability?: boolean;
 }>;
 
+const renderBottomSheetBackdrop = (props: any) => (
+  <BottomSheetBackdrop
+    {...props}
+    disappearsOnIndex={-1}
+    appearsOnIndex={0}
+    opacity={0.5}
+  />
+);
+
 const EditArtworkModal = forwardRef<BottomSheetModal, EditArtworkModalProps>(
   ({ art_id, currentDescription, currentAvailability }, ref) => {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -182,14 +191,7 @@ const EditArtworkModal = forwardRef<BottomSheetModal, EditArtworkModalProps>(
       <BottomSheetModal
         ref={ref}
         snapPoints={snapPoints}
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            disappearsOnIndex={-1}
-            appearsOnIndex={0}
-            opacity={0.5}
-          />
-        )}
+        backdropComponent={renderBottomSheetBackdrop}
         handleIndicatorStyle={tw`bg-slate-300 w-10`}
         backgroundStyle={tw`bg-white rounded-t-3xl`}
       >

@@ -34,7 +34,7 @@ function getCurationMessage(review: any) {
 
     return {
       title: "Reviewer Notes",
-      body: `\"${note}\"`,
+      body: `"${note}"`,
       container: tw`bg-[#FFF4E5] border border-[#FFD9A3]`,
       text: tw`text-[#7A4A00]`,
     };

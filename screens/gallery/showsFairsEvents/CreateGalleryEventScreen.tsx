@@ -160,6 +160,55 @@ function useGalleryEventMedia(updateModal: any) {
   };
 }
 
+async function uploadEventAssets(
+  coverAsset: PickedAsset,
+  installationAssets: PickedAsset[],
+  bucketId: string,
+): Promise<{ coverId: string; installationIds: string[] }> {
+  const coverUpload = await uploadToAppwrite({
+    bucketId,
+    file: {
+      uri: coverAsset.uri,
+      name: coverAsset.name,
+      type: coverAsset.mimeType || "image/jpeg",
+    },
+    fallbackName: coverAsset.name,
+    fallbackType: coverAsset.mimeType || "image/jpeg",
+    errorMessage: "Cover image upload failed",
+  });
+
+  const installationUploads = await Promise.all(
+    installationAssets.map((asset) =>
+      uploadToAppwrite({
+        bucketId,
+        file: {
+          uri: asset.uri,
+          name: asset.name,
+          type: asset.mimeType || "image/jpeg",
+        },
+        fallbackName: asset.name,
+        fallbackType: asset.mimeType || "image/jpeg",
+        errorMessage: "Installation image upload failed",
+      }),
+    ),
+  );
+
+  return {
+    coverId: coverUpload.$id,
+    installationIds: installationUploads.map((up) => up.$id),
+  };
+}
+
+async function invalidateEventQueries(queryClient: any, galleryId: string) {
+  await queryClient.invalidateQueries({ queryKey: EVENTS_QK.allShows });
+  await queryClient.invalidateQueries({
+    queryKey: [...EVENTS_QK.allFairsEvents("all")],
+  });
+  await queryClient.invalidateQueries({
+    queryKey: EVENTS_QK.galleryProgramming(galleryId),
+  });
+}
+
 function CreateGalleryEventScreenImpl({ navigation, route }: Props) {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
@@ -344,54 +393,7 @@ function CreateGalleryEventScreenImpl({ navigation, route }: Props) {
     setIsSubmitting(false);
   };
 
-async function uploadEventAssets(
-  coverAsset: PickedAsset,
-  installationAssets: PickedAsset[],
-  bucketId: string,
-): Promise<{ coverId: string; installationIds: string[] }> {
-  const coverUpload = await uploadToAppwrite({
-    bucketId,
-    file: {
-      uri: coverAsset.uri,
-      name: coverAsset.name,
-      type: coverAsset.mimeType || "image/jpeg",
-    },
-    fallbackName: coverAsset.name,
-    fallbackType: coverAsset.mimeType || "image/jpeg",
-    errorMessage: "Cover image upload failed",
-  });
 
-  const installationUploads = await Promise.all(
-    installationAssets.map((asset) =>
-      uploadToAppwrite({
-        bucketId,
-        file: {
-          uri: asset.uri,
-          name: asset.name,
-          type: asset.mimeType || "image/jpeg",
-        },
-        fallbackName: asset.name,
-        fallbackType: asset.mimeType || "image/jpeg",
-        errorMessage: "Installation image upload failed",
-      }),
-    ),
-  );
-
-  return {
-    coverId: coverUpload.$id,
-    installationIds: installationUploads.map((up) => up.$id),
-  };
-}
-
-async function invalidateEventQueries(queryClient: any, galleryId: string) {
-  await queryClient.invalidateQueries({ queryKey: EVENTS_QK.allShows });
-  await queryClient.invalidateQueries({
-    queryKey: [...EVENTS_QK.allFairsEvents("all")],
-  });
-  await queryClient.invalidateQueries({
-    queryKey: EVENTS_QK.galleryProgramming(galleryId),
-  });
-}
 
   const executeFinalSubmission = async (art: {
     featured_artworks: string[];
@@ -497,7 +499,6 @@ async function invalidateEventQueries(queryClient: any, galleryId: string) {
         ]}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid
-        // extraScrollHeight={80}
         enableResetScrollToCoords={false}
       >
         <Text style={tw`text-sm text-neutral-500 mb-8`}>

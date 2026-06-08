@@ -165,6 +165,66 @@ export default function ArtistReviewHub() {
     reviews.length === 0;
   const canLoadMore = currentPage < (meta?.totalPages || 1);
 
+  let reviewContent = null;
+  if (isInitialLoading) {
+    reviewContent = (
+      <View style={tw`py-12 items-center`}>
+        <ActivityIndicator size="small" color="#111827" />
+        <Text style={tw`mt-3 text-base text-slate-500`}>
+          Loading your pricing hub...
+        </Text>
+      </View>
+    );
+  } else if (reviews.length === 0) {
+    reviewContent = <EmptyReviewState tab={activeTab} />;
+  } else {
+    reviewContent = (
+      <View>
+        {reviews.map((review) => (
+          <ReviewProposalCard
+            key={review?._id}
+            review={review}
+            isMutating={
+              resolveOfferMutation.isPending &&
+              (resolveOfferMutation.variables as any)?.reviewId ===
+                review?._id
+            }
+            mutatingAction={
+              resolveOfferMutation.isPending &&
+              (resolveOfferMutation.variables as any)?.reviewId ===
+                review?._id
+                ? (resolveOfferMutation.variables as any)?.action
+                : undefined
+            }
+            onResolve={(action) =>
+              resolveOfferMutation.mutate({
+                reviewId: review?._id,
+                action,
+                imageFormat: getImageFormatFromReview(review),
+              })
+            }
+          />
+        ))}
+
+        {canLoadMore ? (
+          <TouchableOpacity
+            disabled={listQuery.isFetching}
+            onPress={() => setCurrentPage((p) => p + 1)}
+            style={tw`h-11 mt-2 rounded-xl border border-[#D1D5DB] bg-white items-center justify-center`}
+          >
+            {listQuery.isFetching ? (
+              <ActivityIndicator size="small" color="#111827" />
+            ) : (
+              <Text style={tw`text-[#111827] font-semibold`}>
+                Load more
+              </Text>
+            )}
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    );
+  }
+
   return (
     <View style={tw`flex-1 bg-white`}>
       <ReviewHubHeader
@@ -188,60 +248,7 @@ export default function ArtistReviewHub() {
           />
         }
       >
-        {isInitialLoading ? (
-          <View style={tw`py-12 items-center`}>
-            <ActivityIndicator size="small" color="#111827" />
-            <Text style={tw`mt-3 text-base text-slate-500`}>
-              Loading your pricing hub...
-            </Text>
-          </View>
-        ) : reviews.length === 0 ? (
-          <EmptyReviewState tab={activeTab} />
-        ) : (
-          <View>
-            {reviews.map((review) => (
-              <ReviewProposalCard
-                key={review?._id}
-                review={review}
-                isMutating={
-                  resolveOfferMutation.isPending &&
-                  (resolveOfferMutation.variables as any)?.reviewId ===
-                    review?._id
-                }
-                mutatingAction={
-                  resolveOfferMutation.isPending &&
-                  (resolveOfferMutation.variables as any)?.reviewId ===
-                    review?._id
-                    ? (resolveOfferMutation.variables as any)?.action
-                    : undefined
-                }
-                onResolve={(action) =>
-                  resolveOfferMutation.mutate({
-                    reviewId: review?._id,
-                    action,
-                    imageFormat: getImageFormatFromReview(review),
-                  })
-                }
-              />
-            ))}
-
-            {canLoadMore ? (
-              <TouchableOpacity
-                disabled={listQuery.isFetching}
-                onPress={() => setCurrentPage((p) => p + 1)}
-                style={tw`h-11 mt-2 rounded-xl border border-[#D1D5DB] bg-white items-center justify-center`}
-              >
-                {listQuery.isFetching ? (
-                  <ActivityIndicator size="small" color="#111827" />
-                ) : (
-                  <Text style={tw`text-[#111827] font-semibold`}>
-                    Load more
-                  </Text>
-                )}
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        )}
+        {reviewContent}
       </ScrollWrapper>
     </View>
   );

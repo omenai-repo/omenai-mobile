@@ -237,8 +237,10 @@ const DimensionsDetails = () => {
       length: dimensions.length,
     }).every((value) => value !== "");
 
-    const isExhibitionValid =
-      userType === "gallery" ? (isOnExhibition ? !!expoEndDate : true) : true;
+    let isExhibitionValid = true;
+    if (userType === "gallery" && isOnExhibition) {
+      isExhibitionValid = !!expoEndDate;
+    }
 
     return !(
       isFormValid &&
