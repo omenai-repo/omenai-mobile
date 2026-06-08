@@ -323,6 +323,55 @@ function CreateGalleryEventScreenImpl({ navigation, route }: Props) {
     setIsSubmitting(false);
   };
 
+async function uploadEventAssets(
+  coverAsset: PickedAsset,
+  installationAssets: PickedAsset[],
+  bucketId: string,
+): Promise<{ coverId: string; installationIds: string[] }> {
+  const coverUpload = await uploadToAppwrite({
+    bucketId,
+    file: {
+      uri: coverAsset.uri,
+      name: coverAsset.name,
+      type: coverAsset.mimeType || "image/jpeg",
+    },
+    fallbackName: coverAsset.name,
+    fallbackType: coverAsset.mimeType || "image/jpeg",
+    errorMessage: "Cover image upload failed",
+  });
+
+  const installationUploads = await Promise.all(
+    installationAssets.map((asset) =>
+      uploadToAppwrite({
+        bucketId,
+        file: {
+          uri: asset.uri,
+          name: asset.name,
+          type: asset.mimeType || "image/jpeg",
+        },
+        fallbackName: asset.name,
+        fallbackType: asset.mimeType || "image/jpeg",
+        errorMessage: "Installation image upload failed",
+      }),
+    ),
+  );
+
+  return {
+    coverId: coverUpload.$id,
+    installationIds: installationUploads.map((up) => up.$id),
+  };
+}
+
+async function invalidateEventQueries(queryClient: any, galleryId: string) {
+  await queryClient.invalidateQueries({ queryKey: EVENTS_QK.allShows });
+  await queryClient.invalidateQueries({
+    queryKey: [...EVENTS_QK.allFairsEvents("all")],
+  });
+  await queryClient.invalidateQueries({
+    queryKey: EVENTS_QK.galleryProgramming(galleryId),
+  });
+}
+
   const executeFinalSubmission = async (art: {
     featured_artworks: string[];
     participating_artists: string[];
@@ -340,42 +389,19 @@ function CreateGalleryEventScreenImpl({ navigation, route }: Props) {
     setIsModalOpen(false);
 
     try {
-      const coverUpload = await uploadToAppwrite({
-        bucketId: appwriteConfig.promotionalBucketId,
-        file: {
-          uri: coverAsset.uri,
-          name: coverAsset.name,
-          type: coverAsset.mimeType || "image/jpeg",
-        },
-        fallbackName: coverAsset.name,
-        fallbackType: coverAsset.mimeType || "image/jpeg",
-        errorMessage: "Cover image upload failed",
-      });
-
-      const installationUploads = await Promise.all(
-        installationAssets.map((asset) =>
-          uploadToAppwrite({
-            bucketId: appwriteConfig.promotionalBucketId,
-            file: {
-              uri: asset.uri,
-              name: asset.name,
-              type: asset.mimeType || "image/jpeg",
-            },
-            fallbackName: asset.name,
-            fallbackType: asset.mimeType || "image/jpeg",
-            errorMessage: "Installation image upload failed",
-          }),
-        ),
+      const { coverId, installationIds } = await uploadEventAssets(
+        coverAsset,
+        installationAssets,
+        appwriteConfig.promotionalBucketId,
       );
-      const installationViewIds = installationUploads.map((up) => up.$id);
 
       const dbPayload = {
         ...pendingPayload,
-        cover_image: coverUpload.$id,
+        cover_image: coverId,
         featured_artworks: art.featured_artworks,
         participating_artists: art.participating_artists,
-        ...(installationViewIds.length > 0
-          ? { installation_views: installationViewIds }
+        ...(installationIds.length > 0
+          ? { installation_views: installationIds }
           : {}),
       } as CreateGalleryEventPayload;
 
@@ -391,13 +417,7 @@ function CreateGalleryEventScreenImpl({ navigation, route }: Props) {
         return;
       }
 
-      await queryClient.invalidateQueries({ queryKey: EVENTS_QK.allShows });
-      await queryClient.invalidateQueries({
-        queryKey: [...EVENTS_QK.allFairsEvents("all")],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: EVENTS_QK.galleryProgramming(galleryId),
-      });
+      await invalidateEventQueries(queryClient, galleryId);
 
       updateModal({
         showModal: true,
@@ -785,7 +805,6 @@ function CreateGalleryEventScreenImpl({ navigation, route }: Props) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         galleryId={galleryId}
-        validatedPayload={pendingPayload}
         onFinalSubmit={executeFinalSubmission}
         alreadyFeaturedIds={[]}
       />

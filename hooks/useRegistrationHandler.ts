@@ -44,6 +44,39 @@ function normalizeEmailInPayload<T extends Record<string, unknown>>(rest: T) {
   return { ...rest, email: rest.email.trim().toLowerCase() } as T;
 }
 
+const cleanLogoFile = async (uploadedFileId: string | null) => {
+  if (!uploadedFileId) return;
+  try {
+    await storage.deleteFile({
+      bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
+      fileId: uploadedFileId,
+    });
+  } catch {
+    // best-effort cleanup
+  }
+};
+
+const uploadLogoAsset = async (logoData: any): Promise<string> => {
+  const logoAsset = logoData?.assets?.[0];
+  if (!logoAsset?.uri) {
+    throw new Error("Please select a valid image before creating account.");
+  }
+
+  const files = {
+    uri: logoAsset.uri,
+    name: logoAsset.fileName || `logo-${Date.now()}.jpg`,
+    type: logoAsset.mimeType || "image/jpeg",
+    size: logoAsset.fileSize ?? 0,
+  };
+
+  const fileUploaded = await uploadLogo(files);
+  if (!fileUploaded) {
+    throw new Error("Failed to upload logo");
+  }
+
+  return fileUploaded.$id;
+};
+
 export function useRegistrationHandler(accountType: AccountType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const isMountedRef = useRef(true);
@@ -64,6 +97,27 @@ export function useRegistrationHandler(accountType: AccountType) {
     [updateModal],
   );
 
+  const onRegistrationSuccess = useCallback(
+    (verifyId: string, resultsBody: any, data: any, clearState: () => void) => {
+      Analytics.track("registration_success", {
+        account_type: accountType,
+        registration_data: registrationFingerprintForAnalytics(
+          data as Record<string, unknown>,
+        ),
+        user_id: verifyId,
+        response: registrationResponseForAnalytics(resultsBody, accountType),
+      });
+
+      clearState();
+      if (isMountedRef.current) {
+        navigation.navigate(screenName.verifyEmail, {
+          account: { id: verifyId, type: accountType },
+        });
+      }
+    },
+    [accountType, navigation],
+  );
+
   const handleRegister = async (
     data: any,
     clearState: () => void,
@@ -75,33 +129,13 @@ export function useRegistrationHandler(accountType: AccountType) {
 
       const { confirmPassword, ...restRaw } = data;
       const rest = normalizeEmailInPayload(restRaw as Record<string, unknown>);
-      let payload: Record<string, unknown> = {
+      const payload: Record<string, unknown> = {
         ...rest,
         device_push_token: expoPushToken ?? "",
       };
 
-      if (
-        (accountType === "gallery" || accountType === "artist") &&
-        data.logo
-      ) {
-        const logoAsset = data.logo?.assets?.[0];
-        if (!logoAsset?.uri) {
-          throw new Error("Please select a valid image before creating account.");
-        }
-
-        const files = {
-          uri: logoAsset.uri,
-          name: logoAsset.fileName || `logo-${Date.now()}.jpg`,
-          type: logoAsset.mimeType || "image/jpeg",
-          size: logoAsset.fileSize ?? 0,
-        };
-
-        const fileUploaded = await uploadLogo(files);
-        if (!fileUploaded) {
-          throw new Error("Failed to upload logo");
-        }
-
-        uploadedFileId = fileUploaded.$id;
+      if ((accountType === "gallery" || accountType === "artist") && data.logo) {
+        uploadedFileId = await uploadLogoAsset(data.logo);
         payload.logo = uploadedFileId;
       }
 
@@ -110,57 +144,7 @@ export function useRegistrationHandler(accountType: AccountType) {
         accountType,
       );
 
-      if (results?.isOk) {
-        const verifyId = extractVerifyEmailIdFromRegisterBody(
-          results.body,
-          accountType,
-        );
-
-        if (!verifyId) {
-          Analytics.track("registration_failed", {
-            account_type: accountType,
-            registration_data: registrationFingerprintForAnalytics(
-              data as Record<string, unknown>,
-            ),
-            error_type: "invalid_success_payload",
-            message: "Missing or invalid verify id in register response",
-          });
-
-          if (uploadedFileId) {
-            await storage.deleteFile({
-              bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
-              fileId: uploadedFileId,
-            });
-          }
-
-          safeUpdateModal({
-            message:
-              "We could not finish signup from the server response. Please try again or contact support.",
-            modalType: "error",
-            showModal: true,
-          });
-          return;
-        }
-
-        Analytics.track("registration_success", {
-          account_type: accountType,
-          registration_data: registrationFingerprintForAnalytics(
-            data as Record<string, unknown>,
-          ),
-          user_id: verifyId,
-          response: registrationResponseForAnalytics(
-            results.body,
-            accountType,
-          ),
-        });
-
-        clearState();
-        if (isMountedRef.current) {
-          navigation.navigate(screenName.verifyEmail, {
-            account: { id: verifyId, type: accountType },
-          });
-        }
-      } else {
+      if (!results?.isOk) {
         const statusCode = (results as { status?: number })?.status;
         if (statusCode && statusCode >= 500) {
           Analytics.track("registration_failed", {
@@ -177,30 +161,45 @@ export function useRegistrationHandler(accountType: AccountType) {
           });
         }
 
-        if (uploadedFileId) {
-          await storage.deleteFile({
-            bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
-            fileId: uploadedFileId,
-          });
-        }
+        await cleanLogoFile(uploadedFileId);
 
         safeUpdateModal({
           message: sanitizeErrorMessage(results?.body?.message),
           modalType: "error",
           showModal: true,
         });
+        return;
       }
+
+      const verifyId = extractVerifyEmailIdFromRegisterBody(
+        results.body,
+        accountType,
+      );
+
+      if (!verifyId) {
+        Analytics.track("registration_failed", {
+          account_type: accountType,
+          registration_data: registrationFingerprintForAnalytics(
+            data as Record<string, unknown>,
+          ),
+          error_type: "invalid_success_payload",
+          message: "Missing or invalid verify id in register response",
+        });
+
+        await cleanLogoFile(uploadedFileId);
+
+        safeUpdateModal({
+          message:
+            "We could not finish signup from the server response. Please try again or contact support.",
+          modalType: "error",
+          showModal: true,
+        });
+        return;
+      }
+
+      onRegistrationSuccess(verifyId, results.body, data, clearState);
     } catch (error: unknown) {
-      if (uploadedFileId) {
-        try {
-          await storage.deleteFile({
-            bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
-            fileId: uploadedFileId,
-          });
-        } catch {
-          // best-effort cleanup
-        }
-      }
+      await cleanLogoFile(uploadedFileId);
 
       const err = error as {
         message?: string;
@@ -221,10 +220,9 @@ export function useRegistrationHandler(accountType: AccountType) {
       });
 
       safeUpdateModal({
-        message:
-          sanitizeErrorMessage(
-            err.message || err?.body?.message || "Registration failed",
-          ),
+        message: sanitizeErrorMessage(
+          err.message || err?.body?.message || "Registration failed",
+        ),
         modalType: "error",
         showModal: true,
       });
