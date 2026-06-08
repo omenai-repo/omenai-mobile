@@ -3,6 +3,7 @@ import React from "react";
 import { colors } from "#config/colors.config";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
+import ListSeparator from "#components/general/ListSeparator";
 import { Feather } from "@expo/vector-icons";
 import tw from "twrnc";
 import { FlashList } from "@shopify/flash-list";
@@ -59,7 +60,7 @@ export default function ArtworkListSection({
               />
             )}
             contentContainerStyle={tw`px-5`}
-            ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+            ItemSeparatorComponent={ListSeparator}
             keyExtractor={(item, index) => item.art_id || index.toString()}
             horizontal={true}
             showsHorizontalScrollIndicator={false}

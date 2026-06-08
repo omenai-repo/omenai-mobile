@@ -7,7 +7,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { utils_formatPrice } from "#utils/utils_priceFormatter";
 
 type TransactionStatus = "FAILED" | "PENDING" | "SUCCESSFUL";
-type BeneficiaryDetails = any;
 
 const getStatusConfig = (status: TransactionStatus) => {
   switch (status) {

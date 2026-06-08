@@ -253,6 +253,22 @@ function buildMoreSheetItems(
   ];
 }
 
+const renderGalleryTabBar = (
+  props: any,
+  navigationRef: React.MutableRefObject<any>,
+  openMoreSheet: () => void,
+) => {
+  navigationRef.current = props.navigation;
+  return (
+    <GalleryTabBar
+      {...props}
+      tabMeta={galleryTabs}
+      moreRouteName={screenName.gallery.more}
+      onPressMore={openMoreSheet}
+    />
+  );
+};
+
 function GalleryTabs() {
   const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
   const tabNavigationRef = useRef<any>(null);
@@ -279,17 +295,7 @@ function GalleryTabs() {
   return (
     <>
       <Tab.Navigator
-        tabBar={(props) => (
-          <>
-            {(tabNavigationRef.current = props.navigation, null)}
-            <GalleryTabBar
-              {...props}
-              tabMeta={galleryTabs}
-              moreRouteName={screenName.gallery.more}
-              onPressMore={openMoreSheet}
-            />
-          </>
-        )}
+        tabBar={(props) => renderGalleryTabBar(props, tabNavigationRef, openMoreSheet)}
         screenOptions={{ headerShown: false }}
       >
         {galleryTabs.map(({ name, component, id }) => (

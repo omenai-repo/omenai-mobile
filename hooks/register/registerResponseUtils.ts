@@ -88,8 +88,13 @@ export function registrationResponseForAnalytics(
   }
 
   const val = b[idKey];
-  const topId = typeof val === "string" ? val : (typeof b.id === "string" ? b.id : undefined);
- 
+  let topId: string | undefined;
+  if (typeof val === "string") {
+    topId = val;
+  } else if (typeof b.id === "string") {
+    topId = b.id;
+  }
+
   return {
     ...(topId ? { id: topId } : {}),
     ...(typeof b.email === "string" ? { email: b.email } : {}),

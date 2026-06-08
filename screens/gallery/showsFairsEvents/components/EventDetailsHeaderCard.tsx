@@ -366,6 +366,13 @@ function EventDetailsHeaderCardImpl({
     ? parseHostname(event.external_url)
     : "";
 
+  let publishButtonText = "Publish";
+  if (publishMutation.isPending) {
+    publishButtonText = "Saving...";
+  } else if (event.is_published) {
+    publishButtonText = "Unpublish";
+  }
+
   if (showHeaderPlaceholder) {
     return (
       <View style={tw`gap-4 mb-4`}>
@@ -471,11 +478,7 @@ function EventDetailsHeaderCardImpl({
               <Text
                 style={tw`text-[10px] uppercase tracking-widest text-neutral-700`}
               >
-                {publishMutation.isPending
-                  ? "Saving..."
-                  : event.is_published
-                  ? "Unpublish"
-                  : "Publish"}
+                {publishButtonText}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity

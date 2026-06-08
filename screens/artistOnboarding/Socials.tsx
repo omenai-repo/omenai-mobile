@@ -50,7 +50,7 @@ const Socials = ({ socials, setSocials }: SocialsProps) => {
     return initialLinks.length === 0 ? [{ type: "", url: "" }] : initialLinks;
   });
 
-  const selectedTypes = links.map((link) => link.type).filter(Boolean);
+  const selectedTypes = new Set(links.map((link) => link.type).filter(Boolean));
 
   const handleLinkChange = useCallback(
     (index: number, field: keyof SocialLink, value: string) => {
@@ -124,7 +124,7 @@ const Socials = ({ socials, setSocials }: SocialsProps) => {
           : "";
 
         return (
-          <View key={index} style={tw`flex-row items-center gap-2`}>
+          <View key={link.type || index} style={tw`flex-row items-center gap-2`}>
             {/* Platform Selector */}
             <View style={tw`w-[120px]`}>
               <CustomSelectPicker
@@ -134,7 +134,7 @@ const Socials = ({ socials, setSocials }: SocialsProps) => {
                 data={socialOptions.map((opt) => ({
                   ...opt,
                   disabled:
-                    selectedTypes.includes(opt.value) &&
+                    selectedTypes.has(opt.value) &&
                     opt.value !== link.type,
                 }))}
                 handleSetValue={(item) =>

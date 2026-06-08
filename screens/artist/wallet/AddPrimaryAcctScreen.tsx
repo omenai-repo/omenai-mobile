@@ -32,7 +32,7 @@ type Bank = {
   code: string;
 };
 
-const COUNTRIES_WITH_BANK_BRANCHES = [
+const COUNTRIES_WITH_BANK_BRANCHES = new Set([
   "BJ",
   "CM",
   "TD",
@@ -46,7 +46,7 @@ const COUNTRIES_WITH_BANK_BRANCHES = [
   "SL",
   "TZ",
   "UG",
-];
+]);
 
 const AFRICAN_COUNTRIES = [
   "NG",
@@ -212,7 +212,7 @@ const AddPrimaryAcctScreen = () => {
   const showBranches =
     regionType === "africa" &&
     !!selectedBank &&
-    COUNTRIES_WITH_BANK_BRANCHES.includes(effectiveCountryCode);
+    COUNTRIES_WITH_BANK_BRANCHES.has(effectiveCountryCode);
 
   const animation = useRef(null);
   const prevAcctNumberRef = useRef("");
@@ -280,7 +280,7 @@ const AddPrimaryAcctScreen = () => {
     const fetchBranches = async () => {
       if (
         selectedBank?.value &&
-        COUNTRIES_WITH_BANK_BRANCHES.includes(effectiveCountryCode) &&
+        COUNTRIES_WITH_BANK_BRANCHES.has(effectiveCountryCode) &&
         regionType === "africa"
       ) {
         try {
@@ -540,6 +540,68 @@ const AddPrimaryAcctScreen = () => {
     };
 
     submitPrimaryAcct(payload);
+  };
+
+  const renderFooterButton = () => {
+    if (regionType === "africa" && isValidated) {
+      return (
+        <View style={tw`gap-2`}>
+          <FittedBlackButton
+            onClick={handleAddPrimaryAccount}
+            value={
+              isEditing ? "Update Primary Account" : "Add Primary Account"
+            }
+            isDisabled={isSubmitting}
+            isLoading={isSubmitting}
+            style={{ height: 50 }}
+          />
+
+          {/* Optional: Add a button to reset validation if they need to change details */}
+          <FittedBlackButton
+            onClick={() => setIsValidated(false)}
+            value={"Change Details"}
+            isDisabled={isSubmitting}
+            isLoading={false}
+            style={{
+              height: 50,
+              backgroundColor: "transparent",
+              borderWidth: 1,
+              borderColor: "#ccc",
+            }}
+            textStyle={{ color: "#666" }}
+          />
+        </View>
+      );
+    }
+
+    if (regionType === "africa") {
+      return (
+        <FittedBlackButton
+          onClick={handleStartFlow}
+          value={"Validate Account"}
+          isDisabled={
+            !acctNumber ||
+            isValidating ||
+            !selectedBank ||
+            (showBranches && !selectedBranch)
+          }
+          isLoading={isValidating}
+          style={{ height: 50 }}
+        />
+      );
+    }
+
+    return (
+      <FittedBlackButton
+        onClick={handleAddPrimaryAccount}
+        value={
+          isEditing ? "Update Primary Account" : "Add Primary Account"
+        }
+        isDisabled={isSubmitting}
+        isLoading={isSubmitting}
+        style={{ height: 50 }}
+      />
+    );
   };
 
   return (
@@ -802,57 +864,7 @@ const AddPrimaryAcctScreen = () => {
         </View>
 
         <View style={tw`mt-[50px] mx-[20px]`}>
-          {regionType === "africa" && isValidated ? (
-            <View style={tw`gap-2`}>
-              <FittedBlackButton
-                onClick={handleAddPrimaryAccount}
-                value={
-                  isEditing ? "Update Primary Account" : "Add Primary Account"
-                }
-                isDisabled={isSubmitting}
-                isLoading={isSubmitting}
-                style={{ height: 50 }}
-              />
-
-              {/* Optional: Add a button to reset validation if they need to change details */}
-              <FittedBlackButton
-                onClick={() => setIsValidated(false)}
-                value={"Change Details"}
-                isDisabled={isSubmitting}
-                isLoading={false}
-                style={{
-                  height: 50,
-                  backgroundColor: "transparent",
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                }}
-                textStyle={{ color: "#666" }}
-              />
-            </View>
-          ) : regionType === "africa" ? (
-            <FittedBlackButton
-              onClick={handleStartFlow}
-              value={"Validate Account"}
-              isDisabled={
-                !acctNumber ||
-                isValidating ||
-                !selectedBank ||
-                (showBranches && !selectedBranch)
-              }
-              isLoading={isValidating}
-              style={{ height: 50 }}
-            />
-          ) : (
-            <FittedBlackButton
-              onClick={handleAddPrimaryAccount}
-              value={
-                isEditing ? "Update Primary Account" : "Add Primary Account"
-              }
-              isDisabled={isSubmitting}
-              isLoading={isSubmitting}
-              style={{ height: 50 }}
-            />
-          )}
+          {renderFooterButton()}
         </View>
       </View>
       <Modal visible={fetchingBanks} transparent animationType="fade">

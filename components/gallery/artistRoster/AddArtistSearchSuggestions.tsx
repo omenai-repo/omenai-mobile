@@ -45,6 +45,82 @@ export function AddArtistSearchSuggestions({
   onCreateNew,
   onCommitTypedAsNewGhost,
 }: Readonly<AddArtistSearchSuggestionsProps>) {
+  let suggestionsContent = null;
+  if (trimmedQuery.length >= 2) {
+    if (isSearching) {
+      suggestionsContent = (
+        <View style={tw`p-4 flex-row items-center gap-2`}>
+          <ActivityIndicator size="small" color={colors.black} />
+          <Text style={tw`text-xs text-neutral-500 tracking-wide`}>Searching…</Text>
+        </View>
+      );
+    } else {
+      suggestionsContent = (
+        <>
+          {results.map((res) => {
+            const representationLabel = res.represented_by
+              ? `Represented by ${res.represented_by}`
+              : "Unrepresented";
+            const subLine =
+              res.profile_status === "claimed"
+                ? `Claimed profile • ${res.location || "Unknown location"}`
+                : `Unclaimed profile • ${representationLabel}`;
+            return (
+              <Pressable
+                key={res.artist_id}
+                onPress={() => onSelectArtist(res)}
+                style={tw`flex-row items-center gap-3 p-3 border-b border-neutral-50`}
+              >
+                <View style={tw`h-8 w-8 rounded-full bg-neutral-100 overflow-hidden items-center justify-center`}>
+                  {res.logo ? (
+                    <Image
+                      source={{ uri: getGalleryLogoFileView(res.logo, 64, 64) }}
+                      style={tw`h-8 w-8`}
+                    />
+                  ) : (
+                    <Text style={tw`text-[10px] font-medium text-neutral-500`}>
+                      {res.name.substring(0, 2).toUpperCase()}
+                    </Text>
+                  )}
+                </View>
+                <View style={tw`flex-1 min-w-0`}>
+                  <Text style={[tw`text-sm font-medium`, { color: colors.black }]} numberOfLines={1}>
+                    {res.name}
+                  </Text>
+                  <Text style={tw`text-[11px] text-neutral-500 mt-0.5`} numberOfLines={2}>
+                    {subLine}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          })}
+          <Pressable
+            onPress={onCreateNew}
+            style={tw`flex-row items-center gap-2 p-3 border-t border-neutral-100`}
+          >
+            <View style={tw`w-5 h-5 rounded-full bg-neutral-900 items-center justify-center`}>
+              <Text style={tw`text-white text-xs`}>+</Text>
+            </View>
+            <Text style={[tw`text-sm font-medium flex-1`, { color: colors.black }]} numberOfLines={2}>
+              Create new artist: &quot;{trimmedQuery}&quot;
+            </Text>
+          </Pressable>
+        </>
+      );
+    }
+  } else {
+    suggestionsContent = (
+      <Pressable onPress={onCreateNew} style={tw`flex-row items-center gap-2 p-3`}>
+        <View style={tw`w-5 h-5 rounded-full bg-neutral-900 items-center justify-center`}>
+          <Text style={tw`text-white text-xs`}>+</Text>
+        </View>
+        <Text style={[tw`text-sm font-medium flex-1`, { color: colors.black }]} numberOfLines={2}>
+          Create new artist: &quot;{trimmedQuery}&quot;
+        </Text>
+      </Pressable>
+    );
+  }
+
   return (
     <>
       {galleryId ? null : (
@@ -66,74 +142,7 @@ export function AddArtistSearchSuggestions({
         <View
           style={tw`mt-2 border border-neutral-100 rounded-sm bg-white max-h-72 overflow-hidden`}
         >
-          {trimmedQuery.length >= 2 ? (
-            isSearching ? (
-              <View style={tw`p-4 flex-row items-center gap-2`}>
-                <ActivityIndicator size="small" color={colors.black} />
-                <Text style={tw`text-xs text-neutral-500 tracking-wide`}>Searching…</Text>
-              </View>
-            ) : (
-              <>
-                {results.map((res) => {
-                  const representationLabel = res.represented_by
-                    ? `Represented by ${res.represented_by}`
-                    : "Unrepresented";
-                  const subLine =
-                    res.profile_status === "claimed"
-                      ? `Claimed profile • ${res.location || "Unknown location"}`
-                      : `Unclaimed profile • ${representationLabel}`;
-                  return (
-                    <Pressable
-                      key={res.artist_id}
-                      onPress={() => onSelectArtist(res)}
-                      style={tw`flex-row items-center gap-3 p-3 border-b border-neutral-50`}
-                    >
-                      <View style={tw`h-8 w-8 rounded-full bg-neutral-100 overflow-hidden items-center justify-center`}>
-                        {res.logo ? (
-                          <Image
-                            source={{ uri: getGalleryLogoFileView(res.logo, 64, 64) }}
-                            style={tw`h-8 w-8`}
-                          />
-                        ) : (
-                          <Text style={tw`text-[10px] font-medium text-neutral-500`}>
-                            {res.name.substring(0, 2).toUpperCase()}
-                          </Text>
-                        )}
-                      </View>
-                      <View style={tw`flex-1 min-w-0`}>
-                        <Text style={[tw`text-sm font-medium`, { color: colors.black }]} numberOfLines={1}>
-                          {res.name}
-                        </Text>
-                        <Text style={tw`text-[11px] text-neutral-500 mt-0.5`} numberOfLines={2}>
-                          {subLine}
-                        </Text>
-                      </View>
-                    </Pressable>
-                  );
-                })}
-                <Pressable
-                  onPress={onCreateNew}
-                  style={tw`flex-row items-center gap-2 p-3 border-t border-neutral-100`}
-                >
-                  <View style={tw`w-5 h-5 rounded-full bg-neutral-900 items-center justify-center`}>
-                    <Text style={tw`text-white text-xs`}>+</Text>
-                  </View>
-                  <Text style={[tw`text-sm font-medium flex-1`, { color: colors.black }]} numberOfLines={2}>
-                    Create new artist: &quot;{trimmedQuery}&quot;
-                  </Text>
-                </Pressable>
-              </>
-            )
-          ) : (
-            <Pressable onPress={onCreateNew} style={tw`flex-row items-center gap-2 p-3`}>
-              <View style={tw`w-5 h-5 rounded-full bg-neutral-900 items-center justify-center`}>
-                <Text style={tw`text-white text-xs`}>+</Text>
-              </View>
-              <Text style={[tw`text-sm font-medium flex-1`, { color: colors.black }]} numberOfLines={2}>
-                Create new artist: &quot;{trimmedQuery}&quot;
-              </Text>
-            </Pressable>
-          )}
+          {suggestionsContent}
         </View>
       )}
 
