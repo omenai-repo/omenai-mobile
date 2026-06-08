@@ -56,7 +56,7 @@ const CredentialsOverview: React.FC<Readonly<CredentialsOverviewProps>> = ({
               data={String(value)}
               open={openSections[key]}
               setOpen={() => toggleSection(key)}
-              openModal={() => openEditModal(key as QuestionKey)}
+              openModal={() => openEditModal(key as any)}
             />
           );
         })}

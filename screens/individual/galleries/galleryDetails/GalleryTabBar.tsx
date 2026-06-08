@@ -13,11 +13,11 @@ const TABS: { id: GalleryTabId; label: string }[] = [
 ];
 
 type Props = {
-  active: GalleryTabId;
-  onSelect: (id: GalleryTabId) => void;
+  readonly active: GalleryTabId;
+  readonly onSelect: (id: GalleryTabId) => void;
 };
 
-export default function GalleryTabBar({ active, onSelect }: Props) {
+export default function GalleryTabBar({ active, onSelect }: Readonly<Props>) {
   return (
     <View style={tw`bg-white/95 border-b border-neutral-200`}>
       <ScrollView

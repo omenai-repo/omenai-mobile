@@ -13,7 +13,7 @@ type FilterValue = "All" | "Available" | "Sold";
 const FILTERS: FilterValue[] = ["All", "Available", "Sold"];
 const { width: screenWidth } = Dimensions.get("window");
 
-export default function FairEventWorksSection({ event }: { event: GalleryEventRecord }) {
+export default function FairEventWorksSection({ event }: Readonly<{ event: GalleryEventRecord }>) {
   const navigation = useNavigation<any>();
   const [activeFilter, setActiveFilter] = useState<FilterValue>("All");
   const [isImmersiveOpen, setIsImmersiveOpen] = useState(false);

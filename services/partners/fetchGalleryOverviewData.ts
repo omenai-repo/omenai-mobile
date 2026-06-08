@@ -37,7 +37,7 @@ export async function fetchGalleryOverviewData(galleryId: string) {
     const result = (await res.json()) as { data?: GalleryOverviewData; message?: string };
     return {
       isOk: res.ok,
-      data: (result.data ?? undefined) as GalleryOverviewData | undefined,
+      data: result.data ?? undefined,
       message: result.message,
     };
   } catch (e: any) {

@@ -9,7 +9,7 @@ export function useArtistWorks(
   return useInfiniteQuery({
     queryKey: ARTIST_QK.works(artistId, filters),
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await fetchArtistWorksPage(artistId, pageParam as number, {
+      const res = await fetchArtistWorksPage(artistId, pageParam, {
         medium: filters.medium,
         price: filters.price,
       });

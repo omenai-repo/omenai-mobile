@@ -22,10 +22,10 @@ const FILTERS: FilterType[] = ["All", "Active", "Upcoming", "Closed"];
 function ShowsFilterStrip({
   active,
   onChange,
-}: {
+}: Readonly<{
   active: FilterType;
   onChange: (f: FilterType) => void;
-}) {
+}>) {
   return (
     <View style={tw`border-b border-neutral-200 mb-8`}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`gap-8 flex-row`}>
@@ -59,9 +59,13 @@ function formatShowCardDates(start: string, end: string) {
   return `${a} — ${b}`;
 }
 
-type ShowCardProps = { show: GalleryEventRecord; width: number; onPress: () => void };
+type ShowCardProps = {
+  readonly show: GalleryEventRecord;
+  readonly width: number;
+  readonly onPress: () => void;
+};
 
-function AllShowsGridCard({ show, width, onPress }: ShowCardProps) {
+function AllShowsGridCard({ show, width, onPress }: Readonly<ShowCardProps>) {
   const status = getEventStatus(show.start_date, show.end_date);
   const isClosed = status === "Past";
   const loc = show.location;

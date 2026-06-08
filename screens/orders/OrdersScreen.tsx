@@ -161,9 +161,11 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
       <TabSwitcher
         tabs={tabs}
         selectedKey={selectedTab}
-        setSelectedKey={(key) =>
-          setSelectedTab(key as "pending" | "processing" | "completed")
-        }
+        setSelectedKey={(key) => {
+          if (key === "pending" || key === "processing" || key === "completed") {
+            setSelectedTab(key);
+          }
+        }}
       />
 
       <View

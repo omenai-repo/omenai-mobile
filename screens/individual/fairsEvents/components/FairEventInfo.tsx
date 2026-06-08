@@ -4,16 +4,16 @@ import tw from "twrnc";
 import type { GalleryEventRecord } from "#services/events/events.service";
 
 type Props = {
-  event: GalleryEventRecord;
+  readonly event: GalleryEventRecord;
 };
 
 function InfoBlock({
   label,
   children,
-}: {
+}: Readonly<{
   label: string;
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <View style={tw`pt-5 border-t border-neutral-200`}>
       <Text style={tw`text-xs uppercase tracking-widest font-sans-regular text-black`}>
@@ -24,7 +24,7 @@ function InfoBlock({
   );
 }
 
-export default function FairEventInfo({ event }: Props) {
+export default function FairEventInfo({ event }: Readonly<Props>) {
   const [descExpanded, setDescExpanded] = useState(false);
 
   const description = event.description || "No curatorial statement available.";

@@ -298,14 +298,17 @@ export default function SupportTicketForm({
         data={allowedCategories}
         value={category}
         handleSetValue={(item) => {
-          setCategory(item.value as SupportCategory);
-          if (item.value === defaultCategory) {
-            setReferenceId(defaultReferenceId);
-          } else {
-            setReferenceId("");
-          }
-          if (item.value !== "PAYMENT") {
-            setTransactionDate(null);
+          const matched = allowedCategories.find((c) => c.value === item.value);
+          if (matched) {
+            setCategory(matched.value);
+            if (matched.value === defaultCategory) {
+              setReferenceId(defaultReferenceId);
+            } else {
+              setReferenceId("");
+            }
+            if (matched.value !== "PAYMENT") {
+              setTransactionDate(null);
+            }
           }
         }}
         search

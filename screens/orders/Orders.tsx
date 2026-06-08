@@ -105,8 +105,8 @@ export default function Orders() {
     setOpenSection((prev) => ({ ...prev, [orderId]: !prev[orderId] }));
   }, []);
 
-  const handleTabChange = useCallback((key: string | number) => {
-    setSelectedTab(String(key) as OrderTabsTypes);
+  const handleTabChange = useCallback((key: any) => {
+    setSelectedTab(key);
     setOpenSection({});
   }, []);
 
@@ -119,12 +119,12 @@ export default function Orders() {
   const listLength = currentOrders.length;
 
   const renderItem = useCallback(
-    ({ item, index }: { item: CreateOrderModelTypes; index: number }) => (
+    (row: { item: CreateOrderModelTypes; index: number }) => (
       <CollectorOrderListItem
-        item={item}
-        index={index}
-        isOpen={!!openSection[item.order_id]}
-        isLast={index === listLength - 1}
+        item={row.item}
+        index={row.index}
+        isOpen={!!openSection[row.item.order_id]}
+        isLast={row.index === listLength - 1}
         onToggleOpen={toggleRecentOrder}
         paymentFlags={paymentFlags}
       />

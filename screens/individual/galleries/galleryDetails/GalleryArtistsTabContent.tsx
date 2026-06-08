@@ -11,12 +11,12 @@ import { fetchGalleryArtistsPage, type GalleryArtistFloorRow } from "#services/p
 import { priceFromGalleryWork, type GalleryWorkRow } from "./GalleryWorksTabContent";
 
 type Props = {
-  galleryId: string;
-  isActive: boolean;
-  isLoading: boolean;
-  represented: GalleryOverviewArtist[];
-  available: GalleryOverviewArtist[];
-  onArtistPress: (artist: GalleryOverviewArtist) => void;
+  readonly galleryId: string;
+  readonly isActive: boolean;
+  readonly isLoading: boolean;
+  readonly represented: readonly GalleryOverviewArtist[];
+  readonly available: readonly GalleryOverviewArtist[];
+  readonly onArtistPress: (artist: GalleryOverviewArtist) => void;
 };
 
 export default function GalleryArtistsTabContent({
@@ -26,7 +26,7 @@ export default function GalleryArtistsTabContent({
   represented,
   available,
   onArtistPress,
-}: Props) {
+}: Readonly<Props>) {
   const { width: screenW } = useWindowDimensions();
   const contentWidth = screenW - 32;
 
@@ -38,7 +38,7 @@ export default function GalleryArtistsTabContent({
     fetchNextPage,
   } = useInfiniteQuery({
     queryKey: [...EVENTS_QK.galleryWorks(galleryId, { artist: "All", medium: "All", price: "All" }), "artists-floor"],
-    queryFn: async ({ pageParam = 1 }) => fetchGalleryArtistsPage(galleryId, pageParam as number, 10),
+    queryFn: async ({ pageParam = 1 }) => fetchGalleryArtistsPage(galleryId, pageParam, 10),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const pagination = lastPage?.pagination;
@@ -59,7 +59,7 @@ export default function GalleryArtistsTabContent({
     [floorData],
   );
 
-  const renderArtistRows = (rows: GalleryOverviewArtist[]) => {
+  const renderArtistRows = (rows: readonly GalleryOverviewArtist[]) => {
     const gap = 8;
     const colW = (contentWidth - gap) / 2;
     return (

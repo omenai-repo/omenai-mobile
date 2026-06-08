@@ -12,7 +12,7 @@ export function useFairsEventsInfinite(pageSize = 20) {
   return useInfiniteQuery({
     queryKey: EVENTS_QK.fairsEventsInfinite,
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await getAllEvents(pageParam as number, pageSize, "All");
+      const res = await getAllEvents(pageParam, pageSize, "All");
       return {
         data: res.isOk ? res.data : [],
         pagination: res.pagination,

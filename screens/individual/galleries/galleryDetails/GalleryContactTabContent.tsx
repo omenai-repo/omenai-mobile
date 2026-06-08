@@ -3,9 +3,9 @@ import { Linking, Pressable, Text, View } from "react-native";
 import tw from "twrnc";
 import { useGalleryContact } from "#screens/individual/hooks/useGalleries";
 
-type Props = { galleryId: string; isActive: boolean };
+type Props = { readonly galleryId: string; readonly isActive: boolean };
 
-export default function GalleryContactTabContent({ galleryId, isActive }: Props) {
+export default function GalleryContactTabContent({ galleryId, isActive }: Readonly<Props>) {
   const { data, isLoading, isError } = useGalleryContact(galleryId, isActive);
 
   const mapUrl = useMemo(() => {

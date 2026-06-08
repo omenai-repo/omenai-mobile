@@ -14,11 +14,12 @@ function extractId(
   d: Record<string, unknown>,
   idKey: string,
 ): string | undefined {
-  if (typeof d[idKey] === "string") return d[idKey] as string;
-  if (typeof d.user_id === "string") return d.user_id as string;
-  if (typeof d.gallery_id === "string") return d.gallery_id as string;
-  if (typeof d.artist_id === "string") return d.artist_id as string;
-  if (typeof d.id === "string") return d.id as string;
+  const val = d[idKey];
+  if (typeof val === "string") return val;
+  if (typeof d.user_id === "string") return d.user_id;
+  if (typeof d.gallery_id === "string") return d.gallery_id;
+  if (typeof d.artist_id === "string") return d.artist_id;
+  if (typeof d.id === "string") return d.id;
   return undefined;
 }
 
@@ -26,8 +27,8 @@ function extractEmail(
   d: Record<string, unknown>,
   b: Record<string, unknown>,
 ): string | undefined {
-  if (typeof d.email === "string") return d.email as string;
-  if (typeof b.email === "string") return b.email as string;
+  if (typeof d.email === "string") return d.email;
+  if (typeof b.email === "string") return b.email;
   return undefined;
 }
 
@@ -62,8 +63,8 @@ function parseStringData(
 ): RegistrationAnalyticsResponse {
   return {
     id: rawData,
-    ...(typeof b.email === "string" ? { email: b.email as string } : {}),
-    ...(typeof b.verified === "boolean" ? { verified: b.verified as boolean } : {}),
+    ...(typeof b.email === "string" ? { email: b.email } : {}),
+    ...(typeof b.verified === "boolean" ? { verified: b.verified } : {}),
   };
 }
 
@@ -86,15 +87,13 @@ export function registrationResponseForAnalytics(
     return parseDataRecord(rawData as Record<string, unknown>, b, idKey);
   }
 
-  const topId =
-    (typeof b[idKey] === "string" && b[idKey]) ||
-    (typeof b.id === "string" && b.id) ||
-    undefined;
-
+  const val = b[idKey];
+  const topId = typeof val === "string" ? val : (typeof b.id === "string" ? b.id : undefined);
+ 
   return {
-    ...(topId ? { id: topId as string } : {}),
-    ...(typeof b.email === "string" ? { email: b.email as string } : {}),
-    ...(typeof b.verified === "boolean" ? { verified: b.verified as boolean } : {}),
+    ...(topId ? { id: topId } : {}),
+    ...(typeof b.email === "string" ? { email: b.email } : {}),
+    ...(typeof b.verified === "boolean" ? { verified: b.verified } : {}),
   };
 }
 

@@ -78,7 +78,7 @@ function parseHostname(url: string): string {
 
 type LogisticsRowProps = { label: string; children: React.ReactNode };
 
-function LogisticsRow({ label, children }: LogisticsRowProps) {
+function LogisticsRow({ label, children }: Readonly<LogisticsRowProps>) {
   return (
     <View
       style={tw`flex-col px-4 py-3 border-r border-neutral-100 min-w-[42%]`}
@@ -106,7 +106,7 @@ function LogisticsStrip({
   eventType,
   hasLogisticsDetails,
   externalHostname,
-}: LogisticsStripProps) {
+}: Readonly<LogisticsStripProps>) {
   const vipDate = (event as any).vip_preview_date;
 
   return (
@@ -168,7 +168,9 @@ function LogisticsStrip({
       {eventType === "viewing_room" && !!event.external_url && (
         <LogisticsRow label="External Link">
           <TouchableOpacity
-            onPress={() => Linking.openURL(event.external_url as string)}
+            onPress={() => {
+              if (event.external_url) Linking.openURL(event.external_url);
+            }}
             activeOpacity={0.8}
           >
             <Text
@@ -203,7 +205,7 @@ function CoverImage({
   coverImage,
   isUploadingCover,
   onCoverImageChange,
-}: CoverImageProps) {
+}: Readonly<CoverImageProps>) {
   const uri = coverImage
     ? /^https?:\/\//i.test(coverImage)
       ? coverImage

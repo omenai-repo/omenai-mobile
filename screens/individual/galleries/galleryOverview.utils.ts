@@ -60,7 +60,7 @@ export function computeGalleryHeadliner(events: GalleryOverviewEvent[] | undefin
         : null;
 
   const historyEvents = headliner
-    ? events.filter((e) => e.event_id !== headliner!.event_id)
+    ? events.filter((e) => e.event_id !== headliner.event_id)
     : events;
 
   return { highlightEvent: headliner, historyEvents, status: currentStatus };

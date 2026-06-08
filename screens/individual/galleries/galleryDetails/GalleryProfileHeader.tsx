@@ -7,12 +7,12 @@ import { useGalleryFollow } from "#hooks/useGalleryFollow";
 import type { GalleryProfile } from "#services/partners/galleryPartnerApi";
 
 type Props = {
-  galleryId: string;
-  profile?: GalleryProfile | null;
-  nameFallback: string;
+  readonly galleryId: string;
+  readonly profile?: GalleryProfile | null;
+  readonly nameFallback: string;
 };
 
-export default function GalleryProfileHeader({ galleryId, profile, nameFallback }: Props) {
+export default function GalleryProfileHeader({ galleryId, profile, nameFallback }: Readonly<Props>) {
   const { isFollowingFor, toggleFollow, isLoadingFollowed, hasUser } = useGalleryFollow();
   const isFollowing = isFollowingFor(galleryId);
   const name = profile?.name ?? nameFallback;
