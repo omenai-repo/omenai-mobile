@@ -10,9 +10,9 @@ import tw from "twrnc";
 
 export default function CatalogListing({
   hideAction,
-}: {
+}: Readonly<{
   hideAction?: boolean;
-}) {
+}>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   return (
     <View style={tw`mt-6`}>

@@ -42,12 +42,12 @@ export function registrationResponseForAnalytics(
       (typeof d.email === "string" && d.email) ||
       (typeof b.email === "string" && b.email) ||
       undefined;
-    const verified =
-      typeof d.verified === "boolean"
-        ? d.verified
-        : typeof b.verified === "boolean"
-          ? b.verified
-          : undefined;
+    let verified: boolean | undefined;
+    if (typeof d.verified === "boolean") {
+      verified = d.verified;
+    } else if (typeof b.verified === "boolean") {
+      verified = b.verified;
+    }
 
     return {
       ...(id ? { id } : {}),
@@ -62,7 +62,7 @@ export function registrationResponseForAnalytics(
     undefined;
 
   return {
-    ...(topId ? { id: topId as string } : {}),
+    ...(topId ? { id: topId } : {}),
     ...(typeof b.email === "string" ? { email: b.email } : {}),
     ...(typeof b.verified === "boolean" ? { verified: b.verified } : {}),
   };

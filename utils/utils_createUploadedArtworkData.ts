@@ -3,9 +3,10 @@ export function createUploadedArtworkData(
   url: string,
   id: string,
   role_access: RoleAccess,
-  image_format?:
-    | { ratio: string; orientation: "landscape" | "portrait" | "square" }
-    | null,
+  image_format?: {
+    ratio: string;
+    orientation: "landscape" | "portrait" | "square";
+  } | null,
 ): Omit<
   ArtworkSchemaTypes,
   "art_id" | "should_show_on_sub_active" | "availability"
@@ -18,16 +19,16 @@ export function createUploadedArtworkData(
   const ghostNameCandidate = String(data.newGhostArtistName ?? "").trim();
   const typedArtistName = String(data.artist ?? "").trim();
 
-  const galleryArtistFields =
-    role_access.role === "gallery"
-      ? rosterArtistId
-        ? { artist_id: rosterArtistId }
-        : ghostNameCandidate
-          ? { newGhostArtistName: ghostNameCandidate }
-          : typedArtistName
-            ? { newGhostArtistName: typedArtistName }
-            : {}
-      : {};
+  let galleryArtistFields: Record<string, string> = {};
+  if (role_access.role === "gallery") {
+    if (rosterArtistId) {
+      galleryArtistFields = { artist_id: rosterArtistId };
+    } else if (ghostNameCandidate) {
+      galleryArtistFields = { newGhostArtistName: ghostNameCandidate };
+    } else if (typedArtistName) {
+      galleryArtistFields = { newGhostArtistName: typedArtistName };
+    }
+  }
 
   const updatedArwordData = {
     artist: data.artist,

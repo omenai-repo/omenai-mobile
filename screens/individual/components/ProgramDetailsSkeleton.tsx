@@ -17,10 +17,10 @@ function backTitleFor(kind: ProgramDetailsKind) {
 }
 
 type Props = {
-  kind: ProgramDetailsKind;
+  readonly kind: ProgramDetailsKind;
 };
 
-export default function ProgramDetailsSkeleton({ kind }: Props) {
+export default function ProgramDetailsSkeleton({ kind }: Readonly<Props>) {
   const { height: screenH } = Dimensions.get("window");
   const heroHeight = useMemo(() => Math.min(screenH * 0.5, 320), [screenH]);
 

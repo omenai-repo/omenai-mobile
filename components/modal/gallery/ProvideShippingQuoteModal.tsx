@@ -106,7 +106,7 @@ export default function ProvideShippingQuoteModal() {
 
   const handleValidationChecks = (label: RequiredFieldKey, value: string) => {
     const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(label as string, value);
+      validate(label, value);
     if (!success) {
       setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
     } else {

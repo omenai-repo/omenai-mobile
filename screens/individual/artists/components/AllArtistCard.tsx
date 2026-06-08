@@ -19,12 +19,12 @@ export type DirectoryArtist = {
 };
 
 type Props = {
-  artist: DirectoryArtist;
-  cardWidth: number;
-  isFollowing: boolean;
-  onToggleFollow: (artistId: string) => void;
-  onPressArtist: () => void;
-  disabled?: boolean;
+  readonly artist: DirectoryArtist;
+  readonly cardWidth: number;
+  readonly isFollowing: boolean;
+  readonly onToggleFollow: (artistId: string) => void;
+  readonly onPressArtist: () => void;
+  readonly disabled?: boolean;
 };
 
 export default function AllArtistCard({
@@ -34,7 +34,7 @@ export default function AllArtistCard({
   onToggleFollow,
   onPressArtist,
   disabled = false,
-}: Props) {
+}: Readonly<Props>) {
   const [imgError, setImgError] = useState(false);
   const imageH = (cardWidth * 4) / 5;
   const locationParts = [

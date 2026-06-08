@@ -32,6 +32,18 @@ export default function BinaryToggle({
         const isSelected = value === option.value;
         const isDisabled = disabledValue === option.value;
 
+        const buttonStyle = isDisabled
+          ? tw`bg-gray-50 border-gray-100`
+          : isSelected
+            ? { backgroundColor: colors.black, borderColor: colors.black }
+            : tw`bg-white border-gray-200`;
+
+        const textStyle = isDisabled
+          ? tw`text-gray-300`
+          : isSelected
+            ? { color: colors.white }
+            : tw`text-gray-500`;
+
         return (
           <Pressable
             key={option.value}
@@ -40,25 +52,9 @@ export default function BinaryToggle({
               onChange(option.value);
             }}
             disabled={isDisabled}
-            style={[
-              tw`flex-1 py-3 rounded-lg items-center justify-center border`,
-              isDisabled
-                ? tw`bg-gray-50 border-gray-100`
-                : isSelected
-                ? { backgroundColor: colors.black, borderColor: colors.black }
-                : tw`bg-white border-gray-200`,
-            ]}
+            style={[tw`flex-1 py-3 rounded-lg items-center justify-center border`, buttonStyle]}
           >
-            <Text
-              style={[
-                tw`text-sm font-semibold`,
-                isDisabled
-                  ? tw`text-gray-300`
-                  : isSelected
-                  ? { color: colors.white }
-                  : tw`text-gray-500`,
-              ]}
-            >
+            <Text style={[tw`text-sm font-semibold`, textStyle]}>
               {option.label}
             </Text>
           </Pressable>

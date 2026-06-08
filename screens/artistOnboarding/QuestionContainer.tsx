@@ -1,8 +1,6 @@
-import { View, Text, Pressable, useWindowDimensions } from "react-native";
+import { View, Text, Pressable, useWindowDimensions, TextInput, Animated } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import { TextInput } from "react-native";
-import { Animated } from "react-native";
 import { colors } from "#config/colors.config";
 
 const QuestionContainer = ({

@@ -3,10 +3,10 @@ import { Pressable, Text, View } from "react-native";
 import tw from "twrnc";
 
 type Props = {
-  bio?: string | null;
+  readonly bio?: string | null;
 };
 
-export default function ArtistBioSection({ bio }: Props) {
+export default function ArtistBioSection({ bio }: Readonly<Props>) {
   const [expanded, setExpanded] = useState(false);
   const trimmed = (bio ?? "").trim();
 

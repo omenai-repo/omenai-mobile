@@ -34,7 +34,7 @@ type EditFormState = {
 };
 
 type DateFieldKey = "startDate" | "endDate" | "vipPreviewDate";
-type NormalizedEventType = "art_fair" | "exhibition" | "viewing_room" | string;
+type NormalizedEventType = "art_fair" | "exhibition" | "viewing_room" | (string & {});
 
 function startOfToday(): Date {
   const d = new Date();
@@ -120,11 +120,11 @@ function buildEditPayload(form: EditFormState, eventType: NormalizedEventType) {
 }
 
 type EditEventBottomSheetProps = {
-  isOpen: boolean;
-  event: GalleryEventRecord;
-  isSaving: boolean;
-  onClose: () => void;
-  onSave: (payload: Record<string, unknown>) => void;
+  readonly isOpen: boolean;
+  readonly event: GalleryEventRecord;
+  readonly isSaving: boolean;
+  readonly onClose: () => void;
+  readonly onSave: (payload: Record<string, unknown>) => void;
 };
 
 export default function EditEventBottomSheet({
@@ -133,10 +133,10 @@ export default function EditEventBottomSheet({
   isSaving,
   onClose,
   onSave,
-}: EditEventBottomSheetProps) {
+}: Readonly<EditEventBottomSheetProps>) {
   const insets = useSafeAreaInsets();
   const eventType = normalizeEventType(event);
-  const eventTypeLabel = eventType ? eventType.replaceAll(/_/g, " ") : "presentation";
+  const eventTypeLabel = eventType ? eventType.replaceAll("_", " ") : "presentation";
   const [boothError, setBoothError] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [activeDateField, setActiveDateField] = useState<DateFieldKey | null>(null);
@@ -199,7 +199,7 @@ export default function EditEventBottomSheet({
     () =>
       [...artist_countries_codes_currency]
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map((c) => ({ label: c.name, value: c.name })),
+        .map((country) => ({ label: country.name, value: country.name })),
     [],
   );
 

@@ -31,6 +31,10 @@ export function SingleArtworkCardLoader({
   );
 }
 
+function CardSeparator() {
+  return <View style={tw`w-5`} />;
+}
+
 export default function ArtworkCardLoader({ containerStyle }: Readonly<{ containerStyle?: ViewStyle }>) {
   const placeholderData = [0, 1];
 
@@ -43,7 +47,7 @@ export default function ArtworkCardLoader({ containerStyle }: Readonly<{ contain
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 20 }}
-        ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+        ItemSeparatorComponent={CardSeparator}
       />
     </View>
   );

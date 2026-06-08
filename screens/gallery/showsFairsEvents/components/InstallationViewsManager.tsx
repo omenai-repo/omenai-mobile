@@ -22,10 +22,10 @@ import { uploadToAppwrite } from "#utils/uploadToAppwrite";
 import { deleteFromAppwrite } from "#utils/deleteFromAppwrite";
 
 type InstallationViewsManagerProps = {
-  eventId: string;
-  galleryId: string;
-  existingViews: string[];
-  onUploadSuccess: () => void | Promise<void>;
+  readonly eventId: string;
+  readonly galleryId: string;
+  readonly existingViews: readonly string[];
+  readonly onUploadSuccess: () => void | Promise<void>;
 };
 
 export default function InstallationViewsManager({
@@ -33,7 +33,7 @@ export default function InstallationViewsManager({
   galleryId,
   existingViews,
   onUploadSuccess,
-}: InstallationViewsManagerProps) {
+}: Readonly<InstallationViewsManagerProps>) {
   const MAX_INSTALLATION_SELECTION = 12;
   const { updateModal, updateConfirmationModal, clear } = useModalStore();
   const windowWidth = Dimensions.get("window").width;

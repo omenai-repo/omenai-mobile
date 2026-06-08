@@ -104,13 +104,13 @@ export default function FeaturedArtists() {
         ItemSeparatorComponent={() => <View style={tw`w-5`} />}
         renderItem={renderArtistItem}
         ListEmptyComponent={
-          !isLoading ? (
+          isLoading ? null : (
             <View style={tw`p-[30px]`}>
               <Text style={tw`text-[#858585] text-center`}>
                 No featured artists available
               </Text>
             </View>
-          ) : null
+          )
         }
       />
 

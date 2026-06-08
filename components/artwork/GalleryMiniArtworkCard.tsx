@@ -18,11 +18,11 @@ import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
 
 type MiniArtworkCardType = {
-  title: string;
-  url: string;
-  art_id: string;
-  artist: string;
-  usd_price: number;
+  readonly title: string;
+  readonly url: string;
+  readonly art_id: string;
+  readonly artist: string;
+  readonly usd_price: number;
 };
 
 function GalleryMiniArtworkCard({
@@ -31,7 +31,7 @@ function GalleryMiniArtworkCard({
   art_id,
   artist,
   usd_price,
-}: MiniArtworkCardType) {
+}: Readonly<MiniArtworkCardType>) {
   const { isLoggedIn } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
 

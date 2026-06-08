@@ -2,14 +2,14 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 type ComingSoonScreenProps = {
-  title: string;
-  subtitle?: string;
+  readonly title: string;
+  readonly subtitle?: string;
 };
 
 export default function ComingSoonScreen({
   title,
   subtitle = "This screen is coming soon.",
-}: ComingSoonScreenProps) {
+}: Readonly<ComingSoonScreenProps>) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>

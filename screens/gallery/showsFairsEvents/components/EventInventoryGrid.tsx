@@ -15,11 +15,10 @@ import { useModalStore } from "#store/modal/modalStore";
 import { colors } from "#config/colors.config";
 
 interface EventInventoryGridProps {
-  eventId: string;
-  artworks: EventArtwork[];
-  onAddInventoryClick: () => void;
-  onRemoveArtwork: (artworkId: string) => Promise<void>;
-  onReorderArtworks: (newSequenceIds: string[]) => Promise<void>;
+  readonly artworks: readonly EventArtwork[];
+  readonly onAddInventoryClick: () => void;
+  readonly onRemoveArtwork: (artworkId: string) => Promise<void>;
+  readonly onReorderArtworks: (newSequenceIds: string[]) => Promise<void>;
 }
 
 const resolveArtworkImage = (image?: string, width = 900) => {
@@ -41,14 +40,14 @@ export default function EventInventoryGrid({
   onAddInventoryClick,
   onRemoveArtwork,
   onReorderArtworks,
-}: EventInventoryGridProps) {
+}: Readonly<EventInventoryGridProps>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateModal, updateConfirmationModal, clear } = useModalStore();
   const [isRemoving, setIsRemoving] = useState<string | null>(null);
-  const [items, setItems] = useState<EventArtwork[]>(artworks);
+  const [items, setItems] = useState<EventArtwork[]>(() => [...artworks]);
 
   useEffect(() => {
-    setItems(artworks);
+    setItems([...artworks]);
   }, [artworks]);
 
   const handleConfirmRemove = useCallback(

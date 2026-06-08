@@ -19,14 +19,253 @@ import { useModalStore } from "#store/modal/modalStore";
 import { useAppStore } from "#store/app/appStore";
 
 type EventDetailsHeaderCardProps = {
-  event: GalleryEventRecord;
-  source: "show" | "event";
-  isSavingDetails: boolean;
-  isUploadingCover: boolean;
-  isRefreshingData?: boolean;
-  onCoverImageChange: () => void;
-  onEditClick: () => void;
+  readonly event: GalleryEventRecord;
+  readonly source: "show" | "event";
+  readonly isSavingDetails: boolean;
+  readonly isUploadingCover: boolean;
+  readonly isRefreshingData?: boolean;
+  readonly onCoverImageChange: () => void;
+  readonly onEditClick: () => void;
 };
+
+// ─── Pure helpers ────────────────────────────────────────────────────────────
+function normaliseEventType(raw: string): string {
+  const slug = raw
+    .toLowerCase()
+    .trim()
+    .replaceAll(/[-\s]+/g, "_");
+  if (slug === "artfair") return "art_fair";
+  if (slug === "viewingroom") return "viewing_room";
+  return slug;
+}
+
+function deriveStatus(
+  event: GalleryEventRecord,
+): "Upcoming" | "Active" | "Past" | "Archived" {
+  const now = Date.now();
+  const start = event.start_date ? new Date(event.start_date).getTime() : 0;
+  const end = event.end_date ? new Date(event.end_date).getTime() : 0;
+
+  if (event.is_archived) return "Archived";
+  if (end && now > end) return "Past";
+  if (start && now >= start && (!end || now <= end)) return "Active";
+  return "Upcoming";
+}
+
+function formatDateRange(startDate?: string, endDate?: string): string {
+  if (!startDate || !endDate) return "Date unavailable";
+  const start = new Date(startDate).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+  });
+  const end = new Date(endDate).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  return `${start} - ${end}`;
+}
+
+function parseHostname(url: string): string {
+  try {
+    return new URL(url).hostname.replaceAll("www.", "");
+  } catch {
+    return url;
+  }
+}
+
+// ─── Logistics row sub-component ─────────────────────────────────────────────
+
+type LogisticsRowProps = { label: string; children: React.ReactNode };
+
+function LogisticsRow({ label, children }: LogisticsRowProps) {
+  return (
+    <View
+      style={tw`flex-col px-4 py-3 border-r border-neutral-100 min-w-[42%]`}
+    >
+      <Text
+        style={tw`text-[9px] text-neutral-400 uppercase tracking-widest mb-1 font-medium`}
+      >
+        {label}
+      </Text>
+      {children}
+    </View>
+  );
+}
+
+// ─── Logistics strip ─────────────────────────────────────────────────────────
+type LogisticsStripProps = {
+  event: GalleryEventRecord;
+  eventType: string;
+  hasLogisticsDetails: boolean;
+  externalHostname: string;
+};
+
+function LogisticsStrip({
+  event,
+  eventType,
+  hasLogisticsDetails,
+  externalHostname,
+}: LogisticsStripProps) {
+  const vipDate = (event as any).vip_preview_date;
+
+  return (
+    <View
+      style={tw`bg-white rounded-sm border border-neutral-200 flex-row flex-wrap items-center`}
+    >
+      {vipDate && (
+        <LogisticsRow label="VIP Access">
+          <Text style={tw`text-xs text-neutral-900`}>
+            {new Date(vipDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </Text>
+        </LogisticsRow>
+      )}
+
+      {eventType === "art_fair" && (
+        <>
+          {!!event.booth_number && (
+            <LogisticsRow label="Booth">
+              <Text style={tw`text-sm text-neutral-900`}>
+                {event.booth_number}
+              </Text>
+            </LogisticsRow>
+          )}
+          {!!event.location?.city && (
+            <LogisticsRow label="Location">
+              <Text style={tw`text-sm text-neutral-900`}>
+                {event.location.city}
+                {event.location.country ? `, ${event.location.country}` : ""}
+              </Text>
+            </LogisticsRow>
+          )}
+        </>
+      )}
+
+      {eventType === "exhibition" && (
+        <>
+          {!!event.location?.venue && (
+            <LogisticsRow label="Venue">
+              <Text style={tw`text-sm text-neutral-900`}>
+                {event.location.venue}
+              </Text>
+            </LogisticsRow>
+          )}
+          {!!event.location?.city && (
+            <LogisticsRow label="City">
+              <Text style={tw`text-sm text-neutral-900`}>
+                {event.location.city}
+                {event.location.country ? `, ${event.location.country}` : ""}
+              </Text>
+            </LogisticsRow>
+          )}
+        </>
+      )}
+
+      {eventType === "viewing_room" && !!event.external_url && (
+        <LogisticsRow label="External Link">
+          <TouchableOpacity
+            onPress={() => Linking.openURL(event.external_url as string)}
+            activeOpacity={0.8}
+          >
+            <Text
+              numberOfLines={1}
+              style={tw`text-sm text-neutral-900 underline`}
+            >
+              {externalHostname}
+            </Text>
+          </TouchableOpacity>
+        </LogisticsRow>
+      )}
+
+      {!hasLogisticsDetails && (
+        <View style={tw`p-3`}>
+          <Text style={tw`text-[10px] italic text-neutral-400`}>
+            No additional logistics details provided. Click Edit Details to add.
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+// ─── Cover image area ─────────────────────────────────────────────────────────
+type CoverImageProps = {
+  coverImage?: string;
+  isUploadingCover: boolean;
+  onCoverImageChange: () => void;
+};
+
+function CoverImage({
+  coverImage,
+  isUploadingCover,
+  onCoverImageChange,
+}: CoverImageProps) {
+  const uri = coverImage
+    ? /^https?:\/\//i.test(coverImage)
+      ? coverImage
+      : getPromotionalFileView(coverImage, 1200)
+    : null;
+
+  return (
+    <View
+      style={tw`w-full h-36 shrink-0 bg-neutral-50 overflow-hidden rounded-sm border border-neutral-100 relative`}
+    >
+      {uri ? (
+        <Image source={{ uri }} style={tw`w-full h-full`} resizeMode="cover" />
+      ) : (
+        <View style={tw`w-full h-full items-center justify-center`}>
+          <Ionicons name="image-outline" size={24} color="#A3A3A3" />
+        </View>
+      )}
+
+      <View
+        style={tw`absolute inset-0 bg-black/35 items-center justify-center`}
+      >
+        {isUploadingCover ? (
+          <View style={tw`items-center`}>
+            <ActivityIndicator size="small" color="#fff" />
+            <Text
+              style={tw`text-[9px] uppercase tracking-widest font-medium text-white mt-1`}
+            >
+              Saving...
+            </Text>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={tw`px-3 py-2 bg-black/60 rounded-sm border border-white/20 flex-row items-center`}
+            activeOpacity={0.85}
+            onPress={onCoverImageChange}
+          >
+            <Ionicons name="cloud-upload-outline" size={14} color="#fff" />
+            <Text
+              style={tw`text-[9px] uppercase tracking-widest font-medium text-white ml-1.5`}
+            >
+              Replace
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  );
+}
+
+// ─── Status palettes ──────────────────────────────────────────────────────────
+
+const STATUS_PALETTE: Record<
+  "Upcoming" | "Active" | "Past" | "Archived",
+  { bg: string; border: string; text: string }
+> = {
+  Upcoming: { bg: "#FFFBEB", border: "#FDE68A", text: "#B45309" },
+  Active: { bg: "#F0FDF4", border: "#BBF7D0", text: "#15803D" },
+  Past: { bg: "#F5F5F5", border: "#D4D4D4", text: "#525252" },
+  Archived: { bg: "#F5F5F5", border: "#E5E5E5", text: "#737373" },
+};
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 function EventDetailsHeaderCardImpl({
   event,
@@ -36,25 +275,22 @@ function EventDetailsHeaderCardImpl({
   isRefreshingData = false,
   onCoverImageChange,
   onEditClick,
-}: EventDetailsHeaderCardProps) {
+}: Readonly<EventDetailsHeaderCardProps>) {
   const queryClient = useQueryClient();
   const { userSession } = useAppStore();
   const { updateModal } = useModalStore();
 
   const galleryId = event.gallery_id || userSession?.id || "";
-  const rawEventType = String((event as any)?.event_type || "")
-    .toLowerCase()
-    .trim()
-    .replaceAll(/[-\s]+/g, "_");
-  const eventType =
-    rawEventType === "artfair"
-      ? "art_fair"
-      : rawEventType === "viewingroom"
-        ? "viewing_room"
-        : rawEventType;
-  const eventTypeLabel = eventType ? eventType.replaceAll(/_/g, " ") : "presentation";
-  const eventTitle = String(event?.title || "").trim() || "Untitled Presentation";
+  const eventType = normaliseEventType(
+    String((event as any)?.event_type || ""),
+  );
+  const eventTypeLabel = eventType
+    ? eventType.replaceAll("_", " ")
+    : "presentation";
+  const eventTitle =
+    String(event?.title || "").trim() || "Untitled Presentation";
   const publishedLabel = event?.is_published ? "Event Published" : "Draft";
+
   const showHeaderPlaceholder =
     isRefreshingData &&
     !event?.title &&
@@ -98,43 +334,21 @@ function EventDetailsHeaderCardImpl({
     }
     publishMutation.mutate(!event.is_published);
   };
-  const formatDateRange = (startDate?: string, endDate?: string) => {
-    if (!startDate || !endDate) return "Date unavailable";
-    const start = new Date(startDate).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-    });
-    const end = new Date(endDate).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-    return `${start} - ${end}`;
+
+  const handleViewExternal = () => {
+    if (!event.external_url) {
+      updateModal({
+        showModal: true,
+        modalType: "error",
+        message: "No public link available for this event yet.",
+      });
+      return;
+    }
+    Linking.openURL(event.external_url);
   };
 
-  const now = new Date().getTime();
-  const startDate = event.start_date ? new Date(event.start_date).getTime() : 0;
-  const endDate = event.end_date ? new Date(event.end_date).getTime() : 0;
-
-  let status: "Upcoming" | "Active" | "Past" | "Archived" = "Upcoming";
-  if (event.is_archived) {
-    status = "Archived";
-  } else if (endDate && now > endDate) {
-    status = "Past";
-  } else if (startDate && now >= startDate && (!endDate || now <= endDate)) {
-    status = "Active";
-  }
-
-  const statusPalette: Record<
-    typeof status,
-    { bg: string; border: string; text: string }
-  > = {
-    Upcoming: { bg: "#FFFBEB", border: "#FDE68A", text: "#B45309" },
-    Active: { bg: "#F0FDF4", border: "#BBF7D0", text: "#15803D" },
-    Past: { bg: "#F5F5F5", border: "#D4D4D4", text: "#525252" },
-    Archived: { bg: "#F5F5F5", border: "#E5E5E5", text: "#737373" },
-  };
-  const statusStyle = statusPalette[status];
+  const status = deriveStatus(event);
+  const statusStyle = STATUS_PALETTE[status];
   const publishedPalette = event?.is_published
     ? { bg: "#F0FDF4", border: "#BBF7D0", text: "#15803D" }
     : { bg: "#FFFBEB", border: "#FDE68A", text: "#B45309" };
@@ -146,19 +360,14 @@ function EventDetailsHeaderCardImpl({
     !!event.location?.venue ||
     !!event.external_url;
 
-  const externalHostname = (() => {
-    if (!event.external_url) return "";
-    try {
-      return new URL(event.external_url).hostname.replaceAll("www.", "");
-    } catch {
-      return event.external_url;
-    }
-  })();
+  const externalHostname = event.external_url
+    ? parseHostname(event.external_url)
+    : "";
 
   if (showHeaderPlaceholder) {
     return (
       <View style={tw`gap-4 mb-4`}>
-        <View style={tw`bg-white rounded-sm border border-neutral-200 p-3`}>
+         <View style={tw`bg-white rounded-sm border border-neutral-200 p-3`}>
           <View style={tw`h-36 bg-neutral-100 rounded-sm mb-3`} />
           <View style={tw`items-center py-3`}>
             <ActivityIndicator size="small" color="#737373" />
@@ -173,57 +382,11 @@ function EventDetailsHeaderCardImpl({
       {/* Event Details Header */}
       <View style={tw`bg-white rounded-sm border border-neutral-200 p-3`}>
         <View style={tw`gap-3`}>
-          <View
-            style={tw`w-full h-36 shrink-0 bg-neutral-50 overflow-hidden rounded-sm border border-neutral-100 relative`}
-          >
-            {event.cover_image ? (
-              <Image
-                source={{
-                  uri: /^https?:\/\//i.test(event.cover_image)
-                    ? event.cover_image
-                    : getPromotionalFileView(event.cover_image, 1200),
-                }}
-                style={tw`w-full h-full`}
-                resizeMode="cover"
-              />
-            ) : (
-              <View style={tw`w-full h-full items-center justify-center`}>
-                <Ionicons name="image-outline" size={24} color="#A3A3A3" />
-              </View>
-            )}
-
-            <View
-              style={tw`absolute inset-0 bg-black/35 items-center justify-center`}
-            >
-              {isUploadingCover ? (
-                <View style={tw`items-center`}>
-                  <ActivityIndicator size="small" color="#fff" />
-                  <Text
-                    style={tw`text-[9px] uppercase tracking-widest font-medium text-white mt-1`}
-                  >
-                    Saving...
-                  </Text>
-                </View>
-              ) : (
-                <TouchableOpacity
-                  style={tw`px-3 py-2 bg-black/60 rounded-sm border border-white/20 flex-row items-center`}
-                  activeOpacity={0.85}
-                  onPress={onCoverImageChange}
-                >
-                  <Ionicons
-                    name="cloud-upload-outline"
-                    size={14}
-                    color="#fff"
-                  />
-                  <Text
-                    style={tw`text-[9px] uppercase tracking-widest font-medium text-white ml-1.5`}
-                  >
-                    Replace
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
+          <CoverImage
+            coverImage={event.cover_image}
+            isUploadingCover={isUploadingCover}
+            onCoverImageChange={onCoverImageChange}
+          />
 
           {/* Event Details */}
           <View>
@@ -232,7 +395,10 @@ function EventDetailsHeaderCardImpl({
               <View
                 style={[
                   tw`px-2 py-1 rounded-full border`,
-                  { backgroundColor: statusStyle.bg, borderColor: statusStyle.border },
+                  {
+                    backgroundColor: statusStyle.bg,
+                    borderColor: statusStyle.border,
+                  },
                 ]}
               >
                 <Text
@@ -306,25 +472,14 @@ function EventDetailsHeaderCardImpl({
                 {publishMutation.isPending
                   ? "Saving..."
                   : event.is_published
-                    ? "Unpublish"
-                    : "Publish"}
+                  ? "Unpublish"
+                  : "Publish"}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={tw`px-3 py-2 border border-neutral-300 rounded-sm flex-row items-center justify-center`}
               activeOpacity={0.8}
-              onPress={() => {
-                const { updateModal } = useModalStore.getState();
-                if (!event.external_url) {
-                  updateModal({
-                    showModal: true,
-                    modalType: "error",
-                    message: "No public link available for this event yet.",
-                  });
-                  return;
-                }
-                Linking.openURL(event.external_url);
-              }}
+              onPress={handleViewExternal}
             >
               <Ionicons name="eye-outline" size={14} color="#525252" />
             </TouchableOpacity>
@@ -332,137 +487,19 @@ function EventDetailsHeaderCardImpl({
         </View>
       </View>
 
-      {/* 2. Dynamic Logistics & Metadata Strip */}
-      <View
-        style={tw`bg-white rounded-sm border border-neutral-200 flex-row flex-wrap items-center`}
-      >
-        {/* Universal: VIP Preview Date */}
-        {(event as any).vip_preview_date && (
-          <View
-            style={tw`flex-col px-4 py-3 border-r border-neutral-100 min-w-[42%]`}
-          >
-            <Text
-              style={tw`text-[9px] text-neutral-400 uppercase tracking-widest mb-1 font-medium`}
-            >
-              VIP Access
-            </Text>
-            <Text style={tw`text-xs text-neutral-900`}>
-              {new Date((event as any).vip_preview_date).toLocaleDateString(
-                "en-US",
-                {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                },
-              )}
-            </Text>
-          </View>
-        )}
-
-        {eventType === "art_fair" && (
-          <>
-            {!!event.booth_number && (
-              <View
-                style={tw`flex-col px-4 py-3 border-r border-neutral-100 min-w-[42%]`}
-              >
-                <Text
-                  style={tw`text-[9px] text-neutral-400 uppercase tracking-widest mb-1 font-medium`}
-                >
-                  Booth
-                </Text>
-                <Text style={tw`text-sm text-neutral-900`}>
-                  {event.booth_number}
-                </Text>
-              </View>
-            )}
-            {!!event.location?.city && (
-              <View
-                style={tw`flex-col px-4 py-3 border-r border-neutral-100 min-w-[42%]`}
-              >
-                <Text
-                  style={tw`text-[9px] text-neutral-400 uppercase tracking-widest mb-1 font-medium`}
-                >
-                  Location
-                </Text>
-                <Text style={tw`text-sm text-neutral-900`}>
-                  {event.location.city}
-                  {event.location.country ? `, ${event.location.country}` : ""}
-                </Text>
-              </View>
-            )}
-          </>
-        )}
-
-        {eventType === "exhibition" && (
-          <>
-            {!!event.location?.venue && (
-              <View
-                style={tw`flex-col px-4 py-3 border-r border-neutral-100 min-w-[42%]`}
-              >
-                <Text
-                  style={tw`text-[9px] text-neutral-400 uppercase tracking-widest mb-1 font-medium`}
-                >
-                  Venue
-                </Text>
-                <Text style={tw`text-sm text-neutral-900`}>
-                  {event.location.venue}
-                </Text>
-              </View>
-            )}
-            {!!event.location?.city && (
-              <View
-                style={tw`flex-col px-4 py-3 border-r border-neutral-100 min-w-[42%]`}
-              >
-                <Text
-                  style={tw`text-[9px] text-neutral-400 uppercase tracking-widest mb-1 font-medium`}
-                >
-                  City
-                </Text>
-                <Text style={tw`text-sm text-neutral-900`}>
-                  {event.location.city}
-                  {event.location.country ? `, ${event.location.country}` : ""}
-                </Text>
-              </View>
-            )}
-          </>
-        )}
-
-        {eventType === "viewing_room" && !!event.external_url && (
-          <View
-            style={tw`flex-col px-4 py-3 border-r border-neutral-100 min-w-[42%]`}
-          >
-            <Text
-              style={tw`text-[9px] text-neutral-400 uppercase tracking-widest mb-1 font-medium`}
-            >
-              External Link
-            </Text>
-            <TouchableOpacity
-              onPress={() => Linking.openURL(event.external_url as string)}
-              activeOpacity={0.8}
-            >
-              <Text
-                numberOfLines={1}
-                style={tw`text-sm text-neutral-900 underline`}
-              >
-                {externalHostname}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {!hasLogisticsDetails && (
-          <View style={tw`p-3`}>
-            <Text style={tw`text-[10px] italic text-neutral-400`}>
-              No additional logistics details provided. Click Edit Details to
-              add.
-            </Text>
-          </View>
-        )}
-      </View>
+      {/* Dynamic Logistics & Metadata Strip */}
+      <LogisticsStrip
+        event={event}
+        eventType={eventType}
+        hasLogisticsDetails={hasLogisticsDetails}
+        externalHostname={externalHostname}
+      />
     </View>
   );
 }
 
-export default function EventDetailsHeaderCard(props: EventDetailsHeaderCardProps) {
+export default function EventDetailsHeaderCard(
+  props: Readonly<EventDetailsHeaderCardProps>,
+) {
   return <EventDetailsHeaderCardImpl {...props} />;
 }

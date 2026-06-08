@@ -179,7 +179,7 @@ export default function ShowsFairsEventDetails() {
       });
       return;
     }
-    const title = String(updatePayload.title || "").trim();
+    const title = typeof updatePayload.title === "string" ? updatePayload.title.trim() : "";
     if (!title) {
       updateModal({
         showModal: true,
@@ -444,7 +444,6 @@ export default function ShowsFairsEventDetails() {
         />
 
         <EventInventoryGrid
-          eventId={event.event_id}
           artworks={artworks}
           onAddInventoryClick={handleOpenAddWorks}
           onRemoveArtwork={handleRemoveArtwork}
@@ -489,7 +488,6 @@ export default function ShowsFairsEventDetails() {
         isOpen={inventoryOpen}
         onClose={() => setInventoryOpen(false)}
         galleryId={galleryId}
-        validatedPayload={null}
         onFinalSubmit={handleAddArtworks}
         alreadyFeaturedIds={artworks.map((item: any) => item.art_id)}
       />

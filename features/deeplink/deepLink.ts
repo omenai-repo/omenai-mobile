@@ -2,7 +2,6 @@ import { resolveLoginDeepLink } from "#config/deepLinkPageRegistry";
 import { extractDeepLinkToken } from "#lib/deeplink/extractDeepLinkToken";
 import {
   applyOrQueueDeepLink,
-  flushPendingDeepLinks,
   loginFallbackForPayload,
   resolveAfterVerify,
 } from "#features/deeplink/deepLinkApply";
@@ -10,7 +9,6 @@ import { tryFlushWhenNavReady } from "#features/deeplink/deepLinkFlush";
 import {
   addDeepLinkFlushListener,
   beginDeepLinkResolve,
-  clearPendingDeepLinks,
   isStaleDeepLinkResolve,
 } from "#features/deeplink/deepLinkPending";
 import {
@@ -21,8 +19,6 @@ import { useAppStore } from "#store/app/appStore";
 import { Analytics } from "#utils/analytics";
 import { useEffect } from "react";
 import { AppState } from "react-native";
-
-export { clearPendingDeepLinks, flushPendingDeepLinks };
 
 const payloadFromOutcome = (
   outcome: VerifyDeepLinkOutcome,
@@ -37,6 +33,7 @@ export const resolveDeepLinkUrl = async (
 ): Promise<string> => {
   const generation = beginDeepLinkResolve();
   const token = extractDeepLinkToken(url);
+  const tokenParam = token ? `?token=${encodeURIComponent(token)}` : "";
   const toDlUrl = (t?: string) =>
     `${prefix}dl${t ? `?token=${encodeURIComponent(t)}` : ""}`;
 
@@ -56,7 +53,9 @@ export const resolveDeepLinkUrl = async (
     }
 
     Analytics.track(
-      outcome.status === "ok" ? "deeplink_verify_success" : "deeplink_verify_failed",
+      outcome.status === "ok"
+        ? "deeplink_verify_success"
+        : "deeplink_verify_failed",
       {
         has_token: true,
         duration_ms: Date.now() - startedAt,

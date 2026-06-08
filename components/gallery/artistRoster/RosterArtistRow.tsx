@@ -8,17 +8,17 @@ import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
 import type { RosterArtist } from "#types/roster.types";
 
 type RosterArtistRowProps = {
-  artist: RosterArtist;
-  onRemovePress: (a: RosterArtist) => void;
+  readonly artist: RosterArtist;
+  readonly onRemovePress: (a: RosterArtist) => void;
   /** When set, all remove actions are disabled; this row shows "Removing…" if it matches. */
-  removingArtistId?: string | null;
+  readonly removingArtistId?: string | null;
 };
 
 export function RosterArtistRow({
   artist,
   onRemovePress,
   removingArtistId = null,
-}: RosterArtistRowProps) {
+}: Readonly<RosterArtistRowProps>) {
   const isThisRow = removingArtistId === artist.artist_id;
   const removeLocked = removingArtistId !== null;
   const imageUri = artist.logo ? getGalleryLogoFileView(artist.logo, 200, 200) : null;

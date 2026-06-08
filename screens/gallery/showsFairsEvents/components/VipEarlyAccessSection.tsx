@@ -12,12 +12,12 @@ import {
 import { useModalStore } from "#store/modal/modalStore";
 
 type VipEarlyAccessSectionProps = {
-  event: GalleryEventRecord;
+  readonly event: GalleryEventRecord;
 };
 
 export default function VipEarlyAccessSection({
   event,
-}: VipEarlyAccessSectionProps) {
+}: Readonly<VipEarlyAccessSectionProps>) {
   const queryClient = useQueryClient();
   const { updateModal } = useModalStore();
   const vipMutation = useMutation({
@@ -101,18 +101,7 @@ export default function VipEarlyAccessSection({
         collectors.
       </Text>
 
-      {!event.vip_access_token ? (
-        <TouchableOpacity
-          style={tw`self-start px-3 py-2 bg-black rounded-sm`}
-          activeOpacity={0.85}
-          onPress={() => vipMutation.mutate("generate")}
-          disabled={vipMutation.isPending}
-        >
-          <Text style={tw`text-[10px] uppercase tracking-widest text-white`}>
-            {vipMutation.isPending ? "Generating..." : "Generate Link"}
-          </Text>
-        </TouchableOpacity>
-      ) : (
+      {event.vip_access_token ? (
         <View style={tw`flex-row items-center gap-2`}>
           <View
             style={tw`flex-1 bg-neutral-50 border border-neutral-200 px-3 py-2 rounded-sm`}
@@ -147,6 +136,17 @@ export default function VipEarlyAccessSection({
             )}
           </TouchableOpacity>
         </View>
+      ) : (
+        <TouchableOpacity
+          style={tw`self-start px-3 py-2 bg-black rounded-sm`}
+          activeOpacity={0.85}
+          onPress={() => vipMutation.mutate("generate")}
+          disabled={vipMutation.isPending}
+        >
+          <Text style={tw`text-[10px] uppercase tracking-widest text-white`}>
+            {vipMutation.isPending ? "Generating..." : "Generate Link"}
+          </Text>
+        </TouchableOpacity>
       )}
     </View>
   );

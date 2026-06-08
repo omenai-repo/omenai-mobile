@@ -2,7 +2,7 @@ import { useAppStore } from "../store/app/appStore";
 import { utils_clearLocalStorage } from "./utils_asyncStorage";
 import { deleteSecureItem } from "./secureStore";
 import { resetAllLoginFormLoading } from "../hooks/login/resetLoginFormLoading";
-import { clearPendingDeepLinks } from "#features/deeplink/deepLink";
+import { clearPendingDeepLinks } from "#features/deeplink/deepLinkPending";
 
 export const logout = async () => {
   utils_clearLocalStorage();

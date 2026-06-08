@@ -16,10 +16,10 @@ export function RosterLoadingState() {
 }
 
 type RosterEmptyStateProps = {
-  onAddPress: () => void;
+  readonly onAddPress: () => void;
 };
 
-export function RosterEmptyState({ onAddPress }: RosterEmptyStateProps) {
+export function RosterEmptyState({ onAddPress }: Readonly<RosterEmptyStateProps>) {
   return (
     <View
       style={tw`mx-5 mt-8 py-16 px-6 border border-dashed border-neutral-200 bg-neutral-50 rounded-sm items-center`}
@@ -42,14 +42,14 @@ export function RosterEmptyState({ onAddPress }: RosterEmptyStateProps) {
 }
 
 type RosterNoSearchResultsStateProps = {
-  searchTerm: string;
-  onClearSearch: () => void;
+  readonly searchTerm: string;
+  readonly onClearSearch: () => void;
 };
 
 export function RosterNoSearchResultsState({
   searchTerm,
   onClearSearch,
-}: RosterNoSearchResultsStateProps) {
+}: Readonly<RosterNoSearchResultsStateProps>) {
   return (
     <View
       style={tw`mx-5 mt-8 py-16 border border-neutral-100 bg-white rounded-sm items-center px-6`}

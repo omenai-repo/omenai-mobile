@@ -29,11 +29,8 @@ import CancleOrderPayment from "#screens/payment/components/cancel/CancleOrderPa
 import SuccessOrderPayment from "#screens/payment/components/success/SuccessOrderPayment";
 import BiometricSettings from "#screens/profile/BiometricSettings";
 import ViewReceiptScreen from "#screens/orders/ViewReceiptScreen";
-// import ShowsScreen from "#screens/individual/shows/ShowsScreen";
 import ShowDetailsScreen from "#screens/individual/shows/ShowDetailsScreen";
-// import FairsEventsScreen from "#screens/individual/fairsEvents/FairsEventsScreen";
 import FairEventDetailsScreen from "#screens/individual/fairsEvents/FairEventDetailsScreen";
-// import GalleriesScreen from "#screens/individual/galleries/GalleriesScreen";
 import GalleryDetailsScreen from "#screens/individual/galleries/GalleryDetailsScreen";
 import ArtistDetailsScreen from "#screens/individual/artists/ArtistDetailsScreen";
 import AllArtistsScreen from "#screens/individual/artists/AllArtistsScreen";
@@ -114,25 +111,6 @@ const individualMoreTabs = [
     label: "Profile",
     component: Profile,
   },
-  // Temporarily hidden: Shows + Fairs & Events + Galleries (individual More tab targets).
-  // {
-  //   id: 7,
-  //   name: screenName.individual.shows,
-  //   label: "Shows",
-  //   component: ShowsScreen,
-  // },
-  // {
-  //   id: 8,
-  //   name: screenName.individual.fairsEvents,
-  //   label: "Fairs & Events",
-  //   component: FairsEventsScreen,
-  // },
-  // {
-  //   id: 9,
-  //   name: screenName.individual.galleries,
-  //   label: "Galleries",
-  //   component: GalleriesScreen,
-  // },
   {
     id: 10,
     name: screenName.supportTickets,
@@ -141,114 +119,92 @@ const individualMoreTabs = [
   },
 ];
 
+function IndividualTabs() {
+  const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
+  const tabNavigationRef = useRef<any>(null);
+
+  const navigateToScreen = useCallback((routeName: string) => {
+    if (!tabNavigationRef.current) return;
+    const tabRouteNames = [...individualTabs, ...individualMoreTabs].map(
+      ({ name }) => name,
+    );
+    if (tabRouteNames.includes(routeName)) {
+      tabNavigationRef.current.navigate(routeName);
+      return;
+    }
+    tabNavigationRef.current.getParent()?.navigate(routeName);
+  }, []);
+
+  const moreSheetItems = useMemo<MoreSheetItem[]>(
+    () => [
+      {
+        key: "profile",
+        label: "Profile",
+        routeName: screenName.profile,
+        expoIconName: "person-outline" as const,
+        onPress: () => navigateToScreen(screenName.profile),
+      },
+      {
+        key: "support-tickets",
+        label: "Support Tickets",
+        routeName: screenName.supportTickets,
+        expoIconName: "help-circle-outline" as const,
+        onPress: () => navigateToScreen(screenName.supportTickets),
+      },
+      {
+        key: "logout",
+        label: "Logout",
+        routeName: "logout",
+        isDanger: true,
+        onPress: () => void logout(),
+      },
+    ],
+    [navigateToScreen],
+  );
+
+  return (
+    <>
+      <Tab.Navigator
+        tabBar={(props) => (
+          <>
+            {(tabNavigationRef.current = props.navigation, null)}
+            <GalleryTabBar
+              {...props}
+              tabMeta={individualTabs}
+              moreRouteName="individual-more"
+              onPressMore={openMoreSheet}
+            />
+          </>
+        )}
+        screenOptions={{ headerShown: false }}
+      >
+        {individualTabs.map(({ name, component, id }) => (
+          <Tab.Screen
+            key={id}
+            name={name}
+            component={component}
+            options={{ tabBarShowLabel: false, headerShown: false }}
+          />
+        ))}
+        {individualMoreTabs.map(({ name, component, id }) => (
+          <Tab.Screen
+            key={id}
+            name={name}
+            component={component}
+            options={{ tabBarShowLabel: false, headerShown: false }}
+          />
+        ))}
+      </Tab.Navigator>
+      <MoreSheet
+        visible={isMoreSheetOpen}
+        onClose={closeMoreSheet}
+        menuItems={moreSheetItems}
+      />
+    </>
+  );
+}
+
 const IndividualTabNavigationScreens = () => {
-  function IndividualTabs() {
-    const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
-    const tabNavigationRef = useRef<any>(null);
-
-    const navigateToScreen = useCallback((routeName: string) => {
-      if (!tabNavigationRef.current) return;
-      const tabRouteNames = [...individualTabs, ...individualMoreTabs].map(
-        ({ name }) => name,
-      );
-      if (tabRouteNames.includes(routeName)) {
-        tabNavigationRef.current.navigate(routeName);
-        return;
-      }
-      tabNavigationRef.current.getParent()?.navigate(routeName);
-    }, []);
-
-    const moreSheetItems = useMemo<MoreSheetItem[]>(
-      () => [
-        // Temporarily hidden: Shows + Fairs & Events + Galleries (More sheet; stack routes still exist for deep links / home sections).
-        // {
-        //   key: "shows",
-        //   label: "Shows",
-        //   routeName: screenName.individual.shows,
-        //   expoIconName: "images-outline" as const,
-        //   onPress: () => navigateToScreen(screenName.individual.shows),
-        // },
-        // {
-        //   key: "fairs-events",
-        //   label: "Fairs & Events",
-        //   routeName: screenName.individual.fairsEvents,
-        //   expoIconName: "calendar-outline" as const,
-        //   onPress: () => navigateToScreen(screenName.individual.fairsEvents),
-        // },
-        // {
-        //   key: "galleries",
-        //   label: "Galleries",
-        //   routeName: screenName.individual.galleries,
-        //   expoIconName: "business-outline" as const,
-        //   onPress: () => navigateToScreen(screenName.individual.galleries),
-        // },
-        {
-          key: "profile",
-          label: "Profile",
-          routeName: screenName.profile,
-          expoIconName: "person-outline" as const,
-          onPress: () => navigateToScreen(screenName.profile),
-        },
-        {
-          key: "support-tickets",
-          label: "Support Tickets",
-          routeName: screenName.supportTickets,
-          expoIconName: "help-circle-outline" as const,
-          onPress: () => navigateToScreen(screenName.supportTickets),
-        },
-        {
-          key: "logout",
-          label: "Logout",
-          routeName: "logout",
-          isDanger: true,
-          onPress: () => void logout(),
-        },
-      ],
-      [navigateToScreen],
-    );
-
-    return (
-      <>
-        <Tab.Navigator
-          tabBar={(props) => (
-            <>
-              {(tabNavigationRef.current = props.navigation, null)}
-              <GalleryTabBar
-                {...props}
-                tabMeta={individualTabs}
-                moreRouteName="individual-more"
-                onPressMore={openMoreSheet}
-              />
-            </>
-          )}
-          screenOptions={{ headerShown: false }}
-        >
-          {individualTabs.map(({ name, component, id }) => (
-            <Tab.Screen
-              key={id}
-              name={name}
-              component={component}
-              options={{ tabBarShowLabel: false, headerShown: false }}
-            />
-          ))}
-          {individualMoreTabs.map(({ name, component, id }) => (
-            <Tab.Screen
-              key={id}
-              name={name}
-              component={component}
-              options={{ tabBarShowLabel: false, headerShown: false }}
-            />
-          ))}
-        </Tab.Navigator>
-        <MoreSheet
-          visible={isMoreSheetOpen}
-          onClose={closeMoreSheet}
-          menuItems={moreSheetItems}
-        />
-      </>
-    );
-  }
-
   return (
     <MoreSheetProvider>
       <IndividualTabs />

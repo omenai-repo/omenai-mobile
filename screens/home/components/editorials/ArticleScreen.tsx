@@ -33,8 +33,8 @@ const ArticleScreen = () => {
   const detailQueryKey = useMemo(
     () => [
       "editorial-detail",
-      String(articleRecord.$id ?? ""),
-      String(routeArticle.slug ?? ""),
+      typeof articleRecord.$id === "string" ? articleRecord.$id : "",
+      typeof routeArticle.slug === "string" ? routeArticle.slug : "",
     ],
     [articleRecord.$id, routeArticle.slug],
   );

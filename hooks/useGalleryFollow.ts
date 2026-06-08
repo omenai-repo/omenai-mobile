@@ -23,7 +23,7 @@ export function useGalleryFollow() {
 
   const isFollowingFor = useCallback(
     (galleryId: string) => {
-      if (Object.prototype.hasOwnProperty.call(followOverride, galleryId)) {
+      if (Object.hasOwn(followOverride, galleryId)) {
         return followOverride[galleryId]!;
       }
       return followedIds.includes(galleryId);

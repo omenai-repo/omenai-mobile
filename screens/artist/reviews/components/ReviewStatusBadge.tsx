@@ -11,7 +11,7 @@ type ReviewStatus =
   | "AUTO_APPROVED"
   | "DECLINED_BY_ADMIN"
   | "DECLINED_BY_ARTIST"
-  | string;
+  | (string & {});
 
 function getStatusConfig(status: ReviewStatus) {
   switch (status) {
@@ -58,9 +58,9 @@ function getStatusConfig(status: ReviewStatus) {
 
 export default function ReviewStatusBadge({
   status,
-}: {
+}: Readonly<{
   status: ReviewStatus;
-}) {
+}>) {
   const config = getStatusConfig(status);
 
   return (

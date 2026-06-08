@@ -139,19 +139,19 @@ const isValidUKBankDetails = (
   const cleanSortCode = sortCode.replaceAll(/[\s-]/g, "");
   const cleanAccountNumber = accountNumber.replaceAll(/\s/g, "");
   return (
-    /^[0-9]{6}$/.test(cleanSortCode) && /^[0-9]{8}$/.test(cleanAccountNumber)
+    /^\d{6}$/.test(cleanSortCode) && /^\d{8}$/.test(cleanAccountNumber)
   );
 };
 
 const isValidIBAN = (iban: string): boolean => {
   const cleanIban = iban.replaceAll(/\s/g, "").toUpperCase();
-  if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}$/.test(cleanIban)) return false;
+  if (!/^[A-Z]{2}\d{2}[A-Z0-9]{4,30}$/.test(cleanIban)) return false;
   const rearranged = cleanIban.substring(4) + cleanIban.substring(0, 4);
   const numericString = rearranged
     .split("")
     .map((char) => {
-      const code = char.charCodeAt(0);
-      if (code >= 65 && code <= 90) return (code - 55).toString();
+      const code = char.codePointAt(0);
+      if (code !== undefined && code >= 65 && code <= 90) return (code - 55).toString();
       return char;
     })
     .join("");

@@ -50,10 +50,10 @@ const resolvePromotionalImage = (image?: string, width = 900) => {
 function ProgrammingTabs({
   activeTab,
   onChange,
-}: {
+}: Readonly<{
   activeTab: ProgrammingTab;
   onChange: (tab: ProgrammingTab) => void;
-}) {
+}>) {
   return (
     <View style={tw`flex-row border-b border-neutral-200 mb-6`}>
       <TouchableOpacity

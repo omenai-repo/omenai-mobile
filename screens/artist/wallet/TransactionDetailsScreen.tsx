@@ -82,11 +82,11 @@ const DetailRow = ({
   </View>
 );
 
-export const TransactionDetailsScreen = ({ route }: { route: any }) => {
+export const TransactionDetailsScreen = ({ route }: Readonly<{ route: any }>) => {
   const { transaction } = route.params;
   const status = transaction?.trans_status as TransactionStatus;
   const config = getStatusConfig(status);
-  const beneficiary = transaction?.beneficiary_details as BeneficiaryDetails;
+  const beneficiary = transaction?.beneficiary_details;
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>

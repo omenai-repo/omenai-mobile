@@ -52,7 +52,7 @@ export default function ExhibitionOptions({
 
       <DestinationAddressSection destinationAddress={destinationAddress} />
 
-      {!isGallery ? null : (
+      {isGallery && (
         <>
       <Text style={tw`text-sm text-gray-600 mb-3 mt-7`}>
         Is artwork on exhibition?
@@ -93,7 +93,7 @@ export default function ExhibitionOptions({
         >
           <View
             style={tw`w-5 h-5 rounded-full border ${
-              !isOnExhibition ? "border-black bg-black" : "border-gray-300"
+              isOnExhibition ? "border-gray-300" : "border-black bg-black"
             } items-center justify-center`}
           >
             {!isOnExhibition && (

@@ -17,18 +17,18 @@ import type { ArtistSearchResult } from "#types/roster.types";
 import { formFieldLabelStyle, formTextInputStyle } from "./addArtistFormStyles";
 
 type AddArtistSearchSuggestionsProps = {
-  galleryId: string;
-  query: string;
-  onQueryChange: (text: string) => void;
-  onFocusSearch: () => void;
-  trimmedQuery: string;
-  isDraftingSuggestion: boolean;
-  isSearching: boolean;
-  results: ArtistSearchResult[];
-  artistId: string;
-  onSelectArtist: (selected: ArtistSearchResult) => void;
-  onCreateNew: () => void;
-  onCommitTypedAsNewGhost: () => void;
+  readonly galleryId: string;
+  readonly query: string;
+  readonly onQueryChange: (text: string) => void;
+  readonly onFocusSearch: () => void;
+  readonly trimmedQuery: string;
+  readonly isDraftingSuggestion: boolean;
+  readonly isSearching: boolean;
+  readonly results: ArtistSearchResult[];
+  readonly artistId: string;
+  readonly onSelectArtist: (selected: ArtistSearchResult) => void;
+  readonly onCreateNew: () => void;
+  readonly onCommitTypedAsNewGhost: () => void;
 };
 
 export function AddArtistSearchSuggestions({
@@ -44,14 +44,14 @@ export function AddArtistSearchSuggestions({
   onSelectArtist,
   onCreateNew,
   onCommitTypedAsNewGhost,
-}: AddArtistSearchSuggestionsProps) {
+}: Readonly<AddArtistSearchSuggestionsProps>) {
   return (
     <>
-      {!galleryId ? (
+      {galleryId ? null : (
         <Text style={tw`text-sm text-red-600 mb-4`}>
           Gallery account could not be loaded. Close this screen and try again.
         </Text>
-      ) : null}
+      )}
       <Text style={formFieldLabelStyle}>Artist name</Text>
       <TextInput
         value={query}
@@ -74,36 +74,43 @@ export function AddArtistSearchSuggestions({
               </View>
             ) : (
               <>
-                {results.map((res) => (
-                  <Pressable
-                    key={res.artist_id}
-                    onPress={() => onSelectArtist(res)}
-                    style={tw`flex-row items-center gap-3 p-3 border-b border-neutral-50`}
-                  >
-                    <View style={tw`h-8 w-8 rounded-full bg-neutral-100 overflow-hidden items-center justify-center`}>
-                      {res.logo ? (
-                        <Image
-                          source={{ uri: getGalleryLogoFileView(res.logo, 64, 64) }}
-                          style={tw`h-8 w-8`}
-                        />
-                      ) : (
-                        <Text style={tw`text-[10px] font-medium text-neutral-500`}>
-                          {res.name.substring(0, 2).toUpperCase()}
+                {results.map((res) => {
+                  const representationLabel = res.represented_by
+                    ? `Represented by ${res.represented_by}`
+                    : "Unrepresented";
+                  const subLine =
+                    res.profile_status === "claimed"
+                      ? `Claimed profile • ${res.location || "Unknown location"}`
+                      : `Unclaimed profile • ${representationLabel}`;
+                  return (
+                    <Pressable
+                      key={res.artist_id}
+                      onPress={() => onSelectArtist(res)}
+                      style={tw`flex-row items-center gap-3 p-3 border-b border-neutral-50`}
+                    >
+                      <View style={tw`h-8 w-8 rounded-full bg-neutral-100 overflow-hidden items-center justify-center`}>
+                        {res.logo ? (
+                          <Image
+                            source={{ uri: getGalleryLogoFileView(res.logo, 64, 64) }}
+                            style={tw`h-8 w-8`}
+                          />
+                        ) : (
+                          <Text style={tw`text-[10px] font-medium text-neutral-500`}>
+                            {res.name.substring(0, 2).toUpperCase()}
+                          </Text>
+                        )}
+                      </View>
+                      <View style={tw`flex-1 min-w-0`}>
+                        <Text style={[tw`text-sm font-medium`, { color: colors.black }]} numberOfLines={1}>
+                          {res.name}
                         </Text>
-                      )}
-                    </View>
-                    <View style={tw`flex-1 min-w-0`}>
-                      <Text style={[tw`text-sm font-medium`, { color: colors.black }]} numberOfLines={1}>
-                        {res.name}
-                      </Text>
-                      <Text style={tw`text-[11px] text-neutral-500 mt-0.5`} numberOfLines={2}>
-                        {res.profile_status === "claimed"
-                          ? `Claimed profile • ${res.location || "Unknown location"}`
-                          : `Unclaimed profile • ${res.represented_by ? `Represented by ${res.represented_by}` : "Unrepresented"}`}
-                      </Text>
-                    </View>
-                  </Pressable>
-                ))}
+                        <Text style={tw`text-[11px] text-neutral-500 mt-0.5`} numberOfLines={2}>
+                          {subLine}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  );
+                })}
                 <Pressable
                   onPress={onCreateNew}
                   style={tw`flex-row items-center gap-2 p-3 border-t border-neutral-100`}

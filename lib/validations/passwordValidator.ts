@@ -16,8 +16,8 @@ const meetsComplexityRequirements = (s: string) =>
   /[A-Z]/.test(s) && /[a-z]/.test(s) && /\d/.test(s);
 
 const hasSpecialChar = (s: string): boolean => {
-  for (let i = 0; i < s.length; i += 1) {
-    if (PASSWORD_SPECIAL_SET.has(s[i])) return true;
+  for (const char of s) {
+    if (PASSWORD_SPECIAL_SET.has(char)) return true;
   }
   return false;
 };

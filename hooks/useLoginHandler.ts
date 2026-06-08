@@ -2,7 +2,10 @@ import { useEffect, useRef, useCallback, useMemo } from "react";
 import { InteractionManager } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { loginAccount, type LoginApiJsonBody } from "#services/login/loginAccount";
+import {
+  loginAccount,
+  type LoginApiJsonBody,
+} from "#services/login/loginAccount";
 import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import { useAppStore } from "#store/app/appStore";
 import { useModalStore } from "#store/modal/modalStore";
@@ -14,7 +17,7 @@ import type { LoginSubmitOptions } from "#hooks/loginSubmitOptions";
 import { mapUserDataFromLoginBody } from "#hooks/login/mapUserDataFromLoginBody";
 import { createPostLoginBiometricHandlers } from "#hooks/login/postLoginBiometricPrompts";
 import { resetAllLoginFormLoading } from "#hooks/login/resetLoginFormLoading";
-import { flushPendingDeepLinks } from "#features/deeplink/deepLink";
+import { flushPendingDeepLinks } from "#features/deeplink/deepLinkApply";
 
 type UserType = "individual" | "gallery" | "artist";
 
@@ -29,8 +32,7 @@ const USER_ID_MAP = {
   artist: "artist_id",
 } as const;
 
-const normalizeLoginEmail = (email: string) =>
-  email.trim().toLowerCase();
+const normalizeLoginEmail = (email: string) => email.trim().toLowerCase();
 
 export function useLoginHandler(userType: UserType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -87,19 +89,21 @@ export function useLoginHandler(userType: UserType) {
     return message;
   };
 
-  const finalizeLogin = useCallback((data: any, clearInputs: () => void) => {
-    if (!isMountedRef.current) return;
-    setUserSession(data);
-    const sessionUserType =
-      data.role === "individual" ? "user" : data.role;
-    setUserType(sessionUserType);
-    setIsLoggedIn(true);
-    clearInputs();
+  const finalizeLogin = useCallback(
+    (data: any, clearInputs: () => void) => {
+      if (!isMountedRef.current) return;
+      setUserSession(data);
+      const sessionUserType = data.role === "individual" ? "user" : data.role;
+      setUserType(sessionUserType);
+      setIsLoggedIn(true);
+      clearInputs();
 
-    InteractionManager.runAfterInteractions(() => {
-      flushPendingDeepLinks({ isLoggedIn: true, userType: sessionUserType });
-    });
-  }, [setUserSession, setUserType, setIsLoggedIn]);
+      InteractionManager.runAfterInteractions(() => {
+        flushPendingDeepLinks({ isLoggedIn: true, userType: sessionUserType });
+      });
+    },
+    [setUserSession, setUserType, setIsLoggedIn],
+  );
 
   const { processBiometricFlow } = useMemo(
     () =>
@@ -224,7 +228,8 @@ export function useLoginHandler(userType: UserType) {
 
     if (!isStored) {
       safeUpdateModal({
-        message: "Could not save your session on this device. Please try again.",
+        message:
+          "Could not save your session on this device. Please try again.",
         showModal: true,
         modalType: "error",
       });
@@ -254,12 +259,9 @@ export function useLoginHandler(userType: UserType) {
 
       const { email, token: password } = credentials;
 
-      await handleLogin(
-        { email, password },
-        setIsLoading,
-        () => {},
-        { postLoginFlow: "finalize_only" },
-      );
+      await handleLogin({ email, password }, setIsLoading, () => {}, {
+        postLoginFlow: "finalize_only",
+      });
       return true;
     } catch (e) {
       console.error("Biometric only login failed:", e);

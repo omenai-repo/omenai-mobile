@@ -68,22 +68,24 @@ export default function ViewCredentialsScreen() {
           {Object.entries(answers).map(([key, value]) => {
             const questionText =
               questions.find((q) => q.key === key)?.text || key;
-            if (!value || String(value).trim() === "") return null;
+            const valStr = typeof value === "string" || typeof value === "number" ? String(value) : "";
+            if (!valStr || valStr.trim() === "") return null;
             return (
-              <ViewItem key={key} title={questionText} value={String(value)} />
+              <ViewItem key={key} title={questionText} value={valStr} />
             );
           })}
 
           {/* Social Links */}
-          {Object.entries(documentation?.socials).map(([key, value]) =>
-            value ? (
+          {Object.entries(documentation?.socials).map(([key, value]) => {
+            const valStr = typeof value === "string" || typeof value === "number" ? String(value) : "";
+            return valStr ? (
               <ViewItem
                 key={key}
                 title={key.toUpperCase()}
-                value={String(value)}
+                value={valStr}
               />
-            ) : null,
-          )}
+            ) : null;
+          })}
 
           {/* CV */}
           {cv && <ViewItem title="CV Document" value={cv} isDownloadable />}

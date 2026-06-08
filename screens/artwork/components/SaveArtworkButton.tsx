@@ -51,10 +51,10 @@ export default function SaveArtworkButton({
       ]}
       value={isSaved ? "Remove from collection" : "Save to collection"}
       onClick={() => {
-        if (!sessionId) {
-          openGuestLoginModal();
-        } else {
+        if (sessionId) {
           handleLike(!isSaved);
+        } else {
+          openGuestLoginModal();
         }
       }}
       outline

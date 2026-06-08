@@ -8,8 +8,8 @@ import {
 } from "#services/events/events.service";
 
 type Props = {
-  item: GalleryEventRecord;
-  onPress: () => void;
+  readonly item: GalleryEventRecord;
+  readonly onPress: () => void;
 };
 
 const resolveCoverImageUri = (coverImage?: string) =>
@@ -19,7 +19,7 @@ const resolveCoverImageUri = (coverImage?: string) =>
       : getPromotionalFileView(coverImage, 900)
     : "";
 
-export default function EventCard({ item, onPress }: Props) {
+export default function EventCard({ item, onPress }: Readonly<Props>) {
   const status = getEventStatus(item.start_date, item.end_date);
   const isClosed = status === "Past";
   const isFair = item.event_type === "art_fair";

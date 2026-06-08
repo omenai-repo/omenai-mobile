@@ -44,9 +44,6 @@ const OrderActionsBase = ({
   trackBtn,
   acceptBtn,
   declineBtn,
-  galleryAcceptBlocked,
-  gallerySubscriptionNotice,
-  onGallerySubscribeForOrders,
 }: OrderActionsProps) => {
   const { isTablet } = useDevice();
   const type = getOrderActionType({
@@ -79,29 +76,6 @@ const OrderActionsBase = ({
   }
 
   if (type === "action") {
-    // if (galleryAcceptBlocked) {
-    //   const notice =
-    //     gallerySubscriptionNotice?.trim() ||
-    //     "Your gallery subscription is inactive or has expired. Renew your plan to process this order.";
-    //   return (
-    //     <View style={tw`w-full gap-3`}>
-    //       <Text
-    //         style={tw`text-[13px] text-[#454545] leading-[19px]`}
-    //         accessibilityRole="text"
-    //       >
-    //         {notice}
-    //       </Text>
-    //       <FittedBlackButton
-    //         value="Renew to process order"
-    //         onClick={() => onGallerySubscribeForOrders?.()}
-    //         textStyle={tw`text-[13px] font-semibold`}
-    //         responsive
-    //         accessibilityLabel="Renew subscription to process this order"
-    //       />
-    //     </View>
-    //   );
-    // }
-
     return (
       <View style={tw`flex-row items-center gap-[30px]`}>
         <View style={tw`flex-1`}>

@@ -13,10 +13,10 @@ import FittedBlackButton from "#components/buttons/FittedBlackButton";
 type ReviewAction = "ACCEPT" | "DECLINE";
 
 type ReviewProposalCardProps = {
-  review: any;
-  isMutating?: boolean;
-  mutatingAction?: ReviewAction;
-  onResolve: (action: ReviewAction) => void;
+  readonly review: any;
+  readonly isMutating?: boolean;
+  readonly mutatingAction?: ReviewAction;
+  readonly onResolve: (action: ReviewAction) => void;
 };
 
 function labelFromJustificationType(value?: string) {
@@ -71,7 +71,7 @@ export default function ReviewProposalCard({
   isMutating,
   mutatingAction,
   onResolve,
-}: ReviewProposalCardProps) {
+}: Readonly<ReviewProposalCardProps>) {
   const isActionRequired = review?.status === "PENDING_ARTIST_ACTION";
   const [isExpanded, setIsExpanded] = useState(isActionRequired);
 

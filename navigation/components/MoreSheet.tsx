@@ -24,16 +24,29 @@ export type MoreSheetItem = {
 };
 
 type MoreSheetProps = {
-  visible: boolean;
-  menuItems: MoreSheetItem[];
-  onClose: () => void;
+  readonly visible: boolean;
+  readonly menuItems: readonly MoreSheetItem[];
+  readonly onClose: () => void;
 };
+
+function MoreSheetItemIcon({ item }: Readonly<{ item: MoreSheetItem }>) {
+  switch (true) {
+    case Boolean(item.expoIconName):
+      return <Ionicons name={item.expoIconName!} size={17} color="white" />;
+    case Boolean(item.icon):
+      return <SvgXml xml={item.icon!} width={17} height={17} />;
+    case Boolean(item.isDanger):
+      return <Ionicons name="log-out-outline" size={17} color="#EF4444" />;
+    default:
+      return null;
+  }
+}
 
 export default function MoreSheet({
   visible,
   menuItems,
   onClose,
-}: MoreSheetProps) {
+}: Readonly<MoreSheetProps>) {
   const { bottom } = useSafeAreaInsets();
   const items = useMemo(() => menuItems, [menuItems]);
 
@@ -87,13 +100,7 @@ export default function MoreSheet({
                     onPress={() => onPressItem(item)}
                   >
                     <View style={tw`w-5 h-5 items-center justify-center`}>
-                      {item.expoIconName ? (
-                        <Ionicons name={item.expoIconName} size={17} color="white" />
-                      ) : item.icon ? (
-                        <SvgXml xml={item.icon} width={17} height={17} />
-                      ) : item.isDanger ? (
-                        <Ionicons name="log-out-outline" size={17} color="#EF4444" />
-                      ) : null}
+                      <MoreSheetItemIcon item={item} />
                     </View>
                     <Text
                       style={[

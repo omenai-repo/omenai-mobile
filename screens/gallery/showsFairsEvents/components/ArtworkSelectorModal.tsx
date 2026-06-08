@@ -29,12 +29,11 @@ type ArtworkSelectionPayload = {
 };
 
 type ArtworkSelectorModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  galleryId: string;
-  validatedPayload: any;
-  onFinalSubmit: (payload: ArtworkSelectionPayload) => Promise<void> | void;
-  alreadyFeaturedIds: string[];
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly galleryId: string;
+  readonly onFinalSubmit: (payload: ArtworkSelectionPayload) => Promise<void> | void;
+  readonly alreadyFeaturedIds: readonly string[];
 };
 
 const resolveArtworkImage = (image?: string, width = 900) => {
@@ -51,7 +50,7 @@ export default function ArtworkSelectorModal({
   galleryId,
   onFinalSubmit,
   alreadyFeaturedIds,
-}: ArtworkSelectorModalProps) {
+}: Readonly<ArtworkSelectorModalProps>) {
   const insets = useSafeAreaInsets();
   const { updateModal } = useModalStore();
   const [inventoryResults, setInventoryResults] = useState<ArtworkSchemaTypes[]>(
