@@ -24,11 +24,11 @@ function ShowsFilterTabs({
   active,
   onChange,
   compact,
-}: {
+}: Readonly<{
   active: FilterType;
   onChange: (f: FilterType) => void;
   compact?: boolean;
-}) {
+}>) {
   return (
     <View style={[tw`border-b border-neutral-100 pt-7`, compact ? tw`mb-4` : tw`mb-10`]}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`gap-8 flex-row`}>
@@ -50,7 +50,11 @@ function ShowsFilterTabs({
   );
 }
 
-type Props = { galleryId: string; isActive: boolean; galleryName: string };
+type Props = {
+  readonly galleryId: string;
+  readonly isActive: boolean;
+  readonly galleryName: string;
+};
 
 function formatHeadlinerDates(start: string, end: string) {
   const a = new Date(start).toLocaleDateString("en-US", { month: "long", day: "numeric" });
@@ -73,12 +77,12 @@ function formatGridDates(start: string, end: string) {
 }
 
 type GridCardProps = {
-  show: GalleryEventRecord;
-  width: number;
-  onPress: () => void;
+  readonly show: GalleryEventRecord;
+  readonly width: number;
+  readonly onPress: () => void;
 };
 
-function GalleryShowGridCard({ show, width, onPress }: GridCardProps) {
+function GalleryShowGridCard({ show, width, onPress }: Readonly<GridCardProps>) {
   const status = getEventStatus(show.start_date, show.end_date);
   const isClosed = status === "Past";
   return (
@@ -120,12 +124,12 @@ function GalleryShowGridCard({ show, width, onPress }: GridCardProps) {
 }
 
 type HeadlinerProps = {
-  show: GalleryEventRecord;
-  onPress: () => void;
-  activeFilter: FilterType;
+  readonly show: GalleryEventRecord;
+  readonly onPress: () => void;
+  readonly activeFilter: FilterType;
 };
 
-function GalleryShowHeadliner({ show, onPress, activeFilter }: HeadlinerProps) {
+function GalleryShowHeadliner({ show, onPress, activeFilter }: Readonly<HeadlinerProps>) {
   const status = getEventStatus(show.start_date, show.end_date);
   const isActive = status === "Active";
   const isClosed = status === "Past";
@@ -183,9 +187,9 @@ function GalleryShowHeadliner({ show, onPress, activeFilter }: HeadlinerProps) {
             <Text style={tw`font-sans text-sm text-neutral-500`}>
               {formatHeadlinerDates(show.start_date, show.end_date)}
             </Text>
-            {locationLine != null ? (
+            {locationLine === null ? null : (
               <Text style={tw`font-sans text-sm text-neutral-800`}>{locationLine}</Text>
-            ) : null}
+            )}
           </View>
         </View>
       </View>
@@ -193,14 +197,14 @@ function GalleryShowHeadliner({ show, onPress, activeFilter }: HeadlinerProps) {
   );
 }
 
-export default function GalleryShowsTabContent({ galleryId, isActive, galleryName }: Props) {
+export default function GalleryShowsTabContent({ galleryId, isActive, galleryName }: Readonly<Props>) {
   const navigation = useNavigation<any>();
   const { width: screenW } = useWindowDimensions();
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: EVENTS_QK.galleryShowsTab(galleryId),
-    queryFn: async ({ pageParam = 1 }) => fetchGalleryShowsPage(galleryId, pageParam as number, 12),
+    queryFn: async ({ pageParam = 1 }) => fetchGalleryShowsPage(galleryId, pageParam, 12),
     initialPageParam: 1,
     getNextPageParam: (last) => {
       const p = last?.pagination;
@@ -328,14 +332,14 @@ export default function GalleryShowsTabContent({ galleryId, isActive, galleryNam
       <ShowsFilterTabs active={activeFilter} onChange={setActiveFilter} />
 
       <View style={tw`gap-20`}>
-        {headliner != null ? (
+        {headliner === null ? null : (
           <GalleryShowHeadliner
             key={`headliner-${headliner.event_id}-${activeFilter}`}
             show={headliner}
             activeFilter={activeFilter}
             onPress={() => onEvent(headliner)}
           />
-        ) : null}
+        )}
 
         {gridEvents.length > 0 ? (
           <View style={tw`gap-y-16`}>

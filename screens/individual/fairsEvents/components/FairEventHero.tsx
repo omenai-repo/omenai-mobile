@@ -5,7 +5,7 @@ import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
 import type { GalleryEventRecord } from "#services/events/events.service";
 
 type Props = {
-  event: GalleryEventRecord;
+  readonly event: GalleryEventRecord;
 };
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -16,7 +16,7 @@ const resolveProgramImageUri = (imageId?: string) =>
       : getPromotionalFileView(imageId, 1400)
     : "";
 
-export default function FairEventHero({ event }: Props) {
+export default function FairEventHero({ event }: Readonly<Props>) {
   const images = useMemo(
     () =>
       Array.isArray(event.installation_views) && event.installation_views.length > 0
@@ -47,7 +47,7 @@ export default function FairEventHero({ event }: Props) {
     return () => clearInterval(timer);
   }, [heroWidth, images.length, isMulti]);
 
-  const eventLabel = event.event_type.replaceAll(/_/g, " ").toUpperCase();
+  const eventLabel = event.event_type.replaceAll("_", " ").toUpperCase();
 
   return (
     <View style={tw`overflow-hidden bg-[#111]`}>

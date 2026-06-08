@@ -27,7 +27,7 @@ export async function fetchGalleryProfile(galleryId: string) {
       { method: "GET" },
     );
     const result = (await res.json()) as { data?: GalleryProfile };
-    return { isOk: res.ok, data: result.data as GalleryProfile | undefined };
+    return { isOk: res.ok, data: result.data };
   } catch {
     return { isOk: false, data: undefined as GalleryProfile | undefined };
   }
@@ -131,7 +131,7 @@ export async function fetchGalleryContact(galleryId: string) {
       { method: "GET" },
     );
     const result = (await res.json()) as { data?: GalleryContactData };
-    return { isOk: res.ok, data: result.data as GalleryContactData | undefined };
+    return { isOk: res.ok, data: result.data };
   } catch {
     return { isOk: false, data: undefined as GalleryContactData | undefined };
   }

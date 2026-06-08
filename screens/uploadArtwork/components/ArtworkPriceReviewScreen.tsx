@@ -26,7 +26,7 @@ export default function ArtworkPriceReviewScreen({
 }>) {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const { updateModal } = useModalStore();
   const {
     setActiveIndex,
@@ -278,7 +278,7 @@ export default function ArtworkPriceReviewScreen({
 
       <PriceDisputeTriggerCard
         onPress={() =>
-          navigation.navigate(screenName.artist.proposalPrice as never)
+          navigation.navigate(screenName.artist.proposalPrice)
         }
       />
 

@@ -40,7 +40,7 @@ export async function loginAccount(
     return {
       isOk: response.ok,
       status: response.status,
-      body: result as LoginApiJsonBody,
+      body: result,
     };
   } catch (error: any) {
     const rawMessage = error?.message || "";

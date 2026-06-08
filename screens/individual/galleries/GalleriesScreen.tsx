@@ -44,13 +44,13 @@ function ListHeader() {
 }
 
 type CardProps = {
-  item: GalleryListRecord;
-  cardWidth: number;
-  onOpenDetails: () => void;
-  isFollowing: boolean;
-  onToggleFollow: () => void;
-  followDisabled: boolean;
-  locationText: string;
+  readonly item: GalleryListRecord;
+  readonly cardWidth: number;
+  readonly onOpenDetails: () => void;
+  readonly isFollowing: boolean;
+  readonly onToggleFollow: () => void;
+  readonly followDisabled: boolean;
+  readonly locationText: string;
 };
 
 function GalleryDirectoryCard({
@@ -61,7 +61,7 @@ function GalleryDirectoryCard({
   onToggleFollow,
   followDisabled,
   locationText,
-}: CardProps) {
+}: Readonly<CardProps>) {
   return (
     <View style={[{ width: cardWidth }]}>
       <Pressable onPress={onOpenDetails} style={({ pressed }) => [pressed && tw`opacity-90`]}>

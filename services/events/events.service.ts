@@ -131,7 +131,7 @@ export async function getAllEvents(page = 1, limit = 20, filter = "all") {
         limit,
         totalItems: 0,
         totalPages: 1,
-      } as EventsPagination,
+      },
       message:
         error?.message ||
         error?.response?.data?.message ||

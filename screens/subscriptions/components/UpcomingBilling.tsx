@@ -30,7 +30,7 @@ export default function UpcomingBilling({
   plan_details,
   next_charge_params,
   sub_status,
-}: UpcomingBillingProps) {
+}: Readonly<UpcomingBillingProps>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const currency_symbol = utils_getCurrencySymbol(payment.currency);
 

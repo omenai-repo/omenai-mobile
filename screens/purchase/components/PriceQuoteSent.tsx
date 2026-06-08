@@ -118,7 +118,7 @@ export default function PriceQuoteSent({
             icon={item.icon}
             title={item.title}
             description={item.description}
-            isLast={item === TIMELINE_STEPS[TIMELINE_STEPS.length - 1]}
+            isLast={item === TIMELINE_STEPS.at(-1)}
           />
         ))}
       </View>

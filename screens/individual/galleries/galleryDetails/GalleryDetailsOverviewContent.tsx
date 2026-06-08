@@ -36,13 +36,13 @@ function openEvent(
 }
 
 type OverviewHighlightProps = {
-  event: GalleryOverviewEvent;
-  status: HeadlinerStatus;
-  description: string;
-  onPressEvent: (e: GalleryOverviewEvent) => void;
+  readonly event: GalleryOverviewEvent;
+  readonly status: HeadlinerStatus;
+  readonly description: string;
+  readonly onPressEvent: (e: GalleryOverviewEvent) => void;
 };
 
-function OverviewHighlightWithEvents({ event, status, description, onPressEvent }: OverviewHighlightProps) {
+function OverviewHighlightWithEvents({ event, status, description, onPressEvent }: Readonly<OverviewHighlightProps>) {
   return (
     <View style={tw`border-b border-neutral-100`}>
       <View style={tw`py-12`}>
@@ -62,7 +62,7 @@ function OverviewHighlightWithEvents({ event, status, description, onPressEvent 
         </Pressable>
         <Pressable onPress={() => onPressEvent(event)} style={({ pressed }) => [pressed && tw`opacity-80`]}>
           <Text style={tw`mt-6 text-xs text-neutral-500 uppercase tracking-widest`}>
-            {String(event.event_type ?? "event").replaceAll(/_/g, " ")}
+            {String(event.event_type ?? "event").replaceAll("_", " ")}
           </Text>
           <Text style={tw`mt-2 font-serif text-3xl text-neutral-900 leading-tight`}>
             {event.title}
@@ -91,7 +91,7 @@ function OverviewHighlightWithEvents({ event, status, description, onPressEvent 
   );
 }
 
-function OverviewBioOnly({ description }: { description: string }) {
+function OverviewBioOnly({ description }: Readonly<{ description: string }>) {
   return (
     <View style={tw`border-b border-neutral-100`}>
       <View style={tw`py-12 items-center`}>
@@ -113,13 +113,13 @@ function OverviewBioOnly({ description }: { description: string }) {
 }
 
 type HistoryRailProps = {
-  events: GalleryOverviewEvent[];
-  cardWidth: number;
-  onOpenEvent: (e: GalleryOverviewEvent) => void;
-  onViewAll: () => void;
+  readonly events: readonly GalleryOverviewEvent[];
+  readonly cardWidth: number;
+  readonly onOpenEvent: (e: GalleryOverviewEvent) => void;
+  readonly onViewAll: () => void;
 };
 
-function HistoryRail({ events, cardWidth, onOpenEvent, onViewAll }: HistoryRailProps) {
+function HistoryRail({ events, cardWidth, onOpenEvent, onViewAll }: Readonly<HistoryRailProps>) {
   if (events.length === 0) return null;
   return (
     <View style={tw`border-b border-neutral-100 py-10`}>
@@ -178,13 +178,13 @@ function HistoryRail({ events, cardWidth, onOpenEvent, onViewAll }: HistoryRailP
 }
 
 export type RosterBlockProps = {
-  title: string;
-  artists: GalleryOverviewArtist[];
-  onArtistPress: (artist: GalleryOverviewArtist) => void;
-  contentWidth: number;
+  readonly title: string;
+  readonly artists: readonly GalleryOverviewArtist[];
+  readonly onArtistPress: (artist: GalleryOverviewArtist) => void;
+  readonly contentWidth: number;
 };
 
-export function RosterBlock({ title, artists, onArtistPress, contentWidth }: RosterBlockProps) {
+export function RosterBlock({ title, artists, onArtistPress, contentWidth }: Readonly<RosterBlockProps>) {
   if (artists.length === 0) return null;
   const gap = 8;
   const colW = (contentWidth - gap) / 2;
@@ -216,14 +216,14 @@ export function RosterBlock({ title, artists, onArtistPress, contentWidth }: Ros
 }
 
 type OverviewProps = {
-  data: GalleryOverviewData;
-  contentWidth: number;
-  railCardWidth: number;
-  navigation: NavigationProp<any>;
-  onArtistPress: (artist: GalleryOverviewArtist) => void;
-  onViewAllShows: () => void;
-  isRefetching: boolean;
-  onRefresh: () => void;
+  readonly data: GalleryOverviewData;
+  readonly contentWidth: number;
+  readonly railCardWidth: number;
+  readonly navigation: NavigationProp<any>;
+  readonly onArtistPress: (artist: GalleryOverviewArtist) => void;
+  readonly onViewAllShows: () => void;
+  readonly isRefetching: boolean;
+  readonly onRefresh: () => void;
 };
 
 export default function GalleryDetailsOverviewContent({
@@ -235,7 +235,7 @@ export default function GalleryDetailsOverviewContent({
   onViewAllShows,
   isRefetching,
   onRefresh,
-}: OverviewProps) {
+}: Readonly<OverviewProps>) {
   const { highlightEvent, historyEvents, status } = useMemo(
     () => computeGalleryHeadliner(data?.events),
     [data?.events],

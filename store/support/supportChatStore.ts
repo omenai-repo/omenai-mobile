@@ -44,7 +44,7 @@ const updateSessionList = (
   return sessions.map((s: ChatSession) => {
     if (s.id === sessionId) {
       const capped = capMessages(messages);
-      const lastMsg = capped[capped.length - 1];
+      const lastMsg = capped.at(-1);
       return {
         ...s,
         messages: capped,

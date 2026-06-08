@@ -473,7 +473,7 @@ const AddPrimaryAcctScreen = () => {
     }
   };
 
-  const buildAccountDetails = (): any | null => {
+  const buildAccountDetails = (): any => {
     switch (regionType) {
       case "africa":
         return {

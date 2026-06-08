@@ -186,7 +186,7 @@ function ProposalPriceModalImpl() {
   ).length;
 
   const allTermsAccepted = agreementCount === 3;
-  const proposedNumber = Number.parseFloat(proposalPrice.replaceAll(/,/g, ""));
+  const proposedNumber = Number.parseFloat(proposalPrice.replaceAll(",", ""));
   const artistCategory = (userSession?.categorization || "").toLowerCase();
   const categoryVariances: Record<string, number> = {
     emerging: 0.1,
@@ -299,7 +299,7 @@ function ProposalPriceModalImpl() {
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
-    const nextPrice = Number.parseFloat(proposalPrice.replaceAll(/,/g, ""));
+    const nextPrice = Number.parseFloat(proposalPrice.replaceAll(",", ""));
     const artworkImageAsset = image?.assets?.[0];
 
     const validationError = getSubmissionValidationError({

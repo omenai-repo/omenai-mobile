@@ -30,7 +30,7 @@ export default function FlutterwaveCheckoutButton({
   meta,
   disabled,
   onRedirect,
-}: FlutterwaveCheckoutButtonProps) {
+}: Readonly<FlutterwaveCheckoutButtonProps>) {
   if (!authorization) {
     return <FlutterwavePayButton onPress={() => {}} disabled />;
   }

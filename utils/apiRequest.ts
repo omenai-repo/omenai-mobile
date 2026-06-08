@@ -16,13 +16,9 @@ class ApiForbiddenError extends Error {
 
 function messageFrom403Body(data: unknown): string {
   if (typeof data === "string") return data;
-  if (
-    data &&
-    typeof data === "object" &&
-    "message" in data &&
-    typeof (data as { message: unknown }).message === "string"
-  ) {
-    return (data as { message: string }).message;
+  if (data && typeof data === "object" && "message" in data) {
+    const msg = (data as Record<string, unknown>).message;
+    if (typeof msg === "string") return msg;
   }
   return "Forbidden";
 }

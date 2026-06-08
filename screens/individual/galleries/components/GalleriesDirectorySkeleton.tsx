@@ -6,14 +6,14 @@ const ROWS = 4;
 const COLS = 2;
 
 type Props = {
-  horizontalPad?: number;
-  cardGap?: number;
+  readonly horizontalPad?: number;
+  readonly cardGap?: number;
 };
 
 export default function GalleriesDirectorySkeleton({
   horizontalPad = 20,
   cardGap = 12,
-}: Props) {
+}: Readonly<Props>) {
   const { width: screenW } = Dimensions.get("window");
   const cardW = useMemo(
     () => (screenW - horizontalPad * 2 - cardGap) / 2,

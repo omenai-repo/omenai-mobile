@@ -57,28 +57,28 @@ export default function ArtworksImmersiveModal<T extends ArtworksImmersiveItem>(
   }, [visible]);
 
   const renderItem = useCallback(
-    ({ item }: { item: T }) => (
+    (info: { readonly item: T }) => (
       <Pressable
-        onPress={() => onItemPress(item)}
+        onPress={() => onItemPress(info.item)}
         style={[tw`justify-center items-center px-8`, { width: screenWidth, height: screenHeight }]}
       >
         <Image
-          source={{ uri: getImageFileView(item.url, 1400) }}
+          source={{ uri: getImageFileView(info.item.url, 1400) }}
           style={tw`w-full h-[70%]`}
           contentFit="contain"
         />
         <View style={[tw`absolute left-8`, { bottom: Math.max(insets.bottom + 16, 48) }]}>
-          <Text style={tw`text-xs uppercase tracking-widest text-neutral-600`}>{item.artist}</Text>
+          <Text style={tw`text-xs uppercase tracking-widest text-neutral-600`}>{info.item.artist}</Text>
           <Text style={tw`font-serif-italic text-2xl text-black mt-1`}>
-            {item.title}
-            {item.year != null && String(item.year).trim() !== "" ? `, ${item.year}` : ""}
+            {info.item.title}
+            {info.item.year != null && String(info.item.year).trim() !== "" ? `, ${info.item.year}` : ""}
           </Text>
-          {!!item.medium && (
+          {!!info.item.medium && (
             <Text style={tw`text-xs uppercase tracking-widest text-neutral-600 mt-1 font-sans-regular`}>
-              {item.medium}
+              {info.item.medium}
             </Text>
           )}
-          {renderMetaFooter?.(item)}
+          {renderMetaFooter?.(info.item)}
         </View>
       </Pressable>
     ),

@@ -75,10 +75,10 @@ export type GalleryArtistFilterOption = {
 };
 
 type WorksProps = {
-  galleryId: string;
-  isActive: boolean;
-  artistOptions?: GalleryArtistFilterOption[];
-  selectedArtistId?: string;
+  readonly galleryId: string;
+  readonly isActive: boolean;
+  readonly artistOptions?: readonly GalleryArtistFilterOption[];
+  readonly selectedArtistId?: string;
 };
 
 export default function GalleryWorksTabContent({
@@ -86,7 +86,7 @@ export default function GalleryWorksTabContent({
   isActive,
   artistOptions = [],
   selectedArtistId,
-}: WorksProps) {
+}: Readonly<WorksProps>) {
   const navigation = useNavigation<any>();
   const { width: screenW } = useWindowDimensions();
   const cardW = useMemo(() => (screenW - H_PAD * 2 - COL_GAP) / 2, [screenW]);
@@ -125,7 +125,7 @@ export default function GalleryWorksTabContent({
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: EVENTS_QK.galleryWorks(galleryId, filters),
     queryFn: async ({ pageParam = 1 }) =>
-      fetchGalleryWorksPage(galleryId, pageParam as number, {
+      fetchGalleryWorksPage(galleryId, pageParam, {
         artist: artistFilter,
         medium: mediumFilter,
         price: priceFilter,

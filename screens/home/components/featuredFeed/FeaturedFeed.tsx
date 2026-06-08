@@ -105,9 +105,9 @@ export default function FeaturedFeed() {
   const openPromotion = async (cta?: string) => {
     if (!cta) return;
     const path = parsePromotionPath(cta);
-    const rawEventId = path.match(/^\/events\/([^/?#]+)/)?.[1];
-    const rawShowId = path.match(/^\/shows\/([^/?#]+)/)?.[1];
-    const rawArtworkId = path.match(/^\/artwork\/([^/?#]+)/)?.[1];
+    const rawEventId = /^\/events\/([^/?#]+)/.exec(path)?.[1];
+    const rawShowId = /^\/shows\/([^/?#]+)/.exec(path)?.[1];
+    const rawArtworkId = /^\/artwork\/([^/?#]+)/.exec(path)?.[1];
 
     if (rawShowId) {
       navigation.navigate(screenName.individual.showDetails, { eventId: rawShowId });

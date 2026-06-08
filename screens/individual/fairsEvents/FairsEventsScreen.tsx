@@ -49,12 +49,12 @@ function navigateToEvent(navigation: { navigate: (n: string, p: { eventId: strin
 }
 
 type ActiveGridCardProps = {
-  item: GalleryEventRecord;
-  width: number;
-  onPress: () => void;
+  readonly item: GalleryEventRecord;
+  readonly width: number;
+  readonly onPress: () => void;
 };
 
-function FairsActiveGridCard({ item, width, onPress }: ActiveGridCardProps) {
+function FairsActiveGridCard({ item, width, onPress }: Readonly<ActiveGridCardProps>) {
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [{ width }, pressed && tw`opacity-95`]}>
       <View style={[{ width, aspectRatio: 3 / 2 }, tw`bg-neutral-100 overflow-hidden rounded-sm mb-4`]}>
@@ -79,9 +79,9 @@ function FairsActiveGridCard({ item, width, onPress }: ActiveGridCardProps) {
   );
 }
 
-type PastRowProps = { item: GalleryEventRecord; onPress: () => void };
+type PastRowProps = { readonly item: GalleryEventRecord; readonly onPress: () => void };
 
-function FairsPastRow({ item, onPress }: PastRowProps) {
+function FairsPastRow({ item, onPress }: Readonly<PastRowProps>) {
   return (
     <Pressable
       onPress={onPress}
@@ -115,9 +115,9 @@ function FairsPastRow({ item, onPress }: PastRowProps) {
   );
 }
 
-type UpcomingBlockProps = { item: GalleryEventRecord; onPress: () => void };
+type UpcomingBlockProps = { readonly item: GalleryEventRecord; readonly onPress: () => void };
 
-function FairsUpcomingBlock({ item, onPress }: UpcomingBlockProps) {
+function FairsUpcomingBlock({ item, onPress }: Readonly<UpcomingBlockProps>) {
   return (
     <View style={tw`py-5 border-b border-neutral-100`}>
       <Pressable onPress={onPress} style={({ pressed }) => [pressed && tw`opacity-80`]}>

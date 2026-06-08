@@ -40,9 +40,6 @@ export const utils_clearLocalStorage = async () => {
 export const utils_handleFetchUserID = async () => {
   const userdata = await utils_getAsyncData("userSession");
   if (userdata.value) {
-    const userId = JSON.parse(userdata.value).id;
-    return userId;
+    return JSON.parse(userdata.value).id;
   }
-
-  return;
 };
