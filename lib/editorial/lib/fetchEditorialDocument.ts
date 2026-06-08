@@ -25,12 +25,12 @@ export function editorialRowToArticle(
   row: Record<string, unknown>,
 ): EditorialSchemaTypes & { $id?: string } {
   return {
-    headline: String(row.headline ?? ""),
-    summary: String(row.summary ?? ""),
-    cover: String(row.cover ?? ""),
-    date: (row.date as string | Date | undefined) ?? String(row.$createdAt ?? ""),
-    content: String(row.content ?? ""),
-    slug: String(row.slug ?? ""),
+    headline: typeof row.headline === "string" ? row.headline : "",
+    summary: typeof row.summary === "string" ? row.summary : "",
+    cover: typeof row.cover === "string" ? row.cover : "",
+    date: (row.date as string | Date | undefined) ?? (typeof row.$createdAt === "string" ? row.$createdAt : ""),
+    content: typeof row.content === "string" ? row.content : "",
+    slug: typeof row.slug === "string" ? row.slug : "",
     ...(typeof row.$id === "string" ? { $id: row.$id } : {}),
   };
 }

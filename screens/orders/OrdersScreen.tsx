@@ -1,14 +1,8 @@
 import { Text, View, ScrollView, RefreshControl } from "react-native";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 
-import { screenName } from "#constants/screenNames.constants";
-import { useAppStore } from "#store/app/appStore";
-import {
-  getGalleryOrdersSubscriptionNotice,
-  useGallerySubscriptionActiveForOrders,
-} from "#hooks/useGallerySubscriptionActiveForOrders";
 import TabSwitcher from "#components/orders/TabSwitcher";
 import OrderslistingLoader from "#screens/galleryOrders/components/OrderslistingLoader";
 import EmptyOrdersListing from "#screens/galleryOrders/components/EmptyOrdersListing";
@@ -33,41 +27,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
   const navigation = useNavigation<any>();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
-  const galleryId = useAppStore((s) => s.userSession?.id) as string | undefined;
 
-  const gallerySub = useGallerySubscriptionActiveForOrders({
-    galleryId,
-    enabled: userType === "gallery",
-  });
-
-  // console.log("gallerySub", JSON.stringify(gallerySub, null, 2));
-
-  const galleryAcceptBlocked =
-    userType === "gallery" &&
-    (gallerySub.isLoading || gallerySub.isError || !gallerySub.isActive);
-
-  const gallerySubscriptionNotice = useMemo(
-    () =>
-      userType === "gallery"
-        ? getGalleryOrdersSubscriptionNotice({
-            isLoading: gallerySub.isLoading,
-            isError: gallerySub.isError,
-            isActive: gallerySub.isActive,
-            subscriptionData: gallerySub.subscriptionData,
-          })
-        : "",
-    [
-      userType,
-      gallerySub.isLoading,
-      gallerySub.isError,
-      gallerySub.isActive,
-      gallerySub.subscriptionData,
-    ],
-  );
-
-  const onGallerySubscribeForOrders = useCallback(() => {
-    navigation.navigate(screenName.gallery.billing, { plan_action: null });
-  }, [navigation]);
 
   const [declineModal, setDeclineModal] = useState(false);
   const [orderId, setOrderId] = useState("");
@@ -190,9 +150,6 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
                 item?.artwork_data?.exclusivity_status?.exclusivity_type ||
                 "non-exclusive",
             })}
-            galleryAcceptBlocked={galleryAcceptBlocked}
-            gallerySubscriptionNotice={gallerySubscriptionNotice}
-            onGallerySubscribeForOrders={onGallerySubscribeForOrders}
           />
         )}
       </>

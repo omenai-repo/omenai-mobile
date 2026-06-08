@@ -38,10 +38,10 @@ import WithModal from "#components/modal/WithModal";
 import GuestLoginModal from "#components/guest/GuestLoginModal";
 import { DEEP_LINK_REDIRECT_ORIGIN } from "#constants/deepLink.constants";
 import {
-  flushPendingDeepLinks,
   resolveDeepLinkUrl,
   useDeepLinkFlush,
 } from "#features/deeplink/deepLink";
+import { flushPendingDeepLinks } from "#features/deeplink/deepLinkApply";
 
 // Set default font for all Text and TextInput components
 // @ts-ignore

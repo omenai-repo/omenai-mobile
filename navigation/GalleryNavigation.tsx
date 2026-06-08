@@ -145,18 +145,18 @@ type accountStateType = {
   gallery_verified: boolean;
 };
 
-const allGalleryTabRouteNames = [...galleryTabs, ...galleryMoreTabs].map(
-  ({ name }) => name,
+const allGalleryTabRouteNames = new Set(
+  [...galleryTabs, ...galleryMoreTabs].map(({ name }) => name),
 );
 
-const moreMenuKeys = [
+const moreMenuKeys = new Set([
   "shows-fairs-events",
   "artist-roster",
   "payouts",
   "support-tickets",
   "profile-management",
   "logout",
-];
+]);
 
 function buildMoreSheetItems(
   navigateToScreen: (routeName: string) => void,
@@ -259,7 +259,7 @@ function GalleryTabs() {
 
   const navigateToScreen = useCallback((routeName: string) => {
     if (!tabNavigationRef.current) return;
-    if (allGalleryTabRouteNames.includes(routeName)) {
+    if (allGalleryTabRouteNames.has(routeName)) {
       tabNavigationRef.current.navigate(routeName);
       return;
     }
@@ -272,7 +272,7 @@ function GalleryTabs() {
   );
 
   const moreMenuItems = useMemo(
-    () => moreSheetItems.filter((item) => moreMenuKeys.includes(item.key)),
+    () => moreSheetItems.filter((item) => moreMenuKeys.has(item.key)),
     [moreSheetItems],
   );
 

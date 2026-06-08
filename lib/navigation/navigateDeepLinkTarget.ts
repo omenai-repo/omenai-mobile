@@ -60,7 +60,7 @@ export function resetToDeepLinkStack(
       index: 1,
       routes: [
         baseTabRoute(wrapper),
-        params !== undefined ? { name: screen, params } : { name: screen },
+        params === undefined ? { name: screen } : { name: screen, params },
       ],
     }),
   );

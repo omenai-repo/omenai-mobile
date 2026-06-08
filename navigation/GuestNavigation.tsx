@@ -27,6 +27,7 @@ const GuestTabBar = (props: any) => (
 );
 
 const GuestTabNavigationScreens = () => {
+  const routes = getBottomTabDataGuest();
   return (
     <Tab.Navigator
       tabBar={GuestTabBar}
@@ -34,11 +35,11 @@ const GuestTabNavigationScreens = () => {
         headerShown: false,
       }}
     >
-      {getBottomTabDataGuest().map(({ name, component, id }: { name: string; component: any; id: number }) => (
+      {routes.map((tab) => (
         <Tab.Screen
-          key={id}
-          name={name}
-          component={component}
+          key={tab.id}
+          name={tab.name}
+          component={tab.component}
           options={{
             tabBarShowLabel: false,
           }}

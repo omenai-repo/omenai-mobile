@@ -106,7 +106,7 @@ export function useMobileSupportDefaulter(): SupportDefault {
     for (const config of ROUTE_CONFIG) {
       if (config.keywords.some((keyword) => name.includes(keyword))) {
         return {
-          category: config.category as SupportCategory,
+          category: config.category,
           referenceId: "getRef" in config ? config.getRef(routeParams) : "",
         };
       }

@@ -48,21 +48,23 @@ export async function loginAccount(
       typeof rawMessage === "string" &&
       rawMessage.toLowerCase().includes("unable to resolve data for blob");
 
+    let errorMessage: string;
+    if (isBlobResolutionError) {
+      errorMessage = "An error occurred. Please restart the app and try logging in again.";
+    } else if (typeof error?.message === "string") {
+      errorMessage = error.message;
+    } else {
+      errorMessage =
+        error?.body?.message ||
+        error?.response?.data?.message ||
+        "Unable to reach the server. Check your connection and try again.";
+    }
+
     return {
       isOk: false,
       status: error?.status,
       error,
-      body: {
-        message:
-          (isBlobResolutionError
-            ? "A temporary device data error occurred. Please restart the app and try logging in again."
-            : typeof error?.message === "string"
-              ? error.message
-              : undefined) ||
-          error?.body?.message ||
-          error?.response?.data?.message ||
-          "Unable to reach the server. Check your connection and try again.",
-      },
+      body: { message: errorMessage },
     };
   }
 }

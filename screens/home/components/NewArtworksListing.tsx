@@ -15,9 +15,9 @@ import { useAppStore } from "#store/app/appStore";
 
 export default function NewArtworksListing({
   hideAction,
-}: {
+}: Readonly<{
   hideAction?: boolean;
-}) {
+}>) {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
   const limit = 20;

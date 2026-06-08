@@ -11,7 +11,7 @@ import { OrderActions } from "#components/orders/OrderActions";
 import { DetailRow } from "./DetailRow";
 import type { OrderContainerProps } from "#types/orders";
 
-function OrderContainerInner(props: OrderContainerProps) {
+function OrderContainerInner(props: Readonly<OrderContainerProps>) {
   const {
     id,
     open,
@@ -152,9 +152,6 @@ function OrderContainerInner(props: OrderContainerProps) {
             trackBtn={trackBtn}
             acceptBtn={props.acceptBtn}
             declineBtn={props.declineBtn}
-            galleryAcceptBlocked={props.galleryAcceptBlocked}
-            gallerySubscriptionNotice={props.gallerySubscriptionNotice}
-            onGallerySubscribeForOrders={props.onGallerySubscribeForOrders}
           />
         </View>
       </Animated.View>

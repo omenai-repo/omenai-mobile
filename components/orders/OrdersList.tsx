@@ -16,9 +16,7 @@ interface OrdersListProps {
   onDecline?: (item: any) => void;
   onTrack: (item: any) => void;
   renderExclusivityType?: (item: any) => string;
-  galleryAcceptBlocked?: boolean;
-  gallerySubscriptionNotice?: string;
-  onGallerySubscribeForOrders?: () => void;
+
 }
 
 export const OrdersList: React.FC<OrdersListProps> = ({
@@ -32,9 +30,7 @@ export const OrdersList: React.FC<OrdersListProps> = ({
   onDecline,
   onTrack,
   renderExclusivityType,
-  galleryAcceptBlocked,
-  gallerySubscriptionNotice,
-  onGallerySubscribeForOrders,
+
 }) => {
   return (
     <FlatList
@@ -92,9 +88,6 @@ export const OrdersList: React.FC<OrdersListProps> = ({
           {...(renderExclusivityType && {
             exclusivity_type: renderExclusivityType(item),
           })}
-          galleryAcceptBlocked={galleryAcceptBlocked}
-          gallerySubscriptionNotice={gallerySubscriptionNotice}
-          onGallerySubscribeForOrders={onGallerySubscribeForOrders}
         />
       )}
     />

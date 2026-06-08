@@ -7,10 +7,10 @@ import { colors } from "#config/colors.config";
 import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
 
 type AddArtistSuccessViewProps = {
-  displayName: string;
-  successLogo: string | null;
-  onDone: () => void;
-  isDoneLoading?: boolean;
+  readonly displayName: string;
+  readonly successLogo: string | null;
+  readonly onDone: () => void;
+  readonly isDoneLoading?: boolean;
 };
 
 export function AddArtistSuccessView({
@@ -18,7 +18,7 @@ export function AddArtistSuccessView({
   successLogo,
   onDone,
   isDoneLoading = false,
-}: AddArtistSuccessViewProps) {
+}: Readonly<AddArtistSuccessViewProps>) {
   return (
     <ScrollView
       contentContainerStyle={tw`px-5 pt-10 pb-10 items-center`}

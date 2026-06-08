@@ -6,20 +6,20 @@ import { QuestionKey, questions } from "./ArtistOnboarding";
 import * as DocumentPicker from "expo-document-picker";
 
 interface CredentialsOverviewProps {
-  onboardingQuestions: Record<string, string>;
-  documentationSocials: Record<string, string>;
-  documentationCv: string;
-  cvAssets?: DocumentPicker.DocumentPickerAsset[];
-  openSections: Record<string, boolean>;
-  toggleSection: (key: string) => void;
-  openEditModal: (
+  readonly onboardingQuestions: Record<string, string>;
+  readonly documentationSocials: Record<string, string>;
+  readonly documentationCv: string;
+  readonly cvAssets?: readonly DocumentPicker.DocumentPickerAsset[];
+  readonly openSections: Record<string, boolean>;
+  readonly toggleSection: (key: string) => void;
+  readonly openEditModal: (
     key: QuestionKey | "cv" | "social",
     socialKey?: string,
   ) => void;
-  width: number;
+  readonly width: number;
 }
 
-const CredentialsOverview: React.FC<CredentialsOverviewProps> = ({
+const CredentialsOverview: React.FC<Readonly<CredentialsOverviewProps>> = ({
   onboardingQuestions,
   documentationSocials,
   documentationCv,

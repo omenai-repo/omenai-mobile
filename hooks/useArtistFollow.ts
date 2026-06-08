@@ -22,8 +22,8 @@ export function useArtistFollow() {
   );
 
   const isFollowingFor = useCallback(
-    (artistId: string) => {
-      if (Object.prototype.hasOwnProperty.call(followOverride, artistId)) {
+      (artistId: string) => {
+      if (Object.hasOwn(followOverride, artistId)) {
         return followOverride[artistId]!;
       }
       return followedIds.includes(artistId);

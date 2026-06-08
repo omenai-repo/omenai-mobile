@@ -59,7 +59,7 @@ const EditArtworkModal = forwardRef<BottomSheetModal, EditArtworkModalProps>(
       try {
         const filter: Record<string, any> = {};
         if (hasSoldChanges) {
-          filter.availability = markAsSold ? false : true;
+          filter.availability = !markAsSold;
         }
         if (hasDescriptionChanges && trimmedDescription !== "") {
           filter.artwork_description = trimmedDescription;

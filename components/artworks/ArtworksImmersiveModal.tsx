@@ -17,12 +17,12 @@ export type ArtworksImmersiveItem = {
 };
 
 type Props<T extends ArtworksImmersiveItem> = {
-  visible: boolean;
-  onClose: () => void;
-  items: T[];
-  getHeaderText: (currentIndex: number, total: number) => string;
-  onItemPress: (item: T) => void;
-  renderMetaFooter?: (item: T) => React.ReactNode;
+  readonly visible: boolean;
+  readonly onClose: () => void;
+  readonly items: T[];
+  readonly getHeaderText: (currentIndex: number, total: number) => string;
+  readonly onItemPress: (item: T) => void;
+  readonly renderMetaFooter?: (item: T) => React.ReactNode;
 };
 
 export default function ArtworksImmersiveModal<T extends ArtworksImmersiveItem>({
@@ -32,7 +32,7 @@ export default function ArtworksImmersiveModal<T extends ArtworksImmersiveItem>(
   getHeaderText,
   onItemPress,
   renderMetaFooter,
-}: Props<T>) {
+}: Readonly<Props<T>>) {
   const insets = useSafeAreaInsets();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const listRef = useRef<FlatList<T>>(null);

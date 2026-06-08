@@ -10,17 +10,17 @@ import { formFieldLabelStyle, formTextInputStyle } from "./addArtistFormStyles";
 type CountryOption = { label: string; value: string };
 
 type AddArtistTombstoneFieldsProps = {
-  show: boolean;
-  artistId: string;
-  profileCityOrLocation: string;
-  onProfileCityOrLocationChange: (v: string) => void;
-  birthyear: string;
-  onBirthyearChange: (t: string) => void;
-  onBirthyearFocus: () => void;
-  birthYearError?: string | null;
-  country_of_origin: string;
-  countryOptions: CountryOption[];
-  onCountryChange: (value: string) => void;
+  readonly show: boolean;
+  readonly artistId: string;
+  readonly profileCityOrLocation: string;
+  readonly onProfileCityOrLocationChange: (v: string) => void;
+  readonly birthyear: string;
+  readonly onBirthyearChange: (t: string) => void;
+  readonly onBirthyearFocus: () => void;
+  readonly birthYearError?: string | null;
+  readonly country_of_origin: string;
+  readonly countryOptions: readonly CountryOption[];
+  readonly onCountryChange: (value: string) => void;
 };
 
 export function AddArtistTombstoneFields({
@@ -35,7 +35,7 @@ export function AddArtistTombstoneFields({
   country_of_origin,
   countryOptions,
   onCountryChange,
-}: AddArtistTombstoneFieldsProps) {
+}: Readonly<AddArtistTombstoneFieldsProps>) {
   if (!show) return null;
 
   return (
@@ -73,7 +73,7 @@ export function AddArtistTombstoneFields({
             label="Country"
             placeholder="Select country"
             value={country_of_origin}
-            data={countryOptions}
+            data={[...countryOptions]}
             search
             searchPlaceholder="Search countries"
             handleSetValue={(item) => onCountryChange(item.value)}

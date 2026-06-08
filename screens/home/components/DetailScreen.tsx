@@ -13,7 +13,6 @@ import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { getFeaturedArtistData } from "#services/overview/fetchFeaturedArtistData";
 import { getFeaturedGalleryData } from "#services/overview/fetchFeaturedGalleryData";
-import { getImageFileView } from "#lib/storage/getImageFileView";
 import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
 import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
 import EmptyArtworks from "#components/general/EmptyArtworks";

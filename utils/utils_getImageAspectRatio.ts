@@ -53,12 +53,17 @@ export function getRatioString(
       }
     }
   }
-  const orientation =
-    bestNumerator > bestDenominator
-      ? "landscape"
-      : bestNumerator === bestDenominator
-      ? "square"
-      : "portrait";
+  let orientation: "landscape" | "portrait" | "square";
+  switch (true) {
+    case bestNumerator > bestDenominator:
+      orientation = "landscape";
+      break;
+    case bestNumerator === bestDenominator:
+      orientation = "square";
+      break;
+    default:
+      orientation = "portrait";
+  }
 
   return { ratio: `${bestNumerator}:${bestDenominator}`, orientation };
 }

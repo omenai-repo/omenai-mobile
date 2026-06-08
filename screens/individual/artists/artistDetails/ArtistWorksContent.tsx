@@ -43,17 +43,17 @@ type ArtistWorksPage = Awaited<
 >;
 
 type Props = {
-  worksQuery: UseInfiniteQueryResult<
+  readonly worksQuery: UseInfiniteQueryResult<
     {
-      pages: ArtistWorksPage[];
-      pageParams: unknown[];
+      readonly pages: readonly ArtistWorksPage[];
+      readonly pageParams: readonly unknown[];
     },
     Error
   >;
-  mediumFilter: string;
-  priceFilter: string;
-  onMediumChange: (value: string) => void;
-  onPriceChange: (value: string) => void;
+  readonly mediumFilter: string;
+  readonly priceFilter: string;
+  readonly onMediumChange: (value: string) => void;
+  readonly onPriceChange: (value: string) => void;
 };
 
 export default function ArtistWorksContent({
@@ -62,7 +62,7 @@ export default function ArtistWorksContent({
   priceFilter,
   onMediumChange,
   onPriceChange,
-}: Props) {
+}: Readonly<Props>) {
   const navigation = useNavigation<any>();
   const { width: screenW } = useWindowDimensions();
   const cardW = useMemo(() => (screenW - H_PAD * 2 - COL_GAP) / 2, [screenW]);

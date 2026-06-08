@@ -8,12 +8,12 @@ import type { ArtistProfileData } from "#services/partners/artistPartnerApi";
 import { getArtistInitials } from "#utils/getArtistInitials";
 
 type Props = {
-  artistId: string;
-  profile?: ArtistProfileData | null;
-  nameFallback: string;
-  logoFallback?: string;
-  birthyearFallback?: string;
-  countryFallback?: string;
+  readonly artistId: string;
+  readonly profile?: ArtistProfileData | null;
+  readonly nameFallback: string;
+  readonly logoFallback?: string;
+  readonly birthyearFallback?: string;
+  readonly countryFallback?: string;
 };
 
 export default function ArtistProfileHeader({
@@ -23,7 +23,7 @@ export default function ArtistProfileHeader({
   logoFallback,
   birthyearFallback,
   countryFallback,
-}: Props) {
+}: Readonly<Props>) {
   const { isFollowingFor, toggleFollow, isLoadingFollowed, hasUser } =
     useArtistFollow();
   const isFollowing = isFollowingFor(artistId);

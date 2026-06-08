@@ -22,14 +22,14 @@ type EditFormState = {
 };
 
 type EventTypeSpecificFieldsProps = {
-  eventType: string;
-  editForm: EditFormState;
-  boothError: string;
-  setBoothError: (value: string) => void;
-  setEditForm: React.Dispatch<React.SetStateAction<EditFormState>>;
-  setActiveDateField: (value: DateFieldKey | null) => void;
-  countryOptions: { label: string; value: string }[];
-  formatDateForDisplay: (ymd: string) => string;
+  readonly eventType: string;
+  readonly editForm: EditFormState;
+  readonly boothError: string;
+  readonly setBoothError: (value: string) => void;
+  readonly setEditForm: React.Dispatch<React.SetStateAction<EditFormState>>;
+  readonly setActiveDateField: (value: DateFieldKey | null) => void;
+  readonly countryOptions: readonly { label: string; value: string }[];
+  readonly formatDateForDisplay: (ymd: string) => string;
 };
 
 export default function EventTypeSpecificFields({
@@ -41,7 +41,7 @@ export default function EventTypeSpecificFields({
   setActiveDateField,
   countryOptions,
   formatDateForDisplay,
-}: EventTypeSpecificFieldsProps) {
+}: Readonly<EventTypeSpecificFieldsProps>) {
   if (eventType === "art_fair") {
     return (
       <View style={tw`mb-4 gap-4`}>
@@ -66,7 +66,7 @@ export default function EventTypeSpecificFields({
             label="Event Location (Country)"
             placeholder="Select country"
             value={editForm.country}
-            data={countryOptions}
+            data={[...countryOptions]}
             search
             searchPlaceholder="Search countries"
             handleSetValue={(item) =>
@@ -141,7 +141,7 @@ export default function EventTypeSpecificFields({
             label="Event Location (Country)"
             placeholder="Select country"
             value={editForm.country}
-            data={countryOptions}
+            data={[...countryOptions]}
             search
             searchPlaceholder="Search countries"
             handleSetValue={(item) =>

@@ -9,7 +9,7 @@ type MoreSheetContextValue = {
 
 const MoreSheetContext = createContext<MoreSheetContextValue | null>(null);
 
-export function MoreSheetProvider({ children }: { children: React.ReactNode }) {
+export function MoreSheetProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [isMoreSheetOpen, setIsMoreSheetOpen] = useState(false);
 
   const openMoreSheet = useCallback(() => {

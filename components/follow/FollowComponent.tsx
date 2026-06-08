@@ -4,12 +4,12 @@ import { Pressable, Text } from "react-native";
 import tw from "twrnc";
 
 export type FollowComponentProps = {
-  isFollowing: boolean;
-  onPress: () => void;
-  disabled?: boolean;
+  readonly isFollowing: boolean;
+  readonly onPress: () => void;
+  readonly disabled?: boolean;
 };
 
-export default function FollowComponent({ isFollowing, onPress, disabled }: FollowComponentProps) {
+export default function FollowComponent({ isFollowing, onPress, disabled }: Readonly<FollowComponentProps>) {
   return (
     <Pressable
       onPress={onPress}

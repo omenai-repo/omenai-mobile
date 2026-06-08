@@ -5,14 +5,14 @@ import tw from "twrnc";
 import { colors } from "#config/colors.config";
 
 type RosterListSearchHeaderProps = {
-  searchTerm: string;
-  onSearchTermChange: (t: string) => void;
+  readonly searchTerm: string;
+  readonly onSearchTermChange: (t: string) => void;
 };
 
 export function RosterListSearchHeader({
   searchTerm,
   onSearchTermChange,
-}: RosterListSearchHeaderProps) {
+}: Readonly<RosterListSearchHeaderProps>) {
   return (
     <View style={tw`mb-4`}>
       <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500 mb-2`}>
