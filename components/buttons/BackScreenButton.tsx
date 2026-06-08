@@ -1,6 +1,6 @@
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import React from "react";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "#config/colors.config";
 import { useDevice } from "#hooks/useDevice";
 
@@ -33,11 +33,16 @@ export default function BackScreenButton({
             size={iconSize}
           />
         ) : (
-          <AntDesign
-            name="arrow-left"
-            color={color ?? colors.primary_black}
+          <MaterialCommunityIcons
+            name="keyboard-backspace"
             size={iconSize}
+            color={color ?? colors.primary_black}
           />
+          // <AntDesign
+          //   name="arrow-left"
+          //   color={color ?? colors.primary_black}
+          //   size={iconSize}
+          // />
         )}
       </View>
     </TouchableOpacity>
