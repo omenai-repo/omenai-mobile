@@ -17,6 +17,7 @@ import NavBtnComponent from "#components/artwork/NavBtnComponent";
 import { useQuery } from "@tanstack/react-query";
 import { QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import ListSeparator from "#components/general/ListSeparator";
 import tw from "twrnc";
 
 export default React.memo(function PopularArtworks({
@@ -67,7 +68,7 @@ export default React.memo(function PopularArtworks({
           nestedScrollEnabled
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={[tw`pt-5`, { alignItems: "flex-end" }]}
-          ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+          ItemSeparatorComponent={ListSeparator}
           keyExtractor={(item: ArtworkFlatlistItem, index) =>
             item.art_id?.toString() ?? `popular-${index}`
           }

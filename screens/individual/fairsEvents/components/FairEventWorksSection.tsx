@@ -111,7 +111,7 @@ export default function FairEventWorksSection({ event }: Readonly<{ event: Galle
         <View style={tw`flex-row gap-3`}>
           {/* Artwork Grid */}
           {columnsData.map((column, i) => (
-            <View key={`column-${i}`} style={tw`flex-1`}>
+            <View key={`col-${i === 0 ? "left" : "right"}`} style={tw`flex-1`}>
               {column.map((art) => (
                 <View key={art.art_id} style={tw`mb-5`}>
                   <ArtworkCard

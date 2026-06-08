@@ -13,6 +13,7 @@ import { getArtists } from "#services/overview/fetchArtist";
 import { HOME_QK } from "#utils/queryKeys";
 import { FlashList } from "@shopify/flash-list";
 import { useArtistFollow } from "#hooks/useArtistFollow";
+import ListSeparator from "#components/general/ListSeparator";
 import { screenName } from "#constants/screenNames.constants";
 
 const SKELETON_ITEMS = ["skeleton-1", "skeleton-2", "skeleton-3"];
@@ -101,7 +102,7 @@ export default function FeaturedArtists() {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={tw`pt-5 px-5`}
-        ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+        ItemSeparatorComponent={ListSeparator}
         renderItem={renderArtistItem}
         ListEmptyComponent={
           isLoading ? null : (

@@ -2,19 +2,19 @@ import { apiUrl } from "#constants/apiUrl.constants";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import { apiRequest } from "../../utils/apiRequest";
 
-export async function fetchArtistWalletData(artistIdArg?: string) {
-  let artist_id = artistIdArg || "";
-  if (!artist_id) {
+export async function fetchArtistWalletData(artistId: string = "") {
+  let finalArtistId = artistId;
+  if (!finalArtistId) {
     const userSession = await utils_getAsyncData("userSession");
     if (userSession.value) {
-      artist_id = JSON.parse(userSession.value).id;
+      finalArtistId = JSON.parse(userSession.value).id;
     }
   }
-  if (artist_id.length < 1) return;
+  if (finalArtistId.length < 1) return;
 
   try {
     const res = await apiRequest(
-      `${apiUrl}/api/wallet/fetch_wallet?id=${artist_id}`,
+      `${apiUrl}/api/wallet/fetch_wallet?id=${finalArtistId}`,
       {
         method: "GET",
       },

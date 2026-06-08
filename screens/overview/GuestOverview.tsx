@@ -24,18 +24,18 @@ export default function GuestOverview() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: HOME_QK.banner(undefined) }),
+      queryClient.invalidateQueries({ queryKey: HOME_QK.banner() }),
       queryClient.invalidateQueries({
-        queryKey: HOME_QK.newArtworks(undefined),
+        queryKey: HOME_QK.newArtworks(),
       }),
       queryClient.invalidateQueries({
-        queryKey: HOME_QK.trending(28, undefined),
+        queryKey: HOME_QK.trending(28),
       }),
       queryClient.invalidateQueries({
-        queryKey: HOME_QK.featuredArtists(undefined),
+        queryKey: HOME_QK.featuredArtists(),
       }),
       queryClient.invalidateQueries({
-        queryKey: HOME_QK.editorials(undefined),
+        queryKey: HOME_QK.editorials(),
       }),
     ]);
 

@@ -76,36 +76,44 @@ export default function GalleryDetailsScreen() {
     queryClient.invalidateQueries({ queryKey: EVENTS_QK.galleryContact(galleryId) });
   }, [refetch, refetchProfile, queryClient, galleryId]);
 
+  let overviewContent = null;
+  if (activeTab === "overview") {
+    if (isLoading && !data) {
+      overviewContent = <GalleryDetailsSkeleton />;
+    } else if (isError || !data) {
+      overviewContent = (
+        <View style={tw`flex-1 items-center justify-center px-6`}>
+          <Text style={tw`text-center text-xs uppercase tracking-widest text-neutral-400`}>
+            Could not load this gallery. Try again, or go back.
+          </Text>
+          <Pressable onPress={() => refetch()} style={tw`mt-4 border border-neutral-300 rounded-sm px-4 py-2`}>
+            <Text style={tw`text-sm text-neutral-900`}>Retry</Text>
+          </Pressable>
+        </View>
+      );
+    } else {
+      overviewContent = (
+        <GalleryDetailsOverviewContent
+          data={data}
+          contentWidth={contentWidth}
+          railCardWidth={railCardWidth}
+          navigation={navigation}
+          onArtistPress={onArtistPress}
+          onViewAllShows={onViewAllShows}
+          isRefetching={isRefetching}
+          onRefresh={onRefreshOverview}
+        />
+      );
+    }
+  }
+
   return (
     <View style={tw`flex-1 bg-white`}>
       <BackHeaderTitle title={galleryName} />
       <GalleryProfileHeader galleryId={galleryId} profile={profile} nameFallback={name ?? "Gallery"} />
       <GalleryTabBar active={activeTab} onSelect={setActiveTab} />
       <View style={tw`flex-1`}>
-        {activeTab === "overview" &&
-          (isLoading && !data ? (
-            <GalleryDetailsSkeleton />
-          ) : isError || !data ? (
-            <View style={tw`flex-1 items-center justify-center px-6`}>
-              <Text style={tw`text-center text-xs uppercase tracking-widest text-neutral-400`}>
-                Could not load this gallery. Try again, or go back.
-              </Text>
-              <Pressable onPress={() => refetch()} style={tw`mt-4 border border-neutral-300 rounded-sm px-4 py-2`}>
-                <Text style={tw`text-sm text-neutral-900`}>Retry</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <GalleryDetailsOverviewContent
-              data={data}
-              contentWidth={contentWidth}
-              railCardWidth={railCardWidth}
-              navigation={navigation}
-              onArtistPress={onArtistPress}
-              onViewAllShows={onViewAllShows}
-              isRefetching={isRefetching}
-              onRefresh={onRefreshOverview}
-            />
-          ))}
+        {overviewContent}
 
         {activeTab === "works" && (
           <GalleryWorksTabContent

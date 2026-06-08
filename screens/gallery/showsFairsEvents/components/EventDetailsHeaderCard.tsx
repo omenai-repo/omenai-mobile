@@ -206,11 +206,14 @@ function CoverImage({
   isUploadingCover,
   onCoverImageChange,
 }: Readonly<CoverImageProps>) {
-  const uri = coverImage
-    ? /^https?:\/\//i.test(coverImage)
-      ? coverImage
-      : getPromotionalFileView(coverImage, 1200)
-    : null;
+  let uri = null;
+  if (coverImage) {
+    if (/^https?:\/\//i.test(coverImage)) {
+      uri = coverImage;
+    } else {
+      uri = getPromotionalFileView(coverImage, 1200);
+    }
+  }
 
   return (
     <View

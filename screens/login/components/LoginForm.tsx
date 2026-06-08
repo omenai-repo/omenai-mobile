@@ -71,12 +71,12 @@ export default function LoginForm({
     );
   })();
 
-  const biometricAccessibilityLabel =
-    biometricProps.biometricName === "Face ID"
-      ? "Sign in with Face ID"
-      : biometricProps.biometricName === "Fingerprint"
-        ? "Sign in with fingerprint"
-        : "Sign in with biometrics";
+  let biometricAccessibilityLabel = "Sign in with biometrics";
+  if (biometricProps.biometricName === "Face ID") {
+    biometricAccessibilityLabel = "Sign in with Face ID";
+  } else if (biometricProps.biometricName === "Fingerprint") {
+    biometricAccessibilityLabel = "Sign in with fingerprint";
+  }
 
   return (
     <View

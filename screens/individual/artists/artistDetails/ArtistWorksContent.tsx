@@ -251,15 +251,19 @@ export default function ArtistWorksContent({
         }}
         renderMetaFooter={(art) => {
           const price = priceFromGalleryWork(art);
+          let priceText = "";
+          if (art.availability === false) {
+            priceText = "Sold";
+          } else if (price > 0) {
+            priceText = utils_formatPrice(price);
+          } else {
+            priceText = "Price on request";
+          }
           return (
             <Text
               style={tw`text-xs uppercase tracking-widest text-neutral-600 mt-1 font-sans-regular`}
             >
-              {art.availability === false
-                ? "Sold"
-                : price > 0
-                ? utils_formatPrice(price)
-                : "Price on request"}
+              {priceText}
             </Text>
           );
         }}

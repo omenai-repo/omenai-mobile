@@ -9,12 +9,13 @@ type Props = {
 };
 
 const { width: screenWidth } = Dimensions.get("window");
-const resolveProgramImageUri = (imageId?: string) =>
-  imageId
-    ? /^https?:\/\//i.test(imageId)
-      ? imageId
-      : getPromotionalFileView(imageId, 1400)
-    : "";
+const resolveProgramImageUri = (imageId?: string) => {
+  if (!imageId) return "";
+  if (/^https?:\/\//i.test(imageId)) {
+    return imageId;
+  }
+  return getPromotionalFileView(imageId, 1400);
+};
 
 export default function FairEventHero({ event }: Readonly<Props>) {
   const images = useMemo(
@@ -100,9 +101,9 @@ export default function FairEventHero({ event }: Readonly<Props>) {
 
         {isMulti && (
           <View style={tw`flex-row items-center`}>
-            {images.map((_, idx) => (
+            {images.map((img, idx) => (
               <Pressable
-                key={`dot-${idx}`}
+                key={`dot-${img || idx}`}
                 onPress={() => {
                   setSelectedIndex(idx);
                   scrollRef.current?.scrollTo({ x: idx * heroWidth, animated: true });

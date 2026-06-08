@@ -51,13 +51,14 @@ export function computeGalleryHeadliner(events: GalleryOverviewEvent[] | undefin
     earliestUpcoming ??
     latestPast ??
     null;
-  const currentStatus: HeadlinerStatus = active[0]
-    ? "Active"
-    : earliestUpcoming
-      ? "Upcoming"
-      : latestPast
-        ? "Closed"
-        : null;
+  let currentStatus: HeadlinerStatus = null;
+  if (active[0]) {
+    currentStatus = "Active";
+  } else if (earliestUpcoming) {
+    currentStatus = "Upcoming";
+  } else if (latestPast) {
+    currentStatus = "Closed";
+  }
 
   const historyEvents = headliner
     ? events.filter((e) => e.event_id !== headliner.event_id)

@@ -19,7 +19,6 @@ export function isValidRosterBirthYear(
   return y >= ROSTER_BIRTH_YEAR_MIN && y <= max;
 }
 
-export function rosterBirthYearValidationMessage(now: Date = new Date()): string {
-  const max = rosterBirthYearMaxYear(now);
+export function rosterBirthYearValidationMessage(): string {
   return `Artist must be at least ${ROSTER_ARTIST_MIN_AGE} years old.`;
 }

@@ -9,12 +9,13 @@ import { screenName } from "#constants/screenNames.constants";
 import { getEventStatus } from "#services/events/events.service";
 
 const SKELETON_ITEMS = ["skeleton-1", "skeleton-2", "skeleton-3"];
-const resolveCoverImageUri = (coverImage?: string) =>
-  coverImage
-    ? /^https?:\/\//i.test(coverImage)
-      ? coverImage
-      : getPromotionalFileView(coverImage, 700)
-    : "";
+const resolveCoverImageUri = (coverImage?: string) => {
+  if (!coverImage) return "";
+  if (/^https?:\/\//i.test(coverImage)) {
+    return coverImage;
+  }
+  return getPromotionalFileView(coverImage, 700);
+};
 
 export default function FairsEvents() {
   const navigation = useNavigation<any>();
@@ -28,7 +29,6 @@ export default function FairsEvents() {
     <View style={tw`mt-6`}>
       <SectionHeader
         title="Fairs & Events"
-        // onActionPress={() => navigation.navigate(screenName.individual.fairsEvents)}
       />
       <ScrollView
         horizontal

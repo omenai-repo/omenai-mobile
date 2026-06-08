@@ -40,10 +40,6 @@ export async function apiRequest(url: string, options: RequestOptions = {}) {
     },
   });
 
-  // console.log(
-  //   `[API] ${fetchOptions.method || "GET"} ${url} - Status: ${response.status}`,
-  // );
-
   if (response.status === 403) {
     const { isLoggedIn } = useAppStore.getState();
     if (shouldLogout && auth && isLoggedIn) {

@@ -54,7 +54,7 @@ export default function Editorials({ hideAction }: Readonly<{ hideAction?: boole
         >
           {data.map((item: any, i: number) => (
             <EditorialCard
-              key={`editorial-${i}`}
+              key={item.slug || item.headline || String(i)}
               cover={item.cover}
               headline={item.headline}
               width={280}

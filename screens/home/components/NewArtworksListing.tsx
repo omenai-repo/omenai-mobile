@@ -7,6 +7,7 @@ import ArtworkCard from "#components/artwork/ArtworkCard";
 import { fetchArtworks } from "#services/artworks/fetchArtworks";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import EmptyArtworks from "#components/general/EmptyArtworks";
+import ListSeparator from "#components/general/ListSeparator";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
 import { HOME_QK } from "#utils/queryKeys";
@@ -55,7 +56,7 @@ export default function NewArtworksListing({
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
           contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
-          ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+          ItemSeparatorComponent={ListSeparator}
           keyExtractor={(item: any, index) =>
             item.art_id?.toString() ?? `new-${index}`
           }
