@@ -22,6 +22,15 @@ type FlutterwaveCheckoutButtonProps = {
   onRedirect: (params: FlutterwaveRedirectParams) => void;
 };
 
+type CustomBtnProps = {
+  readonly onPress: () => void;
+  readonly disabled?: boolean;
+};
+
+const CustomPayButton = ({ onPress, disabled }: CustomBtnProps) => (
+  <FlutterwavePayButton onPress={onPress} disabled={disabled} />
+);
+
 export default function FlutterwaveCheckoutButton({
   txRef,
   amount,
@@ -48,7 +57,7 @@ export default function FlutterwaveCheckoutButton({
         meta,
       }}
       customButton={(props) => (
-        <FlutterwavePayButton onPress={props.onPress} disabled={disabled} />
+        <CustomPayButton onPress={props.onPress} disabled={disabled} />
       )}
     />
   );

@@ -9,6 +9,7 @@ import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
 import ViewAllCategoriesButton from "#components/buttons/ViewAllCategoriesButton";
 import EmptyArtworks from "#components/general/EmptyArtworks";
 import ArtworkCard from "#components/artwork/ArtworkCard";
+import ListSeparator from "#components/general/ListSeparator";
 import { screenName } from "#constants/screenNames.constants";
 import { HOME_QK } from "#utils/queryKeys";
 import SectionHeader from "#components/general/SectionHeader";
@@ -61,7 +62,7 @@ export default function TrendingArtworks({
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
           contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
-          ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+          ItemSeparatorComponent={ListSeparator}
           keyExtractor={(item: any, index) =>
             item.art_id?.toString() ?? `trend-${index}`
           }

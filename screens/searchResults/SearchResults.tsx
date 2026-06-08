@@ -15,7 +15,7 @@ import { SEARCH_QK } from "#utils/queryKeys";
 import { useModalStore } from "#store/modal/modalStore";
 
 export default function SearchResults() {
-  const { searchQuery, submittedQuery } = useSearchStore();
+  const { submittedQuery } = useSearchStore();
   const insets = useSafeAreaInsets();
   const { updateModal } = useModalStore();
 

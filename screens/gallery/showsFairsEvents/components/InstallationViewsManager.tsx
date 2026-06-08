@@ -393,9 +393,9 @@ export default function InstallationViewsManager({
             <View
               style={tw`flex-row justify-center items-center gap-1.5 mt-3 mb-0.5`}
             >
-              {existingViews.map((_, i) => (
+              {existingViews.map((item, i) => (
                 <View
-                  key={i}
+                  key={item}
                   style={
                     i === activeIndex
                       ? tw`h-1.5 w-5 rounded-full bg-neutral-800`
@@ -435,90 +435,98 @@ export default function InstallationViewsManager({
             </View>
 
             <View style={tw`px-4 py-4`}>
-              {isUploadingPreviewSelection ? (
-                <View style={tw`py-12 items-center`}>
-                  <ActivityIndicator size="small" color="#171717" />
-                  <Text style={tw`mt-3 text-[10px] uppercase tracking-widest text-neutral-600`}>
-                    {uploadProgressText || "Uploading..."}
-                  </Text>
-                </View>
-              ) : selectedAssets.length === 0 ? (
-                <View style={tw`py-8 items-center`}>
-                  <Text style={tw`text-xs uppercase tracking-widest text-neutral-500`}>
-                    No images selected.
-                  </Text>
-                  <TouchableOpacity
-                    style={tw`mt-3 px-4 py-2 border border-neutral-300 rounded-sm`}
-                    activeOpacity={0.85}
-                    onPress={() => void pickInstallationImages(false)}
-                    disabled={
-                      addInstallationViewMutation.isPending || isUploadingPreviewSelection
-                    }
-                  >
-                    <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-700`}>
-                      Add images
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <View>
-                  <View style={tw`flex-row items-center justify-between mb-3`}>
-                    <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500`}>
-                      Preview ({selectedAssets.length})
-                    </Text>
-                    <TouchableOpacity
-                      style={tw`px-3 py-1.5 border border-neutral-300 rounded-sm`}
-                      activeOpacity={0.85}
-                      onPress={() => void pickInstallationImages(false)}
-                      disabled={
-                        addInstallationViewMutation.isPending ||
-                        isUploadingPreviewSelection ||
-                        selectedAssets.length >= MAX_INSTALLATION_SELECTION
-                      }
-                    >
-                      <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-700`}>
-                        {selectedAssets.length >= MAX_INSTALLATION_SELECTION
-                          ? "Max reached"
-                          : "Add more"}
+              {(() => {
+                if (isUploadingPreviewSelection) {
+                  return (
+                    <View style={tw`py-12 items-center`}>
+                      <ActivityIndicator size="small" color="#171717" />
+                      <Text style={tw`mt-3 text-[10px] uppercase tracking-widest text-neutral-600`}>
+                        {uploadProgressText || "Uploading..."}
                       </Text>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  );
+                }
+                if (selectedAssets.length === 0) {
+                  return (
+                    <View style={tw`py-8 items-center`}>
+                      <Text style={tw`text-xs uppercase tracking-widest text-neutral-500`}>
+                        No images selected.
+                      </Text>
+                      <TouchableOpacity
+                        style={tw`mt-3 px-4 py-2 border border-neutral-300 rounded-sm`}
+                        activeOpacity={0.85}
+                        onPress={() => void pickInstallationImages(false)}
+                        disabled={
+                          addInstallationViewMutation.isPending || isUploadingPreviewSelection
+                        }
+                      >
+                        <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-700`}>
+                          Add images
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }
+                return (
+                  <View>
+                    <View style={tw`flex-row items-center justify-between mb-3`}>
+                      <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-500`}>
+                        Preview ({selectedAssets.length})
+                      </Text>
+                      <TouchableOpacity
+                        style={tw`px-3 py-1.5 border border-neutral-300 rounded-sm`}
+                        activeOpacity={0.85}
+                        onPress={() => void pickInstallationImages(false)}
+                        disabled={
+                          addInstallationViewMutation.isPending ||
+                          isUploadingPreviewSelection ||
+                          selectedAssets.length >= MAX_INSTALLATION_SELECTION
+                        }
+                      >
+                        <Text style={tw`text-[10px] uppercase tracking-widest text-neutral-700`}>
+                          {selectedAssets.length >= MAX_INSTALLATION_SELECTION
+                            ? "Max reached"
+                            : "Add more"}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
 
-                  <View style={[tw`border border-neutral-200 rounded-sm p-2`, { height: 320 }]}>
-                    <FlatList
-                      data={selectedAssets}
-                      keyExtractor={(_, index) => `preview-${index}`}
-                      numColumns={3}
-                      showsVerticalScrollIndicator
-                      nestedScrollEnabled
-                      keyboardShouldPersistTaps="handled"
-                      columnWrapperStyle={tw`justify-start`}
-                      contentContainerStyle={tw`pb-2`}
-                      renderItem={({ item, index }) => (
-                        <View
-                          style={[
-                            tw`rounded-sm overflow-hidden bg-neutral-100 border border-neutral-200 mb-2 mr-2`,
-                            { width: 104, maxWidth: 104, aspectRatio: 4 / 3 },
-                          ]}
-                        >
-                          <Image source={{ uri: item.uri }} style={tw`w-full h-full`} resizeMode="cover" />
-                          {!addInstallationViewMutation.isPending && !isUploadingPreviewSelection && (
-                            <TouchableOpacity
-                              onPress={() => removeSelectedAsset(index)}
-                              style={tw`absolute top-1 right-1 bg-red-600 rounded-sm px-1.5 py-1`}
-                              activeOpacity={0.85}
-                            >
-                              <Text style={tw`text-[8px] uppercase tracking-widest text-white`}>
-                                X
-                              </Text>
-                            </TouchableOpacity>
-                          )}
-                        </View>
-                      )}
-                    />
+                    <View style={[tw`border border-neutral-200 rounded-sm p-2`, { height: 320 }]}>
+                      <FlatList
+                        data={selectedAssets}
+                        keyExtractor={(item) => item.uri}
+                        numColumns={3}
+                        showsVerticalScrollIndicator
+                        nestedScrollEnabled
+                        keyboardShouldPersistTaps="handled"
+                        columnWrapperStyle={tw`justify-start`}
+                        contentContainerStyle={tw`pb-2`}
+                        renderItem={({ item, index }) => (
+                          <View
+                            style={[
+                              tw`rounded-sm overflow-hidden bg-neutral-100 border border-neutral-200 mb-2 mr-2`,
+                              { width: 104, maxWidth: 104, aspectRatio: 4 / 3 },
+                            ]}
+                          >
+                            <Image source={{ uri: item.uri }} style={tw`w-full h-full`} resizeMode="cover" />
+                            {!addInstallationViewMutation.isPending && !isUploadingPreviewSelection && (
+                              <TouchableOpacity
+                                onPress={() => removeSelectedAsset(index)}
+                                style={tw`absolute top-1 right-1 bg-red-600 rounded-sm px-1.5 py-1`}
+                                activeOpacity={0.85}
+                              >
+                                <Text style={tw`text-[8px] uppercase tracking-widest text-white`}>
+                                  X
+                                </Text>
+                              </TouchableOpacity>
+                            )}
+                          </View>
+                        )}
+                      />
+                    </View>
                   </View>
-                </View>
-              )}
+                );
+              })()}
             </View>
 
             <View style={tw`px-4 py-3 border-t border-neutral-100 flex-row justify-end gap-3`}>

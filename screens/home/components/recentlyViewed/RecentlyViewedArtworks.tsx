@@ -7,6 +7,7 @@ import { fetchViewHistory } from "#services/artworks/viewHistory/fetchRecentlyVi
 import { useAppStore } from "#store/app/appStore";
 import EmptyArtworks from "#components/general/EmptyArtworks";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
+import ListSeparator from "#components/general/ListSeparator";
 import { HOME_QK } from "#utils/queryKeys";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 
@@ -32,7 +33,6 @@ type ViewHistoryItem = {
 function RecentlyViewedArtworks() {
   const userSessionId = useAppStore((s) => s.userSession?.id);
   const userId = userSessionId;
-  const ITEM_GAP = 20;
 
   const { data = [], isLoading } = useQuery({
     queryKey: HOME_QK.recentlyViewed(userId),
@@ -60,7 +60,7 @@ function RecentlyViewedArtworks() {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          ItemSeparatorComponent={() => <View style={{ width: ITEM_GAP }} />}
+          ItemSeparatorComponent={ListSeparator}
           contentContainerStyle={{
             alignItems: "flex-end",
             paddingHorizontal: 20,

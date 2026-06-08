@@ -12,12 +12,13 @@ type Props = {
   readonly onPress: () => void;
 };
 
-const resolveCoverImageUri = (coverImage?: string) =>
-  coverImage
-    ? /^https?:\/\//i.test(coverImage)
-      ? coverImage
-      : getPromotionalFileView(coverImage, 900)
-    : "";
+const resolveCoverImageUri = (coverImage?: string) => {
+  if (!coverImage) return "";
+  if (/^https?:\/\//i.test(coverImage)) {
+    return coverImage;
+  }
+  return getPromotionalFileView(coverImage, 900);
+};
 
 export default function EventCard({ item, onPress }: Readonly<Props>) {
   const status = getEventStatus(item.start_date, item.end_date);

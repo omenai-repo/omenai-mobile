@@ -44,11 +44,12 @@ export default function AllArtistCard({
     .filter(Boolean)
     .join(" · ");
   const imageKey = artist.cardImage ?? artist.logo;
-  const imageUri = imageKey
-    ? artist.cardImageIsArtwork
+  let imageUri: string | null = null;
+  if (imageKey) {
+    imageUri = artist.cardImageIsArtwork
       ? getImageFileView(imageKey, 600)
-      : getGalleryLogoFileView(imageKey, 600)
-    : null;
+      : getGalleryLogoFileView(imageKey, 600);
+  }
   const showInitials = !imageUri || imgError;
 
   useEffect(() => {

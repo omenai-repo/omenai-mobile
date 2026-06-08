@@ -11,6 +11,7 @@ import ArtworkCard from "#components/artwork/ArtworkCard";
 import tw from "twrnc";
 import { screenName } from "#constants/screenNames.constants";
 import { HOME_QK } from "#utils/queryKeys";
+import ListSeparator from "#components/general/ListSeparator";
 import { useAppStore } from "#store/app/appStore";
 import SectionHeader from "#components/general/SectionHeader";
 import { colors } from "#config/colors.config";
@@ -54,7 +55,7 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             showsHorizontalScrollIndicator={false}
             style={tw`mt-5`}
             contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
-            ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+            ItemSeparatorComponent={ListSeparator}
             keyExtractor={(item: any, index) =>
               item.art_id?.toString() ?? `curated-${index}`
             }

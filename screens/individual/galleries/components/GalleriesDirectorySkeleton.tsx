@@ -4,6 +4,8 @@ import tw from "twrnc";
 
 const ROWS = 4;
 const COLS = 2;
+const ROW_KEYS = ["row-first", "row-second", "row-third", "row-fourth"];
+const COL_KEYS = ["col-left", "col-right"];
 
 type Props = {
   readonly horizontalPad?: number;
@@ -33,16 +35,16 @@ export default function GalleriesDirectorySkeleton({
           <View style={tw`h-3 w-48 bg-neutral-100 rounded-sm mt-4`} />
         </View>
 
-        {Array.from({ length: ROWS }).map((_, row) => (
+        {ROW_KEYS.map((rowKey) => (
           <View
-            key={`row-${row}`}
+            key={rowKey}
             style={[
               tw`flex-row`,
               { marginBottom: 24, columnGap: cardGap, justifyContent: "space-between" },
             ]}
           >
-            {Array.from({ length: COLS }).map((__, col) => (
-              <View key={`cell-${row}-${col}`} style={[{ width: cardW }]}>
+            {COL_KEYS.map((colKey) => (
+              <View key={`${rowKey}-${colKey}`} style={[{ width: cardW }]}>
                 <View
                   style={[
                     tw`bg-neutral-100 rounded-sm overflow-hidden`,

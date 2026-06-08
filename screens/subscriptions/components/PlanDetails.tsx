@@ -35,6 +35,14 @@ export default function PlanDetails({
   const { setRetainModal } = useModalStore();
 
   const currency_symbol = utils_getCurrencySymbol(payment.currency);
+
+  let pillBgColor = "#00800015";
+  let pillTextColor = "#00800080";
+  if (sub_status === "canceled" || sub_status === "expired") {
+    pillBgColor = "#ff000015";
+    pillTextColor = "#ff000080";
+  }
+
   return (
     <View>
       <View style={styles.container}>
@@ -100,12 +108,7 @@ export default function PlanDetails({
                   style={[
                     styles.activePill,
                     {
-                      backgroundColor:
-                        sub_status === "canceled"
-                          ? "#ff000015"
-                          : sub_status === "expired"
-                          ? "#ff000015"
-                          : "#00800015",
+                      backgroundColor: pillBgColor,
                     },
                   ]}
                 >
@@ -113,12 +116,7 @@ export default function PlanDetails({
                     style={{
                       fontSize: 12,
                       fontWeight: 500,
-                      color:
-                        sub_status === `expired`
-                          ? "#ff000080"
-                          : sub_status === "canceled"
-                          ? "#ff000080"
-                          : "#00800080",
+                      color: pillTextColor,
                       textTransform: "uppercase",
                     }}
                   >

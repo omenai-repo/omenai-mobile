@@ -85,6 +85,14 @@ type GridCardProps = {
 function GalleryShowGridCard({ show, width, onPress }: Readonly<GridCardProps>) {
   const status = getEventStatus(show.start_date, show.end_date);
   const isClosed = status === "Past";
+
+  let pillStyle = tw`bg-white/90 border-neutral-200 text-neutral-900`;
+  if (isClosed) {
+    pillStyle = tw`bg-black/60 border-black/10 text-white`;
+  } else if (status === "Upcoming") {
+    pillStyle = tw`bg-white/90 border-neutral-200 text-neutral-600`;
+  }
+
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [{ width }, pressed && tw`opacity-95`]}>
       <View style={[{ width, aspectRatio: 3 / 2 }, tw`bg-neutral-50 overflow-hidden mb-6 rounded-sm border border-neutral-100`]}>
@@ -97,11 +105,7 @@ function GalleryShowGridCard({ show, width, onPress }: Readonly<GridCardProps>) 
           <Text
             style={[
               tw`px-2.5 py-1.5 text-[9px] uppercase tracking-widest font-sans-medium rounded-sm border`,
-              isClosed
-                ? tw`bg-black/60 border-black/10 text-white`
-                : status === "Upcoming"
-                  ? tw`bg-white/90 border-neutral-200 text-neutral-600`
-                  : tw`bg-white/90 border-neutral-200 text-neutral-900`,
+              pillStyle,
             ]}
           >
             {status}
@@ -135,10 +139,19 @@ function GalleryShowHeadliner({ show, onPress, activeFilter }: Readonly<Headline
   const isClosed = status === "Past";
   const showFeaturedPill = activeFilter === "All";
   const loc = show.location;
-  const locationLine =
-    loc?.city != null && String(loc.city).trim() !== ""
-      ? `${loc.venue ? `${loc.venue}, ` : ""}${loc.city}`
-      : null;
+
+  let locationLine: string | null = null;
+  if (loc?.city != null && String(loc.city).trim() !== "") {
+    const venuePart = loc.venue ? `${loc.venue}, ` : "";
+    locationLine = `${venuePart}${loc.city}`;
+  }
+
+  let headlinerPillStyle = tw`bg-white/90 border-neutral-200 text-neutral-900`;
+  if (isClosed) {
+    headlinerPillStyle = tw`bg-black/60 border-black/10 text-white`;
+  } else if (status === "Upcoming") {
+    headlinerPillStyle = tw`bg-white/90 border-neutral-200 text-neutral-600`;
+  }
 
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [pressed && tw`opacity-95`]}>
@@ -162,11 +175,7 @@ function GalleryShowHeadliner({ show, onPress, activeFilter }: Readonly<Headline
                 <Text
                   style={[
                     tw`px-2.5 py-1.5 text-xs uppercase tracking-widest font-sans-medium rounded-sm border`,
-                    isClosed
-                      ? tw`bg-black/60 border-black/10 text-white`
-                      : status === "Upcoming"
-                        ? tw`bg-white/90 border-neutral-200 text-neutral-600`
-                        : tw`bg-white/90 border-neutral-200 text-neutral-900`,
+                    headlinerPillStyle,
                   ]}
                 >
                   {status}
@@ -243,8 +252,13 @@ export default function GalleryShowsTabContent({ galleryId, isActive, galleryNam
     let grid: GalleryEventRecord[] = [];
 
     if (activeFilter === "All") {
-      selectedHeadliner =
-        active.length > 0 ? active[0] : immediateUpcoming.length > 0 ? immediateUpcoming[0] : null;
+      if (active.length > 0) {
+        selectedHeadliner = active[0];
+      } else if (immediateUpcoming.length > 0) {
+        selectedHeadliner = immediateUpcoming[0];
+      } else {
+        selectedHeadliner = null;
+      }
       grid = allShows.filter((show) => show.event_id !== selectedHeadliner?.event_id);
     } else if (activeFilter === "Active") {
       selectedHeadliner = active.length > 0 ? active[0] : null;

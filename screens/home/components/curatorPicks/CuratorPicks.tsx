@@ -7,6 +7,7 @@ import { fetchCurationData } from "#services/curation/fetchCurationData";
 import SectionHeader from "#components/general/SectionHeader";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
+import ListSeparator from "#components/general/ListSeparator";
 import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
 
@@ -44,7 +45,7 @@ export default function CuratorPicks() {
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
           contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
-          ItemSeparatorComponent={() => <View style={tw`w-5`} />}
+          ItemSeparatorComponent={ListSeparator}
           keyExtractor={(item: any, index) =>
             item.identifier || item?.data?.art_id || `curator-pick-${index}`
           }

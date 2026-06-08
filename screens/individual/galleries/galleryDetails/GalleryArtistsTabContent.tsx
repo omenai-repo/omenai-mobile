@@ -3,12 +3,15 @@ import { Pressable, ScrollView, Text, useWindowDimensions, View } from "react-na
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { FlashList } from "@shopify/flash-list";
 import tw from "twrnc";
+import ListSeparator from "#components/general/ListSeparator";
 import type { GalleryOverviewArtist } from "#services/partners/fetchGalleryOverviewData";
 import ArtworkCard from "#components/artwork/ArtworkCard";
 import Loader from "#components/general/Loader";
 import { EVENTS_QK } from "#utils/queryKeys";
 import { fetchGalleryArtistsPage, type GalleryArtistFloorRow } from "#services/partners/galleryPartnerApi";
 import { priceFromGalleryWork, type GalleryWorkRow } from "./GalleryWorksTabContent";
+
+const ArtistFloorSeparator = () => <ListSeparator width={12} />;
 
 type Props = {
   readonly galleryId: string;
@@ -119,7 +122,7 @@ export default function GalleryArtistsTabContent({
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ alignItems: "flex-start" }}
-          ItemSeparatorComponent={() => <View style={tw`w-3`} />}
+          ItemSeparatorComponent={ArtistFloorSeparator}
           keyExtractor={(art) => art.art_id}
           renderItem={({ item: art }) => (
             <View>

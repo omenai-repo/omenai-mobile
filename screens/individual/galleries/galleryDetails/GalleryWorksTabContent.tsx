@@ -258,6 +258,14 @@ export default function GalleryWorksTabContent({
     );
   }
 
+  let worksHeaderText = "";
+  if (artistFilter !== "All" && selectedArtistName) {
+    worksHeaderText = `Works by ${selectedArtistName} (${items.length})`;
+  } else {
+    const pluralSuffix = items.length === 1 ? "" : "s";
+    worksHeaderText = `${items.length} work${pluralSuffix}`;
+  }
+
   return (
     <View style={tw`flex-1`}>
       {filterStrip}
@@ -275,9 +283,7 @@ export default function GalleryWorksTabContent({
         onEndReachedThreshold={0.45}
         ListHeaderComponent={
           <Text style={tw`text-[11px] text-neutral-500 mb-3`}>
-            {artistFilter !== "All" && selectedArtistName
-              ? `Works by ${selectedArtistName} (${items.length})`
-              : `${items.length} work${items.length === 1 ? "" : "s"}`}
+            {worksHeaderText}
           </Text>
         }
         ListFooterComponent={isFetchingNextPage ? <Loader size={56} height={90} /> : null}
@@ -294,9 +300,17 @@ export default function GalleryWorksTabContent({
         }}
         renderMetaFooter={(art) => {
           const price = priceFromGalleryWork(art);
+          let priceText = "";
+          if (art.availability === false) {
+            priceText = "Sold";
+          } else if (price > 0) {
+            priceText = utils_formatPrice(price);
+          } else {
+            priceText = "Price on request";
+          }
           return (
             <Text style={tw`text-xs uppercase tracking-widest text-neutral-600 mt-1 font-sans-regular`}>
-              {art.availability === false ? "Sold" : price > 0 ? utils_formatPrice(price) : "Price on request"}
+              {priceText}
             </Text>
           );
         }}
