@@ -22,14 +22,16 @@ type FlutterwaveCheckoutButtonProps = {
   onRedirect: (params: FlutterwaveRedirectParams) => void;
 };
 
+const DisabledContext = React.createContext<boolean>(false);
+
 type CustomBtnProps = {
   readonly onPress: () => void;
-  readonly disabled?: boolean;
 };
 
-const CustomPayButton = ({ onPress, disabled }: CustomBtnProps) => (
-  <FlutterwavePayButton onPress={onPress} disabled={disabled} />
-);
+const CustomPayButton = ({ onPress }: CustomBtnProps) => {
+  const disabled = React.useContext(DisabledContext);
+  return <FlutterwavePayButton onPress={onPress} disabled={disabled} />;
+};
 
 export default function FlutterwaveCheckoutButton({
   txRef,
@@ -45,20 +47,20 @@ export default function FlutterwaveCheckoutButton({
   }
 
   return (
-    <PayWithFlutterwave
-      onRedirect={onRedirect}
-      options={{
-        tx_ref: txRef,
-        amount,
-        currency: "USD",
-        authorization,
-        customer,
-        payment_options: "card",
-        meta,
-      }}
-      customButton={(props) => (
-        <CustomPayButton onPress={props.onPress} disabled={disabled} />
-      )}
-    />
+    <DisabledContext.Provider value={!!disabled}>
+      <PayWithFlutterwave
+        onRedirect={onRedirect}
+        options={{
+          tx_ref: txRef,
+          amount,
+          currency: "USD",
+          authorization,
+          customer,
+          payment_options: "card",
+          meta,
+        }}
+        customButton={CustomPayButton}
+      />
+    </DisabledContext.Provider>
   );
 }

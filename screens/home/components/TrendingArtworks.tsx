@@ -18,10 +18,10 @@ import { useAppStore } from "#store/app/appStore";
 export default function TrendingArtworks({
   limit,
   hideAction,
-}: {
+}: Readonly<{
   limit: number;
   hideAction?: boolean;
-}) {
+}>) {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
 
