@@ -6,16 +6,19 @@ import tw from "twrnc";
 export type FlutterwavePayButtonProps = {
   onPress: () => void;
   disabled?: boolean;
+  isLoading?: boolean;
 };
 
 const FlutterwavePayButton = ({
   onPress,
   disabled,
+  isLoading,
 }: FlutterwavePayButtonProps) => (
   <LongBlackButton
     value="Pay with flutterwave"
     onClick={onPress}
     isDisabled={disabled}
+    isLoading={isLoading}
   />
 );
 

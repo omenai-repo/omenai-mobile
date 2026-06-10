@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "49402443940",
-    "project_id": "omenai-inc",
-    "storage_bucket": "omenai-inc.firebasestorage.app"
+    "project_number": "490545132894",
+    "project_id": "omenai-versioning",
+    "storage_bucket": "omenai-versioning.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:49402443940:android:c17423a488e4e2cc620e31",
+        "mobilesdk_app_id": "1:490545132894:android:3d7234e4a3e29564facbcf",
         "android_client_info": {
           "package_name": "com.omenai.omenaiapp"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAZv7oGyQO1rMdYESuV7pJaf-vsvOivuPY"
+          "current_key": "AIzaSyAgVBFGKl4yQKkFIN53Qp36BnxQdXTVuJU"
         }
       ],
       "services": {
