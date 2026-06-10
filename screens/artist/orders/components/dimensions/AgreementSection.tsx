@@ -18,57 +18,36 @@ export default function AgreementSection({
 }: Readonly<AgreementSectionProps>) {
   return (
     <View style={tw`mt-6 mx-5`}>
-      {userType === "gallery" ? (
-        <>
+      {userType === "gallery" && (
+        <View style={tw`mb-4`}>
           <AlertCard
             title="Please review carefully"
             description="By accepting this order, you agree to hold the artwork for 24 hours to allow for payment and shipment processing. If the piece is on exhibition and paid for by this buyer, shipment will be scheduled at the exhibition's end date"
           />
-
-          <Pressable
-            onPress={() => setIsChecked(!isChecked)}
-            style={tw`mt-4 flex-row items-center gap-3`}
-          >
-            <View
-              style={tw`w-5 h-5 rounded-full border-2 border-gray-400 items-center justify-center`}
-            >
-              {isChecked && (
-                <View
-                  style={[
-                    tw`w-3 h-3 rounded-full`,
-                    { backgroundColor: colors.primary_black },
-                  ]}
-                />
-              )}
-            </View>
-            <Text style={tw`text-sm text-gray-600 font-medium`}>
-              I agree and continue
-            </Text>
-          </Pressable>
-        </>
-      ) : (
-        <Pressable
-          onPress={() => setIsChecked(!isChecked)}
-          style={tw`bg-white border border-gray-200 rounded-sm p-4 flex-row gap-3 shadow-sm`}
-        >
-          <View style={tw`mt-0.5`}>
-            <Ionicons
-              name={isChecked ? "checkbox" : "square-outline"}
-              size={24}
-              color={isChecked ? colors.primary_black : "#9CA3AF"}
-            />
-          </View>
-          <View style={tw`flex-1`}>
-            <Text style={tw`text-sm font-bold text-gray-900`}>
-              Acknowledge Terms
-            </Text>
-            <Text style={tw`text-xs text-gray-500 leading-5`}>
-              I confirm the selected packaging is sufficient and ready for
-              pickup.
-            </Text>
-          </View>
-        </Pressable>
+        </View>
       )}
+
+      <Pressable
+        onPress={() => setIsChecked(!isChecked)}
+        style={tw`bg-white border border-gray-200 rounded-sm p-4 flex-row gap-3 shadow-sm`}
+      >
+        <View style={tw`mt-0.5`}>
+          <Ionicons
+            name={isChecked ? "checkbox" : "square-outline"}
+            size={24}
+            color={isChecked ? colors.primary_black : "#9CA3AF"}
+          />
+        </View>
+        <View style={tw`flex-1`}>
+          <Text style={tw`text-sm font-bold text-gray-900`}>
+            Acknowledge Terms & Dimensions
+          </Text>
+          <Text style={tw`text-xs text-gray-500 leading-5`}>
+            I confirm the dimensions provided are strictly accurate, and the
+            artwork is properly packed and ready for processing.
+          </Text>
+        </View>
+      </Pressable>
     </View>
   );
 }
