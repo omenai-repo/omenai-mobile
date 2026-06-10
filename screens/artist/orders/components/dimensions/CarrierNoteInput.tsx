@@ -15,7 +15,12 @@ export default function CarrierNoteInput({
   onChange,
 }: Readonly<CarrierNoteInputProps>) {
   return (
-    <View style={tw`mt-6 mx-5`}>
+    <View
+      style={tw`mt-5 mx-5 border border-neutral-200 rounded-sm bg-white p-5 shadow-sm`}
+    >
+      <Text style={tw`text-sm font-medium text-gray-700 mb-3`}>
+        Special Instructions (Optional)
+      </Text>
       <TextInput
         value={value}
         onChangeText={onChange}
