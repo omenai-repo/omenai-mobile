@@ -74,8 +74,8 @@ export default function OrderDetails({
 
   const fetchPaymentSheetParams = React.useCallback(async () => {
     const { paymentIntent, publishableKey } = await createPaymentIntent(
-      Math.ceil(total_price_number * 100) / 100,
       data.seller_details.id,
+      data.order_id,
       {
         buyer_email: userSession.email,
         buyer_id: userSession.id,
@@ -83,14 +83,11 @@ export default function OrderDetails({
         seller_email: data.seller_details.email,
         seller_name: data.seller_details.name,
         seller_id: data.seller_details.id,
-        shipping_cost: feesNum,
-        unit_price: data.artwork_data.pricing.usd_price,
         artwork_name: data.artwork_data.title,
-        tax_fees: taxesNum,
       },
     );
     return { paymentIntent, publishableKey };
-  }, [total_price_number, data, userSession, feesNum, taxesNum]);
+  }, [data, userSession]);
 
   const initializePaymentSheet = React.useCallback(async () => {
     if (initOnceRef.current) return; // guard
@@ -343,8 +340,7 @@ export default function OrderDetails({
             ) : (
               <FlutterwaveCheckoutButton
                 txRef={transactionRef}
-                amount={Math.ceil(total_price_number * 100) / 100}
-                authorization={process.env.EXPO_PUBLIC_FLW_TEST_PUBLIC_KEY}
+                orderId={data.order_id}
                 customer={{
                   email: userSession.email,
                   name: userSession.name,
@@ -358,9 +354,7 @@ export default function OrderDetails({
                   seller_id: data.seller_details.id,
                   artwork_name: data.artwork_data.title,
                   art_id: data.artwork_data.art_id,
-                  shipping_cost: feesNum,
-                  unit_price: data.artwork_data.pricing.usd_price,
-                  tax_fees: taxesNum,
+                  seller_designation: data.seller_designation,
                 }}
                 disabled={locked}
                 onRedirect={handleOnRedirect}
