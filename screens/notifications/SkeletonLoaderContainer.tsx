@@ -12,7 +12,7 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
     // Fade-in on mount
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 300,
+      duration: 200,
       useNativeDriver: true,
     }).start();
 
@@ -32,27 +32,37 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
   });
 
   return (
-    <Animated.View style={[tw`px-[20px] pt-[20px]`, { opacity: fadeAnim }]}>
+    <Animated.View style={[tw`flex-1 bg-white px-5`, { opacity: fadeAnim }]}>
       {Array.from({ length: count }).map((_, index) => (
-        <View key={index} style={tw`mb-[15px]`}>
-          <View style={tw`bg-[#e5e7eb] rounded-sm h-[100px] overflow-hidden`}>
-            <Animated.View
-              style={[
-                styles.shimmerOverlay,
-                {
-                  transform: [{ translateX }],
-                },
-              ]}
-            />
-            <View style={tw`absolute left-[20px] top-[20px]`}>
-              <View
-                style={tw`w-[180px] h-[14px] bg-[#d1d5db] rounded-sm mb-[10px]`}
-              />
-              <View
-                style={tw`w-[140px] h-[12px] bg-[#d1d5db] rounded-sm mb-[6px]`}
-              />
-              <View style={tw`w-[100px] h-[10px] bg-[#d1d5db] rounded-sm`} />
+        <View
+          key={index}
+          style={tw`flex-row items-start py-4 border-b border-[#F2F2F7] overflow-hidden`}
+        >
+          {/* Shimmer Overlay across the row */}
+          <Animated.View
+            style={[
+              styles.shimmerOverlay,
+              {
+                transform: [{ translateX }],
+              },
+            ]}
+          />
+
+          {/* Left Circle Icon Placeholder */}
+          <View style={tw`w-11 h-11 rounded-full bg-[#E5E7EB] mr-3.5`} />
+
+          {/* Right Text Fields */}
+          <View style={tw`flex-1`}>
+            <View style={tw`flex-row justify-between items-center mb-2`}>
+              {/* Title Block */}
+              <View style={tw`w-36 h-3.5 bg-[#E5E7EB] rounded-sm`} />
+              {/* Time Block */}
+              <View style={tw`w-12 h-3 bg-[#E5E7EB] rounded-sm`} />
             </View>
+
+            {/* Body Text Blocks */}
+            <View style={tw`w-[85%] h-3 bg-[#E5E7EB] rounded-sm mb-1.5`} />
+            <View style={tw`w-[55%] h-3 bg-[#E5E7EB] rounded-sm`} />
           </View>
         </View>
       ))}
@@ -66,7 +76,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff50",
     width: "100%",
     height: "100%",
-    opacity: 0.3,
+    opacity: 0.4,
+    zIndex: 1,
   },
 });
 
