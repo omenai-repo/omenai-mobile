@@ -1,4 +1,12 @@
-import { View, TextInput, Modal, ScrollView, Text } from "react-native";
+import {
+  View,
+  TextInput,
+  Modal,
+  ScrollView,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import Input from "#components/inputs/Input";
@@ -138,9 +146,7 @@ const isValidUKBankDetails = (
 ): boolean => {
   const cleanSortCode = sortCode.replaceAll(/[\s-]/g, "");
   const cleanAccountNumber = accountNumber.replaceAll(/\s/g, "");
-  return (
-    /^\d{6}$/.test(cleanSortCode) && /^\d{8}$/.test(cleanAccountNumber)
-  );
+  return /^\d{6}$/.test(cleanSortCode) && /^\d{8}$/.test(cleanAccountNumber);
 };
 
 const isValidIBAN = (iban: string): boolean => {
@@ -151,7 +157,8 @@ const isValidIBAN = (iban: string): boolean => {
     .split("")
     .map((char) => {
       const code = char.codePointAt(0);
-      if (code !== undefined && code >= 65 && code <= 90) return (code - 55).toString();
+      if (code !== undefined && code >= 65 && code <= 90)
+        return (code - 55).toString();
       return char;
     })
     .join("");
@@ -548,9 +555,7 @@ const AddPrimaryAcctScreen = () => {
         <View style={tw`gap-2`}>
           <FittedBlackButton
             onClick={handleAddPrimaryAccount}
-            value={
-              isEditing ? "Update Primary Account" : "Add Primary Account"
-            }
+            value={isEditing ? "Update Primary Account" : "Add Primary Account"}
             isDisabled={isSubmitting}
             isLoading={isSubmitting}
             style={{ height: 50 }}
@@ -594,9 +599,7 @@ const AddPrimaryAcctScreen = () => {
     return (
       <FittedBlackButton
         onClick={handleAddPrimaryAccount}
-        value={
-          isEditing ? "Update Primary Account" : "Add Primary Account"
-        }
+        value={isEditing ? "Update Primary Account" : "Add Primary Account"}
         isDisabled={isSubmitting}
         isLoading={isSubmitting}
         style={{ height: 50 }}
@@ -605,84 +608,51 @@ const AddPrimaryAcctScreen = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={tw`flex-1`}
-      showsVerticalScrollIndicator={false}
-      style={tw`bg-[#F7F7F7]`}
-    >
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <BackHeaderTitle title="Add Primary Account" />
-
-        <View style={tw`mx-[20px] mt-[40px] gap-[20px]`}>
-          <View>
-            <Text style={tw`text-[13px] text-[#454545] mb-2`}>Country</Text>
-            <View
-              style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-sm px-[14px] justify-center`}
-            >
-              <Text style={tw`text-[14px] text-[#1A1A1A]`}>
-                {effectiveAddress?.country || "—"}
-              </Text>
+    <View style={tw`flex-1 bg-[#F7F7F7]`}>
+      <BackHeaderTitle title="Add Primary Account" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={tw`flex-1`}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
+          showsVerticalScrollIndicator={false}
+          style={tw`bg-[#F7F7F7]`}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={tw`mx-[20px] mt-[40px] gap-[20px] flex-grow`}>
+            <View>
+              <Text style={tw`text-[13px] text-[#454545] mb-2`}>Country</Text>
+              <View
+                style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-sm px-[14px] justify-center`}
+              >
+                <Text style={tw`text-[14px] text-[#1A1A1A]`}>
+                  {effectiveAddress?.country || "—"}
+                </Text>
+              </View>
             </View>
-          </View>
 
-          <View>
-            <Text style={tw`text-[13px] text-[#454545] mb-2`}>Region</Text>
-            <View
-              style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-sm px-[14px] justify-center`}
-            >
-              <Text style={tw`text-[14px] text-[#1A1A1A]`}>
-                {REGION_LABELS[regionType]}
-              </Text>
+            <View>
+              <Text style={tw`text-[13px] text-[#454545] mb-2`}>Region</Text>
+              <View
+                style={tw`h-[50px] bg-white border border-[#D9D9D9] rounded-sm px-[14px] justify-center`}
+              >
+                <Text style={tw`text-[14px] text-[#1A1A1A]`}>
+                  {REGION_LABELS[regionType]}
+                </Text>
+              </View>
             </View>
-          </View>
 
-          {regionType === "africa" && (
-            <>
-              <CustomSelectPicker
-                data={filteredBankList}
-                placeholder="Select bank name"
-                value={selectedBank?.value || ""}
-                renderInputSearch={() => (
-                  <TextInput
-                    placeholder="Search bank"
-                    value={searchText}
-                    style={{
-                      padding: 15,
-                      borderWidth: 1,
-                      borderColor: "#ccc",
-                      backgroundColor: "#fff",
-                      margin: 5,
-                    }}
-                    onChangeText={(text: string) => {
-                      setSearchText(text);
-                      debouncedSearch(text);
-                    }}
-                  />
-                )}
-                handleSetValue={(item: { label: string; value: string }) => {
-                  setSelectedBank(item);
-                  setSelectedBranch(null);
-                  setBranchList([]);
-                  setFilteredBranchList([]);
-                  setBranchSearchText("");
-                  setIsValidated(false);
-                }}
-                label="Bank Name"
-                search={true}
-                searchPlaceholder="Search bank"
-                dropdownPosition="bottom"
-                disable={isValidated}
-              />
-
-              {showBranches && (
+            {regionType === "africa" && (
+              <>
                 <CustomSelectPicker
-                  data={filteredBranchList}
-                  placeholder="Select bank branch"
-                  value={selectedBranch?.value || ""}
+                  data={filteredBankList}
+                  placeholder="Select bank name"
+                  value={selectedBank?.value || ""}
                   renderInputSearch={() => (
                     <TextInput
-                      placeholder="Search branch"
-                      value={branchSearchText}
+                      placeholder="Search bank"
+                      value={searchText}
                       style={{
                         padding: 15,
                         borderWidth: 1,
@@ -691,182 +661,219 @@ const AddPrimaryAcctScreen = () => {
                         margin: 5,
                       }}
                       onChangeText={(text: string) => {
-                        handleBranchSearch(text);
-                        handleBranchSearchDebounced(text);
+                        setSearchText(text);
+                        debouncedSearch(text);
                       }}
                     />
                   )}
-                  handleSetValue={(item: BankOption) => {
-                    setSelectedBranch(item);
+                  handleSetValue={(item: { label: string; value: string }) => {
+                    setSelectedBank(item);
+                    setSelectedBranch(null);
+                    setBranchList([]);
+                    setFilteredBranchList([]);
+                    setBranchSearchText("");
                     setIsValidated(false);
                   }}
-                  label="Bank Branch"
+                  label="Bank Name"
                   search={true}
-                  searchPlaceholder="Search branch"
+                  searchPlaceholder="Search bank"
                   dropdownPosition="bottom"
-                  disable={!selectedBank || isValidated}
+                  disable={isValidated}
                 />
-              )}
 
-              <Input
-                label={"Account number"}
-                keyboardType="numeric"
-                onInputChange={(text: string) => setAcctNumber(text)}
-                placeHolder={`Enter acct number`}
-                value={acctNumber}
-                errorMessage={""}
-                containerStyle={{ flex: 0 }}
-                disabled={isValidated}
-              />
+                {showBranches && (
+                  <CustomSelectPicker
+                    data={filteredBranchList}
+                    placeholder="Select bank branch"
+                    value={selectedBranch?.value || ""}
+                    renderInputSearch={() => (
+                      <TextInput
+                        placeholder="Search branch"
+                        value={branchSearchText}
+                        style={{
+                          padding: 15,
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          backgroundColor: "#fff",
+                          margin: 5,
+                        }}
+                        onChangeText={(text: string) => {
+                          handleBranchSearch(text);
+                          handleBranchSearchDebounced(text);
+                        }}
+                      />
+                    )}
+                    handleSetValue={(item: BankOption) => {
+                      setSelectedBranch(item);
+                      setIsValidated(false);
+                    }}
+                    label="Bank Branch"
+                    search={true}
+                    searchPlaceholder="Search branch"
+                    dropdownPosition="bottom"
+                    disable={!selectedBank || isValidated}
+                  />
+                )}
 
-              <View>
                 <Input
-                  label="Account Name"
-                  disabled={true}
-                  onInputChange={() => {}}
-                  placeHolder="Account Name"
-                  value={acctName}
-                  containerStyle={{ flex: 0, opacity: 0.7 }}
+                  label={"Account number"}
+                  keyboardType="numeric"
+                  onInputChange={(text: string) => setAcctNumber(text)}
+                  placeHolder={`Enter acct number`}
+                  value={acctNumber}
+                  errorMessage={""}
+                  containerStyle={{ flex: 0 }}
+                  disabled={isValidated}
                 />
-                <Text style={tw`text-[10px] text-gray-500 mt-1 ml-1`}>
-                  * Account name is automatically fetched and cannot be edited.
-                </Text>
-              </View>
-            </>
-          )}
 
-          {regionType === "uk" && (
-            <>
-              <Input
-                label="Account Holder Name"
-                onInputChange={(text: string) => setAcctName(text)}
-                placeHolder="Enter account holder name"
-                value={acctName}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-              <Input
-                label="Bank Name"
-                onInputChange={(text: string) => setManualBankName(text)}
-                placeHolder="Enter bank name (optional)"
-                value={manualBankName}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-              <Input
-                label="Account Number"
-                keyboardType="numeric"
-                onInputChange={(text: string) => setAcctNumber(text)}
-                placeHolder="8-digit account number"
-                value={acctNumber}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-              <Input
-                label="Sort Code"
-                keyboardType="default"
-                onInputChange={(text: string) => setSortCode(text)}
-                placeHolder="123456 or 12-34-56"
-                value={sortCode}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-            </>
-          )}
+                <View>
+                  <Input
+                    label="Account Name"
+                    disabled={true}
+                    onInputChange={() => {}}
+                    placeHolder="Account Name"
+                    value={acctName}
+                    containerStyle={{ flex: 0, opacity: 0.7 }}
+                  />
+                  <Text style={tw`text-[10px] text-gray-500 mt-1 ml-1`}>
+                    * Account name is automatically fetched and cannot be
+                    edited.
+                  </Text>
+                </View>
+              </>
+            )}
 
-          {regionType === "us" && (
-            <>
-              <Input
-                label="Account Holder Name"
-                onInputChange={(text: string) => setAcctName(text)}
-                placeHolder="Enter account holder name"
-                value={acctName}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-              <Input
-                label="Bank Name"
-                onInputChange={(text: string) => setManualBankName(text)}
-                placeHolder="Enter bank name (optional)"
-                value={manualBankName}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-              <Input
-                label="Account Number"
-                keyboardType="numeric"
-                onInputChange={(text: string) => setAcctNumber(text)}
-                placeHolder="Enter account number"
-                value={acctNumber}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-              <Input
-                label="Routing Number (ABA)"
-                keyboardType="numeric"
-                onInputChange={(text: string) => {
-                  const digitsOnly = text.replaceAll(/\D/g, "");
-                  if (digitsOnly.length > 9) {
-                    setRoutingNumberError(
-                      "Routing number cannot exceed 9 digits.",
-                    );
-                  } else {
-                    setRoutingNumberError("");
+            {regionType === "uk" && (
+              <>
+                <Input
+                  label="Account Holder Name"
+                  onInputChange={(text: string) => setAcctName(text)}
+                  placeHolder="Enter account holder name"
+                  value={acctName}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+                <Input
+                  label="Bank Name"
+                  onInputChange={(text: string) => setManualBankName(text)}
+                  placeHolder="Enter bank name (optional)"
+                  value={manualBankName}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+                <Input
+                  label="Account Number"
+                  keyboardType="numeric"
+                  onInputChange={(text: string) => setAcctNumber(text)}
+                  placeHolder="8-digit account number"
+                  value={acctNumber}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+                <Input
+                  label="Sort Code"
+                  keyboardType="default"
+                  onInputChange={(text: string) => setSortCode(text)}
+                  placeHolder="123456 or 12-34-56"
+                  value={sortCode}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+              </>
+            )}
+
+            {regionType === "us" && (
+              <>
+                <Input
+                  label="Account Holder Name"
+                  onInputChange={(text: string) => setAcctName(text)}
+                  placeHolder="Enter account holder name"
+                  value={acctName}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+                <Input
+                  label="Bank Name"
+                  onInputChange={(text: string) => setManualBankName(text)}
+                  placeHolder="Enter bank name (optional)"
+                  value={manualBankName}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+                <Input
+                  label="Account Number"
+                  keyboardType="numeric"
+                  onInputChange={(text: string) => setAcctNumber(text)}
+                  placeHolder="Enter account number"
+                  value={acctNumber}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+                <Input
+                  label="Routing Number (ABA)"
+                  keyboardType="numeric"
+                  onInputChange={(text: string) => {
+                    const digitsOnly = text.replaceAll(/\D/g, "");
+                    if (digitsOnly.length > 9) {
+                      setRoutingNumberError(
+                        "Routing number cannot exceed 9 digits.",
+                      );
+                    } else {
+                      setRoutingNumberError("");
+                    }
+                    setRoutingNumber(digitsOnly.slice(0, 9));
+                  }}
+                  placeHolder="Enter 9-digit routing number"
+                  value={routingNumber}
+                  errorMessage={routingNumberError}
+                  containerStyle={{ flex: 0 }}
+                />
+              </>
+            )}
+
+            {(regionType === "eu" || regionType === "international") && (
+              <>
+                <Input
+                  label="Account Holder Name"
+                  onInputChange={(text: string) => setAcctName(text)}
+                  placeHolder="Enter account holder name"
+                  value={acctName}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+                <Input
+                  label="Bank Name"
+                  onInputChange={(text: string) => setManualBankName(text)}
+                  placeHolder="Enter bank name"
+                  value={manualBankName}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+                <Input
+                  label="IBAN"
+                  onInputChange={(text: string) => setIban(text.toUpperCase())}
+                  placeHolder="Enter IBAN"
+                  value={iban}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+                <Input
+                  label="SWIFT / BIC"
+                  onInputChange={(text: string) =>
+                    setSwiftCode(text.toUpperCase())
                   }
-                  setRoutingNumber(digitsOnly.slice(0, 9));
-                }}
-                placeHolder="Enter 9-digit routing number"
-                value={routingNumber}
-                errorMessage={routingNumberError}
-                containerStyle={{ flex: 0 }}
-              />
-            </>
-          )}
+                  placeHolder="Enter SWIFT/BIC code"
+                  value={swiftCode}
+                  errorMessage=""
+                  containerStyle={{ flex: 0 }}
+                />
+              </>
+            )}
+          </View>
 
-          {(regionType === "eu" || regionType === "international") && (
-            <>
-              <Input
-                label="Account Holder Name"
-                onInputChange={(text: string) => setAcctName(text)}
-                placeHolder="Enter account holder name"
-                value={acctName}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-              <Input
-                label="Bank Name"
-                onInputChange={(text: string) => setManualBankName(text)}
-                placeHolder="Enter bank name"
-                value={manualBankName}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-              <Input
-                label="IBAN"
-                onInputChange={(text: string) => setIban(text.toUpperCase())}
-                placeHolder="Enter IBAN"
-                value={iban}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-              <Input
-                label="SWIFT / BIC"
-                onInputChange={(text: string) =>
-                  setSwiftCode(text.toUpperCase())
-                }
-                placeHolder="Enter SWIFT/BIC code"
-                value={swiftCode}
-                errorMessage=""
-                containerStyle={{ flex: 0 }}
-              />
-            </>
-          )}
-        </View>
-
-        <View style={tw`mt-[50px] mx-[20px]`}>
-          {renderFooterButton()}
-        </View>
-      </View>
+          <View style={tw`mt-[50px] mx-[20px]`}>{renderFooterButton()}</View>
+        </ScrollView>
+      </KeyboardAvoidingView>
       <Modal visible={fetchingBanks} transparent animationType="fade">
         <View style={tw`flex-1 justify-center items-center bg-white`}>
           <LottieView
@@ -880,7 +887,7 @@ const AddPrimaryAcctScreen = () => {
           />
         </View>
       </Modal>
-    </ScrollView>
+    </View>
   );
 };
 

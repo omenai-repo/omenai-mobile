@@ -1,5 +1,5 @@
 import { updateArtworkImpressions } from "#services/artworks/updateArtworkImpressions";
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 
@@ -10,6 +10,7 @@ function useLikedState(
   art_id: string,
 ) {
   const { openGuestLoginModal } = useGuestLoginModalStore();
+  const queryClient = useQueryClient();
 
   // Initialize stateful data copy of likes data
   const [likedState, setLikedState] = useState({
@@ -21,22 +22,6 @@ function useLikedState(
     setLikedState({ count: initialImpressions, ids: initialLikeIds });
   }, [initialImpressions, initialLikeIds]);
 
-  // Make async call to update liked state in db
-  // const { mutateAsync: updateLikesMutation } = useMutation({
-  //   mutationFn: (options: { state: boolean; sessionId: string }) =>
-  //     updateArtworkImpressions(art_id, options.state, options.sessionId),
-
-  //   onSuccess: async (data) => {
-  //     if (data?.isOk) {
-  //       queryClient.invalidateQueries({ queryKey: ["latest"] });
-  //       queryClient.invalidateQueries({ queryKey: ["trending"] });
-  //       queryClient.invalidateQueries({ queryKey: ["curated"] });
-  //     } else {
-  //       setLikedState({ count: initialImpressions, ids: initialLikeIds });
-  //     }
-  //   },
-  // });
-
   const updateLikesMutation = async ({
     state,
     sessionId,
@@ -46,7 +31,11 @@ function useLikedState(
   }) => {
     const data = await updateArtworkImpressions(art_id, state, sessionId);
     if (data?.isOk) {
+      // Invalidate the artwork query so the liked state is fresh on next open
+      queryClient.invalidateQueries({ queryKey: ["artwork", art_id] });
+      queryClient.invalidateQueries({ queryKey: ["saved-artworks"] });
     } else {
+      // Rollback optimistic update on failure
       setLikedState({ count: initialImpressions, ids: initialLikeIds });
     }
   };
@@ -58,17 +47,22 @@ function useLikedState(
     } else {
       if (state) {
         setLikedState((prev) => ({
-          count: prev.count + 1,
-          ids: [...likedState.ids, sessionId],
+          // Prevent duplicate count increment (fix stale closure bug)
+          count: prev.ids.includes(sessionId) ? prev.count : prev.count + 1,
+          // Prevent duplicate IDs using prev.ids instead of likedState.ids
+          ids: prev.ids.includes(sessionId)
+            ? prev.ids
+            : [...prev.ids, sessionId],
         }));
       } else {
         setLikedState((prev) => ({
-          count: prev.count - 1,
-          ids: likedState.ids.filter((id) => id !== sessionId),
+          // Only decrement if the ID actually existed
+          count: !prev.ids.includes(sessionId) ? prev.count : prev.count - 1,
+          ids: prev.ids.filter((id) => id !== sessionId),
         }));
       }
 
-      // Call useQuery mutation
+      // Persist the change to the server
       await updateLikesMutation({ state, sessionId });
     }
   };
