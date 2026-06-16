@@ -4,7 +4,6 @@ import {
   Pressable,
   SectionList,
   RefreshControl,
-  Image,
   ScrollView,
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
@@ -14,7 +13,6 @@ import { useAppStore } from "#store/app/appStore";
 import { getNotificationHistory } from "#services/notification/getNotificationHistory";
 import { updateNotification } from "#services/notification/updateNotification";
 import SkeletonLoaderContainer from "./SkeletonLoaderContainer";
-import { images } from "#constants/images.constants";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -94,7 +92,10 @@ const AnimatedNotificationItem = ({ item, onPress }: Props) => {
   const opacity = useSharedValue(0);
 
   useEffect(() => {
-    opacity.value = withTiming(1, { duration: 150, easing: Easing.out(Easing.ease) });
+    opacity.value = withTiming(1, {
+      duration: 150,
+      easing: Easing.out(Easing.ease),
+    });
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -110,11 +111,13 @@ const AnimatedNotificationItem = ({ item, onPress }: Props) => {
         onPress={onPress}
         style={tw.style(
           `flex-row items-start py-4 px-[20px] border-b border-[#F2F2F7]`,
-          isUnread ? `bg-[#F5FAFF]` : `bg-white`
+          isUnread ? `bg-[#F5FAFF]` : `bg-white`,
         )}
       >
         {/* Rounded-full icon container */}
-        <View style={tw`w-11 h-11 rounded-full ${iconConfig.bg} items-center justify-center mr-3.5`}>
+        <View
+          style={tw`w-11 h-11 rounded-full ${iconConfig.bg} items-center justify-center mr-3.5`}
+        >
           <Ionicons name={iconConfig.name} size={18} color={iconConfig.color} />
         </View>
 
@@ -125,21 +128,21 @@ const AnimatedNotificationItem = ({ item, onPress }: Props) => {
                 numberOfLines={1}
                 style={tw.style(
                   `text-base text-slate-900`,
-                  isUnread ? `font-sans-medium` : `font-sans-regular`
+                  isUnread ? `font-sans-medium` : `font-sans-regular`,
                 )}
               >
                 {item.title}
               </Text>
-              {/* {isUnread && (
-                <View style={tw`w-2 h-2 bg-[#007AFF] rounded-full ml-2`} />
-              )} */}
             </View>
             <Text style={tw`text-sm text-gray-500 font-sans-regular`}>
               {dayjs(item.sentAt).format("h:mm a")}
             </Text>
           </View>
 
-          <Text numberOfLines={2} style={tw`text-sm text-gray-500 font-sans-regular`}>
+          <Text
+            numberOfLines={2}
+            style={tw`text-sm text-gray-500 font-sans-regular`}
+          >
             {item.body}
           </Text>
         </View>
@@ -148,12 +151,18 @@ const AnimatedNotificationItem = ({ item, onPress }: Props) => {
   );
 };
 
+const ROOT_BY_ACCESS: Record<AccessType, string> = {
+  artist: "Artist",
+  gallery: "Gallery",
+  collector: "Individual",
+};
+
 /** Centralized router — mirrors Expo notification response logic */
 function routeFromNotification(data?: NotificationDataType) {
   if (!data?.type || !data?.access_type) return;
 
   const { type, access_type } = data;
-  const root = access_type === "artist" ? "Artist" : access_type === "gallery" ? "Gallery" : "Individual";
+  const root = ROOT_BY_ACCESS[access_type] || "Individual";
 
   if (type === "engagement") {
     const { engagement_event_type, art_id, event_id } = data.metadata || {};
@@ -163,12 +172,10 @@ function routeFromNotification(data?: NotificationDataType) {
       } else {
         navigate(root);
       }
+    } else if (art_id) {
+      navigate(screenName.artwork, { art_id });
     } else {
-      if (art_id) {
-        navigate(screenName.artwork, { art_id });
-      } else {
-        navigate(root);
-      }
+      navigate(root);
     }
     return;
   }
@@ -222,11 +229,11 @@ const NotificationScreen = () => {
       const response = await getNotificationHistory({
         access_type: userType === "user" ? "collector" : userType,
       });
-      
+
       const rawData = response?.data ?? [];
       // Sort newest to oldest
       const sortedData = [...rawData].sort(
-        (a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
+        (a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime(),
       );
       setNotifications(sortedData);
     } catch (err) {
@@ -275,8 +282,10 @@ const NotificationScreen = () => {
     const filtered = notifications.filter((item) => {
       if (activeFilter === "All") return true;
       const type = item.data?.type || item.type;
-      if (activeFilter === "Reminders") return type === "engagement" || type === "updates";
-      if (activeFilter === "Payments") return type === "wallet" || type === "subscriptions";
+      if (activeFilter === "Reminders")
+        return type === "engagement" || type === "updates";
+      if (activeFilter === "Payments")
+        return type === "wallet" || type === "subscriptions";
       if (activeFilter === "Orders") return type === "orders";
       return true;
     });
@@ -297,9 +306,12 @@ const NotificationScreen = () => {
     });
 
     const sections = [];
-    if (todayList.length > 0) sections.push({ title: "Today", data: todayList });
-    if (yesterdayList.length > 0) sections.push({ title: "Yesterday", data: yesterdayList });
-    if (earlierList.length > 0) sections.push({ title: "Earlier", data: earlierList });
+    if (todayList.length > 0)
+      sections.push({ title: "Today", data: todayList });
+    if (yesterdayList.length > 0)
+      sections.push({ title: "Yesterday", data: yesterdayList });
+    if (earlierList.length > 0)
+      sections.push({ title: "Earlier", data: earlierList });
 
     return sections;
   };
@@ -311,12 +323,12 @@ const NotificationScreen = () => {
       <View
         style={tw`flex-1 justify-center items-center mt-[100px] px-[100px]`}
       >
-        <Ionicons name="notifications-outline" style={tw`mb-4`} size={60} color={tw.color("slate-900")} />
-        {/* <Image
-          source={images.emptyArtworks}
-          style={tw`w-[120px] h-[120px] mb-4`}
-          resizeMode="contain"
-        /> */}
+        <Ionicons
+          name="notifications-outline"
+          style={tw`mb-4`}
+          size={60}
+          color={tw.color("slate-900")}
+        />
         <Text
           style={tw`text-center text-slate-900 font-sans-medium text-xl mb-2`}
         >
@@ -353,13 +365,13 @@ const NotificationScreen = () => {
                   `px-5 py-2 rounded-sm border`,
                   isSelected
                     ? `bg-[${colors.black}] border-[${colors.black}]`
-                    : `bg-transparent border-gray-100`
+                    : `bg-transparent border-gray-100`,
                 )}
               >
                 <Text
                   style={tw.style(
                     `text-sm font-sans-regular`,
-                    isSelected ? `text-white` : `text-[#636366]`
+                    isSelected ? `text-white` : `text-[#636366]`,
                   )}
                 >
                   {filter}

@@ -35,7 +35,7 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
     <Animated.View style={[tw`flex-1 bg-white px-5`, { opacity: fadeAnim }]}>
       {Array.from({ length: count }).map((_, index) => (
         <View
-          key={index}
+          key={`skeleton-item-${index}`}
           style={tw`flex-row items-start py-4 border-b border-[#F2F2F7] overflow-hidden`}
         >
           {/* Shimmer Overlay across the row */}
