@@ -1,202 +1,183 @@
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-  RefreshControl,
-} from "react-native";
-import React, { useEffect, useState, useMemo } from "react";
-import { colors } from "#config/colors.config";
+import { Text, View, RefreshControl } from "react-native";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import Loader from "#components/general/Loader";
 import { fetchUserSavedArtworks } from "#services/artworks/fetchUserSavedArtwork";
-import { UseSavedArtworksStore } from "#store/artworks/SavedArtworksStore";
-import { getImageFileView } from "#lib/storage/getImageFileView";
-import ListSkeleton from "#components/skeleton/ListSkeleton";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { AntDesign } from "@expo/vector-icons";
-import { screenName } from "#constants/screenNames.constants";
-import { utils_handleFetchUserID } from "#utils/utils_asyncStorage";
-import useLikedState from "#hooks/useLikedState";
+import { SingleArtworkCardLoader } from "#components/general/ArtworkCardLoader";
+import { useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
-import { StackNavigationProp } from "@react-navigation/stack";
-import ScrollWrapper from "#components/general/ScrollWrapper";
-import { useScrollY } from "#hooks/useScrollY";
 import tw from "twrnc";
+import ArtworkCard from "#components/artwork/ArtworkCard";
+import { FlashList } from "@shopify/flash-list";
+import { useWindowDimensions } from "react-native";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-type SavedArtworkItemProps = {
-  name: string;
-  artistName: string;
-  url: string;
-  index: number;
-  art_id: string;
-  likeIds: string[];
-  impressions: number;
-  pricing: {
-    currency: string;
-    price: number;
-    shouldShowPrice: "Yes" | "No";
-    usd_price: number;
-  };
-};
+const H_PAD = 20;
+const COL_GAP = 16;
 
 export default function SavedArtworks() {
-  const navigation = useNavigation<StackNavigationProp<any>>();
-
   const isFocused = useIsFocused();
+  const { width: screenW } = useWindowDimensions();
+  const cardW = useMemo(() => (screenW - H_PAD * 2 - COL_GAP) / 2, [screenW]);
 
-  const { isLoading, setIsLoading, data, setData } = UseSavedArtworksStore();
-  const [refreshing, setRefreshing] = useState(false);
-  const { scrollY, onScroll } = useScrollY();
-
-  const [sessionId, setSessionId] = useState("");
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["saved-artworks"],
+    queryFn: async ({ pageParam = 1 }) => {
+      const res = await fetchUserSavedArtworks(pageParam);
+      if (!res?.isOk) throw new Error("Failed to fetch saved artworks");
+      return res;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalPages = lastPage.count ?? 1;
+      const next = allPages.length + 1;
+      return next <= totalPages ? next : undefined;
+    },
+    staleTime: 10_000,
+  });
 
   useEffect(() => {
-    handleFetchUserSessionData();
-    handleFetchUserSavedArtorks();
-  }, [isFocused]);
-
-  const handleFetchUserSessionData = async () => {
-    const userId = await utils_handleFetchUserID();
-    setSessionId(userId);
-  };
-
-  const onRefresh = React.useCallback(() => {
-    // setRefreshing(true);
-    handleFetchUserSavedArtorks();
-  }, []);
-
-  const handleFetchUserSavedArtorks = async () => {
-    setIsLoading(true);
-    const results = await fetchUserSavedArtworks();
-    if (results?.isOk) {
-      setData(results.data);
+    if (isFocused) {
+      refetch();
     }
+  }, [isFocused, refetch]);
 
-    setIsLoading(false);
-  };
+  const flatData = useMemo(
+    () => (data?.pages || []).flatMap((p) => p.data ?? []),
+    [data?.pages],
+  );
 
-  const SavedArtworkItem = ({
-    name,
-    artistName,
-    url,
-    index,
-    art_id,
-    likeIds,
-    impressions,
-    pricing,
-  }: SavedArtworkItemProps) => {
-    const image_href = useMemo(() => getImageFileView(url, 120), [url]);
+  const totalCount = data?.pages[0]?.total ?? 0;
 
-    const { handleLike } = useLikedState(
-      impressions,
-      likeIds,
-      sessionId,
-      art_id,
-    );
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
-    const handleRemove = () => {
-      handleLike(false);
+  const loadNextPage = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-      //remove artwork from state
-      const prevData = [...data];
-      prevData.splice(index, 1);
-      setData(prevData);
-    };
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => (
+      <View style={[tw`mb-4`, { width: cardW }]}>
+        <ArtworkCard
+          artwork={{
+            art_id: item.art_id,
+            title: item.title,
+            url: item.url,
+            artist: item.artist,
+            impressions: item.impressions,
+            like_IDs: item.like_IDs || [],
+            availability: item.availability,
+            image_format: item.image_format,
+            pricing: {
+              usd_price: item.pricing?.usd_price ?? 0,
+              shouldShowPrice: item.pricing?.shouldShowPrice ?? "No",
+            },
+          }}
+          width={cardW}
+          useImageLoadAspectRatio
+          useFixedImageFrame={false}
+          hideBackground
+        />
+      </View>
+    ),
+    [cardW],
+  );
 
-    return (
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate(screenName.artwork, { title: name, url, art_id })
-        }
-        activeOpacity={0.9}
-        style={tw`flex-row bg-white rounded-sm overflow-hidden mb-4 border border-gray-100 shadow-sm`}
+  const ListHeader = () =>
+    totalCount > 0 ? (
+      <Text
+        style={tw`text-[11px] uppercase tracking-widest text-neutral-400 mb-3`}
       >
-        {/* Image Section */}
-        <View style={tw`w-[120px] h-[150px] bg-gray-50`}>
-          <Image
-            source={{ uri: image_href }}
-            style={tw`w-full h-full`}
-            resizeMode="cover"
-          />
-        </View>
+        {totalCount} {totalCount === 1 ? "artwork" : "artworks"} saved
+      </Text>
+    ) : null;
 
-        {/* Details Section */}
-        <View style={tw`flex-1 p-3 justifying-between flex-col`}>
-          <View>
-            <Text
-              style={tw`text-[16px] font-bold text-black mb-1`}
-              numberOfLines={1}
-            >
-              {name}
-            </Text>
-            <Text style={tw`text-[14px] text-gray-500 mb-2`} numberOfLines={1}>
-              {artistName}
-            </Text>
-            {pricing.shouldShowPrice === "Yes" && (
-              <Text
-                style={[
-                  tw`text-[15px] font-medium`,
-                  { color: colors.primary_black },
-                ]}
-              >
-                {utils_formatPrice(pricing.usd_price)}
-              </Text>
-            )}
-          </View>
-
-          <TouchableOpacity
-            onPress={handleRemove}
-            style={tw`flex-row items-center self-start bg-red-50 px-3 py-2 rounded-sm gap-2 mt-auto`}
-          >
-            <AntDesign name="heart" size={14} color={"#ff0000"} />
-            <Text
-              style={[
-                tw`text-[12px] font-medium`,
-                { color: colors.primary_black },
-              ]}
-            >
-              Remove
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
+  const ListFooter = () =>
+    isFetchingNextPage ? (
+      <Loader size={56} height={90} />
+    ) : (
+      <View style={tw`h-12`} />
     );
-  };
+
+  const ListEmpty = () => (
+    <View style={tw`flex-1 items-center justify-center py-24`}>
+      <View
+        style={tw`w-16 h-16 rounded-full bg-neutral-100 items-center justify-center mb-4`}
+      >
+        <Ionicons name="heart-outline" size={28} color="#a3a3a3" />
+      </View>
+      <Text style={tw`text-base font-semibold text-neutral-800 mb-1`}>
+        No saved artworks
+      </Text>
+      <Text style={tw`text-sm text-neutral-400 text-center px-8`}>
+        Tap the heart on any artwork to save it here.
+      </Text>
+    </View>
+  );
 
   return (
     <View style={tw`flex-1 bg-white`}>
       <BackHeaderTitle title="Saved artworks" />
-      <ScrollWrapper
-        style={tw`flex-1 px-5 pt-4`}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        onScroll={onScroll}
-      >
-        {isLoading && <ListSkeleton count={5} itemHeight={100} />}
-        {data.length > 0 && !isLoading && (
-          <View style={tw`pb-12 gap-1`}>
-            {data.map((artwork, index) => (
-              <SavedArtworkItem
-                name={artwork.title}
-                artistName={artwork.artist}
-                url={artwork.url}
-                art_id={artwork.art_id}
-                likeIds={artwork.like_IDs || []}
-                impressions={artwork.impressions}
-                index={index}
-                key={index}
-                pricing={artwork.pricing}
-              />
-            ))}
-          </View>
-        )}
-        {data.length === 0 && !isLoading && (
-          <View style={tw`h-[400px] items-center justify-center`}>
-            <Text style={tw`text-xl text-gray-400`}>No Saved Artworks</Text>
-          </View>
-        )}
-      </ScrollWrapper>
+
+      {isLoading && flatData.length === 0 ? (
+        <FlashList
+          data={[1, 2, 3, 4, 5, 6]}
+          numColumns={2}
+          masonry
+          renderItem={() => (
+            <View style={[tw`mb-4`, { width: cardW }]}>
+              <SingleArtworkCardLoader style={{ width: cardW }} />
+            </View>
+          )}
+          keyExtractor={(_, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: H_PAD,
+            paddingTop: 12,
+            paddingBottom: 32,
+          }}
+        />
+      ) : (
+        <FlashList
+          data={flatData}
+          numColumns={2}
+          masonry
+          keyExtractor={(item: any) => item.art_id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: H_PAD,
+            paddingTop: 12,
+            paddingBottom: 32,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#000"
+            />
+          }
+          onEndReached={loadNextPage}
+          onEndReachedThreshold={0.45}
+          ListHeaderComponent={<ListHeader />}
+          ListFooterComponent={<ListFooter />}
+          ListEmptyComponent={<ListEmpty />}
+        />
+      )}
     </View>
   );
 }
