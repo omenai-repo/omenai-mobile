@@ -33,6 +33,7 @@ import { Ionicons, Feather } from "@expo/vector-icons";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import ZoomArtwork from "./ZoomArtwork";
+import MuseumViewer from "./components/MuseumViewer";
 import { useScrollY } from "#hooks/useScrollY";
 import { Analytics } from "#utils/analytics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -83,6 +84,7 @@ export default function Artwork() {
 
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [museumVisible, setMuseumVisible] = useState(false);
   const { onScroll } = useScrollY();
   const editModalRef = useRef<BottomSheetModal>(null);
 
@@ -331,6 +333,7 @@ export default function Artwork() {
                     imageUri={imageUri}
                     imageDimensions={imageDimensions}
                     setModalVisible={setModalVisible}
+                    setMuseumVisible={setMuseumVisible}
                     isTabletLandscape={isTabletLandscape}
                     screenWidth={screenWidth}
                     onImageLoad={handleImageLoad}
@@ -349,6 +352,7 @@ export default function Artwork() {
                     imageUri={imageUri}
                     imageDimensions={imageDimensions}
                     setModalVisible={setModalVisible}
+                    setMuseumVisible={setMuseumVisible}
                     isTabletLandscape={isTabletLandscape}
                     screenWidth={screenWidth}
                     onImageLoad={handleImageLoad}
@@ -444,6 +448,24 @@ export default function Artwork() {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
       />
+      {artwork && (
+        <MuseumViewer
+          visible={museumVisible}
+          onClose={() => setMuseumVisible(false)}
+          imageUri={getImageFileView(artwork.url, 1200)}
+          title={artwork.title}
+          artist={artwork.artist}
+          year={artwork.year}
+          medium={artwork.medium}
+          dimensions={
+            artwork.dimensions
+              ? `${artwork.dimensions.width} × ${artwork.dimensions.height} cm`
+              : undefined
+          }
+          naturalWidth={imageDimensions?.width ?? 1}
+          naturalHeight={imageDimensions?.height ?? 1}
+        />
+      )}
       {artwork &&
         userType === "gallery" &&
         artwork.author_id === userSession?.id && (
