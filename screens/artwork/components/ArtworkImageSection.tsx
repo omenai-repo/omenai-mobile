@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { Feather } from "@expo/vector-icons";
-import { museumColors } from "#config/colors.config";
+import { colors } from "#config/colors.config";
 
 export default function ArtworkImageSection({
   imageUri,
@@ -72,25 +72,15 @@ export default function ArtworkImageSection({
       <Pressable
         onPress={() => setMuseumVisible(true)}
         style={({ pressed }) => [
-          tw`flex-row items-center gap-1.5 self-end mt-1.5 mr-4 py-1.5 px-3.5 rounded-sm`,
-          {
-            backgroundColor: pressed
-              ? museumColors.buttonBackgroundPressed
-              : museumColors.buttonBackground,
-            borderWidth: 0.5,
-            borderColor: museumColors.buttonBorder,
-          },
+          tw`flex-row items-center gap-1.5 self-end mt-1.5 mr-4 py-2 px-3.5 rounded-sm`,
+          pressed ? tw`opacity-70` : tw`opacity-100`,
+          { backgroundColor: colors.black },
         ]}
         accessibilityLabel="View artwork in museum viewer"
         accessibilityRole="button"
       >
-        <Feather name="image" size={14} color={museumColors.buttonText} />
-        <Text
-          style={[
-            tw`text-sm font-sans-medium tracking-wide`,
-            { color: museumColors.buttonText },
-          ]}
-        >
+        <Feather name="image" size={14} color="#ffffff" />
+        <Text style={tw`text-sm font-sans-medium tracking-wide text-white`}>
           View in museum
         </Text>
       </Pressable>
