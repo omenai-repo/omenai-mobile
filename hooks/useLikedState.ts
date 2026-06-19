@@ -25,18 +25,24 @@ function useLikedState(
   const updateLikesMutation = async ({
     state,
     sessionId,
+    previousSavedCache,
   }: {
     state: boolean;
     sessionId: string;
+    previousSavedCache: unknown;
   }) => {
     const data = await updateArtworkImpressions(art_id, state, sessionId);
     if (data?.isOk) {
-      // Invalidate the artwork query so the liked state is fresh on next open
+      // Invalidate queries so they re-fetch fresh data in the background
       queryClient.invalidateQueries({ queryKey: ["artwork", art_id] });
       queryClient.invalidateQueries({ queryKey: ["saved-artworks"] });
+      queryClient.invalidateQueries({ queryKey: ["home"] });
+      queryClient.invalidateQueries({ queryKey: ["artworks"] });
     } else {
-      // Rollback optimistic update on failure
       setLikedState({ count: initialImpressions, ids: initialLikeIds });
+      if (previousSavedCache !== undefined) {
+        queryClient.setQueryData(["saved-artworks"], previousSavedCache);
+      }
     }
   };
 
@@ -45,6 +51,8 @@ function useLikedState(
     if (sessionId === undefined || sessionId === "") {
       openGuestLoginModal();
     } else {
+      let previousSavedCache: unknown = undefined;
+
       if (state) {
         setLikedState((prev) => ({
           // Prevent duplicate count increment (fix stale closure bug)
@@ -60,10 +68,27 @@ function useLikedState(
           count: !prev.ids.includes(sessionId) ? prev.count : prev.count - 1,
           ids: prev.ids.filter((id) => id !== sessionId),
         }));
+
+        // Optimistically remove the artwork from the saved-artworks cache
+        // so the card disappears immediately without waiting for a re-fetch.
+        previousSavedCache = queryClient.getQueryData(["saved-artworks"]);
+        queryClient.setQueryData(["saved-artworks"], (old: any) => {
+          if (!old?.pages) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              data: (page.data ?? []).filter(
+                (item: any) => item.art_id !== art_id,
+              ),
+              total: Math.max(0, (page.total ?? 1) - 1),
+            })),
+          };
+        });
       }
 
       // Persist the change to the server
-      await updateLikesMutation({ state, sessionId });
+      await updateLikesMutation({ state, sessionId, previousSavedCache });
     }
   };
 
