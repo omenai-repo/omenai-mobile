@@ -70,7 +70,7 @@ assets/         # Images, fonts, Lottie — never import directly in screens/com
 json/           # Legacy/static JSON blobs (prefer data/ for new work)
 ```
 
-**Not in AGENTS but present:** `navigation/`, `utils/`, `json/`, root `appWrite_config`, `firebaseConfig` — use existing `#` aliases (see below).
+**Not in AGENTS but present:** `navigation/`, `utils/`, `json/`, root `appWrite_config`, — use existing `#` aliases (see below).
 
 ---
 

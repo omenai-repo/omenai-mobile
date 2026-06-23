@@ -49,3 +49,6 @@ omenai-inc-firebase-adminsdk-fbsvc-0b4f7da24e.json
 ios/
 android/
 .idea/
+
+google-services.json
+GoogleService-Info.plist

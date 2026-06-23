@@ -27,7 +27,6 @@ module.exports = function (api) {
             "#types": "./types",
             "#utils": "./utils",
             "#appWrite_config": "./appWrite_config",
-            "#firebaseConfig": "./firebaseConfig",
             "react-native-device-info": "./react-native-device-info.js",
             twrnc: "./lib/tailwind.ts",
             "twrnc-real": "./node_modules/twrnc",

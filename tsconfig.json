@@ -23,7 +23,6 @@
       "#types/*": ["./types/*"],
       "#utils/*": ["./utils/*"],
       "#appWrite_config": ["./appWrite_config"],
-      "#firebaseConfig": ["./firebaseConfig"]
     }
   }
 }

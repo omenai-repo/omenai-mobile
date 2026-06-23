@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import DeviceInfo from "react-native-device-info";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "#firebaseConfig";
+import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import SpInAppUpdates, { IAUUpdateKind } from "sp-react-native-in-app-updates";
 import { Platform } from "react-native";
 
@@ -74,8 +73,11 @@ export const useVersionCheck = (
   }, []);
 
   const handleVersionSnapshot = useCallback(
-    async (docSnapshot: any, currentVersion: string) => {
-      if (!docSnapshot.exists()) {
+    async (
+      docSnapshot: FirebaseFirestoreTypes.DocumentSnapshot,
+      currentVersion: string,
+    ) => {
+      if (!docSnapshot.exists) {
         console.warn("[VersionCheck] No version document found");
         setVersionCheckResult((prev) => ({
           ...prev,
@@ -135,17 +137,16 @@ export const useVersionCheck = (
         if (!currentVersion)
           throw new Error("Unable to determine current app version");
 
-        const docRef = doc(
-          db,
-          "versions",
-          process.env.EXPO_PUBLIC_ENV === "production"
-            ? "production"
-            : "development",
-        );
+        const docRef = firestore()
+          .collection("versions")
+          .doc(
+            process.env.EXPO_PUBLIC_ENV === "production"
+              ? "production"
+              : "development",
+          );
 
-        unsubscribe = onSnapshot(
-          docRef,
-          (snapshot: any) => handleVersionSnapshot(snapshot, currentVersion),
+        unsubscribe = docRef.onSnapshot(
+          (snapshot) => handleVersionSnapshot(snapshot, currentVersion),
           handleSnapshotError,
         );
       } catch (error) {

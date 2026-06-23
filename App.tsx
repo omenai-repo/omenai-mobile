@@ -42,6 +42,7 @@ import {
   useDeepLinkFlush,
 } from "#features/deeplink/deepLink";
 import { flushPendingDeepLinks } from "#features/deeplink/deepLinkApply";
+import { initializeAppCheckConfig } from "#config/appCheck.config";
 
 // Set default font for all Text and TextInput components
 // @ts-ignore
@@ -122,6 +123,7 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
+        initializeAppCheckConfig();
         await clearStaleCredentials();
         const token = await registerForPushToken();
         if (token) setExpoPushToken(token);

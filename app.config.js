@@ -38,6 +38,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: "com.omenai.omenaimobile",
       buildNumber: IOS_BUILD_NUMBER,
+      googleServicesFile: process.env.GOOGLE_SERVICE_INFO_PLIST,
       associatedDomains: associatedDomainsIOS,
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
@@ -52,7 +53,7 @@ export default {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
-      googleServicesFile: "./google-services.json",
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
       useNextNotificationsApi: true,
       package: "com.omenai.omenaiapp",
       permissions: ["android.permission.RECORD_AUDIO"],
@@ -78,6 +79,21 @@ export default {
       [
         "expo-build-properties",
         {
+          ios: {
+            useFrameworks: "static",
+            forceStaticLinking: [
+              "RNFBAnalytics",
+              "RNFBApp",
+              "RNFBAppCheck",
+              "RNFBAuth",
+              "RNFBCrashlytics",
+              "RNFBFirestore",
+              "RNFBMessaging",
+              "RNFBRemoteConfig",
+              "RNFBStorage",
+              "RNFBSomeOtherRNFBModuleYouAreUsing",
+            ],
+          },
           android: {
             enableMinifyInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,
@@ -95,6 +111,7 @@ export default {
           },
         },
       ],
+      "@react-native-firebase/app",
       "@react-native-community/datetimepicker",
       "expo-image",
       "expo-sharing",
