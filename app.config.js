@@ -107,6 +107,9 @@ export default {
 
               # Nimbus JOSE JWT optional Ed25519/X25519 paths reference Tink subtle APIs not bundled.
               -dontwarn com.google.crypto.tink.subtle.**
+
+              # Guava/Google Common references java.lang.reflect.AnnotatedType which is missing in Android SDK
+              -dontwarn java.lang.reflect.AnnotatedType
             `.trim(),
           },
         },
