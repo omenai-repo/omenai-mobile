@@ -7,11 +7,11 @@ export function initializeAppCheckConfig() {
       providerOptions: {
         android: {
           provider: __DEV__ ? "debug" : "playIntegrity",
-          debugToken: process.env.EXPO_APPCHECK_DEBUG_TOKEN,
+          debugToken: process.env.EXPO_PUBLIC_APPCHECK_DEBUG_TOKEN,
         },
         apple: {
           provider: __DEV__ ? "debug" : "appAttestWithDeviceCheckFallback",
-          debugToken: process.env.EXPO_APPCHECK_DEBUG_TOKEN,
+          debugToken: process.env.EXPO_PUBLIC_APPCHECK_DEBUG_TOKEN,
         },
       },
     },

@@ -13,7 +13,7 @@ export const getApiHeaders = async (authenticated: boolean = true) => {
   try {
     const { token } = await appCheck().getToken();
     if (token) {
-      headers["X-Firebase-AppCheck"] = token;
+      headers["x-firebase-appcheck"] = token;
     }
   } catch (error) {
     console.warn("Firebase App Check token acquisition failed:", error);
