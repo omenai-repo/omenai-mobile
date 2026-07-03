@@ -3,7 +3,7 @@ name: Production Build and Submit
 on:
   push:
     branches:
-      - mainnn
+      - feat/museum-view
   workflow_dispatch:
 
 jobs:

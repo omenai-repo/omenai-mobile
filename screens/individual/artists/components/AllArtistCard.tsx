@@ -3,7 +3,6 @@ import { Image, Pressable, Text, View } from "react-native";
 import tw from "twrnc";
 import { MaterialIcons } from "@expo/vector-icons";
 import FollowComponent from "#components/follow/FollowComponent";
-import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { getArtistInitials } from "#utils/getArtistInitials";
 
@@ -43,18 +42,16 @@ export default function AllArtistCard({
   ]
     .filter(Boolean)
     .join(" · ");
-  const imageKey = artist.cardImage ?? artist.logo;
+  const imageKey = artist.cardImage;
   let imageUri: string | null = null;
   if (imageKey) {
-    imageUri = artist.cardImageIsArtwork
-      ? getImageFileView(imageKey, 600)
-      : getGalleryLogoFileView(imageKey, 600);
+    imageUri = getImageFileView(imageKey, 600);
   }
   const showInitials = !imageUri || imgError;
 
   useEffect(() => {
     setImgError(false);
-  }, [artist.artist_id, artist.logo]);
+  }, [artist.artist_id, artist.cardImage]);
 
   return (
     <View style={[{ width: cardWidth }]}>

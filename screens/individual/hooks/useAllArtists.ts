@@ -15,6 +15,7 @@ type ArtistApiRow = {
     birthyear?: string;
     country?: string;
   };
+  latestArtworkUrl?: string;
   country_of_origin?: string;
   artistCountry?: string;
   birthyear?: string;
@@ -25,13 +26,13 @@ function toDirectoryArtist(row: ArtistApiRow): DirectoryArtist | null {
   const artist_id = String(row.artist_id ?? row.author_id ?? "").trim();
   if (!artist_id) return null;
 
-  const artworkUrl = row.mostLikedArtwork?.url?.trim();
-  
+  const artworkUrl = (row.mostLikedArtwork?.url ?? row.latestArtworkUrl ?? "").trim() || undefined;
+
   return {
     artist_id,
     name: row.name ?? row.artist ?? "Artist",
     logo: row.logo,
-    cardImage: artworkUrl || row.logo,
+    cardImage: artworkUrl,
     cardImageIsArtwork: Boolean(artworkUrl),
     country_of_origin:
       row.country_of_origin ??
