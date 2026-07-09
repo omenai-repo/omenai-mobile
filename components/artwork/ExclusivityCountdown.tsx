@@ -4,6 +4,7 @@ import tw from "twrnc";
 import ExclusivityExtensionModal from "./ExclusivityExtensionModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 interface ExclusivityCountdownProps {
   expiresAt: Date;
@@ -33,15 +34,11 @@ const ExpiredState = ({
         Artwork Exclusivity period has ended.
       </Text>
     </View>
-    <TouchableOpacity
-      onPress={onExtendContract}
-      style={tw`bg-[#1A1A1A] py-2 px-3 rounded-sm`}
-      activeOpacity={0.8}
-    >
-      <Text style={tw`text-white text-xs text-center font-sans-medium`}>
-        Extend Contract
-      </Text>
-    </TouchableOpacity>
+    <LongBlackButton
+      style={tw`h-8`}
+      onClick={onExtendContract}
+      value="Extend Contract"
+    />
   </View>
 );
 

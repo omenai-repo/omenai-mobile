@@ -10,7 +10,7 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { createStripeTokenizedCharge } from "#services/stripe/createStripeTokenizedCharge";
+import { createSubscriptionCharge } from "#services/payment/paymentAdapterService";
 import { useAppStore } from "#store/app/appStore";
 import { updateSubscriptionPlan } from "#services/stripe/updateSubscriptionPlan";
 import { useModalStore } from "#store/modal/modalStore";
@@ -58,6 +58,7 @@ type CheckoutPricingParams = {
   startDate: Date;
   days_used: number;
   totalDays: number;
+  action: string | null;
 };
 
 const useCheckoutPricing = ({
@@ -69,9 +70,10 @@ const useCheckoutPricing = ({
   startDate,
   days_used,
   totalDays,
+  action,
 }: CheckoutPricingParams) => {
   const { proratedPrice, upgradeCost, grandTotal } = useMemo(() => {
-    if (isInitialSubscription) {
+    if (isInitialSubscription || action === "reactivation") {
       if (!plan?.pricing)
         return { proratedPrice: 0, upgradeCost: 0, grandTotal: 0 };
       const price =
@@ -100,9 +102,13 @@ const useCheckoutPricing = ({
     totalDays,
     isInitialSubscription,
     isSubscriptionDiscount,
+    action,
   ]);
 
   const plan_change_params = useMemo(() => {
+    if (action === "reactivation") {
+      return { action: "Reactivation", shouldCharge: true };
+    }
     if (!sub_data && !isInitialSubscription)
       return { action: "", shouldCharge: false };
     if (isInitialSubscription)
@@ -118,7 +124,7 @@ const useCheckoutPricing = ({
       interval,
       sub_data.status,
     );
-  }, [sub_data, interval, plan?.pricing, isInitialSubscription]);
+  }, [sub_data, interval, plan?.pricing, isInitialSubscription, action]);
 
   return { proratedPrice, upgradeCost, grandTotal, plan_change_params };
 };
@@ -187,6 +193,7 @@ export default function Checkout() {
       startDate,
       days_used,
       totalDays,
+      action,
     });
 
   const showCharge = plan_change_params.shouldCharge;
@@ -209,7 +216,7 @@ export default function Checkout() {
     try {
       setPayLoading(true);
 
-      const res = await createStripeTokenizedCharge(finalGrandTotal, {
+      const res = await createSubscriptionCharge("stripe", finalGrandTotal, {
         name: user.name,
         email: user.email,
         gallery_id: user.id,
@@ -240,6 +247,15 @@ export default function Checkout() {
 
       const { client_secret, status, paymentIntentId } = res;
       if (status === "requires_action") {
+        if (!client_secret) {
+          updateModal({
+            message:
+              "Unable to process your payment. Please try again or contact support.",
+            showModal: true,
+            modalType: "error",
+          });
+          return;
+        }
         const { error: nextActionErr } = await handleNextAction(client_secret);
         if (nextActionErr) {
           Analytics.track("payment_failed", {
@@ -409,7 +425,7 @@ export default function Checkout() {
           interval={interval}
         />
         <PricingBreakdown
-          isInitialSubscription={isInitialSubscription}
+          isInitialSubscription={isInitialSubscription || action === "reactivation"}
           days_left={days_left}
           upgradeCost={upgradeCost}
           proratedPrice={proratedPrice}
