@@ -66,6 +66,9 @@ if (TextInput.defaultProps) {
 // Vexo analytic initialization
 Analytics.init(process.env.EXPO_PUBLIC_VEXO_ID as string);
 
+// Initialize App Check before any other Firebase services
+initializeAppCheckConfig();
+
 // Safely patch Platform.constants for web/dev environments only
 try {
   if (!Platform.constants) {
@@ -123,7 +126,6 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
-        initializeAppCheckConfig();
         await clearStaleCredentials();
         const token = await registerForPushToken();
         if (token) setExpoPushToken(token);

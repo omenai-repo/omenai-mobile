@@ -115,6 +115,7 @@ export default {
         },
       ],
       "@react-native-firebase/app",
+      "@react-native-firebase/app-check",
       "@react-native-community/datetimepicker",
       "expo-image",
       "expo-sharing",
