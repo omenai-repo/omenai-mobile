@@ -1,10 +1,9 @@
 appId: com.omenai.omenaimobile
-name: "Verify Subscriptions Flow"
+name: "Gallery Subscription Management"
 tags:
-  - profile
+  - gallery
   - subscriptions
   - billing
-  - gallery
 
 ---
 - runFlow: ../login/gallery-login.yaml
@@ -18,7 +17,6 @@ tags:
 - extendedWaitUntil:
     visible: "Billing"
     timeout: 10000
-- assertVisible: "Billing"
 
 - scrollUntilVisible:
     direction: DOWN
@@ -27,6 +25,22 @@ tags:
 
 - assertVisible:
     anyOf:
-      - "plan"
-      - "Subscription"
+      - "Manage subscription"
+      - "Cancel subscription"
+      - "Reactivate plan"
       - "Active"
+      - "Inactive"
+
+- scrollUntilVisible:
+    direction: DOWN
+    element:
+      anyOf:
+        - "Upcoming"
+        - "Transaction"
+        - "History"
+    timeout: 10000
+
+- scrollUntilVisible:
+    direction: UP
+    element: "Billing"
+    timeout: 10000

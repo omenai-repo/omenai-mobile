@@ -6,46 +6,34 @@ tags:
   - gallery
 
 ---
-# This flow assumes a logged-in Gallery user
 - runFlow: ../login/gallery-login.yaml
 
-# Wait for overview to load
 - extendedWaitUntil:
     visible: "Overview"
     timeout: 20000
 
-# Tap the Artworks tab
 - tapOn: "Artworks"
 
-# Assume at least one artwork exists in the listing and tap the first one
 - tapOn:
-    id: "artwork-card-.*" # Regex for artwork card, assuming there's an ID. Alternatively, we can tap coordinates or text like "Edit"
-# Or if there is an explicit "Edit" button on the artworks listing or artwork details page:
+    id: "artwork-card-.*"
+
 - extendedWaitUntil:
     visible: "Edit"
     timeout: 10000
 - tapOn: "Edit"
 
-# Ensure we're on the Edit Artwork screen
 - assertVisible: "Edit artwork pricing"
 
-# Edit Pricing Step
 - tapOn: "Price"
-# Clear existing text (Maestro clearText is an option, or just inputText override)
-# Assuming typical input clearing:
 - clearText
 - inputText: "2000"
 - hideKeyboard
-
-# Convert button (tapping sync icon using nearby text or index)
-- tapOn: "Price" # Focus near it
 
 - scrollUntilVisible:
     direction: DOWN
     element: "Update Pricing"
 - tapOn: "Update Pricing"
 
-# Wait for success toast or navigation back
 - extendedWaitUntil:
-    visible: "Artworks" # or the success message
+    visible: "Artworks"
     timeout: 15000

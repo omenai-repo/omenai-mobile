@@ -6,33 +6,21 @@ tags:
   - discovery
 
 ---
-# Assuming login is not strictly necessary for viewing search, but if it is:
-# - runFlow: ../login/individual-login.yaml
+- runFlow: ../login/individual-login.yaml
 
-# 1. Start from Overview/Home tab
 - extendedWaitUntil:
     visible: "Overview"
     timeout: 20000
 
-# 2. Go to Search Tab
-- tapOn: "Search" # Assuming bottom tab has "Search" or "Catalog" text
+- tapOn: "Search"
 - assertVisible: "Search for artworks on Omenai"
 
-# 3. Enter Search Query
-- tapOn: "Ask Omenai"
+- tapOn:
+    id: "search-input"
 - inputText: "portrait"
 - pressKey: Enter
 - hideKeyboard
 
-# 4. Assert Results
 - extendedWaitUntil:
-    visible: "Results for “portrait”"
+    visible: "Results for \"portrait\""
     timeout: 10000
-# 5. Apply Filter (assuming there is a filter button or icon)
-# If the app has a filter button, we would tap it here.
-# Eg:
-# - tapOn: "Filter"
-# - tapOn: "Medium"
-# - tapOn: "Photography"
-# - tapOn: "Apply"
-# For now, asserting search functions correctly until filter UI is mapped.

@@ -7,17 +7,18 @@ tags:
   - negative
 
 ---
-# Invalid credentials test
 - runFlow: welcome-onboarding-skip.yaml
 
 - tapOn: "Log In"
 - assertVisible: "Welcome Back"
 
-- tapOn: "Email address"
+- tapOn:
+    id: "login-email-input"
 - inputText: "invalid@notexist.com"
 - hideKeyboard
 
-- tapOn: "Password"
+- tapOn:
+    id: "login-password-input"
 - inputText: "WrongPassword123!"
 - hideKeyboard
 
@@ -34,32 +35,32 @@ tags:
     timeout: 10000
 
 ---
-# Empty fields test
 - runFlow: welcome-onboarding-skip.yaml
 
 - tapOn: "Log In"
 
-- assertVisible: "Log In"
-
-- tapOn: "Email address"
+- tapOn:
+    id: "login-email-input"
 - inputText: "test@example.com"
 - hideKeyboard
 
 - tapOn:
     id: "login-submit-button"
+
 - assertVisible: "Welcome Back"
 
 ---
-# Wrong password test
 - runFlow: welcome-onboarding-skip.yaml
 
 - tapOn: "Log In"
 
-- tapOn: "Email address"
+- tapOn:
+    id: "login-email-input"
 - inputText: "dantereus1@gmail.com"
 - hideKeyboard
 
-- tapOn: "Password"
+- tapOn:
+    id: "login-password-input"
 - inputText: "CompletelyWrongPassword!"
 - hideKeyboard
 

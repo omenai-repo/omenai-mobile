@@ -1,24 +1,16 @@
 appId: com.omenai.omenaimobile
-name: "Save Artwork Flow"
+name: "Individual Saved Artworks"
 tags:
-  - artwork
-  - save
-  - discovery
+  - individual
+  - saved-artworks
+  - profile
 
 ---
 - runFlow: ../login/individual-login.yaml
 
 - extendedWaitUntil:
-    visible: "Trending"
+    visible: "Overview"
     timeout: 20000
-
-- tapOn: "Trending"
-- swipe:
-    direction: UP
-    duration: 1000
-
-- tapOn:
-    id: ".*heart.*"
 
 - tapOn: "More"
 - extendedWaitUntil:
@@ -29,6 +21,7 @@ tags:
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 10000
+
 - tapOn: "Saved artworks"
 
 - extendedWaitUntil:

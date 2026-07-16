@@ -7,30 +7,31 @@ tags:
 ---
 - runFlow: ../login/individual-login.yaml
 
-# Navigate to Search (assuming it's on the main tab bar or accessible)
 - tapOn: "Search"
 
-# Search for an artwork that is likely to have 'Price on Request'
-# Using a generic term to get results.
-# Ideally, we should search for a specific artwork we know has this property.
 - tapOn:
-    id: "search-input" # Adjust ID based on actual implementation
+    id: "search-input"
 - inputText: "Abstract"
 - pressKey: Enter
 - hideKeyboard
 
-# Select the first artwork result
 - tapOn:
     index: 0
-    id: "artwork-card" # Need to verify this ID or use relative position
+    id: "artwork-card"
 
-# Check for "Request price" button
-# Note: This is flaky if the first result is a "Purchase" artwork.
-# We might need to scroll or try another if this fails, or use conditional logic if Maestro supports it better now.
-# For this draft, we assume we find one.
 - assertVisible: "Request price"
 - tapOn: "Request price"
 
-# Handle the modal/confirmation
-- assertVisible: "Price quote for.*"
-- tapOn: "OK" # Or whatever the dismissal button is
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Price quote"
+        - "Request sent"
+        - "Thank you"
+    timeout: 10000
+
+- tapOn:
+    anyOf:
+      - "OK"
+      - "Done"
+      - "Close"

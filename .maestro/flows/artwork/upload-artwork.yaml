@@ -6,24 +6,19 @@ tags:
   - gallery
 
 ---
-# This flow assumes a logged-in Gallery or Artist user
 - runFlow: ../login/gallery-login.yaml
 
-# Wait for overview to load
 - extendedWaitUntil:
     visible: "Overview"
     timeout: 20000
 
-# Tap the Artworks tab
 - tapOn: "Artworks"
 
-# Tap Upload artwork
 - extendedWaitUntil:
     visible: "Upload artwork"
     timeout: 10000
 - tapOn: "Upload artwork"
 
-# 1. Artwork Details
 - assertVisible: "Artwork Details"
 - tapOn: "Enter the name of your artwork"
 - inputText: "Maestro Test Masterpiece"
@@ -51,15 +46,14 @@ tags:
     direction: DOWN
     element: "Proceed"
 
-- tapOn: "Select" # Certificate of authenticity
+- tapOn: "Select"
 - tapOn: "Yes"
 
-- tapOn: "Select" # Signature
+- tapOn: "Select"
 - tapOn: "By artist"
 
 - tapOn: "Proceed"
 
-# 2. Artwork Dimensions
 - assertVisible: "Artwork Dimensions"
 - tapOn: "Length (in)"
 - inputText: "24"
@@ -74,33 +68,27 @@ tags:
     element: "Proceed"
 - tapOn: "Proceed"
 
-# 3. Artwork Shipping
 - assertVisible: "Shipping Configuration"
-- tapOn: "Rolled" # Default OR selection
+- tapOn: "Rolled"
 - scrollUntilVisible:
     direction: DOWN
     element: "Proceed"
 - tapOn: "Proceed"
 
-# 4. Pricing (Assuming Gallery)
 - assertVisible: "Currency"
-- tapOn: "Select" # Currency
+- tapOn: "Select"
 - tapOn: "USD"
 
 - tapOn: "Enter your price"
 - inputText: "1000"
 - hideKeyboard
 
-# Convert button (tapping sync icon using nearby text or index)
-- tapOn: "Price" # To ensure we are near it, but tapping sync requires accurate targeting in maestro
-
 - scrollUntilVisible:
     direction: DOWN
     element: "Proceed"
 - tapOn: "Proceed"
-# 5. Artist Details
+
 - assertVisible: "Artist full name"
-# If user is Gallery:
 - tapOn: "Enter artist full name"
 - inputText: "Maestro Painted"
 - hideKeyboard
@@ -112,7 +100,7 @@ tags:
 - tapOn: "Select country"
 - tapOn: "Search country"
 - inputText: "United States"
-- tapOn: "United States" # select it
+- tapOn: "United States"
 - hideKeyboard
 
 - scrollUntilVisible:
@@ -120,12 +108,9 @@ tags:
     element: "Proceed"
 - tapOn: "Proceed"
 
-# 6. Upload Image & Success
-# (Upload image steps to be finalized based on components)
 - tapOn: "Upload Image"
 - tapOn: "Upload artwork"
 
-# 7. Check Success Screen
 - extendedWaitUntil:
     visible: "Done"
     timeout: 30000

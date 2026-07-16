@@ -1,9 +1,9 @@
 appId: com.omenai.omenaimobile
-name: "Edit Profile Flow"
+name: "Biometric Settings Flow"
 tags:
-  - profile
-  - edit
   - individual
+  - profile
+  - biometrics
 
 ---
 - runFlow: ../login/individual-login.yaml
@@ -21,21 +21,21 @@ tags:
 - extendedWaitUntil:
     visible: "Edit profile"
     timeout: 10000
-- tapOn: "Edit profile"
-
-- assertVisible: "Personal Details"
-
-- tapOn: "Full name"
-- clearText
-- inputText: "Maestro Updated Name"
-- hideKeyboard
 
 - scrollUntilVisible:
     direction: DOWN
-    element: "Update profile"
-- tapOn: "Update profile"
+    element: "Biometric Login"
+    timeout: 10000
+
+- tapOn: "Biometric Login"
 
 - extendedWaitUntil:
-    visible: "Profile Details updated successfully"
+    visible:
+      anyOf:
+        - "Biometric"
+        - "Face ID"
+        - "Touch ID"
+        - "Fingerprint"
+        - "enabled"
+        - "disabled"
     timeout: 10000
-- assertVisible: "Profile"

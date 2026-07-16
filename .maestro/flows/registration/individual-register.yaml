@@ -1,5 +1,5 @@
 appId: com.omenai.omenaimobile
-name: "Individual Registration Flow"
+name: "Registration Flow - Individual"
 tags:
   - registration
   - individual
@@ -13,7 +13,6 @@ tags:
 - assertVisible: "Create an account"
 - assertVisible: "Collector"
 
-# Step 1: Account Details
 - tapOn: "Enter your full name"
 - inputText: "Maestro Test User"
 
@@ -29,7 +28,6 @@ tags:
 
 - tapOn: "Next"
 
-# Step 2: Preferences
 - assertVisible: "Select your art preference"
 - tapOn: "Photography"
 - tapOn: "Works on paper"
@@ -39,14 +37,11 @@ tags:
 
 - tapOn: "Next"
 
-# Step 3: Terms & Conditions
 - assertVisible: "Accept terms and conditions"
-# Assuming the first term contains "By ticking this box", tap it.
 - tapOn: "By ticking this box, I accept the Terms of use and Privacy Policy of creating an account with Omenai."
 
 - tapOn: "Create my account"
 
-# Wait for completion and transition to Overview
 - extendedWaitUntil:
     visible: "Overview"
     timeout: 20000

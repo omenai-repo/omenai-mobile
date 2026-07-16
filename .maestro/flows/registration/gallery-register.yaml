@@ -1,5 +1,5 @@
 appId: com.omenai.omenaimobile
-name: "Gallery Registration Flow"
+name: "Registration Flow - Gallery"
 tags:
   - registration
   - gallery
@@ -13,8 +13,7 @@ tags:
 - assertVisible: "Create an account"
 - tapOn: "Gallery"
 
-# Step 1: Account Details
-- tapOn: "Enter your full name" # Gallery Name
+- tapOn: "Enter your full name"
 - inputText: "Maestro Test Gallery"
 
 - tapOn: "Enter your email address"
@@ -29,8 +28,7 @@ tags:
 
 - tapOn: "Next"
 
-# Step 2: Extra Details
-- tapOn: "Enter your full name" # Administrator's Name
+- tapOn: "Enter your full name"
 - inputText: "Test Admin"
 
 - tapOn: "Write a description of your gallery"
@@ -39,7 +37,6 @@ tags:
 
 - tapOn: "Next"
 
-# Step 3: Address Verification
 - tapOn: "Input your gallery address here"
 - inputText: "123 Gallery St"
 - hideKeyboard
@@ -61,19 +58,14 @@ tags:
 
 - tapOn: "Next"
 
-# Step 4: Upload Logo
-# Similar to Artist, tapping to open picker and proceeding.
 - tapOn: "Upload gallery logo"
-# (Skipping native picker)
 - tapOn: "Next"
 
-# Step 5: Terms & Conditions
 - assertVisible: "Accept terms and conditions"
 - tapOn: "By ticking this box, I accept the Terms of use and Privacy Policy of creating an account with Omenai."
 
 - tapOn: "Create my account"
 
-# Wait for completion
 - extendedWaitUntil:
     visible: "Overview"
     timeout: 20000

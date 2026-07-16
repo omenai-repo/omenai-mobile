@@ -9,13 +9,11 @@ tags:
 - launchApp:
     clearState: true
 
-# Select the development server after state is cleared
 - extendedWaitUntil:
     visible: "http://localhost:8081"
     timeout: 10000
 - tapOn: "http://localhost:8081"
 
-# Wait a moment for app to load or Developer Menu to appear (using swipe hack)
 - swipe:
     start: 50%,10%
     end: 50%,10%
@@ -26,7 +24,6 @@ tags:
     end: 50%,10%
     duration: 500
 
-# Onboarding Page 1
 - extendedWaitUntil:
     visible: "Contemporary African Art, Curated"
     timeout: 10000
@@ -35,7 +32,6 @@ tags:
 
 - tapOn: "Continue"
 
-# Onboarding Page 2
 - extendedWaitUntil:
     visible: "Meet the Artists Shaping the Future"
     timeout: 5000
@@ -44,7 +40,6 @@ tags:
 
 - tapOn: "Continue"
 
-# Welcome Screen
 - extendedWaitUntil:
     visible: "Build Your Art World"
     timeout: 5000
