@@ -1,13 +1,13 @@
 import React from "react";
-import { screenName } from "constants/screenNames.constants";
-import Welcome from "screens/welcome/Welcome";
-import Login from "screens/login/Login";
-import Register from "screens/register/Register";
-import ForgotPassword from "screens/forgotPassword/ForgotPassword";
+import { screenName } from "#constants/screenNames.constants";
+import Welcome from "#screens/welcome/Welcome";
+import Login from "#screens/login/Login";
+import Register from "#screens/register/Register";
+import ForgotPassword from "#screens/forgotPassword/ForgotPassword";
 import { createStackNavigator } from "@react-navigation/stack";
-import VerifyEmail from "screens/verification/VerifyEmail";
-import ArtistOnboarding from "screens/artistOnboarding/ArtistOnboarding";
-import { LowRiskProvider } from "providers/ConfigCatProvider";
+import VerifyEmail from "#screens/verification/VerifyEmail";
+import ArtistOnboarding from "#screens/artistOnboarding/ArtistOnboarding";
+import { LowRiskProvider } from "#providers/ConfigCatProvider";
 
 export default function AuthNavigation() {
   const Stack = createStackNavigator();

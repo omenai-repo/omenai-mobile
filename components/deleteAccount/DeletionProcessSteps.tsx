@@ -1,12 +1,12 @@
 import React, { useMemo, useCallback } from "react";
 import { Text, View, Linking } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import {
   deletionProcessSteps,
   DeletionProcessStep,
   PRIVACY_POLICY_URL
-} from "constants/deleteAccount.constants";
+} from "#constants/deleteAccount.constants";
 import DeleteAccountCard from "./DeleteAccountCard";
 
 type DeletionProcessStepWithHandler = DeletionProcessStep & {

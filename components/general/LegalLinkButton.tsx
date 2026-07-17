@@ -1,7 +1,7 @@
 import { Pressable, Text } from 'react-native';
 import tw from 'twrnc';
-import { openLegalLink } from 'utils/utils_openLegalLink';
-import type { updateModalProps } from 'store/modal/modalStore';
+import { openLegalLink } from '#utils/utils_openLegalLink';
+import type { updateModalProps } from '#store/modal/modalStore';
 
 type LegalLinkButtonProps = {
   entity: 'artist' | 'gallery' | 'collector';

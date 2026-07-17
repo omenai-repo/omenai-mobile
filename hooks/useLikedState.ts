@@ -1,4 +1,4 @@
-import { updateArtworkImpressions } from "services/artworks/updateArtworkImpressions";
+import { updateArtworkImpressions } from "#services/artworks/updateArtworkImpressions";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import StripePayouts from "screens/stripeScreens/payouts/StripePayouts";
+import StripePayouts from "#screens/stripeScreens/payouts/StripePayouts";
 
 export default function StripePayoutsTab({ route }: any) {
   const account = route?.params?.account;

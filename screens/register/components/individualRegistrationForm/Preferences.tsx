@@ -4,9 +4,9 @@ import { colors } from "../../../../config/colors.config";
 import BackFormButton from "../../../../components/buttons/BackFormButton";
 import NextButton from "../../../../components/buttons/NextButton";
 import { useIndividualAuthRegisterStore } from "../../../../store/auth/register/IndividualAuthRegisterStore";
-import { mediumListing } from "data/uploadArtworkForm.data";
+import { mediumListing } from "#data/uploadArtworkForm.data";
 import tw from "twrnc";
-import SelectableTag from "components/general/SelectableTag";
+import SelectableTag from "#components/general/SelectableTag";
 
 export default function Preferences() {
   const { pageIndex, setPageIndex, preferences, setPreferences } = useIndividualAuthRegisterStore();

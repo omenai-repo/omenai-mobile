@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import React, { useCallback, useRef } from "react";
 import { Dropdown } from "react-native-element-dropdown";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import tw from "twrnc";
 
 type CustomSelectPickerProps = {

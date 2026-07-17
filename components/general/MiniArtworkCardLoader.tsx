@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import React from "react";
-import { getNumberOfColumns } from "utils/utils_screen";
+import { getNumberOfColumns } from "#utils/utils_screen";
 import { FlashList } from "@shopify/flash-list";
 import MiniArtworkCard from "./MiniArtworkCard";
 import tw from "twrnc";

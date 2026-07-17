@@ -1,9 +1,9 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import TransactionCard from './TransactionCard';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
-import { convertPriceStringToNumber } from 'utils/utils_priceStringToNumberConverter';
+import { utils_formatPrice } from '#utils/utils_priceFormatter';
+import { formatIntlDateTime } from '#utils/utils_formatIntlDateTime';
+import { convertPriceStringToNumber } from '#utils/utils_priceStringToNumberConverter';
 
 type TransactionsTableProps = {
   transactions: (PurchaseTransactionModelSchemaTypes & {

@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { colors } from "config/colors.config";
-import { fontNames } from "constants/fontNames.constants";
-import { getFeaturedArtists } from "services/overview/fetchFeaturedArtist";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { HOME_QK } from "utils/queryKeys";
-import { useAppStore } from "store/app/appStore";
+import { colors } from "#config/colors.config";
+import { fontNames } from "#constants/fontNames.constants";
+import { getFeaturedArtists } from "#services/overview/fetchFeaturedArtist";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import { HOME_QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
 
 type Artist = {
   author_id: string;

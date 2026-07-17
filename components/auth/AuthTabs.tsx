@@ -1,7 +1,7 @@
 import { View, Pressable } from "react-native";
 import React, { useEffect } from "react";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,

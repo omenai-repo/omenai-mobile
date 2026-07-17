@@ -1,11 +1,11 @@
 import { View, Text, Pressable } from "react-native";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { checkedBox, uncheckedBox } from "utils/SvgImages";
-import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
-import { useRegistrationHandler } from "hooks/useRegistrationHandler";
-import { useTermsSelection } from "hooks/useTermsSelection";
-import { TermsAndConditionsForm } from "components/register/TermsAndConditionsForm";
+import { checkedBox, uncheckedBox } from "#utils/SvgImages";
+import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
+import { useRegistrationHandler } from "#hooks/useRegistrationHandler";
+import { useTermsSelection } from "#hooks/useTermsSelection";
+import { TermsAndConditionsForm } from "#components/register/TermsAndConditionsForm";
 
 type CheckboxItemProps = {
   readonly onPress: () => void;

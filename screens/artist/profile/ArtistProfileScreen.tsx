@@ -1,29 +1,32 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { colors } from "config/colors.config";
-import ProfileMenuItems, { ProfileMenuItem } from "components/profile/ProfileMenuItems";
+import { colors } from "#config/colors.config";
+import ProfileMenuItems, {
+  ProfileMenuItem,
+} from "#components/profile/ProfileMenuItems";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { logout } from "utils/logout.utils";
-import WithGalleryModal from "components/modal/WithGalleryModal";
-import { useAppStore } from "store/app/appStore";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { changePasswsordIcon, getDeleteIcon } from "utils/SvgImages";
-import LongBlackButton from "components/buttons/LongBlackButton";
+import { screenName } from "#constants/screenNames.constants";
+import { logout } from "#utils/logout.utils";
+import WithGalleryModal from "#components/modal/WithGalleryModal";
+import { useAppStore } from "#store/app/appStore";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
-import LoadingContainer from "screens/artistOnboarding/LoadingContainer";
-import { getEditEligibility } from "services/update/getEditEligibility";
-import { useModalStore } from "store/modal/modalStore";
+import LoadingContainer from "#screens/artistOnboarding/LoadingContainer";
+import { getEditEligibility } from "#services/update/getEditEligibility";
+import { useModalStore } from "#store/modal/modalStore";
 import EligibityResponseScreen from "./EligibityResponseScreen";
-import Logo from "screens/galleryProfileScreens/galleryProfile/components/Logo";
+import Logo from "#screens/galleryProfileScreens/galleryProfile/components/Logo";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQueryClient } from "@tanstack/react-query";
-import BlurStatusBar from "components/general/BlurStatusBar";
-import { useScrollY } from "hooks/useScrollY";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
+import BlurStatusBar from "#components/general/BlurStatusBar";
+import { useScrollY } from "#hooks/useScrollY";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
+import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
 
 type userDataType = {
   name: string;
@@ -38,6 +41,7 @@ export default function ArtistProfileScreen() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
+  const { contentBottomPadding, buttonBottomMargin } = useSafeBottomSpacing();
 
   const [userData, setUserData] = useState<userDataType>({
     name: "",
@@ -85,7 +89,9 @@ export default function ArtistProfileScreen() {
       } else {
         setIsLoading(false);
         setIsEligible(true);
-        setEligibilityResponse(response?.body?.message ?? "You are not eligible at this time.");
+        setEligibilityResponse(
+          response?.body?.message ?? "You are not eligible at this time."
+        );
       }
     } catch (error: any) {
       updateModal({
@@ -99,36 +105,22 @@ export default function ArtistProfileScreen() {
     }
   };
 
+  // ... inside component
+  const commonMenuItems = useProfileMenuOptions(navigation, "artist");
+
   const menuItems: ProfileMenuItem[] = useMemo(
     () => [
       {
         name: "View Credentials",
         subText: "View your credentials",
         handlePress: () => navigation.navigate("ViewCredentialsScreen"),
-        Icon: <Ionicons name="eye-outline" size={24} color={colors.primary_black} />,
+        Icon: (
+          <Ionicons name="eye-outline" size={24} color={colors.primary_black} />
+        ),
       },
-      {
-        name: "Change password",
-        subText: "Change the password to your account",
-        handlePress: () =>
-          navigation.navigate(screenName.gallery.changePassword, {
-            routeName: "artist",
-          }),
-        svgIcon: changePasswsordIcon,
-      },
-      {
-        name: "Delete account",
-        subText: "Delete your omenai gallery account",
-        handlePress: () => {
-          navigation.navigate(screenName.deleteAccount, {
-            routeName: "artist",
-          });
-        },
-        svgIcon: getDeleteIcon("#DC2626"),
-        variant: "danger" as const,
-      },
+      ...commonMenuItems,
     ],
-    [navigation]
+    [navigation, commonMenuItems]
   );
 
   return (
@@ -137,11 +129,18 @@ export default function ArtistProfileScreen() {
       {!isLoading ? (
         !isEligible ? (
           <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-            <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
+            <View
+              style={[styles.profileContainer, { marginTop: insets.top + 16 }]}
+            >
               <Logo url={userSession?.logo} />
 
               <View>
-                <Text style={[tw`text-base font-medium`, { color: colors.primary_black }]}>
+                <Text
+                  style={[
+                    tw`text-base font-medium`,
+                    { color: colors.primary_black },
+                  ]}
+                >
                   {userData.name}
                 </Text>
                 <Text
@@ -157,10 +156,14 @@ export default function ArtistProfileScreen() {
               </View>
             </View>
 
-            <View style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}>
+            <View
+              style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}
+            >
               <FittedBlackButton
                 value="Edit profile"
-                onClick={() => navigation.navigate(screenName.gallery.editProfile)}
+                onClick={() =>
+                  navigation.navigate(screenName.gallery.editProfile)
+                }
                 style={tw`flex-grow`}
                 textStyle={tw`text-base`}
               />
@@ -172,11 +175,11 @@ export default function ArtistProfileScreen() {
               />
             </View>
 
-            <View style={tw`pt-[40px] pb-8`}>
+            <View style={[tw`pt-10`, { paddingBottom: contentBottomPadding }]}>
               <ProfileMenuItems items={menuItems} />
             </View>
 
-            <View style={tw`mb-[40px]`}>
+            <View style={{ marginBottom: buttonBottomMargin }}>
               <LongBlackButton
                 value="Log Out"
                 onClick={() => {

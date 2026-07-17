@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import Input from "components/inputs/Input";
-import LargeInput from "components/inputs/LargeInput";
-import UploadImageInput from "components/inputs/UploadImageInput";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { uploadArtworkStore } from "store/gallery/uploadArtworkStore";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
+import Input from "#components/inputs/Input";
+import LargeInput from "#components/inputs/LargeInput";
+import UploadImageInput from "#components/inputs/UploadImageInput";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import {
   certificateOfAuthenticitySelectOptions,
   framingList,
@@ -13,9 +13,9 @@ import {
   rarityList,
   signatureArtistSelectOptions,
   signatureSelectOptions,
-} from "data/uploadArtworkForm.data";
-import { validate } from "lib/validations/upload_artwork_input_validator/validator";
-import { useAppStore } from "store/app/appStore";
+} from "#data/uploadArtworkForm.data";
+import { validate } from "#lib/validations/upload_artwork_input_validator/validator";
+import { useAppStore } from "#store/app/appStore";
 
 type artworkDetailsErrorsType = {
   title: string;

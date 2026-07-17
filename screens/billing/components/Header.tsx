@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { billingTabs } from '../Billing'
-import { colors } from 'config/colors.config'
+import { colors } from '#config/colors.config'
 
 type BillingHeaderProps = {
     selectedTab: billingTabs,

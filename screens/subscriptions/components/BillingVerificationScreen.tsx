@@ -4,9 +4,9 @@ import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAppStore } from 'store/app/appStore';
-import { verifySubscriptionCharge } from 'services/stripe/verifySubscriptionCharge';
-import { screenName } from 'constants/screenNames.constants';
+import { useAppStore } from '#store/app/appStore';
+import { verifySubscriptionCharge } from '#services/stripe/verifySubscriptionCharge';
+import { screenName } from '#constants/screenNames.constants';
 
 type RootStackParamList = {
   BillingVerification: { payment_intent: string };

@@ -3,10 +3,10 @@ import { View, Text, ActivityIndicator, FlatList, Platform } from 'react-native'
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import { useAppStore } from 'store/app/appStore';
-import { formatISODate } from 'utils/utils_formatISODate';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { fetchSubscriptionTransactions } from 'services/transactions/fetchSubscriptionTransactions';
+import { useAppStore } from '#store/app/appStore';
+import { formatISODate } from '#utils/utils_formatISODate';
+import { utils_formatPrice } from '#utils/utils_priceFormatter';
+import { fetchSubscriptionTransactions } from '#services/transactions/fetchSubscriptionTransactions';
 
 // ---- types (adjust if your service returns differently)
 type Txn = {

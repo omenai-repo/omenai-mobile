@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { AntDesign, Feather, MaterialIcons } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 
 type StatusPillProps = {
   status: string;

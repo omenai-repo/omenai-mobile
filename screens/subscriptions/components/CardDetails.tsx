@@ -1,17 +1,17 @@
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { colors } from 'config/colors.config';
-import mastercardLogo from 'assets/icons/MastercardLogo.png';
-import visa from 'assets/icons/visa.png';
-import verve from 'assets/icons/verve.png';
-import cardwifiIcon from 'assets/icons/cardwifiIcon.png';
-import chip from 'assets/icons/chip.png';
-import creditcardBG from 'assets/icons/creditcardBg.png';
-import { useAppStore } from 'store/app/appStore';
+import { colors } from '#config/colors.config';
+import mastercardLogo from '#assets/icons/MastercardLogo.png';
+import visa from '#assets/icons/visa.png';
+import verve from '#assets/icons/verve.png';
+import cardwifiIcon from '#assets/icons/cardwifiIcon.png';
+import chip from '#assets/icons/chip.png';
+import creditcardBG from '#assets/icons/creditcardBg.png';
+import { useAppStore } from '#store/app/appStore';
 import Button from './Button';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from 'constants/screenNames.constants';
+import { screenName } from '#constants/screenNames.constants';
 
 type CardDetailsProps = {
     cardData: {

@@ -1,7 +1,7 @@
 import { Pressable } from 'react-native';
 import React from 'react';
 import { SvgXml } from 'react-native-svg';
-import { rightArrowIcon } from 'utils/SvgImages';
+import { rightArrowIcon } from '#utils/SvgImages';
 import tw from 'twrnc';
 
 const NavBtnComponent = ({ onPress }: { onPress: () => void }) => {

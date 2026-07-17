@@ -1,16 +1,16 @@
 import { StyleSheet, Text, View, Linking, Platform, StatusBar } from "react-native";
 import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import Input from "components/inputs/Input";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import { country_codes } from "json/country_alpha_2_codes";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { createConnectedAccount } from "services/stripe/createConnectedAccount";
-import WithModal from "components/modal/WithModal";
-import { useModalStore } from "store/modal/modalStore";
-import { createAccountLink } from "services/stripe/createAccountLink";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { colors } from "#config/colors.config";
+import Input from "#components/inputs/Input";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import { country_codes } from "#json/country_alpha_2_codes";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { createConnectedAccount } from "#services/stripe/createConnectedAccount";
+import WithModal from "#components/modal/WithModal";
+import { useModalStore } from "#store/modal/modalStore";
+import { createAccountLink } from "#services/stripe/createAccountLink";
+import ScrollWrapper from "#components/general/ScrollWrapper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const transformedCountryCodes = country_codes.map((item) => ({

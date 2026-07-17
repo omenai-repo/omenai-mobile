@@ -1,11 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { registerAccount } from "services/register/registerAccount";
-import { useModalStore } from "store/modal/modalStore";
-import { useAppStore } from "store/app/appStore";
-import { screenName } from "constants/screenNames.constants";
-import { storage } from "appWrite_config";
-import uploadLogo from "screens/galleryProfileScreens/uploadNewLogo/uploadLogo";
+import { registerAccount } from "#services/register/registerAccount";
+import { useModalStore } from "#store/modal/modalStore";
+import { useAppStore } from "#store/app/appStore";
+import { screenName } from "../constants/screenNames.constants";
+import { storage } from "#appWrite_config";
+import uploadLogo from "../screens/galleryProfileScreens/uploadNewLogo/uploadLogo";
 
 type AccountType = "individual" | "gallery" | "artist";
 
@@ -26,7 +26,10 @@ export function useRegistrationHandler(accountType: AccountType) {
       let uploadedFileId: string | null = null;
 
       // Handle logo upload for gallery and artist
-      if ((accountType === "gallery" || accountType === "artist") && data.logo) {
+      if (
+        (accountType === "gallery" || accountType === "artist") &&
+        data.logo
+      ) {
         const files = {
           uri: data.logo.assets[0].uri,
           name: data.logo.assets[0].fileName,

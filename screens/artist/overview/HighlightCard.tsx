@@ -3,12 +3,12 @@ import React, { useEffect } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { fetchArtistHighlightData } from "services/overview/fetchArtistHighlightData";
-import { QK } from "utils/queryKeys";
-import { useAppStore } from "store/app/appStore";
+import { fetchArtistHighlightData } from "#services/overview/fetchArtistHighlightData";
+import { QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
 
 export const HighlightCard = ({ onLoadingChange }: { onLoadingChange?: (l: boolean) => void }) => {
   const { width } = useWindowDimensions();

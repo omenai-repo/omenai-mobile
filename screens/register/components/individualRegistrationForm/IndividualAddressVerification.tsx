@@ -1,15 +1,15 @@
 import { View } from "react-native";
 import React, { useMemo, useState } from "react";
 
-import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
+import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import { Country, ICountry } from "country-state-city";
-import { useAddressForm } from "hooks/useAddressForm";
-import { useLocationSelection } from "hooks/useLocationSelection";
-import { useAddressVerification } from "hooks/useAddressVerification";
-import { AddressTooltip } from "components/general/AddressTooltip";
-import { AddressFormFields } from "components/register/AddressFormFields";
-import { AddressVerificationModal } from "components/register/AddressVerificationModal";
-import { AddressVerificationActions } from "components/register/AddressVerificationActions";
+import { useAddressForm } from "#hooks/useAddressForm";
+import { useLocationSelection } from "#hooks/useLocationSelection";
+import { useAddressVerification } from "#hooks/useAddressVerification";
+import { AddressTooltip } from "#components/general/AddressTooltip";
+import { AddressFormFields } from "#components/register/AddressFormFields";
+import { AddressVerificationModal } from "#components/register/AddressVerificationModal";
+import { AddressVerificationActions } from "#components/register/AddressVerificationActions";
 
 const IndividualAddressVerification = () => {
   const [showToolTip, setShowToolTip] = useState(false);

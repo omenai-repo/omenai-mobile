@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import tw from 'twrnc';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { formatEventDate } from 'utils/utils_formatEventDate';
+import BackHeaderTitle from '#components/header/BackHeaderTitle';
+import { formatEventDate } from '#utils/utils_formatEventDate';
 import NotificationDetailsModal from './NotificationDetailsModal';
-import { useAppStore } from 'store/app/appStore';
-import { getNotificationHistory } from 'services/notification/getNotificationHistory';
-import { updateNotification } from 'services/notification/updateNotification';
+import { useAppStore } from '#store/app/appStore';
+import { getNotificationHistory } from '#services/notification/getNotificationHistory';
+import { updateNotification } from '#services/notification/updateNotification';
 import SkeletonLoaderContainer from './SkeletonLoaderContainer';
 import Animated, {
   Easing,
@@ -25,7 +25,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 // ⬇️ Root-level navigation helper (same one you use in useNotificationHandler)
-import { navigate } from 'navigation/RootNavigation';
+import { navigate } from '#navigation/RootNavigation';
 
 /** Match your push payload contract */
 type AccessType = 'artist' | 'gallery' | 'collector';

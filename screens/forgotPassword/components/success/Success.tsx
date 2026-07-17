@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import forgotPasswordSuccessEmail from "../../../../assets/images/forgot-password-email-success.png";
 import LongBlackButton from "../../../../components/buttons/LongBlackButton";
-import { useForgetPasswordStore } from "store/auth/forgotPassword/forgotPasswordStore";
+import { useForgetPasswordStore } from "#store/auth/forgotPassword/forgotPasswordStore";
 import { openInbox } from "react-native-email-link";
 
 export default function Success() {

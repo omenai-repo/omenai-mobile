@@ -2,8 +2,8 @@ import { Platform, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import { screenName } from 'constants/screenNames.constants';
+import LongBlackButton from '#components/buttons/LongBlackButton';
+import { screenName } from '#constants/screenNames.constants';
 
 export default function InActiveSubscription() {
   const navigation = useNavigation<StackNavigationProp<any>>();

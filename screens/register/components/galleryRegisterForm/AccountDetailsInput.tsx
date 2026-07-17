@@ -4,7 +4,7 @@ import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/Gal
 import NextButton from "../../../../components/buttons/NextButton";
 import Input from "../../../../components/inputs/Input";
 import PasswordInput from "../../../../components/inputs/PasswordInput";
-import { useFormValidation } from "hooks/useFormValidation";
+import { useFormValidation } from "#hooks/useFormValidation";
 import tw from "twrnc";
 
 export default function AccountDetailsInput() {

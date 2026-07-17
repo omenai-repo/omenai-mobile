@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native'
 import React from 'react';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
-import { uploadIcon, warningIconSm } from 'utils/SvgImages';
+import { uploadIcon, warningIconSm } from '#utils/SvgImages';
 
 type CVUploadProps = {
   cv: any;

@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 import { useEffect } from "react";
-import { navigate } from "navigation/RootNavigation";
+import { navigate } from "#navigation/RootNavigation";
 
 type AccessType = "artist" | "gallery" | "collector";
 

@@ -1,17 +1,17 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { colors } from 'config/colors.config';
-import CustomPicker from 'components/general/CustomPicker';
-import Input from 'components/inputs/Input';
-import CustomChecker from 'components/inputs/CustomChecker';
-import CustomSelectPicker from 'components/inputs/CustomSelectPicker';
+import { colors } from '#config/colors.config';
+import CustomPicker from '#components/general/CustomPicker';
+import Input from '#components/inputs/Input';
+import CustomChecker from '#components/inputs/CustomChecker';
+import CustomSelectPicker from '#components/inputs/CustomSelectPicker';
 import SummaryContainer from './SummaryContainer';
-import { useOrderSummaryStore } from 'store/orders/OrderSummaryStore';
-import { validate } from 'lib/validations/validatorGroup';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { useOrderSummaryStore } from '#store/orders/OrderSummaryStore';
+import { validate } from '#lib/validations/validatorGroup';
+import { utils_getAsyncData } from '#utils/utils_asyncStorage';
 import { Country, State, City, ICountry, IState, ICity } from 'country-state-city';
 import { debounce } from 'lodash';
-import { useAppStore } from 'store/app/appStore';
+import { useAppStore } from '#store/app/appStore';
 
 interface SessionAddress {
   address_line: string;

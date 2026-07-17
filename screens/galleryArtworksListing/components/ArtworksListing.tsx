@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import ArtworkCard from "components/artwork/ArtworkCard";
+import ArtworkCard from "#components/artwork/ArtworkCard";
 import { FlatList } from "react-native-gesture-handler";
-import MiniArtworkCard from "components/artwork/MiniArtworkCard";
-import GalleryMiniArtworkCard from "components/artwork/GalleryMiniArtworkCard";
-import EmptyArtworks from "components/general/EmptyArtworks";
+import MiniArtworkCard from "#components/artwork/MiniArtworkCard";
+import GalleryMiniArtworkCard from "#components/artwork/GalleryMiniArtworkCard";
+import EmptyArtworks from "#components/general/EmptyArtworks";
 
 export default function ArtworksListing({ data }: { data: any[] }) {
   const [listing, setListing] = useState<any[]>([]);

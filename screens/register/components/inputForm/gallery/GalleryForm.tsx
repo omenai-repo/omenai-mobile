@@ -2,11 +2,11 @@ import tw from "twrnc";
 import React from "react";
 import { View } from "react-native";
 import GalleryRegisterForm from "../../galleryRegisterForm/GalleryRegisterForm";
-import { useLowRiskFeatureFlag } from "hooks/useFeatureFlag";
-import OnboardingBlockerScreen from "components/blockers/onboarding/OnboardingBlockerScreen";
+import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
+import OnboardingBlockerScreen from "#components/blockers/onboarding/OnboardingBlockerScreen";
 // import GalleryWaitList from "../../galleryWaitlist/GalleryWaitList";
-// import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
-// import FittedBlackButton from "components/buttons/FittedBlackButton";
+// import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
+// import FittedBlackButton from "#components/buttons/FittedBlackButton";
 
 export default function GalleryForm() {
   // const { pageIndex, setPageIndex } = useGalleryAuthRegisterStore();

@@ -3,12 +3,12 @@ import OrderHeader from "./OrderHeader";
 import React from "react";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { StatusBadge } from "components/orders/StatusBadge";
-import { OrderActions } from "components/orders/OrderActions";
+import { dropdownIcon, dropUpIcon } from "#utils/SvgImages";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import { StatusBadge } from "#components/orders/StatusBadge";
+import { OrderActions } from "#components/orders/OrderActions";
 import { DetailRow } from "./DetailRow";
-import type { OrderContainerProps } from "types/orders";
+import type { OrderContainerProps } from "#types/orders";
 
 export const OrderContainer = (props: OrderContainerProps) => {
   const {
@@ -83,11 +83,11 @@ export const OrderContainer = (props: OrderContainerProps) => {
     >
       <View style={tw`flex-row items-center`}>
         <OrderHeader image_href={image_href} artId={artId} artName={artName} />
-      </View>
-      <View
-        style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
-      >
-        {typeof currentIcon === "string" && <SvgXml xml={currentIcon} />}
+        <View
+          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
+        >
+          {typeof currentIcon === "string" && <SvgXml xml={currentIcon} />}
+        </View>
       </View>
 
       <Animated.View

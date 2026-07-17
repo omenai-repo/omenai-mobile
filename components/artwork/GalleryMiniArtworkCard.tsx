@@ -8,14 +8,14 @@ import {
   PixelRatio,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import { getImageFileView } from "lib/storage/getImageFileView";
+import { colors } from "#config/colors.config";
+import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import EditArtworkButton from "components/buttons/EditArtworkButton";
+import { screenName } from "#constants/screenNames.constants";
+import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import EditArtworkButton from "#components/buttons/EditArtworkButton";
 import tw from "twrnc";
 
 type MiniArtworkCardType = {

@@ -1,20 +1,20 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { colors } from "config/colors.config";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import Input from "components/inputs/Input";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { displayPrice } from "data/uploadArtworkForm.data";
-import { validate } from "lib/validations/upload_artwork_input_validator/validator";
-import { currencies } from "screens/uploadArtwork/components/mocks";
-import { utils_getCurrencySymbol } from "utils/utils_getCurrencySymbol";
-import { useModalStore } from "store/modal/modalStore";
-import { getCurrencyConversion } from "services/exchange_rate/getCurrencyConversion";
-import { updateArtworkPrice } from "services/artworks/updateArtworkPrice";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { colors } from "#config/colors.config";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import Input from "#components/inputs/Input";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { displayPrice } from "#data/uploadArtworkForm.data";
+import { validate } from "#lib/validations/upload_artwork_input_validator/validator";
+import { currencies } from "#screens/uploadArtwork/components/mocks";
+import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
+import { useModalStore } from "#store/modal/modalStore";
+import { getCurrencyConversion } from "#services/exchange_rate/getCurrencyConversion";
+import { updateArtworkPrice } from "#services/artworks/updateArtworkPrice";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { screenName } from "constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 
 type artworkPricingErrorsType = {
   price: string;

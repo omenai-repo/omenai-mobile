@@ -1,5 +1,5 @@
 import { openBrowserAsync } from 'expo-web-browser';
-import type { updateModalProps } from 'store/modal/modalStore';
+import type { updateModalProps } from '#store/modal/modalStore';
 
 type LegalEntity = 'artist' | 'gallery' | 'collector';
 

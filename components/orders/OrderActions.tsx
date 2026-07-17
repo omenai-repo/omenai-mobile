@@ -1,9 +1,9 @@
 import React, { memo } from "react";
 import { Pressable, Text, View } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import { OrderActionType, OrderActionsProps } from "types/orders";
+import { colors } from "#config/colors.config";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import { OrderActionType, OrderActionsProps } from "#types/orders";
 
 export const getOrderActionType = ({
   status,

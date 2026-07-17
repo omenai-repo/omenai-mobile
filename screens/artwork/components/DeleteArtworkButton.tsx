@@ -1,14 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { colors } from 'config/colors.config'
+import { colors } from '#config/colors.config'
 import { Feather } from '@expo/vector-icons'
-import { useModalStore } from 'store/modal/modalStore'
-import CloseButton from 'components/buttons/CloseButton'
-import LongBlackButton from 'components/buttons/LongBlackButton'
-import { deleteArtwork } from 'services/artworks/deleteArtwork'
+import { useModalStore } from '#store/modal/modalStore'
+import CloseButton from '#components/buttons/CloseButton'
+import LongBlackButton from '#components/buttons/LongBlackButton'
+import { deleteArtwork } from '#services/artworks/deleteArtwork'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { screenName } from 'constants/screenNames.constants'
+import { screenName } from '#constants/screenNames.constants'
 
 export default function DeleteArtworkButton({art_id}: {art_id: string}) {
     const navigation = useNavigation<StackNavigationProp<any>>();

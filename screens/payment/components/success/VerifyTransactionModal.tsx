@@ -16,7 +16,7 @@ import {
   authorization,
   originHeader,
   userAgent,
-} from "constants/apiUrl.constants";
+} from "#constants/apiUrl.constants";
 import { TransactionStatusIcon } from "./TransactionStatusIcon";
 
 interface VerifyTransactionModalProps {

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
-import WithModal from "components/modal/WithModal";
-import Loader from "components/general/Loader";
-import { getSingleOrder } from "services/orders/getSingleOrder";
-import { checkLockStatus } from "services/orders/checkLockStatus";
-import { useAppStore } from "store/app/appStore";
+import WithModal from "#components/modal/WithModal";
+import Loader from "#components/general/Loader";
+import { getSingleOrder } from "#services/orders/getSingleOrder";
+import { checkLockStatus } from "#services/orders/checkLockStatus";
+import { useAppStore } from "#store/app/appStore";
 import OrderDetails from "./components/orderDetails/OrderDetails";
 
 type artworkDetailsProps = {
-  data: (CreateOrderModelTypes & { createdAt: string; updatedAt: string }) | null;
+  data:
+    | (CreateOrderModelTypes & { createdAt: string; updatedAt: string })
+    | null;
   locked: boolean;
 };
 
@@ -52,7 +54,10 @@ export default function Payment() {
   if (!isLoading && artworkDetails.data !== null)
     return (
       <WithModal>
-        <OrderDetails data={artworkDetails.data} locked={artworkDetails.locked} />
+        <OrderDetails
+          data={artworkDetails.data}
+          locked={artworkDetails.locked}
+        />
       </WithModal>
     );
 }

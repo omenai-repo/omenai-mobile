@@ -1,5 +1,5 @@
 import { ImageFormat, ImageGravity } from "appwrite";
-import { storage } from "../../appWrite_config";
+import { storage } from "#appWrite_config";
 
 export const getImageFileView = (
   fileId: string,

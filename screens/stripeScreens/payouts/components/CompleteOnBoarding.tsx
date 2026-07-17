@@ -1,11 +1,11 @@
 import { Linking, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import Input from "components/inputs/Input";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { getAccountID } from "services/stripe/getAccountID";
-import { createAccountLink } from "services/stripe/createAccountLink";
-import { useModalStore } from "store/modal/modalStore";
+import Input from "#components/inputs/Input";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { getAccountID } from "#services/stripe/getAccountID";
+import { createAccountLink } from "#services/stripe/createAccountLink";
+import { useModalStore } from "#store/modal/modalStore";
 import tw from "twrnc";
 
 export default function CompleteOnBoarding() {

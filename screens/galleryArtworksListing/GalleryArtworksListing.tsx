@@ -1,19 +1,19 @@
 import { useCallback, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import WithModal from "components/modal/WithModal";
+import WithModal from "#components/modal/WithModal";
 import { Feather } from "@expo/vector-icons";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { fetchAllArtworksById } from "services/artworks/fetchAllArtworksById";
-import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import ArtworksListing from "components/general/ArtworksListing";
+import { screenName } from "#constants/screenNames.constants";
+import { fetchAllArtworksById } from "#services/artworks/fetchAllArtworksById";
+import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import ArtworksListing from "#components/general/ArtworksListing";
 import { useQuery } from "@tanstack/react-query";
-import { useModalStore } from "store/modal/modalStore";
+import { useModalStore } from "#store/modal/modalStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAppStore } from "store/app/appStore";
+import { useAppStore } from "#store/app/appStore";
 
 export default function GalleryArtworksListing() {
   const navigation = useNavigation<StackNavigationProp<any>>();

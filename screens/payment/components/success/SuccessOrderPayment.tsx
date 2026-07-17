@@ -1,13 +1,13 @@
 import { Image, Text, View } from "react-native";
 import React from "react";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 
-import success_check from "assets/icons/success_check.png";
-import LongBlackButton from "components/buttons/LongBlackButton";
+import success_check from "#assets/icons/success_check.png";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { useOrderStore } from "store/orders/Orders";
+import { screenName } from "#constants/screenNames.constants";
+import { useOrderStore } from "#store/orders/Orders";
 
 export default function SuccessOrderPayment() {
   const navigation = useNavigation<StackNavigationProp<any>>();

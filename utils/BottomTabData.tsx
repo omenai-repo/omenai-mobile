@@ -1,4 +1,4 @@
-import ArtistOverview from 'screens/artist/overview/ArtistOverview';
+import ArtistOverview from '#screens/artist/overview/ArtistOverview';
 import {
   catalogueIcon,
   catalogueIconFocused,
@@ -21,20 +21,20 @@ import {
   walletActive,
   walletInActive,
 } from './SvgImages';
-import WalletScreen from 'screens/artist/wallet/WalletScreen';
-import OrderScreen from 'screens/artist/orders/OrderScreen';
-import GalleryArtworksListing from 'screens/galleryArtworksListing/GalleryArtworksListing';
-import ArtistProfileScreen from 'screens/artist/profile/ArtistProfileScreen';
-import Home from 'screens/home/Home';
-import Catalog from 'screens/catalog/Catalog';
-import SearchResults from 'screens/searchResults/SearchResults';
-import Orders from 'screens/orders/Orders';
-import Profile from 'screens/profile/Profile';
-import Overview from 'screens/overview/Overview';
-import GalleryOrdersListing from 'screens/galleryOrders/GalleryOrdersListing';
-import Subscriptions from 'screens/subscriptions/Subscriptions';
-import GalleryProfile from 'screens/galleryProfileScreens/galleryProfile/GalleryProfile';
-import StripePayoutsTab from 'screens/stripeScreens/payouts/StripePayoutsTab';
+import WalletScreen from '#screens/artist/wallet/WalletScreen';
+import OrderScreen from '#screens/artist/orders/OrderScreen';
+import GalleryArtworksListing from '#screens/galleryArtworksListing/GalleryArtworksListing';
+import ArtistProfileScreen from '#screens/artist/profile/ArtistProfileScreen';
+import Home from '#screens/home/Home';
+import Catalog from '#screens/catalog/Catalog';
+import SearchResults from '#screens/searchResults/SearchResults';
+import Orders from '#screens/orders/Orders';
+import Profile from '#screens/profile/Profile';
+import Overview from '#screens/overview/Overview';
+import GalleryOrdersListing from '#screens/galleryOrders/GalleryOrdersListing';
+import Subscriptions from '#screens/subscriptions/Subscriptions';
+import GalleryProfile from '#screens/galleryProfileScreens/galleryProfile/GalleryProfile';
+import StripePayoutsTab from '#screens/stripeScreens/payouts/StripePayoutsTab';
 
 export const BottomTabDataArtist = [
   {

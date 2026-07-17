@@ -1,9 +1,9 @@
 import { TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import { utils_handleFetchUserID } from "utils/utils_asyncStorage";
-import useLikedState from "hooks/useLikedState";
+import { utils_handleFetchUserID } from "#utils/utils_asyncStorage";
+import useLikedState from "#hooks/useLikedState";
 import { AntDesign } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 
 export type LikeComponentProps = {
   likeIds: string[];

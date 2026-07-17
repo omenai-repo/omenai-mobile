@@ -1,11 +1,11 @@
 import { Text, View } from 'react-native';
 import React, { useState } from 'react';
-import { galleryOrderModalStore } from 'store/modal/galleryModalStore';
-import LongBlackButton from 'components/buttons/LongBlackButton';
-import Input from 'components/inputs/Input';
-import CloseButton from 'components/buttons/CloseButton';
+import { galleryOrderModalStore } from '#store/modal/galleryModalStore';
+import LongBlackButton from '#components/buttons/LongBlackButton';
+import Input from '#components/inputs/Input';
+import CloseButton from '#components/buttons/CloseButton';
 import CompletedModal from './CompletedModal';
-import { provideTrackingInfo } from 'services/orders/provideTrackingInfo';
+import { provideTrackingInfo } from '#services/orders/provideTrackingInfo';
 
 export default function ProvideTrackingInfo() {
   const { clear, trackingInfoForm, updateTrackingInfoForm, currentId } = galleryOrderModalStore();

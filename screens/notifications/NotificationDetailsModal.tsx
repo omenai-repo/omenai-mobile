@@ -10,9 +10,9 @@ import {
   Platform,
 } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import { Ionicons } from "@expo/vector-icons";
-import { formatEventDate } from "utils/utils_formatEventDate";
+import { formatEventDate } from "#utils/utils_formatEventDate";
 
 type NotificationDetailsModalProps = {
   visible: boolean;

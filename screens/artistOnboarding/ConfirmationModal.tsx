@@ -2,8 +2,8 @@ import { View, Text, Pressable, Modal } from 'react-native';
 import React from 'react';
 import tw from 'twrnc';
 import { SvgXml } from 'react-native-svg';
-import { warningIconSm } from 'utils/SvgImages';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
+import { warningIconSm } from '#utils/SvgImages';
+import FittedBlackButton from '#components/buttons/FittedBlackButton';
 
 const ConfirmationModal = ({
   isModalVisible,

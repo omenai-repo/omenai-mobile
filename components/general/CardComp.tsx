@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 import Animated from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 
 export type CardConfig = {
   title: string;

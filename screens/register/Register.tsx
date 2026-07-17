@@ -12,10 +12,10 @@ import AuthHeader from "../../components/auth/AuthHeader";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { screenName } from "../../constants/screenNames.constants";
-import WithModal from "components/modal/WithModal";
-import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
-import { useGalleryAuthRegisterStore } from "store/auth/register/GalleryAuthRegisterStore";
-import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
+import WithModal from "#components/modal/WithModal";
+import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
+import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
+import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
 import InputForm from "./components/inputForm/InputForm";
 
 type RootStackParamList = {

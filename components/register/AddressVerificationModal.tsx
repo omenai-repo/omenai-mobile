@@ -1,5 +1,5 @@
-import AuthModal from "components/auth/AuthModal";
-import { checkMarkIcon, errorIcon } from "utils/SvgImages";
+import AuthModal from "#components/auth/AuthModal";
+import { checkMarkIcon, errorIcon } from "#utils/SvgImages";
 
 type AddressVerificationModalProps = {
   readonly showModal: boolean;

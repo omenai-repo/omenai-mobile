@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import MiniImage from "./MiniImage";
 import LikeComponent from "./LikeComponent";
 

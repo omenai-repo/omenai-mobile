@@ -1,36 +1,45 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect, useState, useCallback } from "react";
-import { useAppStore } from "store/app/appStore";
-import { utils_appInit } from "utils/utils_appInit";
+import { useAppStore } from "#store/app/appStore";
+import { utils_appInit } from "#utils/utils_appInit";
 import { useFonts } from "expo-font";
-import IndividualNavigation from "navigation/IndividualNavigation";
-import AuthNavigation from "navigation/AuthNavigation";
-import GalleryNavigation from "navigation/GalleryNavigation";
+import IndividualNavigation from "#navigation/IndividualNavigation";
+import AuthNavigation from "#navigation/AuthNavigation";
+import GalleryNavigation from "#navigation/GalleryNavigation";
 import * as Linking from "expo-linking";
-import { screenName } from "constants/screenNames.constants";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { CopilotProvider } from "react-native-copilot";
 import * as SplashScreen from "expo-splash-screen";
-import ArtistNavigation from "navigation/ArtistNavigation";
+import ArtistNavigation from "#navigation/ArtistNavigation";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { focusManager, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  focusManager,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 
 import { AppState, Platform } from "react-native";
-import { configureNotificationHandling } from "notifications/NotificationService";
-import { useNotifications } from "hooks/useNotifications";
-import { registerForPushToken } from "notifications/registerForPushToken";
-import { navigationRef } from "navigation/RootNavigation";
-import { useNotificationHandler } from "hooks/useNotificationHandler";
+import { configureNotificationHandling } from "#notifications/NotificationService";
+import { useNotifications } from "#hooks/useNotifications";
+import { registerForPushToken } from "#notifications/registerForPushToken";
+import { navigationRef } from "#navigation/RootNavigation";
+import { useNotificationHandler } from "#hooks/useNotificationHandler";
 import { StatusBar } from "expo-status-bar";
+import { clearStaleCredentials } from "#hooks/useBiometrics";
+import ForceUpdateModal from "#components/modal/ForceUpdateModal";
 
-if (!Platform.constants) {
-  Platform.constants = {
-    reactNativeVersion: { major: 0, minor: 0, patch: 0 },
-    isTesting: false,
-    // Add other required constants
-  };
+// Safely patch Platform.constants for web/dev environments only
+try {
+  if (!Platform.constants) {
+    Platform.constants = {
+      reactNativeVersion: { major: 0, minor: 0, patch: 0 },
+      isTesting: false,
+    };
+  }
+} catch (error) {
+  console.warn("Failed to patch Platform.constants:", error);
 }
 
 // Keep the splash screen visible while we fetch resources
@@ -46,18 +55,25 @@ export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const { isLoggedIn, userType, setExpoPushToken } = useAppStore();
 
+  const [needsForceUpdate] = useState(false);
+
   configureNotificationHandling(); // Set up global handler
   useNotifications(); // Register listeners
 
   useEffect(() => {
-    const initPush = async () => {
-      const token = await registerForPushToken();
-      if (token) {
-        setExpoPushToken(token);
+    const initApp = async () => {
+      try {
+        await clearStaleCredentials();
+        const token = await registerForPushToken();
+        if (token) {
+          setExpoPushToken(token);
+        }
+      } catch {
+        // Silently fail
       }
     };
 
-    initPush();
+    initApp();
   }, []);
 
   const prefix = Linking.createURL("/");
@@ -147,8 +163,12 @@ export default function App() {
                   {/* AUTH SCREENS */}
                   {!isLoggedIn && <AuthNavigation />}
                   {/* App screens */}
-                  {isLoggedIn && userType === "gallery" && <GalleryNavigation />}
-                  {isLoggedIn && userType === "user" && <IndividualNavigation />}
+                  {isLoggedIn && userType === "gallery" && (
+                    <GalleryNavigation />
+                  )}
+                  {isLoggedIn && userType === "user" && (
+                    <IndividualNavigation />
+                  )}
                   {isLoggedIn && userType === "artist" && <ArtistNavigation />}
                 </NavigationContainer>
               </StripeProvider>
@@ -156,6 +176,9 @@ export default function App() {
           </SafeAreaProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>
+
+      {/* Force Update Modal - Cannot be dismissed */}
+      <ForceUpdateModal isVisible={needsForceUpdate} />
     </CopilotProvider>
   );
 }

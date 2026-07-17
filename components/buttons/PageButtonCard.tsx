@@ -1,7 +1,7 @@
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
-import { rightArrowIcon, getRightArrowIcon } from "utils/SvgImages";
+import { rightArrowIcon, getRightArrowIcon } from "#utils/SvgImages";
 import tw from "twrnc";
 
 type PageButtonItemProps = {

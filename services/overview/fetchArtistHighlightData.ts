@@ -1,9 +1,9 @@
-import { fetchIncomeData } from 'services/overview/fetchIncomeData';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { fetchIncomeData } from '#services/overview/fetchIncomeData';
+import { utils_formatPrice } from '#utils/utils_priceFormatter';
 import { getSalesHighlightData } from './getSalesHighlightData';
 import { getWalletBalance } from './getWalletBalance';
 import { getArtworkHighlightData } from './getArtworkHighlightData';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { utils_getAsyncData } from '#utils/utils_asyncStorage';
 
 export async function fetchArtistHighlightData(tag: string) {
   let userId = '';

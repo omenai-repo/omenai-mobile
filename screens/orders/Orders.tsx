@@ -1,15 +1,15 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import tw from "twrnc";
-import WithModal from "components/modal/WithModal";
-import OrderslistingLoader from "screens/galleryOrders/components/OrderslistingLoader";
-import TabSwitcher from "components/orders/TabSwitcher";
-import EmptyOrdersListing from "screens/galleryOrders/components/EmptyOrdersListing";
-import YearDropdown from "screens/artist/orders/YearDropdown";
+import WithModal from "#components/modal/WithModal";
+import OrderslistingLoader from "#screens/galleryOrders/components/OrderslistingLoader";
+import TabSwitcher from "#components/orders/TabSwitcher";
+import EmptyOrdersListing from "#screens/galleryOrders/components/EmptyOrdersListing";
+import YearDropdown from "#screens/artist/orders/YearDropdown";
 import OrderContainer from "./components/OrderContainer"; // Make sure this path is correct
 import { useNavigation } from "@react-navigation/native";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { useCollectorOrders } from "hooks/useCollectorOrders";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { useCollectorOrders } from "#hooks/useCollectorOrders";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type OrderTabsTypes = "pending" | "history";

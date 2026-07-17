@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import tw from 'twrnc';
-import { fontNames } from 'constants/fontNames.constants';
+import { fontNames } from '#constants/fontNames.constants';
 
 interface ArtworkStatusProps {
   readonly availability: boolean;

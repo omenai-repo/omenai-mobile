@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import Input from 'components/inputs/Input';
+import Input from '#components/inputs/Input';
 
 interface DimensionInputProps {
   field: string;

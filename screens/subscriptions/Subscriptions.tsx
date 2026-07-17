@@ -1,19 +1,19 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import InActiveSubscription from "./features/InActiveSubscription";
-import { useAppStore } from "store/app/appStore";
+import { useAppStore } from "#store/app/appStore";
 import ActiveSubscriptions from "./features/ActiveSubscriptions";
-import WithModal from "components/modal/WithModal";
+import WithModal from "#components/modal/WithModal";
 import ActiveSubLoader from "./components/ActiveSubLoader";
-import { useModalStore } from "store/modal/modalStore";
-import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscriptionData";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import { getAccountID } from "services/stripe/getAccountID";
-import { checkIsStripeOnboarded } from "services/stripe/checkIsStripeOnboarded";
+import { useModalStore } from "#store/modal/modalStore";
+import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import { getAccountID } from "#services/stripe/getAccountID";
+import { checkIsStripeOnboarded } from "#services/stripe/checkIsStripeOnboarded";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useHighRiskFeatureFlag } from "hooks/useFeatureFlag";
-import SubscriptionDowntimeBlocker from "components/blockers/payments/SubscriptionDowntimeBlocker";
+import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
+import SubscriptionDowntimeBlocker from "#components/blockers/payments/SubscriptionDowntimeBlocker";
 
 export default function Subscriptions() {
   const { userSession } = useAppStore();

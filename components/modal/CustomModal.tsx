@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import React from 'react';
-import { colors } from 'config/colors.config';
-import { useModalStore } from 'store/modal/modalStore';
+import { colors } from '#config/colors.config';
+import { useModalStore } from '#store/modal/modalStore';
 import { MaterialIcons } from '@expo/vector-icons';
 import CancelSubscriptionModal from './modals/CancelSubscriptionModal';
 import DeleteAccountSuccessModal from './modals/DeleteAccountSuccessModal';

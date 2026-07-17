@@ -1,14 +1,14 @@
 import { Alert, StyleSheet, Text, View, Platform, StatusBar } from "react-native";
 import React, { useEffect, useState } from "react";
 import { colors } from "../../config/colors.config";
-import { useSearchStore } from "store/search/searchStore";
+import { useSearchStore } from "#store/search/searchStore";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { fetchSearchKeyWordResults } from "services/search/fetchSearchKeywordResults";
+import { fetchSearchKeyWordResults } from "#services/search/fetchSearchKeywordResults";
 import ResultsListing from "./components/resultsListing/ResultsListing";
-import SearchInput from "components/inputs/SearchInput";
-import MiniArtworkCardLoader from "components/general/MiniArtworkCardLoader";
-import EmptyArtworks from "components/general/EmptyArtworks";
+import SearchInput from "#components/inputs/SearchInput";
+import MiniArtworkCardLoader from "#components/general/MiniArtworkCardLoader";
+import EmptyArtworks from "#components/general/EmptyArtworks";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SearchResults() {

@@ -1,11 +1,11 @@
 import { Dimensions, TouchableOpacity, PixelRatio } from "react-native";
 import React, { memo, useMemo } from "react";
-import { getImageFileView } from "lib/storage/getImageFileView";
+import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 import tw from "twrnc";
-import { getNumberOfColumns } from "utils/utils_screen";
+import { getNumberOfColumns } from "#utils/utils_screen";
 import ExclusivityCountdown from "./ExclusivityCountdown";
 import ArtworkImage from "./ArtworkImage";
 import ArtworkDetails from "./ArtworkDetails";

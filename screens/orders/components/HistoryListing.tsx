@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
+import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
 import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import OrderCard from "./OrderCard";
 
 export default function HistoryListing({

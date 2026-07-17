@@ -5,25 +5,21 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 
-import { colors } from "config/colors.config";
-import { useAppStore } from "store/app/appStore";
-import { screenName } from "constants/screenNames.constants";
-import WithModal from "components/modal/WithModal";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import {
-  changePasswsordIcon,
-  getDeleteIcon,
-  orderHistoryIcon,
-  savedArtworksIcon,
-} from "utils/SvgImages";
-import ProfileMenuItems from "components/profile/ProfileMenuItems";
+import { useAppStore } from "#store/app/appStore";
+import { screenName } from "#constants/screenNames.constants";
+import WithModal from "#components/modal/WithModal";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { orderHistoryIcon, savedArtworksIcon } from "#utils/SvgImages";
+import ProfileMenuItems from "#components/profile/ProfileMenuItems";
 import omenaiAvatar from "../../assets/images/omenai-avatar.png";
-import { logout } from "utils/logout.utils";
+import { logout } from "#utils/logout.utils";
 import { useQueryClient } from "@tanstack/react-query";
-import BlurStatusBar from "components/general/BlurStatusBar";
-import { useScrollY } from "hooks/useScrollY";
+import BlurStatusBar from "#components/general/BlurStatusBar";
+import { useScrollY } from "#hooks/useScrollY";
+import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
+import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
 
 type Nav = StackNavigationProp<any>;
 
@@ -33,6 +29,7 @@ export default function Profile() {
   const { userSession } = useAppStore();
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
+  const { contentBottomPadding } = useSafeBottomSpacing();
 
   const name = userSession?.name ?? "";
   const email = userSession?.email ?? "";
@@ -61,6 +58,8 @@ export default function Profile() {
     navigation.navigate(screenName.deleteAccount, { routeName: "individual" });
   }, [navigation]);
 
+  const commonMenuItems = useProfileMenuOptions(navigation, "individual");
+
   const menuItems = useMemo(
     () => [
       {
@@ -75,21 +74,9 @@ export default function Profile() {
         handlePress: goToOrdersTab,
         svgIcon: orderHistoryIcon,
       },
-      {
-        name: "Change password",
-        subText: "Change the password to your account",
-        handlePress: goToChangePassword,
-        svgIcon: changePasswsordIcon,
-      },
-      {
-        name: "Delete account",
-        subText: "Delete your omenai account",
-        handlePress: goToDeleteAccount,
-        svgIcon: getDeleteIcon("#DC2626"),
-        variant: "danger" as const,
-      },
+      ...commonMenuItems,
     ],
-    [goToSaved, goToOrdersTab, goToChangePassword, goToDeleteAccount]
+    [goToSaved, goToOrdersTab, commonMenuItems]
   );
 
   return (
@@ -115,7 +102,9 @@ export default function Profile() {
 
           <View>
             <Text style={tw`text-base font-semibold text-black`}>{name}</Text>
-            <Text style={tw`text-sm mt-[5px] mb-5 text-[#00000099]`}>{email}</Text>
+            <Text style={tw`text-sm mt-[5px] mb-5 text-[#00000099]`}>
+              {email}
+            </Text>
 
             <FittedBlackButton
               value="Edit profile"
@@ -126,10 +115,10 @@ export default function Profile() {
           </View>
         </View>
 
-        <View style={tw`pt-[40px] px-[20px] pb-8`}>
+        <View style={[tw`pt-10 px-5`, { paddingBottom: contentBottomPadding }]}>
           <ProfileMenuItems items={menuItems} />
 
-          <View style={tw`mt-[40px]`} />
+          <View style={tw`mt-10`} />
           <LongBlackButton
             value="Log Out"
             onClick={() => {

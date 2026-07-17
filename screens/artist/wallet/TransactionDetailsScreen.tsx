@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import tw from 'twrnc';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { formatISODate } from 'utils/utils_formatISODate';
+import BackHeaderTitle from '#components/header/BackHeaderTitle';
+import { formatISODate } from '#utils/utils_formatISODate';
 
 const statusColors = {
   FAILED: 'text-[#FF0000]',

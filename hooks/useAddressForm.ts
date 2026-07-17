@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { debounce } from "lodash";
-import { validate } from "lib/validations/validatorGroup";
+import { validate } from "#lib/validations/validatorGroup";
 
 export const useAddressForm = () => {
   const [formErrors, setFormErrors] = useState<Partial<AddressTypes & { phone: string }>>({

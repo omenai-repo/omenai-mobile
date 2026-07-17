@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getOrdersForUser } from 'services/orders/getOrdersForUser';
-import { useAppStore } from 'store/app/appStore';
+import { getOrdersForUser } from '#services/orders/getOrdersForUser';
+import { useAppStore } from '#store/app/appStore';
 
 type Partitioned = {
   pendingOrders: CreateOrderModelTypes[];
