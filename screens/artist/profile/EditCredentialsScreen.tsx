@@ -1,5 +1,5 @@
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Dimensions,
@@ -21,9 +21,8 @@ import { uploadIcon } from "#utils/SvgImages";
 import * as DocumentPicker from "expo-document-picker";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { getArtistCredentials } from "#services/artistOnboarding/getArtistCredentials";
-import LottieView from "lottie-react-native";
-import loaderAnimation from "../../../assets/other/loader-animation.json";
 import CredentialsOverview from "#screens/artistOnboarding/CredentialsOverview";
+import CredentialsSkeleton from "#components/skeleton/CredentialsSkeleton";
 
 const { width } = Dimensions.get("window");
 
@@ -67,7 +66,6 @@ export default function EditCredentialsScreen() {
     },
     cv: "",
   });
-  const animation = useRef(null);
 
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -132,19 +130,7 @@ export default function EditCredentialsScreen() {
   }, []);
 
   if (isLoading) {
-    return (
-      <View style={tw`flex-1 bg-[#F7F7F7] justify-center items-center`}>
-        <LottieView
-          autoPlay
-          ref={animation}
-          style={{
-            width: 300,
-            height: 300,
-          }}
-          source={loaderAnimation}
-        />
-      </View>
-    );
+    return <CredentialsSkeleton />;
   }
 
   if (!credentials) {
@@ -162,7 +148,7 @@ export default function EditCredentialsScreen() {
           <TouchableOpacity
             onPress={pickDocument}
             style={tw.style(
-              `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-[5px] justify-center items-center`
+              `border border-[#00000033] bg-[#EAE8E8] h-[160px] rounded-sm justify-center items-center`
             )}
           >
             {!cv?.assets && <SvgXml xml={uploadIcon} />}
@@ -185,7 +171,7 @@ export default function EditCredentialsScreen() {
             Edit {editingSocialKey.toUpperCase()}
           </Text>
           <TextInput
-            style={tw`bg-[#F7F7F7] rounded-[20px] h-[50px] p-4 mx-[10px]`}
+            style={tw`bg-[#F7F7F7] rounded-sm h-[50px] p-4 mx-[10px]`}
             placeholder={`Enter your ${editingSocialKey} link`}
             value={
               documentation.socials[
@@ -274,7 +260,7 @@ export default function EditCredentialsScreen() {
             style={tw.style(
               (editingQuestionKey === "social" ||
                 editingQuestionKey === "cv") &&
-                `bg-white p-5 rounded-lg w-[90%]`
+                `bg-white p-5 rounded-sm w-[90%]`
             )}
           >
             {renderModalContent()}

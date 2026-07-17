@@ -1,66 +1,64 @@
-import { StyleSheet, RefreshControl, View } from 'react-native';
-import React, { useCallback, useRef, useState } from 'react';
-import WithModal from '#components/modal/WithModal';
-import Header from '#components/header/Header';
-import SalesOverview from './components/SalesOverview';
-import RecentOrders from './components/RecentOrders';
-import { HighlightCard } from './components/HighlightCard';
-import ScrollWrapper from '#components/general/ScrollWrapper';
-import PopularArtworks from './components/PopularArtworks';
-import { useQueryClient } from '@tanstack/react-query';
-import { QK } from '#utils/queryKeys';
-import { useAppStore } from '#store/app/appStore';
-import BlurStatusBar from '#components/general/BlurStatusBar';
-import { useScrollY } from '#hooks/useScrollY';
+import { Animated, RefreshControl } from "react-native";
+import tw from "twrnc";
+import React, { useCallback, useRef, useState } from "react";
+
+import WithGalleryModal from "#components/modal/WithGalleryModal";
+import SalesOverview from "./components/SalesOverview";
+import { HighlightCard } from "./components/HighlightCard";
+import PopularArtworks from "./components/PopularArtworks";
+import { useQueryClient } from "@tanstack/react-query";
+import { QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
 
 export default function Overview() {
   const [refreshing, setRefreshing] = useState(false);
   const inflight = useRef(0);
   const qc = useQueryClient();
   const { userSession } = useAppStore();
-  const { scrollY, onScroll } = useScrollY();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([
-      qc.invalidateQueries({ queryKey: QK.highlightGallery('artworks', userSession?.id) }),
-      qc.invalidateQueries({ queryKey: QK.highlightGallery('sales', userSession?.id) }),
-      qc.invalidateQueries({ queryKey: QK.highlightGallery('net', userSession?.id) }),
-      qc.invalidateQueries({ queryKey: QK.highlightGallery('revenue', userSession?.id) }),
+      qc.invalidateQueries({
+        queryKey: QK.highlightGallery("artworks", userSession?.id),
+      }),
+      qc.invalidateQueries({
+        queryKey: QK.highlightGallery("sales", userSession?.id),
+      }),
+      qc.invalidateQueries({
+        queryKey: QK.highlightGallery("net", userSession?.id),
+      }),
+      qc.invalidateQueries({
+        queryKey: QK.highlightGallery("revenue", userSession?.id),
+      }),
       qc.invalidateQueries({ queryKey: QK.salesOverview(userSession?.id) }),
-      qc.invalidateQueries({ queryKey: QK.overviewOrders(userSession?.id) }),
+
       qc.invalidateQueries({ queryKey: QK.popularArtworks(userSession?.id) }),
     ]);
-  }, [qc]);
+  }, [qc, userSession?.id]);
 
   const handleLoadingChange = useCallback((isLoading: boolean) => {
     inflight.current += isLoading ? 1 : -1;
     if (inflight.current <= 0) {
       inflight.current = 0;
-      setRefreshing(false);
+      requestAnimationFrame(() => setRefreshing(false));
     }
   }, []);
 
   return (
-    <WithModal>
-      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-      <ScrollWrapper
+    <WithGalleryModal>
+      <Animated.ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={tw`flex-1 bg-[#F7F7F7] px-5`}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        onScroll={onScroll}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        <Header />
-        <View style={styles.container}>
-          <HighlightCard onLoadingChange={handleLoadingChange} />
-        </View>
+        <HighlightCard onLoadingChange={handleLoadingChange} />
         <SalesOverview onLoadingChange={handleLoadingChange} />
-        <RecentOrders onLoadingChange={handleLoadingChange} />
         <PopularArtworks onLoadingChange={handleLoadingChange} />
-      </ScrollWrapper>
-    </WithModal>
+      </Animated.ScrollView>
+    </WithGalleryModal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { paddingVertical: 20 },
-});

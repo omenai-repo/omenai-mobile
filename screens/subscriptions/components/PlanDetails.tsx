@@ -1,16 +1,16 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
-import { colors } from '#config/colors.config';
-import omenai_logo from '#assets/icons/omenai_logo_cut.png';
-import { utils_formatPrice } from '#utils/utils_priceFormatter';
-import { utils_getCurrencySymbol } from '#utils/utils_getCurrencySymbol';
-import Button from './Button';
-import { formatIntlDateTime } from '#utils/utils_formatIntlDateTime';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from '#constants/screenNames.constants';
-import { daysLeft } from '#utils/utils_daysLeft';
-import { useModalStore } from '#store/modal/modalStore';
+import { Image, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { colors } from "#config/colors.config";
+import { images } from "#constants/images.constants";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
+import Button from "./Button";
+import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "#constants/screenNames.constants";
+import { daysLeft } from "#utils/utils_daysLeft";
+import { useModalStore } from "#store/modal/modalStore";
 
 type PlanDetailsProps = {
   sub_status: string;
@@ -35,47 +35,80 @@ export default function PlanDetails({
   const { setRetainModal } = useModalStore();
 
   const currency_symbol = utils_getCurrencySymbol(payment.currency);
-  console.log(sub_status);
+
+  let pillBgColor = "#00800015";
+  let pillTextColor = "#00800080";
+  if (sub_status === "canceled" || sub_status === "expired") {
+    pillBgColor = "#ff000015";
+    pillTextColor = "#ff000080";
+  }
+
   return (
     <View>
       <View style={styles.container}>
         <View style={styles.topContainer}>
           <View style={styles.planTitleContainer}>
-            <Text style={{ fontSize: 16, color: colors.primary_black }}>Subscription Info</Text>
+            <Text style={{ fontSize: 16, color: colors.primary_black }}>
+              Subscription Info
+            </Text>
           </View>
         </View>
         <View style={styles.bottomContainer}>
-          <View style={{ flexDirection: 'row', gap: 10 }}>
-            <Image source={omenai_logo} style={styles.omenaiLogo} />
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <Image source={images.omenaiLogoCut} style={styles.omenaiLogo} />
             <View style={{ gap: 7 }}>
-              <Text style={{ fontSize: 16, fontWeight: 500, color: colors.primary_black }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 500,
+                  color: colors.primary_black,
+                }}
+              >
                 Omenai {plan_details.type}
               </Text>
-              <Text style={{ opacity: 0.7 }}>{daysLeft(end_date)} day(s) left</Text>
+              <Text style={{ opacity: 0.7 }}>
+                {daysLeft(end_date)} day(s) left
+              </Text>
               <View style={styles.amountContainer}>
-                <Text style={{ fontSize: 16, fontWeight: 500, color: colors.primary_black }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 500,
+                    color: colors.primary_black,
+                  }}
+                >
                   {utils_formatPrice(payment.value, currency_symbol)}
                 </Text>
-                <Text style={{ fontSize: 14, color: colors.primary_black, opacity: 0.8 }}>
-                  / {plan_details.interval.replace(/^./, (char) => char.toUpperCase())}
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: colors.primary_black,
+                    opacity: 0.8,
+                  }}
+                >
+                  /{" "}
+                  {plan_details.interval.replace(/^./, (char) =>
+                    char.toUpperCase(),
+                  )}
                 </Text>
               </View>
-              <Text style={{ fontSize: 14, color: colors.primary_black, opacity: 0.8 }}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: colors.primary_black,
+                  opacity: 0.8,
+                }}
+              >
                 {sub_status === `expired`
                   ? `Due date: ${formatIntlDateTime(end_date)}`
                   : `Next billing date: ${formatIntlDateTime(end_date)}`}
               </Text>
-              <View style={{ flexWrap: 'wrap' }}>
+              <View style={{ flexWrap: "wrap" }}>
                 <View
                   style={[
                     styles.activePill,
                     {
-                      backgroundColor:
-                        sub_status === 'canceled'
-                          ? '#ff000015'
-                          : sub_status === 'expired'
-                          ? '#ff000015'
-                          : '#00800015',
+                      backgroundColor: pillBgColor,
                     },
                   ]}
                 >
@@ -83,13 +116,8 @@ export default function PlanDetails({
                     style={{
                       fontSize: 12,
                       fontWeight: 500,
-                      color:
-                        sub_status === `expired`
-                          ? '#ff000080'
-                          : sub_status === 'canceled'
-                          ? '#ff000080'
-                          : '#00800080',
-                      textTransform: 'uppercase',
+                      color: pillTextColor,
+                      textTransform: "uppercase",
                     }}
                   >
                     {sub_status.toUpperCase()}
@@ -98,12 +126,14 @@ export default function PlanDetails({
               </View>
             </View>
           </View>
-          {sub_status === 'canceled' || sub_status === 'expired' ? (
+          {sub_status === "canceled" || sub_status === "expired" ? (
             <View style={styles.buttonContainer}>
               <Button
                 label="Reactivate subscription"
                 handleClick={() =>
-                  navigation.navigate(screenName.gallery.billing, { plan_action: 'reactivation' })
+                  navigation.navigate(screenName.gallery.billing, {
+                    plan_action: "reactivation",
+                  })
                 }
               />
             </View>
@@ -112,7 +142,9 @@ export default function PlanDetails({
               <Button
                 label="Upgrade/Downgrade plan"
                 handleClick={() =>
-                  navigation.navigate(screenName.gallery.billing, { plan_action: null })
+                  navigation.navigate(screenName.gallery.billing, {
+                    plan_action: null,
+                  })
                 }
               />
               <Button
@@ -120,9 +152,9 @@ export default function PlanDetails({
                 remove
                 handleClick={() =>
                   setRetainModal({
-                    retainModal: 'cancleSubscription',
+                    retainModal: "cancleSubscription",
                     showModal: true,
-                    message: end_date,
+                    message: formatIntlDateTime(end_date),
                   })
                 }
               />
@@ -141,19 +173,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   topContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 15,
   },
   planTitleContainer: {
     flex: 1,
     gap: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   amountContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    flexDirection: "row",
     gap: 4,
   },
   activePill: {

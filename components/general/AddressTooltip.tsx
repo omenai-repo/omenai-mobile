@@ -29,8 +29,18 @@ export const AddressTooltip = ({
       </Pressable>
       {showToolTip && (
         <View style={[tw`absolute top-0 right-16`, { width: width / 2 }]}>
-          <View style={[tw`rounded-[12px] py-2.5 px-4`, { backgroundColor: `${colors.black}` }]}>
-            <Text style={[tw`text-[10px] text-center leading-[15px]`, { color: colors.white }]}>
+          <View
+            style={[
+              tw`rounded-sm py-2.5 px-4`,
+              { backgroundColor: `${colors.black}` },
+            ]}
+          >
+            <Text
+              style={[
+                tw`text-[10px] text-center leading-[15px]`,
+                { color: colors.white },
+              ]}
+            >
               {tooltipText}
             </Text>
           </View>

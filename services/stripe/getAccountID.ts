@@ -1,14 +1,21 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
-export async function getAccountID(galleryId: string) {
+type GetAccountIDResponse = {
+  isOk: boolean;
+  data?: Pick<
+    AccountGallerySchemaTypes,
+    "connected_account_id" | "gallery_verified" | "subscription_status"
+  >;
+  body?: {
+    message: string;
+  };
+};
+
+export async function getAccountID(galleryId: string): Promise<GetAccountIDResponse> {
   try {
-    const res = await fetch(`${apiUrl}/api/stripe/getAccountId`, {
+    const res = await apiRequest(`${apiUrl}/api/stripe/getAccountId`, {
       method: "POST",
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify({ gallery_id: galleryId }),
     });
 
@@ -19,6 +26,14 @@ export async function getAccountID(galleryId: string) {
       data: result.data,
     };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching Stripe account ID",
+      },
+    };
   }
 }

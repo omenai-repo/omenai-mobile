@@ -1,18 +1,15 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { colors } from "#config/colors.config";
-import ProfileMenuItems, {
-  ProfileMenuItem,
-} from "#components/profile/ProfileMenuItems";
+import ProfileLayout from "#components/profile/ProfileLayout";
+import { ProfileMenuItem } from "#components/profile/ProfileMenuItems";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
-import { logout } from "#utils/logout.utils";
 import WithGalleryModal from "#components/modal/WithGalleryModal";
 import { useAppStore } from "#store/app/appStore";
 import ScrollWrapper from "#components/general/ScrollWrapper";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
-import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
 import LoadingContainer from "#screens/artistOnboarding/LoadingContainer";
 import { getEditEligibility } from "#services/update/getEditEligibility";
@@ -26,7 +23,6 @@ import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useProfileMenuOptions } from "#hooks/useProfileMenuOptions";
-import { useSafeBottomSpacing } from "#hooks/useSafeBottomSpacing";
 
 type userDataType = {
   name: string;
@@ -41,7 +37,6 @@ export default function ArtistProfileScreen() {
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
-  const { contentBottomPadding, buttonBottomMargin } = useSafeBottomSpacing();
 
   const [userData, setUserData] = useState<userDataType>({
     name: "",
@@ -68,7 +63,7 @@ export default function ArtistProfileScreen() {
   useFocusEffect(
     useCallback(() => {
       handleFetchUserSession();
-    }, [handleFetchUserSession])
+    }, [handleFetchUserSession]),
   );
 
   const checkEditEligibility = async () => {
@@ -90,12 +85,16 @@ export default function ArtistProfileScreen() {
         setIsLoading(false);
         setIsEligible(true);
         setEligibilityResponse(
-          response?.body?.message ?? "You are not eligible at this time."
+          response?.body?.message ?? "You are not eligible at this time.",
         );
       }
     } catch (error: any) {
       updateModal({
-        message: error?.message ?? "Something went wrong",
+        message:
+          error?.message ||
+          error?.response?.data?.message ||
+          error?.body?.message ||
+          "Something went wrong",
         showModal: true,
         modalType: "error",
       });
@@ -120,88 +119,79 @@ export default function ArtistProfileScreen() {
       },
       ...commonMenuItems,
     ],
-    [navigation, commonMenuItems]
+    [navigation, commonMenuItems],
   );
+
+  const Header = (
+    <>
+      <View style={[styles.profileContainer, { marginTop: insets.top + 16 }]}>
+        <Logo url={userSession?.logo} />
+
+        <View>
+          <Text
+            style={[tw`text-base font-medium`, { color: colors.primary_black }]}
+          >
+            {userData.name}
+          </Text>
+          <Text
+            style={[
+              tw`text-sm mt-1.5`,
+              {
+                color: "#00000099",
+              },
+            ]}
+          >
+            {userData.email}
+          </Text>
+        </View>
+      </View>
+
+      <View style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}>
+        <FittedBlackButton
+          value="Edit profile"
+          onClick={() => navigation.navigate(screenName.gallery.editProfile)}
+          style={tw`flex-grow`}
+          textStyle={tw`text-base`}
+        />
+        <FittedBlackButton
+          value="Edit your credentials"
+          onClick={checkEditEligibility}
+          style={tw`flex-grow bg-transparent border border-black`}
+          textStyle={tw`text-black text-[16px]`}
+        />
+      </View>
+    </>
+  );
+
+  const renderContent = () => {
+    if (isLoading) {
+      return <LoadingContainer label="" />;
+    }
+
+    if (isEligible) {
+      return (
+        <EligibityResponseScreen
+          label={
+            eligibilityResponse ||
+            `You’re currently not eligible to update your credentials. Please try again in:`
+          }
+          daysLeft={eligibilityData?.body?.eligibility?.daysLeft}
+          onPress={() => setIsEligible(false)}
+        />
+      );
+    }
+
+    return (
+      <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
+        <ProfileLayout menuItems={menuItems} headerComponent={Header} />
+      </ScrollWrapper>
+    );
+  };
 
   return (
     <WithGalleryModal>
       <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-      {!isLoading ? (
-        !isEligible ? (
-          <ScrollWrapper style={styles.mainContainer} onScroll={onScroll}>
-            <View
-              style={[styles.profileContainer, { marginTop: insets.top + 16 }]}
-            >
-              <Logo url={userSession?.logo} />
-
-              <View>
-                <Text
-                  style={[
-                    tw`text-base font-medium`,
-                    { color: colors.primary_black },
-                  ]}
-                >
-                  {userData.name}
-                </Text>
-                <Text
-                  style={[
-                    tw`text-sm mt-1.5`,
-                    {
-                      color: "#00000099",
-                    },
-                  ]}
-                >
-                  {userData.email}
-                </Text>
-              </View>
-            </View>
-
-            <View
-              style={tw`flex-row items-center gap-[15px] mt-[35px] flex-wrap`}
-            >
-              <FittedBlackButton
-                value="Edit profile"
-                onClick={() =>
-                  navigation.navigate(screenName.gallery.editProfile)
-                }
-                style={tw`flex-grow`}
-                textStyle={tw`text-base`}
-              />
-              <FittedBlackButton
-                value="Edit your credentials"
-                onClick={checkEditEligibility}
-                style={tw`flex-grow bg-transparent border border-black`}
-                textStyle={tw`text-black text-[16px]`}
-              />
-            </View>
-
-            <View style={[tw`pt-10`, { paddingBottom: contentBottomPadding }]}>
-              <ProfileMenuItems items={menuItems} />
-            </View>
-
-            <View style={{ marginBottom: buttonBottomMargin }}>
-              <LongBlackButton
-                value="Log Out"
-                onClick={() => {
-                  queryClient.clear();
-                  logout();
-                }}
-              />
-            </View>
-          </ScrollWrapper>
-        ) : (
-          <EligibityResponseScreen
-            label={
-              eligibilityResponse ||
-              `You’re currently not eligible to update your credentials. Please try again in:`
-            }
-            daysLeft={eligibilityData?.body?.eligibility?.daysLeft}
-            onPress={() => setIsEligible(false)}
-          />
-        )
-      ) : (
-        <LoadingContainer label="" />
-      )}
+      {renderContent()}
     </WithGalleryModal>
   );
 }

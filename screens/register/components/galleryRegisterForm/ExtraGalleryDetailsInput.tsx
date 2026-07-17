@@ -1,21 +1,29 @@
 import { StyleSheet, View } from "react-native";
 import React from "react";
-import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
-import NextButton from "../../../../components/buttons/NextButton";
-import Input from "../../../../components/inputs/Input";
-import BackFormButton from "../../../../components/buttons/BackFormButton";
-import LargeInput from "../../../../components/inputs/LargeInput";
+import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
+import NextButton from "#components/buttons/NextButton";
+import Input from "#components/inputs/Input";
+import BackFormButton from "#components/buttons/BackFormButton";
+import LargeInput from "#components/inputs/LargeInput";
 import { useFormValidation } from "#hooks/useFormValidation";
 
 export default function ExtraGalleryDetailsInput() {
-  const { pageIndex, setPageIndex, galleryRegisterData, setAdmin, setDescription } =
-    useGalleryAuthRegisterStore();
+  const {
+    pageIndex,
+    setPageIndex,
+    galleryRegisterData,
+    setAdmin,
+    setDescription,
+  } = useGalleryAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } =
-    useFormValidation<Partial<GallerySignupData>>();
+  const { formErrors, handleValidationChecks, checkIsDisabled } =
+    useFormValidation({
+      admin: "",
+      description: "",
+    });
 
-  const checkIsDisabled = () => {
-    return !checkIsFormValid({
+  const isButtonDisabled = () => {
+    return checkIsDisabled({
       admin: galleryRegisterData.admin,
       description: galleryRegisterData.description,
     });
@@ -51,7 +59,7 @@ export default function ExtraGalleryDetailsInput() {
         <BackFormButton handleBackClick={() => setPageIndex(pageIndex - 1)} />
         <View style={{ flex: 1 }} />
         <NextButton
-          isDisabled={checkIsDisabled()}
+          isDisabled={isButtonDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

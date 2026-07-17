@@ -6,20 +6,20 @@ import { QuestionKey, questions } from "./ArtistOnboarding";
 import * as DocumentPicker from "expo-document-picker";
 
 interface CredentialsOverviewProps {
-  onboardingQuestions: Record<string, string>;
-  documentationSocials: Record<string, string>;
-  documentationCv: string;
-  cvAssets?: DocumentPicker.DocumentPickerAsset[];
-  openSections: Record<string, boolean>;
-  toggleSection: (key: string) => void;
-  openEditModal: (
+  readonly onboardingQuestions: Record<string, string>;
+  readonly documentationSocials: Record<string, string>;
+  readonly documentationCv: string;
+  readonly cvAssets?: readonly DocumentPicker.DocumentPickerAsset[];
+  readonly openSections: Record<string, boolean>;
+  readonly toggleSection: (key: string) => void;
+  readonly openEditModal: (
     key: QuestionKey | "cv" | "social",
-    socialKey?: string
+    socialKey?: string,
   ) => void;
-  width: number;
+  readonly width: number;
 }
 
-const CredentialsOverview: React.FC<CredentialsOverviewProps> = ({
+const CredentialsOverview: React.FC<Readonly<CredentialsOverviewProps>> = ({
   onboardingQuestions,
   documentationSocials,
   documentationCv,
@@ -35,13 +35,13 @@ const CredentialsOverview: React.FC<CredentialsOverviewProps> = ({
         `bg-[#fff] border border-[#E7E7E7] rounded-[23px] p-[20px]`,
         {
           marginHorizontal: width / 18,
-        }
+        },
       )}
     >
       {/* Map through onboarding questions */}
       {Object.entries(onboardingQuestions)
         .filter(
-          ([_, value]) => typeof value === "string" && value.trim() !== ""
+          ([_, value]) => typeof value === "string" && value.trim() !== "",
         )
         .map(([key, value]) => {
           // Find the corresponding question text
@@ -56,19 +56,19 @@ const CredentialsOverview: React.FC<CredentialsOverviewProps> = ({
               data={String(value)}
               open={openSections[key]}
               setOpen={() => toggleSection(key)}
-              openModal={() => openEditModal(key as QuestionKey)}
+              openModal={() => openEditModal(key as any)}
             />
           );
         })}
 
       {/* Map through documentation socials */}
       {Object.entries(documentationSocials)
-        .filter(([_, value]) => value.trim() !== "")
+        .filter(([_, value]) => value && value.trim() !== "")
         .map(([key, value]) => (
           <OverviewContainer
             key={key}
             index={key}
-            title={key.toUpperCase()}
+            title={key.charAt(0).toUpperCase() + key.slice(1)}
             data={value}
             open={openSections[key]}
             setOpen={() => toggleSection(key)}

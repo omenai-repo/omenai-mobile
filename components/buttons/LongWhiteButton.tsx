@@ -1,6 +1,14 @@
-import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import {
+  ActivityIndicator,
+  StyleProp,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 import React from "react";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 import tw from "twrnc";
 
 type LongWhiteButtonProps = {
@@ -11,6 +19,7 @@ type LongWhiteButtonProps = {
   outline?: boolean;
   borderColor?: string;
   icon?: React.ReactNode;
+  isLoading?: boolean;
 };
 
 export default function LongWhiteButton({
@@ -21,32 +30,50 @@ export default function LongWhiteButton({
   outline = true,
   borderColor = colors.black,
   icon,
+  isLoading,
 }: LongWhiteButtonProps) {
   const defaultContainerStyle: ViewStyle = {
     height: 55,
     backgroundColor: outline ? "transparent" : colors.white,
     borderWidth: 1,
     borderColor: borderColor,
-  };
-
-  const defaultTextStyle: TextStyle = {
-    color: colors.black,
-    fontSize: 16,
+    opacity: isLoading ? 0.7 : 1,
   };
 
   const containerStyle = [
-    tw`w-full flex items-center justify-center rounded-lg`,
+    tw`w-full flex items-center justify-center rounded-sm`,
     defaultContainerStyle,
     style,
   ];
 
-  const mergedTextStyle = [defaultTextStyle, textStyle];
+  const mergedTextStyle = [
+    tw`text-center text-sm tracking-widest`,
+    { color: colors.black },
+    textStyle,
+  ];
 
   return (
-    <TouchableOpacity activeOpacity={1} style={containerStyle} onPress={onClick}>
+    <TouchableOpacity
+      activeOpacity={1}
+      style={containerStyle}
+      onPress={isLoading ? undefined : onClick}
+    >
       <View style={tw`flex-row items-center justify-center gap-3`}>
-        {icon}
-        <Text style={mergedTextStyle}>{value}</Text>
+        {isLoading ? (
+          <ActivityIndicator
+            size="small"
+            color={
+              textStyle && (textStyle as any).color
+                ? (textStyle as any).color
+                : colors.black
+            }
+          />
+        ) : (
+          <>
+            {icon}
+            <Text style={mergedTextStyle}>{value}</Text>
+          </>
+        )}
       </View>
     </TouchableOpacity>
   );

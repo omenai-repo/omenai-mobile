@@ -1,11 +1,12 @@
-import { ImageFormat, ImageGravity } from 'appwrite';
-import { storage } from '../../appWrite_config';
+import { ImageFormat, ImageGravity } from "appwrite";
+import { storage } from "../../appWrite_config";
 
 export const getPromotionalFileView = (
   fileId: string,
   width: number,
   height?: number,
   format?: string,
+  quality: number = 90,
 ) => {
   const fileData = storage.getFilePreview({
     bucketId: process.env.EXPO_PUBLIC_APPWRITE_PROMOTIONAL_BUCKET_ID!!,
@@ -14,13 +15,13 @@ export const getPromotionalFileView = (
     width: width, // width, will be resized using this value.
     height: height ? height : 0, // height, ignored when 0
     gravity: ImageGravity.Center, // crop center
-    quality: 90, // slight compression
+    quality: quality, // configurable compression
     borderWidth: 0, // border width
-    borderColor: 'FFFFFF', // border color
+    borderColor: "FFFFFF", // border color
     borderRadius: 0, // border radius
     opacity: 1, // full opacity
     rotation: 0, // no rotation
-    background: 'FFFFFF', // background color
+    background: "FFFFFF", // background color
     output: ImageFormat.Jpeg,
   });
 

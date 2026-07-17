@@ -1,36 +1,41 @@
-import React, { useEffect } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ArtworkCardLoader from '#components/general/ArtworkCardLoader';
-import { fetchPopularArtworks } from '#services/artworks/fetchPopularArtworks';
-import ArtworkCard from '#components/artwork/ArtworkCard';
-import EmptyArtworks from '#components/general/EmptyArtworks';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from '#constants/screenNames.constants';
-import NavBtnComponent from '#components/artwork/NavBtnComponent';
-import { useQuery } from '@tanstack/react-query';
-import { QK } from '#utils/queryKeys';
-import { useAppStore } from '#store/app/appStore';
+import React, { useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
+import { fetchPopularArtworks } from "#services/artworks/fetchPopularArtworks";
+import ArtworkCard from "#components/artwork/ArtworkCard";
+import EmptyArtworks from "#components/general/EmptyArtworks";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "#constants/screenNames.constants";
+import NavBtnComponent from "#components/artwork/NavBtnComponent";
+import { useQuery } from "@tanstack/react-query";
+import { QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
+import ListSeparator from "#components/general/ListSeparator";
+import tw from "twrnc";
 
-export default function PopularArtworks({
+export default React.memo(function PopularArtworks({
   onLoadingChange,
 }: {
   onLoadingChange?: (l: boolean) => void;
 }) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { userSession } = useAppStore();
+  const { userSession, userType } = useAppStore();
+  const userId = userSession?.id;
 
   const query = useQuery({
-    queryKey: QK.popularArtworks(userSession?.id),
+    queryKey: QK.popularArtworks(userId),
     queryFn: async () => {
       const res = await fetchPopularArtworks();
       return res?.data ?? [];
     },
-    staleTime: 60_000,
-    gcTime: 10 * 60_000,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    refetchOnWindowFocus: true,
+    enabled: !!userId,
   });
 
   useEffect(() => {
@@ -42,46 +47,51 @@ export default function PopularArtworks({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate(screenName.gallery.artworks)}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20 }}>
-          <Text style={{ fontSize: 18, fontWeight: '500', flex: 1, color: '#000' }}>
-            Popular artworks
-          </Text>
-          <NavBtnComponent onPress={() => {}} />
+      <TouchableOpacity
+        disabled={["artist", "gallery"].includes(userType)}
+        onPress={() => navigation.navigate(screenName.gallery.artworks)}
+      >
+        <View style={tw`flex-row items-center`}>
+          <Text style={tw`font-medium flex-1 text-lg`}>Popular artworks</Text>
+          {!["artist", "gallery"].includes(userType) && (
+            <NavBtnComponent onPress={() => { }} />
+          )}
         </View>
       </TouchableOpacity>
 
-      {isLoading && <ArtworkCardLoader />}
+      {isLoading && <ArtworkCardLoader containerStyle={tw`!pl-0 !ml-0`} />}
 
       {!isLoading && data.length > 0 && (
-        <FlatList
+        <FlashList
           data={data}
-          renderItem={({ item }: { item: ArtworkFlatlistItem }) => (
+          horizontal
+          nestedScrollEnabled
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[tw`pt-5`, { alignItems: "flex-end" }]}
+          ItemSeparatorComponent={ListSeparator}
+          keyExtractor={(item: ArtworkFlatlistItem, index) =>
+            item.art_id?.toString() ?? `popular-${index}`
+          }
+          renderItem={({ item }) => (
             <ArtworkCard
-              title={item.title}
-              url={item.url}
-              artist={item.artist}
-              showPrice={item.pricing.shouldShowPrice === 'Yes'}
-              price={item.pricing.usd_price}
-              impressions={item.impressions}
-              like_IDs={item.like_IDs}
-              art_id={item.art_id}
+              artwork={item}
               galleryView
+              hideBackground
+              useImageLoadAspectRatio
             />
           )}
-          keyExtractor={(item, index) => String(item.art_id ?? index)}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 30 }}
-          contentContainerStyle={{ paddingRight: 20 }}
         />
       )}
 
-      {!isLoading && data.length === 0 && <EmptyArtworks size={70} />}
+      {!isLoading && data.length === 0 && (
+        <View style={tw`flex-1 pt-10 min-h-[300px]`}>
+          <EmptyArtworks />
+        </View>
+      )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
-  container: { paddingTop: 25, paddingBottom: 150 },
+  container: { paddingTop: 25, paddingBottom: 60 },
 });

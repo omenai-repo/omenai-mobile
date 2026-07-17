@@ -1,7 +1,14 @@
-import { StyleProp, Text, TextInput, View, ViewStyle, TextStyle } from "react-native";
+import {
+  StyleProp,
+  Text,
+  TextInput,
+  View,
+  ViewStyle,
+  TextStyle,
+} from "react-native";
 import React from "react";
 import tw from "twrnc";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 
 type InputProps = {
   label: string;
@@ -36,7 +43,7 @@ export default function LargeInput({
         onChangeText={onInputChange}
         placeholder={placeHolder}
         style={[
-          tw`w-full rounded-[5px] mt-2`,
+          tw`w-full rounded-sm mt-2 text-sm`,
           inputStyle,
           height ? { height } : { height: 140 },
           {

@@ -11,26 +11,26 @@ export const salesDataAlgorithm = (salesData: any) => {
   const monthlySalesData = monthsOrder.map((month) => {
     const revenue = groupedData[month] || 0;
     return {
-      name: month,
-      Revenue: revenue,
+      label: month,
+      value: revenue,
     };
   });
 
   return monthlySalesData;
 };
 
-export const getSalesDataHighestMonth = (salesData: {Revenue: any, name: string}[]) => {
-  let highest = 0
+export const getSalesDataHighestMonth = (
+  salesData: { Revenue: any; name: string }[]
+) => {
+  let highest = 0;
   salesData.map((month, _) => {
-
-    if(month.Revenue >= highest){
-      highest = month.Revenue
+    if (month.Revenue >= highest) {
+      highest = month.Revenue;
     }
-    
   });
 
-  return highest
-}
+  return highest;
+};
 
 export const splitNumberIntoChartIndicator = (number: number) => {
   let snapshots = [];
@@ -42,7 +42,7 @@ export const splitNumberIntoChartIndicator = (number: number) => {
   }
 
   return snapshots;
-}
+};
 
 const monthsOrder = [
   "Jan",

@@ -1,23 +1,25 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { colors } from '#config/colors.config';
-import sortIcon from '../../assets/icons/sort-icon.png';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { screenName } from '#constants/screenNames.constants';
-import tw from 'twrnc';
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { colors } from "#config/colors.config";
+import { images } from "#constants/images.constants";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { screenName } from "#constants/screenNames.constants";
+import tw from "twrnc";
 
 type FilterButtonProps = {
   children?: React.ReactNode;
   handleClick?: () => void;
 };
 
-export default function FilterButton({ children, handleClick }: FilterButtonProps) {
+export default function FilterButton({
+  children,
+  handleClick,
+}: Readonly<FilterButtonProps>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   return (
-    <View style={styles.mainContainer}>
+    <View style={tw`flex-row items-center gap-2.5`}>
       <View style={{ flex: 1 }}>{children}</View>
       <TouchableOpacity
         onPress={() => {
@@ -28,43 +30,24 @@ export default function FilterButton({ children, handleClick }: FilterButtonProp
           }
         }}
       >
-        <View style={styles.filterButton}>
-          <Text style={styles.filterButtonText}>Filters</Text>
-          <View
-            style={tw`rounded-full h-[30px] w-[30px] flex items-center justify-center text-white`}
+        <View
+          style={tw`flex-row items-center gap-2 px-2.5 py-1.5 rounded-sm border border-neutral-200`}
+        >
+          <Text
+            style={[
+              tw`text-sm uppercase text-center font-sans-regular`,
+              { color: colors.primary_black },
+            ]}
           >
-            <Image source={sortIcon} style={styles.sortIcon} />
-          </View>
+            Filter
+          </Text>
+          <Image
+            source={images.sortIcon}
+            style={tw`h-[18px] w-[18px] opacity-70`}
+            resizeMode="contain"
+          />
         </View>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  filterButton: {
-    height: 40,
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 20,
-    // backgroundColor: '#FAFAFA',
-    borderRadius: 30,
-    // borderWidth: 1,
-    // borderColor: colors.inputBorder,
-  },
-  filterButtonText: {
-    fontSize: 14,
-    color: colors.primary_black,
-  },
-  sortIcon: {
-    height: 20,
-    width: 20,
-  },
-});

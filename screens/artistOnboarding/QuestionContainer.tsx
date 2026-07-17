@@ -1,9 +1,7 @@
-import { View, Text, Pressable, useWindowDimensions } from 'react-native';
-import React from 'react';
-import { QuestionKey } from './ArtistOnboarding';
-import tw from 'twrnc';
-import { TextInput } from 'react-native';
-import { Animated } from 'react-native';
+import { View, Text, Pressable, useWindowDimensions, TextInput, Animated } from "react-native";
+import React from "react";
+import tw from "twrnc";
+import { colors } from "#config/colors.config";
 
 const QuestionContainer = ({
   question,
@@ -26,44 +24,63 @@ const QuestionContainer = ({
   return (
     <Animated.View
       style={[
-        tw`border border-[#BDBDBDB2] rounded-[16px] py-[25px] self-center`,
+        tw`border border-neutral-200 rounded-sm py-8 self-center px-6`,
         {
           width: width - 50,
-          backgroundColor: isModalVisible ? '#ffff' : '#FFFFFFB5',
+          backgroundColor: isModalVisible ? "#ffff" : "#FFFFFFB5",
         },
         animatedStyle,
       ]}
     >
-      <Text style={tw`text-[16px] text-[#1A1A1A] font-medium text-center px-[50px]`}>
+      <Text style={tw`text-sm text-[#1A1A1A] text-center font-sans-regular 1`}>
         {question}
       </Text>
-      <View style={tw`h-[1px] bg-[#00000033] my-[20px] mx-[40px]`} />
+      <View style={tw`h-[1px] bg-neutral-200 my-5`} />
 
       {/* Conditional Input for Bio, Solo, and Group */}
-      {!options ? (
+      {options ? (
+        // Updated: Special handling for Biennale
+        <View>
+          {options.map((option) => (
+            <Pressable
+              key={option}
+              onPress={() => onSelect(option)}
+              style={tw.style(
+                `py-3.5 justify-center items-center rounded-sm mb-4 border`,
+                value === option
+                  ? `bg-[${colors.black}] border-[${colors.black}]`
+                  : "bg-transparent border-neutral-100",
+              )}
+            >
+              <Text
+                style={tw.style(
+                  `text-sm font-sans-regular`,
+                  value === option ? "text-white" : "text-[#1A1A1A]",
+                )}
+              >
+                {option}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : (
         <>
           <TextInput
             style={tw.style(
-              `bg-[#F7F7F7] rounded-[20px] pt-[20px] pl-[20px] mx-[30px]`,
-              isNumber ? 'py-[15px]' : 'h-[97px]',
+              `bg-neutral-100 rounded-sm p-5 text-sm font-sans-regular`,
+              isNumber ? "py-[15px]" : "h-[97px]",
               {
-                textAlignVertical: 'top',
+                textAlignVertical: "top",
               },
             )}
             multiline={!isNumber}
-            keyboardType={isNumber ? 'numeric' : 'default'}
-            placeholder={!isNumber ? 'Write about yourself...' : 'Enter number'}
+            keyboardType={isNumber ? "numeric" : "default"}
+            placeholder={isNumber ? "Enter number" : "Write about yourself..."}
             value={value}
             onChangeText={(text) => {
               if (!isNumber) {
-                // Count words
-                const wordCount = text
-                  .trim()
-                  .split(/\s+/)
-                  .filter((word) => word !== '').length;
-
-                // Allow text input only if word count is within the limit
-                if (wordCount <= 250) {
+                // Allow text input only if character count is within the limit
+                if (text.length <= 500) {
                   onSelect(text);
                 }
               } else {
@@ -74,51 +91,34 @@ const QuestionContainer = ({
           />
           {!isNumber &&
             (() => {
-              const wordCount = value
-                .trim()
-                .split(/\s+/)
-                .filter((word) => word !== '').length;
-              const isLimitExceeded = wordCount > 249;
+              const charCount = value.length;
+              const isLimitExceeded = charCount >= 500;
 
               return (
                 <View>
                   <Text
                     style={tw.style(
-                      `text-[12px] text-right mr-[30px] mt-[5px]`,
-                      isLimitExceeded ? 'text-[#FF0000]' : 'text-[#1A1A1A]00080]',
+                      `text-sm text-right font-sans-regular mt-1.5`,
+                      isLimitExceeded
+                        ? "text-red-600"
+                        : `text-[${colors.black}]`,
                     )}
                   >
-                    {wordCount}/250 words
+                    {charCount}/500 Characters
                   </Text>
 
                   {/* Warning Message */}
                   {isLimitExceeded && (
-                    <Text style={tw`text-[12px] text-[#FF0000] text-center mt-[5px]`}>
-                      You have exceeded the word limit!
+                    <Text
+                      style={tw`text-sm text-red-600 text-center mt-1.5 font-sans-regular`}
+                    >
+                      You have reached the character limit!
                     </Text>
                   )}
                 </View>
               );
             })()}
         </>
-      ) : (
-        // Updated: Special handling for Biennale
-        <View>
-          {options.map((option) => (
-            <Pressable
-              key={option}
-              onPress={() => onSelect(option)}
-              style={tw.style(
-                `py-[10px] justify-center items-center rounded-[20px] mx-[35px]`,
-                value === option && 'bg-[#1A1A1A]',
-              )}
-            >
-              <Text style={tw.style(`text-[16px]`, value === option && 'text-[#FFFFFF]')}>
-                {option}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
       )}
     </Animated.View>
   );

@@ -1,11 +1,12 @@
-import { create } from 'zustand';
+import { create } from "zustand";
+import type { CreateOrderModelTypes } from "#types/types";
 
 export type artistOrderDataType = {
   pending: CreateOrderModelTypes[];
   processing: CreateOrderModelTypes[];
   completed: CreateOrderModelTypes[];
 };
-export type artistOrdersTab = 'pending' | 'processing' | 'completed';
+export type artistOrdersTab = "pending" | "processing" | "completed";
 
 type artistOrdersStoreTypes = {
   data: artistOrderDataType;
@@ -19,7 +20,7 @@ export const artistOrdersStore = create<artistOrdersStoreTypes>((set, get) => ({
   setData: (value: artistOrderDataType) => {
     set({ data: value });
   },
-  selectedTab: 'pending',
+  selectedTab: "pending",
   setSelectedTab: (tab: artistOrdersTab) => {
     set({ selectedTab: tab });
   },

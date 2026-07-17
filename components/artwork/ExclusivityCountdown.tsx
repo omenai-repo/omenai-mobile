@@ -1,8 +1,10 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import tw from 'twrnc';
-import { fontNames } from '#constants/fontNames.constants';
-import ExclusivityExtensionModal from './ExclusivityExtensionModal';
+import React, { memo, useState, useEffect } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import tw from "twrnc";
+import ExclusivityExtensionModal from "./ExclusivityExtensionModal";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "#store/app/appStore";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 interface ExclusivityCountdownProps {
   expiresAt: Date;
@@ -10,63 +12,47 @@ interface ExclusivityCountdownProps {
 }
 
 const TimeDisplay = ({ value, label }: { value: number; label: string }) => (
-  <View style={tw`bg-white rounded px-1.5 py-1 flex-1 items-center shadow-sm`}>
-    <Text
-      style={[
-        tw`text-[#1A1A1A] font-semibold text-xs`,
-        { fontFamily: fontNames.dmSans + 'Bold' },
-      ]}
-    >
-      {String(value).padStart(2, '0')}
+  <View
+    style={tw`bg-white rounded-sm px-1.5 py-1 flex-1 items-center shadow-sm`}
+  >
+    <Text style={tw`text-[#1A1A1A] text-xs font-sans-semibold`}>
+      {String(value).padStart(2, "0")}
     </Text>
-    <Text
-      style={[
-        tw`text-[#1A1A1A]/50 text-[8px]`,
-        { fontFamily: fontNames.dmSans + 'Regular' },
-      ]}
-    >
-      {label}
-    </Text>
+    <Text style={tw`text-[#1A1A1A]/50 text-[8px] font-sans`}>{label}</Text>
   </View>
 );
 
-const ExpiredState = ({ onExtendContract }: { onExtendContract: () => void }) => (
-  <View style={tw`bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2`}>
+const ExpiredState = ({
+  onExtendContract,
+}: {
+  onExtendContract: () => void;
+}) => (
+  <View style={tw`bg-amber-50 border border-amber-200 rounded-sm p-2 mt-2`}>
     <View style={tw`flex-row items-start gap-2 mb-2`}>
       <View style={tw`w-3 h-3 bg-amber-500 rounded-full mt-0.5`} />
-      <Text
-        style={[
-          tw`text-amber-800 text-xs flex-1`,
-          { fontFamily: fontNames.dmSans + 'Regular' },
-        ]}
-      >
-        Exclusivity ended. You may sell outside platform.
+      <Text style={tw`text-amber-800 text-xs flex-1 font-sans`}>
+        Artwork Exclusivity period has ended.
       </Text>
     </View>
-    <TouchableOpacity
-      onPress={onExtendContract}
-      style={tw`bg-[#1A1A1A] py-2 px-3 rounded-md`}
-      activeOpacity={0.8}
-    >
-      <Text
-        style={[
-          tw`text-white text-xs text-center`,
-          { fontFamily: fontNames.dmSans + 'Medium' },
-        ]}
-      >
-        Extend Contract
-      </Text>
-    </TouchableOpacity>
+    <LongBlackButton
+      style={tw`h-8`}
+      onClick={onExtendContract}
+      value="Extend Contract"
+    />
   </View>
 );
 
-const ActiveCountdown = ({ timeLeft }: { timeLeft: { days: number; hours: number; minutes: number; seconds: number } }) => (
-  <View style={tw`bg-[#1A1A1A]/5 rounded-lg p-2 mt-2 border border-[#1A1A1A]/10`}>
+const ActiveCountdown = ({
+  timeLeft,
+}: {
+  timeLeft: { days: number; hours: number; minutes: number; seconds: number };
+}) => (
+  <View
+    style={tw`bg-[#1A1A1A]/5 rounded-sm p-2 mt-2 border border-[#1A1A1A]/10`}
+  >
     <View style={tw`flex-row items-center gap-1 mb-1.5`}>
       <View style={tw`w-1.5 h-1.5 bg-green-500 rounded-full`} />
-      <Text
-        style={[tw`text-[#1A1A1A]/70 text-[10px]`, { fontFamily: fontNames.dmSans + 'Medium' }]}
-      >
+      <Text style={tw`text-[#1A1A1A]/70 text-[10px] font-sans-medium`}>
         Exclusivity period ends in:
       </Text>
     </View>
@@ -79,8 +65,16 @@ const ActiveCountdown = ({ timeLeft }: { timeLeft: { days: number; hours: number
   </View>
 );
 
-export default memo(function ExclusivityCountdown({ expiresAt, art_id }: ExclusivityCountdownProps) {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+export default memo(function ExclusivityCountdown({
+  expiresAt,
+  art_id,
+}: ExclusivityCountdownProps) {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
   const [isExpired, setIsExpired] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -120,17 +114,29 @@ export default memo(function ExclusivityCountdown({ expiresAt, art_id }: Exclusi
     setShowModal(false);
   };
 
+  const queryClient = useQueryClient();
+  const { userSession, userType } = useAppStore();
+
   const handleExtensionSuccess = () => {
     setIsExpired(false);
+    queryClient.invalidateQueries({
+      queryKey: ["artworks", userSession?.id, userType],
+    });
   };
+
+  let countdownContent: React.ReactNode = (
+    <ActiveCountdown timeLeft={timeLeft} />
+  );
+
+  if (isExpired) {
+    countdownContent = userType ? (
+      <ExpiredState onExtendContract={handleExtendContract} />
+    ) : null;
+  }
 
   return (
     <>
-      {isExpired ? (
-        <ExpiredState onExtendContract={handleExtendContract} />
-      ) : (
-        <ActiveCountdown timeLeft={timeLeft} />
-      )}
+      {countdownContent}
 
       <ExclusivityExtensionModal
         visible={showModal}

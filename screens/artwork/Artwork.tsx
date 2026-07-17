@@ -5,50 +5,40 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import {
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  PixelRatio,
-} from "react-native";
+import { Text, View, Dimensions, Pressable } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { colors } from "#config/colors.config";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import DetailsCard from "./components/detailsCard/DetailsCard";
-import ArtworkCard from "#components/artwork/ArtworkCard";
+import ArtistInformationCard from "./components/detailsCard/ArtistInformationCard";
+import { getCountryName } from "#utils/utils_getCountryName";
+import ArtworkImageSection from "./components/ArtworkImageSection";
+import ArtworkContentSection from "./components/ArtworkContentSection";
 import { fetchsingleArtwork } from "#services/artworks/fetchSingleArtwork";
 import { getImageFileView } from "#lib/storage/getImageFileView";
-import { SimpleLineIcons } from "@expo/vector-icons";
 import SimilarArtworks from "./components/similarArtworks/SimilarArtworks";
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
 import { screenName } from "#constants/screenNames.constants";
-import WithModal from "#components/modal/WithModal";
 import { requestArtworkPrice } from "#services/artworks/requestArtworkPrice";
 import { utils_getAsyncData } from "#utils/utils_asyncStorage";
 import { useModalStore } from "#store/modal/modalStore";
-import SaveArtworkButton from "./components/SaveArtworkButton";
-import Loader from "#components/general/Loader";
+import ArtworkSkeleton from "#components/skeleton/ArtworkSkeleton";
 import { useAppStore } from "#store/app/appStore";
-import Header from "./components/Header";
-import ShippingAndTaxes from "./components/extraDetails/ShippingAndTaxes";
-import Coverage from "./components/extraDetails/Coverage";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 import { createViewHistory } from "#services/artworks/viewHistory/createViewHistory";
-import { fetchArtworkByArtist } from "#services/artworks/fetchArtworkByArtist";
+import SimilarArtworksByArtist from "./components/similarArtworks/SimilarArtworksByArtist";
 import tw from "twrnc";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import ScrollWrapper from "#components/general/ScrollWrapper";
-import { SvgXml } from "react-native-svg";
-import { licenseIcon } from "#utils/SvgImages";
-import BackScreenButton from "#components/buttons/BackScreenButton";
 import { resizeImageDimensions } from "#utils/utils_resizeImageDimensions.utils";
 import ZoomArtwork from "./ZoomArtwork";
-import BlurStatusBar from "#components/general/BlurStatusBar";
+import MuseumViewer from "./components/MuseumViewer";
 import { useScrollY } from "#hooks/useScrollY";
+import { Analytics } from "#utils/analytics";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import EditArtworkModal from "./components/EditArtworkSection";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 type RouteParams = { art_id: string; url: string };
 
@@ -56,7 +46,7 @@ const useTabletLandscape = () => {
   const [win, setWin] = useState(Dimensions.get("window"));
   useEffect(() => {
     const sub = Dimensions.addEventListener("change", ({ window }) =>
-      setWin(window)
+      setWin(window),
     );
     return () => sub?.remove();
   }, []);
@@ -70,19 +60,33 @@ const useTabletLandscape = () => {
 };
 
 export default function Artwork() {
+  const formatPackaging = (type: string | undefined) => {
+    if (!type) return "Standard Packaging";
+    if (type === "rolled") return "Rolled";
+    if (type === "stretched") return "Stretched";
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { art_id, url } = route.params as RouteParams;
 
   const { updateModal } = useModalStore();
-  const { userType, userSession } = useAppStore();
+  const { userType, userSession, isLoggedIn } = useAppStore();
+  const { openGuestLoginModal } = useGuestLoginModalStore();
   const { isTabletLandscape, screenWidth } = useTabletLandscape();
   const isTabletSize = Math.min(screenWidth) >= 768;
 
-  const [showMore, setShowMore] = useState(false);
+  React.useLayoutEffect(() => {
+    navigation.setOptions({ headerShown: false });
+  }, [navigation]);
+
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const { scrollY, onScroll } = useScrollY();
+  const [museumVisible, setMuseumVisible] = useState(false);
+  const { onScroll } = useScrollY();
+  const editModalRef = useRef<BottomSheetModal>(null);
 
   // 1) Fetch the artwork (cached; no re-fetch during staleTime window from App.tsx)
   const {
@@ -96,20 +100,12 @@ export default function Artwork() {
       if (!res?.isOk) throw new Error("Failed to load artwork");
       return res.body.data as ArtworkDataType;
     },
-    // You already set staleTime globally in App.tsx; override here only if needed.
-    // staleTime: 5 * 60 * 1000,
-  });
-
-  // 2) Fetch other works by the same artist (depends on artwork)
-  const { data: similarArtworksByArtist = [] } = useQuery({
-    queryKey: ["artist-artworks", artwork?.artist],
-    enabled: !!artwork?.artist,
-    queryFn: async () => {
-      const res = await fetchArtworkByArtist(artwork!.artist as string);
-      if (!res?.isOk) return [];
-      const list = res.body.data as any[];
-      return list.filter((a) => a.title !== artwork!.title);
-    },
+    enabled: !!art_id,
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
   });
 
   // 3) Record view history ONCE per session
@@ -118,47 +114,69 @@ export default function Artwork() {
     if (!artwork || viewedRef.current) return;
     if (!userSession?.id) return;
     viewedRef.current = true;
+
+    // Track in Vexo
+    Analytics.track("view_artwork", {
+      art_id: artwork.art_id,
+      title: artwork.title,
+      viewer_type: userType,
+      user_id: userSession.id,
+      artwork: artwork,
+    });
+
     // Fire-and-forget; don’t block UI
     createViewHistory(
       artwork.title,
       artwork.artist,
       artwork.art_id,
       userSession.id,
-      artwork.url
+      artwork.url,
     ).catch(() => {
       // silent fail
     });
-  }, [artwork, userSession?.id]);
-
-  const dpr = PixelRatio.get();
-  const displayWidth = Math.max(200, screenWidth - 40);
-  const fetchWidth = useMemo(
-    () => Math.round(displayWidth * dpr),
-    [displayWidth, dpr]
-  );
+  }, [artwork, userSession?.id, userType]);
 
   const imageUri = useMemo(
-    () => (artwork ? getImageFileView(artwork.url, fetchWidth) : ""),
-    [artwork, fetchWidth]
+    () => (artwork ? getImageFileView(artwork.url, 500) : ""),
+    [artwork],
   );
 
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 350,
-    height: 250,
-  });
-  useEffect(() => {
-    if (!imageUri) return;
-    Image.getSize(imageUri, (w, h) => {
-      const maxWidth = screenWidth - 40; // padding
+  const [imageDimensions, setImageDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+
+  const handleImageLoad = useCallback(
+    (w: number, h: number) => {
+      const maxWidth = screenWidth - 40;
       const maxHeight = isTabletLandscape ? 500 : 400;
       const next = resizeImageDimensions(
         { width: w, height: h },
         maxWidth,
-        maxHeight
+        maxHeight,
       );
       setImageDimensions(next);
-    });
-  }, [imageUri, isTabletLandscape, screenWidth]);
+    },
+    [screenWidth, isTabletLandscape],
+  );
+
+  const handleBack = useCallback(() => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+    if (userType === "gallery") {
+      navigation.navigate("Gallery" as any, {
+        screen: screenName.gallery.overview,
+      });
+    } else if (userType === "artist") {
+      navigation.navigate("Artist" as any, { screen: "Overview" });
+    } else if (userType === "user") {
+      navigation.navigate("Individual" as any, { screen: "Overview" });
+    } else {
+      navigation.navigate("GuestTabs" as any, { screen: "Overview" });
+    }
+  }, [navigation, userType]);
 
   const handleRequestPriceQuote = useCallback(async () => {
     if (!artwork) return;
@@ -167,42 +185,84 @@ export default function Artwork() {
     const us = await utils_getAsyncData("userSession");
     if (!us.value) {
       setLoadingPriceQuote(false);
+      openGuestLoginModal({
+        screen: screenName.artwork,
+        params: { art_id: artwork.art_id, url: artwork.url },
+      });
       return;
     }
-    const { email, name } = JSON.parse(us.value);
+    const { email, id } = JSON.parse(us.value);
 
-    const artwork_data = {
-      title: artwork.title,
-      artist: artwork.artist,
-      art_id: artwork.art_id,
-      url: artwork.url,
-      medium: artwork.medium,
-      pricing: { ...artwork.pricing, currency: "USD" },
-    };
-
-    const results = await requestArtworkPrice(artwork_data, email, name);
+    const results = await requestArtworkPrice(artwork.art_id, id);
     if (results.isOk) {
+      Analytics.track("artwork_price_requested", {
+        ids: {
+          art_id: artwork.art_id,
+          user_id: id,
+        },
+        title: artwork.title,
+        artist: artwork.artist,
+        user_type: userType,
+        response: results,
+      });
+
       updateModal({
-        message: `Price quote for ${artwork_data.title} has been sent to ${email}`,
+        message: `Price quote for ${artwork.title} has been sent to ${email}`,
         showModal: true,
         modalType: "success",
       });
     } else {
+      Analytics.track("artwork_price_request_failed", {
+        ids: {
+          art_id: artwork.art_id,
+          user_id: id,
+        },
+        title: artwork.title,
+        artist: artwork.artist,
+        error_message: results.message,
+        response: results,
+      });
+
       updateModal({
         message:
+          results.message ||
           "Something went wrong, please try again or contact us for assistance.",
         showModal: true,
         modalType: "error",
       });
     }
     setLoadingPriceQuote(false);
-  }, [artwork, updateModal]);
+  }, [artwork, updateModal, userType, openGuestLoginModal]);
 
   const renderPrimaryButton = () => {
     if (!artwork) return null;
 
     if (["gallery", "artist"].includes(userType)) {
       return null;
+    }
+
+    // Guest users: show the button but open the login modal on press
+    if (!isLoggedIn) {
+      if (!artwork.availability) {
+        return <LongBlackButton value="Sold" isDisabled onClick={() => {}} />;
+      }
+      const guestLabel =
+        artwork.pricing?.shouldShowPrice === "Yes"
+          ? "Purchase artwork"
+          : "Request price";
+      return (
+        <LongBlackButton
+          textStyle={tw`uppercase text-center text-sm tracking-widest`}
+          value={guestLabel}
+          isDisabled={false}
+          onClick={() =>
+            openGuestLoginModal({
+              screen: screenName.artwork,
+              params: { art_id: artwork.art_id, url: artwork.url },
+            })
+          }
+        />
+      );
     }
 
     if (!artwork.availability) {
@@ -212,13 +272,15 @@ export default function Artwork() {
     if (artwork.pricing?.shouldShowPrice === "Yes") {
       return (
         <LongBlackButton
+          textStyle={tw`uppercase text-center text-sm tracking-widest`}
           value="Purchase artwork"
           isDisabled={false}
-          onClick={() =>
+          onClick={() => {
             navigation.navigate(screenName.purchaseArtwork, {
               art_id: artwork.art_id,
-            })
-          }
+            });
+          }}
+          testID="purchase-artwork-button"
         />
       );
     }
@@ -229,381 +291,191 @@ export default function Artwork() {
         isDisabled={false}
         onClick={handleRequestPriceQuote}
         isLoading={loadingPriceQuote}
+        testID="request-price-button"
       />
     );
   };
 
-  const renderImageSection = () =>
-    artwork ? (
-      <View
-        style={
-          isTabletLandscape
-            ? styles.tabletImageContainer
-            : styles.mobileImageContainer
-        }
-      >
-        <Pressable onPress={() => setModalVisible(true)}>
-          <Image
-            source={{ uri: imageUri }}
-            style={[
-              {
-                height: imageDimensions.height,
-                width: imageDimensions.width,
-                resizeMode: "contain",
-                alignSelf: "center",
-                borderRadius: 5,
-                backgroundColor: "#f5f5f5",
-              },
-              isTabletLandscape && styles.tabletImage,
-            ]}
-          />
-        </Pressable>
-      </View>
-    ) : null;
-
-  const renderContentSection = () =>
-    artwork ? (
-      <View
-        style={
-          isTabletLandscape
-            ? styles.tabletContentContainer
-            : styles.mobileContentContainer
-        }
-      >
-        <View style={styles.artworkDetails}>
-          <Text style={styles.artworkTitle}>{artwork.title}</Text>
-          <Text style={styles.artworkCreator}>{artwork.artist}</Text>
-          <Text style={styles.artworkTags}>
-            {artwork.medium} | {artwork.rarity}
-          </Text>
-
-          <Text style={styles.priceTitle}>Price</Text>
-          <Text
-            style={[
-              styles.price,
-              artwork.pricing.shouldShowPrice === "No" &&
-                !["gallery", "artist"].includes(userType) && {
-                  fontSize: 16,
-                  color: colors.black,
-                },
-            ]}
-          >
-            {artwork.pricing.shouldShowPrice === "Yes" ||
-            ["gallery", "artist"].includes(userType)
-              ? utils_formatPrice(Number(artwork.pricing.usd_price))
-              : "Price on request"}
-          </Text>
-
-          <ScrollWrapper horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.tagsContainer}>
-              {artwork.certificate_of_authenticity === "Yes" && (
-                <View style={styles.tagItem}>
-                  <SvgXml xml={licenseIcon} />
-                  <Text style={styles.tagItemText}>
-                    Certificate of authencity availiable
-                  </Text>
-                </View>
-              )}
-              <View style={[styles.tagItem, { backgroundColor: "#e5f4ff" }]}>
-                <SimpleLineIcons name="frame" size={15} />
-                <Text style={[styles.tagItemText, { color: "#30589f" }]}>
-                  {artwork.framing === "Framed"
-                    ? "Frame Included"
-                    : "Artwork is not framed"}
-                </Text>
-              </View>
-            </View>
-          </ScrollWrapper>
-        </View>
-
-        <View
-          style={[
-            styles.buttonContainer,
-            isTabletSize && {
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 30,
-            },
-          ]}
-        >
-          <View style={tw`flex-1`}>{renderPrimaryButton()}</View>
-
-          <View style={tw`flex-1`}>
-            {!["gallery", "artist"].includes(userType) && (
-              <SaveArtworkButton
-                likeIds={artwork.like_IDs || []}
-                art_id={artwork.art_id || ""}
-                impressions={artwork.impressions || 0}
-              />
-            )}
-          </View>
-        </View>
-
-        <Pressable onPress={() => setShowMore(true)}>
-          <Text
-            style={tw`text-[#004617] text-[14px] text-center mt-[20px] underline`}
-          >
-            More details about this artwork
-          </Text>
-        </Pressable>
-
-        <View style={tw`mt-[50px] gap-[25px]`}>
-          <ShippingAndTaxes />
-          <Coverage />
-        </View>
-      </View>
-    ) : null;
-
   const loadingMain = isLoadingArtwork && !artwork;
-  const showEmpty = !loadingMain && !artwork && !isArtworkError;
 
   return (
-    <WithModal>
-      {!showMore ? (
-        <View style={{ flex: 1 }}>
-          <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-          <Header
-            art_id={artwork?.art_id}
-            isGallery={["gallery", "artist"].includes(userType)}
-          />
+    <>
+      <View style={tw`flex-1 bg-white`}>
+        <BackHeaderTitle
+          title=""
+          customGoBack={handleBack}
+          rightAction={
+            userType === "gallery" &&
+            artwork?.author_id === userSession?.id &&
+            artwork?.availability !== false ? (
+              <Pressable onPress={() => editModalRef.current?.present()}>
+                <Feather name="edit" size={20} color="#333" />
+              </Pressable>
+            ) : undefined
+          }
+        />
 
-          {loadingMain && <Loader />}
+        {loadingMain && <ArtworkSkeleton />}
 
-          {artwork && (
-            <ScrollWrapper
-              style={styles.scrollContainer}
-              showsVerticalScrollIndicator={false}
-              onScroll={onScroll}
-            >
-              <View style={{ paddingBottom: 20 }}>
-                {isTabletLandscape ? (
-                  <View style={styles.tabletLandscapeContainer}>
-                    {renderImageSection()}
-                    {renderContentSection()}
-                  </View>
-                ) : (
-                  <View style={{ paddingHorizontal: 20 }}>
-                    {renderImageSection()}
-                    {renderContentSection()}
-                  </View>
-                )}
-              </View>
-            </ScrollWrapper>
-          )}
-
-          {showEmpty && (
-            <View style={styles.loaderContainer}>
-              <Text style={styles.loaderText}>No details of artwork</Text>
-            </View>
-          )}
-        </View>
-      ) : (
-        <View style={tw`flex-1`}>
-          <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
-          <View style={tw`pt-[60px] android:pt-[40px] pl-[25px]`}>
-            <BackScreenButton handleClick={() => setShowMore(false)} />
-          </View>
-
-          {artwork && (
-            <ScrollWrapper
-              showsVerticalScrollIndicator={false}
-              style={tw`flex-1`}
-              onScroll={onScroll}
-            >
-              <View>
-                <View
-                  style={[
-                    styles.detailsContainer,
-                    ["gallery", "artist"].includes(userType) && {
-                      paddingBottom: 70,
-                    },
-                  ]}
-                >
-                  <DetailsCard
-                    title="Additional details about this artwork"
-                    details={[
-                      {
-                        name: "Description",
-                        text: artwork.artwork_description || "N/A",
-                      },
-                      { name: "Materials", text: artwork.materials },
-                      {
-                        name: "Certificate of authenticity",
-                        text:
-                          artwork.certificate_of_authenticity === "Yes"
-                            ? "Included"
-                            : "Not included",
-                      },
-                      { name: "Artwork packaging", text: artwork.framing },
-                      {
-                        name: "Signature",
-                        text: `Signed ${artwork.signature}`,
-                      },
-                      { name: "Year", text: artwork.year },
-                      { name: "Height", text: artwork.dimensions.height },
-                      { name: "Width", text: artwork.dimensions.width },
-                      ...(artwork.dimensions.depth
-                        ? [{ name: "Depth", text: artwork.dimensions.depth }]
-                        : []),
-                      { name: "Weight", text: artwork.dimensions.weight },
-                      { name: "Rarity", text: artwork.rarity },
-                    ]}
+        {artwork && (
+          <ScrollWrapper
+            style={tw`flex-1 bg-white`}
+            showsVerticalScrollIndicator={false}
+            onScroll={onScroll}
+            contentContainerStyle={{
+              paddingBottom: Math.max(insets.bottom, 20) + 40,
+            }}
+          >
+            <View style={tw`pb-8`}>
+              {isTabletLandscape ? (
+                <View style={tw`flex-row px-4 gap-8`}>
+                  <ArtworkImageSection
+                    imageUri={imageUri}
+                    imageDimensions={imageDimensions}
+                    setModalVisible={setModalVisible}
+                    setMuseumVisible={setMuseumVisible}
+                    isTabletLandscape={isTabletLandscape}
+                    screenWidth={screenWidth}
+                    onImageLoad={handleImageLoad}
                   />
-                  <DetailsCard
-                    title="Artist Information"
-                    details={[
-                      { name: "Artist name", text: artwork.artist },
-                      { name: "Birth Year", text: artwork.artist_birthyear },
-                      { name: "Country", text: artwork.artist_country_origin },
-                    ]}
+                  <ArtworkContentSection
+                    artwork={artwork}
+                    userType={userType}
+                    isTabletLandscape={isTabletLandscape}
+                    isTabletSize={isTabletSize}
+                    primaryButton={renderPrimaryButton()}
                   />
                 </View>
-
-                {!["gallery", "artist"].includes(userType) &&
-                  similarArtworksByArtist.length > 0 && (
-                    <>
-                      <Text
-                        style={tw`text-[20px] font-medium text-[#1A1A1A] mb-[20px] pl-[20px]`}
-                      >
-                        Other Works by {artwork.artist}
-                      </Text>
-
-                      <FlatList
-                        data={similarArtworksByArtist}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        keyExtractor={(_, i) => String(i)}
-                        style={{ marginBottom: 25 }}
-                        contentContainerStyle={{ paddingRight: 20 }}
-                        renderItem={({ item }) => (
-                          <ArtworkCard
-                            title={item.title}
-                            url={item.url}
-                            artist={item.artist}
-                            showPrice={item.pricing.shouldShowPrice === "Yes"}
-                            price={item.pricing.usd_price}
-                          />
-                        )}
-                      />
-                    </>
-                  )}
-
-                {!["gallery", "artist"].includes(userType) && (
-                  <SimilarArtworks
-                    title={artwork.title}
-                    medium={artwork.medium}
+              ) : (
+                <View>
+                  <ArtworkImageSection
+                    imageUri={imageUri}
+                    imageDimensions={imageDimensions}
+                    setModalVisible={setModalVisible}
+                    setMuseumVisible={setMuseumVisible}
+                    isTabletLandscape={isTabletLandscape}
+                    screenWidth={screenWidth}
+                    onImageLoad={handleImageLoad}
                   />
-                )}
-              </View>
-            </ScrollWrapper>
-          )}
-        </View>
-      )}
+                  <View style={tw`px-5`}>
+                    <ArtworkContentSection
+                      artwork={artwork}
+                      userType={userType}
+                      isTabletLandscape={isTabletLandscape}
+                      isTabletSize={isTabletSize}
+                      primaryButton={renderPrimaryButton()}
+                    />
+                  </View>
+                </View>
+              )}
+            </View>
+
+            <View
+              style={[
+                tw`mb-8 gap-10 px-5`,
+                ["gallery", "artist"].includes(userType) && tw`pb-10`,
+              ]}
+            >
+              <DetailsCard
+                title="Provenance & Details"
+                details={[
+                  { name: "Materials", text: artwork.materials },
+                  {
+                    name: "Signature",
+                    text: `Signed ${artwork.signature}`,
+                  },
+                  {
+                    name: "Authenticity",
+                    text:
+                      artwork.certificate_of_authenticity === "Yes"
+                        ? "Certificate Included"
+                        : "Certificate Not included",
+                  },
+                  {
+                    name: "Packaging",
+                    text: formatPackaging(artwork.carrier),
+                  },
+                  {
+                    name: "Description",
+                    text: artwork.artwork_description || "N/A",
+                  },
+                ]}
+              />
+              <ArtistInformationCard
+                artistName={artwork.artist}
+                birthYear={artwork.artist_birthyear}
+                country={getCountryName(artwork.artist_country_origin)}
+              />
+            </View>
+
+            {!["gallery", "artist"].includes(userType) && (
+              <SimilarArtworks
+                title={artwork.title}
+                medium={artwork.medium}
+                hideAction={!userSession}
+              />
+            )}
+
+            {!["gallery", "artist"].includes(userType) && artwork && (
+              <SimilarArtworksByArtist
+                artist={artwork.artist}
+                currentArtworkTitle={artwork.title}
+              />
+            )}
+          </ScrollWrapper>
+        )}
+
+        {(isArtworkError || (!loadingMain && !artwork)) && (
+          <View style={tw`flex-1 items-center justify-center px-8`}>
+            <View
+              style={tw`w-20 h-20 rounded-full bg-neutral-100 items-center justify-center mb-5`}
+            >
+              <Ionicons name="image-outline" size={36} color="#a3a3a3" />
+            </View>
+            <Text style={tw`text-lg font-semibold text-neutral-800 mb-2`}>
+              Artwork not found
+            </Text>
+            <Text
+              style={tw`text-sm text-neutral-500 text-center leading-relaxed`}
+            >
+              This artwork may have been removed or is no longer available.
+            </Text>
+          </View>
+        )}
+      </View>
       <ZoomArtwork
         url={url}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
       />
-    </WithModal>
+      {artwork && (
+        <MuseumViewer
+          visible={museumVisible}
+          onClose={() => setMuseumVisible(false)}
+          imageUri={getImageFileView(artwork.url, 1200)}
+          title={artwork.title}
+          artist={artwork.artist}
+          year={artwork.year}
+          medium={artwork.medium}
+          dimensions={
+            artwork.dimensions
+              ? `${artwork.dimensions.width} × ${artwork.dimensions.height} cm`
+              : undefined
+          }
+          naturalWidth={imageDimensions?.width ?? 1}
+          naturalHeight={imageDimensions?.height ?? 1}
+        />
+      )}
+      {artwork &&
+        userType === "gallery" &&
+        artwork.author_id === userSession?.id && (
+          <EditArtworkModal
+            ref={editModalRef}
+            art_id={artwork.art_id}
+            currentDescription={artwork.artwork_description || ""}
+            currentAvailability={artwork.availability}
+          />
+        )}
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContainer: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  // Tablet Landscape Styles
-  tabletLandscapeContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-    gap: 30,
-  },
-  tabletImageContainer: {
-    flex: 0.5,
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  tabletContentContainer: {
-    flex: 0.5,
-    paddingLeft: 20,
-  },
-  tabletImage: {
-    maxWidth: "100%",
-    maxHeight: 500,
-  },
-  // Mobile/Portrait Styles
-  mobileImageContainer: {
-    alignItems: "center",
-  },
-  mobileContentContainer: {
-    // Default mobile styles
-  },
-  artworkDetails: {
-    marginTop: 25,
-    marginBottom: 25,
-  },
-  artworkTitle: {
-    color: colors.primary_black,
-    fontSize: 24,
-    fontWeight: "700",
-  },
-  artworkCreator: {
-    fontSize: 16,
-    color: "#616161",
-    marginTop: 10,
-  },
-  artworkTags: {
-    color: "#616161",
-    fontSize: 14,
-    marginTop: 10,
-  },
-  tagsContainer: {
-    marginTop: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  tagItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: "#E7F6EC",
-  },
-  tagItemText: {
-    color: colors.secondary_text_color,
-    fontSize: 12,
-  },
-  priceTitle: {
-    color: "#616161",
-    fontSize: 14,
-    marginTop: 20,
-  },
-  price: {
-    fontSize: 19,
-    fontWeight: "700",
-    color: "#1A1A1A",
-    marginTop: 10,
-  },
-  buttonContainer: {
-    gap: 20,
-  },
-  loaderContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loaderText: {
-    fontSize: 16,
-    color: colors.black,
-  },
-  detailsContainer: {
-    marginBottom: 30,
-    gap: 30,
-    marginTop: 30,
-    marginHorizontal: 20,
-  },
-});

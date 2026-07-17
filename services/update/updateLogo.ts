@@ -1,27 +1,29 @@
-import { apiUrl, authorization, originHeader, userAgent } from '#constants/apiUrl.constants';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function updateLogo(
   payload: { id: string; url: string },
-  type: 'gallery' | 'artist' | 'individual',
+  type: "gallery" | "artist" | "individual",
 ) {
-  const result = await fetch(`${apiUrl}/api/requests/${type}/logo`, {
-    method: 'POST',
-    body: JSON.stringify({ ...payload }),
-    headers: {
-      'Content-type': 'application/json',
-      Origin: originHeader,
-      'User-Agent': userAgent,
-      Authorization: authorization,
-    },
-  }).then(async (res) => {
+  try {
+    const res = await apiRequest(`${apiUrl}/api/requests/${type}/logo`, {
+      method: "POST",
+      body: JSON.stringify({ ...payload }),
+    });
     const data: { message: string } = await res.json();
-    const response = {
+    return {
       isOk: res.ok,
       body: { message: data.message },
     };
-
-    return response;
-  });
-
-  return result;
+  } catch (error: any) {
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error updating logo",
+      },
+    };
+  }
 }

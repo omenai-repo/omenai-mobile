@@ -1,0 +1,26 @@
+appId: com.omenai.omenaimobile
+name: "Search and Filter Artwork Flow"
+tags:
+  - search
+  - filter
+  - discovery
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Search"
+- assertVisible: "Search for artworks on Omenai"
+
+- tapOn:
+    id: "search-input"
+- inputText: "portrait"
+- pressKey: Enter
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible: "Results for \"portrait\""
+    timeout: 10000

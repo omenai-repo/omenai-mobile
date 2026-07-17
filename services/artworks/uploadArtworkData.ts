@@ -1,28 +1,34 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { ArtworkSchemaTypes } from "#types/types";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
-export async function uploadArtworkData(data: Omit<ArtworkSchemaTypes, "art_id">) {
+export async function uploadArtworkData(
+  data: Omit<ArtworkSchemaTypes, "art_id">,
+) {
   try {
-    const response = await fetch(`${apiUrl}/api/artworks/upload`, {
+    const response = await apiRequest(`${apiUrl}/api/artworks/upload`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify(data),
     }).then(async (res) => {
       const ParsedResponse = {
         isOk: res.ok,
+        status: res.status,
         body: await res.json(),
       };
       return ParsedResponse;
     });
     return response;
-  } catch {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: "Error uploading artwork" },
+      status: error?.status,
+      error: error,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error uploading artwork",
+      },
     };
   }
 }

@@ -1,0 +1,80 @@
+appId: com.omenai.omenaimobile
+name: "Individual Registration Validation Errors"
+tags:
+  - individual
+  - registration
+  - validation
+  - negative
+  - auth
+
+---
+- runFlow: ../login/welcome-onboarding-skip.yaml
+
+- tapOn: "Create Account"
+- assertVisible: "Create an account"
+- assertVisible: "Collector"
+
+- tapOn: "Enter your full name"
+- inputText: "Test Validation User"
+
+- tapOn: "Enter your email address"
+- inputText: "validation_test@test.com"
+
+- tapOn: "Enter password"
+- inputText: "Test12345@"
+
+- tapOn: "Enter password again"
+- inputText: "DifferentPass1@"
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible: "Sorry, your passwords do not match"
+    timeout: 5000
+
+- assertVisible: "Next"
+
+---
+- runFlow: ../login/welcome-onboarding-skip.yaml
+
+- tapOn: "Create Account"
+- assertVisible: "Create an account"
+
+- tapOn: "Enter your full name"
+- inputText: "Test Validation User"
+
+- tapOn: "Enter your email address"
+- inputText: "validation_test@test.com"
+
+- tapOn: "Enter password"
+- inputText: "weakpassword"
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "special character"
+        - "one uppercase letter"
+        - "one lowercase letter"
+    timeout: 5000
+
+---
+- runFlow: ../login/welcome-onboarding-skip.yaml
+
+- tapOn: "Create Account"
+- assertVisible: "Create an account"
+
+- tapOn: "Enter your full name"
+- inputText: "Test User"
+
+- tapOn: "Enter your email address"
+- inputText: "test@test.com"
+
+- tapOn: "Enter password"
+- inputText: "Abc1@"
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible: "between 8 and 16 characters"
+    timeout: 5000
+
+- assertVisible: "Next"

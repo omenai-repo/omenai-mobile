@@ -2,7 +2,7 @@ import { Text, View, ScrollView, RefreshControl } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
-import WithModal from "#components/modal/WithModal";
+
 import TabSwitcher from "#components/orders/TabSwitcher";
 import OrderslistingLoader from "#screens/galleryOrders/components/OrderslistingLoader";
 import EmptyOrdersListing from "#screens/galleryOrders/components/EmptyOrdersListing";
@@ -27,6 +27,7 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
   const navigation = useNavigation<any>();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
+
 
   const [declineModal, setDeclineModal] = useState(false);
   const [orderId, setOrderId] = useState("");
@@ -87,91 +88,99 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({
       return <OrderslistingLoader />;
     }
 
-    if (currentOrders.length === 0) {
-      return (
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={ordersQuery.refetch}
-            />
-          }
-        >
-          <EmptyOrdersListing status={selectedTab} />
-        </ScrollView>
-      );
-    }
-
     return (
       <>
-        <View style={tw`flex-row items-center`}>
-          <Text
-            style={tw`text-[16px] text-[#454545] font-semibold mb-[25px] flex-1`}
-          >
+        <View style={tw`flex-row items-center mb-5`}>
+          <Text style={tw`text-lg text-[#454545] font-medium flex-1`}>
             Your Orders
           </Text>
           <YearDropdown
             selectedYear={selectedYear}
             setSelectedYear={setSelectedYear}
+            style={tw`w-[120px]`}
           />
         </View>
 
-        <OrdersList
-          data={currentOrders}
-          openSection={openSection}
-          toggleRecentOrder={toggleRecentOrder}
-          selectedTab={selectedTab}
-          isRefreshing={isRefreshing}
-          onRefresh={() => ordersQuery.refetch()}
-          onAccept={(item) =>
-            navigation.navigate("DimensionsDetails", {
-              orderId: item?.order_id,
-            })
-          }
-          onDecline={handleDecline}
-          onTrack={(item) =>
-            navigation.navigate("ShipmentTrackingScreen", {
-              orderId: item?.order_id,
-              tracking_id:
-                item?.shipping_details?.shipment_information?.tracking?.id,
-            })
-          }
-          {...(userType === "artist" && {
-            renderExclusivityType: (item) =>
-              item?.artwork_data?.exclusivity_status?.exclusivity_type ||
-              "non-exclusive",
-          })}
-        />
+        {currentOrders.length === 0 ? (
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={ordersQuery.refetch}
+              />
+            }
+          >
+            <EmptyOrdersListing status={selectedTab} />
+          </ScrollView>
+        ) : (
+          <OrdersList
+            data={currentOrders}
+            openSection={openSection}
+            toggleRecentOrder={toggleRecentOrder}
+            selectedTab={selectedTab}
+            isRefreshing={isRefreshing}
+            onRefresh={() => ordersQuery.refetch()}
+            onAccept={(item) =>
+              navigation.navigate("DimensionsDetails", {
+                orderId: item?.order_id,
+                artworkDimensions: item?.artwork_data?.dimensions,
+                exclusivityType:
+                  item?.artwork_data?.exclusivity_status?.exclusivity_type,
+                shippingOrigin:
+                  item?.shipping_details?.addresses?.origin || null,
+                shippingDestination:
+                  item?.shipping_details?.addresses?.destination || null,
+                carrier:
+                  item?.shipping_details?.shipment_information?.carrier ||
+                  item?.shipping_quote?.package_carrier ||
+                  "",
+              })
+            }
+            onDecline={handleDecline}
+            onTrack={(item) =>
+              navigation.navigate("ShipmentTrackingScreen", {
+                orderId: item?.order_id,
+                tracking_id:
+                  item?.shipping_details?.shipment_information?.tracking?.id,
+              })
+            }
+            {...(userType === "artist" && {
+              renderExclusivityType: (item) =>
+                item?.artwork_data?.exclusivity_status?.exclusivity_type ||
+                "non-exclusive",
+            })}
+          />
+        )}
       </>
     );
   };
 
   return (
-    <WithModal>
-      <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
-        <TabSwitcher
-          tabs={tabs}
-          selectedKey={selectedTab}
-          setSelectedKey={(key) =>
-            setSelectedTab(key as "pending" | "processing" | "completed")
+    <View style={[tw`flex-1 bg-[#F7F7F7]`, { paddingTop: insets.top + 16 }]}>
+      <TabSwitcher
+        tabs={tabs}
+        selectedKey={selectedTab}
+        setSelectedKey={(key) => {
+          if (key === "pending" || key === "processing" || key === "completed") {
+            setSelectedTab(key);
           }
-        />
+        }}
+      />
 
-        <View
-          style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-[25px] p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
-        >
-          {renderContent()}
-        </View>
-
-        <DeclineOrderModal
-          isModalVisible={declineModal}
-          setIsModalVisible={setDeclineModal}
-          orderId={orderId}
-          orderModalMetadata={orderModalMetadata}
-          refresh={() => queryClient.invalidateQueries({ queryKey })}
-        />
+      <View
+        style={tw`border border-[#E7E7E7] bg-[#FFFFFF] flex-1 rounded-sm p-[20px] mt-[20px] mx-[15px] mb-[50px] android:mb-[30px]`}
+      >
+        {renderContent()}
       </View>
-    </WithModal>
+
+      <DeclineOrderModal
+        isModalVisible={declineModal}
+        setIsModalVisible={setDeclineModal}
+        orderId={orderId}
+        orderModalMetadata={orderModalMetadata}
+        refresh={() => queryClient.invalidateQueries({ queryKey })}
+      />
+    </View>
   );
 };

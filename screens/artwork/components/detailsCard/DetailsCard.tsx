@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import React from "react";
+import tw from "twrnc";
 import { colors } from "#config/colors.config";
 
 type DetailItemProps = {
@@ -15,23 +16,34 @@ type DetailCardProps = {
 export default function DetailsCard({ title, details }: DetailCardProps) {
   const DetailItem = ({ name, text }: DetailItemProps) => {
     return (
-      <View style={styles.detailItem}>
+      <View style={tw`flex-row items-center gap-4`}>
         <Text
-          style={[styles.detailItemText, { width: 120, fontWeight: "500" }]}
+          style={tw`text-neutral-600 font-sans-regular text-xs tracking-wide uppercase w-2/6 pr-4`}
         >
           {name}
         </Text>
-        <Text style={[styles.detailItemText, { flex: 1 }]}>{text}</Text>
+        <Text
+          style={tw`text-neutral-500 font-sans-regular text-sm leading-relaxed w-4/6 pr-2`}
+        >
+          {text}
+        </Text>
       </View>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{title}</Text>
+    <View style={tw`border border-neutral-200 rounded-sm`}>
+      <View style={[tw`p-4 rounded-t-md`, { backgroundColor: colors.black }]}>
+        <Text
+          style={[
+            tw`text-lg font-serif tracking-wider`,
+            { color: colors.white },
+          ]}
+        >
+          {title}
+        </Text>
       </View>
-      <View style={styles.mainContainer}>
+      <View style={tw`p-4 gap-4`}>
         {details.map((detail, idx) => (
           <DetailItem name={detail.name} text={detail.text} key={idx} />
         ))}
@@ -39,37 +51,3 @@ export default function DetailsCard({ title, details }: DetailCardProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    borderRadius: 15,
-  },
-  header: {
-    backgroundColor: "#1A1A1A",
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: colors.white,
-  },
-  mainContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-    gap: 20,
-  },
-  detailItem: {
-    flexDirection: "row",
-    gap: 20,
-  },
-  detailItemText: {
-    color: "#858585",
-    fontSize: 14,
-    lineHeight: 20,
-  },
-});

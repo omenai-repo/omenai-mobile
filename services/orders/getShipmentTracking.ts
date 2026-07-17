@@ -1,27 +1,30 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function getShipmentTracking(order_id: string) {
   try {
-    const response = await fetch(`${apiUrl}/api/shipment/shipment_tracking?order_id=${order_id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      `${apiUrl}/api/shipment/shipment_tracking?order_id=${order_id}`,
+      {
+        method: "GET",
       },
-    });
+    );
 
     const result = await response.json();
     return {
       isOk: response.ok,
       message: result.message,
-      data: result,
+      data: result.data,
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: 'Error fetching shipment data' },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching shipment data",
+      },
     };
   }
 }

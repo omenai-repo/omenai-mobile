@@ -1,4 +1,4 @@
-import { useGalleryAuthRegisterStore } from "../../../../store/auth/register/GalleryAuthRegisterStore";
+import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
 import AccountDetailsInput from "./AccountDetailsInput";
 import ExtraGalleryDetailsInput from "./ExtraGalleryDetailsInput";
 import GalleryAddressVerification from "./GalleryAddressVerification";
@@ -13,7 +13,7 @@ export default function GalleryRegisterForm() {
     <ExtraGalleryDetailsInput key="extra" />,
     <GalleryAddressVerification key="address" />,
     <UploadLogo key="logo" />,
-    <TermsAndConditions key="terms" hideBackButton={true} />,
+    <TermsAndConditions key="terms" hideBackButton={false} />,
   ];
 
   return forms[pageIndex];

@@ -1,0 +1,34 @@
+appId: com.omenai.omenaimobile
+name: "Individual Orders Screen"
+tags:
+  - individual
+  - orders
+  - smoke
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Orders"
+
+- extendedWaitUntil:
+    visible: "Orders"
+    timeout: 10000
+- assertVisible: "Order History"
+
+- assertVisible: "All Status"
+
+- tapOn: "Order History"
+
+- assertVisible: "Order History"
+
+- assertVisible: "All Status"
+
+- tapOn:
+    text: "Orders"
+    index: 0
+
+- assertVisible: "All Status"

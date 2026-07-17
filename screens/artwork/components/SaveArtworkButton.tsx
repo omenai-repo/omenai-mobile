@@ -6,6 +6,9 @@ import LongBlackButton from "#components/buttons/LongBlackButton";
 import { AntDesign } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
 import { heartIcon } from "#utils/SvgImages";
+import tw from "twrnc";
+import { colors } from "#config/colors.config";
+import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
 
 type SaveArtworkButtonProps = {
   likeIds: string[];
@@ -19,6 +22,7 @@ export default function SaveArtworkButton({
   impressions,
 }: SaveArtworkButtonProps) {
   const [sessionId, setSessionId] = useState("");
+  const { openGuestLoginModal } = useGuestLoginModalStore();
 
   useEffect(() => {
     handleFetchUserSessionData();
@@ -29,21 +33,43 @@ export default function SaveArtworkButton({
     setSessionId(userId);
   };
 
-  const { likedState, handleLike } = useLikedState(impressions, likeIds, sessionId, art_id);
+  const { likedState, handleLike } = useLikedState(
+    impressions,
+    likeIds,
+    sessionId,
+    art_id,
+  );
 
   const isSaved = sessionId !== undefined && likedState.ids.includes(sessionId);
 
   return (
     <LongBlackButton
-      value={isSaved ? "Remove from saved" : "Save artwork to favorites"}
-      onClick={() => handleLike(!isSaved)}
+      style={tw`border-neutral-200`}
+      textStyle={[
+        tw`uppercase text-center text-sm tracking-widest`,
+        { color: colors.black },
+      ]}
+      value={isSaved ? "Remove from collection" : "Save to collection"}
+      onClick={() => {
+        if (sessionId) {
+          handleLike(!isSaved);
+        } else {
+          openGuestLoginModal();
+        }
+      }}
       outline
       icon={
         <View style={styles.iconContainer}>
           {isSaved ? (
-            <AntDesign name="heart" size={20} color="#ff0000" />
+            <AntDesign name="heart" size={14} color="#ff0000" />
           ) : (
-            <SvgXml xml={heartIcon} width={20} height={20} fill="#ffffff" />
+            <SvgXml
+              xml={heartIcon}
+              width={14}
+              height={14}
+              fill="#CCCCCC"
+              opacity={0.3}
+            />
           )}
         </View>
       }
@@ -53,7 +79,7 @@ export default function SaveArtworkButton({
 
 const styles = StyleSheet.create({
   iconContainer: {
-    width: 20,
-    height: 20,
+    width: 14,
+    height: 14,
   },
 });

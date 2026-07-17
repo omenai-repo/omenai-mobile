@@ -8,6 +8,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import VerifyEmail from "#screens/verification/VerifyEmail";
 import ArtistOnboarding from "#screens/artistOnboarding/ArtistOnboarding";
 import { LowRiskProvider } from "#providers/ConfigCatProvider";
+import GuestNavigation from "./GuestNavigation";
 
 export default function AuthNavigation() {
   const Stack = createStackNavigator();
@@ -19,7 +20,11 @@ export default function AuthNavigation() {
           component={Welcome}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name={screenName.login} component={Login} options={{ headerShown: false }} />
+        <Stack.Screen
+          name={screenName.login}
+          component={Login}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name={screenName.register}
           component={Register}
@@ -38,6 +43,11 @@ export default function AuthNavigation() {
         <Stack.Screen
           name={"ArtistOnboarding"}
           component={ArtistOnboarding}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={"GuestNavigation"}
+          component={GuestNavigation}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

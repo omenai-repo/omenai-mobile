@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, Platform } from 'react-native';
-import tw from 'twrnc';
-import { Ionicons } from '@expo/vector-icons';
-import { useAppStore } from '#store/app/appStore';
+import React from "react";
+import { View, Text, Platform } from "react-native";
+import tw from "twrnc";
+import { Ionicons } from "@expo/vector-icons";
+import { useAppStore } from "#store/app/appStore";
 
 export default function BillingInfo() {
   const { userSession } = useAppStore();
@@ -13,15 +13,26 @@ export default function BillingInfo() {
   return (
     <View style={[tw`w-full`, {}]}>
       <View
-        style={[tw`bg-white rounded-2xl border border-slate-200 overflow-hidden`, cardShadow()]}
+        style={[
+          tw`bg-white rounded-sm border border-slate-200 overflow-hidden`,
+          cardShadow(),
+        ]}
       >
         {/* Header */}
         <View style={tw`bg-slate-50 px-5 py-4 border-b border-slate-200`}>
           <View style={tw`flex-row items-center`}>
-            <View style={tw.style(`p-2 bg-white rounded-lg mr-3`, cardShadowSm())}>
-              <Ionicons name="person-circle-outline" size={20} color="#475569" />
+            <View
+              style={tw.style(`p-2 bg-white rounded-sm mr-3`, cardShadowSm())}
+            >
+              <Ionicons
+                name="person-circle-outline"
+                size={20}
+                color="#475569"
+              />
             </View>
-            <Text style={tw`text-slate-900 font-semibold`}>Billing Information</Text>
+            <Text style={tw`text-slate-900 font-semibold`}>
+              Billing Information
+            </Text>
           </View>
         </View>
 
@@ -29,7 +40,9 @@ export default function BillingInfo() {
         <View style={tw`p-5`}>
           {/* Gallery Name */}
           <View style={tw`mb-4`}>
-            <Text style={tw`text-[10px] font-medium text-slate-500 uppercase tracking-widest`}>
+            <Text
+              style={tw`text-[10px] font-medium text-slate-500 uppercase tracking-widest`}
+            >
               Gallery Name
             </Text>
             <Text style={tw`text-slate-900 font-medium mt-1`}>{name}</Text>
@@ -37,7 +50,9 @@ export default function BillingInfo() {
 
           {/* Email Address */}
           <View>
-            <Text style={tw`text-[10px] font-medium text-slate-500 uppercase tracking-widest`}>
+            <Text
+              style={tw`text-[10px] font-medium text-slate-500 uppercase tracking-widest`}
+            >
               Email Address
             </Text>
 
@@ -47,7 +62,9 @@ export default function BillingInfo() {
               </Text>
 
               <View style={tw`ml-2 px-2 py-0.5 rounded-full bg-green-100`}>
-                <Text style={tw`text-green-700 text-[10px] font-medium`}>Verified</Text>
+                <Text style={tw`text-green-700 text-[10px] font-medium`}>
+                  Verified
+                </Text>
               </View>
             </View>
           </View>
@@ -60,7 +77,7 @@ export default function BillingInfo() {
 function cardShadow() {
   return Platform.select({
     ios: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOpacity: 0.06,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 6 },
@@ -73,7 +90,7 @@ function cardShadow() {
 function cardShadowSm() {
   return Platform.select({
     ios: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOpacity: 0.05,
       shadowRadius: 6,
       shadowOffset: { width: 0, height: 3 },

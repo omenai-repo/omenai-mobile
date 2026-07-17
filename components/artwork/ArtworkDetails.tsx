@@ -1,8 +1,8 @@
-import React from 'react';
-import { Text, View } from 'react-native';
-import tw from 'twrnc';
-import { fontNames } from '#constants/fontNames.constants';
-import { utils_formatPrice } from '#utils/utils_priceFormatter';
+import React from "react";
+import { Text, View } from "react-native";
+import tw from "twrnc";
+import { useAppStore } from "#store/app/appStore";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
 
 interface ArtworkDetailsProps {
   readonly title: string;
@@ -19,43 +19,45 @@ export default function ArtworkDetails({
   showPrice,
   price,
 }: Readonly<ArtworkDetailsProps>) {
+  const userSession = useAppStore((s) => s.userSession);
+
+  const renderPriceOrStatus = () => {
+    if (availability === false) {
+      return (
+        <Text style={tw`text-sm text-[#1A1A1A]/90 font-sans-semibold`}>
+          SOLD
+        </Text>
+      );
+    }
+
+    if (userSession?.id) {
+      return (
+        <Text
+          style={tw`text-sm text-dark text-[#1A1A1A]/90 font-sans ${
+            showPrice ? "font-sans-bold" : "font-sans-medium"
+          }`}
+        >
+          {showPrice ? utils_formatPrice(price || 0) : "Price on request"}
+        </Text>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <View style={tw`mt-3 w-full`}>
-      <Text
-        style={[
-          tw`text-base font-medium text-[#1A1A1A]/90`,
-          { fontFamily: fontNames.dmSans + 'Medium' },
-        ]}
-      >
+      <Text style={tw`text-base capitalize font-serif leading-snug text-dark`}>
         {title}
       </Text>
       <Text
-        style={[
-          tw`text-sm text-[#1A1A1A]/70 my-1`,
-          { fontFamily: fontNames.dmSans + 'Regular' },
-        ]}
+        numberOfLines={1}
+        ellipsizeMode="tail"
+        style={tw`text-xs capitalize text-slate-500 mt-0.5 font-sans-regular`}
       >
         {artist}
       </Text>
-      {availability ? (
-        <Text
-          style={[
-            tw`text-base font-bold text-[#1A1A1A]/90`,
-            { fontFamily: fontNames.dmSans + 'Bold' },
-          ]}
-        >
-          {showPrice ? utils_formatPrice(price) : 'Price on request'}
-        </Text>
-      ) : (
-        <Text
-          style={[
-            tw`text-base font-bold text-[#1A1A1A]/90`,
-            { fontFamily: fontNames.dmSans + 'Bold' },
-          ]}
-        >
-          Sold
-        </Text>
-      )}
+      {renderPriceOrStatus()}
     </View>
   );
 }

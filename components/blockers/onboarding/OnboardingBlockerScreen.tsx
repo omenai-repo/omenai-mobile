@@ -47,7 +47,7 @@ export default function OnboardingBlockerScreen({
           duration: 600,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     loop.start();
     return () => loop.stop();
@@ -63,7 +63,7 @@ export default function OnboardingBlockerScreen({
       <SafeAreaView />
       <View
         style={[
-          tw`items-center rounded-3xl px-7 py-8`,
+          tw`items-center rounded-sm px-7 py-8`,
           {
             backgroundColor: colors.white,
             shadowColor: "#000",
@@ -94,7 +94,7 @@ export default function OnboardingBlockerScreen({
           ]}
         >
           {message ||
-            "We\u2019re fixing some issues right now. Please check back soon or explore other parts of the app and see what tickles your fancy."}
+            "We are currently completing updates to the registration system.\nPlease check back shortly, or continue exploring the platform."}
         </Text>
         <Text
           style={[
@@ -102,12 +102,12 @@ export default function OnboardingBlockerScreen({
             { color: "#4B5563" },
           ]}
         >
-          Thank you for your patience ❤️
+          Thank you for your patience.
         </Text>
         <Pressable
           onPress={handleExploreOmenai}
           style={({ pressed }) => [
-            tw`mt-2 self-stretch rounded-lg py-3 px-6 items-center`,
+            tw`mt-2 self-stretch rounded-sm py-3 px-6 items-center`,
             { backgroundColor: colors.primary_black },
             pressed && tw`opacity-85`,
           ]}

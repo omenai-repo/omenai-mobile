@@ -1,100 +1,86 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, Image, Pressable, Animated } from "react-native";
-import OrderHeader from "../../../components/orders/OrderHeader";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { View, Pressable, Animated } from "react-native";
+import OrderHeader from "#components/orders/OrderHeader";
 import { SvgXml } from "react-native-svg";
 import tw from "twrnc";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { dropdownIcon, dropUpIcon } from "#utils/SvgImages";
-import StatusPill from "./StatusPill";
-import FittedBlackButton from "#components/buttons/FittedBlackButton";
-import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
-import { screenName } from "#constants/screenNames.constants";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { useNavigation } from "@react-navigation/native";
+import type { CollectorOrderContainerProps } from "#types/orders";
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
+import { OrderExpiryTimer } from "./container/OrderExpiryTimer";
+import { OrderStatusDetails } from "./container/OrderStatusDetails";
+import { OrderPaymentAction } from "./container/OrderPaymentAction";
+import { OrderActions } from "./container/OrderActions";
+import StatusPill from "./StatusPill";
 
-interface HoldStatus {
-  hold_end_date: string;
-}
-
-interface OrderContainerProps {
-  id: number;
-  open: boolean;
-  setOpen: () => void;
-  artId: string;
-  artName: string;
-  price: string;
-  status: "pending" | "processing" | "completed";
-  lastId: boolean;
-  url: string;
-  payment_information: string;
-  tracking_information: {
-    id: string;
-    link: string;
-  };
-  order_accepted: string;
-  delivery_confirmed: boolean;
-  availability: boolean;
-  orderId: string;
-  holdStatus: HoldStatus | null;
-  updatedAt: string;
-  trackBtn: () => void;
-  order_decline_reason?: string;
-  seller_designation?: string;
-}
-
-const OrderContainer: React.FC<OrderContainerProps> = ({
+const OrderContainer = React.memo(function OrderContainer({
+  item,
   id,
   open,
-  setOpen,
-  artId,
-  artName,
-  price,
-  status,
+  onToggleOpen,
   lastId,
-  url,
-  payment_information,
-  tracking_information,
-  order_accepted,
-  delivery_confirmed,
-  availability,
-  orderId,
-  holdStatus,
-  updatedAt,
-  trackBtn,
-  order_decline_reason = "",
-  seller_designation,
-}) => {
-  const image_href = getImageFileView(url, 700);
+  paymentFlags,
+}: CollectorOrderContainerProps) {
+  const navigation = useNavigation<any>();
+  const orderId = item.order_id;
+  const url = item.artwork_data.url;
+  const artName = item.artwork_data.title;
+  const price = utils_formatPrice(item.artwork_data.pricing.usd_price ?? 0);
+  const status = item.status;
+  const payment_information = item.payment_information.status;
+  const tracking_information =
+    item.shipping_details.shipment_information.tracking;
+  const order_accepted = item.order_accepted.status;
+  const delivery_confirmed = item.shipping_details.delivery_confirmed;
+  const availability = item.availability;
+  const holdStatus = item.hold_status;
+  const updatedAt = item.updatedAt;
+  const order_decline_reason = item.order_accepted.reason ?? "";
+  const seller_designation = item.seller_designation;
+  const invoice = (item as CreateOrderModelTypes & { invoice?: InvoiceTypes })
+    .invoice;
+  const invoiceNumber = (
+    item.payment_information as PaymentStatusTypes & {
+      invoice_reference?: string;
+    }
+  ).invoice_reference;
+
+  const image_href = getImageFileView(url ?? "", 300);
   const [remainingTime, setRemainingTime] = useState<number>(0);
-  const navigation = useNavigation<StackNavigationProp<any>>();
+  const [contentHeight, setContentHeight] = useState<number>(0);
   const [confirmOrderModal, setConfirmOrderModal] = useState(false);
 
-  const { value: isFlutterwavePaymentEnabled } = useHighRiskFeatureFlag(
-    "flutterwave_payment_enabled"
-  );
-  const { value: isStripePaymentEnabled } = useHighRiskFeatureFlag(
-    "stripe_payment_enabled"
-  );
+  const {
+    isFlutterwavePaymentEnabled,
+    isStripePaymentEnabled,
+    areFlagsLoading,
+  } = paymentFlags;
 
   const showBlocker =
     (seller_designation === "artist" && !isFlutterwavePaymentEnabled) ||
     (seller_designation === "gallery" && !isStripePaymentEnabled);
 
-  const expiresAt = React.useMemo(
+  const handleTrackShipment = React.useCallback(() => {
+    navigation.navigate("ShipmentTrackingScreen", {
+      orderId,
+      tracking_id: tracking_information.id,
+    });
+  }, [navigation, orderId, tracking_information.id]);
+
+  const expiresAt = useMemo(
     () =>
       holdStatus
         ? new Date(holdStatus.hold_end_date)
         : new Date(new Date(updatedAt).getTime() + 24 * 60 * 60 * 1000),
-    [holdStatus, updatedAt]
+    [holdStatus, updatedAt],
   );
 
   useEffect(() => {
     const targetTime = expiresAt.getTime();
     const intervalId = setInterval(() => {
-      const currentTime = new Date().getTime();
-      const timeLeft = targetTime - currentTime;
+      const timeLeft = targetTime - Date.now();
       if (timeLeft <= 0) {
         clearInterval(intervalId);
         setRemainingTime(0);
@@ -105,64 +91,14 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
     return () => clearInterval(intervalId);
   }, [expiresAt]);
 
-  const formatTime = (time: number) => {
-    const hours = Math.floor(time / 3600000);
-    const minutes = Math.floor((time % 3600000) / 60000);
-    const seconds = Math.floor((time % 60000) / 1000);
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  const renderCountdownTimer = () => {
-    if (
-      payment_information === "pending" &&
-      order_accepted === "accepted" &&
-      remainingTime > 0
-    ) {
-      return (
-        <View style={tw`mt-3`}>
-          <View
-            style={tw`flex-row items-center bg-[#FFF1F0] border border-[#FCA5A5] px-3 py-2 rounded-lg`}
-          >
-            <Ionicons name="time-outline" size={16} color="#C71C16" />
-            <Text style={tw`ml-2 text-[13px] text-[#C71C16]`}>
-              Time left to pay:{" "}
-              <Text style={tw`font-semibold`}>{formatTime(remainingTime)}</Text>
-            </Text>
-          </View>
-        </View>
-      );
-    }
-
-    return null;
-  };
-
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const calculateBaseHeight = () => {
-      let base = 80;
-      if (status !== "completed" && order_accepted && !delivery_confirmed) {
-        base = 140;
-      }
-
-      // Add extra height only when blocker and pay-area are visible
-      const payAreaVisible =
-        availability &&
-        payment_information === "pending" &&
-        order_accepted === "accepted" &&
-        remainingTime > 0;
-      const extra = showBlocker && payAreaVisible ? 64 : 0;
-      return base + extra;
-    };
-
     if (open) {
-      const baseHeight = calculateBaseHeight();
       Animated.parallel([
         Animated.timing(animatedHeight, {
-          toValue: baseHeight,
+          toValue: contentHeight,
           duration: 300,
           useNativeDriver: false,
         }),
@@ -186,56 +122,27 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
         }),
       ]).start();
     }
-  }, [
-    open,
-    status,
-    order_accepted,
-    delivery_confirmed,
-    animatedHeight,
-    animatedOpacity,
-    showBlocker,
-    availability,
-    payment_information,
-    remainingTime,
-  ]);
+  }, [open, contentHeight, animatedHeight, animatedOpacity]);
 
   return (
     <View
       style={tw`
         border-t-[1px] border-l-[1px] border-r-[1px] border-[#E7E7E7] p-[20px]
-        ${id === 0 ? "rounded-t-[15px]" : ""}
-        ${lastId ? "border-b-[1px] rounded-b-[15px]" : ""}
+        ${id === 0 ? "rounded-t-md" : ""}
+        ${lastId ? "border-b-[1px] rounded-b-md" : ""}
       `}
     >
       <View style={tw`flex-row items-center`}>
-        <OrderHeader image_href={image_href} artId={artId} artName={artName} />
-        <Pressable
-          onPress={() => setOpen()}
-          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
-        >
-          <SvgXml xml={open ? dropUpIcon : dropdownIcon} />
-        </Pressable>
-      </View>
-
-      {renderCountdownTimer()}
-
-      <Animated.View
-        style={{
-          height: animatedHeight,
-          opacity: animatedOpacity,
-          overflow: "hidden",
-        }}
-      >
-        <View style={tw`gap-[20px] mt-[15px]`}>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-              {price}
-            </Text>
-          </View>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
-            <View style={{ flexWrap: "wrap" }}>
+        <OrderHeader image_href={image_href} artId={orderId} artName={artName}>
+          {!open && (
+            <View
+              style={{
+                transform: [{ scale: 0.8 }],
+                alignSelf: "flex-start",
+                marginLeft: -10,
+                marginTop: 4,
+              }}
+            >
               <StatusPill
                 status={status}
                 payment_status={payment_information}
@@ -245,93 +152,78 @@ const OrderContainer: React.FC<OrderContainerProps> = ({
                 availability={availability}
               />
             </View>
-          </View>
-          {order_accepted === "declined" && (
-            <Text style={{ color: "#ff0000", fontSize: 14 }}>
-              Reason: {order_decline_reason}
-            </Text>
           )}
-          {availability &&
-            payment_information === "pending" &&
-            order_accepted === "accepted" &&
-            remainingTime > 0 && (
-              <>
-                {showBlocker ? (
-                  <FittedBlackButton
-                    value="Pay now — under maintenance"
-                    isDisabled
-                    onClick={() => {}}
-                    style={{ height: 40 }}
-                  />
-                ) : (
-                  <FittedBlackButton
-                    value="Pay now"
-                    onClick={() =>
-                      navigation.navigate(screenName.payment, {
-                        id: orderId,
-                      })
-                    }
-                    style={{ height: 40 }}
-                  />
-                )}
+        </OrderHeader>
+        <Pressable
+          onPress={() => onToggleOpen(orderId)}
+          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-sm`}
+        >
+          <SvgXml xml={open ? dropUpIcon : dropdownIcon} />
+        </Pressable>
+      </View>
 
-                {showBlocker && (
-                  <Text style={tw`text-[12px] text-[#666]`}>
-                    We’re fine-tuning our payment system to resolve a minor
-                    issue and ensure every transaction remains flawlessly
-                    seamless.
-                  </Text>
-                )}
-              </>
-            )}
-          {availability &&
-            payment_information === "completed" &&
-            !delivery_confirmed &&
-            tracking_information.link?.trim() && (
-              <View style={{ flexDirection: "row", gap: 10 }}>
-                <Pressable
-                  onPress={trackBtn}
-                  style={tw`h-[35px] w-[35px] bg-[#000] rounded-full justify-center items-center`}
-                >
-                  <Ionicons name="location-outline" size={18} color="#fff" />
-                </Pressable>
-                <FittedBlackButton
-                  value="Confirm order delivery"
-                  onClick={() => setConfirmOrderModal(true)}
-                  style={{ height: 35, backgroundColor: "#16A34A" }}
-                  textStyle={{ fontSize: 12 }}
-                />
-              </View>
-            )}
-          {availability &&
-            payment_information === "completed" &&
-            order_accepted === "accepted" &&
-            status !== "completed" &&
-            !tracking_information.link && (
-              <View
-                style={[
-                  tw`rounded-lg`,
-                  {
-                    padding: 10,
-                    backgroundColor: "#f3f3f3",
-                  },
-                ]}
-              >
-                <Text style={{ color: "#666", textAlign: "center" }}>
-                  Awaiting tracking information
-                </Text>
-              </View>
-            )}
+      <OrderExpiryTimer
+        payment_information={payment_information}
+        order_accepted={order_accepted}
+        remainingTime={remainingTime}
+      />
+
+      <Animated.View
+        style={{
+          height: animatedHeight,
+          opacity: animatedOpacity,
+          overflow: "hidden",
+        }}
+      >
+        <View
+          style={{ position: "absolute", width: "100%" }}
+          onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
+        >
+          <View style={tw`gap-[20px] mt-[15px]`}>
+            <OrderStatusDetails
+              price={price}
+              status={status}
+              payment_information={payment_information}
+              tracking_link={tracking_information.link}
+              order_accepted={order_accepted}
+              delivery_confirmed={delivery_confirmed}
+              availability={availability}
+              order_decline_reason={order_decline_reason}
+            />
+
+            <OrderPaymentAction
+              availability={availability}
+              payment_information={payment_information}
+              order_accepted={order_accepted}
+              remainingTime={remainingTime}
+              showBlocker={showBlocker ?? false}
+              areFlagsLoading={areFlagsLoading}
+              orderId={orderId}
+            />
+
+            <OrderActions
+              availability={availability}
+              payment_information={payment_information}
+              tracking_link={tracking_information.link}
+              order_accepted={order_accepted}
+              status={status}
+              delivery_confirmed={delivery_confirmed}
+              trackBtn={handleTrackShipment}
+              setConfirmOrderModal={setConfirmOrderModal}
+              invoice={invoice}
+              invoiceNumber={invoiceNumber}
+            />
+          </View>
         </View>
-
-        <ConfirmOrderDeliveryModal
-          orderId={orderId}
-          modalVisible={confirmOrderModal}
-          setModalVisible={setConfirmOrderModal}
-        />
       </Animated.View>
+
+      <ConfirmOrderDeliveryModal
+        orderId={orderId}
+        modalVisible={confirmOrderModal}
+        setModalVisible={setConfirmOrderModal}
+      />
     </View>
   );
-};
+});
 
 export default OrderContainer;

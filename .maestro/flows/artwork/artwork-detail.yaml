@@ -1,0 +1,58 @@
+appId: com.omenai.omenaimobile
+name: "Artwork Detail Screen"
+tags:
+  - individual
+  - artwork
+  - smoke
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Search"
+
+- tapOn:
+    id: "search-input"
+- inputText: "painting"
+- pressKey: Enter
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Results for"
+        - "Artworks"
+    timeout: 15000
+
+- tapOn:
+    index: 0
+    id: "artwork-card"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Purchase artwork"
+        - "Request price"
+        - "Medium"
+        - "Dimensions"
+    timeout: 15000
+
+- scrollUntilVisible:
+    direction: DOWN
+    element:
+      anyOf:
+        - "About the Artist"
+        - "Similar"
+        - "More from"
+    timeout: 15000
+
+- scrollUntilVisible:
+    direction: UP
+    element:
+      anyOf:
+        - "Purchase artwork"
+        - "Request price"
+    timeout: 10000

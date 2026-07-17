@@ -1,6 +1,6 @@
 import { Text, View, Pressable } from "react-native";
 import React from "react";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 import { AntDesign } from "@expo/vector-icons";
 import tw from "twrnc";
 
@@ -9,12 +9,15 @@ type NextButtonProps = {
   readonly handleButtonClick: () => void;
 };
 
-export default function NextButton({ isDisabled, handleButtonClick }: Readonly<NextButtonProps>) {
+export default function NextButton({
+  isDisabled,
+  handleButtonClick,
+}: Readonly<NextButtonProps>) {
   if (isDisabled)
     return (
       <View
         style={[
-          tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-lg`,
+          tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-sm`,
           { backgroundColor: colors.inputBorder },
         ]}
       >
@@ -27,7 +30,7 @@ export default function NextButton({ isDisabled, handleButtonClick }: Readonly<N
     <Pressable
       onPress={handleButtonClick}
       style={({ pressed }) => [
-        tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-lg`,
+        tw`h-[46px] flex-row items-center gap-2.5 px-7 rounded-sm`,
         { backgroundColor: colors.black },
         pressed && { opacity: 0.85 },
       ]}

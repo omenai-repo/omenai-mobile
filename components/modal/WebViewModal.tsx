@@ -14,14 +14,24 @@ export default function WebViewModal({ url }: { url: string | null }) {
         <View style={styles.topContainer}>
           <BackScreenButton cancle handleClick={() => setWebViewUrl(null)} />
         </View>
-        <WebView source={{ uri: "https://omenai-web.vercel.app/" + url }} style={{ flex: 1 }} />
+        <WebView
+          source={{
+            uri: url.startsWith("http")
+              ? url
+              : "https://omenai-web.vercel.app/" + url,
+          }}
+          style={{ flex: 1 }}
+        />
       </SafeAreaView>
     );
+  return null;
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "white",
+    zIndex: 9999,
   },
   topContainer: {
     paddingHorizontal: 20,

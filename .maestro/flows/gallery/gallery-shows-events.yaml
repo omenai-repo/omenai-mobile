@@ -1,0 +1,49 @@
+appId: com.omenai.omenaimobile
+name: "Gallery Shows, Fairs & Events"
+tags:
+  - gallery
+  - shows
+  - events
+  - smoke
+
+---
+- runFlow: ../login/gallery-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn:
+    anyOf:
+      - "Shows"
+      - "Events"
+      - "Fairs"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Shows"
+        - "Events"
+        - "Fairs"
+    timeout: 10000
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Create"
+        - "No shows"
+        - "No events"
+        - "Upcoming"
+    timeout: 15000
+
+- swipe:
+    direction: UP
+    duration: 1000
+
+- scrollUntilVisible:
+    direction: UP
+    element:
+      anyOf:
+        - "Shows"
+        - "Events"
+    timeout: 10000

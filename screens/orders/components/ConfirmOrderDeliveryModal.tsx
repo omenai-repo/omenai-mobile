@@ -1,12 +1,19 @@
-import { View, Text, Modal, Pressable, useWindowDimensions, TouchableOpacity } from 'react-native';
-import { useRef, useState } from 'react';
-import tw from 'twrnc';
-import { Ionicons } from '@expo/vector-icons';
-import LottieView from 'lottie-react-native';
-import loaderAnimation from '#assets/other/loader-animation.json';
-import { confirmOrderDelivery } from '#services/orders/confirmOrderDelivery';
-import { useModalStore } from '#store/modal/modalStore';
-import { useCollectorOrders } from '#hooks/useCollectorOrders';
+import {
+  View,
+  Text,
+  Modal,
+  Pressable,
+  useWindowDimensions,
+} from "react-native";
+import { useState } from "react";
+import tw from "twrnc";
+import { Ionicons } from "@expo/vector-icons";
+import { confirmOrderDelivery } from "#services/orders/confirmOrderDelivery";
+import { useModalStore } from "#store/modal/modalStore";
+import { useCollectorOrders } from "#hooks/useCollectorOrders";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { Analytics } from "#utils/analytics";
+import { useAppStore } from "#store/app/appStore";
 
 type ConfirmDeliveryProps = {
   orderId: string;
@@ -20,33 +27,55 @@ const ConfirmOrderDeliveryModal = ({
   setModalVisible,
 }: ConfirmDeliveryProps) => {
   const { width } = useWindowDimensions();
-  const animation = useRef(null);
   const [loading, setLoading] = useState(false);
   const { updateModal } = useModalStore();
   const { invalidate } = useCollectorOrders();
+  const userId = useAppStore((state) => state.userSession.id);
 
   async function confirmDelivery() {
     setLoading(true);
     const response = await confirmOrderDelivery(true, orderId);
     try {
-      if (!response?.isOk) {
-        updateModal({
-          message: response.message,
-          modalType: 'error',
-          showModal: true,
+      if (response?.isOk) {
+        Analytics.track("order_delivered", {
+          order_id: orderId,
+          user_id: userId,
+          response: response,
         });
-      } else {
+
         await invalidate();
         updateModal({
           message: response.message,
-          modalType: 'success',
+          modalType: "success",
+          showModal: true,
+        });
+      } else {
+        Analytics.track("order_delivery_confirm_failed", {
+          order_id: orderId,
+          user_id: userId,
+          error: (response as any).error,
+          message: response.message,
+          response: response,
+        });
+
+        updateModal({
+          message: response.message,
+          modalType: "error",
           showModal: true,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      Analytics.track("order_delivery_confirm_failed", {
+        order_id: orderId,
+        user_id: userId,
+        error: error,
+        message: error.message,
+        failure_stage: "exception",
+      });
+
       updateModal({
-        message: 'Something went wrong, try again or contact support',
-        modalType: 'success',
+        message: "Something went wrong, try again or contact support",
+        modalType: "success",
         showModal: true,
       });
     } finally {
@@ -68,9 +97,12 @@ const ConfirmOrderDeliveryModal = ({
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
-          style={tw.style(`bg-white py-[20px] px-[10px] w-full self-center rounded-[16px]`, {
-            width: width - 60,
-          })}
+          style={tw.style(
+            `bg-white py-[20px] px-[10px] w-full self-center rounded-sm`,
+            {
+              width: width - 60,
+            },
+          )}
         >
           <View style={tw`p-4`}>
             {/* Title */}
@@ -86,40 +118,26 @@ const ConfirmOrderDeliveryModal = ({
                   <Ionicons name="warning-outline" size={25} color="#FFA500" />
                 </View>
                 {/* Info Text */}
-                <Text style={tw`text-[13px]`}>
-                  By confirming you are acknowledging that the artwork has been delivered to you in
-                  good condition. If you mistakenly confirm or encounter any issues with your order,
-                  please contact customer service immediately, as this action cannot be undone.
+                <Text style={tw`text-sm`}>
+                  By confirming you are acknowledging that the artwork has been
+                  delivered to you in good condition. If you mistakenly confirm
+                  or encounter any issues with your order, please contact
+                  customer service immediately, as this action cannot be undone.
                 </Text>
               </View>
             </View>
 
             {/* Action Button */}
             <View style={tw`w-full mt-5 flex flex-row items-center gap-2`}>
-              <TouchableOpacity
-                disabled={loading}
-                onPress={confirmDelivery}
-                style={[
-                  tw`h-[45px] rounded-[20px] px-4 w-full items-center justify-center`,
-                  loading ? tw`bg-[#E0E0E0]` : tw`bg-green-600`,
-                ]}
-              >
-                {loading ? (
-                  <LottieView
-                    autoPlay
-                    ref={animation}
-                    style={{
-                      width: 100,
-                      height: 100,
-                    }}
-                    source={loaderAnimation}
-                  />
-                ) : (
-                  <Text style={tw`text-[14px] font-medium text-white`}>
-                    I understand, confirm delivery
-                  </Text>
-                )}
-              </TouchableOpacity>
+              <LongBlackButton
+                value="I understand, confirm delivery"
+                isLoading={loading}
+                onClick={confirmDelivery}
+                style={{
+                  backgroundColor: loading ? "#E0E0E0" : "#16A34A",
+                }}
+                textStyle={{ fontSize: 14, fontWeight: "500" }}
+              />
             </View>
           </View>
         </Pressable>

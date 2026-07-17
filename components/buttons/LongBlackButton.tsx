@@ -1,9 +1,16 @@
-import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import {
+  StyleProp,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 import React, { useRef } from "react";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 import LottieView from "lottie-react-native";
 import tw from "twrnc";
-import loaderAnimation from "../../assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 
 type LongBlackButtonProps = {
   value: string;
@@ -15,6 +22,8 @@ type LongBlackButtonProps = {
   outline?: boolean;
   borderColor?: string;
   icon?: React.ReactNode;
+  iconPosition?: "left" | "right";
+  testID?: string;
 };
 
 export default function LongBlackButton({
@@ -27,6 +36,8 @@ export default function LongBlackButton({
   outline = false,
   borderColor = colors.black,
   icon,
+  iconPosition = "left",
+  testID,
 }: LongBlackButtonProps) {
   const animation = useRef(null);
 
@@ -66,42 +77,50 @@ export default function LongBlackButton({
     }),
   };
 
-  const defaultTextStyle: TextStyle = {
-    color: textColor,
-    fontSize: 16,
-    fontWeight: "400",
-  };
-
   const containerStyle = [
-    tw`w-full flex items-center justify-center rounded-lg`,
+    tw`w-full flex items-center justify-center rounded-sm`,
     defaultContainerStyle,
     style,
   ];
 
-  const mergedTextStyle = [defaultTextStyle, textStyle];
-
-  if (isInactive) {
-    return (
-      <View style={containerStyle}>
-        {isDisabled ? (
-          <Text style={mergedTextStyle}>{value}</Text>
-        ) : (
-          <LottieView
-            autoPlay
-            ref={animation}
-            style={tw`w-[100px] h-[100px]`}
-            source={loaderAnimation}
-          />
-        )}
-      </View>
-    );
-  }
+  const mergedTextStyle = [
+    tw`uppercase text-center text-sm tracking-widest`,
+    { color: textColor },
+    textStyle,
+  ];
 
   return (
-    <TouchableOpacity activeOpacity={1} style={containerStyle} onPress={onClick}>
-      <View style={tw`flex-row items-center justify-center gap-3`}>
-        {icon}
-        <Text style={mergedTextStyle}>{value}</Text>
+    <TouchableOpacity
+      activeOpacity={1}
+      style={containerStyle}
+      onPress={onClick}
+      disabled={isInactive}
+      testID={testID}
+    >
+      <View style={tw`flex-row items-center justify-center w-full`}>
+        {/* Invisible content to maintain button width */}
+        <View
+          style={[
+            tw`flex-row items-center justify-center gap-3`,
+            { opacity: isLoading ? 0 : 1 },
+          ]}
+        >
+          {iconPosition === "left" && icon}
+          <Text style={mergedTextStyle}>{value}</Text>
+          {iconPosition === "right" && icon}
+        </View>
+
+        {/* Overlay loader */}
+        {isLoading && (
+          <View style={tw`absolute inset-0 items-center justify-center`}>
+            <LottieView
+              autoPlay
+              ref={animation}
+              style={tw`w-[80px] h-[80px]`}
+              source={animations.loader}
+            />
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );

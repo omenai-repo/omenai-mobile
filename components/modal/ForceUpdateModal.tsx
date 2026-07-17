@@ -1,9 +1,10 @@
-import { Text, View, TouchableOpacity, Linking } from "react-native";
+import { Text, View, Linking, Platform } from "react-native";
 import Modal from "react-native-modal";
 import React from "react";
 import { colors } from "#config/colors.config";
 import { MaterialIcons } from "@expo/vector-icons";
 import tw from "twrnc";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 
 type ForceUpdateModalProps = Readonly<{
   isVisible: boolean;
@@ -12,7 +13,9 @@ type ForceUpdateModalProps = Readonly<{
 export default function ForceUpdateModal({ isVisible }: ForceUpdateModalProps) {
   const handleUpdate = () => {
     const storeUrl =
-      "https://play.google.com/store/apps/details?id=com.omenai.omenaiapp";
+      Platform.OS === "ios"
+        ? "https://apps.apple.com/ng/app/omenai/id6748387089"
+        : "https://play.google.com/store/apps/details?id=com.omenai.omenaiapp";
     Linking.openURL(storeUrl);
   };
 
@@ -45,22 +48,24 @@ export default function ForceUpdateModal({ isVisible }: ForceUpdateModalProps) {
 
         {/* Description */}
         <Text style={tw`text-sm text-[#666] text-center leading-5 mb-6`}>
-          We've made some important improvements! Please update to the latest
-          version to continue using the app.
+          We&apos;ve made some important improvements! Please update to the
+          latest version to continue using the app.
         </Text>
 
         {/* Update Button */}
-        <TouchableOpacity
-          onPress={handleUpdate}
-          style={[
-            tw`w-full h-[52px] rounded-xl flex-row items-center justify-center gap-2`,
-            { backgroundColor: colors.black },
-          ]}
-          activeOpacity={0.8}
-        >
-          <Text style={tw`text-white text-base font-medium`}>Update Now</Text>
-          <MaterialIcons name="arrow-forward" size={20} color={colors.white} />
-        </TouchableOpacity>
+        <LongBlackButton
+          value="Update Now"
+          onClick={handleUpdate}
+          icon={
+            <MaterialIcons
+              name="arrow-forward"
+              size={20}
+              color={colors.white}
+            />
+          }
+          style={tw`h-[52px]`}
+          textStyle={tw`text-base font-medium`}
+        />
       </View>
     </Modal>
   );

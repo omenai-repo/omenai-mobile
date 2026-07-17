@@ -1,121 +1,60 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "#config/colors.config";
-import ArtworkCard from "#components/artwork/ArtworkCard";
+import React from "react";
 import { fetchArtworksByCriteria } from "#services/artworks/fetchArtworksByCriteria";
-import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
-import { FlatList } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
-import { Feather } from "@expo/vector-icons";
+import tw from "twrnc";
+import { useQuery } from "@tanstack/react-query";
+import ArtworkListSection from "./ArtworkListSection";
 
 export default function SimilarArtworks({
   medium,
   title = "",
+  hideAction,
 }: Readonly<{
   medium: string;
   title: string;
+  hideAction?: boolean;
 }>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [data, setData] = useState<ArtworkFlatlistItem[]>([]);
 
-  useEffect(() => {
-    handleFetchArtworksByCiteria();
-  }, []);
+  const { data, isLoading } = useQuery({
+    queryKey: ["similarArtworks", medium],
+    queryFn: async () => {
+      const results = await fetchArtworksByCriteria({
+        medium,
+        page: 1,
+        filters: null,
+      });
 
-  const handleFetchArtworksByCiteria = async () => {
-    setIsLoading(true);
-    const results = await fetchArtworksByCriteria({
-      medium,
-      page: 1,
-      filters: null,
-    });
+      if (results.isOk) {
+        let resultsData = results.data as ArtworkFlatlistItem[];
+        if (resultsData.length > 0) {
+          const parsedResults = resultsData.filter((artwork) => {
+            return artwork.title !== title;
+          });
 
-    if (results.isOk) {
-      let resultsData = results.data as [];
-      if (resultsData.length > 0) {
-        const parsedResults = resultsData.filter((artwork: any) => {
-          return artwork.title !== title;
-        });
-
-        setData(parsedResults.splice(0, 4));
+          return parsedResults.splice(0, 4);
+        }
       }
-    }
-    setIsLoading(false);
-  };
+      return [];
+    },
+  });
 
   return (
-    <View style={styles.similarContainer}>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate(screenName.artworksMedium, {
-            catalog: medium,
-          })
-        }
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            paddingHorizontal: 20,
-          }}
-        >
-          <Text style={styles.similarTitle}>Hot Recommendations</Text>
-          <Feather name="chevron-right" color={colors.grey} size={20} />
-        </View>
-      </TouchableOpacity>
-      <View style={styles.artworksContainer}>
-        {isLoading ? (
-          <ArtworkCardLoader />
-        ) : (
-          <FlatList
-            data={data}
-            renderItem={({ item }) => (
-              <ArtworkCard
-                title={item.title}
-                url={item.url}
-                artist={item.artist}
-                showPrice={item.pricing.shouldShowPrice === "Yes"}
-                price={item.pricing.usd_price}
-              />
-            )}
-            contentContainerStyle={{
-              paddingRight: 20,
-            }}
-            keyExtractor={(item) => item.title}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          />
-        )}
-      </View>
-    </View>
+    <ArtworkListSection
+      title="Curated for You"
+      data={data || []}
+      isLoading={isLoading}
+      onHeaderPress={
+        hideAction
+          ? undefined
+          : () =>
+              navigation.navigate(screenName.artworksMedium, {
+                catalog: medium,
+              })
+      }
+      containerStyle={tw`mt-5`}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  similarContainer: {
-    marginTop: 0,
-    marginBottom: 200,
-  },
-  similarTitle: {
-    fontSize: 20,
-    fontWeight: "500",
-    color: colors.primary_black,
-    flex: 1,
-  },
-  artworksContainer: {
-    marginTop: 20,
-  },
-  singleColumn: {
-    flex: 1,
-    gap: 20,
-  },
-  viewMoreContainer: {
-    paddingHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

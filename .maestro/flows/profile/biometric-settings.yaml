@@ -1,0 +1,41 @@
+appId: com.omenai.omenaimobile
+name: "Biometric Settings Flow"
+tags:
+  - individual
+  - profile
+  - biometrics
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "More"
+- extendedWaitUntil:
+    visible: "Profile"
+    timeout: 5000
+- tapOn: "Profile"
+
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 10000
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Biometric Login"
+    timeout: 10000
+
+- tapOn: "Biometric Login"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Biometric"
+        - "Face ID"
+        - "Touch ID"
+        - "Fingerprint"
+        - "enabled"
+        - "disabled"
+    timeout: 10000

@@ -1,0 +1,49 @@
+appId: com.omenai.omenaimobile
+name: "Individual Profile Screen"
+tags:
+  - individual
+  - profile
+  - smoke
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "More"
+
+- extendedWaitUntil:
+    visible: "Profile"
+    timeout: 5000
+- tapOn: "Profile"
+
+- extendedWaitUntil:
+    visible: "Edit profile"
+    timeout: 10000
+
+- assertVisible: "Edit profile"
+- assertVisible: "Saved artworks"
+- assertVisible: "Order history"
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Change password"
+    timeout: 10000
+
+- assertVisible: "Change password"
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Biometric Login"
+    timeout: 10000
+
+- assertVisible: "Biometric Login"
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Delete account"
+    timeout: 10000
+
+- assertVisible: "Delete account"

@@ -1,14 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import React, { useEffect, useState } from "react";
 import Input from "#components/inputs/Input";
 import LargeInput from "#components/inputs/LargeInput";
-import UploadImageInput from "#components/inputs/UploadImageInput";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 import {
   certificateOfAuthenticitySelectOptions,
-  framingList,
   mediumListing,
   rarityList,
   signatureArtistSelectOptions,
@@ -16,6 +14,7 @@ import {
 } from "#data/uploadArtworkForm.data";
 import { validate } from "#lib/validations/upload_artwork_input_validator/validator";
 import { useAppStore } from "#store/app/appStore";
+import tw from "twrnc";
 
 type artworkDetailsErrorsType = {
   title: string;
@@ -26,10 +25,16 @@ type artworkDetailsErrorsType = {
 
 export default function ArtworkDetails() {
   const { userType } = useAppStore();
-  const { setActiveIndex, activeIndex, updateArtworkUploadData, artworkUploadData } =
-    uploadArtworkStore();
+  const {
+    setActiveIndex,
+    activeIndex,
+    updateArtworkUploadData,
+    artworkUploadData,
+  } = uploadArtworkStore();
 
-  const [year, setYear] = useState<string>("");
+  const [year, setYear] = useState<string>(
+    artworkUploadData.year === 0 ? "" : artworkUploadData.year.toString(),
+  );
 
   const [formErrors, setFormErrors] = useState<artworkDetailsErrorsType>({
     title: "",
@@ -39,24 +44,51 @@ export default function ArtworkDetails() {
   });
 
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
-    const isFormValid = Object.values(formErrors).every((error) => error === "");
-    const areAllFieldsFilled = Object.values({
-      title: artworkUploadData.title,
-      materials: artworkUploadData.materials,
-      year: artworkUploadData.year,
-      medium: artworkUploadData.medium,
-      rarity: artworkUploadData.rarity,
-      certificate_of_auth: artworkUploadData.certificate_of_authenticity,
-      signature: artworkUploadData.signature,
-      framing: artworkUploadData.framing,
-    }).every((value) => value !== "");
+    const isTitleValid = validate("title", artworkUploadData.title).success;
+    const isDescriptionValid = validate(
+      "description",
+      artworkUploadData.artwork_description || "",
+    ).success;
+    const isMaterialsValid = validate(
+      "materials",
+      artworkUploadData.materials,
+    ).success;
+    const isYearValid = validate(
+      "year",
+      artworkUploadData.year === 0
+        ? ""
+        : artworkUploadData.year?.toString() || "",
+    ).success;
 
-    return !(isFormValid && areAllFieldsFilled);
+    const isFormValid =
+      isTitleValid &&
+      isDescriptionValid &&
+      isMaterialsValid &&
+      isYearValid &&
+      Object.values(formErrors).every((error) => error === "");
+
+    const areAllFieldsFilled = [
+      artworkUploadData.title,
+      artworkUploadData.artwork_description,
+      artworkUploadData.materials,
+      artworkUploadData.medium,
+      artworkUploadData.rarity,
+      artworkUploadData.certificate_of_authenticity,
+      artworkUploadData.signature,
+    ].every((value) => (value || "").trim() !== "");
+
+    const isYearFilled = artworkUploadData.year !== 0;
+
+    return !(isFormValid && areAllFieldsFilled && isYearFilled);
   };
 
   const handleValidationChecks = (label: string, value: string) => {
-    const { success, errors }: { success: boolean; errors: string[] | [] } = validate(label, value);
+    if (value.trim() === "") {
+      setFormErrors((prev) => ({ ...prev, [label]: "" }));
+      return;
+    }
+    const { success, errors }: { success: boolean; errors: string[] | [] } =
+      validate(label, value);
     if (!success) {
       setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
     } else {
@@ -65,32 +97,32 @@ export default function ArtworkDetails() {
   };
 
   useEffect(() => {
-    if (artworkUploadData.title) {
-      handleValidationChecks("title", artworkUploadData.title);
-    }
-  }, [artworkUploadData.title]);
+    const fieldsToValidate = [
+      { label: "title", value: artworkUploadData.title },
+      { label: "description", value: artworkUploadData.artwork_description },
+      {
+        label: "year",
+        value:
+          artworkUploadData.year === 0
+            ? ""
+            : artworkUploadData.year?.toString(),
+      },
+      { label: "materials", value: artworkUploadData.materials },
+    ];
 
-  useEffect(() => {
-    if (artworkUploadData.artwork_description) {
-      handleValidationChecks("description", artworkUploadData.artwork_description || "");
-    }
-  }, [artworkUploadData.artwork_description]);
-
-  useEffect(() => {
-    if (artworkUploadData.year) {
-      handleValidationChecks("year", artworkUploadData.year.toString());
-    }
-  }, [artworkUploadData.year]);
-
-  useEffect(() => {
-    if (artworkUploadData.materials) {
-      handleValidationChecks("materials", artworkUploadData.materials);
-    }
-  }, [artworkUploadData.materials]);
+    fieldsToValidate.forEach(({ label, value }) => {
+      handleValidationChecks(label, value || "");
+    });
+  }, [
+    artworkUploadData.title,
+    artworkUploadData.artwork_description,
+    artworkUploadData.year,
+    artworkUploadData.materials,
+  ]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputsContainer}>
+    <View style={tw`flex-1`}>
+      <View style={tw`gap-5 mb-12`}>
         <Input
           label="Artwork title"
           onInputChange={(value) => updateArtworkUploadData("title", value)}
@@ -100,18 +132,22 @@ export default function ArtworkDetails() {
         />
         <LargeInput
           label="Artwork description"
-          onInputChange={(value) => updateArtworkUploadData("artwork_description", value)}
+          onInputChange={(value) =>
+            updateArtworkUploadData("artwork_description", value)
+          }
           placeHolder="Write a description of your artwork (not more than 100 words)"
           value={artworkUploadData.artwork_description || ""}
           errorMessage={formErrors.description}
         />
-        <View style={{ flex: 1 }}>
+        <View style={tw`flex-1`}>
           <CustomSelectPicker
             label="Medium"
             data={mediumListing}
             placeholder="Select medium"
             value={artworkUploadData.medium}
-            handleSetValue={(item) => updateArtworkUploadData("medium", item.value)}
+            handleSetValue={(item) =>
+              updateArtworkUploadData("medium", item.value)
+            }
           />
         </View>
         <LargeInput
@@ -122,7 +158,7 @@ export default function ArtworkDetails() {
           errorMessage={formErrors.materials}
           height={105}
         />
-        <View style={{ flex: 1 }}>
+        <View style={tw`flex-1`}>
           <Input
             label="Year"
             placeHolder="Enter year of creation"
@@ -134,50 +170,49 @@ export default function ArtworkDetails() {
             errorMessage={formErrors.year}
           />
         </View>
-        <View style={[styles.flexInputsContainer, { zIndex: 5 }]}>
-          <View style={{ flex: 1 }}>
+        <View style={tw`flex-row gap-5 z-[5]`}>
+          <View style={tw`flex-1`}>
             <CustomSelectPicker
               label="Rarity"
               data={rarityList}
               placeholder="Select rarity"
               value={artworkUploadData.rarity}
-              handleSetValue={(item) => updateArtworkUploadData("rarity", item.value)}
+              handleSetValue={(item) =>
+                updateArtworkUploadData("rarity", item.value)
+              }
             />
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={tw`flex-1`}>
             <CustomSelectPicker
               label="Certificate of authenticity"
               data={certificateOfAuthenticitySelectOptions}
               placeholder="Select"
               value={artworkUploadData.certificate_of_authenticity}
               handleSetValue={(item) =>
-                updateArtworkUploadData("certificate_of_authenticity", item.value)
+                updateArtworkUploadData(
+                  "certificate_of_authenticity",
+                  item.value,
+                )
               }
             />
           </View>
         </View>
 
-        <View style={[styles.flexInputsContainer, { zIndex: 4 }]}>
-          <View style={{ flex: 1 }}>
-            <CustomSelectPicker
-              label="Signature"
-              data={userType === "gallery" ? signatureSelectOptions : signatureArtistSelectOptions}
-              placeholder="Select"
-              value={artworkUploadData.signature}
-              dropdownPosition="top"
-              handleSetValue={(item) => updateArtworkUploadData("signature", item.value)}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <CustomSelectPicker
-              label="Framing"
-              data={framingList}
-              placeholder="Choose frame"
-              value={artworkUploadData.framing}
-              dropdownPosition="top"
-              handleSetValue={(item) => updateArtworkUploadData("framing", item.value)}
-            />
-          </View>
+        <View style={tw`flex-1 z-[4]`}>
+          <CustomSelectPicker
+            label="Signature"
+            data={
+              userType === "gallery"
+                ? signatureSelectOptions
+                : signatureArtistSelectOptions
+            }
+            placeholder="Select"
+            value={artworkUploadData.signature}
+            dropdownPosition="top"
+            handleSetValue={(item) =>
+              updateArtworkUploadData("signature", item.value)
+            }
+          />
         </View>
       </View>
       <LongBlackButton
@@ -189,17 +224,3 @@ export default function ArtworkDetails() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inputsContainer: {
-    gap: 20,
-    marginBottom: 50,
-  },
-  flexInputsContainer: {
-    flexDirection: "row",
-    gap: 20,
-  },
-});

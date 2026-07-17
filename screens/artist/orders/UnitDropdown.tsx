@@ -1,7 +1,7 @@
 import React from "react";
-import { Pressable, Text, View, ScrollView } from "react-native";
+import { View, Text } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import tw from "twrnc";
-import { Feather } from "@expo/vector-icons";
 
 type UnitItem = {
   label: string;
@@ -15,41 +15,46 @@ type UnitDropdownProps = {
 };
 
 const UnitDropdown = ({ units, selectedUnit, onSelect }: UnitDropdownProps) => {
-  const [showDropdown, setShowDropdown] = React.useState(false);
-
-  const selectedLabel = units.find((u) => u.value === selectedUnit)?.label || selectedUnit;
-
   return (
-    <View style={tw`relative`}>
-      <Pressable
-        onPress={() => setShowDropdown(!showDropdown)}
-        style={tw`px-3 h-[50px] border border-gray-300 flex-row items-center justify-between rounded-lg bg-white`}
-        accessibilityRole="button"
-      >
-        <Text style={tw`text-[16px] text-left`}>{selectedLabel}</Text>
-        <Feather name={showDropdown ? "chevron-up" : "chevron-down"} size={18} color="#616161" />
-      </Pressable>
-
-      {showDropdown && (
-        <View
-          style={tw`absolute left-0 right-0 top-[58px] z-20 bg-white border border-gray-300 rounded-lg shadow-lg`}
-        >
-          <ScrollView style={tw`max-h-[200px]`} nestedScrollEnabled>
-            {units.map((item, index) => (
-              <Pressable
-                key={item.value + index}
-                onPress={() => {
-                  onSelect(item.value);
-                  setShowDropdown(false);
-                }}
-                style={tw`${index > 0 ? "border-t border-gray-200" : ""} px-3 py-3`}
+    <View style={tw`relative w-full`}>
+      <Dropdown
+        style={tw`h-[50px] bg-white rounded-sm border border-gray-300 px-3`}
+        placeholderStyle={tw`text-base text-gray-800`}
+        selectedTextStyle={tw`text-base text-gray-800`}
+        inputSearchStyle={tw`h-10 text-base`}
+        iconStyle={tw`w-5 h-5`}
+        data={units}
+        search={false}
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder="Select Unit"
+        value={selectedUnit}
+        onChange={(item) => {
+          onSelect(item.value);
+        }}
+        renderItem={(item) => {
+          const isSelected = item.value === selectedUnit;
+          return (
+            <View
+              style={[
+                tw`p-4 flex-row justify-between items-center`,
+                isSelected ? tw`bg-blue-50` : null,
+              ]}
+            >
+              <Text
+                style={[
+                  tw`text-base`,
+                  isSelected ? tw`text-blue-600 font-bold` : tw`text-gray-800`,
+                ]}
               >
-                <Text style={tw`text-[16px] text-left`}>{item.label}</Text>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </View>
-      )}
+                {item.label}
+              </Text>
+              {isSelected && <Text style={tw`text-blue-500 font-bold`}>✓</Text>}
+            </View>
+          );
+        }}
+      />
     </View>
   );
 };
