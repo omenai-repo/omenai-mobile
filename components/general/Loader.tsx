@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import React, { useRef } from 'react';
 import LottieView from 'lottie-react-native';
-import loaderAnimation from '../../assets/other/loader-animation.json';
+import { animations } from "#constants/animations.constants";
 
 export default function Loader({ size = 200, height = 500 }: { size?: number; height?: number }) {
   const animation = useRef(null);
@@ -15,7 +15,7 @@ export default function Loader({ size = 200, height = 500 }: { size?: number; he
           width: size,
           height: size,
         }}
-        source={loaderAnimation}
+        source={animations.loader}
       />
     </View>
   );

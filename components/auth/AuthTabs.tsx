@@ -1,7 +1,7 @@
-import { View, Pressable } from "react-native";
+import { View, Pressable, Text } from "react-native";
 import React, { useEffect } from "react";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -21,7 +21,6 @@ type TabItemProps = {
 };
 
 const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
-  // Only animate scale to keep behavior stable across platforms.
   const progress = useSharedValue(isSelected ? 1 : 0);
 
   useEffect(() => {
@@ -31,32 +30,45 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
     });
   }, [isSelected, progress]);
 
-  const animatedContainerStyle = useAnimatedStyle(() => {
-    const scale = 0.96 + progress.value * 0.04; // Interpolate from 0.96 to 1.0
-    return {
-      transform: [{ scale }],
-    };
-  });
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: 0.96 + progress.value * 0.04 }],
+  }));
 
-  // Use theme colors (avoid platform-specific interpolation issues)
-  const backgroundColor = isSelected ? colors.black : "transparent";
   const textColor = isSelected ? colors.white : "#858585";
 
   return (
-    <Animated.View style={[tw`flex-1`, animatedContainerStyle]}>
+    <Animated.View
+      style={[
+        {
+          flex: 1,
+          minWidth: 0,
+          minHeight: 46,
+        },
+        animatedContainerStyle,
+      ]}
+    >
       <Pressable
         onPress={onClick}
-        style={({ pressed }) => [
-          tw`h-[46px] flex-1 rounded-lg items-center justify-center overflow-hidden`,
-          pressed && { opacity: 0.8 },
-        ]}
+        style={({ pressed }) => ({
+          flex: 1,
+          minWidth: 0,
+          minHeight: 46,
+          borderRadius: 4,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: isSelected ? colors.black : "transparent",
+          opacity: pressed ? 0.88 : 1,
+        })}
       >
-        <Animated.View
-          style={[tw`absolute inset-0 rounded-lg`, { backgroundColor }]}
-        />
-        <Animated.Text style={[tw`text-sm`, { zIndex: 10, color: textColor }]}>
+        <Text
+          style={[
+            tw`text-sm font-sans-regular text-center`,
+            { color: textColor },
+          ]}
+          numberOfLines={1}
+        >
           {name}
-        </Animated.Text>
+        </Text>
       </Pressable>
     </Animated.View>
   );
@@ -69,12 +81,12 @@ export default function AuthTabs({
 }: AuthTabsProps) {
   return (
     <View
-      style={tw`w-full bg-[#FAFAFA] border border-[#E0E0E0] rounded-lg p-1 flex-row gap-[15px]`}
+      style={tw`w-full flex-row gap-2.5 rounded-sm border border-[#E0E0E0] bg-[#FAFAFA] p-1`}
     >
-      {tabs.map((i, idx) => (
+      {tabs.map((label, idx) => (
         <TabItem
-          name={i}
-          key={`tab-${idx}`}
+          name={label}
+          key={`tab-${label}`}
           onClick={() => handleSelect(idx)}
           isSelected={stateIndex === idx}
         />

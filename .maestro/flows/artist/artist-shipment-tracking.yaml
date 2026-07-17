@@ -1,0 +1,53 @@
+appId: com.omenai.omenaimobile
+name: "Artist Shipment Tracking"
+tags:
+  - artist
+  - orders
+  - tracking
+
+---
+- runFlow: ../login/artist-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Orders"
+
+- extendedWaitUntil:
+    visible: "Orders"
+    timeout: 10000
+
+- tapOn:
+    anyOf:
+      - "Track Shipment"
+      - "Tracking"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Track your shipment"
+        - "Tracking Number"
+        - "Enter tracking"
+    timeout: 10000
+
+- tapOn:
+    anyOf:
+      - "Tracking Number"
+      - "Enter tracking"
+- inputText: "1Z999AA10123456784"
+- hideKeyboard
+
+- tapOn:
+    anyOf:
+      - "Track"
+      - "Search"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Delivered"
+        - "In Transit"
+        - "No result"
+        - "not found"
+    timeout: 15000

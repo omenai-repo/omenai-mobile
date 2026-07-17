@@ -16,7 +16,7 @@ import {
   clipboardIcon,
   checkIconWhite,
   globeIcon,
-} from "utils/SvgImages";
+} from "#utils/SvgImages";
 
 /**
  * Props for the Blocker Screen
@@ -64,7 +64,7 @@ export default function TrackingDowntimeBlocker({
           duration: 2000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Rotation animation for loader
@@ -73,7 +73,7 @@ export default function TrackingDowntimeBlocker({
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
-      })
+      }),
     ).start();
   }, [pulseAnim, rotateAnim]);
 
@@ -84,7 +84,7 @@ export default function TrackingDowntimeBlocker({
 
   const handleExternalLink = () => {
     Linking.openURL(externalLink).catch((err) =>
-      console.error("Failed to open URL:", err)
+      console.error("Failed to open URL:", err),
     );
   };
 
@@ -116,7 +116,7 @@ export default function TrackingDowntimeBlocker({
         </View>
         <Animated.View
           style={[
-            tw`absolute -bottom-2 -right-2 bg-[#0f172a] p-1 rounded-[20px] border border-[#47748E]`,
+            tw`absolute -bottom-2 -right-2 bg-[#0f172a] p-1 rounded-sm border border-[#47748E]`,
             {
               transform: [{ rotate: spin }],
             },
@@ -140,7 +140,7 @@ export default function TrackingDowntimeBlocker({
 
       {/* Tracking Number Section */}
       <View
-        style={tw`bg-[#1f2937] p-4 rounded-lg w-full max-w-[380px] shadow-lg border border-[rgba(71,116,142,0.3)] mb-6 z-30`}
+        style={tw`bg-[#1f2937] p-4 rounded-sm w-full max-w-[380px] shadow-lg border border-[rgba(71,116,142,0.3)] mb-6 z-30`}
       >
         <Text
           style={tw`text-[10px] text-[#818181] uppercase tracking-widest mb-2 font-medium`}
@@ -151,7 +151,7 @@ export default function TrackingDowntimeBlocker({
           <Text style={tw`text-white font-mono text-lg`}>{trackingNumber}</Text>
           <TouchableOpacity
             onPress={() => copyToClipboard(trackingNumber, setCopied)}
-            style={tw`p-2 rounded-[20px] ${
+            style={tw`p-2 rounded-sm ${
               copied ? "bg-[#10b981]" : "bg-[rgba(42,158,223,0.1)]"
             }`}
           >
@@ -172,7 +172,7 @@ export default function TrackingDowntimeBlocker({
 
         <TouchableOpacity
           onPress={handleExternalLink}
-          style={tw`flex-row items-center justify-center py-3 px-6 bg-[#2A9EDF] rounded-md shadow-lg`}
+          style={tw`flex-row items-center justify-center py-3 px-6 bg-[#2A9EDF] rounded-sm shadow-lg`}
         >
           <SvgXml xml={globeIcon} width={16} height={16} style={tw`mr-1`} />
           <Text style={tw`text-white font-medium text-sm ml-2`}>
@@ -182,7 +182,7 @@ export default function TrackingDowntimeBlocker({
 
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={tw`flex-row items-center justify-center py-3 px-6 bg-[#0f172a] rounded-md border border-transparent mt-4 shadow-md`}
+          style={tw`flex-row items-center justify-center py-3 px-6 bg-[#0f172a] rounded-sm border border-transparent mt-4 shadow-md`}
         >
           <SvgXml xml={globeIcon} width={16} height={16} style={tw`mr-1`} />
           <Text style={tw`text-white font-medium text-sm ml-2`}>Go Back</Text>

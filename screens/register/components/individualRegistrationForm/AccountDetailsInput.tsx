@@ -1,11 +1,11 @@
 import { View } from "react-native";
 import React from "react";
-import PasswordInput from "../../../../components/inputs/PasswordInput";
-import Input from "../../../../components/inputs/Input";
-import NextButton from "../../../../components/buttons/NextButton";
-import { useIndividualAuthRegisterStore } from "../../../../store/auth/register/IndividualAuthRegisterStore";
+import PasswordInput from "#components/inputs/PasswordInput";
+import Input from "#components/inputs/Input";
+import NextButton from "#components/buttons/NextButton";
+import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import tw from "twrnc";
-import { useFormValidation } from "hooks/useFormValidation";
+import { useFormValidation } from "#hooks/useFormValidation";
 
 export default function AccountDetailsInput() {
   const {
@@ -18,13 +18,18 @@ export default function AccountDetailsInput() {
     setPageIndex,
   } = useIndividualAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } =
-    useFormValidation<Omit<IndividualRegisterData, "address" | "phone">>();
+  const { formErrors, handleValidationChecks, checkIsDisabled } =
+    useFormValidation({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
 
-  const checkIsDisabled = () => {
-    return !checkIsFormValid({
-      email: individualRegisterData.email,
+  const isButtonDisabled = () => {
+    return checkIsDisabled({
       name: individualRegisterData.name,
+      email: individualRegisterData.email,
       password: individualRegisterData.password,
       confirmPassword: individualRegisterData.confirmPassword,
     });
@@ -64,21 +69,27 @@ export default function AccountDetailsInput() {
           placeHolder="Enter password"
           value={individualRegisterData.password}
           errorMessage={formErrors.password}
+          textContentType="newPassword"
         />
         <PasswordInput
           label="Confirm password"
           onInputChange={(text) => {
             setConfirmPassword(text);
-            handleValidationChecks("confirmPassword", individualRegisterData.password, text);
+            handleValidationChecks(
+              "confirmPassword",
+              individualRegisterData.password,
+              text,
+            );
           }}
           placeHolder="Enter password again"
           value={individualRegisterData.confirmPassword}
           errorMessage={formErrors.confirmPassword}
+          textContentType="newPassword"
         />
       </View>
       <View style={tw`flex-row gap-2.5 justify-end`}>
         <NextButton
-          isDisabled={checkIsDisabled()}
+          isDisabled={isButtonDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

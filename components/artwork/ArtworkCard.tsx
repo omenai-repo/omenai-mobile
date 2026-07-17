@@ -1,193 +1,200 @@
-import { Image, Text, View, TouchableOpacity, Dimensions, PixelRatio } from "react-native";
-import React, { useEffect, useState } from "react";
-import { getImageFileView } from "lib/storage/getImageFileView";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { View, TouchableOpacity, Platform, StyleSheet } from "react-native";
+import { Image, ImageLoadEventData } from "expo-image";
+import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { screenName } from "#constants/screenNames.constants";
 import LikeComponent from "./LikeComponent";
 import tw from "twrnc";
-import { resizeImageDimensions } from "utils/utils_resizeImageDimensions.utils";
-import { fontNames } from "constants/fontNames.constants";
+import { useDevice } from "#hooks/useDevice";
+import { useAppStore } from "#store/app/appStore";
+import ArtworkCardMetadata from "./ArtworkCardMetadata";
+import type { ArtworkCardType } from "./artworkCard.types";
+import {
+  areArtworkCardPropsEqual,
+  computeDimensions,
+  DEFAULT_ASPECT_RATIO,
+  parseAspectRatio,
+  resolveFixedImageHeight,
+} from "./artworkCard.utils";
 
-type ArtworkCardType = {
-  title: string;
-  url: string;
-  price: number;
-  artist: string;
-  showPrice?: boolean;
-  availiablity?: boolean;
-  lightText?: boolean;
-  width?: number;
-  art_id?: string;
-  impressions?: number;
-  like_IDs?: string[];
-  galleryView?: boolean;
-};
+const DPR_MULTIPLIER = Platform.OS === "ios" ? 2 : 1.5;
+const IMAGE_TRANSITION_MS = Platform.OS === "ios" ? 200 : 0;
 
-export default function ArtworkCard({
-  title,
-  url,
-  artist,
-  showPrice,
-  price,
-  lightText,
+const styles = StyleSheet.create({
+  likeButton: {
+    height: 32,
+    width: 32,
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+});
+
+function ArtworkCard({
+  artwork,
   width = 0,
-  impressions,
-  art_id,
-  like_IDs,
+  rootHidePrice = false,
+  lightText = false,
   galleryView = false,
-  availiablity,
-}: ArtworkCardType) {
+  disableLikeButton = false,
+  hideBackground = false,
+  useImageLoadAspectRatio = false,
+  metadataMode = "default",
+  fixedImageHeight,
+  frameBackgroundColor,
+  useFixedImageFrame = true,
+}: Readonly<ArtworkCardType>) {
+  const userSession = useAppStore((s) => s.userSession);
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { isTablet } = useDevice();
 
-  const dpr = PixelRatio.get();
-  const screenWidth = Dimensions.get("window").width;
-  const displayWidth = width > 0 ? width : screenWidth * 0.7;
-  const fetchWidth = Math.round(displayWidth * dpr);
-  const image_href = getImageFileView(url, fetchWidth);
+  const title = artwork.title ?? "";
+  const artist = artwork.artist ?? "";
+  const url = artwork.url ?? artwork?.image_url ?? "";
+  const art_id = artwork.art_id ?? "";
+  const impressions = artwork.impressions ?? 0;
+  const like_IDs = artwork.like_IDs ?? [];
+  const availability = artwork.availability ?? true;
+  const imageFormat = artwork.image_format;
+  const price = artwork.pricing?.usd_price ?? 0;
+  const canShowPriceLabel = galleryView || !!userSession?.id;
+  const showPrice =
+    canShowPriceLabel && artwork.pricing?.shouldShowPrice === "Yes";
 
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 250,
-    height: 250,
-  });
+  const metadataAspectRatio = useMemo(
+    () => parseAspectRatio(imageFormat?.ratio),
+    [imageFormat?.ratio],
+  );
+  const [loadedAspectRatio, setLoadedAspectRatio] = useState<number | null>(
+    null,
+  );
 
   useEffect(() => {
-    Image.getSize(image_href, (defaultWidth, defaultHeight) => {
-      const maxHeight = 300;
+    setLoadedAspectRatio(null);
+  }, [url, art_id]);
 
-      const { width: resizedWidth, height: resizedHeight } = resizeImageDimensions(
-        { width: defaultWidth, height: defaultHeight },
-        displayWidth,
-        maxHeight
-      );
+  const imageAspectRatio =
+    metadataAspectRatio ?? loadedAspectRatio ?? DEFAULT_ASPECT_RATIO;
 
-      setImageDimensions({ height: resizedHeight, width: resizedWidth });
-    });
-  }, [image_href, displayWidth]);
+  const resolvedFixedImageHeight = useMemo(
+    () => resolveFixedImageHeight(fixedImageHeight, isTablet),
+    [fixedImageHeight, isTablet],
+  );
+
+  const handleImageLoad = useCallback(
+    (event: ImageLoadEventData) => {
+      if (!useImageLoadAspectRatio) return;
+      const { width: w, height: h } = event.source;
+      if (!w || !h || h === 0) return;
+
+      const nextRatio = w / h;
+      if (!Number.isFinite(nextRatio) || nextRatio <= 0) return;
+
+      setLoadedAspectRatio((prev) => {
+        if (prev !== null && Math.abs(prev - nextRatio) < 0.005) return prev;
+        return nextRatio;
+      });
+    },
+    [useImageLoadAspectRatio],
+  );
+
+  const { cardWidth, imageFrameHeight } = useMemo(
+    () =>
+      computeDimensions(
+        width,
+        imageAspectRatio,
+        resolvedFixedImageHeight,
+        isTablet,
+        useFixedImageFrame,
+      ),
+    [
+      width,
+      imageAspectRatio,
+      resolvedFixedImageHeight,
+      isTablet,
+      useFixedImageFrame,
+    ],
+  );
+
+  const imageUri = useMemo(
+    () =>
+      getImageFileView(
+        url,
+        Math.round(cardWidth * DPR_MULTIPLIER),
+        undefined,
+        undefined,
+        90,
+      ),
+    [url, cardWidth],
+  );
+
+  const handlePress = useCallback(() => {
+    navigation.push(screenName.artwork, { art_id, url });
+  }, [navigation, art_id, url]);
 
   return (
     <View>
-      <View style={tw`flex-1`} />
       <TouchableOpacity
-        activeOpacity={1}
-        style={[tw`ml-[20px] rounded-2xl`, { width: imageDimensions.width }]}
-        onPress={() => {
-          navigation.push(screenName.artwork, { art_id, url });
-        }}
+        activeOpacity={0.8}
+        style={[tw`rounded-sm`, { width: cardWidth }]}
+        onPress={handlePress}
       >
-        <View style={tw`rounded-[5px] overflow-hidden relative`}>
+        <View
+          style={{
+            width: cardWidth,
+            height: imageFrameHeight,
+            backgroundColor: hideBackground
+              ? "transparent"
+              : frameBackgroundColor ?? "#f0f0f0",
+            overflow: "hidden",
+            alignItems: useFixedImageFrame ? "center" : undefined,
+            justifyContent: useFixedImageFrame ? "center" : undefined,
+          }}
+        >
           <Image
-            source={{ uri: image_href }}
-            style={{
-              width: imageDimensions.width,
-              height: imageDimensions.height,
-              objectFit: "contain",
-              borderRadius: 5,
-              backgroundColor: "#f5f5f5",
-            }}
-            resizeMode="contain"
+            source={{ uri: imageUri }}
+            style={{ width: cardWidth, height: imageFrameHeight }}
+            contentFit="contain"
+            transition={IMAGE_TRANSITION_MS}
+            recyclingKey={art_id ?? url}
+            cachePolicy="memory-disk"
+            placeholder={null}
+            priority="normal"
+            onLoad={handleImageLoad}
           />
-          <View style={tw`absolute top-0 left-0 h-full w-full flex items-end justify-end p-3`}>
-            {!galleryView && (
-              <View
-                style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
-              >
+          {!galleryView && !disableLikeButton && (
+            <View style={tw`absolute bottom-3 right-3`}>
+              <View style={styles.likeButton}>
                 <LikeComponent
-                  art_id={art_id || ""}
-                  impressions={impressions || 0}
-                  likeIds={like_IDs || []}
+                  art_id={art_id ?? ""}
+                  impressions={impressions ?? 0}
+                  likeIds={like_IDs ?? []}
                   lightText={true}
                 />
               </View>
-            )}
-          </View>
-        </View>
-        <View style={[tw`mt-[15px]`, { width: imageDimensions.width }]}>
-          <View style={tw`flex-wrap w-[${imageDimensions.width}px]`}>
-            <Text
-              style={[
-                tw`text-base ${
-                  lightText ? "text-white/90" : "text-[#1A1A1A]00099]"
-                } font-medium w-full`,
-                { fontFamily: fontNames.dmSans + "Medium" },
-              ]}
-            >
-              {title}
-            </Text>
-            <Text
-              style={[
-                tw`text-sm ${lightText ? "text-white/80" : "text-[#1A1A1A]/70"} w-full`,
-                { fontFamily: fontNames.dmSans + "Regular" },
-              ]}
-            >
-              {artist}
-            </Text>
-          </View>
-          <View style={tw`flex flex-row items-center gap-2`}>
-            {availiablity && (
-              <Text
-                style={[
-                  tw`text-base font-bold ${
-                    lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                  } flex-1`,
-                  { fontFamily: fontNames.dmSans + "Bold" },
-                ]}
-              >
-                {showPrice ? utils_formatPrice(price) : "Price on request"}
-              </Text>
-            )}
-
-            <View style={tw`flex-wrap`}>
-              {/* {availiablity && (
-                <TouchableOpacity
-                  style={tw`${
-                    lightText ? "bg-white" : "bg-black"
-                  } rounded-full px-5 py-2 w-fit mt-2`}
-                  onPress={() => {
-                    if (showPrice) {
-                      navigation.push(screenName.purchaseArtwork, {
-                        title,
-                      });
-                    } else {
-                      handleRequestPriceQuote();
-                    }
-                  }}
-                  activeOpacity={1}
-                >
-                  <Text
-                    style={[
-                      tw`${lightText ? "text-[#1A1A1A]" : "text-white"} text-sm`,
-                      { fontFamily: fontNames.dmSans + "Medium" },
-                    ]}
-                  >
-                    {showPrice
-                      ? "Purchase"
-                      : loadingPriceQuote
-                      ? "Requesting ..."
-                      : "Request price"}
-                  </Text>
-                </TouchableOpacity>
-              )}  */}
-
-              {!availiablity && (
-                // <View style={tw`rounded-full bg-[#E0E0E0] px-5 py-2 mt-2`}>
-                <Text
-                  style={[
-                    tw`text-base font-bold ${
-                      lightText ? "text-white/90" : "text-[#1A1A1A]/90"
-                    } flex-1`,
-                    { fontFamily: fontNames.dmSans + "Bold" },
-                  ]}
-                >
-                  Sold
-                </Text>
-                // </View>
-              )}
             </View>
-          </View>
+          )}
+        </View>
+        <View style={[tw`mt-3`, { width: cardWidth }]}>
+          <ArtworkCardMetadata
+            metadataMode={metadataMode}
+            title={title}
+            artist={artist}
+            impressions={impressions}
+            lightText={lightText}
+            rootHidePrice={rootHidePrice}
+            availability={availability}
+            canShowPriceLabel={canShowPriceLabel}
+            showPrice={showPrice}
+            price={price}
+          />
         </View>
       </TouchableOpacity>
     </View>
   );
 }
+
+export default React.memo(ArtworkCard, areArtworkCardPropsEqual);

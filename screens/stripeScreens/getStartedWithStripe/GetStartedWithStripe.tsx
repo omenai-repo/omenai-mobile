@@ -1,16 +1,23 @@
-import { StyleSheet, Text, View, Linking, Platform, StatusBar } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Linking,
+  Platform,
+  StatusBar,
+} from "react-native";
 import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import Input from "components/inputs/Input";
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import { country_codes } from "json/country_alpha_2_codes";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { createConnectedAccount } from "services/stripe/createConnectedAccount";
-import WithModal from "components/modal/WithModal";
-import { useModalStore } from "store/modal/modalStore";
-import { createAccountLink } from "services/stripe/createAccountLink";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { colors } from "#config/colors.config";
+import Input from "#components/inputs/Input";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import { country_codes } from "#json/country_alpha_2_codes";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { createConnectedAccount } from "#services/stripe/createConnectedAccount";
+
+import { useModalStore } from "#store/modal/modalStore";
+import { createAccountLink } from "#services/stripe/createAccountLink";
+import ScrollWrapper from "#components/general/ScrollWrapper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const transformedCountryCodes = country_codes.map((item) => ({
@@ -19,13 +26,14 @@ const transformedCountryCodes = country_codes.map((item) => ({
 }));
 
 export default function GetStartedWithStripe() {
-  const [gallerySession, setGallerySession] = useState();
+  const [gallerySession, setGallerySession] = useState<any>();
   const [countrySelect, setCountrySelect] = useState<string>("");
 
   const { updateModal } = useModalStore();
 
   const [accountCreatePending, setAccountCreatePending] = useState(false);
-  const [accountLinkCreatePending, setAccountLinkCreatePending] = useState(false);
+  const [accountLinkCreatePending, setAccountLinkCreatePending] =
+    useState(false);
   const [connectedAccountId, setConnectedAccountId] = useState();
 
   useEffect(() => {
@@ -56,7 +64,8 @@ export default function GetStartedWithStripe() {
     if (res?.isOk) {
       setConnectedAccountId(res.account_id);
       updateModal({
-        message: "Connected account created successfully, Please continue with Onboarding",
+        message:
+          "Connected account created successfully, Please continue with Onboarding",
         modalType: "success",
         showModal: true,
       });
@@ -92,9 +101,16 @@ export default function GetStartedWithStripe() {
   }
 
   return (
-    <WithModal>
+    <>
       <SafeAreaView style={styles.safeArea}>
-        <View style={{ paddingHorizontal: 20, flexDirection: "row", gap: 5, alignSelf: "center" }}>
+        <View
+          style={{
+            paddingHorizontal: 20,
+            flexDirection: "row",
+            gap: 5,
+            alignSelf: "center",
+          }}
+        >
           <Text
             style={{
               fontSize: 20,
@@ -115,7 +131,10 @@ export default function GetStartedWithStripe() {
           </Text>
         </View>
       </SafeAreaView>
-      <ScrollWrapper style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+      <ScrollWrapper
+        style={styles.mainContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <Text>Let&apos;s get you setup to receive payments!</Text>
         <View style={[styles.form, { zIndex: 10 }]}>
           <Input
@@ -140,7 +159,9 @@ export default function GetStartedWithStripe() {
             value={countrySelect}
           />
         </View>
-        {(connectedAccountId || accountCreatePending || accountLinkCreatePending) && (
+        {(connectedAccountId ||
+          accountCreatePending ||
+          accountLinkCreatePending) && (
           <View style={{ marginTop: 20, gap: 7 }}>
             {connectedAccountId && (
               <>
@@ -148,15 +169,19 @@ export default function GetStartedWithStripe() {
                   Your connected account ID is: {connectedAccountId}{" "}
                 </Text>
                 <Text style={{ fontSize: 14, opacity: 0.7 }}>
-                  Hey, don&apos;t worry, we'll remember it for you!
+                  Hey, don&apos;t worry, we&apos;ll remember it for you!
                 </Text>
               </>
             )}
             {accountCreatePending && (
-              <Text style={{ fontSize: 14 }}>Creating a connected account for you...</Text>
+              <Text style={{ fontSize: 14 }}>
+                Creating a connected account for you...
+              </Text>
             )}
             {accountLinkCreatePending && (
-              <Text style={{ fontSize: 14 }}>Creating a new Account Link for you...</Text>
+              <Text style={{ fontSize: 14 }}>
+                Creating a new Account Link for you...
+              </Text>
             )}
           </View>
         )}
@@ -167,7 +192,6 @@ export default function GetStartedWithStripe() {
               onClick={handleCreateConnectAccount}
               isLoading={accountCreatePending}
               isDisabled={countrySelect.length < 1}
-              style={{ backgroundColor: "#0A2552" }}
             />
           )}
           {connectedAccountId && (
@@ -175,12 +199,11 @@ export default function GetStartedWithStripe() {
               value="Continue to stripe onboarding"
               onClick={handleAccountLink}
               isLoading={accountLinkCreatePending}
-              style={{ backgroundColor: "#0A2552" }}
             />
           )}
         </View>
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }
 

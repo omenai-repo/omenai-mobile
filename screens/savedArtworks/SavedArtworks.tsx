@@ -1,233 +1,182 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  RefreshControl,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import { fetchUserSavedArtworks } from "services/artworks/fetchUserSavedArtwork";
-import { UseSavedArtworksStore } from "store/artworks/SavedArtworksStore";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import Loader from "components/general/Loader";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { AntDesign } from "@expo/vector-icons";
-import { screenName } from "constants/screenNames.constants";
-import { utils_handleFetchUserID } from "utils/utils_asyncStorage";
-import useLikedState from "hooks/useLikedState";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { StackNavigationProp } from "@react-navigation/stack";
-import ScrollWrapper from "components/general/ScrollWrapper";
-import BlurStatusBar from "components/general/BlurStatusBar";
-import { useScrollY } from "hooks/useScrollY";
+import { Text, View, RefreshControl, useWindowDimensions } from "react-native";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import Loader from "#components/general/Loader";
+import { fetchUserSavedArtworks } from "#services/artworks/fetchUserSavedArtwork";
+import { SingleArtworkCardLoader } from "#components/general/ArtworkCardLoader";
+import { useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import tw from "twrnc";
+import ArtworkCard from "#components/artwork/ArtworkCard";
+import { FlashList } from "@shopify/flash-list";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-type SavedArtworkItemProps = {
-  name: string;
-  artistName: string;
-  url: string;
-  index: number;
-  art_id: string;
-  likeIds: string[];
-  impressions: number;
-  pricing: {
-    currency: string;
-    price: number;
-    shouldShowPrice: "Yes" | "No";
-    usd_price: number;
-  };
-};
+const H_PAD = 20;
+const COL_GAP = 16;
+
+const ListHeader = ({ totalCount }: { totalCount: number }) =>
+  totalCount > 0 ? (
+    <Text
+      style={tw`text-[11px] uppercase tracking-widest text-neutral-400 mb-3`}
+    >
+      {totalCount} {totalCount === 1 ? "artwork" : "artworks"} saved
+    </Text>
+  ) : null;
+
+const ListFooter = ({ isFetchingNextPage }: { isFetchingNextPage: boolean }) =>
+  isFetchingNextPage ? (
+    <Loader size={56} height={90} />
+  ) : (
+    <View style={tw`h-12`} />
+  );
+
+const ListEmpty = () => (
+  <View style={tw`flex-1 items-center justify-center py-24`}>
+    <View
+      style={tw`w-16 h-16 rounded-full bg-neutral-100 items-center justify-center mb-4`}
+    >
+      <Ionicons name="heart-outline" size={28} color="#a3a3a3" />
+    </View>
+    <Text style={tw`text-base font-semibold text-neutral-800 mb-1`}>
+      No saved artworks
+    </Text>
+    <Text style={tw`text-sm text-neutral-400 text-center px-8`}>
+      Tap the heart on any artwork to save it here.
+    </Text>
+  </View>
+);
 
 export default function SavedArtworks() {
-  const navigation = useNavigation<StackNavigationProp<any>>();
-
   const isFocused = useIsFocused();
+  const { width: screenW } = useWindowDimensions();
+  const cardW = useMemo(() => (screenW - H_PAD * 2 - COL_GAP) / 2, [screenW]);
 
-  const { isLoading, setIsLoading, data, setData } = UseSavedArtworksStore();
-  const [refreshing, setRefreshing] = useState(false);
-  const { scrollY, onScroll } = useScrollY();
-
-  const [sessionId, setSessionId] = useState("");
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["saved-artworks"],
+    queryFn: async ({ pageParam = 1 }) => {
+      const res = await fetchUserSavedArtworks(pageParam);
+      if (!res?.isOk) throw new Error("Failed to fetch saved artworks");
+      return res;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalPages = lastPage.count ?? 1;
+      const next = allPages.length + 1;
+      return next <= totalPages ? next : undefined;
+    },
+    staleTime: 10_000,
+  });
 
   useEffect(() => {
-    handleFetchUserSessionData();
-    handleFetchUserSavedArtorks();
-  }, [isFocused]);
-
-  const handleFetchUserSessionData = async () => {
-    const userId = await utils_handleFetchUserID();
-    setSessionId(userId);
-  };
-
-  const onRefresh = React.useCallback(() => {
-    // setRefreshing(true);
-    handleFetchUserSavedArtorks();
-  }, []);
-
-  const handleFetchUserSavedArtorks = async () => {
-    setIsLoading(true);
-    const results = await fetchUserSavedArtworks();
-    if (results?.isOk) {
-      setData(results.data);
+    if (isFocused) {
+      refetch();
     }
+  }, [isFocused, refetch]);
 
-    setIsLoading(false);
-  };
+  const flatData = useMemo(
+    () => (data?.pages || []).flatMap((p) => p.data ?? []),
+    [data?.pages],
+  );
 
-  const SavedArtworkItem = ({
-    name,
-    artistName,
-    url,
-    index,
-    art_id,
-    likeIds,
-    impressions,
-    pricing,
-  }: SavedArtworkItemProps) => {
-    let image_href = getImageFileView(url, 80);
+  const totalCount = data?.pages[0]?.total ?? 0;
 
-    const { handleLike } = useLikedState(
-      impressions,
-      likeIds,
-      sessionId,
-      art_id
-    );
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
-    const handleRemove = () => {
-      handleLike(false);
+  const loadNextPage = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-      //remove artwork from state
-      let prevData = data;
-      prevData.splice(index, 1);
-      setData(prevData);
-    };
-
-    return (
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate(screenName.artwork, { title: name, url })
-        }
-        activeOpacity={1}
-      >
-        <View style={styles.savedArtworkItem}>
-          <View style={{ flex: 1, flexDirection: "row", gap: 15 }}>
-            <Image
-              source={{ uri: image_href }}
-              style={styles.image}
-              resizeMode="contain"
-            />
-            <View style={{ paddingTop: 5 }}>
-              <Text style={{ fontSize: 16, color: colors.primary_black }}>
-                {name}
-              </Text>
-              <Text style={{ fontSize: 14, color: "#858585", marginTop: 2 }}>
-                {artistName}
-              </Text>
-              {pricing.shouldShowPrice === "Yes" && (
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.primary_black,
-                    marginTop: 5,
-                    fontWeight: 500,
-                  }}
-                >
-                  {utils_formatPrice(pricing.usd_price)}
-                </Text>
-              )}
-              <TouchableOpacity
-                onPress={handleRemove}
-                style={{ paddingTop: 5, flexWrap: "wrap" }}
-              >
-                <View
-                  style={[
-                    tw`rounded-lg flex-row items-center p-2.5 mt-2.5 gap-2`,
-                    { backgroundColor: "#f1f1f1" },
-                  ]}
-                >
-                  <AntDesign name="heart" color={"#ff0000"} size={14} />
-                  <Text style={{ fontSize: 12, color: colors.primary_black }}>
-                    Remove from saved
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  const renderItem = useCallback(
+    (info: { item: any }) => (
+      <View style={[tw`mb-4`, { width: cardW }]}>
+        <ArtworkCard
+          artwork={{
+            art_id: info.item.art_id,
+            title: info.item.title,
+            url: info.item.url,
+            artist: info.item.artist,
+            impressions: info.item.impressions,
+            like_IDs: info.item.like_IDs || [],
+            availability: info.item.availability,
+            image_format: info.item.image_format,
+            pricing: {
+              usd_price: info.item.pricing?.usd_price ?? 0,
+              shouldShowPrice: info.item.pricing?.shouldShowPrice ?? "No",
+            },
+          }}
+          width={cardW}
+          useImageLoadAspectRatio
+          useFixedImageFrame={false}
+          hideBackground
+        />
+      </View>
+    ),
+    [cardW],
+  );
 
   return (
-    <View style={styles.container}>
-      <BlurStatusBar scrollY={scrollY} intensity={80} tint="light" />
+    <View style={tw`flex-1 bg-white`}>
       <BackHeaderTitle title="Saved artworks" />
-      <ScrollWrapper
-        style={styles.mainContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        onScroll={onScroll}
-      >
-        {isLoading && <Loader />}
-        {data.length > 0 && !isLoading && (
-          <View style={styles.sectionContainer}>
-            {data.map((artwork, index) => (
-              <SavedArtworkItem
-                name={artwork.title}
-                artistName={artwork.artist}
-                url={artwork.url}
-                art_id={artwork.art_id}
-                likeIds={artwork.like_ids}
-                impressions={artwork.impressions}
-                index={index}
-                key={index}
-                pricing={artwork.pricing}
-              />
-            ))}
-          </View>
-        )}
-        {data.length === 0 && !isLoading && (
-          <View
-            style={{
-              height: 400,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text style={{ fontSize: 20 }}>No Saved Artworks</Text>
-          </View>
-        )}
-      </ScrollWrapper>
+
+      {isLoading && flatData.length === 0 ? (
+        <FlashList
+          data={[1, 2, 3, 4, 5, 6]}
+          numColumns={2}
+          masonry
+          renderItem={() => (
+            <View style={[tw`mb-4`, { width: cardW }]}>
+              <SingleArtworkCardLoader style={{ width: cardW }} />
+            </View>
+          )}
+          keyExtractor={(_, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: H_PAD,
+            paddingTop: 12,
+            paddingBottom: 32,
+          }}
+        />
+      ) : (
+        <FlashList
+          data={flatData}
+          numColumns={2}
+          masonry
+          keyExtractor={(item: any) => item.art_id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: H_PAD,
+            paddingTop: 12,
+            paddingBottom: 32,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#000"
+            />
+          }
+          onEndReached={loadNextPage}
+          onEndReachedThreshold={0.45}
+          ListHeaderComponent={<ListHeader totalCount={totalCount} />}
+          ListFooterComponent={<ListFooter isFetchingNextPage={isFetchingNextPage} />}
+          ListEmptyComponent={<ListEmpty />}
+        />
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  mainContainer: {
-    paddingHorizontal: 20,
-    marginTop: 15,
-    paddingTop: 15,
-    flex: 1,
-  },
-  sectionContainer: {
-    gap: 25,
-    marginBottom: 50,
-  },
-  savedArtworkItem: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  image: {
-    width: 80,
-    height: 100,
-    backgroundColor: "#f9f9f9",
-  },
-});

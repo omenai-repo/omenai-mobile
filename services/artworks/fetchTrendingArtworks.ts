@@ -1,31 +1,37 @@
-import { utils_getAsyncData } from "utils/utils_asyncStorage";
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
-export async function fetchTrendingArtworks({page, filters}:{page: number, filters: any}){
+export async function fetchTrendingArtworks({
+  page,
+  filters,
+}: {
+  page: number;
+  filters: any;
+}) {
+  try {
+    const response = await apiRequest(
+      `${apiUrl}/api/artworks/getTrendingArtworks`,
+      {
+        method: "POST",
+        body: JSON.stringify({ page, filters }),
+      },
+    ).then(async (res) => {
+      if (!res.ok) return undefined;
+      const result = await res.json();
 
-    try {
-        const response = await fetch(`${apiUrl}/api/artworks/getTrendingArtworks`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Origin': originHeader,
-                "User-Agent": userAgent,
-                "Authorization": authorization
-            },
-            body: JSON.stringify({ page, filters}),
-        })
-        .then(async (res) => {
-            if (!res.ok) return undefined;
-            const result = await res.json();
+      return result;
+    });
 
-            return result;
-        })
-
-        return response
-    }catch(error){
-        return {
-            isOk: false,
-            body: {message: 'Error fetching similar posts'}
-        }
-    }
+    return response;
+  } catch (error: any) {
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching trending artworks",
+      },
+    };
+  }
 }

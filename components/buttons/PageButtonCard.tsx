@@ -1,7 +1,7 @@
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
-import { rightArrowIcon, getRightArrowIcon } from "utils/SvgImages";
+import { rightArrowIcon, getRightArrowIcon } from "#utils/SvgImages";
 import tw from "twrnc";
 
 type PageButtonItemProps = {
@@ -36,19 +36,30 @@ export const PageButtonCard = ({
             <Text
               style={[
                 tw`text-base font-medium`,
-                { color: logout || isDanger ? "#DC2626" : colors.primary_black },
+                {
+                  color: logout || isDanger ? "#DC2626" : colors.primary_black,
+                },
               ]}
             >
               {name}
             </Text>
           </View>
           {subText && (
-            <Text style={[tw`text-sm mt-[10px]`, { color: isDanger ? "#991B1B" : "#00000099" }]}>
+            <Text
+              style={[
+                tw`text-sm mt-[10px]`,
+                { color: isDanger ? "#991B1B" : "#00000099" },
+              ]}
+            >
               {subText}
             </Text>
           )}
         </View>
-        {children || <SvgXml xml={isDanger ? getRightArrowIcon("#DC2626") : rightArrowIcon} />}
+        {children || (
+          <SvgXml
+            xml={isDanger ? getRightArrowIcon("#DC2626") : rightArrowIcon}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );

@@ -1,16 +1,18 @@
 import { Text, View } from "react-native";
 import React, { useState } from "react";
-import WithModal from "components/modal/WithModal";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import Input from "components/inputs/Input";
+
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import Input from "#components/inputs/Input";
 import GetCodeButton from "./GetCodeButton";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { validate } from "lib/validations/validatorGroup";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { validate } from "#lib/validations/validatorGroup";
 import { MaterialIcons } from "@expo/vector-icons";
-import { requestPasswordConfirmationCode } from "services/requests/requestConfirmationCode";
-import { updatePassword } from "services/requests/updatePassword";
-import { useModalStore } from "store/modal/modalStore";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import { requestPasswordConfirmationCode } from "#services/requests/requestConfirmationCode";
+import { updatePassword } from "#services/requests/updatePassword";
+import { useModalStore } from "#store/modal/modalStore";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import { useBiometrics, UserType } from "#hooks/useBiometrics";
+import { useAppStore } from "#store/app/appStore";
 
 export default function ChangeGalleryPassword({
   route,
@@ -31,14 +33,13 @@ export default function ChangeGalleryPassword({
   const [errorList, setErrorList] = useState<string[]>([]);
 
   const { updateModal } = useModalStore();
+  const { deleteCredentials } = useBiometrics();
+  const { userType } = useAppStore();
 
   function handleInputChange(name: string, value: string) {
     setErrorList([]);
-    const { success, errors }: { success: boolean; errors: string[] | [] } = validate(
-      value,
-      name,
-      info.password
-    );
+    const { success, errors }: { success: boolean; errors: string[] | [] } =
+      validate(value, name, info.password);
     if (!success) setErrorList(errors);
 
     setInfo((prev) => {
@@ -53,13 +54,13 @@ export default function ChangeGalleryPassword({
     if (response?.isOk) {
       updateModal({
         modalType: "success",
-        message: response.message,
+        message: response?.body?.message,
         showModal: true,
       });
     } else {
       updateModal({
         modalType: "error",
-        message: response?.message,
+        message: response?.body?.message,
         showModal: true,
       });
     }
@@ -72,21 +73,24 @@ export default function ChangeGalleryPassword({
     const response = await updatePassword(info.password, info.code, routeName);
 
     if (response?.isOk) {
-      updateModal({
-        modalType: "success",
-        message: response.message,
-        showModal: true,
-      });
+      if (userType) await deleteCredentials(userType as UserType);
       setInfo({
         password: "",
         confirmPassword: "",
         code: "",
       });
-      navigation.goBack();
+      updateModal({
+        modalType: "success",
+        message: response?.body?.message,
+        showModal: true,
+        onDismiss: () => {
+          navigation.goBack();
+        },
+      });
     } else {
       updateModal({
         modalType: "error",
-        message: response?.message,
+        message: response?.body?.message,
         showModal: true,
       });
     }
@@ -95,7 +99,7 @@ export default function ChangeGalleryPassword({
   }
 
   return (
-    <WithModal>
+    <>
       <BackHeaderTitle title="Change password" />
       <ScrollWrapper
         style={{
@@ -116,9 +120,13 @@ export default function ChangeGalleryPassword({
             label="Confirm password"
             value={info.confirmPassword}
             placeHolder="Confirm your new password"
-            onInputChange={(value) => handleInputChange("confirmPassword", value)}
+            onInputChange={(value) =>
+              handleInputChange("confirmPassword", value)
+            }
           />
-          <View style={{ flexDirection: "row", gap: 10, alignItems: "flex-end" }}>
+          <View
+            style={{ flexDirection: "row", gap: 10, alignItems: "flex-end" }}
+          >
             <View style={{ flex: 1 }}>
               <Input
                 label="Confirmation code"
@@ -154,7 +162,9 @@ export default function ChangeGalleryPassword({
                     }}
                   >
                     <MaterialIcons name="error" color={"#ff000080"} />
-                    <Text style={{ fontSize: 12, color: "#ff000080" }}>{error}</Text>
+                    <Text style={{ fontSize: 12, color: "#ff000080" }}>
+                      {error}
+                    </Text>
                   </View>
                 );
               })}
@@ -172,6 +182,6 @@ export default function ChangeGalleryPassword({
           isLoading={loading}
         />
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }

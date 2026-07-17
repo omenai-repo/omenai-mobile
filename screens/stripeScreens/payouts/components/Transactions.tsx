@@ -1,9 +1,9 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import TransactionCard from './TransactionCard';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
-import { formatIntlDateTime } from 'utils/utils_formatIntlDateTime';
-import { convertPriceStringToNumber } from 'utils/utils_priceStringToNumberConverter';
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import TransactionCard from "./TransactionCard";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
+import { PurchaseTransactionModelSchemaTypes } from "#types/types";
 
 type TransactionsTableProps = {
   transactions: (PurchaseTransactionModelSchemaTypes & {
@@ -25,10 +25,11 @@ export default function Transactions({ transactions }: TransactionsTableProps) {
         date: formatIntlDateTime(transaction.trans_date),
         gross: utils_formatPrice(transaction.trans_pricing.unit_price),
         net: utils_formatPrice(
-          transaction.trans_pricing.unit_price - transaction.trans_pricing.commission,
+          transaction.trans_pricing.unit_price -
+            transaction.trans_pricing.commission,
         ),
         commission: transaction.trans_pricing.commission,
-        status: 'Completed',
+        status: "Completed",
       };
       return table;
     },
@@ -43,6 +44,7 @@ export default function Transactions({ transactions }: TransactionsTableProps) {
             id={data.id}
             gross={data.gross} //fix gross
             net={data.net}
+            date={data.date}
             key={index}
           />
         ))}

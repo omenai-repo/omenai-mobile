@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { GalleryProfileUpdateData } from "#types/types";
 
 type GalleryProfileUpdateStoreTypes = {
   updateData: GalleryProfileUpdateData;
@@ -19,5 +20,5 @@ export const galleryProfileUpdate = create<GalleryProfileUpdateStoreTypes>(
     clearData: () => {
       set({ updateData: {} });
     },
-  })
+  }),
 );

@@ -1,9 +1,17 @@
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { colors } from "config/colors.config";
-import { Animated, Image, Platform, ScrollView, useWindowDimensions, View } from "react-native";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { colors } from "#config/colors.config";
+import {
+  Animated,
+  Image,
+  Platform,
+  ScrollView,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import tw from "twrnc";
+import { useDevice } from "#hooks/useDevice";
 
 type onBoardingSectionProps = {
   data: { title: string; image: any; subText: string };
@@ -20,6 +28,7 @@ export default function OnBoardingSection({
 }: onBoardingSectionProps) {
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const { isTablet } = useDevice();
 
   // Animation values
   const titleTranslateX = useRef(new Animated.Value(50)).current;
@@ -48,7 +57,7 @@ export default function OnBoardingSection({
       }),
     ]).start();
 
-    // Animate subText with slight delay (opacity to 0.7 to match original style)
+    // Animate subText with slight delay
     Animated.parallel([
       Animated.timing(subTextTranslateX, {
         toValue: 0,
@@ -87,9 +96,9 @@ export default function OnBoardingSection({
         />
         <View style={[tw`absolute w-full`, { top: insets.top }]}>
           <View style={tw`w-full flex-row items-center gap-2.5 px-5`}>
-            {[0, 1, 2].map((i) => (
+            {[0, 1].map((i) => (
               <View
-                style={tw`h-1 bg-white rounded-xl ${
+                style={tw`h-1 bg-white rounded-sm ${
                   i <= currentIndex ? "opacity-100" : "opacity-30"
                 } flex-1`}
                 key={i}
@@ -98,7 +107,16 @@ export default function OnBoardingSection({
           </View>
         </View>
       </ScrollView>
-      <View style={[tw`px-8 pt-6`]}>
+      <View
+        style={[
+          tw`px-8 pt-6`,
+          isTablet && {
+            alignSelf: "center",
+            width: "100%",
+            maxWidth: 500,
+          },
+        ]}
+      >
         <Animated.Text
           style={[
             tw`text-3xl font-medium mb-1.5`,
@@ -124,9 +142,9 @@ export default function OnBoardingSection({
         </Animated.Text>
         <View style={tw`gap-3 mt-6`}>
           <LongBlackButton
-            value="Next"
+            value="Continue"
             onClick={() => {
-              if (currentIndex === 2) {
+              if (currentIndex === 1) {
                 onFinish();
               } else {
                 handleNext();
@@ -137,9 +155,13 @@ export default function OnBoardingSection({
             textStyle={{ fontSize: 16, fontWeight: "600" }}
           />
           <LongBlackButton
-            value="Sign Up"
+            value="Skip"
             onClick={onFinish}
-            style={{ height: 48, backgroundColor: "#E0E0E0", marginBottom: insets.bottom + 10 }}
+            style={{
+              height: 48,
+              backgroundColor: "#E0E0E0",
+              marginBottom: insets.bottom + 10,
+            }}
             textStyle={{ fontSize: 16, fontWeight: "600", color: colors.black }}
           />
         </View>

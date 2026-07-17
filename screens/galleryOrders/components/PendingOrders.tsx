@@ -3,17 +3,17 @@ import React from "react";
 import {
   galleryOrderModalStore,
   galleryOrderModalTypes,
-} from "store/modal/galleryModalStore";
+} from "#store/modal/galleryModalStore";
 import OrderCard from "./OrderCard";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import Divider from "components/general/Divider";
-import { utils_getColors } from "utils/utils_sortFunctions";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import Divider from "#components/general/Divider";
+import { utils_getColors } from "#utils/utils_sortFunctions";
 
 export type OrdersListingProps = {
   readonly data: any[];
   readonly handleOpenModal: (
     modalType: galleryOrderModalTypes,
-    order_id: string
+    order_id: string,
   ) => void;
 };
 
@@ -39,6 +39,7 @@ export default function PendingOrders({
             setArtworkDetails({
               url: item.artwork_data.url,
               type: "pending",
+              art_id: item.artwork_data.art_id,
               details: [
                 { label: "Artwork title", value: item.artwork_data.title },
                 { label: "Artist name", value: item.artwork_data.artist },

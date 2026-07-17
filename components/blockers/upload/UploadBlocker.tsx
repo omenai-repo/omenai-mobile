@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { paletteIcon, clockIcon, arrowLeftIcon } from "utils/SvgImages";
+import { paletteIcon, clockIcon, arrowLeftIcon } from "#utils/SvgImages";
 
 /**
  * Props for the Blocker Screen
@@ -46,7 +46,7 @@ export default function UploadBlocker({
           duration: 4000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Pulse animation for blob 2
@@ -62,7 +62,7 @@ export default function UploadBlocker({
           duration: 5000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Rotation animation for palette icon
@@ -71,7 +71,7 @@ export default function UploadBlocker({
         toValue: 1,
         duration: 20000,
         useNativeDriver: true,
-      })
+      }),
     ).start();
   }, [pulseAnim1, pulseAnim2, rotateAnim]);
 
@@ -94,7 +94,7 @@ export default function UploadBlocker({
       }
 
       const hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
       );
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
@@ -158,7 +158,7 @@ export default function UploadBlocker({
             style={tw`absolute inset-0 bg-[#2A9EDF] rounded-full opacity-20`}
           />
           <View
-            style={tw`relative w-20 h-20 bg-[#0f172a] border border-[#47748E]/30 rounded-2xl items-center justify-center shadow-2xl`}
+            style={tw`relative w-20 h-20 bg-[#0f172a] border border-[#47748E]/30 rounded-sm items-center justify-center shadow-2xl`}
           >
             <Animated.View
               style={{
@@ -203,7 +203,7 @@ export default function UploadBlocker({
               {/* Hours */}
               <View style={tw`flex-1 items-center`}>
                 <View
-                  style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-lg w-full h-20 items-center justify-center overflow-hidden`}
+                  style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-sm w-full h-20 items-center justify-center overflow-hidden`}
                 >
                   <Text style={tw`text-[32px] font-light text-white`}>
                     {timeLeft.hours}
@@ -222,7 +222,7 @@ export default function UploadBlocker({
               {/* Minutes */}
               <View style={tw`flex-1 items-center`}>
                 <View
-                  style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-lg w-full h-20 items-center justify-center overflow-hidden`}
+                  style={tw`relative bg-[#0f172a]/50 border border-[#47748E]/20 rounded-sm w-full h-20 items-center justify-center overflow-hidden`}
                 >
                   <Text style={tw`text-[32px] font-light text-white`}>
                     {timeLeft.minutes}
@@ -241,7 +241,7 @@ export default function UploadBlocker({
               {/* Seconds */}
               <View style={tw`flex-1 items-center`}>
                 <View
-                  style={tw`relative bg-[#0f172a]/50 border border-[#2A9EDF]/30 rounded-lg w-full h-20 items-center justify-center overflow-hidden shadow-lg`}
+                  style={tw`relative bg-[#0f172a]/50 border border-[#2A9EDF]/30 rounded-sm w-full h-20 items-center justify-center overflow-hidden shadow-lg`}
                 >
                   <Text style={tw`text-[32px] font-medium text-[#2A9EDF]`}>
                     {timeLeft.seconds}

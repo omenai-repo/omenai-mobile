@@ -1,37 +1,42 @@
-import {
-  View,
-  Text,
-  Pressable,
-  useWindowDimensions,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { View, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import tw from "twrnc";
-import Input from "components/inputs/Input";
-import { validate } from "lib/validations/validatorGroup";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import BackFormButton from "components/buttons/BackFormButton";
-import { verifyAddress } from "services/register/verifyAddress";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
-import { useModalStore } from "store/modal/modalStore";
+import Input from "#components/inputs/Input";
+import { validate } from "#lib/validations/validatorGroup";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import { verifyAddress } from "#services/register/verifyAddress";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import { useModalStore } from "#store/modal/modalStore";
 import { debounce } from "lodash";
-import AuthModal from "components/auth/AuthModal";
-import { checkMarkIcon, errorIcon } from "utils/SvgImages";
-import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
-import { Country, State, City, ICountry, IState, ICity } from "country-state-city";
-import { useAppStore } from "store/app/appStore";
+import AuthModal from "#components/auth/AuthModal";
+import { checkMarkIcon, errorIcon } from "#utils/SvgImages";
+import {
+  Country,
+  State,
+  City,
+  ICountry,
+  IState,
+  ICity,
+} from "country-state-city";
+import { useAppStore } from "#store/app/appStore";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { updateProfile } from "#services/update/updateProfile";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import { useNavigation } from "@react-navigation/native";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import { updateProfile } from "services/update/updateProfile";
-import { logout } from "utils/logout.utils";
+import AlertCard from "#components/general/AlertCard";
+import { colors } from "#config/colors.config";
+import { artist_countries_codes_currency } from "#data/artist_countries_codes_currency";
+import { updateArtistAddress } from "#services/update/updateArtistAddress";
+import { fetchArtistProfile } from "#services/artist/fetchArtistProfile";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditAddressScreen = () => {
+  const { userSession, userType, setUserSession } = useAppStore();
   const navigation = useNavigation<any>();
-  const { height, width } = useWindowDimensions();
-  const { userSession } = useAppStore();
-  const [formErrors, setFormErrors] = useState<Partial<AddressTypes & { phone: string }>>({
+  const queryClient = useQueryClient();
+  const [formErrors, setFormErrors] = useState<
+    Partial<AddressTypes & { phone: string }>
+  >({
     address_line: "",
     city: "",
     country: "",
@@ -42,18 +47,30 @@ const EditAddressScreen = () => {
   });
   const [showModal, setShowModal] = useState(false);
   const [addressVerified, setAddressVerified] = useState(false);
-  const [countryCode, setCountryCode] = useState(userSession.address.countryCode || "");
+  const [countryCode, setCountryCode] = useState(
+    userSession.address.countryCode || "",
+  );
   const [country, setCountry] = useState(userSession.address.country || "");
   const [stateName, setStateName] = useState(userSession.address.state || "");
-  const [stateCode, setStateCode] = useState(userSession.address.stateCode || "");
-  const [city, setCity] = useState(userSession.address.city || "");
-  const [addressLine, setAddressLine] = useState(userSession.address.address_line || "");
-  const [zipCode, setZipCode] = useState(userSession.address.zip || "");
-  const [stateData, setStateData] = useState<{ label: string; value: string; isoCode?: string }[]>(
-    []
+  const [stateCode, setStateCode] = useState(
+    userSession.address.stateCode || "",
   );
-  const [cityData, setCityData] = useState<{ label: string; value: string }[]>([]);
+  const [city, setCity] = useState(userSession.address.city || "");
+  const [addressLine, setAddressLine] = useState(
+    userSession.address.address_line || "",
+  );
+  const [zipCode, setZipCode] = useState(userSession.address.zip || "");
+  const [stateData, setStateData] = useState<
+    { label: string; value: string; isoCode?: string }[]
+  >([]);
+  const [cityData, setCityData] = useState<{ label: string; value: string }[]>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedBaseCurrency, setSelectedBaseCurrency] = useState(
+    userSession.base_currency || "",
+  );
+  const fallbackLocationNameRef = useRef("");
 
   const { updateModal } = useModalStore();
 
@@ -67,7 +84,7 @@ const EditAddressScreen = () => {
       state: userSession.address.state || "",
       stateCode: userSession.address.stateCode || "",
     }),
-    [userSession]
+    [userSession],
   );
 
   const hasAddressChanged = useMemo(() => {
@@ -80,7 +97,16 @@ const EditAddressScreen = () => {
       stateName !== originalAddress.state ||
       stateCode !== originalAddress.stateCode
     );
-  }, [addressLine, city, zipCode, country, countryCode, stateName, stateCode, originalAddress]);
+  }, [
+    addressLine,
+    city,
+    zipCode,
+    country,
+    countryCode,
+    stateName,
+    stateCode,
+    originalAddress,
+  ]);
 
   useEffect(() => {
     if (countryCode) {
@@ -93,22 +119,33 @@ const EditAddressScreen = () => {
       setStateData(mappedStates);
 
       const selectedState = mappedStates.find(
-        (s) => s.value === stateName || s.isoCode === stateCode
+        (s) => s.value === stateName || s.isoCode === stateCode,
       );
       if (selectedState?.isoCode) {
+        fallbackLocationNameRef.current = selectedState.value;
         fetchCities(countryCode, selectedState.isoCode);
       }
     }
   }, [countryCode]);
 
-  const transformedCountries = useMemo(
-    () =>
-      Country.getAllCountries().map((item: ICountry) => ({
-        value: item.isoCode,
-        label: item.name,
-      })),
-    []
-  );
+  const transformedCountries = useMemo(() => {
+    if (userType === "artist") {
+      return [...artist_countries_codes_currency]
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+        )
+        .map((item) => ({
+          value: item.alpha2,
+          label: item.name,
+          currency: item.currency,
+        }));
+    }
+
+    return Country.getAllCountries().map((item: ICountry) => ({
+      value: item.isoCode,
+      label: item.name,
+    }));
+  }, [userType]);
 
   const handleCountrySelect = (item: { label: string; value: string }) => {
     setCountry(item.label);
@@ -120,6 +157,12 @@ const EditAddressScreen = () => {
     setAddressLine("");
     setStateData([]);
     setCityData([]);
+    const selectedCountryMeta = transformedCountries.find(
+      (countryItem) => countryItem.value === item.value,
+    ) as { currency?: string } | undefined;
+    if (selectedCountryMeta?.currency) {
+      setSelectedBaseCurrency(selectedCountryMeta.currency);
+    }
 
     const getStates = State.getStatesOfCountry(item.value);
     if (getStates) {
@@ -128,29 +171,55 @@ const EditAddressScreen = () => {
           label: s.name,
           value: s.name,
           isoCode: s.isoCode,
-        }))
+        })),
       );
     }
   };
 
   // 🚀 **Debounced Fetch Cities Function**
-  const fetchCities = useCallback(
-    debounce((countryCode, stateValue) => {
-      const getCities = City.getCitiesOfState(countryCode, stateValue);
-      setCityData(
-        getCities?.map((city: ICity) => ({
-          label: city.name,
-          value: city.name,
-        })) || []
-      );
-    }, 300),
-    []
+  const fetchCities = useMemo(
+    () =>
+      debounce((countryCode: string, stateValue: string) => {
+        const getCities = City.getCitiesOfState(countryCode, stateValue);
+        const mappedCities =
+          getCities?.map((city: ICity) => ({
+            label: city.name,
+            value: city.name,
+          })) || [];
+
+        // UK and similar edge cases can have admin regions without nested cities.
+        // Fallback to using the selected state/county as the city option.
+        if (mappedCities.length === 0 && fallbackLocationNameRef.current) {
+          setCityData([
+            {
+              label: fallbackLocationNameRef.current,
+              value: fallbackLocationNameRef.current,
+            },
+          ]);
+          return;
+        }
+
+        setCityData(mappedCities);
+      }, 300),
+    [],
   );
 
+  useEffect(() => {
+    return () => {
+      // cancel any pending debounced calls on unmount
+      (fetchCities as unknown as { cancel?: () => void }).cancel?.();
+    };
+  }, [fetchCities]);
+
   // 🚀 **Handle State Selection**
-  const handleStateSelect = (item: { label: string; value: string; isoCode?: string }) => {
+  const handleStateSelect = (item: {
+    label: string;
+    value: string;
+    isoCode?: string;
+  }) => {
     if (item.value !== stateName) {
       setStateName(item.value);
+      fallbackLocationNameRef.current = item.value;
       if (item.isoCode) {
         setStateCode(item.isoCode);
       }
@@ -166,7 +235,8 @@ const EditAddressScreen = () => {
   };
 
   const checkIsDisabled = () => {
-    const isFormValid = formErrors && Object.values(formErrors).every((error) => error === "");
+    const isFormValid =
+      formErrors && Object.values(formErrors).every((error) => error === "");
     const areAllFieldsFilled = Object.values({
       address_line: addressLine,
       city: city,
@@ -178,19 +248,22 @@ const EditAddressScreen = () => {
     return !(isFormValid && areAllFieldsFilled && hasAddressChanged);
   };
 
-  const handleValidationChecks = debounce((label: string, value: string, confirm?: string) => {
-    // Clear error if the input is empty
-    if (value.trim() === "") {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-      return;
-    }
+  const handleValidationChecks = debounce(
+    (label: string, value: string, confirm?: string) => {
+      // Clear error if the input is empty
+      if (value.trim() === "") {
+        setFormErrors((prev) => ({ ...prev, [label]: "" }));
+        return;
+      }
 
-    const { success, errors } = validate(value, label, confirm);
-    setFormErrors((prev) => ({
-      ...prev,
-      [label]: errors.length > 0 ? errors[0] : "",
-    }));
-  }, 500); // ✅ Delay validation by 500ms
+      const { success, errors } = validate(value, label, confirm);
+      setFormErrors((prev) => ({
+        ...prev,
+        [label]: errors.length > 0 ? errors[0] : "",
+      }));
+    },
+    500,
+  ); // ✅ Delay validation by 500ms
 
   const handleSubmit = async () => {
     if (!hasAddressChanged) return;
@@ -209,7 +282,10 @@ const EditAddressScreen = () => {
       setIsLoading(false);
 
       if (response?.isOk) {
-        if (response?.body?.data?.address && response.body.data.address.length !== 0) {
+        if (
+          response?.body?.data?.address &&
+          response.body.data.address.length !== 0
+        ) {
           setShowModal(true);
           setAddressVerified(true);
         } else {
@@ -220,22 +296,15 @@ const EditAddressScreen = () => {
         setShowModal(true);
         setAddressVerified(false);
       }
-    } catch (error) {
-      console.error("Error verifying address:", error);
+    } catch (error: any) {
       updateModal({
-        message: "Network error, please check your connection and try again.",
+        message: error?.message || error?.body?.message || "Network error, please check your connection and try again.",
         modalType: "error",
         showModal: true,
       });
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const signOut = () => {
-    setTimeout(() => {
-      logout();
-    }, 3500);
   };
 
   const handleUpdate = async () => {
@@ -252,16 +321,52 @@ const EditAddressScreen = () => {
         stateCode: stateCode,
       },
     };
-    const result = await updateProfile("individual", data, userSession.id);
+    const routeType = userType === "user" ? "individual" : userType;
+    const result =
+      userType === "artist"
+        ? await updateArtistAddress({
+          artist_id: userSession.id,
+          base_currency: selectedBaseCurrency || userSession.base_currency,
+          address: data.address,
+        })
+        : await updateProfile(routeType as any, data, userSession.id);
 
     if (result.isOk) {
+      let updatedSession = {
+        ...userSession,
+        address: { ...userSession.address, ...data.address },
+      };
+
+      if (userType === "artist") {
+        const profileResponse = await fetchArtistProfile(userSession.id);
+        if (profileResponse?.isOk && profileResponse?.data) {
+          updatedSession = {
+            ...updatedSession,
+            address: profileResponse.data.address || updatedSession.address,
+            base_currency:
+              profileResponse.data.base_currency || updatedSession.base_currency,
+          };
+        }
+      }
+      setUserSession(updatedSession);
+      await utils_storeAsyncData("userSession", JSON.stringify(updatedSession));
+
+      // Prevent stale wallet/account flashes after address changes.
+      await queryClient.cancelQueries({ queryKey: ["wallet", "artist"] });
+      queryClient.removeQueries({ queryKey: ["wallet", "artist"] });
+      queryClient.removeQueries({ queryKey: ["wallet", "artist", "txns"] });
+
       setIsLoading(false);
+
       updateModal({
-        message: "Address updated successfully, sign in to view update",
+        message:
+          userType === "artist" && countryCode !== originalAddress.countryCode
+            ? "Address updated successfully. Withdrawal account has been reset due to country change."
+            : "Address updated successfully",
         modalType: "success",
         showModal: true,
+        onDismiss: () => navigation.goBack(),
       });
-      signOut();
     } else {
       setIsLoading(false);
       updateModal({
@@ -270,6 +375,12 @@ const EditAddressScreen = () => {
         showModal: true,
       });
     }
+  };
+
+  const getAddressPlaceholder = () => {
+    if (userType === "gallery") return "Input your gallery address here";
+    if (userType === "artist") return "Input your studio address here";
+    return "Input your residential address here";
   };
 
   return (
@@ -309,19 +420,17 @@ const EditAddressScreen = () => {
               dropdownPosition="bottom"
             />
 
-            <View style={tw`flex-row`}>
-              <Input
-                label="Address"
-                keyboardType="default"
-                onInputChange={(text) => {
-                  setAddressLine(text);
-                  handleValidationChecks("general", text);
-                }}
-                placeHolder="Input your gallery address here"
-                value={addressLine}
-                errorMessage={formErrors?.address_line}
-              />
-            </View>
+            <Input
+              label="Address"
+              keyboardType="default"
+              onInputChange={(text) => {
+                setAddressLine(text);
+                handleValidationChecks("general", text);
+              }}
+              placeHolder={getAddressPlaceholder()}
+              value={addressLine}
+              errorMessage={formErrors?.address_line}
+            />
 
             <View style={tw`flex-row items-center gap-[30px]`}>
               <View style={tw`flex-1`}>
@@ -356,6 +465,20 @@ const EditAddressScreen = () => {
                 />
               </View>
             </View>
+
+            <AlertCard
+              title="Please note"
+              description={
+                userType === "user"
+                  ? "Changing your address will only apply to future orders. Any orders that are currently being processed or have already been shipped will be delivered to your previous address."
+                  : "Changing your address will only apply to future orders. Any orders that are currently being processed will be picked up from your current Address."
+              }
+              style={tw`mb-0`}
+              borderColor="#FFBF00"
+              iconColor="#FFBF00"
+              backgroundColor="#FFBF001A"
+              titleColor={colors.black}
+            />
 
             <View style={tw`flex-1 mt-[20px]`}>
               <FittedBlackButton

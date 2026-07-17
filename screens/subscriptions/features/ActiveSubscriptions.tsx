@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
-import { View, ScrollView } from 'react-native';
-import tw from 'twrnc';
-import { PaymentMethod } from '@stripe/stripe-js';
-import { BillingCard } from '../components/BillingCard';
-import SubDetail from '../components/SubDetail';
-import UpcomingSub from '../components/UpcomingSub';
-import BillingInfo from '../components/BillingInfo';
-import TransactionsListing from '../components/TransactionsListing';
-import CancelSubscriptionModal from '../components/CancelSubscriptionModal';
+import React, { useState } from "react";
+import { View, ScrollView } from "react-native";
+import tw from "twrnc";
+import { PaymentMethod } from "@stripe/stripe-js";
+import { BillingCard } from "../components/BillingCard";
+import SubDetail from "../components/SubDetail";
+import UpcomingSub from "../components/UpcomingSub";
+import BillingInfo from "../components/BillingInfo";
+import TransactionsListing from "../components/TransactionsListing";
+import CancelSubscriptionModal from "../components/CancelSubscriptionModal";
 
 type SubscriptionActiveThemeProps = {
   subscription_data: any & { createdAt: string; updatedAt: string };
-  subscription_plan: any & { createdAt: string; updatedAt: string; plan_id: string };
+  subscription_plan: any & {
+    createdAt: string;
+    updatedAt: string;
+    plan_id: string;
+  };
 };
 
 export default function SubscriptionActiveThemeRN({
@@ -20,7 +24,10 @@ export default function SubscriptionActiveThemeRN({
 }: SubscriptionActiveThemeProps) {
   const [open, setOpen] = useState(false);
   return (
-    <ScrollView contentContainerStyle={tw`px-4 py-5`} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={tw`px-4 py-5`}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={tw`w-full`}>
         {/* responsive grid substitute using stacked blocks */}
         <View style={tw`gap-4`}>
@@ -31,7 +38,10 @@ export default function SubscriptionActiveThemeRN({
               plan_interval={subscription_data.plan_details.interval}
             />
 
-            <SubDetail sub_data={subscription_data} onOpenCancelModal={() => setOpen(true)} />
+            <SubDetail
+              sub_data={subscription_data}
+              onOpenCancelModal={() => setOpen(true)}
+            />
           </View>
 
           <View style={tw`gap-3`}>

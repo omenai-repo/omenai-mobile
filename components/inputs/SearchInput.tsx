@@ -1,64 +1,49 @@
-import { StyleSheet, TouchableOpacity, View, TextInput, Text } from 'react-native';
-import React from 'react';
-import { colors } from '../../config/colors.config';
-import { useSearchStore } from 'store/search/searchStore';
-import { useNavigation } from '@react-navigation/native';
-import { screenName } from 'constants/screenNames.constants';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { TouchableOpacity, View, TextInput, Text } from "react-native";
+import React from "react";
+import tw from "twrnc";
+import { colors } from "#config/colors.config";
+import { useSearchStore } from "#store/search/searchStore";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "#constants/screenNames.constants";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 export default function SearchInput() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { searchQuery, setSearchQuery } = useSearchStore();
+  const { searchQuery, setSearchQuery, setSubmittedQuery } = useSearchStore();
 
   const handleSearch = () => {
-    if (searchQuery.length > 0) {
+    if (searchQuery.trim().length > 0) {
+      setSubmittedQuery(searchQuery.trim());
       navigation.navigate(screenName.searchResults);
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        tw`h-[55px] bg-[#FAFAFA] border border-neutral-100 pl-4 pr-1.5 py-1.5 flex-row items-center rounded-sm`,
+      ]}
+    >
       <TextInput
-        style={styles.input}
+        style={tw`flex-1 h-full font-sans-regular text-base mr-3`}
         placeholder="Ask Omenai"
-        placeholderTextColor={'#858585'}
+        placeholderTextColor={"#858585"}
         value={searchQuery}
         onChangeText={setSearchQuery}
         onSubmitEditing={handleSearch}
         returnKeyType="search"
+        testID="search-input"
       />
-      <TouchableOpacity style={styles.searchButton} activeOpacity={0.5} onPress={handleSearch}>
-        <Text style={{ fontSize: 14, color: colors.white }}>Search</Text>
+      <TouchableOpacity
+        style={[
+          tw`h-full rounded-sm items-center justify-center px-5`,
+          { backgroundColor: colors.primary_black },
+        ]}
+        activeOpacity={0.5}
+        onPress={handleSearch}
+      >
+        <Text style={tw`text-base font-sans-medium text-white`}>Search</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 55,
-    backgroundColor: '#FAFAFA',
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 15,
-    borderRadius: 30,
-  },
-  input: {
-    flex: 1,
-    paddingVertical: 10,
-    fontSize: 16,
-    paddingLeft: 15,
-  },
-  searchButton: {
-    height: '100%',
-    backgroundColor: colors.primary_black,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-});

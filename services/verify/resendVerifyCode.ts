@@ -1,18 +1,16 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { RouteIdentifier } from "#types/types";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function resendVerifyCode(route: RouteIdentifier, id: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/requests/${route}/verify/resend`, {
-      method: 'POST',
-      body: JSON.stringify({ author: id }),
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const res = await apiRequest(
+      `${apiUrl}/api/requests/${route}/verify/resend`,
+      {
+        method: "POST",
+        body: JSON.stringify({ author: id }),
       },
-    });
-    console.log(await res.json(), 'response');
+    );
     const data: { message: string } = await res.json();
     const response = {
       isOk: res.ok,
@@ -20,10 +18,15 @@ export async function resendVerifyCode(route: RouteIdentifier, id: string) {
     };
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: 'Error sending code, try again later' },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error sending code, try again later",
+      },
     };
   }
 }

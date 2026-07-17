@@ -1,16 +1,16 @@
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
-import CloseButton from "components/buttons/CloseButton";
-import { useModalStore } from "store/modal/modalStore";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { colors } from "config/colors.config";
-import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
-import { useAppStore } from "store/app/appStore";
-import { cancelSubscription } from "services/subscriptions/cancelSubscription";
+import CloseButton from "#components/buttons/CloseButton";
+import { useModalStore } from "#store/modal/modalStore";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { colors } from "#config/colors.config";
+import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
+import { useAppStore } from "#store/app/appStore";
+import { cancelSubscription } from "#services/subscriptions/cancelSubscription";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 
 export default function CancelSubscriptionModal() {
   const navigation = useNavigation<StackNavigationProp<any>>();

@@ -1,23 +1,41 @@
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text } from "react-native";
-import React, { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import tw from "twrnc";
-import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { updateShippingQuote } from "services/orders/updateShippingQuote";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { updateShippingQuote } from "#services/orders/updateShippingQuote";
+import { updateOrderPickupAddress } from "#services/orders/updateOrderPickupAddress";
 import { useQueryClient } from "@tanstack/react-query";
-import { useModalStore } from "store/modal/modalStore";
+import { useModalStore } from "#store/modal/modalStore";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import WithModal from "components/modal/WithModal";
-import { validateOrderMeasurement } from "lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
-import { useAppStore } from "store/app/appStore";
-import { convertDimensionsToStandard } from "utils/convertUnits";
-import { format } from "date-fns";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import ToggleButton from "components/forms/ToggleButton";
-import DimensionInput from "components/forms/DimensionInput";
-import UnitDropdownField from "components/forms/UnitDropdownField";
+
+import { screenName } from "#constants/screenNames.constants";
+import {
+  getGalleryOrdersSubscriptionNotice,
+  useGallerySubscriptionActiveForOrders,
+} from "#hooks/useGallerySubscriptionActiveForOrders";
+import { validateOrderMeasurement } from "#lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
+import { useAppStore } from "#store/app/appStore";
+import { Analytics } from "#utils/analytics";
+import PackagingSelector from "#components/packaging/PackagingSelector";
+import { PackagingType } from "#constants/packaging_data";
+import {
+  checkCarrierLimit,
+  checkIfRolledPassesLimit,
+} from "#utils/shippingLimits";
+import CarrierInterventionCard from "#components/packaging/CarrierInterventionCard";
+import ExclusivityCheck from "./components/dimensions/ExclusivityCheck";
+import CustomDimensionsInput from "./components/dimensions/CustomDimensionsInput";
+import SelectedDimensionsSummary from "./components/dimensions/SelectedDimensionsSummary";
+import ExhibitionOptions from "./components/dimensions/ExhibitionOptions";
+import AgreementSection from "./components/dimensions/AgreementSection";
+import CarrierNoteInput from "./components/dimensions/CarrierNoteInput";
 
 type ArtworkDimensionsErrorsType = {
   height: string;
@@ -26,16 +44,23 @@ type ArtworkDimensionsErrorsType = {
   weight: string;
 };
 
-type DimensionUnit = "cm" | "m" | "in" | "ft";
-type WeightUnit = "kg" | "g" | "lb";
-
 const DimensionsDetails = () => {
   const { userType } = useAppStore();
-  const { orderId } = useRoute<any>().params;
-  const navigation = useNavigation();
-  const [dimensionUnit, setDimensionUnit] = useState<DimensionUnit>("cm");
-  const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
-  const [dimentions, setDimentions] = useState({
+  const {
+    orderId,
+    artworkDimensions,
+    exclusivityType,
+    carrier,
+    shippingOrigin,
+    shippingDestination,
+  } = useRoute<any>().params;
+  const navigation = useNavigation<any>();
+
+  // Packaging type state - default to rolled for better shipping rates
+  const [packagingType, setPackagingType] = useState<PackagingType>("rolled");
+  const [usePreset, setUsePreset] = useState(true);
+
+  const [dimensions, setDimensions] = useState({
     length: "",
     width: "",
     height: "",
@@ -49,121 +74,304 @@ const DimensionsDetails = () => {
     weight: "",
   });
 
-  const dimensionUnits = [
-    { label: "centimeter (cm)", value: "cm" },
-    { label: "meter (m)", value: "m" },
-    { label: "inch (in)", value: "in" },
-    { label: "feet (ft)", value: "ft" },
-  ];
-
-  const weightUnits = [
-    { label: "kilogram (kg)", value: "kg" },
-    { label: "gram (g)", value: "g" },
-    { label: "pound (lb)", value: "lb" },
-  ];
   const [isLoading, setIsLoading] = useState(false);
   const [isOnExhibition, setIsOnExhibition] = useState(false);
   const [expoEndDate, setExpoEndDate] = useState<Date | null>(null);
   const [isChecked, setIsChecked] = useState(false);
+  const [specialInstructions, setSpecialInstructions] = useState("");
 
-  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  // The current active pickup address. Defaults to shippingOrigin.
+  const [selectedPickupAddress, setSelectedPickupAddress] =
+    useState<AddressTypes | null>(shippingOrigin || null);
+
+  // Intervention states
+  const [hasDeclinedRolled, setHasDeclinedRolled] = useState(false);
 
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const userId = useAppStore((state) => state.userSession.id);
 
-  const showDatePicker = () => {
-    setIsDatePickerVisible(true);
+  const gallerySub = useGallerySubscriptionActiveForOrders({
+    galleryId: userId,
+    enabled: userType === "gallery",
+  });
+
+  const galleryOrdersAcceptBlocked = useMemo(
+    () =>
+      userType === "gallery" &&
+      (gallerySub.isLoading || gallerySub.isError || !gallerySub.isActive),
+    [userType, gallerySub.isLoading, gallerySub.isError, gallerySub.isActive],
+  );
+
+  const gallerySubscriptionNotice = useMemo(
+    () =>
+      userType === "gallery"
+        ? getGalleryOrdersSubscriptionNotice({
+            isLoading: gallerySub.isLoading,
+            isError: gallerySub.isError,
+            isActive: gallerySub.isActive,
+            subscriptionData: gallerySub.subscriptionData,
+          })
+        : "",
+    [
+      userType,
+      gallerySub.isLoading,
+      gallerySub.isError,
+      gallerySub.isActive,
+      gallerySub.subscriptionData,
+    ],
+  );
+
+  // Helper to safely parse dimension strings (e.g. "32in" -> 32)
+  const parseDim = (val: string | number | undefined) => {
+    if (!val) return 0;
+    const str = String(val);
+    // Remove everything that is NOT a digit or a decimal point
+    const cleanStr = str.replaceAll(/[^\d.]/g, "");
+    return Number(cleanStr) || 0;
   };
 
-  const hideDatePicker = () => {
-    setIsDatePickerVisible(false);
-  };
+  const normalizedCarrier = useMemo(
+    () => (carrier || "").toUpperCase(),
+    [carrier],
+  );
 
-  const handleConfirm = (date: Date) => {
-    setExpoEndDate(date);
-    hideDatePicker();
-  };
+  const artDims = useMemo(() => {
+    return {
+      width: parseDim(artworkDimensions?.width),
+      height: parseDim(artworkDimensions?.height),
+    };
+  }, [artworkDimensions]);
+
+  const isCurrentlyOversized = useMemo(() => {
+    if (!carrier) return false;
+
+    const hasPackageDimensions =
+      dimensions.length &&
+      dimensions.width &&
+      dimensions.height &&
+      dimensions.weight;
+
+    if (!hasPackageDimensions) {
+      return false;
+    }
+
+    const IN_TO_CM = 2.54;
+    return checkCarrierLimit(
+      usePreset
+        ? Number.parseFloat(dimensions.length)
+        : Number.parseFloat(dimensions.length) * IN_TO_CM,
+      usePreset
+        ? Number.parseFloat(dimensions.width)
+        : Number.parseFloat(dimensions.width) * IN_TO_CM,
+      usePreset
+        ? Number.parseFloat(dimensions.height)
+        : Number.parseFloat(dimensions.height) * IN_TO_CM,
+      Number.parseFloat(dimensions.weight),
+      normalizedCarrier,
+    );
+  }, [normalizedCarrier, dimensions, usePreset]);
+
+  const canBeRolled = useMemo(() => {
+    return checkIfRolledPassesLimit(
+      artDims.width * 2.54,
+      artDims.height * 2.54,
+      normalizedCarrier,
+    );
+  }, [artDims, normalizedCarrier]);
+
+  useEffect(() => {
+    setSelectedPickupAddress((prev) => {
+      const next = shippingOrigin || null;
+      if (!prev && !next) return prev;
+      if (prev && next && JSON.stringify(prev) === JSON.stringify(next)) {
+        return prev;
+      }
+      return next;
+    });
+  }, [shippingOrigin]);
+
+  const handlePresetSelect = useCallback(
+    (details: {
+      length: string;
+      width: string;
+      height: string;
+      weight: string;
+    }) => {
+      setHasDeclinedRolled(false);
+      if (details.length) {
+        setUsePreset(true);
+        setDimensions((prev) =>
+          prev.length === details.length &&
+          prev.width === details.width &&
+          prev.height === details.height &&
+          prev.weight === details.weight
+            ? prev
+            : details,
+        );
+        setFormErrors((prev) =>
+          !prev.height && !prev.length && !prev.width && !prev.weight
+            ? prev
+            : { height: "", length: "", width: "", weight: "" },
+        );
+      } else {
+        setUsePreset(false);
+        setDimensions((prev) =>
+          !prev.length && !prev.width && !prev.height && !prev.weight
+            ? prev
+            : { length: "", width: "", height: "", weight: "" },
+        );
+      }
+    },
+    [],
+  );
 
   const checkIsDisabled = () => {
-    const isFormValid = Object.values({
-      weight: formErrors.weight,
-      height: formErrors.height,
-      width: formErrors.width,
-    }).every((error) => error === "");
-
+    const isFormValid = Object.values(formErrors).every(
+      (error) => error === "",
+    );
     const areAllFieldsFilled = Object.values({
-      weight: dimentions.weight,
-      height: dimentions.height,
-      width: dimentions.width,
+      weight: dimensions.weight,
+      height: dimensions.height,
+      width: dimensions.width,
+      length: dimensions.length,
     }).every((value) => value !== "");
 
-    return !(isFormValid && areAllFieldsFilled && isChecked);
+    let isExhibitionValid = true;
+    if (userType === "gallery" && isOnExhibition) {
+      isExhibitionValid = !!expoEndDate;
+    }
+
+    return !(
+      isFormValid &&
+      areAllFieldsFilled &&
+      isChecked &&
+      isExhibitionValid
+    );
   };
 
-  const handleValidationChecks = (label: keyof ArtworkDimensionsErrorsType, value: string) => {
+  const handleValidationChecks = (
+    label: keyof ArtworkDimensionsErrorsType,
+    value: string,
+  ) => {
     if (value.trim() === "") {
       setFormErrors((prev) => ({ ...prev, [label]: "" }));
     } else {
       const errors = validateOrderMeasurement(value);
-      setFormErrors((prev) => ({ ...prev, [label]: errors.length === 0 ? "" : errors }));
+      setFormErrors((prev) => ({
+        ...prev,
+        [label]: errors.length === 0 ? "" : errors,
+      }));
     }
   };
 
   const handleSubmit = async () => {
-    const units = {
-      height: dimensionUnit,
-      width: dimensionUnit,
-      length: dimensionUnit,
-      weight: weightUnit,
-    };
-    const converted = convertDimensionsToStandard(dimentions, units);
+    if (galleryOrdersAcceptBlocked) {
+      return;
+    }
+
     try {
       setIsLoading(true);
+
+      // Auto-save pickup address if it was changed but not explicitly saved
+      if (
+        selectedPickupAddress &&
+        JSON.stringify(selectedPickupAddress) !== JSON.stringify(shippingOrigin)
+      ) {
+        const addressResult = await updateOrderPickupAddress({
+          type: "pickup",
+          pickupAddress: selectedPickupAddress,
+          order_id: orderId,
+        });
+        if (!addressResult.isOk) {
+          updateModal({
+            message: addressResult.message || "Failed to save pickup address",
+            modalType: "error",
+            showModal: true,
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Convert inches to cm for API (preset values are already in cm)
+      const IN_TO_CM = 2.54;
+      const dimLength = usePreset
+        ? Number.parseFloat(dimensions.length)
+        : Number.parseFloat(dimensions.length) * IN_TO_CM;
+      const dimWidth = usePreset
+        ? Number.parseFloat(dimensions.width)
+        : Number.parseFloat(dimensions.width) * IN_TO_CM;
+      const dimHeight = usePreset
+        ? Number.parseFloat(dimensions.height)
+        : Number.parseFloat(dimensions.height) * IN_TO_CM;
+
       const payload = {
         order_id: orderId,
-        dimensions: converted,
-        exhibition_status:
-          userType === "gallery"
-            ? {
-                is_on_exhibition: isOnExhibition,
-                exhibition_end_date: expoEndDate || "",
-              }
-            : null,
-        hold_status: null,
+        data: {
+          dimensions: {
+            length: dimLength,
+            width: dimWidth,
+            height: dimHeight,
+            weight: Number.parseFloat(dimensions.weight),
+          },
+          packaging_type: packagingType,
+          specialInstructions: specialInstructions.trim() || undefined,
+          exhibition_status:
+            userType === "gallery" && isOnExhibition
+              ? {
+                  is_on_exhibition: true,
+                  exhibition_end_date: expoEndDate || "",
+                  status: "pending",
+                }
+              : null,
+          hold_status: null,
+        },
       };
+
       const response = await updateShippingQuote(payload);
+
       if (response.isOk) {
-        // Invalidate both artist/collector and gallery orders so both screens refresh
+        Analytics.track("order_accepted", {
+          ids: { order_id: orderId, seller_id: userId },
+          seller_type: userType,
+          packaging_type: packagingType,
+          payload,
+          response,
+        });
+
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["orders", userId] }),
           queryClient.invalidateQueries({ queryKey: ["orders", "gallery"] }),
+          queryClient.invalidateQueries({ queryKey: ["orders", "artist"] }),
         ]);
 
         updateModal({
           message: "Order accepted successfully",
           modalType: "success",
           showModal: true,
+          onDismiss: () => {
+            setDimensions({ length: "", width: "", height: "", weight: "" });
+            navigation.goBack();
+          },
         });
-        setTimeout(() => {
-          setDimentions({
-            length: "",
-            width: "",
-            height: "",
-            weight: "",
-          });
-          navigation.goBack();
-        }, 2000);
       } else {
+        Analytics.track("order_accept_failed", {
+          ids: { order_id: orderId, seller_id: userId },
+          seller_type: userType,
+          error_message: response.message,
+          payload,
+          response,
+        });
         updateModal({
-          message: response.message,
+          message: response.message || response?.body?.message,
           modalType: "error",
           showModal: true,
         });
       }
     } catch (error: any) {
       updateModal({
-        message: error.message,
+        message: error.message || error?.body?.message,
         modalType: "error",
         showModal: true,
       });
@@ -173,182 +381,135 @@ const DimensionsDetails = () => {
   };
 
   return (
-    <WithModal>
-      <View style={tw`flex-1 bg-[#F7F7F7]`}>
-        <BackHeaderTitle title="Dimensions (Including Packaging)" />
+    <View style={tw`flex-1 bg-[#F7F7F7]`}>
+      <BackHeaderTitle title="Packaging Dimensions" />
 
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={tw`flex-1`}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={tw`flex-1`}
+      >
+        <ScrollView
+          nestedScrollEnabled={true}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={tw`pb-20`}
         >
-          <ScrollView
-            nestedScrollEnabled={true}
-            style={{ flexGrow: 1 }}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-          >
-            <View style={tw`mt-[30px] mx-[25px] gap-[10px] z-50`}>
-              <View style={tw`flex-row gap-4 mb-4`}>
-                <UnitDropdownField
-                  label="Dimension Unit"
-                  units={dimensionUnits}
-                  selectedUnit={dimensionUnit}
-                  onSelect={(unit) => setDimensionUnit(unit as DimensionUnit)}
-                />
-                <UnitDropdownField
-                  label="Weight Unit"
-                  units={weightUnits}
-                  selectedUnit={weightUnit}
-                  onSelect={(unit) => setWeightUnit(unit as WeightUnit)}
-                />
-              </View>
+          <View style={tw`mt-[20px] mx-[20px]`}>
+            {/* Packaging Selector with Presets */}
+            <ExclusivityCheck
+              userType={userType}
+              exclusivityType={exclusivityType}
+            />
 
-              {(["height", "length", "width"] as Array<keyof typeof dimentions>).map((field) => (
-                <DimensionInput
-                  key={field}
-                  field={field}
-                  unit={dimensionUnit}
-                  value={dimentions[field]}
-                  errorMessage={formErrors[field]}
-                  onInputChange={(text) => setDimentions((prev) => ({ ...prev, [field]: text }))}
-                  onValidation={(text) => handleValidationChecks(field, text)}
-                />
-              ))}
+            <PackagingSelector
+              artDimensions={artDims}
+              packagingType={packagingType}
+              carrier={normalizedCarrier}
+              onTypeChange={setPackagingType}
+              onSelect={handlePresetSelect}
+            />
 
-              <DimensionInput
-                field="weight"
-                unit={weightUnit}
-                value={dimentions.weight}
-                errorMessage={formErrors.weight}
-                onInputChange={(text) => setDimentions((prev) => ({ ...prev, weight: text }))}
-                onValidation={(text) => handleValidationChecks("weight", text)}
+            {/* Custom Dimension Inputs (shown when custom selected) */}
+            <CustomDimensionsInput
+              usePreset={usePreset}
+              dimensions={dimensions}
+              setDimensions={setDimensions}
+              formErrors={formErrors}
+              handleValidationChecks={handleValidationChecks}
+            />
+
+            {/* Selected Dimensions Summary */}
+            <SelectedDimensionsSummary
+              usePreset={usePreset}
+              dimensions={dimensions as any}
+            />
+          </View>
+
+          {isCurrentlyOversized || hasDeclinedRolled ? (
+            <View style={tw`mx-4 mb-10`}>
+              <CarrierInterventionCard
+                orderId={orderId}
+                carrier={normalizedCarrier || "Courier"}
+                hasDeclined={hasDeclinedRolled}
+                canBeRolled={canBeRolled}
+                packagingType={packagingType}
+                onDecline={() => setHasDeclinedRolled(true)}
+                onSwitchToRolled={() => {
+                  setPackagingType("rolled");
+                  setHasDeclinedRolled(false);
+                }}
+                onTryCustomCrate={() => {
+                  setUsePreset(false);
+                  setDimensions({
+                    length: "",
+                    width: "",
+                    height: "",
+                    weight: "",
+                  });
+                  setHasDeclinedRolled(false);
+                }}
               />
             </View>
+          ) : (
+            <View>
+              <ExhibitionOptions
+                userType={userType}
+                orderId={orderId}
+                isOnExhibition={isOnExhibition}
+                setIsOnExhibition={setIsOnExhibition}
+                expoEndDate={expoEndDate}
+                setExpoEndDate={setExpoEndDate}
+                pickupAddress={selectedPickupAddress}
+                destinationAddress={shippingDestination || null}
+                onAddressUpdated={setSelectedPickupAddress}
+              />
 
-            {userType === "gallery" && (
-              <View style={tw`mt-5 mx-[25px]`}>
-                <Text style={tw`text-[14px] text-[#858585] mb-[15px]`}>
-                  Is artwork on exhibition?
-                </Text>
-                <View style={tw`flex-row gap-4`}>
-                  <View style={tw`flex-1`}>
-                    <ToggleButton
-                      label="Yes"
-                      isSelected={isOnExhibition}
-                      onPress={() => setIsOnExhibition(true)}
-                    />
-                  </View>
-                  <View style={tw`flex-1`}>
-                    <ToggleButton
-                      label="No"
-                      isSelected={!isOnExhibition}
-                      onPress={() => {
-                        setIsOnExhibition(false);
-                        setExpoEndDate(null);
-                      }}
-                    />
-                  </View>
-                </View>
+              <CarrierNoteInput
+                value={specialInstructions}
+                onChange={setSpecialInstructions}
+              />
 
-                {isOnExhibition && (
-                  <View style={tw`mt-4`}>
-                    <Text style={tw`text-[14px] text-[#858585] mb-[15px]`}>
-                      Select Exhibition End Date:
-                    </Text>
+              {/* Agreement Section */}
+              <AgreementSection
+                userType={userType}
+                isChecked={isChecked}
+                setIsChecked={setIsChecked}
+              />
 
-                    <Pressable
-                      onPress={showDatePicker}
-                      style={tw`bg-white border border-[#D1D5DB] rounded-lg px-4 py-3`}
+              {/* Submit: accept order (artist / active gallery sub) or subscribe (blocked gallery) */}
+              <View style={tw`mt-12 mx-5 mb-10`}>
+                {galleryOrdersAcceptBlocked ? (
+                  <View style={tw`gap-3`}>
+                    <Text
+                      style={tw`text-[14px] text-[#454545] leading-[20px]`}
+                      accessibilityRole="text"
                     >
-                      <Text style={tw`text-[#1A1A1A]`}>
-                        {expoEndDate
-                          ? format(expoEndDate, "MMM dd, yyyy - hh:mm a")
-                          : "Select date and time"}
-                      </Text>
-                    </Pressable>
-
-                    <DateTimePickerModal
-                      isVisible={isDatePickerVisible}
-                      mode="datetime"
-                      onConfirm={handleConfirm}
-                      onCancel={hideDatePicker}
-                      minimumDate={new Date()}
-                      display={Platform.OS === "ios" ? "inline" : "default"}
-                      confirmTextIOS="Confirm"
-                      cancelTextIOS="Cancel"
+                      {gallerySubscriptionNotice.trim() ||
+                        "Your gallery subscription is inactive or has expired. Renew your plan to process this order."}
+                    </Text>
+                    <LongBlackButton
+                      value="Renew to process order"
+                      onClick={() =>
+                        navigation.navigate(screenName.gallery.billing, {
+                          plan_action: null,
+                        })
+                      }
+                      textStyle={tw`normal-case tracking-normal`}
                     />
                   </View>
+                ) : (
+                  <LongBlackButton
+                    value="Accept Order"
+                    onClick={handleSubmit}
+                    isLoading={isLoading}
+                    isDisabled={checkIsDisabled()}
+                  />
                 )}
               </View>
-            )}
-
-            <View style={tw`mt-7 mx-6`}>
-              <View
-                style={[
-                  tw`rounded-xl relative overflow-hidden mb-3 p-4`,
-                  {
-                    borderWidth: 2,
-                    backgroundColor: "#FA52521A",
-                    borderColor: "#FA5252",
-                  },
-                ]}
-              >
-                <View style={tw`flex gap-2 flex-row items-center`}>
-                  <Feather name="alert-circle" size={30} color="#FA5252" />
-
-                  <Text
-                    style={[
-                      tw`text-sm`,
-                      {
-                        color: "#FA5252",
-                        fontWeight: "700",
-                      },
-                    ]}
-                  >
-                    Kindly review the following information carefully before continuing.
-                  </Text>
-                </View>
-                <View style={[tw`pt-2.5 pl-0`]}>
-                  <Text style={[tw`text-sm leading-6`, { color: colors.black }]}>
-                    By accepting this order, you agree to hold the artwork for 24 hours to allow for
-                    payment and shipment processing. If the piece is on exhibition and paid for by
-                    this buyer, shipment will be scheduled at the exhibition’s end date
-                  </Text>
-                </View>
-              </View>
-
-              <Pressable
-                onPress={() => setIsChecked(!isChecked)}
-                style={tw`mt-[18px] flex-row items-center gap-[12px]`}
-              >
-                <View
-                  style={tw`w-[20px] h-[20px] rounded-full border-2 border-[#858585] items-center justify-center`}
-                >
-                  {isChecked && (
-                    <View
-                      style={[
-                        tw`w-[12px] h-[12px] rounded-full`,
-                        { backgroundColor: colors.primary_black },
-                      ]}
-                    />
-                  )}
-                </View>
-                <Text style={tw`text-[14px] text-[#858585] font-medium`}>I agree and continue</Text>
-              </Pressable>
             </View>
-
-            <View style={tw`mt-[60px] mx-[25px] mb-[150px]`}>
-              <LongBlackButton
-                value="Submit"
-                onClick={handleSubmit}
-                isLoading={isLoading}
-                isDisabled={checkIsDisabled()}
-              />
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
-    </WithModal>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 

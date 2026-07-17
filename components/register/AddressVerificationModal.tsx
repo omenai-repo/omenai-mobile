@@ -1,5 +1,7 @@
-import AuthModal from "components/auth/AuthModal";
-import { checkMarkIcon, errorIcon } from "utils/SvgImages";
+import AuthModal from "#components/auth/AuthModal";
+import { colors } from "#config/colors.config";
+import { errorIcon } from "#utils/SvgImages";
+import { Feather } from "@expo/vector-icons";
 
 type AddressVerificationModalProps = {
   readonly showModal: boolean;
@@ -26,7 +28,18 @@ export const AddressVerificationModal = ({
     <AuthModal
       modalVisible={showModal}
       setModalVisible={setShowModal}
-      icon={addressVerified ? checkMarkIcon : errorIcon}
+      icon={
+        addressVerified ? (
+          <Feather
+            name="check-circle"
+            size={50}
+            color={colors.black}
+            style={{ alignSelf: "center" }}
+          />
+        ) : (
+          errorIcon
+        )
+      }
       text={addressVerified ? successMessage : errorMessage}
       btn1Text="Go Back"
       btn2Text={addressVerified ? "Proceed" : "Try Again"}

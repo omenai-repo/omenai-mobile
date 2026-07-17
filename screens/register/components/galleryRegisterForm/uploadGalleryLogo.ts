@@ -1,14 +1,15 @@
-import { storage } from 'appWrite_config';
-import { ID } from 'appwrite';
+import { uploadToAppwrite } from "#utils/uploadToAppwrite";
 
 const uploadGalleryLogoContent = async (file: any) => {
   if (!file) return;
-  const fileUploaded = await storage.createFile({
+
+  return uploadToAppwrite({
     bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
-    fileId: ID.unique(),
-    file: file,
+    file,
+    fallbackName: `logo-${Date.now()}.jpg`,
+    fallbackType: "image/jpeg",
+    errorMessage: "Logo upload failed",
   });
-  return fileUploaded;
 };
 
 export default uploadGalleryLogoContent;

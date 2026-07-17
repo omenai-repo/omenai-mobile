@@ -1,10 +1,10 @@
-import { Dimensions, ImageBackground, Text, TouchableOpacity, View } from "react-native";
-import React, { memo } from "react";
+import { Image, Pressable, Text, View } from "react-native";
+import React, { memo, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
-import { getPromotionalFileView } from "lib/storage/getPromotionalsFileView";
-import { fontNames } from "constants/fontNames.constants";
+import { colors } from "#config/colors.config";
+import { getPromotionalFileView } from "#lib/storage/getPromotionalsFileView";
+import { MotiView } from "moti";
 
 type BannerItemProps = {
   image: string;
@@ -12,65 +12,99 @@ type BannerItemProps = {
   subheadline: string;
   cta: string;
   handleClick: (url: string) => void;
+  cardWidth: number;
 };
 
-const { width: windowWidth } = Dimensions.get("window");
-const SIDE_PADDING = 15;
-const CARD_WIDTH = windowWidth - SIDE_PADDING * 2;
+const BannerCard = memo(
+  ({
+    image,
+    headline,
+    subheadline,
+    cta,
+    handleClick,
+    cardWidth,
+  }: BannerItemProps) => {
+    const [highResLoaded, setHighResLoaded] = useState(false);
 
-const BannerCard = memo(({ image, headline, subheadline, cta, handleClick }: BannerItemProps) => {
-  const image_href = getPromotionalFileView(image, 800);
+    const lowResUri = getPromotionalFileView(
+      image,
+      50,
+      undefined,
+      undefined,
+      20,
+    );
+    const highResUri = getPromotionalFileView(image, 800);
 
-  return (
-    <View
-      style={{
-        width: CARD_WIDTH, // ensures one card per screen
-      }}
-    >
-      <ImageBackground
-        source={{ uri: image_href }}
-        style={tw`h-[200px]`}
-        imageStyle={tw`rounded-[12px]`}
-        resizeMode="cover"
+    return (
+      <View
+        style={[
+          tw`flex-row`,
+          {
+            width: cardWidth,
+            minHeight: 200,
+            backgroundColor: colors.black,
+            overflow: "hidden",
+          },
+        ]}
       >
+        <View style={tw`w-[34%]`}>
+          <View style={tw`flex-1 overflow-hidden`}>
+            <Image
+              source={{ uri: lowResUri }}
+              style={[
+                tw`absolute inset-0 w-full h-full`,
+                { opacity: 0.5 },
+              ]}
+              resizeMode="cover"
+              blurRadius={10}
+            />
+            <Image
+              source={{ uri: highResUri }}
+              style={tw`absolute w-0 h-0 opacity-0`}
+              onLoad={() => setHighResLoaded(true)}
+            />
+            <MotiView
+              from={{ opacity: 0 }}
+              animate={{ opacity: highResLoaded ? 1 : 0 }}
+              transition={{ type: "timing", duration: 500 }}
+              style={tw`flex-1`}
+            >
+              <Image
+                source={{ uri: highResUri }}
+                style={tw`w-full h-full`}
+                resizeMode="cover"
+              />
+            </MotiView>
+          </View>
+        </View>
+
         <View
           style={[
-            tw`flex-1 rounded-[12px] pt-[30px] pl-[20px]`,
-            { backgroundColor: `${colors.black}80` },
+            tw`flex-1 justify-center px-5 py-4`,
+            { backgroundColor: colors.black },
           ]}
         >
-          <Text
-            style={[
-              tw`text-white text-[18px] font-bold`,
-              { fontFamily: fontNames.dmSans + "Bold" },
-            ]}
-          >
+          <Text style={tw`text-white text-3xl font-sans-medium`}>
             {headline}
           </Text>
           <Text
-            style={[
-              tw`text-white text-[13px] mt-1 pr-[100px]`,
-              { fontFamily: fontNames.dmSans + "Regular" },
-            ]}
+            style={tw`text-white text-sm mt-1 pr-[50px] font-sans-light tracking-wide`}
           >
             {subheadline}
           </Text>
 
-          <TouchableOpacity
-            onPress={() => handleClick(image_href)}
-            style={[
-              tw`mt-4 flex-row items-center gap-2 px-4 py-2 rounded-full w-[110px]`,
-              { backgroundColor: `${colors.black}33` },
-            ]}
+          <Pressable
+            onPress={() => handleClick(cta)}
+            style={tw`mt-4 flex-row items-center gap-2 px-4 py-2 rounded-sm border border-white self-start`}
           >
-            <Text style={tw`text-white text-[13px] font-semibold`}>Explore</Text>
+            <Text style={tw`text-white text-sm font-semibold`}>Explore</Text>
             <AntDesign name="arrow-right" color="#fff" size={15} />
-          </TouchableOpacity>
+          </Pressable>
         </View>
-      </ImageBackground>
-    </View>
-  );
-});
+      </View>
+    );
+  },
+);
 
 BannerCard.displayName = "BannerCard";
 

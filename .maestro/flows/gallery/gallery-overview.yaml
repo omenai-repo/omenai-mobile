@@ -1,0 +1,48 @@
+appId: com.omenai.omenaimobile
+name: "Gallery Overview Screen"
+tags:
+  - gallery
+  - overview
+  - smoke
+
+---
+- runFlow: ../login/gallery-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Total Sales"
+        - "Net Revenue"
+        - "Balance"
+        - "Popular"
+    timeout: 15000
+
+- swipe:
+    direction: UP
+    duration: 1000
+
+- scrollUntilVisible:
+    direction: DOWN
+    element:
+      anyOf:
+        - "Popular Artworks"
+        - "Sales Overview"
+    timeout: 15000
+
+- scrollUntilVisible:
+    direction: UP
+    element: "Overview"
+    timeout: 10000
+
+- swipe:
+    start: 50%,30%
+    end: 50%,80%
+    duration: 500
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 10000

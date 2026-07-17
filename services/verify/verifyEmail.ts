@@ -1,30 +1,34 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { RouteIdentifier } from "#types/types";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function verifyEmail(
   payload: { params: string; token: string },
   route: RouteIdentifier,
 ) {
   try {
-    const response = await fetch(`${apiUrl}/api/requests/${route}/verifyMail`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      `${apiUrl}/api/requests/${route}/verifyMail`,
+      {
+        method: "POST",
+        body: JSON.stringify({ params: payload.params, token: payload.token }),
       },
-      body: JSON.stringify({ params: payload.params, token: payload.token }),
-    });
+    );
 
     const ParsedResponse = {
       isOk: response.ok,
       body: await response.json(),
     };
     return ParsedResponse;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: 'Error verifying token, try again later' },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error verifying token, try again later",
+      },
     };
   }
 }

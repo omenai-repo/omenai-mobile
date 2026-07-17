@@ -1,12 +1,12 @@
 import { Text, View } from "react-native";
 import React from "react";
-import { colors } from "../../../../config/colors.config";
-import NextButton from "../../../../components/buttons/NextButton";
-import { mediumListing } from "data/uploadArtworkForm.data";
+import { colors } from "#config/colors.config";
+import NextButton from "#components/buttons/NextButton";
+import { mediumListing } from "#data/uploadArtworkForm.data";
 import tw from "twrnc";
-import { useArtistAuthRegisterStore } from "store/auth/register/ArtistAuthRegisterStore";
-import BackFormButton from "components/buttons/BackFormButton";
-import SelectableTag from "components/general/SelectableTag";
+import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
+import BackFormButton from "#components/buttons/BackFormButton";
+import SelectableTag from "#components/general/SelectableTag";
 
 const ArtistPreference = () => {
   const { pageIndex, setPageIndex, artistRegisterData, setArtStyles } =
@@ -23,7 +23,7 @@ const ArtistPreference = () => {
       </Text>
       <View
         style={[
-          tw`mt-3 bg-[#FAFAFA] rounded-lg border p-3 flex-row flex-wrap`,
+          tw`mt-3 bg-[#FAFAFA] rounded-sm border p-3 flex-row flex-wrap`,
           { borderColor: colors.inputBorder, rowGap: 10, columnGap: 10 },
         ]}
       >

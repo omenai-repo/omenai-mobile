@@ -1,18 +1,18 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
-import BackScreenButton from "components/buttons/BackScreenButton";
+import BackScreenButton from "#components/buttons/BackScreenButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import LongBlackButton from "components/buttons/LongBlackButton";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import tw from "twrnc";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { updateLogo } from "services/update/updateLogo";
-import { useAppStore } from "store/app/appStore";
-import { useModalStore } from "store/modal/modalStore";
-import { logout } from "utils/logout.utils";
+import { updateLogo } from "#services/update/updateLogo";
+import { useAppStore } from "#store/app/appStore";
+import { useModalStore } from "#store/modal/modalStore";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import uploadLogo from "./uploadLogo";
 
 export default function UploadNewLogo() {
@@ -49,9 +49,10 @@ export default function UploadNewLogo() {
 
   const handleUpload = async () => {
     const logoParams = {
-      name: logo.assets[0].fileName,
+      name: logo.assets[0].fileName || `logo-${Date.now()}.jpg`,
       uri: logo.assets[0].uri,
-      type: logo.assets[0].mimeType,
+      type: logo.assets[0].mimeType || "image/jpeg",
+      size: logo.assets[0].fileSize,
     };
 
     try {
@@ -68,7 +69,7 @@ export default function UploadNewLogo() {
             id: userSession.id,
             url: file.fileId,
           },
-          getUserTypeKey(userType)
+          getUserTypeKey(userType),
         );
 
         if (!isOk) {
@@ -78,30 +79,31 @@ export default function UploadNewLogo() {
             showModal: true,
           });
         } else {
+          // Update local session
+          const updatedSession = { ...userSession, logo: file.fileId };
+          useAppStore.setState({ userSession: updatedSession });
+          await utils_storeAsyncData(
+            "userSession",
+            JSON.stringify(updatedSession),
+          );
+
           updateModal({
-            message: `${body.message}... Please log back in`,
+            message: body.message,
             modalType: "success",
             showModal: true,
+            onDismiss: () => navigation.goBack(),
           });
-          handleLogout();
         }
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
       updateModal({
-        message: "An error occured, please try again",
+        message: error.message || error?.body?.message || error?.response?.data?.message || "An error occured, please try again",
         modalType: "error",
         showModal: true,
       });
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    setTimeout(() => {
-      logout();
-    }, 3500);
   };
 
   return (
@@ -115,7 +117,7 @@ export default function UploadNewLogo() {
         <TouchableOpacity onPress={pickImage} activeOpacity={0.8}>
           {logo === null ? (
             <View
-              style={tw`h-[200px] w-full border border-[#E5E7EB] rounded-[7px] items-center justify-center gap-2 border-dashed bg-[#fff]`}
+              style={tw`h-[200px] w-full border border-[#E5E7EB] rounded-sm items-center justify-center gap-2 border-dashed bg-[#fff]`}
             >
               <Feather name="image" size={30} color={colors.grey} />
               <Text style={[tw`text-[14px]`, { color: colors.primary_black }]}>

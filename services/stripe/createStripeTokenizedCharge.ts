@@ -1,5 +1,6 @@
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export const createStripeTokenizedCharge = async (
   amount: number,
@@ -11,26 +12,24 @@ export const createStripeTokenizedCharge = async (
     plan_interval: string;
   },
 ) => {
-  let gallery_id = '';
-  const userSession = await utils_getAsyncData('userSession');
+  let gallery_id = "";
+  const userSession = await utils_getAsyncData("userSession");
   if (userSession.value) {
     gallery_id = JSON.parse(userSession.value).id;
   }
   if (gallery_id.length < 1) return;
   try {
-    const res = await fetch(`${apiUrl}/api/subscriptions/stripe/createStripeTokenizedCharge`, {
-      method: 'POST',
-      headers: {
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const res = await apiRequest(
+      `${apiUrl}/api/subscriptions/stripe/createStripeTokenizedCharge`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          amount,
+          gallery_id,
+          meta,
+        }),
       },
-      body: JSON.stringify({
-        amount,
-        gallery_id,
-        meta,
-      }),
-    });
+    );
 
     const result = await res.json();
     return {
@@ -43,7 +42,14 @@ export const createStripeTokenizedCharge = async (
   } catch (error: any) {
     return {
       isOk: false,
-      message: 'An error was encountered, please try again later or contact support',
+      status: error?.status,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "An error was encountered, please try again later or contact support",
+      },
+      error: error,
     };
   }
 };

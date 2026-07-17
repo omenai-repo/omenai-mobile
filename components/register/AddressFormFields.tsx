@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import Input from "components/inputs/Input";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
+import Input from "#components/inputs/Input";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 
 interface AddressFormFieldsProps {
   countryData: { label: string; value: string; currency?: string }[];
@@ -17,8 +17,16 @@ interface AddressFormFieldsProps {
   };
   phone?: string;
   formErrors: Partial<AddressTypes & { phone: string }>;
-  onCountrySelect: (item: { label: string; value: string; currency?: string }) => void;
-  onStateSelect: (item: { label: string; value: string; isoCode?: string }) => void;
+  onCountrySelect: (item: {
+    label: string;
+    value: string;
+    currency?: string;
+  }) => void;
+  onStateSelect: (item: {
+    label: string;
+    value: string;
+    isoCode?: string;
+  }) => void;
   onCitySelect: (item: { label: string; value: string }) => void;
   onAddressChange: (text: string) => void;
   onZipChange: (text: string) => void;

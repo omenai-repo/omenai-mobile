@@ -1,9 +1,9 @@
 import { TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
-import { utils_handleFetchUserID } from "utils/utils_asyncStorage";
-import useLikedState from "hooks/useLikedState";
+import React from "react";
+import useLikedState from "#hooks/useLikedState";
 import { AntDesign } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
+import { useAppStore } from "#store/app/appStore";
 
 export type LikeComponentProps = {
   likeIds: string[];
@@ -12,28 +12,24 @@ export type LikeComponentProps = {
   lightText?: boolean;
 };
 
-export default function LikeComponent({
+function LikeComponent({
   likeIds,
   art_id,
   impressions,
   lightText,
 }: LikeComponentProps) {
-  const [sessionId, setSessionId] = useState("");
+  const sessionId = useAppStore((s) => s.userSession?.id);
 
-  useEffect(() => {
-    handleFetchUserSessionData();
-  }, []);
-
-  const handleFetchUserSessionData = async () => {
-    const userId = await utils_handleFetchUserID();
-    setSessionId(userId);
-  };
-
-  const { likedState, handleLike } = useLikedState(impressions, likeIds, sessionId, art_id);
+  const { likedState, handleLike } = useLikedState(
+    impressions,
+    likeIds,
+    sessionId ?? "",
+    art_id,
+  );
 
   return (
     <>
-      {(sessionId === undefined || (sessionId && !likedState.ids.includes(sessionId))) && (
+      {(!sessionId || !likedState.ids.includes(sessionId)) && (
         <TouchableOpacity onPress={() => handleLike(true)}>
           <AntDesign
             size={15}
@@ -42,7 +38,7 @@ export default function LikeComponent({
           />
         </TouchableOpacity>
       )}
-      {sessionId !== undefined && likedState.ids.includes(sessionId) && (
+      {sessionId && likedState.ids.includes(sessionId) && (
         <TouchableOpacity onPress={() => handleLike(false)}>
           <AntDesign size={15} color={"#ff0000"} name="heart" />
         </TouchableOpacity>
@@ -50,3 +46,5 @@ export default function LikeComponent({
     </>
   );
 }
+
+export default React.memo(LikeComponent);

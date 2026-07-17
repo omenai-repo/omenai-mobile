@@ -1,14 +1,16 @@
-import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import WithModal from "components/modal/WithModal";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import { checkIsStripeOnboarded } from "services/stripe/checkIsStripeOnboarded";
-import Loader from "components/general/Loader";
+import { StyleSheet, RefreshControl } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { checkIsStripeOnboarded } from "#services/stripe/checkIsStripeOnboarded";
 import CompleteOnBoarding from "./components/CompleteOnBoarding";
-import { useModalStore } from "store/modal/modalStore";
+import { useModalStore } from "#store/modal/modalStore";
 import BlockingScreen from "./components/BlockingScreen";
 import PayoutDashboard from "./components/PayoutDashboard";
-import { colors } from "config/colors.config";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import { colors } from "#config/colors.config";
+import { useQueryClient } from "@tanstack/react-query";
+import PayoutSkeleton from "#components/skeleton/PayoutSkeleton";
 
 export default function StripePayouts({
   account_id,
@@ -17,60 +19,91 @@ export default function StripePayouts({
   account_id: string;
   showScreen: boolean;
 }) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const [refreshCount, setRefreshCount] = useState<number>(1);
 
+  const [refreshing, setRefreshing] = useState(false);
   const { updateModal } = useModalStore();
+  const queryClient = useQueryClient();
+
+  const handleOnBoardingCheck = useCallback(async () => {
+    const res = await checkIsStripeOnboarded(account_id);
+    if (res?.isOk) {
+      setIsSubmitted(res.details_submitted);
+    } else {
+      updateModal({
+        message: "Something went wrong, please try again or contact support",
+        modalType: "error",
+        showModal: true,
+      });
+    }
+  }, [account_id, updateModal]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await handleOnBoardingCheck();
+    setRefreshCount((prev) => prev + 1);
+    setRefreshing(false);
+  };
 
   useEffect(() => {
-    async function handleOnBoardingCheck() {
-      setLoading(true);
-      const res = await checkIsStripeOnboarded(account_id);
-      if (res?.isOk) {
-        setIsSubmitted(res.details_submitted);
-      } else {
-        updateModal({
-          message: "Something went wrong, please try again or contact support",
-          modalType: "error",
-          showModal: true,
-        });
+    async function init() {
+      if (!showScreen || !account_id) {
+        setIsSubmitted(false);
+        setLoading(false);
+        return;
       }
+      setLoading(true);
+      await handleOnBoardingCheck();
       setLoading(false);
     }
 
-    handleOnBoardingCheck();
-  }, []);
+    init();
+
+    return () => {
+      queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
+    };
+  }, [showScreen, account_id, queryClient, handleOnBoardingCheck]);
 
   if (!showScreen) return <BlockingScreen />;
 
-  if (loading)
-    return (
-      <View style={{ flex: 1, backgroundColor: colors.white }}>
-        <Loader />
-      </View>
-    );
+  if (loading) return <PayoutSkeleton withHeader={true} />;
 
   if (!loading && showScreen)
     return (
-      <WithModal>
-        <BackHeaderTitle title={isSubmitted ? "Stripe Payout" : "Complete stripe onboarding"} />
-        <View style={styles.container}>
+      <>
+        <BackHeaderTitle
+          title={isSubmitted ? "Payout" : "Complete stripe onboarding"}
+        />
+        <ScrollWrapper
+          contentContainerStyle={styles.container}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[colors.black]}
+              tintColor={colors.black}
+            />
+          }
+        >
           {!isSubmitted && <CompleteOnBoarding />}
           {isSubmitted && account_id.length > 0 && (
-            <PayoutDashboard account_id={account_id} refreshCount={refreshCount} />
+            <PayoutDashboard
+              account_id={account_id}
+              refreshCount={refreshCount}
+            />
           )}
-        </View>
-      </WithModal>
+        </ScrollWrapper>
+      </>
     );
 }
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    flex: 1,
-    paddingTop: 15,
-    marginTop: 15,
+    flexGrow: 1,
+    paddingTop: 10,
   },
 });

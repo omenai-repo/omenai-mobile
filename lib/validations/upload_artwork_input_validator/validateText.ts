@@ -11,9 +11,9 @@ export const validateBasicText = (value: string): string[] => {
   }
 
   // Validate if the value does not contain security-compromising characters
-  const securityCompromisingRegex = /[<>{}[\]'"`]/;
+  const securityCompromisingRegex = /[<>{}[\]`]/;
   if (securityCompromisingRegex.test(value)) {
-    errors.push("Value cannot contain characters such as < > { } [ ] ' \" `.");
+    errors.push("Value cannot contain characters such as < > { } [ ] `.");
   }
 
   return errors;

@@ -1,107 +1,103 @@
-import React, { memo } from 'react';
-import { View, Text } from 'react-native';
-import tw from 'twrnc';
-import { Ionicons } from '@expo/vector-icons';
-import type { StatusBadgeProps } from 'types/orders';
+import React, { memo } from "react";
+import type { StatusBadgeProps } from "#types/orders";
+import { StatusBadgeItem } from "#components/orders/StatusBadgeItem";
 
-const StatusBadgeBase = ({
-  status,
-  payment_status,
-  tracking_status,
-  order_accepted,
-  delivered,
-}: StatusBadgeProps) => {
-  const badgeBaseStyle = tw`flex-row items-center px-3 py-1 rounded-full`;
+const getProcessingStatus = (props: StatusBadgeProps) => {
+  const { payment_status, tracking_status, order_accepted } = props;
 
-  if (
-    status === 'pending' &&
-    (order_accepted ?? '') === '' &&
-    payment_status === 'pending' &&
-    !tracking_status
-  ) {
-    return (
-      <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
-        <Ionicons name="time-outline" size={14} color="#92400E" style={tw`mr-1`} />
-        <Text style={tw`text-[12px] font-medium text-yellow-800`}>Awaiting acceptance</Text>
-      </View>
-    );
+  if (order_accepted === "accepted") {
+    if (payment_status === "pending") {
+      return {
+        icon: "alert-circle-outline" as const,
+        label: "Awaiting payment",
+        bgStyle: "bg-yellow-100",
+        textStyle: "text-yellow-800",
+        iconColor: "#92400E",
+      };
+    }
+    if (payment_status === "completed") {
+      return tracking_status
+        ? {
+            icon: "car-outline" as const,
+            label: "Delivery in progress",
+            bgStyle: "bg-green-100",
+            textStyle: "text-green-800",
+            iconColor: "#166534",
+          }
+        : {
+            icon: "card-outline" as const,
+            label: "Payment completed",
+            bgStyle: "bg-green-100",
+            textStyle: "text-green-800",
+            iconColor: "#166534",
+          };
+    }
+  } else if (!order_accepted && payment_status === "pending") {
+    return {
+      icon: "information-circle-outline" as const,
+      label: "Action required",
+      bgStyle: "bg-yellow-100",
+      textStyle: "text-yellow-800",
+      iconColor: "#92400E",
+    };
+  }
+  return null;
+};
+
+const getStatusConfig = (props: StatusBadgeProps) => {
+  const { status, payment_status, order_accepted, delivered } = props;
+
+  if (order_accepted === "declined") {
+    return {
+      icon: "close-circle-outline" as const,
+      label: "Order declined",
+      bgStyle: "bg-red-200",
+      textStyle: "text-red-800",
+      iconColor: "#991B1B",
+    };
   }
 
-  if (
-    status === 'processing' &&
-    order_accepted === 'accepted' &&
-    payment_status === 'pending' &&
-    !tracking_status
-  ) {
-    return (
-      <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
-        <Ionicons name="alert-circle-outline" size={14} color="#92400E" style={tw`mr-1`} />
-        <Text style={tw`text-[12px] font-medium text-yellow-800`}>Awaiting payment</Text>
-      </View>
-    );
+  if (status === "completed" && order_accepted === "accepted" && delivered) {
+    return {
+      icon: "checkmark-done-outline" as const,
+      label: "Order has been fulfilled",
+      bgStyle: "bg-green-100",
+      textStyle: "text-green-800",
+      iconColor: "#166534",
+    };
   }
 
-  if (
-    status === 'processing' &&
-    order_accepted === 'accepted' &&
-    payment_status === 'completed' &&
-    !tracking_status
-  ) {
-    return (
-      <View style={[badgeBaseStyle, tw`bg-green-100`]}>
-        <Ionicons name="card-outline" size={14} color="#166534" style={tw`mr-1`} />
-        <Text style={tw`text-[12px] font-medium text-green-800`}>Payment completed</Text>
-      </View>
-    );
+  if (status === "pending" && !order_accepted && payment_status === "pending") {
+    return {
+      icon: "time-outline" as const,
+      label: "Awaiting acceptance",
+      bgStyle: "bg-yellow-100",
+      textStyle: "text-yellow-800",
+      iconColor: "#92400E",
+    };
   }
 
-  if (
-    status === 'processing' &&
-    order_accepted === 'accepted' &&
-    payment_status === 'completed' &&
-    tracking_status
-  ) {
-    return (
-      <View style={[badgeBaseStyle, tw`bg-green-100`]}>
-        <Ionicons name="car-outline" size={14} color="#166534" style={tw`mr-1`} />
-        <Text style={tw`text-[12px] font-medium text-green-800`}>Delivery in progress</Text>
-      </View>
-    );
-  }
-
-  if (
-    status === 'processing' &&
-    (order_accepted ?? '') === '' &&
-    payment_status === 'pending' &&
-    !tracking_status
-  ) {
-    return (
-      <View style={[badgeBaseStyle, tw`bg-yellow-100`]}>
-        <Ionicons name="information-circle-outline" size={14} color="#92400E" style={tw`mr-1`} />
-        <Text style={tw`text-[12px] font-medium text-yellow-800`}>Action required</Text>
-      </View>
-    );
-  }
-
-  if ((order_accepted ?? '') === 'declined') {
-    return (
-      <View style={[badgeBaseStyle, tw`bg-red-200`]}>
-        <Ionicons name="close-circle-outline" size={14} color="#991B1B" style={tw`mr-1`} />
-        <Text style={tw`text-[12px] font-medium text-red-800`}>Order declined</Text>
-      </View>
-    );
-  }
-
-  if (status === 'completed' && order_accepted === 'accepted' && delivered) {
-    return (
-      <View style={[badgeBaseStyle, tw`bg-green-100`]}>
-        <Ionicons name="checkmark-done-outline" size={14} color="#166534" style={tw`mr-1`} />
-        <Text style={tw`text-[12px] font-medium text-green-800`}>Order has been fulfilled</Text>
-      </View>
-    );
+  if (status === "processing") {
+    return getProcessingStatus(props);
   }
 
   return null;
+};
+
+const StatusBadgeBase = (props: StatusBadgeProps) => {
+  const config = getStatusConfig(props);
+
+  if (!config) return null;
+
+  return (
+    <StatusBadgeItem
+      icon={config.icon}
+      label={config.label}
+      bgStyle={config.bgStyle}
+      textStyle={config.textStyle}
+      iconColor={config.iconColor}
+    />
+  );
 };
 
 export const StatusBadge = memo(StatusBadgeBase);

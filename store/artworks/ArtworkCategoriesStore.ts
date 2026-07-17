@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { artworkListingType } from "#types/types";
 
 export type FilterStoreTypes = {
   filterOptions: {
@@ -25,10 +26,10 @@ export type FilterStoreTypes = {
   setIsLoading: (loading: boolean) => void;
   pageCount: number;
   setPageCount: (count: number) => void;
-  category: artworkListingType,
-  setCategory: (e: artworkListingType) => void,
-  artworkCount: number,
-  setArtworkCount: (count: number) => void
+  category: artworkListingType;
+  setCategory: (e: artworkListingType) => void;
+  artworkCount: number;
+  setArtworkCount: (count: number) => void;
 };
 
 type SelectedFilterArray = {
@@ -42,7 +43,7 @@ export const artworkCategoriesStore = create<FilterStoreTypes>((set, get) => ({
     price: [],
     year: [],
     rarity: [],
-    medium: []
+    medium: [],
   },
 
   updateFilter: (label: string, value: string) => {
@@ -103,17 +104,17 @@ export const artworkCategoriesStore = create<FilterStoreTypes>((set, get) => ({
     const currentFilterSelection = get().selectedFilters;
 
     const currentSelectedFilter = currentFilterSelection.find(
-      (filter) => filter.name === name
+      (filter) => filter.name === name,
     );
     const removeFilterValue = get().removeFilter;
 
     removeFilterValue(
       currentSelectedFilter!.label,
-      currentSelectedFilter!.value
+      currentSelectedFilter!.value,
     );
 
     const removeSelectedFilter = currentFilterSelection.filter(
-      (element) => element.name !== name
+      (element) => element.name !== name,
     );
 
     set({ selectedFilters: removeSelectedFilter });
@@ -142,12 +143,12 @@ export const artworkCategoriesStore = create<FilterStoreTypes>((set, get) => ({
   setPageCount: (count: number) => {
     set({ pageCount: count });
   },
-  category: '',
+  category: "trending",
   setCategory: (e: artworkListingType) => {
-    set({category: e})
+    set({ category: e });
   },
   artworkCount: 0,
   setArtworkCount: (count: number) => {
-    set({artworkCount: count})
-  }
+    set({ artworkCount: count });
+  },
 }));

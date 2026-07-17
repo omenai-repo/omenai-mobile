@@ -1,17 +1,20 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
+import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCuratedArtworks } from "services/artworks/fetchCuratedArtworks";
-import ArtworkCardLoader from "components/general/ArtworkCardLoader";
-import ViewAllCategoriesButton from "components/buttons/ViewAllCategoriesButton";
-import EmptyArtworks from "components/general/EmptyArtworks";
-import ArtworkCard from "components/artwork/ArtworkCard";
-import { colors } from "config/colors.config";
-import { screenName } from "constants/screenNames.constants";
-import { fontNames } from "constants/fontNames.constants";
-import { HOME_QK } from "utils/queryKeys";
-import { useAppStore } from "store/app/appStore";
+import { FlashList } from "@shopify/flash-list";
+import { fetchCuratedArtworks } from "#services/artworks/fetchCuratedArtworks";
+import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
+import ViewAllCategoriesButton from "#components/buttons/ViewAllCategoriesButton";
+import EmptyArtworks from "#components/general/EmptyArtworks";
+import ArtworkCard from "#components/artwork/ArtworkCard";
+import tw from "twrnc";
+import { screenName } from "#constants/screenNames.constants";
+import { HOME_QK } from "#utils/queryKeys";
+import ListSeparator from "#components/general/ListSeparator";
+import { useAppStore } from "#store/app/appStore";
+import SectionHeader from "#components/general/SectionHeader";
+import { colors } from "#config/colors.config";
 
 export default function CuratedArtworksListing({ limit }: { limit: number }) {
   const navigation = useNavigation<any>();
@@ -31,82 +34,58 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
   const showMoreButton = data.length >= limit;
 
   return (
-    <View style={styles.mainContainer}>
-      <TouchableOpacity
-        activeOpacity={0.7}
-        style={{ paddingHorizontal: 20 }}
-        onPress={() => navigation.navigate(screenName.artworkCategories, { title: "curated" })}
-      >
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: "500",
-            color: colors.white,
-            fontFamily: fontNames.dmSans + "Medium",
-          }}
-        >
-          Artworks based on your interests
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            color: colors.white,
-            marginTop: 10,
-            opacity: 0.9,
-            fontFamily: fontNames.dmSans + "Regular",
-          }}
-        >
-          Explore artworks based off your interests and interactions within the past days
-        </Text>
-      </TouchableOpacity>
+    <View style={[tw`py-10 mt-6`, { backgroundColor: colors.black }]}>
+      <SectionHeader
+        subtitle="CURATED FOR YOU"
+        title="Because you liked"
+        onActionPress={() =>
+          navigation.navigate(screenName.artworksMedium, {
+            catalog: "curated",
+          })
+        }
+        dark
+      />
 
-      <View style={{ marginTop: 20 }}>
+      <View>
         {isLoading && <ArtworkCardLoader />}
         {!isLoading && data.length > 0 && (
-          <FlatList
+          <FlashList
             data={data}
-            keyExtractor={(_, i) => `curated-${i}`}
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 20 }}
-            contentContainerStyle={{ paddingRight: 20 }}
-            renderItem={({ item, index }) =>
-              index + 1 === limit && showMoreButton ? (
+            style={tw`mt-5`}
+            contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
+            ItemSeparatorComponent={ListSeparator}
+            keyExtractor={(item: any, index) =>
+              item.art_id?.toString() ?? `curated-${index}`
+            }
+            renderItem={({ item }) => (
+              <ArtworkCard
+                artwork={item}
+                lightText
+                hideBackground
+                useImageLoadAspectRatio
+              />
+            )}
+            ListFooterComponent={
+              showMoreButton ? (
                 <ViewAllCategoriesButton
                   label="View all curated artworks"
                   listingType="curated"
                   darkMode
                 />
-              ) : (
-                <ArtworkCard
-                  title={item.title}
-                  url={item.url}
-                  artist={item.artist}
-                  showPrice={item.pricing.shouldShowPrice === "Yes"}
-                  price={item.pricing.usd_price}
-                  availiablity={item.availability}
-                  lightText
-                  impressions={item.impressions}
-                  like_IDs={item.like_IDs}
-                  art_id={item.art_id}
-                />
-              )
+              ) : null
             }
           />
         )}
         {!isLoading && data.length < 1 && (
-          <EmptyArtworks size={70} writeUp="No artworks to match your interests" darkTheme />
+          <EmptyArtworks
+            writeUp="No artworks to match your interests"
+            darkTheme
+            fixedHeight
+          />
         )}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    paddingBottom: 50,
-    backgroundColor: colors.black,
-    marginTop: 50,
-    paddingTop: 50,
-  },
-});

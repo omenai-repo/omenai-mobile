@@ -1,0 +1,33 @@
+appId: com.omenai.omenaimobile
+name: "Individual User Login"
+tags:
+  - login
+  - individual
+  - auth
+
+---
+- runFlow: welcome-onboarding-skip.yaml
+
+- tapOn: "Log In"
+
+- assertVisible: "Welcome Back"
+- assertVisible: "Collector"
+
+- tapOn:
+    id: "login-email-input"
+- inputText: "dantereus1@gmail.com"
+- hideKeyboard
+
+- tapOn:
+    id: "login-password-input"
+- inputText: "Test12345@"
+- hideKeyboard
+
+- tapOn:
+    id: "login-submit-button"
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- assertVisible: "Trending"

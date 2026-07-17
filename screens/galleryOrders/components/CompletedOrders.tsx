@@ -1,10 +1,10 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { galleryOrderModalStore } from "store/modal/galleryModalStore";
+import { galleryOrderModalStore } from "#store/modal/galleryModalStore";
 import OrderCard from "./OrderCard";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import Divider from "components/general/Divider";
-import { utils_getColors } from "utils/utils_sortFunctions";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import Divider from "#components/general/Divider";
+import { utils_getColors } from "#utils/utils_sortFunctions";
 import { OrdersListingProps } from "./PendingOrders";
 import { orderCardStatusTypes } from "./OrdersListing";
 

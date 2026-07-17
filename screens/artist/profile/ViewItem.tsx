@@ -1,10 +1,10 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Alert, Platform } from "react-native";
-import * as FileSystem from "expo-file-system";
+import React, { useState } from "react";
+import { View, Text, Alert, Platform } from "react-native";
+import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
-import { useModalStore } from "store/modal/modalStore";
+import { useModalStore } from "#store/modal/modalStore";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 
 export default function ViewItem({
   title,
@@ -16,6 +16,8 @@ export default function ViewItem({
   isDownloadable?: boolean;
 }) {
   const { updateModal } = useModalStore();
+  const [isLoading, setIsLoading] = useState(false);
+
   const downloadFile = async () => {
     if (!value) {
       updateModal({
@@ -26,10 +28,18 @@ export default function ViewItem({
       return;
     }
 
+    setIsLoading(true);
+
     try {
       // Check if the URL is valid
       if (!value.startsWith("http")) {
         throw new Error("Invalid URL format");
+      }
+
+      // Check file existence and get content type
+      const { exists, contentType } = await checkFileUrl(value);
+      if (!exists) {
+        throw new Error("File not found on server (404)");
       }
 
       // Extract filename from URL or create a default one
@@ -37,7 +47,6 @@ export default function ViewItem({
 
       // Ensure filename has an extension (default to .pdf if none found)
       if (!filename.includes(".")) {
-        const contentType = await getContentType(value);
         const extension = contentType.split("/").pop() || "pdf";
         filename = `${filename}.${extension}`;
       }
@@ -45,85 +54,77 @@ export default function ViewItem({
       // Clean up filename by removing query parameters
       filename = filename.split("?")[0];
 
-      const downloadPath = `${FileSystem.documentDirectory}${filename}`;
+      const file = new File(Paths.cache, filename);
 
-      // Check if file already exists
-      const fileInfo = await FileSystem.getInfoAsync(downloadPath);
-      if (fileInfo.exists) {
-        Alert.alert(
-          "File Exists",
-          "This file already exists. Would you like to download it again?",
-          [
-            { text: "Cancel", style: "cancel" },
-            { text: "Download", onPress: () => performDownload(value, downloadPath) },
-          ]
-        );
-        return;
-      }
-
-      await performDownload(value, downloadPath);
+      // Always perform path cleanup and new download (simulating 'clear cache' / force re-download)
+      await performDownload(value, file);
     } catch (err: any) {
       updateModal({
-        message: err.message || "Failed to download the file.",
+        message: err.message || err?.body?.message || "Failed to download the file.",
         showModal: true,
         modalType: "error",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const performDownload = async (url: string, path: string) => {
+  const performDownload = async (url: string, file: File) => {
     try {
-      const downloadResumable = FileSystem.createDownloadResumable(
-        url,
-        path,
-        {},
-        (downloadProgress) => {
-          const progress =
-            downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
-          console.log(`Download progress: ${progress * 100}%`);
-        }
-      );
-
-      const downloadResult = await downloadResumable.downloadAsync();
-
-      if (!downloadResult) {
-        throw new Error("Download failed: No result returned.");
+      if (file.exists) {
+        await file.delete();
       }
 
+      await File.downloadFileAsync(url, file);
+
       if (Platform.OS === "ios" || (await Sharing.isAvailableAsync())) {
-        await Sharing.shareAsync(downloadResult.uri);
+        await Sharing.shareAsync(file.uri, {
+          mimeType: "application/pdf",
+          dialogTitle: title || "Document",
+        });
       } else {
-        Alert.alert("Download Complete", `File saved to: ${downloadResult.uri}`);
+        Alert.alert("Download Complete", `File saved to: ${file.uri}`);
       }
     } catch (err) {
       throw err;
     }
   };
 
-  const getContentType = async (url: string): Promise<string> => {
+  const checkFileUrl = async (
+    url: string,
+  ): Promise<{ exists: boolean; contentType: string }> => {
     try {
       const response = await fetch(url, { method: "HEAD" });
-      return response.headers.get("Content-Type") || "application/pdf";
+      if (response.status === 404) {
+        return { exists: false, contentType: "" };
+      }
+      return {
+        exists: true,
+        contentType: response.headers.get("Content-Type") || "application/pdf",
+      };
     } catch {
-      return "application/pdf";
+      return { exists: false, contentType: "" };
     }
   };
 
   return (
     <View style={tw`mb-4`}>
-      <Text style={tw`text-[#1A1A1A] text-[14px] font-bold mb-1`}>{title}</Text>
-      <View style={tw`flex-row justify-between items-center bg-[#F4F4F4] rounded-[10px] p-3`}>
+      <Text style={tw`text-[#1A1A1A] text-sm font-bold mb-1`}>{title}</Text>
+      <View
+        style={tw`flex-row justify-between items-center bg-[#F4F4F4] rounded-sm p-3`}
+      >
         <Text style={tw`text-[13px] text-[#333] flex-1 mr-2`} numberOfLines={1}>
           {title === "CV Document" ? "Pdf file" : value}
         </Text>
         {isDownloadable && (
-          <TouchableOpacity
-            style={[tw`px-3 py-1 rounded-[8px]`, { backgroundColor: colors.black }]}
-            onPress={downloadFile}
-            disabled={!value}
-          >
-            <Text style={[tw`text-xs`, { color: colors.white }]}>Download</Text>
-          </TouchableOpacity>
+          <FittedBlackButton
+            value="Download"
+            onClick={downloadFile}
+            isLoading={isLoading}
+            isDisabled={!value}
+            style={tw`h-[32px] px-3`}
+            textStyle={tw`text-xs`}
+          />
         )}
       </View>
     </View>

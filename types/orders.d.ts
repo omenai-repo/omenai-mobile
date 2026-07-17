@@ -1,3 +1,29 @@
+export type CollectorOrderPaymentFlags = {
+  isFlutterwavePaymentEnabled: boolean;
+  isStripePaymentEnabled: boolean;
+  areFlagsLoading: boolean;
+};
+
+/** Collector orders list row — `screens/orders/components/OrderContainer` */
+export type CollectorOrderContainerProps = {
+  item: CreateOrderModelTypes;
+  id: number;
+  open: boolean;
+  /** Stable handler: `(orderId) => void` */
+  onToggleOpen: (orderId: string) => void;
+  lastId: boolean;
+  paymentFlags: CollectorOrderPaymentFlags;
+};
+
+export type CollectorOrderListItemProps = {
+  item: CreateOrderModelTypes;
+  index: number;
+  isOpen: boolean;
+  isLast: boolean;
+  onToggleOpen: (orderId: string) => void;
+  paymentFlags: CollectorOrderPaymentFlags;
+};
+
 export type OrderStatusKey = "pending" | "processing" | "completed";
 
 export type OrderActionType = "track" | "action" | null;

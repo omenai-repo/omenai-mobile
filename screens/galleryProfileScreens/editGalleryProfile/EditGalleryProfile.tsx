@@ -1,20 +1,20 @@
-import AddressField from "components/general/AddressField";
+import AddressField from "#components/general/AddressField";
 import { Platform, Text, View, KeyboardAvoidingView } from "react-native";
 import React, { useState } from "react";
-import BackHeaderTitle from "components/header/BackHeaderTitle";
-import Input from "components/inputs/Input";
-import LargeInput from "components/inputs/LargeInput";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { galleryProfileUpdate } from "store/gallery/galleryProfileUpdateStore";
-import { updateProfile } from "services/update/updateProfile";
-import WithModal from "components/modal/WithModal";
-import { useModalStore } from "store/modal/modalStore";
-import { logout } from "utils/logout.utils";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import Input from "#components/inputs/Input";
+import LargeInput from "#components/inputs/LargeInput";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { galleryProfileUpdate } from "#store/gallery/galleryProfileUpdateStore";
+import { updateProfile } from "#services/update/updateProfile";
+
+import { useModalStore } from "#store/modal/modalStore";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
 import UploadNewLogo from "./components/GalleryLogo";
-import ScrollWrapper from "components/general/ScrollWrapper";
+import ScrollWrapper from "#components/general/ScrollWrapper";
 import tw from "twrnc";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAppStore } from "store/app/appStore";
+import { useAppStore } from "#store/app/appStore";
 import { useNavigation } from "@react-navigation/native";
 
 export default function EditGalleryProfile() {
@@ -22,7 +22,7 @@ export default function EditGalleryProfile() {
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(false);
   const { updateModal } = useModalStore();
-  const { userType, userSession } = useAppStore();
+  const { userType, userSession, setUserSession } = useAppStore();
 
   const { updateData, setProfileUpdateData, clearData } =
     galleryProfileUpdate();
@@ -33,7 +33,7 @@ export default function EditGalleryProfile() {
       const { isOk, body } = await updateProfile(
         userType === "gallery" ? "gallery" : "artist",
         updateData,
-        userSession.id
+        userSession.id,
       );
 
       if (!isOk) {
@@ -44,21 +44,25 @@ export default function EditGalleryProfile() {
           showModal: true,
         });
       } else {
-        //throw succcess modal prompting galleries to re-login
+        const updatedSession = { ...userSession, ...updateData };
+        setUserSession(updatedSession);
+        await utils_storeAsyncData(
+          "userSession",
+          JSON.stringify(updatedSession),
+        );
+
         updateModal({
           modalType: "success",
-          message: `${body.message}, please log back in`,
+          message: "Profile updated successfully",
           showModal: true,
+          onDismiss: () => navigation.goBack(),
         });
-        setTimeout(() => {
-          logout();
-        }, 3500);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("EditGalleryProfile.handleSubmit error:", error);
       updateModal({
         modalType: "error",
-        message: "Something went wrong. Please try again later.",
+        message: error?.message || error?.body?.message || "Something went wrong. Please try again later.",
         showModal: true,
       });
     } finally {
@@ -67,7 +71,7 @@ export default function EditGalleryProfile() {
   };
 
   return (
-    <WithModal>
+    <>
       <BackHeaderTitle
         title={userType === "gallery" ? "Gallery profile" : "Artist profile"}
         callBack={clearData}
@@ -127,7 +131,7 @@ export default function EditGalleryProfile() {
                   Full Address
                 </Text>
                 <View
-                  style={tw`bg-gray-100 p-4 rounded-lg border border-gray-300`}
+                  style={tw`bg-gray-100 p-4 rounded-sm border border-gray-300`}
                 >
                   <AddressField
                     label="Address:"
@@ -197,6 +201,6 @@ export default function EditGalleryProfile() {
           </View>
         </ScrollWrapper>
       </KeyboardAvoidingView>
-    </WithModal>
+    </>
   );
 }

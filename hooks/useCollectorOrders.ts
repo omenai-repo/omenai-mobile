@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getOrdersForUser } from 'services/orders/getOrdersForUser';
-import { useAppStore } from 'store/app/appStore';
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getOrdersForUser } from "#services/orders/getOrdersForUser";
+import { useAppStore } from "#store/app/appStore";
 
 type Partitioned = {
   pendingOrders: CreateOrderModelTypes[];
@@ -16,13 +16,13 @@ function partition(list: CreateOrderModelTypes[]): Partitioned {
     const accepted = order.order_accepted.status;
     const delivered = order.shipping_details.delivery_confirmed;
 
-    if (accepted === '') {
+    if (accepted === "") {
       pending.push(order);
-    } else if (accepted === 'accepted' && !delivered) {
+    } else if (accepted === "accepted" && !delivered) {
       pending.push(order);
     } else if (
-      (accepted === 'accepted' && delivered && order.status === 'completed') ||
-      accepted === 'declined'
+      (accepted === "accepted" && delivered && order.status === "completed") ||
+      accepted === "declined"
     ) {
       completed.push(order);
     }
@@ -35,18 +35,23 @@ export function useCollectorOrders() {
   const userId = useAppStore((state) => state.userSession.id);
 
   const query = useQuery({
-    queryKey: ['orders', userId],
+    queryKey: ["orders", userId],
     queryFn: async () => {
       const res = await getOrdersForUser();
-      if (!res?.isOk) throw new Error('Failed to fetch orders');
+      if (!res?.isOk) throw new Error("Failed to fetch orders");
       return res.data as CreateOrderModelTypes[];
     },
     select: partition,
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: false,
   });
 
   const invalidate = useCallback(
-    () => queryClient.invalidateQueries({ queryKey: ['orders', userId] }),
-    [queryClient],
+    () => queryClient.invalidateQueries({ queryKey: ["orders", userId] }),
+    [queryClient, userId],
   );
 
   return { ...query, invalidate };

@@ -1,4 +1,5 @@
-import { apiUrl, authorization, originHeader, userAgent } from 'constants/apiUrl.constants';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function getTransferRate(params: {
   source: string;
@@ -6,15 +7,10 @@ export async function getTransferRate(params: {
   amount: number;
 }) {
   try {
-    const res = await fetch(
+    const res = await apiRequest(
       `${apiUrl}/api/flw/getTransferRate?source=${params.source}&destination=${params.destination}&amount=${params.amount}`,
       {
-        method: 'GET',
-        headers: {
-          Origin: originHeader,
-          'User-Agent': userAgent,
-          Authorization: authorization,
-        },
+        method: "GET",
       },
     );
 
@@ -24,7 +20,12 @@ export async function getTransferRate(params: {
   } catch (error: any) {
     return {
       isOk: false,
-      message: error.response?.data?.message || 'Failed to get rate',
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Failed to get rate",
+      },
     };
   }
 }

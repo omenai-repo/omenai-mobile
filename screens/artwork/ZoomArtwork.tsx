@@ -1,10 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Dimensions, View, Image } from "react-native";
-import { GestureHandlerRootView, Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import {
+  Modal,
+  Dimensions,
+  View,
+  TouchableOpacity,
+  Platform,
+  Image,
+} from "react-native";
+import {
+  GestureHandlerRootView,
+  Gesture,
+  GestureDetector,
+} from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  runOnJS,
+  useAnimatedReaction,
+} from "react-native-reanimated";
 import tw from "twrnc";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import { getImageFileView } from "lib/storage/getImageFileView";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import Slider from "@react-native-community/slider";
+import { Feather } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { colors } from "#config/colors.config";
 
 const ZoomArtwork = ({
   modalVisible,
@@ -16,168 +36,175 @@ const ZoomArtwork = ({
   setModalVisible: (visible: boolean) => void;
 }) => {
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-
+  const insets = useSafeAreaInsets();
+  const [imageUrl, setImageUrl] = useState("");
   const [imageDimensions, setImageDimensions] = useState({
     width: screenWidth,
     height: screenHeight,
   });
 
-  const [imageUrl, setImageUrl] = useState("");
+  // Slider state
+  const [sliderValue, setSliderValue] = useState(1);
 
   useEffect(() => {
     if (url) {
-      const image = getImageFileView(url, 800);
-      setImageUrl(image);
+      setImageUrl(getImageFileView(url, 1200)); // Higher res for zoom
     }
   }, [url]);
 
-  // Shared values for gestures
+  // Shared values
   const scale = useSharedValue(1);
-  const lastScale = useSharedValue(1);
+  const savedScale = useSharedValue(1);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
-  const lastTranslateX = useSharedValue(0);
-  const lastTranslateY = useSharedValue(0);
+  const savedTranslateX = useSharedValue(0);
+  const savedTranslateY = useSharedValue(0);
 
-  // Track the focal point for better zooming experience
-  const focalX = useSharedValue(0);
-  const focalY = useSharedValue(0);
+  // Sync Slider to Pinch (Throttle logic could be added if needed, but smooth enough for now)
+  useAnimatedReaction(
+    () => scale.value,
+    (currentScale) => {
+      runOnJS(setSliderValue)(currentScale);
+    }
+  );
 
-  // Fetch and calculate image dimensions
   useEffect(() => {
     if (imageUrl) {
       Image.getSize(
         imageUrl,
-        (imageWidth, imageHeight) => {
-          const aspectRatio = imageWidth / imageHeight;
+        (w, h) => {
+          const aspectRatio = w / h;
           let targetWidth = screenWidth;
           let targetHeight = screenWidth / aspectRatio;
 
-          if (targetHeight > screenHeight) {
-            targetHeight = screenHeight;
-            targetWidth = screenHeight * aspectRatio;
+          if (targetHeight > screenHeight * 0.8) {
+            // Fit within 80% of height to leave room for controls
+            targetHeight = screenHeight * 0.8;
+            targetWidth = targetHeight * aspectRatio;
           }
 
-          setImageDimensions({
-            width: targetWidth,
-            height: targetHeight,
-          });
+          setImageDimensions({ width: targetWidth, height: targetHeight });
         },
-        (error) => console.error("Failed to load image size:", error)
+        () => {}
       );
     }
   }, [imageUrl, screenWidth, screenHeight]);
 
-  // Reset image position and scale when modal closes
   useEffect(() => {
     if (!modalVisible) {
       scale.value = 1;
       translateX.value = 0;
       translateY.value = 0;
+      setSliderValue(1);
     }
   }, [modalVisible]);
 
-  // Pinch gesture handler (with focal point handling)
-  const pinchGesture = Gesture.Pinch()
-    .onStart((event) => {
-      lastScale.value = scale.value;
-      focalX.value = event.focalX;
-      focalY.value = event.focalY;
-    })
-    .onUpdate((event) => {
-      const newScale = Math.max(1, Math.min(3, lastScale.value * event.scale));
-      const scaleFactor = newScale / scale.value;
+  const onSliderValueChange = (val: number) => {
+    scale.value = val;
+    setSliderValue(val);
+  };
 
-      // Adjust translation to keep zoom centered around fingers
-      translateX.value = (translateX.value - focalX.value) * scaleFactor + focalX.value;
-      translateY.value = (translateY.value - focalY.value) * scaleFactor + focalY.value;
-
-      scale.value = newScale;
-    })
-    .onEnd(() => {
-      scale.value = withSpring(scale.value, {
-        damping: 10,
-        stiffness: 100,
-      });
-    });
-
-  // Pan gesture handler
   const panGesture = Gesture.Pan()
     .onStart(() => {
-      lastTranslateX.value = translateX.value;
-      lastTranslateY.value = translateY.value;
+      savedTranslateX.value = translateX.value;
+      savedTranslateY.value = translateY.value;
     })
-    .onUpdate((event) => {
-      const scaledWidth = imageDimensions.width * scale.value;
-      const scaledHeight = imageDimensions.height * scale.value;
-
-      const boundaryX = Math.max(0, (scaledWidth - screenWidth) / 2);
-      const boundaryY = Math.max(0, (scaledHeight - screenHeight) / 2);
-
-      translateX.value = Math.max(
-        -boundaryX,
-        Math.min(boundaryX, lastTranslateX.value + event.translationX)
-      );
-      translateY.value = Math.max(
-        -boundaryY,
-        Math.min(boundaryY, lastTranslateY.value + event.translationY)
-      );
+    .onUpdate((e) => {
+      // Allow panning only when zoomed in or if image is naturally larger (not the case here as we fit it)
+      if (scale.value > 1) {
+        translateX.value = savedTranslateX.value + e.translationX;
+        translateY.value = savedTranslateY.value + e.translationY;
+      }
     })
     .onEnd(() => {
-      translateX.value = withSpring(translateX.value, {
-        damping: 10,
-        stiffness: 100,
-      });
-      translateY.value = withSpring(translateY.value, {
-        damping: 10,
-        stiffness: 100,
-      });
+      // Reset to center if scale is 1
+      if (scale.value <= 1) {
+        translateX.value = withSpring(0);
+        translateY.value = withSpring(0);
+      }
     });
 
-  // Combined gestures
-  const combinedGesture = Gesture.Simultaneous(pinchGesture, panGesture);
+  const pinchGesture = Gesture.Pinch()
+    .onStart(() => {
+      savedScale.value = scale.value;
+    })
+    .onUpdate((e) => {
+      scale.value = Math.max(1, Math.min(4, savedScale.value * e.scale));
+    })
+    .onEnd(() => {
+      if (scale.value < 1) {
+        scale.value = withSpring(1);
+      }
+    });
 
-  // Animated styles
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: translateX.value },
-        { translateY: translateY.value },
-        { scale: scale.value },
-      ],
-    };
-  });
+  const composed = Gesture.Simultaneous(pinchGesture, panGesture);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }));
 
   return (
     <Modal
-      animationType="fade"
-      transparent={true}
       visible={modalVisible}
+      transparent
+      animationType="fade"
       onRequestClose={() => setModalVisible(false)}
+      statusBarTranslucent
     >
-      <GestureHandlerRootView style={tw`flex-1`}>
-        <View style={tw`flex-1 bg-white`}>
-          {/* Back Button */}
-          <View style={tw`pt-[60px] android:pt-[40px] pl-[20px] absolute z-10`}>
-            <BackScreenButton handleClick={() => setModalVisible(false)} />
-          </View>
+      <GestureHandlerRootView style={tw`flex-1 bg-[${colors.black}]`}>
+        {/* Close Button */}
+        <TouchableOpacity
+          onPress={() => setModalVisible(false)}
+          style={[
+            tw`absolute right-5 z-50 bg-[${colors.black_light}] rounded-full p-2`,
+            { top: Platform.OS === "android" ? 40 : insets.top + 10 },
+          ]}
+        >
+          <Feather name="x" size={24} color="white" />
+        </TouchableOpacity>
 
-          {/* Gesture Detector */}
-          <GestureDetector gesture={combinedGesture}>
+        {/* Main Image Area */}
+        <View style={tw`flex-1 justify-center items-center overflow-hidden`}>
+          <GestureDetector gesture={composed}>
             <Animated.Image
               source={{ uri: imageUrl }}
               style={[
                 {
                   width: imageDimensions.width,
                   height: imageDimensions.height,
-                  alignSelf: "center",
-                  marginTop: screenHeight / 6,
                   resizeMode: "contain",
                 },
                 animatedStyle,
               ]}
             />
           </GestureDetector>
+        </View>
+
+        {/* Bottom Controls */}
+        <View
+          style={[
+            tw`absolute bottom-10 w-full px-8 items-center gap-4`,
+            { paddingBottom: insets.bottom },
+          ]}
+        >
+          <View style={tw`flex-row items-center w-full gap-4`}>
+            <Feather name="minus" size={20} color={colors.white} />
+            <Slider
+              style={tw`flex-1 h-10`}
+              minimumValue={1}
+              maximumValue={4}
+              value={sliderValue}
+              onValueChange={onSliderValueChange}
+              minimumTrackTintColor={colors.white}
+              maximumTrackTintColor={colors.grey}
+              thumbTintColor={colors.white}
+            />
+            <Feather name="plus" size={20} color={colors.white} />
+          </View>
         </View>
       </GestureHandlerRootView>
     </Modal>

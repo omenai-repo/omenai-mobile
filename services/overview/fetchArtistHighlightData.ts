@@ -1,9 +1,9 @@
-import { fetchIncomeData } from 'services/overview/fetchIncomeData';
-import { utils_formatPrice } from 'utils/utils_priceFormatter';
+import { fetchIncomeData } from '#services/overview/fetchIncomeData';
+import { utils_formatPrice } from '#utils/utils_priceFormatter';
 import { getSalesHighlightData } from './getSalesHighlightData';
 import { getWalletBalance } from './getWalletBalance';
 import { getArtworkHighlightData } from './getArtworkHighlightData';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { utils_getAsyncData } from '#utils/utils_asyncStorage';
 
 export async function fetchArtistHighlightData(tag: string) {
   let userId = '';
@@ -29,7 +29,6 @@ export async function fetchArtistHighlightData(tag: string) {
 
   if (tag === 'artworks') {
     const result = await getArtworkHighlightData({ sessionId: userId });
-    console.log(result);
     return result?.isOk ? result.data.length : 0;
   }
 

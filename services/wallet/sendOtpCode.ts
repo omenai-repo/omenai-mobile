@@ -1,23 +1,22 @@
-import { apiUrl, authorization, originHeader, userAgent } from 'constants/apiUrl.constants';
-import { utils_getAsyncData } from 'utils/utils_asyncStorage';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { utils_getAsyncData } from "#utils/utils_asyncStorage";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function sendOtpCode() {
-  let id = '';
-  const userSession = await utils_getAsyncData('userSession');
+  let id = "";
+  const userSession = await utils_getAsyncData("userSession");
   if (userSession.value) {
     id = JSON.parse(userSession.value).id;
   }
   if (id.length < 1) return;
   try {
-    const res = await fetch(`${apiUrl}/api/wallet/pin_recovery/send_otp_code`, {
-      method: 'POST',
-      headers: {
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const res = await apiRequest(
+      `${apiUrl}/api/wallet/pin_recovery/send_otp_code`,
+      {
+        method: "POST",
+        body: JSON.stringify({ artist_id: id }),
       },
-      body: JSON.stringify({ artist_id: id }),
-    });
+    );
 
     const result = await res.json();
 
@@ -25,7 +24,12 @@ export async function sendOtpCode() {
   } catch (error: any) {
     return {
       isOk: false,
-      message: error.response?.data?.message || 'Failed to send OTP',
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Failed to send OTP",
+      },
     };
   }
 }

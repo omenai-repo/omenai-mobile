@@ -1,12 +1,20 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { colors } from "config/colors.config";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { useOrderSummaryStore } from "store/orders/OrderSummaryStore";
+import { colors } from "#config/colors.config";
 import SummaryContainer from "./SummaryContainer";
-import OrderCard from "screens/orders/components/OrderCard";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+
+function hasArtworkPrice(
+  pricing?: artworkOrderDataTypes["pricing"],
+): pricing is artworkOrderDataTypes["pricing"] {
+  return (
+    pricing != null &&
+    typeof pricing.usd_price === "number" &&
+    Number.isFinite(pricing.usd_price) &&
+    pricing.usd_price > 0
+  );
+}
 
 export default function OrderSummary({
   data: { title, url, artist, art_id, author_id, pricing },
@@ -14,6 +22,7 @@ export default function OrderSummary({
   data: artworkOrderDataTypes;
 }) {
   const [image_href, setImageHref] = useState<string>("");
+  const artworkPrice = hasArtworkPrice(pricing) ? pricing.usd_price : undefined;
   useEffect(() => {
     if (url) {
       let image_href = getImageFileView(url, 300);
@@ -23,7 +32,6 @@ export default function OrderSummary({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleHeader}>Order Summary</Text>
       <View style={styles.ordersContainer}>
         <View style={styles.listItem}>
           <Image
@@ -42,19 +50,17 @@ export default function OrderSummary({
               {title}
             </Text>
             <Text style={styles.orderItemTitle}>{artist}</Text>
-            {pricing?.shouldShowPrice === "Yes" ? (
+            {artworkPrice != null && (
               <Text style={{ fontSize: 18, fontWeight: "500", marginTop: 15 }}>
-                {utils_formatPrice(pricing.usd_price)}
+                {utils_formatPrice(artworkPrice)}
               </Text>
-            ) : (
-              <Text>Request Price</Text>
             )}
           </View>
         </View>
       </View>
       <SummaryContainer
         buttonTypes="Proceed to shipping"
-        price={pricing?.shouldShowPrice === "Yes" ? pricing.usd_price : 0}
+        price={artworkPrice}
       />
     </View>
   );
@@ -63,7 +69,7 @@ export default function OrderSummary({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingVertical: 30,
+    paddingBottom: 30,
     paddingTop: 0,
   },
   titleHeader: {
@@ -74,7 +80,7 @@ const styles = StyleSheet.create({
   ordersContainer: {
     borderWidth: 1,
     borderColor: colors.inputBorder,
-    marginTop: 30,
+    marginTop: 0,
     paddingHorizontal: 20,
   },
   listItem: {

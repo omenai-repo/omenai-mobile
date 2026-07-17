@@ -1,9 +1,17 @@
-import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+import {
+  StyleProp,
+  Text,
+  TextStyle,
+  Pressable,
+  View,
+  ViewStyle,
+} from "react-native";
 import React, { useRef } from "react";
 import LottieView from "lottie-react-native";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import tw from "twrnc";
-import loaderAnimation from "assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
+import { useDevice } from "#hooks/useDevice";
 
 type FittedBlackButtonProps = {
   value: string;
@@ -13,6 +21,9 @@ type FittedBlackButtonProps = {
   children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
+  responsive?: boolean;
+  iconPosition?: "left" | "right";
+  accessibilityLabel?: string;
 };
 
 export default function FittedBlackButton({
@@ -23,52 +34,74 @@ export default function FittedBlackButton({
   children,
   style,
   textStyle,
+  responsive = false,
+  iconPosition = "right",
+  accessibilityLabel,
 }: FittedBlackButtonProps) {
   const animation = useRef(null);
+  const { isTablet } = useDevice();
 
   const defaultContainerStyle: ViewStyle = {
     height: 44,
-    backgroundColor: isDisabled || isLoading ? colors.grey50 : colors.primary_black,
+    backgroundColor:
+      isDisabled || isLoading ? colors.grey50 : colors.black,
   };
 
   const defaultTextStyle: TextStyle = {
     color: isDisabled || isLoading ? colors.inputLabel : colors.white,
-    fontSize: 16,
-    fontWeight: "400",
+    fontSize: 14,
+    fontWeight: "300",
   };
 
   const containerStyle = [
-    tw`flex flex-row items-center justify-center rounded-lg gap-[10px] px-5`,
+    tw`flex flex-row items-center justify-center rounded-sm gap-[10px] px-5`,
     defaultContainerStyle,
+    responsive &&
+      ({
+        alignSelf: isTablet ? "flex-start" : "auto",
+        width: isTablet ? undefined : "100%",
+      } as ViewStyle),
     style,
   ];
 
   const mergedTextStyle = [defaultTextStyle, textStyle];
 
-  if (isDisabled || isLoading) {
-    return (
-      <View style={containerStyle}>
-        {isDisabled ? (
-          <>
-            <Text style={mergedTextStyle}>{value}</Text>
-            {children}
-          </>
-        ) : (
-          <LottieView
-            autoPlay
-            ref={animation}
-            style={tw`w-[100px] h-[100px]`}
-            source={loaderAnimation}
-          />
+  return (
+    <Pressable
+      style={({ pressed }) => [
+        containerStyle,
+        pressed && !isLoading && !isDisabled ? { opacity: 0.9 } : null,
+      ]}
+      onPress={onClick}
+      disabled={isDisabled || isLoading}
+      accessibilityLabel={accessibilityLabel ?? value}
+      accessibilityRole="button"
+    >
+      <View style={tw`flex-row items-center justify-center`}>
+        {/* Invisible content to maintain button width */}
+        <View
+          style={[
+            tw`flex-row items-center justify-center gap-[10px]`,
+            { opacity: isLoading ? 0 : 1 },
+          ]}
+        >
+          {iconPosition === "left" && children}
+          <Text style={mergedTextStyle}>{value}</Text>
+          {iconPosition === "right" && children}
+        </View>
+
+        {/* Absolutely positioned loader */}
+        {isLoading && (
+          <View style={tw`absolute inset-0 items-center justify-center`}>
+            <LottieView
+              autoPlay
+              ref={animation}
+              style={tw`w-[60px] h-[60px]`}
+              source={animations.loader}
+            />
+          </View>
         )}
       </View>
-    );
-  }
-
-  return (
-    <TouchableOpacity activeOpacity={0.9} style={containerStyle} onPress={onClick}>
-      <Text style={mergedTextStyle}>{value}</Text>
-      {children}
-    </TouchableOpacity>
+    </Pressable>
   );
 }

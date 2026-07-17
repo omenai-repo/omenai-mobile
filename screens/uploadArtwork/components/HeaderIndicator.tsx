@@ -1,27 +1,46 @@
-import { StyleSheet, Text, View, Platform, StatusBar } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import BackScreenButton from "components/buttons/BackScreenButton";
-import { colors } from "config/colors.config";
-import { uploadArtworkStore } from "store/gallery/uploadArtworkStore";
+import BackScreenButton from "#components/buttons/BackScreenButton";
+import { colors } from "#config/colors.config";
+import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { useAppStore } from "store/app/appStore";
+import { useAppStore } from "#store/app/appStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function HeaderIndicator() {
+export default function HeaderIndicator({
+  shouldUseArtistReviewFlow,
+  isArtistSelfPriced,
+}: Readonly<{
+  shouldUseArtistReviewFlow: boolean;
+  isArtistSelfPriced: boolean;
+}>) {
   const { userType } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { activeIndex, setActiveIndex, isUploaded, clearData } = uploadArtworkStore();
+  const { activeIndex, setActiveIndex, isUploaded, clearData } =
+    uploadArtworkStore();
   const insets = useSafeAreaInsets();
 
-  const titles = [
-    "Upload artwork",
-    "Dimensions",
-    ...(userType !== "artist" ? ["Pricing"] : []),
-    "Artist details",
-    "Upload image",
-    ...(userType === "artist" ? ["Artwork Price Review"] : []),
-  ];
+  const titles = isArtistSelfPriced
+    ? [
+        "Upload artwork",
+        "Dimensions",
+        "Shipping",
+        "Artist details",
+        "Upload image",
+        "Pricing",
+      ]
+    : [
+        "Upload artwork",
+        "Dimensions",
+        "Shipping",
+        ...(userType !== "artist" || !shouldUseArtistReviewFlow
+          ? ["Pricing"]
+          : []),
+        "Artist details",
+        "Upload image",
+        ...(shouldUseArtistReviewFlow ? ["Artwork Price Review"] : []),
+      ];
 
   return (
     <View
@@ -48,7 +67,10 @@ export default function HeaderIndicator() {
         {titles.map((_, index) => (
           <View
             key={index}
-            style={[styles.indicator, activeIndex >= index + 1 && { backgroundColor: "#000" }]}
+            style={[
+              styles.indicator,
+              activeIndex >= index + 1 && { backgroundColor: "#000" },
+            ]}
           />
         ))}
       </View>

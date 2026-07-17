@@ -1,15 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from 'constants/apiUrl.constants';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function verifyGalleryRequest(name: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/verification/verifyGallery`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
-      },
+    const res = await apiRequest(`${apiUrl}/api/verification/verifyGallery`, {
+      method: "POST",
       body: JSON.stringify({ name }),
     });
 
@@ -17,6 +12,14 @@ export async function verifyGalleryRequest(name: string) {
 
     return { isOk: res.ok, message: result.message };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error verifying gallery request",
+      },
+    };
   }
 }

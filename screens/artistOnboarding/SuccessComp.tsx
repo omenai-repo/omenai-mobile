@@ -1,12 +1,18 @@
-import { View, Text, Animated, useWindowDimensions, Easing } from 'react-native';
-import React, { useEffect, useRef } from 'react';
-import tw from 'twrnc';
-import { Image } from 'react-native';
-import omenaiLogo from '../../assets/omenai-logo.png';
-import FittedBlackButton from 'components/buttons/FittedBlackButton';
-import { SvgXml } from 'react-native-svg';
-import { starEffect } from 'utils/SvgImages';
-import { useAppStore } from 'store/app/appStore';
+import {
+  View,
+  Text,
+  Animated,
+  useWindowDimensions,
+  Easing,
+  Image,
+} from "react-native";
+import React, { useEffect, useRef } from "react";
+import tw from "twrnc";
+import { images } from "#constants/images.constants";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
+import { SvgXml } from "react-native-svg";
+import { starEffect } from "#utils/SvgImages";
+import { useAppStore } from "#store/app/appStore";
 
 const SuccessComp = () => {
   const { height } = useWindowDimensions();
@@ -39,22 +45,16 @@ const SuccessComp = () => {
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
       <Image
-        style={tw.style(`w-[130px] h-[30px] ml-[20px]`, {
-          marginTop: height / 12,
-        })}
+        style={[tw`w-[130px] h-[30px] ml-[20px]`, { marginTop: height / 12 }]}
         resizeMode="contain"
-        source={omenaiLogo}
+        source={images.omenaiLogo}
       />
-      <View
-        style={tw.style({
-          marginTop: height / 5,
-        })}
-      >
+      <View style={{ marginTop: height / 5 }}>
         <Animated.View
           style={[
-            tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
+            tw`bg-[#FFFFFF] rounded-sm py-[35px]`,
             {
-              marginHorizontal: '5%',
+              marginHorizontal: "5%",
               opacity: fadeAnim, // Apply fade animation
               transform: [{ scale: scaleAnim }], // Apply scale animation
             },
@@ -62,16 +62,24 @@ const SuccessComp = () => {
         >
           <View style={tw`flex-row self-center gap-[20px]`}>
             <SvgXml xml={starEffect} style={{ transform: [{ scaleX: -1 }] }} />
-            <Text style={tw`text-[18px] text-[#1A1A1A] font-bold`}>Congratulations</Text>
+            <Text style={tw`text-lg text-[#1A1A1A] font-bold`}>
+              Congratulations
+            </Text>
             <SvgXml xml={starEffect} />
           </View>
 
-          <Text style={tw`text-[16px] leading-[25px] text-[#1A1A1A]00099] text-center mx-[40px]`}>
-            We have received your information and are currently verifying your details. This process
-            typically takes 24 to 48 hours. We appreciate your patience.
+          <Text
+            style={tw`text-sm leading-[25px] text-[#1A1A1A]00099] text-center mx-[40px]`}
+          >
+            We have received your information and are currently verifying your
+            details. This process typically takes 24 to 48 hours. We appreciate
+            your patience.
           </Text>
           <View style={tw`mt-[30px] mx-[30px]`}>
-            <FittedBlackButton onClick={completeOnboarding} value="Proceed to Home" />
+            <FittedBlackButton
+              onClick={completeOnboarding}
+              value="Proceed to Home"
+            />
           </View>
         </Animated.View>
       </View>

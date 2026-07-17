@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, memo } from 'react';
 import { Animated, View } from 'react-native';
-import type { VerticalStickProps } from '../../types/otp';
+import type { VerticalStickProps } from '#types/otp';
 
 const VerticalStick: React.FC<VerticalStickProps> = memo(
   ({ focusColor, style, focusStickBlinkingDuration = 350 }) => {

@@ -1,15 +1,15 @@
 import { View } from "react-native";
 import React, { useMemo, useState } from "react";
 
-import { useIndividualAuthRegisterStore } from "store/auth/register/IndividualAuthRegisterStore";
+import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import { Country, ICountry } from "country-state-city";
-import { useAddressForm } from "hooks/useAddressForm";
-import { useLocationSelection } from "hooks/useLocationSelection";
-import { useAddressVerification } from "hooks/useAddressVerification";
-import { AddressTooltip } from "components/general/AddressTooltip";
-import { AddressFormFields } from "components/register/AddressFormFields";
-import { AddressVerificationModal } from "components/register/AddressVerificationModal";
-import { AddressVerificationActions } from "components/register/AddressVerificationActions";
+import { useAddressForm } from "#hooks/useAddressForm";
+import { useLocationSelection } from "#hooks/useLocationSelection";
+import { useAddressVerification } from "#hooks/useAddressVerification";
+import { AddressTooltip } from "#components/general/AddressTooltip";
+import { AddressFormFields } from "#components/register/AddressFormFields";
+import { AddressVerificationModal } from "#components/register/AddressVerificationModal";
+import { AddressVerificationActions } from "#components/register/AddressVerificationActions";
 
 const IndividualAddressVerification = () => {
   const [showToolTip, setShowToolTip] = useState(false);
@@ -20,7 +20,7 @@ const IndividualAddressVerification = () => {
         value: item.isoCode,
         label: item.name,
       })),
-    []
+    [],
   );
 
   const {
@@ -30,7 +30,6 @@ const IndividualAddressVerification = () => {
     setAddress,
     setCity,
     setZipCode,
-    setPhone,
     setState,
     setCountry,
     setCountryCode,
@@ -43,7 +42,8 @@ const IndividualAddressVerification = () => {
     setStateCode,
   } = useIndividualAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } = useAddressForm();
+  const { formErrors, handleValidationChecks, checkIsFormValid } =
+    useAddressForm();
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -58,7 +58,7 @@ const IndividualAddressVerification = () => {
       setCountryCode,
       setStateData,
       setCityData,
-    }
+    },
   );
 
   const {
@@ -71,7 +71,7 @@ const IndividualAddressVerification = () => {
   } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
 
   const handleSubmit = () => {
-    handleVerifyAddress(individualRegisterData.address, individualRegisterData.phone, "delivery");
+    handleVerifyAddress(individualRegisterData.address, "", "delivery");
   };
 
   return (
@@ -81,7 +81,6 @@ const IndividualAddressVerification = () => {
         stateData={stateData}
         cityData={cityData}
         addressData={individualRegisterData.address}
-        phone={individualRegisterData.phone}
         formErrors={formErrors}
         onCountrySelect={handleCountrySelect}
         onStateSelect={handleStateSelect}
@@ -94,17 +93,13 @@ const IndividualAddressVerification = () => {
           setZipCode(text);
           handleValidationChecks("general", text);
         }}
-        onPhoneChange={(text) => {
-          setPhone(text);
-          handleValidationChecks("general", text);
-        }}
         addressLabel="Collector's Address"
-        addressPlaceholder="Input your gallery address here"
+        addressPlaceholder="Input your residential address here"
       />
 
       <AddressVerificationActions
         isLoading={isLoading}
-        isDisabled={!checkIsFormValid(individualRegisterData.address, individualRegisterData.phone)}
+        isDisabled={!checkIsFormValid(individualRegisterData.address)}
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
       />

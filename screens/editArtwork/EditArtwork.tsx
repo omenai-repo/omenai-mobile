@@ -1,12 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import WithModal from 'components/modal/WithModal';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { useRoute } from '@react-navigation/native';
-import EditPricing from './components/EditPricing';
-import DeleteArtworkButton from 'screens/artwork/components/DeleteArtworkButton';
-import ScrollWrapper from 'components/general/ScrollWrapper';
-import { useAppStore } from 'store/app/appStore';
+import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
+import { useRoute } from "@react-navigation/native";
+import EditPricing from "./components/EditPricing";
+import DeleteArtworkButton from "#screens/artwork/components/DeleteArtworkButton";
+import ScrollWrapper from "#components/general/ScrollWrapper";
+import { useAppStore } from "#store/app/appStore";
 
 export default function EditArtwork() {
   const route = useRoute();
@@ -19,13 +18,15 @@ export default function EditArtwork() {
   }, []);
 
   return (
-    <WithModal>
-      <BackHeaderTitle title={userType === 'gallery' ? 'Edit artwork pricing' : ''} />
+    <>
+      <BackHeaderTitle
+        title={userType === "gallery" ? "Edit artwork pricing" : ""}
+      />
       <ScrollWrapper style={styles.container}>
-        {userType === 'gallery' && artID && <EditPricing art_id={artID} />}
+        {userType === "gallery" && artID && <EditPricing art_id={artID} />}
         {artID && <DeleteArtworkButton art_id={artID} />}
       </ScrollWrapper>
-    </WithModal>
+    </>
   );
 }
 

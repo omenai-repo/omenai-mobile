@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
-import MiniArtworkCard from "components/artwork/MiniArtworkCard";
-import EmptyArtworks from "components/general/EmptyArtworks";
+import MiniArtworkCard from "#components/artwork/MiniArtworkCard";
+import EmptyArtworks from "#components/general/EmptyArtworks";
+import tw from "twrnc";
 
 export default function ArtworksMediumListing({ data }: { data: any[] }) {
   const [listing, setListing] = useState<any[]>([]);
@@ -21,8 +22,11 @@ export default function ArtworksMediumListing({ data }: { data: any[] }) {
 
   if (data.length === 0)
     return (
-      <View style={{ marginTop: 30 }}>
-        <EmptyArtworks writeUp="No artworks to display" size={120} />
+      <View style={tw`flex-1 `}>
+        <EmptyArtworks
+          writeUp="No artworks to match your interests"
+          darkTheme
+        />
       </View>
     );
 

@@ -2,17 +2,16 @@ import { View } from "react-native";
 import React from "react";
 import IndividualRegistrationForm from "../../individualRegistrationForm/IndividualRegistrationForm";
 import tw from "twrnc";
-import { useLowRiskFeatureFlag } from "hooks/useFeatureFlag";
-import OnboardingBlockerScreen from "components/blockers/onboarding/OnboardingBlockerScreen";
+import OnboardingBlockerScreen from "#components/blockers/onboarding/OnboardingBlockerScreen";
 
-const IndividualForm = () => {
-  const { value: collectorOnboardingEnabled } = useLowRiskFeatureFlag(
-    "collectoronboardingenabled",
-    false
-  );
+type IndividualFormProps = Readonly<{
+  isEnabled: boolean;
+}>;
+
+const IndividualForm = ({ isEnabled }: IndividualFormProps) => {
   return (
     <View style={tw`mt-7`}>
-      {collectorOnboardingEnabled ? <IndividualRegistrationForm /> : <OnboardingBlockerScreen />}
+      {isEnabled ? <IndividualRegistrationForm /> : <OnboardingBlockerScreen />}
     </View>
   );
 };

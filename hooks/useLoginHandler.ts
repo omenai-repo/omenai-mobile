@@ -1,10 +1,23 @@
+import { useEffect, useRef, useCallback, useMemo } from "react";
+import { InteractionManager } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { loginAccount } from "services/login/loginAccount";
-import { utils_storeAsyncData } from "utils/utils_asyncStorage";
-import { useAppStore } from "store/app/appStore";
-import { useModalStore } from "store/modal/modalStore";
-import { screenName } from "constants/screenNames.constants";
+import {
+  loginAccount,
+  type LoginApiJsonBody,
+} from "#services/login/loginAccount";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
+import { useAppStore } from "#store/app/appStore";
+import { useModalStore } from "#store/modal/modalStore";
+import { screenName } from "#constants/screenNames.constants";
+import { useBiometrics } from "#hooks/useBiometrics";
+import { Analytics } from "#utils/analytics";
+import { saveSecureItem } from "#utils/secureStore";
+import type { LoginSubmitOptions } from "#hooks/loginSubmitOptions";
+import { mapUserDataFromLoginBody } from "#hooks/login/mapUserDataFromLoginBody";
+import { createPostLoginBiometricHandlers } from "#hooks/login/postLoginBiometricPrompts";
+import { resetAllLoginFormLoading } from "#hooks/login/resetLoginFormLoading";
+import { flushPendingDeepLinks } from "#features/deeplink/deepLinkApply";
 
 type UserType = "individual" | "gallery" | "artist";
 
@@ -19,107 +32,244 @@ const USER_ID_MAP = {
   artist: "artist_id",
 } as const;
 
+const normalizeLoginEmail = (email: string) => email.trim().toLowerCase();
+
 export function useLoginHandler(userType: UserType) {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { setUserSession, setIsLoggedIn, expoPushToken } = useAppStore();
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const { setUserSession, setUserType, setIsLoggedIn, expoPushToken } =
+    useAppStore();
   const { updateModal } = useModalStore();
+  const {
+    isBiometricSupported,
+    isBiometricEnabled,
+    saveCredentials,
+    getCredentials,
+    authenticate,
+    getStoredEmail,
+    deleteCredentials,
+  } = useBiometrics();
+
+  /** When `false`, always clears Zustand loading (survives Login unmount after success). */
+  const safeSetLoading = useCallback(
+    (setIsLoading: (loading: boolean) => void, value: boolean) => {
+      if (!value) {
+        resetAllLoginFormLoading();
+      }
+      if (isMountedRef.current) {
+        setIsLoading(value);
+      }
+    },
+    [],
+  );
+
+  const safeUpdateModal = useCallback(
+    (args: Parameters<typeof updateModal>[0]) => {
+      if (isMountedRef.current) updateModal(args);
+    },
+    [updateModal],
+  );
+
+  const sanitizeErrorMessage = (message: unknown) => {
+    if (typeof message !== "string")
+      return "Something went wrong. Please try again.";
+
+    if (message.toLowerCase().includes("unable to resolve data for blob")) {
+      return "A temporary device data error occurred. Please restart the app and try again.";
+    }
+
+    return message;
+  };
+
+  const finalizeLogin = useCallback(
+    (data: any, clearInputs: () => void) => {
+      if (!isMountedRef.current) return;
+      setUserSession(data);
+      const sessionUserType = data.role === "individual" ? "user" : data.role;
+      setUserType(sessionUserType);
+      setIsLoggedIn(true);
+      clearInputs();
+
+      InteractionManager.runAfterInteractions(() => {
+        flushPendingDeepLinks({ isLoggedIn: true, userType: sessionUserType });
+      });
+    },
+    [setUserSession, setUserType, setIsLoggedIn],
+  );
+
+  const { processBiometricFlow } = useMemo(
+    () =>
+      createPostLoginBiometricHandlers({
+        userType,
+        isBiometricSupported,
+        isBiometricEnabled,
+        authenticate,
+        saveCredentials,
+        getStoredEmail,
+        deleteCredentials,
+        finalizeLogin,
+      }),
+    [
+      userType,
+      isBiometricSupported,
+      isBiometricEnabled,
+      authenticate,
+      saveCredentials,
+      getStoredEmail,
+      deleteCredentials,
+      finalizeLogin,
+    ],
+  );
 
   const handleLogin = async (
     loginData: LoginData,
     setIsLoading: (loading: boolean) => void,
-    clearInputs: () => void
+    clearInputs: () => void,
+    options?: LoginSubmitOptions,
   ) => {
-    setIsLoading(true);
+    const postLoginFlow = options?.postLoginFlow ?? "full";
+    const normalizedEmail = normalizeLoginEmail(loginData.email);
+    const payload: LoginData = {
+      email: normalizedEmail,
+      password: loginData.password,
+    };
+
+    safeSetLoading(setIsLoading, true);
 
     const results = await loginAccount(
-      { ...loginData, device_push_token: expoPushToken ?? "" },
-      userType
+      { ...payload, device_push_token: expoPushToken ?? "" },
+      userType,
     );
 
-    if (results?.isOk) {
-      const resultsBody = results?.body?.data;
-
-      if (!resultsBody) {
-        setIsLoading(false);
-        return;
-      }
-
-      const isVerified = Boolean(resultsBody.verified);
-
-      if (!isVerified) {
-        setIsLoading(false);
-        const idKey = USER_ID_MAP[userType];
-        navigation.navigate(screenName.verifyEmail, {
-          account: { id: resultsBody[idKey], type: userType },
+    if (!results?.isOk) {
+      if (results?.status && results.status >= 500) {
+        Analytics.track("login_failed", {
+          user_type: userType,
+          login_data: payload.email,
+          status: results.status,
+          message: results?.body?.message,
+          response: results?.body,
+          error: (results as any).error,
         });
-        return;
       }
-
-      const data = mapUserData(resultsBody, userType);
-
-      const isStored = await utils_storeAsyncData("userSession", JSON.stringify(data));
-
-      const loginTimeStamp = new Date();
-      const isLoginTimeStampStored = await utils_storeAsyncData(
-        "loginTimeStamp",
-        JSON.stringify(loginTimeStamp)
-      );
-
-      if (isStored && isLoginTimeStampStored) {
-        setUserSession(data);
-        setIsLoggedIn(true);
-        clearInputs();
-      }
-    } else {
-      updateModal({
-        message: results?.body.message,
+      safeUpdateModal({
+        message: sanitizeErrorMessage(results?.body?.message),
         showModal: true,
         modalType: "error",
       });
+      safeSetLoading(setIsLoading, false);
+      return;
     }
 
-    setIsLoading(false);
+    const resultsBody = (results.body as LoginApiJsonBody)?.data as
+      | Record<string, unknown>
+      | undefined;
+    if (!resultsBody) {
+      safeUpdateModal({
+        message:
+          "We could not read your login response. Please try again or contact support.",
+        showModal: true,
+        modalType: "error",
+      });
+      safeSetLoading(setIsLoading, false);
+      return;
+    }
+
+    const sessionPayload = resultsBody as any;
+
+    if (!sessionPayload.verified) {
+      safeSetLoading(setIsLoading, false);
+      if (!isMountedRef.current) return;
+      const idKey = USER_ID_MAP[userType];
+      navigation.navigate(screenName.verifyEmail, {
+        account: { id: sessionPayload[idKey], type: userType },
+      });
+      return;
+    }
+
+    Analytics.track("login_success", {
+      user_type: userType,
+      user_data: {
+        id: sessionPayload[USER_ID_MAP[userType]],
+        email: sessionPayload.email,
+        verified: Boolean(sessionPayload.verified),
+      },
+      login_data: payload.email,
+    });
+
+    const data = mapUserDataFromLoginBody(sessionPayload, userType);
+
+    if ((data as any).id) {
+      Analytics.identify((data as any).id);
+    }
+
+    const isStored = await utils_storeAsyncData(
+      "userSession",
+      JSON.stringify(data),
+    );
+
+    if (sessionPayload?.access_token) {
+      await saveSecureItem("session_token", sessionPayload.access_token);
+    }
+
+    const loginTimeStamp = new Date();
+    await utils_storeAsyncData(
+      "loginTimeStamp",
+      JSON.stringify(loginTimeStamp),
+    );
+
+    if (!isStored) {
+      safeUpdateModal({
+        message:
+          "Could not save your session on this device. Please try again.",
+        showModal: true,
+        modalType: "error",
+      });
+      safeSetLoading(setIsLoading, false);
+      return;
+    }
+
+    if (postLoginFlow === "finalize_only") {
+      finalizeLogin(data, clearInputs);
+    } else {
+      await processBiometricFlow(data, payload, clearInputs);
+    }
+
+    safeSetLoading(setIsLoading, false);
   };
 
-  return { handleLogin };
-}
+  const handleBiometricOnlyLogin = async (
+    setIsLoading: (loading: boolean) => void,
+  ) => {
+    safeSetLoading(setIsLoading, true);
+    try {
+      const { success } = await authenticate();
+      if (!success) return false;
 
-function mapUserData(resultsBody: any, userType: UserType) {
-  const baseData = {
-    email: resultsBody.email,
-    name: resultsBody.name,
-    role: resultsBody.role,
-    verified: resultsBody.verified,
-    address: resultsBody.address,
-    phone: resultsBody.phone,
-    logo: resultsBody.logo,
+      const credentials = await getCredentials(userType);
+      if (!credentials) return false;
+
+      const { email, token: password } = credentials;
+
+      await handleLogin({ email, password }, setIsLoading, () => {}, {
+        postLoginFlow: "finalize_only",
+      });
+      return true;
+    } catch (e) {
+      console.error("Biometric only login failed:", e);
+      return false;
+    } finally {
+      safeSetLoading(setIsLoading, false);
+    }
   };
 
-  switch (userType) {
-    case "individual":
-      return {
-        ...baseData,
-        id: resultsBody.user_id,
-        preferences: resultsBody.preferences,
-      };
-    case "gallery":
-      return {
-        ...baseData,
-        id: resultsBody.gallery_id,
-        gallery_verified: resultsBody.gallery_verified,
-        description: resultsBody.description,
-        admin: resultsBody.admin,
-        subscription_active: resultsBody.subscription_active,
-      };
-    case "artist":
-      return {
-        ...baseData,
-        id: resultsBody.artist_id,
-        artist_verified: resultsBody.artist_verified,
-        isOnboardingCompleted: resultsBody.isOnboardingCompleted,
-        base_currency: resultsBody.base_currency,
-        walletId: resultsBody.wallet_id,
-        categorization: resultsBody.categorization,
-      };
-  }
+  return { handleLogin, handleBiometricOnlyLogin };
 }

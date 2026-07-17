@@ -8,16 +8,15 @@ import {
   View,
 } from "react-native";
 import React, { useState } from "react";
-import { colors } from "config/colors.config";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
+import { colors } from "#config/colors.config";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
-import { useModalStore } from "store/modal/modalStore";
+import { screenName } from "#constants/screenNames.constants";
+import { useModalStore } from "#store/modal/modalStore";
 import StatusPill from "./StatusPill";
-// removed feature-flag usage here — payment gating moved to OrderContainer
 import ConfirmOrderDeliveryModal from "./ConfirmOrderDeliveryModal";
 import { Ionicons } from "@expo/vector-icons";
 import tw from "twrnc";
@@ -61,7 +60,7 @@ export default function OrderCard({ order }: { readonly order: any }) {
     }
   }
 
-  let image_href = getImageFileView(url, 700);
+  let image_href = getImageFileView(url, 300);
 
   return (
     <View style={{ paddingVertical: 10, gap: 15 }}>
@@ -99,13 +98,7 @@ export default function OrderCard({ order }: { readonly order: any }) {
             />
           </View>
           <View style={{ flexWrap: "wrap", marginTop: 15 }}>
-            {!availability ? (
-              <View style={styles.disabledButton}>
-                <Text style={styles.disabledButtonText}>
-                  No action required
-                </Text>
-              </View>
-            ) : (
+            {availability ? (
               <>
                 {/* Pay Now Button */}
                 <View style={tw`flex-1`}>
@@ -165,6 +158,12 @@ export default function OrderCard({ order }: { readonly order: any }) {
                     </View>
                   )}
               </>
+            ) : (
+              <View style={styles.disabledButton}>
+                <Text style={styles.disabledButtonText}>
+                  No action required
+                </Text>
+              </View>
             )}
           </View>
         </View>
@@ -172,7 +171,7 @@ export default function OrderCard({ order }: { readonly order: any }) {
       {showTrackingInfo && (
         <View style={{ gap: 10 }}>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <Text style={{ fontSize: 14, color: colors.primary_black }}>
+            <Text style={tw`text-xs uppercase font-bold text-gray-400`}>
               Tracking ID:
             </Text>
             <Text
@@ -182,7 +181,7 @@ export default function OrderCard({ order }: { readonly order: any }) {
             </Text>
           </View>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <Text style={{ fontSize: 14, color: colors.primary_black }}>
+            <Text style={tw`text-xs uppercase font-bold text-gray-400`}>
               Tracking link:
             </Text>
             <TouchableOpacity
@@ -217,7 +216,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     color: "#004617",
     fontSize: 12,
-    borderRadius: 20,
+    borderRadius: 8,
     flexWrap: "wrap",
   },
   listItemDetails: {
@@ -235,7 +234,7 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: "#E0E0E0",
-    borderRadius: 20,
+    borderRadius: 8,
     height: 30,
     paddingHorizontal: 15,
     alignItems: "center",

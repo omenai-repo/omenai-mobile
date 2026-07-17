@@ -1,20 +1,21 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import LongBlackButton from "components/buttons/LongBlackButton";
-import { colors } from "config/colors.config";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
-import Input from "components/inputs/Input";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
-import { displayPrice } from "data/uploadArtworkForm.data";
-import { validate } from "lib/validations/upload_artwork_input_validator/validator";
-import { currencies } from "screens/uploadArtwork/components/mocks";
-import { utils_getCurrencySymbol } from "utils/utils_getCurrencySymbol";
-import { useModalStore } from "store/modal/modalStore";
-import { getCurrencyConversion } from "services/exchange_rate/getCurrencyConversion";
-import { updateArtworkPrice } from "services/artworks/updateArtworkPrice";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import LongBlackButton from "#components/buttons/LongBlackButton";
+import { colors } from "#config/colors.config";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import Input from "#components/inputs/Input";
+import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { displayPrice } from "#data/uploadArtworkForm.data";
+import { validate } from "#lib/validations/upload_artwork_input_validator/validator";
+import { currencies } from "#screens/uploadArtwork/components/mocks";
+import { utils_getCurrencySymbol } from "#utils/utils_getCurrencySymbol";
+import { useModalStore } from "#store/modal/modalStore";
+import { getCurrencyConversion } from "#services/exchange_rate/getCurrencyConversion";
+import { updateArtworkPrice } from "#services/artworks/updateArtworkPrice";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { screenName } from "constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
+import tw from "twrnc";
 
 type artworkPricingErrorsType = {
   price: string;
@@ -47,7 +48,7 @@ export default function EditPricing({ art_id }: { art_id: string }) {
   const checkIsDisabled = () => {
     // Check if there are no error messages and all input fields are filled
     const isFormValid = Object.values(formErrors).every(
-      (error) => error === ""
+      (error) => error === "",
     );
     const areAllFieldsFilled = Object.values({
       pricing: price,
@@ -85,7 +86,7 @@ export default function EditPricing({ art_id }: { art_id: string }) {
     setLoadingConversion(true);
     const conversion_value = await getCurrencyConversion(
       currency.toUpperCase(),
-      +value
+      +value,
     );
 
     if (!conversion_value?.isOk)
@@ -116,30 +117,26 @@ export default function EditPricing({ art_id }: { art_id: string }) {
         message: "Artwork pricing detials successfully updated",
         showModal: true,
         modalType: "success",
+        onDismiss: () => {
+          navigation.navigate(screenName.gallery.artworks);
+        },
       });
-      goBack();
     } else {
       updateModal({
-        message: "Error updating pricing detials",
+        message: update?.message || update?.body?.message || "Error updating pricing detials",
         showModal: true,
         modalType: "error",
       });
     }
-
     setLoading(false);
   };
 
-  const goBack = () => {
-    setTimeout(() => {
-      navigation.navigate(screenName.gallery.artworks);
-    }, 3500);
-  };
 
   return (
     <View style={styles.container}>
       <View style={styles.inputsContainer}>
-        <View style={{ flexDirection: "row", gap: 10, zIndex: 11 }}>
-          <View style={{ flex: 1 }}>
+        <View style={tw`flex-row gap-10 z-11`}>
+          <View style={tw`flex-1`}>
             <CustomSelectPicker
               label="Currency"
               data={transformedCurrencies}
@@ -154,12 +151,11 @@ export default function EditPricing({ art_id }: { art_id: string }) {
           <View style={{ flex: 1 }}>
             <Input
               label="Price"
-              // onInputChange={value => updateArtworkUploadData('price', parseInt(value, 10))}
               onInputChange={(value) =>
                 handleCurrencyConvert(parseInt(value, 10))
               }
               placeHolder="Enter your price"
-              value={price === 0 ? "" : price}
+              value={price === 0 ? "" : String(price)}
               handleBlur={() =>
                 handleValidationChecks("price", JSON.stringify(price))
               }
@@ -171,14 +167,17 @@ export default function EditPricing({ art_id }: { art_id: string }) {
         </View>
         <View>
           {currency !== "" && price !== 0 && usdPrice !== 0 && (
-            <Text style={{ fontSize: 14, fontWeight: 500, opacity: 0.8 }}>
-              Exchange rate:{" "}
-              {`${utils_formatPrice(price, currency_symbol)} = ${
+            <Input
+              label="USD Equivalent"
+              value={
                 loadingConversion
-                  ? "converting..."
+                  ? "Converting..."
                   : utils_formatPrice(usdPrice, usd_symbol)
-              }`}
-            </Text>
+              }
+              disabled={true}
+              placeHolder=""
+              onInputChange={() => { }}
+            />
           )}
         </View>
         <View style={{ zIndex: 10 }}>
@@ -226,3 +225,4 @@ const styles = StyleSheet.create({
     color: colors.inputLabel,
   },
 });
+

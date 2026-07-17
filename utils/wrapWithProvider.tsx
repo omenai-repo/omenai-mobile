@@ -1,5 +1,5 @@
 import React from "react";
-import { HighRiskProvider, LowRiskProvider } from "providers/ConfigCatProvider";
+import { HighRiskProvider, LowRiskProvider } from "#providers/ConfigCatProvider";
 
 export const wrapWithHighRisk = (Component: React.ComponentType<any>) => {
   const WrappedComponent = (props: any) => (

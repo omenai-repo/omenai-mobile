@@ -1,43 +1,96 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import React from 'react';
-import { getEditorialImageFilePreview } from 'lib/editorial/lib/getEditorialImageFilePreview';
-import { colors } from 'config/colors.config';
-import { fontNames } from 'constants/fontNames.constants';
+import { View, Text, Pressable, Image } from "react-native";
+import React from "react";
+import { getEditorialImageFilePreview } from "#lib/editorial/lib/getEditorialImageFilePreview";
+import { Feather } from "@expo/vector-icons";
+import tw from "twrnc";
+import dayjs from "dayjs";
 
 type EditorialCardProps = {
-  cover: string;
-  headline: string;
-  width: number;
-  onPress: () => void;
+  readonly cover: string;
+  readonly headline: string;
+  readonly width: number;
+  readonly onPress: () => void;
+  readonly date?: string;
+  readonly showDetails?: boolean;
 };
 
-export default function EditorialCard({ cover, headline, width, onPress }: EditorialCardProps) {
-  const imageUrl = getEditorialImageFilePreview(cover, 500);
+export default function EditorialCard({
+  cover,
+  headline,
+  width,
+  onPress,
+  date,
+  showDetails,
+}: EditorialCardProps) {
+  const imageUri = getEditorialImageFilePreview(cover, 500);
+
+  const formattedDate = date
+    ? dayjs(date).format("MMM YYYY").toUpperCase()
+    : "";
+
+  const imageHeight = showDetails ? 160 : 220; // h-40 is 160px
+  const detailsCardHeight = 250;
 
   return (
-    <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
-      <View style={{ width }}>
-        <Image source={{ uri: imageUrl }} style={styles.image} />
-        <Text numberOfLines={2} style={styles.headline}>
-          {headline}
-        </Text>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+    >
+      <View
+        style={[
+          { width, height: showDetails ? detailsCardHeight : undefined },
+          showDetails
+            ? tw`rounded-sm pb-5 overflow-hidden`
+            : null,
+        ]}
+      >
+        <Image
+          source={{ uri: imageUri }}
+          style={[
+            tw`w-full bg-[#858585]`,
+            showDetails ? tw`rounded-t-sm rounded-b-none` : tw`rounded-sm`,
+            { height: imageHeight },
+          ]}
+          resizeMode="cover"
+        />
+        <View style={showDetails ? tw`flex-1 justify-between` : null}>
+          <Text
+            numberOfLines={2}
+            style={[
+              tw`font-serif text-sm text-[#0F172A] mt-[15px] font-medium`,
+              showDetails ? tw`mt-2.5 mb-2 leading-5` : null,
+            ]}
+          >
+            {headline}
+          </Text>
+
+          {showDetails && (
+            <View style={tw`flex-row justify-between items-center`}>
+              <View style={tw`flex-row items-center gap-1`}>
+                <Text
+                  style={[
+                    tw`text-[10px] tracking-wider text-neutral-500 font-medium uppercase font-sans-medium`,
+                  ]}
+                >
+                  Read Story
+                </Text>
+                <Feather
+                  name="arrow-right"
+                  size={14}
+                  style={tw`text-neutral-500`}
+                />
+              </View>
+              <Text
+                style={[
+                  tw`text-[10px] text-neutral-500 font-medium tracking-wider font-sans-medium`,
+                ]}
+              >
+                {formattedDate}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    width: '100%',
-    height: 220,
-    borderRadius: 5,
-    backgroundColor: colors.grey,
-  },
-  headline: {
-    fontSize: 14,
-    color: colors.primary_black,
-    marginTop: 15,
-    fontWeight: '500',
-    fontFamily: fontNames.dmSans + 'Medium',
-  },
-});

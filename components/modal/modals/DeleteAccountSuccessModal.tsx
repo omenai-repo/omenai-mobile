@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { logout } from "utils/logout.utils";
-import { useModalStore } from "store/modal/modalStore";
-import { colors } from "config/colors.config";
+import { logout } from "#utils/logout.utils";
+import { useModalStore } from "#store/modal/modalStore";
+import { colors } from "#config/colors.config";
 import tw from "twrnc";
-import type { RootNavigationProp } from "types/navigation";
+import type { RootNavigationProp } from "#types/navigation";
 
 export default function DeleteAccountSuccessModal() {
   const [countdown, setCountdown] = useState(10);
@@ -29,7 +29,7 @@ export default function DeleteAccountSuccessModal() {
     <View style={tw`flex-1 justify-center items-center p-4`}>
       <View
         style={[
-          tw`rounded-xl shadow-lg w-full max-w-[448px]`,
+          tw`rounded-sm shadow-lg w-full max-w-[448px]`,
           { backgroundColor: colors.white },
         ]}
         accessibilityRole="alert"

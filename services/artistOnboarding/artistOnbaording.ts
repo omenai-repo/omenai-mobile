@@ -1,17 +1,17 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
-export async function artistOnboarding(payload: ArtistCategorizationUpdateDataTypes) {
+export async function artistOnboarding(
+  payload: ArtistCategorizationUpdateDataTypes,
+) {
   try {
-    const response = await fetch(`${apiUrl}/api/auth/artist/onboarding/createCategorization`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
+    const response = await apiRequest(
+      `${apiUrl}/api/auth/artist/onboarding/createCategorization`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
       },
-      body: JSON.stringify(payload),
-    });
+    );
 
     const ParsedResponse = {
       isOk: response.ok,
@@ -19,10 +19,15 @@ export async function artistOnboarding(payload: ArtistCategorizationUpdateDataTy
     };
 
     return ParsedResponse;
-  } catch (error) {
+  } catch (error: any) {
     return {
       isOk: false,
-      body: { message: 'Error onboarding artist' },
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error onboarding artist",
+      },
     };
   }
 }

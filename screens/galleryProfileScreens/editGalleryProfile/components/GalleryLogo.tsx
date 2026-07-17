@@ -1,11 +1,11 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { colors } from "config/colors.config";
-import { getGalleryLogoFileView } from "lib/storage/getGalleryLogoFileView";
+import { colors } from "#config/colors.config";
+import { getGalleryLogoFileView } from "#lib/storage/getGalleryLogoFileView";
 import { Feather } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 
 type GalleryLogoProps = {
   logo: string;

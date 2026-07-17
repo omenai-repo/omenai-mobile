@@ -11,12 +11,8 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { Feather } from "@expo/vector-icons";
-import {
-  apiUrl,
-  authorization,
-  originHeader,
-  userAgent,
-} from "constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "#utils/apiRequest";
 import { TransactionStatusIcon } from "./TransactionStatusIcon";
 
 interface VerifyTransactionModalProps {
@@ -30,7 +26,7 @@ interface VerifyTransactionModalProps {
 type VerifyResponse = {
   isOk: boolean;
   message?: string;
-  status?: "completed" | "pending" | "failed";
+  status?: "completed" | "pending" | "failed" | "successful";
   success?: boolean;
 };
 
@@ -42,7 +38,7 @@ const cardAnimConfig = {
 } as const;
 
 export default function VerifyTransactionModal(
-  props: VerifyTransactionModalProps
+  props: VerifyTransactionModalProps,
 ) {
   const { visible, transactionId, onGoHome, onGoToDashboard, onDismiss } =
     props;
@@ -55,17 +51,17 @@ export default function VerifyTransactionModal(
   const opacity = useRef(new Animated.Value(0)).current;
 
   const statusColors = useMemo(() => {
-    if (!verified?.isOk)
-      return { ring: "#ef4444", bg: "#fee2e2", text: "#b91c1c" }; // red
-    switch (verified?.status) {
-      case "completed":
-        return { ring: "#22c55e", bg: "#dcfce7", text: "#166534" }; // green
-      case "pending":
-        return { ring: "#f59e0b", bg: "#fef3c7", text: "#92400e" }; // amber
-      case "failed":
-      default:
-        return { ring: "#ef4444", bg: "#fee2e2", text: "#b91c1c" }; // red
+    if (
+      verified?.success ||
+      verified?.status === "completed" ||
+      verified?.status === "successful"
+    ) {
+      return { ring: "#22c55e", bg: "#dcfce7", text: "#166534" }; // green
     }
+    if (verified?.status === "pending") {
+      return { ring: "#f59e0b", bg: "#fef3c7", text: "#92400e" }; // amber
+    }
+    return { ring: "#ef4444", bg: "#fee2e2", text: "#b91c1c" }; // red
   }, [verified]);
 
   function getPaymentStatusText(verified: VerifyResponse | null): string {
@@ -74,6 +70,7 @@ export default function VerifyTransactionModal(
       case "pending":
         return "Payment Pending";
       case "completed":
+      case "successful":
         return "Payment Verified!";
       case "failed":
       default:
@@ -96,17 +93,12 @@ export default function VerifyTransactionModal(
     const run = async () => {
       try {
         if (!transactionId) throw new Error("Missing transaction id");
-        const res = await fetch(
+        const res = await apiRequest(
           `${apiUrl}/api/transactions/verify_FLW_transaction`,
           {
             method: "POST",
-            headers: {
-              Origin: originHeader,
-              "User-Agent": userAgent,
-              Authorization: authorization,
-            },
             body: JSON.stringify({ transaction_id: transactionId }),
-          }
+          },
         );
 
         if (!res.ok) {
@@ -148,7 +140,7 @@ export default function VerifyTransactionModal(
       <View style={tw`flex-1 bg-[#00000066] justify-center items-center px-5`}>
         <Animated.View
           style={[
-            tw`w-full max-w-[360px] rounded-3xl p-6`,
+            tw`w-full max-w-[360px] rounded-sm p-6`,
             {
               backgroundColor: "#FFFFFFE6",
               transform: [{ scale }],
@@ -220,7 +212,7 @@ export default function VerifyTransactionModal(
               <View style={tw`w-full mt-6`}>
                 <TouchableOpacity
                   onPress={onGoToDashboard}
-                  style={tw`h-12 rounded-2xl bg-[#1a1a1a] items-center justify-center flex-row`}
+                  style={tw`h-12 rounded-sm bg-[#1a1a1a] items-center justify-center flex-row`}
                 >
                   <Feather name="eye" size={18} color="#fff" style={tw`mr-2`} />
                   <Text style={tw`text-white font-medium`}>View my orders</Text>
@@ -228,7 +220,7 @@ export default function VerifyTransactionModal(
 
                 <TouchableOpacity
                   onPress={onGoHome}
-                  style={tw`h-12 rounded-2xl bg-white items-center justify-center flex-row mt-3 border border-gray-200`}
+                  style={tw`h-12 rounded-sm bg-white items-center justify-center flex-row mt-3 border border-gray-200`}
                 >
                   <Feather
                     name="arrow-left"

@@ -1,8 +1,8 @@
 import React from "react";
 import { Text, TextInput, View } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
-import { MAX_MESSAGE_LENGTH } from "constants/deleteAccount.constants";
+import { colors } from "#config/colors.config";
+import { MAX_MESSAGE_LENGTH } from "#constants/deleteAccount.constants";
 import DeleteAccountCard from "./DeleteAccountCard";
 
 type OtherMessageInputProps = Readonly<{
@@ -23,7 +23,7 @@ export default function OtherMessageInput({
       </Text>
       <TextInput
         style={[
-          tw`rounded-xl p-4 text-[15px] min-h-[100px] bg-[#FAFAFA]`,
+          tw`rounded-sm p-4 text-[15px] min-h-[100px] bg-[#FAFAFA]`,
           {
             borderWidth: 1,
             borderColor: message ? colors.primary_black : colors.inputBorder,

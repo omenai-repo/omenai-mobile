@@ -1,10 +1,13 @@
+import type { CreateOrderModelTypes } from "#types/types";
+
 interface FormattedObject extends CreateOrderModelTypes {
   createdAt: string; // Updated type for formatted date
-  
 }
 
 interface FinalObject {
-  map(arg0: (order: any, index: any) => import("react").JSX.Element | null): import("react").ReactNode;
+  map(
+    arg0: (order: any, index: any) => import("react").JSX.Element | null,
+  ): import("react").ReactNode;
   createdAt(createdAt: any): string;
   artwork_data: any;
   date: string;
@@ -12,7 +15,7 @@ interface FinalObject {
 }
 
 export function utils_sortOrdersDataByDate(
-  inputArray: CreateOrderModelTypes[]
+  inputArray: CreateOrderModelTypes[],
 ): FinalObject[] {
   // Format and sort the data
   const formattedData: FormattedObject[] = inputArray
@@ -30,14 +33,14 @@ export function utils_sortOrdersDataByDate(
     })
     .sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
   // Structure the data into the final format using reduce
   const finalData: FinalObject[] = formattedData.reduce(
     (result: FinalObject[], item: FormattedObject) => {
       const existingMonthYear = result.find(
-        (entry) => entry.date === item.createdAt
+        (entry) => entry.date === item.createdAt,
       );
 
       if (existingMonthYear) {
@@ -46,15 +49,20 @@ export function utils_sortOrdersDataByDate(
         result.push({
           date: item.createdAt,
           data: [item],
-          map: (arg0: (order: any, index: any) => import("react").JSX.Element | null) => [],
-          createdAt: (createdAt: any) => '',
+          map: (
+            arg0: (
+              order: any,
+              index: any,
+            ) => import("react").JSX.Element | null,
+          ) => [],
+          createdAt: (createdAt: any) => "",
           artwork_data: {},
         });
       }
 
       return result;
     },
-    []
+    [],
   );
 
   return finalData;
