@@ -65,7 +65,7 @@ function useLikedState(
       } else {
         setLikedState((prev) => ({
           // Only decrement if the ID actually existed
-          count: !prev.ids.includes(sessionId) ? prev.count : prev.count - 1,
+          count: prev.ids.includes(sessionId) ? prev.count - 1 : prev.count,
           ids: prev.ids.filter((id) => id !== sessionId),
         }));
 
