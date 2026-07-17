@@ -2,12 +2,13 @@ import { apiUrl, authorization, originHeader, userAgent } from "constants/apiUrl
 
 export async function cancelSubscription(gallery_id: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/subscriptions/cancelSubscription`, {
+    const url = `${apiUrl}/api/subscriptions/cancelSubscription`;
+    const res = await fetch(url, {
       method: "POST",
       headers: {
-        'Origin': originHeader,
+        Origin: originHeader,
         "User-Agent": userAgent,
-        "Authorization": authorization
+        Authorization: authorization,
       },
       body: JSON.stringify({ gallery_id }),
     });

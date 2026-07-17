@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,16 +8,18 @@ import {
   TextInput,
   ActivityIndicator,
   Animated,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import tw from 'twrnc';
-import { SvgXml } from 'react-native-svg';
-import { locationIcon } from 'utils/SvgImages';
-import { getImageFileView } from 'lib/storage/getImageFileView';
-import { formatEventDate } from 'utils/utils_formatEventDate';
-import { getTrackingData } from 'services/orders/getTrackingData';
-import BackHeaderTitle from 'components/header/BackHeaderTitle';
-import { useRoute } from '@react-navigation/native';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import tw from "twrnc";
+import { SvgXml } from "react-native-svg";
+import { locationIcon } from "utils/SvgImages";
+import { getImageFileView } from "lib/storage/getImageFileView";
+import { formatEventDate } from "utils/utils_formatEventDate";
+import { getTrackingData } from "services/orders/getTrackingData";
+import BackHeaderTitle from "components/header/BackHeaderTitle";
+import { useRoute } from "@react-navigation/native";
+import { useLowRiskFeatureFlag } from "hooks/useFeatureFlag";
+import TrackingDowntimeBlocker from "components/blockers/tracking/TrackingDowntimeBlocker";
 
 interface TrackingData {
   artwork_data: {
@@ -28,13 +30,13 @@ interface TrackingData {
   events: TrackingEvent[];
   order_date: string;
   shipping_details: OrderShippingDetailsTypes & {
-    shipment_information: OrderShippingDetailsTypes['shipment_information'] & {
+    shipment_information: OrderShippingDetailsTypes["shipment_information"] & {
       planned_shipping_date: string;
     };
   };
 }
 
-function SkeletonRow({ widthPct = '100%', height = 14, borderRadius = 8 }: any) {
+function SkeletonRow({ widthPct = "100%", height = 14, borderRadius = 8 }: any) {
   const anim = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
@@ -42,7 +44,7 @@ function SkeletonRow({ widthPct = '100%', height = 14, borderRadius = 8 }: any) 
       Animated.sequence([
         Animated.timing(anim, { toValue: 1, duration: 600, useNativeDriver: true }),
         Animated.timing(anim, { toValue: 0.3, duration: 600, useNativeDriver: true }),
-      ]),
+      ])
     );
     loop.start();
     return () => loop.stop();
@@ -53,7 +55,7 @@ function SkeletonRow({ widthPct = '100%', height = 14, borderRadius = 8 }: any) 
       style={[
         {
           opacity: anim,
-          backgroundColor: '#E6E7E8',
+          backgroundColor: "#E6E7E8",
           width: widthPct,
           height,
           borderRadius,
@@ -65,18 +67,18 @@ function SkeletonRow({ widthPct = '100%', height = 14, borderRadius = 8 }: any) 
 
 export default function ShipmentTrackingScreen({ navigation }: any) {
   const { tracking_id } = useRoute<any>().params;
-  const [trackingInput, setTrackingInput] = useState(tracking_id || '');
+  const [trackingInput, setTrackingInput] = useState(tracking_id || "");
   const [trackingData, setTrackingData] = useState<TrackingData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchAttempted, setSearchAttempted] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [showAllEvents, setShowAllEvents] = useState(false);
 
   const handleSearch = async () => {
     if (!trackingInput.trim()) return;
 
     setIsLoading(true);
-    setError('');
+    setError("");
     setSearchAttempted(true);
     setShowAllEvents(false);
 
@@ -85,7 +87,7 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
     if (response.isOk && response.data) {
       setTrackingData(response.data);
     } else {
-      setError(response.message || 'Unable to find tracking information');
+      setError(response.message || "Unable to find tracking information");
       setTrackingData(null);
     }
 
@@ -93,34 +95,34 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
   };
 
   const handleSearchAgain = () => {
-    setTrackingInput('');
+    setTrackingInput("");
     setTrackingData(null);
     setSearchAttempted(false);
-    setError('');
+    setError("");
     setShowAllEvents(false);
   };
 
   const formatTimestamp = (isoString: string): string => {
-    const cleanedString = isoString.replace(' GMT', '');
+    const cleanedString = isoString.replace(" GMT", "");
 
     const date = new Date(cleanedString);
 
     if (Number.isNaN(date.getTime())) {
-      return 'Error: Invalid Date could not be parsed.';
+      return "Error: Invalid Date could not be parsed.";
     }
 
     const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "long",
     };
-    return date.toLocaleDateString('en-US', options);
+    return date.toLocaleDateString("en-US", options);
   };
 
   const image = trackingData?.artwork_data?.url
     ? getImageFileView(trackingData.artwork_data.url, 300)
-    : '';
+    : "";
 
   // events: assume chronological (oldest -> newest); the most recent is last element
   const events = [...(trackingData?.events ?? [])].reverse();
@@ -128,6 +130,22 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
   const lastNEvents = events.slice(0, 5);
 
   const primaryEventsToShow = showAllEvents ? events : lastNEvents;
+
+  const { value: isTrackingEnabled } = useLowRiskFeatureFlag("shipment_tracking_enabled");
+
+  // If tracking is disabled, show the downtime blocker
+  if (!isTrackingEnabled) {
+    return (
+      <View style={tw`flex-1`}>
+        <BackHeaderTitle title="Track Shipment" />
+        <TrackingDowntimeBlocker
+          trackingNumber={tracking_id || trackingInput}
+          externalLink="https://www.dhl.com/global-en/home/tracking.html"
+          externalLinkText="Track on DHL Global Website"
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={tw`flex-1 bg-gray-50`}>
@@ -156,7 +174,7 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
             onPress={handleSearch}
             disabled={isLoading || !trackingInput.trim()}
             style={tw`bg-slate-900 rounded-xl py-3 mt-4 items-center justify-center ${
-              isLoading || !trackingInput.trim() ? 'opacity-50' : ''
+              isLoading || !trackingInput.trim() ? "opacity-50" : ""
             }`}
           >
             {isLoading ? (
@@ -170,11 +188,11 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
         {/* Loading skeletons (below input, not replacing it) */}
         {isLoading && (
           <View style={tw`mt-4`}>
-            <SkeletonRow widthPct={'60%'} height={16} />
+            <SkeletonRow widthPct={"60%"} height={16} />
             <View style={tw`h-3`} />
-            <SkeletonRow widthPct={'100%'} height={90} borderRadius={12} />
+            <SkeletonRow widthPct={"100%"} height={90} borderRadius={12} />
             <View style={tw`h-3`} />
-            <SkeletonRow widthPct={'100%'} height={120} borderRadius={12} />
+            <SkeletonRow widthPct={"100%"} height={120} borderRadius={12} />
           </View>
         )}
       </View>
@@ -215,13 +233,13 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
                 <View style={tw`flex-1 pr-2`}>
                   <Text style={tw`text-gray-500 text-[16px] font-medium`}>Origin Address</Text>
                   <Text style={tw`text-black text-sm font-semibold mt-1`}>
-                    {trackingData.shipping_details?.addresses.origin.address_line || 'N/A'}
+                    {trackingData.shipping_details?.addresses.origin.address_line || "N/A"}
                   </Text>
                 </View>
                 <View style={tw`flex-1 pl-2 items-end`}>
                   <Text style={tw`text-gray-500 text-[16px] font-medium`}>Destination Address</Text>
                   <Text style={tw`text-black text-sm font-semibold mt-1`}>
-                    {trackingData.shipping_details?.addresses.destination.address_line || 'N/A'}
+                    {trackingData.shipping_details?.addresses.destination.address_line || "N/A"}
                   </Text>
                 </View>
               </View>
@@ -230,7 +248,7 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
                 <View>
                   <Text style={tw`text-gray-500 text-[16px] font-medium`}>Carrier</Text>
                   <Text style={tw`text-black text-sm font-semibold mt-1`}>
-                    {trackingData.shipping_details?.shipment_information?.carrier || 'DHL Express'}
+                    {trackingData.shipping_details?.shipment_information?.carrier || "DHL Express"}
                   </Text>
                 </View>
 
@@ -247,15 +265,15 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
                   </Text>
                   <Text style={tw`text-black text-sm font-semibold mt-1`}>
                     {formatTimestamp(
-                      trackingData?.shipping_details?.shipment_information?.planned_shipping_date,
-                    ) || 'TBD'}
+                      trackingData?.shipping_details?.shipment_information?.planned_shipping_date
+                    ) || "TBD"}
                   </Text>
                 </View>
 
                 <View style={tw``}>
                   <Text style={tw`text-gray-500 text-[16px] font-medium`}>Order date</Text>
                   <Text style={tw`text-black text-sm font-semibold mt-1`}>
-                    {trackingData.order_date || 'N/A'}
+                    {trackingData.order_date || "N/A"}
                   </Text>
                 </View>
               </View>
@@ -281,12 +299,12 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
                   return (
                     <View
                       key={`${originalIndex}-${idx}`}
-                      style={tw`mb-${originalIndex === eventsCount - 1 ? '0' : '6'}`}
+                      style={tw`mb-${originalIndex === eventsCount - 1 ? "0" : "6"}`}
                     >
                       <View style={tw`flex-row items-center gap-4`}>
                         <View
                           style={tw`h-10 w-10 ${
-                            isMostRecent ? 'bg-blue-100' : 'bg-gray-100'
+                            isMostRecent ? "bg-blue-100" : "bg-gray-100"
                           } rounded-full justify-center items-center`}
                         >
                           <SvgXml xml={locationIcon} width={20} height={20} />
@@ -320,7 +338,7 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
                     style={tw`items-center justify-center py-3`}
                   >
                     <Text style={tw`text-slate-800 font-semibold`}>
-                      {showAllEvents ? 'Show less' : `Show more (${eventsCount - 5} more)`}
+                      {showAllEvents ? "Show less" : `Show more (${eventsCount - 5} more)`}
                     </Text>
                   </Pressable>
                 </View>
@@ -350,7 +368,7 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
             </Text>
             <Text style={tw`text-gray-500 text-sm text-center mb-6`}>
               {error ||
-                'We could not find tracking information for this number. Please check and try again.'}
+                "We could not find tracking information for this number. Please check and try again."}
             </Text>
             <Pressable onPress={handleSearchAgain} style={tw`bg-slate-900 rounded-xl px-6 py-3`}>
               <Text style={tw`text-white font-semibold text-base`}>Try Again</Text>

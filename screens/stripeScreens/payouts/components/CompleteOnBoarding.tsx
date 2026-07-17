@@ -1,4 +1,4 @@
-import { Linking, StyleSheet, Text, View } from "react-native";
+import { Linking, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import Input from "components/inputs/Input";
 import { utils_getAsyncData } from "utils/utils_asyncStorage";
@@ -6,6 +6,7 @@ import LongBlackButton from "components/buttons/LongBlackButton";
 import { getAccountID } from "services/stripe/getAccountID";
 import { createAccountLink } from "services/stripe/createAccountLink";
 import { useModalStore } from "store/modal/modalStore";
+import tw from "twrnc";
 
 export default function CompleteOnBoarding() {
   const [gallerySession, setGallerySession] = useState();
@@ -51,8 +52,8 @@ export default function CompleteOnBoarding() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={{ gap: 20 }}>
+    <View style={tw`flex-1`}>
+      <View style={tw`flex-col gap-5`}>
         <Input
           label="Full Name"
           placeHolder=""
@@ -80,7 +81,3 @@ export default function CompleteOnBoarding() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {},
-});

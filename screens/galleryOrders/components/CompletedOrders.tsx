@@ -8,10 +8,7 @@ import { utils_getColors } from "utils/utils_sortFunctions";
 import { OrdersListingProps } from "./PendingOrders";
 import { orderCardStatusTypes } from "./OrdersListing";
 
-export default function CompletedOrders({
-  data,
-  handleOpenModal,
-}: OrdersListingProps) {
+export default function CompletedOrders({ data, handleOpenModal }: OrdersListingProps) {
   const { setArtworkDetails } = galleryOrderModalStore();
 
   const getStatus = (order: any): orderCardStatusTypes => {

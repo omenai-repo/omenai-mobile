@@ -1,11 +1,13 @@
-import { View, Text, Pressable, Image, Animated } from "react-native";
+import { View, Text, Pressable, Animated } from "react-native";
+import OrderHeader from "./OrderHeader";
 import React from "react";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
 import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
 import { getImageFileView } from "lib/storage/getImageFileView";
-import StatusBadge from "components/orders/StatusBadge";
-import OrderActions from "components/orders/OrderActions";
+import { StatusBadge } from "components/orders/StatusBadge";
+import { OrderActions } from "components/orders/OrderActions";
+import { DetailRow } from "./DetailRow";
 import type { OrderContainerProps } from "types/orders";
 
 export const OrderContainer = (props: OrderContainerProps) => {
@@ -80,33 +82,12 @@ export const OrderContainer = (props: OrderContainerProps) => {
       accessibilityRole="button"
     >
       <View style={tw`flex-row items-center`}>
-        <View style={tw`flex-row items-center gap-[10px] flex-1`}>
-          <Image
-            source={{ uri: image_href }}
-            style={tw`h-[42px] w-[42px] rounded-[3px]`}
-          />
-          <View style={tw`gap-[5px] pr-[20px] max-w-[80%]`}>
-            <Text
-              style={tw`text-[12px] text-[#454545]`}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {artId}
-            </Text>
-            <Text
-              style={tw`text-[14px] text-[#454545] font-semibold`}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {artName}
-            </Text>
-          </View>
-        </View>
-        <View
-          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
-        >
-          {typeof currentIcon === "string" && <SvgXml xml={currentIcon} />}
-        </View>
+        <OrderHeader image_href={image_href} artId={artId} artName={artName} />
+      </View>
+      <View
+        style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
+      >
+        {typeof currentIcon === "string" && <SvgXml xml={currentIcon} />}
       </View>
 
       <Animated.View
@@ -117,20 +98,9 @@ export const OrderContainer = (props: OrderContainerProps) => {
         }}
       >
         <View style={tw`gap-[20px] mt-[15px]`}>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-              {price}
-            </Text>
-          </View>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Date</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-              {dateTime}
-            </Text>
-          </View>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
+          <DetailRow label="Price" value={price} />
+          <DetailRow label="Date" value={dateTime} />
+          <DetailRow label="Status">
             <StatusBadge
               status={status}
               payment_status={payment_status}
@@ -138,7 +108,7 @@ export const OrderContainer = (props: OrderContainerProps) => {
               order_accepted={order_accepted}
               delivered={delivered}
             />
-          </View>
+          </DetailRow>
           {order_accepted === "declined" && (
             <Text style={{ color: "#ff0000", fontSize: 14 }}>
               Reason: {order_decline_reason}

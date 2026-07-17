@@ -29,6 +29,7 @@ export default {
       buildNumber: IOS_BUILD_NUMBER,
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
+        NSUserNotificationUsageDescription: "This app uses notifications to keep you updated.",
       },
     },
     android: {
@@ -59,17 +60,13 @@ export default {
       [
         "expo-font",
         {
-          fonts: [
-            "./assets/fonts/nunito-sans.ttf",
-            "./assets/fonts/DMSans.ttf",
-          ],
+          fonts: ["./assets/fonts/nunito-sans.ttf", "./assets/fonts/DMSans.ttf"],
         },
       ],
       [
         "expo-image-picker",
         {
-          photosPermission:
-            "Omenai app accesses your photos to let you upload artworks.",
+          photosPermission: "Omenai app accesses your photos to let you upload artworks.",
         },
       ],
       [

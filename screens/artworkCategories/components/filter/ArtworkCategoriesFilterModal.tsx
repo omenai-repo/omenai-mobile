@@ -1,12 +1,5 @@
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
 import { colors } from "config/colors.config";
 import { Feather } from "@expo/vector-icons";
 import PriceFilter from "./PriceFilter";
@@ -20,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { artworkCategoriesStore } from "store/artworks/ArtworkCategoriesStore";
 import MediumFilter from "./MediumFilter";
 import ScrollWrapper from "components/general/ScrollWrapper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ArtworkCategoriesFilterModal() {
   const navigation = useNavigation<StackNavigationProp<any>>();

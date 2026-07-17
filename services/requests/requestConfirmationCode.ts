@@ -26,14 +26,10 @@ export async function requestPasswordConfirmationCode(route: string) {
       }
     ).then(async (res) => {
       const result = await res.json();
-      console.log("result", res);
-
       return { isOk: res.ok, message: result.message };
     });
-
     return response;
-  } catch (error) {
-    console.log("Error requesting confirmation code: ", error);
+  } catch {
     return {
       isOk: false,
       message: "Error getting confirmation code",

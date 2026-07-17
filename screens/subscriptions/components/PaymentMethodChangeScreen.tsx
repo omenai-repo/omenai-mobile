@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, Pressable, ActivityIndicator } from 'react-native';
-import tw from 'twrnc';
-import { useStripe } from '@stripe/stripe-react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { useQueryClient } from '@tanstack/react-query';
-import { useAppStore } from 'store/app/appStore';
-import { createPaymentMethodSetupIntent } from 'services/stripe/createPaymentMethodSetupIntent';
-import { updatePaymentMethod } from 'services/stripe/updatePaymentMethod';
-import SuccessPaymentModal from './SuccessPaymentModal';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import tw from "twrnc";
+import { useStripe } from "@stripe/stripe-react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "store/app/appStore";
+import { createPaymentMethodSetupIntent } from "services/stripe/createPaymentMethodSetupIntent";
+import { updatePaymentMethod } from "services/stripe/updatePaymentMethod";
+import SuccessPaymentModal from "./SuccessPaymentModal";
 
 export default function PaymentMethodChangeScreen() {
   const navigation = useNavigation<any>();
@@ -26,8 +26,8 @@ export default function PaymentMethodChangeScreen() {
   const [successVisible, setSuccessVisible] = useState(false);
 
   const displayName = useMemo(
-    () => (user?.name ? `Omenai • ${user.name}` : 'Omenai'),
-    [user?.name],
+    () => (user?.name ? `Omenai • ${user.name}` : "Omenai"),
+    [user?.name]
   );
 
   const fetchSetupIntent = useCallback(async () => {
@@ -36,12 +36,12 @@ export default function PaymentMethodChangeScreen() {
     try {
       const intent = await createPaymentMethodSetupIntent();
       if (!intent?.isOk || !intent?.client_secret) {
-        throw new Error('Unable to create a setup intent.');
+        throw new Error("Unable to create a setup intent.");
       }
       setClientSecret(intent.client_secret);
       return intent.client_secret;
     } catch (e: any) {
-      setError(e?.message ?? 'Failed to start payment setup.');
+      setError(e?.message ?? "Failed to start payment setup.");
       return null;
     }
   }, []); // it doesn't use user props; keep deps empty so it runs once
@@ -54,16 +54,16 @@ export default function PaymentMethodChangeScreen() {
         setupIntentClientSecret: secret,
         // applePay: { merchantCountryCode: 'US' },
         // googlePay: { merchantCountryCode: 'US', testEnv: __DEV__ },
-        style: 'automatic',
-        returnURL: 'omenai://stripe-redirect', // iOS only
+        style: "automatic",
+        returnURL: "omenaimobile://stripe-redirect",
         defaultBillingDetails: {
-          name: user?.name ?? '',
-          email: user?.email ?? '',
+          name: user?.name ?? "",
+          email: user?.email ?? "",
         },
       });
 
       if (initError) {
-        console.warn('[initPaymentSheet] error:', initError);
+        console.warn("[initPaymentSheet] error:", initError);
         setError(initError.message);
         setSheetReady(false);
         return false;
@@ -72,7 +72,7 @@ export default function PaymentMethodChangeScreen() {
       setSheetReady(true);
       return true;
     },
-    [displayName, initPaymentSheet, user?.email, user?.name],
+    [displayName, initPaymentSheet, user?.email, user?.name]
   );
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export default function PaymentMethodChangeScreen() {
       }
       const ok = await initializeSheet(secret);
       if (mounted) setInitializing(false);
-      if (!ok) setError((e) => e ?? 'Could not initialize payment sheet.');
+      if (!ok) setError((e) => e ?? "Could not initialize payment sheet.");
     })();
     return () => {
       mounted = false;
@@ -111,12 +111,12 @@ export default function PaymentMethodChangeScreen() {
     setPresenting(false);
 
     if (presentErr) {
-      if (presentErr.code !== 'Canceled') setError(presentErr.message);
+      if (presentErr.code !== "Canceled") setError(presentErr.message);
       return;
     }
 
     // success -> refresh any data that depends on the PM
-    const setupIntentId = clientSecret?.split('_secret_')[0] ?? null;
+    const setupIntentId = clientSecret?.split("_secret_")[0] ?? null;
     await updatePaymentMethod(setupIntentId!);
     setSuccessVisible(true);
   }, [sheetReady, clientSecret, initializeSheet, presentPaymentSheet, navigation, queryClient]);
@@ -148,13 +148,13 @@ export default function PaymentMethodChangeScreen() {
             style={({ pressed }) =>
               tw.style(
                 `mt-2 h-12 rounded-md items-center justify-center`,
-                initializing || presenting || !sheetReady ? 'bg-slate-300' : 'bg-slate-900',
-                pressed ? 'opacity-85' : '',
+                initializing || presenting || !sheetReady ? "bg-slate-300" : "bg-slate-900",
+                pressed ? "opacity-85" : ""
               )
             }
           >
             <Text style={tw`text-white font-medium`}>
-              {presenting ? 'Processing…' : 'Update payment method'}
+              {presenting ? "Processing…" : "Update payment method"}
             </Text>
           </Pressable>
         </View>
@@ -164,7 +164,7 @@ export default function PaymentMethodChangeScreen() {
         onPrimaryPress={() => {
           setSuccessVisible(false);
           // refresh + go back to billing
-          queryClient.invalidateQueries({ queryKey: ['subscription_precheck'] });
+          queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
           navigation.goBack();
         }}
       />

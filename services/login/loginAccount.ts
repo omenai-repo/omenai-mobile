@@ -1,32 +1,32 @@
-import { apiUrl, authorization, originHeader, userAgent } from '../../constants/apiUrl.constants';
+import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
 
 export async function loginAccount(
   payload: IndividualLoginData,
-  route: 'individual' | 'gallery' | 'artist',
+  route: "individual" | "gallery" | "artist"
 ) {
-  const url = apiUrl + '/api/auth/' + route + '/login';
+  const url = apiUrl + "/api/auth/" + route + "/login";
 
   try {
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Origin: originHeader,
-        'User-Agent': userAgent,
+        "User-Agent": userAgent,
         Authorization: authorization,
       },
       body: JSON.stringify(payload),
     });
     const result = await response.json();
-    console.log(result, 'result');
+    console.log(result, "result");
     return {
       isOk: response.ok,
       body: result,
     };
-  } catch (error) {
+  } catch {
     return {
       isOk: false,
-      body: { message: 'Error logging into account' },
+      body: { message: "Error logging into account" },
     };
   }
 }

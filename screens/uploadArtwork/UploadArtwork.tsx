@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import WithModal from "components/modal/WithModal";
 import HeaderIndicator from "./components/HeaderIndicator";
@@ -24,8 +24,12 @@ import { getAccountID } from "services/stripe/getAccountID";
 import { checkIsStripeOnboarded } from "services/stripe/checkIsStripeOnboarded";
 import { retrieveSubscriptionData } from "services/subscriptions/retrieveSubscriptionData";
 import NoSubscriptionBlock from "screens/galleryArtworksListing/components/NoSubscriptionBlock";
+import { useHighRiskFeatureFlag } from "hooks/useFeatureFlag";
+import UploadBlocker from "components/blockers/upload/UploadBlocker";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function UploadArtwork() {
+  const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showLockScreen, setShowLockScreen] = useState(false);
   const [shouldPreCheck, setShouldPreCheck] = useState(false);
@@ -193,7 +197,7 @@ export default function UploadArtwork() {
   const canUpload = userSession?.gallery_verified && isConfirmed?.isSubActive;
 
   const renderUploadContent = () => (
-    <>
+    <View style={{ paddingBottom: insets.bottom + 16, flex: 1 }}>
       <HeaderIndicator />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -210,7 +214,7 @@ export default function UploadArtwork() {
           {isLoading && <Loader />}
         </ScrollWrapper>
       </KeyboardAvoidingView>
-    </>
+    </View>
   );
 
   const shouldShowLock =
@@ -220,11 +224,27 @@ export default function UploadArtwork() {
 
   const shouldRenderUpload = userType === "gallery" ? canUpload : !showLockScreen;
 
+  const { value: isArtworkPriceCalculationEnabled } = useHighRiskFeatureFlag(
+    "artwork_price_calculation_enabled"
+  );
+  const { value: isArtworkUploadEnabled } = useHighRiskFeatureFlag("artwork_upload_enabled");
+
+  const isUploadDisabled = !isArtworkPriceCalculationEnabled || !isArtworkUploadEnabled;
+
   return (
     <WithModal>
-      {shouldShowLock && <LockScreen name={userSession?.name} />}
-      {userType === "gallery" && shouldShowSubscriptionBlock && <NoSubscriptionBlock />}
-      {shouldRenderUpload && renderUploadContent()}
+      {isUploadDisabled && (
+        <UploadBlocker
+          entity={userType as "artist" | "gallery"}
+          message="We are currently working on some fixes and curating your upload experience."
+          expiryTimestamp="2025-11-25T18:00:00Z"
+        />
+      )}
+      {!isUploadDisabled && shouldShowLock && <LockScreen name={userSession?.name} />}
+      {!isUploadDisabled && userType === "gallery" && shouldShowSubscriptionBlock && (
+        <NoSubscriptionBlock />
+      )}
+      {!isUploadDisabled && shouldRenderUpload && renderUploadContent()}
     </WithModal>
   );
 }

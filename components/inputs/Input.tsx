@@ -29,16 +29,20 @@ export default function Input({
   containerStyle,
 }: InputProps) {
   return (
-    <View style={[tw`z-[100] flex-1`, containerStyle]}>
+    <View style={[containerStyle]}>
       <Text style={[tw`text-sm`, { color: colors.grey }]}>{label}</Text>
       <TextInput
         onChangeText={onInputChange}
         placeholder={placeHolder}
         placeholderTextColor={colors.grey}
         style={[
-          tw`h-11 w-full border bg-[#FAFAFA] px-3 rounded-lg mt-2.5 text-black`,
-          { borderColor: colors.inputBorder },
-          disabled && tw`text-[#1a1a1a70]`,
+          tw`h-11 w-full border px-3 rounded-lg mt-2.5`,
+          {
+            borderColor: colors.inputBorder,
+            backgroundColor: "#FAFAFA",
+            color: colors.primary_black,
+          },
+          disabled && { color: `${colors.primary_black}70` },
         ]}
         keyboardType={keyboardType}
         autoCapitalize="none"

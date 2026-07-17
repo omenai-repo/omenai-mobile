@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { Modal, View, Text, Pressable, Animated, Easing, Platform } from 'react-native';
-import tw from 'twrnc';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useRef } from "react";
+import { Modal, View, Text, Pressable, Animated, Easing, Platform } from "react-native";
+import tw from "twrnc";
+import { colors } from "config/colors.config";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = {
   visible: boolean;
@@ -15,9 +16,9 @@ type Props = {
 
 export default function SuccessPaymentModal({
   visible,
-  title = 'Payment Method Added!',
-  subtitle = 'Successfully saved to your account',
-  ctaLabel = 'Back to billing',
+  title = "Payment Method Added!",
+  subtitle = "Successfully saved to your account",
+  ctaLabel = "Back to billing",
   onPrimaryPress,
   onRequestClose,
 }: Props) {
@@ -88,14 +89,19 @@ export default function SuccessPaymentModal({
       statusBarTranslucent
       onRequestClose={onRequestClose}
     >
-      <View style={tw`flex-1 bg-black/50 items-center justify-center px-4`}>
+      <View
+        style={[
+          tw`items-center justify-center px-4`,
+          { flex: 1, backgroundColor: `${colors.black}80` },
+        ]}
+      >
         {/* Card */}
         <View
           style={[tw`w-11/12 bg-white rounded-2xl overflow-hidden`, { maxWidth: 420, ...shadow() }]}
         >
           {/* Gradient header */}
           <LinearGradient
-            colors={['#10B981', '#059669']} // emerald shades
+            colors={["#10B981", "#059669"]} // emerald shades
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={tw`px-6 pt-8 pb-6 items-center`}
@@ -162,13 +168,13 @@ export default function SuccessPaymentModal({
               style={({ pressed }) =>
                 tw.style(
                   `h-12 rounded-md items-center justify-center bg-emerald-600`,
-                  pressed ? 'opacity-90' : '',
+                  pressed ? "opacity-90" : ""
                 )
               }
               accessibilityRole="button"
               accessibilityLabel={ctaLabel}
             >
-              <Text style={tw`text-white font-medium`}>{ctaLabel}</Text>
+              <Text style={[tw`font-medium`, { color: colors.white }]}>{ctaLabel}</Text>
             </Pressable>
           </Animated.View>
         </View>
@@ -191,7 +197,7 @@ function Row({ icon, text }: { icon: keyof typeof Ionicons.glyphMap; text: strin
 function shadow() {
   return Platform.select({
     ios: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOpacity: 0.1,
       shadowRadius: 14,
       shadowOffset: { width: 0, height: 8 },

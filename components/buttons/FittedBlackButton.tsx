@@ -1,6 +1,7 @@
 import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
 import React, { useRef } from "react";
 import LottieView from "lottie-react-native";
+import { colors } from "config/colors.config";
 import tw from "twrnc";
 import loaderAnimation from "assets/other/loader-animation.json";
 
@@ -27,11 +28,11 @@ export default function FittedBlackButton({
 
   const defaultContainerStyle: ViewStyle = {
     height: 44,
-    backgroundColor: isDisabled || isLoading ? "#E0E0E0" : "#000000",
+    backgroundColor: isDisabled || isLoading ? colors.grey50 : colors.primary_black,
   };
 
   const defaultTextStyle: TextStyle = {
-    color: isDisabled || isLoading ? "#A1A1A1" : "#FFFFFF",
+    color: isDisabled || isLoading ? colors.inputLabel : colors.white,
     fontSize: 16,
     fontWeight: "400",
   };

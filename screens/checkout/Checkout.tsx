@@ -4,6 +4,7 @@ import tw from "twrnc";
 import { differenceInCalendarDays } from "date-fns";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
+import { colors } from "config/colors.config";
 import { PaymentMethod } from "@stripe/stripe-js";
 import { BillingCard } from "screens/subscriptions/components/BillingCard";
 import { createStripeTokenizedCharge } from "services/stripe/createStripeTokenizedCharge";
@@ -117,6 +118,8 @@ export default function Checkout() {
         plan_id: plan.plan_id,
         plan_interval: interval,
       });
+
+      console.log("stripe-response ---", res);
 
       if (!res?.isOk) {
         updateModal({
@@ -287,10 +290,12 @@ export default function Checkout() {
         <TouchableOpacity
           disabled={payLoading || migrateLoading}
           onPress={showCharge ? handlePayNow : handleMigrateToPlan}
-          style={tw.style(
-            "mt-5 w-full py-3 rounded-md items-center justify-center",
-            payLoading || migrateLoading ? "bg-black/30" : "bg-black"
-          )}
+          style={[
+            tw`mt-5 w-full py-3 rounded-md items-center justify-center`,
+            payLoading || migrateLoading
+              ? { backgroundColor: `${colors.black}4D` }
+              : { backgroundColor: colors.black },
+          ]}
         >
           {payLoading || migrateLoading ? (
             <ActivityIndicator color="#fff" />
