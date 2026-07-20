@@ -1,7 +1,6 @@
-import React, { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import * as WebBrowser from "expo-web-browser";
 import { useStripe } from "@stripe/stripe-react-native";
-import { useModalStore } from "#store/modal/modalStore";
 import { createOrderLock } from "#services/orders/createOrderLock";
 import { initializePayment } from "#services/payment/paymentAdapterService";
 import { Analytics } from "#utils/analytics";
@@ -54,7 +53,6 @@ export const usePaymentAdapter = ({
   onError,
 }: UsePaymentAdapterOptions) => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
-  const { updateModal } = useModalStore();
 
   const [loading, setLoading] = useState(false);
   const [initLoader, setInitLoader] = useState(false);
