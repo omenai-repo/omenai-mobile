@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import React, { useMemo, useState } from "react";
 import tw from "twrnc";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
 import { fetchSubscriptionTransactions } from "#services/transactions/fetchSubscriptionTransactions";
@@ -26,7 +25,6 @@ const ItemSeparator = () => <View style={tw`h-3`} />;
 
 const SubscriptionHistory = ({ navigation }: any) => {
   const { height } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
   const { userSession: user } = useAppStore();
 
   const {

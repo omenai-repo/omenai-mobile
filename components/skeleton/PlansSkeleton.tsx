@@ -40,7 +40,9 @@ const PlanCard = () => (
   </View>
 );
 
-export default function PlansSkeleton({ noStyle }: { noStyle?: boolean }) {
+export default function PlansSkeleton({
+  noStyle,
+}: Readonly<{ noStyle?: boolean }>) {
   return (
     <View style={noStyle ? undefined : tw`px-5 pt-4`}>
       <PlanCard />
