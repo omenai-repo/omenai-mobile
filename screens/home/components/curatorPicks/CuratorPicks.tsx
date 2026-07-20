@@ -20,7 +20,9 @@ export default function CuratorPicks() {
       if (!res?.isOk) return [];
       const rows = Array.isArray(res.data) ? res.data : [];
       return rows.filter(
-        (item: any) => String(item?.type || "").toLowerCase() === "artwork" && item?.data?.art_id,
+        (item: any) =>
+          String(item?.type || "").toLowerCase() === "artwork" &&
+          item?.data?.art_id,
       );
     },
     staleTime: 5 * 60_000,
@@ -33,9 +35,7 @@ export default function CuratorPicks() {
 
   return (
     <View style={tw`mt-6`}>
-      <SectionHeader
-        title="Curator's Picks"
-      />
+      <SectionHeader title="Curator's Picks" />
       {isLoading ? (
         <ArtworkCardLoader />
       ) : (
@@ -44,7 +44,10 @@ export default function CuratorPicks() {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={tw`mt-5`}
-          contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
+          contentContainerStyle={{
+            alignItems: "flex-end",
+            paddingHorizontal: 20,
+          }}
           ItemSeparatorComponent={ListSeparator}
           keyExtractor={(item: any, index) =>
             item.identifier || item?.data?.art_id || `curator-pick-${index}`

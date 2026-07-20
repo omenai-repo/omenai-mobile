@@ -59,7 +59,7 @@ export default function MuseumViewer({
   dimensions,
   naturalWidth,
   naturalHeight,
-}: MuseumViewerProps) {
+}: Readonly<MuseumViewerProps>) {
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const [imageLoading, setImageLoading] = useState(true);

@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import tw from "twrnc";
 import ExclusivityExtensionModal from "./ExclusivityExtensionModal";
 import { useQueryClient } from "@tanstack/react-query";

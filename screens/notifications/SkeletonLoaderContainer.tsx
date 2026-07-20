@@ -72,7 +72,7 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
 
 const styles = StyleSheet.create({
   shimmerOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "#ffffff50",
     width: "100%",
     height: "100%",

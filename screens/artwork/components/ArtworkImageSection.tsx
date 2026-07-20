@@ -3,13 +3,10 @@ import {
   View,
   Pressable,
   Image,
-  Text,
   NativeSyntheticEvent,
   ImageLoadEventData,
 } from "react-native";
 import tw from "twrnc";
-import { Feather } from "@expo/vector-icons";
-import { colors } from "#config/colors.config";
 
 export default function ArtworkImageSection({
   imageUri,
