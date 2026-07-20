@@ -121,17 +121,10 @@ export default function CancelSubscriptionModal({
                 <Text style={tw`text-base font-semibold text-slate-900`}>
                   Cancel Subscription
                 </Text>
-                <Text style={tw`text-xs text-slate-600 mt-1`}>
+                <Text style={tw`text-xs text-slate-600 mt-0.5`}>
                   This action cannot be undone
                 </Text>
               </View>
-              <Pressable
-                onPress={() => !loading && onClose()}
-                style={tw`p-1 rounded-sm`}
-                android_ripple={{ color: "#fecaca" }}
-              >
-                <Ionicons name="close" size={18} color="#94a3b8" />
-              </Pressable>
             </View>
           </View>
 
@@ -183,7 +176,7 @@ export default function CancelSubscriptionModal({
 
           {/* Footer */}
           <View style={tw`bg-slate-50 px-5 py-4 border-t border-slate-200`}>
-            <View style={tw`flex-row justify-center`}>
+            <View style={tw`flex-row justify-between`}>
               <Pressable
                 onPress={() => !loading && onClose()}
                 style={({ pressed }) =>

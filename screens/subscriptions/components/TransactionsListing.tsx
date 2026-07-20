@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ActivityIndicator,
-  FlatList,
   Platform,
   Pressable,
 } from "react-native";
@@ -111,14 +110,16 @@ export default function TransactionsListing() {
           {/* timeline line */}
           <View style={tw`absolute left-6 top-0 bottom-0 w-0.5 bg-slate-200`} />
 
-          <FlatList
-            // Show only top 5 items
-            data={list.slice(0, 5)}
-            keyExtractor={(item) => item.trans_id}
-            contentContainerStyle={tw`pr-1`}
-            renderItem={({ item, index }) => <Row item={item} index={index} />}
-            ItemSeparatorComponent={() => <View style={tw`h-3`} />}
-          />
+          <View style={tw`pr-1`}>
+            {list.slice(0, 5).map((item, index, sliced) => (
+              <React.Fragment key={item.trans_id}>
+                <Row item={item} index={index} />
+                {index < sliced.length - 1 ? (
+                  <View style={tw`h-3`} />
+                ) : null}
+              </React.Fragment>
+            ))}
+          </View>
         </View>
       )}
     </View>

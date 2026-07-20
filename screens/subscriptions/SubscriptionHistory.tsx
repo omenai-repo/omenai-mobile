@@ -4,12 +4,10 @@ import {
   useWindowDimensions,
   FlatList,
   RefreshControl,
-  Platform,
 } from "react-native";
 import React, { useMemo, useState } from "react";
 import tw from "twrnc";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import BackScreenButton from "#components/buttons/BackScreenButton";
 import { useQuery } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
 import { fetchSubscriptionTransactions } from "#services/transactions/fetchSubscriptionTransactions";
@@ -20,6 +18,7 @@ import {
   SubscriptionTransactionRow,
   Txn,
 } from "./components/SubscriptionTransactionRow";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 
 const PAGE_SIZE = 15;
 
@@ -68,22 +67,7 @@ const SubscriptionHistory = ({ navigation }: any) => {
 
   return (
     <View style={tw`flex-1 bg-[#F7F7F7]`}>
-      <View
-        style={{
-          paddingTop: insets.top + (Platform.OS === "android" ? 16 : 10),
-          paddingBottom: 16,
-          paddingHorizontal: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 15,
-        }}
-      >
-        <BackScreenButton handleClick={() => navigation.goBack()} />
-        <Text style={tw`text-[16px] font-medium text-[#1A1A1A]`}>
-          Transaction History
-        </Text>
-      </View>
-
+      <BackHeaderTitle title="Transaction History" />
       {/* List */}
       {!isLoading && visibleList.length > 0 && (
         <FlatList

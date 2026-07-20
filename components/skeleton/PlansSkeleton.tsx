@@ -40,9 +40,9 @@ const PlanCard = () => (
   </View>
 );
 
-export default function PlansSkeleton() {
+export default function PlansSkeleton({ noStyle }: { noStyle?: boolean }) {
   return (
-    <View style={tw`px-5 pt-4`}>
+    <View style={noStyle ? undefined : tw`px-5 pt-4`}>
       <PlanCard />
       <PlanCard />
       <PlanCard />

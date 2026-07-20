@@ -54,10 +54,14 @@ export default function CancelSubscriptionModal() {
       <SafeAreaView>
         <View style={styles.scrollContainer}>
           <View style={styles.mainContainer}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+            >
               <Text style={{ fontSize: 16, flex: 1 }}>Cancle subscription</Text>
               <CloseButton
-                handlePress={() => setRetainModal({ showModal: false, retainModal: null })}
+                handlePress={() =>
+                  setRetainModal({ showModal: false, retainModal: null })
+                }
               />
             </View>
             <View
@@ -70,10 +74,12 @@ export default function CancelSubscriptionModal() {
             >
               <Text style={{ fontSize: 14, color: colors.primary_black }}>
                 Are you sure? After{" "}
-                <Text style={{ fontWeight: 500 }}>{formatIntlDateTime(modalMessage)}</Text>, you
-                will be unable to upload artworks and events or use any of the services provided by
-                Omenai Inc. All artworks uploaded will be suspended until your subscriptions are
-                restarted.
+                <Text style={{ fontWeight: 500 }}>
+                  {formatIntlDateTime(modalMessage)}
+                </Text>
+                , you will be unable to upload artworks and events or use any of
+                the services provided by Omenai Inc. All artworks uploaded will
+                be suspended until your subscriptions are restarted.
               </Text>
             </View>
             <LongBlackButton

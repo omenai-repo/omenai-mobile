@@ -126,15 +126,19 @@ export default function Billing() {
     }
 
     handleFetchPlans();
-  }, [isVerified, checkingOnboarding, isOnboarded, userSession?.id]);
+  }, [
+    isVerified,
+    checkingOnboarding,
+    isOnboarded,
+    userSession?.id,
+    updateModal,
+  ]);
 
   if (checkingOnboarding) {
     return (
       <>
         <BackHeaderTitle title="Billing" />
-        <ScrollWrapper style={styles.container}>
-          <PlansSkeleton />
-        </ScrollWrapper>
+        <PlansSkeleton />
       </>
     );
   }
@@ -157,7 +161,11 @@ export default function Billing() {
           <Text style={styles.heading}>Choose your plan</Text>
         </View>
         <Header selectedTab={selectedTab} handleUpdate={setSelectedTab} />
-        {loading && <PlansSkeleton />}
+        {loading && (
+          <View style={{ marginTop: 20 }}>
+            <PlansSkeleton noStyle />
+          </View>
+        )}
         {!loading && plans.length > 0 && (
           <View style={styles.mainContainer}>
             {plans.map((plan) => (

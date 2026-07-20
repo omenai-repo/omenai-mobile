@@ -73,7 +73,10 @@ export default function Subscriptions() {
         };
       } catch (error: any) {
         updateModal({
-          message: error?.message || error?.body?.message || "Something went wrong, Please refresh again",
+          message:
+            error?.message ||
+            error?.body?.message ||
+            "Something went wrong, Please refresh again",
           modalType: "error",
           showModal: true,
         });
@@ -93,79 +96,59 @@ export default function Subscriptions() {
   });
 
   const showLoading = isLoading || isRefetching;
+  const showSkeleton =
+    isFlagLoading || (isSubscriptionBillingEnabled && showLoading);
   const needsVerification =
     isConfirmed && (!isConfirmed.isSubmitted || !isConfirmed.id);
   const isSubActive = !!isConfirmed?.isSubActive;
 
+  const refreshControl = (
+    <RefreshControl
+      refreshing={isRefetching}
+      onRefresh={refetch}
+      colors={[colors.black]}
+      tintColor={colors.black}
+    />
+  );
+
   const renderContent = () => {
-    if (isFlagLoading) {
-      return (
-        <View style={{ padding: 20 }}>
-          <PlansSkeleton />
-        </View>
-      );
+    if (showSkeleton) {
+      return <PlansSkeleton />;
     }
 
-    if (isSubscriptionBillingEnabled) {
-      if (showLoading) {
-        return (
-          <View style={{ padding: 20 }}>
-            <PlansSkeleton />
-          </View>
-        );
-      }
+    if (!isSubscriptionBillingEnabled) {
+      return <SubscriptionDowntimeBlocker />;
+    }
 
-      if (needsVerification) {
-        return (
-          <ScrollWrapper
-            contentContainerStyle={{
-              flexGrow: 1,
-              justifyContent: "center",
-            }}
-            refreshControl={
-              <RefreshControl
-                refreshing={isRefetching}
-                onRefresh={refetch}
-                colors={[colors.black]}
-                tintColor={colors.black}
-              />
-            }
-          >
-            <VerificationRequiredBlock disableBack />
-          </ScrollWrapper>
-        );
-      }
-
+    if (needsVerification) {
       return (
         <ScrollWrapper
-          style={styles.mainContainer}
-          contentContainerStyle={
-            isSubActive ? undefined : { flexGrow: 1, justifyContent: "center" }
-          }
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching}
-              onRefresh={refetch}
-              colors={[colors.black]}
-              tintColor={colors.black}
-            />
-          }
+          contentContainerStyle={styles.centeredContent}
+          refreshControl={refreshControl}
         >
-          {isSubActive ? (
-            <ActiveSubscriptions
-              subscription_data={isConfirmed?.subscription_data}
-              subscription_plan={isConfirmed?.subscription_plan}
-            />
-          ) : (
-            <InActiveSubscription />
-          )}
-          <View style={{ paddingVertical: 30 }} />
+          <VerificationRequiredBlock disableBack />
         </ScrollWrapper>
       );
     }
 
-    return <SubscriptionDowntimeBlocker />;
+    return (
+      <ScrollWrapper
+        style={styles.mainContainer}
+        contentContainerStyle={isSubActive ? undefined : styles.centeredContent}
+        showsVerticalScrollIndicator={false}
+        refreshControl={refreshControl}
+      >
+        {isSubActive ? (
+          <ActiveSubscriptions
+            subscription_data={isConfirmed?.subscription_data}
+            subscription_plan={isConfirmed?.subscription_plan}
+          />
+        ) : (
+          <InActiveSubscription />
+        )}
+        <View style={styles.bottomSpacer} />
+      </ScrollWrapper>
+    );
   };
 
   return (
@@ -188,12 +171,14 @@ export default function Subscriptions() {
 }
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
   mainContainer: {
     flex: 1,
+  },
+  centeredContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+  bottomSpacer: {
+    paddingVertical: 30,
   },
 });

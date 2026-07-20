@@ -9,6 +9,7 @@ import { createPaymentMethodSetupIntent } from "#services/stripe/createPaymentMe
 import { updatePaymentMethod } from "#services/stripe/updatePaymentMethod";
 import SuccessPaymentModal from "./SuccessPaymentModal";
 import { invalidateGallerySubscriptionAndOrders } from "#utils/invalidateGallerySubscriptionAndOrders";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 
 export default function PaymentMethodChangeScreen() {
   const navigation = useNavigation<any>();
@@ -92,6 +93,13 @@ export default function PaymentMethodChangeScreen() {
     };
   }, [fetchSetupIntent, initializeSheet]);
 
+  const refreshSubscriptionData = useCallback(() => {
+    void queryClient.invalidateQueries({
+      queryKey: ["subscription_precheck"],
+    });
+    void invalidateGallerySubscriptionAndOrders(queryClient, user?.id);
+  }, [queryClient, user?.id]);
+
   const handleOpenSheet = useCallback(async () => {
     // Safety: ensure ready. If not, try to initialize now.
     if (!sheetReady) {
@@ -107,31 +115,49 @@ export default function PaymentMethodChangeScreen() {
     setError(null);
 
     const { error: presentErr } = await presentPaymentSheet();
-    setPresenting(false);
 
     if (presentErr) {
+      setPresenting(false);
       if (presentErr.code !== "Canceled") setError(presentErr.message);
       return;
     }
 
-    // success -> refresh any data that depends on the PM
     const setupIntentId = clientSecret?.split("_secret_")[0];
     if (!setupIntentId) {
+      setPresenting(false);
       setError("Invalid setup. Please contact support.");
       return;
     }
-    await updatePaymentMethod(setupIntentId);
-    setSuccessVisible(true);
-  }, [sheetReady, clientSecret, initializeSheet, presentPaymentSheet]);
+
+    try {
+      const result = await updatePaymentMethod(setupIntentId);
+      if (!result?.isOk) {
+        setError(
+          result?.message ??
+            result?.body?.message ??
+            "Failed to save payment method. Please try again.",
+        );
+        return;
+      }
+      setSuccessVisible(true);
+      refreshSubscriptionData();
+    } catch {
+      setError("Failed to save payment method. Please try again.");
+    } finally {
+      setPresenting(false);
+    }
+  }, [
+    sheetReady,
+    clientSecret,
+    initializeSheet,
+    presentPaymentSheet,
+    refreshSubscriptionData,
+  ]);
 
   return (
     <>
       <View style={tw`flex-1 bg-slate-50`}>
-        <View style={tw`px-4 py-5 mt-[80px]`}>
-          <Text style={tw`text-xl font-semibold text-slate-900`}>
-            Change Card
-          </Text>
-        </View>
+        <BackHeaderTitle title="Change card" />
 
         <View style={tw`px-4`}>
           {initializing && (
@@ -152,13 +178,15 @@ export default function PaymentMethodChangeScreen() {
           )}
 
           <Pressable
-            disabled={initializing || presenting || !sheetReady} // CHANGED
+            disabled={initializing || presenting || !sheetReady}
             onPress={handleOpenSheet}
             style={({ pressed }) =>
-              tw`mt-2 h-12 rounded-sm items-center justify-center 
-                ${initializing || presenting || !sheetReady
-                  ? "bg-slate-300"
-                  : "bg-slate-900"}
+              tw`mt-2 h-12 rounded-sm items-center justify-center
+                ${
+                  initializing || presenting || !sheetReady
+                    ? "bg-slate-300"
+                    : "bg-slate-900"
+                }
                 ${pressed ? "opacity-85" : ""}`
             }
           >
@@ -170,13 +198,12 @@ export default function PaymentMethodChangeScreen() {
       </View>
       <SuccessPaymentModal
         visible={successVisible}
-        onPrimaryPress={async () => {
+        onPrimaryPress={() => {
           setSuccessVisible(false);
-          // refresh + go back to billing
-          await queryClient.invalidateQueries({
+          void queryClient.invalidateQueries({
             queryKey: ["subscription_precheck"],
           });
-          await invalidateGallerySubscriptionAndOrders(queryClient, user?.id);
+          void invalidateGallerySubscriptionAndOrders(queryClient, user?.id);
           navigation.goBack();
         }}
       />
