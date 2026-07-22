@@ -7779,6 +7779,11 @@ react-native-dropdown-picker@^5.4.6:
   resolved "https://registry.yarnpkg.com/react-native-dropdown-picker/-/react-native-dropdown-picker-5.4.6.tgz#3736fc468de4a295e4df8d1f65ed2eadaf9b445f"
   integrity sha512-T1XBHbE++M6aRU3wFYw3MvcOuabhWZ29RK/Ivdls2r1ZkZ62iEBZknLUPeVLMX3x6iUxj4Zgr3X2DGlEGXeHsA==
 
+react-native-ease@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/react-native-ease/-/react-native-ease-0.7.3.tgz#654e420e9d203c9585a5e1064d52d08749332f1f"
+  integrity sha512-RiZdoWFD+XBWX1RrikXz/AW9HBBMdWBNUDrSgmrjbldZDWtPorlc6QHZddTyILqiteoV2aOZMc4iYn0TVu1Y6A==
+
 react-native-element-dropdown@^2.12.2:
   version "2.12.4"
   resolved "https://registry.yarnpkg.com/react-native-element-dropdown/-/react-native-element-dropdown-2.12.4.tgz#259db84e673b9f4fc03090a54760efd4f4a1456c"

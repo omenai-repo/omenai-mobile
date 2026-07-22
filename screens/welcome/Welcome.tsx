@@ -43,7 +43,7 @@ export default function Welcome() {
 
   if (!showWelcome) {
     return (
-      <>
+      <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
         <StatusBar style="light" />
         <OnBoardingSection
           data={onboardingdata[selected]}
@@ -53,8 +53,9 @@ export default function Welcome() {
             utils_storeAsyncData("isOnboarded", JSON.stringify(true));
           }}
           handleNext={() => setSelected((prev) => prev + 1)}
+          handleBack={() => setSelected((prev) => prev - 1)}
         />
-      </>
+      </View>
     );
   }
 
@@ -117,6 +118,7 @@ export default function Welcome() {
             }}
           />
 
+          {/* Browse as guest user button */}
           {/* <Pressable
             onPress={() => navigation.navigate("GuestNavigation")}
             style={tw`items-center mt-2`}

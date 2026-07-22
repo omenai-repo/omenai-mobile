@@ -79,6 +79,7 @@
     "react-native-countdown-component": "^2.7.1",
     "react-native-device-info": "^15.0.1",
     "react-native-dropdown-picker": "^5.4.6",
+    "react-native-ease": "^0.7.3",
     "react-native-element-dropdown": "^2.12.2",
     "react-native-email-link": "^1.16.1",
     "react-native-gesture-handler": "~2.30.0",
