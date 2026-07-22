@@ -29,7 +29,7 @@ export default function DeleteAccountSuccessModal() {
     <View style={tw`flex-1 justify-center items-center p-4`}>
       <View
         style={[
-          tw`rounded-xl shadow-lg w-full max-w-[448px]`,
+          tw`rounded-sm shadow-lg w-full max-w-[448px]`,
           { backgroundColor: colors.white },
         ]}
         accessibilityRole="alert"

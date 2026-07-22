@@ -1,0 +1,37 @@
+appId: com.omenai.omenaimobile
+name: "Request Price Flow"
+tags:
+  - purchase
+  - request-price
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- tapOn: "Search"
+
+- tapOn:
+    id: "search-input"
+- inputText: "Abstract"
+- pressKey: Enter
+- hideKeyboard
+
+- tapOn:
+    index: 0
+    id: "artwork-card"
+
+- assertVisible: "Request price"
+- tapOn: "Request price"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Price quote"
+        - "Request sent"
+        - "Thank you"
+    timeout: 10000
+
+- tapOn:
+    anyOf:
+      - "OK"
+      - "Done"
+      - "Close"

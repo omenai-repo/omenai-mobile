@@ -1,16 +1,15 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function generateStripeLoginLink(account: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/stripe/generateStripeLoginLink`, {
-      method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
+    const res = await apiRequest(
+      `${apiUrl}/api/stripe/generateStripeLoginLink`,
+      {
+        method: "POST",
+        body: JSON.stringify({ account }),
       },
-      body: JSON.stringify({ account }),
-    });
+    );
 
     const result = await res.json();
 
@@ -19,6 +18,14 @@ export async function generateStripeLoginLink(account: string) {
       url: result.url,
     };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error generating Stripe login link",
+      },
+    };
   }
 }

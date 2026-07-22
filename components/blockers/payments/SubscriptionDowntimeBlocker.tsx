@@ -20,7 +20,7 @@ export default function SubscriptionBillingBlocker({
         duration: 20000,
         useNativeDriver: true,
         isInteraction: false,
-      })
+      }),
     ).start();
 
     Animated.loop(
@@ -29,7 +29,7 @@ export default function SubscriptionBillingBlocker({
         duration: 2000,
         useNativeDriver: true,
         isInteraction: false,
-      })
+      }),
     ).start();
   }, [rotateAnim, spinAnim]);
 
@@ -64,7 +64,7 @@ export default function SubscriptionBillingBlocker({
 
       <View
         style={[
-          tw`w-full items-center p-7 rounded-2xl border`,
+          tw`w-full items-center p-7 rounded-sm border`,
           {
             maxWidth: 720,
             borderColor: "rgba(71,116,142,0.12)",

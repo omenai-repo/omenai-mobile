@@ -1,12 +1,7 @@
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { colors } from '#config/colors.config';
-import mastercardLogo from '#assets/icons/MastercardLogo.png';
-import visa from '#assets/icons/visa.png';
-import verve from '#assets/icons/verve.png';
-import cardwifiIcon from '#assets/icons/cardwifiIcon.png';
-import chip from '#assets/icons/chip.png';
-import creditcardBG from '#assets/icons/creditcardBg.png';
+import { images } from "#constants/images.constants";
 import { useAppStore } from '#store/app/appStore';
 import Button from './Button';
 import { useNavigation } from '@react-navigation/native';
@@ -32,12 +27,12 @@ export default function CardDetails({cardData}: CardDetailsProps) {
         <View style={styles.container}>
             <View style={styles.topContainer}>
                 <Text style={{fontSize: 16, color: colors.primary_black, marginBottom: 10}}>Payment info</Text>
-                <ImageBackground source={creditcardBG} resizeMode="cover" style={styles.cardContainer}>
+                <ImageBackground source={images.creditCardBg} resizeMode="cover" style={styles.cardContainer}>
                     <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
                         <Text style={styles.galleryName}>{userSession.name}</Text>
-                        <Image source={cardwifiIcon} />
+                        <Image source={images.cardWifiIcon} />
                     </View>
-                    <Image style={styles.chip} source={chip} />
+                    <Image style={styles.chip} source={images.chip} />
                     <View style={{flexDirection: 'row', marginTop: 10, alignItems: 'flex-end'}}>
                         <View style={{flex: 1}}>
                             <Text style={styles.cardNumber}>{cardData.first_6digits} ** **** {cardData.last_4digits}</Text>
@@ -46,9 +41,9 @@ export default function CardDetails({cardData}: CardDetailsProps) {
                                 <Text style={styles.expiryYear}>{cardData.expiry}</Text>
                             </View>
                         </View>
-                        {cardData.type === "MASTERCARD" && <Image source={mastercardLogo} style={styles.cardLogo} />}
-                        {cardData.type === "VERVE" && <Image source={verve} style={styles.cardLogo} />}
-                        {cardData.type === "VISA" && <Image source={visa} style={styles.cardLogo} />}
+                        {cardData.type === "MASTERCARD" && <Image source={images.mastercardLogo} style={styles.cardLogo} />}
+                        {cardData.type === "VERVE" && <Image source={images.verve} style={styles.cardLogo} />}
+                        {cardData.type === "VISA" && <Image source={images.visa} style={styles.cardLogo} />}
                     </View>
                 </ImageBackground>
             </View>

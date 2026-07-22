@@ -1,14 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export const getSingleOrder = async (order_id: string) => {
   try {
-    const res = await fetch(`${apiUrl}/api/orders/getSingleOrder`, {
+    const res = await apiRequest(`${apiUrl}/api/orders/getSingleOrder`, {
       method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      },
       body: JSON.stringify({
         order_id,
       }),
@@ -16,6 +12,14 @@ export const getSingleOrder = async (order_id: string) => {
     const result = await res.json();
     return { isOk: res.ok, message: result.message, data: result.data };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching order details",
+      },
+    };
   }
 };

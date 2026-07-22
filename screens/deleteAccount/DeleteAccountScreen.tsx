@@ -1,5 +1,12 @@
 import React, { useState, useRef } from "react";
-import { View, KeyboardAvoidingView, Platform, Animated, Linking, Text } from "react-native";
+import {
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  Animated,
+  Linking,
+  Text,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import tw from "twrnc";
@@ -14,7 +21,10 @@ import DeleteAccountActions from "#components/deleteAccount/DeleteAccountActions
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import CommitmentsModal from "#components/deleteAccount/CommitmentsModal";
 import { PRIVACY_POLICY_URL } from "#constants/deleteAccount.constants";
-import { deleteAccount, type DeleteAccountResponse } from "#services/requests/deleteAccount";
+import {
+  deleteAccount,
+  type DeleteAccountResponse,
+} from "#services/requests/deleteAccount";
 import { useAppStore } from "#store/app/appStore";
 import { useModalStore } from "#store/modal/modalStore";
 import type { RootNavigationProp } from "#types/navigation";
@@ -63,17 +73,22 @@ export default function DeleteAccountScreen() {
     try {
       const payload = {
         id: userSession.id,
-        reason: selectedReason.toLowerCase() === "other" ? otherMessage : selectedReason,
+        reason:
+          selectedReason.toLowerCase() === "other"
+            ? otherMessage
+            : selectedReason,
       };
 
       const response: DeleteAccountResponse = await deleteAccount(
         routeName as "individual" | "gallery" | "artist",
         payload.id,
-        payload.reason
+        payload.reason,
       );
 
       if (response.status === 409) {
-        const commitmentsList: Commitment[] = Array.isArray(response?.commitments)
+        const commitmentsList: Commitment[] = Array.isArray(
+          response?.commitments,
+        )
           ? response.commitments
           : response?.commitments?.commitments ?? [];
         setCommitments(commitmentsList);
@@ -102,7 +117,10 @@ export default function DeleteAccountScreen() {
       });
     } catch (err: any) {
       const errorMessage =
-        err?.message || "Network error encountered, please try again or contact support";
+        err?.message ||
+        err?.body?.message ||
+        err?.response?.data?.message ||
+        "Network error encountered, please try again or contact support";
       setError(errorMessage);
       updateModal({
         message: errorMessage,
@@ -134,23 +152,33 @@ export default function DeleteAccountScreen() {
           style={tw`flex-1`}
           contentContainerStyle={[tw`pb-4`]}
           keyboardShouldPersistTaps="handled"
-          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-            useNativeDriver: false,
-          })}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            {
+              useNativeDriver: false,
+            },
+          )}
         >
           <View style={[tw`px-5`, { paddingTop: insets.top + 24 }]}>
             <DeleteAccountHeader />
-            <DeletionProcessSteps onPrivacyPolicyPress={handlePrivacyPolicyPress} />
+            <DeletionProcessSteps
+              onPrivacyPolicyPress={handlePrivacyPolicyPress}
+            />
             <DeletionReasonSection
               selectedReason={selectedReason}
               onReasonSelect={handleReasonSelect}
             />
             {selectedReason === "other" && (
-              <OtherMessageInput message={otherMessage} onMessageChange={setOtherMessage} />
+              <OtherMessageInput
+                message={otherMessage}
+                onMessageChange={setOtherMessage}
+              />
             )}
             {error && (
               <View style={tw`px-5 mb-4`}>
-                <View style={tw`p-4 bg-red-50 rounded-lg border border-red-200`}>
+                <View
+                  style={tw`p-4 bg-red-50 rounded-sm border border-red-200`}
+                >
                   <Text style={tw`text-red-600 text-sm`}>{error}</Text>
                 </View>
               </View>

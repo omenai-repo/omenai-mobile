@@ -17,8 +17,16 @@ interface AddressFormFieldsProps {
   };
   phone?: string;
   formErrors: Partial<AddressTypes & { phone: string }>;
-  onCountrySelect: (item: { label: string; value: string; currency?: string }) => void;
-  onStateSelect: (item: { label: string; value: string; isoCode?: string }) => void;
+  onCountrySelect: (item: {
+    label: string;
+    value: string;
+    currency?: string;
+  }) => void;
+  onStateSelect: (item: {
+    label: string;
+    value: string;
+    isoCode?: string;
+  }) => void;
   onCitySelect: (item: { label: string; value: string }) => void;
   onAddressChange: (text: string) => void;
   onZipChange: (text: string) => void;

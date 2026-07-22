@@ -1,6 +1,6 @@
+import React, { useEffect, useState, useCallback } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useEffect, useState, useCallback } from "react";
 import { useAppStore } from "#store/app/appStore";
 import { utils_appInit } from "#utils/utils_appInit";
 import { useFonts } from "expo-font";
@@ -20,7 +20,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 
-import { AppState, Platform } from "react-native";
+import { AppState, Platform, View, Text, TextInput } from "react-native";
 import { configureNotificationHandling } from "#notifications/NotificationService";
 import { useNotifications } from "#hooks/useNotifications";
 import { registerForPushToken } from "#notifications/registerForPushToken";
@@ -29,6 +29,45 @@ import { useNotificationHandler } from "#hooks/useNotificationHandler";
 import { StatusBar } from "expo-status-bar";
 import { clearStaleCredentials } from "#hooks/useBiometrics";
 import ForceUpdateModal from "#components/modal/ForceUpdateModal";
+import { useVersionCheck } from "#hooks/useVersionCheck";
+import { Analytics } from "#utils/analytics";
+import * as Updates from "expo-updates";
+import { SupportProvider } from "#providers/SupportProvider";
+import SupportWidget from "#components/support/SupportWidget";
+import WithModal from "#components/modal/WithModal";
+import GuestLoginModal from "#components/guest/GuestLoginModal";
+import { DEEP_LINK_REDIRECT_ORIGIN } from "#constants/deepLink.constants";
+import {
+  resolveDeepLinkUrl,
+  useDeepLinkFlush,
+} from "#features/deeplink/deepLink";
+import { flushPendingDeepLinks } from "#features/deeplink/deepLinkApply";
+import { initializeAppCheckConfig } from "#config/appCheck.config";
+
+// Set default font for all Text and TextInput components
+// @ts-ignore
+if (Text.defaultProps) {
+  // @ts-ignore
+  Text.defaultProps.style = { fontFamily: "WorkSans-Light" };
+} else {
+  // @ts-ignore
+  Text.defaultProps = { style: { fontFamily: "WorkSans-Light" } };
+}
+
+// @ts-ignore
+if (TextInput.defaultProps) {
+  // @ts-ignore
+  TextInput.defaultProps.style = { fontFamily: "WorkSans-Light" };
+} else {
+  // @ts-ignore
+  TextInput.defaultProps = { style: { fontFamily: "WorkSans-Light" } };
+}
+
+// Vexo analytic initialization
+Analytics.init(process.env.EXPO_PUBLIC_VEXO_ID as string);
+
+// Initialize App Check before any other Firebase services
+initializeAppCheckConfig();
 
 // Safely patch Platform.constants for web/dev environments only
 try {
@@ -50,69 +89,94 @@ SplashScreen.setOptions({
   fade: true,
 });
 
+async function checkForOTAUpdate() {
+  if (Updates.channel === "production") return;
+  try {
+    const update = await Updates.checkForUpdateAsync();
+    if (update.isAvailable) {
+      await Updates.fetchUpdateAsync();
+      await Updates.reloadAsync();
+    }
+  } catch {
+    // Continue to app start if update check fails
+  }
+}
+
 export default function App() {
   useNotificationHandler(); // Set up notification handler
   const [appIsReady, setAppIsReady] = useState(false);
   const { isLoggedIn, userType, setExpoPushToken } = useAppStore();
 
-  const [needsForceUpdate] = useState(false);
+  useDeepLinkFlush(appIsReady, isLoggedIn, userType);
+
+  const [needsForceUpdate, setNeedsForceUpdate] = useState(false);
+
+  const handleUpdateNeeded = useCallback((versionCheckResult: any) => {
+    if (versionCheckResult.needsUpdate) {
+      setNeedsForceUpdate(true);
+    }
+  }, []);
+
+  // Check version on app initialization
+  useVersionCheck(handleUpdateNeeded);
 
   configureNotificationHandling(); // Set up global handler
   useNotifications(); // Register listeners
 
   useEffect(() => {
-    const initApp = async () => {
+    async function prepare() {
       try {
         await clearStaleCredentials();
         const token = await registerForPushToken();
-        if (token) {
-          setExpoPushToken(token);
-        }
-      } catch {
-        // Silently fail
+        if (token) setExpoPushToken(token);
+        await checkForOTAUpdate();
+        await utils_appInit();
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+        await SplashScreen.hideAsync();
       }
-    };
+    }
 
-    initApp();
-  }, []);
+    prepare();
+  }, [setExpoPushToken]);
 
   const prefix = Linking.createURL("/");
 
-  const config = {
-    screens: {
-      CancleOrderPayment: "CancleOrderPayment",
-      SuccessOrderPayment: "SuccessOrderPayment",
+  const linking = {
+    prefixes: [prefix, DEEP_LINK_REDIRECT_ORIGIN, "omenaimobile://"],
+    getStateFromPath: () => undefined,
+    resolveIncomingUrl: (url: string) => resolveDeepLinkUrl(url, prefix),
+    getInitialURL: async () => {
+      const url = await Linking.getInitialURL();
+      return url ? resolveDeepLinkUrl(url, prefix) : null;
+    },
+    subscribe: (listener: (url: string) => void) => {
+      const sub = Linking.addEventListener("url", ({ url }) => {
+        resolveDeepLinkUrl(url, prefix).then(listener);
+      });
+      return () => sub.remove();
     },
   };
 
-  const linking = {
-    prefixes: [prefix],
-    config,
-  };
-
   const [fontsLoaded] = useFonts({
-    nunitoSans: require("./assets/fonts/nunito-sans.ttf"),
+    "WorkSans-Light": require("./assets/fonts/Work_Sans/static/WorkSans-Light.ttf"),
+    "WorkSans-ExtraLight": require("./assets/fonts/Work_Sans/static/WorkSans-ExtraLight.ttf"),
+    "WorkSans-Regular": require("./assets/fonts/Work_Sans/static/WorkSans-Regular.ttf"),
+    "WorkSans-Medium": require("./assets/fonts/Work_Sans/static/WorkSans-Medium.ttf"),
+    "WorkSans-SemiBold": require("./assets/fonts/Work_Sans/static/WorkSans-SemiBold.ttf"),
+    "WorkSans-Bold": require("./assets/fonts/Work_Sans/static/WorkSans-Bold.ttf"),
+    "WorkSans-ExtraBold": require("./assets/fonts/Work_Sans/static/WorkSans-ExtraBold.ttf"),
+    "WorkSans-Black": require("./assets/fonts/Work_Sans/static/WorkSans-Black.ttf"),
+    "PTSerif-Regular": require("./assets/fonts/PT_Serif/PTSerif-Regular.ttf"),
+    "PTSerif-Italic": require("./assets/fonts/PT_Serif/PTSerif-Italic.ttf"),
+    "PTSerif-Bold": require("./assets/fonts/PT_Serif/PTSerif-Bold.ttf"),
+    "PTSerif-BoldItalic": require("./assets/fonts/PT_Serif/PTSerif-BoldItalic.ttf"),
   });
 
-  //add logic for conditional routing
-  useEffect(() => {
-    utils_appInit();
-  }, [isLoggedIn]);
-
-  useEffect(() => {
-    // Immediately mark the app ready and hide the splash to avoid long
-    // splash-screen delays on some devices. Heavy visuals should load
-    // lazily so they do not block initial paint.
-    setAppIsReady(true);
-    try {
-      SplashScreen.hideAsync();
-    } catch (err) {
-      console.error("[App] failed to hide splash on ready", err);
-    }
-  }, []);
-
   const onLayoutRootView = useCallback(() => {
-    if (appIsReady) {
+    if (appIsReady && fontsLoaded) {
       // This tells the splash screen to hide immediately! If we call this after
       // `setAppIsReady`, then we may see a blank screen while the app is
       // loading its initial state and rendering its first pixels. So instead,
@@ -122,19 +186,21 @@ export default function App() {
         console.error("Failed to hide splash screen:", err);
       });
     }
-  }, [appIsReady]);
+  }, [appIsReady, fontsLoaded]);
 
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
-            refetchOnMount: false,
-            refetchOnReconnect: false,
+            staleTime: 5 * 60_000, // 5 minutes — avoid redundant refetches
+            gcTime: 30 * 60_000, // 30 minutes — keep cached data in memory
+            refetchOnMount: true,
+            refetchOnReconnect: true,
             refetchOnWindowFocus: false, // RN: safe to disable
           },
         },
-      })
+      }),
   );
 
   useEffect(() => {
@@ -144,35 +210,53 @@ export default function App() {
     return () => unsubscribe.remove();
   }, []);
 
-  if (!appIsReady) {
+  if (!appIsReady || !fontsLoaded) {
     return null;
   }
 
   return (
     <CopilotProvider>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
       <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
-            <BottomSheetModalProvider>
-              <StripeProvider
-                publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
-                urlScheme="omenaimobile"
-              >
-                <NavigationContainer ref={navigationRef} linking={linking}>
-                  {/* AUTH SCREENS */}
-                  {!isLoggedIn && <AuthNavigation />}
-                  {/* App screens */}
-                  {isLoggedIn && userType === "gallery" && (
-                    <GalleryNavigation />
-                  )}
-                  {isLoggedIn && userType === "user" && (
-                    <IndividualNavigation />
-                  )}
-                  {isLoggedIn && userType === "artist" && <ArtistNavigation />}
-                </NavigationContainer>
-              </StripeProvider>
-            </BottomSheetModalProvider>
+            <SupportProvider>
+              <BottomSheetModalProvider>
+                <StripeProvider
+                  publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK as string}
+                  urlScheme="omenaimobile"
+                >
+                  <NavigationContainer
+                    ref={navigationRef}
+                    linking={linking}
+                    onReady={() => {
+                      const { isLoggedIn, userType } = useAppStore.getState();
+                      flushPendingDeepLinks({ isLoggedIn, userType });
+                    }}
+                  >
+                    <WithModal>
+                      <View style={{ flex: 1 }}>
+                        {/* AUTH SCREENS */}
+                        {!isLoggedIn && <AuthNavigation />}
+                        {/* App screens */}
+                        {isLoggedIn && userType === "gallery" && (
+                          <GalleryNavigation />
+                        )}
+                        {isLoggedIn && userType === "user" && (
+                          <IndividualNavigation />
+                        )}
+                        {isLoggedIn && userType === "artist" && (
+                          <ArtistNavigation />
+                        )}
+
+                        <GuestLoginModal />
+                        <SupportWidget />
+                      </View>
+                    </WithModal>
+                  </NavigationContainer>
+                </StripeProvider>
+              </BottomSheetModalProvider>
+            </SupportProvider>
           </SafeAreaProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>

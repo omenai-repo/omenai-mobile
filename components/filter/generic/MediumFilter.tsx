@@ -7,13 +7,11 @@ import GenericFilterOptionBox from "./FilterOptionBox";
 import { SharedFilterStore } from "./types";
 
 export const optionsMedium = [
-  "Photography",
   "Works on paper",
   "Acrylic on canvas/linen/panel",
-  "Mixed media on paper/canvas",
-  "Sculpture (Resin/plaster/clay)",
+  "Mixed media on canvas",
   "Oil on canvas/panel",
-  "Sculpture (Bronze/stone/metal)",
+  "Photography",
 ];
 
 export default function GenericMediumFilter({
@@ -36,18 +34,16 @@ export default function GenericMediumFilter({
       <TouchableOpacity onPress={() => setOpenDropdown(!openDropdown)}>
         <View
           style={[
-            tw`h-14 px-5 items-center gap-2.5 flex-row rounded-lg`,
+            tw`h-14 px-5 items-center gap-2.5 flex-row rounded-sm`,
             { borderWidth: 1, borderColor: colors.inputBorder },
           ]}
         >
           <View style={tw`flex-1 flex-row items-center gap-2.5`}>
-            <Text style={{ color: "#616161", fontSize: 16 }}>
-              Filter by medium
-            </Text>
+            <Text style={{ color: "#616161", fontSize: 16 }}>Medium</Text>
             {filterOptions.medium && filterOptions.medium.length > 0 && (
               <View
                 style={[
-                  tw`px-2.5 rounded-lg py-1`,
+                  tw`px-2.5 rounded-sm py-1`,
                   { backgroundColor: "#f5f5f5" },
                 ]}
               >

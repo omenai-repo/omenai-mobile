@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
 import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
 import { cancelSubscription } from "#services/subscriptions/cancelSubscription";
+import { invalidateGallerySubscriptionAndOrders } from "#utils/invalidateGallerySubscriptionAndOrders";
 
 type Props = {
   visible: boolean;
@@ -23,7 +24,11 @@ type Props = {
   onClose: () => void;
 };
 
-export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Props) {
+export default function CancelSubscriptionModal({
+  visible,
+  subEnd,
+  onClose,
+}: Readonly<Props>) {
   const { userSession } = useAppStore();
   const qc = useQueryClient();
   const [loading, setLoading] = useState(false);
@@ -56,7 +61,8 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
     }
   }, [visible, fade, scale]);
 
-  const formattedEnd = formatIntlDateTime?.(subEnd) ?? new Date(subEnd).toLocaleString();
+  const formattedEnd =
+    formatIntlDateTime?.(subEnd) ?? new Date(subEnd).toLocaleString();
 
   const handleCancel = async () => {
     if (loading) return;
@@ -67,8 +73,8 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
       if (!res?.isOk) {
         setErr(res?.message || "Failed to cancel subscription.");
       } else {
-        // Refresh any dependent queries
-        qc.invalidateQueries({ queryKey: ["subscription_precheck"] });
+        await qc.invalidateQueries({ queryKey: ["subscription_precheck"] });
+        await invalidateGallerySubscriptionAndOrders(qc, userSession.id);
         onClose();
       }
     } catch (e: any) {
@@ -94,10 +100,13 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
           { backgroundColor: `${colors.black}99`, opacity: fade },
         ]}
       >
-        <Pressable onPress={() => !loading && onClose()} style={tw`absolute inset-0`} />
+        <Pressable
+          onPress={() => !loading && onClose()}
+          style={tw`absolute inset-0`}
+        />
         <Animated.View
           style={[
-            tw`w-11/12 max-w:420px bg-white rounded-2xl overflow-hidden`,
+            tw`w-11/12 max-w:420px bg-white rounded-sm overflow-hidden`,
             { transform: [{ scale }] },
             cardShadow(),
           ]}
@@ -109,16 +118,13 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
                 <Ionicons name="warning" size={20} color="#dc2626" />
               </View>
               <View style={tw`flex-1`}>
-                <Text style={tw`text-base font-semibold text-slate-900`}>Cancel Subscription</Text>
-                <Text style={tw`text-xs text-slate-600 mt-1`}>This action cannot be undone</Text>
+                <Text style={tw`text-base font-semibold text-slate-900`}>
+                  Cancel Subscription
+                </Text>
+                <Text style={tw`text-xs text-slate-600 mt-0.5`}>
+                  This action cannot be undone
+                </Text>
               </View>
-              <Pressable
-                onPress={() => !loading && onClose()}
-                style={tw`p-1 rounded-lg`}
-                android_ripple={{ color: "#fecaca" }}
-              >
-                <Ionicons name="close" size={18} color="#94a3b8" />
-              </Pressable>
             </View>
           </View>
 
@@ -128,15 +134,24 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
               <Text style={tw`text-sm text-slate-700`}>
                 Your subscription will remain active until:
               </Text>
-              <View style={tw`bg-slate-100 rounded-lg px-4 py-3 mt-2`}>
-                <Text style={tw`font-semibold text-slate-900`}>{formattedEnd}</Text>
+              <View style={tw`bg-slate-100 rounded-sm px-4 py-3 mt-2`}>
+                <Text style={tw`font-semibold text-slate-900`}>
+                  {formattedEnd}
+                </Text>
               </View>
             </View>
 
             {/* Warning box */}
-            <View style={tw`bg-amber-50 border border-amber-200 rounded-lg p-4`}>
+            <View
+              style={tw`bg-amber-50 border border-amber-200 rounded-sm p-4`}
+            >
               <View style={tw`flex-row`}>
-                <Ionicons name="alert-circle" size={18} color="#b45309" style={tw`mr-2 mt-0.5`} />
+                <Ionicons
+                  name="alert-circle"
+                  size={18}
+                  color="#b45309"
+                  style={tw`mr-2 mt-0.5`}
+                />
                 <View style={tw`flex-1`}>
                   <Text style={tw`text-sm font-medium text-amber-900`}>
                     What happens after cancellation:
@@ -151,7 +166,9 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
             </View>
 
             {!!err && (
-              <View style={tw`mt-4 bg-red-50 border border-red-200 rounded-lg p-3`}>
+              <View
+                style={tw`mt-4 bg-red-50 border border-red-200 rounded-sm p-3`}
+              >
                 <Text style={tw`text-red-700 text-xs`}>{err}</Text>
               </View>
             )}
@@ -159,28 +176,30 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
 
           {/* Footer */}
           <View style={tw`bg-slate-50 px-5 py-4 border-t border-slate-200`}>
-            <View style={tw`flex-row justify-center`}>
+            <View style={tw`flex-row justify-between`}>
               <Pressable
                 onPress={() => !loading && onClose()}
                 style={({ pressed }) =>
                   tw.style(
-                    `px-4 h-11 rounded-lg items-center justify-center bg-white border border-slate-300 mr-2`,
-                    pressed ? "opacity-95" : ""
+                    `px-4 h-11 rounded-sm items-center justify-center bg-white border border-slate-300 mr-2`,
+                    pressed ? "opacity-95" : "",
                   )
                 }
                 disabled={loading}
                 accessibilityRole="button"
                 accessibilityLabel="Keep Subscription"
               >
-                <Text style={tw`text-slate-700 text-sm font-medium`}>Keep Subscription</Text>
+                <Text style={tw`text-slate-700 text-sm font-medium`}>
+                  Keep Subscription
+                </Text>
               </Pressable>
 
               <Pressable
                 onPress={handleCancel}
                 style={({ pressed }) =>
                   tw.style(
-                    `px-4 h-11 rounded-lg items-center justify-center bg-red-600`,
-                    pressed ? "opacity-90" : ""
+                    `px-4 h-11 rounded-sm items-center justify-center bg-red-600`,
+                    pressed ? "opacity-90" : "",
                   )
                 }
                 disabled={loading}
@@ -190,7 +209,9 @@ export default function CancelSubscriptionModal({ visible, subEnd, onClose }: Pr
                 {loading ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text style={tw`text-white text-sm font-medium`}>Yes, Cancel</Text>
+                  <Text style={tw`text-white text-sm font-medium`}>
+                    Yes, Cancel
+                  </Text>
                 )}
               </Pressable>
             </View>

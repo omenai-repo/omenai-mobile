@@ -3,37 +3,94 @@ import { View, Text, Pressable, useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import { useModalStore } from "#store/modal/modalStore";
-import { getArtistCurrencySymbol } from "#utils/utils_getArtistCurrencySymbol";
 import { getArtworkPriceForArtist } from "#services/artworks/getArtworkPriceForArtist";
 import { uploadArtworkStore } from "#store/gallery/uploadArtworkStore";
 import { useAppStore } from "#store/app/appStore";
 import LottieView from "lottie-react-native";
-import loaderAnimation from "../../../assets/other/loader-animation.json";
+import { animations } from "#constants/animations.constants";
 import { extractNumberString } from "#utils/utils_editStringToNumber";
-import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import * as WebBrowser from "expo-web-browser";
 import { colors } from "#config/colors.config";
+import { screenName } from "#constants/screenNames.constants";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PriceDisputeTriggerCard from "./PriceDisputeTriggerCard";
+import ArtistExclusivityAgreementSection, {
+  isArtistExclusivityComplete,
+} from "./ArtistExclusivityAgreementSection";
 
-export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () => void }) {
+export default function ArtworkPriceReviewScreen({
+  onConfirm,
+}: Readonly<{
+  onConfirm: () => void;
+}>) {
   const { height } = useWindowDimensions();
-  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation<any>();
   const { updateModal } = useModalStore();
-  const { setActiveIndex, activeIndex, updateArtworkUploadData, artworkUploadData, clearData } =
-    uploadArtworkStore();
+  const {
+    setActiveIndex,
+    updateArtworkUploadData,
+    artworkUploadData,
+    clearData,
+  } = uploadArtworkStore();
   const { userSession } = useAppStore();
   const animation = useRef<LottieView | null>(null);
+
+  const parseHasAutoApprovalsRemaining = (value: unknown): boolean => {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value > 0;
+    if (typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+      if (["false", "0", "no", "none", ""].includes(normalized)) {
+        return false;
+      }
+
+      if (["true", "1", "yes"].includes(normalized)) {
+        return true;
+      }
+
+      const numeric = Number.parseFloat(normalized);
+      return Number.isNaN(numeric) ? true : numeric > 0;
+    }
+
+    return Boolean(value);
+  };
 
   // consent states like web
   const [acknowledgment, setAcknowledgment] = useState(false);
   const [penaltyConsent, setPenaltyConsent] = useState(false);
   const [priceConsent, setPriceConsent] = useState(false);
 
-  const canProceed = acknowledgment && penaltyConsent && priceConsent;
+  // Display price gating based on artist categorization
+  const normalizedCategorization = userSession?.categorization?.trim().toLowerCase();
+  const isCustomPricingEligibleArtist = [
+    "emerging",
+    "early mid-career",
+  ].includes(normalizedCategorization || "");
+  const [displayPriceValue, setDisplayPriceValue] = useState(
+    isCustomPricingEligibleArtist ? "Yes" : ""
+  );
+
+  const exclusivityComplete = isArtistExclusivityComplete(
+    priceConsent,
+    acknowledgment,
+    penaltyConsent,
+  );
+
+  const canProceed =
+    exclusivityComplete &&
+    (isCustomPricingEligibleArtist || displayPriceValue !== "");
 
   // prepare query inputs
-  const heightNum = Number.parseFloat(extractNumberString(artworkUploadData.height));
-  const widthNum = Number.parseFloat(extractNumberString(artworkUploadData.width));
+  const heightNum = Number.parseFloat(
+    extractNumberString(artworkUploadData.height || "")
+  );
+  const widthNum = Number.parseFloat(
+    extractNumberString(
+      artworkUploadData.width || artworkUploadData.length || ""
+    )
+  );
 
   // Use tanstack/react-query for fetching price
   const {
@@ -51,23 +108,62 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
       widthNum,
     ],
     queryFn: async () => {
-      const response = await getArtworkPriceForArtist({
+      const payload = {
         medium: artworkUploadData.medium,
         category: userSession.categorization,
         currency: userSession.base_currency,
         height: heightNum,
         width: widthNum,
-      });
+        artistId: userSession.id,
+      };
+
+      const response = await getArtworkPriceForArtist(payload);
 
       if (!response?.isOk) {
-        throw new Error(response?.data?.message || "Failed to fetch price");
+        const fullErrorMessage =
+          response?.message ||
+          response?.body?.message ||
+          response?.raw?.message ||
+          "Failed to fetch price";
+
+        console.error("Artwork price API error:", {
+          payload,
+          response,
+          message: fullErrorMessage,
+        });
+
+        throw new Error(fullErrorMessage);
       }
 
       // update upload store with returned price fields so rest of flow can use it
       updateArtworkUploadData("price", response.data.price);
       updateArtworkUploadData("usd_price", response.data.usd_price);
       updateArtworkUploadData("currency", response.data.currency);
-      updateArtworkUploadData("shouldShowPrice", response.data.shouldShowPrice);
+      updateArtworkUploadData(
+        "algorithm_recommendation",
+        response.data.algorithm_recommendation || response.data.price_data
+      );
+      const hasAutoApprovalsRemaining = parseHasAutoApprovalsRemaining(
+        response.data.hasAutoApprovalsRemaining
+      );
+
+      updateArtworkUploadData(
+        "hasAutoApprovalsRemaining",
+        hasAutoApprovalsRemaining ? 1 : 0
+      );
+      if (
+        !artworkUploadData.shouldShowPrice ||
+        isCustomPricingEligibleArtist
+      ) {
+        updateArtworkUploadData(
+          "shouldShowPrice",
+          response.data.shouldShowPrice
+        );
+        // Also sync local state
+        if (isCustomPricingEligibleArtist) {
+          setDisplayPriceValue("Yes");
+        }
+      }
 
       return response.data;
     },
@@ -75,19 +171,6 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
     refetchOnWindowFocus: false,
     retry: 1,
   });
-
-  // handle the in-app opening of Terms/Legal link
-  const openTerms = async () => {
-    try {
-      await WebBrowser.openBrowserAsync("https://omenai.app/legal?ent=artist");
-    } catch {
-      updateModal({
-        showModal: true,
-        modalType: "error",
-        message: "Something went wrong while opening the Terms of Agreement.",
-      });
-    }
-  };
 
   // Upload/confirm handler for mobile — call onConfirm only when all consents are accepted
   const handleConfirmPress = () => {
@@ -106,20 +189,23 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
   if (isLoading) {
     return (
       <View
-        style={tw.style(`flex-1 justify-center items-center`, {
-          marginTop: height / 8,
-        })}
+        style={[
+          tw`flex-1 justify-center items-center`,
+          { marginTop: height / 8 },
+        ]}
       >
         <LottieView
           autoPlay
           ref={animation}
           style={{
-            width: 200,
-            height: 200,
+            width: 120,
+            height: 120,
           }}
-          source={loaderAnimation}
+          source={animations.loader}
         />
-        <Text style={tw`text-lg font-semibold`}>Determining price of art piece...</Text>
+        <Text style={tw`text-lg font-semibold`}>
+          Determining price of art piece...
+        </Text>
       </View>
     );
   }
@@ -133,7 +219,10 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
         <View style={tw`flex-row gap-4`}>
           <Pressable
             onPress={() => refetch()}
-            style={[tw`px-4 py-2 rounded-xl`, { backgroundColor: colors.black }]}
+            style={[
+              tw`px-4 py-2 rounded-sm`,
+              { backgroundColor: colors.black },
+            ]}
           >
             <Text style={[tw`text-white`]}>Retry</Text>
           </Pressable>
@@ -141,7 +230,7 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
             onPress={() => {
               navigation.goBack();
             }}
-            style={tw`px-4 py-2 bg-white border border-gray-300 rounded-xl`}
+            style={tw`px-4 py-2 bg-white border border-gray-300 rounded-sm`}
           >
             <Text style={tw`text-black`}>Back</Text>
           </Pressable>
@@ -151,138 +240,131 @@ export default function ArtworkPriceReviewScreen({ onConfirm }: { onConfirm: () 
   }
 
   return (
-    <View style={tw`flex-1 bg-[#F7F7F7] px-6 py-8 mb-[40px]`}>
-      <Text style={tw`text-xl font-bold mb-4`}>Proposed Artwork Price</Text>
-
-      <View style={tw`bg-white rounded-xl p-5 border border-[#00000020] mb-6`}>
-        <Text style={tw`text-sm text-gray-600 mb-1`}>Omenai will list your art piece for:</Text>
-        <Text style={tw`text-2xl font-bold text-black`}>
-          {priceData?.usd_price ? `$${Number(priceData.usd_price).toLocaleString()}` : "-"}
-        </Text>
-
-        <Text style={tw`text-sm mt-3 text-gray-500`}>
-          ({userSession.base_currency} equivalent: {getArtistCurrencySymbol(priceData.currency)}{" "}
-          {Number(priceData.price).toLocaleString(undefined, { maximumFractionDigits: 2 })})
-        </Text>
-      </View>
-
-      <Text style={tw`text-gray-600 text-sm mb-6`}>
-        If you agree with the price, you can proceed to upload your piece. If not, tap cancel to
-        review your details.
-      </Text>
-
-      {/* Exclusivity / terms alert (mimics web Alert) */}
-      <View style={tw`bg-[#FFF3CD] border border-[#FFEEBA] rounded-[16px] px-4 py-5 mb-6`}>
-        <View style={tw`flex-row items-center mb-5`}>
-          <Ionicons name="warning-outline" size={20} color="#856404" style={tw`mr-3`} />
-          <Text style={tw`text-[#856404] font-semibold`}>Exclusivity Agreement</Text>
-        </View>
-        <View style={tw`flex-1`}>
-          {/* Price consent */}
-          <Pressable
-            onPress={() => setPriceConsent((s) => !s)}
-            style={tw`flex-row items-start gap-3 mb-3`}
-          >
-            <View
-              style={[
-                tw`w-5 h-5 rounded-sm border border-[#856404] items-center justify-center`,
-                priceConsent
-                  ? { backgroundColor: colors.black }
-                  : { backgroundColor: colors.white },
-              ]}
-            >
-              {priceConsent ? <Text style={[{ color: colors.white }]}>✓</Text> : null}
-            </View>
-            <Text style={tw`text-[#856404] text-sm flex-1`}>
-              I accept the price stipulated for this artwork and agree to have it listed on the
-              platform at this price. I understand that I may cancel this upload if I do not agree.
-            </Text>
-          </Pressable>
-
-          {/* Acknowledgment with link to Terms */}
-          <Pressable
-            onPress={() => setAcknowledgment((s) => !s)}
-            style={tw`flex-row items-start gap-3 mb-3`}
-          >
-            <View
-              style={[
-                tw`w-5 h-5 rounded-sm border border-[#856404] items-center justify-center`,
-                acknowledgment
-                  ? { backgroundColor: colors.black }
-                  : { backgroundColor: colors.white },
-              ]}
-            >
-              {acknowledgment ? <Text style={[{ color: colors.white }]}>✓</Text> : null}
-            </View>
-
-            <Text style={tw`text-[#856404] text-sm flex-1`}>
-              I acknowledge that this artwork is subject to a 90-day exclusivity period with Omenai
-              as stipulated in the{" "}
-              <Text onPress={openTerms} style={tw`underline font-semibold`}>
-                Terms of Agreement
-              </Text>{" "}
-              and may not be sold through external channels during this time.
-            </Text>
-          </Pressable>
-
-          {/* Penalty consent with link */}
-          <Pressable
-            onPress={() => setPenaltyConsent((s) => !s)}
-            style={tw`flex-row items-start gap-3`}
-          >
-            <View
-              style={[
-                tw`w-5 h-5 rounded-sm border border-[#856404] items-center justify-center`,
-                penaltyConsent
-                  ? { backgroundColor: colors.black }
-                  : { backgroundColor: colors.white },
-              ]}
-            >
-              {penaltyConsent ? <Text style={[{ color: colors.white }]}>✓</Text> : null}
-            </View>
-
-            <Text style={tw`text-[#856404] text-sm flex-1`}>
-              I agree that any breach of this exclusivity obligation will result in a 10% penalty
-              fee deducted from my next successful sale on the platform as stipulated in the{" "}
-              <Text onPress={openTerms} style={tw`underline font-semibold`}>
-                Terms of Agreement
-              </Text>
-              .
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <View style={tw`flex-row items-center justify-between mb-2`}>
-        <Text style={tw`text-gray-500 text-sm`}>
-          Acknowledgment: {acknowledgment ? "✔️" : "❌"} | Penalty: {penaltyConsent ? "✔️" : "❌"} |
-          Price:
-          {priceConsent ? "✔️" : "❌"}
-        </Text>
-      </View>
-
-      <View style={tw`flex-row gap-4 mt-4`}>
-        <Pressable
-          onPress={() => {
-            navigation.goBack();
-            setActiveIndex(1);
-            clearData();
-          }}
-          style={tw`flex-1 py-3 border border-gray-400 rounded-xl justify-center items-center`}
-        >
-          <Text style={tw`text-gray-700 font-semibold`}>Cancel</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={handleConfirmPress}
+    <View style={tw`flex-1 rounded-sm`}>
+      <View
+        style={tw`bg-white items-center rounded-sm p-5 border border-neutral-200 mb-6`}
+      >
+        <Text
           style={[
-            tw`flex-1 py-3 rounded-xl justify-center items-center`,
-            canProceed ? { backgroundColor: colors.black } : { backgroundColor: "#22222260" },
+            tw`text-base font-sans-medium text-center uppercase`,
+            { color: colors.black },
           ]}
-          disabled={!canProceed}
         >
-          <Text style={[tw`font-semibold`, { color: colors.white }]}>Upload</Text>
-        </Pressable>
+          Proposed Listing Price
+        </Text>
+        <Text style={[tw`text-5xl font-bold mt-3`, { color: colors.black }]}>
+          {priceData?.usd_price
+            ? `$${Number(priceData.usd_price).toLocaleString()}`
+            : "-"}
+        </Text>
+
+        <View style={tw`bg-slate-50 rounded-full px-3 py-2 mt-2`}>
+          <Text style={tw`text-xs text-slate-400 font-sans-medium`}>
+            Local currency equivalent:{" "}
+            <Text style={tw`text-slate-500 font-sans-semibold`}>
+              {priceData.currency}{" "}
+              {Number(priceData.price).toLocaleString(undefined, {
+                maximumFractionDigits: 2,
+              })}
+            </Text>
+          </Text>
+        </View>
+        <Text style={tw`text-xs text-slate-400 mt-3 text-center`}>
+          This price is calculated based on your artist tier, the medium, and
+          dimensions of the artwork. Consistent pricing helps build collector
+          trust.
+        </Text>
+      </View>
+
+      <PriceDisputeTriggerCard
+        onPress={() =>
+          navigation.navigate(screenName.artist.proposalPrice)
+        }
+      />
+
+      <View style={tw`mb-6`}>
+        <ArtistExclusivityAgreementSection
+          priceConsent={priceConsent}
+          acknowledgment={acknowledgment}
+          penaltyConsent={penaltyConsent}
+          onTogglePriceConsent={() => setPriceConsent((s) => !s)}
+          onToggleAcknowledgment={() => setAcknowledgment((s) => !s)}
+          onTogglePenaltyConsent={() => setPenaltyConsent((s) => !s)}
+          subtitle="All artist listings on Omenai include a 90-day exclusivity period. You must confirm each point below before uploading."
+        />
+      </View>
+
+      {/* Display Price Option */}
+      {!isCustomPricingEligibleArtist && (
+        <View
+          style={tw`bg-white border border-[#E5E7EB] rounded-sm px-4 py-5 mb-6`}
+        >
+          <Text style={tw`text-sm font-semibold text-gray-800 mb-1`}>
+            Pricing Visibility
+          </Text>
+          <Text style={tw`text-xs text-gray-400`}>
+            Control how collectors view the price of this artwork.
+          </Text>
+
+          <View style={tw`mt-3`}>
+            <CustomSelectPicker
+              label=""
+              data={[
+                {
+                  label: "Public: Display price to all collectors",
+                  value: "Yes",
+                },
+                {
+                  label: "Private: Mask price (inquiries only)",
+                  value: "No",
+                },
+              ]}
+              placeholder="Select"
+              value={displayPriceValue}
+              handleSetValue={(item) => {
+                setDisplayPriceValue(item.value);
+                updateArtworkUploadData("shouldShowPrice", item.value);
+              }}
+            />
+          </View>
+        </View>
+      )}
+
+      <View
+        style={[
+          tw`mt-1`,
+          {
+            paddingBottom: Math.max(insets.bottom, 10),
+          },
+        ]}
+      >
+        <View style={tw`flex-row gap-3`}>
+          <Pressable
+            onPress={() => {
+              navigation.goBack();
+              setActiveIndex(1);
+              clearData();
+            }}
+            style={tw`flex-1 py-3 border border-gray-400 rounded-sm justify-center items-center`}
+          >
+            <Text style={tw`text-gray-700 font-sans-medium`}>Cancel</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={handleConfirmPress}
+            style={[
+              tw`flex-1 py-3 rounded-sm justify-center items-center`,
+              canProceed
+                ? { backgroundColor: colors.black }
+                : { backgroundColor: "#22222260" },
+            ]}
+            disabled={!canProceed}
+          >
+            <Text style={[tw`font-sans-medium`, { color: colors.white }]}>
+              Upload
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );

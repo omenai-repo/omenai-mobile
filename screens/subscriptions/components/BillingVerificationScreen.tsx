@@ -1,37 +1,106 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, ActivityIndicator, Pressable, Animated, Easing, Platform } from 'react-native';
-import tw from 'twrnc';
-import { Ionicons } from '@expo/vector-icons';
-import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAppStore } from '#store/app/appStore';
-import { verifySubscriptionCharge } from '#services/stripe/verifySubscriptionCharge';
-import { screenName } from '#constants/screenNames.constants';
+import React, { useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  Animated,
+  Easing,
+  StyleSheet,
+} from "react-native";
+import tw from "twrnc";
+import { Ionicons } from "@expo/vector-icons";
+import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { verifySubscriptionCharge } from "#services/stripe/verifySubscriptionCharge";
+import { verifyDiscountedSubscriptionCharge } from "#services/stripe/verifyDiscountedSubscriptionCharge";
+import { useAppStore } from "#store/app/appStore";
+import { screenName } from "#constants/screenNames.constants";
+import { invalidateGallerySubscriptionAndOrders } from "#utils/invalidateGallerySubscriptionAndOrders";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "#config/colors.config";
+import LongWhiteButton from "#components/buttons/LongWhiteButton";
+import BackScreenButton from "#components/buttons/BackScreenButton";
+import PremiumStateCard from "#components/general/PremiumStateCard";
 
 type RootStackParamList = {
-  BillingVerification: { payment_intent: string };
+  BillingVerification: {
+    payment_intent?: string;
+    setup_intent?: string;
+    isDiscounted?: boolean;
+    planId?: string;
+  };
 };
 
-type ScreenRouteProp = RouteProp<RootStackParamList, 'BillingVerification'>;
+type ScreenRouteProp = RouteProp<RootStackParamList, "BillingVerification">;
 
 export default function BillingVerificationScreen() {
   const route = useRoute<ScreenRouteProp>();
   const navigation = useNavigation<any>();
   const qc = useQueryClient();
+  const galleryId = useAppStore((s) => s.userSession?.id);
 
-  const paymentIntentId = route?.params?.payment_intent;
+  const {
+    payment_intent: paymentIntentId,
+    setup_intent: setupIntentId,
+    isDiscounted,
+    planId,
+  } = route?.params ?? {};
+
+  const navigateToGallerySubscriptions = () => {
+    navigation.navigate("Gallery", {
+      screen: screenName.gallery.subscriptions,
+    });
+  };
+
+  const navigateToGalleryBilling = () => {
+    navigation.navigate("Gallery", {
+      screen: screenName.gallery.billing,
+    });
+  };
 
   // animations (for the result card)
   const cardScale = useRef(new Animated.Value(0.96)).current;
   const cardOpacity = useRef(new Animated.Value(0)).current;
 
   const { data: verified, isLoading } = useQuery({
-    queryKey: ['verify_subscription_payment_on_redirect', paymentIntentId],
-    enabled: !!paymentIntentId,
+    queryKey: [
+      "verify_subscription_payment_on_redirect",
+      paymentIntentId,
+      setupIntentId,
+    ],
+    enabled: !!paymentIntentId || !!setupIntentId,
     queryFn: async () => {
+      // Discounted verification flow
+      if (isDiscounted && setupIntentId && planId) {
+        const response = await verifyDiscountedSubscriptionCharge(
+          setupIntentId,
+          planId
+        );
+        if (!response?.isOk) {
+          return {
+            isOk: false,
+            message:
+              response?.message ??
+              (response as any)?.body?.message ??
+              "Verification failed.",
+          };
+        }
+        return { isOk: true, message: response.message };
+      }
+
+      // Regular verification flow
+      if (!paymentIntentId) {
+        return { isOk: false, message: "No payment intent found." };
+      }
       const response = await verifySubscriptionCharge(paymentIntentId);
       if (!response?.isOk) {
-        return { isOk: false, message: response?.message ?? 'Verification failed.' };
+        return {
+          isOk: false,
+          message:
+            response?.message ??
+            (response as any)?.body?.message ??
+            "Verification failed.",
+        };
       }
       return { isOk: true, message: response.message };
     },
@@ -59,77 +128,159 @@ export default function BillingVerificationScreen() {
 
   // keep user data fresh after verification succeeds
   useEffect(() => {
-    if (verified?.isOk) {
-      qc.invalidateQueries({ queryKey: ['subscription_precheck'] });
-      qc.invalidateQueries({ queryKey: ['subscription'] });
-    }
-  }, [verified?.isOk, qc]);
+    if (!verified?.isOk) return;
+    void (async () => {
+      await qc.invalidateQueries({ queryKey: ["subscription_precheck"] });
+      await qc.invalidateQueries({ queryKey: ["subscription"] });
+      await invalidateGallerySubscriptionAndOrders(qc, galleryId);
+    })();
+  }, [verified?.isOk, qc, galleryId]);
 
-  // Simple loader with pulse rings
+  // Simple loader matching premium design
   const Loader = () => (
     <View style={tw`items-center`}>
-      <View style={tw`w-16 h-16 items-center justify-center`}>
-        <PulseRing delay={0} />
-        <PulseRing delay={200} />
+      <View style={tw`mb-8 items-center justify-center`}>
         <View
-          style={tw`w-16 h-16 rounded-full border-4 border-blue-300 items-center justify-center`}
+          style={[
+            tw`w-20 h-20 rounded-full items-center justify-center bg-white shadow-sm`,
+            {
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.2,
+              shadowRadius: 8,
+              elevation: 5,
+            },
+          ]}
         >
-          <Ionicons name="card" size={22} color="#2563eb" />
+          <ActivityIndicator size="large" color={colors.primary_black} />
         </View>
       </View>
-      <Text style={tw`mt-4 text-slate-600`}>Please wait while we confirm your payment…</Text>
-      <View style={tw`mt-3`}>
-        <ActivityIndicator />
-      </View>
+      <Text style={tw`text-white text-base font-bold text-center mb-4`}>
+        Verifying your transaction...
+      </Text>
+      <Text
+        style={[
+          tw`text-center text-sm leading-5 mb-8`,
+          { color: colors.grey50 },
+        ]}
+      >
+        Please wait while we confirm your payment details.
+      </Text>
     </View>
   );
 
-  if (!paymentIntentId) {
+  if (!paymentIntentId && !setupIntentId) {
     return (
-      <View style={tw`flex-1 bg-slate-50 items-center justify-center px-4`}>
-        <Result
-          success={false}
-          message="We couldn’t find a payment intent to verify."
-          onPrimary={() => navigation.replace(screenName.gallery.subscriptions)}
-        />
-      </View>
+      <PremiumStateCard
+        icon="close-circle"
+        title="Verification Failed"
+        description="We couldn’t find a payment intent to verify."
+        onBack={() => navigation.goBack()}
+        actionButton={
+          <LongWhiteButton
+            value="Go back to billing page"
+            onClick={navigateToGalleryBilling}
+            outline={false}
+            style={{
+              height: 48,
+              backgroundColor: colors.white,
+            }}
+            textStyle={{
+              color: colors.primary_black,
+              fontSize: 14,
+              fontWeight: "bold",
+            }}
+            icon={
+              <Ionicons
+                name="arrow-back"
+                size={18}
+                color={colors.primary_black}
+              />
+            }
+          />
+        }
+      />
     );
   }
 
   return (
-    <View style={tw`flex-1 bg-slate-50`}>
-      {/* Header */}
-      <View style={tw`px-4 pt-10 pb-3`}>
-        <Text style={tw`text-xl font-semibold text-slate-900`}>Verifying your transaction</Text>
+    <View style={tw`flex-1 bg-white relative`}>
+      {/* Background with subtle gradient */}
+      <LinearGradient
+        colors={["#ffffff", "#f8f9fa", "#e9ecef"]}
+        style={StyleSheet.absoluteFillObject}
+      />
+
+      <View style={tw`pt-[60px] android:pt-[80px] px-[25px] z-10`}>
+        <BackScreenButton handleClick={() => navigation.goBack()} />
       </View>
 
-      <View style={tw`flex-1 items-center justify-center px-4`}>
-        {isLoading ? (
-          <View style={[tw`w-11/12 bg-white rounded-2xl p-6`, cardShadow()]}>
-            <Loader />
+      <View style={tw`flex-1 items-center justify-center px-6`}>
+        <View style={tw`w-full max-w-[340px] items-center`}>
+          {isLoading ? (
+            <View
+              style={[
+                tw`w-full rounded-sm overflow-hidden`,
+                {
+                  backgroundColor: colors.primary_black,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 10 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 20,
+                  elevation: 10,
+                },
+              ]}
+            >
+              <LinearGradient
+                colors={[colors.primary_black, "#000"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={tw`p-8 items-center`}
+              >
+                <Loader />
+              </LinearGradient>
+            </View>
+          ) : (
+            <Animated.View
+              style={[
+                tw`w-full rounded-sm overflow-hidden`,
+                {
+                  transform: [{ scale: cardScale }],
+                  opacity: cardOpacity,
+                  backgroundColor: colors.primary_black,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 10 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 20,
+                  elevation: 10,
+                },
+              ]}
+            >
+              <LinearGradient
+                colors={[colors.primary_black, "#000"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={tw`p-8 items-center`}
+              >
+                <Result
+                  success={!!verified?.isOk}
+                  message={verified?.isOk ? "" : verified?.message ?? ""}
+                  onPrimary={
+                    verified?.isOk
+                      ? navigateToGallerySubscriptions
+                      : navigateToGalleryBilling
+                  }
+                />
+              </LinearGradient>
+            </Animated.View>
+          )}
+
+          <View style={tw`mt-8 flex-row items-center`}>
+            <View style={tw`w-2 h-2 bg-green-500 rounded-full mr-2`} />
+            <Text style={tw`text-gray-400 text-xs`}>
+              Secure SSL Encrypted Transaction
+            </Text>
           </View>
-        ) : (
-          <Animated.View
-            style={[
-              tw`w-11/12 bg-white rounded-2xl p-6`,
-              { transform: [{ scale: cardScale }], opacity: cardOpacity },
-              cardShadow(),
-            ]}
-          >
-            <Result
-              success={!!verified?.isOk}
-              message={verified?.message ?? ''}
-              onPrimary={() => navigation.replace(screenName.gallery.subscriptions)}
-            />
-          </Animated.View>
-        )}
-      </View>
-
-      {/* Security badge */}
-      <View style={tw`items-center pb-6`}>
-        <View style={tw`flex-row items-center`}>
-          <View style={tw`w-2 h-2 bg-green-400 rounded-full mr-2`} />
-          <Text style={tw`text-slate-500 text-xs`}>Secure SSL Encrypted Transaction</Text>
         </View>
       </View>
     </View>
@@ -146,107 +297,71 @@ function Result({
   onPrimary: () => void;
 }) {
   return (
-    <View style={tw`items-center`}>
+    <View style={tw`items-center w-full`}>
       {/* Icon */}
-      <View
-        style={tw.style(
-          `w-20 h-20 rounded-full items-center justify-center mb-5`,
-          success ? tw`bg-green-100` : tw`bg-red-100`,
-        )}
-      >
-        <Ionicons
-          name={success ? 'checkmark-circle' : 'close-circle'}
-          size={48}
-          color={success ? '#16a34a' : '#dc2626'}
-        />
+      <View style={tw`mb-8 items-center justify-center`}>
+        <View
+          style={[
+            tw`w-20 h-20 rounded-full items-center justify-center bg-white shadow-sm`,
+            {
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.2,
+              shadowRadius: 8,
+              elevation: 5,
+            },
+          ]}
+        >
+          <Ionicons
+            name={success ? "checkmark-circle" : "close-circle"}
+            size={40}
+            color={success ? "#16a34a" : "#dc2626"}
+          />
+        </View>
       </View>
 
       {/* Title */}
-      <Text
-        style={tw.style(`text-lg font-semibold mb-2`, success ? 'text-green-700' : 'text-red-700')}
-      >
-        {success ? 'Payment Verified!' : 'Verification Failed'}
+      <Text style={tw`text-white text-xl font-bold text-center mb-3`}>
+        {success ? "Payment Verified!" : "Verification Failed"}
       </Text>
 
       {/* Message */}
-      <Text style={tw`text-slate-600 text-center mb-6`}>
-        {message || (success ? 'Your payment was confirmed.' : 'We couldn’t confirm the payment.')}
+      <Text
+        style={[
+          tw`text-center text-sm leading-5 mb-8`,
+          { color: colors.grey50 },
+        ]}
+      >
+        {message ||
+          (success
+            ? "Payment processing successful"
+            : "We couldn’t confirm the payment.")}
       </Text>
 
       {/* CTA */}
-      <Pressable
-        onPress={onPrimary}
-        style={({ pressed }) =>
-          tw.style(
-            `h-12 rounded-md items-center justify-center w-full`,
-            success ? 'bg-blue-600' : 'bg-slate-900',
-            pressed ? 'opacity-90' : '',
-          )
-        }
-        accessibilityRole="button"
-        accessibilityLabel={success ? 'View Subscription Info' : 'Go Back to billing page'}
-      >
-        <View style={tw`flex-row items-center`}>
-          <Ionicons name={success ? 'eye' : 'arrow-back'} size={18} color="#fff" style={tw`mr-2`} />
-          <Text style={tw`text-white font-medium`}>
-            {success ? 'View Subscription Info' : 'Go back to billing page'}
-          </Text>
-        </View>
-      </Pressable>
+      <View style={tw`w-full`}>
+        <LongWhiteButton
+          value={success ? "View subscription info" : "Go back to billing page"}
+          onClick={onPrimary}
+          outline={false}
+          style={{
+            height: 48,
+            backgroundColor: colors.white,
+          }}
+          textStyle={{
+            color: colors.primary_black,
+            fontSize: 14,
+            fontWeight: "bold",
+          }}
+          icon={
+            <Ionicons
+              name={success ? "eye" : "arrow-back"}
+              size={18}
+              color={colors.primary_black}
+            />
+          }
+        />
+      </View>
     </View>
   );
-}
-
-// subtle pulse rings around the loader icon
-function PulseRing({ delay = 0 }: { delay?: number }) {
-  const scale = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0.25)).current;
-
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.parallel([
-        Animated.timing(scale, {
-          toValue: 1,
-          duration: 1200,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-          delay,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 1200,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-          delay,
-        }),
-      ]),
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [scale, opacity, delay]);
-
-  return (
-    <Animated.View
-      style={[
-        tw`absolute w-16 h-16 rounded-full border-2 border-blue-400`,
-        {
-          opacity,
-          transform: [{ scale: scale.interpolate({ inputRange: [0, 1], outputRange: [1, 2] }) }],
-        },
-      ]}
-    />
-  );
-}
-
-function cardShadow() {
-  return Platform.select({
-    ios: {
-      shadowColor: '#000',
-      shadowOpacity: 0.08,
-      shadowRadius: 12,
-      shadowOffset: { width: 0, height: 8 },
-    },
-    android: { elevation: 4 },
-    default: {},
-  });
 }

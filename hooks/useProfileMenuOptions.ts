@@ -12,7 +12,7 @@ type UserType = "gallery" | "artist" | "individual";
 
 export const useProfileMenuOptions = (
   navigation: any,
-  userType: UserType
+  userType: UserType,
 ): ProfileMenuItem[] => {
   return useMemo(
     () => [
@@ -45,6 +45,6 @@ export const useProfileMenuOptions = (
         variant: "danger" as const,
       },
     ],
-    [navigation, userType]
+    [navigation, userType],
   );
 };

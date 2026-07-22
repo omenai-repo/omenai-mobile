@@ -1,0 +1,58 @@
+appId: com.omenai.omenaimobile
+name: "Individual Search Flow"
+tags:
+  - individual
+  - search
+  - discovery
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Search"
+
+- extendedWaitUntil:
+    visible: "Search for artworks on Omenai"
+    timeout: 10000
+
+- tapOn:
+    id: "search-input"
+- inputText: "portrait"
+- pressKey: Enter
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible: "Results for \"portrait\""
+    timeout: 15000
+
+- tapOn:
+    id: "search-input"
+- eraseText: 20
+- inputText: "ab"
+- pressKey: Enter
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Please enter at least 3 characters"
+        - "Search for artworks on Omenai"
+    timeout: 10000
+
+- tapOn:
+    id: "search-input"
+- eraseText: 20
+- inputText: "xyznonexistent12345"
+- pressKey: Enter
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "mispellings"
+        - "Can't find artwork"
+        - "0 Artworks"
+    timeout: 15000

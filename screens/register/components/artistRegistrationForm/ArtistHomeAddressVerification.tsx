@@ -16,12 +16,16 @@ const ArtistHomeAddressVerification = () => {
 
   const transformedCountries = useMemo(
     () =>
-      artist_countries_codes_currency.map((item) => ({
-        value: item.alpha2,
-        label: item.name,
-        currency: item.currency,
-      })),
-    []
+      [...artist_countries_codes_currency]
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+        )
+        .map((item) => ({
+          value: item.alpha2,
+          label: item.name,
+          currency: item.currency,
+        })),
+    [],
   );
 
   const {
@@ -45,7 +49,8 @@ const ArtistHomeAddressVerification = () => {
     setBaseCurrency,
   } = useArtistAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } = useAddressForm();
+  const { formErrors, handleValidationChecks, checkIsFormValid } =
+    useAddressForm();
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -61,7 +66,7 @@ const ArtistHomeAddressVerification = () => {
       setStateData,
       setCityData,
       setBaseCurrency,
-    }
+    },
   );
 
   const {
@@ -74,7 +79,11 @@ const ArtistHomeAddressVerification = () => {
   } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
 
   const handleSubmit = () => {
-    handleVerifyAddress(artistRegisterData.address, artistRegisterData.phone, "pickup");
+    handleVerifyAddress(
+      artistRegisterData.address,
+      artistRegisterData.phone,
+      "pickup",
+    );
   };
 
   return (
@@ -99,7 +108,7 @@ const ArtistHomeAddressVerification = () => {
         }}
         onPhoneChange={(text) => {
           setPhone(text);
-          handleValidationChecks("general", text);
+          handleValidationChecks("phone", text);
         }}
         addressLabel="Home Address"
         addressPlaceholder="Input your home address here"
@@ -107,7 +116,12 @@ const ArtistHomeAddressVerification = () => {
 
       <AddressVerificationActions
         isLoading={isLoading}
-        isDisabled={!checkIsFormValid(artistRegisterData.address, artistRegisterData.phone)}
+        isDisabled={
+          !checkIsFormValid(
+            artistRegisterData.address,
+            artistRegisterData.phone,
+          )
+        }
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
       />

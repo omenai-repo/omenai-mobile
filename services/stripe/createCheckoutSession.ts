@@ -1,38 +1,30 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export async function createCheckoutSession(
   item: string,
-  amount: number,
-  gallery_id: string,
+  seller_id: string,
+  order_id: string,
   meta: {
-    trans_type: string;
-    user_id: string;
-    user_email: string;
+    buyer_id: string;
+    buyer_email: string;
     art_id: string;
+    seller_email: string;
+    seller_name: string;
+    seller_id: string;
+    artwork_name: string;
+    seller_designation: string;
   },
   success_url: string,
-  cancel_url: string
+  cancel_url: string,
 ) {
-  console.log({
-    item,
-    amount,
-    gallery_id,
-    meta,
-    cancel_url,
-    success_url,
-  })
   try {
-    const res = await fetch(`${apiUrl}/api/stripe/createCheckoutSession`, {
+    const res = await apiRequest(`${apiUrl}/api/stripe/createCheckoutSession`, {
       method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      },
       body: JSON.stringify({
         item,
-        amount,
-        gallery_id,
+        seller_id,
+        order_id,
         meta,
         cancel_url,
         success_url,
@@ -47,6 +39,14 @@ export async function createCheckoutSession(
       url: result.url,
     };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error creating checkout session",
+      },
+    };
   }
 }

@@ -1,0 +1,164 @@
+import { useEffect, useState, useRef, useCallback } from "react";
+import DeviceInfo from "react-native-device-info";
+import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+import SpInAppUpdates, { IAUUpdateKind } from "sp-react-native-in-app-updates";
+import { Platform } from "react-native";
+
+const inAppUpdates = new SpInAppUpdates(false); // `false` for production
+
+type VersionCheckResult = {
+  needsUpdate: boolean;
+  remoteVersion: string | null;
+  currentVersion: string;
+  error: string | null;
+};
+
+/** Compares two semantic versions. Returns true if currentVersion < requiredVersion */
+const compareVersions = (
+  currentVersion: string,
+  requiredVersion: string,
+): boolean => {
+  try {
+    const current = currentVersion.split(".").map(Number);
+    const required = requiredVersion.split(".").map(Number);
+    const maxLength = Math.max(current.length, required.length);
+
+    while (current.length < maxLength) current.push(0);
+    while (required.length < maxLength) required.push(0);
+
+    for (let i = 0; i < maxLength; i++) {
+      if (current[i] < required[i]) return true;
+      if (current[i] > required[i]) return false;
+    }
+    return false;
+  } catch (error) {
+    console.error("[VersionCheck] Error comparing versions:", error);
+    return false;
+  }
+};
+
+/** Hook to check app version from Firebase and determine if update is needed (Real-time) */
+export const useVersionCheck = (
+  onUpdateNeeded?: (result: VersionCheckResult) => void,
+): VersionCheckResult => {
+  const [versionCheckResult, setVersionCheckResult] =
+    useState<VersionCheckResult>({
+      needsUpdate: false,
+      remoteVersion: null,
+      currentVersion: "",
+      error: null,
+    });
+
+  const onUpdateNeededRef = useRef(onUpdateNeeded);
+
+  useEffect(() => {
+    onUpdateNeededRef.current = onUpdateNeeded;
+  }, [onUpdateNeeded]);
+
+  const handleAndroidUpdate = useCallback(async (needsUpdate: boolean) => {
+    if (needsUpdate && Platform.OS === "android") {
+      try {
+        const result = await inAppUpdates.checkNeedsUpdate();
+        if (result.shouldUpdate) {
+          await inAppUpdates.startUpdate({
+            updateType: IAUUpdateKind.IMMEDIATE,
+          });
+          // Fall through to return needsUpdate so custom modal shows if native one is dismissed/failed
+        }
+      } catch (e) {
+        console.error("[VersionCheck] Android in-app update check failed:", e);
+      }
+    }
+    return needsUpdate;
+  }, []);
+
+  const handleVersionSnapshot = useCallback(
+    async (
+      docSnapshot: FirebaseFirestoreTypes.DocumentSnapshot,
+      currentVersion: string,
+    ) => {
+      if (!docSnapshot.exists) {
+        console.warn("[VersionCheck] No version document found");
+        setVersionCheckResult((prev) => ({
+          ...prev,
+          currentVersion,
+          error: "Version document not found",
+        }));
+        return;
+      }
+
+      const remoteVersion = docSnapshot.data()?.version;
+      if (!remoteVersion) {
+        console.warn("[VersionCheck] No version field found in document");
+        setVersionCheckResult((prev) => ({
+          ...prev,
+          currentVersion,
+          error: "Version field missing",
+        }));
+        return;
+      }
+
+      const needsUpdate = compareVersions(currentVersion, remoteVersion);
+      const finalNeedsUpdate = await handleAndroidUpdate(needsUpdate);
+
+      const result: VersionCheckResult = {
+        needsUpdate: finalNeedsUpdate,
+        remoteVersion,
+        currentVersion,
+        error: null,
+      };
+
+      console.log(
+        `[VersionCheck] Current: ${currentVersion}, Required: ${remoteVersion}, Needs Update: ${needsUpdate}`,
+      );
+      setVersionCheckResult(result);
+
+      if (finalNeedsUpdate && onUpdateNeededRef.current) {
+        onUpdateNeededRef.current(result);
+      }
+    },
+    [handleAndroidUpdate],
+  );
+
+  const handleSnapshotError = useCallback((error: any) => {
+    console.error("[VersionCheck] Snapshot listener error:", error);
+    setVersionCheckResult((prev) => ({
+      ...prev,
+      error: error.message,
+    }));
+  }, []);
+
+  useEffect(() => {
+    let unsubscribe: () => void;
+
+    (async () => {
+      try {
+        const currentVersion = await DeviceInfo.getVersion();
+        if (!currentVersion)
+          throw new Error("Unable to determine current app version");
+
+        const docRef = firestore()
+          .collection("versions")
+          .doc(
+            process.env.EXPO_PUBLIC_ENV === "production"
+              ? "production"
+              : "development",
+          );
+
+        unsubscribe = docRef.onSnapshot(
+          (snapshot) => handleVersionSnapshot(snapshot, currentVersion),
+          handleSnapshotError,
+        );
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.error("[VersionCheck] Listener setup error:", errorMessage);
+        setVersionCheckResult((prev) => ({ ...prev, error: errorMessage }));
+      }
+    })();
+
+    return () => unsubscribe?.();
+  }, [handleVersionSnapshot, handleSnapshotError]);
+
+  return versionCheckResult;
+};

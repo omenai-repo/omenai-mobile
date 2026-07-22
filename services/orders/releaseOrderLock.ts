@@ -1,14 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export const releaseOrderLock = async (art_id: string, user_id: string) => {
   try {
-    const res = await fetch(`${apiUrl}/api/locks/releaseLock`, {
+    const res = await apiRequest(`${apiUrl}/api/locks/releaseLock`, {
       method: "POST",
-      headers: {
-        'Origin': originHeader,
-        "User-Agent": userAgent,
-        "Authorization": authorization
-      },
       body: JSON.stringify({
         art_id,
         user_id,
@@ -17,6 +13,14 @@ export const releaseOrderLock = async (art_id: string, user_id: string) => {
     const result = await res.json();
     return { isOk: res.ok, message: result.message };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error releasing order lock",
+      },
+    };
   }
 };

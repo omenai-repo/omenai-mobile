@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
-import { fontNames } from "#constants/fontNames.constants";
 import { useModalStore } from "#store/modal/modalStore";
 import { extendArtworkExclusivity } from "#services/artworks/extendArtworkExclusivity";
 
@@ -32,7 +31,7 @@ const CheckboxItem = ({
     onPress={onPress}
     activeOpacity={0.9}
     style={[
-      tw`bg-white border rounded-lg p-3 mb-2`,
+      tw`bg-white border rounded-sm p-3 mb-2`,
       checked ? tw`border-[#1A1A1A] shadow-md` : tw`border-gray-200`,
     ]}
   >
@@ -61,12 +60,7 @@ const StatusIndicator = ({
 }) => (
   <View style={tw`flex-row items-center gap-1`}>
     <Text style={[tw`${checked ? "text-green-600" : "text-gray-400"}`]}>✓</Text>
-    <Text
-      style={[
-        tw`${checked ? "text-green-600" : "text-gray-400"}`,
-        { fontFamily: fontNames.dmSans + "Regular" },
-      ]}
-    >
+    <Text style={tw`${checked ? "text-green-600" : "text-gray-400"} font-sans`}>
       {label}
     </Text>
   </View>
@@ -153,23 +147,13 @@ export default function ExclusivityExtensionModal({
           { backgroundColor: `${colors.black}80` },
         ]}
       >
-        <View style={tw`bg-white rounded-xl p-5 w-full max-w-md`}>
+        <View style={tw`bg-white rounded-sm p-5 w-full max-w-md`}>
           {/* Header */}
           <View style={tw`mb-3`}>
-            <Text
-              style={[
-                tw`text-lg font-bold text-[#1A1A1A] mb-1`,
-                { fontFamily: fontNames.dmSans + "Bold" },
-              ]}
-            >
+            <Text style={tw`text-lg text-[#1A1A1A] mb-1 font-sans-bold`}>
               Extend Artwork Exclusivity Contract
             </Text>
-            <Text
-              style={[
-                tw`text-sm text-[#1A1A1A]/70`,
-                { fontFamily: fontNames.dmSans + "Regular" },
-              ]}
-            >
+            <Text style={tw`text-sm text-[#1A1A1A]/70 font-sans`}>
               Review and accept the terms below to renew your artwork&apos;s
               90-day exclusivity period.
             </Text>
@@ -178,7 +162,7 @@ export default function ExclusivityExtensionModal({
           {/* Notice Card */}
           <View
             style={[
-              tw`relative rounded-lg p-4 mb-4`,
+              tw`relative rounded-sm p-4 mb-4`,
               { backgroundColor: colors.black_light },
             ]}
           >
@@ -191,27 +175,17 @@ export default function ExclusivityExtensionModal({
             <View style={tw`flex-row items-start gap-3`}>
               <View
                 style={[
-                  tw`w-10 h-10 rounded-lg items-center justify-center`,
+                  tw`w-10 h-10 rounded-sm items-center justify-center`,
                   { backgroundColor: `${colors.white}33` },
                 ]}
               >
                 <Text style={[tw``, { color: colors.white }]}>i</Text>
               </View>
               <View style={tw`flex-1`}>
-                <Text
-                  style={[
-                    tw`font-semibold text-white mb-1`,
-                    { fontFamily: fontNames.dmSans + "Medium" },
-                  ]}
-                >
+                <Text style={tw`text-white mb-1 font-sans-medium`}>
                   Contract Extension
                 </Text>
-                <Text
-                  style={[
-                    tw`text-sm text-white/90`,
-                    { fontFamily: fontNames.dmSans + "Regular" },
-                  ]}
-                >
+                <Text style={tw`text-sm text-white/90 font-sans`}>
                   This action will renew the 90-day exclusivity period, starting
                   from today.
                 </Text>
@@ -228,12 +202,7 @@ export default function ExclusivityExtensionModal({
                   { backgroundColor: colors.black_light },
                 ]}
               />
-              <Text
-                style={[
-                  tw`text-base font-semibold`,
-                  { fontFamily: fontNames.dmSans + "Medium" },
-                ]}
-              >
+              <Text style={tw`text-base font-sans-medium`}>
                 Agreement Terms
               </Text>
             </View>
@@ -242,14 +211,9 @@ export default function ExclusivityExtensionModal({
               checked={acknowledgment}
               onPress={() => setAcknowledgment((v) => !v)}
             >
-              <Text
-                style={[
-                  tw`text-sm`,
-                  { fontFamily: fontNames.dmSans + "Regular" },
-                ]}
-              >
+              <Text style={tw`text-sm font-sans`}>
                 I acknowledge that this artwork will be subject to a{" "}
-                <Text style={[{ fontFamily: fontNames.dmSans + "Bold" }]}>
+                <Text style={tw`font-sans-bold`}>
                   90-day exclusivity period
                 </Text>{" "}
                 with Omenai and cannot be sold through external channels during
@@ -261,18 +225,11 @@ export default function ExclusivityExtensionModal({
               checked={penaltyConsent}
               onPress={() => setPenaltyConsent((v) => !v)}
             >
-              <Text
-                style={[
-                  tw`text-sm`,
-                  { fontFamily: fontNames.dmSans + "Regular" },
-                ]}
-              >
+              <Text style={tw`text-sm font-sans`}>
                 I understand that any breach of this exclusivity agreement will
                 result in a{" "}
-                <Text style={[{ fontFamily: fontNames.dmSans + "Bold" }]}>
-                  10% penalty fee
-                </Text>{" "}
-                deducted from my next successful sale on the platform.
+                <Text style={tw`font-sans-bold`}>10% penalty fee</Text> deducted
+                from my next successful sale on the platform.
               </Text>
             </CheckboxItem>
           </View>
@@ -293,7 +250,7 @@ export default function ExclusivityExtensionModal({
               onPress={handleExtension}
               activeOpacity={0.9}
               style={[
-                tw`w-full h-11 rounded items-center justify-center`,
+                tw`w-full h-11 rounded-sm items-center justify-center`,
                 isFormValid && !loading
                   ? { backgroundColor: colors.black }
                   : tw`bg-gray-300`,
@@ -304,10 +261,9 @@ export default function ExclusivityExtensionModal({
               ) : (
                 <Text
                   style={[
-                    tw``,
+                    tw`font-sans-medium`,
                     {
                       color: colors.white,
-                      fontFamily: fontNames.dmSans + "Medium",
                     },
                   ]}
                 >
@@ -318,10 +274,7 @@ export default function ExclusivityExtensionModal({
 
             {!isFormValid && (
               <Text
-                style={[
-                  tw`text-center text-sm text-[#1A1A1A]/70 mt-3`,
-                  { fontFamily: fontNames.dmSans + "Regular" },
-                ]}
+                style={tw`text-center text-sm text-[#1A1A1A]/70 mt-3 font-sans`}
               >
                 Please accept both terms to continue
               </Text>
@@ -332,12 +285,7 @@ export default function ExclusivityExtensionModal({
               onPress={() => !loading && onClose()}
               style={tw`mt-3 items-center`}
             >
-              <Text
-                style={[
-                  tw`text-sm text-[#1A1A1A]/70`,
-                  { fontFamily: fontNames.dmSans + "Medium" },
-                ]}
-              >
+              <Text style={tw`text-sm text-[#1A1A1A]/70 font-sans-medium`}>
                 Cancel
               </Text>
             </TouchableOpacity>

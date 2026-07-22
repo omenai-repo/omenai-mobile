@@ -1,8 +1,9 @@
-import { apiUrl, authorization, originHeader, userAgent } from "../../constants/apiUrl.constants";
+import { apiUrl } from "../../constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 export const createPaymentIntent = async (
-  amount: number,
   seller_id: string,
+  order_id: string,
   meta: {
     buyer_id: string;
     buyer_email: string;
@@ -11,29 +12,29 @@ export const createPaymentIntent = async (
     seller_name: string;
     seller_id: string;
     artwork_name: string;
-    shipping_cost: number;
-    unit_price: number;
-    tax_fees: number;
-  }
+  },
 ) => {
   try {
     const url = `${apiUrl}/api/stripe/createPaymentIntent`;
-    const res = await fetch(url, {
+    const res = await apiRequest(url, {
       method: "POST",
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify({
-        amount,
         seller_id,
+        order_id,
         meta,
       }),
     });
     const result = await res.json();
     return result;
   } catch (error: any) {
-    console.log("create payment intent api error ---- ", error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error creating payment intent",
+      },
+    };
   }
 };

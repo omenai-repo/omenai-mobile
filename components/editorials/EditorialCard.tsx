@@ -1,9 +1,8 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, Image } from "react-native";
 import React from "react";
 import { getEditorialImageFilePreview } from "#lib/editorial/lib/getEditorialImageFilePreview";
-import { colors } from "#config/colors.config";
-import { fontNames } from "#constants/fontNames.constants";
 import { Feather } from "@expo/vector-icons";
+import tw from "twrnc";
 import dayjs from "dayjs";
 
 type EditorialCardProps = {
@@ -23,116 +22,75 @@ export default function EditorialCard({
   date,
   showDetails,
 }: EditorialCardProps) {
-  const imageUrl = getEditorialImageFilePreview(cover, 500);
+  const imageUri = getEditorialImageFilePreview(cover, 500);
+
   const formattedDate = date
     ? dayjs(date).format("MMM YYYY").toUpperCase()
     : "";
 
+  const imageHeight = showDetails ? 160 : 220; // h-40 is 160px
+  const detailsCardHeight = 250;
+
   return (
-    <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+    >
       <View
         style={[
-          { width },
-          showDetails && styles.cardContainer, // Apply container styles if showDetails is true
+          { width, height: showDetails ? detailsCardHeight : undefined },
+          showDetails
+            ? tw`rounded-sm pb-5 overflow-hidden`
+            : null,
         ]}
       >
         <Image
-          source={{ uri: imageUrl }}
-          style={[styles.image, showDetails && styles.imageWithDetails]}
+          source={{ uri: imageUri }}
+          style={[
+            tw`w-full bg-[#858585]`,
+            showDetails ? tw`rounded-t-sm rounded-b-none` : tw`rounded-sm`,
+            { height: imageHeight },
+          ]}
+          resizeMode="cover"
         />
-        <View style={showDetails && styles.contentContainer}>
+        <View style={showDetails ? tw`flex-1 justify-between` : null}>
           <Text
             numberOfLines={2}
-            style={[styles.headline, showDetails && styles.headlineLarge]}
+            style={[
+              tw`font-serif text-sm text-[#0F172A] mt-[15px] font-medium`,
+              showDetails ? tw`mt-2.5 mb-2 leading-5` : null,
+            ]}
           >
             {headline}
           </Text>
 
           {showDetails && (
-            <View style={styles.footer}>
-              <View style={styles.readArticleRow}>
-                <Text style={styles.readArticleText}>Read</Text>
+            <View style={tw`flex-row justify-between items-center`}>
+              <View style={tw`flex-row items-center gap-1`}>
+                <Text
+                  style={[
+                    tw`text-[10px] tracking-wider text-neutral-500 font-medium uppercase font-sans-medium`,
+                  ]}
+                >
+                  Read Story
+                </Text>
                 <Feather
                   name="arrow-right"
-                  size={16}
-                  color={colors.primary_black}
+                  size={14}
+                  style={tw`text-neutral-500`}
                 />
               </View>
-              <Text style={styles.dateText}>{formattedDate}</Text>
+              <Text
+                style={[
+                  tw`text-[10px] text-neutral-500 font-medium tracking-wider font-sans-medium`,
+                ]}
+              >
+                {formattedDate}
+              </Text>
             </View>
           )}
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  cardContainer: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#EFEFEF",
-    paddingBottom: 20,
-    // Shadow for iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    // Elevation for Android
-    elevation: 2,
-  },
-  image: {
-    width: "100%",
-    height: 220,
-    borderRadius: 5,
-    backgroundColor: colors.grey,
-  },
-  imageWithDetails: {
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    height: 160, // Reduced height for 2-column layout
-  },
-  contentContainer: {
-    paddingHorizontal: 10, // Reduced padding
-  },
-  headline: {
-    fontSize: 14,
-    color: colors.primary_black,
-    marginTop: 15,
-    fontWeight: "500",
-    fontFamily: fontNames.dmSans + "Medium",
-  },
-  headlineLarge: {
-    fontSize: 14, // Keep font size manageable for grid
-    marginTop: 10,
-    marginBottom: 15,
-    lineHeight: 20,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: "auto",
-  },
-  readArticleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  readArticleText: {
-    fontSize: 12,
-    color: colors.primary_black,
-    fontWeight: "500",
-    fontFamily: fontNames.dmSans + "Medium",
-  },
-  dateText: {
-    fontSize: 10, // Smaller date text
-    color: "#999",
-    fontWeight: "500",
-    fontFamily: fontNames.dmSans + "Medium",
-    letterSpacing: 0.5,
-  },
-});

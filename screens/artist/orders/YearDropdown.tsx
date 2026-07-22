@@ -1,7 +1,6 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
-import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon } from "#utils/SvgImages";
+import React from "react";
+import { View, Text } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import tw from "twrnc";
 
 const YearDropdown = ({
@@ -13,50 +12,60 @@ const YearDropdown = ({
   setSelectedYear: (year: number) => void;
   style?: any;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const currentYear = new Date().getFullYear();
   const launchYear = 2025;
 
-  // Only generate years from launchYear up to currentYear (descending)
-  const years = Array.from(
-    { length: currentYear - launchYear + 1 },
-    (_, i) => currentYear - i
-  );
+  const years = Array.from({ length: currentYear - launchYear + 1 }, (_, i) => {
+    const year = currentYear - i;
+    return { label: year.toString(), value: year };
+  });
 
   return (
-    <View style={[tw`mb-[20px] relative`, style]}>
-      <TouchableOpacity
-        style={tw`flex-row items-center gap-[10px] bg-white border border-[#E7E7E7] rounded-[12px] px-[16px] py-[10px]`}
-        onPress={() => setIsOpen(!isOpen)}
-      >
-        <Text style={tw`text-[14px] text-[#1A1A1A] font-medium`}>
-          {selectedYear}
-        </Text>
-        <SvgXml xml={isOpen ? dropUpIcon : dropdownIcon} />
-      </TouchableOpacity>
-
-      {isOpen && (
-        <View
-          style={tw`absolute top-[50px] left-0 right-0 bg-white rounded-[12px] border border-[#E7E7E7] z-10`}
-        >
-          <FlatList
-            data={years}
-            keyExtractor={(item) => item.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={tw`px-[16px] py-[10px]`}
-                onPress={() => {
-                  setSelectedYear(item);
-                  setIsOpen(false);
-                }}
-              >
-                <Text style={tw`text-[14px] text-[#1A1A1A]`}>{item}</Text>
-              </TouchableOpacity>
+    <Dropdown
+      style={[
+        tw`h-[42px] bg-white rounded-sm border border-gray-200 px-3`,
+        style,
+      ]}
+      placeholderStyle={tw`text-[13px] text-gray-800 font-sans-medium`}
+      selectedTextStyle={tw`text-[13px] text-gray-800 font-sans-medium`}
+      inputSearchStyle={tw`h-8 text-[13px] font-sans-regular`}
+      iconStyle={tw`w-4 h-4`}
+      data={years}
+      search={false}
+      maxHeight={300}
+      labelField="label"
+      valueField="value"
+      placeholder="Select year"
+      value={selectedYear}
+      onChange={(item) => {
+        setSelectedYear(item.value);
+      }}
+      renderItem={(item) => {
+        const isSelected = item.value === selectedYear;
+        return (
+          <View
+            style={[
+              tw`p-3 flex-row justify-between items-center`,
+              isSelected ? tw`bg-slate-100` : null,
+            ]}
+          >
+            <Text
+              style={[
+                tw`text-sm`,
+                isSelected
+                  ? tw`text-neutral-900 font-sans-medium`
+                  : tw`text-gray-800 font-sans-regular`,
+              ]}
+            >
+              {item.label}
+            </Text>
+            {isSelected && (
+              <Text style={tw`text-neutral-900 font-sans-medium`}>✓</Text>
             )}
-          />
-        </View>
-      )}
-    </View>
+          </View>
+        );
+      }}
+    />
   );
 };
 

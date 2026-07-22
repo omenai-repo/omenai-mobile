@@ -1,4 +1,4 @@
-import ArtistOverview from '#screens/artist/overview/ArtistOverview';
+import ArtistOverviewStack from "#navigation/ArtistOverviewStack";
 import {
   catalogueIcon,
   catalogueIconFocused,
@@ -20,138 +20,182 @@ import {
   shippingInActive,
   walletActive,
   walletInActive,
-} from './SvgImages';
-import WalletScreen from '#screens/artist/wallet/WalletScreen';
-import OrderScreen from '#screens/artist/orders/OrderScreen';
-import GalleryArtworksListing from '#screens/galleryArtworksListing/GalleryArtworksListing';
-import ArtistProfileScreen from '#screens/artist/profile/ArtistProfileScreen';
-import Home from '#screens/home/Home';
-import Catalog from '#screens/catalog/Catalog';
-import SearchResults from '#screens/searchResults/SearchResults';
-import Orders from '#screens/orders/Orders';
-import Profile from '#screens/profile/Profile';
-import Overview from '#screens/overview/Overview';
-import GalleryOrdersListing from '#screens/galleryOrders/GalleryOrdersListing';
-import Subscriptions from '#screens/subscriptions/Subscriptions';
-import GalleryProfile from '#screens/galleryProfileScreens/galleryProfile/GalleryProfile';
-import StripePayoutsTab from '#screens/stripeScreens/payouts/StripePayoutsTab';
+  billingActive,
+  billingInActive,
+  reviewHubActive,
+  reviewHubInActive,
+} from "./SvgImages";
+import WalletScreen from "#screens/artist/wallet/WalletScreen";
+import OrderScreen from "#screens/artist/orders/OrderScreen";
+import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
+import ArtistProfileScreen from "#screens/artist/profile/ArtistProfileScreen";
+import ArtistReviewHub from "#screens/artist/reviews/ArtistReviewHub";
+import IndividualHomeStack from "#navigation/IndividualHomeStack";
+import GuestOverview from "#screens/overview/GuestOverview";
+import Catalog from "#screens/catalog/Catalog";
+import SearchResults from "#screens/searchResults/SearchResults";
+import Orders from "#screens/orders/Orders";
+import Profile from "#screens/profile/Profile";
+import GalleryOverviewStack from "#navigation/GalleryOverviewStack";
+import GalleryOrdersListing from "#screens/galleryOrders/GalleryOrdersListing";
+import Subscriptions from "#screens/subscriptions/Subscriptions";
+import GuestProfilePlaceholder from "#screens/guest/GuestProfilePlaceholder";
+import GalleryProfile from "#screens/galleryProfileScreens/galleryProfile/GalleryProfile";
+import StripePayoutsTab from "#screens/stripeScreens/payouts/StripePayoutsTab";
 
-export const BottomTabDataArtist = [
+export const getBottomTabDataArtist = () => [
   {
     id: 1,
     activeIcon: overviewActive,
     inActiveIcon: overviewInActive,
-    name: 'Overview',
-    component: ArtistOverview,
+    name: "Overview",
+    component: ArtistOverviewStack,
   },
   {
     id: 2,
     activeIcon: walletActive,
     inActiveIcon: walletInActive,
-    name: 'Wallet',
+    name: "Wallet",
     component: WalletScreen,
   },
   {
     id: 3,
     activeIcon: ordersActive,
     inActiveIcon: ordersInActive,
-    name: 'Orders',
+    name: "Orders",
     component: OrderScreen,
   },
   {
     id: 4,
     activeIcon: shippingActive,
     inActiveIcon: shippingInActive,
-    name: 'Artworks',
+    name: "Artworks",
     component: GalleryArtworksListing,
   },
   {
     id: 5,
+    activeIcon: reviewHubActive,
+    inActiveIcon: reviewHubInActive,
+    name: "Review",
+    component: ArtistReviewHub,
+  },
+  {
+    id: 6,
     activeIcon: profileActive,
     inActiveIcon: profileInActive,
-    name: 'Profile',
+    name: "Profile",
     component: ArtistProfileScreen,
   },
 ];
 
-export const BottomTabDataIndividual = [
+export const getBottomTabDataIndividual = () => [
   {
     id: 1,
     activeIcon: homeIcon,
     inActiveIcon: homeIconFocused,
-    name: 'Overview',
-    component: Home,
+    name: "Overview",
+    component: IndividualHomeStack,
   },
   {
     id: 2,
     activeIcon: catalogueIcon,
     inActiveIcon: catalogueIconFocused,
-    name: 'Catalog',
+    name: "Artworks",
     component: Catalog,
   },
   {
     id: 3,
     activeIcon: searchIcon,
     inActiveIcon: searchIconFocused,
-    name: 'Search',
+    name: "Search",
     component: SearchResults,
   },
   {
     id: 4,
     activeIcon: orderIcon,
     inActiveIcon: orderIconFocused,
-    name: 'Orders',
+    name: "Orders",
     component: Orders,
   },
   {
     id: 5,
     activeIcon: profileIcon,
     inActiveIcon: profileIconFocused,
-    name: 'Profile',
+    name: "Profile",
     component: Profile,
   },
 ];
 
-export const BottomTabDataGallery = (account: any) => [
+export const getBottomTabDataGuest = () => [
   {
     id: 1,
-    name: 'Overview',
-    activeIcon: overviewActive,
-    inActiveIcon: overviewInActive,
-    component: Overview,
+    activeIcon: homeIcon,
+    inActiveIcon: homeIconFocused,
+    name: "Overview",
+    component: GuestOverview,
   },
   {
     id: 2,
-    name: 'Artworks',
+    activeIcon: catalogueIcon,
+    inActiveIcon: catalogueIconFocused,
+    name: "Artworks",
+    component: Catalog,
+  },
+  {
+    id: 3,
+    activeIcon: searchIcon,
+    inActiveIcon: searchIconFocused,
+    name: "Search",
+    component: SearchResults,
+  },
+  {
+    id: 4,
+    activeIcon: profileIcon,
+    inActiveIcon: profileIconFocused,
+    name: "Profile",
+    component: GuestProfilePlaceholder,
+  },
+];
+
+export const getBottomTabDataGallery = () => [
+  {
+    id: 1,
+    name: "Overview",
+    activeIcon: overviewActive,
+    inActiveIcon: overviewInActive,
+    component: GalleryOverviewStack,
+  },
+  {
+    id: 2,
+    name: "Artworks",
     activeIcon: shippingActive,
     inActiveIcon: shippingInActive,
     component: GalleryArtworksListing,
   },
   {
     id: 3,
-    name: 'Orders',
+    name: "Orders",
     activeIcon: ordersActive,
     inActiveIcon: ordersInActive,
     component: GalleryOrdersListing,
   },
   {
     id: 4,
-    name: 'Sub',
-    activeIcon: ordersActive,
-    inActiveIcon: ordersInActive,
+    name: "Billing",
+    activeIcon: billingActive,
+    inActiveIcon: billingInActive,
     component: Subscriptions,
   },
   {
     id: 5,
-    name: 'Payouts',
+    name: "Payouts",
     activeIcon: walletActive,
     inActiveIcon: walletInActive,
     component: StripePayoutsTab,
-    initialParams: { account },
   },
   {
     id: 6,
-    name: 'Profile',
+    name: "Profile",
     activeIcon: profileActive,
     inActiveIcon: profileInActive,
     component: GalleryProfile,

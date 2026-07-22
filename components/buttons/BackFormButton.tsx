@@ -1,6 +1,6 @@
 import { Pressable } from "react-native";
 import React from "react";
-import { colors } from "../../config/colors.config";
+import { colors } from "#config/colors.config";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import tw from "twrnc";
 
@@ -9,13 +9,16 @@ type handleBackCLickProp = {
   disabled?: boolean;
 };
 
-export default function BackFormButton({ handleBackClick, disabled }: handleBackCLickProp) {
+export default function BackFormButton({
+  handleBackClick,
+  disabled,
+}: handleBackCLickProp) {
   return (
     <Pressable
       onPress={handleBackClick}
       disabled={disabled}
       style={({ pressed }) => [
-        tw`h-11 w-[70px] rounded-lg border flex-row items-center justify-center`,
+        tw`h-11 w-[70px] rounded-sm border flex-row items-center justify-center`,
         { borderColor: colors.primary_black },
         pressed && !disabled ? { opacity: 0.8 } : null,
       ]}

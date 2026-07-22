@@ -1,12 +1,24 @@
 import { View, Text, Modal, Animated, Easing, Pressable } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { useAppStore } from "#store/app/appStore";
 import ArtistOnboarding from "#screens/artistOnboarding/ArtistOnboarding";
 import tw from "twrnc";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SvgXml } from "react-native-svg";
-import { starEffect } from "#utils/SvgImages";
-import ArtistOverview from "#screens/artist/overview/ArtistOverview";
+import {
+  starEffect,
+  ordersActive,
+  ordersInActive,
+  overviewActive,
+  overviewInActive,
+  profileActive,
+  reviewHubActive,
+  walletActive,
+  walletInActive,
+  shippingActive,
+  shippingInActive,
+} from "#utils/SvgImages";
+import ArtistOverviewStack from "#navigation/ArtistOverviewStack";
 import { createStackNavigator } from "@react-navigation/stack";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { logout } from "#utils/logout.utils";
@@ -21,6 +33,7 @@ import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryP
 import UploadNewLogo from "#screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo";
 import EditCredentialsScreen from "#screens/artist/profile/EditCredentialsScreen";
 import UploadArtwork from "#screens/uploadArtwork/UploadArtwork";
+import ProposalPriceScreen from "#screens/uploadArtwork/ProposalPriceScreen";
 import { WithdrawScreen } from "#screens/artist/wallet/WithdrawScreen";
 import { ForgotPinScreen } from "#screens/artist/wallet/ForgotPinScreen";
 import { ResetPinScreen } from "#screens/artist/wallet/ResetPinScreen";
@@ -29,25 +42,113 @@ import { TransactionDetailsScreen } from "#screens/artist/wallet/TransactionDeta
 import Artwork from "#screens/artwork/Artwork";
 import EditArtwork from "#screens/editArtwork/EditArtwork";
 import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
-import { BottomTabDataArtist } from "#utils/BottomTabData";
 import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
 import ViewCredentialsScreen from "#screens/artist/profile/ViewCredentials";
-import CustomTabBar from "./components/TabButton";
+import GalleryTabBar from "./components/GalleryTabBar";
 import NotificationScreen from "#screens/notifications/NotificationScreen";
 import DeleteAccountScreen from "#screens/deleteAccount/DeleteAccountScreen";
 import { wrapWithHighRisk, wrapWithLowRisk } from "#utils/wrapWithProvider";
 import BiometricSettings from "#screens/profile/BiometricSettings";
+import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
+import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
+import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
+import {
+  MoreSheetProvider,
+  useMoreSheet,
+} from "./components/MoreSheetContext";
+import ArtistReviewHub from "#screens/artist/reviews/ArtistReviewHub";
+import ArtistProfileScreen from "#screens/artist/profile/ArtistProfileScreen";
+import WalletScreen from "#screens/artist/wallet/WalletScreen";
+import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const ArtistTabBar = (props: any) => (
-  <CustomTabBar {...props} tabData={BottomTabDataArtist} />
-);
+const moreLabel = "More";
+
+const artistTabs = [
+  {
+    id: 1,
+    name: "Overview",
+    label: "Overview",
+    component: ArtistOverviewStack,
+    activeIcon: overviewActive,
+    inActiveIcon: overviewInActive,
+  },
+  {
+    id: 2,
+    name: "Wallet",
+    label: "Wallet",
+    component: WalletScreen,
+    activeIcon: walletActive,
+    inActiveIcon: walletInActive,
+  },
+  {
+    id: 3,
+    name: "artist-more",
+    label: moreLabel,
+    component: () => <View style={{ flex: 1, backgroundColor: "#F7F7F7" }} />,
+  },
+  {
+    id: 4,
+    name: "Artworks",
+    label: "Artworks",
+    component: GalleryArtworksListing,
+    activeIcon: shippingActive,
+    inActiveIcon: shippingInActive,
+  },
+  {
+    id: 5,
+    name: "Orders",
+    label: "Orders",
+    component: OrderScreen,
+    activeIcon: ordersActive,
+    inActiveIcon: ordersInActive,
+  },
+];
+
+const artistMoreTabs = [
+  {
+    id: 6,
+    name: "Review",
+    label: "Review",
+    component: ArtistReviewHub,
+  },
+  {
+    id: 7,
+    name: "Profile",
+    label: "Profile",
+    component: ArtistProfileScreen,
+  },
+  {
+    id: 8,
+    name: screenName.supportTickets,
+    label: "Support Tickets",
+    component: SupportTicketsScreen,
+  },
+];
+
+const renderArtistTabBar = (
+  props: any,
+  navigationRef: RefObject<any>,
+  openMoreSheet: () => void,
+) => {
+  navigationRef.current = props.navigation;
+  return (
+    <GalleryTabBar
+      {...props}
+      tabMeta={artistTabs}
+      moreRouteName="artist-more"
+      onPressMore={openMoreSheet}
+    />
+  );
+};
 
 const BottomTabNav = () => {
   const { userSession } = useAppStore();
   const [isModalVisible, setModalVisible] = useState(false);
+  const { isMoreSheetOpen, closeMoreSheet, openMoreSheet } = useMoreSheet();
+  const tabNavigationRef = useRef<any>(null);
 
   useEffect(() => {
     if (!userSession.artist_verified) {
@@ -75,15 +176,72 @@ const BottomTabNav = () => {
     ]).start();
   }, []);
 
+  const navigateToScreen = (routeName: string) => {
+    if (!tabNavigationRef.current) return;
+    const tabRouteNames = [...artistTabs, ...artistMoreTabs].map(
+      ({ name }) => name,
+    );
+    if (tabRouteNames.includes(routeName)) {
+      tabNavigationRef.current.navigate(routeName);
+      return;
+    }
+    tabNavigationRef.current.getParent()?.navigate(routeName);
+  };
+
+  const moreSheetItems: MoreSheetItem[] = [
+    {
+      key: "review",
+      label: "Review",
+      routeName: "Review",
+      icon: reviewHubActive,
+      keywords: ["ratings", "feedback"],
+      onPress: () => navigateToScreen("Review"),
+    },
+    {
+      key: "profile",
+      label: "Profile",
+      routeName: "Profile",
+      icon: profileActive,
+      keywords: ["account", "settings"],
+      onPress: () => navigateToScreen("Profile"),
+    },
+    {
+      key: "support-tickets",
+      label: "Support Tickets",
+      routeName: screenName.supportTickets,
+      icon: reviewHubActive,
+      keywords: ["support", "help"],
+      onPress: () => navigateToScreen(screenName.supportTickets),
+    },
+    {
+      key: "logout",
+      label: "Logout",
+      routeName: "logout",
+      keywords: ["sign out", "log out"],
+      isDanger: true,
+      onPress: () => void logout(),
+    },
+  ];
+
   return (
     <>
       <Tab.Navigator
-        tabBar={ArtistTabBar}
+        tabBar={(props) => renderArtistTabBar(props, tabNavigationRef, openMoreSheet)}
         screenOptions={{
           headerShown: false,
         }}
       >
-        {BottomTabDataArtist.map(({ name, component, id }) => (
+        {artistTabs.map(({ name, component, id }) => (
+          <Tab.Screen
+            key={id}
+            name={name}
+            component={component}
+            options={{
+              tabBarShowLabel: false,
+            }}
+          />
+        ))}
+        {artistMoreTabs.map(({ name, component, id }) => (
           <Tab.Screen
             key={id}
             name={name}
@@ -94,12 +252,14 @@ const BottomTabNav = () => {
           />
         ))}
       </Tab.Navigator>
+      <MoreSheet
+        visible={isMoreSheetOpen}
+        onClose={closeMoreSheet}
+        menuItems={moreSheetItems}
+      />
 
       <Modal visible={isModalVisible} transparent={true} animationType="fade">
-        <Pressable
-          onPressOut={() => setModalVisible(false)}
-          style={tw`flex-1 bg-[#0003] justify-center items-center`}
-        >
+        <View style={tw`flex-1 bg-[#0003] justify-center items-center`}>
           <BlurView
             intensity={30}
             style={tw`absolute top-0 left-0 right-0 bottom-0`}
@@ -107,7 +267,7 @@ const BottomTabNav = () => {
           <Pressable onPress={(e) => e.stopPropagation()}>
             <Animated.View
               style={[
-                tw`bg-[#FFFFFF] rounded-[20px] py-[35px]`,
+                tw`bg-[#FFFFFF] rounded-sm py-[35px]`,
                 {
                   marginHorizontal: "5%",
                   opacity: fadeAnim, // Apply fade animation
@@ -138,11 +298,17 @@ const BottomTabNav = () => {
               </View>
             </Animated.View>
           </Pressable>
-        </Pressable>
+        </View>
       </Modal>
     </>
   );
 };
+
+const ArtistBottomTabWrapper = () => (
+  <MoreSheetProvider>
+    <BottomTabNav />
+  </MoreSheetProvider>
+);
 
 const ArtistNavigation = () => {
   const { userSession } = useAppStore();
@@ -153,7 +319,10 @@ const ArtistNavigation = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Artist" component={wrapWithHighRisk(BottomTabNav)} />
+      <Stack.Screen
+        name="Artist"
+        component={wrapWithHighRisk(ArtistBottomTabWrapper)}
+      />
       <Stack.Screen
         name="ShipmentTrackingScreen"
         component={wrapWithLowRisk(ShipmentTrackingScreen)}
@@ -164,7 +333,7 @@ const ArtistNavigation = () => {
       />
       <Stack.Screen
         name="ArtistOverview"
-        component={wrapWithHighRisk(ArtistOverview)}
+        component={wrapWithHighRisk(ArtistOverviewStack)}
       />
       <Stack.Screen
         name={"NotificationScreen"}
@@ -231,10 +400,18 @@ const ArtistNavigation = () => {
           name={screenName.gallery.uploadNewLogo}
           component={wrapWithHighRisk(UploadNewLogo)}
         />
+        <Stack.Screen
+          name={screenName.supportTicketsFilterModal}
+          component={wrapWithHighRisk(SupportTicketsFilterModal)}
+        />
       </Stack.Group>
       <Stack.Screen
         name={screenName.gallery.uploadArtwork}
         component={wrapWithHighRisk(UploadArtwork)}
+      />
+      <Stack.Screen
+        name={screenName.artist.proposalPrice}
+        component={wrapWithHighRisk(ProposalPriceScreen)}
       />
       <Stack.Screen
         name={screenName.artwork}
@@ -251,6 +428,10 @@ const ArtistNavigation = () => {
       <Stack.Screen
         name={screenName.biometricSettings}
         component={wrapWithHighRisk(BiometricSettings)}
+      />
+      <Stack.Screen
+        name={screenName.supportTickets}
+        component={wrapWithHighRisk(SupportTicketsScreen)}
       />
     </Stack.Navigator>
   );

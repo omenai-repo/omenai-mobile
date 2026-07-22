@@ -1,5 +1,5 @@
 import { View, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import tw from "twrnc";
 import Input from "#components/inputs/Input";
 import { validate } from "#lib/validations/validatorGroup";
@@ -21,12 +21,19 @@ import {
 import { useAppStore } from "#store/app/appStore";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import { updateProfile } from "#services/update/updateProfile";
-import { logout } from "#utils/logout.utils";
+import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
+import { useNavigation } from "@react-navigation/native";
 import AlertCard from "#components/general/AlertCard";
 import { colors } from "#config/colors.config";
+import { artist_countries_codes_currency } from "#data/artist_countries_codes_currency";
+import { updateArtistAddress } from "#services/update/updateArtistAddress";
+import { fetchArtistProfile } from "#services/artist/fetchArtistProfile";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditAddressScreen = () => {
-  const { userSession, userType } = useAppStore();
+  const { userSession, userType, setUserSession } = useAppStore();
+  const navigation = useNavigation<any>();
+  const queryClient = useQueryClient();
   const [formErrors, setFormErrors] = useState<
     Partial<AddressTypes & { phone: string }>
   >({
@@ -41,25 +48,29 @@ const EditAddressScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [addressVerified, setAddressVerified] = useState(false);
   const [countryCode, setCountryCode] = useState(
-    userSession.address.countryCode || ""
+    userSession.address.countryCode || "",
   );
   const [country, setCountry] = useState(userSession.address.country || "");
   const [stateName, setStateName] = useState(userSession.address.state || "");
   const [stateCode, setStateCode] = useState(
-    userSession.address.stateCode || ""
+    userSession.address.stateCode || "",
   );
   const [city, setCity] = useState(userSession.address.city || "");
   const [addressLine, setAddressLine] = useState(
-    userSession.address.address_line || ""
+    userSession.address.address_line || "",
   );
   const [zipCode, setZipCode] = useState(userSession.address.zip || "");
   const [stateData, setStateData] = useState<
     { label: string; value: string; isoCode?: string }[]
   >([]);
   const [cityData, setCityData] = useState<{ label: string; value: string }[]>(
-    []
+    [],
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedBaseCurrency, setSelectedBaseCurrency] = useState(
+    userSession.base_currency || "",
+  );
+  const fallbackLocationNameRef = useRef("");
 
   const { updateModal } = useModalStore();
 
@@ -73,7 +84,7 @@ const EditAddressScreen = () => {
       state: userSession.address.state || "",
       stateCode: userSession.address.stateCode || "",
     }),
-    [userSession]
+    [userSession],
   );
 
   const hasAddressChanged = useMemo(() => {
@@ -108,22 +119,33 @@ const EditAddressScreen = () => {
       setStateData(mappedStates);
 
       const selectedState = mappedStates.find(
-        (s) => s.value === stateName || s.isoCode === stateCode
+        (s) => s.value === stateName || s.isoCode === stateCode,
       );
       if (selectedState?.isoCode) {
+        fallbackLocationNameRef.current = selectedState.value;
         fetchCities(countryCode, selectedState.isoCode);
       }
     }
   }, [countryCode]);
 
-  const transformedCountries = useMemo(
-    () =>
-      Country.getAllCountries().map((item: ICountry) => ({
-        value: item.isoCode,
-        label: item.name,
-      })),
-    []
-  );
+  const transformedCountries = useMemo(() => {
+    if (userType === "artist") {
+      return [...artist_countries_codes_currency]
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+        )
+        .map((item) => ({
+          value: item.alpha2,
+          label: item.name,
+          currency: item.currency,
+        }));
+    }
+
+    return Country.getAllCountries().map((item: ICountry) => ({
+      value: item.isoCode,
+      label: item.name,
+    }));
+  }, [userType]);
 
   const handleCountrySelect = (item: { label: string; value: string }) => {
     setCountry(item.label);
@@ -135,6 +157,12 @@ const EditAddressScreen = () => {
     setAddressLine("");
     setStateData([]);
     setCityData([]);
+    const selectedCountryMeta = transformedCountries.find(
+      (countryItem) => countryItem.value === item.value,
+    ) as { currency?: string } | undefined;
+    if (selectedCountryMeta?.currency) {
+      setSelectedBaseCurrency(selectedCountryMeta.currency);
+    }
 
     const getStates = State.getStatesOfCountry(item.value);
     if (getStates) {
@@ -143,7 +171,7 @@ const EditAddressScreen = () => {
           label: s.name,
           value: s.name,
           isoCode: s.isoCode,
-        }))
+        })),
       );
     }
   };
@@ -153,14 +181,27 @@ const EditAddressScreen = () => {
     () =>
       debounce((countryCode: string, stateValue: string) => {
         const getCities = City.getCitiesOfState(countryCode, stateValue);
-        setCityData(
+        const mappedCities =
           getCities?.map((city: ICity) => ({
             label: city.name,
             value: city.name,
-          })) || []
-        );
+          })) || [];
+
+        // UK and similar edge cases can have admin regions without nested cities.
+        // Fallback to using the selected state/county as the city option.
+        if (mappedCities.length === 0 && fallbackLocationNameRef.current) {
+          setCityData([
+            {
+              label: fallbackLocationNameRef.current,
+              value: fallbackLocationNameRef.current,
+            },
+          ]);
+          return;
+        }
+
+        setCityData(mappedCities);
       }, 300),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -178,6 +219,7 @@ const EditAddressScreen = () => {
   }) => {
     if (item.value !== stateName) {
       setStateName(item.value);
+      fallbackLocationNameRef.current = item.value;
       if (item.isoCode) {
         setStateCode(item.isoCode);
       }
@@ -220,7 +262,7 @@ const EditAddressScreen = () => {
         [label]: errors.length > 0 ? errors[0] : "",
       }));
     },
-    500
+    500,
   ); // ✅ Delay validation by 500ms
 
   const handleSubmit = async () => {
@@ -254,22 +296,15 @@ const EditAddressScreen = () => {
         setShowModal(true);
         setAddressVerified(false);
       }
-    } catch (error) {
-      console.error("Error verifying address:", error);
+    } catch (error: any) {
       updateModal({
-        message: "Network error, please check your connection and try again.",
+        message: error?.message || error?.body?.message || "Network error, please check your connection and try again.",
         modalType: "error",
         showModal: true,
       });
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const signOut = () => {
-    setTimeout(() => {
-      logout();
-    }, 3500);
   };
 
   const handleUpdate = async () => {
@@ -286,16 +321,52 @@ const EditAddressScreen = () => {
         stateCode: stateCode,
       },
     };
-    const result = await updateProfile("individual", data, userSession.id);
+    const routeType = userType === "user" ? "individual" : userType;
+    const result =
+      userType === "artist"
+        ? await updateArtistAddress({
+          artist_id: userSession.id,
+          base_currency: selectedBaseCurrency || userSession.base_currency,
+          address: data.address,
+        })
+        : await updateProfile(routeType as any, data, userSession.id);
 
     if (result.isOk) {
+      let updatedSession = {
+        ...userSession,
+        address: { ...userSession.address, ...data.address },
+      };
+
+      if (userType === "artist") {
+        const profileResponse = await fetchArtistProfile(userSession.id);
+        if (profileResponse?.isOk && profileResponse?.data) {
+          updatedSession = {
+            ...updatedSession,
+            address: profileResponse.data.address || updatedSession.address,
+            base_currency:
+              profileResponse.data.base_currency || updatedSession.base_currency,
+          };
+        }
+      }
+      setUserSession(updatedSession);
+      await utils_storeAsyncData("userSession", JSON.stringify(updatedSession));
+
+      // Prevent stale wallet/account flashes after address changes.
+      await queryClient.cancelQueries({ queryKey: ["wallet", "artist"] });
+      queryClient.removeQueries({ queryKey: ["wallet", "artist"] });
+      queryClient.removeQueries({ queryKey: ["wallet", "artist", "txns"] });
+
       setIsLoading(false);
+
       updateModal({
-        message: "Address updated successfully, sign in to view update",
+        message:
+          userType === "artist" && countryCode !== originalAddress.countryCode
+            ? "Address updated successfully. Withdrawal account has been reset due to country change."
+            : "Address updated successfully",
         modalType: "success",
         showModal: true,
+        onDismiss: () => navigation.goBack(),
       });
-      signOut();
     } else {
       setIsLoading(false);
       updateModal({
@@ -304,6 +375,12 @@ const EditAddressScreen = () => {
         showModal: true,
       });
     }
+  };
+
+  const getAddressPlaceholder = () => {
+    if (userType === "gallery") return "Input your gallery address here";
+    if (userType === "artist") return "Input your studio address here";
+    return "Input your residential address here";
   };
 
   return (
@@ -343,19 +420,17 @@ const EditAddressScreen = () => {
               dropdownPosition="bottom"
             />
 
-            <View style={tw`flex-row`}>
-              <Input
-                label="Address"
-                keyboardType="default"
-                onInputChange={(text) => {
-                  setAddressLine(text);
-                  handleValidationChecks("general", text);
-                }}
-                placeHolder="Input your gallery address here"
-                value={addressLine}
-                errorMessage={formErrors?.address_line}
-              />
-            </View>
+            <Input
+              label="Address"
+              keyboardType="default"
+              onInputChange={(text) => {
+                setAddressLine(text);
+                handleValidationChecks("general", text);
+              }}
+              placeHolder={getAddressPlaceholder()}
+              value={addressLine}
+              errorMessage={formErrors?.address_line}
+            />
 
             <View style={tw`flex-row items-center gap-[30px]`}>
               <View style={tw`flex-1`}>

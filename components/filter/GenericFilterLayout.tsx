@@ -57,7 +57,7 @@ export default function GenericFilterLayout({
           <TouchableOpacity onPress={onClear}>
             <View
               style={[
-                tw`flex-row items-center justify-center rounded-lg px-5 h-10 gap-2.5`,
+                tw`flex-row items-center justify-center rounded-sm px-5 h-10 gap-2.5`,
                 { backgroundColor: "#FAFAFA" },
               ]}
             >

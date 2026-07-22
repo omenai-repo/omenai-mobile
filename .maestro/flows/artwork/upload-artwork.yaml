@@ -1,0 +1,117 @@
+appId: com.omenai.omenaimobile
+name: "Upload Artwork Flow"
+tags:
+  - artwork
+  - upload
+  - gallery
+
+---
+- runFlow: ../login/gallery-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Artworks"
+
+- extendedWaitUntil:
+    visible: "Upload artwork"
+    timeout: 10000
+- tapOn: "Upload artwork"
+
+- assertVisible: "Artwork Details"
+- tapOn: "Enter the name of your artwork"
+- inputText: "Maestro Test Masterpiece"
+- hideKeyboard
+
+- tapOn: "Write a description of your artwork"
+- inputText: "A beautiful masterpiece created during Maestro E2E test."
+- hideKeyboard
+
+- tapOn: "Select medium"
+- tapOn: "Photography"
+
+- tapOn: "Enter the materials used"
+- inputText: "Digital, Camera"
+- hideKeyboard
+
+- tapOn: "Enter year of creation"
+- inputText: "2026"
+- hideKeyboard
+
+- tapOn: "Select rarity"
+- tapOn: "Unique"
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Proceed"
+
+- tapOn: "Select"
+- tapOn: "Yes"
+
+- tapOn: "Select"
+- tapOn: "By artist"
+
+- tapOn: "Proceed"
+
+- assertVisible: "Artwork Dimensions"
+- tapOn: "Length (in)"
+- inputText: "24"
+- hideKeyboard
+
+- tapOn: "Height (in)"
+- inputText: "36"
+- hideKeyboard
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Proceed"
+- tapOn: "Proceed"
+
+- assertVisible: "Shipping Configuration"
+- tapOn: "Rolled"
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Proceed"
+- tapOn: "Proceed"
+
+- assertVisible: "Currency"
+- tapOn: "Select"
+- tapOn: "USD"
+
+- tapOn: "Enter your price"
+- inputText: "1000"
+- hideKeyboard
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Proceed"
+- tapOn: "Proceed"
+
+- assertVisible: "Artist full name"
+- tapOn: "Enter artist full name"
+- inputText: "Maestro Painted"
+- hideKeyboard
+
+- tapOn: "Enter artist birth year"
+- inputText: "1980"
+- hideKeyboard
+
+- tapOn: "Select country"
+- tapOn: "Search country"
+- inputText: "United States"
+- tapOn: "United States"
+- hideKeyboard
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Proceed"
+- tapOn: "Proceed"
+
+- tapOn: "Upload Image"
+- tapOn: "Upload artwork"
+
+- extendedWaitUntil:
+    visible: "Done"
+    timeout: 30000
+- tapOn: "Done"

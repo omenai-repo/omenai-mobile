@@ -32,7 +32,12 @@ const NotificationDetailsModal = ({
   if (!notification) return null;
 
   return (
-    <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent
+      onRequestClose={onClose}
+    >
       <TouchableWithoutFeedback onPress={onClose}>
         <View
           style={[
@@ -45,7 +50,7 @@ const NotificationDetailsModal = ({
             style={tw`w-full max-w-[400px]`}
           >
             <TouchableWithoutFeedback onPress={() => {}}>
-              <View style={tw`bg-white rounded-[20px] p-[20px] shadow-lg`}>
+              <View style={tw`bg-white rounded-sm p-[20px] shadow-lg`}>
                 {/* Close Button */}
                 <TouchableOpacity
                   onPress={onClose}
@@ -58,7 +63,9 @@ const NotificationDetailsModal = ({
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={tw`pt-[10px] pb-[10px]`}
                 >
-                  <Text style={tw`text-[18px] font-bold text-[#1A1A1A] mb-[10px]`}>
+                  <Text
+                    style={tw`text-[18px] font-bold text-[#1A1A1A] mb-[10px]`}
+                  >
                     {notification.title}
                   </Text>
 

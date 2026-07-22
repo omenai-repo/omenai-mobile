@@ -1,0 +1,43 @@
+appId: com.omenai.omenaimobile
+name: "Individual Catalog Browse"
+tags:
+  - individual
+  - catalog
+  - artworks
+  - smoke
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Artworks"
+
+- extendedWaitUntil:
+    visible: "All Works"
+    timeout: 10000
+
+- tapOn:
+    anyOf:
+      - "Filter"
+      - "All Works"
+
+- swipe:
+    start: 50%,10%
+    end: 50%,10%
+    duration: 1000
+
+- swipe:
+    direction: UP
+    duration: 1500
+
+- swipe:
+    direction: UP
+    duration: 1500
+
+- scrollUntilVisible:
+    direction: UP
+    element: "All Works"
+    timeout: 10000

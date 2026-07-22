@@ -1,0 +1,36 @@
+---
+description: Omenai RN folder roles, # imports, screen vs component boundaries
+alwaysApply: true
+---
+
+# Omenai architecture
+
+Follow `AGENTS.md` for full detail. Summary for every change:
+
+## Layers
+
+| Layer | Folder | Responsibility |
+|-------|--------|----------------|
+| Screen | `screens/` | Route UI: compose children, navigation, store/hook wiring |
+| Screen-local UI | `screens/<feature>/components/` | UI used only in that feature folder |
+| Shared UI | `components/<domain>/` | Reused in 2+ places or clear shared concept |
+| Feature logic | `features/` | Non-UI cross-cutting modules (deeplink, etc.) |
+| Data | `services/` | API and external IO |
+| State | `store/` | Zustand |
+| Config | `config/` | Colors, Appwrite, flags — no secrets |
+
+## Do / Don't
+
+- **Do** keep screens thin; move API calls to `services/`.
+- **Do** use `#` aliases for all cross-folder imports.
+- **Do** register images in `constants/images.constants.ts`; use `images.*` in UI.
+- **Do** use twrnc unless listed in AGENTS.md Style Exception List.
+- **Don't** import `#assets/*` directly in `screens/` or `components/`.
+- **Don't** add large reusable blocks only under `screens/.../components/` if another screen needs them — promote to `components/`.
+- **Don't** put screen components in `features/`.
+
+## New UI decision tree
+
+1. Used in one screen only? → `screens/<feature>/components/`.
+2. Used in 2+ screens or generic (Button, Card, Modal)? → `components/<domain>/`.
+3. No UI, shared logic? → `features/`, `hooks/`, or `lib/`.

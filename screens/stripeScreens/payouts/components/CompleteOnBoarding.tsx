@@ -11,7 +11,8 @@ import tw from "twrnc";
 export default function CompleteOnBoarding() {
   const [gallerySession, setGallerySession] = useState();
   const [accountID, setAccountID] = useState("");
-  const [accountLinkCreatePending, setAccountLinkCreatePending] = useState(false);
+  const [accountLinkCreatePending, setAccountLinkCreatePending] =
+    useState(false);
 
   const { updateModal } = useModalStore();
 

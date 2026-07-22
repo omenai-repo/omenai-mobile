@@ -1,32 +1,61 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View, Animated, Easing } from 'react-native';
-import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
-import { useQuery } from '@tanstack/react-query';
-import { getSalesActivityData } from '#services/overview/getSalesActivityData';
-import { salesDataAlgorithm } from '#utils/utils_salesDataAlgorithm';
-import { QK } from '#utils/queryKeys';
-import { useAppStore } from '#store/app/appStore';
+import { useDevice } from "#hooks/useDevice";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  StyleProp,
+  Text,
+  View,
+  ViewStyle,
+  InteractionManager,
+} from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import { getSalesActivityData } from "#services/overview/getSalesActivityData";
+import { salesDataAlgorithm } from "#utils/utils_salesDataAlgorithm";
+import { QK } from "#utils/queryKeys";
+import { useAppStore } from "#store/app/appStore";
+import { BarChart } from "react-native-gifted-charts";
+import { Dropdown } from "react-native-element-dropdown";
+import { colors } from "#config/colors.config";
+import tw from "twrnc";
+import { ChartTooltip } from "./ChartTooltip";
 
-const { width } = Dimensions.get('window');
+const currentYear = new Date().getFullYear();
+const years = [
+  { label: (currentYear - 2).toString(), value: (currentYear - 2).toString() },
+  { label: (currentYear - 1).toString(), value: (currentYear - 1).toString() },
+  { label: currentYear.toString(), value: currentYear.toString() },
+];
 
-export default function SalesOverview({
+export default React.memo(function SalesOverview({
   onLoadingChange,
+  customWidth,
+  style,
 }: {
   onLoadingChange?: (l: boolean) => void;
+  customWidth?: number;
+  style?: StyleProp<ViewStyle>;
 }) {
   const { userSession } = useAppStore();
+  const { width, isTablet } = useDevice();
+  const [selectedYear, setSelectedYear] = useState(currentYear.toString());
+  const [interactionsComplete, setInteractionsComplete] = useState(false);
+
+  useEffect(() => {
+    const task = InteractionManager.runAfterInteractions(() => {
+      setInteractionsComplete(true);
+    });
+    return () => task.cancel();
+  }, []);
+
+  const activeWidth = customWidth ?? width - 32; // If customWidth provided, use it. Else use screen width - 32 (margin)
+  const chartWidth = activeWidth - 32; // Subtract internal padding (px-4 = 32)
 
   const query = useQuery({
-    queryKey: QK.salesOverview(userSession?.id),
+    queryKey: QK.salesOverview(userSession?.id, selectedYear),
     queryFn: async () => {
-      const res = await getSalesActivityData();
-      return salesDataAlgorithm(res.data).map((m) => m.Revenue) as number[];
+      const res = await getSalesActivityData(selectedYear);
+      return salesDataAlgorithm(res.data);
     },
-    staleTime: 60_000,
-    gcTime: 10 * 60_000,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    refetchOnWindowFocus: true,
+    enabled: interactionsComplete, // Defer fetching until navigation finishes
   });
 
   useEffect(() => {
@@ -34,195 +63,174 @@ export default function SalesOverview({
   }, [query.isFetching, query.isLoading, query.data, onLoadingChange]);
 
   const data = query.data ?? [];
-  const labels = useMemo(
-    () => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    [],
+  const isEmpty = data.every((item: any) => item.value === 0);
+
+  const customLabel = useCallback(
+    (val: string) => {
+      return (
+        <View
+          style={[tw`w-[50px] items-center`, isTablet && { marginLeft: 10 }]}
+        >
+          <Text
+            style={tw`text-gray-400 font-medium text-[11px] mb-1.5 text-center`}
+          >
+            {val}
+          </Text>
+        </View>
+      );
+    },
+    [isTablet]
   );
-  const maxValue = Math.max(0, ...data);
-  const safeMax = maxValue || 1;
 
-  const chartWidth = width - 40;
-  const chartHeight = 100;
-  const yAxisWidth = 40;
-  const barWidth = data.length ? (chartWidth - yAxisWidth) / data.length : 1;
+  const formattedData = useMemo(
+    () =>
+      data.map((item: any, index: number) => ({
+        value: item.value,
+        label: item.label,
+        labelComponent: () => customLabel(item.label),
+        index,
+      })),
+    [data, customLabel]
+  );
 
-  const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: 0 });
-  const [fade] = useState(new Animated.Value(0));
-  const fmt = (n: number) =>
-    n >= 1000 ? `$${(n / 1000).toFixed(1).replace(/\.0$/, '')}K` : `${n}`;
-
-  const toggleTip = (x: number, y: number, value: number) => {
-    if (tooltip.visible && tooltip.value === value && tooltip.x === x) {
-      Animated.timing(fade, {
-        toValue: 0,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }).start(() => setTooltip((t) => ({ ...t, visible: false })));
-    } else {
-      setTooltip({ visible: true, x, y, value });
-      Animated.timing(fade, {
-        toValue: 1,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }).start();
+  const formatYAxisLabel = useCallback((label: string) => {
+    const value = Number.parseFloat(label);
+    if (value < 0) return "";
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(0)}k`;
     }
-  };
+    return `$${value}`;
+  }, []);
+
+  const renderHeader = useCallback(
+    () => (
+      <View style={tw`flex-row justify-between items-center mb-5 z-20`}>
+        <Text style={tw`text-lg text-black font-medium`}>Sales Revenue</Text>
+        <Dropdown
+          style={tw`h-[35px] w-[90px] border border-[#E0E0E0] rounded-sm px-2`}
+          containerStyle={tw`rounded-sm mt-1`}
+          data={years}
+          labelField="label"
+          valueField="value"
+          value={selectedYear}
+          onChange={(item) => setSelectedYear(item.value)}
+          placeholder="Year"
+          placeholderStyle={tw`text-sm text-[#333]`}
+          selectedTextStyle={tw`text-sm text-[#333]`}
+          itemTextStyle={tw`text-sm text-[#333]`}
+          iconStyle={tw`w-5 h-5`}
+        />
+      </View>
+    ),
+    [selectedYear]
+  );
+
+  const maxDataValue = Math.max(...formattedData.map((d) => d.value));
+  const chartMaxValue = maxDataValue > 0 ? maxDataValue * 2 : 1000;
+
+  const tooltipMaxValue = useMemo(
+    () => Math.max(0, ...formattedData.map((d) => d.value)),
+    [formattedData]
+  );
+
+  const renderTooltip = useCallback(
+    (item: any, index: number) => {
+      return (
+        <View
+          style={{
+            marginLeft: -15, // Center tooltip roughly over bar
+            backgroundColor: "transparent",
+          }}
+        >
+          <ChartTooltip
+            value={item.value}
+            label={item.label}
+            index={index}
+            maxValue={tooltipMaxValue}
+            totalBars={formattedData.length}
+          />
+        </View>
+      );
+    },
+    [tooltipMaxValue, formattedData.length]
+  );
 
   if (query.isLoading && !query.data) {
     return (
-      <View style={styles.skeletonContainer}>
-        <View style={styles.header}>
-          <View style={[styles.skeletonBlock, { width: 100, height: 20 }]} />
-        </View>
-        <View style={[styles.chart, { justifyContent: 'space-around' }]}>
+      <View style={[tw`bg-white rounded-sm py-5 px-4`, style]}>
+        {renderHeader()}
+        <View
+          style={[
+            tw`flex-row items-end h-[100px] relative`,
+            { justifyContent: "space-around", height: 260 },
+          ]}
+        >
           {Array.from({ length: 12 }).map((_, i) => (
             <View
               key={i}
               style={{
                 width: 10,
                 height: Math.random() * 60 + 20,
-                backgroundColor: '#E0E0E0',
+                backgroundColor: "#E0E0E0",
                 borderRadius: 4,
                 marginBottom: 5,
               }}
             />
           ))}
         </View>
-        <View style={styles.xAxis}>
-          {Array.from({ length: 12 }).map((_, i) => (
-            <View
-              key={i}
-              style={{
-                width: 20,
-                height: 10,
-                borderRadius: 2,
-                backgroundColor: '#E0E0E0',
-                marginHorizontal: 3,
-              }}
-            />
-          ))}
-        </View>
-      </View>
-    );
-  }
-
-  if (data.every((v) => v === 0)) {
-    return (
-      <View style={styles.container}>
-        <Text style={[styles.title, { textAlign: 'center', marginTop: 40, marginBottom: 20 }]}>
-          No sales data available for this year.
-        </Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Sales</Text>
-      </View>
-      <View style={styles.chart}>
-        <View style={styles.yAxis}>
-          {[0, maxValue / 2, maxValue].map((v, idx) => (
-            <Text key={idx} style={[styles.yAxisLabel, { bottom: (chartHeight / 2) * idx - 8 }]}>
-              {fmt(v)}
-            </Text>
-          ))}
-        </View>
+    <View
+      style={[tw`bg-white rounded-sm py-5 px-4 overflow-hidden`, style]}
+    >
+      {renderHeader()}
 
-        <Svg width={chartWidth} height={chartHeight} style={{ backgroundColor: '#242731' }}>
-          <Defs>
-            <LinearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#8668E1" stopOpacity="1" />
-              <Stop offset="1" stopColor="#232630" stopOpacity="0.5" />
-            </LinearGradient>
-          </Defs>
-
-          {data.map((value, i) => {
-            const barH = (value / safeMax) * chartHeight;
-            const x = yAxisWidth + i * barWidth - barWidth + i + 10;
-            const y = chartHeight - barH;
-            return (
-              <Rect
-                key={i}
-                x={x}
-                y={y}
-                width={barWidth - 10}
-                height={barH}
-                fill="url(#barGradient)"
-                rx={4}
-                onPress={() => toggleTip(x + barWidth / 2, y, value)}
-              />
-            );
-          })}
-        </Svg>
-      </View>
-
-      {tooltip.visible && (
-        <Animated.View style={[styles.tooltip, { opacity: fade, left: tooltip.x, top: tooltip.y }]}>
-          <Text style={styles.tooltipText}>{fmt(tooltip.value)} Sales</Text>
-        </Animated.View>
-      )}
-
-      <View style={styles.xAxis}>
-        {labels.map((l, i) => (
-          <Text
-            key={i}
-            style={[
-              styles.xAxisLabel,
-              {
-                width: barWidth,
-                textAlign: 'center',
-                left: yAxisWidth + i * barWidth - barWidth + i + 5,
-              },
-            ]}
-          >
-            {l}
+      {isEmpty ? (
+        <View style={tw`h-[200px] justify-center items-center`}>
+          <Text style={tw`text-gray-400 text-sm`}>
+            No sales data available for {selectedYear}.
           </Text>
-        ))}
-      </View>
+        </View>
+      ) : (
+        <View style={tw`overflow-hidden`}>
+          <BarChart
+            data={formattedData}
+            barWidth={22}
+            spacing={isTablet ? 40 : 20}
+            hideRules
+            xAxisThickness={0}
+            yAxisThickness={0}
+            yAxisTextStyle={{
+              color: "#9CA3AF",
+              fontSize: 11,
+              fontWeight: "500",
+            }}
+            maxValue={chartMaxValue}
+            noOfSections={4}
+            formatYLabel={formatYAxisLabel}
+            isAnimated
+            roundedTop={false}
+            barBorderTopLeftRadius={3}
+            barBorderTopRightRadius={3}
+            animationDuration={1200}
+            frontColor={colors.black}
+            showValuesAsTopLabel={false}
+            renderTooltip={renderTooltip}
+            width={chartWidth}
+            height={200}
+            labelWidth={40}
+            xAxisLabelTextStyle={{
+              color: "#9CA3AF",
+              fontSize: 11,
+              fontWeight: "500",
+              textAlign: "center",
+            }}
+          />
+        </View>
+      )}
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#242731',
-    borderRadius: 16,
-    paddingTop: 20,
-    paddingBottom: 40,
-    paddingHorizontal: 10,
-    marginHorizontal: 15,
-  },
-  skeletonContainer: {
-    backgroundColor: '#FAFAFA',
-    borderRadius: 16,
-    paddingTop: 20,
-    paddingBottom: 40,
-    paddingHorizontal: 10,
-    marginHorizontal: 15,
-  },
-  header: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  title: { fontSize: 18, color: '#FFFFFF', fontWeight: '600' },
-  chart: { flexDirection: 'row', alignItems: 'flex-end', height: 100, position: 'relative' },
-  yAxis: {
-    position: 'absolute',
-    left: 0,
-    justifyContent: 'space-between',
-    height: '100%',
-    zIndex: 10,
-  },
-  yAxisLabel: { color: '#7C7C8D', fontSize: 12, textAlign: 'right', position: 'absolute', left: 0 },
-  xAxis: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-    position: 'relative',
-  },
-  xAxisLabel: { color: '#7C7C8D', fontSize: 10, position: 'absolute', bottom: -20 },
-  tooltip: { position: 'absolute', backgroundColor: '#fff', padding: 8, borderRadius: 4 },
-  tooltipText: { color: '#000', fontSize: 12 },
-  skeletonBlock: { backgroundColor: '#E0E0E0', borderRadius: 4 },
 });

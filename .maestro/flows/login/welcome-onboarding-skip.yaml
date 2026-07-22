@@ -1,0 +1,39 @@
+appId: com.omenai.omenaimobile
+name: "Welcome Screen - Skip Onboarding (First Time)"
+tags:
+  - welcome
+  - onboarding
+  - auth
+
+---
+- stopApp: com.omenai.omenaimobile
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible: "http://localhost:8081"
+    timeout: 10000
+- tapOn: "http://localhost:8081"
+
+- swipe:
+    start: 50%,10%
+    end: 50%,10%
+    duration: 7000
+
+- swipe:
+    start: 50%,10%
+    end: 50%,10%
+    duration: 7000
+
+- extendedWaitUntil:
+    visible: "Contemporary African Art, Curated"
+    timeout: 10000
+
+- tapOn: "Skip"
+
+- extendedWaitUntil:
+    visible: "Build Your Art World"
+    timeout: 5000
+
+- assertVisible: "Create Account"
+- assertVisible: "Log In"

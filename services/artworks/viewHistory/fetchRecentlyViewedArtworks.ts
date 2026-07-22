@@ -1,14 +1,10 @@
-import { apiUrl, authorization, originHeader, userAgent } from '#constants/apiUrl.constants';
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../../utils/apiRequest";
 
 export async function fetchViewHistory(user_id: string) {
   try {
-    const res = await fetch(`${apiUrl}/api/viewHistory/getViewHistory`, {
-      method: 'POST',
-      headers: {
-        Origin: originHeader,
-        'User-Agent': userAgent,
-        Authorization: authorization,
-      },
+    const res = await apiRequest(`${apiUrl}/api/viewHistory/getViewHistory`, {
+      method: "POST",
       body: JSON.stringify({ user_id }),
     });
 
@@ -16,6 +12,14 @@ export async function fetchViewHistory(user_id: string) {
 
     return { isOk: res.ok, message: result.message, data: result.data };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching view history",
+      },
+    };
   }
 }

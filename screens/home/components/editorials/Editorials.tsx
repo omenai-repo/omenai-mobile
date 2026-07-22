@@ -1,23 +1,16 @@
 import React from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { listEditorials } from "#lib/editorial/lib/getAllBlogArticles";
 import EditorialCard from "#components/editorials/EditorialCard";
 import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
-import { colors } from "#config/colors.config";
-import { fontNames } from "#constants/fontNames.constants";
-import { Feather } from "@expo/vector-icons";
 import { HOME_QK } from "#utils/queryKeys";
 import { useAppStore } from "#store/app/appStore";
+import SectionHeader from "#components/general/SectionHeader";
+import tw from "twrnc";
 
-export default function Editorials() {
+export default function Editorials({ hideAction }: Readonly<{ hideAction?: boolean }>) {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
 
@@ -26,55 +19,58 @@ export default function Editorials() {
     queryFn: async () => {
       const editorials: any = await listEditorials();
       const safe = Array.isArray(editorials.data) ? editorials.data : [];
-      return safe.slice(0, 5);
+      return safe
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime(),
+        )
+        .slice(0, 5);
     },
     staleTime: 5 * 60_000,
     gcTime: 15 * 60_000,
   });
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.headerRow}
-        disabled={data.length === 0}
-        onPress={() =>
-          navigation.navigate("AllEditorialsScreen", { editorials: data })
+    <View style={tw`mt-6 mb-2.5`}>
+      <SectionHeader
+        subtitle="JOURNALS"
+        title="Editorials"
+        onActionPress={
+          data.length > 0 && !hideAction
+            ? () =>
+                navigation.navigate("AllEditorialsScreen", { editorials: data })
+            : undefined
         }
-        hitSlop={10}
-      >
-        <Text style={styles.headerText}>Editorials</Text>
-        <Feather name="chevron-right" color={colors.grey} size={20} />
-      </TouchableOpacity>
+      />
 
       {isLoading && data.length === 0 && <ArtworkCardLoader />}
 
       {!isLoading && data.length > 0 && (
-        <FlatList
-          data={data}
-          keyExtractor={(_, i) => `editorial-${i}`}
+        <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.flatListContainer}
-          renderItem={({ item }) => (
-            <View style={styles.cardWrapper}>
-              <EditorialCard
-                cover={item.cover}
-                headline={item.headline}
-                width={280}
-                date={item.date}
-                showDetails={true}
-                onPress={() =>
-                  navigation.navigate("ArticleScreen", { article: item })
-                }
-              />
-            </View>
-          )}
-        />
+          style={tw`mt-6`}
+          contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-start" }]}
+        >
+          {data.map((item: any, i: number) => (
+            <EditorialCard
+              key={item.slug || item.headline || String(i)}
+              cover={item.cover}
+              headline={item.headline}
+              width={280}
+              date={item.date}
+              showDetails={true}
+              onPress={() =>
+                navigation.navigate("ArticleScreen", { article: item })
+              }
+            />
+          ))}
+        </ScrollView>
       )}
 
       {!isLoading && data.length === 0 && (
-        <View style={{ padding: 30 }}>
-          <Text style={{ color: colors.grey, textAlign: "center" }}>
+        <View style={tw`p-[30px]`}>
+          <Text style={tw`text-[#858585] text-center`}>
             No editorials available
           </Text>
         </View>
@@ -82,20 +78,3 @@ export default function Editorials() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { marginTop: 40, marginBottom: 10 },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    justifyContent: "space-between",
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "500",
-    fontFamily: fontNames.dmSans + "Medium",
-  },
-  flatListContainer: { paddingRight: 20, marginTop: 20 },
-  cardWrapper: { marginLeft: 20 },
-});

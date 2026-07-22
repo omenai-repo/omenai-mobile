@@ -1,4 +1,5 @@
-import { apiUrl, authorization, originHeader, userAgent } from "#constants/apiUrl.constants";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "../../utils/apiRequest";
 
 type addPrimaryAcctProp = {
   owner_id: string;
@@ -11,22 +12,24 @@ export async function addPrimaryAcct({
   account_details,
   base_currency,
 }: addPrimaryAcctProp) {
-  console.log({ owner_id, account_details, base_currency });
   try {
     const url = `${apiUrl}/api/wallet/add_primary_account`;
-    const res = await fetch(url, {
+    const res = await apiRequest(url, {
       method: "POST",
-      headers: {
-        Origin: originHeader,
-        "User-Agent": userAgent,
-        Authorization: authorization,
-      },
       body: JSON.stringify({ owner_id, account_details, base_currency }),
     });
 
     const result = await res.json();
     return { isOk: res.ok, data: result };
   } catch (error: any) {
-    console.log(error);
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error adding primary account",
+      },
+    };
   }
 }

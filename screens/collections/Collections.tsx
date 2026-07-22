@@ -33,7 +33,7 @@ export default function Collections() {
 
   return (
     <View style={tw`flex-1 bg-white`}>
-      <BackHeaderTitle title="Art collections" />
+      <BackHeaderTitle title="Browse By Medium" />
       <FlatList
         data={mediums}
         numColumns={getNumberOfColumns()}

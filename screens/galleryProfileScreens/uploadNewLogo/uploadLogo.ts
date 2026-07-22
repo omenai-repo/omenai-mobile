@@ -1,29 +1,18 @@
-const uploadLogo = async (file: { uri: string; name: string; type: string }) => {
-  const formData = new FormData();
+import { uploadToAppwrite } from "#utils/uploadToAppwrite";
 
-  formData.append('fileId', 'unique()'); // Appwrite will auto-generate an ID
-  formData.append('file', {
-    uri: file.uri,
-    name: file.name,
-    type: file.type,
-  } as any); // TS expects a `File`, so we cast
-
-  const res = await fetch(
-    `https://cloud.appwrite.io/v1/storage/buckets/${process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID}/files`,
-    {
-      method: 'POST',
-      headers: {
-        'X-Appwrite-Project': process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID!,
-        'X-Appwrite-Key': process.env.EXPO_PUBLIC_APPWRITE_UPLOAD_KEY!,
-      },
-      body: formData,
-    },
-  );
-
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.message || 'Upload failed');
-
-  return json; // file metadata
+const uploadLogo = async (file: {
+  uri: string;
+  name: string;
+  type: string;
+  size?: number;
+}) => {
+  return uploadToAppwrite({
+    bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
+    file,
+    fallbackName: `logo-${Date.now()}.jpg`,
+    fallbackType: "image/jpeg",
+    errorMessage: "Logo upload failed",
+  });
 };
 
 export default uploadLogo;

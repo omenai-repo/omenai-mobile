@@ -1,137 +1,133 @@
 import React from "react";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  PixelRatio,
-} from "react-native";
+import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { colors } from "#config/colors.config";
-import { fontNames } from "#constants/fontNames.constants";
-import { getFeaturedArtists } from "#services/overview/fetchFeaturedArtist";
-import { getImageFileView } from "#lib/storage/getImageFileView";
-import { HOME_QK } from "#utils/queryKeys";
+import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
+import ArtistCard from "./ArtistCard";
+import LongWhiteButton from "#components/buttons/LongWhiteButton";
+import SectionHeader from "#components/general/SectionHeader";
+import { colors } from "#config/colors.config";
+import { getArtists } from "#services/overview/fetchArtist";
+import { HOME_QK } from "#utils/queryKeys";
+import { FlashList } from "@shopify/flash-list";
+import { useArtistFollow } from "#hooks/useArtistFollow";
+import ListSeparator from "#components/general/ListSeparator";
+import { screenName } from "#constants/screenNames.constants";
 
-type Artist = {
-  author_id: string;
-  mostLikedArtwork: { url: string; artworkId: string; birthyear: string; country: string };
-  artist: string;
-  totalLikes: number;
-};
+const SKELETON_ITEMS = ["skeleton-1", "skeleton-2", "skeleton-3"];
 
-const FeaturedArtists = () => {
+export default function FeaturedArtists() {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
+  const { isFollowingFor, toggleFollow, isLoadingFollowed, hasUser } =
+    useArtistFollow();
 
-  const { data: artists = [] } = useQuery({
+  const {
+    data: featuredArtists = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: HOME_QK.featuredArtists(userSession?.id),
     queryFn: async () => {
-      const res = await getFeaturedArtists();
-      return res?.isOk && Array.isArray(res.data) ? (res.data as Artist[]) : [];
+      const res = await getArtists();
+
+      if (!res?.isOk) {
+        throw new Error(
+          res?.message || res?.body?.message || "Failed to load artists.",
+        );
+      }
+
+      return res.data?.featured_artists ?? [];
     },
     staleTime: 5 * 60_000,
     gcTime: 15 * 60_000,
   });
 
-  const ArtistCard = ({
-    image,
-    name,
-    details,
-    totalLikes,
-  }: {
-    image: string;
-    name: string;
-    details: { birthyear: string; country: string };
-    totalLikes?: number;
-  }) => {
-    const dpr = PixelRatio.get();
-    const displayWidth = 300;
-    const fetchWidth = Math.round(displayWidth * dpr);
-    const image_href = getImageFileView(image, fetchWidth);
+  if (isError) {
+    const message =
+      error instanceof Error ? error.message : "Failed to load artists.";
     return (
-      <View style={styles.artistCard}>
-        <Image source={{ uri: image_href }} style={styles.artistImage} />
-        <View
-          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
-        >
-          <View style={styles.artistInfo}>
-            <Text style={styles.artistName}>{name}</Text>
-            <Text style={styles.artistDetails}>{details.country + " b." + details.birthyear}</Text>
-          </View>
-          <View style={{ marginTop: 5 }}>
-            <Text
-              style={{ fontSize: 12, color: "#858585", fontFamily: fontNames.dmSans + "Regular" }}
-            >
-              {totalLikes || 0} Likes
-            </Text>
+      <View style={tw`p-[30px]`}>
+        <Text style={tw`text-[#858585] text-center`}>{message}</Text>
+      </View>
+    );
+  }
+
+  const listData = isLoading ? SKELETON_ITEMS : featuredArtists;
+
+  const renderArtistItem = ({ item }: { item: any }) => {
+    if (isLoading) {
+      return (
+        <View style={tw`w-[250px]`}>
+          <View style={tw`w-full h-[170px] rounded-sm bg-neutral-200`} />
+          <View style={tw`mt-3`}>
+            <View style={tw`h-5 w-36 bg-neutral-200 rounded-sm`} />
+            <View style={tw`h-3 w-28 bg-neutral-200 rounded-sm mt-2`} />
+            <View style={tw`h-7 w-24 bg-neutral-200 rounded-sm mt-3`} />
           </View>
         </View>
-      </View>
+      );
+    }
+
+    return (
+      <ArtistCard
+        artist={item}
+        isFollowing={isFollowingFor(item.author_id)}
+        onToggleFollow={toggleFollow}
+        onPressArtist={() =>
+          navigation.navigate(screenName.individual.artistDetails, {
+            artistId: item.author_id,
+            name: item.artist,
+            logo: item.logo,
+            coverUrl: item.mostLikedArtwork?.url,
+            birthyear: item.birthyear,
+            country: item.artistCountry,
+          })
+        }
+        disabled={!hasUser || isLoadingFollowed}
+      />
     );
   };
 
   return (
-    <View style={{ marginTop: 40 }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "500", flex: 1 }}>
-          Artists making the rave on Omenai
-        </Text>
-      </View>
+    <View style={tw`mt-6`}>
+      <SectionHeader subtitle="Featured Artists" title="Artists to watch" />
 
-      {artists.length > 0 ? (
-        <FlatList
-          data={artists}
-          keyExtractor={(item) => item.author_id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingRight: 20, paddingTop: 20 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("DetailsScreen", {
-                  type: "artist",
-                  id: item.author_id,
-                  name: item.artist,
-                  logo: item.mostLikedArtwork.url,
-                })
-              }
-            >
-              <ArtistCard
-                image={item.mostLikedArtwork.url}
-                name={item.artist}
-                details={item.mostLikedArtwork}
-                totalLikes={item.totalLikes}
-              />
-            </TouchableOpacity>
-          )}
-        />
-      ) : (
-        <View style={{ padding: 30 }}>
-          <Text style={{ color: colors.grey, textAlign: "center" }}>
-            No featured artists available
-          </Text>
+      <FlashList
+        data={listData}
+        keyExtractor={(item) => (isLoading ? item : item.author_id)}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={tw`pt-5 px-5`}
+        ItemSeparatorComponent={ListSeparator}
+        renderItem={renderArtistItem}
+        ListEmptyComponent={
+          isLoading ? null : (
+            <View style={tw`p-[30px]`}>
+              <Text style={tw`text-[#858585] text-center`}>
+                No featured artists available
+              </Text>
+            </View>
+          )
+        }
+      />
+
+      {!isLoading && (
+        <View style={tw`px-5 mt-7`}>
+          <LongWhiteButton
+            value="View all artists"
+            onClick={() => navigation.navigate(screenName.individual.allArtists)}
+            outline
+            borderColor={colors.inputBorder}
+            textStyle={tw`text-neutral-700 font-sans-regular`}
+            style={{ height: 48 }}
+            icon={<Feather name="arrow-right" size={16} color={tw.color("neutral-500")} />}
+          />
         </View>
       )}
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  artistCard: { width: 300, marginLeft: 20 },
-  artistImage: { width: "100%", height: 200, borderRadius: 5, backgroundColor: "#eee" },
-  artistInfo: { marginTop: 10 },
-  artistName: { fontSize: 14, fontWeight: "600", color: colors.primary_black },
-  artistDetails: {
-    fontSize: 12,
-    color: "#858585",
-    fontFamily: fontNames.dmSans + "Regular",
-    marginTop: 4,
-  },
-});
-
-export default React.memo(FeaturedArtists);
+}

@@ -9,9 +9,4 @@ export const appwriteConfig = {
   logoBucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID,
   documentationBucketId:
     process.env.EXPO_PUBLIC_APPWRITE_DOCUMENTATION_BUCKET_ID,
-  uploadKey: process.env.EXPO_PUBLIC_APPWRITE_UPLOAD_KEY,
 } as const;
-
-export const getAppwriteEndpoint = () => "https://cloud.appwrite.io/v1";
-export const getAppwriteProjectId = () =>
-  process.env.EXPO_PUBLIC_APPWRITE_CLIENT_ID;

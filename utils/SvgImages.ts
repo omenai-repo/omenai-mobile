@@ -141,16 +141,21 @@ export const errorIcon = `<svg width="51" height="51" viewBox="0 0 51 51" fill="
 </defs>
 </svg>
 `;
-export const checkMarkIcon = `<svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+export const getCheckMarkIcon = (
+  backgroundColor: string = "transparent"
+) => `<svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="51" height="51" rx="25.5" fill="${backgroundColor}"/>
 <rect x="0.175781" y="0.0234375" width="50" height="50" fill="url(#pattern0_5382_49597)"/>
 <defs>
 <pattern id="pattern0_5382_49597" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0_5382_49597" transform="scale(0.02)"/>
-</pattern>
+</pattern>  
 <image id="image0_5382_49597" width="50" height="50" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAExElEQVR4nO1ZTWwbRRReTiCBEFRCyDtpK9FQ4EBakNpcAhLlGK6lSIgjPxLixAE4IAFq1UIbROsmsbwzTkWPbUFQRENiBBIVaRB/sdNgp669M+s0jRSTNnEb1Y770BvbsddOm931eh0hf9JI9sreed+8782890ZR2mijjZahQxO7VcqHceBnZaOjQxOdhIkRwsQUofzjR47PPeBjvIdQniVMgBzys9G9dSj1EKFiP2E8TpgI43+VDQGAe1TGx1cNZgJUJq4QKq5XPys+5xkcNc/GW2b75hN8G9GMrs6j0/cSqvfWGmx3qFR/8dEvZ+8nzNjhmYcI5Z9WrXxOZeJao0QI40uE8ULV98+aSqJDE5sI4/nGDV+XWB7nahoRX4g/13wSojSMbtcJbBngD+P2SSg/4hURlYrPceFc8wzqlVC+4p0nhHnIuRuMGTWY3t4yAqzGQ8H0dsdEfCH92VYTIKtSSz3jmEhxb6/eFj2TE5hIMJHbOpS6zzERQo0Xinu8N8arwSSo/f8A8UfMZDBLoHovZhG2CODpqjI+5g0BHdTBOGwbmIB3R1Jw8BcDngpEgGjJenkxPo5ZhXVPMBH2xAOBS/DEYASO/DoDC8t5OHg+DcQfBaKl7vI/MWqDiMxMm0cCV9sfgffDOlxbzkNu5Ta8+V2iKKua+KgfPGaZiMrEgaZ5YTAOPScuwl+zWUDcyBVg3+kYqAMxCyTkOz6xTARrhtp0e1WnGJDBZHFVqW4vFvqn4J1zScjmViQJ9MS+03FJzuJCzG06Of2gvcpuLSJaCnZqUXj9bAL2norDLjYJvqN/S0lIcndaUaqD71gU+sZmoIzCbYA3ziaKnrDsVb6IaYs1EiGx645bLhp0/CK8ciYOc9mcNAiD9MzUPLz29bTUvSRUIyeffxK0P65CNQ6dT0sPWZITM70va6lsJkz8sN7LcLd5OhiBcHLBZFxs/ibsPRUzGYje+uhnYfrdcOJfUI9F7ZNgpfkpH3aFSFlmaMwXFypyKSPw+yx0+CclYSSGMirjyuIteHIwcvctlrlCxOgmjN+wE8Af/KhDla0S38Yz0On/ExKZ5dVn+JuX0WOBS45JEMaXUP7W4oSK5zGwLGpWkvnwJ17nmZnFW6bvJyfmnMUFK3mC8YytthK2c2QnxHoASgPXklkZ8zfzpdSjEUmJBVuFFh46tifCM8UfhdHL5g2gjPfCeoOSEiWviAPNT1G0lMydMKCrkVxYhi3+CceSIk5TlEaSRjWQgFe/ipuIvIV5VCDhAgmBY8ReGk/5b04nw0Pzm1hGkpi4mq2vLxzLio/ZSuMrrVD9pbVan1Yk9lh/BN7+/jJ0BaP1p719OS2RkL5HcQosL7HMdDQ5njEyuXS+S5EKkQLupI6JqEPpnS7purXNB3UDtYNIyHhcaQSE8cMtbdAxnsfGueIG8DQt9X37PCTRh3kftmtdIVFDaLdXRHyM9yjNAq7O/+JaYbWpXZmw4EYDDy+Lqrd5lYlDimdXb8zYIVuqIX1Pwx6geq+8xtOMLvsnt4tQKb+w3qVn0WBxvbY8kJehdluhTfUQFaPF62mxX15BFyvNiuwoz2IA4wldKhOmMAFsqQesAktSlfFzOCyXp2200YbSDPwHlRnZE5vqZaMAAAAASUVORK5CYII="/>
 </defs>
 </svg>
 `;
+
+export const checkMarkIcon = getCheckMarkIcon();
 
 // Tracking blocker icons
 export const packageIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2A9EDF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`;
@@ -328,3 +333,47 @@ export const getDeleteIcon = (
 `;
 
 export const deleteIcon = getDeleteIcon();
+
+export const faceIdIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M4 8v-2a2 2 0 0 1 2 -2h2" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M4 16v2a2 2 0 0 0 2 2h2" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M16 4h2a2 2 0 0 1 2 2v2" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M16 20h2a2 2 0 0 0 2 -2v-2" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M9 10l.01 0" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M15 10l.01 0" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M9.5 15a3.5 3.5 0 0 0 5 0" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+</svg>`;
+
+export const logo = `<svg width="107" height="24" viewBox="0 0 107 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12.9231 12.0001C12.9231 18.0534 8.76001 22.1534 2.19309 22.1534C1.39309 22.1534 0.627699 22.0867 0 21.9934V2.00673C0.627699 1.9134 1.39309 1.84673 2.19309 1.84673C8.76001 1.84673 12.9231 5.94673 12.9231 12.0001ZM8.54617 12.0001C8.54617 7.78673 6.4277 5.76007 3.55309 5.76007C2.96616 5.76007 2.45924 5.8134 1.97924 5.8934V18.1067C2.45924 18.1867 2.96616 18.2401 3.55309 18.2401C6.4277 18.2401 8.54617 16.2134 8.54617 12.0001Z" fill="#1A1A1A"/>
+<path d="M26.8647 1.84673C33.4316 1.84673 37.5947 5.94673 37.5947 12.0001C37.5947 18.0534 33.4316 22.1534 26.8647 22.1534C18.8247 22.1534 16.1316 18.0534 16.1316 12.0001C16.1316 5.94673 18.8247 1.84673 26.8647 1.84673ZM26.8647 18.2401C29.7393 18.2401 31.8578 16.2134 31.8578 12.0001C31.8578 7.78673 29.7393 5.76007 26.8647 5.76007C23.99 5.76007 21.8716 7.78673 21.8716 12.0001C21.8716 16.2134 23.99 18.2401 26.8647 18.2401Z" fill="#1A1A1A"/>
+<path d="M53.2985 22.1534H41.5646V2.00673H53.0585V5.92007H45.8316V10.2934H52.4185V14.2067H45.8316V18.2401H53.2985V22.1534Z" fill="#1A1A1A"/>
+<path d="M69.9678 2.00673V22.1534H65.8078L60.2078 10.9334V22.1534H56.0477V2.00673H60.2078L65.8078 13.2267V2.00673H69.9678Z" fill="#1A1A1A"/>
+<path d="M86.9739 18.2401H79.6139L78.3339 22.1534H73.8539L79.9339 2.00673H86.6539L92.7339 22.1534H88.2539L86.9739 18.2401ZM83.2939 6.24007L80.8408 14.3267H85.747L83.2939 6.24007Z" fill="#1A1A1A"/>
+<path d="M96.0093 22.1534H91.7423V2.00673H96.0093V22.1534Z" fill="#1A1A1A"/>
+</svg>
+`;
+
+export const billingActive = `<svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21 4H3C1.89543 4 1 4.89543 1 6V18C1 19.1046 1.89543 20 3 20H21C22.1046 20 23 19.1046 23 18V6C23 4.89543 22.1046 4 21 4ZM21 18H3V12H21V18ZM21 8H3V6H21V8Z" fill="white"/>
+</svg>
+`;
+
+export const billingInActive = `<svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21 4H3C1.89543 4 1 4.89543 1 6V18C1 19.1046 1.89543 20 3 20H21C22.1046 20 23 19.1046 23 18V6C23 4.89543 22.1046 4 21 4ZM21 18H3V12H21V18ZM21 8H3V6H21V8Z" fill="white" fill-opacity="0.7"/>
+</svg>
+`;
+
+export const reviewHubActive = `<svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7 4H17C19.2091 4 21 5.79086 21 8V14C21 16.2091 19.2091 18 17 18H11.5L8 21V18H7C4.79086 18 3 16.2091 3 14V8C3 5.79086 4.79086 4 7 4Z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/>
+<path d="M8 9.5H16" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+<path d="M8 12.5H13" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+</svg>
+`;
+
+export const reviewHubInActive = `<svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7 4H17C19.2091 4 21 5.79086 21 8V14C21 16.2091 19.2091 18 17 18H11.5L8 21V18H7C4.79086 18 3 16.2091 3 14V8C3 5.79086 4.79086 4 7 4Z" stroke="white" stroke-opacity="0.7" stroke-width="1.4" stroke-linejoin="round"/>
+<path d="M8 9.5H16" stroke="white" stroke-opacity="0.7" stroke-width="1.2" stroke-linecap="round"/>
+<path d="M8 12.5H13" stroke="white" stroke-opacity="0.7" stroke-width="1.2" stroke-linecap="round"/>
+</svg>
+`;

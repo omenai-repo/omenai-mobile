@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import React from "react";
-import { UseGalleryAuthStore } from "../../../../store/auth/login/galleryAuthStore";
-import Input from "../../../../components/inputs/Input";
-import LongBlackButton from "../../../../components/buttons/LongBlackButton";
+import { UseGalleryAuthStore } from "#store/auth/login/galleryAuthStore";
+import Input from "#components/inputs/Input";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
 
 export default function GalleryWaitList() {

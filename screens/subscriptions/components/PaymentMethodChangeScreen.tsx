@@ -2,17 +2,17 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import tw from "twrnc";
 import { useStripe } from "@stripe/stripe-react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
 import { createPaymentMethodSetupIntent } from "#services/stripe/createPaymentMethodSetupIntent";
 import { updatePaymentMethod } from "#services/stripe/updatePaymentMethod";
 import SuccessPaymentModal from "./SuccessPaymentModal";
+import { invalidateGallerySubscriptionAndOrders } from "#utils/invalidateGallerySubscriptionAndOrders";
+import BackHeaderTitle from "#components/header/BackHeaderTitle";
 
 export default function PaymentMethodChangeScreen() {
   const navigation = useNavigation<any>();
-  const route = useRoute<any>();
-  const { planId, planInterval } = route.params;
 
   const queryClient = useQueryClient();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -27,7 +27,7 @@ export default function PaymentMethodChangeScreen() {
 
   const displayName = useMemo(
     () => (user?.name ? `Omenai • ${user.name}` : "Omenai"),
-    [user?.name]
+    [user?.name],
   );
 
   const fetchSetupIntent = useCallback(async () => {
@@ -72,7 +72,7 @@ export default function PaymentMethodChangeScreen() {
       setSheetReady(true);
       return true;
     },
-    [displayName, initPaymentSheet, user?.email, user?.name]
+    [displayName, initPaymentSheet, user?.email, user?.name],
   );
 
   useEffect(() => {
@@ -93,6 +93,13 @@ export default function PaymentMethodChangeScreen() {
     };
   }, [fetchSetupIntent, initializeSheet]);
 
+  const refreshSubscriptionData = useCallback(() => {
+    void queryClient.invalidateQueries({
+      queryKey: ["subscription_precheck"],
+    });
+    void invalidateGallerySubscriptionAndOrders(queryClient, user?.id);
+  }, [queryClient, user?.id]);
+
   const handleOpenSheet = useCallback(async () => {
     // Safety: ensure ready. If not, try to initialize now.
     if (!sheetReady) {
@@ -108,49 +115,79 @@ export default function PaymentMethodChangeScreen() {
     setError(null);
 
     const { error: presentErr } = await presentPaymentSheet();
-    setPresenting(false);
 
     if (presentErr) {
+      setPresenting(false);
       if (presentErr.code !== "Canceled") setError(presentErr.message);
       return;
     }
 
-    // success -> refresh any data that depends on the PM
-    const setupIntentId = clientSecret?.split("_secret_")[0] ?? null;
-    await updatePaymentMethod(setupIntentId!);
-    setSuccessVisible(true);
-  }, [sheetReady, clientSecret, initializeSheet, presentPaymentSheet, navigation, queryClient]);
+    const setupIntentId = clientSecret?.split("_secret_")[0];
+    if (!setupIntentId) {
+      setPresenting(false);
+      setError("Invalid setup. Please contact support.");
+      return;
+    }
+
+    try {
+      const result = await updatePaymentMethod(setupIntentId);
+      if (!result?.isOk) {
+        setError(
+          result?.message ??
+            result?.body?.message ??
+            "Failed to save payment method. Please try again.",
+        );
+        return;
+      }
+      setSuccessVisible(true);
+      refreshSubscriptionData();
+    } catch {
+      setError("Failed to save payment method. Please try again.");
+    } finally {
+      setPresenting(false);
+    }
+  }, [
+    sheetReady,
+    clientSecret,
+    initializeSheet,
+    presentPaymentSheet,
+    refreshSubscriptionData,
+  ]);
 
   return (
     <>
       <View style={tw`flex-1 bg-slate-50`}>
-        <View style={tw`px-4 py-5 mt-[80px]`}>
-          <Text style={tw`text-xl font-semibold text-slate-900`}>Change Card</Text>
-        </View>
+        <BackHeaderTitle title="Change card" />
 
         <View style={tw`px-4`}>
           {initializing && (
             <View style={tw`my-6 items-center`}>
               <ActivityIndicator />
-              <Text style={tw`mt-2 text-slate-600`}>Preparing secure form…</Text>
+              <Text style={tw`mt-2 text-slate-600`}>
+                Preparing secure form…
+              </Text>
             </View>
           )}
 
           {error && !initializing && (
-            <View style={tw`p-3 mb-3 rounded-lg border border-red-200 bg-red-50`}>
+            <View
+              style={tw`p-3 mb-3 rounded-sm border border-red-200 bg-red-50`}
+            >
               <Text style={tw`text-red-700`}>{error}</Text>
             </View>
           )}
 
           <Pressable
-            disabled={initializing || presenting || !sheetReady} // CHANGED
+            disabled={initializing || presenting || !sheetReady}
             onPress={handleOpenSheet}
             style={({ pressed }) =>
-              tw.style(
-                `mt-2 h-12 rounded-md items-center justify-center`,
-                initializing || presenting || !sheetReady ? "bg-slate-300" : "bg-slate-900",
-                pressed ? "opacity-85" : ""
-              )
+              tw`mt-2 h-12 rounded-sm items-center justify-center
+                ${
+                  initializing || presenting || !sheetReady
+                    ? "bg-slate-300"
+                    : "bg-slate-900"
+                }
+                ${pressed ? "opacity-85" : ""}`
             }
           >
             <Text style={tw`text-white font-medium`}>
@@ -163,8 +200,10 @@ export default function PaymentMethodChangeScreen() {
         visible={successVisible}
         onPrimaryPress={() => {
           setSuccessVisible(false);
-          // refresh + go back to billing
-          queryClient.invalidateQueries({ queryKey: ["subscription_precheck"] });
+          void queryClient.invalidateQueries({
+            queryKey: ["subscription_precheck"],
+          });
+          void invalidateGallerySubscriptionAndOrders(queryClient, user?.id);
           navigation.goBack();
         }}
       />

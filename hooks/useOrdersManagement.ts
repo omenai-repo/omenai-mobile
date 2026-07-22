@@ -14,7 +14,9 @@ export const useOrdersManagement = ({
   errorMessage = "Failed to fetch orders",
 }: UseOrdersManagementOptions) => {
   const { updateModal } = useModalStore();
-  const [selectedTab, setSelectedTab] = useState<"pending" | "processing" | "completed">("pending");
+  const [selectedTab, setSelectedTab] = useState<
+    "pending" | "processing" | "completed"
+  >("pending");
   const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -27,15 +29,15 @@ export const useOrdersManagement = ({
         return Array.isArray(res.data) ? res.data : [];
       } catch (err: any) {
         updateModal({
-          message: err?.message ?? errorMessage,
+          message: err?.message || err?.body?.message || errorMessage,
           showModal: true,
           modalType: "error",
         });
         return [];
       }
     },
-    staleTime: 30_000,
-    gcTime: 10 * 60_000,
+    staleTime: 0,
+    gcTime: 0,
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
@@ -49,9 +51,11 @@ export const useOrdersManagement = ({
   const filterByYear = useCallback(
     (arr: any[]) => {
       if (!Array.isArray(arr)) return [];
-      return arr.filter((o) => new Date(o.createdAt).getFullYear() === selectedYear);
+      return arr.filter(
+        (o) => new Date(o.createdAt).getFullYear() === selectedYear,
+      );
     },
-    [selectedYear]
+    [selectedYear],
   );
 
   const getCurrentOrders = useCallback(() => {

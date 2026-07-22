@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Animated, StyleSheet, Platform, View } from "react-native";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,23 +17,15 @@ export default function BlurStatusBar({
   threshold = 0,
 }: Readonly<BlurStatusBarProps>) {
   const insets = useSafeAreaInsets();
-  const opacity = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    if (scrollY) {
-      const listener = scrollY.addListener(({ value }) => {
-        const scrollAmount = Math.max(0, value - threshold);
-        const mappedOpacity = Math.min(1, scrollAmount / 50);
-        opacity.setValue(mappedOpacity);
-      });
-
-      return () => {
-        scrollY.removeListener(listener);
-      };
-    } else {
-      opacity.setValue(1);
-    }
-  }, [scrollY, threshold, opacity]);
+  // We map the continuous scrollY value into an opacity between 0 and 1
+  // using Animated.interpolate to keep all maths on the native thread.
+  const opacity = scrollY
+    ? scrollY.interpolate({
+        inputRange: [threshold, threshold + 50],
+        outputRange: [0, 1],
+        extrapolate: "clamp",
+      })
+    : new Animated.Value(1);
 
   const shadowOpacity = scrollY
     ? opacity.interpolate({
@@ -78,7 +70,11 @@ export default function BlurStatusBar({
     >
       <View style={{ overflow: "hidden", height: "100%" }}>
         {Platform.OS === "ios" ? (
-          <BlurView intensity={intensity} tint={tint} style={StyleSheet.absoluteFill} />
+          <BlurView
+            intensity={intensity}
+            tint={tint}
+            style={StyleSheet.absoluteFill}
+          />
         ) : (
           <View
             style={[
