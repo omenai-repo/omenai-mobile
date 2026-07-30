@@ -34,14 +34,14 @@ export default function OnBoardingSection({
   const insets = useSafeAreaInsets();
   const { isTablet } = useDevice();
 
-  const imageHeight = Platform.OS === "ios" ? height / 1.6 : height / 1.1;
+  const imageHeight = height / 1.5;
 
   return (
     <View style={tw`flex-1 bg-white`}>
       {/* Full-bleed image with scale + fade */}
       <EaseView
         key={`image-${currentIndex}`}
-        initialAnimate={{ opacity: 0.2, scale: 1.05 }}
+        initialAnimate={{ opacity: 0.8, scale: 1.08 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{
           type: "timing",
@@ -95,7 +95,10 @@ export default function OnBoardingSection({
         {/* Subtle Skip button at top right */}
         <Pressable
           onPress={onFinish}
-          style={tw`bg-black/30 px-3 py-1.5 rounded-full`}
+          style={({ pressed }) => [
+            tw`bg-black/30 px-3 py-1.5 rounded-sm`,
+            pressed && tw`scale-95 opacity-90`,
+          ]}
           hitSlop={8}
         >
           <Text style={tw`text-white text-xs font-semibold tracking-wide`}>

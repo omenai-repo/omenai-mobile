@@ -101,21 +101,14 @@ export default function Welcome() {
             value="Create Account"
             onClick={() => handleNavigation(screenName.register)}
             style={{ backgroundColor: colors.white, height: 48 }}
-            textStyle={[
-              tw`font-semibold`,
-              {
-                color: colors.black,
-              },
-            ]}
+            textStyle={[tw`font-semibold`, { color: colors.black }]}
           />
 
           <LongBlackButton
             value="Log In"
             onClick={() => handleNavigation(screenName.login)}
             style={{ height: 48, backgroundColor: colors.black_light }}
-            textStyle={{
-              color: colors.white,
-            }}
+            textStyle={{ color: colors.white }}
           />
 
           {/* Browse as guest user button */}

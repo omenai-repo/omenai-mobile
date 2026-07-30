@@ -1,9 +1,9 @@
 import { View } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import ArtistRegisterationForms from "../../artistRegistrationForm/ArtistRegisterationForms";
+import ArtistRegisterationForms from "../artistRegistrationForm/ArtistRegisterationForms";
 import OnboardingBlockerScreen from "#components/blockers/onboarding/OnboardingBlockerScreen";
-import ArtistWaitlistForm from "../../artistWaitlistForm/ArtistWaitlistForm";
+import ArtistWaitlistForm from "../artistWaitlistForm/ArtistWaitlistForm";
 
 type ArtistFormProps = Readonly<{
   onInviteValidated?: (validated: boolean) => void;

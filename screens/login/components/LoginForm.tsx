@@ -6,7 +6,7 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import tw from "twrnc";
 import { useDevice } from "#hooks/useDevice";
 import LongBlackButton from "#components/buttons/LongBlackButton";
@@ -19,6 +19,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "#config/colors.config";
 import { SvgXml } from "react-native-svg";
 import { faceIdIcon } from "#utils/SvgImages";
+import { validate } from "#lib/validations/validatorGroup";
 
 type LoginFormProps = Readonly<{
   loginData: { email: string; password?: string };
@@ -54,6 +55,11 @@ export default function LoginForm({
   const { isTablet } = useDevice();
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
+
+  const [touched, setTouched] = useState({ email: false });
+
+  const emailValidation = validate(loginData.email || "", "email");
+  const emailError = emailValidation.success ? "" : emailValidation.errors[0];
 
   const biometricIcon = (() => {
     if (biometricProps.isBiometricLoading)
@@ -96,10 +102,11 @@ export default function LoginForm({
           label={emailLabel}
           keyboardType="email-address"
           onInputChange={setEmail}
+          handleBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
           placeHolder={emailPlaceholder}
           value={loginData.email}
+          errorMessage={touched.email ? emailError : ""}
           returnKeyType="next"
-          blurOnSubmit={false}
           onSubmitEditing={() => passwordRef.current?.focus()}
           textContentType="username"
           autoComplete="email"
@@ -114,15 +121,16 @@ export default function LoginForm({
           textContentType="password"
           autoComplete="password"
           returnKeyType="go"
-          blurOnSubmit={false}
           onSubmitEditing={() => {
             if (
-              loginData.email &&
+              emailValidation.success &&
               loginData.password &&
               !isLoading &&
               !biometricProps.isBiometricLoading
             ) {
               handleSubmit();
+            } else {
+              setTouched({ email: true });
             }
           }}
         />
@@ -132,7 +140,8 @@ export default function LoginForm({
           <LongBlackButton
             value={isLoading ? "Loading ..." : loginButtonLabel}
             isDisabled={
-              !(loginData.email && loginData.password) ||
+              !emailValidation.success ||
+              !loginData.password ||
               biometricProps.isBiometricLoading
             }
             isLoading={isLoading}
@@ -152,8 +161,7 @@ export default function LoginForm({
               accessibilityHint="Uses saved email and password after device authentication"
               accessibilityState={{
                 busy: biometricProps.isBiometricLoading,
-                disabled:
-                  biometricProps.isBiometricLoading || isLoading,
+                disabled: biometricProps.isBiometricLoading || isLoading,
               }}
               style={[
                 tw`items-center justify-center rounded-sm h-[52px] w-[52px]`,

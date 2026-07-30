@@ -55,25 +55,6 @@ export default function ShippingDetails({
     pricing.usd_price > 0
       ? pricing.usd_price
       : undefined;
-  const { formErrors, handleValidationChecks, checkIsDisabled } =
-    useFormValidation({
-      name: "",
-      email: "",
-      address: "",
-      zipCode: "",
-      city: "",
-      state: "",
-    });
-
-  const transformedCountries = useMemo(
-    () =>
-      Country.getAllCountries().map((item: ICountry) => ({
-        value: item.isoCode,
-        label: item.name,
-      })),
-    [],
-  );
-
   const {
     deliveryMode,
     setDeliveryMode,
@@ -101,6 +82,25 @@ export default function ShippingDetails({
     saveShippingAddress,
     setSaveShippingAddress,
   } = useOrderSummaryStore();
+
+  const { formErrors, touched, handleBlur, checkIsDisabled } =
+    useFormValidation({
+      name,
+      email,
+      address,
+      zipCode,
+      city,
+      state,
+    });
+
+  const transformedCountries = useMemo(
+    () =>
+      Country.getAllCountries().map((item: ICountry) => ({
+        value: item.isoCode,
+        label: item.name,
+      })),
+    [],
+  );
 
   const handleCountrySelect = (item: { label: string; value: string }) => {
     setCountry(item.label);
@@ -143,7 +143,6 @@ export default function ShippingDetails({
     [],
   );
 
-  // 🚀 **Handle State Selection**
   const handleStateSelect = useCallback(
     (item: { label: string; value: string; isoCode?: string }) => {
       setState(item.value);
@@ -177,7 +176,6 @@ export default function ShippingDetails({
     setDeliveryAddress(session.address.address_line);
     setZipCode(session.address.zip);
 
-    // ✅ Set Country
     const countryItem = Country.getAllCountries().find(
       (c) => c.isoCode === session.address.countryCode,
     );
@@ -190,7 +188,6 @@ export default function ShippingDetails({
     setCountry(selectedCountry.label);
     setCountryCode(selectedCountry.value);
 
-    // 🌎 Get and set states
     const states = State.getStatesOfCountry(selectedCountry.value) || [];
     const mappedStates = states.map((state: IState) => ({
       label: state.name,
@@ -206,7 +203,6 @@ export default function ShippingDetails({
       setState(selectedState.value);
       setStateCode(selectedState.isoCode);
 
-      // 🏙️ Get and set cities
       const cities =
         City.getCitiesOfState(selectedCountry.value, selectedState.isoCode) ||
         [];
@@ -216,7 +212,6 @@ export default function ShippingDetails({
       }));
       setCityData(mappedCities);
 
-      // 🏠 Set city if valid
       const foundCity = mappedCities.find(
         (c) => c.value === session.address.city,
       );
@@ -247,8 +242,8 @@ export default function ShippingDetails({
             placeHolder="Enter your full name"
             onInputChange={() => null}
             disabled
-            handleBlur={() => handleValidationChecks("name", name)}
-            errorMessage={formErrors.name}
+            handleBlur={() => handleBlur("name")}
+            errorMessage={touched.name ? formErrors.name : ""}
           />
           <Input
             label="Email address"
@@ -257,16 +252,16 @@ export default function ShippingDetails({
             onInputChange={() => null}
             disabled
             keyboardType="email-address"
-            handleBlur={() => handleValidationChecks("email", email)}
-            errorMessage={formErrors.email}
+            handleBlur={() => handleBlur("email")}
+            errorMessage={touched.email ? formErrors.email : ""}
           />
           <Input
             label="Delivery address"
             value={address}
             placeHolder="Enter your delivery address"
             onInputChange={setDeliveryAddress}
-            handleBlur={() => handleValidationChecks("address", address)}
-            errorMessage={formErrors.address}
+            handleBlur={() => handleBlur("address")}
+            errorMessage={touched.address ? formErrors.address : ""}
           />
           <CustomSelectPicker
             data={transformedCountries}
@@ -308,8 +303,8 @@ export default function ShippingDetails({
             placeHolder="123456"
             onInputChange={setZipCode}
             keyboardType="number-pad"
-            handleBlur={() => handleValidationChecks("zipCode", zipCode)}
-            errorMessage={formErrors.zipCode}
+            handleBlur={() => handleBlur("zipCode")}
+            errorMessage={touched.zipCode ? formErrors.zipCode : ""}
           />
           <CustomChecker
             isSelected={saveShippingAddress}
@@ -321,14 +316,7 @@ export default function ShippingDetails({
       <SummaryContainer
         buttonTypes="Request price quote"
         price={artworkPrice}
-        disableButton={checkIsDisabled({
-          name,
-          email,
-          address,
-          zipCode,
-          city,
-          state,
-        })}
+        disableButton={checkIsDisabled()}
       />
     </View>
   );

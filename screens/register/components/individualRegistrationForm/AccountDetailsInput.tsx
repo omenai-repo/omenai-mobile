@@ -18,22 +18,18 @@ export default function AccountDetailsInput() {
     setPageIndex,
   } = useIndividualAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsDisabled } =
-    useFormValidation({
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
-
-  const isButtonDisabled = () => {
-    return checkIsDisabled({
-      name: individualRegisterData.name,
-      email: individualRegisterData.email,
-      password: individualRegisterData.password,
-      confirmPassword: individualRegisterData.confirmPassword,
-    });
-  };
+  const { formErrors, touched, handleBlur, checkIsDisabled } =
+    useFormValidation(
+      {
+        name: individualRegisterData.name,
+        email: individualRegisterData.email,
+        password: individualRegisterData.password,
+        confirmPassword: individualRegisterData.confirmPassword,
+      },
+      {
+        confirmPassword: individualRegisterData.password,
+      },
+    );
 
   return (
     <View style={tw`gap-10`}>
@@ -41,55 +37,45 @@ export default function AccountDetailsInput() {
         <Input
           label="Full name"
           keyboardType="default"
-          onInputChange={(text) => {
-            setName(text);
-            handleValidationChecks("name", text);
-          }}
+          onInputChange={setName}
+          handleBlur={() => handleBlur("name")}
           placeHolder="Enter your full name"
           value={individualRegisterData.name}
-          errorMessage={formErrors.name}
+          errorMessage={touched.name ? formErrors.name : ""}
         />
         <Input
           label="Email address"
           keyboardType="email-address"
-          onInputChange={(text) => {
-            setEmail(text);
-            handleValidationChecks("email", text);
-          }}
+          onInputChange={setEmail}
+          handleBlur={() => handleBlur("email")}
           placeHolder="Enter your email address"
           value={individualRegisterData.email}
-          errorMessage={formErrors.email}
+          errorMessage={touched.email ? formErrors.email : ""}
         />
         <PasswordInput
           label="Password"
-          onInputChange={(text) => {
-            setPassword(text);
-            handleValidationChecks("password", text); // ✅ Debounced validation
-          }}
+          onInputChange={setPassword}
+          handleBlur={() => handleBlur("password")}
           placeHolder="Enter password"
           value={individualRegisterData.password}
-          errorMessage={formErrors.password}
+          errorMessage={touched.password ? formErrors.password : ""}
           textContentType="newPassword"
         />
         <PasswordInput
           label="Confirm password"
-          onInputChange={(text) => {
-            setConfirmPassword(text);
-            handleValidationChecks(
-              "confirmPassword",
-              individualRegisterData.password,
-              text,
-            );
-          }}
+          onInputChange={setConfirmPassword}
+          handleBlur={() => handleBlur("confirmPassword")}
           placeHolder="Enter password again"
           value={individualRegisterData.confirmPassword}
-          errorMessage={formErrors.confirmPassword}
+          errorMessage={
+            touched.confirmPassword ? formErrors.confirmPassword : ""
+          }
           textContentType="newPassword"
         />
       </View>
       <View style={tw`flex-row gap-2.5 justify-end`}>
         <NextButton
-          isDisabled={isButtonDisabled()}
+          isDisabled={checkIsDisabled()}
           handleButtonClick={() => setPageIndex(pageIndex + 1)}
         />
       </View>

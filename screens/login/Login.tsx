@@ -1,10 +1,10 @@
-import {
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AuthHeader from "#components/auth/AuthHeader";
 import ScrollWrapper from "#components/general/ScrollWrapper";
@@ -113,9 +113,7 @@ export default function Login() {
   const handleBiometricLogin = async () => {
     setSubmitLoading(true);
     try {
-      const { success } = await authenticate(
-        "Sign in with your saved login",
-      );
+      const { success } = await authenticate("Sign in with your saved login");
       if (!success) {
         showBiometricError(
           "Biometric sign-in was cancelled or did not succeed. Try email and password, or try again.",
@@ -133,12 +131,9 @@ export default function Login() {
 
       const { email, token: password } = credentials;
 
-      await handleLogin(
-        { email, password },
-        setSubmitLoading,
-        () => {},
-        { postLoginFlow: "finalize_only" },
-      );
+      await handleLogin({ email, password }, setSubmitLoading, () => {}, {
+        postLoginFlow: "finalize_only",
+      });
     } catch {
       showBiometricError(
         "Something went wrong during biometric sign-in. Please try again.",

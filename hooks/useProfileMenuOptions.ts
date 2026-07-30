@@ -20,7 +20,7 @@ export const useProfileMenuOptions = (
         name: "Change password",
         subText: "Change the password to your account",
         handlePress: () =>
-          navigation.navigate(screenName.gallery.changePassword, {
+          navigation.navigate(screenName.changePassword, {
             routeName: userType,
           }),
         svgIcon: changePasswsordIcon,

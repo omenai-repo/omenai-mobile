@@ -16,17 +16,14 @@ export default function ExtraGalleryDetailsInput() {
     setDescription,
   } = useGalleryAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsDisabled } =
+  const { formErrors, touched, handleBlur, checkIsDisabled } =
     useFormValidation({
-      admin: "",
-      description: "",
-    });
-
-  const isButtonDisabled = () => {
-    return checkIsDisabled({
       admin: galleryRegisterData.admin,
       description: galleryRegisterData.description,
     });
+
+  const isButtonDisabled = () => {
+    return checkIsDisabled();
   };
 
   return (
@@ -35,24 +32,20 @@ export default function ExtraGalleryDetailsInput() {
         <Input
           label={`Administrator’s Full Name`}
           keyboardType="default"
-          onInputChange={(text) => {
-            setAdmin(text);
-            handleValidationChecks("admin", text);
-          }}
+          onInputChange={setAdmin}
+          handleBlur={() => handleBlur("admin")}
           placeHolder="Enter your full name"
           value={galleryRegisterData.admin}
-          errorMessage={formErrors.admin}
+          errorMessage={touched.admin ? formErrors.admin : ""}
         />
 
         <LargeInput
           label={`Gallery Description`}
-          onInputChange={(text) => {
-            setDescription(text);
-            handleValidationChecks("description", text);
-          }}
+          onInputChange={setDescription}
+          handleBlur={() => handleBlur("description")}
           placeHolder="Write a description of your gallery (not more than 100 words)"
           value={galleryRegisterData.description}
-          errorMessage={formErrors.description}
+          errorMessage={touched.description ? formErrors.description : ""}
         />
       </View>
       <View style={styles.buttonsContainer}>

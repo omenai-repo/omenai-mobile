@@ -5,9 +5,7 @@ export const validateText = <T>(value: T) => {
   let errors = [];
 
   if (!schema.min(3).safeParse(value).success) {
-    errors.push(
-      "Seems like you left this field blank or it's too short. Please provide full name."
-    );
+    errors.push("Must be at least 3 characters.");
   }
   return errors;
 };

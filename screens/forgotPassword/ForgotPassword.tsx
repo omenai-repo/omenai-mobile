@@ -3,8 +3,7 @@ import React from "react";
 import AuthHeader from "#components/auth/AuthHeader";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "#constants/screenNames.constants";
-import Form from "./components/form/Form";
+import Form from "./components/Form";
 import tw from "twrnc";
 
 import ScrollWrapper from "#components/general/ScrollWrapper";
@@ -17,7 +16,7 @@ export default function ForgotPassword() {
       <AuthHeader
         title="Forgot Password?"
         subTitle="Provide the details required and reset your password"
-        handleBackClick={() => navigation.navigate(screenName.login)}
+        handleBackClick={() => navigation.goBack()}
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

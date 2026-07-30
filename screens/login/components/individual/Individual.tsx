@@ -19,13 +19,8 @@ export default function Individual({
   handleLogin,
   setSubmitLoading,
 }: IndividualProps) {
-  const {
-    individualLoginData,
-    setEmail,
-    setPassword,
-    clearInputs,
-    isLoading,
-  } = useIndividualAuthLoginStore();
+  const { individualLoginData, setEmail, setPassword, clearInputs, isLoading } =
+    useIndividualAuthLoginStore();
 
   const handleSubmit = () =>
     handleLogin(individualLoginData, setSubmitLoading, clearInputs);

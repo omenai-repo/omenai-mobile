@@ -1,7 +1,9 @@
 import { useAppStore } from "../store/app/appStore";
 import { logout } from "./logout.utils";
 import { getSecureItem } from "./secureStore";
-import { utils_getAsyncData } from "./utils_asyncStorage";
+import { utils_getAsyncData, utils_storeAsyncData } from "./utils_asyncStorage";
+import { apiRequest } from "./apiRequest";
+import { apiUrl } from "../constants/apiUrl.constants";
 
 const sanitizeSessionLogo = (logo: unknown): string => {
   if (typeof logo !== "string") return "";
@@ -52,6 +54,31 @@ export const utils_appInit = async () => {
           userSession: value,
           userType: value.role === "individual" ? "user" : value.role,
         });
+
+        // Sync with API in background
+        apiRequest(`${apiUrl}/api/auth/session/user`)
+          .then(async (res) => {
+            console.log(JSON.stringify(res, null, 2));
+            if (res.ok) {
+              const { user } = await res.json();
+              if (user && user.userData) {
+                const updatedSession = sanitizePersistedSession({
+                  ...value,
+                  ...user.userData,
+                  id: user.userId || value.id,
+                });
+                console.log(updatedSession);
+                useAppStore.setState({ userSession: updatedSession });
+                await utils_storeAsyncData(
+                  "userSession",
+                  JSON.stringify(updatedSession),
+                );
+              }
+            }
+          })
+          .catch((err) => {
+            console.error("Failed to sync profile on app load:", err);
+          });
       } catch (error) {
         console.error("Failed to parse user data:", error);
         await logout();
