@@ -25,8 +25,6 @@ export default function CuratorPicks() {
           item?.data?.art_id,
       );
     },
-    staleTime: 5 * 60_000,
-    gcTime: 15 * 60_000,
   });
 
   if (!isLoading && picks.length === 0) {
@@ -53,10 +51,9 @@ export default function CuratorPicks() {
             item.identifier || item?.data?.art_id || `curator-pick-${index}`
           }
           renderItem={({ item }) => {
-            const artwork = item.data;
             return (
               <ArtworkCard
-                artwork={artwork}
+                artwork={item.data}
                 hideBackground
                 useImageLoadAspectRatio
               />

@@ -27,10 +27,7 @@ export default function FeaturedShows() {
 
   return (
     <View style={tw`mt-6`}>
-      <SectionHeader
-        title="Featured Shows"
-        subtitle="Shows to discover"
-      />
+      <SectionHeader title="Featured Shows" subtitle="Shows to discover" />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -38,72 +35,86 @@ export default function FeaturedShows() {
       >
         {isLoading
           ? SKELETON_ITEMS.map((item) => (
-            <View key={item} style={tw`w-[250px]`}>
-              <View style={tw`w-full h-[170px] rounded-sm bg-[#EAEAEA]`} />
-              <View style={tw`h-3 w-24 rounded-sm bg-[#E6E6E6] mt-3`} />
-              <View style={tw`h-4 w-48 rounded-sm bg-[#E6E6E6] mt-2`} />
-              <View style={tw`h-3 w-36 rounded-sm bg-[#E6E6E6] mt-2`} />
-              <View style={tw`h-3 w-28 rounded-sm bg-[#E6E6E6] mt-1.5`} />
-            </View>
-          ))
+              <View key={item} style={tw`w-[250px]`}>
+                <View style={tw`w-full h-[170px] rounded-sm bg-[#EAEAEA]`} />
+                <View style={tw`h-3 w-24 rounded-sm bg-[#E6E6E6] mt-3`} />
+                <View style={tw`h-4 w-48 rounded-sm bg-[#E6E6E6] mt-2`} />
+                <View style={tw`h-3 w-36 rounded-sm bg-[#E6E6E6] mt-2`} />
+                <View style={tw`h-3 w-28 rounded-sm bg-[#E6E6E6] mt-1.5`} />
+              </View>
+            ))
           : shows.map((show) => {
-            const status = getEventStatus(show.start_date, show.end_date);
-            const isClosed = status === "Past";
+              const status = getEventStatus(show.start_date, show.end_date);
+              const isClosed = status === "Past";
 
-            return (
-              <Pressable
-                key={show.event_id}
-                onPress={() =>
-                  navigation.navigate(screenName.individual.showDetails, {
-                    eventId: show.event_id,
-                  })
-                }
-                style={tw`w-[250px]`}
-              >
-                <View style={tw`relative`}>
-                  <Image
-                    source={{ uri: resolveCoverImageUri(show.cover_image) }}
-                    style={tw`w-full h-[170px] bg-[#EAEAEA]`}
-                  />
-                  <View style={tw`absolute top-3 left-3`}>
-                    <Text
-                      style={[
-                        tw`px-2 py-1 text-[10px] uppercase tracking-widest font-medium`,
-                        isClosed ? tw`bg-black/70 text-white` : tw`bg-white/90 text-neutral-900`,
-                      ]}
-                    >
-                      {isClosed ? "Closed" : show.event_type.replace("_", " ")}
-                    </Text>
+              return (
+                <Pressable
+                  key={show.event_id}
+                  onPress={() =>
+                    navigation.navigate(screenName.individual.showDetails, {
+                      eventId: show.event_id,
+                    })
+                  }
+                  style={tw`w-[250px]`}
+                >
+                  <View style={tw`relative`}>
+                    <Image
+                      source={{ uri: resolveCoverImageUri(show.cover_image) }}
+                      style={tw`w-full h-[170px] bg-[#EAEAEA]`}
+                    />
+                    <View style={tw`absolute top-3 left-3`}>
+                      <Text
+                        style={[
+                          tw`px-2 py-1 text-[10px] uppercase tracking-widest font-medium`,
+                          isClosed
+                            ? tw`bg-black/70 text-white`
+                            : tw`bg-white/90 text-neutral-900`,
+                        ]}
+                      >
+                        {isClosed
+                          ? "Closed"
+                          : show.event_type.replace("_", " ")}
+                      </Text>
+                    </View>
                   </View>
-                </View>
 
-                <Text style={tw`text-xs uppercase tracking-wide text-neutral-500 mt-2`}>
-                  {show.gallery?.name || "Gallery"}
-                </Text>
-                <Text style={tw`text-base capitalize font-serif leading-snug mt-1 text-neutral-900`}>
-                  {show.title}
-                </Text>
-                <Text style={tw`text-xs uppercase tracking-wide mt-1 text-neutral-500`}>
-                  {new Date(show.start_date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}{" "}
-                  —{" "}
-                  {new Date(show.end_date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </Text>
-                {show.location?.city ? (
-                  <Text style={tw`text-xs uppercase tracking-wide mt-0.5 text-neutral-700`}>
-                    {show.location.city}
-                    {show.location.country ? `, ${show.location.country}` : ""}
+                  <Text
+                    style={tw`text-xs uppercase tracking-wide text-neutral-500 mt-2`}
+                  >
+                    {show.gallery?.name || "Gallery"}
                   </Text>
-                ) : null}
-              </Pressable>
-            );
-          })}
+                  <Text
+                    style={tw`text-base capitalize font-serif leading-snug mt-1 text-neutral-900`}
+                  >
+                    {show.title}
+                  </Text>
+                  <Text
+                    style={tw`text-xs uppercase tracking-wide mt-1 text-neutral-500`}
+                  >
+                    {new Date(show.start_date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}{" "}
+                    —{" "}
+                    {new Date(show.end_date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </Text>
+                  {show.location?.city ? (
+                    <Text
+                      style={tw`text-xs uppercase tracking-wide mt-0.5 text-neutral-700`}
+                    >
+                      {show.location.city}
+                      {show.location.country
+                        ? `, ${show.location.country}`
+                        : ""}
+                    </Text>
+                  ) : null}
+                </Pressable>
+              );
+            })}
       </ScrollView>
     </View>
   );

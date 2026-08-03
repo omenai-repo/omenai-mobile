@@ -27,9 +27,7 @@ export default function FairsEvents() {
 
   return (
     <View style={tw`mt-6`}>
-      <SectionHeader
-        title="Fairs & Events"
-      />
+      <SectionHeader title="Fairs & Events" />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -45,70 +43,85 @@ export default function FairsEvents() {
                 <View style={tw`h-3 w-28 rounded-sm bg-[#E6E6E6] mt-1.5`} />
               </View>
             ))
-          : events.map((event) => (
-          (() => {
-            const status = getEventStatus(event.start_date, event.end_date);
-            const isClosed = status === "Past";
-            const isFair = event.event_type === "art_fair";
+          : events.map((event) =>
+              (() => {
+                const status = getEventStatus(event.start_date, event.end_date);
+                const isClosed = status === "Past";
+                const isFair = event.event_type === "art_fair";
 
-            return (
-              <Pressable
-                key={event.event_id}
-                onPress={() =>
-                  navigation.navigate(screenName.individual.fairEventDetails, {
-                    eventId: event.event_id,
-                  })
-                }
-                style={tw`w-[250px]`}
-              >
-                <View style={tw`relative`}>
-                  <Image
-                    source={{
-                      uri: resolveCoverImageUri(event.cover_image),
-                    }}
-                    style={tw`w-full h-[170px] rounded-sm bg-[#EAEAEA]`}
-                  />
-                  <View style={tw`absolute top-3 left-3`}>
+                return (
+                  <Pressable
+                    key={event.event_id}
+                    onPress={() =>
+                      navigation.navigate(
+                        screenName.individual.fairEventDetails,
+                        {
+                          eventId: event.event_id,
+                        },
+                      )
+                    }
+                    style={tw`w-[250px]`}
+                  >
+                    <View style={tw`relative`}>
+                      <Image
+                        source={{
+                          uri: resolveCoverImageUri(event.cover_image),
+                        }}
+                        style={tw`w-full h-[170px] rounded-sm bg-[#EAEAEA]`}
+                      />
+                      <View style={tw`absolute top-3 left-3`}>
+                        <Text
+                          style={[
+                            tw`px-2 py-1 text-[10px] uppercase tracking-widest font-medium rounded-sm`,
+                            isClosed
+                              ? tw`bg-black/70 text-white`
+                              : tw`bg-white/90 text-neutral-900`,
+                          ]}
+                        >
+                          {isClosed
+                            ? "Closed"
+                            : event.event_type.replace("_", " ")}
+                        </Text>
+                      </View>
+                    </View>
                     <Text
-                      style={[
-                        tw`px-2 py-1 text-[10px] uppercase tracking-widest font-medium rounded-sm`,
-                        isClosed ? tw`bg-black/70 text-white` : tw`bg-white/90 text-neutral-900`,
-                      ]}
+                      style={tw`text-xs uppercase tracking-wide text-neutral-500 mt-2`}
                     >
-                      {isClosed ? "Closed" : event.event_type.replace("_", " ")}
+                      {event.gallery?.name || "Gallery"}
                     </Text>
-                  </View>
-                </View>
-                <Text
-                  style={tw`text-xs uppercase tracking-wide text-neutral-500 mt-2`}
-                >
-                  {event.gallery?.name || "Gallery"}
-                </Text>
-                <Text style={tw`text-base capitalize font-serif leading-snug mt-1 text-neutral-900`}>
-                  {event.title}
-                </Text>
-                <Text style={tw`text-xs uppercase tracking-wide mt-1 text-neutral-500`}>
-                  {new Date(event.start_date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}{" "}
-                  —{" "}
-                  {new Date(event.end_date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </Text>
-                {isFair && event.location?.city ? (
-                  <Text style={tw`text-xs uppercase tracking-wide mt-0.5 text-neutral-700`}>
-                    {event.location.city}
-                    {event.location.country ? `, ${event.location.country}` : ""}
-                  </Text>
-                ) : null}
-              </Pressable>
-            );
-          })()
-        ))}
+                    <Text
+                      style={tw`text-base capitalize font-serif leading-snug mt-1 text-neutral-900`}
+                    >
+                      {event.title}
+                    </Text>
+                    <Text
+                      style={tw`text-xs uppercase tracking-wide mt-1 text-neutral-500`}
+                    >
+                      {new Date(event.start_date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}{" "}
+                      —{" "}
+                      {new Date(event.end_date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </Text>
+                    {isFair && event.location?.city ? (
+                      <Text
+                        style={tw`text-xs uppercase tracking-wide mt-0.5 text-neutral-700`}
+                      >
+                        {event.location.city}
+                        {event.location.country
+                          ? `, ${event.location.country}`
+                          : ""}
+                      </Text>
+                    ) : null}
+                  </Pressable>
+                );
+              })(),
+            )}
       </ScrollView>
     </View>
   );

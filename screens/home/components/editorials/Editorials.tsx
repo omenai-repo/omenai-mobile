@@ -10,7 +10,9 @@ import { useAppStore } from "#store/app/appStore";
 import SectionHeader from "#components/general/SectionHeader";
 import tw from "twrnc";
 
-export default function Editorials({ hideAction }: Readonly<{ hideAction?: boolean }>) {
+export default function Editorials({
+  hideAction,
+}: Readonly<{ hideAction?: boolean }>) {
   const navigation = useNavigation<any>();
   const { userSession } = useAppStore();
 
@@ -26,8 +28,6 @@ export default function Editorials({ hideAction }: Readonly<{ hideAction?: boole
         )
         .slice(0, 5);
     },
-    staleTime: 5 * 60_000,
-    gcTime: 15 * 60_000,
   });
 
   return (

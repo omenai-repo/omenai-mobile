@@ -42,8 +42,6 @@ export default function FeaturedArtists() {
 
       return res.data?.featured_artists ?? [];
     },
-    staleTime: 5 * 60_000,
-    gcTime: 15 * 60_000,
   });
 
   if (isError) {
@@ -119,12 +117,20 @@ export default function FeaturedArtists() {
         <View style={tw`px-5 mt-7`}>
           <LongWhiteButton
             value="View all artists"
-            onClick={() => navigation.navigate(screenName.individual.allArtists)}
+            onClick={() =>
+              navigation.navigate(screenName.individual.allArtists)
+            }
             outline
             borderColor={colors.inputBorder}
             textStyle={tw`text-neutral-700 font-sans-regular`}
             style={{ height: 48 }}
-            icon={<Feather name="arrow-right" size={16} color={tw.color("neutral-500")} />}
+            icon={
+              <Feather
+                name="arrow-right"
+                size={16}
+                color={tw.color("neutral-500")}
+              />
+            }
           />
         </View>
       )}

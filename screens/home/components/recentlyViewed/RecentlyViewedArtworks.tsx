@@ -42,8 +42,6 @@ function RecentlyViewedArtworks() {
       return res?.isOk ? (res.data ?? []).slice(0, 10) : [];
     },
     enabled: !!userId,
-    staleTime: 60_000,
-    gcTime: 10 * 60_000,
   });
 
   const recentArtworks = useMemo(() => data as ViewHistoryItem[], [data]);

@@ -27,8 +27,6 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
       return res?.data ?? [];
     },
     select: (rows) => rows.slice(0, limit),
-    staleTime: 60_000,
-    gcTime: 10 * 60_000,
   });
 
   const showMoreButton = data.length >= limit;
@@ -54,7 +52,10 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
             horizontal
             showsHorizontalScrollIndicator={false}
             style={tw`mt-5`}
-            contentContainerStyle={{ alignItems: "flex-end", paddingHorizontal: 20 }}
+            contentContainerStyle={{
+              alignItems: "flex-end",
+              paddingHorizontal: 20,
+            }}
             ItemSeparatorComponent={ListSeparator}
             keyExtractor={(item: any, index) =>
               item.art_id?.toString() ?? `curated-${index}`

@@ -24,7 +24,6 @@ export function useFairsEventsInfinite(pageSize = 20) {
       if (p && p.page < p.totalPages) return p.page + 1;
       return undefined;
     },
-    staleTime: 5 * 60_000,
   });
 }
 
@@ -49,8 +48,6 @@ export function useFairsEventsPreview(limit = 10) {
       const res = await getAllEvents(1, limit, "All");
       return res?.isOk ? res.data : [];
     },
-    staleTime: 5 * 60_000,
-    gcTime: 15 * 60_000,
   });
 }
 

@@ -34,7 +34,7 @@ export default function OnBoardingSection({
   const insets = useSafeAreaInsets();
   const { isTablet } = useDevice();
 
-  const imageHeight = height / 1.5;
+  const imageHeight = Platform.OS === "ios" ? height / 1.6 : height / 1.5;
 
   return (
     <View style={tw`flex-1 bg-white`}>
