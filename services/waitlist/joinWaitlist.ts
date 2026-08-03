@@ -1,5 +1,5 @@
 import { apiUrl } from "#constants/apiUrl.constants";
-import { apiRequest } from "../../utils/apiRequest";
+import { apiRequest } from "#utils/network/apiRequest";
 
 type JoinWaitlistPayload = Readonly<{
   name: string;
@@ -11,6 +11,7 @@ type JoinWaitlistResponse = {
   isOk: boolean;
   message: string;
   status?: string;
+  body?: { message: string };
 };
 
 export async function joinWaitlist(
@@ -44,6 +45,7 @@ export async function joinWaitlist(
   } catch (error: any) {
     return {
       isOk: false,
+      message: error?.message || "Something went wrong",
       body: {
         message:
           error.message ||

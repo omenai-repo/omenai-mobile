@@ -3,48 +3,48 @@ import { screenName } from "#constants/screenNames.constants";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { View } from "react-native";
-import SavedArtworks from "#screens/savedArtworks/SavedArtworks";
-import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
-import PurchaseArtwork from "#screens/purchase/PurchaseArtwork";
-import Artwork from "#screens/artwork/Artwork";
-import SearchResults from "#screens/searchResults/SearchResults";
+import SavedArtworks from "#screens/discovery/savedArtworks/SavedArtworks";
+import SupportTicketsScreen from "#screens/account/profile/SupportTicketsScreen";
+import PurchaseArtwork from "#screens/commerce/purchase/PurchaseArtwork";
+import Artwork from "#screens/artwork/detail/Artwork";
+import SearchResults from "#screens/discovery/search/SearchResults";
 import Filter from "#components/filter/Filter";
-import EditProfile from "#screens/editProfile/EditProfile";
-import ArtworksMedium from "#screens/artworksMedium/ArtworksMedium";
-import ArtworkMediumFilterModal from "#screens/artworksMedium/components/filter/ArtworkMediumFilterModal";
-import ArtworkCategoriesFilterModal from "#screens/artworkCategories/components/filter/ArtworkCategoriesFilterModal";
-import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
-import Collections from "#screens/collections/Collections";
-import ChangePassword from "#screens/changePassword/ChangePassword";
-import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
-import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
-import DetailsScreen from "#screens/home/components/DetailScreen";
-import ArticleScreen from "#screens/home/components/editorials/ArticleScreen";
-import AllEditorialsScreen from "#screens/home/components/editorials/AllEditorialsScreen";
-import NotificationScreen from "#screens/notifications/NotificationScreen";
-import DeleteAccountScreen from "#screens/deleteAccount/DeleteAccountScreen";
-import Payment from "#screens/payment/Payment";
+import EditProfile from "#screens/account/profile/EditProfile";
+import ArtworksMedium from "#screens/artwork/medium/ArtworksMedium";
+import ArtworkMediumFilterModal from "#screens/artwork/medium/components/filter/ArtworkMediumFilterModal";
+import ArtworkCategoriesFilterModal from "#screens/artwork/categories/components/filter/ArtworkCategoriesFilterModal";
+import SupportTicketsFilterModal from "#screens/account/profile/components/SupportTicketsFilterModal";
+import Collections from "#screens/discovery/collections/Collections";
+import ChangePassword from "#screens/auth/password/changePassword/ChangePassword";
+import ShipmentTrackingScreen from "#screens/marketplace/artist/orders/ShipmentTrackingScreen";
+import EditAddressScreen from "#screens/account/profile/EditAddressScreen";
+import DetailsScreen from "#screens/discovery/DetailScreen";
+import ArticleScreen from "#screens/discovery/editorials/ArticleScreen";
+import AllEditorialsScreen from "#screens/discovery/editorials/AllEditorialsScreen";
+import NotificationScreen from "#screens/account/notifications/NotificationScreen";
+import DeleteAccountScreen from "#screens/account/settings/DeleteAccountScreen";
+import Payment from "#screens/commerce/payment/Payment";
 import { wrapWithHighRisk, wrapWithLowRisk } from "#utils/wrapWithProvider";
-import CancleOrderPayment from "#screens/payment/components/cancel/CancleOrderPayment";
-import SuccessOrderPayment from "#screens/payment/components/success/SuccessOrderPayment";
-import BiometricSettings from "#screens/profile/BiometricSettings";
-import ViewReceiptScreen from "#screens/orders/ViewReceiptScreen";
-import ShowDetailsScreen from "#screens/individual/shows/ShowDetailsScreen";
-import FairEventDetailsScreen from "#screens/individual/fairsEvents/FairEventDetailsScreen";
-import GalleryDetailsScreen from "#screens/individual/galleries/GalleryDetailsScreen";
-import ArtistDetailsScreen from "#screens/individual/artists/ArtistDetailsScreen";
-import AllArtistsScreen from "#screens/individual/artists/AllArtistsScreen";
+import CancleOrderPayment from "#screens/commerce/payment/components/cancel/CancleOrderPayment";
+import SuccessOrderPayment from "#screens/commerce/payment/components/success/SuccessOrderPayment";
+import BiometricSettings from "#screens/auth/biometrics/BiometricSettings";
+import ViewReceiptScreen from "#screens/commerce/orders/ViewReceiptScreen";
+import ShowDetailsScreen from "#screens/marketplace/discovery/shows/ShowDetailsScreen";
+import FairEventDetailsScreen from "#screens/marketplace/discovery/fairsEvents/FairEventDetailsScreen";
+import GalleryDetailsScreen from "#screens/marketplace/discovery/galleries/GalleryDetailsScreen";
+import ArtistDetailsScreen from "#screens/marketplace/discovery/artists/ArtistDetailsScreen";
+import AllArtistsScreen from "#screens/marketplace/discovery/artists/AllArtistsScreen";
 import IndividualHomeStack from "#navigation/IndividualHomeStack";
-import Catalog from "#screens/catalog/Catalog";
-import Orders from "#screens/orders/Orders";
-import Profile from "#screens/profile/Profile";
+import Catalog from "#screens/discovery/catalog/Catalog";
+import Orders from "#screens/commerce/orders/Orders";
+import Profile from "#screens/account/profile/Profile";
 import GalleryTabBar from "./components/GalleryTabBar";
 import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
 import {
   MoreSheetProvider,
   useMoreSheet,
 } from "./components/MoreSheetContext";
-import { logout } from "#utils/logout.utils";
+import { logout } from "#utils/auth/logout.utils";
 import {
   homeIcon,
   homeIconFocused,
@@ -54,7 +54,7 @@ import {
   searchIconFocused,
   orderIcon,
   orderIconFocused,
-} from "#utils/SvgImages";
+} from "#utils/assets/SvgImages";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

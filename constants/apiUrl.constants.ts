@@ -1,4 +1,4 @@
-export { getApiHeaders } from "../utils/apiHeaders";
+export { getApiHeaders } from "#utils/network/apiHeaders";
 
 /** Linear-time; avoids regex backtracking on long slash runs */
 function stripTrailingSlashes(url: string): string {

@@ -1,5 +1,5 @@
 
-export const plan_details: PlanProps[] = [
+export const plan_details = [
   {
     name: "Basic",
     monthly_price: { value: 150, text: "$150" },

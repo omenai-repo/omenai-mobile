@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import LongBlackButton from "#components/buttons/LongBlackButton";
-import { ChatSession } from "#store/support/supportChatStore";
+import { ChatSession } from "#store/account/support/supportChatStore";
 
 interface SupportChatHistoryProps {
   greeting: string;

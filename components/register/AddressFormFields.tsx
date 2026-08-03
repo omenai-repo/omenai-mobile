@@ -9,7 +9,7 @@ interface AddressFormFieldsProps {
   stateData: { label: string; value: string; isoCode?: string }[];
   cityData: { label: string; value: string }[];
   addressData: {
-    countryCode: string;
+    countryCode?: string;
     state: string;
     city: string;
     address_line: string;
@@ -65,7 +65,7 @@ export const AddressFormFields = ({
         <CustomSelectPicker
           data={countryData}
           placeholder={`Select ${countryLabel.toLowerCase()}`}
-          value={addressData.countryCode}
+          value={addressData.countryCode ?? ""}
           handleSetValue={onCountrySelect}
           label={countryLabel}
           search={true}

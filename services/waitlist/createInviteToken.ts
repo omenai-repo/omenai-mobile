@@ -1,5 +1,5 @@
 import { apiUrl } from "#constants/apiUrl.constants";
-import { apiRequest } from "../../utils/apiRequest";
+import { apiRequest } from "#utils/network/apiRequest";
 
 type CreateInviteTokenPayload = Readonly<{
   inviteCode: string;
@@ -12,6 +12,7 @@ type CreateInviteTokenResponse = {
   message: string;
   status?: string;
   referrerKey?: string;
+  body?: { message: string };
 };
 
 export async function createInviteToken(
@@ -48,6 +49,7 @@ export async function createInviteToken(
   } catch (error: any) {
     return {
       isOk: false,
+      message: error?.message || "Something went wrong",
       body: {
         message:
           error.message ||

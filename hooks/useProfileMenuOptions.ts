@@ -4,7 +4,7 @@ import {
   changePasswsordIcon,
   getDeleteIcon,
   getLockIcon,
-} from "#utils/SvgImages";
+} from "#utils/assets/SvgImages";
 import { ProfileMenuItem } from "#components/profile/ProfileMenuItems";
 import { colors } from "#config/colors.config";
 

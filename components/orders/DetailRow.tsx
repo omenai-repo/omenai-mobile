@@ -8,8 +8,7 @@ interface DetailRowProps {
   value?: string;
 }
 
-export const DetailRow = React.memo(
-  ({ label, value, children }: DetailRowProps) => {
+function DetailRowComponent({ label, value, children }: DetailRowProps) {
     return (
       <View style={tw`flex-row items-center gap-5`}>
         <Text style={tw`text-xs text-neutral-600 uppercase font-medium`}>
@@ -22,5 +21,6 @@ export const DetailRow = React.memo(
         )}
       </View>
     );
-  },
-);
+}
+
+export const DetailRow = React.memo(DetailRowComponent);

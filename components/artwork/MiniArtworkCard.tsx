@@ -5,7 +5,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
 import tw from "twrnc";
-import { getNumberOfColumns } from "#utils/utils_screen";
+import { getNumberOfColumns } from "#utils/navigation/utils_screen";
 import { useAppStore } from "#store/app/appStore";
 import ExclusivityCountdown from "./ExclusivityCountdown";
 import ArtworkImage from "./ArtworkImage";

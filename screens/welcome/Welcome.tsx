@@ -8,8 +8,8 @@ import { colors } from "#config/colors.config";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { onboardingdata } from "#constants/onBoardingData.constants";
 import OnBoardingSection from "./components/OnBoardingSection";
-import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
-import { utils_determineOnboardingPages } from "#utils/utils_determineOnboardingPages";
+import { utils_storeAsyncData } from "#utils/app/utils_asyncStorage";
+import { utils_determineOnboardingPages } from "#utils/location/utils_determineOnboardingPages";
 
 import tw from "twrnc";
 import { StatusBar } from "expo-status-bar";

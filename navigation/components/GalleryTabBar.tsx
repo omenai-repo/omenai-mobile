@@ -3,7 +3,7 @@ import { Pressable, Text, View } from "react-native";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { SvgXml } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { curvedTabBg } from "#utils/SvgImages";
+import { curvedTabBg } from "#utils/assets/SvgImages";
 import { colors } from "#config/colors.config";
 import tw from "twrnc";
 

@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
-import { useModalStore } from "#store/modal/modalStore";
-import { extendArtworkExclusivity } from "#services/artworks/extendArtworkExclusivity";
+import { useModalStore } from "#store/account/modal/modalStore";
+import { extendArtworkExclusivity } from "#services/artwork/extendArtworkExclusivity";
 
 interface ExclusivityExtensionModalProps {
   readonly visible: boolean;

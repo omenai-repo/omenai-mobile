@@ -1,6 +1,6 @@
 import Modal from "react-native-modal";
 import React from "react";
-import { useModalStore } from "#store/modal/modalStore";
+import { useModalStore } from "#store/account/modal/modalStore";
 import CancelSubscriptionModal from "./modals/CancelSubscriptionModal";
 import DeleteAccountSuccessModal from "./modals/DeleteAccountSuccessModal";
 import tw from "twrnc";

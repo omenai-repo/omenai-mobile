@@ -15,7 +15,7 @@ import Animated, {
 } from "react-native-reanimated";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
-import { curvedTabBg } from "#utils/SvgImages";
+import { curvedTabBg } from "#utils/assets/SvgImages";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type TabDataType = {

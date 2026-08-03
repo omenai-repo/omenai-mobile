@@ -1,7 +1,7 @@
 import { View, Text, Modal, Animated, Easing, Pressable } from "react-native";
 import React, { RefObject, useEffect, useRef, useState } from "react";
 import { useAppStore } from "#store/app/appStore";
-import ArtistOnboarding from "#screens/artistOnboarding/ArtistOnboarding";
+import ArtistOnboarding from "#screens/auth/artistOnboarding/ArtistOnboarding";
 import tw from "twrnc";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SvgXml } from "react-native-svg";
@@ -17,49 +17,49 @@ import {
   walletInActive,
   shippingActive,
   shippingInActive,
-} from "#utils/SvgImages";
+} from "#utils/assets/SvgImages";
 import ArtistOverviewStack from "#navigation/ArtistOverviewStack";
 import { createStackNavigator } from "@react-navigation/stack";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
-import { logout } from "#utils/logout.utils";
+import { logout } from "#utils/auth/logout.utils";
 import { BlurView } from "expo-blur";
-import OrderScreen from "#screens/artist/orders/OrderScreen";
-import DimensionsDetails from "#screens/artist/orders/DimensionsDetails";
-import WalletHistory from "#screens/artist/wallet/WalletHistory";
-import AddPrimaryAcctScreen from "#screens/artist/wallet/AddPrimaryAcctScreen";
+import OrderScreen from "#screens/marketplace/artist/orders/OrderScreen";
+import DimensionsDetails from "#screens/marketplace/artist/orders/DimensionsDetails";
+import WalletHistory from "#screens/marketplace/artist/wallet/WalletHistory";
+import AddPrimaryAcctScreen from "#screens/marketplace/artist/wallet/AddPrimaryAcctScreen";
 import { screenName } from "#constants/screenNames.constants";
-import EditGalleryProfile from "#screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile";
-import ChangePassword from "#screens/changePassword/ChangePassword";
-import UploadNewLogo from "#screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo";
-import EditCredentialsScreen from "#screens/artist/profile/EditCredentialsScreen";
-import UploadArtwork from "#screens/uploadArtwork/UploadArtwork";
-import ProposalPriceScreen from "#screens/uploadArtwork/ProposalPriceScreen";
-import { WithdrawScreen } from "#screens/artist/wallet/WithdrawScreen";
-import { ForgotPinScreen } from "#screens/artist/wallet/ForgotPinScreen";
-import { ResetPinScreen } from "#screens/artist/wallet/ResetPinScreen";
-import { WithdrawalSuccess } from "#screens/artist/wallet/WithdarwalSuccess";
-import { TransactionDetailsScreen } from "#screens/artist/wallet/TransactionDetailsScreen";
-import Artwork from "#screens/artwork/Artwork";
-import EditArtwork from "#screens/editArtwork/EditArtwork";
-import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
-import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
-import ViewCredentialsScreen from "#screens/artist/profile/ViewCredentials";
+import EditGalleryProfile from "#screens/marketplace/gallery/profile/editGalleryProfile/EditGalleryProfile";
+import ChangePassword from "#screens/auth/password/changePassword/ChangePassword";
+import UploadNewLogo from "#screens/marketplace/gallery/profile/uploadNewLogo/UploadNewLogo";
+import EditCredentialsScreen from "#screens/marketplace/artist/profile/EditCredentialsScreen";
+import UploadArtwork from "#screens/artwork/upload/UploadArtwork";
+import ProposalPriceScreen from "#screens/artwork/upload/ProposalPriceScreen";
+import { WithdrawScreen } from "#screens/marketplace/artist/wallet/WithdrawScreen";
+import { ForgotPinScreen } from "#screens/marketplace/artist/wallet/ForgotPinScreen";
+import { ResetPinScreen } from "#screens/marketplace/artist/wallet/ResetPinScreen";
+import { WithdrawalSuccess } from "#screens/marketplace/artist/wallet/WithdarwalSuccess";
+import { TransactionDetailsScreen } from "#screens/marketplace/artist/wallet/TransactionDetailsScreen";
+import Artwork from "#screens/artwork/detail/Artwork";
+import EditArtwork from "#screens/artwork/edit/EditArtwork";
+import ShipmentTrackingScreen from "#screens/marketplace/artist/orders/ShipmentTrackingScreen";
+import EditAddressScreen from "#screens/account/profile/EditAddressScreen";
+import ViewCredentialsScreen from "#screens/marketplace/artist/profile/ViewCredentials";
 import GalleryTabBar from "./components/GalleryTabBar";
-import NotificationScreen from "#screens/notifications/NotificationScreen";
-import DeleteAccountScreen from "#screens/deleteAccount/DeleteAccountScreen";
+import NotificationScreen from "#screens/account/notifications/NotificationScreen";
+import DeleteAccountScreen from "#screens/account/settings/DeleteAccountScreen";
 import { wrapWithHighRisk, wrapWithLowRisk } from "#utils/wrapWithProvider";
-import BiometricSettings from "#screens/profile/BiometricSettings";
-import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
-import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
+import BiometricSettings from "#screens/auth/biometrics/BiometricSettings";
+import SupportTicketsScreen from "#screens/account/profile/SupportTicketsScreen";
+import SupportTicketsFilterModal from "#screens/account/profile/components/SupportTicketsFilterModal";
 import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
 import {
   MoreSheetProvider,
   useMoreSheet,
 } from "./components/MoreSheetContext";
-import ArtistReviewHub from "#screens/artist/reviews/ArtistReviewHub";
-import ArtistProfileScreen from "#screens/artist/profile/ArtistProfileScreen";
-import WalletScreen from "#screens/artist/wallet/WalletScreen";
-import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
+import ArtistReviewHub from "#screens/marketplace/artist/reviews/ArtistReviewHub";
+import ArtistProfileScreen from "#screens/marketplace/artist/profile/ArtistProfileScreen";
+import WalletScreen from "#screens/marketplace/artist/wallet/WalletScreen";
+import GalleryArtworksListing from "#screens/marketplace/gallery/artworks/GalleryArtworksListing";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

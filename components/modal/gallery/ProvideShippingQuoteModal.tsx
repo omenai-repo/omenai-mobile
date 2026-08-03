@@ -1,20 +1,20 @@
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import React, { useState } from "react";
 import CloseButton from "#components/buttons/CloseButton";
-import { galleryOrderModalStore } from "#store/modal/galleryModalStore";
+import { galleryOrderModalStore } from "#store/account/modal/galleryModalStore";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import Input from "#components/inputs/Input";
 import LargeInput from "#components/inputs/LargeInput";
-import { validate } from "#lib/validations/provideShippingQuoteValidations/validator";
-import { updateShippingQuote } from "#services/orders/updateShippingQuote";
+import { validate } from "#lib/validation/shippingQuote/validator";
+import { updateShippingQuote } from "#services/commerce/orders/updateShippingQuote";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "#store/app/appStore";
 import CompletedModal from "./CompletedModal";
-import { Analytics } from "#utils/analytics";
+import { Analytics } from "#utils/core/analytics";
 import UnitDropdownField from "#components/forms/UnitDropdownField";
 import DimensionInput from "#components/forms/DimensionInput";
-import { validateOrderMeasurement } from "#lib/validations/upload_artwork_input_validator/validateOrderMeasurement";
-import { convertDimensionsToStandard } from "#utils/convertUnits";
+import { validateOrderMeasurement } from "#lib/validation/artwork/validateOrderMeasurement";
+import { convertDimensionsToStandard } from "#utils/core/convertUnits";
 import tw from "twrnc";
 
 // Type definitions for required form fields

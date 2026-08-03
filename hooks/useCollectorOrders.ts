@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getOrdersForUser } from "#services/orders/getOrdersForUser";
+import { getOrdersForUser } from "#services/commerce/orders/getOrdersForUser";
 import { useAppStore } from "#store/app/appStore";
 
 type Partitioned = {

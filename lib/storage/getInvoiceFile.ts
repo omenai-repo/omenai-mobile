@@ -1,4 +1,4 @@
-import { storage } from "#appWrite_config";
+import { storage } from "#config/appwrite.client";
 
 export const getInvoiceDownloadUrl = (fileId: string) => {
   if (!fileId) return;

@@ -1,5 +1,5 @@
-import { verifyAddress } from "#services/register/verifyAddress";
-import { useModalStore } from "#store/modal/modalStore";
+import { verifyAddress } from "#services/auth/verifyAddress";
+import { useModalStore } from "#store/account/modal/modalStore";
 
 type VerifyType = "delivery" | "pickup";
 
@@ -7,7 +7,8 @@ interface AddressData {
   city: string;
   state: string;
   zip: string;
-  countryCode: string;
+  countryCode?: string;
+  country?: string;
 }
 
 export const useAddressVerification = (
@@ -29,7 +30,7 @@ export const useAddressVerification = (
         countyName: addressData.city,
         cityName: addressData.state,
         postalCode: addressData.zip,
-        countryCode: addressData.countryCode,
+        countryCode: addressData.countryCode ?? addressData.country ?? "",
         phone,
       };
 

@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { validate } from "#lib/validations/validatorGroup";
+import { validate } from "#lib/validation/validatorGroup";
 
 type AddressData = Partial<AddressTypes & { phone: string }>;
 
