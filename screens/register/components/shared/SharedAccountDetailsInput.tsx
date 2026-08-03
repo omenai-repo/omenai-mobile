@@ -38,21 +38,18 @@ export default function SharedAccountDetailsInput({
   labels,
   pageIndex,
 }: Readonly<SharedAccountDetailsInputProps>) {
-  const { formErrors, handleValidationChecks, checkIsDisabled } =
+  const { formErrors, touched, handleBlur, checkIsDisabled } =
     useFormValidation({
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
-
-  const isButtonDisabled = () => {
-    return checkIsDisabled({
       name: data.name,
       email: data.email,
       password: data.password,
       confirmPassword: data.confirmPassword,
+    }, {
+      confirmPassword: data.password
     });
+
+  const isButtonDisabled = () => {
+    return checkIsDisabled();
   };
 
   return (
@@ -61,45 +58,37 @@ export default function SharedAccountDetailsInput({
         <Input
           label={labels.nameLabel}
           keyboardType="default"
-          onInputChange={(text) => {
-            actions.setName(text);
-            handleValidationChecks("name", text);
-          }}
+          onInputChange={actions.setName}
+          handleBlur={() => handleBlur("name")}
           placeHolder={labels.namePlaceholder}
           value={data.name}
-          errorMessage={formErrors.name}
+          errorMessage={touched.name ? formErrors.name : ""}
         />
         <Input
           label={labels.emailLabel}
           keyboardType="email-address"
-          onInputChange={(text) => {
-            actions.setEmail(text);
-            handleValidationChecks("email", text);
-          }}
+          onInputChange={actions.setEmail}
+          handleBlur={() => handleBlur("email")}
           placeHolder={labels.emailPlaceholder}
           value={data.email}
-          errorMessage={formErrors.email}
+          errorMessage={touched.email ? formErrors.email : ""}
         />
         <PasswordInput
           label="Password"
-          onInputChange={(text) => {
-            actions.setPassword(text);
-            handleValidationChecks("password", text);
-          }}
+          onInputChange={actions.setPassword}
+          handleBlur={() => handleBlur("password")}
           placeHolder="Enter password"
           value={data.password}
-          errorMessage={formErrors.password}
+          errorMessage={touched.password ? formErrors.password : ""}
           textContentType="newPassword"
         />
         <PasswordInput
           label="Confirm password"
-          onInputChange={(text) => {
-            actions.setConfirmPassword(text);
-            handleValidationChecks("confirmPassword", data.password, text);
-          }}
+          onInputChange={actions.setConfirmPassword}
+          handleBlur={() => handleBlur("confirmPassword")}
           placeHolder="Enter password again"
           value={data.confirmPassword}
-          errorMessage={formErrors.confirmPassword}
+          errorMessage={touched.confirmPassword ? formErrors.confirmPassword : ""}
           textContentType="newPassword"
         />
       </View>

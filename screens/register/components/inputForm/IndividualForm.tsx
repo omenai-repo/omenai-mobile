@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import React from "react";
-import IndividualRegistrationForm from "../../individualRegistrationForm/IndividualRegistrationForm";
+import IndividualRegistrationForm from "../individualRegistrationForm/IndividualRegistrationForm";
 import tw from "twrnc";
 import OnboardingBlockerScreen from "#components/blockers/onboarding/OnboardingBlockerScreen";
 

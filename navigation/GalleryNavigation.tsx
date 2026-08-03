@@ -6,7 +6,7 @@ import Artwork from "#screens/artwork/Artwork";
 import Billing from "#screens/billing/Billing";
 import Checkout from "#screens/checkout/Checkout";
 import GalleryOrder from "#screens/galleryOrder/GalleryOrder";
-import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
+import ChangePassword from "#screens/changePassword/ChangePassword";
 import EditGalleryProfile from "#screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile";
 import GetStartedWithStripe from "#screens/stripeScreens/getStartedWithStripe/GetStartedWithStripe";
 import UploadArtwork from "#screens/uploadArtwork/UploadArtwork";
@@ -411,8 +411,8 @@ export default function GalleryNavigation() {
         component={wrapWithHighRisk(EditAddressScreen)}
       />
       <Stack.Screen
-        name={screenName.gallery.changePassword}
-        component={wrapWithHighRisk(ChangeGalleryPassword)}
+        name={screenName.changePassword}
+        component={wrapWithHighRisk(ChangePassword)}
       />
       <Stack.Screen
         name={screenName.gallery.billing}

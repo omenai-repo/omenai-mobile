@@ -5,9 +5,9 @@ import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualA
 import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
 import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
 import AuthTabs from "#components/auth/AuthTabs";
-import IndividualForm from "./individual/IndividualForm";
-import GalleryForm from "./gallery/GalleryForm";
-import ArtistForm from "./artist/ArtistForm";
+import IndividualForm from "./IndividualForm";
+import GalleryForm from "./GalleryForm";
+import ArtistForm from "./ArtistForm";
 import tw from "twrnc";
 import { useLowRiskFeatureFlag } from "#hooks/useFeatureFlag";
 import FormSkeleton from "#components/skeleton/FormSkeleton";

@@ -1,4 +1,5 @@
 import {
+  Pressable,
   StyleProp,
   Text,
   TextStyle,
@@ -90,9 +91,11 @@ export default function LongBlackButton({
   ];
 
   return (
-    <TouchableOpacity
-      activeOpacity={1}
-      style={containerStyle}
+    <Pressable
+      style={({ pressed }) => [
+        ...containerStyle,
+        pressed && tw`scale-95 opacity-90`,
+      ]}
       onPress={onClick}
       disabled={isInactive}
       testID={testID}
@@ -122,6 +125,6 @@ export default function LongBlackButton({
           </View>
         )}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

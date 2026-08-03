@@ -6,13 +6,11 @@ import { Country, ICountry } from "country-state-city";
 import { useAddressForm } from "#hooks/useAddressForm";
 import { useLocationSelection } from "#hooks/useLocationSelection";
 import { useAddressVerification } from "#hooks/useAddressVerification";
-import { AddressTooltip } from "#components/general/AddressTooltip";
 import { AddressFormFields } from "#components/register/AddressFormFields";
-import { AddressVerificationModal } from "#components/register/AddressVerificationModal";
+
 import { AddressVerificationActions } from "#components/register/AddressVerificationActions";
 
 const IndividualAddressVerification = () => {
-  const [showToolTip, setShowToolTip] = useState(false);
 
   const transformedCountries = useMemo(
     () =>
@@ -42,8 +40,8 @@ const IndividualAddressVerification = () => {
     setStateCode,
   } = useIndividualAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } =
-    useAddressForm();
+  const { formErrors, touched, handleBlur, checkIsFormValid } =
+    useAddressForm({ ...individualRegisterData.address });
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -61,14 +59,11 @@ const IndividualAddressVerification = () => {
     },
   );
 
-  const {
-    showModal,
-    setShowModal,
-    addressVerified,
-    handleVerifyAddress,
-    handleModalProceed,
-    handleModalGoBack,
-  } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
+  const { handleVerifyAddress } = useAddressVerification(
+    setIsLoading,
+    pageIndex,
+    setPageIndex
+  );
 
   const handleSubmit = () => {
     handleVerifyAddress(individualRegisterData.address, "", "delivery");
@@ -82,43 +77,24 @@ const IndividualAddressVerification = () => {
         cityData={cityData}
         addressData={individualRegisterData.address}
         formErrors={formErrors}
+        touched={touched}
+        onBlur={handleBlur}
         onCountrySelect={handleCountrySelect}
         onStateSelect={handleStateSelect}
         onCitySelect={(item) => setCity(item.value)}
-        onAddressChange={(text) => {
-          setAddress(text);
-          handleValidationChecks("general", text);
-        }}
-        onZipChange={(text) => {
-          setZipCode(text);
-          handleValidationChecks("general", text);
-        }}
+        onAddressChange={setAddress}
+        onZipChange={setZipCode}
         addressLabel="Collector's Address"
         addressPlaceholder="Input your residential address here"
       />
 
       <AddressVerificationActions
         isLoading={isLoading}
-        isDisabled={!checkIsFormValid(individualRegisterData.address)}
+        isDisabled={!checkIsFormValid()}
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
       />
 
-      <AddressTooltip
-        showToolTip={showToolTip}
-        setShowToolTip={setShowToolTip}
-        tooltipText="We need your home address to properly verify shipping designation"
-      />
-
-      <AddressVerificationModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        addressVerified={addressVerified}
-        handleModalGoBack={handleModalGoBack}
-        handleModalProceed={handleModalProceed}
-        handleSubmit={handleSubmit}
-        successMessage="Your account has been verified succesfully"
-      />
     </View>
   );
 };

@@ -26,17 +26,28 @@ export default function EditProfile() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [fullname, setFullName] = useState<string>(userSession.name);
-  const [email, setEmail] = useState<string>(userSession.email);
-  const [phoneNumber, setPhoneNumber] = useState<string>(userSession.phone);
-  const [selectedPreferences, setSelectedPreferences] = useState<string[]>(
-    userSession.preferences || [],
-  );
+  const [formData, setFormData] = useState({
+    name: userSession.name || "",
+    email: userSession.email || "",
+    phone: userSession.phone || "",
+    preferences: userSession.preferences || [],
+  });
+
   const [formErrors, setFormErrors] = useState<EditProfileErrorsTypes>({
     name: "",
   });
 
-  const [isChanged, setIsChanged] = useState<boolean>(false);
+  const [isDirty, setIsDirty] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    const isNameChanged = formData.name !== userSession.name;
+    const isPhoneChanged = formData.phone !== userSession.phone;
+    const isPrefsChanged =
+      JSON.stringify([...formData.preferences].sort()) !==
+      JSON.stringify([...(userSession.preferences || [])].sort());
+
+    setIsDirty(isNameChanged || isPrefsChanged || isPhoneChanged);
+  }, [formData, userSession]);
 
   const handleValidationChecks = (label: string, value: string) => {
     const { success, errors }: { success: boolean; errors: string[] | [] } =
@@ -48,27 +59,18 @@ export default function EditProfile() {
     }
   };
 
-  const handleChange = (value: string) => {
-    setFullName(value);
-    setIsChanged(true);
-    handleValidationChecks("name", value);
+  const handleChange = (label: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [label]: value }));
+    handleValidationChecks(label, value);
   };
 
   const checkIsDisabled = () => {
-    // Check if there are no error messages and all input fields are filled
     const isFormValid = Object.values(formErrors).every(
       (error) => error === "",
     );
-    const areAllFieldsFilled = Object.values({
-      name: fullname,
-      phoneNumber,
-    }).every((value) => {
-      if (value === "") return false;
+    const areAllFieldsFilled = formData.name !== "" && formData.phone !== "";
 
-      return true;
-    });
-
-    return !(isFormValid && areAllFieldsFilled && isChanged);
+    return !(isFormValid && areAllFieldsFilled && isDirty);
   };
 
   const handleUpdate = async () => {
@@ -76,7 +78,7 @@ export default function EditProfile() {
 
     if (!userSession.id) return;
 
-    if (selectedPreferences.length < 5) {
+    if (formData.preferences.length < 5) {
       setIsLoading(false);
       updateModal({
         message: "Please select up to 5 preferences",
@@ -87,8 +89,9 @@ export default function EditProfile() {
     }
 
     const data = {
-      name: fullname,
-      preferences: selectedPreferences,
+      name: formData.name,
+      phone: formData.phone,
+      preferences: formData.preferences,
     };
     const routeType = userType === "user" ? "individual" : userType;
 
@@ -123,26 +126,24 @@ export default function EditProfile() {
         <View style={{ gap: 20, marginBottom: 40 }}>
           <Input
             label="Full name"
-            value={fullname}
-            onInputChange={handleChange}
+            value={formData.name}
+            onInputChange={(text) => handleChange("name", text)}
             errorMessage={formErrors.name}
           />
           <Input
             label="Email address"
-            value={email}
+            value={formData.email}
             disabled
             onInputChange={(text) => {
-              setEmail(text);
-              handleValidationChecks("email", text);
+              handleChange("email", text);
             }}
           />
           <Input
             label="Phone number"
-            value={phoneNumber}
+            value={formData.phone}
             keyboardType="phone-pad"
             onInputChange={(text) => {
-              setPhoneNumber(text);
-              setIsChanged(true);
+              handleChange("phone", text);
             }}
           />
           <View style={{ marginTop: 10, gap: 10 }}>
@@ -207,10 +208,9 @@ export default function EditProfile() {
 
           <Preferences
             label="Preferences"
-            selectedPreferences={selectedPreferences}
+            selectedPreferences={formData.preferences}
             setSelectedPreferences={(preferences) => {
-              setSelectedPreferences(preferences);
-              setIsChanged(true);
+              setFormData((prev) => ({ ...prev, preferences }));
             }}
           />
         </View>

@@ -8,8 +8,6 @@ import { verifyAddress } from "#services/register/verifyAddress";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { useModalStore } from "#store/modal/modalStore";
 import { debounce } from "lodash";
-import AuthModal from "#components/auth/AuthModal";
-import { checkMarkIcon, errorIcon } from "#utils/SvgImages";
 import {
   Country,
   State,
@@ -45,8 +43,6 @@ const EditAddressScreen = () => {
     countryCode: "",
     phone: "",
   });
-  const [showModal, setShowModal] = useState(false);
-  const [addressVerified, setAddressVerified] = useState(false);
   const [countryCode, setCountryCode] = useState(
     userSession.address.countryCode || "",
   );
@@ -279,26 +275,27 @@ const EditAddressScreen = () => {
 
       const response = await verifyAddress(payload);
 
-      setIsLoading(false);
+      const isValidAddress =
+        response?.isOk &&
+        response?.body?.data?.address &&
+        response.body.data.address.length > 0;
 
-      if (response?.isOk) {
-        if (
-          response?.body?.data?.address &&
-          response.body.data.address.length !== 0
-        ) {
-          setShowModal(true);
-          setAddressVerified(true);
-        } else {
-          setShowModal(true);
-          setAddressVerified(false);
-        }
-      } else {
-        setShowModal(true);
-        setAddressVerified(false);
+      if (!isValidAddress) {
+        updateModal({
+          showModal: true,
+          modalType: "error",
+          message: "Your Address could not be verified. Try again.",
+        });
+        return;
       }
+
+      await handleUpdate();
     } catch (error: any) {
       updateModal({
-        message: error?.message || error?.body?.message || "Network error, please check your connection and try again.",
+        message:
+          error?.message ||
+          error?.body?.message ||
+          "Network error, please check your connection and try again.",
         modalType: "error",
         showModal: true,
       });
@@ -325,10 +322,10 @@ const EditAddressScreen = () => {
     const result =
       userType === "artist"
         ? await updateArtistAddress({
-          artist_id: userSession.id,
-          base_currency: selectedBaseCurrency || userSession.base_currency,
-          address: data.address,
-        })
+            artist_id: userSession.id,
+            base_currency: selectedBaseCurrency || userSession.base_currency,
+            address: data.address,
+          })
         : await updateProfile(routeType as any, data, userSession.id);
 
     if (result.isOk) {
@@ -344,7 +341,8 @@ const EditAddressScreen = () => {
             ...updatedSession,
             address: profileResponse.data.address || updatedSession.address,
             base_currency:
-              profileResponse.data.base_currency || updatedSession.base_currency,
+              profileResponse.data.base_currency ||
+              updatedSession.base_currency,
           };
         }
       }
@@ -489,31 +487,6 @@ const EditAddressScreen = () => {
                 style={{ height: 50 }}
               />
             </View>
-
-            <AuthModal
-              modalVisible={showModal}
-              setModalVisible={setShowModal}
-              icon={addressVerified ? checkMarkIcon : errorIcon}
-              text={
-                addressVerified
-                  ? "Your Address has been verified succesfully"
-                  : "Your Address could not be verified. Try again."
-              }
-              btn1Text="Cancel"
-              btn2Text={addressVerified ? "Update Address" : "Try Again"}
-              onPress1={() => {
-                setShowModal(false);
-              }}
-              onPress2={() => {
-                if (addressVerified) {
-                  setShowModal(false);
-                  handleUpdate();
-                } else {
-                  setShowModal(false);
-                  handleSubmit();
-                }
-              }}
-            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

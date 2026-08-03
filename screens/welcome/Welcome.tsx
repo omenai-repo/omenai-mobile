@@ -43,7 +43,7 @@ export default function Welcome() {
 
   if (!showWelcome) {
     return (
-      <>
+      <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
         <StatusBar style="light" />
         <OnBoardingSection
           data={onboardingdata[selected]}
@@ -53,8 +53,9 @@ export default function Welcome() {
             utils_storeAsyncData("isOnboarded", JSON.stringify(true));
           }}
           handleNext={() => setSelected((prev) => prev + 1)}
+          handleBack={() => setSelected((prev) => prev - 1)}
         />
-      </>
+      </View>
     );
   }
 
@@ -100,23 +101,17 @@ export default function Welcome() {
             value="Create Account"
             onClick={() => handleNavigation(screenName.register)}
             style={{ backgroundColor: colors.white, height: 48 }}
-            textStyle={[
-              tw`font-semibold`,
-              {
-                color: colors.black,
-              },
-            ]}
+            textStyle={[tw`font-semibold`, { color: colors.black }]}
           />
 
           <LongBlackButton
             value="Log In"
             onClick={() => handleNavigation(screenName.login)}
             style={{ height: 48, backgroundColor: colors.black_light }}
-            textStyle={{
-              color: colors.white,
-            }}
+            textStyle={{ color: colors.white }}
           />
 
+          {/* Browse as guest user button */}
           {/* <Pressable
             onPress={() => navigation.navigate("GuestNavigation")}
             style={tw`items-center mt-2`}

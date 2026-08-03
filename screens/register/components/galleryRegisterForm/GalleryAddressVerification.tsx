@@ -6,13 +6,11 @@ import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthReg
 import { useAddressForm } from "#hooks/useAddressForm";
 import { useLocationSelection } from "#hooks/useLocationSelection";
 import { useAddressVerification } from "#hooks/useAddressVerification";
-import { AddressTooltip } from "#components/general/AddressTooltip";
 import { AddressFormFields } from "#components/register/AddressFormFields";
-import { AddressVerificationModal } from "#components/register/AddressVerificationModal";
+
 import { AddressVerificationActions } from "#components/register/AddressVerificationActions";
 
 const GalleryAddressVerification = () => {
-  const [showToolTip, setShowToolTip] = useState(false);
 
   const transformedCountries = useMemo(
     () =>
@@ -43,8 +41,11 @@ const GalleryAddressVerification = () => {
     setCityData,
   } = useGalleryAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } =
-    useAddressForm();
+  const { formErrors, touched, handleBlur, checkIsFormValid } =
+    useAddressForm({
+      ...galleryRegisterData.address,
+      phone: galleryRegisterData.phone,
+    });
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -62,14 +63,11 @@ const GalleryAddressVerification = () => {
     },
   );
 
-  const {
-    showModal,
-    setShowModal,
-    addressVerified,
-    handleVerifyAddress,
-    handleModalProceed,
-    handleModalGoBack,
-  } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
+  const { handleVerifyAddress } = useAddressVerification(
+    setIsLoading,
+    pageIndex,
+    setPageIndex
+  );
 
   const handleSubmit = () => {
     handleVerifyAddress(
@@ -88,21 +86,14 @@ const GalleryAddressVerification = () => {
         addressData={galleryRegisterData.address}
         phone={galleryRegisterData.phone}
         formErrors={formErrors}
+        touched={touched}
+        onBlur={handleBlur}
         onCountrySelect={handleCountrySelect}
         onStateSelect={handleStateSelect}
         onCitySelect={(item) => setCity(item.value)}
-        onAddressChange={(text) => {
-          setAddress(text);
-          handleValidationChecks("general", text);
-        }}
-        onZipChange={(text) => {
-          setZipCode(text);
-          handleValidationChecks("general", text);
-        }}
-        onPhoneChange={(text) => {
-          setPhone(text);
-          handleValidationChecks("phone", text);
-        }}
+        onAddressChange={setAddress}
+        onZipChange={setZipCode}
+        onPhoneChange={setPhone}
         addressLabel="Gallery Address"
         addressPlaceholder="Input your gallery address here"
         countryLabel="Country of operation"
@@ -111,30 +102,9 @@ const GalleryAddressVerification = () => {
 
       <AddressVerificationActions
         isLoading={isLoading}
-        isDisabled={
-          !checkIsFormValid(
-            galleryRegisterData.address,
-            galleryRegisterData.phone,
-          )
-        }
+        isDisabled={!checkIsFormValid()}
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
-      />
-
-      <AddressTooltip
-        showToolTip={showToolTip}
-        setShowToolTip={setShowToolTip}
-        tooltipText="We need your gallery address to properly verify shipping designation"
-      />
-
-      <AddressVerificationModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        addressVerified={addressVerified}
-        handleModalGoBack={handleModalGoBack}
-        handleModalProceed={handleModalProceed}
-        handleSubmit={handleSubmit}
-        successMessage="Your account has been verified succesfully"
       />
     </View>
   );

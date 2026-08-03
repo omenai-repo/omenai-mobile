@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import Input from "#components/inputs/Input";
 import GetCodeButton from "./GetCodeButton";
+import PasswordInput from "#components/inputs/PasswordInput";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { validate } from "#lib/validations/validatorGroup";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -14,7 +15,7 @@ import ScrollWrapper from "#components/general/ScrollWrapper";
 import { useBiometrics, UserType } from "#hooks/useBiometrics";
 import { useAppStore } from "#store/app/appStore";
 
-export default function ChangeGalleryPassword({
+export default function ChangePassword({
   route,
   navigation,
 }: {
@@ -51,19 +52,21 @@ export default function ChangeGalleryPassword({
     setCodeLoading(true);
     const response = await requestPasswordConfirmationCode(routeName);
 
-    if (response?.isOk) {
-      updateModal({
-        modalType: "success",
-        message: response?.body?.message,
-        showModal: true,
-      });
-    } else {
+    if (!response?.isOk) {
       updateModal({
         modalType: "error",
         message: response?.body?.message,
         showModal: true,
       });
+      setCodeLoading(false);
+      return;
     }
+
+    updateModal({
+      modalType: "success",
+      message: response?.body?.message,
+      showModal: true,
+    });
 
     setCodeLoading(false);
   }
@@ -72,28 +75,30 @@ export default function ChangeGalleryPassword({
     setLoading(true);
     const response = await updatePassword(info.password, info.code, routeName);
 
-    if (response?.isOk) {
-      if (userType) await deleteCredentials(userType as UserType);
-      setInfo({
-        password: "",
-        confirmPassword: "",
-        code: "",
-      });
-      updateModal({
-        modalType: "success",
-        message: response?.body?.message,
-        showModal: true,
-        onDismiss: () => {
-          navigation.goBack();
-        },
-      });
-    } else {
+    if (!response?.isOk) {
       updateModal({
         modalType: "error",
         message: response?.body?.message,
         showModal: true,
       });
+      setLoading(false);
+      return;
     }
+
+    if (userType) await deleteCredentials(userType as UserType);
+    setInfo({
+      password: "",
+      confirmPassword: "",
+      code: "",
+    });
+    updateModal({
+      modalType: "success",
+      message: response?.body?.message,
+      showModal: true,
+      onDismiss: () => {
+        navigation.goBack();
+      },
+    });
 
     setLoading(false);
   }
@@ -110,13 +115,13 @@ export default function ChangeGalleryPassword({
         }}
       >
         <View style={{ gap: 20, marginBottom: 50 }}>
-          <Input
+          <PasswordInput
             label="Password"
             value={info.password}
             placeHolder="Enter new password"
             onInputChange={(value) => handleInputChange("password", value)}
           />
-          <Input
+          <PasswordInput
             label="Confirm password"
             value={info.confirmPassword}
             placeHolder="Confirm your new password"

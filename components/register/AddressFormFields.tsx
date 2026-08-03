@@ -17,6 +17,8 @@ interface AddressFormFieldsProps {
   };
   phone?: string;
   formErrors: Partial<AddressTypes & { phone: string }>;
+  touched?: Partial<Record<string, boolean>>;
+  onBlur?: (field: string) => void;
   onCountrySelect: (item: {
     label: string;
     value: string;
@@ -44,6 +46,8 @@ export const AddressFormFields = ({
   addressData,
   phone,
   formErrors,
+  touched,
+  onBlur,
   onCountrySelect,
   onStateSelect,
   onCitySelect,
@@ -88,9 +92,10 @@ export const AddressFormFields = ({
         label={addressLabel}
         keyboardType="default"
         onInputChange={onAddressChange}
+        handleBlur={() => onBlur?.("address_line")}
         placeHolder={addressPlaceholder}
         value={addressData.address_line}
-        errorMessage={formErrors?.address_line}
+        errorMessage={touched?.address_line ? formErrors?.address_line : ""}
       />
 
       <View style={tw`flex-row items-center gap-[30px] my-5`}>
@@ -111,9 +116,10 @@ export const AddressFormFields = ({
           label="Zip Code"
           keyboardType="default"
           onInputChange={onZipChange}
+          handleBlur={() => onBlur?.("zip")}
           placeHolder="Zip Code"
           value={addressData.zip}
-          errorMessage={formErrors?.zip}
+          errorMessage={touched?.zip ? formErrors?.zip : ""}
         />
       </View>
 
@@ -122,9 +128,10 @@ export const AddressFormFields = ({
           label="Phone number"
           keyboardType="phone-pad"
           onInputChange={onPhoneChange}
+          handleBlur={() => onBlur?.("phone")}
           placeHolder="+12345678990"
           value={phone || ""}
-          errorMessage={formErrors?.phone}
+          errorMessage={touched?.phone ? formErrors?.phone : ""}
         />
       )}
     </>

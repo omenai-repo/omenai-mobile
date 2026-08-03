@@ -19,7 +19,13 @@ type GalleryCardProps = {
   readonly disabled: boolean;
 };
 
-const GalleryCard = ({ item, navigation, isFollowing, toggleFollow, disabled }: GalleryCardProps) => {
+const GalleryCard = ({
+  item,
+  navigation,
+  isFollowing,
+  toggleFollow,
+  disabled,
+}: GalleryCardProps) => {
   const image_href = getGalleryLogoFileView(item.logo, 600);
 
   return (
@@ -34,7 +40,9 @@ const GalleryCard = ({ item, navigation, isFollowing, toggleFollow, disabled }: 
         }
         activeOpacity={0.85}
       >
-        <View style={tw`w-full h-[170px] rounded-sm bg-neutral-100 overflow-hidden items-center justify-center`}>
+        <View
+          style={tw`w-full h-[170px] rounded-sm bg-neutral-100 overflow-hidden items-center justify-center`}
+        >
           {item.logo ? (
             <Image
               source={{ uri: image_href }}
@@ -61,11 +69,17 @@ const GalleryCard = ({ item, navigation, isFollowing, toggleFollow, disabled }: 
           style={tw`flex-1 mr-3`}
           activeOpacity={0.8}
         >
-          <Text numberOfLines={1} style={tw`font-serif text-base text-neutral-900`}>
+          <Text
+            numberOfLines={1}
+            style={tw`font-serif text-base text-neutral-900`}
+          >
             {item.name}
           </Text>
           {!!item.address?.city && (
-            <Text numberOfLines={1} style={tw`mt-1 text-[10px] uppercase tracking-widest text-neutral-500`}>
+            <Text
+              numberOfLines={1}
+              style={tw`mt-1 text-[10px] uppercase tracking-widest text-neutral-500`}
+            >
               {item.address.city}
               {item.address?.country ? `, ${item.address.country}` : ""}
             </Text>
@@ -87,7 +101,8 @@ const GalleryCard = ({ item, navigation, isFollowing, toggleFollow, disabled }: 
 export default function FeaturedGalleries() {
   const navigation = useNavigation<any>();
   const { data: galleries = [], isLoading } = useFeaturedGalleries(10);
-  const { isFollowingFor, toggleFollow, isLoadingFollowed, hasUser } = useGalleryFollow();
+  const { isFollowingFor, toggleFollow, isLoadingFollowed, hasUser } =
+    useGalleryFollow();
 
   if (!isLoading && galleries.length === 0) {
     return null;
@@ -95,9 +110,7 @@ export default function FeaturedGalleries() {
 
   return (
     <View style={tw`mt-6`}>
-      <SectionHeader
-        title={`Featured Galleries (${galleries.length})`}
-      />
+      <SectionHeader title={`Featured Galleries (${galleries.length})`} />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

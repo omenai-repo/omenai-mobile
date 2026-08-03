@@ -1,13 +1,15 @@
 import { z } from "zod";
 
 export const validateEmail = <T>(value: T) => {
-  const schema = z.string();
-  let errors = [];
+  const schema = z
+    .string()
+    .trim()
+    .min(1, "Email is required.")
+    .email({ message: "Please enter a valid email." });
 
-  if (!schema.email().safeParse(value).success) {
-    errors.push(
-      `Your email address (${value}) doesn't match the required format. If you're unsure, please use this format: example@example.com.`
-    );
-  }
-  return errors;
+  const result = schema.safeParse(value);
+
+  return result.success
+    ? []
+    : result.error.issues.map((issue) => issue.message);
 };

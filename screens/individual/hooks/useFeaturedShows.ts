@@ -13,7 +13,5 @@ export function useFeaturedShows(limit = 10) {
       if (!res?.isOk || !Array.isArray(res.data)) return [];
       return res.data.slice(0, limit);
     },
-    staleTime: 5 * 60_000,
-    gcTime: 15 * 60_000,
   });
 }

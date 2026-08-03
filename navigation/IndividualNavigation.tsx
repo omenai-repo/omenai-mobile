@@ -15,7 +15,7 @@ import ArtworkMediumFilterModal from "#screens/artworksMedium/components/filter/
 import ArtworkCategoriesFilterModal from "#screens/artworkCategories/components/filter/ArtworkCategoriesFilterModal";
 import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
 import Collections from "#screens/collections/Collections";
-import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
+import ChangePassword from "#screens/changePassword/ChangePassword";
 import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
 import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
 import DetailsScreen from "#screens/home/components/DetailScreen";
@@ -276,8 +276,8 @@ export default function IndividualNavigation() {
         component={wrapWithHighRisk(EditAddressScreen)}
       />
       <Stack.Screen
-        name={screenName.gallery.changePassword}
-        component={wrapWithHighRisk(ChangeGalleryPassword)}
+        name={screenName.changePassword}
+        component={wrapWithHighRisk(ChangePassword)}
       />
       <Stack.Screen
         name={screenName.artworksMedium}

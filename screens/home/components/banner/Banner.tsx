@@ -37,8 +37,6 @@ export default function Banner() {
       const res = await getPromotionalData();
       return res?.isOk ? (res.data as BannerItemProps[]) : [];
     },
-    staleTime: 60_000,
-    gcTime: 10 * 60_000,
   });
 
   const scrollX = useRef(new Animated.Value(0)).current;

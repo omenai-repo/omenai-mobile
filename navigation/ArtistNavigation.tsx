@@ -29,7 +29,7 @@ import WalletHistory from "#screens/artist/wallet/WalletHistory";
 import AddPrimaryAcctScreen from "#screens/artist/wallet/AddPrimaryAcctScreen";
 import { screenName } from "#constants/screenNames.constants";
 import EditGalleryProfile from "#screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile";
-import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
+import ChangePassword from "#screens/changePassword/ChangePassword";
 import UploadNewLogo from "#screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo";
 import EditCredentialsScreen from "#screens/artist/profile/EditCredentialsScreen";
 import UploadArtwork from "#screens/uploadArtwork/UploadArtwork";
@@ -384,8 +384,8 @@ const ArtistNavigation = () => {
         component={wrapWithHighRisk(EditAddressScreen)}
       />
       <Stack.Screen
-        name={screenName.gallery.changePassword}
-        component={wrapWithHighRisk(ChangeGalleryPassword)}
+        name={screenName.changePassword}
+        component={wrapWithHighRisk(ChangePassword)}
       />
       <Stack.Screen
         name={"EditCredentialsScreen"}

@@ -1,18 +1,16 @@
 import { View } from "react-native";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useArtistAuthRegisterStore } from "#store/auth/register/ArtistAuthRegisterStore";
 
 import { artist_countries_codes_currency } from "#data/artist_countries_codes_currency";
 import { useAddressForm } from "#hooks/useAddressForm";
 import { useLocationSelection } from "#hooks/useLocationSelection";
 import { useAddressVerification } from "#hooks/useAddressVerification";
-import { AddressTooltip } from "#components/general/AddressTooltip";
 import { AddressFormFields } from "#components/register/AddressFormFields";
-import { AddressVerificationModal } from "#components/register/AddressVerificationModal";
+
 import { AddressVerificationActions } from "#components/register/AddressVerificationActions";
 
 const ArtistHomeAddressVerification = () => {
-  const [showToolTip, setShowToolTip] = useState(false);
 
   const transformedCountries = useMemo(
     () =>
@@ -49,8 +47,10 @@ const ArtistHomeAddressVerification = () => {
     setBaseCurrency,
   } = useArtistAuthRegisterStore();
 
-  const { formErrors, handleValidationChecks, checkIsFormValid } =
-    useAddressForm();
+  const { formErrors, touched, handleBlur, checkIsFormValid } = useAddressForm({
+    ...artistRegisterData.address,
+    phone: artistRegisterData.phone,
+  });
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -69,14 +69,11 @@ const ArtistHomeAddressVerification = () => {
     },
   );
 
-  const {
-    showModal,
-    setShowModal,
-    addressVerified,
-    handleVerifyAddress,
-    handleModalProceed,
-    handleModalGoBack,
-  } = useAddressVerification(setIsLoading, pageIndex, setPageIndex);
+  const { handleVerifyAddress } = useAddressVerification(
+    setIsLoading,
+    pageIndex,
+    setPageIndex,
+  );
 
   const handleSubmit = () => {
     handleVerifyAddress(
@@ -95,50 +92,23 @@ const ArtistHomeAddressVerification = () => {
         addressData={artistRegisterData.address}
         phone={artistRegisterData.phone}
         formErrors={formErrors}
+        touched={touched}
+        onBlur={handleBlur}
         onCountrySelect={handleCountrySelect}
         onStateSelect={handleStateSelect}
         onCitySelect={(item) => setCity(item.value)}
-        onAddressChange={(text) => {
-          setHomeAddress(text);
-          handleValidationChecks("general", text);
-        }}
-        onZipChange={(text) => {
-          setZipCode(text);
-          handleValidationChecks("general", text);
-        }}
-        onPhoneChange={(text) => {
-          setPhone(text);
-          handleValidationChecks("phone", text);
-        }}
+        onAddressChange={setHomeAddress}
+        onZipChange={setZipCode}
+        onPhoneChange={setPhone}
         addressLabel="Home Address"
         addressPlaceholder="Input your home address here"
       />
 
       <AddressVerificationActions
         isLoading={isLoading}
-        isDisabled={
-          !checkIsFormValid(
-            artistRegisterData.address,
-            artistRegisterData.phone,
-          )
-        }
+        isDisabled={!checkIsFormValid()}
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
-      />
-
-      <AddressTooltip
-        showToolTip={showToolTip}
-        setShowToolTip={setShowToolTip}
-        tooltipText="We need your home address to properly verify shipping designation"
-      />
-
-      <AddressVerificationModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        addressVerified={addressVerified}
-        handleModalGoBack={handleModalGoBack}
-        handleModalProceed={handleModalProceed}
-        handleSubmit={handleSubmit}
       />
     </View>
   );
