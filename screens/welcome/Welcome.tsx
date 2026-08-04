@@ -9,7 +9,6 @@ import LongBlackButton from "#components/buttons/LongBlackButton";
 import { onboardingdata } from "#constants/onBoardingData.constants";
 import OnBoardingSection from "./components/OnBoardingSection";
 import { utils_storeAsyncData } from "#utils/app/utils_asyncStorage";
-import { utils_determineOnboardingPages } from "#utils/location/utils_determineOnboardingPages";
 
 import tw from "twrnc";
 import { StatusBar } from "expo-status-bar";
@@ -19,6 +18,7 @@ import {
   secondaryGridImages,
 } from "#constants/images.constants";
 import { useDevice } from "#hooks/useDevice";
+import { utils_hasCompletedWelcomeOnboarding } from "#utils/location/utils_hasCompletedWelcomeOnboarding";
 
 export default function Welcome() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -27,12 +27,12 @@ export default function Welcome() {
   const { isTablet } = useDevice();
 
   const [selected, setSelected] = useState(0);
-  const [showWelcome, setShowWelcome] = useState(false);
+  const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
 
   useEffect(() => {
     async function handleOnboardingCheck() {
-      const isOnboarded = await utils_determineOnboardingPages();
-      if (isOnboarded) setShowWelcome(true);
+      const isOnboarded = await utils_hasCompletedWelcomeOnboarding();
+      setShowWelcome(isOnboarded);
     }
     handleOnboardingCheck();
   }, []);
@@ -41,10 +41,18 @@ export default function Welcome() {
     navigation.navigate(value);
   };
 
-  if (!showWelcome) {
-    return (
-      <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
-        <StatusBar style="light" />
+  return (
+    <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
+      <StatusBar style="light" />
+
+      {/* Horizontal Animated Grid Background */}
+      <TiltedGridBackground
+        primaryImages={primaryGridImages}
+        secondaryImages={secondaryGridImages}
+        isActive={isFocused && showWelcome === true}
+      />
+
+      {showWelcome === null ? null : !showWelcome ? (
         <OnBoardingSection
           data={onboardingdata[selected]}
           currentIndex={selected}
@@ -55,23 +63,8 @@ export default function Welcome() {
           handleNext={() => setSelected((prev) => prev + 1)}
           handleBack={() => setSelected((prev) => prev - 1)}
         />
-      </View>
-    );
-  }
-
-  return (
-    <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
-      <StatusBar style="light" />
-
-      {/* Horizontal Animated Grid Background */}
-      <TiltedGridBackground
-        primaryImages={primaryGridImages}
-        secondaryImages={secondaryGridImages}
-        isActive={isFocused}
-      />
-
-      {/* Bottom content container */}
-      <View
+      ) : (
+        <View
         style={[
           tw`rounded-sm py-8 px-8`,
           {
@@ -123,7 +116,8 @@ export default function Welcome() {
             </Text>
           </Pressable> */}
         </View>
-      </View>
+        </View>
+      )}
     </View>
   );
 }

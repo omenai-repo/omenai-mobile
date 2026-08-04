@@ -2,7 +2,6 @@ import LongBlackButton from "#components/buttons/LongBlackButton";
 import { colors } from "#config/colors.config";
 import {
   Image,
-  Platform,
   Pressable,
   Text,
   useWindowDimensions,
@@ -22,6 +21,7 @@ type onBoardingSectionProps = {
 };
 
 const TOTAL_SLIDES = 2;
+const IMAGE_HEIGHT_RATIO = 0.64;
 
 export default function OnBoardingSection({
   data,
@@ -34,7 +34,7 @@ export default function OnBoardingSection({
   const insets = useSafeAreaInsets();
   const { isTablet } = useDevice();
 
-  const imageHeight = Platform.OS === "ios" ? height / 1.6 : height / 1.5;
+  const imageHeight = height * IMAGE_HEIGHT_RATIO;
 
   return (
     <View style={tw`flex-1 bg-white`}>
