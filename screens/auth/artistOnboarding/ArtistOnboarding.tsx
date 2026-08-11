@@ -85,7 +85,7 @@ const ArtistOnboarding = () => {
     }
   >(INITIAL_ONBOARDING_STATE);
   const [cv, setCv] = useState<DocumentPicker.DocumentPickerResult | null>(
-    null
+    null,
   );
   const [documentation, setDocumentation] = useState<{
     cv: string;
@@ -102,13 +102,12 @@ const ArtistOnboarding = () => {
     socials: INITIAL_SOCIALS_STATE,
   });
 
-
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [editingQuestionKey, setEditingQuestionKey] = useState<
-    QuestionKey | "cv" | "social" | null
-  >(null);
+  const [editingQuestionKey] = useState<QuestionKey | "cv" | "social" | null>(
+    null,
+  );
 
-  const [editingSocialKey, setEditingSocialKey] = useState<string | null>(null);
+  const [editingSocialKey] = useState<string | null>(null);
   const [screen, setScreen] = useState(1);
   const [isConfirmed, setIsConfirmed] = useState(false);
 
@@ -117,7 +116,6 @@ const ArtistOnboarding = () => {
   const resetScroll = () => {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   };
-
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -245,7 +243,6 @@ const ArtistOnboarding = () => {
 
     return false;
   };
-
 
   const updateSocial = (key: string, value: string) => {
     setDocumentation((prev) => ({
@@ -495,9 +492,7 @@ const ArtistOnboarding = () => {
             )}
 
             <FittedBlackButton
-              value={
-                stage === "overview" ? "Submit for Verification" : "Next"
-              }
+              value={stage === "overview" ? "Submit for Verification" : "Next"}
               onClick={nextHandler}
               isDisabled={isNextDisabled()}
               isLoading={isLoading}

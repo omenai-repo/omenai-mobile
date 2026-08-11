@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 import { useIndividualAuthRegisterStore } from "#store/auth/register/IndividualAuthRegisterStore";
 import { Country, ICountry } from "country-state-city";
@@ -11,7 +11,6 @@ import { AddressFormFields } from "#components/register/AddressFormFields";
 import { AddressVerificationActions } from "#components/register/AddressVerificationActions";
 
 const IndividualAddressVerification = () => {
-
   const transformedCountries = useMemo(
     () =>
       Country.getAllCountries().map((item: ICountry) => ({
@@ -40,8 +39,9 @@ const IndividualAddressVerification = () => {
     setStateCode,
   } = useIndividualAuthRegisterStore();
 
-  const { formErrors, touched, handleBlur, checkIsFormValid } =
-    useAddressForm({ ...individualRegisterData.address });
+  const { formErrors, touched, handleBlur, checkIsFormValid } = useAddressForm({
+    ...individualRegisterData.address,
+  });
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -62,7 +62,7 @@ const IndividualAddressVerification = () => {
   const { handleVerifyAddress } = useAddressVerification(
     setIsLoading,
     pageIndex,
-    setPageIndex
+    setPageIndex,
   );
 
   const handleSubmit = () => {
@@ -94,7 +94,6 @@ const IndividualAddressVerification = () => {
         onBack={() => setPageIndex(pageIndex - 1)}
         onSubmit={handleSubmit}
       />
-
     </View>
   );
 };

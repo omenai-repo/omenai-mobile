@@ -54,21 +54,25 @@ export default function ArtistDetails() {
     return !(isArtistValid && isBirthYearValid && areAllFieldsFilled);
   };
 
-  const handleValidationChecks = debounce((label: string, value: string) => {
-    // Clear error if the input is empty
-    if (value.trim() === "") {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-      return;
-    }
+  const handleValidationChecks = useMemo(
+    () =>
+      debounce((label: string, value: string) => {
+        // Clear error if the input is empty
+        if (value.trim() === "") {
+          setFormErrors((prev) => ({ ...prev, [label]: "" }));
+          return;
+        }
 
-    const { success, errors }: { success: boolean; errors: string[] | [] } =
-      validate(label, value);
-    if (!success) {
-      setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
-    } else {
-      setFormErrors((prev) => ({ ...prev, [label]: "" }));
-    }
-  }, 500);
+        const { success, errors }: { success: boolean; errors: string[] | [] } =
+          validate(label, value);
+        if (!success) {
+          setFormErrors((prev) => ({ ...prev, [label]: errors[0] }));
+        } else {
+          setFormErrors((prev) => ({ ...prev, [label]: "" }));
+        }
+      }, 500),
+    []
+  );
 
   useEffect(() => {
     if (userSession && userType === "artist") {

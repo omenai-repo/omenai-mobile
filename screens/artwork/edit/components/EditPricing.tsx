@@ -42,7 +42,6 @@ export default function EditPricing({ art_id }: { art_id: string }) {
   });
   const [loadingConversion, setLoadingConversion] = useState<boolean>(false);
 
-  const currency_symbol = utils_getCurrencySymbol(currency);
   const usd_symbol = utils_getCurrencySymbol("USD");
 
   const checkIsDisabled = () => {
@@ -123,14 +122,16 @@ export default function EditPricing({ art_id }: { art_id: string }) {
       });
     } else {
       updateModal({
-        message: update?.message || update?.body?.message || "Error updating pricing detials",
+        message:
+          update?.message ||
+          update?.body?.message ||
+          "Error updating pricing detials",
         showModal: true,
         modalType: "error",
       });
     }
     setLoading(false);
   };
-
 
   return (
     <View style={styles.container}>
@@ -176,7 +177,7 @@ export default function EditPricing({ art_id }: { art_id: string }) {
               }
               disabled={true}
               placeHolder=""
-              onInputChange={() => { }}
+              onInputChange={() => {}}
             />
           )}
         </View>

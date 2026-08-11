@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, Pressable } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";

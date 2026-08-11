@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import { getImageFileView } from "#lib/storage/getImageFileView";

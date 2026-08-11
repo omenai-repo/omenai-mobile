@@ -18,7 +18,6 @@ import EligibityResponseScreen from "./EligibityResponseScreen";
 import Logo from "#screens/marketplace/gallery/profile/galleryProfile/components/Logo";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useQueryClient } from "@tanstack/react-query";
 import BlurStatusBar from "#components/general/BlurStatusBar";
 import { useScrollY } from "#hooks/useScrollY";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
@@ -35,7 +34,6 @@ export default function ArtistProfileScreen() {
 
   const { userSession } = useAppStore();
   const insets = useSafeAreaInsets();
-  const queryClient = useQueryClient();
   const { scrollY, onScroll } = useScrollY();
 
   const [userData, setUserData] = useState<userDataType>({

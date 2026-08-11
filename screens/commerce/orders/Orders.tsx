@@ -10,9 +10,7 @@ import { useCollectorOrders } from "#hooks/useCollectorOrders";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FilterDropdown from "./components/FilterDropdown";
 import { useHighRiskFeatureFlag } from "#hooks/useFeatureFlag";
-import type { CollectorOrderPaymentFlags } from "#types/orders";
-import type { OrderTabsTypes } from "#types/orders";
-
+import type { CollectorOrderPaymentFlags, OrderTabsTypes } from "#types/orders";
 
 export default function Orders() {
   const { data, isLoading, refetch } = useCollectorOrders();

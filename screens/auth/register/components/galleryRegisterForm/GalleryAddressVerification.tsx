@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { country_codes } from "#json/country_alpha_2_codes";
 
 import { useGalleryAuthRegisterStore } from "#store/auth/register/GalleryAuthRegisterStore";
@@ -11,7 +11,6 @@ import { AddressFormFields } from "#components/register/AddressFormFields";
 import { AddressVerificationActions } from "#components/register/AddressVerificationActions";
 
 const GalleryAddressVerification = () => {
-
   const transformedCountries = useMemo(
     () =>
       country_codes.map((item) => ({
@@ -41,11 +40,10 @@ const GalleryAddressVerification = () => {
     setCityData,
   } = useGalleryAuthRegisterStore();
 
-  const { formErrors, touched, handleBlur, checkIsFormValid } =
-    useAddressForm({
-      ...galleryRegisterData.address,
-      phone: galleryRegisterData.phone,
-    });
+  const { formErrors, touched, handleBlur, checkIsFormValid } = useAddressForm({
+    ...galleryRegisterData.address,
+    phone: galleryRegisterData.phone,
+  });
 
   const { handleCountrySelect, handleStateSelect } = useLocationSelection(
     {
@@ -66,7 +64,7 @@ const GalleryAddressVerification = () => {
   const { handleVerifyAddress } = useAddressVerification(
     setIsLoading,
     pageIndex,
-    setPageIndex
+    setPageIndex,
   );
 
   const handleSubmit = () => {

@@ -244,21 +244,22 @@ const EditAddressScreen = () => {
     return !(isFormValid && areAllFieldsFilled && hasAddressChanged);
   };
 
-  const handleValidationChecks = debounce(
-    (label: string, value: string, confirm?: string) => {
-      // Clear error if the input is empty
-      if (value.trim() === "") {
-        setFormErrors((prev) => ({ ...prev, [label]: "" }));
-        return;
-      }
+  const handleValidationChecks = useMemo(
+    () =>
+      debounce((label: string, value: string, confirm?: string) => {
+        // Clear error if the input is empty
+        if (value.trim() === "") {
+          setFormErrors((prev) => ({ ...prev, [label]: "" }));
+          return;
+        }
 
-      const { success, errors } = validate(value, label, confirm);
-      setFormErrors((prev) => ({
-        ...prev,
-        [label]: errors.length > 0 ? errors[0] : "",
-      }));
-    },
-    500,
+        const { success, errors } = validate(value, label, confirm);
+        setFormErrors((prev) => ({
+          ...prev,
+          [label]: errors.length > 0 ? errors[0] : "",
+        }));
+      }, 500),
+    []
   ); // ✅ Delay validation by 500ms
 
   const handleSubmit = async () => {

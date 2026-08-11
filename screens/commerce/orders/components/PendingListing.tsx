@@ -3,7 +3,6 @@ import React from "react";
 import { colors } from "#config/colors.config";
 import { Feather } from "@expo/vector-icons";
 import OrderCard from "./OrderCard";
-import Divider from "#components/general/Divider";
 
 type PendingListingProps = {
   listing: any[];

@@ -61,7 +61,7 @@ export const utils_appInit = async () => {
             console.log(JSON.stringify(res, null, 2));
             if (res.ok) {
               const { user } = await res.json();
-              if (user && user.userData) {
+              if (user?.userData) {
                 const updatedSession = sanitizePersistedSession({
                   ...value,
                   ...user.userData,
