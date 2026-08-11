@@ -8,9 +8,11 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
   const shimmerAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const skeletonKeys = React.useMemo(() => 
-    Array.from({ length: count }).map(() => Math.random().toString()),
-  [count]);
+  const baseId = React.useId();
+  const skeletonKeys = React.useMemo(
+    () => Array.from({ length: count }).map((_, i) => `${baseId}-${i}`),
+    [count, baseId],
+  );
 
   useEffect(() => {
     // Fade-in on mount
