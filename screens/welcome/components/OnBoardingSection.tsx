@@ -21,7 +21,7 @@ type onBoardingSectionProps = {
 };
 
 const TOTAL_SLIDES = 2;
-const IMAGE_HEIGHT_RATIO = 0.64;
+const IMAGE_HEIGHT_RATIO = 0.7;
 
 export default function OnBoardingSection({
   data,

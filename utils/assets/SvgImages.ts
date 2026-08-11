@@ -142,14 +142,14 @@ export const errorIcon = `<svg width="51" height="51" viewBox="0 0 51 51" fill="
 </svg>
 `;
 export const getCheckMarkIcon = (
-  backgroundColor: string = "transparent"
+  backgroundColor: string = "transparent",
 ) => `<svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <rect width="51" height="51" rx="25.5" fill="${backgroundColor}"/>
 <rect x="0.175781" y="0.0234375" width="50" height="50" fill="url(#pattern0_5382_49597)"/>
 <defs>
 <pattern id="pattern0_5382_49597" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0_5382_49597" transform="scale(0.02)"/>
-</pattern>  
+</pattern>
 <image id="image0_5382_49597" width="50" height="50" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAExElEQVR4nO1ZTWwbRRReTiCBEFRCyDtpK9FQ4EBakNpcAhLlGK6lSIgjPxLixAE4IAFq1UIbROsmsbwzTkWPbUFQRENiBBIVaRB/sdNgp669M+s0jRSTNnEb1Y770BvbsddOm931eh0hf9JI9sreed+8782890ZR2mijjZahQxO7VcqHceBnZaOjQxOdhIkRwsQUofzjR47PPeBjvIdQniVMgBzys9G9dSj1EKFiP2E8TpgI43+VDQGAe1TGx1cNZgJUJq4QKq5XPys+5xkcNc/GW2b75hN8G9GMrs6j0/cSqvfWGmx3qFR/8dEvZ+8nzNjhmYcI5Z9WrXxOZeJao0QI40uE8ULV98+aSqJDE5sI4/nGDV+XWB7nahoRX4g/13wSojSMbtcJbBngD+P2SSg/4hURlYrPceFc8wzqlVC+4p0nhHnIuRuMGTWY3t4yAqzGQ8H0dsdEfCH92VYTIKtSSz3jmEhxb6/eFj2TE5hIMJHbOpS6zzERQo0Xinu8N8arwSSo/f8A8UfMZDBLoHovZhG2CODpqjI+5g0BHdTBOGwbmIB3R1Jw8BcDngpEgGjJenkxPo5ZhXVPMBH2xAOBS/DEYASO/DoDC8t5OHg+DcQfBaKl7vI/MWqDiMxMm0cCV9sfgffDOlxbzkNu5Ta8+V2iKKua+KgfPGaZiMrEgaZ5YTAOPScuwl+zWUDcyBVg3+kYqAMxCyTkOz6xTARrhtp0e1WnGJDBZHFVqW4vFvqn4J1zScjmViQJ9MS+03FJzuJCzG06Of2gvcpuLSJaCnZqUXj9bAL2norDLjYJvqN/S0lIcndaUaqD71gU+sZmoIzCbYA3ziaKnrDsVb6IaYs1EiGx645bLhp0/CK8ciYOc9mcNAiD9MzUPLz29bTUvSRUIyeffxK0P65CNQ6dT0sPWZITM70va6lsJkz8sN7LcLd5OhiBcHLBZFxs/ibsPRUzGYje+uhnYfrdcOJfUI9F7ZNgpfkpH3aFSFlmaMwXFypyKSPw+yx0+CclYSSGMirjyuIteHIwcvctlrlCxOgmjN+wE8Af/KhDla0S38Yz0On/ExKZ5dVn+JuX0WOBS45JEMaXUP7W4oSK5zGwLGpWkvnwJ17nmZnFW6bvJyfmnMUFK3mC8YytthK2c2QnxHoASgPXklkZ8zfzpdSjEUmJBVuFFh46tifCM8UfhdHL5g2gjPfCeoOSEiWviAPNT1G0lMydMKCrkVxYhi3+CceSIk5TlEaSRjWQgFe/ipuIvIV5VCDhAgmBY8ReGk/5b04nw0Pzm1hGkpi4mq2vLxzLio/ZSuMrrVD9pbVan1Yk9lh/BN7+/jJ0BaP1p719OS2RkL5HcQosL7HMdDQ5njEyuXS+S5EKkQLupI6JqEPpnS7purXNB3UDtYNIyHhcaQSE8cMtbdAxnsfGueIG8DQt9X37PCTRh3kftmtdIVFDaLdXRHyM9yjNAq7O/+JaYbWpXZmw4EYDDy+Lqrd5lYlDimdXb8zYIVuqIX1Pwx6geq+8xtOMLvsnt4tQKb+w3qVn0WBxvbY8kJehdluhTfUQFaPF62mxX15BFyvNiuwoz2IA4wldKhOmMAFsqQesAktSlfFzOCyXp2200YbSDPwHlRnZE5vqZaMAAAAASUVORK5CYII="/>
 </defs>
 </svg>
@@ -180,7 +180,7 @@ export const getLockIcon = (
   color: string = "#2A9EDF",
   width: number = 24,
   height: number = 24,
-  strokeWidth: number = 1.5
+  strokeWidth: number = 1.5,
 ) =>
   `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
 
@@ -310,7 +310,7 @@ export const rightArrowIcon = `<svg width="24" height="24" viewBox="0 0 24 24" f
 `;
 
 export const getRightArrowIcon = (
-  color: string = "#292D32"
+  color: string = "#292D32",
 ) => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M14.4301 18.8191C14.2401 18.8191 14.0501 18.7491 13.9001 18.5991C13.6101 18.3091 13.6101 17.8291 13.9001 17.5391L19.4401 11.9991L13.9001 6.45914C13.6101 6.16914 13.6101 5.68914 13.9001 5.39914C14.1901 5.10914 14.6701 5.10914 14.9601 5.39914L21.0301 11.4691C21.3201 11.7591 21.3201 12.2391 21.0301 12.5291L14.9601 18.5991C14.8101 18.7491 14.6201 18.8191 14.4301 18.8191Z" fill="${color}"/>
 <path d="M20.33 12.75H3.5C3.09 12.75 2.75 12.41 2.75 12C2.75 11.59 3.09 11.25 3.5 11.25H20.33C20.74 11.25 21.08 11.59 21.08 12C21.08 12.41 20.74 12.75 20.33 12.75Z" fill="${color}"/>
@@ -326,7 +326,7 @@ export const uncheckedBox = `<svg width="20" height="21" viewBox="0 0 20 21" fil
 </svg>
 `;
 export const getDeleteIcon = (
-  color: string = "#C71C16"
+  color: string = "#C71C16",
 ) => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M6.70838 20.7171C6.1806 20.7171 5.72879 20.5291 5.35295 20.1533C4.97711 19.7775 4.78919 19.3256 4.78919 18.7979V6.32312C4.5173 6.32312 4.2894 6.23116 4.10547 6.04724C3.92155 5.86332 3.82959 5.63541 3.82959 5.36353C3.82959 5.09164 3.92155 4.86374 4.10547 4.67982C4.2894 4.49589 4.5173 4.40393 4.78919 4.40393H8.62757C8.62757 4.13205 8.71953 3.90414 8.90345 3.72022C9.08738 3.5363 9.31528 3.44434 9.58717 3.44434H13.4255C13.6974 3.44434 13.9253 3.5363 14.1093 3.72022C14.2932 3.90414 14.3851 4.13205 14.3851 4.40393H18.2235C18.4954 4.40393 18.7233 4.49589 18.9072 4.67982C19.0912 4.86374 19.1831 5.09164 19.1831 5.36353C19.1831 5.63541 19.0912 5.86332 18.9072 6.04724C18.7233 6.23116 18.4954 6.32312 18.2235 6.32312V18.7979C18.2235 19.3256 18.0356 19.7775 17.6598 20.1533C17.2839 20.5291 16.8321 20.7171 16.3043 20.7171H6.70838ZM16.3043 6.32312H6.70838V18.7979H16.3043V6.32312ZM9.58717 16.8787C9.85905 16.8787 10.087 16.7867 10.2709 16.6028C10.4548 16.4189 10.5468 16.191 10.5468 15.9191V9.20191C10.5468 8.93003 10.4548 8.70212 10.2709 8.5182C10.087 8.33428 9.85905 8.24232 9.58717 8.24232C9.31528 8.24232 9.08738 8.33428 8.90345 8.5182C8.71953 8.70212 8.62757 8.93003 8.62757 9.20191V15.9191C8.62757 16.191 8.71953 16.4189 8.90345 16.6028C9.08738 16.7867 9.31528 16.8787 9.58717 16.8787ZM13.4255 16.8787C13.6974 16.8787 13.9253 16.7867 14.1093 16.6028C14.2932 16.4189 14.3851 16.191 14.3851 15.9191V9.20191C14.3851 8.93003 14.2932 8.70212 14.1093 8.5182C13.9253 8.33428 13.6974 8.24232 13.4255 8.24232C13.1537 8.24232 12.9258 8.33428 12.7418 8.5182C12.5579 8.70212 12.466 8.93003 12.466 9.20191V15.9191C12.466 16.191 12.5579 16.4189 12.7418 16.6028C12.9258 16.7867 13.1537 16.8787 13.4255 16.8787Z" fill="${color}"/>
 </svg>

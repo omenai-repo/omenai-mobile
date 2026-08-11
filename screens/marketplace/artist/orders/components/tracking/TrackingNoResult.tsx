@@ -13,7 +13,7 @@ export default function TrackingNoResult({
   handleSearchAgain,
 }: Readonly<TrackingNoResultProps>) {
   return (
-    <View style={tw`px-4 py-8 items-center`}>
+    <View style={tw`py-16 items-center`}>
       <View
         style={tw`h-16 w-16 bg-red-100 rounded-full items-center justify-center mb-4`}
       >

@@ -93,7 +93,7 @@ export default function LongBlackButton({
     <Pressable
       style={({ pressed }) => [
         ...containerStyle,
-        pressed && tw`scale-95 opacity-90`,
+        pressed && tw`scale-99 opacity-90`,
       ]}
       onPress={onClick}
       disabled={isInactive}

@@ -58,11 +58,8 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
     return (
       <View style={tw`flex-1 bg-gray-50`}>
         <BackHeaderTitle title="Track Shipment" />
-        <View style={tw`px-4 py-8`}>
-          {/* Mimic search bar */}
+        <View style={tw`px-5 py-6 gap-4`}>
           <SkeletonRow widthPct="100%" height={120} borderRadius={12} />
-          <View style={tw`h-6`} />
-          {/* Mimic content */}
           <SkeletonRow widthPct="100%" height={200} borderRadius={12} />
         </View>
       </View>
@@ -71,10 +68,10 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
 
   if (isTrackingEnabled) {
     return (
-      <View style={tw`flex-1 bg-gray-50`}>
+      <View style={tw`flex-1 bg-white`}>
         <BackHeaderTitle title="Track Shipment" />
 
-        <View style={tw`flex-1`}>
+        <View style={tw`flex-1 px-6`}>
           <TrackingSearchBar
             trackingInput={trackingInput}
             setTrackingInput={setTrackingInput}
@@ -85,7 +82,7 @@ export default function ShipmentTrackingScreen({ navigation }: any) {
           <ScrollView
             style={tw`flex-1`}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 40 }}
+            contentContainerStyle={tw`pb-6`}
           >
             {/* Tracking Results */}
             {trackingData && !isLoading && (
