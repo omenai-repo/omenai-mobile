@@ -36,7 +36,7 @@ export const artworksMediumFilterStore = create<FilterStoreTypes>((set, get) => 
 
   updateFilter: (label: string, value: string) => {
     const currentFilterData: Record<string, any> = get().filterOptions;
-    if (!label || typeof value === "undefined") {
+    if (!label || value === undefined) {
       return; // Do nothing if filters, label, or value is missing
     }
 
@@ -50,7 +50,7 @@ export const artworksMediumFilterStore = create<FilterStoreTypes>((set, get) => 
   },
 
   removeFilter: (label: string, value: any) => {
-    if (!label || typeof value === "undefined") {
+    if (!label || value === undefined) {
       return; // Do nothing if filters, label, or value is missing
     }
 

@@ -3,9 +3,9 @@ import { View, Text } from "react-native";
 import tw from "twrnc";
 
 interface DetailRowProps {
-  label: string;
-  children?: React.ReactNode;
-  value?: string;
+  readonly label: string;
+  readonly children?: React.ReactNode;
+  readonly value?: string;
 }
 
 function DetailRowComponent({ label, value, children }: DetailRowProps) {

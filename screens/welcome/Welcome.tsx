@@ -41,18 +41,13 @@ export default function Welcome() {
     navigation.navigate(value);
   };
 
-  return (
-    <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
-      <StatusBar style="light" />
+  const renderContent = () => {
+    if (showWelcome === null) {
+      return null;
+    }
 
-      {/* Horizontal Animated Grid Background */}
-      <TiltedGridBackground
-        primaryImages={primaryGridImages}
-        secondaryImages={secondaryGridImages}
-        isActive={isFocused && showWelcome === true}
-      />
-
-      {showWelcome === null ? null : !showWelcome ? (
+    if (!showWelcome) {
+      return (
         <OnBoardingSection
           data={onboardingdata[selected]}
           currentIndex={selected}
@@ -63,8 +58,11 @@ export default function Welcome() {
           handleNext={() => setSelected((prev) => prev + 1)}
           handleBack={() => setSelected((prev) => prev - 1)}
         />
-      ) : (
-        <View
+      );
+    }
+
+    return (
+      <View
         style={[
           tw`rounded-sm py-8 px-8`,
           {
@@ -116,8 +114,22 @@ export default function Welcome() {
             </Text>
           </Pressable> */}
         </View>
-        </View>
-      )}
+      </View>
+    );
+  };
+
+  return (
+    <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
+      <StatusBar style="light" />
+
+      {/* Horizontal Animated Grid Background */}
+      <TiltedGridBackground
+        primaryImages={primaryGridImages}
+        secondaryImages={secondaryGridImages}
+        isActive={isFocused && showWelcome === true}
+      />
+
+      {renderContent()}
     </View>
   );
 }

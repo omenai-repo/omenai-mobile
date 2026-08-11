@@ -19,8 +19,8 @@ export default function ChangePassword({
   route,
   navigation,
 }: {
-  route: any;
-  navigation: any;
+  readonly route: any;
+  readonly navigation: any;
 }) {
   const { routeName } = route.params;
   const [loading, setLoading] = useState<boolean>(false);
@@ -155,10 +155,10 @@ export default function ChangePassword({
           </View>
           <View>
             {errorList.length > 0 &&
-              errorList.map((error, index) => {
+              errorList.map((error) => {
                 return (
                   <View
-                    key={index}
+                    key={error}
                     style={{
                       flexDirection: "row",
                       alignItems: "center",

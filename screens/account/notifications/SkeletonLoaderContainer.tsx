@@ -8,6 +8,10 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
   const shimmerAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  const skeletonKeys = React.useMemo(() => 
+    Array.from({ length: count }).map(() => Math.random().toString()),
+  [count]);
+
   useEffect(() => {
     // Fade-in on mount
     Animated.timing(fadeAnim, {
@@ -33,9 +37,9 @@ const SkeletonLoaderContainer = ({ count = 5 }: { count?: number }) => {
 
   return (
     <Animated.View style={[tw`flex-1 bg-white px-5`, { opacity: fadeAnim }]}>
-      {Array.from({ length: count }).map((_, index) => (
+      {skeletonKeys.map((key) => (
         <View
-          key={`skeleton-item-${index}`}
+          key={`skeleton-item-${key}`}
           style={tw`flex-row items-start py-4 border-b border-[#F2F2F7] overflow-hidden`}
         >
           {/* Shimmer Overlay across the row */}
