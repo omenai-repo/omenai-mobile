@@ -43,8 +43,12 @@ export default function EditProfile() {
     const isNameChanged = formData.name !== userSession.name;
     const isPhoneChanged = formData.phone !== userSession.phone;
     const isPrefsChanged =
-      JSON.stringify([...formData.preferences].sort()) !==
-      JSON.stringify([...(userSession.preferences || [])].sort());
+      JSON.stringify(
+        [...formData.preferences].sort((a, b) => a.localeCompare(b)),
+      ) !==
+      JSON.stringify(
+        [...(userSession.preferences || [])].sort((a, b) => a.localeCompare(b)),
+      );
 
     setIsDirty(isNameChanged || isPrefsChanged || isPhoneChanged);
   }, [formData, userSession]);
