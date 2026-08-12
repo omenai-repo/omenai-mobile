@@ -43,9 +43,7 @@ export default function ArtworkContentSection({
       <ArtworkActionButtons
         primaryButton={primaryButton}
         userType={userType}
-        likeIds={artwork.like_IDs || []}
-        art_id={artwork.art_id || ""}
-        impressions={artwork.impressions || 0}
+        artwork={artwork}
       />
 
       <View style={[tw`mt-8 gap-4`, isTabletSize && tw`flex-row`]}>

@@ -103,12 +103,13 @@ export default function LongBlackButton({
         {/* Invisible content to maintain button width */}
         <View
           style={[
-            tw`flex-row items-center justify-center gap-3`,
+            tw`flex-row items-center justify-center`,
+            !!value && tw`gap-3`,
             { opacity: isLoading ? 0 : 1 },
           ]}
         >
           {iconPosition === "left" && icon}
-          <Text style={mergedTextStyle}>{value}</Text>
+          {!!value && <Text style={mergedTextStyle}>{value}</Text>}
           {iconPosition === "right" && icon}
         </View>
 

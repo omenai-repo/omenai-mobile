@@ -14,12 +14,14 @@ type SaveArtworkButtonProps = {
   likeIds: string[];
   art_id: string;
   impressions: number;
+  minimized?: boolean;
 };
 
 export default function SaveArtworkButton({
   likeIds,
   art_id,
   impressions,
+  minimized = false,
 }: SaveArtworkButtonProps) {
   const [sessionId, setSessionId] = useState("");
   const { openGuestLoginModal } = useGuestLoginModalStore();
@@ -44,12 +46,18 @@ export default function SaveArtworkButton({
 
   return (
     <LongBlackButton
-      style={tw`border-neutral-200`}
+      style={[tw`border-neutral-200`, minimized && tw`w-[46px] px-0`]}
       textStyle={[
         tw`uppercase text-center text-sm tracking-widest`,
         { color: colors.black },
       ]}
-      value={isSaved ? "Remove from collection" : "Save to collection"}
+      value={
+        minimized
+          ? ""
+          : isSaved
+          ? "Remove from collection"
+          : "Save to collection"
+      }
       onClick={() => {
         if (sessionId) {
           handleLike(!isSaved);

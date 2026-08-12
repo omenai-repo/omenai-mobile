@@ -46,6 +46,8 @@ export default {
           "This app uses notifications to keep you updated.",
         NSFaceIDUsageDescription:
           "Allow Omenai to use Face ID for secure and convenient login.",
+        NSCameraUsageDescription:
+          "Omenai uses the camera to place this artwork in your room with augmented reality.",
       },
     },
     android: {
@@ -56,7 +58,10 @@ export default {
       googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
       useNextNotificationsApi: true,
       package: "com.omenai.omenaiapp",
-      permissions: ["android.permission.RECORD_AUDIO"],
+      permissions: [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+      ],
       versionCode: ANDROID_VERSION_CODE,
       softwareKeyboardLayoutMode: "pan",
       intentFilters: androidIntentFilters,
@@ -97,6 +102,10 @@ export default {
           android: {
             enableMinifyInReleaseBuilds: true,
             enableShrinkResourcesInReleaseBuilds: true,
+            manifestQueries: {
+              package: ["com.google.ar.core"],
+            },
+            buildArchs: ["armeabi-v7a", "arm64-v8a"],
             // R8 fails on optional class references unless ignored (see minifyReleaseWithR8).
             extraProguardRules: `
               # Stripe: push provisioning classes are optional; @stripe/stripe-react-native still references them.
@@ -110,6 +119,13 @@ export default {
 
               # Guava/Google Common references java.lang.reflect.AnnotatedType which is missing in Android SDK
               -dontwarn java.lang.reflect.AnnotatedType
+
+              # Viro / Google VR references optional telemetry + protobuf classes not packaged in release APK.
+              -dontwarn com.google.common.logging.Vr$**
+              -dontwarn com.google.common.logging.nano.**
+              -dontwarn com.google.protobuf.**
+              -dontwarn com.google.protobuf.nano.**
+              -dontwarn logs.proto.wireless.performance.mobile.**
             `.trim(),
           },
         },
@@ -148,7 +164,19 @@ export default {
             "Omenai app accesses your photos to let you upload artworks.",
         },
       ],
-
+      [
+        "@reactvision/react-viro",
+        {
+          android: {
+            xRMode: "AR",
+          },
+          ios: {
+            cameraUsagePermission:
+              "Omenai uses the camera to place this artwork in your room with augmented reality.",
+          },
+        },
+      ],
+      "./plugins/viro-with-simulator.js",
       "expo-web-browser",
       [
         "expo-secure-store",

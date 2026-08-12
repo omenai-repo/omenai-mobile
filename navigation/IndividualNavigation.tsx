@@ -40,10 +40,7 @@ import Orders from "#screens/commerce/orders/Orders";
 import Profile from "#screens/account/profile/Profile";
 import GalleryTabBar from "./components/GalleryTabBar";
 import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
-import {
-  MoreSheetProvider,
-  useMoreSheet,
-} from "./components/MoreSheetContext";
+import { MoreSheetProvider, useMoreSheet } from "./components/MoreSheetContext";
 import { logout } from "#utils/auth/logout.utils";
 import {
   homeIcon,
@@ -55,6 +52,7 @@ import {
   orderIcon,
   orderIconFocused,
 } from "#utils/assets/SvgImages";
+import ArPreview from "#artwork/ar/ArPreview";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -181,7 +179,9 @@ function IndividualTabs() {
   return (
     <>
       <Tab.Navigator
-        tabBar={(props) => renderIndividualTabBar(props, tabNavigationRef, openMoreSheet)}
+        tabBar={(props) =>
+          renderIndividualTabBar(props, tabNavigationRef, openMoreSheet)
+        }
         screenOptions={{ headerShown: false }}
       >
         {individualTabs.map(({ name, component, id }) => (
@@ -254,6 +254,11 @@ export default function IndividualNavigation() {
       <Stack.Screen
         name={screenName.artwork}
         component={wrapWithHighRisk(Artwork)}
+      />
+      <Stack.Screen
+        name={screenName.arPreview}
+        component={wrapWithHighRisk(ArPreview)}
+        options={{ presentation: "modal", gestureEnabled: false }}
       />
       <Stack.Screen
         name={screenName.purchaseArtwork}

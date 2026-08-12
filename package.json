@@ -7,6 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+    "ios:simulator": "EXCLUDE_VIRO=1 expo prebuild --platform ios --clean && EXCLUDE_VIRO=1 expo run:ios --no-build-cache",
     "lint": "eslint . --fix=false --cache=true --cache-location=.expo/cache/eslint --ignore-pattern 'dist/**' --ignore-pattern 'ios/**' --ignore-pattern 'android/**'",
     "typecheck": "tsc --noEmit --pretty false",
     "check:structure": "node scripts/check-structure.js",
