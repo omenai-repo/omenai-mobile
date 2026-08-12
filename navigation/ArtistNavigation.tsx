@@ -19,7 +19,7 @@ import {
   shippingInActive,
 } from "#utils/assets/SvgImages";
 import ArtistOverviewStack from "#navigation/ArtistOverviewStack";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import { logout } from "#utils/auth/logout.utils";
 import { BlurView } from "expo-blur";
@@ -52,17 +52,14 @@ import BiometricSettings from "#screens/auth/biometrics/BiometricSettings";
 import SupportTicketsScreen from "#screens/account/profile/SupportTicketsScreen";
 import SupportTicketsFilterModal from "#screens/account/profile/components/SupportTicketsFilterModal";
 import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
-import {
-  MoreSheetProvider,
-  useMoreSheet,
-} from "./components/MoreSheetContext";
+import { MoreSheetProvider, useMoreSheet } from "./components/MoreSheetContext";
 import ArtistReviewHub from "#screens/marketplace/artist/reviews/ArtistReviewHub";
 import ArtistProfileScreen from "#screens/marketplace/artist/profile/ArtistProfileScreen";
 import WalletScreen from "#screens/marketplace/artist/wallet/WalletScreen";
 import GalleryArtworksListing from "#screens/marketplace/gallery/artworks/GalleryArtworksListing";
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const moreLabel = "More";
 
@@ -226,7 +223,9 @@ const BottomTabNav = () => {
   return (
     <>
       <Tab.Navigator
-        tabBar={(props) => renderArtistTabBar(props, tabNavigationRef, openMoreSheet)}
+        tabBar={(props) =>
+          renderArtistTabBar(props, tabNavigationRef, openMoreSheet)
+        }
         screenOptions={{
           headerShown: false,
         }}
@@ -395,11 +394,20 @@ const ArtistNavigation = () => {
         name={"ViewCredentialsScreen"}
         component={wrapWithHighRisk(ViewCredentialsScreen)}
       />
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
+      <Stack.Group
+        screenOptions={{
+          presentation: "formSheet",
+          sheetAllowedDetents: "fitToContents",
+          sheetGrabberVisible: true,
+          contentStyle: { backgroundColor: "white" },
+        }}
+      >
         <Stack.Screen
           name={screenName.gallery.uploadNewLogo}
           component={wrapWithHighRisk(UploadNewLogo)}
         />
+      </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen
           name={screenName.supportTicketsFilterModal}
           component={wrapWithHighRisk(SupportTicketsFilterModal)}

@@ -66,7 +66,7 @@ const Input = forwardRef<TextInput, InputProps & { testID?: string }>(
           placeholder={placeHolder}
           placeholderTextColor={colors.grey}
           style={[
-            tw`py-3 w-full border px-3 rounded-sm text-sm font-sans-regular`,
+            tw`py-3 w-full border px-3 rounded-sm font-sans-regular`,
             !!label && tw`mt-2.5`,
             {
               borderColor: colors.inputBorder,

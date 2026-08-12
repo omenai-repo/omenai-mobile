@@ -57,7 +57,7 @@ const PasswordInput = forwardRef<
           ref={ref}
           testID={testID}
           style={[
-            tw`flex-1 py-3 px-3 bg-transparent font-sans-regular text-sm`,
+            tw`flex-1 py-3 px-3 bg-transparent font-sans-regular`,
             { color: colors.black },
           ]}
           placeholder={placeHolder}

@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { screenName } from "#constants/screenNames.constants";
 import { useCallback, useMemo, useRef } from "react";
 import Artwork from "#screens/artwork/detail/Artwork";
@@ -40,10 +40,7 @@ import GalleryProfile from "#screens/marketplace/gallery/profile/galleryProfile/
 import GalleryTabBar from "./components/GalleryTabBar";
 import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
 import { logout } from "#utils/auth/logout.utils";
-import {
-  MoreSheetProvider,
-  useMoreSheet,
-} from "./components/MoreSheetContext";
+import { MoreSheetProvider, useMoreSheet } from "./components/MoreSheetContext";
 import {
   ordersActive,
   ordersInActive,
@@ -60,7 +57,7 @@ import {
 import { View } from "react-native";
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const hideHeader = { headerShown: false };
 
@@ -295,7 +292,9 @@ function GalleryTabs() {
   return (
     <>
       <Tab.Navigator
-        tabBar={(props) => renderGalleryTabBar(props, tabNavigationRef, openMoreSheet)}
+        tabBar={(props) =>
+          renderGalleryTabBar(props, tabNavigationRef, openMoreSheet)
+        }
         screenOptions={{ headerShown: false }}
       >
         {galleryTabs.map(({ name, component, id }) => (
@@ -454,11 +453,24 @@ export default function GalleryNavigation() {
         name="SubscriptionHistory"
         component={wrapWithHighRisk(SubscriptionHistory)}
       />
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
+
+      {/* bottom fit form sheet */}
+      <Stack.Group
+        screenOptions={{
+          presentation: "formSheet",
+          sheetAllowedDetents: "fitToContents",
+          sheetGrabberVisible: true,
+          contentStyle: { backgroundColor: "white" },
+        }}
+      >
         <Stack.Screen
           name={screenName.gallery.uploadNewLogo}
           component={wrapWithHighRisk(UploadNewLogo)}
         />
+      </Stack.Group>
+
+      {/* modals */}
+      <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen
           name={screenName.supportTicketsFilterModal}
           component={wrapWithHighRisk(SupportTicketsFilterModal)}

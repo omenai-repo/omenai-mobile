@@ -1,3 +1,5 @@
+import { colors } from "#config/colors.config";
+import { Feather } from "@expo/vector-icons";
 import React from "react";
 import {
   View,
@@ -5,6 +7,7 @@ import {
   Image,
   NativeSyntheticEvent,
   ImageLoadEventData,
+  Text,
 } from "react-native";
 import tw from "twrnc";
 
@@ -66,7 +69,7 @@ export default function ArtworkImageSection({
       </Pressable>
 
       {/* Pressable pressed state must stay inline — style exception */}
-      {/* <Pressable
+      <Pressable
         onPress={() => setMuseumVisible(true)}
         style={({ pressed }) => [
           tw`flex-row items-center gap-1.5 self-end mt-1.5 mr-4 py-2 px-3.5 rounded-sm`,
@@ -80,7 +83,7 @@ export default function ArtworkImageSection({
         <Text style={tw`text-sm font-sans-medium tracking-wide text-white`}>
           View in museum
         </Text>
-      </Pressable> */}
+      </Pressable>
     </View>
   );
 }

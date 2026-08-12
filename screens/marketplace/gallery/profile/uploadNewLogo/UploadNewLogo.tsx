@@ -1,6 +1,5 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Platform, Pressable, Text, View, Alert } from "react-native";
 import React, { useState } from "react";
-import BackScreenButton from "#components/buttons/BackScreenButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import LongBlackButton from "#components/buttons/LongBlackButton";
@@ -73,11 +72,7 @@ export default function UploadNewLogo() {
         );
 
         if (!isOk) {
-          updateModal({
-            message: body.message,
-            modalType: "error",
-            showModal: true,
-          });
+          Alert.alert("Error", body.message);
         } else {
           // Update local session
           const updatedSession = { ...userSession, logo: file.fileId };
@@ -87,63 +82,66 @@ export default function UploadNewLogo() {
             JSON.stringify(updatedSession),
           );
 
-          updateModal({
-            message: body.message,
-            modalType: "success",
-            showModal: true,
-            onDismiss: () => navigation.goBack(),
-          });
+          navigation.goBack();
+          setTimeout(() => {
+            updateModal({
+              message: body.message,
+              modalType: "success",
+              showModal: true,
+            });
+          }, 500);
         }
       }
     } catch (error: any) {
-      updateModal({
-        message: error.message || error?.body?.message || error?.response?.data?.message || "An error occured, please try again",
-        modalType: "error",
-        showModal: true,
-      });
+      Alert.alert(
+        "Error",
+        error.message ||
+          error?.body?.message ||
+          error?.response?.data?.message ||
+          "An error occured, please try again",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View style={tw`flex-1 px-5 py-5 bg-white`}>
-      {/* Header: back button placed in its own header area so content flows below it */}
-      <View style={[{ paddingTop: insets.top ? insets.top : 24 }, tw`px-1`]}>
-        <BackScreenButton cancle handleClick={() => navigation.goBack()} />
-      </View>
-
-      <View style={tw`flex-1 mt-2`}>
-        <TouchableOpacity onPress={pickImage} activeOpacity={0.8}>
-          {logo === null ? (
-            <View
-              style={tw`h-[200px] w-full border border-[#E5E7EB] rounded-sm items-center justify-center gap-2 border-dashed bg-[#fff]`}
-            >
-              <Feather name="image" size={30} color={colors.grey} />
-              <Text style={[tw`text-[14px]`, { color: colors.primary_black }]}>
-                Select from gallery
-              </Text>
-            </View>
-          ) : (
-            <Image
-              source={{ uri: logo.assets[0].uri }}
-              style={tw`w-full h-[400px]`}
-              resizeMode="contain"
-            />
-          )}
-        </TouchableOpacity>
-
-        <View style={tw`mt-5`}>
-          <LongBlackButton
-            value="Upload logo"
-            onClick={handleUpload}
-            isDisabled={!logo}
-            isLoading={loading}
+    <View
+      style={[
+        tw`px-5 pt-10 bg-white`,
+        { paddingBottom: Platform.OS === "android" ? insets.bottom + 5 : 16 },
+      ]}
+    >
+      <Pressable
+        onPress={pickImage}
+        style={({ pressed }) => [pressed && tw`opacity-90`]}
+      >
+        {logo === null ? (
+          <View
+            style={tw`h-[270px] w-full border border-[#E5E7EB] rounded-sm items-center justify-center gap-2 border-dashed bg-white`}
+          >
+            <Feather name="image" size={30} color={colors.grey} />
+            <Text style={[tw`text-[14px]`, { color: colors.primary_black }]}>
+              Select from gallery
+            </Text>
+          </View>
+        ) : (
+          <Image
+            source={{ uri: logo.assets[0].uri }}
+            style={tw`w-full h-[270px]`}
+            resizeMode="contain"
           />
-        </View>
+        )}
+      </Pressable>
+
+      <View style={tw`mt-5`}>
+        <LongBlackButton
+          value="Upload logo"
+          onClick={handleUpload}
+          isDisabled={!logo}
+          isLoading={loading}
+        />
       </View>
     </View>
   );
 }
-
-// Styling moved to `twrnc` (tw). Kept color tokens from `colors` where needed.

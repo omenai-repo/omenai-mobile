@@ -16,6 +16,7 @@ import tw from "twrnc";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppStore } from "#store/app/appStore";
 import { useNavigation } from "@react-navigation/native";
+import { colors } from "#config/colors.config";
 
 export default function EditGalleryProfile() {
   const navigation = useNavigation<any>();
@@ -62,7 +63,10 @@ export default function EditGalleryProfile() {
       console.error("EditGalleryProfile.handleSubmit error:", error);
       updateModal({
         modalType: "error",
-        message: error?.message || error?.body?.message || "Something went wrong. Please try again later.",
+        message:
+          error?.message ||
+          error?.body?.message ||
+          "Something went wrong. Please try again later.",
         showModal: true,
       });
     } finally {
@@ -71,14 +75,14 @@ export default function EditGalleryProfile() {
   };
 
   return (
-    <>
+    <View style={tw`flex-1 bg-white`}>
       <BackHeaderTitle
         title={userType === "gallery" ? "Gallery profile" : "Artist profile"}
         callBack={clearData}
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={tw`flex-1 bg-[#fff]`}
+        style={tw`flex-1 bg-white`}
       >
         <ScrollWrapper
           style={{
@@ -125,13 +129,20 @@ export default function EditGalleryProfile() {
                 }
               />
             )}
-            <View style={{ marginTop: 10, gap: 10 }}>
+
+            {/* Full address + edit button */}
+            <View style={tw`mt-2.5 gap-2.5`}>
               <View style={tw`mb-2`}>
-                <Text style={tw`text-sm font-semibold text-[#858585] mb-1`}>
+                <Text
+                  style={[
+                    tw`text-sm font-sans-regular mb-2.5`,
+                    { color: colors.grey },
+                  ]}
+                >
                   Full Address
                 </Text>
                 <View
-                  style={tw`bg-gray-100 p-4 rounded-sm border border-gray-300`}
+                  style={tw`bg-gray-100 p-4 rounded-sm border border-gray-300 gap-2.5 flex-col`}
                 >
                   <AddressField
                     label="Address:"
@@ -166,6 +177,7 @@ export default function EditGalleryProfile() {
                 isDisabled={false}
               />
             </View>
+
             <Input
               label="Phone number"
               value={updateData?.phone || ""}
@@ -201,6 +213,6 @@ export default function EditGalleryProfile() {
           </View>
         </ScrollWrapper>
       </KeyboardAvoidingView>
-    </>
+    </View>
   );
 }

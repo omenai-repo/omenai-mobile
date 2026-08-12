@@ -65,17 +65,17 @@ export default function Profile() {
   );
 
   const Header = (
-    <View style={tw`flex-row gap-5 items-center px-5`}>
+    <View style={tw`flex-row gap-5 items-center`}>
       {/* Avatar / Logo fallback */}
       {logoUrl ? (
         <Image
           source={{ uri: logoUrl }}
-          style={tw`w-[72px] h-[72px] rounded-[36px] bg-[#F2F2F2]`}
+          style={tw`w-30 h-30 rounded-sm bg-[#F2F2F2]`}
         />
       ) : (
         <Image
           source={images.omenaiAvatar}
-          style={tw`w-[72px] h-[72px] rounded-[36px] bg-[#F2F2F2]`}
+          style={tw`w-30 h-30 rounded-sm bg-[#F2F2F2]`}
         />
       )}
 
