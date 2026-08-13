@@ -1,7 +1,7 @@
 // NOTE: This file has noting to do with prod is just for simulator builds.
 const { withFinalizedMod } = require("expo/config-plugins");
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const CONDITIONAL_VIRO_POD_BLOCK = `  # Viro is device-only (no simulator slice). Set EXCLUDE_VIRO=1 for simulator builds.
   unless ENV['EXCLUDE_VIRO'] == '1'
@@ -24,23 +24,21 @@ function sleep(ms) {
 function stripAnyViroBlocks(podfile) {
   let result = podfile;
 
-  while (result.includes(CONDITIONAL_VIRO_POD_BLOCK)) {
-    result = result.replace(CONDITIONAL_VIRO_POD_BLOCK, "");
-  }
+  result = result.replaceAll(CONDITIONAL_VIRO_POD_BLOCK, "");
 
   // Remove direct Viro pod declarations (added by @reactvision/react-viro plugin).
   result = result.replace(
-    /^\s*pod 'ViroReact', :path => '\.\.\/node_modules\/@reactvision\/react-viro\/ios'\n/gm,
+    /^[ \t]*pod 'ViroReact', :path => '\.\.\/node_modules\/@reactvision\/react-viro\/ios'\n/gm,
     "",
   );
   result = result.replace(
-    /^\s*pod 'ViroKit', :path => '\.\.\/node_modules\/@reactvision\/react-viro\/ios\/dist\/ViroRenderer\/'\n/gm,
+    /^[ \t]*pod 'ViroKit', :path => '\.\.\/node_modules\/@reactvision\/react-viro\/ios\/dist\/ViroRenderer\/'\n/gm,
     "",
   );
 
   // Remove the New Architecture guard that belongs to Viro block.
   result = result.replace(
-    /^\s*# Enforce New Architecture requirement\n\s*# ViroReact 2\.43\.1\+ requires React Native New Architecture\n\s*if ENV\['RCT_NEW_ARCH_ENABLED'\] != '1'\n\s*raise "ViroReact requires New Architecture to be enabled\. Please set RCT_NEW_ARCH_ENABLED=1 in ios\/\.xcode\.env"\n\s*end\n/gm,
+    /^[ \t]*# Enforce New Architecture requirement\n[ \t]*# ViroReact 2\.43\.1\+ requires React Native New Architecture\n[ \t]*if ENV\['RCT_NEW_ARCH_ENABLED'\] != '1'\n[ \t]*raise "ViroReact requires New Architecture to be enabled\. Please set RCT_NEW_ARCH_ENABLED=1 in ios\/\.xcode\.env"\n[ \t]*end\n/gm,
     "",
   );
 
@@ -55,7 +53,7 @@ function sanitizeViroPodsInPodfile(podfile) {
   }
 
   return result.replace(
-    /(\n)(\s*post_install do \|installer\|)/,
+    /(\n)([ \t]*post_install do \|installer\|)/,
     `\n${CONDITIONAL_VIRO_POD_BLOCK}\n\n$2`,
   );
 }
@@ -84,8 +82,8 @@ function withIosSimulatorArch(config) {
         "project.pbxproj",
       );
       const pbxproj = fs.readFileSync(pbxprojPath, "utf8");
-      const updatedPbxproj = pbxproj.replace(
-        /\t\t\t\t"EXCLUDED_ARCHS\[sdk=iphonesimulator\*\]" = "arm64";\n/g,
+      const updatedPbxproj = pbxproj.replaceAll(
+        '\t\t\t\t"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64";\n',
         "",
       );
       if (updatedPbxproj !== pbxproj) {

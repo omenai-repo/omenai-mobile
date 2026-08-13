@@ -14,7 +14,7 @@ function parseDimensionToMeters(
   if (!value || value === "0") return fallbackMeters;
 
   const trimmed = value.trim().toLowerCase();
-  const match = trimmed.match(/^([\d.]+)\s*(cm|in|m|ft)?$/);
+  const match = /^([\d.]+)\s*(cm|in|m|ft)?$/.exec(trimmed);
   if (!match) {
     const numeric = Number.parseFloat(trimmed.replace(/[^\d.]/g, ""));
     return Number.isFinite(numeric) && numeric > 0

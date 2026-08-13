@@ -40,8 +40,8 @@ export default function EditProfile() {
   const isDirty =
     formData.name !== (userSession.name || "") ||
     formData.phone !== (userSession.phone || "") ||
-    JSON.stringify([...formData.preferences].sort()) !==
-      JSON.stringify([...(userSession.preferences || [])].sort());
+    JSON.stringify([...formData.preferences].sort((a, b) => a.localeCompare(b))) !==
+      JSON.stringify([...(userSession.preferences || [])].sort((a, b) => a.localeCompare(b)));
 
   const handleValidationChecks = (label: string, value: string) => {
     const { success, errors }: { success: boolean; errors: string[] | [] } =

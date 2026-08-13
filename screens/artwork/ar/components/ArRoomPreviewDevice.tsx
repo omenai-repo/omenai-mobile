@@ -12,7 +12,7 @@ function formatDimensions(widthM: number, heightM: number) {
   return `${toCm(widthM)} × ${toCm(heightM)} cm`;
 }
 
-export default function ArRoomPreviewDevice(props: ARRoomPreviewProps) {
+export default function ArRoomPreviewDevice(props: Readonly<ARRoomPreviewProps>) {
   const insets = useSafeAreaInsets();
   const [statusText, setStatusText] = useState(
     "This artwork is shown in your room. Point at a wall, then pinch to resize or drag to reposition.",

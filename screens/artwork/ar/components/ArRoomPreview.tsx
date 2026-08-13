@@ -5,7 +5,7 @@ import ArRoomPreviewUnavailable from "./ArRoomPreviewUnavailable";
 import { isArEnvironmentSupported } from "#utils/hooks/isArEnvironmentSupported";
 import type { ARRoomPreviewProps } from "#types/ar";
 
-export default function ArRoomPreview(props: ARRoomPreviewProps) {
+export default function ArRoomPreview(props: Readonly<ARRoomPreviewProps>) {
   const canRunAr = isArEnvironmentSupported();
   const [DevicePreview, setDevicePreview] =
     useState<React.ComponentType<ARRoomPreviewProps> | null>(null);

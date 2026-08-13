@@ -54,9 +54,7 @@ export default function SaveArtworkButton({
       value={
         minimized
           ? ""
-          : isSaved
-          ? "Remove from collection"
-          : "Save to collection"
+          : (isSaved ? "Remove from collection" : "Save to collection")
       }
       onClick={() => {
         if (sessionId) {

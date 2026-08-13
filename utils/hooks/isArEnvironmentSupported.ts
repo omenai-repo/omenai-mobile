@@ -5,7 +5,7 @@ import { NativeModules, Platform, TurboModuleRegistry } from "react-native";
 function hasViroNativeModule() {
   return Boolean(
     NativeModules.VRTMaterialManager ||
-      (TurboModuleRegistry && TurboModuleRegistry.get("VRTMaterialManager")),
+      (TurboModuleRegistry?.get("VRTMaterialManager")),
   );
 }
 
