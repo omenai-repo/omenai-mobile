@@ -11,6 +11,7 @@ type ArPreviewRouteParams = {
   artworkTitle: string;
   artworkWidth?: number;
   artworkHeight?: number;
+  imageAspectRatio?: number;
   frameStyle?: FrameStyle;
   dimensions?: {
     height?: string;
@@ -45,6 +46,7 @@ export default function ArPreview() {
       artworkUri={params.artworkUri}
       artworkTitle={params.artworkTitle ?? "Artwork"}
       artworkDimensions={artworkDimensions}
+      imageAspectRatio={params.imageAspectRatio}
       frameStyle={params.frameStyle ?? "dark"}
       onClose={() => navigation.goBack()}
     />

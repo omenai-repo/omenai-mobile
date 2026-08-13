@@ -25,6 +25,7 @@ type CameraTransform = {
 type WallPreviewARSceneProps = {
   artworkUri: string;
   artworkDimensions: ArtworkDimensions;
+  imageAspectRatio?: number;
   frameStyle?: FrameStyle;
   onPlaneDetected?: () => void;
   onPlacement?: () => void;
@@ -35,7 +36,7 @@ export default function WallPreviewARScene(props: any) {
     props.sceneNavigator?.viroAppProps ||
     props.arSceneNavigator?.viroAppProps ||
     props;
-  const { artworkUri, artworkDimensions, onPlacement } =
+  const { artworkUri, artworkDimensions, imageAspectRatio, onPlacement } =
     viroAppProps as WallPreviewARSceneProps;
 
   const nodeRef = useRef<ViroNode>(null);
@@ -43,12 +44,15 @@ export default function WallPreviewARScene(props: any) {
   const pinchBaseScale = useRef(1);
 
   const aspectRatio = useMemo(() => {
-    if (artworkDimensions.width <= 0) return 1;
-    return artworkDimensions.height / artworkDimensions.width;
-  }, [artworkDimensions.height, artworkDimensions.width]);
+    if (imageAspectRatio && imageAspectRatio > 0) {
+      return imageAspectRatio;
+    }
+    if (artworkDimensions.width <= 0 || artworkDimensions.height <= 0) return 1;
+    return artworkDimensions.width / artworkDimensions.height;
+  }, [artworkDimensions.height, artworkDimensions.width, imageAspectRatio]);
 
   const imageWidth = BASE_WIDTH * scale;
-  const imageHeight = imageWidth * aspectRatio;
+  const imageHeight = imageWidth / aspectRatio;
 
   const onCameraTransformUpdate = useCallback((transform: CameraTransform) => {
     const { position, forward } = transform.cameraTransform;

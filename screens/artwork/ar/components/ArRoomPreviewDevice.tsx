@@ -29,6 +29,7 @@ export default function ArRoomPreviewDevice(props: ARRoomPreviewProps) {
         viroAppProps={{
           artworkUri: props.artworkUri,
           artworkDimensions: props.artworkDimensions,
+          imageAspectRatio: props.imageAspectRatio,
           frameStyle: props.frameStyle,
           onPlaneDetected: () => {},
           onPlacement: () => {

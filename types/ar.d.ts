@@ -10,6 +10,7 @@ export type ARRoomPreviewProps = {
   artworkUri: string;
   artworkTitle: string;
   artworkDimensions: ArtworkDimensions;
+  imageAspectRatio?: number;
   frameStyle?: FrameStyle;
   onClose: () => void;
 };
