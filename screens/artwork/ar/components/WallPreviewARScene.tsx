@@ -7,6 +7,7 @@ import {
 } from "@reactvision/react-viro";
 
 import type { ArtworkDimensions, FrameStyle } from "#types/ar";
+import { getImageFileView } from "#lib/storage/getImageFileView";
 
 const SCALE_MIN = 0.5;
 const SCALE_MAX = 2.2;
@@ -94,7 +95,7 @@ export default function WallPreviewARScene(props: WallPreviewARSceneProps) {
           onDrag={onDrag}
         >
           <ViroImage
-            source={{ uri: artworkUri }}
+            source={{ uri: getImageFileView(artworkUri, 500) }}
             width={imageWidth}
             height={imageHeight}
             resizeMode="ScaleToFill"

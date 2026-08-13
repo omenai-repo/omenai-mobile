@@ -12,10 +12,12 @@ export default function ArRoomPreview(props: ARRoomPreviewProps) {
 
   useEffect(() => {
     if (!canRunAr) return;
-
-    void import("./ArRoomPreviewDevice").then((module) => {
+    try {
+      const module = require("./ARPreviewWithViro");
       setDevicePreview(() => module.default);
-    });
+    } catch (e) {
+      console.warn("Failed to load AR module", e);
+    }
   }, [canRunAr]);
 
   if (!canRunAr) {

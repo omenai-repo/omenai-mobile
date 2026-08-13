@@ -1,9 +1,12 @@
 import Constants from "expo-constants";
 import * as Device from "expo-device";
-import { NativeModules, Platform } from "react-native";
+import { NativeModules, Platform, TurboModuleRegistry } from "react-native";
 
 function hasViroNativeModule() {
-  return Boolean(NativeModules.VRTMaterialManager);
+  return Boolean(
+    NativeModules.VRTMaterialManager ||
+      (TurboModuleRegistry && TurboModuleRegistry.get("VRTMaterialManager")),
+  );
 }
 
 // True when AR can run on this device/build.

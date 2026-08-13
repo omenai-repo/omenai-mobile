@@ -47,7 +47,11 @@ export default {
         NSFaceIDUsageDescription:
           "Allow Omenai to use Face ID for secure and convenient login.",
         NSCameraUsageDescription:
-          "Omenai uses the camera to place this artwork in your room with augmented reality.",
+          "Omenai uses the camera to place artwork in your room with augmented reality.",
+        NSLocationWhenInUseUsageDescription:
+          "Omenai requires location access for augmented reality features.",
+        NSMicrophoneUsageDescription:
+          "Omenai requires microphone access to support augmented reality capabilities.",
       },
     },
     android: {
