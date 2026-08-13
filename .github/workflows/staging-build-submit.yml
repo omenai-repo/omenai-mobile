@@ -3,7 +3,7 @@ name: Staging Build and Submit
 on:
   push:
     branches:
-      - refactor/standardize-project-architecture
+      - refactor/standardize-project-architecturee
   workflow_dispatch:
 
 jobs:

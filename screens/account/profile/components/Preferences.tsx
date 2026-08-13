@@ -30,12 +30,12 @@ export default function Preferences({
 
   const handleUpdatePreference = (value: string) => {
     if (selectedPreferences.includes(value)) {
-      //if artwork pereference is selected then get index and remove from selected
+      // if artwork pereference is selected then get index and remove from selected
       let arr = [...selectedPreferences];
       let index = arr.indexOf(value);
       arr.splice(index, 1);
       setSelectedPreferences(arr);
-    } else if (selectedPreferences.length < 5) {
+    } else if (selectedPreferences.length <= 5) {
       const arr = [...selectedPreferences, value];
       setSelectedPreferences(arr);
     } else {

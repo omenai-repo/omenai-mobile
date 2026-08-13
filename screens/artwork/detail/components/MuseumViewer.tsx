@@ -27,11 +27,11 @@ const LABEL_GAP = 14; // space between frame and label card, dp
 
 // Platform shadows differ (iOS shadow* vs Android elevation) — kept outside tw
 const frameShadow = {
-  shadowColor: "#000",
-  shadowOffset: { width: 4, height: 8 },
-  shadowOpacity: 0.5,
-  shadowRadius: 18,
-  elevation: 14,
+  shadowColor: "#181b1d",
+  shadowOffset: { width: 2, height: 7 },
+  shadowOpacity: 0.28,
+  shadowRadius: 14,
+  elevation: 10,
 };
 
 interface MuseumViewerProps {
@@ -137,7 +137,7 @@ export default function MuseumViewer({
                 width: frameWidth,
                 height: frameHeight,
                 backgroundColor: museumColors.frameBackground,
-                // Asymmetric border colours simulate a bevelled wooden frame
+                // Asymmetric border colours give the graphite frame subtle depth
                 borderTopColor: museumColors.frameBevelLight,
                 borderLeftColor: museumColors.frameBevelLight,
                 borderBottomColor: museumColors.frameBevelDark,

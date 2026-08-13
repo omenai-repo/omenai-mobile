@@ -37,21 +37,11 @@ export default function EditProfile() {
     name: "",
   });
 
-  const [isDirty, setIsDirty] = useState<boolean>(false);
-
-  React.useEffect(() => {
-    const isNameChanged = formData.name !== userSession.name;
-    const isPhoneChanged = formData.phone !== userSession.phone;
-    const isPrefsChanged =
-      JSON.stringify(
-        [...formData.preferences].sort((a, b) => a.localeCompare(b)),
-      ) !==
-      JSON.stringify(
-        [...(userSession.preferences || [])].sort((a, b) => a.localeCompare(b)),
-      );
-
-    setIsDirty(isNameChanged || isPrefsChanged || isPhoneChanged);
-  }, [formData, userSession]);
+  const isDirty =
+    formData.name !== (userSession.name || "") ||
+    formData.phone !== (userSession.phone || "") ||
+    JSON.stringify([...formData.preferences].sort()) !==
+      JSON.stringify([...(userSession.preferences || [])].sort());
 
   const handleValidationChecks = (label: string, value: string) => {
     const { success, errors }: { success: boolean; errors: string[] | [] } =
@@ -72,9 +62,9 @@ export default function EditProfile() {
     const isFormValid = Object.values(formErrors).every(
       (error) => error === "",
     );
-    const areAllFieldsFilled = formData.name !== "" && formData.phone !== "";
+    const areRequiredFieldsFilled = formData.name.trim() !== "";
 
-    return !(isFormValid && areAllFieldsFilled && isDirty);
+    return !(isFormValid && areRequiredFieldsFilled && isDirty);
   };
 
   const handleUpdate = async () => {

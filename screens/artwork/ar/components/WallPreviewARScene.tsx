@@ -30,8 +30,14 @@ type WallPreviewARSceneProps = {
   onPlacement?: () => void;
 };
 
-export default function WallPreviewARScene(props: WallPreviewARSceneProps) {
-  const { artworkUri, artworkDimensions, onPlacement } = props;
+export default function WallPreviewARScene(props: any) {
+  const viroAppProps =
+    props.sceneNavigator?.viroAppProps ||
+    props.arSceneNavigator?.viroAppProps ||
+    props;
+  const { artworkUri, artworkDimensions, onPlacement } =
+    viroAppProps as WallPreviewARSceneProps;
+
   const nodeRef = useRef<ViroNode>(null);
   const [scale, setScale] = useState(1);
   const pinchBaseScale = useRef(1);
@@ -54,7 +60,12 @@ export default function WallPreviewARScene(props: WallPreviewARSceneProps) {
 
     nodeRef.current?.setNativeProps({
       position: nextPosition,
-      rotation: [0, Math.atan2(forward[0], forward[2]) * (180 / Math.PI), 0],
+      // Add 180 degrees so the front of the image faces the camera
+      rotation: [
+        0,
+        (Math.atan2(forward[0], forward[2]) * 180) / Math.PI + 180,
+        0,
+      ],
     });
   }, []);
 
@@ -95,10 +106,15 @@ export default function WallPreviewARScene(props: WallPreviewARSceneProps) {
           onDrag={onDrag}
         >
           <ViroImage
-            source={{ uri: getImageFileView(artworkUri, 500) }}
+            source={{
+              uri: getImageFileView(artworkUri, 500).toString() + "&ext=.jpg",
+            }}
             width={imageWidth}
             height={imageHeight}
             resizeMode="ScaleToFill"
+            onError={(e) =>
+              console.log("ViroImage Error:", e.nativeEvent.error)
+            }
           />
         </ViroFlexView>
       </ViroNode>
