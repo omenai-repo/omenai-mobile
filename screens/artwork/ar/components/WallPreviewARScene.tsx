@@ -102,25 +102,23 @@ export default function WallPreviewARScene(props: any) {
 
   return (
     <ViroARScene onCameraTransformUpdate={onCameraTransformUpdate}>
-      <ViroNode ref={nodeRef} position={[0, 0, -FOLLOW_DISTANCE]}>
-        <ViroFlexView
+      <ViroNode 
+        ref={nodeRef} 
+        position={[0, 0, -FOLLOW_DISTANCE]}
+        onPinch={onPinch}
+        onDrag={onDrag}
+      >
+        <ViroImage
+          source={{
+            uri: getImageFileView(artworkUri, 500).toString() + "&ext=.jpg",
+          }}
           width={imageWidth}
           height={imageHeight}
-          onPinch={onPinch}
-          onDrag={onDrag}
-        >
-          <ViroImage
-            source={{
-              uri: getImageFileView(artworkUri, 500).toString() + "&ext=.jpg",
-            }}
-            width={imageWidth}
-            height={imageHeight}
-            resizeMode="ScaleToFill"
-            onError={(e) =>
-              console.log("ViroImage Error:", e.nativeEvent.error)
-            }
-          />
-        </ViroFlexView>
+          resizeMode="ScaleToFill"
+          onError={(e) =>
+            console.log("ViroImage Error:", e.nativeEvent.error)
+          }
+        />
       </ViroNode>
     </ViroARScene>
   );
