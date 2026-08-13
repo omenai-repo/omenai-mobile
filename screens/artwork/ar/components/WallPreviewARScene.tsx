@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   ViroARScene,
-  ViroFlexView,
   ViroImage,
   ViroNode,
 } from "@reactvision/react-viro";

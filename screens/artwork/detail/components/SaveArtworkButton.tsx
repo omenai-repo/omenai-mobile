@@ -44,6 +44,11 @@ export default function SaveArtworkButton({
 
   const isSaved = sessionId !== undefined && likedState.ids.includes(sessionId);
 
+  let buttonText = "";
+  if (!minimized) {
+    buttonText = isSaved ? "Remove from collection" : "Save to collection";
+  }
+
   return (
     <LongBlackButton
       style={[tw`border-neutral-200`, minimized && tw`w-[46px] px-0`]}
@@ -51,11 +56,7 @@ export default function SaveArtworkButton({
         tw`uppercase text-center text-sm tracking-widest`,
         { color: colors.black },
       ]}
-      value={
-        minimized
-          ? ""
-          : (isSaved ? "Remove from collection" : "Save to collection")
-      }
+      value={buttonText}
       onClick={() => {
         if (sessionId) {
           handleLike(!isSaved);
