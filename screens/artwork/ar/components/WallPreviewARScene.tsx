@@ -1,9 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import {
-  ViroARScene,
-  ViroImage,
-  ViroNode,
-} from "@reactvision/react-viro";
+import { ViroARScene, ViroImage, ViroNode } from "@reactvision/react-viro";
 
 import type { ArtworkDimensions, FrameStyle } from "#types/ar";
 import { getImageFileView } from "#lib/storage/getImageFileView";
@@ -101,23 +97,22 @@ export default function WallPreviewARScene(props: any) {
 
   return (
     <ViroARScene onCameraTransformUpdate={onCameraTransformUpdate}>
-      <ViroNode 
-        ref={nodeRef} 
-        position={[0, 0, -FOLLOW_DISTANCE]}
-        onPinch={onPinch}
-        onDrag={onDrag}
-      >
-        <ViroImage
-          source={{
-            uri: getImageFileView(artworkUri, 500).toString() + "&ext=.jpg",
-          }}
-          width={imageWidth}
-          height={imageHeight}
-          resizeMode="ScaleToFill"
-          onError={(e) =>
-            console.log("ViroImage Error:", e.nativeEvent.error)
-          }
-        />
+      {/* Outer node stays locked to the camera */}
+      <ViroNode ref={nodeRef} position={[0, 0, -FOLLOW_DISTANCE]}>
+        {/* Inner node handles local dragging and pinching */}
+        <ViroNode onPinch={onPinch} onDrag={onDrag} dragType="FixedDistance">
+          <ViroImage
+            source={{
+              uri: getImageFileView(artworkUri, 500).toString() + "&ext=.jpg",
+            }}
+            width={imageWidth}
+            height={imageHeight}
+            resizeMode="ScaleToFill"
+            onError={(e) =>
+              console.log("ViroImage Error:", e.nativeEvent.error)
+            }
+          />
+        </ViroNode>
       </ViroNode>
     </ViroARScene>
   );
