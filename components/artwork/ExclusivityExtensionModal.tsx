@@ -1,11 +1,6 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  Text,
-  TouchableOpacity,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
+import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 import { useModalStore } from "#store/account/modal/modalStore";
@@ -166,12 +161,6 @@ export default function ExclusivityExtensionModal({
               { backgroundColor: colors.black_light },
             ]}
           >
-            <View
-              style={tw`absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16`}
-            />
-            <View
-              style={tw`absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12`}
-            />
             <View style={tw`flex-row items-start gap-3`}>
               <View
                 style={[
@@ -245,32 +234,12 @@ export default function ExclusivityExtensionModal({
 
           {/* Action Button */}
           <View>
-            <TouchableOpacity
-              disabled={!isFormValid || loading}
-              onPress={handleExtension}
-              activeOpacity={0.9}
-              style={[
-                tw`w-full h-11 rounded-sm items-center justify-center`,
-                isFormValid && !loading
-                  ? { backgroundColor: colors.black }
-                  : tw`bg-gray-300`,
-              ]}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text
-                  style={[
-                    tw`font-sans-medium`,
-                    {
-                      color: colors.white,
-                    },
-                  ]}
-                >
-                  Confirm & Extend Contract
-                </Text>
-              )}
-            </TouchableOpacity>
+            <LongBlackButton
+              value="Confirm & Extend Contract"
+              onClick={handleExtension}
+              isDisabled={!isFormValid}
+              isLoading={loading}
+            />
 
             {!isFormValid && (
               <Text

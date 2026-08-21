@@ -32,6 +32,7 @@ interface SessionAddress {
 interface UserSession {
   name: string;
   email: string;
+  phone?: string;
   address: SessionAddress;
 }
 
@@ -71,6 +72,8 @@ export default function ShippingDetails({
     city,
     setCity,
     zipCode,
+    phone,
+    setPhone,
     setZipCode,
     state,
     stateData,
@@ -89,6 +92,7 @@ export default function ShippingDetails({
       email,
       address,
       zipCode,
+      phone,
       city,
       state,
     });
@@ -101,6 +105,11 @@ export default function ShippingDetails({
       })),
     [],
   );
+
+  const phoneCode = useMemo(() => {
+    const code = Country.getCountryByCode(countryCode)?.phonecode || "";
+    return code.replace(/[^\d]/g, "");
+  }, [countryCode]);
 
   const handleCountrySelect = (item: { label: string; value: string }) => {
     setCountry(item.label);
@@ -166,6 +175,7 @@ export default function ShippingDetails({
 
     setName(userSession.name);
     setEmail(userSession.email);
+    setPhone(userSession.phone || "");
 
     if (savedDeliveryAddress) {
       populateAddressFromSession(userSession);
@@ -305,6 +315,15 @@ export default function ShippingDetails({
             keyboardType="number-pad"
             handleBlur={() => handleBlur("zipCode")}
             errorMessage={touched.zipCode ? formErrors.zipCode : ""}
+          />
+          <Input
+            label="Phone number"
+            value={phone}
+            placeHolder={phoneCode ? `+${phoneCode}...` : "+1234567890"}
+            onInputChange={setPhone}
+            keyboardType="phone-pad"
+            handleBlur={() => handleBlur("phone")}
+            errorMessage={touched.phone ? formErrors.phone : ""}
           />
           <CustomChecker
             isSelected={saveShippingAddress}

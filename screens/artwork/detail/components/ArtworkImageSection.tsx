@@ -69,7 +69,7 @@ export default function ArtworkImageSection({
       </Pressable>
 
       {/* Pressable pressed state must stay inline — style exception */}
-      <Pressable
+      {/* <Pressable
         onPress={() => setMuseumVisible(true)}
         style={({ pressed }) => [
           tw`flex-row items-center gap-1.5 self-end mt-1.5 mr-4 py-2 px-3.5 rounded-sm`,
@@ -83,7 +83,7 @@ export default function ArtworkImageSection({
         <Text style={tw`text-sm font-sans-medium tracking-wide text-white`}>
           View in museum
         </Text>
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 }

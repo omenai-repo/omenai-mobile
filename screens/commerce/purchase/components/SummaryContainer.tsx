@@ -31,6 +31,7 @@ export default function SummaryContainer({
     country,
     state,
     zipCode,
+    phone,
     stateCode,
     countryCode,
     artworkOrderData,
@@ -50,11 +51,11 @@ export default function SummaryContainer({
     //if there isn't a user id
     if (userId.length < 1) return;
 
-    console.log("[SummaryContainer] userId", userId);
     const results = await createShippingOrder(
       userId,
       artworkOrderData.art_id,
       artworkOrderData?.author_id,
+      phone,
       saveShippingAddress,
       {
         address_line: address,

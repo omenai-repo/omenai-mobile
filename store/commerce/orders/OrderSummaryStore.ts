@@ -22,12 +22,14 @@ type OrderSummaryStoreTypes = {
   state: string;
   stateCode: string;
   zipCode: string;
+  phone: string;
   setCountry: (e: string) => void;
   setCountryCode: (e: string) => void;
   setState: (e: string) => void;
   setStateCode: (e: string) => void;
   setCity: (e: string) => void;
   setZipCode: (e: string) => void;
+  setPhone: (e: string) => void;
   stateData: { label: string; value: string }[];
   setStateData: (e: { label: string; value: string }[]) => void;
   cityData: { label: string; value: string }[];
@@ -79,6 +81,10 @@ export const useOrderSummaryStore = create<OrderSummaryStoreTypes>(
     setZipCode: (e: string) => {
       set({ zipCode: e });
     },
+    phone: "",
+    setPhone: (e: string) => {
+      set({ phone: e });
+    },
     country: "",
     setCountry: (e: string) => {
       set({ country: e });
@@ -112,6 +118,7 @@ export const useOrderSummaryStore = create<OrderSummaryStoreTypes>(
         name: "",
         state: "",
         zipCode: "",
+        phone: "",
         country: "",
         stateData: [],
         cityData: [],
