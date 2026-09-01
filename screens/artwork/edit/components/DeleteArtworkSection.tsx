@@ -1,6 +1,5 @@
-import { Text, View, Pressable } from "react-native";
+import { Text, View } from "react-native";
 import React, { useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import { useModalStore } from "#store/account/modal/modalStore";
 import CardHeaderStripe from "#components/general/CardHeaderStripe";
 import tw from "twrnc";
@@ -11,10 +10,10 @@ import DeleteModal from "./DeleteModal";
 export default function DeleteArtworkSection({
   art_id,
   onDeleteSuccess,
-}: {
+}: Readonly<{
   art_id: string;
   onDeleteSuccess: () => void;
-}) {
+}>) {
   const { updateConfirmationModal, clear, updateModal } = useModalStore();
 
   const [loading, setLoading] = useState<boolean>(false);
