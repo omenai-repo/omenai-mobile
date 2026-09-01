@@ -1,16 +1,15 @@
 import { Text, View } from "react-native";
 import React from "react";
-import { Ionicons } from "@expo/vector-icons";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
 
-type ConfirmSaveArtworkModalProps = {
+type ConfirmSaveArtworkModalProps = Readonly<{
   onConfirm: () => void;
   onCancel: () => void;
   canSave: boolean;
   isSaving: boolean;
-};
+}>;
 
 export default function ConfirmSaveArtworkModal({
   onConfirm,

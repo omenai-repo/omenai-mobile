@@ -16,7 +16,7 @@ import { useAppStore } from "#store/app/appStore";
 import CardHeaderStripe from "#components/general/CardHeaderStripe";
 import { colors } from "#config/colors.config";
 
-type GalleryEditPricingProps = {
+type GalleryEditPricingProps = Readonly<{
   pricing: {
     price: number;
     usdPrice: number;
@@ -31,7 +31,7 @@ type GalleryEditPricingProps = {
   }) => void;
   formErrors: { price: string };
   setFormErrors: (errors: any) => void;
-};
+}>;
 
 const transformedCurrencies = currencies.map((item) => ({
   value: item.code,
@@ -68,7 +68,7 @@ export default function GalleryEditPricing({
   });
 
   const handleValidationChecks = (label: string, value: string) => {
-    if (label === "price" && (isNaN(Number(value)) || Number(value) <= 0)) {
+    if (label === "price" && (Number.isNaN(Number(value)) || Number(value) <= 0)) {
       setFormErrors((prev: any) => ({
         ...prev,
         [label]: "Please enter a valid price.",
@@ -101,6 +101,12 @@ export default function GalleryEditPricing({
       onPricingChange({ usdPrice: conversion_value.data });
     }
     setLoadingConversion(false);
+  };
+
+  const getUsdPriceDisplay = () => {
+    if (loadingConversion) return "Calculating…";
+    if (pricing.usdPrice > 0) return utils_formatPrice(pricing.usdPrice, usd_symbol);
+    return "";
   };
 
   return (
@@ -148,7 +154,7 @@ export default function GalleryEditPricing({
               <Input
                 label="Price"
                 onInputChange={(value) => {
-                  const num = parseInt(value, 10);
+                  const num = Number.parseInt(value, 10);
                   const parsedPrice = Number.isNaN(num) ? 0 : num;
                   onPricingChange({ price: parsedPrice, usdPrice: 0 });
                 }}
@@ -204,13 +210,7 @@ export default function GalleryEditPricing({
         <View>
           <Input
             label="USD Equivalent (Calculated)"
-            value={
-              loadingConversion
-                ? "Calculating…"
-                : pricing.usdPrice > 0
-                ? utils_formatPrice(pricing.usdPrice, usd_symbol)
-                : ""
-            }
+            value={getUsdPriceDisplay()}
             disabled={true}
             placeHolder="USD value will appear here"
             onInputChange={() => {}}

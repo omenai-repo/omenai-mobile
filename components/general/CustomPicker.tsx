@@ -2,11 +2,11 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { colors } from "#config/colors.config";
 
-type CustomPickerProps = {
+type CustomPickerProps = Readonly<{
   name: string;
   isSelected: boolean;
   onPress: (e: string) => void;
-};
+}>;
 
 export default function CustomPicker({
   name,

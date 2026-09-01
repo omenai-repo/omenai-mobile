@@ -10,12 +10,12 @@ export type CardHeaderStripeVariant =
   | "success"
   | "warning";
 
-type CardHeaderStripeProps = {
+type CardHeaderStripeProps = Readonly<{
   title: string;
   icon?: keyof typeof Ionicons.glyphMap;
   variant?: CardHeaderStripeVariant;
   style?: StyleProp<ViewStyle>;
-};
+}>;
 
 const VARIANT_CONFIG: Record<
   CardHeaderStripeVariant,

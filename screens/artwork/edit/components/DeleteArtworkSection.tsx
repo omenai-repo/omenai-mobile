@@ -6,6 +6,7 @@ import CardHeaderStripe from "#components/general/CardHeaderStripe";
 import tw from "twrnc";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { deleteArtwork } from "#services/artwork/deleteArtwork";
+import DeleteModal from "./DeleteModal";
 
 export default function DeleteArtworkSection({
   art_id,
@@ -19,7 +20,15 @@ export default function DeleteArtworkSection({
   const [loading, setLoading] = useState<boolean>(false);
 
   const openConfirmModal = () => {
-    updateConfirmationModal({ child: <DeleteModal /> });
+    updateConfirmationModal({
+      child: (
+        <DeleteModal
+          onDelete={handleDelete}
+          onCancel={clear}
+          loading={loading}
+        />
+      ),
+    });
   };
 
   const handleDelete = async () => {
@@ -42,34 +51,6 @@ export default function DeleteArtworkSection({
     }
     setLoading(false);
   };
-
-  const DeleteModal = () => (
-    <View>
-      <Text style={tw`font-sans-semibold text-lg text-[#B91C1C] mb-4`}>
-        Delete Artwork
-      </Text>
-
-      <Text style={tw`font-sans-regular text-sm text-slate-500 leading-5 mb-5`}>
-        Are you sure you want to delete this artwork? This action cannot be
-        undone and will remove the piece from all public listings.
-      </Text>
-
-      <View style={tw`gap-3`}>
-        <LongBlackButton
-          value="Yes, delete artwork"
-          onClick={handleDelete}
-          isLoading={loading}
-          style={tw`bg-red-600 border border-red-600`}
-        />
-        <LongBlackButton
-          value="Cancel"
-          onClick={clear}
-          outline
-          borderColor="#DC2626"
-        />
-      </View>
-    </View>
-  );
 
   return (
     <View

@@ -13,11 +13,11 @@ export default function MarkAsSoldSection({
   art_id,
   availability,
   onMarkAsSoldSuccess,
-}: {
+}: Readonly<{
   art_id: string;
   availability: boolean;
   onMarkAsSoldSuccess: () => void;
-}) {
+}>) {
   const { updateModal } = useModalStore();
   const queryClient = useQueryClient();
   const [showConfirm, setShowConfirm] = useState(false);

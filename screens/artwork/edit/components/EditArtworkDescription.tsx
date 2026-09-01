@@ -4,10 +4,10 @@ import LargeInput from "#components/inputs/LargeInput";
 import tw from "twrnc";
 import FormSectionHeader from "#components/general/FormSectionHeader";
 
-type EditArtworkDescriptionProps = {
+type EditArtworkDescriptionProps = Readonly<{
   description: string;
   onChangeText: (text: string) => void;
-};
+}>;
 
 export default function EditArtworkDescription({
   description,

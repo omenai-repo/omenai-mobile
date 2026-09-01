@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import React from "react";
 import DimensionInputRow from "#components/artwork/DimensionInputRow";
 import tw from "twrnc";
@@ -16,7 +16,7 @@ export type DimensionsErrorsState = {
   weight: string;
 };
 
-type EditArtworkDimensionsProps = {
+type EditArtworkDimensionsProps = Readonly<{
   dims: DimensionsFormState;
   errors: DimensionsErrorsState;
   dimUnit: DimensionUnit;
@@ -24,7 +24,7 @@ type EditArtworkDimensionsProps = {
   onFieldChange: (field: keyof DimensionsFormState, value: string) => void;
   onDimUnitChange: (unit: DimensionUnit) => void;
   onWeightUnitChange: (unit: WeightUnit) => void;
-};
+}>;
 
 export default function EditArtworkDimensions({
   dims,

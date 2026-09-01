@@ -6,10 +6,10 @@ import { colors } from "#config/colors.config";
 export function SectionIndicator({
   color,
   style,
-}: {
+}: Readonly<{
   color?: string;
   style?: StyleProp<ViewStyle>;
-}) {
+}>) {
   return (
     <View
       style={[
@@ -21,12 +21,12 @@ export function SectionIndicator({
   );
 }
 
-type FormSectionHeaderProps = {
+type FormSectionHeaderProps = Readonly<{
   title: string;
   subtitle?: string;
   style?: StyleProp<ViewStyle>;
   indicatorColor?: string;
-};
+}>;
 
 export default function FormSectionHeader({
   title,

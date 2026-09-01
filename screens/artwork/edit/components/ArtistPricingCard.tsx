@@ -11,14 +11,14 @@ type ProposedPrice = {
   currency: string;
 };
 
-type ArtistPricingCardProps = {
+type ArtistPricingCardProps = Readonly<{
   currentPricing?: {
     price: number;
     usd_price: number;
     currency: string;
   };
   proposedPrice: ProposedPrice | null;
-};
+}>;
 
 export default function ArtistPricingCard({
   currentPricing,
