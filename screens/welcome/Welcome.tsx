@@ -92,7 +92,7 @@ export default function Welcome() {
             value="Create Account"
             onClick={() => handleNavigation(screenName.register)}
             style={{ backgroundColor: colors.white, height: 48 }}
-            textStyle={[tw`font-semibold`, { color: colors.black }]}
+            textStyle={[tw`font-sans-semibold`, { color: colors.black }]}
           />
 
           <LongBlackButton

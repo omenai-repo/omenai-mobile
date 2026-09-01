@@ -37,8 +37,6 @@ import MuseumViewer from "./components/MuseumViewer";
 import { useScrollY } from "#hooks/useScrollY";
 import { Analytics } from "#utils/core/analytics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import EditArtworkModal from "./components/EditArtworkSection";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 type RouteParams = { art_id: string; url: string };
 
@@ -86,7 +84,6 @@ export default function Artwork() {
   const [modalVisible, setModalVisible] = useState(false);
   const [museumVisible, setMuseumVisible] = useState(false);
   const { onScroll } = useScrollY();
-  const editModalRef = useRef<BottomSheetModal>(null);
 
   // 1) Fetch the artwork (cached; no re-fetch during staleTime window from App.tsx)
   const {
@@ -305,10 +302,16 @@ export default function Artwork() {
           title=""
           customGoBack={handleBack}
           rightAction={
-            userType === "gallery" &&
+            ["gallery", "artist"].includes(userType) &&
             artwork?.author_id === userSession?.id &&
             artwork?.availability !== false ? (
-              <Pressable onPress={() => editModalRef.current?.present()}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate(screenName.gallery.editArtwork, {
+                    art_id: artwork?.art_id,
+                  })
+                }
+              >
                 <Feather name="edit" size={20} color="#333" />
               </Pressable>
             ) : undefined
@@ -466,16 +469,6 @@ export default function Artwork() {
           naturalHeight={imageDimensions?.height ?? 1}
         />
       )}
-      {artwork &&
-        userType === "gallery" &&
-        artwork.author_id === userSession?.id && (
-          <EditArtworkModal
-            ref={editModalRef}
-            art_id={artwork.art_id}
-            currentDescription={artwork.artwork_description || ""}
-            currentAvailability={artwork.availability}
-          />
-        )}
     </>
   );
 }

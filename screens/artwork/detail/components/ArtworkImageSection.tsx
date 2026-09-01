@@ -1,5 +1,3 @@
-import { colors } from "#config/colors.config";
-import { Feather } from "@expo/vector-icons";
 import React from "react";
 import {
   View,
@@ -7,7 +5,6 @@ import {
   Image,
   NativeSyntheticEvent,
   ImageLoadEventData,
-  Text,
 } from "react-native";
 import tw from "twrnc";
 

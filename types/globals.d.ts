@@ -787,3 +787,30 @@ type DeepLinkFallback = {
 };
 
 type DeepLinkResolveResult = DeepLinkNavigationTarget | DeepLinkFallback;
+
+type DimensionUnit = "in" | "cm";
+type WeightUnit = "lbs" | "kg";
+
+type DimensionInputRowProps =
+  | {
+      type: "dimension";
+      label: string;
+      value: string;
+      unit: DimensionUnit;
+      placeholder?: string;
+      errorMessage?: string;
+      hideUnitSelector?: boolean;
+      onChangeText: (text: string) => void;
+      onUnitChange: (unit: DimensionUnit) => void;
+    }
+  | {
+      type: "weight";
+      label: string;
+      value: string;
+      unit: WeightUnit;
+      placeholder?: string;
+      errorMessage?: string;
+      hideUnitSelector?: boolean;
+      onChangeText: (text: string) => void;
+      onUnitChange: (unit: WeightUnit) => void;
+    };

@@ -19,6 +19,10 @@ type GlobalSupportCategory = SupportCategory;
 type GlobalUploadTrackingTypes = UploadTrackingTypes;
 type GlobalArtworkListingType = artworkListingType;
 type GlobalArtworkOrderDataTypes = artworkOrderDataTypes;
+type GlobalDimensionUnit = DimensionUnit;
+type GlobalWeightUnit = WeightUnit;
+type GlobalDimensionInputRowProps = DimensionInputRowProps;
+type GlobalArtworkDataType = ArtworkDataType;
 
 export type {
   GlobalAddressTypes as AddressTypes,
@@ -39,6 +43,10 @@ export type {
   GlobalSubscriptionModelSchemaTypes as SubscriptionModelSchemaTypes,
   GlobalSupportCategory as SupportCategory,
   GlobalUploadTrackingTypes as UploadTrackingTypes,
+  GlobalDimensionUnit as DimensionUnit,
+  GlobalWeightUnit as WeightUnit,
+  GlobalDimensionInputRowProps as DimensionInputRowProps,
+  GlobalArtworkDataType as ArtworkDataType,
 };
 
 export type EntityType = "artist" | "gallery" | "individual" | "user";

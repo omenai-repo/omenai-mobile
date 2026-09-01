@@ -21,6 +21,7 @@ export default function WithModal({ children }: WithModalProps) {
     modalType,
     modalStyle,
     webViewUrl,
+    clear,
   } = useModalStore();
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function WithModal({ children }: WithModalProps) {
       {children}
       <ConfirmationModal
         isVisible={showConfirmationModal}
+        onClose={clear}
         child={confirmationModal}
       />
       <CustomModal />

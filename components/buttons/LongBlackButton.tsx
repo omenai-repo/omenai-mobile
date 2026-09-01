@@ -78,14 +78,14 @@ export default function LongBlackButton({
   };
 
   const containerStyle = [
-    tw`w-full flex items-center justify-center rounded-sm`,
+    tw`w-full flex items-center justify-center rounded-sm px-4`,
     defaultContainerStyle,
     style,
   ];
 
   const mergedTextStyle = [
-    tw`uppercase text-center text-sm tracking-widest`,
-    { color: textColor },
+    tw`uppercase text-center text-sm font-sans-regular tracking-widest`,
+    { color: textColor, includeFontPadding: false },
     textStyle,
   ];
 
@@ -109,7 +109,11 @@ export default function LongBlackButton({
           ]}
         >
           {iconPosition === "left" && icon}
-          {!!value && <Text style={mergedTextStyle}>{value}</Text>}
+          {!!value && (
+            <Text numberOfLines={1} style={mergedTextStyle}>
+              {value}
+            </Text>
+          )}
           {iconPosition === "right" && icon}
         </View>
 

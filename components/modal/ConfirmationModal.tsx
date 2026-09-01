@@ -1,24 +1,38 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import { ReactNode } from "react";
 import Modal from "react-native-modal";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+type ConfirmationModalProps = {
+  isVisible: boolean;
+  child: ReactNode;
+  onClose?: () => void;
+};
 
 export default function ConfirmationModal({
   isVisible,
   child,
-}: {
-  isVisible: boolean;
-  child: ReactNode;
-}) {
+  onClose,
+}: ConfirmationModalProps) {
+  const insets = useSafeAreaInsets();
+  const bottomPadding = Math.max(insets.bottom, 16) + 8;
+
   return (
     <Modal
       isVisible={isVisible}
       backdropOpacity={0.2}
       animationIn={"slideInUp"}
       animationOut={"slideOutDown"}
+      onBackdropPress={onClose}
+      onBackButtonPress={onClose}
     >
       <View style={styles.container}>
         <View style={styles.scrollContainer}>
-          <View style={styles.mainContainer}>{child}</View>
+          <View
+            style={[styles.mainContainer, { paddingBottom: bottomPadding }]}
+          >
+            {child}
+          </View>
         </View>
       </View>
     </Modal>
@@ -38,10 +52,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   mainContainer: {
-    // height: 200,
     width: "100%",
     backgroundColor: "#fff",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },

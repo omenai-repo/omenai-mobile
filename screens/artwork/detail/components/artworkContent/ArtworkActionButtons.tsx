@@ -21,11 +21,11 @@ export default function ArtworkActionButtons({
 
       {!["gallery", "artist"].includes(userType) && (
         <View style={tw`w-full flex-row gap-5`}>
-          {/* <ViewInSpaceButton
+          <ViewInSpaceButton
             artworkTitle={artwork.title}
             artworkUri={artwork.url}
             dimensions={artwork.dimensions}
-          /> */}
+          />
           <SaveArtworkButton
             likeIds={artwork.like_IDs || []}
             art_id={artwork.art_id || ""}
