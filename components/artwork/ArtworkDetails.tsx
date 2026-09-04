@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { utils_formatPrice } from "#utils/commerce/utils_priceFormatter";
 
 interface ArtworkDetailsProps {
   readonly title: string;

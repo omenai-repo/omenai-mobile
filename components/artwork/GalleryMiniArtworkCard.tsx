@@ -12,7 +12,7 @@ import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { utils_formatPrice } from "#utils/commerce/utils_priceFormatter";
 import EditArtworkButton from "#components/buttons/EditArtworkButton";
 import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";

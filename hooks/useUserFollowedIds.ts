@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchFollows } from "#services/engagements/fetchFollows";
-import { ENGAGEMENTS_QK } from "#utils/queryKeys";
+import { fetchFollows } from "#services/marketplace/engagements/fetchFollows";
+import { ENGAGEMENTS_QK } from "#utils/core/queryKeys";
 
 export function useUserFollowedIds(sessionId: string | undefined) {
   return useQuery({

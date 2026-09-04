@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import tw from "twrnc";
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
+import { utils_formatPrice } from "#utils/commerce/utils_priceFormatter";
 
 const styles = StyleSheet.create({
   metaRow: {

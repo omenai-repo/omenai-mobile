@@ -1,0 +1,37 @@
+import { utils_getAsyncData } from "#utils/app/utils_asyncStorage";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "#utils/network/apiRequest";
+
+export async function deleteGalleryAccount() {
+  let id = "";
+  const userSession = await utils_getAsyncData("userSession");
+  if (userSession.value) {
+    id = JSON.parse(userSession.value).id;
+  } else {
+    return;
+  }
+
+  try {
+    const response = await apiRequest(
+      `${apiUrl}/api/requests/gallery/deleteAccount`,
+      {
+        method: "POST",
+        body: JSON.stringify({ gallery_id: id }),
+      },
+    ).then(async (res) => {
+      const result = await res.json();
+      return { isOk: res.ok, message: result.message };
+    });
+    return response;
+  } catch (error: any) {
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error deleting account",
+      },
+    };
+  }
+}

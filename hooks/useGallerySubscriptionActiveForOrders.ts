@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { retrieveSubscriptionData } from "#services/subscriptions/retrieveSubscriptionData";
-import { formatIntlDateTime } from "#utils/utils_formatIntlDateTime";
+import { retrieveSubscriptionData } from "#services/commerce/subscriptions/retrieveSubscriptionData";
+import { formatIntlDateTime } from "#utils/date/utils_formatIntlDateTime";
 
 export const gallerySubscriptionOrdersAcceptQueryKey = (galleryId: string) =>
   ["gallery", "subscription", galleryId, "orders_accept"] as const;

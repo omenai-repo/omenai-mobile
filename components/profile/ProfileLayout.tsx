@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleProp, ViewStyle } from "react-native";
 import tw from "twrnc";
 import { useQueryClient } from "@tanstack/react-query";
-import { logout } from "#utils/logout.utils";
+import { logout } from "#utils/auth/logout.utils";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import ProfileMenuItems, {

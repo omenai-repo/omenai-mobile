@@ -25,7 +25,6 @@ type InputProps = {
   inputStyle?: StyleProp<ViewStyle>;
   returnKeyType?: TextInputProps["returnKeyType"];
   onSubmitEditing?: TextInputProps["onSubmitEditing"];
-  blurOnSubmit?: TextInputProps["blurOnSubmit"];
   textContentType?: TextInputProps["textContentType"];
   autoComplete?: TextInputProps["autoComplete"];
   autoCorrect?: TextInputProps["autoCorrect"];
@@ -48,7 +47,6 @@ const Input = forwardRef<TextInput, InputProps & { testID?: string }>(
       testID,
       returnKeyType,
       onSubmitEditing,
-      blurOnSubmit,
       textContentType,
       autoComplete,
       autoCorrect,
@@ -56,10 +54,8 @@ const Input = forwardRef<TextInput, InputProps & { testID?: string }>(
 
     return (
       <View style={[containerStyle]}>
-        {label !== "" && (
-          <Text
-            style={[tw`text-sm font-sans-regular`, { color: colors.grey }]}
-          >
+        {!!label && (
+          <Text style={[tw`text-sm font-sans-regular`, { color: colors.grey }]}>
             {label}
           </Text>
         )}
@@ -70,8 +66,8 @@ const Input = forwardRef<TextInput, InputProps & { testID?: string }>(
           placeholder={placeHolder}
           placeholderTextColor={colors.grey}
           style={[
-            tw`py-3 w-full border px-3 rounded-sm text-sm font-sans-regular`,
-            label !== "" && label !== undefined && tw`mt-2.5`,
+            tw`py-3 w-full border px-3 rounded-sm font-sans-regular`,
+            !!label && tw`mt-2.5`,
             {
               borderColor: colors.inputBorder,
               backgroundColor: "#FAFAFA",
@@ -88,14 +84,14 @@ const Input = forwardRef<TextInput, InputProps & { testID?: string }>(
           editable={!disabled}
           returnKeyType={returnKeyType}
           onSubmitEditing={onSubmitEditing}
-          blurOnSubmit={blurOnSubmit}
+          submitBehavior="blurAndSubmit"
           textContentType={textContentType}
           autoComplete={autoComplete}
           autoCorrect={autoCorrect ?? false}
         />
-        {errorMessage && errorMessage?.length > 0 && (
+        {!!errorMessage && (
           <Text style={tw`text-red-500 mt-0.5 font-sans-regular text-sm`}>
-            {errorMessage || ""}
+            {errorMessage}
           </Text>
         )}
       </View>

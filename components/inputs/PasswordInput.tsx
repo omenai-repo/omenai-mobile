@@ -15,7 +15,6 @@ type PasswordInputProps = {
   textContentType?: "newPassword" | "password" | "none";
   returnKeyType?: TextInputProps["returnKeyType"];
   onSubmitEditing?: TextInputProps["onSubmitEditing"];
-  blurOnSubmit?: TextInputProps["blurOnSubmit"];
   autoComplete?: TextInputProps["autoComplete"];
 };
 
@@ -34,21 +33,23 @@ const PasswordInput = forwardRef<
     testID,
     returnKeyType,
     onSubmitEditing,
-    blurOnSubmit,
     autoComplete,
   } = props;
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <View>
-      <Text
-        style={[tw`text-sm font-sans-regular`, { color: colors.inputLabel }]}
-      >
-        {label}
-      </Text>
+      {!!label && (
+        <Text
+          style={[tw`text-sm font-sans-regular`, { color: colors.inputLabel }]}
+        >
+          {label}
+        </Text>
+      )}
       <View
         style={[
-          tw`w-full border bg-[#FAFAFA] overflow-hidden rounded-sm mt-2.5 flex-row`,
+          tw`w-full border bg-[#FAFAFA] overflow-hidden rounded-sm flex-row`,
+          !!label && tw`mt-2.5`,
           { borderColor: colors.inputBorder },
         ]}
       >
@@ -56,7 +57,7 @@ const PasswordInput = forwardRef<
           ref={ref}
           testID={testID}
           style={[
-            tw`flex-1 py-3 px-3 bg-transparent font-sans-regular text-sm`,
+            tw`flex-1 py-3 px-3 bg-transparent font-sans-regular`,
             { color: colors.black },
           ]}
           placeholder={placeHolder}
@@ -69,7 +70,6 @@ const PasswordInput = forwardRef<
           textContentType={textContentType}
           returnKeyType={returnKeyType}
           onSubmitEditing={onSubmitEditing}
-          blurOnSubmit={blurOnSubmit}
           autoComplete={autoComplete}
           autoCorrect={false}
         />
@@ -86,8 +86,10 @@ const PasswordInput = forwardRef<
           />
         </TouchableOpacity>
       </View>
-      {errorMessage && errorMessage?.length > 0 && (
-        <Text style={tw`text-red-500 mt-0.5`}>{errorMessage || ""}</Text>
+      {!!errorMessage && (
+        <Text style={tw`text-red-500 mt-0.5 font-sans-regular text-sm`}>
+          {errorMessage}
+        </Text>
       )}
     </View>
   );

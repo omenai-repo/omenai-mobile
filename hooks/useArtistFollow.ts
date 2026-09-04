@@ -2,9 +2,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useUserFollowedIds } from "#hooks/useUserFollowedIds";
 import { useAppStore } from "#store/app/appStore";
-import { apiRequest } from "#utils/apiRequest";
+import { apiRequest } from "#utils/network/apiRequest";
 import { apiUrl } from "#constants/apiUrl.constants";
-import { ENGAGEMENTS_QK } from "#utils/queryKeys";
+import { ENGAGEMENTS_QK } from "#utils/core/queryKeys";
 
 function clearId(map: Record<string, boolean>, id: string) {
   const next = { ...map };

@@ -11,7 +11,7 @@ import { WithModalProps } from "./WithModal";
 import {
   galleryOrderModalStore,
   galleryOrderModalTypes,
-} from "#store/modal/galleryModalStore";
+} from "#store/account/modal/galleryModalStore";
 import Modal from "react-native-modal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DeclineOrderModal from "./gallery/DeclineOrderModal";

@@ -4,6 +4,14 @@ export type CollectorOrderPaymentFlags = {
   areFlagsLoading: boolean;
 };
 
+export type OrderTabsTypes = "orders" | "history";
+export type GalleryOrderCardStatus =
+  | "Pending"
+  | "Pending customer payment"
+  | "Pending tracking info"
+  | "Declined by gallery"
+  | "Order completed";
+
 /** Collector orders list row — `screens/orders/components/OrderContainer` */
 export type CollectorOrderContainerProps = {
   item: CreateOrderModelTypes;

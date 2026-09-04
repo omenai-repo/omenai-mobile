@@ -7,7 +7,7 @@ import { Image } from "expo-image";
 
 import { images } from "#constants/images.constants";
 import tailwind from "twrnc";
-import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
+import { useGuestLoginModalStore } from "#store/account/guest/guestLoginModalStore";
 import { colors } from "#config/colors.config";
 
 export function GalleryOverviewLogo() {

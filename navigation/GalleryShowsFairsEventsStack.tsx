@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import ShowsFairsEvents from "#screens/gallery/showsFairsEvents/ShowsFairsEvents";
-import CreateGalleryEventScreen from "#screens/gallery/showsFairsEvents/CreateGalleryEventScreen";
+import ShowsFairsEvents from "#screens/marketplace/gallery/showsFairsEvents/ShowsFairsEvents";
+import CreateGalleryEventScreen from "#screens/marketplace/gallery/showsFairsEvents/CreateGalleryEventScreen";
 
 export type GalleryShowsFairsEventsStackParamList = {
   GalleryShowsFairsEventsMain: undefined;
