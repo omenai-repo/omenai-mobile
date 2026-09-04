@@ -93,7 +93,8 @@ export function useArtworkEditForm(
   const hasChanges = descriptionChanged || dimensionsChanged || pricingChanged;
 
   const noDimErrors = Object.values(dimErrors).every((e) => e === "");
-  const hasDimValues = dims.height !== "" && dims.width !== "";
+  const hasDimValues =
+    dims.height !== "" && dims.width !== "" && dims.weight !== "";
   const noPricingErrors = Object.values(pricingErrors).every((e) => e === "");
 
   const artistCanSave = dimensionsChanged

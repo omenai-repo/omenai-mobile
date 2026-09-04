@@ -115,9 +115,7 @@ export default function EditArtwork() {
 
   return (
     <View style={tw`flex-1 bg-white`}>
-      <View style={tw`bg-white border-b border-neutral-200`}>
-        <BackHeaderTitle title="Edit Artwork" />
-      </View>
+      <BackHeaderTitle title="Edit Artwork" />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

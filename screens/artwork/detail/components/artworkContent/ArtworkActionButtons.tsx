@@ -30,7 +30,7 @@ export default function ArtworkActionButtons({
             likeIds={artwork.like_IDs || []}
             art_id={artwork.art_id || ""}
             impressions={artwork.impressions || 0}
-            // minimized
+            minimized
           />
         </View>
       )}
