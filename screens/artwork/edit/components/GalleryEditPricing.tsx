@@ -68,7 +68,10 @@ export default function GalleryEditPricing({
   });
 
   const handleValidationChecks = (label: string, value: string) => {
-    if (label === "price" && (Number.isNaN(Number(value)) || Number(value) <= 0)) {
+    if (
+      label === "price" &&
+      (Number.isNaN(Number(value)) || Number(value) <= 0)
+    ) {
       setFormErrors((prev: any) => ({
         ...prev,
         [label]: "Please enter a valid price.",
@@ -105,7 +108,8 @@ export default function GalleryEditPricing({
 
   const getUsdPriceDisplay = () => {
     if (loadingConversion) return "Calculating…";
-    if (pricing.usdPrice > 0) return utils_formatPrice(pricing.usdPrice, usd_symbol);
+    if (pricing.usdPrice > 0)
+      return utils_formatPrice(pricing.usdPrice, usd_symbol);
     return "";
   };
 
@@ -117,16 +121,16 @@ export default function GalleryEditPricing({
 
       <View style={tw`p-5 gap-5`}>
         <View
-          style={tw`bg-[#F0F4FF] border border-[#C7D5F8] rounded-sm px-4 py-3 flex-row gap-2.5 items-start`}
+          style={tw`bg-amber-50 border border-amber-100 rounded-sm px-4 py-3 flex-row gap-2.5 items-start`}
         >
           <Ionicons
             name="information-circle"
             size={15}
-            color="#3B5BDB"
+            color="#f59e0b"
             style={tw`mt-0.5`}
           />
           <Text
-            style={tw`font-sans-regular text-xs text-[#3B5BDB] leading-5 flex-1`}
+            style={tw`font-sans-regular text-xs text-amber-800 leading-5 flex-1`}
           >
             <Text style={tw`font-sans-semibold`}>
               Currency standardisation:{" "}
@@ -199,8 +203,8 @@ export default function GalleryEditPricing({
 
           {canConvert && pricing.usdPrice === 0 && (
             <View style={tw`flex-row items-center gap-1 px-1`}>
-              <Ionicons name="information-circle" size={12} color="#3B5BDB" />
-              <Text style={tw`font-sans-regular text-xs text-[#3B5BDB]`}>
+              <Ionicons name="information-circle" size={12} color="#f59e0b" />
+              <Text style={tw`font-sans-regular text-xs text-amber-500`}>
                 Sync your price to proceed
               </Text>
             </View>

@@ -19,6 +19,7 @@ export function useArtworkEditForm(
   const [initialised, setInitialised] = useState(false);
   const [description, setDescription] = useState("");
   const [dimUnit, setDimUnit] = useState<DimensionUnit>("in");
+  const [widthUnit, setWidthUnit] = useState<DimensionUnit>("in");
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("lbs");
   const [dims, setDims] = useState<DimensionsFormState>({
     height: "",
@@ -83,6 +84,7 @@ export function useArtworkEditForm(
     dims.width !== savedDims.width ||
     dims.weight !== savedDims.weight ||
     dimUnit !== "in" ||
+    widthUnit !== "in" ||
     weightUnit !== "lbs";
   const pricingChanged =
     pricing.price !== savedPricing.price ||
@@ -158,7 +160,7 @@ export function useArtworkEditForm(
         (dimUnit === "cm" ? heightNum / 2.54 : heightNum).toFixed(1),
       );
       const canonicalWidth = Number.parseFloat(
-        (dimUnit === "cm" ? widthNum / 2.54 : widthNum).toFixed(1),
+        (widthUnit === "cm" ? widthNum / 2.54 : widthNum).toFixed(1),
       );
 
       const result = await getArtworkPriceForArtist({
@@ -201,6 +203,8 @@ export function useArtworkEditForm(
     setDescription,
     dimUnit,
     setDimUnit,
+    widthUnit,
+    setWidthUnit,
     weightUnit,
     setWeightUnit,
     dims,

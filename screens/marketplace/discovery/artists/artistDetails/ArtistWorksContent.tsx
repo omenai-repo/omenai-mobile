@@ -54,6 +54,7 @@ type Props = {
   readonly priceFilter: string;
   readonly onMediumChange: (value: string) => void;
   readonly onPriceChange: (value: string) => void;
+  readonly isOwner?: boolean;
 };
 
 export default function ArtistWorksContent({
@@ -62,6 +63,7 @@ export default function ArtistWorksContent({
   priceFilter,
   onMediumChange,
   onPriceChange,
+  isOwner = false,
 }: Readonly<Props>) {
   const navigation = useNavigation<any>();
   const { width: screenW } = useWindowDimensions();
@@ -88,7 +90,8 @@ export default function ArtistWorksContent({
 
   const totalCount = data?.pages?.[0]?.total ?? items.length;
   const isInitialWorksLoad = isLoading && items.length === 0;
-  const isFilteringWorks = isFetching && !isInitialWorksLoad && !isFetchingNextPage;
+  const isFilteringWorks =
+    isFetching && !isInitialWorksLoad && !isFetchingNextPage;
 
   const renderArtwork = useCallback(
     (art: ArtistWorkRow) => {
@@ -112,11 +115,20 @@ export default function ArtistWorksContent({
             hideBackground
             useImageLoadAspectRatio
             useFixedImageFrame={false}
+            showEditButton={isOwner}
+            onEditPress={
+              isOwner
+                ? () =>
+                    navigation.navigate(screenName.gallery.editArtwork, {
+                      art_id: art.art_id,
+                    })
+                : undefined
+            }
           />
         </View>
       );
     },
-    [cardW],
+    [cardW, isOwner, navigation],
   );
 
   const filterStrip = (

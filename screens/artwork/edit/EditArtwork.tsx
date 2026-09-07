@@ -54,6 +54,8 @@ export default function EditArtwork() {
     setDescription,
     dimUnit,
     setDimUnit,
+    widthUnit,
+    setWidthUnit,
     weightUnit,
     setWeightUnit,
     dims,
@@ -80,6 +82,7 @@ export default function EditArtwork() {
       artID,
       dims,
       dimUnit,
+      widthUnit,
       weightUnit,
       description,
       pricing,
@@ -134,10 +137,15 @@ export default function EditArtwork() {
               dims={dims}
               errors={dimErrors}
               dimUnit={dimUnit}
+              widthUnit={widthUnit}
               weightUnit={weightUnit}
               onFieldChange={handleDimChange}
               onDimUnitChange={(u) => {
                 setDimUnit(u);
+                setProposedPrice(null);
+              }}
+              onWidthUnitChange={(u) => {
+                setWidthUnit(u);
                 setProposedPrice(null);
               }}
               onWeightUnitChange={(u) => {

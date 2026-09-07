@@ -1,10 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  View,
-  Platform,
-  StyleSheet,
-  Pressable,
-} from "react-native";
+import { View, Text, Platform, StyleSheet, Pressable } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { Image, ImageLoadEventData } from "expo-image";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -15,6 +11,7 @@ import tw from "twrnc";
 import { useDevice } from "#hooks/useDevice";
 import { useAppStore } from "#store/app/appStore";
 import ArtworkCardMetadata from "./ArtworkCardMetadata";
+import FloatingEditButton from "./FloatingEditButton";
 import type { ArtworkCardType } from "./artworkCard.types";
 import {
   areArtworkCardPropsEqual,
@@ -51,6 +48,8 @@ function ArtworkCard({
   fixedImageHeight,
   frameBackgroundColor,
   useFixedImageFrame = true,
+  showEditButton = false,
+  onEditPress,
 }: Readonly<ArtworkCardType>) {
   const userSession = useAppStore((s) => s.userSession);
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -183,6 +182,9 @@ function ArtworkCard({
               />
             </View>
           </View>
+        )}
+        {showEditButton && availability && onEditPress && (
+          <FloatingEditButton onPress={onEditPress} style={tw`top-3 right-3`} />
         )}
       </View>
       <View style={[tw`mt-3`, { width: cardWidth }]}>

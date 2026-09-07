@@ -23,6 +23,7 @@ type MiniArtworkCardType = {
   readonly art_id: string;
   readonly artist: string;
   readonly usd_price: number;
+  readonly availability: boolean;
 };
 
 function GalleryMiniArtworkCard({
@@ -31,6 +32,7 @@ function GalleryMiniArtworkCard({
   art_id,
   artist,
   usd_price,
+  availability,
 }: Readonly<MiniArtworkCardType>) {
   const { isLoggedIn } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -83,13 +85,15 @@ function GalleryMiniArtworkCard({
           recyclingKey={art_id}
           onLoad={handleImageLoad}
         />
-        <EditArtworkButton
-          handlePress={() => {
-            navigation.navigate(screenName.gallery.editArtwork, {
-              art_id: art_id,
-            });
-          }}
-        />
+        {availability && (
+          <EditArtworkButton
+            handlePress={() => {
+              navigation.navigate(screenName.gallery.editArtwork, {
+                art_id: art_id,
+              });
+            }}
+          />
+        )}
       </View>
       <View style={styles.mainDetailsContainer}>
         <Text style={{ fontSize: 14, color: colors.primary_black }}>

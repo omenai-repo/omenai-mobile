@@ -20,9 +20,11 @@ type EditArtworkDimensionsProps = Readonly<{
   dims: DimensionsFormState;
   errors: DimensionsErrorsState;
   dimUnit: DimensionUnit;
+  widthUnit: DimensionUnit;
   weightUnit: WeightUnit;
   onFieldChange: (field: keyof DimensionsFormState, value: string) => void;
   onDimUnitChange: (unit: DimensionUnit) => void;
+  onWidthUnitChange: (unit: DimensionUnit) => void;
   onWeightUnitChange: (unit: WeightUnit) => void;
 }>;
 
@@ -30,9 +32,11 @@ export default function EditArtworkDimensions({
   dims,
   errors,
   dimUnit,
+  widthUnit,
   weightUnit,
   onFieldChange,
   onDimUnitChange,
+  onWidthUnitChange,
   onWeightUnitChange,
 }: EditArtworkDimensionsProps) {
   return (
@@ -55,12 +59,11 @@ export default function EditArtworkDimensions({
           type="dimension"
           label="Width"
           value={dims.width}
-          unit={dimUnit}
+          unit={widthUnit}
           placeholder="e.g. 36"
           errorMessage={errors.width}
-          hideUnitSelector={true}
           onChangeText={(val) => onFieldChange("width", val)}
-          onUnitChange={onDimUnitChange}
+          onUnitChange={onWidthUnitChange}
         />
 
         <DimensionInputRow

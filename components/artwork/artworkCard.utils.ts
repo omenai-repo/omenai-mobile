@@ -103,6 +103,8 @@ export const areArtworkCardPropsEqual = (
   prev.useFixedImageFrame === next.useFixedImageFrame &&
   prev.metadataMode === next.metadataMode &&
   prev.useImageLoadAspectRatio === next.useImageLoadAspectRatio &&
+  prev.showEditButton === next.showEditButton &&
+  prev.onEditPress === next.onEditPress &&
   prev.artwork.image_format?.ratio === next.artwork.image_format?.ratio &&
   prev.artwork.image_format?.orientation ===
     next.artwork.image_format?.orientation &&

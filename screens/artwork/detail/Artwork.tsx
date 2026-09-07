@@ -298,25 +298,7 @@ export default function Artwork() {
   return (
     <>
       <View style={tw`flex-1 bg-white`}>
-        <BackHeaderTitle
-          title=""
-          customGoBack={handleBack}
-          rightAction={
-            ["gallery", "artist"].includes(userType) &&
-            artwork?.author_id === userSession?.id &&
-            artwork?.availability !== false ? (
-              <Pressable
-                onPress={() =>
-                  navigation.navigate(screenName.gallery.editArtwork, {
-                    art_id: artwork?.art_id,
-                  })
-                }
-              >
-                <Feather name="edit" size={20} color="#333" />
-              </Pressable>
-            ) : undefined
-          }
-        />
+        <BackHeaderTitle title="" customGoBack={handleBack} />
 
         {loadingMain && <ArtworkSkeleton />}
 

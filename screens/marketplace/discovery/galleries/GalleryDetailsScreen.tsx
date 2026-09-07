@@ -5,16 +5,22 @@ import { Pressable, Text, useWindowDimensions, View } from "react-native";
 import tw from "twrnc";
 import BackHeaderTitle from "#components/header/BackHeaderTitle";
 import type { GalleryOverviewArtist } from "#services/marketplace/partners/fetchGalleryOverviewData";
-import { useGalleryOverview, useGalleryProfile } from "#screens/marketplace/discovery/hooks/useGalleries";
+import {
+  useGalleryOverview,
+  useGalleryProfile,
+} from "#screens/marketplace/discovery/hooks/useGalleries";
 import GalleryDetailsSkeleton from "#screens/marketplace/discovery/galleries/components/GalleryDetailsSkeleton";
 import GalleryDetailsOverviewContent from "#screens/marketplace/discovery/galleries/galleryDetails/GalleryDetailsOverviewContent";
 import GalleryProfileHeader from "#screens/marketplace/discovery/galleries/galleryDetails/GalleryProfileHeader";
-import GalleryTabBar, { type GalleryTabId } from "#screens/marketplace/discovery/galleries/galleryDetails/GalleryTabBar";
+import GalleryTabBar, {
+  type GalleryTabId,
+} from "#screens/marketplace/discovery/galleries/galleryDetails/GalleryTabBar";
 import GalleryWorksTabContent from "#screens/marketplace/discovery/galleries/galleryDetails/GalleryWorksTabContent";
 import GalleryShowsTabContent from "#screens/marketplace/discovery/galleries/galleryDetails/GalleryShowsTabContent";
 import GalleryArtistsTabContent from "#screens/marketplace/discovery/galleries/galleryDetails/GalleryArtistsTabContent";
 import GalleryContactTabContent from "#screens/marketplace/discovery/galleries/galleryDetails/GalleryContactTabContent";
 import { EVENTS_QK } from "#utils/core/queryKeys";
+import { useAppStore } from "#store/app/appStore";
 
 type RouteParams = RouteProp<
   {
@@ -34,10 +40,20 @@ export default function GalleryDetailsScreen() {
   const { width: screenW } = useWindowDimensions();
   const { galleryId, name } = route.params;
   const [activeTab, setActiveTab] = useState<GalleryTabId>("overview");
-  const [selectedArtistId, setSelectedArtistId] = useState<string | undefined>(undefined);
+  const [selectedArtistId, setSelectedArtistId] = useState<string | undefined>(
+    undefined,
+  );
 
-  const { data: profile, refetch: refetchProfile } = useGalleryProfile(galleryId);
-  const { data, isLoading, isError, refetch, isRefetching } = useGalleryOverview(galleryId);
+  const { userSession, userType } = useAppStore();
+  const isOwner =
+    ["gallery"].includes(userType) &&
+    !!userSession?.id &&
+    userSession.id === galleryId;
+
+  const { data: profile, refetch: refetchProfile } =
+    useGalleryProfile(galleryId);
+  const { data, isLoading, isError, refetch, isRefetching } =
+    useGalleryOverview(galleryId);
 
   const { contentWidth, railCardWidth } = useMemo(() => {
     const cw = screenW - 32;
@@ -45,8 +61,14 @@ export default function GalleryDetailsScreen() {
   }, [screenW]);
 
   const galleryName = data?.name ?? profile?.name ?? name ?? "Gallery";
-  const represented = useMemo(() => data?.represented_artists ?? [], [data?.represented_artists]);
-  const available = useMemo(() => data?.available_artists ?? [], [data?.available_artists]);
+  const represented = useMemo(
+    () => data?.represented_artists ?? [],
+    [data?.represented_artists],
+  );
+  const available = useMemo(
+    () => data?.available_artists ?? [],
+    [data?.available_artists],
+  );
   const artistOptions = useMemo(() => {
     const map = new Map<string, { id: string; name: string }>();
     [...represented, ...available].forEach((artist) => {
@@ -71,9 +93,15 @@ export default function GalleryDetailsScreen() {
   const onRefreshOverview = useCallback(() => {
     refetch();
     refetchProfile();
-    queryClient.invalidateQueries({ queryKey: ["events", "gallery", "works", galleryId] });
-    queryClient.invalidateQueries({ queryKey: EVENTS_QK.galleryShowsTab(galleryId) });
-    queryClient.invalidateQueries({ queryKey: EVENTS_QK.galleryContact(galleryId) });
+    queryClient.invalidateQueries({
+      queryKey: ["events", "gallery", "works", galleryId],
+    });
+    queryClient.invalidateQueries({
+      queryKey: EVENTS_QK.galleryShowsTab(galleryId),
+    });
+    queryClient.invalidateQueries({
+      queryKey: EVENTS_QK.galleryContact(galleryId),
+    });
   }, [refetch, refetchProfile, queryClient, galleryId]);
 
   let overviewContent = null;
@@ -83,10 +111,15 @@ export default function GalleryDetailsScreen() {
     } else if (isError || !data) {
       overviewContent = (
         <View style={tw`flex-1 items-center justify-center px-6`}>
-          <Text style={tw`text-center text-xs uppercase tracking-widest text-neutral-400`}>
+          <Text
+            style={tw`text-center text-xs uppercase tracking-widest text-neutral-400`}
+          >
             Could not load this gallery. Try again, or go back.
           </Text>
-          <Pressable onPress={() => refetch()} style={tw`mt-4 border border-neutral-300 rounded-sm px-4 py-2`}>
+          <Pressable
+            onPress={() => refetch()}
+            style={tw`mt-4 border border-neutral-300 rounded-sm px-4 py-2`}
+          >
             <Text style={tw`text-sm text-neutral-900`}>Retry</Text>
           </Pressable>
         </View>
@@ -110,7 +143,11 @@ export default function GalleryDetailsScreen() {
   return (
     <View style={tw`flex-1 bg-white`}>
       <BackHeaderTitle title={galleryName} />
-      <GalleryProfileHeader galleryId={galleryId} profile={profile} nameFallback={name ?? "Gallery"} />
+      <GalleryProfileHeader
+        galleryId={galleryId}
+        profile={profile}
+        nameFallback={name ?? "Gallery"}
+      />
       <GalleryTabBar active={activeTab} onSelect={setActiveTab} />
       <View style={tw`flex-1`}>
         {overviewContent}
@@ -121,10 +158,15 @@ export default function GalleryDetailsScreen() {
             isActive
             artistOptions={artistOptions}
             selectedArtistId={selectedArtistId}
+            isOwner={isOwner}
           />
         )}
         {activeTab === "shows" && (
-          <GalleryShowsTabContent galleryId={galleryId} isActive galleryName={galleryName} />
+          <GalleryShowsTabContent
+            galleryId={galleryId}
+            isActive
+            galleryName={galleryName}
+          />
         )}
         {activeTab === "artists" && (
           <GalleryArtistsTabContent
@@ -136,7 +178,9 @@ export default function GalleryDetailsScreen() {
             onArtistPress={onArtistPress}
           />
         )}
-        {activeTab === "contact" && <GalleryContactTabContent galleryId={galleryId} isActive />}
+        {activeTab === "contact" && (
+          <GalleryContactTabContent galleryId={galleryId} isActive />
+        )}
       </View>
     </View>
   );

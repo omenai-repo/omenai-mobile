@@ -9,6 +9,7 @@ import { useArtistWorks } from "#screens/marketplace/discovery/hooks/useArtistWo
 import ArtistProfileHeader from "#screens/marketplace/discovery/artists/artistDetails/ArtistProfileHeader";
 import ArtistBioSection from "#screens/marketplace/discovery/artists/artistDetails/ArtistBioSection";
 import ArtistWorksContent from "#screens/marketplace/discovery/artists/artistDetails/ArtistWorksContent";
+import { useAppStore } from "#store/app/appStore";
 
 type RouteParams = RouteProp<
   {
@@ -34,6 +35,12 @@ export default function ArtistDetailsScreen() {
     birthyear: birthyearFallback,
     country: countryFallback,
   } = route.params;
+
+  const { userSession, userType } = useAppStore();
+  const isOwner =
+    ["artist"].includes(userType) &&
+    !!userSession?.id &&
+    userSession.id === artistId;
 
   const [mediumFilter, setMediumFilter] = useState("All");
   const [priceFilter, setPriceFilter] = useState("All");
@@ -64,7 +71,7 @@ export default function ArtistDetailsScreen() {
 
   return (
     <>
-      <BackHeaderTitle title='' />
+      <BackHeaderTitle title="" />
       <ScrollView style={tw`flex-1 bg-white`}>
         <View style={tw`relative w-full h-[200px] bg-neutral-900`}>
           {coverImageUrl ? (
@@ -117,6 +124,7 @@ export default function ArtistDetailsScreen() {
             priceFilter={priceFilter}
             onMediumChange={setMediumFilter}
             onPriceChange={setPriceFilter}
+            isOwner={isOwner}
           />
         )}
       </ScrollView>

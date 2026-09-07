@@ -1,10 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Pressable,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Pressable, Text, useWindowDimensions, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -24,7 +19,10 @@ const MEDIUM_OPTIONS: { label: string; value: string }[] = [
   { label: "Medium", value: "All" },
   { label: "Photography", value: "Photography" },
   { label: "Works on paper", value: "Works on paper" },
-  { label: "Acrylic on canvas/linen/panel", value: "Acrylic on canvas/linen/panel" },
+  {
+    label: "Acrylic on canvas/linen/panel",
+    value: "Acrylic on canvas/linen/panel",
+  },
   { label: "Mixed media on canvas", value: "Mixed media on canvas" },
   { label: "Oil on canvas/panel", value: "Oil on canvas/panel" },
 ];
@@ -46,7 +44,9 @@ export type GalleryWorkRow = {
   availability?: boolean;
   impressions?: number;
   like_IDs?: string[];
-  pricing?: { amount?: number; currency?: string; price?: number; usd_price?: number } | number;
+  pricing?:
+    | { amount?: number; currency?: string; price?: number; usd_price?: number }
+    | number;
   price?: number;
   medium?: string;
   year?: string | number;
@@ -58,9 +58,14 @@ export function priceFromGalleryWork(art: GalleryWorkRow): number {
   if (p == null) return 0;
   if (typeof p === "number") return p;
   if (typeof p === "object") {
-    const n = Number((p as { usd_price?: number; price?: number; amount?: number }).usd_price);
+    const n = Number(
+      (p as { usd_price?: number; price?: number; amount?: number }).usd_price,
+    );
     if (Number.isFinite(n) && n > 0) return n;
-    const m = Number((p as { price?: number; amount?: number }).price ?? (p as { amount?: number }).amount);
+    const m = Number(
+      (p as { price?: number; amount?: number }).price ??
+        (p as { amount?: number }).amount,
+    );
     return Number.isFinite(m) && m > 0 ? m : 0;
   }
   return 0;
@@ -79,6 +84,7 @@ type WorksProps = {
   readonly isActive: boolean;
   readonly artistOptions?: readonly GalleryArtistFilterOption[];
   readonly selectedArtistId?: string;
+  readonly isOwner?: boolean;
 };
 
 export default function GalleryWorksTabContent({
@@ -86,6 +92,7 @@ export default function GalleryWorksTabContent({
   isActive,
   artistOptions = [],
   selectedArtistId,
+  isOwner = false,
 }: Readonly<WorksProps>) {
   const navigation = useNavigation<any>();
   const { width: screenW } = useWindowDimensions();
@@ -118,11 +125,19 @@ export default function GalleryWorksTabContent({
   );
 
   const selectedArtistName = useMemo(
-    () => artistOptions.find((artist) => artist.id === artistFilter)?.name ?? "",
+    () =>
+      artistOptions.find((artist) => artist.id === artistFilter)?.name ?? "",
     [artistOptions, artistFilter],
   );
 
-  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: EVENTS_QK.galleryWorks(galleryId, filters),
     queryFn: async ({ pageParam = 1 }) =>
       fetchGalleryWorksPage(galleryId, pageParam, {
@@ -141,7 +156,10 @@ export default function GalleryWorksTabContent({
   });
 
   const items = useMemo(
-    () => (data?.pages ?? []).flatMap((p) => (Array.isArray(p.data) ? (p.data as GalleryWorkRow[]) : [])),
+    () =>
+      (data?.pages ?? []).flatMap((p) =>
+        Array.isArray(p.data) ? (p.data as GalleryWorkRow[]) : [],
+      ),
     [data],
   );
 
@@ -154,7 +172,9 @@ export default function GalleryWorksTabContent({
             artwork={{
               ...art,
               pricing: {
-                ...((typeof art.pricing === "object" ? art.pricing : {}) as object),
+                ...((typeof art.pricing === "object"
+                  ? art.pricing
+                  : {}) as object),
                 usd_price: price,
                 shouldShowPrice: price > 0 ? "Yes" : "No",
               },
@@ -165,11 +185,20 @@ export default function GalleryWorksTabContent({
             hideBackground
             useImageLoadAspectRatio
             useFixedImageFrame={false}
+            showEditButton={isOwner}
+            onEditPress={
+              isOwner
+                ? () =>
+                    navigation.navigate(screenName.gallery.editArtwork, {
+                      art_id: art.art_id,
+                    })
+                : undefined
+            }
           />
         </View>
       );
     },
-    [cardW],
+    [cardW, isOwner, navigation],
   );
 
   if (!isActive) return null;
@@ -186,7 +215,9 @@ export default function GalleryWorksTabContent({
   if (isError) {
     return (
       <View style={tw`py-20 px-4`}>
-        <Text style={tw`text-center text-xs uppercase text-neutral-400`}>Failed to load artworks.</Text>
+        <Text style={tw`text-center text-xs uppercase text-neutral-400`}>
+          Failed to load artworks.
+        </Text>
       </View>
     );
   }
@@ -236,8 +267,14 @@ export default function GalleryWorksTabContent({
             pressed && tw`opacity-70`,
           ]}
         >
-          <MaterialCommunityIcons name="view-grid" size={16} color={tw.color("neutral-700")} />
-          <Text style={tw`text-xs uppercase tracking-widest font-sans-medium text-neutral-700`}>
+          <MaterialCommunityIcons
+            name="view-grid"
+            size={16}
+            color={tw.color("neutral-700")}
+          />
+          <Text
+            style={tw`text-xs uppercase tracking-widest font-sans-medium text-neutral-700`}
+          >
             Immersive view
           </Text>
         </Pressable>
@@ -286,17 +323,24 @@ export default function GalleryWorksTabContent({
             {worksHeaderText}
           </Text>
         }
-        ListFooterComponent={isFetchingNextPage ? <Loader size={56} height={90} /> : null}
+        ListFooterComponent={
+          isFetchingNextPage ? <Loader size={56} height={90} /> : null
+        }
         renderItem={({ item }) => renderArtwork(item)}
       />
       <ArtworksImmersiveModal
         visible={immersiveOpen}
         onClose={() => setImmersiveOpen(false)}
         items={items}
-        getHeaderText={(currentIndex, total) => `Works — ${currentIndex + 1} / ${total}`}
+        getHeaderText={(currentIndex, total) =>
+          `Works — ${currentIndex + 1} / ${total}`
+        }
         onItemPress={(item) => {
           setImmersiveOpen(false);
-          navigation.push(screenName.artwork, { art_id: item.art_id, url: item.url });
+          navigation.push(screenName.artwork, {
+            art_id: item.art_id,
+            url: item.url,
+          });
         }}
         renderMetaFooter={(art) => {
           const price = priceFromGalleryWork(art);
@@ -309,7 +353,9 @@ export default function GalleryWorksTabContent({
             priceText = "Price on request";
           }
           return (
-            <Text style={tw`text-xs uppercase tracking-widest text-neutral-600 mt-1 font-sans-regular`}>
+            <Text
+              style={tw`text-xs uppercase tracking-widest text-neutral-600 mt-1 font-sans-regular`}
+            >
               {priceText}
             </Text>
           );

@@ -83,7 +83,7 @@ export default function GalleryArtworksListing() {
         </ScrollWrapper>
       ) : (
         <View style={tw`flex-1 mt-5`}>
-          <ArtworksListing data={data} onRefresh={onRefresh} />
+          <ArtworksListing data={data} onRefresh={onRefresh} showEditButtons />
         </View>
       )}
     </>

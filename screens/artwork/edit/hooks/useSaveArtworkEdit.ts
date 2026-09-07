@@ -16,6 +16,7 @@ interface UseSaveArtworkEditProps {
   artID: string | null;
   dims: DimensionsFormState;
   dimUnit: DimensionUnit;
+  widthUnit: DimensionUnit;
   weightUnit: WeightUnit;
   description: string;
   pricing: {
@@ -33,6 +34,7 @@ export function useSaveArtworkEdit({
   artID,
   dims,
   dimUnit,
+  widthUnit,
   weightUnit,
   description,
   pricing,
@@ -86,7 +88,7 @@ export function useSaveArtworkEdit({
       if (userType === "artist") {
         const dimensionsFilter = {
           height: toCanonicalDimensionString(Number(dims.height), dimUnit),
-          width: toCanonicalDimensionString(Number(dims.width), dimUnit),
+          width: toCanonicalDimensionString(Number(dims.width), widthUnit),
           weight: toCanonicalWeightString(Number(dims.weight), weightUnit),
         };
         result = await updateArtworkDimensions(dimensionsFilter, artID!);
@@ -100,7 +102,7 @@ export function useSaveArtworkEdit({
         if (dimensionsChanged) {
           filter.dimensions = {
             height: toCanonicalDimensionString(Number(dims.height), dimUnit),
-            width: toCanonicalDimensionString(Number(dims.width), dimUnit),
+            width: toCanonicalDimensionString(Number(dims.width), widthUnit),
             weight: toCanonicalWeightString(Number(dims.weight), weightUnit),
           };
         }

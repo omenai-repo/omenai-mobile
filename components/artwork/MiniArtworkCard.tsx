@@ -1,4 +1,4 @@
-import { Dimensions, TouchableOpacity } from "react-native";
+import { Dimensions, TouchableOpacity, View } from "react-native";
 import React, { memo, useMemo } from "react";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -11,6 +11,7 @@ import ExclusivityCountdown from "./ExclusivityCountdown";
 import ArtworkImage from "./ArtworkImage";
 import ArtworkDetails from "./ArtworkDetails";
 import ArtworkStatus from "./ArtworkStatus";
+import FloatingEditButton from "./FloatingEditButton";
 
 type MiniArtworkCardType = {
   title: string;
@@ -24,6 +25,8 @@ type MiniArtworkCardType = {
   galleryView?: boolean;
   availability: boolean;
   countdown?: Date | null;
+  showEditButton?: boolean;
+  onEditPress?: () => void;
 };
 
 const MiniArtworkCard = memo(
@@ -39,6 +42,8 @@ const MiniArtworkCard = memo(
     galleryView = false,
     availability,
     countdown,
+    showEditButton = false,
+    onEditPress,
   }: Readonly<MiniArtworkCardType>) => {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const { userSession } = useAppStore();
@@ -52,7 +57,7 @@ const MiniArtworkCard = memo(
 
     const expiryDate = useMemo(
       () => (countdown ? new Date(countdown) : null),
-      [countdown]
+      [countdown],
     );
 
     const showCountdown =
@@ -65,14 +70,22 @@ const MiniArtworkCard = memo(
         onPress={() => navigation.push(screenName.artwork, { art_id, url })}
         testID="artwork-card"
       >
-        <ArtworkImage
-          imageWidth={displayWidth}
-          image_href={image_href}
-          galleryView={galleryView}
-          art_id={art_id}
-          impressions={impressions}
-          like_IDs={like_IDs}
-        />
+        <View style={tw`relative`}>
+          <ArtworkImage
+            imageWidth={displayWidth}
+            image_href={image_href}
+            galleryView={galleryView}
+            art_id={art_id}
+            impressions={impressions}
+            like_IDs={like_IDs}
+          />
+          {showEditButton && availability && onEditPress && (
+            <FloatingEditButton
+              onPress={onEditPress}
+              style={tw`top-2 right-2`}
+            />
+          )}
+        </View>
 
         <ArtworkDetails
           title={title}
@@ -91,7 +104,7 @@ const MiniArtworkCard = memo(
         )}
       </TouchableOpacity>
     );
-  }
+  },
 );
 
 MiniArtworkCard.displayName = "MiniArtworkCard";
