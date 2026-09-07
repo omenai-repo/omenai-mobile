@@ -12,16 +12,26 @@ export default function ArtworkStatus({
   return (
     <View style={tw`mt-3 pt-3 border-t border-gray-200`}>
       <View style={tw`flex-row items-center justify-between`}>
-        <Text style={tw`text-gray-600 text-xs font-sans-regular`}>Status:</Text>
+        <Text
+          style={tw`text-[#A3A3A3] text-xs uppercase tracking-widest font-sans-medium`}
+        >
+          Status
+        </Text>
         {availability ? (
-          <View style={tw`bg-green-50 px-2 py-1 rounded-sm`}>
-            <Text style={tw`text-green-700 text-xs font-sans-medium`}>
+          <View style={tw`border border-black px-2 py-1 rounded-sm`}>
+            <Text
+              style={tw`text-black text-xs uppercase tracking-widest font-sans-medium`}
+            >
               Available
             </Text>
           </View>
         ) : (
-          <View style={tw`bg-red-50 px-2 py-1 rounded-sm`}>
-            <Text style={tw`text-red-700 text-xs font-sans-medium`}>Sold</Text>
+          <View style={tw`border border-neutral-300 px-2 py-1 rounded-sm`}>
+            <Text
+              style={tw`text-neutral-400 text-xs uppercase tracking-widest font-sans-medium`}
+            >
+              Sold
+            </Text>
           </View>
         )}
       </View>

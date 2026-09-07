@@ -13,7 +13,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
 import { utils_formatPrice } from "#utils/commerce/utils_priceFormatter";
-import EditArtworkButton from "#components/buttons/EditArtworkButton";
+import FloatingEditButton from "#components/artwork/FloatingEditButton";
 import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
 
@@ -86,12 +86,13 @@ function GalleryMiniArtworkCard({
           onLoad={handleImageLoad}
         />
         {availability && (
-          <EditArtworkButton
-            handlePress={() => {
+          <FloatingEditButton
+            onPress={() => {
               navigation.navigate(screenName.gallery.editArtwork, {
                 art_id: art_id,
               });
             }}
+            style={tw`top-2 right-2`}
           />
         )}
       </View>

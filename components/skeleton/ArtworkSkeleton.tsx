@@ -10,7 +10,12 @@ export default function ArtworkSkeleton() {
     <View style={tw`flex-1 bg-white`}>
       {/* Image placeholder */}
       <View style={tw`items-center`}>
-        <Skeleton colorMode="light" height={300} width={screenWidth} />
+        <Skeleton
+          colorMode="light"
+          height={300}
+          width={screenWidth}
+          radius={0}
+        />
       </View>
 
       <View style={tw`px-5 pt-8`}>
