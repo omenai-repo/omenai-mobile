@@ -188,7 +188,7 @@ export function useArtworkEditForm(
       });
     } catch {
       updateModal({
-        message: "Unable to calculate the proposed price.",
+        message: "Unable to calculate the updated price.",
         modalType: "error",
         showModal: true,
       });

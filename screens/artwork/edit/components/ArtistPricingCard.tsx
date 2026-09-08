@@ -67,7 +67,7 @@ export default function ArtistPricingCard({
             <Text
               style={tw`font-sans-regular text-xs text-[#065F46] tracking-wide uppercase`}
             >
-              Proposed new price
+              Updated price
             </Text>
           </View>
           <View style={tw`flex-row justify-between items-center`}>
@@ -85,22 +85,42 @@ export default function ArtistPricingCard({
           </Text>
         </View>
       ) : (
-        <View style={tw`mx-5 mb-5 mt-2 flex-row items-start gap-2`}>
-          <Ionicons
-            name="information-circle-outline"
-            size={14}
-            color="#94A3C4"
-            style={tw`mt-0.5`}
-          />
-          <Text
-            style={tw`font-sans-regular text-sm text-[#94A3C4] flex-1 leading-5`}
+        <View style={tw`mx-5 mb-5 mt-2 flex-col gap-3`}>
+          <View
+            style={tw`bg-amber-50 border border-amber-100 rounded-sm px-4 py-3 flex-row gap-2.5 items-start`}
           >
-            Enter new dimensions and tap{" "}
-            <Text style={tw`font-sans-semibold text-[#0F172A]`}>
-              Re-evaluate
-            </Text>{" "}
-            to see the proposed price.
-          </Text>
+            <Ionicons
+              name="information-circle"
+              size={15}
+              color="#f59e0b"
+              style={tw`mt-0.5`}
+            />
+            <Text
+              style={tw`font-sans-regular text-xs text-amber-800 leading-5 flex-1`}
+            >
+              <Text style={tw`font-sans-semibold`}>
+                Notice:{" "}
+              </Text>
+              Updating your artwork's dimensions will automatically recalculate its price value.
+            </Text>
+          </View>
+          <View style={tw`flex-row items-start gap-2 px-1`}>
+            <Ionicons
+              name="calculator-outline"
+              size={14}
+              color="#94A3C4"
+              style={tw`mt-0.5`}
+            />
+            <Text
+              style={tw`font-sans-regular text-sm text-[#94A3C4] flex-1 leading-5`}
+            >
+              Enter new dimensions and tap{" "}
+              <Text style={tw`font-sans-semibold text-[#0F172A]`}>
+                Re-evaluate
+              </Text>{" "}
+              to see the updated price.
+            </Text>
+          </View>
         </View>
       )}
     </View>
