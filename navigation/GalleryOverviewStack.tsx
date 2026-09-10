@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import Overview from "#screens/overview/Overview";
+import Overview from "#screens/marketplace/overview/Overview";
 import {
   primaryTabRootNavigatorScreenOptions,
   primaryTabRootScreenHeaderOptions,

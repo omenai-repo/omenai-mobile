@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { colors } from "#config/colors.config";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDevice } from "#hooks/useDevice";
+import tw from "#lib/tailwind";
 
 type BackHeaderTitleProps = {
   title: string;
@@ -43,7 +44,13 @@ export default function BackHeaderTitle({
             }
           }}
         />
-        <Text style={[styles.topTitle, isTablet && { fontSize: 20 }]}>
+        <Text
+          style={[
+            tw`font-sans-medium flex-1 text-center capitalize`,
+            styles.topTitle,
+            isTablet && { fontSize: 20 },
+          ]}
+        >
           {title}
         </Text>
         <View style={{ width: isTablet ? 60 : 50, alignItems: "flex-end" }}>
@@ -61,11 +68,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   topTitle: {
-    flex: 1,
-    textAlign: "center",
     fontSize: 16,
-    fontWeight: "500",
     color: colors.primary_black,
-    textTransform: "capitalize",
   },
 });

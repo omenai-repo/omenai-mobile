@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import tw from 'twrnc';
-import UnitDropdown from '#screens/artist/orders/UnitDropdown';
+import UnitDropdown from '#components/forms/UnitDropdown';
 
 interface UnitDropdownFieldProps {
   label: string;

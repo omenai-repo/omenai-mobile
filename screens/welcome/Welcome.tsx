@@ -8,8 +8,7 @@ import { colors } from "#config/colors.config";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { onboardingdata } from "#constants/onBoardingData.constants";
 import OnBoardingSection from "./components/OnBoardingSection";
-import { utils_storeAsyncData } from "#utils/utils_asyncStorage";
-import { utils_determineOnboardingPages } from "#utils/utils_determineOnboardingPages";
+import { utils_storeAsyncData } from "#utils/app/utils_asyncStorage";
 
 import tw from "twrnc";
 import { StatusBar } from "expo-status-bar";
@@ -19,6 +18,7 @@ import {
   secondaryGridImages,
 } from "#constants/images.constants";
 import { useDevice } from "#hooks/useDevice";
+import { utils_hasCompletedWelcomeOnboarding } from "#utils/location/utils_hasCompletedWelcomeOnboarding";
 
 export default function Welcome() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -27,12 +27,12 @@ export default function Welcome() {
   const { isTablet } = useDevice();
 
   const [selected, setSelected] = useState(0);
-  const [showWelcome, setShowWelcome] = useState(false);
+  const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
 
   useEffect(() => {
     async function handleOnboardingCheck() {
-      const isOnboarded = await utils_determineOnboardingPages();
-      if (isOnboarded) setShowWelcome(true);
+      const isOnboarded = await utils_hasCompletedWelcomeOnboarding();
+      setShowWelcome(isOnboarded);
     }
     handleOnboardingCheck();
   }, []);
@@ -41,10 +41,13 @@ export default function Welcome() {
     navigation.navigate(value);
   };
 
-  if (!showWelcome) {
-    return (
-      <>
-        <StatusBar style="light" />
+  const renderContent = () => {
+    if (showWelcome === null) {
+      return null;
+    }
+
+    if (!showWelcome) {
+      return (
         <OnBoardingSection
           data={onboardingdata[selected]}
           currentIndex={selected}
@@ -53,23 +56,12 @@ export default function Welcome() {
             utils_storeAsyncData("isOnboarded", JSON.stringify(true));
           }}
           handleNext={() => setSelected((prev) => prev + 1)}
+          handleBack={() => setSelected((prev) => prev - 1)}
         />
-      </>
-    );
-  }
+      );
+    }
 
-  return (
-    <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
-      <StatusBar style="light" />
-
-      {/* Horizontal Animated Grid Background */}
-      <TiltedGridBackground
-        primaryImages={primaryGridImages}
-        secondaryImages={secondaryGridImages}
-        isActive={isFocused}
-      />
-
-      {/* Bottom content container */}
+    return (
       <View
         style={[
           tw`rounded-sm py-8 px-8`,
@@ -100,23 +92,17 @@ export default function Welcome() {
             value="Create Account"
             onClick={() => handleNavigation(screenName.register)}
             style={{ backgroundColor: colors.white, height: 48 }}
-            textStyle={[
-              tw`font-semibold`,
-              {
-                color: colors.black,
-              },
-            ]}
+            textStyle={[tw`font-sans-semibold`, { color: colors.black }]}
           />
 
           <LongBlackButton
             value="Log In"
             onClick={() => handleNavigation(screenName.login)}
             style={{ height: 48, backgroundColor: colors.black_light }}
-            textStyle={{
-              color: colors.white,
-            }}
+            textStyle={{ color: colors.white }}
           />
 
+          {/* Browse as guest user button */}
           {/* <Pressable
             onPress={() => navigation.navigate("GuestNavigation")}
             style={tw`items-center mt-2`}
@@ -129,6 +115,21 @@ export default function Welcome() {
           </Pressable> */}
         </View>
       </View>
+    );
+  };
+
+  return (
+    <View style={[tw`flex-1`, { backgroundColor: colors.black }]}>
+      <StatusBar style="light" />
+
+      {/* Horizontal Animated Grid Background */}
+      <TiltedGridBackground
+        primaryImages={primaryGridImages}
+        secondaryImages={secondaryGridImages}
+        isActive={isFocused && showWelcome === true}
+      />
+
+      {renderContent()}
     </View>
   );
 }

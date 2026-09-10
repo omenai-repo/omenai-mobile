@@ -16,7 +16,7 @@ import {
   type VerifyDeepLinkOutcome,
 } from "#services/deeplink/verifyDeepLinkToken";
 import { useAppStore } from "#store/app/appStore";
-import { Analytics } from "#utils/analytics";
+import { Analytics } from "#utils/core/analytics";
 import { useEffect } from "react";
 import { AppState } from "react-native";
 

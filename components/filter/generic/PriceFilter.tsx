@@ -9,7 +9,7 @@ import { SharedFilterStore } from "./types";
 const priceFilterOptions = [
   { option: "$0 to $1,000", value: { min: 0, max: 1000 } },
   { option: "$1,001 to $10,000", value: { min: 1001, max: 10000 } },
-  { option: "$10,001 to $50,000", value: { min: 1001, max: 50000 } },
+  { option: "$10,001 to $50,000", value: { min: 10001, max: 50000 } },
   { option: "Premium Range", value: { min: 50001, max: 10000000 } },
 ];
 

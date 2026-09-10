@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import BackFormButton from "#components/buttons/BackFormButton";
 import TermsAndConditionItem from "#components/general/TermsAndConditionItem";
-import { useModalStore } from "#store/modal/modalStore";
+import { useModalStore } from "#store/account/modal/modalStore";
 import LegalLinkButton from "#components/general/LegalLinkButton";
 import { termsAndConditionsStyles } from "#components/general/TermsAndConditionsStyles";
 import tw from "twrnc";

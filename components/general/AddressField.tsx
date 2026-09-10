@@ -10,10 +10,9 @@ export type AddressFieldProps = {
 const AddressField = ({ label, value }: AddressFieldProps) => {
   if (!value) return null;
   return (
-    <Text style={tw`text-gray-800`}>
-      <Text style={tw`font-semibold`}>{label} </Text>
+    <Text style={tw`text-gray-800 font-sans-regular`}>
+      <Text style={tw`font-sans-medium`}>{label} </Text>
       {value}
-      {"\n"}
     </Text>
   );
 };

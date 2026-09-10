@@ -8,6 +8,11 @@
       "#components/*": ["./components/*"],
       "#config/*": ["./config/*"],
       "#features/*": ["./features/*"],
+      "#discovery/*": ["./screens/discovery/*"],
+      "#artwork/*": ["./screens/artwork/*"],
+      "#commerce/*": ["./screens/commerce/*"],
+      "#marketplace/*": ["./screens/marketplace/*"],
+      "#account/*": ["./screens/account/*"],
       "#constants/*": ["./constants/*"],
       "#data/*": ["./data/*"],
       "#hooks/*": ["./hooks/*"],
@@ -22,7 +27,7 @@
       "#store/*": ["./store/*"],
       "#types/*": ["./types/*"],
       "#utils/*": ["./utils/*"],
-      "#appWrite_config": ["./appWrite_config"],
+      "#config/appwrite.client": ["./config/appwrite.client"],
     }
   }
 }

@@ -1,28 +1,32 @@
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { colors } from "#config/colors.config";
 import {
-  Animated,
   Image,
-  Platform,
-  ScrollView,
+  Pressable,
+  Text,
   useWindowDimensions,
   View,
 } from "react-native";
-import { useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import tw from "twrnc";
 import { useDevice } from "#hooks/useDevice";
+import { EaseView } from "react-native-ease";
 
 type onBoardingSectionProps = {
   data: { title: string; image: any; subText: string };
   currentIndex: number;
   handleNext: () => void;
+  handleBack: () => void;
   onFinish: () => void;
 };
+
+const TOTAL_SLIDES = 2;
+const IMAGE_HEIGHT_RATIO = 0.7;
 
 export default function OnBoardingSection({
   data,
   handleNext,
+  handleBack,
   currentIndex,
   onFinish,
 }: onBoardingSectionProps) {
@@ -30,83 +34,80 @@ export default function OnBoardingSection({
   const insets = useSafeAreaInsets();
   const { isTablet } = useDevice();
 
-  // Animation values
-  const titleTranslateX = useRef(new Animated.Value(50)).current;
-  const titleOpacity = useRef(new Animated.Value(0)).current;
-  const subTextTranslateX = useRef(new Animated.Value(50)).current;
-  const subTextOpacity = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    // Reset animation values
-    titleTranslateX.setValue(50);
-    titleOpacity.setValue(0);
-    subTextTranslateX.setValue(50);
-    subTextOpacity.setValue(0);
-
-    // Animate title
-    Animated.parallel([
-      Animated.timing(titleTranslateX, {
-        toValue: 0,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-      Animated.timing(titleOpacity, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    // Animate subText with slight delay
-    Animated.parallel([
-      Animated.timing(subTextTranslateX, {
-        toValue: 0,
-        duration: 400,
-        delay: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(subTextOpacity, {
-        toValue: 0.7,
-        duration: 400,
-        delay: 150,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [
-    currentIndex,
-    data.title,
-    data.subText,
-    titleTranslateX,
-    titleOpacity,
-    subTextTranslateX,
-    subTextOpacity,
-  ]);
+  const imageHeight = height * IMAGE_HEIGHT_RATIO;
 
   return (
     <View style={tw`flex-1 bg-white`}>
-      <ScrollView>
+      {/* Full-bleed image with scale + fade */}
+      <EaseView
+        key={`image-${currentIndex}`}
+        initialAnimate={{ opacity: 0.8, scale: 1.08 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          type: "timing",
+          duration: 700,
+          easing: "easeOut",
+        }}
+        style={{
+          width,
+          height: imageHeight,
+          overflow: "hidden",
+          backgroundColor: "#121212",
+        }}
+      >
         <Image
           source={data.image}
-          alt=""
-          style={{
-            width,
-            height: Platform.OS === "ios" ? height / 1.5 : height / 1,
-            resizeMode: "cover",
-          }}
+          style={{ width, height: imageHeight, resizeMode: "cover" }}
         />
-        <View style={[tw`absolute w-full`, { top: insets.top }]}>
-          <View style={tw`w-full flex-row items-center gap-2.5 px-5`}>
-            {[0, 1].map((i) => (
-              <View
-                style={tw`h-1 bg-white rounded-sm ${
-                  i <= currentIndex ? "opacity-100" : "opacity-30"
-                } flex-1`}
-                key={i}
-              />
-            ))}
-          </View>
+      </EaseView>
+
+      {/* Top Header Overlay: Progress dots & Subtle Skip Button */}
+      <View
+        style={[
+          tw`absolute left-0 right-0 flex-row items-center justify-between px-5`,
+          { top: insets.top + 12 },
+        ]}
+      >
+        {/* Progress dots */}
+        <View style={tw`flex-row items-center gap-2`}>
+          {Array.from({ length: TOTAL_SLIDES }).map((_, i) => (
+            <EaseView
+              key={i}
+              animate={{
+                scaleX: i === currentIndex ? 3 : 1,
+              }}
+              transition={{
+                type: "spring",
+                damping: 18,
+                stiffness: 90,
+              }}
+              style={{
+                height: 4,
+                width: 8,
+                borderRadius: 4,
+                backgroundColor:
+                  i <= currentIndex ? "#FFFFFF" : "rgba(255,255,255,0.35)",
+              }}
+            />
+          ))}
         </View>
-      </ScrollView>
+
+        {/* Subtle Skip button at top right */}
+        <Pressable
+          onPress={onFinish}
+          style={({ pressed }) => [
+            tw`bg-black/30 px-3 py-1.5 rounded-sm`,
+            pressed && tw`scale-95 opacity-90`,
+          ]}
+          hitSlop={8}
+        >
+          <Text style={tw`text-white text-xs font-semibold tracking-wide`}>
+            Skip
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* Bottom text + buttons */}
       <View
         style={[
           tw`px-8 pt-6`,
@@ -117,53 +118,90 @@ export default function OnBoardingSection({
           },
         ]}
       >
-        <Animated.Text
-          style={[
-            tw`text-3xl font-medium mb-1.5`,
-            {
-              transform: [{ translateX: titleTranslateX }],
-              opacity: titleOpacity,
-            },
-          ]}
+        <EaseView
+          key={`title-${currentIndex}`}
+          initialAnimate={{ opacity: 0, translateX: 40 }}
+          animate={{ opacity: 1, translateX: 0 }}
+          transition={{
+            type: "timing",
+            duration: 600,
+            delay: 150,
+            easing: "easeOut",
+          }}
         >
-          {data.title}
-        </Animated.Text>
-        <Animated.Text
-          style={[
-            tw`text-sm`,
-            {
-              color: colors.primary_black,
-              opacity: subTextOpacity,
-              transform: [{ translateX: subTextTranslateX }],
-            },
-          ]}
+          <Text style={tw`text-3xl font-medium mb-1.5`}>{data.title}</Text>
+        </EaseView>
+
+        <EaseView
+          key={`subText-${currentIndex}`}
+          initialAnimate={{ opacity: 0, translateX: 40 }}
+          animate={{ opacity: 0.75, translateX: 0 }}
+          transition={{
+            type: "timing",
+            duration: 600,
+            delay: 300,
+            easing: "easeOut",
+          }}
         >
-          {data.subText}
-        </Animated.Text>
+          <Text style={[tw`text-sm`, { color: colors.primary_black }]}>
+            {data.subText}
+          </Text>
+        </EaseView>
+
         <View style={tw`gap-3 mt-6`}>
-          <LongBlackButton
-            value="Continue"
-            onClick={() => {
-              if (currentIndex === 1) {
-                onFinish();
-              } else {
-                handleNext();
-              }
+          <EaseView
+            key={`continue-${currentIndex}`}
+            initialAnimate={{ opacity: 0, translateY: 24 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{
+              type: "timing",
+              duration: 600,
+              delay: 450,
+              easing: "easeOut",
             }}
-            isDisabled={false}
-            style={{ height: 48 }}
-            textStyle={{ fontSize: 16, fontWeight: "600" }}
-          />
-          <LongBlackButton
-            value="Skip"
-            onClick={onFinish}
-            style={{
-              height: 48,
-              backgroundColor: "#E0E0E0",
-              marginBottom: insets.bottom + 10,
+          >
+            <LongBlackButton
+              value="Continue"
+              onClick={() => {
+                if (currentIndex === TOTAL_SLIDES - 1) {
+                  onFinish();
+                } else {
+                  handleNext();
+                }
+              }}
+              isDisabled={false}
+              style={{ height: 48 }}
+              textStyle={{ fontSize: 16, fontWeight: "600" }}
+            />
+          </EaseView>
+
+          <EaseView
+            key={`back-${currentIndex}`}
+            initialAnimate={{ opacity: 0, translateY: 24 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{
+              type: "timing",
+              duration: 600,
+              delay: 550,
+              easing: "easeOut",
             }}
-            textStyle={{ fontSize: 16, fontWeight: "600", color: colors.black }}
-          />
+          >
+            <LongBlackButton
+              value="Back"
+              onClick={handleBack}
+              isDisabled={currentIndex === 0}
+              style={{
+                height: 48,
+                backgroundColor: currentIndex === 0 ? "#F0F0F0" : "#E0E0E0",
+                marginBottom: insets.bottom + 10,
+              }}
+              textStyle={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: currentIndex === 0 ? "#A0A0A0" : colors.black,
+              }}
+            />
+          </EaseView>
         </View>
       </View>
     </View>

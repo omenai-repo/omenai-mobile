@@ -1,4 +1,4 @@
-import { hasFilterValue } from "#utils/utils_checkIfFilterExists";
+import { hasFilterValue } from "#utils/string/utils_checkIfFilterExists";
 import { Text, TouchableOpacity, View } from "react-native";
 import { colors } from "#config/colors.config";
 import { Feather } from "@expo/vector-icons";

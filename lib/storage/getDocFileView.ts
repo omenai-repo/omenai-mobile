@@ -1,4 +1,4 @@
-import { storage } from '../../appWrite_config';
+import { storage } from "#config/appwrite.client";
 
 export const getDocFileView = (fileId: string) => {
   const fileData = storage.getFileView({

@@ -100,7 +100,7 @@ export default function CarrierInterventionCard({
                   : "Ship it Rolled (Recommended)"}
               </Text>
               <Text style={tw`text-xs text-gray-500 mt-0.5`}>
-                The safest, most affordable option. We'll recalculate for a tube
+                The safest, most affordable option. We&apos;ll recalculate for a tube
                 package.
               </Text>
             </View>

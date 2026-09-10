@@ -1,7 +1,7 @@
-import { updateArtworkImpressions } from "#services/artworks/updateArtworkImpressions";
+import { updateArtworkImpressions } from "#services/artwork/updateArtworkImpressions";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
+import { useGuestLoginModalStore } from "#store/account/guest/guestLoginModalStore";
 
 function useLikedState(
   initialImpressions: number,

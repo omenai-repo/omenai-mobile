@@ -1,0 +1,40 @@
+import { utils_getAsyncData } from "#utils/app/utils_asyncStorage";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "#utils/network/apiRequest";
+
+export async function fetchAllArtworksById() {
+  let userId = "";
+  const userSession = await utils_getAsyncData("userSession");
+  if (userSession.value) {
+    userId = JSON.parse(userSession.value).id;
+  } else {
+    return;
+  }
+
+  try {
+    const response = await apiRequest(
+      `${apiUrl}/api/artworks/getAllArtworksbyId`,
+      {
+        method: "POST",
+        body: JSON.stringify({ id: userId }),
+      },
+    );
+
+    const result = await response.json();
+    return {
+      isOk: response.ok,
+      message: result.message,
+      data: result.data,
+    };
+  } catch (error: any) {
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching artworks",
+      },
+    };
+  }
+}

@@ -1,49 +1,46 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { screenName } from "#constants/screenNames.constants";
 import { useCallback, useMemo, useRef } from "react";
-import Artwork from "#screens/artwork/Artwork";
-import Billing from "#screens/billing/Billing";
-import Checkout from "#screens/checkout/Checkout";
-import GalleryOrder from "#screens/galleryOrder/GalleryOrder";
-import ChangeGalleryPassword from "#screens/galleryProfileScreens/changeGalleryPassword/ChangeGalleryPassword";
-import EditGalleryProfile from "#screens/galleryProfileScreens/editGalleryProfile/EditGalleryProfile";
-import GetStartedWithStripe from "#screens/stripeScreens/getStartedWithStripe/GetStartedWithStripe";
-import UploadArtwork from "#screens/uploadArtwork/UploadArtwork";
-import { getAccountID } from "#services/stripe/getAccountID";
-import { utils_getAsyncData } from "#utils/utils_asyncStorage";
-import UploadNewLogo from "#screens/galleryProfileScreens/uploadNewLogo/UploadNewLogo";
-import ShipmentTrackingScreen from "#screens/artist/orders/ShipmentTrackingScreen";
-import DimensionsDetails from "#screens/artist/orders/DimensionsDetails";
-import EditAddressScreen from "#screens/editProfile/EditAddressScreen";
-import NotificationScreen from "#screens/notifications/NotificationScreen";
-import PaymentMethodChangeScreen from "#screens/subscriptions/components/PaymentMethodChangeScreen";
-import BillingVerificationScreen from "#screens/subscriptions/components/BillingVerificationScreen";
-import EditArtwork from "#screens/editArtwork/EditArtwork";
-import DeleteAccountScreen from "#screens/deleteAccount/DeleteAccountScreen";
+import Artwork from "#screens/artwork/detail/Artwork";
+import Billing from "#screens/commerce/billing/Billing";
+import Checkout from "#screens/commerce/checkout/Checkout";
+import GalleryOrder from "#screens/marketplace/gallery/orderDetails/GalleryOrder";
+import ChangePassword from "#screens/auth/password/changePassword/ChangePassword";
+import EditGalleryProfile from "#screens/marketplace/gallery/profile/editGalleryProfile/EditGalleryProfile";
+import GetStartedWithStripe from "#screens/commerce/stripe/getStartedWithStripe/GetStartedWithStripe";
+import UploadArtwork from "#screens/artwork/upload/UploadArtwork";
+import { getAccountID } from "#services/commerce/stripe/getAccountID";
+import { utils_getAsyncData } from "#utils/app/utils_asyncStorage";
+import UploadNewLogo from "#screens/marketplace/gallery/profile/uploadNewLogo/UploadNewLogo";
+import ShipmentTrackingScreen from "#screens/marketplace/artist/orders/ShipmentTrackingScreen";
+import DimensionsDetails from "#screens/marketplace/artist/orders/DimensionsDetails";
+import EditAddressScreen from "#screens/account/profile/EditAddressScreen";
+import NotificationScreen from "#screens/account/notifications/NotificationScreen";
+import PaymentMethodChangeScreen from "#screens/commerce/subscriptions/components/PaymentMethodChangeScreen";
+import BillingVerificationScreen from "#screens/commerce/subscriptions/components/BillingVerificationScreen";
+import EditArtwork from "#screens/artwork/edit/EditArtwork";
+import DeleteAccountScreen from "#screens/account/settings/DeleteAccountScreen";
 import { wrapWithHighRisk, wrapWithLowRisk } from "#utils/wrapWithProvider";
-import BiometricSettings from "#screens/profile/BiometricSettings";
-import SupportTicketsScreen from "#screens/profile/SupportTicketsScreen";
-import SupportTicketsFilterModal from "#screens/profile/components/SupportTicketsFilterModal";
-import SubscriptionHistory from "#screens/subscriptions/SubscriptionHistory";
+import BiometricSettings from "#screens/auth/biometrics/BiometricSettings";
+import SupportTicketsScreen from "#screens/account/profile/SupportTicketsScreen";
+import SupportTicketsFilterModal from "#screens/account/profile/components/SupportTicketsFilterModal";
+import SubscriptionHistory from "#screens/commerce/subscriptions/SubscriptionHistory";
 import { useQuery } from "@tanstack/react-query";
 import GalleryOverviewStack from "#navigation/GalleryOverviewStack";
 import GalleryShowsFairsEventsStack from "#navigation/GalleryShowsFairsEventsStack";
-import GalleryArtworksListing from "#screens/galleryArtworksListing/GalleryArtworksListing";
-import ArtistRoster from "#screens/gallery/artistRoster/ArtistRoster";
-import AddArtistToRosterModal from "#screens/gallery/artistRoster/AddArtistToRosterModal";
-import ShowsFairsEventDetails from "#screens/gallery/showsFairsEvents/ShowsFairsEventDetails";
-import GalleryOrdersListing from "#screens/galleryOrders/GalleryOrdersListing";
-import Subscriptions from "#screens/subscriptions/Subscriptions";
-import StripePayoutsTab from "#screens/stripeScreens/payouts/StripePayoutsTab";
-import GalleryProfile from "#screens/galleryProfileScreens/galleryProfile/GalleryProfile";
+import GalleryArtworksListing from "#screens/marketplace/gallery/artworks/GalleryArtworksListing";
+import ArtistRoster from "#screens/marketplace/gallery/artistRoster/ArtistRoster";
+import AddArtistToRosterModal from "#screens/marketplace/gallery/artistRoster/AddArtistToRosterModal";
+import ShowsFairsEventDetails from "#screens/marketplace/gallery/showsFairsEvents/ShowsFairsEventDetails";
+import GalleryOrdersListing from "#screens/marketplace/gallery/orders/GalleryOrdersListing";
+import Subscriptions from "#screens/commerce/subscriptions/Subscriptions";
+import StripePayoutsTab from "#screens/commerce/stripe/payouts/StripePayoutsTab";
+import GalleryProfile from "#screens/marketplace/gallery/profile/galleryProfile/GalleryProfile";
 import GalleryTabBar from "./components/GalleryTabBar";
 import MoreSheet, { type MoreSheetItem } from "./components/MoreSheet";
-import { logout } from "#utils/logout.utils";
-import {
-  MoreSheetProvider,
-  useMoreSheet,
-} from "./components/MoreSheetContext";
+import { logout } from "#utils/auth/logout.utils";
+import { MoreSheetProvider, useMoreSheet } from "./components/MoreSheetContext";
 import {
   ordersActive,
   ordersInActive,
@@ -56,11 +53,11 @@ import {
   walletActive,
   billingActive,
   billingInActive,
-} from "#utils/SvgImages";
+} from "#utils/assets/SvgImages";
 import { View } from "react-native";
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const hideHeader = { headerShown: false };
 
@@ -295,7 +292,9 @@ function GalleryTabs() {
   return (
     <>
       <Tab.Navigator
-        tabBar={(props) => renderGalleryTabBar(props, tabNavigationRef, openMoreSheet)}
+        tabBar={(props) =>
+          renderGalleryTabBar(props, tabNavigationRef, openMoreSheet)
+        }
         screenOptions={{ headerShown: false }}
       >
         {galleryTabs.map(({ name, component, id }) => (
@@ -411,8 +410,8 @@ export default function GalleryNavigation() {
         component={wrapWithHighRisk(EditAddressScreen)}
       />
       <Stack.Screen
-        name={screenName.gallery.changePassword}
-        component={wrapWithHighRisk(ChangeGalleryPassword)}
+        name={screenName.changePassword}
+        component={wrapWithHighRisk(ChangePassword)}
       />
       <Stack.Screen
         name={screenName.gallery.billing}
@@ -454,11 +453,24 @@ export default function GalleryNavigation() {
         name="SubscriptionHistory"
         component={wrapWithHighRisk(SubscriptionHistory)}
       />
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
+
+      {/* bottom fit form sheet */}
+      <Stack.Group
+        screenOptions={{
+          presentation: "formSheet",
+          sheetAllowedDetents: "fitToContents",
+          sheetGrabberVisible: true,
+          contentStyle: { backgroundColor: "white" },
+        }}
+      >
         <Stack.Screen
           name={screenName.gallery.uploadNewLogo}
           component={wrapWithHighRisk(UploadNewLogo)}
         />
+      </Stack.Group>
+
+      {/* modals */}
+      <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen
           name={screenName.supportTicketsFilterModal}
           component={wrapWithHighRisk(SupportTicketsFilterModal)}

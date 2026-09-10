@@ -17,6 +17,9 @@ import EmptyArtworks from "./EmptyArtworks";
 import Loader from "./Loader";
 import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { screenName } from "#constants/screenNames.constants";
 
 import { useDevice } from "#hooks/useDevice";
 import { colors } from "#config/colors.config";
@@ -43,14 +46,17 @@ export default function ArtworksListing({
   onRefresh,
   loadingMore = false,
   hasMore = true,
+  showEditButtons = false,
 }: {
   data: ArtworkSchemaTypes[];
   onEndReached?: () => void;
   onRefresh?: () => Promise<void>;
   loadingMore?: boolean;
   hasMore?: boolean;
+  showEditButtons?: boolean;
 }) {
   const { userType } = useAppStore();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { numColumns, horizontalPadding } = useDevice();
   const [refreshing, setRefreshing] = useState(false);
   const [footerLoading, setFooterLoading] = useState(false);
@@ -183,6 +189,15 @@ export default function ArtworksListing({
                 ? ((item as any).exclusivity_status
                     .exclusivity_end_date as Date)
                 : null
+            }
+            showEditButton={showEditButtons}
+            onEditPress={
+              showEditButtons
+                ? () =>
+                    navigation.navigate(screenName.gallery.editArtwork, {
+                      art_id: item.art_id,
+                    })
+                : undefined
             }
           />
         </View>

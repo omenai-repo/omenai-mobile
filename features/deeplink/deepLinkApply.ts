@@ -13,7 +13,7 @@ import {
   takePendingPayload,
   takePendingResult,
 } from "#features/deeplink/deepLinkPending";
-import { useModalStore } from "#store/modal/modalStore";
+import { useModalStore } from "#store/account/modal/modalStore";
 import { screenName } from "#constants/screenNames.constants";
 import {
   resetToDeepLinkStack,
@@ -21,7 +21,7 @@ import {
 } from "#lib/navigation/navigateDeepLinkTarget";
 import { navigate, navigationRef } from "#navigation/RootNavigation";
 import { useAppStore } from "#store/app/appStore";
-import { Analytics } from "#utils/analytics";
+import { Analytics } from "#utils/core/analytics";
 
 const VERIFY_FAILED_MESSAGE =
   "We couldn't open this link. Check your connection and try again from the email.";
