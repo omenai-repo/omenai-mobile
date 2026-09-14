@@ -79,7 +79,7 @@ export default function Banner() {
   };
 
   return (
-    <View style={tw`mt-6`}>
+    <View style={tw``}>
       {isLoading && data.length === 0 && (
         <BannerLoader isTablet={isTablet} cardWidth={CARD_WIDTH} />
       )}

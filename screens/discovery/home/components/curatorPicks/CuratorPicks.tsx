@@ -32,7 +32,7 @@ export default function CuratorPicks() {
   }
 
   return (
-    <View style={tw`mt-6`}>
+    <View style={tw``}>
       <SectionHeader title="Curator's Picks" />
       {isLoading ? (
         <ArtworkCardLoader />

@@ -298,7 +298,7 @@ export default function AddArtistToRosterModal() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View style={[tw`flex-row items-center px-4 border-b border-neutral-100 pt-5`]}>
-        <BackScreenButton handleClick={handleClose} cancle color={colors.grey} />
+        <BackScreenButton handleClick={handleClose} cancel color={colors.grey} />
         <Text style={[tw`text-lg font-medium flex-1 text-center pr-10`, { color: colors.black }]}>
           Add to Roster
         </Text>

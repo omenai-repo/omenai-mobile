@@ -32,7 +32,7 @@ export default function CuratedArtworksListing({ limit }: { limit: number }) {
   const showMoreButton = data.length >= limit;
 
   return (
-    <View style={[tw`py-10 mt-6`, { backgroundColor: colors.black }]}>
+    <View style={[tw`py-10`, { backgroundColor: colors.black }]}>
       <SectionHeader
         subtitle="CURATED FOR YOU"
         title="Because you liked"

@@ -1,7 +1,7 @@
-import { KeyboardTypeOptions, StyleSheet, View } from 'react-native';
-import React from 'react';
-import { colors } from '#config/colors.config';
-import { TextInput } from 'react-native-gesture-handler';
+import { KeyboardTypeOptions, TextInput, View } from "react-native";
+import React from "react";
+import { colors } from "#config/colors.config";
+import tw from "twrnc";
 
 type NoLabelInputProps = {
   value: string;
@@ -21,37 +21,28 @@ export default function NoLabelInput({
   handleBlur,
 }: NoLabelInputProps) {
   return (
-    <View style={{ flex: 1, width: '100%' }}>
+    <View style={tw`flex-1 w-full`}>
       <TextInput
         onChangeText={onInputChange}
         placeholder={placeHolder}
+        placeholderTextColor={colors.grey}
         style={[
-          styles.container,
-          errorMessage && errorMessage?.length > 0 ? { borderColor: '#ff0000' } : null,
+          tw`h-[46px] w-full border rounded-sm mt-2.5 px-4 font-sans-regular`,
+          {
+            borderColor:
+              errorMessage && errorMessage.length > 0
+                ? "#EF4444"
+                : colors.inputBorder,
+            backgroundColor: colors.inputBackground,
+            color: colors.primary_black,
+          },
         ]}
         keyboardType={keyboardType}
         autoCapitalize="none"
         value={value}
         onBlur={handleBlur}
+        autoCorrect={false}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 60,
-    width: '100%',
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    backgroundColor: '#FAFAFA',
-    paddingHorizontal: 20,
-    borderRadius: 95,
-    marginTop: 10,
-  },
-  errorMessage: {
-    color: '#ff0000',
-    marginTop: 2,
-    width: 300,
-  },
-});

@@ -50,7 +50,7 @@ export default function GenericFilterLayout({
         ]}
       >
         <View style={tw`flex-1 overflow-hidden`}>
-          <BackScreenButton cancle handleClick={() => navigation.goBack()} />
+          <BackScreenButton cancel handleClick={() => navigation.goBack()} />
         </View>
 
         {selectedFilters.length > 0 && (

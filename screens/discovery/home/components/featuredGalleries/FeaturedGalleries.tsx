@@ -109,7 +109,7 @@ export default function FeaturedGalleries() {
   }
 
   return (
-    <View style={tw`mt-6`}>
+    <View style={tw``}>
       <SectionHeader title={`Featured Galleries (${galleries.length})`} />
       <ScrollView
         horizontal

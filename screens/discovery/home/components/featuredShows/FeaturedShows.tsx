@@ -26,7 +26,7 @@ export default function FeaturedShows() {
   }
 
   return (
-    <View style={tw`mt-6`}>
+    <View style={tw``}>
       <SectionHeader title="Featured Shows" subtitle="Shows to discover" />
       <ScrollView
         horizontal

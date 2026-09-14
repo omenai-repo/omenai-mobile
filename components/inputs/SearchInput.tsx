@@ -21,13 +21,14 @@ export default function SearchInput() {
   return (
     <View
       style={[
-        tw`h-[55px] bg-[#FAFAFA] border border-neutral-100 pl-4 pr-1.5 py-1.5 flex-row items-center rounded-sm`,
+        tw`h-[55px] border border-neutral-100 pl-4 pr-1.5 py-1.5 flex-row items-center rounded-sm`,
+        { backgroundColor: colors.inputBackground },
       ]}
     >
       <TextInput
         style={tw`flex-1 h-full font-sans-regular text-base mr-3`}
         placeholder="Ask Omenai"
-        placeholderTextColor={"#858585"}
+        placeholderTextColor={colors.grey}
         value={searchQuery}
         onChangeText={setSearchQuery}
         onSubmitEditing={handleSearch}

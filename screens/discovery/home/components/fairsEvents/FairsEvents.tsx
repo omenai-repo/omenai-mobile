@@ -26,7 +26,7 @@ export default function FairsEvents() {
   }
 
   return (
-    <View style={tw`mt-6`}>
+    <View style={tw``}>
       <SectionHeader title="Fairs & Events" />
       <ScrollView
         horizontal

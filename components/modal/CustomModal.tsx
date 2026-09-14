@@ -66,8 +66,8 @@ export default function CustomModal({
   const isError = activeModalType === "error";
   const title = isError ? "Error" : "Success";
   const iconName = isError ? "error-outline" : "check-circle-outline";
-  const iconColor = isError ? "#ff0000" : "#008000";
-  const iconBg = isError ? "#ffe6e6" : "#e6ffe6";
+  const iconColor = isError ? "#EF4444" : "#16A34A";
+  const iconBg = isError ? "#FEE2E2" : "#DCFCE7";
 
   const isToast = activeModalStyle === "toast";
 

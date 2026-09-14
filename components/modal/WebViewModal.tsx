@@ -12,7 +12,7 @@ export default function WebViewModal({ url }: { url: string | null }) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.topContainer}>
-          <BackScreenButton cancle handleClick={() => setWebViewUrl(null)} />
+          <BackScreenButton cancel handleClick={() => setWebViewUrl(null)} />
         </View>
         <WebView
           source={{

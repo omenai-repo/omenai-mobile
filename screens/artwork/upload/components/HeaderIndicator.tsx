@@ -58,7 +58,7 @@ export default function HeaderIndicator({
               setActiveIndex(activeIndex - 1);
             }
           }}
-          cancle={activeIndex === 1 || isUploaded}
+          cancel={activeIndex === 1 || isUploaded}
         />
         <Text style={styles.topTitle}>{titles[activeIndex - 1]}</Text>
         <View style={{ width: 50 }} />

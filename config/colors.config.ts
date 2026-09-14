@@ -7,6 +7,7 @@ export const colors = {
   inputLabel: "#858585",
   grey: "#858585",
   inputBorder: "#E0E0E0",
+  inputBackground: "#FAFAFA",
   amber50: "#FFFBEB",
   amber200: "#FDE68A",
   grey50: "#E0E0E0",

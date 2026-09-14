@@ -70,7 +70,7 @@ const Input = forwardRef<TextInput, InputProps & { testID?: string }>(
             !!label && tw`mt-2.5`,
             {
               borderColor: colors.inputBorder,
-              backgroundColor: "#FAFAFA",
+              backgroundColor: colors.inputBackground,
               color: colors.primary_black,
             },
             disabled && { color: `${colors.primary_black}70` },

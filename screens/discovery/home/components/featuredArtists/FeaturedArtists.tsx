@@ -91,7 +91,7 @@ export default function FeaturedArtists() {
   };
 
   return (
-    <View style={tw`mt-6`}>
+    <View style={tw``}>
       <SectionHeader subtitle="Featured Artists" title="Artists to watch" />
 
       <FlashList

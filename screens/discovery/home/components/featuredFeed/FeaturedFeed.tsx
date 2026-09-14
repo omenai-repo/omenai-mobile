@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  Image,
-  Linking,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Linking, Pressable, ScrollView, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
@@ -225,7 +219,10 @@ export default function FeaturedFeed() {
                   {imageUri ? (
                     <Image
                       source={{ uri: imageUri }}
-                      style={tw`w-full h-[170px] rounded-sm bg-neutral-100`}
+                      style={tw`w-full h-[170px] rounded-sm`}
+                      contentFit="cover"
+                      cachePolicy="memory-disk"
+                      transition={200}
                     />
                   ) : (
                     <View

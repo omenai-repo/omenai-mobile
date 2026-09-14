@@ -48,9 +48,9 @@ const PasswordInput = forwardRef<
       )}
       <View
         style={[
-          tw`w-full border bg-[#FAFAFA] overflow-hidden rounded-sm flex-row`,
+          tw`w-full border overflow-hidden rounded-sm flex-row`,
           !!label && tw`mt-2.5`,
-          { borderColor: colors.inputBorder },
+          { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground },
         ]}
       >
         <TextInput

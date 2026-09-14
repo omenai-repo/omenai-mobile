@@ -42,7 +42,7 @@ export default function FittedBlackButton({
   const { isTablet } = useDevice();
 
   const defaultContainerStyle: ViewStyle = {
-    height: 44,
+    height: 46,
     backgroundColor:
       isDisabled || isLoading ? colors.grey50 : colors.black,
   };

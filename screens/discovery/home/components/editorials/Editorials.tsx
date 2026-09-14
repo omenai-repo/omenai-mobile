@@ -31,7 +31,7 @@ export default function Editorials({
   });
 
   return (
-    <View style={tw`mt-6 mb-2.5`}>
+    <View style={tw`mb-2.5`}>
       <SectionHeader
         subtitle="JOURNALS"
         title="Editorials"
@@ -49,7 +49,6 @@ export default function Editorials({
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={tw`mt-6`}
           contentContainerStyle={[tw`px-5 gap-5`, { alignItems: "flex-start" }]}
         >
           {data.map((item: any, i: number) => (

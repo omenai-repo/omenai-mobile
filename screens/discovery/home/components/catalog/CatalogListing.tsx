@@ -15,7 +15,7 @@ export default function CatalogListing({
 }>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
   return (
-    <View style={tw`mt-6`}>
+    <View style={tw``}>
       <SectionHeader
         subtitle="FEATURED COLLECTIONS"
         title="Browse by medium"

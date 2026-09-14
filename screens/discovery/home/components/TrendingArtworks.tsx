@@ -37,7 +37,7 @@ export default function TrendingArtworks({
   const showMoreButton = data.length >= limit;
 
   return (
-    <View style={tw`mt-6`}>
+    <View style={tw``}>
       <SectionHeader
         subtitle="Trending Now"
         title="Trending Artworks"
