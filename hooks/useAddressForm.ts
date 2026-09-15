@@ -3,18 +3,18 @@ import { validate } from "#lib/validation/validatorGroup";
 
 type AddressData = Partial<AddressTypes & { phone: string }>;
 
-export const useAddressForm = (addressData: AddressData) => {
-  const allKeys: (keyof AddressData)[] = [
-    "address_line",
-    "city",
-    "country",
-    "state",
-    "zip",
-    "phone",
-  ];
+const ADDRESS_KEYS: (keyof AddressData)[] = [
+  "address_line",
+  "city",
+  "country",
+  "state",
+  "zip",
+  "phone",
+];
 
+export const useAddressForm = (addressData: AddressData) => {
   const [touched, setTouched] = useState<Record<keyof AddressData, boolean>>(
-    allKeys.reduce((acc, key) => {
+    ADDRESS_KEYS.reduce((acc, key) => {
       acc[key] = false;
       return acc;
     }, {} as Record<keyof AddressData, boolean>),
@@ -25,7 +25,7 @@ export const useAddressForm = (addressData: AddressData) => {
   };
 
   const formErrors = useMemo(() => {
-    return allKeys.reduce((acc, key) => {
+    return ADDRESS_KEYS.reduce((acc, key) => {
       const value = addressData[key] || "";
       if (value.trim() === "") {
         acc[key] = "";

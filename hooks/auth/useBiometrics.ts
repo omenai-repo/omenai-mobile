@@ -6,36 +6,31 @@ import {
   utils_getAsyncData,
   utils_storeAsyncData,
 } from "#utils/app/utils_asyncStorage";
+import {
+  encryptCredential,
+  decryptCredential,
+} from "#lib/crypto/biometricEncryption";
 
 const BIOMETRIC_KEY_PREFIX = "biometric_auth_";
 const INSTALL_CHECK_KEY = "app_installed_flag";
 
 export type UserType = "individual" | "artist" | "gallery";
 
-// Clear stale biometric credentials on fresh install
-// iOS Keychain persists after uninstall, but AsyncStorage does not
 export const clearStaleCredentials = async (): Promise<void> => {
   try {
     const result = await utils_getAsyncData(INSTALL_CHECK_KEY);
-
     if (!result.isOk) {
-      // Fresh install - clear any stale Keychain data
       const userTypes: UserType[] = ["individual", "artist", "gallery"];
       for (const userType of userTypes) {
         try {
           await SecureStore.deleteItemAsync(
             `${BIOMETRIC_KEY_PREFIX}${userType}`,
           );
-        } catch {
-          // Ignore errors
-        }
+        } catch {}
       }
-      // Set the flag so we don't clear on next launch
       await utils_storeAsyncData(INSTALL_CHECK_KEY, "true");
     }
-  } catch {
-    // Silently fail
-  }
+  } catch {}
 };
 
 export const useBiometrics = () => {
@@ -46,21 +41,18 @@ export const useBiometrics = () => {
   useEffect(() => {
     (async () => {
       try {
-        // Wrap each call individually for maximum fault tolerance
         let compatible = false;
         let enrolled = false;
 
         try {
           compatible = await LocalAuthentication.hasHardwareAsync();
-        } catch (e) {
-          console.warn("Failed to check biometric hardware:", e);
+        } catch {
           compatible = false;
         }
 
         try {
           enrolled = await LocalAuthentication.isEnrolledAsync();
-        } catch (e) {
-          console.warn("Failed to check biometric enrollment:", e);
+        } catch {
           enrolled = false;
         }
 
@@ -70,7 +62,6 @@ export const useBiometrics = () => {
           try {
             const types =
               await LocalAuthentication.supportedAuthenticationTypesAsync();
-            // Prioritize FINGERPRINT over FACIAL_RECOGNITION when both are available
             if (
               types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)
             ) {
@@ -86,9 +77,8 @@ export const useBiometrics = () => {
                 LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
               );
             }
-          } catch (e) {
-            console.warn("Failed to get supported biometric types:", e);
-            // Leave biometricType as null
+          } catch {
+            // leave biometricType as null
           }
         }
       } catch (error) {
@@ -153,9 +143,10 @@ export const useBiometrics = () => {
   const saveCredentials = useCallback(
     async (userType: UserType, email: string, token: string) => {
       try {
+        const encryptedToken = await encryptCredential(token);
         await SecureStore.setItemAsync(
           `${BIOMETRIC_KEY_PREFIX}${userType}`,
-          JSON.stringify({ email, token }),
+          JSON.stringify({ email, token: encryptedToken }),
         );
         return true;
       } catch (error) {
@@ -168,10 +159,21 @@ export const useBiometrics = () => {
 
   const getCredentials = useCallback(async (userType: UserType) => {
     try {
-      const credentials = await SecureStore.getItemAsync(
+      const raw = await SecureStore.getItemAsync(
         `${BIOMETRIC_KEY_PREFIX}${userType}`,
       );
-      return credentials ? JSON.parse(credentials) : null;
+      if (!raw) return null;
+
+      const parsed = JSON.parse(raw);
+      if (!parsed?.token) return null;
+
+      const decryptedToken = await decryptCredential(parsed.token);
+      if (!decryptedToken) {
+        await SecureStore.deleteItemAsync(`${BIOMETRIC_KEY_PREFIX}${userType}`);
+        return null;
+      }
+
+      return { email: parsed.email, token: decryptedToken };
     } catch (error) {
       console.error("Error getting credentials:", error);
       return null;

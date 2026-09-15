@@ -43,7 +43,7 @@ export const useAddressVerification = (
 
       if (isVerified) {
         updateModal({
-          message: "Your Address has been verified succesfully",
+          message: "Your address has been verified successfully",
           modalType: "success",
           showModal: true,
           onDismiss: () => setPageIndex(pageIndex + 1),

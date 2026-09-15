@@ -87,6 +87,7 @@ export const usePaymentAdapter = ({
 
       if (!res.isOk || !res.paymentIntent) {
         initOnceRef.current = false;
+        console.log("failed to initialize", res);
         const msg = res.message || "Failed to initialize Stripe Payment Sheet";
         onError(msg);
         return;

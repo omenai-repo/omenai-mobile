@@ -33,7 +33,7 @@ export const useOrdersManagement = ({
           showModal: true,
           modalType: "error",
         });
-        return [];
+        throw err;
       }
     },
     staleTime: 0,
