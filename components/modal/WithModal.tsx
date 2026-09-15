@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React, { useEffect } from "react";
 import CustomModal from "./CustomModal";
-import { useModalStore } from "#store/modal/modalStore";
+import { useModalStore } from "#store/account/modal/modalStore";
 import { colors } from "#config/colors.config";
 import ConfirmationModal from "./ConfirmationModal";
 import WebViewModal from "./WebViewModal";
@@ -21,6 +21,7 @@ export default function WithModal({ children }: WithModalProps) {
     modalType,
     modalStyle,
     webViewUrl,
+    clear,
   } = useModalStore();
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function WithModal({ children }: WithModalProps) {
       {children}
       <ConfirmationModal
         isVisible={showConfirmationModal}
+        onClose={clear}
         child={confirmationModal}
       />
       <CustomModal />

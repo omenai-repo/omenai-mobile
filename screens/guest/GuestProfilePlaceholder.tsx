@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { View } from "react-native";
-import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
+import { useGuestLoginModalStore } from "#store/account/guest/guestLoginModalStore";
 import { screenName } from "#constants/screenNames.constants";
 import { useNavigation } from "@react-navigation/native";
 

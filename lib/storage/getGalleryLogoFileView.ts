@@ -1,4 +1,4 @@
-import { storage } from "#appWrite_config";
+import { storage } from "#config/appwrite.client";
 import { ImageFormat, ImageGravity } from "appwrite";
 
 export const getGalleryLogoFileView = (
@@ -8,7 +8,7 @@ export const getGalleryLogoFileView = (
   format?: string,
 ) => {
   const fileData = storage.getFilePreview({
-    bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!!,
+    bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
     fileId: fileId,
 
     width: width, // width, will be resized using this value.

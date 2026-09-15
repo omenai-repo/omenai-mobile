@@ -25,11 +25,16 @@ export const BottomSheetView = ({
   buttonText = "Dismiss",
 }: NotificationProps) => (
   <View
-    style={tw`bg-[${colors.white}] rounded-t-[20px] px-5 pb-10 pt-2.5 items-center w-full`}
+    style={[
+      tw`rounded-t-[20px] px-5 pb-10 pt-2.5 items-center w-full`,
+      { backgroundColor: colors.white },
+    ]}
   >
     {/* Handle Bar */}
     <View style={tw`w-full items-center mb-5`}>
-      <View style={tw`w-10 h-1 bg-[${colors.grey50}] rounded-full`} />
+      <View
+        style={[tw`w-10 h-1 rounded-full`, { backgroundColor: colors.grey50 }]}
+      />
     </View>
 
     {/* Icon */}
@@ -43,13 +48,18 @@ export const BottomSheetView = ({
     </View>
 
     {/* Title */}
-    <Text style={tw`text-xl font-bold text-[${colors.primary_black}] mb-2.5`}>
+    <Text
+      style={[tw`text-xl font-bold mb-2.5`, { color: colors.primary_black }]}
+    >
       {title}
     </Text>
 
     {/* Message */}
     <Text
-      style={tw`text-sm text-[${colors.black_light}] text-center mb-[30px] leading-5`}
+      style={[
+        tw`text-sm text-center mb-[30px] leading-5`,
+        { color: colors.black_light },
+      ]}
     >
       {message}
     </Text>

@@ -116,7 +116,7 @@ function TubePreview({
           fill="#222"
           textAnchor="middle"
         >
-          {height}"
+          {height}&quot;
         </SvgText>
 
         <Line
@@ -134,7 +134,7 @@ function TubePreview({
           fontWeight="bold"
           fill="#222"
         >
-          {width}"
+          {width}&quot;
         </SvgText>
       </Svg>
     </View>
@@ -238,7 +238,7 @@ function BoxPreview({
             fontWeight="bold"
             fill="#222"
           >
-            {height}"
+            {height}&quot;
           </SvgText>
 
           {/* Dimension: Width */}
@@ -249,7 +249,7 @@ function BoxPreview({
             fontWeight="bold"
             fill="#222"
           >
-            {width}"
+            {width}&quot;
           </SvgText>
 
           {/* Dimension: Depth */}
@@ -260,7 +260,7 @@ function BoxPreview({
             fontWeight="bold"
             fill="#222"
           >
-            {depth}"
+            {depth}&quot;
           </SvgText>
         </G>
       </Svg>

@@ -1,0 +1,97 @@
+import React, { useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import ArtworkCardLoader from "#components/general/ArtworkCardLoader";
+import { fetchPopularArtworks } from "#services/artwork/fetchPopularArtworks";
+import ArtworkCard from "#components/artwork/ArtworkCard";
+import EmptyArtworks from "#components/general/EmptyArtworks";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { screenName } from "#constants/screenNames.constants";
+import NavBtnComponent from "#components/artwork/NavBtnComponent";
+import { useQuery } from "@tanstack/react-query";
+import { QK } from "#utils/core/queryKeys";
+import { useAppStore } from "#store/app/appStore";
+import ListSeparator from "#components/general/ListSeparator";
+import tw from "twrnc";
+
+export default React.memo(function PopularArtworks({
+  onLoadingChange,
+}: {
+  onLoadingChange?: (l: boolean) => void;
+}) {
+  const navigation = useNavigation<StackNavigationProp<any>>();
+  const { userSession, userType } = useAppStore();
+  const userId = userSession?.id;
+
+  const query = useQuery({
+    queryKey: QK.popularArtworks(userId),
+    queryFn: async () => {
+      const res = await fetchPopularArtworks();
+      return res?.data ?? [];
+    },
+    enabled: !!userId,
+  });
+
+  useEffect(() => {
+    onLoadingChange?.(query.isFetching || (query.isLoading && !query.data));
+  }, [query.isFetching, query.isLoading, query.data, onLoadingChange]);
+
+  const isLoading = query.isLoading && !query.data;
+  const data = query.data ?? [];
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        disabled={["artist", "gallery"].includes(userType)}
+        onPress={() => navigation.navigate(screenName.gallery.artworks)}
+      >
+        <View style={tw`flex-row items-center`}>
+          <Text style={tw`font-medium flex-1 text-lg`}>Popular artworks</Text>
+          {!["artist", "gallery"].includes(userType) && (
+            <NavBtnComponent onPress={() => { }} />
+          )}
+        </View>
+      </TouchableOpacity>
+
+      {isLoading && <ArtworkCardLoader containerStyle={tw`!pl-0 !ml-0`} />}
+
+      {!isLoading && data.length > 0 && (
+        <FlashList
+          data={data}
+          horizontal
+          nestedScrollEnabled
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[tw`pt-5`, { alignItems: "flex-end" }]}
+          ItemSeparatorComponent={ListSeparator}
+          keyExtractor={(item: ArtworkFlatlistItem, index) =>
+            item.art_id?.toString() ?? `popular-${index}`
+          }
+          renderItem={({ item }) => (
+            <ArtworkCard
+              artwork={item}
+              galleryView
+              hideBackground
+              useImageLoadAspectRatio
+            />
+          )}
+        />
+      )}
+
+      {!isLoading && data.length === 0 && (
+        <View style={tw`flex-1 pt-10 min-h-[300px]`}>
+          <EmptyArtworks />
+        </View>
+      )}
+    </View>
+  );
+});
+
+const styles = StyleSheet.create({
+  container: { paddingTop: 25, paddingBottom: 60 },
+});

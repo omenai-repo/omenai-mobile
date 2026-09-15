@@ -20,8 +20,8 @@ import {
   useSupportChatStore,
   Message,
   ChatSession,
-} from "#store/support/supportChatStore";
-import { sendAiChatMessage } from "#services/support/support.service";
+} from "#store/account/support/supportChatStore";
+import { sendAiChatMessage } from "#services/account/support/support.service";
 import SupportChatHistory from "./SupportChatHistory";
 
 interface SupportAiChatProps {

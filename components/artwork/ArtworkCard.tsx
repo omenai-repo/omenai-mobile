@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { View, TouchableOpacity, Platform, StyleSheet } from "react-native";
+import { View, Text, Platform, StyleSheet, Pressable } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { Image, ImageLoadEventData } from "expo-image";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -10,6 +11,7 @@ import tw from "twrnc";
 import { useDevice } from "#hooks/useDevice";
 import { useAppStore } from "#store/app/appStore";
 import ArtworkCardMetadata from "./ArtworkCardMetadata";
+import FloatingEditButton from "./FloatingEditButton";
 import type { ArtworkCardType } from "./artworkCard.types";
 import {
   areArtworkCardPropsEqual,
@@ -46,6 +48,8 @@ function ArtworkCard({
   fixedImageHeight,
   frameBackgroundColor,
   useFixedImageFrame = true,
+  showEditButton = false,
+  onEditPress,
 }: Readonly<ArtworkCardType>) {
   const userSession = useAppStore((s) => s.userSession);
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -136,64 +140,68 @@ function ArtworkCard({
   }, [navigation, art_id, url]);
 
   return (
-    <View>
-      <TouchableOpacity
-        activeOpacity={0.8}
-        style={[tw`rounded-sm`, { width: cardWidth }]}
-        onPress={handlePress}
+    <Pressable
+      style={({ pressed }) => [
+        tw`rounded-sm`,
+        { width: cardWidth },
+        pressed && tw`scale-99 opacity-90`,
+      ]}
+      onPress={handlePress}
+    >
+      <View
+        style={{
+          width: cardWidth,
+          height: imageFrameHeight,
+          backgroundColor: hideBackground
+            ? "transparent"
+            : frameBackgroundColor ?? "#f0f0f0",
+          overflow: "hidden",
+          alignItems: useFixedImageFrame ? "center" : undefined,
+          justifyContent: useFixedImageFrame ? "center" : undefined,
+        }}
       >
-        <View
-          style={{
-            width: cardWidth,
-            height: imageFrameHeight,
-            backgroundColor: hideBackground
-              ? "transparent"
-              : frameBackgroundColor ?? "#f0f0f0",
-            overflow: "hidden",
-            alignItems: useFixedImageFrame ? "center" : undefined,
-            justifyContent: useFixedImageFrame ? "center" : undefined,
-          }}
-        >
-          <Image
-            source={{ uri: imageUri }}
-            style={{ width: cardWidth, height: imageFrameHeight }}
-            contentFit="contain"
-            transition={IMAGE_TRANSITION_MS}
-            recyclingKey={art_id ?? url}
-            cachePolicy="memory-disk"
-            placeholder={null}
-            priority="normal"
-            onLoad={handleImageLoad}
-          />
-          {!galleryView && !disableLikeButton && (
-            <View style={tw`absolute bottom-3 right-3`}>
-              <View style={styles.likeButton}>
-                <LikeComponent
-                  art_id={art_id ?? ""}
-                  impressions={impressions ?? 0}
-                  likeIds={like_IDs ?? []}
-                  lightText={true}
-                />
-              </View>
+        <Image
+          source={{ uri: imageUri }}
+          style={{ width: cardWidth, height: imageFrameHeight }}
+          contentFit="contain"
+          transition={IMAGE_TRANSITION_MS}
+          recyclingKey={art_id ?? url}
+          cachePolicy="memory-disk"
+          placeholder={null}
+          priority="normal"
+          onLoad={handleImageLoad}
+        />
+        {!galleryView && !disableLikeButton && (
+          <View style={tw`absolute bottom-3 right-3`}>
+            <View style={styles.likeButton}>
+              <LikeComponent
+                art_id={art_id ?? ""}
+                impressions={impressions ?? 0}
+                likeIds={like_IDs ?? []}
+                lightText={true}
+              />
             </View>
-          )}
-        </View>
-        <View style={[tw`mt-3`, { width: cardWidth }]}>
-          <ArtworkCardMetadata
-            metadataMode={metadataMode}
-            title={title}
-            artist={artist}
-            impressions={impressions}
-            lightText={lightText}
-            rootHidePrice={rootHidePrice}
-            availability={availability}
-            canShowPriceLabel={canShowPriceLabel}
-            showPrice={showPrice}
-            price={price}
-          />
-        </View>
-      </TouchableOpacity>
-    </View>
+          </View>
+        )}
+        {showEditButton && availability && onEditPress && (
+          <FloatingEditButton onPress={onEditPress} style={tw`top-3 right-3`} />
+        )}
+      </View>
+      <View style={[tw`mt-3`, { width: cardWidth }]}>
+        <ArtworkCardMetadata
+          metadataMode={metadataMode}
+          title={title}
+          artist={artist}
+          impressions={impressions}
+          lightText={lightText}
+          rootHidePrice={rootHidePrice}
+          availability={availability}
+          canShowPriceLabel={canShowPriceLabel}
+          showPrice={showPrice}
+          price={price}
+        />
+      </View>
+    </Pressable>
   );
 }
 
