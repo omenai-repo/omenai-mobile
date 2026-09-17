@@ -1,6 +1,6 @@
-import { utils_getAsyncData } from "#utils/app/utils_asyncStorage";
+import { storage } from "#store/mmkv";
 
-export const utils_hasCompletedWelcomeOnboarding = async (): Promise<boolean> => {
-  const { value } = await utils_getAsyncData("isOnboarded");
-  return value === "true";
-};
+export const utils_hasCompletedWelcomeOnboarding =
+  async (): Promise<boolean> => {
+    return storage.getBoolean("isOnboarded") ?? false;
+  };

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { zustandStorage } from "#store/mmkv";
 
 export interface Message {
   id: string;
@@ -117,7 +117,7 @@ export const useSupportChatStore = create<SupportChatState>()(
     }),
     {
       name: "omenai-support-chat-storage",
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => zustandStorage),
       partialize: (state) => ({ userSessions: state.userSessions }), // Only persist authenticated user sessions
     },
   ),

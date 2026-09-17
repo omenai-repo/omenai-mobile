@@ -8,7 +8,7 @@ import { colors } from "#config/colors.config";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import { onboardingdata } from "#constants/onBoardingData.constants";
 import OnBoardingSection from "./components/OnBoardingSection";
-import { utils_storeAsyncData } from "#utils/app/utils_asyncStorage";
+import { storage } from "#store/mmkv";
 
 import tw from "twrnc";
 import { StatusBar } from "expo-status-bar";
@@ -53,7 +53,7 @@ export default function Welcome() {
           currentIndex={selected}
           onFinish={() => {
             setShowWelcome(true);
-            utils_storeAsyncData("isOnboarded", JSON.stringify(true));
+            storage.set("isOnboarded", true);
           }}
           handleNext={() => setSelected((prev) => prev + 1)}
           handleBack={() => setSelected((prev) => prev - 1)}

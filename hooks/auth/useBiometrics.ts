@@ -6,10 +6,6 @@ import {
   utils_getAsyncData,
   utils_storeAsyncData,
 } from "#utils/app/utils_asyncStorage";
-import {
-  encryptCredential,
-  decryptCredential,
-} from "#lib/crypto/biometricEncryption";
 
 const BIOMETRIC_KEY_PREFIX = "biometric_auth_";
 const INSTALL_CHECK_KEY = "app_installed_flag";
@@ -77,9 +73,7 @@ export const useBiometrics = () => {
                 LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
               );
             }
-          } catch {
-            // leave biometricType as null
-          }
+          } catch {}
         }
       } catch (error) {
         console.error("Biometric initialization error:", error);
@@ -107,22 +101,11 @@ export const useBiometrics = () => {
             "Biometrics Not Set Up",
             "Your device supports biometrics but you haven't set them up. Would you like to go to settings?",
             [
-              {
-                text: "Cancel",
-                style: "cancel",
-              },
-              {
-                text: "Go to Settings",
-                onPress: () => {
-                  Linking.openSettings();
-                },
-              },
+              { text: "Cancel", style: "cancel" },
+              { text: "Go to Settings", onPress: () => Linking.openSettings() },
             ],
           );
-          return {
-            success: false,
-            error: "Biometrics not enrolled",
-          };
+          return { success: false, error: "Biometrics not enrolled" };
         }
 
         const result = await LocalAuthentication.authenticateAsync({
@@ -143,10 +126,9 @@ export const useBiometrics = () => {
   const saveCredentials = useCallback(
     async (userType: UserType, email: string, token: string) => {
       try {
-        const encryptedToken = await encryptCredential(token);
         await SecureStore.setItemAsync(
           `${BIOMETRIC_KEY_PREFIX}${userType}`,
-          JSON.stringify({ email, token: encryptedToken }),
+          JSON.stringify({ email, token }),
         );
         return true;
       } catch (error) {
@@ -165,15 +147,9 @@ export const useBiometrics = () => {
       if (!raw) return null;
 
       const parsed = JSON.parse(raw);
-      if (!parsed?.token) return null;
+      if (!parsed?.token || !parsed?.email) return null;
 
-      const decryptedToken = await decryptCredential(parsed.token);
-      if (!decryptedToken) {
-        await SecureStore.deleteItemAsync(`${BIOMETRIC_KEY_PREFIX}${userType}`);
-        return null;
-      }
-
-      return { email: parsed.email, token: decryptedToken };
+      return { email: parsed.email, token: parsed.token };
     } catch (error) {
       console.error("Error getting credentials:", error);
       return null;

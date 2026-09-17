@@ -39,8 +39,19 @@ export function createPostLoginBiometricHandlers({
   ) => {
     const bioResult = await authenticate();
     if (bioResult.success) {
-      await saveCredentials(userType, loginData.email, loginData.password);
-      Alert.alert("Success", "Biometric login enabled");
+      const saved = await saveCredentials(
+        userType,
+        loginData.email,
+        loginData.password,
+      );
+      if (!saved) {
+        Alert.alert(
+          "Error",
+          "Could not save biometric credentials. You can try again in Settings.",
+        );
+      } else {
+        Alert.alert("Success", "Biometric login enabled");
+      }
       finalizeLogin(data, clearInputs);
     } else {
       Alert.alert(
