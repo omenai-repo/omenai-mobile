@@ -4,7 +4,7 @@ import OrderHeader from "./OrderHeader";
 import React from "react";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon } from "#utils/SvgImages";
+import { dropdownIcon, dropUpIcon } from "#utils/assets/SvgImages";
 import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StatusBadge } from "#components/orders/StatusBadge";
 import { OrderActions } from "#components/orders/OrderActions";

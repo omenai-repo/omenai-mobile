@@ -12,8 +12,8 @@ import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { screenName } from "#constants/screenNames.constants";
-import { utils_formatPrice } from "#utils/utils_priceFormatter";
-import EditArtworkButton from "#components/buttons/EditArtworkButton";
+import { utils_formatPrice } from "#utils/commerce/utils_priceFormatter";
+import FloatingEditButton from "#components/artwork/FloatingEditButton";
 import tw from "twrnc";
 import { useAppStore } from "#store/app/appStore";
 
@@ -23,6 +23,7 @@ type MiniArtworkCardType = {
   readonly art_id: string;
   readonly artist: string;
   readonly usd_price: number;
+  readonly availability: boolean;
 };
 
 function GalleryMiniArtworkCard({
@@ -31,6 +32,7 @@ function GalleryMiniArtworkCard({
   art_id,
   artist,
   usd_price,
+  availability,
 }: Readonly<MiniArtworkCardType>) {
   const { isLoggedIn } = useAppStore();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -83,13 +85,16 @@ function GalleryMiniArtworkCard({
           recyclingKey={art_id}
           onLoad={handleImageLoad}
         />
-        <EditArtworkButton
-          handlePress={() => {
-            navigation.navigate(screenName.gallery.editArtwork, {
-              art_id: art_id,
-            });
-          }}
-        />
+        {availability && (
+          <FloatingEditButton
+            onPress={() => {
+              navigation.navigate(screenName.gallery.editArtwork, {
+                art_id: art_id,
+              });
+            }}
+            style={tw`top-2 right-2`}
+          />
+        )}
       </View>
       <View style={styles.mainDetailsContainer}>
         <Text style={{ fontSize: 14, color: colors.primary_black }}>

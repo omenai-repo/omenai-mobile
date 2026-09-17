@@ -16,7 +16,7 @@ import {
   clipboardIcon,
   checkIconWhite,
   globeIcon,
-} from "#utils/SvgImages";
+} from "#utils/assets/SvgImages";
 
 /**
  * Props for the Blocker Screen

@@ -20,10 +20,10 @@ const AlertCard: React.FC<AlertCardProps> = ({
   title,
   description,
   iconName = "alert-circle",
-  iconColor = "#FA5252",
-  titleColor = "#FA5252",
-  borderColor = "#FA5252",
-  backgroundColor = "#FA52521A",
+  iconColor = "#EF4444",
+  titleColor = "#EF4444",
+  borderColor = "#EF4444",
+  backgroundColor = "#EF44441A",
   descriptionColor = colors.black,
   style,
 }) => {
@@ -40,7 +40,7 @@ const AlertCard: React.FC<AlertCardProps> = ({
       ]}
     >
       <View style={tw`flex gap-2 flex-row items-center`}>
-        <Feather name={iconName} size={30} color={iconColor} />
+        <Feather name={iconName} size={20} color={iconColor} />
 
         <Text
           style={[

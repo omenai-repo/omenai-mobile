@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import ArtistOverview from "#screens/artist/overview/ArtistOverview";
+import ArtistOverview from "#screens/marketplace/artist/overview/ArtistOverview";
 import {
   primaryTabRootNavigatorScreenOptions,
   primaryTabRootScreenHeaderOptions,

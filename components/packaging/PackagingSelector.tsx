@@ -10,7 +10,7 @@ import {
 } from "#constants/packaging_data";
 import PackagingPreview from "./PackagingPreview";
 import PackagingWarning from "./PackagingWarning";
-import { checkCarrierLimit } from "#utils/shippingLimits";
+import { checkCarrierLimit } from "#utils/core/shippingLimits";
 import { colors } from "#config/colors.config";
 
 type DimensionDetails = {
