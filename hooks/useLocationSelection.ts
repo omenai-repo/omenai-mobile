@@ -19,6 +19,8 @@ interface LocationActions {
 }
 
 export const useLocationSelection = (locationState: LocationState, actions: LocationActions) => {
+  const fallbackLocationNameRef = useRef("");
+
   const handleCountrySelect = (item: { label: string; value: string; currency?: string }) => {
     actions.setCountry(item.label);
     actions.setCountryCode(item.value);
@@ -51,15 +53,31 @@ export const useLocationSelection = (locationState: LocationState, actions: Loca
   };
 
   const fetchCitiesRef = useRef(
-    debounce((countryCode: string, stateCode: string, setCityData: (data: any[]) => void) => {
-      const getCities = City.getCitiesOfState(countryCode, stateCode);
-      setCityData(
-        getCities?.map((city: ICity) => ({
-          label: city.name,
-          value: city.name,
-        })) || []
-      );
-    }, 300)
+    debounce(
+      (countryCode: string, stateCode: string, setCityData: (data: any[]) => void) => {
+        const getCities = City.getCitiesOfState(countryCode, stateCode);
+        const mappedCities =
+          getCities?.map((city: ICity) => ({
+            label: city.name,
+            value: city.name,
+          })) || [];
+
+        // Some locations (e.g. "City of London") are represented as a top-level
+        // administrative region and return no nested cities. Fallback to itself.
+        if (mappedCities.length === 0 && fallbackLocationNameRef.current) {
+          setCityData([
+            {
+              label: fallbackLocationNameRef.current,
+              value: fallbackLocationNameRef.current,
+            },
+          ]);
+          return;
+        }
+
+        setCityData(mappedCities);
+      },
+      300,
+    ),
   );
 
   useEffect(() => {
@@ -72,6 +90,8 @@ export const useLocationSelection = (locationState: LocationState, actions: Loca
   const handleStateSelect = useCallback(
     (item: { label: string; value: string; isoCode?: string }) => {
       actions.setState(item.value);
+      actions.setCity("");
+      fallbackLocationNameRef.current = item.value;
       if (item.isoCode && actions.setStateCode) {
         actions.setStateCode(item.isoCode);
       }

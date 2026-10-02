@@ -1,0 +1,51 @@
+appId: com.omenai.omenaimobile
+name: "Individual Order History Filter"
+tags:
+  - individual
+  - orders
+  - filter
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Orders"
+
+- extendedWaitUntil:
+    visible: "Orders"
+    timeout: 10000
+
+- tapOn: "All Status"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Pending"
+        - "Accepted"
+        - "Declined"
+        - "Completed"
+        - "Cancelled"
+    timeout: 10000
+
+- tapOn:
+    anyOf:
+      - "Pending"
+      - "Accepted"
+
+- extendedWaitUntil:
+    visible: "Orders"
+    timeout: 5000
+
+- tapOn: "All Status"
+
+- tapOn:
+    anyOf:
+      - "All"
+      - "All Status"
+
+- extendedWaitUntil:
+    visible: "Orders"
+    timeout: 5000

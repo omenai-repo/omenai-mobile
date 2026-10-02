@@ -1,0 +1,46 @@
+---
+description: Hard cap of 300 lines per source file; one responsibility per file (Omenai RN)
+alwaysApply: true
+---
+
+# Modular files (300-LOC cap)
+
+## Rule
+
+- Every `.ts` and `.tsx` file in this repo MUST stay under **300 lines**, counting code, JSX, and comments.
+- If a change pushes a file past the cap, split it before merging.
+- One responsibility per file: a component, hook, service module, store, or constant group.
+
+## How to split (Omenai layout)
+
+- **Screens** → thin `screens/<feature>/<Screen>.tsx` + `screens/<feature>/components/<Piece>.tsx`. Promote reused pieces to `components/<domain>/`.
+- **Shared UI** → `components/<domain>/<Piece>.tsx` (buttons, cards, modals, filters).
+- **Logic** → `hooks/<useFoo>.ts`, `features/<feature>/<helper>.ts`, or `lib/<helper>.ts`.
+- **API / IO** → `services/<domain>/<action>.ts`.
+- **Constants / static data** → `constants/<topic>.ts` or `data/<topic>.ts`.
+
+## Co-location
+
+- Co-locate hooks/types with a screen component only when they are **under 30 lines** and used **only** by that screen.
+- Cross-feature shared UI → `components/`. Cross-feature logic → `hooks/`, `lib/`, or `features/`.
+
+## Imports
+
+- Use `#` path aliases (`#components/...`, `#screens/...`, `#services/...`). Avoid deep `../../../` chains.
+- See `AGENTS.md` for the full alias table and screen vs component rules.
+
+## Example: screen too big
+
+```typescript
+// screens/uploadArtwork/UploadArtwork.tsx — 461 lines ❌
+```
+
+Split into:
+
+```typescript
+// screens/uploadArtwork/UploadArtwork.tsx           — orchestrator (<150 LOC)
+// screens/uploadArtwork/components/Pricing.tsx     — screen-local section
+// screens/uploadArtwork/components/ArtworkForm.tsx
+// hooks/useUploadArtworkForm.ts                    — if shared or large
+// services/artworks/uploadArtworkImage.ts          — API calls
+```

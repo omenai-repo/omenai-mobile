@@ -1,9 +1,9 @@
 import React from "react";
 import { FlatList, RefreshControl } from "react-native";
 import tw from "twrnc";
-import OrderContainer from "./OrderContainer";
-import { formatIntlDateTime } from "utils/utils_formatIntlDateTime";
-import { utils_formatPrice } from "utils/utils_priceFormatter";
+import { OrderContainer } from "./OrderContainer";
+import { formatIntlDateTime } from "#utils/date/utils_formatIntlDateTime";
+import { utils_formatPrice } from "#utils/commerce/utils_priceFormatter";
 
 interface OrdersListProps {
   data: any[];
@@ -16,6 +16,7 @@ interface OrdersListProps {
   onDecline?: (item: any) => void;
   onTrack: (item: any) => void;
   renderExclusivityType?: (item: any) => string;
+
 }
 
 export const OrdersList: React.FC<OrdersListProps> = ({
@@ -29,12 +30,15 @@ export const OrdersList: React.FC<OrdersListProps> = ({
   onDecline,
   onTrack,
   renderExclusivityType,
+
 }) => {
   return (
     <FlatList
       data={data}
       keyExtractor={(item, index) =>
-        item?.order_id?.toString?.() ?? item?.artwork_data?._id ?? `order-${index}`
+        item?.order_id?.toString?.() ??
+        item?.artwork_data?._id ??
+        `order-${index}`
       }
       showsVerticalScrollIndicator={false}
       contentContainerStyle={tw`pb-[30px]`}
@@ -46,6 +50,10 @@ export const OrdersList: React.FC<OrdersListProps> = ({
           colors={["#000"]}
         />
       }
+      initialNumToRender={15}
+      maxToRenderPerBatch={15}
+      windowSize={5}
+      removeClippedSubviews={true}
       renderItem={({ item, index }) => (
         <OrderContainer
           id={index}
@@ -58,13 +66,24 @@ export const OrdersList: React.FC<OrdersListProps> = ({
           price={utils_formatPrice(item?.artwork_data?.pricing?.usd_price)}
           status={selectedTab}
           lastId={index === data.length - 1}
-          acceptBtn={selectedTab === "pending" && onAccept ? () => onAccept(item) : undefined}
-          declineBtn={selectedTab === "pending" && onDecline ? () => onDecline(item) : undefined}
+          seller_designation={item?.seller_designation}
+          acceptBtn={
+            selectedTab === "pending" && onAccept
+              ? () => onAccept(item)
+              : undefined
+          }
+          declineBtn={
+            selectedTab === "pending" && onDecline
+              ? () => onDecline(item)
+              : undefined
+          }
           delivered={item?.shipping_details?.delivery_confirmed}
           order_accepted={item?.order_accepted?.status}
           order_decline_reason={item?.order_accepted?.reason}
           payment_status={item?.payment_information?.status}
-          tracking_status={item?.shipping_details?.shipment_information?.tracking?.id}
+          tracking_status={
+            item?.shipping_details?.shipment_information?.tracking?.id
+          }
           trackBtn={() => onTrack(item)}
           {...(renderExclusivityType && {
             exclusivity_type: renderExclusivityType(item),

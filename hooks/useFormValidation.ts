@@ -1,39 +1,46 @@
-import { useState, useCallback } from "react";
-import { validate } from "lib/validations/validatorGroup";
-import { debounce } from "lodash";
+import { useState, useMemo } from "react";
+import { validate } from "#lib/validation/validatorGroup";
 
-type FormErrors<T> = {
-  [K in keyof T]?: string;
-};
-
-export function useFormValidation<T extends Record<string, any>>() {
-  const [formErrors, setFormErrors] = useState<FormErrors<T>>({});
-
-  const handleValidationChecks = useCallback(
-    debounce((label: string, value: string, confirm?: string) => {
-      if (value.trim() === "") {
-        setFormErrors((prev) => ({ ...prev, [label]: "" }));
-        return;
-      }
-
-      const { errors } = validate(value, label, confirm);
-      setFormErrors((prev) => ({
-        ...prev,
-        [label]: errors.length > 0 ? errors[0] : "",
-      }));
-    }, 500),
-    []
+export function useFormValidation<T extends Record<string, string>>(
+  values: T,
+  confirmFields?: Partial<Record<keyof T, string>>,
+) {
+  const [touched, setTouched] = useState<Record<keyof T, boolean>>(
+    Object.keys(values).reduce((acc, key) => {
+      acc[key as keyof T] = false;
+      return acc;
+    }, {} as Record<keyof T, boolean>),
   );
 
-  const checkIsFormValid = (requiredFields: Partial<T>) => {
-    const isFormValid = Object.values(formErrors).every((error) => error === "");
-    const areAllFieldsFilled = Object.values(requiredFields).every((value) => value !== "");
-    return isFormValid && areAllFieldsFilled;
+  const handleBlur = (field: keyof T) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const formErrors = useMemo(() => {
+    return Object.keys(values).reduce((acc, key) => {
+      const field = key as keyof T;
+      const value = values[field];
+      const confirm = confirmFields ? confirmFields[field] : undefined;
+
+      const { success, errors } = validate(value, String(field), confirm);
+      acc[field] = success ? "" : errors[0];
+      return acc;
+    }, {} as Record<keyof T, string>);
+  }, [values, confirmFields]);
+
+  const checkIsDisabled = () => {
+    const isFormValid = Object.values(formErrors).every(
+      (error) => error === "",
+    );
+    const areAllFieldsFilled = Object.values(values).every((val) => val !== "");
+    return !(isFormValid && areAllFieldsFilled);
   };
 
   return {
     formErrors,
-    handleValidationChecks,
-    checkIsFormValid,
+    touched,
+    handleBlur,
+    checkIsDisabled,
+    setTouched,
   };
 }

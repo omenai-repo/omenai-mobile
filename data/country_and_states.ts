@@ -1042,7 +1042,7 @@ export const country_and_states = [
       ],
     },
     {
-      country: "Congo, Republic of the",
+      country: "Congo",
       states: [
         "Bouenza",
         "Brazzaville",

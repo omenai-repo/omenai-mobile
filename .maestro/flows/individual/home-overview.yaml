@@ -1,0 +1,48 @@
+appId: com.omenai.omenaimobile
+name: "Individual Home/Overview Screen"
+tags:
+  - individual
+  - home
+  - overview
+  - smoke
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- assertVisible: "Trending Now"
+
+- swipe:
+    direction: UP
+    duration: 1000
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Curated"
+    timeout: 15000
+
+- scrollUntilVisible:
+    direction: DOWN
+    element:
+      anyOf:
+        - "Editorials"
+        - "Galleries"
+        - "Artists"
+    timeout: 15000
+
+- scrollUntilVisible:
+    direction: UP
+    element: "Overview"
+    timeout: 10000
+
+- swipe:
+    start: 50%,30%
+    end: 50%,80%
+    duration: 500
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 10000

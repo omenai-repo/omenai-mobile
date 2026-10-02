@@ -1,9 +1,9 @@
 import React from "react";
 import { Text, View } from "react-native";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
-import RadioButton from "components/general/RadioButton";
-import { reasons, ReasonOption } from "constants/deleteAccount.constants";
+import { colors } from "#config/colors.config";
+import RadioButton from "#components/general/RadioButton";
+import { reasons, ReasonOption } from "#constants/deleteAccount.constants";
 import DeleteAccountCard from "./DeleteAccountCard";
 
 type DeletionReasonSectionProps = Readonly<{

@@ -2,13 +2,14 @@ import React, { useEffect, useMemo, useRef } from "react";
 import {
   View,
   Animated as RNAnimated,
-  Image,
   ImageSourcePropType,
   useWindowDimensions,
   Easing,
 } from "react-native";
-import { courselImages } from "constants/images.constants";
+import { Image } from "expo-image";
+import { courselImages } from "#constants/images.constants";
 import tw from "twrnc";
+import { colors } from "#config/colors.config";
 
 type Props = {
   readonly primaryImages?: ImageSourcePropType[];
@@ -19,7 +20,14 @@ type Props = {
 const NUM_ROWS = 5;
 const NUM_ITEMS_PER_ROW = 4;
 const ENABLE_ANIMATION = true;
-const SHADES = ["#1a1a1a", "#2b2b2b", "#3c3c3c", "#222222", "#111111", "#2f2f2f"];
+const SHADES = [
+  "#1a1a1a",
+  "#2b2b2b",
+  "#3c3c3c",
+  "#222222",
+  "#111111",
+  "#2f2f2f",
+];
 const ROW_BASE_DURATION = 120_000;
 
 const GRID_DATA = Array.from({ length: NUM_ROWS }, (_, rowIndex) =>
@@ -27,17 +35,21 @@ const GRID_DATA = Array.from({ length: NUM_ROWS }, (_, rowIndex) =>
     id: `${rowIndex}-${colIndex}`,
     rowIndex,
     colIndex,
-  }))
+  })),
 ).flat();
+
+const GRID_ROWS = Array.from({ length: NUM_ROWS }, (_, rowIndex) => ({
+  id: `row-${rowIndex}`,
+  items: GRID_DATA.filter((item) => item.rowIndex === rowIndex),
+  rowIndex,
+}));
 
 const GridItem = React.memo(
   ({
-    item,
     itemSize,
     backgroundColor,
     imageSource,
   }: {
-    item: { id: string };
     itemSize: number;
     backgroundColor: string;
     imageSource?: ImageSourcePropType;
@@ -50,11 +62,17 @@ const GridItem = React.memo(
       }}
     >
       {imageSource ? (
-        <Image source={imageSource} style={tw`w-full h-full rounded-lg`} resizeMode="cover" />
+        <Image
+          source={imageSource}
+          style={tw`w-full h-full rounded-sm`}
+          contentFit="cover"
+          cachePolicy="memory-disk"
+          transition={0}
+        />
       ) : (
         <View
           style={[
-            tw`w-full h-full rounded-lg`,
+            tw`w-full h-full rounded-sm`,
             {
               backgroundColor,
             },
@@ -62,7 +80,7 @@ const GridItem = React.memo(
         />
       )}
     </View>
-  )
+  ),
 );
 GridItem.displayName = "GridItem";
 
@@ -72,18 +90,13 @@ export default function TiltedGridBackground({
   isActive = true,
 }: Readonly<Props>) {
   const { width, height } = useWindowDimensions();
-  const rowAnims = useRef(Array.from({ length: NUM_ROWS }, () => new RNAnimated.Value(0))).current;
+  const rowAnims = useRef(
+    Array.from({ length: NUM_ROWS }, () => new RNAnimated.Value(0)),
+  ).current;
   const itemSize = useMemo(() => (height * 1.5) / NUM_ROWS, [height]);
-  const totalScrollDistance = useMemo(() => itemSize * NUM_ITEMS_PER_ROW, [itemSize]);
-
-  const rows = useMemo(
-    () =>
-      Array.from({ length: NUM_ROWS }, (_, rowIndex) => ({
-        id: `row-${Date.now()}-${rowIndex}`,
-        items: GRID_DATA.filter((item) => item.rowIndex === rowIndex),
-        rowIndex,
-      })),
-    []
+  const totalScrollDistance = useMemo(
+    () => itemSize * NUM_ITEMS_PER_ROW,
+    [itemSize],
   );
 
   const primary = useMemo(() => {
@@ -92,28 +105,30 @@ export default function TiltedGridBackground({
   }, [primaryImages]);
   const secondary = useMemo(() => {
     if (secondaryImages?.length) return secondaryImages;
-    return Array.isArray(courselImages) ? [...courselImages].reverse() : courselImages;
+    return Array.isArray(courselImages)
+      ? [...courselImages].reverse()
+      : courselImages;
   }, [secondaryImages]);
 
   useEffect(() => {
     if (!ENABLE_ANIMATION || !isActive) return;
 
-    const animations = rowAnims.map((anim, i) => {
-      anim.setValue(0);
-
-      const animation = RNAnimated.timing(anim, {
+    const animations = rowAnims.map((anim) =>
+      RNAnimated.loop(
+        RNAnimated.timing(anim, {
         toValue: 1,
         duration: ROW_BASE_DURATION,
         useNativeDriver: true,
         easing: Easing.linear,
-      });
+        }),
+        { resetBeforeIteration: true },
+      ),
+    );
 
-      return RNAnimated.loop(animation);
-    });
+    animations.forEach((animation) => animation.start());
 
-    for (const a of animations) a.start();
     return () => {
-      for (const a of animations) a.stop();
+      animations.forEach((animation) => animation.stop());
     };
   }, [rowAnims, isActive]);
 
@@ -129,7 +144,7 @@ export default function TiltedGridBackground({
       }}
     >
       <View>
-        {rows.map((row) => {
+        {GRID_ROWS.map((row) => {
           // opposite translate based on row index
           const isMovingLeft = row.rowIndex % 2 === 0;
           const translate = rowAnims[row.rowIndex].interpolate({
@@ -140,19 +155,23 @@ export default function TiltedGridBackground({
           });
 
           return (
-            <RNAnimated.View key={row.id} style={{ transform: [{ translateX: translate }] }}>
+            <RNAnimated.View
+              key={row.id}
+              style={{ transform: [{ translateX: translate }] }}
+            >
               <View style={{ flexDirection: "row" }}>
                 {/* Duplicated items for seamless loop */}
                 {row.items.map((item, itemIndex) => {
-                  const backgroundColor = SHADES[(row.rowIndex + itemIndex) % SHADES.length];
-                  const images = (row.rowIndex % 2 === 0 ? primary : secondary) ?? [];
+                  const backgroundColor =
+                    SHADES[(row.rowIndex + itemIndex) % SHADES.length];
+                  const images =
+                    (row.rowIndex % 2 === 0 ? primary : secondary) ?? [];
                   const imageSource = images.length
                     ? images[(row.rowIndex + itemIndex) % images.length]
                     : undefined;
                   return (
                     <GridItem
                       key={item.id}
-                      item={item}
                       itemSize={itemSize}
                       backgroundColor={backgroundColor}
                       imageSource={imageSource}
@@ -162,15 +181,16 @@ export default function TiltedGridBackground({
 
                 {/* Duplicated copy 2 */}
                 {row.items.map((item, itemIndex) => {
-                  const backgroundColor = SHADES[(row.rowIndex + itemIndex) % SHADES.length];
-                  const images = (row.rowIndex % 2 === 0 ? primary : secondary) ?? [];
+                  const backgroundColor =
+                    SHADES[(row.rowIndex + itemIndex) % SHADES.length];
+                  const images =
+                    (row.rowIndex % 2 === 0 ? primary : secondary) ?? [];
                   const imageSource = images.length
                     ? images[(row.rowIndex + itemIndex) % images.length]
                     : undefined;
                   return (
                     <GridItem
                       key={`${item.id}-clone`}
-                      item={item}
                       itemSize={itemSize}
                       backgroundColor={backgroundColor}
                       imageSource={imageSource}
@@ -182,7 +202,10 @@ export default function TiltedGridBackground({
           );
         })}
       </View>
-      <View pointerEvents="none" style={tw`absolute inset-0 bg-black opacity-50`} />
+      <View
+        pointerEvents="none"
+        style={[tw`absolute inset-0`, { backgroundColor: `${colors.black}80` }]}
+      />
     </View>
   );
 }

@@ -1,14 +1,17 @@
-import { View, Text, Pressable, Image, Animated } from "react-native";
+import { View, Text, Pressable, Animated } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import OrderHeader from "./OrderHeader";
 import React from "react";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { dropdownIcon, dropUpIcon } from "utils/SvgImages";
-import { getImageFileView } from "lib/storage/getImageFileView";
-import StatusBadge from "components/orders/StatusBadge";
-import OrderActions from "components/orders/OrderActions";
-import type { OrderContainerProps } from "types/orders";
+import { dropdownIcon, dropUpIcon } from "#utils/assets/SvgImages";
+import { getImageFileView } from "#lib/storage/getImageFileView";
+import { StatusBadge } from "#components/orders/StatusBadge";
+import { OrderActions } from "#components/orders/OrderActions";
+import { DetailRow } from "./DetailRow";
+import type { OrderContainerProps } from "#types/orders";
 
-export const OrderContainer = (props: OrderContainerProps) => {
+function OrderContainerInner(props: Readonly<OrderContainerProps>) {
   const {
     id,
     open,
@@ -29,7 +32,7 @@ export const OrderContainer = (props: OrderContainerProps) => {
     exclusivity_type,
   } = props;
 
-  const image_href = getImageFileView(url, 700);
+  const image_href = getImageFileView(url, 300);
   const animatedOpacity = React.useRef(new Animated.Value(0)).current;
   const animatedMaxHeight = React.useRef(new Animated.Value(0)).current;
 
@@ -70,8 +73,8 @@ export const OrderContainer = (props: OrderContainerProps) => {
       onPress={() => setOpen(!open)}
       style={tw.style(
         `border-t-[1px] border-l-[1px] border-r-[1px] border-[#E7E7E7] p-[20px]`,
-        id === 0 && `rounded-t-[15px]`,
-        lastId && `border-b-[1px] rounded-b-[15px]`
+        id === 0 && `rounded-t-md`,
+        lastId && `border-b-[1px] rounded-b-md`,
       )}
       accessible
       accessibilityLabel={`Order ${artName}, ${
@@ -80,30 +83,21 @@ export const OrderContainer = (props: OrderContainerProps) => {
       accessibilityRole="button"
     >
       <View style={tw`flex-row items-center`}>
-        <View style={tw`flex-row items-center gap-[10px] flex-1`}>
-          <Image
-            source={{ uri: image_href }}
-            style={tw`h-[42px] w-[42px] rounded-[3px]`}
-          />
-          <View style={tw`gap-[5px] pr-[20px] max-w-[80%]`}>
-            <Text
-              style={tw`text-[12px] text-[#454545]`}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {artId}
-            </Text>
-            <Text
-              style={tw`text-[14px] text-[#454545] font-semibold`}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {artName}
-            </Text>
-          </View>
-        </View>
+        <OrderHeader image_href={image_href} artId={artId} artName={artName}>
+          {!open && (
+            <View style={tw`mt-1`}>
+              <StatusBadge
+                status={status}
+                payment_status={payment_status}
+                tracking_status={tracking_status}
+                order_accepted={order_accepted}
+                delivered={delivered}
+              />
+            </View>
+          )}
+        </OrderHeader>
         <View
-          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-[8px]`}
+          style={tw`border border-[#F6F6F6] bg-[#F6F6F6] justify-center items-center h-[35px] w-[35px] rounded-sm`}
         >
           {typeof currentIcon === "string" && <SvgXml xml={currentIcon} />}
         </View>
@@ -116,21 +110,10 @@ export const OrderContainer = (props: OrderContainerProps) => {
           overflow: "hidden",
         }}
       >
-        <View style={tw`gap-[20px] mt-[15px]`}>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Price</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-              {price}
-            </Text>
-          </View>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Date</Text>
-            <Text style={tw`text-[14px] text-[#454545] font-semibold`}>
-              {dateTime}
-            </Text>
-          </View>
-          <View style={tw`flex-row items-center gap-[20px]`}>
-            <Text style={tw`text-[14px] text-[#737373]`}>Status</Text>
+        <View style={tw`gap-5 mt-4`}>
+          <DetailRow label="Price" value={price} />
+          <DetailRow label="Date" value={dateTime} />
+          <DetailRow label="Status">
             <StatusBadge
               status={status}
               payment_status={payment_status}
@@ -138,7 +121,7 @@ export const OrderContainer = (props: OrderContainerProps) => {
               order_accepted={order_accepted}
               delivered={delivered}
             />
-          </View>
+          </DetailRow>
           {order_accepted === "declined" && (
             <Text style={{ color: "#ff0000", fontSize: 14 }}>
               Reason: {order_decline_reason}
@@ -146,10 +129,18 @@ export const OrderContainer = (props: OrderContainerProps) => {
           )}
 
           {exclusivity_type === "exclusive" &&
-            order_accepted !== "declined" && (
-              <Text style={tw`text-[13px] text-amber-500 mt-2`}>
-                This artpiece is still within its exclusivity period
-              </Text>
+            order_accepted !== "declined" &&
+            status !== "completed" && (
+              <View style={tw`flex-row items-center gap-1 mt-2`}>
+                <Ionicons
+                  name="information-circle-outline"
+                  size={16}
+                  color={tw.color("gray-500")}
+                />
+                <Text style={tw`text-[13px] text-gray-500 flex-1`}>
+                  This artpiece is still within its exclusivity period
+                </Text>
+              </View>
             )}
 
           <OrderActions
@@ -166,6 +157,8 @@ export const OrderContainer = (props: OrderContainerProps) => {
       </Animated.View>
     </Pressable>
   );
-};
+}
+
+export const OrderContainer = React.memo(OrderContainerInner);
 
 export default OrderContainer;

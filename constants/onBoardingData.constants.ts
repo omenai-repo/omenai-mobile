@@ -1,25 +1,22 @@
-import onboardingImageOne from '../assets/images/onboarding-1.jpg';
-import onboardingImageTwo from '../assets/images/onboarding-2.jpg';
-import onboardingImageThree from '../assets/images/onboarding-3.jpg';
+import { images } from "#constants/images.constants";
 
-export type onboardingdataTypes = { title: string; image: string; subText: string };
+export type onboardingdataTypes = {
+  title: string;
+  image: string;
+  subText: string;
+};
 
-export const onboardingdata = <onboardingdataTypes[]>[
+export const onboardingdata = [
   {
-    title: 'Access to countless artworks',
-    image: onboardingImageOne,
+    title: "Contemporary African Art, Curated",
+    image: images.onboardingImageOne,
     subText:
-      'Discover artworks meticulously curated into various collections for your browsing pleasure.',
+      "Discover works from emerging and established artists across Africa and its diaspora.",
   },
   {
-    title: 'Meet Emerging & Master Artists',
-    image: onboardingImageTwo,
+    title: "Meet the Artists Shaping the Future",
+    image: images.onboardingImageTwo,
     subText:
-      'Explore unique creations from both rising talents and established masters across the globe.',
+      "Discover rising and established artists across Africa and its diaspora.",
   },
-  {
-    title: 'Find Your Next Favorite Piece',
-    image: onboardingImageThree,
-    subText: 'Personalized recommendations that evolve as you explore and save artworks you love.',
-  },
-];
+] as onboardingdataTypes[];

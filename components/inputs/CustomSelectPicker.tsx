@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import React, { useCallback, useRef } from "react";
 import { Dropdown } from "react-native-element-dropdown";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 import tw from "twrnc";
 
 type CustomSelectPickerProps = {
@@ -18,6 +18,7 @@ type CustomSelectPickerProps = {
   dropdownPosition?: "auto" | "top" | "bottom";
   disable?: false | true;
   renderInputSearch?: any;
+  renderItem?: (item: any) => React.ReactElement;
 };
 
 export default function CustomSelectPicker({
@@ -34,6 +35,7 @@ export default function CustomSelectPicker({
   dropdownPosition,
   disable,
   renderInputSearch,
+  renderItem,
 }: CustomSelectPickerProps) {
   const dropdownRef = useRef<any>(null);
 
@@ -42,7 +44,7 @@ export default function CustomSelectPicker({
       handleSetValue(item);
       dropdownRef.current?.close?.();
     },
-    [handleSetValue]
+    [handleSetValue],
   );
 
   const renderDropdownItem = useCallback(
@@ -52,15 +54,21 @@ export default function CustomSelectPicker({
         onPress={() => handleOptionSelect(item)}
         style={tw`px-4 py-2.5`}
       >
-        <Text style={[tw`text-sm`, { color: colors.inputLabel }]}>{item.label}</Text>
+        <Text style={[tw`text-sm`, { color: colors.inputLabel }]}>
+          {item.label}
+        </Text>
       </Pressable>
     ),
-    [handleOptionSelect]
+    [handleOptionSelect],
   );
 
   return (
     <View style={{ zIndex: zIndex }}>
-      <Text style={[tw`text-sm mb-2.5`, { color: colors.inputLabel }]}>{label}</Text>
+      {!!label && (
+        <Text style={[tw`text-sm mb-2.5`, { color: colors.inputLabel }]}>
+          {label}
+        </Text>
+      )}
       <Dropdown
         ref={dropdownRef}
         value={value}
@@ -74,27 +82,31 @@ export default function CustomSelectPicker({
         searchPlaceholder={searchPlaceholder}
         showsVerticalScrollIndicator={false}
         placeholder={placeholder}
-        placeholderStyle={{
-          color: "#858585",
-          fontSize: 14,
-        }}
+        placeholderStyle={[
+          tw`text-sm`,
+          {
+            color: colors.inputLabel,
+          },
+        ]}
         disable={disable}
         maxHeight={250}
         containerStyle={{
           borderRadius: 5,
         }}
         style={[
-          tw`px-4 h-11 w-full bg-[#FAFAFA] rounded-lg border`,
-          { borderColor: colors.inputBorder },
+          tw`px-4 h-11 w-full rounded-sm border`,
+          { borderColor: colors.inputBorder, backgroundColor: "#FAFAFA" },
         ]}
-        selectedTextStyle={{
-          color: disable ? "#c0c0c0" : colors.black,
-          fontSize: 14,
-        }}
+        selectedTextStyle={[
+          tw`text-sm`,
+          {
+            color: disable ? colors.inputLabel : colors.black,
+          },
+        ]}
         renderInputSearch={renderInputSearch}
         dropdownPosition={dropdownPosition}
         keyboardAvoiding={true}
-        renderItem={renderDropdownItem}
+        renderItem={renderItem || renderDropdownItem}
         flatListProps={{
           initialNumToRender: 15,
           maxToRenderPerBatch: 20,

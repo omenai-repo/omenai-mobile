@@ -1,0 +1,48 @@
+appId: com.omenai.omenaimobile
+name: "Gallery Artist Roster"
+tags:
+  - gallery
+  - artist-roster
+  - smoke
+
+---
+- runFlow: ../login/gallery-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn:
+    anyOf:
+      - "Artists"
+      - "Roster"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Artist Roster"
+        - "Artists"
+        - "Roster"
+    timeout: 10000
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Invite"
+        - "Add Artist"
+        - "No artists"
+        - "artist"
+    timeout: 15000
+
+- swipe:
+    direction: UP
+    duration: 1000
+
+- scrollUntilVisible:
+    direction: UP
+    element:
+      anyOf:
+        - "Artist Roster"
+        - "Artists"
+        - "Roster"
+    timeout: 10000

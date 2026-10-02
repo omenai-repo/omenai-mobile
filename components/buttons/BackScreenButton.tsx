@@ -1,21 +1,48 @@
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { AntDesign, Feather } from '@expo/vector-icons';
-import { colors } from '../../config/colors.config';
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import React from "react";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors } from "#config/colors.config";
+import { useDevice } from "#hooks/useDevice";
 
 type BackScreenButtonTypes = {
   handleClick: () => void;
-  cancle?: boolean;
+  cancel?: boolean;
+  color?: string;
 };
 
-export default function BackScreenButton({ handleClick, cancle }: BackScreenButtonTypes) {
+export default function BackScreenButton({
+  handleClick,
+  cancel,
+  color,
+}: Readonly<BackScreenButtonTypes>) {
+  const { isTablet } = useDevice();
+  const iconSize = isTablet ? 30 : 25;
+
   return (
     <TouchableOpacity activeOpacity={1} onPress={handleClick}>
-      <View style={styles.container}>
-        {cancle ? (
-          <Feather name="x" color={colors.primary_black} size={25} />
+      <View
+        style={[
+          styles.container,
+          isTablet && { height: 60, width: 60, borderRadius: 30 },
+        ]}
+      >
+        {cancel ? (
+          <Feather
+            name="x"
+            color={color ?? colors.primary_black}
+            size={iconSize}
+          />
         ) : (
-          <AntDesign name="arrowleft" color={colors.primary_black} size={25} />
+          <MaterialCommunityIcons
+            name="keyboard-backspace"
+            size={iconSize}
+            color={color ?? colors.primary_black}
+          />
+          // <AntDesign
+          //   name="arrow-left"
+          //   color={color ?? colors.primary_black}
+          //   size={iconSize}
+          // />
         )}
       </View>
     </TouchableOpacity>
@@ -27,7 +54,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
 
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

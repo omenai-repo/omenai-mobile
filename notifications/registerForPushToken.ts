@@ -1,36 +1,56 @@
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
+import Constants from "expo-constants";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
 
 export async function registerForPushToken(): Promise<string | null> {
-  if (!Device.isDevice) {
-    alert('Push notifications require a physical device');
-    return null;
-  }
+  try {
+    if (!Device.isDevice) {
+      return null;
+    }
 
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
 
-  if (existingStatus !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
 
-  if (finalStatus !== 'granted') {
-    alert('Failed to get push token for push notification!');
-    return null;
-  }
+    if (finalStatus !== "granted") {
+      return null;
+    }
 
-  const tokenData = await Notifications.getExpoPushTokenAsync();
-  const token = tokenData.data;
-  console.log('Expo Push Token:', token);
+    // Get the project ID from the config
+    const projectId = Constants.expoConfig?.extra?.eas?.projectId;
 
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
+    if (!projectId) {
+      // If we can't find the project ID, we can't generate a valid token for EAS build
+      return null;
+    }
+
+    const tokenData = await Notifications.getExpoPushTokenAsync({
+      projectId,
     });
-  }
+    const token = tokenData.data;
 
-  return token;
+    // Create Android notification channel if available
+    if (Platform.OS === "android") {
+      try {
+        if (typeof Notifications.setNotificationChannelAsync === "function") {
+          await Notifications.setNotificationChannelAsync("default", {
+            name: "default",
+            importance: Notifications.AndroidImportance?.MAX ?? 5,
+          });
+        }
+      } catch {
+        // Silently fail - not critical
+      }
+    }
+
+    return token;
+  } catch {
+    return null;
+  }
 }

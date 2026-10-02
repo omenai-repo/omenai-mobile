@@ -1,0 +1,43 @@
+appId: com.omenai.omenaimobile
+name: "Artist Wallet Screen"
+tags:
+  - artist
+  - wallet
+  - smoke
+
+---
+- runFlow: ../login/artist-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Wallet"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Wallet"
+        - "Balance"
+        - "Transactions"
+    timeout: 10000
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Withdraw"
+        - "Transaction History"
+        - "No transactions"
+    timeout: 15000
+
+- swipe:
+    direction: UP
+    duration: 1000
+
+- scrollUntilVisible:
+    direction: UP
+    element:
+      anyOf:
+        - "Wallet"
+        - "Balance"
+    timeout: 10000

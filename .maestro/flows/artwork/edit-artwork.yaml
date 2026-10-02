@@ -1,0 +1,39 @@
+appId: com.omenai.omenaimobile
+name: "Edit Artwork Flow"
+tags:
+  - artwork
+  - edit
+  - gallery
+
+---
+- runFlow: ../login/gallery-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "Artworks"
+
+- tapOn:
+    id: "artwork-card-.*"
+
+- extendedWaitUntil:
+    visible: "Edit"
+    timeout: 10000
+- tapOn: "Edit"
+
+- assertVisible: "Edit artwork pricing"
+
+- tapOn: "Price"
+- clearText
+- inputText: "2000"
+- hideKeyboard
+
+- scrollUntilVisible:
+    direction: DOWN
+    element: "Update Pricing"
+- tapOn: "Update Pricing"
+
+- extendedWaitUntil:
+    visible: "Artworks"
+    timeout: 15000
