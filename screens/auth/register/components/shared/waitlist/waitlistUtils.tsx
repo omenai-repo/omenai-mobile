@@ -1,0 +1,52 @@
+import { Text, TouchableOpacity } from "react-native";
+import React from "react";
+import tw from "twrnc";
+import { colors } from "#config/colors.config";
+import { z } from "zod";
+
+// Shared validation functions
+export const validateEmail = (value: string): string | undefined => {
+  if (!value.trim()) return "Email is required";
+  const emailSchema = z.string().email();
+  const result = emailSchema.safeParse(value);
+  if (!result.success) return "Please enter a valid email address";
+  return undefined;
+};
+
+export const validateName = (
+  value: string,
+  section: "artist" | "gallery" = "artist"
+): string | undefined => {
+  if (!value.trim()) return `${section} name is required`;
+  if (value.trim().length < 2)
+    return `${section} name must be at least 2 characters`;
+  return undefined;
+};
+
+export const validateInviteCode = (value: string): string | undefined => {
+  if (!value || value.trim() === "") return "Code is required";
+  if (value.trim().length < 2) return "Code must be at least 2 characters long";
+  if (value.trim().length > 100) return "Code must not exceed 100 characters";
+  return undefined;
+};
+
+// Shared underlined link component
+type UnderlinedLinkProps = Readonly<{
+  text: string;
+  onPress: () => void;
+}>;
+
+export function UnderlinedLink({ text, onPress }: UnderlinedLinkProps) {
+  return (
+    <TouchableOpacity onPress={onPress} style={tw`mt-4 self-end`}>
+      <Text
+        style={[
+          tw`text-sm pb-px border-b`,
+          { color: colors.black, borderColor: colors.black },
+        ]}
+      >
+        {text}
+      </Text>
+    </TouchableOpacity>
+  );
+}

@@ -1,12 +1,18 @@
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React from "react";
+import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
-import { colors } from "config/colors.config";
-import { getImageFileView } from "lib/storage/getImageFileView";
+import { colors } from "#config/colors.config";
+import { getImageFileView } from "#lib/storage/getImageFileView";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { screenName } from "constants/screenNames.constants";
+import { screenName } from "#constants/screenNames.constants";
 
 type TrendingArtworkCardType = {
   title: string;
@@ -16,37 +22,37 @@ type TrendingArtworkCardType = {
   medium?: string;
   likes: number;
   art_id: string;
+  image_format?: { ratio: string; orientation?: string };
 };
 
-export default function TrendingArtworkCard({
+function TrendingArtworkCard({
   image,
   artist,
-  rarity,
-  medium,
   title,
   likes,
   art_id,
-}: TrendingArtworkCardType) {
+  image_format,
+}: Readonly<TrendingArtworkCardType>) {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const screenWidth = Dimensions.get("window").width;
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
+  const imageWidth = (screenWidth - 60) / 2;
+  const image_href = getImageFileView(image, 300);
 
-  let imageWidth = 0;
-  imageWidth = (screenWidth - 60) / 2; //screen width minus paddings applied to grid view tnen divided by two, to get the width of a single card
-  const image_href = getImageFileView(image, imageWidth);
-
-  useEffect(() => {
-    // Fetch the image to get its dimensions
-    Image.getSize(image_href, (width, height) => {
-      // Calculate the image height based on the screen width and image aspect ratio
-      const aspectRatio = height / width;
-      setImageDimensions({ height: height * aspectRatio, width: width });
-    });
-  }, [image_href, screenWidth]);
+  const imageDimensions = React.useMemo(() => {
+    let height = imageWidth; // Default fallback (1:1 aspect ratio)
+    if (image_format?.ratio) {
+      const [w, h] = image_format.ratio.split(":");
+      const ratio = Number(w) / Number(h);
+      if (!Number.isNaN(ratio) && ratio > 0) {
+        height = imageWidth / ratio;
+      }
+    }
+    return {
+      width: imageWidth,
+      height: Math.max(100, Math.min(height, 500)), // Clamp height to reasonable bounds
+    };
+  }, [imageWidth, image_format?.ratio]);
 
   return (
     <TouchableOpacity
@@ -61,9 +67,11 @@ export default function TrendingArtworkCard({
               style={{
                 width: imageDimensions.width,
                 height: imageDimensions.height,
-                objectFit: "cover",
               }}
-              resizeMode="contain"
+              contentFit="cover"
+              transition={200}
+              cachePolicy="memory-disk"
+              recyclingKey={art_id}
             />
           </View>
           <View style={styles.likeContainer}>
@@ -82,15 +90,13 @@ export default function TrendingArtworkCard({
               {likes} {likes > 1 ? "Likes" : "Like"}
             </Text>
           </View>
-          {/* <View style={styles.tagsContainer}>
-                        <Text style={styles.tags}>{medium}</Text>
-                        <Text style={styles.tags}>{rarity}</Text>
-                    </View> */}
         </View>
       </View>
     </TouchableOpacity>
   );
 }
+
+export default React.memo(TrendingArtworkCard);
 
 const styles = StyleSheet.create({
   container: {

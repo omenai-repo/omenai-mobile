@@ -1,0 +1,40 @@
+import { utils_getAsyncData } from "#utils/app/utils_asyncStorage";
+import { apiUrl } from "#constants/apiUrl.constants";
+import { apiRequest } from "#utils/network/apiRequest";
+
+export async function fetchPopularArtworks() {
+  let userId = "";
+  const userSession = await utils_getAsyncData("userSession");
+  if (userSession.value) {
+    userId = JSON.parse(userSession.value).id;
+  } else {
+    return;
+  }
+
+  try {
+    const response = await apiRequest(
+      `${apiUrl}/api/artworks/getPopularArtworks`,
+      {
+        method: "POST",
+        body: JSON.stringify({ id: userId }),
+      },
+    ).then(async (res) => {
+      if (!res.ok) return undefined;
+      const result = await res.json();
+
+      return result;
+    });
+
+    return response;
+  } catch (error: any) {
+    return {
+      isOk: false,
+      body: {
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Error fetching popular artworks",
+      },
+    };
+  }
+}

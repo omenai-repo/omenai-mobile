@@ -1,0 +1,35 @@
+type PlanChangeResult = {
+  action: 'upgrade' | 'downgrade';
+  shouldCharge: boolean;
+};
+
+const planTiers = {
+  principal: { monthlyPrice: 500, yearlyPrice: 5100 },
+  gallery: { monthlyPrice: 250, yearlyPrice: 2550 },
+  foundation: { monthlyPrice: 150, yearlyPrice: 1530 },
+};
+
+export function utils_determinePlanChange(
+  currentPlan: string,
+  currentInterval: 'monthly' | 'yearly',
+  newPrice: number,
+  newInterval: 'monthly' | 'yearly',
+  status: SubscriptionModelSchemaTypes['status'],
+): PlanChangeResult {
+  const currentPlanData = planTiers[currentPlan as keyof typeof planTiers];
+  const currentPrice = currentPlanData[`${currentInterval}Price`];
+
+  const planOrder = ['foundation', 'gallery', 'principal'];
+  const currentPlanIndex = planOrder.indexOf(currentPlan);
+  const newPlanIndex = planOrder.findIndex(
+    (plan) => planTiers[plan as keyof typeof planTiers][`${newInterval}Price`] === newPrice,
+  );
+
+  const isUpgrade = newPlanIndex >= currentPlanIndex;
+  const shouldCharge = status === 'expired' || newPrice > currentPrice;
+
+  return {
+    action: isUpgrade ? 'upgrade' : 'downgrade',
+    shouldCharge,
+  };
+}

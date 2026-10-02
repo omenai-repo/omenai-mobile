@@ -1,15 +1,15 @@
 import { View } from "react-native";
 import React from "react";
 import tw from "twrnc";
-import Input from "components/inputs/Input";
-import CustomSelectPicker from "components/inputs/CustomSelectPicker";
+import Input from "#components/inputs/Input";
+import CustomSelectPicker from "#components/inputs/CustomSelectPicker";
 
 interface AddressFormFieldsProps {
   countryData: { label: string; value: string; currency?: string }[];
   stateData: { label: string; value: string; isoCode?: string }[];
   cityData: { label: string; value: string }[];
   addressData: {
-    countryCode: string;
+    countryCode?: string;
     state: string;
     city: string;
     address_line: string;
@@ -17,8 +17,18 @@ interface AddressFormFieldsProps {
   };
   phone?: string;
   formErrors: Partial<AddressTypes & { phone: string }>;
-  onCountrySelect: (item: { label: string; value: string; currency?: string }) => void;
-  onStateSelect: (item: { label: string; value: string; isoCode?: string }) => void;
+  touched?: Partial<Record<string, boolean>>;
+  onBlur?: (field: string) => void;
+  onCountrySelect: (item: {
+    label: string;
+    value: string;
+    currency?: string;
+  }) => void;
+  onStateSelect: (item: {
+    label: string;
+    value: string;
+    isoCode?: string;
+  }) => void;
   onCitySelect: (item: { label: string; value: string }) => void;
   onAddressChange: (text: string) => void;
   onZipChange: (text: string) => void;
@@ -36,6 +46,8 @@ export const AddressFormFields = ({
   addressData,
   phone,
   formErrors,
+  touched,
+  onBlur,
   onCountrySelect,
   onStateSelect,
   onCitySelect,
@@ -53,7 +65,7 @@ export const AddressFormFields = ({
         <CustomSelectPicker
           data={countryData}
           placeholder={`Select ${countryLabel.toLowerCase()}`}
-          value={addressData.countryCode}
+          value={addressData.countryCode ?? ""}
           handleSetValue={onCountrySelect}
           label={countryLabel}
           search={true}
@@ -80,9 +92,10 @@ export const AddressFormFields = ({
         label={addressLabel}
         keyboardType="default"
         onInputChange={onAddressChange}
+        handleBlur={() => onBlur?.("address_line")}
         placeHolder={addressPlaceholder}
         value={addressData.address_line}
-        errorMessage={formErrors?.address_line}
+        errorMessage={touched?.address_line ? formErrors?.address_line : ""}
       />
 
       <View style={tw`flex-row items-center gap-[30px] my-5`}>
@@ -103,9 +116,10 @@ export const AddressFormFields = ({
           label="Zip Code"
           keyboardType="default"
           onInputChange={onZipChange}
+          handleBlur={() => onBlur?.("zip")}
           placeHolder="Zip Code"
           value={addressData.zip}
-          errorMessage={formErrors?.zip}
+          errorMessage={touched?.zip ? formErrors?.zip : ""}
         />
       </View>
 
@@ -114,9 +128,10 @@ export const AddressFormFields = ({
           label="Phone number"
           keyboardType="phone-pad"
           onInputChange={onPhoneChange}
+          handleBlur={() => onBlur?.("phone")}
           placeHolder="+12345678990"
           value={phone || ""}
-          errorMessage={formErrors?.phone}
+          errorMessage={touched?.phone ? formErrors?.phone : ""}
         />
       )}
     </>

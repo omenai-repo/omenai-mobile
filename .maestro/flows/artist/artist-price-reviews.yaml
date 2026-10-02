@@ -1,0 +1,54 @@
+appId: com.omenai.omenaimobile
+name: "Artist Price Reviews Hub"
+tags:
+  - artist
+  - price-review
+  - smoke
+
+---
+- runFlow: ../login/artist-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn:
+    anyOf:
+      - "Reviews"
+      - "Price Reviews"
+      - "Proposals"
+
+- extendedWaitUntil:
+    visible: "Pricing Proposals"
+    timeout: 10000
+
+- assertVisible: "Track and manage your requested pricing overrides."
+
+- assertVisible: "Active"
+- assertVisible: "History"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "PENDING"
+        - "No active"
+        - "No proposals"
+        - "review"
+    timeout: 10000
+
+- tapOn: "History"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "APPROVED"
+        - "DECLINED"
+        - "No history"
+        - "resolved"
+    timeout: 10000
+
+- tapOn: "Active"
+
+- extendedWaitUntil:
+    visible: "Pricing Proposals"
+    timeout: 5000

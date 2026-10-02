@@ -22,7 +22,8 @@
         "buildType": "apk"
       }
     },
-    "staging-ios": {
+    "staging": {
+      "environment": "development",
       "distribution": "store",
       "channel": "staging",
       "env": {
@@ -30,13 +31,6 @@
       },
       "ios": {
         "credentialsSource": "remote"
-      }
-    },
-    "staging-android": {
-      "distribution": "store",
-      "channel": "staging",
-      "env": {
-        "EXPO_PUBLIC_ENV": "staging"
       },
       "android": {
         "buildType": "app-bundle",
@@ -44,10 +38,16 @@
       }
     },
     "production": {
+      "distribution": "store",
+      "environment": "production",
       "env": {
         "EXPO_PUBLIC_ENV": "production"
       },
+      "ios": {
+        "credentialsSource": "remote"
+      },
       "android": {
+        "buildType": "app-bundle",
         "credentialsSource": "remote"
       },
       "channel": "production"
@@ -55,17 +55,18 @@
   },
   "submit": {
     "production": {
+      "ios": {
+        "ascAppId": "6748387089"
+      },
       "android": {
         "track": "production"
       }
     },
     "preview": {},
-    "staging-ios": {
+    "staging": {
       "ios": {
         "ascAppId": "6748387089"
-      }
-    },
-    "staging-android": {
+      },
       "android": {
         "track": "internal"
       }

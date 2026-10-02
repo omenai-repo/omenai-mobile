@@ -1,3 +1,5 @@
 export const fontNames = {
-    dmSans: 'DMSans-9ptRegular_'
-}
+  workSans: "WorkSans-",
+  ptSerif: "PTSerif-",
+  dmSans: "DMSans",
+};

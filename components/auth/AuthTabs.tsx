@@ -1,17 +1,17 @@
-import { View, Pressable } from "react-native";
+import { View, Pressable, Text } from "react-native";
 import React, { useEffect } from "react";
 import tw from "twrnc";
+import { colors } from "#config/colors.config";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  interpolateColor,
 } from "react-native-reanimated";
 
 type AuthTabsProps = {
-  tabs: string[];
-  stateIndex: number;
-  handleSelect: (e: number) => void;
+  readonly tabs: string[];
+  readonly stateIndex: number;
+  readonly handleSelect: (e: number) => void;
 };
 
 type TabItemProps = {
@@ -30,55 +30,45 @@ const TabItem = ({ name, onClick, isSelected }: TabItemProps) => {
     });
   }, [isSelected, progress]);
 
-  const animatedContainerStyle = useAnimatedStyle(() => {
-    const scale = 0.96 + progress.value * 0.04; // Interpolate from 0.96 to 1.0
-    return {
-      transform: [{ scale }],
-    };
-  });
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: 0.96 + progress.value * 0.04 }],
+  }));
 
-  const animatedBackgroundStyle = useAnimatedStyle(() => {
-    const backgroundColor = interpolateColor(
-      progress.value,
-      [0, 1],
-      ["transparent", "#000000"]
-    );
-
-    return {
-      backgroundColor,
-    };
-  });
-
-  const animatedTextStyle = useAnimatedStyle(() => {
-    const color = interpolateColor(
-      progress.value,
-      [0, 1],
-      ["#858585", "#ffffff"]
-    );
-
-    return {
-      color,
-    };
-  });
+  const textColor = isSelected ? colors.white : "#858585";
 
   return (
-    <Animated.View style={[tw`flex-1`, animatedContainerStyle]}>
+    <Animated.View
+      style={[
+        {
+          flex: 1,
+          minWidth: 0,
+          minHeight: 46,
+        },
+        animatedContainerStyle,
+      ]}
+    >
       <Pressable
         onPress={onClick}
-        style={({ pressed }) => [
-          tw`h-[46px] flex-1 rounded-lg items-center justify-center overflow-hidden`,
-          pressed && { opacity: 0.8 },
-        ]}
+        style={({ pressed }) => ({
+          flex: 1,
+          minWidth: 0,
+          minHeight: 46,
+          borderRadius: 4,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: isSelected ? colors.black : "transparent",
+          opacity: pressed ? 0.88 : 1,
+        })}
       >
-        <Animated.View
+        <Text
           style={[
-            tw`absolute inset-0 rounded-lg`,
-            animatedBackgroundStyle,
+            tw`text-sm font-sans-regular text-center`,
+            { color: textColor },
           ]}
-        />
-        <Animated.Text style={[tw`text-sm`, { zIndex: 10 }, animatedTextStyle]}>
+          numberOfLines={1}
+        >
           {name}
-        </Animated.Text>
+        </Text>
       </Pressable>
     </Animated.View>
   );
@@ -89,15 +79,14 @@ export default function AuthTabs({
   stateIndex,
   handleSelect,
 }: AuthTabsProps) {
-
   return (
     <View
-      style={tw`w-full bg-[#FAFAFA] border border-[#E0E0E0] rounded-lg p-1 flex-row gap-[15px]`}
+      style={tw`w-full flex-row gap-2.5 rounded-sm border border-[#E0E0E0] bg-[#FAFAFA] p-1`}
     >
-      {tabs.map((i, idx) => (
+      {tabs.map((label, idx) => (
         <TabItem
-          name={i}
-          key={`tab-${idx}`}
+          name={label}
+          key={`tab-${label}`}
           onClick={() => handleSelect(idx)}
           isSelected={stateIndex === idx}
         />

@@ -10,7 +10,7 @@ export function useScrollY() {
 
   const onScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    { useNativeDriver: false } // Blur animations don't support native driver
+    { useNativeDriver: true }, // Supported since we moved opacity logic to interpolate
   );
 
   return { scrollY, onScroll };

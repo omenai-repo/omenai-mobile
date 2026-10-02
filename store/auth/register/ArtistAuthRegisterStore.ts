@@ -1,7 +1,10 @@
-import { create } from 'zustand';
+import { AddressTypes } from "#types/types";
+import { create } from "zustand";
 
 type ArtistSignupData = {
   name: string;
+  referrerKey: string;
+  inviteCode: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -16,6 +19,8 @@ type ArtistAuthRegisterStoreType = {
   pageIndex: number;
   setPageIndex: (e: number) => void;
   artistRegisterData: ArtistSignupData;
+  setReferrerKey: (e: string) => void;
+  setInviteCode: (e: string) => void;
   setEmail: (e: string) => void;
   setName: (e: string) => void;
   setPhone: (e: string) => void;
@@ -42,133 +47,171 @@ type ArtistAuthRegisterStoreType = {
   clearState: () => void;
 };
 
-export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>((set, get) => ({
-  pageIndex: 0,
-  setPageIndex: (e: number) => {
-    set({ pageIndex: e });
-  },
-  artistRegisterData: {
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    address: {
-      address_line: '',
-      city: '',
-      country: '',
-      zip: '',
-      countryCode: '',
-      state: '',
-      stateCode: '',
+export const useArtistAuthRegisterStore = create<ArtistAuthRegisterStoreType>(
+  (set, get) => ({
+    pageIndex: 0,
+    setPageIndex: (e: number) => {
+      set({ pageIndex: e });
     },
-    art_style: '',
-    base_currency: '',
-    logo: null,
-  },
-  setName: (name: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, name } });
-  },
-  setEmail: (email: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, email } });
-  },
-  setPhone: (phone: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, phone } });
-  },
-  setPassword: (password: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, password } });
-  },
-  setConfirmPassword: (confirmPassword: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, confirmPassword } });
-  },
-  setHomeAddress: (homeAddress: string) => {
-    const data = get().artistRegisterData;
-    set({
-      artistRegisterData: { ...data, address: { ...data.address, address_line: homeAddress } },
-    });
-  },
-  setCity: (city: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, address: { ...data.address, city } } });
-  },
-  setState: (state: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, address: { ...data.address, state } } });
-  },
-  setZipCode: (zipCode: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, address: { ...data.address, zip: zipCode } } });
-  },
-  setCountry: (country: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, address: { ...data.address, country } } });
-  },
-  setCountryCode: (countryCode: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, address: { ...data.address, countryCode } } });
-  },
-  setStateCode: (stateCode: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, address: { ...data.address, stateCode } } });
-  },
-  setBaseCurrency: (base_currency: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, base_currency } });
-  },
-  stateData: [],
-  setStateData: (stateData: { label: string; value: string }[]) => {
-    set({ stateData });
-  },
-  cityData: [],
-  setCityData: (cityData: { label: string; value: string }[]) => {
-    set({ cityData });
-  },
-  setArtStyles: (art_style: string) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, art_style } });
-  },
-  setArtistPhoto: (logo: null) => {
-    const data = get().artistRegisterData;
-    set({ artistRegisterData: { ...data, logo } });
-  },
-  isLoading: false,
-  setIsLoading: (e: boolean) => {
-    set({ isLoading: e });
-  },
-  selectedTerms: [],
-  setSelectedTerms: (e: number[]) => {
-    set({ selectedTerms: e });
-  },
-  clearState: () => {
-    set({
-      isLoading: false,
-      pageIndex: 0,
-      stateData: [],
-      cityData: [],
-      artistRegisterData: {
-        name: '',
-        email: '',
-        phone: '',
-        password: '',
-        confirmPassword: '',
-        address: {
-          address_line: '',
-          city: '',
-          country: '',
-          zip: '',
-          countryCode: '',
-          state: '',
-          stateCode: '',
-        },
-        art_style: '',
-        base_currency: '',
-        logo: null,
+    artistRegisterData: {
+      name: "",
+      referrerKey: "",
+      inviteCode: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+      address: {
+        address_line: "",
+        city: "",
+        country: "",
+        zip: "",
+        countryCode: "",
+        state: "",
+        stateCode: "",
       },
-    });
-  },
-}));
+      art_style: "",
+      base_currency: "",
+      logo: null,
+    },
+    setName: (name: string) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, name } });
+    },
+    setReferrerKey: (referrerKey: string) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, referrerKey } });
+    },
+    setInviteCode: (inviteCode: string) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, inviteCode } });
+    },
+    setEmail: (email: string) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, email } });
+    },
+    setPhone: (phone: string) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, phone } });
+    },
+    setPassword: (password: string) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, password } });
+    },
+    setConfirmPassword: (confirmPassword: string) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, confirmPassword } });
+    },
+    setHomeAddress: (homeAddress: string) => {
+      const data = get().artistRegisterData;
+      set({
+        artistRegisterData: {
+          ...data,
+          address: { ...data.address, address_line: homeAddress },
+        },
+      });
+    },
+    setCity: (city: string) => {
+      const data = get().artistRegisterData;
+      set({
+        artistRegisterData: { ...data, address: { ...data.address, city } },
+      });
+    },
+    setState: (state: string) => {
+      const data = get().artistRegisterData;
+      set({
+        artistRegisterData: { ...data, address: { ...data.address, state } },
+      });
+    },
+    setZipCode: (zipCode: string) => {
+      const data = get().artistRegisterData;
+      set({
+        artistRegisterData: {
+          ...data,
+          address: { ...data.address, zip: zipCode },
+        },
+      });
+    },
+    setCountry: (country: string) => {
+      const data = get().artistRegisterData;
+      set({
+        artistRegisterData: { ...data, address: { ...data.address, country } },
+      });
+    },
+    setCountryCode: (countryCode: string) => {
+      const data = get().artistRegisterData;
+      set({
+        artistRegisterData: {
+          ...data,
+          address: { ...data.address, countryCode },
+        },
+      });
+    },
+    setStateCode: (stateCode: string) => {
+      const data = get().artistRegisterData;
+      set({
+        artistRegisterData: {
+          ...data,
+          address: { ...data.address, stateCode },
+        },
+      });
+    },
+    setBaseCurrency: (base_currency: string) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, base_currency } });
+    },
+    stateData: [],
+    setStateData: (stateData: { label: string; value: string }[]) => {
+      set({ stateData });
+    },
+    cityData: [],
+    setCityData: (cityData: { label: string; value: string }[]) => {
+      set({ cityData });
+    },
+    setArtStyles: (art_style: string) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, art_style } });
+    },
+    setArtistPhoto: (logo: null) => {
+      const data = get().artistRegisterData;
+      set({ artistRegisterData: { ...data, logo } });
+    },
+    isLoading: false,
+    setIsLoading: (e: boolean) => {
+      set({ isLoading: e });
+    },
+    selectedTerms: [],
+    setSelectedTerms: (e: number[]) => {
+      set({ selectedTerms: e });
+    },
+    clearState: () => {
+      set({
+        isLoading: false,
+        pageIndex: 0,
+        stateData: [],
+        cityData: [],
+        artistRegisterData: {
+          name: "",
+          referrerKey: "",
+          inviteCode: "",
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+          address: {
+            address_line: "",
+            city: "",
+            country: "",
+            zip: "",
+            countryCode: "",
+            state: "",
+            stateCode: "",
+          },
+          art_style: "",
+          base_currency: "",
+          logo: null,
+        },
+      });
+    },
+  })
+);

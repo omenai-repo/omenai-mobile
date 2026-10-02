@@ -1,0 +1,68 @@
+appId: com.omenai.omenaimobile
+name: "Registration Flow - Artist"
+tags:
+  - registration
+  - artist
+  - auth
+
+---
+- runFlow: ../login/welcome-onboarding-skip.yaml
+
+- tapOn: "Create Account"
+
+- assertVisible: "Create an account"
+- tapOn: "Artist"
+
+- tapOn: "Enter your full name"
+- inputText: "Maestro Artist"
+
+- tapOn: "Enter your email address"
+- inputText: "maestro_artist@test.com"
+
+- tapOn: "Enter password"
+- inputText: "Test12345@"
+
+- tapOn: "Enter password again"
+- inputText: "Test12345@"
+- hideKeyboard
+
+- tapOn: "Next"
+
+- tapOn: "Input your home address here"
+- inputText: "123 Artist Lane"
+- hideKeyboard
+- tapOn: "Zip/Postal code"
+- inputText: "10001"
+- hideKeyboard
+- tapOn: "Phone number"
+- inputText: "8001234567"
+- hideKeyboard
+
+- tapOn: "Select Country"
+- tapOn: "United States"
+
+- tapOn: "Select State"
+- tapOn: "New York"
+
+- tapOn: "Select City"
+- tapOn: "New York City"
+
+- tapOn: "Next"
+
+- tapOn: "Photo must be 1040 x 1040"
+- tapOn: "Next"
+
+- assertVisible: "Select your art style"
+- tapOn: "Photography"
+- tapOn: "Next"
+
+- assertVisible: "Accept terms and conditions"
+- tapOn: "By ticking this box, I accept the Terms of use and Privacy Policy of creating an account with Omenai."
+
+- tapOn: "Create my account"
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- assertVisible: "Overview"

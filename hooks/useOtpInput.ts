@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo } from 'react';
-import type { OtpInputProps } from '../types/otp';
+import type { OtpInputProps } from "#types/otp";
 
 const regexMap = {
   alpha: /[^a-zA-Z]/g,

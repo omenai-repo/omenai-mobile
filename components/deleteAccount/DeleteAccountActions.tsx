@@ -1,8 +1,8 @@
 import React from "react";
 import { View } from "react-native";
-import FittedBlackButton from "components/buttons/FittedBlackButton";
+import FittedBlackButton from "#components/buttons/FittedBlackButton";
 import tw from "twrnc";
-import { colors } from "config/colors.config";
+import { colors } from "#config/colors.config";
 
 type DeleteAccountActionsProps = Readonly<{
   onCancel: () => void;

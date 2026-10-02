@@ -1,0 +1,47 @@
+appId: com.omenai.omenaimobile
+name: "Individual Support Tickets"
+tags:
+  - individual
+  - support
+  - profile
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "More"
+
+- extendedWaitUntil:
+    visible: "Support Tickets"
+    timeout: 5000
+- tapOn: "Support Tickets"
+
+- extendedWaitUntil:
+    visible: "Support History"
+    timeout: 10000
+
+- assertVisible: "Search tickets..."
+
+- tapOn: "Search tickets..."
+- inputText: "order"
+- hideKeyboard
+
+- swipe:
+    start: 50%,10%
+    end: 50%,10%
+    duration: 1500
+
+- tapOn: "Search tickets..."
+- eraseText: 10
+- hideKeyboard
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Support History"
+        - "No tickets"
+        - "support"
+    timeout: 10000

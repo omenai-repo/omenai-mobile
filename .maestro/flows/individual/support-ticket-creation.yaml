@@ -1,0 +1,68 @@
+appId: com.omenai.omenaimobile
+name: "Support Ticket Creation"
+tags:
+  - individual
+  - support
+  - create
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn: "More"
+- extendedWaitUntil:
+    visible: "Support Tickets"
+    timeout: 5000
+- tapOn: "Support Tickets"
+
+- extendedWaitUntil:
+    visible: "Support History"
+    timeout: 10000
+
+- tapOn:
+    anyOf:
+      - "New Ticket"
+      - "Create Ticket"
+      - "+"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Create Ticket"
+        - "New Ticket"
+        - "Subject"
+        - "Issue"
+    timeout: 10000
+
+- tapOn:
+    anyOf:
+      - "Subject"
+      - "Title"
+- inputText: "Maestro test support ticket"
+- hideKeyboard
+
+- tapOn:
+    anyOf:
+      - "Describe"
+      - "Message"
+      - "Description"
+- inputText: "This is a test ticket created by Maestro automated testing."
+- hideKeyboard
+
+- tapOn:
+    anyOf:
+      - "Submit"
+      - "Send"
+      - "Create"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Ticket submitted"
+        - "submitted"
+        - "Support History"
+        - "successfully"
+    timeout: 15000

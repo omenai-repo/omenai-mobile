@@ -1,23 +1,64 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
-import React from 'react';
+import { Text, View } from "react-native";
+import React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { colors } from "#config/colors.config";
+import tw from "twrnc";
 
-import emptyImage from '../../assets/icons/empty-artworks.png';
-import { colors } from 'config/colors.config';
+const EmptyArtworks = ({
+  size,
+  title,
+  description,
+  writeUp,
+  darkTheme,
+  icon,
+  fixedHeight = false,
+}: {
+  size?: number;
+  title?: string;
+  description?: string;
+  writeUp?: string;
+  darkTheme?: boolean;
+  icon?: keyof typeof Ionicons.glyphMap;
+  fixedHeight?: boolean;
+}) => {
+  const displayTitle = title || writeUp || "No Data Found";
+  const displayDescription = description || "It Feels a little empty here.";
 
-export default function EmptyArtworks({size, writeUp, darkTheme}: {size: number, writeUp?: string, darkTheme?: boolean}) {
-    return (
-        <View style={styles.container}>
-            <Image source={emptyImage} alt='' style={{height: size, width: size}} />
-            <Text style={[{textAlign: 'center'}, darkTheme && {color: colors.white}]}>{writeUp ? writeUp : 'No artwork available'}</Text>
-        </View>
-    )
-}
+  return (
+    <View
+      style={tw`justify-center items-center px-5 gap-5 ${
+        fixedHeight ? "py-10" : "flex-1"
+      }`}
+    >
+      <View
+        style={tw`w-20 h-20 rounded-full bg-gray-100 justify-center items-center ${
+          darkTheme ? "bg-white/10" : ""
+        }`}
+      >
+        <Ionicons
+          name={icon || "images-outline"}
+          size={size || 46}
+          color={darkTheme ? colors.white60 : "#9CA3AF"}
+        />
+      </View>
+      <View style={tw`items-center gap-2`}>
+        <Text
+          style={tw`text-lg font-sans-medium text-slate-900 text-center ${
+            darkTheme ? "text-white" : ""
+          }`}
+        >
+          {displayTitle}
+        </Text>
+        <Text
+          style={tw`text-sm text-gray-500 font-sans text-center ${
+            darkTheme ? "text-white/60" : ""
+          }`}
+        >
+          {displayDescription}
+        </Text>
+      </View>
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({
-    container: {
-        paddingHorizontal: 20,
-        alignItems: 'center',
-        marginTop: 20,
-        gap: 10
-    }
-})
+export default EmptyArtworks;

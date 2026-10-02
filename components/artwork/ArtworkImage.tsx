@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import tw from "twrnc";
+import { colors } from "#config/colors.config";
 import MiniImage from "./MiniImage";
 import LikeComponent from "./LikeComponent";
 
@@ -22,18 +23,19 @@ export default function ArtworkImage({
   like_IDs,
 }: Readonly<ArtworkImageProps>) {
   return (
-    <View style={tw`rounded-[5px] overflow-hidden relative`}>
+    <View style={tw`rounded-sm overflow-hidden relative`}>
       <View style={tw`w-full flex items-center justify-center`}>
         {MiniImage({ maxWidth: imageWidth, url: image_href })}
       </View>
       <View
-        style={tw`absolute top-0 left-0 h-full w-[${
-          imageWidth - 10
-        }px] bg-black/20 flex items-end justify-end p-3`}
+        style={[
+          tw`absolute top-0 left-0 h-full flex items-end justify-end p-3`,
+          { width: imageWidth - 10, backgroundColor: `${colors.black}33` },
+        ]}
       >
         {galleryView && (
           <View
-            style={tw`bg-white/20 h-[30px] w-[30px] rounded-full flex items-center justify-center`}
+            style={tw`bg-white/20 h-[30px] w-[30px] rounded-sm flex items-center justify-center`}
           >
             <LikeComponent
               art_id={art_id}

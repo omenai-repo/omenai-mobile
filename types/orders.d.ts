@@ -1,6 +1,40 @@
-export type OrderStatusKey = 'pending' | 'processing' | 'completed';
+export type CollectorOrderPaymentFlags = {
+  isFlutterwavePaymentEnabled: boolean;
+  isStripePaymentEnabled: boolean;
+  areFlagsLoading: boolean;
+};
 
-export type OrderActionType = 'track' | 'action' | null;
+export type OrderTabsTypes = "orders" | "history";
+export type GalleryOrderCardStatus =
+  | "Pending"
+  | "Pending customer payment"
+  | "Pending tracking info"
+  | "Declined by gallery"
+  | "Order completed";
+
+/** Collector orders list row — `screens/orders/components/OrderContainer` */
+export type CollectorOrderContainerProps = {
+  item: CreateOrderModelTypes;
+  id: number;
+  open: boolean;
+  /** Stable handler: `(orderId) => void` */
+  onToggleOpen: (orderId: string) => void;
+  lastId: boolean;
+  paymentFlags: CollectorOrderPaymentFlags;
+};
+
+export type CollectorOrderListItemProps = {
+  item: CreateOrderModelTypes;
+  index: number;
+  isOpen: boolean;
+  isLast: boolean;
+  onToggleOpen: (orderId: string) => void;
+  paymentFlags: CollectorOrderPaymentFlags;
+};
+
+export type OrderStatusKey = "pending" | "processing" | "completed";
+
+export type OrderActionType = "track" | "action" | null;
 
 export type OrderContainerProps = {
   id: number;
@@ -19,9 +53,10 @@ export type OrderContainerProps = {
   order_accepted?: string;
   delivered?: boolean;
   order_decline_reason?: string;
-  exclusivity_type?: 'exclusive' | 'non-exclusive' | string;
+  exclusivity_type?: "exclusive" | "non-exclusive" | string;
   acceptBtn?: () => void;
   declineBtn?: () => void;
+  seller_designation?: string;
 };
 
 export type OrderActionsProps = {

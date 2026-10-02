@@ -1,4 +1,5 @@
-import { create } from 'zustand';
+import { IndividualRegisterData } from "#types/types";
+import { create } from "zustand";
 
 type IndividualAuthRegisterStoreType = {
   individualRegisterData: IndividualRegisterData;
@@ -29,22 +30,22 @@ type IndividualAuthRegisterStoreType = {
   clearState: () => void;
 };
 
-export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStoreType>(
-  (set, get) => ({
+export const useIndividualAuthRegisterStore =
+  create<IndividualAuthRegisterStoreType>((set, get) => ({
     individualRegisterData: {
-      name: '',
-      email: '',
-      phone: '',
-      password: '',
-      confirmPassword: '',
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
       address: {
-        address_line: '',
-        city: '',
-        country: '',
-        zip: '',
-        countryCode: '',
-        state: '',
-        stateCode: '',
+        address_line: "",
+        city: "",
+        country: "",
+        zip: "",
+        countryCode: "",
+        state: "",
+        stateCode: "",
       },
     },
     setName: (name: string) => {
@@ -70,32 +71,62 @@ export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStore
     setAddress: (address: string) => {
       const data = get().individualRegisterData;
       set({
-        individualRegisterData: { ...data, address: { ...data.address, address_line: address } },
+        individualRegisterData: {
+          ...data,
+          address: { ...data.address, address_line: address },
+        },
       });
     },
     setCountry: (country: string) => {
       const data = get().individualRegisterData;
-      set({ individualRegisterData: { ...data, address: { ...data.address, country } } });
+      set({
+        individualRegisterData: {
+          ...data,
+          address: { ...data.address, country },
+        },
+      });
     },
     setCity: (city: string) => {
       const data = get().individualRegisterData;
-      set({ individualRegisterData: { ...data, address: { ...data.address, city } } });
+      set({
+        individualRegisterData: { ...data, address: { ...data.address, city } },
+      });
     },
     setZipCode: (zipCode: string) => {
       const data = get().individualRegisterData;
-      set({ individualRegisterData: { ...data, address: { ...data.address, zip: zipCode } } });
+      set({
+        individualRegisterData: {
+          ...data,
+          address: { ...data.address, zip: zipCode },
+        },
+      });
     },
     setState: (state: string) => {
       const data = get().individualRegisterData;
-      set({ individualRegisterData: { ...data, address: { ...data.address, state } } });
+      set({
+        individualRegisterData: {
+          ...data,
+          address: { ...data.address, state },
+        },
+      });
     },
     setCountryCode: (countryCode: string) => {
       const data = get().individualRegisterData;
-      set({ individualRegisterData: { ...data, address: { ...data.address, countryCode } } });
+      set({
+        individualRegisterData: {
+          ...data,
+          address: { ...data.address, countryCode },
+        },
+      });
     },
     setStateCode: (stateCode: string) => {
       const data = get().individualRegisterData;
-      set({ individualRegisterData: { ...data, address: { ...data.address, stateCode } } });
+      set({
+        individualRegisterData: {
+          ...data,
+          address: { ...data.address, stateCode },
+        },
+      });
     },
     stateData: [],
     setStateData: (stateData: { label: string; value: string }[]) => {
@@ -124,19 +155,19 @@ export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStore
     clearState: () => {
       set({
         individualRegisterData: {
-          name: '',
-          email: '',
-          phone: '',
-          password: '',
-          confirmPassword: '',
+          name: "",
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
           address: {
-            address_line: '',
-            city: '',
-            country: '',
-            zip: '',
-            countryCode: '',
-            state: '',
-            stateCode: '',
+            address_line: "",
+            city: "",
+            country: "",
+            zip: "",
+            countryCode: "",
+            state: "",
+            stateCode: "",
           },
         },
         isLoading: false,
@@ -147,5 +178,4 @@ export const useIndividualAuthRegisterStore = create<IndividualAuthRegisterStore
         cityData: [],
       });
     },
-  }),
-);
+  }));

@@ -1,0 +1,54 @@
+appId: com.omenai.omenaimobile
+name: "Individual Notifications Screen"
+tags:
+  - individual
+  - notifications
+  - smoke
+
+---
+- runFlow: ../login/individual-login.yaml
+
+- extendedWaitUntil:
+    visible: "Overview"
+    timeout: 20000
+
+- tapOn:
+    id: ".*notification.*"
+
+- extendedWaitUntil:
+    visible: "Notifications"
+    timeout: 10000
+
+- assertVisible: "All"
+- assertVisible: "Reminders"
+- assertVisible: "Payments"
+- assertVisible: "Orders"
+
+- tapOn: "Reminders"
+- swipe:
+    start: 50%,10%
+    end: 50%,10%
+    duration: 1000
+
+- tapOn: "Payments"
+- swipe:
+    start: 50%,10%
+    end: 50%,10%
+    duration: 1000
+
+- tapOn: "Orders"
+- swipe:
+    start: 50%,10%
+    end: 50%,10%
+    duration: 1000
+
+- tapOn: "All"
+
+- extendedWaitUntil:
+    visible:
+      anyOf:
+        - "Today"
+        - "Yesterday"
+        - "Earlier"
+        - "No Notifications"
+    timeout: 10000

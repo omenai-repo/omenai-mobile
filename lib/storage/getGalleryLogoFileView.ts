@@ -1,5 +1,5 @@
-import { storage } from 'appWrite_config';
-import { ImageFormat, ImageGravity } from 'appwrite';
+import { storage } from "#config/appwrite.client";
+import { ImageFormat, ImageGravity } from "appwrite";
 
 export const getGalleryLogoFileView = (
   fileId: string,
@@ -8,7 +8,7 @@ export const getGalleryLogoFileView = (
   format?: string,
 ) => {
   const fileData = storage.getFilePreview({
-    bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!!,
+    bucketId: process.env.EXPO_PUBLIC_APPWRITE_LOGO_BUCKET_ID!,
     fileId: fileId,
 
     width: width, // width, will be resized using this value.
@@ -16,11 +16,11 @@ export const getGalleryLogoFileView = (
     gravity: ImageGravity.Center, // crop center
     quality: 90, // slight compression
     borderWidth: 0, // border width
-    borderColor: 'FFFFFF', // border color
+    borderColor: "FFFFFF", // border color
     borderRadius: 0, // border radius
     opacity: 1, // full opacity
     rotation: 0, // no rotation
-    background: 'FFFFFF', // background color
+    background: "FFFFFF", // background color
     output: ImageFormat.Jpeg,
   });
 
