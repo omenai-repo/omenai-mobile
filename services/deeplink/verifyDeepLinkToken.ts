@@ -1,5 +1,5 @@
 import { apiUrl } from "#constants/apiUrl.constants";
-import { apiRequest } from "#utils/apiRequest";
+import { apiRequest } from "#utils/network/apiRequest";
 
 type VerifyDeepLinkResponse = {
   success?: boolean;

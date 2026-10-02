@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import { SvgXml } from "react-native-svg";
-import { paletteIcon, clockIcon, arrowLeftIcon } from "#utils/SvgImages";
+import { paletteIcon, clockIcon, arrowLeftIcon } from "#utils/assets/SvgImages";
 
 /**
  * Props for the Blocker Screen

@@ -17,7 +17,6 @@ interface ScrollWrapperProps {
   showsHorizontalScrollIndicator?: boolean;
   onScroll?: (event: any) => void;
   onEndReached?: () => void;
-  onEndReachedThreshold?: number;
   refreshControl?: React.ReactElement<any>;
   horizontal?: boolean;
   nestedScrollEnabled?: boolean;
@@ -63,14 +62,14 @@ const ScrollWrapper = React.forwardRef<ScrollView, ScrollWrapperProps>(
         onScroll={onScroll}
         refreshControl={refreshControl}
         horizontal={horizontal}
-        scrollEventThrottle={16} // For smooth scrolling
+        scrollEventThrottle={16}
         nestedScrollEnabled={nestedScrollEnabled}
         keyboardShouldPersistTaps={keyboardShouldPersistTaps}
         contentInsetAdjustmentBehavior={contentInsetAdjustmentBehavior}
+        overScrollMode={overScrollMode}
         onScrollEndDrag={onEndReached}
         bounces={bounces}
         alwaysBounceVertical={alwaysBounceVertical}
-        overScrollMode={overScrollMode}
       >
         {children}
       </Animated.ScrollView>

@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useRef } from "react";
 import {
   View,
   Animated as RNAnimated,
-  Image,
   ImageSourcePropType,
   useWindowDimensions,
   Easing,
 } from "react-native";
+import { Image } from "expo-image";
 import { courselImages } from "#constants/images.constants";
 import tw from "twrnc";
 import { colors } from "#config/colors.config";
@@ -38,14 +38,18 @@ const GRID_DATA = Array.from({ length: NUM_ROWS }, (_, rowIndex) =>
   })),
 ).flat();
 
+const GRID_ROWS = Array.from({ length: NUM_ROWS }, (_, rowIndex) => ({
+  id: `row-${rowIndex}`,
+  items: GRID_DATA.filter((item) => item.rowIndex === rowIndex),
+  rowIndex,
+}));
+
 const GridItem = React.memo(
   ({
-    item,
     itemSize,
     backgroundColor,
     imageSource,
   }: {
-    item: { id: string };
     itemSize: number;
     backgroundColor: string;
     imageSource?: ImageSourcePropType;
@@ -61,7 +65,9 @@ const GridItem = React.memo(
         <Image
           source={imageSource}
           style={tw`w-full h-full rounded-sm`}
-          resizeMode="cover"
+          contentFit="cover"
+          cachePolicy="memory-disk"
+          transition={0}
         />
       ) : (
         <View
@@ -93,16 +99,6 @@ export default function TiltedGridBackground({
     [itemSize],
   );
 
-  const rows = useMemo(
-    () =>
-      Array.from({ length: NUM_ROWS }, (_, rowIndex) => ({
-        id: `row-${Date.now()}-${rowIndex}`,
-        items: GRID_DATA.filter((item) => item.rowIndex === rowIndex),
-        rowIndex,
-      })),
-    [],
-  );
-
   const primary = useMemo(() => {
     if (primaryImages?.length) return primaryImages;
     return courselImages;
@@ -117,22 +113,22 @@ export default function TiltedGridBackground({
   useEffect(() => {
     if (!ENABLE_ANIMATION || !isActive) return;
 
-    const animations = rowAnims.map((anim, i) => {
-      anim.setValue(0);
-
-      const animation = RNAnimated.timing(anim, {
+    const animations = rowAnims.map((anim) =>
+      RNAnimated.loop(
+        RNAnimated.timing(anim, {
         toValue: 1,
         duration: ROW_BASE_DURATION,
         useNativeDriver: true,
         easing: Easing.linear,
-      });
+        }),
+        { resetBeforeIteration: true },
+      ),
+    );
 
-      return RNAnimated.loop(animation);
-    });
+    animations.forEach((animation) => animation.start());
 
-    for (const a of animations) a.start();
     return () => {
-      for (const a of animations) a.stop();
+      animations.forEach((animation) => animation.stop());
     };
   }, [rowAnims, isActive]);
 
@@ -148,7 +144,7 @@ export default function TiltedGridBackground({
       }}
     >
       <View>
-        {rows.map((row) => {
+        {GRID_ROWS.map((row) => {
           // opposite translate based on row index
           const isMovingLeft = row.rowIndex % 2 === 0;
           const translate = rowAnims[row.rowIndex].interpolate({
@@ -176,7 +172,6 @@ export default function TiltedGridBackground({
                   return (
                     <GridItem
                       key={item.id}
-                      item={item}
                       itemSize={itemSize}
                       backgroundColor={backgroundColor}
                       imageSource={imageSource}
@@ -196,7 +191,6 @@ export default function TiltedGridBackground({
                   return (
                     <GridItem
                       key={`${item.id}-clone`}
-                      item={item}
                       itemSize={itemSize}
                       backgroundColor={backgroundColor}
                       imageSource={imageSource}

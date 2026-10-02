@@ -32,4 +32,6 @@ export type ArtworkCardType = {
   fixedImageHeight?: number;
   frameBackgroundColor?: string;
   useFixedImageFrame?: boolean;
+  showEditButton?: boolean;
+  onEditPress?: () => void;
 };

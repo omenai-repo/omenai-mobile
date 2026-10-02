@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -18,17 +18,17 @@ import Animated, {
 } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
-import { useGuestLoginModalStore } from "#store/guest/guestLoginModalStore";
+import { useGuestLoginModalStore } from "#store/account/guest/guestLoginModalStore";
 import { screenName } from "#constants/screenNames.constants";
 import LongBlackButton from "#components/buttons/LongBlackButton";
 import LongWhiteButton from "#components/buttons/LongWhiteButton";
 import Input from "#components/inputs/Input";
 import PasswordInput from "#components/inputs/PasswordInput";
 import { colors } from "#config/colors.config";
-import { useLoginHandler } from "#hooks/useLoginHandler";
-import { useModalStore } from "#store/modal/modalStore";
-import { useBiometrics } from "#hooks/useBiometrics";
-import { faceIdIcon } from "#utils/SvgImages";
+import { useLoginHandler } from "#hooks/auth/useLoginHandler";
+import { useModalStore } from "#store/account/modal/modalStore";
+import { useBiometrics } from "#hooks/auth/useBiometrics";
+import { faceIdIcon } from "#utils/assets/SvgImages";
 
 export default function GuestLoginModal() {
   const {
@@ -72,16 +72,16 @@ export default function GuestLoginModal() {
   })();
 
   // Check biometric status when modal opens
+  const checkBiometricStatus = useCallback(async () => {
+    const enabled = await isBiometricEnabled("individual");
+    setCanUseBiometrics(enabled);
+  }, [isBiometricEnabled]);
+
   useEffect(() => {
     if (isOpen) {
       checkBiometricStatus();
     }
-  }, [isOpen]);
-
-  const checkBiometricStatus = async () => {
-    const enabled = await isBiometricEnabled("individual");
-    setCanUseBiometrics(enabled);
-  };
+  }, [checkBiometricStatus, isOpen]);
 
   const clearInputs = () => {
     setEmail("");
@@ -243,7 +243,7 @@ export default function GuestLoginModal() {
             {/* Create Account Link */}
             <View style={tw`flex-row justify-center items-center mt-5`}>
               <Text style={tw`text-sm text-gray-500`}>
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
               </Text>
               <TouchableOpacity onPress={handleCreateAccount}>
                 <Text

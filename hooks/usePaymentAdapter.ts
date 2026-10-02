@@ -1,9 +1,9 @@
 import { useState, useRef, useCallback } from "react";
 import * as WebBrowser from "expo-web-browser";
 import { useStripe } from "@stripe/stripe-react-native";
-import { createOrderLock } from "#services/orders/createOrderLock";
-import { initializePayment } from "#services/payment/paymentAdapterService";
-import { Analytics } from "#utils/analytics";
+import { createOrderLock } from "#services/commerce/orders/createOrderLock";
+import { initializePayment } from "#services/commerce/payment/paymentAdapterService";
+import { Analytics } from "#utils/core/analytics";
 import { PaymentInitiateParams } from "#types/payment";
 
 export interface UsePaymentAdapterOptions {
@@ -87,6 +87,7 @@ export const usePaymentAdapter = ({
 
       if (!res.isOk || !res.paymentIntent) {
         initOnceRef.current = false;
+        console.log("failed to initialize", res);
         const msg = res.message || "Failed to initialize Stripe Payment Sheet";
         onError(msg);
         return;

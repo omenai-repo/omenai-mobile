@@ -12,7 +12,7 @@ export type RootStackParamList = {
   "purchase-artwork": { title: string };
   "saved-artworks": undefined;
   "edit-profile": undefined;
-  "change-gallery-password": { routeName: string };
+  "change-password": { routeName: string };
   "delete-account": { routeName?: string };
   collections: undefined;
   "artworks-medium": { catalog: string };

@@ -1,5 +1,5 @@
 import { Query } from "appwrite";
-import { editorial_database } from "#appWrite_config";
+import { editorial_database } from "#config/appwrite.client";
 
 const APPWRITE_ROW_ID_REGEX = /^[a-f0-9]{20,24}$/i;
 

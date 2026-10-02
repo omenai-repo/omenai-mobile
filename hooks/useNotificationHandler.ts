@@ -43,21 +43,25 @@ function handleNotification(data: NotificationDataType) {
   switch (data.type) {
     case "wallet":
       if (data.access_type === "artist") {
-        navigate(root, { screen: "WalletScreen" });
+        navigate(root, { screen: screenName.artist.wallet });
       } else if (data.access_type === "gallery") {
-        navigate(root, { screen: "Payouts" });
+        navigate(root, { screen: screenName.gallery.stripePayouts });
       }
       break;
     case "orders":
-      navigate(root, { screen: "Orders" });
+      if (data.access_type === "gallery") {
+        navigate(root, { screen: screenName.gallery.orders });
+      } else {
+        navigate(root, { screen: screenName.orders });
+      }
       break;
     case "subscriptions":
       if (data.access_type === "gallery") {
-        navigate(root, { screen: "SubscriptionScreen" });
+        navigate(root, { screen: screenName.gallery.subscriptions });
       }
       break;
     case "updates":
-      navigate(root, { screen: "NotificationScreen" });
+      navigate(root, { screen: screenName.notifications });
       break;
     case "engagement":
       handleEngagementNotification(data, root);

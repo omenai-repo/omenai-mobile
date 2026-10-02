@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Animated } from "react-native";
+import { View, Text, Pressable, Animated } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import tw from "twrnc";
 
@@ -77,20 +77,35 @@ export default function SectionHeader({
           </View>
         )}
         <Text
-          style={tw`text-lg font-serif ${dark ? "text-white" : "text-gray-800"
-            }`}
+          style={tw`text-lg font-serif ${
+            dark ? "text-white" : "text-gray-800"
+          }`}
         >
           {title}
         </Text>
       </View>
 
       {onActionPress && (
-        <TouchableOpacity
-          style={tw`flex-row items-center gap-1 mb-1`}
+        <Pressable
+          style={({ pressed }) => [
+            tw`flex-row items-center gap-1 p-2 -mr-2`,
+            pressed && { opacity: 0.5 },
+          ]}
           onPress={onActionPress}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="See all"
         >
-          <Feather name="arrow-right" size={14} color={subtitleColor} />
-        </TouchableOpacity>
+          <Text
+            style={[
+              tw`text-[11px] font-sans-regular uppercase tracking-widest`,
+              { color: subtitleColor },
+            ]}
+          >
+            See all
+          </Text>
+          <Feather name="arrow-right" size={12} color={subtitleColor} />
+        </Pressable>
       )}
     </View>
   );

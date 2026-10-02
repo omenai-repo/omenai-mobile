@@ -6,13 +6,13 @@ import { useDevice } from "#hooks/useDevice";
 
 type BackScreenButtonTypes = {
   handleClick: () => void;
-  cancle?: boolean;
+  cancel?: boolean;
   color?: string;
 };
 
 export default function BackScreenButton({
   handleClick,
-  cancle,
+  cancel,
   color,
 }: Readonly<BackScreenButtonTypes>) {
   const { isTablet } = useDevice();
@@ -26,7 +26,7 @@ export default function BackScreenButton({
           isTablet && { height: 60, width: 60, borderRadius: 30 },
         ]}
       >
-        {cancle ? (
+        {cancel ? (
           <Feather
             name="x"
             color={color ?? colors.primary_black}

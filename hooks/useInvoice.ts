@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiUrl } from "#constants/apiUrl.constants";
-import { apiRequest } from "#utils/apiRequest";
+import { apiRequest } from "#utils/network/apiRequest";
 
 const fetchInvoice = async (id: string) => {
   const url = `${apiUrl}/api/invoices/fetchInvoice?id=${id}`;

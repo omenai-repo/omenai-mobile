@@ -5,76 +5,76 @@ import tw from "twrnc";
 
 const { width: screenWidth } = Dimensions.get("window");
 
-/**
- * Skeleton loader for the Artwork details screen.
- * Mimics the artwork image, title, artist, price, and buttons layout.
- */
 export default function ArtworkSkeleton() {
   return (
-    <View style={tw`flex-1 bg-white px-5`}>
+    <View style={tw`flex-1 bg-white`}>
       {/* Image placeholder */}
-      <View style={tw`items-center mb-6`}>
+      <View style={tw`items-center`}>
         <Skeleton
           colorMode="light"
           height={300}
-          width={screenWidth - 40}
-          radius={8}
+          width={screenWidth}
+          radius={0}
         />
       </View>
 
-      {/* Title */}
-      <View style={tw`mb-2`}>
-        <Skeleton colorMode="light" height={28} width="80%" radius={4} />
-      </View>
-
-      {/* Artist name */}
-      <View style={tw`mb-2`}>
-        <Skeleton colorMode="light" height={18} width="50%" radius={4} />
-      </View>
-
-      {/* Tags */}
-      <View style={tw`mb-5`}>
-        <Skeleton colorMode="light" height={14} width="40%" radius={4} />
-      </View>
-
-      {/* Price label */}
-      <View style={tw`mb-2`}>
-        <Skeleton colorMode="light" height={14} width={60} radius={4} />
-      </View>
-
-      {/* Price value */}
-      <View style={tw`mb-6`}>
-        <Skeleton colorMode="light" height={22} width={120} radius={4} />
-      </View>
-
-      {/* Tags row */}
-      <View style={tw`flex-row gap-3 mb-8`}>
-        <Skeleton colorMode="light" height={36} width={180} radius={20} />
-        <Skeleton colorMode="light" height={36} width={140} radius={20} />
-      </View>
-
-      {/* Purchase button */}
-      <View style={tw`mb-4`}>
-        <Skeleton colorMode="light" height={48} width="100%" radius={8} />
-      </View>
-
-      {/* Save button */}
-      <View style={tw`mb-6`}>
-        <Skeleton colorMode="light" height={48} width="100%" radius={8} />
-      </View>
-
-      {/* More details link */}
-      <View style={tw`items-center mb-10`}>
-        <Skeleton colorMode="light" height={16} width={200} radius={4} />
-      </View>
-
-      {/* Extra cards */}
-      <View style={tw`flex-row gap-4`}>
-        <View style={tw`flex-1`}>
-          <Skeleton colorMode="light" height={100} width="100%" radius={12} />
+      <View style={tw`px-5 pt-8`}>
+        {/* Title */}
+        <View style={tw`mb-3`}>
+          <Skeleton colorMode="light" height={36} width="80%" radius={2} />
         </View>
-        <View style={tw`flex-1`}>
-          <Skeleton colorMode="light" height={100} width="100%" radius={12} />
+
+        {/* Artist name */}
+        <View style={tw`mb-6`}>
+          <Skeleton colorMode="light" height={20} width="50%" radius={2} />
+        </View>
+
+        {/* Medium / Year / Rarity (Artwork Details) */}
+        <View
+          style={tw`flex-row gap-3 mb-6 items-center py-4 border-t border-b border-slate-100 mt-2`}
+        >
+          <Skeleton colorMode="light" height={14} width={50} radius={2} />
+          <View style={tw`h-3 w-[1px] bg-slate-200`} />
+          <Skeleton colorMode="light" height={14} width={40} radius={2} />
+          <View style={tw`h-3 w-[1px] bg-slate-200`} />
+          <Skeleton colorMode="light" height={14} width={80} radius={2} />
+        </View>
+
+        {/* Physical Specifications */}
+        <View
+          style={tw`bg-[#F9F9F9] px-3 py-4 mb-6 border-[0.5px] border-neutral-100`}
+        >
+          <View style={tw`mb-4`}>
+            <Skeleton colorMode="light" height={16} width={150} radius={2} />
+          </View>
+          <View style={tw`flex-row items-center gap-4`}>
+            <Skeleton colorMode="light" height={24} width="28%" radius={2} />
+            <Skeleton colorMode="light" height={24} width="28%" radius={2} />
+          </View>
+        </View>
+
+        {/* Price value */}
+        <View style={tw`mb-6`}>
+          <Skeleton colorMode="light" height={28} width={120} radius={2} />
+        </View>
+
+        {/* Purchase/Request button */}
+        <View style={tw`mb-4`}>
+          <Skeleton colorMode="light" height={46} width="100%" radius={2} />
+        </View>
+
+        {/* Save button & AR button row */}
+        <View style={tw`flex-row gap-5 mb-8 w-full`}>
+          <View style={tw`flex-1`}>
+            <Skeleton colorMode="light" height={46} width="100%" radius={2} />
+          </View>
+          <Skeleton colorMode="light" height={46} width={46} radius={2} />
+        </View>
+
+        {/* Extra cards (Shipping / Coverage) */}
+        <View style={tw`flex-col gap-4`}>
+          <Skeleton colorMode="light" height={80} width="100%" radius={2} />
+          <Skeleton colorMode="light" height={80} width="100%" radius={2} />
         </View>
       </View>
     </View>

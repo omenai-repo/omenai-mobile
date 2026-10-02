@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import DeviceInfo from "react-native-device-info";
-import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+import firestore, {
+  FirebaseFirestoreTypes,
+} from "@react-native-firebase/firestore";
 import SpInAppUpdates, { IAUUpdateKind } from "sp-react-native-in-app-updates";
 import { Platform } from "react-native";
 
@@ -108,9 +110,6 @@ export const useVersionCheck = (
         error: null,
       };
 
-      console.log(
-        `[VersionCheck] Current: ${currentVersion}, Required: ${remoteVersion}, Needs Update: ${needsUpdate}`,
-      );
       setVersionCheckResult(result);
 
       if (finalNeedsUpdate && onUpdateNeededRef.current) {

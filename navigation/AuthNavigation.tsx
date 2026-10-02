@@ -1,12 +1,12 @@
 import React from "react";
 import { screenName } from "#constants/screenNames.constants";
 import Welcome from "#screens/welcome/Welcome";
-import Login from "#screens/login/Login";
-import Register from "#screens/register/Register";
-import ForgotPassword from "#screens/forgotPassword/ForgotPassword";
+import Login from "#screens/auth/login/Login";
+import Register from "#screens/auth/register/Register";
+import ForgotPassword from "#screens/auth/password/forgotPassword/ForgotPassword";
 import { createStackNavigator } from "@react-navigation/stack";
-import VerifyEmail from "#screens/verification/VerifyEmail";
-import ArtistOnboarding from "#screens/artistOnboarding/ArtistOnboarding";
+import VerifyEmail from "#screens/auth/verification/VerifyEmail";
+import ArtistOnboarding from "#screens/auth/artistOnboarding/ArtistOnboarding";
 import { LowRiskProvider } from "#providers/ConfigCatProvider";
 import GuestNavigation from "./GuestNavigation";
 

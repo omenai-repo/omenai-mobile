@@ -1,8 +1,8 @@
 import React from "react";
-import { filterStore } from "#store/artworks/FilterStore";
-import { artworkStore } from "#store/artworks/ArtworkStore";
-import { artworkActionStore } from "#store/artworks/ArtworkActionStore";
-import { fetchPaginatedArtworks } from "#services/artworks/fetchPaginatedArtworks";
+import { filterStore } from "#store/artwork/filterStore";
+import { artworkStore } from "#store/artwork/artworkStore";
+import { artworkActionStore } from "#store/artwork/artworkActionStore";
+import { fetchPaginatedArtworks } from "#services/artwork/fetchPaginatedArtworks";
 import GenericFilterPill from "#components/filter/generic/FilterPill";
 
 export default function FilterPill({ filter }: { filter: string }) {
